@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/10/19 23:33:44 $
+ * $Revision: 1.21 $
+ * $Date: 2004/10/25 17:59:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
+import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
@@ -39,6 +40,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Erzeugt eine Standard-Tabelle.
@@ -59,8 +61,11 @@ public class TablePart implements Part
 
 	private Composite parent							= null;
 	private Composite comp 								= null;
+	private Label summary									= null;
 	 
-  private org.eclipse.swt.widgets.Table table;
+  private org.eclipse.swt.widgets.Table table = null;
+
+	private int size = 0;
 
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
@@ -131,7 +136,128 @@ public class TablePart implements Part
 	{
 		this.showSummary = false;
 	}
-	
+
+	/**
+	 * Entfernt das genannte Element aus der Tabelle.
+	 * Wurde die Tabelle mit einer Liste von Objekten erzeugt, die von <code>DBObject</code>
+	 * abgeleitet sind, muss das Loeschen nicht manuell vorgenommen werden. Die Tabelle
+	 * fuegt in diesem Fall automatisch jedem Objekt einen Listener hinzu, der
+	 * beim Loeschen des Objektes benachrichtigt wird. Die Tabelle entfernt
+	 * das Element dann selbstaendig.
+	 * Hinweis: Der im Konstruktor verwendete GenericIterator zum initialen Befuellen
+	 * der Tabelle wird hierbei nicht angefasst. 
+   * @param item zu entfernendes Element.
+   * @throws RemoteException
+   */
+  public void removeItem(GenericObject item) throws RemoteException
+	{
+		if (table == null || item == null)
+			return;
+		TableItem[] items = table.getItems();
+		GenericObject o = null;
+		for (int i=0;i<items.length;++i)
+		{
+			
+			try
+			{
+				o = (GenericObject) items[i].getData();
+				if (item.equals(o))
+				{
+					table.remove(i);
+					size--;
+					refreshSummary();
+					return;
+				}
+				
+			}
+			catch (Throwable t)
+			{
+				Logger.error("error while removing item",t);
+			}
+		}
+	}
+
+	/**
+	 * Fuegt der Tabelle am Ende ein Element hinzu.
+	 * Hinweis: Der im Konstruktor verwendete GenericIterator zum initialen Befuellen
+	 * der Tabelle wird hierbei nicht angefasst. 
+   * @param object hinzuzufuegendes Element.
+   * @throws RemoteException
+   */
+  public void addItem(GenericObject object) throws RemoteException
+	{
+		addItem(object,size());
+	}
+
+	/**
+	 * Fuegt der Tabelle ein Element hinzu.
+   * @param object hinzuzufuegendes Element.
+   * @param index Position, an der es eingefuegt werden soll.
+   * @throws RemoteException
+   */
+  public void addItem(final GenericObject object, int index) throws RemoteException
+	{
+		final TableItem item = new TableItem(table, SWT.NONE,index);
+
+		// hihi, wenn es sich um ein DBObject handelt, haengen wir einen
+		// Listener dran, der uns ueber das Loeschen des Objektes
+		// benachrichtigt. Dann koennen wir es automatisch aus der
+		// Tabelle werfen.
+		if (object instanceof DBObject)
+		{
+			((DBObject)object).addDeleteListener(new de.willuhn.datasource.rmi.Listener()
+      {
+        public void handleEvent(de.willuhn.datasource.rmi.Event e) throws RemoteException
+        {
+        	removeItem(e.getObject());
+        }
+      });
+		}
+		item.setData(object);
+
+		for (int i=0;i<this.fields.size();++i)
+		{
+			String[] fieldData = (String[]) fields.get(i);
+			String field = fieldData[1];
+			Object value = object.getAttribute(field);
+
+			if (value == null)
+				item.setText(i,"");
+			else
+				item.setText(i,value.toString());
+
+			if (value instanceof GenericObject)
+			{
+				// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
+				GenericObject go = (GenericObject) value;
+				Object attribute = go.getAttribute(go.getPrimaryAttribute());
+				item.setText(i,attribute == null ? "" : attribute.toString());
+			}
+
+			// Formatter vorhanden?
+			Formatter f = (Formatter) formatter.get(field);
+			if (f != null)
+				item.setText(i,f.format(value));
+		}
+
+		// Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
+		// TableFormatter drueber
+		if (tableFormatter != null)
+			tableFormatter.format(item);
+
+		// Tabellengroesse anpassen
+		size++;
+	}
+
+	/**
+	 * Liefert die Anzahl der Elemente in dieser Tabelle.
+   * @return Anzahl der Elemente.
+   */
+  public int size()
+	{
+		return size;
+	}
+
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
@@ -198,42 +324,7 @@ public class TablePart implements Part
 		list.begin(); // zurueckblaettern nicht vergessen
 		while (list.hasNext())
 		{
-			final TableItem item = new TableItem(table, SWT.NONE);
-			final GenericObject o = list.next();
-
-			item.setData(o);
-
-			for (int i=0;i<this.fields.size();++i)
-			{
-				String[] fieldData = (String[]) fields.get(i);
-				String field = fieldData[1];
-				Object value = o.getAttribute(field);
-
-				if (value == null)
-					item.setText(i,"");
-				else
-					item.setText(i,value.toString());
-
-				if (value instanceof GenericObject)
-				{
-					// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
-					GenericObject go = (GenericObject) value;
-					Object attribute = go.getAttribute(go.getPrimaryAttribute());
-					item.setText(i,attribute == null ? "" : attribute.toString());
-				}
-
-				// Formatter vorhanden?
-				Formatter f = (Formatter) formatter.get(field);
-				if (f != null)
-					item.setText(i,f.format(value));
-
-			}
-
-			// Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
-			// TableFormatter drueber
-			if (tableFormatter != null)
-				tableFormatter.format(item);
-
+			addItem(list.next());
 		}
 
     // noch der Listener fuer den Doppelklick drauf.
@@ -281,26 +372,35 @@ public class TablePart implements Part
       col.pack();
     }
 
-		if (showSummary)
-		{
-			Label summary = new Label(comp,SWT.NONE);
-			summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			summary.setBackground(Color.BACKGROUND.getSWTColor());
-			summary.setText(list.size() + " " + (list.size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
-		}
-
+		refreshSummary();
+		
     // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
     // Damit kann das Control wiederverwendet werden ;) 
 	  this.list.begin();
 
   }
 
+	/**
+   * Aktualisiert die Summenzeile.
+   */
+  private void refreshSummary()
+	{
+		if (!showSummary)
+			return;
+		if (summary == null)
+		{
+			summary = new Label(comp,SWT.NONE);
+			summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			summary.setBackground(Color.BACKGROUND.getSWTColor());
+		}
+		summary.setText(size() + " " + (size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
+	}
 
 	/**
 	 * Sortiert die Tabelle nach der angegebenen Spaltennummer.
    * @param index Spaltennummer.
    */
-  public void orderBy(int index)
+  private void orderBy(int index)
 	{
 		final TableItem[] items = table.getItems();
 		Collator collator = Collator.getInstance(Application.getConfig().getLocale());
@@ -336,6 +436,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.21  2004/10/25 17:59:15  willuhn
+ * @N aenderbare Tabellen
+ *
  * Revision 1.20  2004/10/19 23:33:44  willuhn
  * *** empty log message ***
  *

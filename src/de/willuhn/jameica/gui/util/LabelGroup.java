@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/09/13 23:27:12 $
+ * $Revision: 1.13 $
+ * $Date: 2004/10/25 17:59:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,25 +42,42 @@ public class LabelGroup
 
 	private I18N i18n;
   private Group group = null;
+  private boolean fullSize = false;
 
   /**
    * ct.
+   * Erzeugt eine neue Labelgroup, welche so hoch ist, wie ihr Inhalt.
    * @param parent Das Composite, in dem die Group gemalt werden soll.
    * @param name Name der Group.
    */
   public LabelGroup(Composite parent, String name)
   {
-		i18n = Application.getI18n();
-    group = new Group(parent, SWT.NONE);
-		group.setBackground(Color.BACKGROUND.getSWTColor());
-    group.setText(name);
-		group.setFont(Font.H2.getSWTFont());
-    GridLayout layout = new GridLayout(2, false);
-    group.setLayout(layout);
-    GridData grid = new GridData(GridData.FILL_HORIZONTAL);
-    group.setLayoutData(grid);
+  	this(parent,name,false);
   }
   
+	/**
+	 * ct.
+	 * Erzeugt eine neue Labelgroup, jedoch kann fastgelegt werden, ob
+	 * sie sich ueber die volle Hoehe der View erstreckt oder nur
+	 * auf ihre tatsaechliche Hoehe.
+   * @param parent Das Composite, in dem die Group gemalt werden soll.
+   * @param name Name der Group.
+   * @param fullSize true, wenn es voelle Hoehe haben soll.
+   */
+  public LabelGroup(Composite parent, String name, boolean fullSize)
+	{
+		this.fullSize = fullSize;
+		i18n = Application.getI18n();
+		group = new Group(parent, SWT.NONE);
+		group.setBackground(Color.BACKGROUND.getSWTColor());
+		group.setText(name);
+		group.setFont(Font.H2.getSWTFont());
+		GridLayout layout = new GridLayout(2, false);
+		group.setLayout(layout);
+		GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
+		group.setLayoutData(grid);
+	}
+
 	/**
 	 * Liefert das allumfassende Control der Gruppe.
    * @return das Control der Group.
@@ -137,7 +154,7 @@ public class LabelGroup
   public void addPart(Part part)
   {
     try {
-      final GridData grid = new GridData(GridData.FILL_HORIZONTAL);
+      final GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
       grid.horizontalSpan = 2;
       final Composite comp = new Composite(group,SWT.NONE);
       comp.setBackground(Color.BACKGROUND.getSWTColor());
@@ -223,6 +240,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.13  2004/10/25 17:59:15  willuhn
+ * @N aenderbare Tabellen
+ *
  * Revision 1.12  2004/09/13 23:27:12  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/10/12 23:49:31 $
+ * $Revision: 1.26 $
+ * $Date: 2004/10/25 17:59:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -115,9 +115,36 @@ public class Navigation {
 		item.setData("iconOpen",element.getIconOpen());
 		item.setData("action",element.getAction());
 		item.setText(name);
+		item.setExpanded(true);
 		
 		// wir laden unsere Kinder
 		loadChilds(element,item);
+		
+		// alles aufklappen
+		expand(null);
+	}
+
+  /**
+   * Klappt das Item und alle Kinder auf.
+   * @param item aufzuklappendes Item.
+   */
+  private void expand(TreeItem item)
+	{
+		// erstmal uns selbst aufklappen.
+		TreeItem[] childs = null; 
+		if (item != null)
+		{
+			item.setExpanded(true);
+			childs = item.getItems();
+		}
+		else
+		{
+			childs = mainTree.getItems();
+		}
+		for (int i=0;i<childs.length;++i)
+		{
+			expand(childs[i]);
+		}
 	}
 
 	/**
@@ -219,6 +246,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.26  2004/10/25 17:59:15  willuhn
+ * @N aenderbare Tabellen
+ *
  * Revision 1.25  2004/10/12 23:49:31  willuhn
  * *** empty log message ***
  *

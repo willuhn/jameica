@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/07/09 00:12:46 $
+ * $Revision: 1.5 $
+ * $Date: 2004/10/25 17:59:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,6 +54,7 @@ public class TextPart implements Part
    */
   public TextPart()
   {
+  	content = new StringBuffer();
   }
 
 	/**
@@ -121,7 +122,10 @@ public class TextPart implements Part
 			return;
 
 		if (stext == null || stext.isDisposed())
+		{
+			content.append(text);
 			return;
+		}
 
 		stext.append(text);
 		scroll();
@@ -168,6 +172,9 @@ public class TextPart implements Part
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.5  2004/10/25 17:59:15  willuhn
+ * @N aenderbare Tabellen
+ *
  * Revision 1.4  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *

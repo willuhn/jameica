@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/FatalErrorView.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/20 12:33:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/25 17:59:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import org.eclipse.swt.dnd.Transfer;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.parts.TextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.system.Application;
@@ -48,32 +49,36 @@ public class FatalErrorView extends AbstractView
 	    
 	    Throwable t = (Throwable) getCurrentObject();
 	
-	    LabelGroup stacktrace = new LabelGroup(getParent(),"Unerwarteter Fehler");
+	    LabelGroup group = new LabelGroup(getParent(),i18n.tr("Unerwarteter Fehler"));
 	    
-	    stacktrace.addText(i18n.tr("Es ist ein unerwarteter Fehler aufgetreten.\n" +	      "Wenn Sie sich aktiv an der Verbesserung dieser Software beteiligen möchten,\n" +	      "dann klicken Sie einfach auf \"in Zwischenablage kopieren\", öffnen Ihr\n" +	      "Mailprogramm, fügen den Fehlertext via \"Bearbeiten/Einfügen\" in eine neue\n" +	      "Mail ein und senden ihn zusammen mit ihrer Beschreibung an den Autor dieses Programms.\n" +	      "Vielen Dank."),false);
+	    group.addText(i18n.tr("Es ist ein unerwarteter Fehler aufgetreten.\n\n" +	      "Wenn Sie sich aktiv an der Verbesserung dieser Software beteiligen möchten, " +	      "dann klicken Sie einfach auf \"in Zwischenablage kopieren\", öffnen Ihr " +	      "Mailprogramm, fügen den Fehlertext via \"Bearbeiten/Einfügen\" in eine neue " +	      "Mail ein und senden ihn zusammen mit ihrer Beschreibung an den Autor dieses Programms.\n\n" +	      "Vielen Dank."),true);
 	
 			String e1 = "";
 			String e2 = "";
 			if (t != null)
 			{
-		    stacktrace.addHeadline("Stacktrace");
+				LabelGroup stacktrace = new LabelGroup(getParent(),i18n.tr("Stacktrace"),true);
+				TextPart text = new TextPart();
+				text.setAutoscroll(false);
+				text.setWordWrap(false);
 		    ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		    t.printStackTrace(new PrintStream(bos));
 		    e1 = bos.toString();
         e1 = e1.replaceAll("\r\n","\n");
-		    stacktrace.addText(e1,false);
+        text.appendText(e1);
 		
 		    e2 = "";
 		    Throwable t2 = t.getCause();
 		    if (t2 != null)
 		    {
-		      stacktrace.addHeadline("caused by");
+		      text.appendText("caused by");
 		  
 		      bos = new ByteArrayOutputStream();
 		      t2.printStackTrace(new PrintStream(bos));
 		      e2 += bos.toString();
-		      stacktrace.addText(e2,false);
+		      text.appendText(e2);
 		    }
+		    stacktrace.addPart(text);
 		  }
 	    final String s = e1 + e2;
 	    ButtonArea buttons = new ButtonArea(getParent(),1);
@@ -120,6 +125,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.3  2004/10/25 17:59:15  willuhn
+ * @N aenderbare Tabellen
+ *
  * Revision 1.2  2004/10/20 12:33:53  willuhn
  * @C MVC-Refactoring (new Controllers)
  *

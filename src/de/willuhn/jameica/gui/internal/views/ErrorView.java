@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Attic/ErrorView.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/25 17:59:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,8 +54,8 @@ public class ErrorView extends AbstractView
   	try {
   		Exception e = (Exception) getCurrentObject();
   		
-  		if (e != null)
-	  		group.addText(""+e.getMessage(),true);
+  		if (e != null && e.getMessage() != null)
+	  		group.addText(e.getMessage(),true);
 	  	else
 	  		group.addText(unknownError,false);
   	}
@@ -78,6 +78,9 @@ public class ErrorView extends AbstractView
 
 /**********************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.2  2004/10/25 17:59:15  willuhn
+ * @N aenderbare Tabellen
+ *
  * Revision 1.1  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *
