@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/08 15:41:09 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,11 +22,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
@@ -150,19 +149,19 @@ public class Table
     );
 
     // und jetzt fuegen wir noch die Kontext-Menues hinzu,
-    Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
-    table.setMenu(menu);
-    MenuItem editItem = new MenuItem(menu, SWT.PUSH);
-    editItem.setText (I18N.tr("Bearbeiten"));
-    editItem.addListener (SWT.Selection, new Listener () {
-      public void handleEvent (Event e) {
-        TableItem item = table.getItem(table.getSelectionIndex());
-        if (item == null) return;
-        String id = (String) item.getData();
-        if (id == null) return;
-        controller.handleLoad(id);
-      }
-    });
+//    Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
+//    table.setMenu(menu);
+//    MenuItem editItem = new MenuItem(menu, SWT.PUSH);
+//    editItem.setText (I18N.tr("Bearbeiten"));
+//    editItem.addListener (SWT.Selection, new Listener () {
+//      public void handleEvent (Event e) {
+//        TableItem item = table.getItem(table.getSelectionIndex());
+//        if (item == null) return;
+//        String id = (String) item.getData();
+//        if (id == null) return;
+//        controller.handleLoad(id);
+//      }
+//    });
 
 
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
@@ -177,12 +176,28 @@ public class Table
     Label summary = new Label(parent,SWT.NONE);
     summary.setText(list.size() + " " + (list.size() == 1 ? I18N.tr("Datensatz") : I18N.tr("Datensätze")) + ".");
 
+    // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
+    // Damit kann das Control wiederverwendet werden ;) 
+    try {
+      this.list.begin();
+    }
+    catch (RemoteException e)
+    {
+      if (Application.DEBUG)
+        e.printStackTrace();
+      Application.getLog().warn("unable to restore list back to first element. this list will not be reusable.");
+    }
+
   }
 
 }
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.9  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.8  2003/12/08 15:41:09  willuhn
  * @N searchInput
  *

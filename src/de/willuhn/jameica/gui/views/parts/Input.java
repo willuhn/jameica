@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/05 18:43:01 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -138,6 +138,21 @@ public abstract class Input
       control.addListener(SWT.Selection,commentListener);
       control.addListener(SWT.FocusIn,commentListener);
       control.addListener(SWT.FocusOut,commentListener);
+      
+      // Es kann sein, dass das Control ein Composite ist (z.Bsp. bei SearchInput)
+      // Wenn es also aus mehren Elementen besteht, dann muessen wir
+      // den Listener an alle haengen.
+      if (control instanceof Composite)
+      {
+        Composite c = (Composite) control;
+        Control[] children = c.getChildren();
+        for (int i=0;i<children.length;++i)
+        {
+          children[i].addListener(SWT.Selection,commentListener);
+          children[i].addListener(SWT.FocusIn,commentListener);
+          children[i].addListener(SWT.FocusOut,commentListener);
+        }
+      }
     }
   }
 
@@ -150,6 +165,10 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.10  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.9  2003/12/05 18:43:01  willuhn
  * *** empty log message ***
  *

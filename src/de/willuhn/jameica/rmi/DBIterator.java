@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBIterator.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/30 16:23:09 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,6 +58,12 @@ public interface DBIterator extends Remote {
    */
   public DBObject previous() throws RemoteException;
 
+  /**
+   * Blaettert den Iterator wieder an den Anfang zurueck. Somit kann er erneut
+   * durchlaufen werden.
+   * @throws RemoteException
+   */
+  public void begin() throws RemoteException;
 
   /**
    * Damit kann man manuell eine Transaktion starten.
@@ -99,6 +105,10 @@ public interface DBIterator extends Remote {
 
 /*********************************************************************
  * $Log: DBIterator.java,v $
+ * Revision 1.6  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.5  2003/11/30 16:23:09  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/01 21:22:58 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,7 +35,7 @@ public class LabelInput extends Input
 
   public Control getControl()
   {
-    Label label = new Label(parent,SWT.NONE);
+    Label label = new Label(parent,SWT.WRAP);
     label.setText(value);
     return label;
 
@@ -68,6 +68,10 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.4  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.3  2003/12/01 21:22:58  willuhn
  * *** empty log message ***
  *

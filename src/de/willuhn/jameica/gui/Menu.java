@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -164,7 +164,8 @@ public class Menu
       {
         if (Application.DEBUG)
           e.printStackTrace();
-        Application.getLog().warn("Class " + c + " not found");
+        Application.getLog().error("unable to execute menu entry. exception: " + e.getClass() + "["+e.getMessage()+"]");
+        throw new RuntimeException(e); // wir werfen eine RuntimeException, weil handleEvent nix werfen darf ;)
       }
     }
     
@@ -174,6 +175,10 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.10  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.9  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -206,11 +206,23 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
     if (!initialized) init();
     return list.size();
   }
+
+  /**
+   * @see de.willuhn.jameica.rmi.DBIterator#begin()
+   */
+  public void begin() throws RemoteException
+  {
+    this.index = 0;
+  }
 }
 
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.9  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.8  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *

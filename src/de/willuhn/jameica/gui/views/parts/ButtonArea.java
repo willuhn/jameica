@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/ButtonArea.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.GUI;
 import de.willuhn.jameica.I18N;
 
@@ -134,10 +135,40 @@ public class ButtonArea
     });
   }
 
+  /**
+   * Fuegt einen Custom Button hinzu.
+   * @param text Beschriftung des Buttons.
+   * @param adapter Adapter, der dem Button zugewiesen werden soll.
+   */
+  public void addCustomButton(String text, MouseAdapter adapter)
+  {
+    if (adapter == null)
+    {
+      // button without adapter makes no sense ;)
+      Application.getLog().warn("a button without a mouseAdapter makes no sense - skipping");
+      return;
+    }
+    if (text == null || "".equals(text))
+    {
+      // button without text makes no sense ;)
+      Application.getLog().warn("a button without a text makes no sense - skipping");
+      return;
+    }
+
+    final Button button = new Button(buttonArea,SWT.NONE);
+    button.setText(text);
+    button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+    button.addMouseListener(adapter);
+  }
+
 }
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.5  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.4  2003/11/24 23:01:58  willuhn
  * @N added settings
  *

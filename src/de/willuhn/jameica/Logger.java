@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Logger.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/13 00:37:35 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ package de.willuhn.jameica;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Vector;
 
 /**
  * Kleiner System-Logger.
@@ -25,6 +26,13 @@ public class Logger
 {
 
   private OutputStream target;
+
+  // maximale Groesse des Log-Puffers (Zeilen-Anzahl)
+  private final static int FIFO_SIZE = 40;
+
+  // Ein FIFO mit den letzten Log-Eintraegen. Kann ganz nuetzlich sein,
+  // wenn man irgendwo in der Anwendung mal die letzten Zeilen des Logs ansehen will.
+  private Vector lastLines = new Vector(FIFO_SIZE);
 
   private final static String DEBUG  = "DEBUG";
   private final static String INFO   = "INFO";
@@ -49,7 +57,6 @@ public class Logger
    */
   public void debug(String message)
   {
-    if (!Application.DEBUG) return;
     write(DEBUG,message);
   }
 
@@ -95,6 +102,15 @@ public class Logger
 	}
 
   /**
+   * Liefert die letzten Zeilen des Logs.
+   * @return String-Array mit den letzten Log-Eintraegen (einer pro Index).
+   */
+  public String[] getLastLines()
+  {
+    return (String[]) lastLines.toArray(new String[lastLines.size()]);
+  }
+
+  /**
    * Interne Methode zum Formatieren und Schreiben der Meldungen.
    * @param level Name des Log-Levels.
    * @param message zu loggende Nachricht.
@@ -104,13 +120,32 @@ public class Logger
     String s = "["+new Date().toString()+"] ["+level+"] " + message + "\n";
     try
     {
+      synchronized(lastLines) { // wir wollen ja nicht, dass die FIFO aus'm Tritt kommt ;)
+        lastLines.addElement(s);
+        if (lastLines.size() >= FIFO_SIZE)
+          lastLines.removeElementAt(0); // maximale Groesse erreicht, wir schneiden unten ab
+      }
+
+      if (!Application.DEBUG && Logger.DEBUG.equals(level))
+      {
+        // DEBUG-Meldungen werden nicht geschrieben, wenn die Anwendung nicht
+        // im Debug-Mode laeuft. Im FIFO lastLines wollen wir sie aber dennoch haben.
+        return;
+      }
+        
+
       target.write(s.getBytes());
+
     } catch (IOException e) {}
   }
 }
 
 /*********************************************************************
  * $Log: Logger.java,v $
+ * Revision 1.3  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.2  2003/11/13 00:37:35  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SearchInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/08 16:19:06 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -84,9 +84,10 @@ public class SearchInput extends Input
     {
       public void mouseUp(MouseEvent e)
       {
-        Application.getLog().info("starting search dialog");
-        text.setText(""+searchDialog.open()); // TODO
+        Application.getLog().debug("starting search dialog");
+        text.setText(""+searchDialog.open());
         text.redraw();
+        text.forceFocus(); // das muessen wir machen, damit die CommentLister ausgeloest werden
       }
     });
  
@@ -125,6 +126,10 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.4  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.3  2003/12/08 16:19:06  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/09 11:38:50 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,21 @@
 
 package de.willuhn.jameica.views;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+
+import de.willuhn.jameica.Application;
+import de.willuhn.jameica.GUI;
 import de.willuhn.jameica.I18N;
+import de.willuhn.jameica.views.parts.ButtonArea;
 import de.willuhn.jameica.views.parts.Headline;
 import de.willuhn.jameica.views.parts.LabelGroup;
-import de.willuhn.jameica.views.parts.LabelInput;
-
 
 public class ErrorView extends AbstractView
 {
@@ -33,16 +43,48 @@ public class ErrorView extends AbstractView
     new Headline(getParent(),I18N.tr("Fehler"));
     
     Exception e = (Exception) getCurrentObject();
-    LabelGroup stacktrace = new LabelGroup(getParent(),I18N.tr("Fehlertext: ") + e.getClass() + ":" + e.getLocalizedMessage());
+    LabelGroup stacktrace = new LabelGroup(getParent(),"Unerwarteter Fehler");
     
-    StackTraceElement[] lines = e.getStackTrace();
-    for (int i=0;i<lines.length;++i)
-    {
-      LabelInput line = new LabelInput(" at " + lines[i].getClassName() + "("+lines[i].getFileName()+":"+lines[i].getLineNumber() +")");
-      stacktrace.addLabelPair(" ",line);
-    }
-  }        
+    stacktrace.addText(I18N.tr("Es ist ein unerwarteter Fehler aufgetreten.\n" +      "Wenn Sie sich aktiv an der Verbesserung dieser Software beteiligen möchten,\n" +      "dann klicken Sie einfach auf \"in Zwischenablage kopieren\", öffnen Ihr\n" +      "Mailprogramm, fügen den Fehlertext via \"Bearbeiten/Einfügen\" in eine neue\n" +      "Mail ein und senden ihn zusammen mit ihrer Beschreibung an den Autor dieses Programms.\n" +      "Vielen Dank."),false);
 
+
+    stacktrace.addHeadline("Stacktrace");
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    e.printStackTrace(new PrintStream(bos));
+    String e1 = bos.toString();
+    stacktrace.addText(e1,false);
+
+    String e2 = "";
+    Throwable t = e.getCause();
+    if (t != null)
+    {
+      stacktrace.addHeadline("caused by");
+  
+      bos = new ByteArrayOutputStream();
+      t.printStackTrace(new PrintStream(bos));
+      e2 += bos.toString();
+      stacktrace.addText(e2,false);
+    }
+
+    final String s = e1 + e2;
+    ButtonArea buttons = new ButtonArea(getParent(),1);
+    buttons.addCustomButton(I18N.tr("in Zwischenablage kopieren"),new MouseAdapter()
+    {
+      public void mouseUp(MouseEvent e)
+      {
+        final Clipboard cb = new Clipboard(GUI.display);
+        TextTransfer textTransfer = TextTransfer.getInstance();
+        String[] logEntries = Application.getLog().getLastLines();
+        StringBuffer sb = new StringBuffer();
+        for (int i=0;i<logEntries.length;++i)
+        {
+          sb.append(logEntries[i]);
+        }
+        final String log = "\n" + I18N.tr("Auszug aus dem Systemprotokoll") + ":\n" + sb.toString();
+        cb.setContents(new Object[]{(s + log)}, new Transfer[]{textTransfer});
+      }
+    });
+  }        
 
   public void unbind()
   {
@@ -52,6 +94,10 @@ public class ErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.2  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.1  2003/12/09 11:38:50  willuhn
  * @N error page
  *

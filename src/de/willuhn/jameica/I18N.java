@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/I18N.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/30 16:23:09 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,6 @@ public class I18N
 
   private static ResourceBundle bundle;
   private static Properties properties;
-  private static Locale currentLocale;
 
   private static String RESOURCE_PATH = "lang/messages";
   /**
@@ -39,7 +38,6 @@ public class I18N
    */
   public static void init(Locale l)
   {
-    currentLocale = l;
     try {
       bundle = ResourceBundle.getBundle(RESOURCE_PATH,l);
     }
@@ -98,6 +96,10 @@ public class I18N
 
 /*********************************************************************
  * $Log: I18N.java,v $
+ * Revision 1.5  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.4  2003/11/30 16:23:09  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/01 20:28:57 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/10 00:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+
+import de.willuhn.jameica.views.util.Style;
 
 /**
  * @author willuhn
@@ -39,11 +41,13 @@ public class LabelGroup
     group = new Group(parent, SWT.NONE);
     group.setText(name);
     group.setLayout(new GridLayout(2, false));
-    group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    group.setLayoutData(new GridData(GridData.FILL_BOTH));
   }
   
   /**
    * Fuegt ein weiteres Label-Paar hinzu.
+   * @param name Name des Feldes.
+   * @param input Das Eingabefeld.
    */
   public void addLabelPair(String name, Input input)
   {
@@ -57,11 +61,55 @@ public class LabelGroup
     // Inputfeld
     input.paint(group);
   }
+  
+  /**
+   * Fuegt Freitext zur Group hinzu.
+   * @param text der anzuzeigende Text.
+   * @param linewrap legt fest, ob der Text bei Erreichen der maximalen Breite umgebrochen werden darf.
+   */
+  public void addText(String text, boolean linewrap)
+  {
+    final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
+    labelGrid.horizontalSpan = 2;
+    final Label label = new Label(group,linewrap ? SWT.WRAP : SWT.NONE);
+    label.setText(text);
+    label.setLayoutData(labelGrid);
+  }
 
+  /**
+   * Fuegt eine Zwischenueberschrift zur Group hinzu.
+   * @param text die anzuzeigende Ueberschrift.
+   */
+  public void addHeadline(String text)
+  {
+    final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+    labelGrid.horizontalSpan = 2;
+    labelGrid.widthHint = 400;
+    final Label label = new Label(group,SWT.NONE);
+    label.setFont(Style.FONT_HEADLINE);
+    label.setText(text);
+    label.setLayoutData(labelGrid);
+    addSeparator();
+  }
+  
+  /**
+   * Fuegt eine Trennzeile ein.
+   */
+  public void addSeparator()
+  {
+    final GridData lineGrid = new GridData(GridData.FILL_HORIZONTAL);
+    lineGrid.horizontalSpan = 2;
+    final Label line = new Label(group,SWT.SEPARATOR | SWT.HORIZONTAL);
+    line.setLayoutData(lineGrid);
+  }
 }
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.6  2003/12/10 00:47:12  willuhn
+ * @N SearchDialog done
+ * @N ErrorView
+ *
  * Revision 1.5  2003/12/01 20:28:57  willuhn
  * @B filter in DBIteratorImpl
  * @N InputFelder generalisiert
