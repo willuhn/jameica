@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/10/11 22:41:17 $
+ * $Revision: 1.9 $
+ * $Date: 2004/10/17 14:08:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,7 +85,8 @@ public final class PluginLoader
     File[] jars = null;
     try {
     	// Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
-    	Application.getClassLoader().add(new File(plugindir.getPath() + "/bin"));
+    	Application.getClassLoader().add(new File(plugindir.getPath()));
+			Application.getClassLoader().add(new File(plugindir.getPath() + "/bin"));
     	
     	// Und jetzt noch alle darin befindlichen Jars
     	jars = Application.getClassLoader().addJars(plugindir);
@@ -118,8 +119,11 @@ public final class PluginLoader
 					continue;
 	
 				// Jetzt muessen wir vorn noch den Verzeichnisnamen abschneiden
-				name = name.substring(plugindir.getPath().length()+5); // "/bin/"
-				name = name.substring(0, name.indexOf(".class")).replace('/', '.').replace('\\', '.');
+				name = name.substring(plugindir.getPath().length() + 5); // fuehrenden Pfad abschneiden ("/bin" beachten)
+				name = name.substring(0, name.indexOf(".class")).replace('/', '.').replace('\\', '.'); // .class weg Trenner ersetzen
+				if (name.startsWith("."))
+					name = name.substring(1); // ggf. fuehrenden Punkt abschneiden
+				
 	
 				// Checken, ob es ein gueltiges Plugin ist
 				Class c = load(name);
@@ -293,9 +297,11 @@ public final class PluginLoader
 			ct.setAccessible(true);
 			plugin = (AbstractPlugin) ct.newInstance(new Object[]{container.getFile()});
 		}
-		catch (Exception e)
+		catch (Throwable t)
 		{
-			Logger.error("failed",e);
+			Logger.error("failed",t);
+			String name = manifest.getName();
+			Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Initialisieren des Plugins {0}",new String[]{name}));
 			return;
 		}
 		container.setPlugin(plugin);
@@ -533,6 +539,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.9  2004/10/17 14:08:10  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/10/11 22:41:17  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/10/14 23:15:05 $
+ * $Revision: 1.8 $
+ * $Date: 2004/10/17 14:08:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -215,6 +215,8 @@ public final class Config
 			s = pluginDir.getContent();
 			if (s == null || s.length() == 0)
 				continue; // skip
+			if (s.equals("plugins") || s.equals(this.pluginDir.getAbsolutePath()))
+				continue; // die haben wir schon
 			this.pluginDirs.add(s);
 		}
   }
@@ -362,8 +364,12 @@ public final class Config
 		plugins = xml.createElement("plugindirs");		
 		for (int i=0;i<this.pluginDirs.size();++i)
 		{
+			String s = (String)this.pluginDirs.get(i);
+			if (s.equals("plugins") || s.equals(this.pluginDir.getAbsolutePath()))
+				continue; // die werden ohnehin geladen
+
 			IXMLElement pdir = plugins.createElement("dir");
-			pdir.setContent((String)this.pluginDirs.get(i));
+			pdir.setContent(s);
 			plugins.addChild(pdir);
 		}
 		xml.addChild(plugins);
@@ -390,6 +396,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.8  2004/10/17 14:08:10  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/10/14 23:15:05  willuhn
  * @N maded locale configurable via GUI
  * @B fixed locale handling
