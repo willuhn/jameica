@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.14 $
- * $Date: 2003/12/18 21:47:12 $
+ * $Revision: 1.15 $
+ * $Date: 2003/12/19 01:43:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,7 +63,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    * @param conn die Connection.
    * @throws RemoteException
    */
-  DBIteratorImpl(AbstractDBObject object, ArrayList list, Connection conn) throws RemoteException
+  public DBIteratorImpl(AbstractDBObject object, ArrayList list, Connection conn) throws RemoteException
   {
     if (object == null)
       throw new RemoteException("given object type is null");
@@ -268,6 +268,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.15  2003/12/19 01:43:26  willuhn
+ * @N added Tree
+ *
  * Revision 1.14  2003/12/18 21:47:12  willuhn
  * @N AbstractDBObjectNode
  *

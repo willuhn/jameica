@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/19 01:43:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,7 +72,6 @@ public class Table
     int style = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
     final org.eclipse.swt.widgets.Table table = new org.eclipse.swt.widgets.Table(parent, style);
     final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-    gridData.horizontalSpan = 3;
     table.setLayoutData(gridData);
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
@@ -94,7 +93,10 @@ public class Table
       String field = fieldData[1];
       if (title == null) title = "";
       try {
-        if (DBObject.FIELDTYPE_DOUBLE.equals(_o.getFieldType(field)))
+        if (
+          DBObject.FIELDTYPE_DOUBLE.equals(_o.getFieldType(field)) ||
+          DBObject.FIELDTYPE_DECIMAL.equals(_o.getFieldType(field))
+        )
           col.setAlignment(SWT.RIGHT);
       }
       catch (Exception e)
@@ -194,6 +196,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.11  2003/12/19 01:43:27  willuhn
+ * @N added Tree
+ *
  * Revision 1.10  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

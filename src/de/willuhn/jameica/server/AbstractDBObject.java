@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.19 $
- * $Date: 2003/12/18 21:47:12 $
+ * $Revision: 1.20 $
+ * $Date: 2003/12/19 01:43:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -314,7 +314,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.willuhn.jameica.rmi.DBObject#getField(java.lang.String)
    */
-  public final Object getField(String fieldName) throws RemoteException
+  public Object getField(String fieldName) throws RemoteException
   {
     if (!isInitialized())
       throw new RemoteException("object not initialized.");
@@ -639,7 +639,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       else if (FIELDTYPE_INT.equalsIgnoreCase(type))
         stmt.setInt(index,((Integer) value).intValue());
 
-      else if (FIELDTYPE_DOUBLE.equalsIgnoreCase(type))
+      else if (FIELDTYPE_DOUBLE.equalsIgnoreCase(type) || FIELDTYPE_DECIMAL.equalsIgnoreCase(type))
         stmt.setDouble(index,((Double) value).doubleValue());
 
       else stmt.setString(index,(String) value);
@@ -805,6 +805,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.20  2003/12/19 01:43:26  willuhn
+ * @N added Tree
+ *
  * Revision 1.19  2003/12/18 21:47:12  willuhn
  * @N AbstractDBObjectNode
  *

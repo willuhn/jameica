@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObjectNode.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/18 21:47:12 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/19 01:43:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import de.willuhn.jameica.ApplicationException;
 import de.willuhn.jameica.rmi.DBIterator;
+import de.willuhn.jameica.rmi.DBObjectNode;
 
 /**
  * Diese Klasse ist die ideale Basis-Klasse, wenn es gilt, Baum-Strukturen
@@ -29,7 +30,7 @@ import de.willuhn.jameica.rmi.DBIterator;
  * befinden, muessen den Wert "0" im Feld fuer das Eltern-Objekt besitzen.
  * @author willuhn
  */
-public abstract class AbstractDBObjectNode extends AbstractDBObject
+public abstract class AbstractDBObjectNode extends AbstractDBObject implements DBObjectNode
 {
 
   /**
@@ -51,10 +52,7 @@ public abstract class AbstractDBObjectNode extends AbstractDBObject
   }
 
   /**
-   * Liefert einen Iterator mit allen direkten Kind-Objekten
-   * des aktuellen Objektes. Jedoch keine Kindes-Kinder.
-   * @return DBIterator mit den direkten Kind-Objekten.
-   * @throws RemoteException
+   * @see de.willuhn.jameica.rmi.DBObjectNode#getChilds()
    */
   public DBIterator getChilds() throws RemoteException
   {
@@ -64,10 +62,7 @@ public abstract class AbstractDBObjectNode extends AbstractDBObject
   }
 
   /**
-   * Liefert einen Iterator mit allen Root-Objekten.
-   * Das sind all die, welche sich auf oberster Ebene befinden.
-   * @return DBIterator mit den Root-Objekten.
-   * @throws RemoteException
+   * @see de.willuhn.jameica.rmi.DBObjectNode#getTopLevelList()
    */
   public DBIterator getTopLevelList() throws RemoteException
   {
@@ -77,25 +72,21 @@ public abstract class AbstractDBObjectNode extends AbstractDBObject
   }
 
   /**
-   * Prueft, ob das uebergeben Node-Objekt ein Kind des aktuellen
-   * ist. Dabei wird der gesamte Baum ab hier rekursiv durchsucht.
-   * @param object das zu testende Objekt.
-   * @return true wenn es ein Kind ist, sonst false.
-   * @throws RemoteException
+   * @see de.willuhn.jameica.rmi.DBObjectNode#hasChild(de.willuhn.jameica.rmi.DBObjectNode)
    */
-  public boolean hasChild(AbstractDBObjectNode object) throws RemoteException
+  public boolean hasChild(DBObjectNode object) throws RemoteException
   {
     if (object == null)
       return false;
 
     DBIterator childs = this.getChilds();
     int count = 1;
-    AbstractDBObjectNode child = null;
+    DBObjectNode child = null;
     while (childs.hasNext())
     {
       count++;
       if (count > 100) return false; // limit recursion
-      child = (AbstractDBObjectNode) childs.next();
+      child = (DBObjectNode) childs.next();
       if (child.hasChild(object))
         return true;
     }
@@ -104,32 +95,19 @@ public abstract class AbstractDBObjectNode extends AbstractDBObject
 
 
   /**
-   * Liefert das Eltern-Element des aktuellen oder null, wenn es sich
-   * bereits auf oberster Ebene befindet.
-   * @return das Eltern-Objekt oder null.
-   * @throws RemoteException
+   * @see de.willuhn.jameica.rmi.DBObjectNode#getParent()
    */
-  public AbstractDBObjectNode getParent() throws RemoteException
+  public DBObjectNode getParent() throws RemoteException
   {
     DBIterator list = getList();
     list.addFilter(getIDField() + "=" + this.getField(this.getNodeField()));
     if (!list.hasNext())
       return null;
-    return (AbstractDBObjectNode) list.next();
+    return (DBObjectNode) list.next();
   }
 
   /**
-   * Liefert alle moeglichen Eltern-Objekte dieses Objektes.
-   * Das sind nicht die tatsaechlichen Eltern (denn jedes Objekt
-   * kann ja nur ein Eltern-Objekt haben) sondern eine Liste
-   * der Objekte, an die es als Kind gehangen werden werden.
-   * Das ist z.Bsp. sinnvoll, wenn man ein Kind-Element im Baum
-   * woanders hinhaengenn will. Da das Objekt jedoch nicht an
-   * eines seiner eigenen Kinder und auch nicht an sich selbst
-   * gehangen werden kann (Rekursion) liefert diese Funktion nur
-   * die moeglichen Eltern-Objekte.
-   * @return Liste der moeglichen Eltern-Objekte.
-   * @throws RemoteException
+   * @see de.willuhn.jameica.rmi.DBObjectNode#getPossibleParents()
    */
   public DBIterator getPossibleParents() throws RemoteException
   {
@@ -137,10 +115,10 @@ public abstract class AbstractDBObjectNode extends AbstractDBObject
     list.addFilter(getIDField() + " != "+this.getID()); // an object cannot have itself as parent
     ArrayList array = new ArrayList();
 
-    AbstractDBObjectNode element = null;
+    DBObjectNode element = null;
     while (list.hasNext())
     {
-      element = (AbstractDBObjectNode) list.next();
+      element = (DBObjectNode) list.next();
 
       if (!this.hasChild(element)) {
         // only objects which are not childs of this can be possible parents
@@ -150,19 +128,14 @@ public abstract class AbstractDBObjectNode extends AbstractDBObject
     return new DBIteratorImpl(this,array,getConnection());
   }
 
-
   /**
-   * Liefert eine Liste mit allen Eltern-Objekten bis hoch zum
-   * Root-Objekt. Also sowas wie ein voller Verzeichnisname, jedoch
-   * andersrum. Das oberste Element steht am Ende der Liste.
-   * @return Liste aller Elternobjekte bis zum Root-Objekt.
-   * @throws RemoteException
+   * @see de.willuhn.jameica.rmi.DBObjectNode#getPath()
    */
   public DBIterator getPath() throws RemoteException
   {
     ArrayList objectArray = new ArrayList();
     boolean reached = false;
-    AbstractDBObjectNode currentObject = this.getParent();
+    DBObjectNode currentObject = this.getParent();
 
     if (currentObject == null) {
       // keine Eltern-Objekte. Also liefern wir eine leere Liste.
@@ -170,7 +143,7 @@ public abstract class AbstractDBObjectNode extends AbstractDBObject
     }
     objectArray.add(currentObject.getID());
 
-    AbstractDBObjectNode object = null;
+    DBObjectNode object = null;
     while (!reached) {
       object = currentObject.getParent();
       if (object != null) {
@@ -208,6 +181,9 @@ public abstract class AbstractDBObjectNode extends AbstractDBObject
 
 /*********************************************************************
  * $Log: AbstractDBObjectNode.java,v $
+ * Revision 1.2  2003/12/19 01:43:26  willuhn
+ * @N added Tree
+ *
  * Revision 1.1  2003/12/18 21:47:12  willuhn
  * @N AbstractDBObjectNode
  *

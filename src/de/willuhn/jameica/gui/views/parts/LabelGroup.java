@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/19 01:43:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,6 +54,7 @@ public class LabelGroup
     // Label
     final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
     labelGrid.widthHint = 130;
+    labelGrid.verticalAlignment = GridData.BEGINNING;
     final Label label = new Label(group, SWT.NONE);
     label.setText(name);
     label.setLayoutData(labelGrid);
@@ -106,6 +107,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.8  2003/12/19 01:43:27  willuhn
+ * @N added Tree
+ *
  * Revision 1.7  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/18 21:47:12 $
+ * $Revision: 1.13 $
+ * $Date: 2003/12/19 01:43:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
+import java.io.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -175,8 +176,13 @@ public class PluginLoader extends ClassLoader
     //////////////////////////////////////////////////////////////////////////////////////////////
     // TODO: Das hier ist nur zum Entwickeln in der IDE damit die Plugins auch ohne Jar funktionieren
     try {
-      GUI.addMenu(new FileInputStream(path + "/menu.xml"));
-      GUI.addNavigation(new FileInputStream(path + "/navigation.xml"));
+      try {
+        GUI.addMenu(new FileInputStream(path + "/menu.xml"));
+      } catch (FileNotFoundException e) {} // skip
+      try {
+        GUI.addNavigation(new FileInputStream(path + "/navigation.xml"));
+      } catch (FileNotFoundException e) {} // skip
+      
       loadPlugin(null,clazz);
     }
     catch (Exception e) {
@@ -325,6 +331,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.13  2003/12/19 01:43:27  willuhn
+ * @N added Tree
+ *
  * Revision 1.12  2003/12/18 21:47:12  willuhn
  * @N AbstractDBObjectNode
  *
