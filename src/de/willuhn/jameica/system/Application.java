@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.10 $
+ * $Date: 2004/08/30 13:30:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -111,6 +111,13 @@ public final class Application {
 		Logger.info("starting jameica...");
 		//
 		////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////
+    // set securityManager
+    Logger.info("setting security manager");
+    System.setSecurityManager(new JameicaSecurityManager());
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////////
 		// init config
@@ -269,8 +276,10 @@ public final class Application {
    */
   public static void splash(String text)
   {
+    Logger.info(text);
+
     if (inServerMode())
-    	return;
+      return;
 
 		SplashScreen.setText(text);
     SplashScreen.add(10);
@@ -450,6 +459,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.10  2004/08/30 13:30:58  willuhn
+ * @N neuer Security-Manager
+ *
  * Revision 1.9  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.8 $
+ * $Date: 2004/08/30 13:30:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.lang.reflect.Constructor;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.security.Permission;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -97,8 +96,6 @@ public final class ServiceFactory
    */
   private synchronized void startRegistry() throws RemoteException
   {
-		setSecurityManager();
-
   	if (!Application.inServerMode() || rmiStarted) return;
 
     try {
@@ -232,26 +229,12 @@ public final class ServiceFactory
       }
     }
   }
-
-	private void setSecurityManager()
-	{
-		// System.setSecurityManager(new RMISecurityManager()); TODO SecurityManager
-		System.setSecurityManager(new DummySecurityManager());
-	}
-
-	private class DummySecurityManager extends SecurityManager
-	{
-    /**
-     * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
-     */
-    public void checkPermission(Permission perm)
-    {
-    }
-
-}
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.8  2004/08/30 13:30:58  willuhn
+ * @N neuer Security-Manager
+ *
  * Revision 1.7  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *
