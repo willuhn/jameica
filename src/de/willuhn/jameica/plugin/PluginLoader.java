@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:44 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/25 17:15:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,20 +38,19 @@ public class PluginLoader
 
   // Liste mit allen gefundenen Plugins.
   // Die Reihenfolge aus der config.xml bleibt
-  private static List plugins = new ArrayList();
+  private List plugins = new ArrayList();
 
   // BasisPlugin-Basis-Klasse
-  private static Class pluginClass = AbstractPlugin.class;
+  private Class pluginClass = AbstractPlugin.class;
   
   // Den brauchen wir, damit wir Updates an Plugins triggern und deren
   // Update-Methode aufrufen koennen.
-  private static Settings updateChecker = new Settings(PluginLoader.class);
+  private Settings updateChecker = new Settings(PluginLoader.class);
 
 	/**
-	 * Wird beim Start der Anwendung ausgefuehrt, sucht in den Plugin-Verzeichnissen
-	 * nach verfuegbaren Plugins und initialisiert diese.
-	 */
-	public static void init()
+   * Sucht nach allen verfuegbaren Plugins und initialisiert sie.
+   */
+  public synchronized void init()
 	{
 		Logger.info("init plugins");
 		String[] dirs = Application.getConfig().getPluginDirs();
@@ -74,7 +73,7 @@ public class PluginLoader
    * Laedt die Plugins aus dem angegebenen Verzeichnis.
    * @param plugindir das Plugin-Verzeichnis.
    */
-  private static void init(File plugindir)
+  private synchronized void init(File plugindir)
   {
     if (plugindir == null)
     	return;
@@ -231,7 +230,7 @@ public class PluginLoader
    * @param classname zu ladende Klasse.
    * @return Klasse, wenn es gueltig ist und geladen werden konnte. Andernfalls null.
    */
-  private static Class load(String classname)
+  private Class load(String classname)
   {
 
 		Class clazz = null;
@@ -261,7 +260,7 @@ public class PluginLoader
   /**
    * Instanziiert die geladenen Plugins.
    */
-  private static void initPlugins()
+  private synchronized void initPlugins()
   {
 
 		int size = plugins.size();
@@ -276,7 +275,7 @@ public class PluginLoader
    * Instanziiert das Plugin.
    * @param container
    */
-  private static void initPlugin(PluginContainer container)
+  private void initPlugin(PluginContainer container)
   {
 		Class pluginClass = container.getPluginClass();
 
@@ -378,7 +377,7 @@ public class PluginLoader
    * Liefert eine Liste mit allen installierten Plugins.
    * @return Liste aller installierten Plugins. Die Elemente sind vom Typ <code>AbstractPlugin</code>.
    */
-  public static Iterator getInstalledPlugins()
+  public Iterator getInstalledPlugins()
   {
   	Vector v = new Vector();
   	int size = plugins.size();
@@ -400,7 +399,7 @@ public class PluginLoader
 	 * <code>getInstalledPlugins</code>.
 	 * @return Liste aller registrierten Plugin-Container.
 	 */
-	public static Iterator getPluginContainers()
+	public Iterator getPluginContainers()
 	{
 		return plugins.iterator();
 	}
@@ -410,7 +409,7 @@ public class PluginLoader
    * @param plugin Klasse des Plugins.
    * @return der zugehoerige Plugin-Container.
    */
-  public static PluginContainer getPluginContainer(Class plugin)
+  public PluginContainer getPluginContainer(Class plugin)
 	{
 		if (plugin == null)
 			return null;
@@ -431,7 +430,7 @@ public class PluginLoader
 	 * @param plugin Klasse des Plugins.
 	 * @return Instanz des Plugins oder <code>null</code> wenn es nicht installiert ist.
 	 */
-	public static AbstractPlugin getPlugin(Class plugin)
+	public AbstractPlugin getPlugin(Class plugin)
 	{
 		if (plugin == null)
 			return null;
@@ -451,7 +450,7 @@ public class PluginLoader
 	 * @param pluginClass Klassenname des Plugins.
 	 * @return Instanz des Plugins oder <code>null</code> wenn es nicht installiert ist.
 	 */
-	public static AbstractPlugin getPlugin(String pluginClass)
+	public AbstractPlugin getPlugin(String pluginClass)
 	{
 		if (pluginClass == null || pluginClass.length() == 0)
 			return null;
@@ -483,7 +482,7 @@ public class PluginLoader
 	 * bezogen werden kann. 
 	 * @return true, wenn es installiert <b>und</b> aktiv ist.
 	 */
-	public static boolean isInstalled(String pluginClass)
+	public boolean isInstalled(String pluginClass)
 	{
 		if (pluginClass == null || pluginClass.length() == 0)
 			return false;
@@ -510,7 +509,7 @@ public class PluginLoader
   /**
    * Wird beim Beenden der Anwendung ausgefuehrt und beendet alle Plugins.
    */
-  public static void shutDown()
+  public void shutDown()
   {
     Logger.info("shutting down plugins");
     int size = plugins.size();
@@ -537,6 +536,9 @@ public class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.2  2004/07/25 17:15:20  willuhn
+ * @C PluginLoader is no longer static
+ *
  * Revision 1.1  2004/07/21 20:08:44  willuhn
  * @C massive Refactoring ;)
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/07/23 16:23:54 $
+ * $Revision: 1.5 $
+ * $Date: 2004/07/25 17:15:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,16 +15,15 @@ package de.willuhn.jameica.system;
 
 import java.lang.reflect.Constructor;
 import java.rmi.Naming;
-import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.security.Permission;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
 import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
-import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.Logger;
 
@@ -38,19 +37,19 @@ import de.willuhn.util.Logger;
 public class ServiceFactory
 {
   
-  private static Hashtable bindings = new Hashtable();
-  private static boolean rmiStarted = false;
+  private Hashtable bindings = new Hashtable();
+  private boolean rmiStarted = false;
 
   /**
    * Initialisiert die ServiceFactory.
    * @throws RemoteException
    */
-  public static void init() throws RemoteException
+  public synchronized void init() throws RemoteException
   {
 		startRegistry();
 
     Logger.info("init plugin services");
-    Iterator plugins = PluginLoader.getInstalledPlugins();
+    Iterator plugins = Application.getPluginLoader().getInstalledPlugins();
 
 		AbstractPlugin plugin = null;
 		Class service = null;
@@ -59,7 +58,7 @@ public class ServiceFactory
 		{
 			try {
 				plugin = (AbstractPlugin) plugins.next();
-				Logger.info("  init services for plugin " + plugin.getName() + "[version: " + plugin.getVersion() +"]");
+				Logger.info("  init services for plugin " + plugin.getName() + " [version: " + plugin.getVersion() +"]");
 				String[] serviceNames = plugin.getServiceNames();
 				if (serviceNames == null || serviceNames.length == 0)
 				{
@@ -96,13 +95,14 @@ public class ServiceFactory
    * Startet die RMI-Registry.
    * @throws RemoteException Wenn ein Fehler beim Starten der Registry auftrat.
    */
-  private static synchronized void startRegistry() throws RemoteException
+  private synchronized void startRegistry() throws RemoteException
   {
+		setSecurityManager();
+
   	if (!Application.inServerMode() || rmiStarted) return;
 
     try {
       Logger.info("trying to start new RMI registry");
-			System.setSecurityManager(new RMISecurityManager());
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
     }
     catch (RemoteException e)
@@ -122,7 +122,7 @@ public class ServiceFactory
    * @param service Der Service selbst.
    * @throws Exception wenn das Binden fehlschlaegt.
    */
-  private static void bind(AbstractPlugin plugin, String serviceName, Class service)
+  private void bind(AbstractPlugin plugin, String serviceName, Class service)
   	throws RemoteException
 	{
 		serviceName = plugin.getClass().getName() + "." + serviceName;
@@ -149,7 +149,7 @@ public class ServiceFactory
    * @return die erzeugte Instanz.
    * @throws Exception
    */
-  private static Service newInstance(Class serviceClass) throws Exception
+  private Service newInstance(Class serviceClass) throws Exception
 	{
 		Constructor ct = serviceClass.getConstructor(new Class[]{});
 		ct.setAccessible(true);
@@ -167,7 +167,7 @@ public class ServiceFactory
    * @return die Instanz des Services.
    * @throws Exception
    */
-  public static Service lookup(AbstractPlugin plugin, String serviceName) throws Exception
+  public Service lookup(AbstractPlugin plugin, String serviceName) throws Exception
   {
   	if (serviceName == null)
   		return null;
@@ -181,14 +181,14 @@ public class ServiceFactory
 		if (Application.inClientMode())
 		{
 			if (local == null)
-				throw new ApplicationException(Application.getI18n().tr("Zum Service {0} existiert kein lokales Binding",serviceName));
+				throw new ApplicationException(Application.getI18n().tr("Zum Service \"{0}\" existiert kein lokales Binding",serviceName));
 
-			Logger.debug("  running in client mode, looking for remote service");
-			String host = ServiceLookup.getLookupHost(serviceName);
-			int port    = ServiceLookup.getLookupPort(serviceName);
+			Logger.debug("  running in client mode, looking for remote service " + fullName);
+			String host = ServiceLookup.getLookupHost(fullName);
+			int port    = ServiceLookup.getLookupPort(fullName);
 
 			if (host == null || host.length() == 0 || port == -1)
-				throw new ApplicationException(Application.getI18n().tr("Für den Service {0} ist kein Server definiert",serviceName));
+				throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
 
 			Logger.debug("  searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
@@ -198,7 +198,7 @@ public class ServiceFactory
 		// Wir schauen lokal
 		Logger.debug("  running in standalone/server mode, looking for local service");
 		if (local == null)
-			throw new ApplicationException(Application.getI18n().tr("Der Service {0} wurde nicht gefunden",serviceName));
+			throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht gefunden",serviceName));
 		return newInstance(local);
 
   }
@@ -206,7 +206,7 @@ public class ServiceFactory
   /**
    * Faehrt die Services runter.
    */
-  public static void shutDown()
+  public synchronized void shutDown()
   {
     Logger.info("shutting down services");
 
@@ -232,9 +232,29 @@ public class ServiceFactory
       }
     }
   }
+
+	private void setSecurityManager()
+	{
+		// System.setSecurityManager(new RMISecurityManager()); TODO SecurityManager
+		System.setSecurityManager(new DummySecurityManager());
+	}
+
+	private class DummySecurityManager extends SecurityManager
+	{
+    /**
+     * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
+     */
+    public void checkPermission(Permission perm)
+    {
+    }
+
+}
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.5  2004/07/25 17:15:20  willuhn
+ * @C PluginLoader is no longer static
+ *
  * Revision 1.4  2004/07/23 16:23:54  willuhn
  * *** empty log message ***
  *

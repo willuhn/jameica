@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.27 $
- * $Date: 2004/07/23 15:51:20 $
+ * $Revision: 1.28 $
+ * $Date: 2004/07/25 17:15:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,6 @@ import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.PluginContainer;
-import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.util.InfoReader;
 import de.willuhn.util.I18N;
@@ -47,7 +46,7 @@ public class Start extends AbstractView
 		
 		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
 
-		Iterator it = PluginLoader.getPluginContainers();
+		Iterator it = Application.getPluginLoader().getPluginContainers();
 		while (it.hasNext())
 		{
 			PluginContainer pc = (PluginContainer) it.next();
@@ -134,6 +133,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.28  2004/07/25 17:15:20  willuhn
+ * @C PluginLoader is no longer static
+ *
  * Revision 1.27  2004/07/23 15:51:20  willuhn
  * @C Rest des Refactorings
  *

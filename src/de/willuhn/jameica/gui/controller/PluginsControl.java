@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/PluginsControl.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.6 $
+ * $Date: 2004/07/25 17:15:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,6 @@ import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.PluginContainer;
-import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.util.InfoReader;
 import de.willuhn.util.I18N;
@@ -58,7 +57,7 @@ public class PluginsControl extends AbstractControl {
 		buffer.append("<form>");
 		buffer.append("<p><span color=\"header\" font=\"header\">" + i18n.tr("Installierte Plugins") + "</span></p>");
 
-		Iterator i = PluginLoader.getPluginContainers();
+		Iterator i = Application.getPluginLoader().getPluginContainers();
 		while (i.hasNext())
 		{
 			PluginContainer container = (PluginContainer) i.next();
@@ -132,6 +131,9 @@ public class PluginsControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: PluginsControl.java,v $
+ * Revision 1.6  2004/07/25 17:15:20  willuhn
+ * @C PluginLoader is no longer static
+ *
  * Revision 1.5  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

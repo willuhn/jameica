@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.11 $
+ * $Date: 2004/07/25 17:15:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,7 +56,8 @@ public class Main {
    * standardmaessig <b>~/.jameica</b> und bei Windows
    * <b>C:\dokumente und Einstellungen\benutzername\.jameica</b>.
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Throwable
+  {
 
     String[] modes = {
 			"-server",
@@ -86,6 +87,7 @@ public class Main {
 		if (modeGiven && modes[0].equals(args[0])) mode = Application.MODE_SERVER;
 		if (modeGiven && modes[1].equals(args[0])) mode = Application.MODE_CLIENT;
 
+
     Application.newInstance(mode, configFile);
 
    }
@@ -94,6 +96,9 @@ public class Main {
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.11  2004/07/25 17:15:20  willuhn
+ * @C PluginLoader is no longer static
+ *
  * Revision 1.10  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.3 $
+ * $Date: 2004/07/25 17:15:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,13 +15,12 @@ package de.willuhn.jameica.system;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
-import de.willuhn.jameica.plugin.*;
+import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.util.I18N;
 import de.willuhn.util.JarInfo;
 import de.willuhn.util.Lock;
@@ -57,17 +56,15 @@ public class Application {
   
   // singleton
   private static Application app;
-    private Config config;
+  	private String 							dataDir;
+    private Config 							config;
     private MultipleClassLoader classLoader;
-    private I18N i18n;
-		private ArrayList welcomeMessages = new ArrayList();
-    
-  /**
-   * ct.
-   */
-  private Application() {
-  }
+    private ServiceFactory 			serviceFactory;
+    private PluginLoader 				pluginLoader;
 
+    private I18N 								i18n;
+		private ArrayList 					welcomeMessages = new ArrayList();
+    
   /**
    * Erzeugt eine neue Instanz der Anwendung.
    * @param appMode Konstante fuer den Betriebsmodus. Siehe MODE_*.
@@ -77,13 +74,27 @@ public class Application {
 
     Application.appMode = appMode;
 
-    // start application
-    app = new Application();
+		// Wir nehmen grundsaetzlich unseren eingenen Classloader.
+		MultipleClassLoader cl = new MultipleClassLoader();
+		cl.addClassloader(Application.class.getClassLoader());
 
-		// init our classloader
-		app.classLoader = new MultipleClassLoader();
+		// Wir machen unseren Classloader zum Context-Classloader fuer diesen Thread
+		Thread.currentThread().setContextClassLoader(cl);
 
+		// Instanz erstellen.
+		app = new Application();
+		app.classLoader = cl;
+		app.init(dataDir);
+  }
 
+  /**
+   * Initialisiert die Instanz.
+   * @param dataDir optionales Work-Verzeichnis.
+   */
+  private void init(String dataDir)
+	{
+
+		this.dataDir = dataDir;
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
 		Logger.addTarget(System.out);
@@ -95,15 +106,13 @@ public class Application {
 		////////////////////////////////////////////////////////////////////////////
 		// init config
 		try {
-			app.config = new Config(dataDir);
+			this.config = new Config(dataDir);
 		}
-		catch (Exception e)
+		catch (Throwable t)
 		{
-			e.printStackTrace();
-			startupError(e);
+			startupError(t);
 		}
-		Logger.setLevel(app.config.getLogLevel());
-
+		Logger.setLevel(this.config.getLogLevel());
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -112,9 +121,9 @@ public class Application {
 		try {
 			new Lock(app.config.getDir() + "/jameica");
 		}
-		catch (RuntimeException e)
+		catch (Throwable t)
 		{
-			startupError(e);
+			startupError(t);
 		}
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -123,7 +132,7 @@ public class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// init i18n
-		app.i18n = new I18N("lang/messages",app.config.getLocale());
+		this.i18n = new I18N("lang/messages",this.config.getLocale());
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -131,8 +140,8 @@ public class Application {
 		////////////////////////////////////////////////////////////////////////////
     // switch logger to defined log file
     try {
-      Logger.info("adding defined log file " + app.config.getLogFile());
-      Logger.addTarget(new FileOutputStream(app.config.getLogFile()));
+      Logger.info("adding defined log file " + this.config.getLogFile());
+      Logger.addTarget(new FileOutputStream(this.config.getLogFile()));
     }
     catch (FileNotFoundException e)
     {
@@ -146,16 +155,27 @@ public class Application {
 
 		// init plugins
 		splash("loading plugins");
-		PluginLoader.init();
+		try {
+			this.pluginLoader = new PluginLoader();
+			// Das Init muessen wir separat machen, damit ein Application.getPluginLoader()
+			// keinen Nullpointer liefert, wenn es aus dem Init eines Plugins heraus
+			// aufgerufen wird.
+			this.pluginLoader.init();
+		}
+		catch (Throwable t)
+		{
+			startupError(t);
+		}
 
 		splash("init services");
 		try {
-			ServiceFactory.init();
+			this.serviceFactory = new ServiceFactory();
+			// Siehe PluginLoader
+			this.serviceFactory.init();
 		}
-		catch (RemoteException e)
+		catch (Throwable t)
 		{
-			Logger.error("error while initializing service factory",e);
-			startupError(e);
+			startupError(t);
 		}
 
 		//
@@ -184,12 +204,14 @@ public class Application {
 
 	/**
 	 * Startup-Error zeigt eine Fehlermeldung an und beendet Jameica dann.
-   * @param e anzuzeigender Fehler.
+   * @param t anzuzeigender Fehler.
    */
-  private static void startupError(Exception e)
+  private static void startupError(Throwable t)
 	{
+		t.printStackTrace();
+
 		if (inServerMode())
-			throw new RuntimeException(e);
+			throw new RuntimeException(t);
 
 		Display d = Display.getCurrent();
 		if (d == null)
@@ -199,16 +221,18 @@ public class Application {
 		s.setText("Fehler");
 		Label l = new Label(s,SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l.setText(""+e.getMessage());
+		l.setText(""+t.getMessage());
 
 		Button b = new Button(s,SWT.BORDER);
 		b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		b.setText("OK");
-		b.addMouseListener(new MouseAdapter() {
-			public void mouseUp(MouseEvent e) {
+		b.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
 				s.close();
-			}
-		});
+      }
+    });
 		s.pack();
 		s.open();
 		while (!s.isDisposed()) {
@@ -256,9 +280,9 @@ public class Application {
     if (!inServerMode())
       SplashScreen.shutDown();
 
-               GUI.shutDown();     
-		ServiceFactory.shutDown();
-      PluginLoader.shutDown();
+    GUI.shutDown();     
+		app.serviceFactory.shutDown();
+    app.pluginLoader.shutDown();
 
 		Logger.info("shutdown complete");
 		Logger.close();
@@ -275,6 +299,24 @@ public class Application {
   public static MultipleClassLoader getClassLoader()
 	{
 		return app.classLoader;
+	}
+
+	/**
+	 * Liefert die ServiceFactory, ueber die alle Services von Plugins bezogen werden koennen.
+   * @return die ServiceFactory.
+   */
+  public static ServiceFactory getServiceFactory()
+	{
+		return app.serviceFactory;
+	}
+
+	/**
+	 * Liefert den PluginLoader, ueber den die Instanzen der Plugins geholt werden koennen.
+   * @return den PluginLoader.
+   */
+  public static PluginLoader getPluginLoader()
+	{
+		return app.pluginLoader;
 	}
 
   /**
@@ -372,6 +414,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.3  2004/07/25 17:15:20  willuhn
+ * @C PluginLoader is no longer static
+ *
  * Revision 1.2  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *
