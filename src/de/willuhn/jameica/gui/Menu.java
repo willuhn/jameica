@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.26 $
- * $Date: 2004/10/11 22:41:17 $
+ * $Revision: 1.27 $
+ * $Date: 2004/10/12 23:49:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,16 +12,12 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
-import java.util.Hashtable;
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.GenericIterator;
-import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.Logger;
@@ -36,15 +32,7 @@ public class Menu
   private final org.eclipse.swt.widgets.Menu mainMenu;
 	private final org.eclipse.swt.widgets.Menu pluginMenu;
 
-  /**
-   * Mapping MenuItem->MenuItem(SWT)
-   */
-  private Map mapping           = new Hashtable();
-
-  /**
-   * Mapping Plugin -> NavigationItem
-   */
-  private Map pluginMap         = new Hashtable();
+	private Decorations parent;
 
   /**
    * Erzeugt eine neue Instanz des Dropdown-Menus.
@@ -54,28 +42,18 @@ public class Menu
   protected Menu(Decorations parent) throws Exception
   {
 
+		this.parent = parent;
+
     mainMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
 		parent.setMenuBar(mainMenu);
 
 		// System-Menu laden
-		load(new Manifest(null,getClass().getResourceAsStream("system.xml")).getMenu(),mainMenu);
+		load(Application.getManifest().getMenu(),mainMenu);
 
     org.eclipse.swt.widgets.MenuItem mi = new org.eclipse.swt.widgets.MenuItem(mainMenu,SWT.CASCADE);
 		mi.setText(Application.getI18n().tr("Plugins"));
 		pluginMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
 		mi.setMenu(pluginMenu);
-  }
-
-  /**
-   * Liefert das Menu-Item, in dem das genannte Plugin einghaengt ist.
-   * Will ein Plugin beispielsweise dynamisch sein Menu erweitern,
-   * erhaelt es hier genau das MenuItem, an das es sich einhaengen kann.
-   * @param pluginClass Klasse des Plugins, dessen oberstes MenuItem geholt werden soll.
-   * @return das MenuItem.
-   */
-  public MenuItem getPluginMenu(String pluginClass)
-  {
-    return (MenuItem) pluginMap.get(pluginClass);
   }
 
   /**
@@ -105,54 +83,44 @@ public class Menu
    * @param parent Menu.
    * @throws Exception
    */
-  private void load(final MenuItem element, org.eclipse.swt.widgets.Menu parent) throws Exception
+  private void load(final MenuItem element, org.eclipse.swt.widgets.Menu parentMenu) throws Exception
   {
     if (element == null)
       return;
 
-    // Wir malen uns erstmal selbst.
-    org.eclipse.swt.widgets.MenuItem item = null;
-    org.eclipse.swt.widgets.Menu     menu = null;
+		org.eclipse.swt.widgets.MenuItem item = null;
+		org.eclipse.swt.widgets.Menu     menu = parentMenu;
+		
+		String name         = element.getName();
+		final Action action = element.getAction();
 
-    MenuItem myParent = (MenuItem) element.getParent();
-		if (myParent != null)
-    {
-    	menu = parent;
-    }
-    else
-    {
-			org.eclipse.swt.widgets.MenuItem mi = new org.eclipse.swt.widgets.MenuItem(parent,SWT.CASCADE);
-			mi.setText(element.getName());
-			menu = new org.eclipse.swt.widgets.Menu(parent);
-			mi.setMenu(menu);
-    }
-		item = new org.eclipse.swt.widgets.MenuItem(menu,SWT.DROP_DOWN);
-
-    org.eclipse.swt.widgets.Menu m = (org.eclipse.swt.widgets.Menu) mapping.get(myParent);
-    item = new org.eclipse.swt.widgets.MenuItem(m,SWT.DROP_DOWN);
-
-		String text = element.getName();
-
-		if ("-".equals(text))
+		// Wenns keinen Namen hat, gibts nichts anzuzeigen und wir laden nur die Kinder,
+		if (name == null)
 		{
-			item = new org.eclipse.swt.widgets.MenuItem(parent,SWT.SEPARATOR);
+			loadChilds(element,menu);
+			return;
 		}
 
-		item.addListener(SWT.Selection, new Listener()
-    {
-      public void handleEvent(Event event)
-      {
-      	try
-      	{
-					element.getAction().handleAction(event);
-      	}
-      	catch (Exception e)
-      	{
-      		Logger.error("error while executing menu entry",e);
-      		GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Ausführen"));
-      	}
-      }
-    });
+		// Ist ein Separator. Dann gibts auch keine Kinder.
+		if ("-".equals(name))
+		{
+			item = new org.eclipse.swt.widgets.MenuItem(menu,SWT.SEPARATOR);
+			return;
+		}
+
+		// Wenn's keine Action hat, dann nur anzeigen und Kinder bearbeiten
+		if (action == null)
+		{
+			item = new org.eclipse.swt.widgets.MenuItem(menu,SWT.CASCADE);
+			item.setText(element.getName());
+			menu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
+			item.setMenu(menu);
+			loadChilds(element,menu);
+			return;
+		}
+
+		// Ist ein tatsaechliches Item zum Klicken.
+		item = new org.eclipse.swt.widgets.MenuItem(menu,SWT.CASCADE);
 
 		String shortCut = element.getShortcut();
 		if (shortCut != null)
@@ -162,15 +130,39 @@ public class Menu
 			int modi = SWT.ALT;
 			if ("CTRL".equalsIgnoreCase(modifier)) modi = SWT.CTRL;
 			item.setAccelerator(modi + key.getBytes()[0]);
-			text += "\t" + shortCut;
+			name += "\t" + shortCut;
 		}
 		catch (Exception e)
 		{
 			Logger.error("error while creating menu element",e);
 		}
-		item.setText(text);
+		item.setText(name);
 
+		item.addListener(SWT.Selection, new Listener()
+		{
+			public void handleEvent(Event event)
+			{
+				try
+				{
+					action.handleAction(event);
+				}
+				catch (Exception e)
+				{
+					Logger.error("error while executing menu entry",e);
+					GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Ausführen"));
+				}
+			}
+		});
+  }
 
+	/**
+	 * Laedt nur die Kinder.
+   * @param element Element.
+   * @param menu Menu.
+   * @throws Exception
+   */
+  private void loadChilds(final MenuItem element, org.eclipse.swt.widgets.Menu menu) throws Exception
+	{
 		// add elements
 		GenericIterator childs = element.getChilds();
 		if (childs == null || childs.size() == 0)
@@ -184,6 +176,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.27  2004/10/12 23:49:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.26  2004/10/11 22:41:17  willuhn
  * *** empty log message ***
  *

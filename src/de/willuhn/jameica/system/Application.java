@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/10/07 18:05:26 $
+ * $Revision: 1.15 $
+ * $Date: 2004/10/12 23:49:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.jar.JarFile;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,10 +31,10 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.io.Lock;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.util.I18N;
-import de.willuhn.util.JarInfo;
 import de.willuhn.util.Logger;
 import de.willuhn.util.MultipleClassLoader;
 
@@ -386,36 +385,6 @@ public final class Application {
   }
   
 	/**
-	 * Liefert die aktuelle Versionsnummer von Jameica.
-   * @return Versionsnummer.
-   */
-  public static double getVersion()
-	{
-		try {
-			JarInfo info = new JarInfo(new JarFile("jameica.jar"));
-			return info.getVersion();
-		}
-		catch (Exception e) {/*ignore*/}
-		
-		return 1.0;
-	}
-	
-	/**
-	 * Liefert die aktuelle Buildnummer von Jameica.
-	 * @return Buildnummer.
-	 */
-	public static int getBuildnumber()
-	{
-		try {
-			JarInfo info = new JarInfo(new JarFile("jameica.jar"));
-			return info.getBuildnumber();
-		}
-		catch (Exception e) {/*ignore*/}
-		
-		return 1;
-	}
-
-	/**
 	 * Liefert das Language-Pack fuer Jameica selbst.
    * @return Language-Pack.
    */
@@ -470,11 +439,24 @@ public final class Application {
 			GUI.startAsync(task);
 		}
 	}
+
+  /**
+	 * Liefert das Manifest von Jameica selbst.
+   * @return Manifest von Jameica selbst.
+   * @throws Exception
+   */
+  public static Manifest getManifest() throws Exception
+	{
+		return new Manifest(null,app.getClass().getResourceAsStream("/system.xml"));
+	}
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.15  2004/10/12 23:49:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/10/07 18:05:26  willuhn
  * *** empty log message ***
  *

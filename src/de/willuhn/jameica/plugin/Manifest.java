@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/08 16:41:58 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/12 23:49:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,15 +35,14 @@ public class Manifest
   private IXMLElement root = null;
 
   /**
-   * ct.
+   * @param pc Plugin-Container, zu dem das Manifest gehoert.
    * @param is der Stream mit der plugin.xml/system.xml.
+   * @throws Exception
    */
   public Manifest(PluginContainer pc,InputStream is) throws Exception
   {
     this.pc = pc;
 
-		if (is == null)
-			return;
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 		parser.setReader(new StdXMLReader(is));
 		root = (IXMLElement) parser.parse();
@@ -81,7 +80,8 @@ public class Manifest
    */
   public String getDescription()
 	{
-    return root.getAttribute("description",null);
+		IXMLElement desc = root.getFirstChildNamed("description");
+		return desc == null ? null: desc.getContent();
 	}
 	
 	/**
@@ -90,7 +90,8 @@ public class Manifest
    */
   public String getURL()
 	{
-    return root.getAttribute("url",null);
+		IXMLElement desc = root.getFirstChildNamed("url");
+		return desc == null ? null: desc.getContent();
 	}
 	
   /**
@@ -99,7 +100,8 @@ public class Manifest
    */
   public String getHomepage()
   {
-    return root.getAttribute("homepage",null);
+		IXMLElement desc = root.getFirstChildNamed("homepage");
+		return desc == null ? null: desc.getContent();
   }
 
 	/**
@@ -108,7 +110,8 @@ public class Manifest
    */
   public String getLicense()
 	{
-    return root.getAttribute("license",null);
+		IXMLElement desc = root.getFirstChildNamed("license");
+		return desc == null ? null: desc.getContent();
 	}
 
   /**
@@ -162,6 +165,9 @@ public class Manifest
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.3  2004/10/12 23:49:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *

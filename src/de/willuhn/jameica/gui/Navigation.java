@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/10/08 17:18:11 $
+ * $Revision: 1.25 $
+ * $Date: 2004/10/12 23:49:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,9 +11,6 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui;
-
-import java.util.Hashtable;
-import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -26,7 +23,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
-import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
@@ -39,18 +35,11 @@ import de.willuhn.util.Logger;
 public class Navigation {
 
   private Composite parent			= null;
-  private Tree tree							= null;
+  private Tree mainTree					= null;
   
-	/**
-	 * Mapping NavigationItem->TreeItem
-	 */
-  private Map mapping						= new Hashtable();
-	
-	/**
-	 * Mapping Plugin -> NavigationItem
-	 */
-	private Map pluginMap					= new Hashtable();
-
+	// TreeItem, unterhalb dessen die Plugins eingehaengt werden. 
+  private TreeItem pluginTree		= null;
+  
   /**
    * Erzeugt die Navigation.
    * @param parent Das Eltern-Element.
@@ -61,23 +50,23 @@ public class Navigation {
 		this.parent = parent;
 
 		// Tree erzeugen
-		this.tree = new Tree(this.parent, SWT.BORDER);
-		this.tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		this.mainTree = new Tree(this.parent, SWT.BORDER);
+		this.mainTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// Listener fuer "Folder auf machen"
-		tree.addListener(SWT.Expand, new Listener() {
+		this.mainTree.addListener(SWT.Expand, new Listener() {
 			public void handleEvent(Event event) {
 				handleFolderOpen(event);
 			}
 		});
 		// Listener fuer "Folder auf machen"
-		tree.addListener(SWT.Collapse, new Listener() {
+		this.mainTree.addListener(SWT.Collapse, new Listener() {
 			public void handleEvent(Event event) {
 				handleFolderClose(event);
 			}
 		});
 
 		// Listener fuer die Aktionen
-		tree.addListener(SWT.Selection, new Listener() {
+		this.mainTree.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				handleSelect(event);
 			}
@@ -85,45 +74,66 @@ public class Navigation {
 
 
 		// System-Navigation laden
-		load(new Manifest(null,getClass().getResourceAsStream("system.xml")).getNavigation());
+		load(Application.getManifest().getNavigation(),null);
 	}
 
-	/**
+  /**
 	 * Laedt das Navigation-Item und dessen Kinder.
    * @param element das zu ladende Item.
+   * @param parentTree uebergeordnetes SWT-Element.
    * @throws Exception
    */
-  private void load(NavigationItem element) throws Exception
+  private void load(NavigationItem element, TreeItem parentTree) throws Exception
 	{
 		if (element == null)
 			return;
+		
+		String name = element.getName();
+		
+		if (name == null)
+		{
+			loadChilds(element,parentTree);
+			return;
+		}
+
 		// Wir malen uns erstmal selbst.
 		TreeItem item = null;
-		NavigationItem myParent = (NavigationItem) element.getParent();
-		if (myParent == null)
+		if (parentTree == null)
 		{
 			// Wir sind die ersten
-			item = new TreeItem(this.tree,SWT.NONE);
+			item = new TreeItem(this.mainTree,SWT.NONE);
+			// Das muesste dann auch gleich der pluginTree sein
+			this.pluginTree = item;
 		}
 		else
 		{
-			// Wir holen uns das TreeItem vom Parent
-			TreeItem ti = (TreeItem) mapping.get(myParent);
-			item = new TreeItem(ti,SWT.NONE);
+			item = new TreeItem(parentTree,SWT.NONE);
 		}
+
 		item.setImage(element.getIconClose());
 		item.setData("iconClose",element.getIconClose());
 		item.setData("iconOpen",element.getIconOpen());
 		item.setData("action",element.getAction());
-		item.setText(element.getName());
-		mapping.put(element,item);
+		item.setText(name);
+		
+		// wir laden unsere Kinder
+		loadChilds(element,item);
+	}
 
+	/**
+	 * Laedt nur die Kinder.
+   * @param element Element.
+   * @param parentTree Parent.
+   * @throws Exception
+   */
+  private void loadChilds(NavigationItem element, TreeItem parentTree) throws Exception
+	{
 		GenericIterator childs = element.getChilds();
 		if (childs == null || childs.size() == 0)
 			return;
 		while (childs.hasNext())
 		{
-			load((NavigationItem) childs.next());
+			load((NavigationItem) childs.next(),parentTree);
 		}
 	}
 
@@ -145,19 +155,7 @@ public class Navigation {
 			return;
 		}
 
-		load(container.getManifest().getNavigation());
-	}
-
-	/**
-	 * Liefert das Navigation-Item, in dem das genannte Plugin einghaengt ist.
-	 * Will ein Plugin beispielsweise dynamisch seine Navigation erweitern,
-	 * erhaelt es hier genau das NavigationItem, an das es sich hinten dran haengen kann.
-   * @param pluginClass Klasse des Plugins, dessen oberstes NavigationItem geholt werden soll.
-   * @return das NavigationItem.
-   */
-  public NavigationItem getPluginNavigation(Class pluginClass)
-	{
-		return (NavigationItem) pluginMap.get(pluginClass);
+		load(container.getManifest().getNavigation(),this.pluginTree);
 	}
 
 	/**
@@ -221,6 +219,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.25  2004/10/12 23:49:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2004/10/08 17:18:11  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.59 $
- * $Date: 2004/10/11 15:39:21 $
+ * $Revision: 1.60 $
+ * $Date: 2004/10/12 23:49:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -101,15 +100,16 @@ public class GUI
 	/**
 	 * Laedt die GUI.
 	 */
-	private void load()
+	private void load() throws Exception
 	{
 		Logger.info("startup GUI");
 
 		// init shell
 		shell.setLayout(createGrid(2, false));
 		shell.setLayoutData(new GridData(GridData.FILL_BOTH));
-		shell.setText("Jameica " + Application.getVersion());
 		shell.setImage(SWTUtil.getImage("globe.gif"));
+
+		shell.setText("Jameica " + Application.getManifest().getVersion());
 
 		StyleEngine.init();
 
@@ -146,7 +146,14 @@ public class GUI
 		////////////////////////////
 
 		Logger.info("adding menu");
-		addMenu(shell);
+		try
+		{
+			menu = new Menu(shell);
+		}
+		catch (Exception e)
+		{
+			Logger.error("error while loading menu, skipping",e);
+		}
 
 		SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
 		sash.setLayout(createGrid(1, false));
@@ -156,8 +163,16 @@ public class GUI
 
 		SashForm left = new SashForm(sash, SWT.VERTICAL);
 		left.setLayout(new FillLayout());
+
 		Logger.info("adding navigation");
-		addNavigation(left);
+		try
+		{
+			navi = new Navigation(left);
+		}
+		catch (Exception e)
+		{
+			Logger.error("error while loading navigation, skipping",e);
+		}
 
 		help = new HelpView(left);
 
@@ -211,45 +226,20 @@ public class GUI
 		if (gui != null) return; // allready started.
 
 		gui = new GUI();
-		gui.load();
+
+		try
+		{
+			gui.load();
+		}
+		catch (Exception e)
+		{
+			Logger.error("error while loading GUI",e);
+			return;
+		}
 
 		// GUI Loop starten
 		gui.loop();
 
-	}
-
-	/**
-	 * Fuegt der Anwendung das Dropdown-Menu hinzu.
-	 * @param parent
-	 */
-	private void addMenu(Decorations parent)
-	{
-		try
-		{
-			menu = new Menu(parent);
-		}
-		catch (Exception e)
-		{
-			Logger.error("unable to load menu", e);
-			// skip menu
-		}
-	}
-
-	/**
-	 * Fuegt der Anwendung die Navigation hinzu.
-	 * @param parent
-	 */
-	private void addNavigation(Composite parent)
-	{
-		try
-		{
-			navi = new Navigation(parent);
-		}
-		catch (Exception e)
-		{
-			Logger.error("unable to load navigation", e);
-			// skip navi
-		}
 	}
 
 	/**
@@ -635,6 +625,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.60  2004/10/12 23:49:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.59  2004/10/11 15:39:21  willuhn
  * *** empty log message ***
  *

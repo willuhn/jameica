@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/11 22:41:17 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/12 23:49:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,8 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * @author willuhn
@@ -35,6 +35,8 @@ public abstract class AbstractItemXml implements Item
   protected IXMLElement path;
   protected I18N i18n = Application.getI18n();
   protected ArrayList childs = new ArrayList();
+
+	private Action action = null;
 
   /**
    * ct.
@@ -56,7 +58,8 @@ public abstract class AbstractItemXml implements Item
    */
   public String getName()
   {
-    return i18n.tr(path.getAttribute("name","unknown"));
+  	String name = path.getAttribute("name",null);
+    return name == null ? null : i18n.tr(name);
   }
 
   /**
@@ -64,15 +67,25 @@ public abstract class AbstractItemXml implements Item
    */
   public Action getAction()
   {
-    return new Action()
-    {
-      public void handleAction(Object context) throws ApplicationException
-      {
-        String action = path.getAttribute("action",null);
-        GUI.startView(action,null);
-        GUI.getStatusBar().setStatusText(getName());
-      }
-    };
+		if (action != null)
+			return action; // hatten wir schonmal geladen
+
+  	String s = path.getAttribute("action",null);
+
+  	if (s == null)
+  		return null;
+
+		try
+		{
+			Class c = Application.getClassLoader().load(s);
+			action = (Action) c.newInstance();
+			return action;
+		}
+		catch (Exception e)
+		{
+			Logger.error("error while instantiating action " + s,e);
+		}
+		return null;
   }
 
   /**
@@ -165,6 +178,9 @@ public abstract class AbstractItemXml implements Item
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.3  2004/10/12 23:49:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/10/11 22:41:17  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/MenuItemXml.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/11 22:41:17 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/12 23:49:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,11 +49,15 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
   {
     return (String) getAttribute("shortcut");
   }
+
 }
 
 
 /*********************************************************************
  * $Log: MenuItemXml.java,v $
+ * Revision 1.3  2004/10/12 23:49:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/10/11 22:41:17  willuhn
  * *** empty log message ***
  *

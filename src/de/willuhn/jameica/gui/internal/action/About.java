@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/About.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/08 16:41:58 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/12 23:49:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,7 @@ public class About implements Action
     catch (Exception e)
     {
       Logger.error("error while opening about dialog",e);
-      throw new ApplicationException(Application.getI18n().tr("Fehler beim Anzeigen des Dialogs"));
+      throw new ApplicationException(Application.getI18n().tr("Fehler beim Anzeigen des Dialogs"),e);
     }
   }
 
@@ -48,6 +48,9 @@ public class About implements Action
 
 /*********************************************************************
  * $Log: About.java,v $
+ * Revision 1.3  2004/10/12 23:49:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *
