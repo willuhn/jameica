@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/01/14 00:48:56 $
+ * $Revision: 1.15 $
+ * $Date: 2005/01/15 16:20:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -105,6 +105,24 @@ public final class Config
   public void setRmiPort(int port)
 	{
     settings.setAttribute("jameica.system.rmi.serverport",port);
+	}
+
+	/**
+	 * Prueft, ob die RMI-Verbindungen SSL-verschluesselt werden sollen.
+   * @return true, wenn die Verwendung von SSL aktiv ist.
+   */
+  public boolean getRmiSSL()
+	{
+		return settings.getBoolean("jameica.system.rmi.enablessl",false);
+	}
+
+	/**
+	 * Aktiviert oder deaktiviert die Verwendung von SSL fuer die RMI-Verbindungen.
+   * @param b
+   */
+  public void setRmiSSL(boolean b)
+	{
+		settings.setAttribute("jameica.system.rmi.enablessl",b);
 	}
 
   /**
@@ -260,6 +278,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.15  2005/01/15 16:20:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/01/14 00:48:56  willuhn
  * *** empty log message ***
  *

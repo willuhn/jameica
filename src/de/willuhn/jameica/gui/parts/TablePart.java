@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.26 $
+ * $Date: 2005/01/15 16:20:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -214,6 +214,8 @@ public class TablePart implements Part
 		// Listener dran, der uns ueber das Loeschen des Objektes
 		// benachrichtigt. Dann koennen wir es automatisch aus der
 		// Tabelle werfen.
+		// TODO Das funktioniert noch nicht uebers Netz, da der Listener
+		// uebers Netz muss, aber die Tabelle nicht kennen darf
 		if (object instanceof DBObject)
 		{
 			((DBObject)object).addDeleteListener(new de.willuhn.datasource.rmi.Listener()
@@ -447,6 +449,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.26  2005/01/15 16:20:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.25  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/JameicaTrustManager.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/01/12 00:59:38 $
+ * $Revision: 1.3 $
+ * $Date: 2005/01/15 16:20:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -59,7 +59,8 @@ public class JameicaTrustManager implements X509TrustManager
     throws CertificateException
   {
   	Logger.info("checking client certificate");
-    //this.standardTrustManager.checkClientTrusted(chain,authType);
+		//this.standardTrustManager.checkClientTrusted(chain,authType);
+		// TODO: Zertifikatspruefung einbauen.
     return;
   }
 
@@ -70,6 +71,7 @@ public class JameicaTrustManager implements X509TrustManager
     throws CertificateException
   {
 		Logger.info("checking server certificate");
+		// TODO: Zertifikatspruefung einbauen.
     return;
   }
 
@@ -85,6 +87,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.3  2005/01/15 16:20:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/01/12 00:59:38  willuhn
  * *** empty log message ***
  *

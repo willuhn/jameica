@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLRMISocketFactory.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/01/14 00:48:57 $
+ * $Revision: 1.10 $
+ * $Date: 2005/01/15 16:20:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.server.RMISocketFactory;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
@@ -47,9 +48,11 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 
     RMISocketFactory.setFailureHandler(new SSLRMIFailureHandler());
 
-//  	SSLContext context 	= Application.getSSLFactory().getSSLContext();
-    serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-    socketFactory 			= (SSLSocketFactory) SSLSocketFactory.getDefault();
+  	SSLContext context 	= Application.getSSLFactory().getSSLContext();
+//    serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+//    socketFactory 			= (SSLSocketFactory) SSLSocketFactory.getDefault();
+		serverSocketFactory = context.getServerSocketFactory();
+		socketFactory 			= context.getSocketFactory();
   }
 
   /**
@@ -60,7 +63,7 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 		Logger.debug("Creating client socket to " + host + ":" + port);
     SSLSocket socket = (SSLSocket) socketFactory.createSocket(host, port);
 		log(socket);
-    return new SSLSocketMonitor(socket);
+    return socket;
   }
 
   /**
@@ -73,7 +76,7 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 		log(socket);
     socket.setNeedClientAuth(clientAuth);
     socket.setWantClientAuth(clientAuth);
-    return new SSLServerSocketMonitor(socket);
+    return socket;
   }
 
 	/**
@@ -144,6 +147,9 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.10  2005/01/15 16:20:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/01/14 00:48:57  willuhn
  * *** empty log message ***
  *

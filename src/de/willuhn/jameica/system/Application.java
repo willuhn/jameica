@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.25 $
- * $Date: 2005/01/14 01:05:14 $
+ * $Revision: 1.26 $
+ * $Date: 2005/01/15 16:20:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -307,7 +307,7 @@ public final class Application {
 	}
 
 	/**
-	 * Liefert die SSL-Factory von Jameica. Ueber diese kann der
+	 * Liefert die SSL-Factory von Jameica. Ueber diese kann unter anderem der
 	 * Public- und Private-Key der Jameica-Instanz bezogen werden.
    * @return SSL-Factory.
    */
@@ -451,6 +451,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.26  2005/01/15 16:20:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.25  2005/01/14 01:05:14  willuhn
  * *** empty log message ***
  *

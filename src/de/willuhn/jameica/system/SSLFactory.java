@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/01/14 00:48:56 $
+ * $Revision: 1.16 $
+ * $Date: 2005/01/15 16:20:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -300,7 +300,7 @@ public class SSLFactory
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
 												 new TrustManager[]{trustManager},null);
 
-// Loesung mit SUN TrustManager
+// alternative Loesung mit SUN TrustManager
 //		TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance("SunX509");
 //		trustManagerFactory.init(this.getKeyStore());
 //		this.sslContext.init(keyManagerFactory.getKeyManagers(),
@@ -313,6 +313,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.16  2005/01/15 16:20:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2005/01/14 00:48:56  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.25 $
- * $Date: 2005/01/14 00:48:57 $
+ * $Revision: 1.26 $
+ * $Date: 2005/01/15 16:20:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,8 +39,6 @@ import de.willuhn.util.ApplicationException;
 public final class ServiceFactory
 {
 
-	private final static boolean SSL = true;
-
   private boolean rmiStarted = false;
   private boolean sslStarted = false;
 
@@ -64,7 +62,7 @@ public final class ServiceFactory
   {
 		Logger.info("init plugin services");
 
-    if (!sslStarted && SSL)
+    if (!sslStarted && Application.getConfig().getRmiSSL())
     {
       Logger.info("rmi over ssl enabled");
       RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
@@ -371,6 +369,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.26  2005/01/15 16:20:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.25  2005/01/14 00:48:57  willuhn
  * *** empty log message ***
  *
