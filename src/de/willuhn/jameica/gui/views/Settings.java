@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/01/28 20:51:25 $
+ * $Revision: 1.7 $
+ * $Date: 2004/01/29 00:45:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import de.willuhn.util.I18N;
 
 /**
  * Dialog fuer die Programm-Einstellungen.
+ * TODO: Plugins via GUI installier- und deinstallierbar machen.
  */
 public class Settings extends AbstractView
 {
@@ -104,6 +105,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.7  2004/01/29 00:45:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/01/28 20:51:25  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
