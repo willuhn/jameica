@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.27 $
- * $Date: 2005/01/15 18:21:48 $
+ * $Revision: 1.28 $
+ * $Date: 2005/01/19 01:00:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -133,7 +133,7 @@ public final class Application {
 		// LockFile erzeugen
 		try {
 			new Lock(app.config.getWorkDir() + "/jameica");
-			// TODO: Im Fehlerfall nicht vom User verlangen, die Lockdatei
+			// TODO JAMEICA Im Fehlerfall nicht vom User verlangen, die Lockdatei
 			// zu loeschen sondern ihn fragen, ob Jameica dennoch gestartet werden soll.
 		}
 		catch (Throwable t)
@@ -453,6 +453,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.28  2005/01/19 01:00:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2005/01/15 18:21:48  willuhn
  * *** empty log message ***
  *
