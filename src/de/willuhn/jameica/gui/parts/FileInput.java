@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/FileInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/18 17:14:40 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/18 20:28:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,6 +71,7 @@ public class FileInput extends Input
     Composite around = new Composite(comp,SWT.NONE);
     around.setBackground(Style.COLOR_BORDER);
     around.setLayout(new FormLayout());
+		around.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
     FormData comboFD = new FormData();
     comboFD.left = new FormAttachment(0, 1);
@@ -170,6 +171,9 @@ public class FileInput extends Input
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.5  2004/02/18 20:28:45  willuhn
+ * @N jameica now stores window position and size
+ *
  * Revision 1.4  2004/02/18 17:14:40  willuhn
  * *** empty log message ***
  *

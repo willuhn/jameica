@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/18 01:40:30 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/18 20:28:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,9 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -59,18 +62,41 @@ public class SearchInput extends Input
   public Control getControl()
   {
 
-    comp = new Composite(getParent(),SWT.NONE);
+		comp = new Composite(getParent(),SWT.NONE);
 		comp.setBackground(Style.COLOR_BG);
-    GridLayout layout = new GridLayout(2, false);
-    layout.marginHeight=0;
-    layout.marginWidth=0;
-    comp.setLayout(layout);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight=0;
+		layout.marginWidth=0;
+		comp.setLayout(layout);
   
-    text = new Text(comp, SWT.BORDER);
-    GridData grid = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-    grid.widthHint = 60;
-		text.setBackground(Style.COLOR_BG);
-    text.setLayoutData(grid);
+		Composite around = new Composite(comp,SWT.NONE);
+		around.setBackground(Style.COLOR_BORDER);
+		around.setLayout(new FormLayout());
+		around.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		FormData comboFD = new FormData();
+		comboFD.left = new FormAttachment(0, 1);
+		comboFD.top = new FormAttachment(0, 1);
+		comboFD.right = new FormAttachment(100, -1);
+		comboFD.bottom = new FormAttachment(100, -1);
+    
+		Composite around2 = new Composite(around,SWT.NONE);
+		around2.setBackground(Style.COLOR_WHITE);
+		around2.setLayout(new FormLayout());
+		around2.setLayoutData(comboFD);
+
+		FormData comboFD2 = new FormData();
+		comboFD2.left = new FormAttachment(0, 2);
+		comboFD2.top = new FormAttachment(0, 2);
+		comboFD2.right = new FormAttachment(100, -2);
+		comboFD2.bottom = new FormAttachment(100, -2);
+  
+    text = new Text(around2, SWT.NONE);
+		text.setLayoutData(comboFD2);
+//    GridData grid = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+//    grid.widthHint = 60;
+		text.setBackground(Style.COLOR_WHITE);
+//    text.setLayoutData(grid);
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
@@ -145,6 +171,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.3  2004/02/18 20:28:45  willuhn
+ * @N jameica now stores window position and size
+ *
  * Revision 1.2  2004/02/18 01:40:30  willuhn
  * @N new white style
  *

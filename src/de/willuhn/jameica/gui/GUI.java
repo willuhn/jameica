@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/01/29 01:11:04 $
+ * $Revision: 1.21 $
+ * $Date: 2004/02/18 20:28:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,9 @@ import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -29,10 +32,11 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.Settings;
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.FatalErrorView;
-import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 import de.willuhn.util.MultipleClassLoader;
@@ -48,6 +52,8 @@ public class GUI
   private static ArrayList additionalMenus = new ArrayList();
   private static ArrayList additionalNavigation = new ArrayList();
   
+	private static Settings settings = new Settings(GUI.class);
+
   // singleton
   private static GUI gui;
     private final Display display = new Display();
@@ -87,9 +93,39 @@ public class GUI
     // init shell
     shell.setLayout(createGrid(2,false));
     shell.setLayoutData(new GridData(GridData.FILL_BOTH));
-    shell.setBounds(10, 10, 920, 720);
     shell.setText(Jameica.getName() + " " + Jameica.getVersion());
     shell.setImage(Style.getImage("globe.gif"));
+
+		////////////////////////////
+		// size and position restore
+		int x = 10; int y = 10;
+		int width = 920; int height = 720;
+		try {
+			x 		 = Integer.parseInt(settings.getAttribute("window.x",null));
+			y 		 = Integer.parseInt(settings.getAttribute("window.y",null));
+			width  = Integer.parseInt(settings.getAttribute("window.width",null));
+			height = Integer.parseInt(settings.getAttribute("window.height",null));
+		}
+		catch (NumberFormatException e) {/*useless*/}
+		if (x >= gui.display.getBounds().width)
+			x = 10; // screen resolution smaller than last start
+		if (y >= gui.display.getBounds().height)
+			y = 10; // screen resolution smaller than last start
+		shell.setSize(width,height);
+		shell.setLocation(x,y);
+
+		shell.addDisposeListener(new DisposeListener() {
+      public void widgetDisposed(DisposeEvent e) {
+				Point rect = gui.shell.getSize();
+				Point pos  = gui.shell.getLocation();
+				settings.setAttribute("window.width",""+rect.x);
+				settings.setAttribute("window.height",""+rect.y);
+				settings.setAttribute("window.x",""+pos.x);
+				settings.setAttribute("window.y",""+pos.y);
+      }
+    });
+
+		////////////////////////////
     
     Application.getLog().info("adding menu");
     addMenu();
@@ -342,6 +378,7 @@ public class GUI
         GUI.startView(FatalErrorView.class.getName(),e);
       }
     }
+		// save window position and size
     quit();
   }
   
@@ -400,7 +437,7 @@ public class GUI
   {
     if (Application.inServerMode())
       return;
-      
+
     // exit running gui loop
     stop = true;
   }
@@ -430,6 +467,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.21  2004/02/18 20:28:45  willuhn
+ * @N jameica now stores window position and size
+ *
  * Revision 1.20  2004/01/29 01:11:04  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/18 11:38:49 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/18 20:28:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.controller.*;
+import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
@@ -166,6 +166,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.4  2004/02/18 20:28:45  willuhn
+ * @N jameica now stores window position and size
+ *
  * Revision 1.3  2004/02/18 11:38:49  willuhn
  * @N flat style
  *

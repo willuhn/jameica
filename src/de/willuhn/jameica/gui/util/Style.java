@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/18 17:14:40 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/18 20:28:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -74,11 +74,14 @@ public class Style
     }
     return image;
   }
-
+  
 }
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.5  2004/02/18 20:28:45  willuhn
+ * @N jameica now stores window position and size
+ *
  * Revision 1.4  2004/02/18 17:14:40  willuhn
  * *** empty log message ***
  *
