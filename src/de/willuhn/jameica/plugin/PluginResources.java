@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/11/12 16:19:42 $
+ * $Revision: 1.6 $
+ * $Date: 2004/11/12 16:25:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,7 @@ public final class PluginResources {
   {
   	this.plugin = plugin;
 
-  	File f = new File(getPath());
+  	File f = plugin.getFile();
 
     try
     {
@@ -131,6 +131,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.6  2004/11/12 16:25:45  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/11/12 16:19:42  willuhn
  * *** empty log message ***
  *
