@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.18 $
- * $Date: 2003/12/16 02:27:44 $
+ * $Revision: 1.19 $
+ * $Date: 2003/12/18 21:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -144,7 +144,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			while (meta.next())
 			{
 				field = meta.getString(4);
-				if (field == null || field.equalsIgnoreCase("id")) // skip empty fields and ID field
+				if (field == null || field.equalsIgnoreCase(this.getIDField())) // skip empty fields and primary key
 					continue;
 				properties.put(field,null);
         types.put(field,meta.getString(6));
@@ -200,7 +200,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     Application.getLog().debug("trying to load object id ["+id+"] from table " + tableName);
 		try {
 			stmt = conn.createStatement();
-			data = stmt.executeQuery("select * from " + tableName + " where id = "+this.id);
+			data = stmt.executeQuery("select * from " + tableName + " where " + this.getIDField() + " = "+this.id);
 			if (!data.next())
 				return; // record not found.
 
@@ -273,7 +273,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     Application.getLog().debug("deleting object id ["+id+"] from table " + getTableName());
     try {
     	stmt = conn.createStatement();
-      stmt.execute("delete from " + getTableName() + " where id = '"+id+"'");
+      stmt.execute("delete from " + getTableName() + " where "+this.getIDField()+" = '"+id+"'");
       if (!this.inTransaction)
         conn.commit();
       this.id = null;
@@ -411,7 +411,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select max(id) from " + getTableName());
+			ResultSet rs = stmt.executeQuery("select max("+this.getIDField()+") from " + getTableName());
 			rs.next();
 			this.id = rs.getString(1);
 			Application.getLog().debug("  id: " + id);
@@ -537,11 +537,11 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
     for (int i=0;i<fields.length;++i)
     {
-			if (fields[i].equalsIgnoreCase("id"))
+			if (fields[i].equalsIgnoreCase(this.getIDField()))
 				continue; // skip the id field
       sql += fields[i] + "=?,";
     }
-    sql = sql.substring(0,sql.length()-1) + " where id="+id+""; // remove last ","
+    sql = sql.substring(0,sql.length()-1) + " where "+this.getIDField()+"="+id+""; // remove last ","
     try {
       PreparedStatement stmt = conn.prepareStatement(sql);
       for (int i=0;i<fields.length;++i)
@@ -616,7 +616,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   protected String getListQuery() throws RemoteException
   {
-    return "select id from " + getTableName();
+    return "select " + getIDField() + " from " + getTableName();
   }
 
   /**
@@ -660,6 +660,16 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   public final boolean isNewObject() throws  RemoteException
   {
     return id == null;
+  }
+
+  /**
+   * Liefert den Namen der Spalte, in der sich der Primary-Key befindet.
+   * Default: "id".
+   * @return Name der Spalte mit dem Primary-Key.
+   */
+  protected String getIDField()
+  {
+    return "id";
   }
 
   /**
@@ -795,6 +805,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.19  2003/12/18 21:47:12  willuhn
+ * @N AbstractDBObjectNode
+ *
  * Revision 1.18  2003/12/16 02:27:44  willuhn
  * *** empty log message ***
  *

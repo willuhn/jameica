@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/18 21:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,9 +56,8 @@ public class PluginLoader extends ClassLoader
     Application.getLog().info("init plugins");
     
     // TODO: Nur fuer IDE
-    //loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","/work/willuhn/eclipse/fibu/src");
     loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","../fibu/src");
-    // loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","d:/work/fibu/src");
+    loadPluginFromIDE("de.willuhn.jameica.dynameica.Dynameica","../dynameica/src");
 
     try {
       // Plugin-Verzeichnis ermitteln
@@ -326,6 +325,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.12  2003/12/18 21:47:12  willuhn
+ * @N AbstractDBObjectNode
+ *
  * Revision 1.11  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

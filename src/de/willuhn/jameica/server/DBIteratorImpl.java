@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.13 $
- * $Date: 2003/12/16 02:27:44 $
+ * $Revision: 1.14 $
+ * $Date: 2003/12/18 21:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,8 +40,8 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 	/**
 	 * Erzeugt einen neuen Iterator.
-   * @param object
-   * @param conn
+   * @param object Objekt, fuer welches die Liste erzeugt werden soll.
+   * @param conn die Connection.
    * @throws RemoteException
    */
   public DBIteratorImpl(AbstractDBObject object, Connection conn) throws RemoteException
@@ -57,9 +57,36 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
   }
 
   /**
+   * Erzeugt einen neuen Iterator mit der uebergebenen Liste von IDs.
+   * @param object Objekt, fuer welches die Liste erzeugt werden soll.
+   * @param list eine vorgefertigte Liste.
+   * @param conn die Connection.
+   * @throws RemoteException
+   */
+  DBIteratorImpl(AbstractDBObject object, ArrayList list, Connection conn) throws RemoteException
+  {
+    if (object == null)
+      throw new RemoteException("given object type is null");
+
+    if (list == null)
+      throw new RemoteException("given list is null");
+
+    if (conn == null)
+      throw new RemoteException("given connection is null");
+
+    this.object = object;
+    this.list = list;
+    this.conn = conn;
+    this.initialized = true;
+  }
+
+  /**
    * @see de.willuhn.jameica.rmi.DBIterator#setOrder(java.lang.String)
    */
   public void setOrder(String order) throws RemoteException {
+    if (this.initialized)
+      return; // allready initialized
+
     this.order = " " + order;
   }
 
@@ -67,8 +94,11 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    * @see de.willuhn.jameica.rmi.DBIterator#addFilter(java.lang.String)
    */
   public void addFilter(String filter) throws RemoteException {
+    if (this.initialized)
+      return; // allready initialized
+
     if (filter == null)
-      return;
+      return; // no filter given
 
     if ("".equals(this.filter))
     {
@@ -114,6 +144,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    * @throws RemoteException
    */
   private void init() throws RemoteException {
+    if (this.initialized)
+      return; // allready initialzed
+
 		Statement stmt = null;
     String sql = null;
 		ResultSet rs = null;
@@ -125,7 +158,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 			rs = stmt.executeQuery(sql);
 			while (rs.next())
 			{
-				list.add(rs.getString("id"));
+				list.add(rs.getString(object.getIDField()));
 			}
       this.initialized = true;
 		}
@@ -235,6 +268,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.14  2003/12/18 21:47:12  willuhn
+ * @N AbstractDBObjectNode
+ *
  * Revision 1.13  2003/12/16 02:27:44  willuhn
  * *** empty log message ***
  *

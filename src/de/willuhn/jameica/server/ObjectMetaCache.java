@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/ObjectMetaCache.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/15 19:08:01 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/18 21:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,12 +67,16 @@ public class ObjectMetaCache
    */
   public static int getStats()
   {
+    if (found == 0 || all == 0) return 0;
     return (int) ((100 * found) / all);
   }
 }
 
 /*********************************************************************
  * $Log: ObjectMetaCache.java,v $
+ * Revision 1.5  2003/12/18 21:47:12  willuhn
+ * @N AbstractDBObjectNode
+ *
  * Revision 1.4  2003/12/15 19:08:01  willuhn
  * *** empty log message ***
  *
