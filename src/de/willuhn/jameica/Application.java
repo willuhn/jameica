@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.14 $
- * $Date: 2003/12/18 21:47:12 $
+ * $Revision: 1.15 $
+ * $Date: 2003/12/21 20:59:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -74,7 +74,7 @@ public class Application {
       Application.shutDown();
       return;
     }
-
+    
     // init service factory
     ServiceFactory.init(); splash();
 
@@ -170,6 +170,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.15  2003/12/21 20:59:00  willuhn
+ * @N added internal SSH tunnel
+ *
  * Revision 1.14  2003/12/18 21:47:12  willuhn
  * @N AbstractDBObjectNode
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.13 $
- * $Date: 2003/12/19 01:43:27 $
+ * $Revision: 1.14 $
+ * $Date: 2003/12/21 20:59:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -268,7 +268,7 @@ public class PluginLoader extends ClassLoader
         clazz = Class.forName(classname);
       }
       else { 
-        clazz = loader.loadClass(classname);
+        clazz = Class.forName(classname,true,loader);
       }
 
       if (!checkPlugin(clazz))
@@ -331,6 +331,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.14  2003/12/21 20:59:00  willuhn
+ * @N added internal SSH tunnel
+ *
  * Revision 1.13  2003/12/19 01:43:27  willuhn
  * @N added Tree
  *
