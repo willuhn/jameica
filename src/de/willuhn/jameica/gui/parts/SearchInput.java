@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ import de.willuhn.jameica.gui.util.Style;
  * Objekt auszulesen und die Objekt-Werte in die Eingabe-Felder zu schreiben.
  * @author willuhn
  */
-public class SearchInput extends Input
+public class SearchInput extends AbstractInput
 {
 
   private Composite comp;
@@ -66,7 +66,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -137,7 +137,7 @@ public class SearchInput extends Input
   /**
    * Liefert das Objekt, welches in dem ListDialog ausgewaehlt wurde.
    * Fuer gewoehnlich ist das ein Fach-Objekt.
-   * @see de.willuhn.jameica.gui.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -145,7 +145,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.String)
    */
   public void setValue(Object value)
   {
@@ -156,7 +156,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
    */
   public void focus()
   {
@@ -164,7 +164,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
    */
   public void disable()
   {
@@ -172,7 +172,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
    */
   public void enable()
   {
@@ -183,6 +183,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.8  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.7  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.11 $
+ * $Date: 2004/03/11 08:56:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,6 +54,11 @@ public class Style
    * Standard-Hintergrundfarbe.
    */
   public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 251, 251, 251);
+
+  /**
+   * Standard-Vordergrundfarbe.
+   */
+  public final static Color COLOR_FG      = new Color(GUI.getDisplay(),  0,    0,   0);
 
   /**
    * Standard-Rahmenfarbe.
@@ -149,6 +154,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.11  2004/03/11 08:56:56  willuhn
+ * @C some refactoring
+ *
  * Revision 1.10  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

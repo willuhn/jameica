@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import de.willuhn.jameica.gui.util.Style;
  * Das Label ist z.Bsp. sinnvoll, wenn Werte zwar angezeigt aber nicht geaendert werden sollen.
  * @author willuhn
  */
-public class LabelInput extends Input
+public class LabelInput extends AbstractInput
 {
 	private Label label;
   private String value;
@@ -39,7 +39,7 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -52,7 +52,7 @@ public class LabelInput extends Input
 
   /**
    * Liefert immer <code>null</code>.
-   * @see de.willuhn.jameica.gui.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -60,7 +60,7 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
    */
   public void focus()
   {
@@ -68,7 +68,7 @@ public class LabelInput extends Input
 
   /**
    * Erwartet ein Objekt des Typs java.lang.String.
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -79,14 +79,14 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
    */
   public void disable()
   {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
    */
   public void enable()
   {
@@ -97,6 +97,9 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.6  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.5  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

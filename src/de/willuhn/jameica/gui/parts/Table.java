@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.9 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -216,7 +216,9 @@ public class Table
 						// Wir schauen aber noch, ob wir einen Formatter haben
 						Formatter f = (Formatter) formatter.get(field);
 						if (f != null)
+						{
 							item.setText(i,f.format(value));
+						}
 						else 
 							item.setText(i,value.toString());
 					}
@@ -254,21 +256,31 @@ public class Table
     // und jetzt fuegen wir noch die Kontext-Menues hinzu,
     Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
     table.setMenu(menu);
-    MenuItem editItem = new MenuItem(menu, SWT.PUSH);
-    editItem.setText(i18n.tr("Öffnen"));
-    editItem.addListener (SWT.Selection, new Listener () {
-      public void handleEvent (Event e) {
-        int i = table.getSelectionIndex();
-        if (i == -1)
-          return;
-        TableItem item = table.getItem(i);
-        if (item == null) return;
-        Object o = item.getData();
-        if (o == null) return;
-        controller.handleOpen(o);
-      }
-    });
-
+    {
+      MenuItem editItem = new MenuItem(menu, SWT.PUSH);
+      editItem.setText(i18n.tr("Neu..."));
+      editItem.addListener (SWT.Selection, new Listener () {
+        public void handleEvent (Event e) {
+          controller.handleCreate();
+        }
+      });
+    }
+    {
+      MenuItem editItem = new MenuItem(menu, SWT.PUSH);
+      editItem.setText(i18n.tr("Öffnen"));
+      editItem.addListener (SWT.Selection, new Listener () {
+        public void handleEvent (Event e) {
+          int i = table.getSelectionIndex();
+          if (i == -1)
+            return;
+          TableItem item = table.getItem(i);
+          if (item == null) return;
+          Object o = item.getData();
+          if (o == null) return;
+          controller.handleOpen(o);
+        }
+      });
+    }
 
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
     int cols = table.getColumnCount();
@@ -336,6 +348,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.9  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.8  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

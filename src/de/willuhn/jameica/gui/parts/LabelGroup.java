@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/04 00:26:34 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/11 08:56:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,7 +63,7 @@ public class LabelGroup
    * @param name Name des Feldes.
    * @param input Das Eingabefeld.
    */
-  public void addLabelPair(String name, Input input)
+  public void addLabelPair(String name, AbstractInput input)
   {
     // Label
     final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -231,6 +231,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.8  2004/03/11 08:56:56  willuhn
+ * @C some refactoring
+ *
  * Revision 1.7  2004/03/04 00:26:34  willuhn
  * *** empty log message ***
  *

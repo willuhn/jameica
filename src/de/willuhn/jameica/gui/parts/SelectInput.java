@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ import de.willuhn.jameica.gui.util.Style;
  * Ist zustaendig fuer Eingabefelder des Typs "Select" aka "Combo".
  * @author willuhn
  */
-public class SelectInput extends Input
+public class SelectInput extends AbstractInput
 {
 
   private Hashtable values = new Hashtable();
@@ -133,7 +133,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -175,7 +175,7 @@ public class SelectInput extends Input
    * Wenn die Select-Box mit einem String-Array aufgebaut wurde,
    * wird der angezeigte String zurueckgegeben. Bei einem DBObject oder
    * DBIterator wird direkt das Objekt zurueckgegeben.
-   * @see de.willuhn.jameica.gui.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -183,7 +183,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
    */
   public void focus()
   {
@@ -192,7 +192,7 @@ public class SelectInput extends Input
 
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
    */
   public void disable()
   {
@@ -200,7 +200,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
    */
   public void enable()
   {
@@ -209,7 +209,7 @@ public class SelectInput extends Input
 
   /**
    * Die Funktion macht nichts.
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object o)
   {
@@ -219,6 +219,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.8  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.7  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

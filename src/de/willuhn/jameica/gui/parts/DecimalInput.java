@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/DecimalInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ import de.willuhn.jameica.gui.util.Style;
  * @author willuhn
  * Malt ein Eingabefeld, in das nur Dezimalzahlen eingegeben werden koennen.
  */
-public class DecimalInput extends Input
+public class DecimalInput extends AbstractInput
 {
   private double value;
   private DecimalFormat format;
@@ -52,7 +52,7 @@ public class DecimalInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -99,7 +99,7 @@ public class DecimalInput extends Input
   /**
    * Die Funktion liefert ein Objekt des Typs java.lang.Double zurueck
    * oder <code>null</code> wenn die Zahl nicht ermittelt werden konnte.
-   * @see de.willuhn.jameica.gui.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -115,7 +115,7 @@ public class DecimalInput extends Input
 
   /**
    * Erwartet ein Objekt des Typs java.lang.Double.
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -129,7 +129,7 @@ public class DecimalInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
    */
   public void focus()
   {
@@ -137,7 +137,7 @@ public class DecimalInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
    */
   public void disable()
   {
@@ -145,7 +145,7 @@ public class DecimalInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
    */
   public void enable()
   {
@@ -157,6 +157,9 @@ public class DecimalInput extends Input
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.4  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.3  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Input.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/AbstractInput.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,7 @@ import de.willuhn.util.I18N;
  * Basisklasse fuer Eingabefelder.
  * @author willuhn
  */
-public abstract class Input
+public abstract class AbstractInput
 {
 
 	I18N i18n;
@@ -45,7 +45,7 @@ public abstract class Input
 	/**
    * Erzeugt ein neues Eingabe-Feld.
    */
-  public Input()
+  public AbstractInput()
 	{
 		i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
 	}
@@ -215,7 +215,10 @@ public abstract class Input
 }
 
 /*********************************************************************
- * $Log: Input.java,v $
+ * $Log: AbstractInput.java,v $
+ * Revision 1.1  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.5  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

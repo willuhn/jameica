@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/CurrencyFormatter.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,7 +21,7 @@ import java.util.Locale;
  * Formatierer fuer Geld-Betraege.
  * @author willuhn
  */
-public class CurrencyFormatter implements Formatter
+public class CurrencyFormatter extends AbstractFormatter
 {
 
   private String curr = "";
@@ -72,6 +72,9 @@ public class CurrencyFormatter implements Formatter
 
 /*********************************************************************
  * $Log: CurrencyFormatter.java,v $
+ * Revision 1.2  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

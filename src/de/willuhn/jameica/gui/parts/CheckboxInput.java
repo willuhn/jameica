@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/CheckboxInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.5 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,7 @@ import de.willuhn.jameica.gui.util.Style;
  * @author willuhn
  * Ist zustaendig fuer Eingabefelder des Typs Checkbox.
  */
-public class CheckboxInput extends Input
+public class CheckboxInput extends AbstractInput
 {
 
   private Button button;
@@ -38,7 +38,7 @@ public class CheckboxInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -52,7 +52,7 @@ public class CheckboxInput extends Input
 
   /**
    * Liefert ein Objekt des Typs java.lang.Boolean.
-   * @see de.willuhn.jameica.gui.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -61,7 +61,7 @@ public class CheckboxInput extends Input
 
   /**
    * Erwartet ein Objekt des Typs java.lang.Boolean.
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -76,7 +76,7 @@ public class CheckboxInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
    */
   public void focus()
   {
@@ -84,7 +84,7 @@ public class CheckboxInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
    */
   public void disable()
   {
@@ -92,7 +92,7 @@ public class CheckboxInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
    */
   public void enable()
   {
@@ -105,6 +105,9 @@ public class CheckboxInput extends Input
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.5  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.4  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

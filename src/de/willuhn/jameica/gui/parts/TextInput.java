@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/TextInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/11 08:56:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,7 @@ import de.willuhn.jameica.gui.util.Style;
  * Ist zustaendig fuer Standard-Eingabefelder.
  * @author willuhn
  */
-public class TextInput extends Input
+public class TextInput extends AbstractInput
 {
 
   private Text text;
@@ -44,7 +44,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -77,7 +77,7 @@ public class TextInput extends Input
 
   /**
    * Liefert den angezeigten Text als String.
-   * @see de.willuhn.jameica.gui.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -85,7 +85,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -96,7 +96,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
    */
   public void focus()
   {
@@ -104,7 +104,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
    */
   public void disable()
   {
@@ -112,7 +112,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
    */
   public void enable()
   {
@@ -123,6 +123,9 @@ public class TextInput extends Input
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.4  2004/03/11 08:56:55  willuhn
+ * @C some refactoring
+ *
  * Revision 1.3  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

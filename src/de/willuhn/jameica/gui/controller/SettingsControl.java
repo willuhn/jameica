@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.11 $
+ * $Date: 2004/03/11 08:56:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,7 @@ import de.willuhn.jameica.Jameica;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.FileInput;
-import de.willuhn.jameica.gui.parts.Input;
+import de.willuhn.jameica.gui.parts.AbstractInput;
 import de.willuhn.jameica.gui.parts.SelectInput;
 import de.willuhn.jameica.gui.parts.Table;
 import de.willuhn.jameica.gui.views.AbstractView;
@@ -37,8 +37,8 @@ public class SettingsControl extends AbstractControl
 
 	private Config config = Application.getConfig();
 	
-	private Input logFile  = new FileInput(config.getLogFile());
-	private Input logLevel = new SelectInput(Logger.LEVEL_TEXT,config.getLogLevel());
+	private AbstractInput logFile  = new FileInput(config.getLogFile());
+	private AbstractInput logLevel = new SelectInput(Logger.LEVEL_TEXT,config.getLogLevel());
 	private I18N i18n;
 
   /**
@@ -56,7 +56,7 @@ public class SettingsControl extends AbstractControl
 	 * Liefert das Eingabe-Feld fuer das Logfile.
    * @return Eingabe-Feld fuer das Logfile.
    */
-  public Input getLogFile()
+  public AbstractInput getLogFile()
 	{
 		return logFile;
 	}
@@ -65,7 +65,7 @@ public class SettingsControl extends AbstractControl
 	 * Liefert das Eingabefeld fuer das Loglevel.
    * @return Eingabe-Feld fuer das Loglevel.
    */
-  public Input getLoglevel()
+  public AbstractInput getLoglevel()
 	{
 		return logLevel;
 	}
@@ -169,6 +169,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.11  2004/03/11 08:56:56  willuhn
+ * @C some refactoring
+ *
  * Revision 1.10  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *
