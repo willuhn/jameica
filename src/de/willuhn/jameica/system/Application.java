@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.24 $
- * $Date: 2005/01/13 19:31:37 $
+ * $Revision: 1.25 $
+ * $Date: 2005/01/14 01:05:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -451,6 +451,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.25  2005/01/14 01:05:14  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2005/01/13 19:31:37  willuhn
  * @C SSLFactory geaendert
  * @N Settings auf property-Format umgestellt
