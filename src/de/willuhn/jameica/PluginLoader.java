@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.41 $
- * $Date: 2004/04/01 19:06:26 $
+ * $Revision: 1.42 $
+ * $Date: 2004/04/26 21:00:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,6 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.FileFinder;
 
 /**
@@ -352,9 +351,6 @@ public class PluginLoader extends ClassLoader
       }
       // ok, wir haben alles durchlaufen, wir speichern die neue Version.
 			updateChecker.setAttribute(pluginClass.getName() + ".version",plugin.getVersion());
-			// Menu hinzufuegen
-			GUI.addMenu(container.getMenu());
-			GUI.addNavigation(container.getNavigation());
 			// und setzen es auf status "installed"
 			container.setInstalled(true);
 		}
@@ -383,15 +379,30 @@ public class PluginLoader extends ClassLoader
   }
 
 	/**
+	 * Liefert eine Liste mit allen Plugin-Containern.
+	 * Achtung: Die Funktion liefert alle Container, also auch die von
+	 * Plugins, deren Initialisierung fehlgeschlagen ist. Um zu pruefen,
+	 * ob das Plugin wirklich aktiv ist, muss mit <code>PluginContainer.isInstalled</code>
+	 * geprueft werden oder man nimmt stattdessen gleich die Funktion
+	 * <code>getInstalledPlugins</code>.
+	 * @return Liste aller registrierten Plugin-Container.
+	 */
+	public static Enumeration getPluginContainers()
+	{
+		return plugins.elements();
+	}
+
+	/**
 	 * Liefert die Instanz des Plugins mit der angegebenen Klasse.
-   * @param plugin Klasse des Plugins.
-   * @return Instanz des Plugins oder <code>null</code> wenn es nicht installiert ist.
-   */
-  public static AbstractPlugin getPlugin(Class plugin)
+	 * @param plugin Klasse des Plugins.
+	 * @return Instanz des Plugins oder <code>null</code> wenn es nicht installiert ist.
+	 */
+	public static AbstractPlugin getPlugin(Class plugin)
 	{
 		PluginContainer pc = (PluginContainer) plugins.get(plugin);
 		return pc == null ? null : pc.getPlugin();
 	}
+
 
   /**
    * Wird beim Beenden der Anwendung ausgefuehrt und beendet alle Plugins.
@@ -423,6 +434,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.42  2004/04/26 21:00:11  willuhn
+ * @N made menu and navigation entries translatable
+ *
  * Revision 1.41  2004/04/01 19:06:26  willuhn
  * *** empty log message ***
  *

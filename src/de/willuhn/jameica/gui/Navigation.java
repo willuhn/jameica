@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.15 $
+ * $Date: 2004/04/26 21:00:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
+import de.willuhn.jameica.Application;
+import de.willuhn.jameica.PluginContainer;
 import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.util.I18N;
 
 /**
  * Bildet den Navigations-Baum im linken Frame ab.
@@ -53,17 +56,52 @@ public class Navigation {
 
 		// add elements
 		this.parent = parent;
-		root = new Item(null,xml.getFirstChildNamed("item"));
+		root = new Item(null,xml.getFirstChildNamed("item"),Application.getI18n());
     root.expandChilds(); 
+	}
+
+  /**
+	 * Fuer zur Navigation den Navi-Tree eines Plugins hinzu.
+   * @param container der PluginContainer.
+   */
+  protected void addPlugin(PluginContainer container)
+	{
+		if (container == null)
+		{
+			Application.getLog().warn("unable to add navigation, plugin container was null");
+			return;
+		}
+		if (!container.isInstalled())
+		{
+			Application.getLog().warn("plugin is not installed, skipping navigation");
+			return;
+		}
+		try {
+			I18N i18n = null;
+			try {
+				i18n = container.getPlugin().getResources().getI18N();
+			}
+			catch (Exception e)
+			{
+				Application.getLog().warn("unable to load I18N for plugin");
+			}
+			appendNavigation(container.getNavigation(),i18n);
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("unable to add navigation",e);
+		}
 	}
 
   /**
    * Fuegt der Navigation noch weitere Eintraege hinzu, die sich in dem uebergebenen
    * Inputstream befinden. Der Stream muss eine navigation.xml enthalten.
    * Wird von GUI nach der Initialisierung der Plugins aufgerufen.
-   * @param navi
+   * @param navi der InputStream mit dem Navigationsbaum.
+   * @param i18n optionaler Uebersetzer, um die Navi-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
+   * @throws Exception
    */
-  protected void appendNavigation(InputStream navi) throws Exception
+  private void appendNavigation(InputStream navi,I18N i18n) throws Exception
   {
     if (navi == null)
       return;
@@ -71,7 +109,7 @@ public class Navigation {
 		parser.setReader(new StdXMLReader(navi));
 		IXMLElement xml = (IXMLElement) parser.parse();
 
-    new Item(root.parentItem,xml.getFirstChildNamed("item"));
+    new Item(root.parentItem,xml.getFirstChildNamed("item"),i18n);
     root.expandChilds(); 
   }
 
@@ -161,19 +199,25 @@ public class Navigation {
 		private IXMLElement path;
 
 		private TreeItem parentItem;
+		
+		private I18N i18n;
 
 		/**
 		 * ct. Laed ein neues Element der Navigation.
      * @param parent das Eltern-Element.
      * @param sPath Pfad in der XML-Datei.
+	   * @param i18n optionaler Uebersetzer, um die Navi-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
      */
-    Item(TreeItem parent, IXMLElement sPath)
+    Item(TreeItem parent, IXMLElement sPath, I18N i18n)
 		{
 			// store xml path
 			this.path = sPath;
 
 			// store parent
 			this.parentItem = parent;
+
+			// store i18n
+			this.i18n = i18n;
 
 			TreeItem item;
 			// this is only needed for the first element
@@ -206,8 +250,7 @@ public class Navigation {
 
 			item.setData("action",action);
 
-			// TODO: Nicht plugin/i18n tauglich
-			item.setText(name);
+			item.setText(i18n != null ? i18n.tr(name) : name);
 
 			// make this item the parent
 			this.parentItem = item;
@@ -230,7 +273,7 @@ public class Navigation {
 			while (e.hasMoreElements())
 			{
 				IXMLElement path = (IXMLElement) e.nextElement();
-				new Item(this.parentItem,path);
+				new Item(this.parentItem,path,i18n);
 			}
 		}
     
@@ -260,6 +303,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.15  2004/04/26 21:00:11  willuhn
+ * @N made menu and navigation entries translatable
+ *
  * Revision 1.14  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.38 $
- * $Date: 2004/04/20 15:51:13 $
+ * $Revision: 1.39 $
+ * $Date: 2004/04/26 21:00:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,7 @@ package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Stack;
 
@@ -35,6 +34,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.PluginContainer;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.gui.util.Style;
@@ -51,9 +52,6 @@ import de.willuhn.util.ApplicationException;
 public class GUI
 {
 
-  private static ArrayList additionalMenus = new ArrayList();
-  private static ArrayList additionalNavigation = new ArrayList();
-  
 	private static Settings settings = new Settings(GUI.class);
 
   // singleton
@@ -174,19 +172,14 @@ public class GUI
     shell.open();
 
     // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins hinzu.
-    InputStream entry = null;
-    Iterator menus = additionalMenus.iterator();
-    while (menus.hasNext())
-    {
-      entry = (InputStream) menus.next();
-      appendMenu(entry);
-    }
-    Iterator navigations = additionalNavigation.iterator();
-    while (navigations.hasNext())
-    {
-      entry = (InputStream) navigations.next();
-      appendNavigation(entry);
-    }
+		Enumeration e = PluginLoader.getPluginContainers();
+		while (e.hasMoreElements())
+		{
+			PluginContainer pc = (PluginContainer) e.nextElement();
+			menu.addPlugin(pc);
+			navi.addPlugin(pc);
+		}
+
 
 		// History initialisieren
 		history = new Stack();
@@ -247,39 +240,6 @@ public class GUI
    */
   private void addView(Composite parent) {
     view = new View(parent);
-  }
-
-  /**
-   * Fuegt dem Menu noch weitere Eintraege hinzu, die sich in dem uebergebenen Inputstream befinden.
-   * Der Stream muss eine menu.xml enthalten.
-   * Wird von Application nach der Initialisierung der Plugins aufgerufen.
-   * @param xml XML-File mit weiteren Menu-Eintraegen.
-   */
-  public void appendMenu(InputStream xml) {
-		try {
-			menu.appendMenu(xml);
-		}
-		catch (Exception e)
-		{
-			Application.getLog().error("unable to add menu",e);
-		}
-  }
-
-  /**
-   * Fuegt der Navigation noch weitere Eintraege hinzu, die sich in dem uebergebenen Inputstream befinden.
-   * Der Stream muss eine navigation.xml enthalten.
-   * Wird von Application nach der Initialisierung der Plugins aufgerufen.
-   * @param xml XML-File mit weiteren Navigations-Eintraegen.
-   */
-  public void appendNavigation(InputStream xml) {
-    try
-    {
-      navi.appendNavigation(xml);
-    }
-    catch (Exception e)
-    {
-			Application.getLog().error("unable to add navigation",e);
-    }
   }
 
   /**
@@ -510,7 +470,6 @@ public class GUI
   public static void startSync(final Runnable job)
 	{
 
-		// TODO Das sollte mal noch schoen gemacht werden
 		Runnable r = new Runnable() {
 
 			boolean done = false;
@@ -610,35 +569,6 @@ public class GUI
     quit();
   }
   
-
-  /**
-   * Erweitert das Menu der Anwendung um die in dem InputStream uebergebene menu.xml.
-   * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
-   * Diese Funktion wird vom PluginLoader ausgefuehrt.
-   * @param xml XML-File mit Menu-Eintraegen.
-   */
-  public static void addMenu(InputStream xml)
-  {
-    if (Application.inServerMode())
-      return;
-
-    additionalMenus.add(xml);
-  }
-
-  /**
-   * Erweitert die Navigation der Anwendung um die in dem InputStream uebergebene navigation.xml.
-   * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
-   * Diese Funktion wird vom PluginLoader ausgefuehrt.
-   * @param xml XML-File mit Navigations-Eintraegen.
-   */
-  public static void addNavigation(InputStream xml)
-  {
-    if (Application.inServerMode())
-      return;
-
-    additionalNavigation.add(xml);
-  }
-
   /**
    * Liefert die Shell der Anwendung.
    * @return Shell der Anwendung.
@@ -693,6 +623,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.39  2004/04/26 21:00:11  willuhn
+ * @N made menu and navigation entries translatable
+ *
  * Revision 1.38  2004/04/20 15:51:13  willuhn
  * @N added recursive disposing
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/04/22 23:47:11 $
+ * $Revision: 1.20 $
+ * $Date: 2004/04/26 21:00:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.PluginContainer;
+import de.willuhn.util.I18N;
 
 /**
  * Bildet das Dropdown-Menu ab.
@@ -35,6 +37,7 @@ public class Menu
 {
 
   private final org.eclipse.swt.widgets.Menu bar;
+	private final org.eclipse.swt.widgets.Menu plugins;
 
 
   /**
@@ -45,16 +48,56 @@ public class Menu
 
     bar = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
 		parent.setMenuBar(bar);
-		appendMenu(getClass().getResourceAsStream("/menu.xml"));
+		appendMenu(getClass().getResourceAsStream("/menu.xml"),Application.getI18n());
+
+		MenuItem p = new MenuItem(bar,SWT.CASCADE);
+		p.setText(Application.getI18n().tr("Plugins"));
+		plugins = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
+		p.setMenu(plugins);
   }
+
+	/**
+	 * Fuer zur Navigation den Navi-Tree eines Plugins hinzu.
+	 * @param container der PluginContainer.
+	 */
+	protected void addPlugin(PluginContainer container)
+	{
+		if (container == null)
+		{
+			Application.getLog().warn("unable to add menu, plugin container was null");
+			return;
+		}
+		if (!container.isInstalled())
+		{
+			Application.getLog().warn("plugin is not installed, skipping menu");
+			return;
+		}
+		try {
+			I18N i18n = null;
+			try {
+				i18n = container.getPlugin().getResources().getI18N();
+			}
+			catch (Exception e)
+			{
+				Application.getLog().warn("unable to load I18N for plugin");
+			}
+			appendMenu(container.getMenu(),i18n);
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("unable to add menu",e);
+		}
+	}
 
   /**
    * Fuegt dem Menu noch weitere Eintraege hinzu, die sich in dem uebergebenen
    * Inputstream befinden. Der Stream muss eine menu.xml enthalten.
    * Wird von GUI nach der Initialisierung der Plugins aufgerufen.
-   * @param menu
+   * @param menu der InputStream mit dem Menu im XML-Format.
+   * @param i18n optionaler Uebersetzer, um die Menu-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
+   * @throws Exception
    */
-  protected void appendMenu(InputStream menu) throws Exception
+  private void appendMenu(InputStream menu, I18N i18n) throws Exception
   {
     if (menu == null)
       return;
@@ -68,7 +111,7 @@ public class Menu
 		while (e.hasMoreElements())
 		{
 			IXMLElement key = (IXMLElement) e.nextElement();
-			new MenuCascade(key);
+			new MenuCascade(key,i18n);
 		}
   }
 
@@ -76,25 +119,31 @@ public class Menu
    * Innere Hilfsklasse zur Abbildung des Menu-Baumes.
    * @author willuhn
    */
-  class MenuCascade {
+  private class MenuCascade {
 
     /**
      * ct.
      * @param key Pfad zum aktuellen Menupunkt in der Config-Datei.
+	   * @param i18n optionaler Uebersetzer, um die Menu-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
      */
-    MenuCascade(IXMLElement key)
+    private MenuCascade(IXMLElement key,I18N i18n)
     {
-    	// TODO nicht plugin- und i18n-tauglich
-      final MenuItem cascade = new MenuItem(bar,SWT.CASCADE);
+      final MenuItem cascade = new MenuItem(plugins != null ? plugins : bar,SWT.CASCADE);
       String text = key.getAttribute("name",null);
-      cascade.setText(text);
+      if (text == null)
+      {
+				// Das wuerde eh nen SWT-Fehler erzeugen
+				Application.getLog().warn("menu text was null, skipping");
+				return;
+      }
+      cascade.setText(i18n != null ? i18n.tr(text) : text);
       final org.eclipse.swt.widgets.Menu submenu = new org.eclipse.swt.widgets.Menu(GUI.getShell(), SWT.DROP_DOWN);
       cascade.setMenu(submenu);
       Enumeration e = key.enumerateChildren();
       while (e.hasMoreElements())
       {
         IXMLElement ckey = (IXMLElement) e.nextElement();
-        new MenuElement(submenu, ckey);
+        new MenuElement(submenu, ckey, i18n);
       }
 
     }
@@ -104,25 +153,36 @@ public class Menu
    * Innere Hilfsklasse zur Abbildung des Menu-Baumes.
    * @author willuhn
    */
-  class MenuElement {
+  private class MenuElement {
 
     /**
      * ct.
      * @param parent Eltern-Element.
      * @param ckey Pfad zum aktuellen Menupunkt in der Config-Datei.
+	   * @param i18n optionaler Uebersetzer, um die Menu-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
      */
-    MenuElement(org.eclipse.swt.widgets.Menu parent,IXMLElement ckey)
+    private MenuElement(org.eclipse.swt.widgets.Menu parent,IXMLElement ckey,I18N i18n)
     {
-			// TODO Nicht plugin- und i18n-tauglich
 
       String c      = ckey.getAttribute("class",null);
       String text   = ckey.getAttribute("name",null);
 			String target = ckey.getAttribute("target",null);
-      if (text != null && text.startsWith("-"))
+
+			if (text == null)
+			{
+				// Das wuerde eh nen SWT-Fehler erzeugen
+				Application.getLog().warn("menu text was null, skipping");
+				return;
+			}
+
+      if ("-".equals(text))
       {
         new MenuItem(parent,SWT.SEPARATOR);
         return;
       }
+
+			if (i18n != null) text = i18n.tr(text);
+
       final MenuItem item = new MenuItem(parent,SWT.CASCADE);
       
       item.addListener(SWT.Selection, new MenuListener(c, target, text));
@@ -145,12 +205,13 @@ public class Menu
     }
   }
   
-  class MenuListener implements Listener
+  private class MenuListener implements Listener
   {
     private String clazz = null;
     private String target = null;
     private String text = null;
-    MenuListener(String clazz, String target, String text)
+    
+    private MenuListener(String clazz, String target, String text)
     {
       this.clazz = clazz;
       this.target = target;
@@ -162,6 +223,11 @@ public class Menu
      */
     public void handleEvent(org.eclipse.swt.widgets.Event event)
     {
+    	if (clazz == null || text == null)
+    	{
+    		Application.getLog().warn("text or class of menu entry was null (text: " + text + ", class: " + clazz + "), skipping");
+				return;
+    	}
       try {
       	if (target != null && "dialog".equalsIgnoreCase(target))
       		GUI.startDialog(clazz,text,null);
@@ -181,6 +247,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.20  2004/04/26 21:00:11  willuhn
+ * @N made menu and navigation entries translatable
+ *
  * Revision 1.19  2004/04/22 23:47:11  willuhn
  * *** empty log message ***
  *
