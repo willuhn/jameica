@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.11 $
+ * $Date: 2004/02/18 01:40:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,6 @@ package de.willuhn.jameica.gui;
 
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -51,7 +50,7 @@ public class View
   private void setLayout()
 	{
 		view = new Composite(parent, SWT.NONE);
-		view.setBackground(new Color(GUI.getDisplay(), 255, 255, 255));
+		view.setBackground(Style.COLOR_WHITE);
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -84,6 +83,7 @@ public class View
 		// weil wir wollen, dass die gesamte View disposed und entfernt
 		// wird, bevor eine neue drauf kommt.
 		content = new Composite(view, SWT.BORDER);
+		content.setBackground(Style.COLOR_BG);
 		GridLayout l = new GridLayout();
 		l.marginHeight = 6;
 		l.marginWidth = 6;
@@ -113,6 +113,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.11  2004/02/18 01:40:30  willuhn
+ * @N new white style
+ *
  * Revision 1.10  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

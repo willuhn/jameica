@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/18 01:40:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Listener;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.*;
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
 /**
@@ -52,6 +53,7 @@ public class ButtonArea
     layout.numColumns = numButtons;
 
     buttonArea = new Composite(parent, SWT.NONE);
+		buttonArea.setBackground(Style.COLOR_BG);
     buttonArea.setLayout(layout);
     buttonArea.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
   }
@@ -164,6 +166,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.2  2004/02/18 01:40:29  willuhn
+ * @N new white style
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/17 00:53:47 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/18 01:40:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,9 @@ public class LabelGroup
   public LabelGroup(Composite parent, String name)
   {
     group = new Group(parent, SWT.NONE);
+		group.setBackground(Style.COLOR_BG);
     group.setText(name);
+		group.setFont(Style.FONT_H2);
     GridLayout layout = new GridLayout(2, false);
     group.setLayout(layout);
     GridData grid = new GridData(GridData.FILL_HORIZONTAL);
@@ -62,8 +64,9 @@ public class LabelGroup
     // Label
     final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
     labelGrid.widthHint = 130;
-    labelGrid.verticalAlignment = GridData.BEGINNING;
+    labelGrid.verticalAlignment = GridData.CENTER;
     final Label label = new Label(group, SWT.NONE);
+		label.setBackground(Style.COLOR_BG);
     label.setText(name);
     label.setLayoutData(labelGrid);
 
@@ -81,6 +84,7 @@ public class LabelGroup
     final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
     labelGrid.horizontalSpan = 2;
     final Composite comp = new Composite(group,SWT.NONE);
+		comp.setBackground(Style.COLOR_BG);
     GridLayout gl = new GridLayout(2,false);
     gl.marginHeight = 0;
     gl.marginWidth = 0;
@@ -90,6 +94,7 @@ public class LabelGroup
     checkbox.paint(comp,40);
 
     final Label label = new Label(comp , SWT.NONE);
+		label.setBackground(Style.COLOR_BG);
     label.setText(text);
     label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
   }
@@ -105,6 +110,7 @@ public class LabelGroup
     labelGrid.horizontalSpan = 2;
 
     final Label label = new Label(group,linewrap ? SWT.WRAP : SWT.NONE);
+		label.setBackground(Style.COLOR_BG);
     label.setText(text);
     label.setLayoutData(labelGrid);
   }
@@ -118,6 +124,7 @@ public class LabelGroup
 		final GridData grid = new GridData(GridData.FILL_HORIZONTAL);
 		grid.horizontalSpan = 2;
 		final Composite comp = new Composite(group,SWT.NONE);
+		comp.setBackground(Style.COLOR_BG);
 		comp.setLayoutData(grid);
 
 		GridLayout layout = new GridLayout(1,true);
@@ -159,14 +166,28 @@ public class LabelGroup
    */
   public void addHeadline(String text)
   {
-    final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-    labelGrid.horizontalSpan = 2;
-    labelGrid.widthHint = 400;
-    final Label label = new Label(group,SWT.NONE);
-    label.setFont(Style.FONT_HEADLINE);
-    label.setText(text);
-    label.setLayoutData(labelGrid);
-    addSeparator();
+		final GridData grid = new GridData(GridData.FILL_HORIZONTAL);
+		grid.horizontalSpan = 2;
+		grid.horizontalIndent = 0;
+		Composite comp = new Composite(group,SWT.NONE);
+		comp.setBackground(Style.COLOR_BG);
+		comp.setLayoutData(grid);
+
+		GridLayout layout = new GridLayout(2,false);
+		layout.marginHeight = 3;
+		layout.marginWidth = 2;
+		comp.setLayout(layout);
+
+		final Label label = new Label(comp,SWT.NONE);
+		label.setFont(Style.FONT_H2);
+		label.setBackground(Style.COLOR_BG);
+		label.setText(text);
+		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		
+		final Label line = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
+		line.setBackground(Style.COLOR_BG);
+		line.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
   }
   
   /**
@@ -177,6 +198,7 @@ public class LabelGroup
     final GridData lineGrid = new GridData(GridData.FILL_HORIZONTAL);
     lineGrid.horizontalSpan = 2;
     final Label line = new Label(group,SWT.SEPARATOR | SWT.HORIZONTAL);
+		line.setBackground(Style.COLOR_BG);
     line.setLayoutData(lineGrid);
   }
   
@@ -190,6 +212,7 @@ public class LabelGroup
 		final GridData g = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
 		g.horizontalSpan = 2;
 		final Composite comp = new Composite(group,SWT.NONE);
+		comp.setBackground(Style.COLOR_BG);
 		comp.setLayoutData(g);
 
 		final GridLayout gl = new GridLayout();
@@ -202,6 +225,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.4  2004/02/18 01:40:30  willuhn
+ * @N new white style
+ *
  * Revision 1.3  2004/02/17 00:53:47  willuhn
  * *** empty log message ***
  *

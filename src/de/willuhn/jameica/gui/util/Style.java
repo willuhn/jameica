@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/01/29 00:07:23 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/18 01:40:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,8 +35,11 @@ public class Style
 
   public final static Color COLOR_WHITE   = new Color(GUI.getDisplay(),255,255,255);
 	public final static Color COLOR_COMMENT = new Color(GUI.getDisplay(),60,60,60);
+	public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 255, 255, 255);
 
-  public final static Font FONT_HEADLINE = new Font(GUI.getDisplay(),"Verdana", 8, SWT.BOLD);
+
+  public final static Font FONT_H1 = new Font(GUI.getDisplay(),"Verdana", 10, SWT.BOLD);
+	public final static Font FONT_H2 = new Font(GUI.getDisplay(),"Verdana", 8, SWT.BOLD);
 
   /**
    * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
@@ -75,6 +78,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.3  2004/02/18 01:40:30  willuhn
+ * @N new white style
+ *
  * Revision 1.2  2004/01/29 00:07:23  willuhn
  * @N Text widget
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/17 00:53:47 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/18 01:40:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.gui.parts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+
+import de.willuhn.jameica.gui.util.Style;
 
 /**
  * Das ist ein Dummy-InputFeld.
@@ -42,6 +44,7 @@ public class LabelInput extends Input
   public Control getControl()
   {
     label = new Label(parent,SWT.WRAP);
+		label.setBackground(Style.COLOR_BG);
     label.setText(value);
     return label;
 
@@ -92,6 +95,9 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.3  2004/02/18 01:40:30  willuhn
+ * @N new white style
+ *
  * Revision 1.2  2004/02/17 00:53:47  willuhn
  * *** empty log message ***
  *

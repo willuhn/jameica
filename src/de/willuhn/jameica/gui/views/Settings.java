@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/02/11 00:10:42 $
+ * $Revision: 1.9 $
+ * $Date: 2004/02/18 01:40:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,32 +53,30 @@ public class Settings extends AbstractView
 		mainSettings.addLabelPair("Log-Datei",control.getLogFile());
 		mainSettings.addLabelPair("Log-Level", control.getLoglevel());
 
-		LabelGroup services = new LabelGroup(getParent(),I18N.tr("Services"));
-
-		services.addText(I18N.tr("Lokale Services"),false);
-		services.addTable(control.getLocalServices());
+		mainSettings.addText("",false);
+		mainSettings.addHeadline(I18N.tr("Lokale Services"));
+		mainSettings.addTable(control.getLocalServices());
 		
-		services.addText(I18N.tr("Netzwerkservices"),false);
-		services.addTable(control.getRemoteServices());
+		mainSettings.addText("",false);
+		mainSettings.addHeadline(I18N.tr("Netzwerkservices"));
+		mainSettings.addTable(control.getRemoteServices());
 
-		ButtonArea sbuttons = services.createButtonArea(2);
-		sbuttons.addCustomButton(I18N.tr("lokalen Service erstellen"),new MouseAdapter()
+
+		ButtonArea buttons = new ButtonArea(getParent(),5);
+		buttons.addCustomButton(I18N.tr("lokalen Service erstellen"),new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
 			{
 				control.handleRestore();
 			}
 		});
-		sbuttons.addCustomButton(I18N.tr("Netzwerk-Service erstellen"),new MouseAdapter()
+		buttons.addCustomButton(I18N.tr("Netzwerk-Service erstellen"),new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
 			{
 				control.handleRestore();
 			}
 		});
-
-		ButtonArea buttons = new ButtonArea(getParent(),3);
-		buttons.addCancelButton(control);
 		buttons.addCustomButton(I18N.tr("Zurücksetzen"),new MouseAdapter()
     {
       public void mouseUp(MouseEvent e)
@@ -86,6 +84,7 @@ public class Settings extends AbstractView
       	control.handleRestore();
       }
     });
+		buttons.addCancelButton(control);
 		buttons.addStoreButton(control);
   }
 
@@ -101,6 +100,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.9  2004/02/18 01:40:29  willuhn
+ * @N new white style
+ *
  * Revision 1.8  2004/02/11 00:10:42  willuhn
  * *** empty log message ***
  *

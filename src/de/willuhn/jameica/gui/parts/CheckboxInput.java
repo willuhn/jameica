@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/CheckboxInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/18 01:40:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.gui.parts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+
+import de.willuhn.jameica.gui.util.Style;
 
 /**
  * @author willuhn
@@ -46,6 +48,7 @@ public class CheckboxInput extends Input
 			return button;
     button = new Button(getParent(), SWT.CHECK);
     button.setSelection(value);
+		button.setBackground(Style.COLOR_BG);
     return button;
   }
 
@@ -99,6 +102,9 @@ public class CheckboxInput extends Input
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.2  2004/02/18 01:40:30  willuhn
+ * @N new white style
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

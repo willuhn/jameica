@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/FileInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/01/29 00:07:24 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/18 01:40:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,6 +58,7 @@ public class FileInput extends Input
   {
 
     comp = new Composite(getParent(),SWT.NONE);
+		comp.setBackground(Style.COLOR_BG);
     GridLayout layout = new GridLayout(2, false);
     layout.marginHeight=0;
     layout.marginWidth=0;
@@ -141,6 +142,9 @@ public class FileInput extends Input
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.3  2004/02/18 01:40:30  willuhn
+ * @N new white style
+ *
  * Revision 1.2  2004/01/29 00:07:24  willuhn
  * @N Text widget
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/18 01:40:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,6 +60,7 @@ public class SearchInput extends Input
   {
 
     comp = new Composite(getParent(),SWT.NONE);
+		comp.setBackground(Style.COLOR_BG);
     GridLayout layout = new GridLayout(2, false);
     layout.marginHeight=0;
     layout.marginWidth=0;
@@ -68,6 +69,7 @@ public class SearchInput extends Input
     text = new Text(comp, SWT.BORDER);
     GridData grid = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
     grid.widthHint = 60;
+		text.setBackground(Style.COLOR_BG);
     text.setLayoutData(grid);
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
@@ -143,6 +145,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.2  2004/02/18 01:40:30  willuhn
+ * @N new white style
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

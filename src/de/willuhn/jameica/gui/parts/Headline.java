@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Headline.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/18 01:40:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,18 +42,21 @@ public class Headline
   public Headline(Composite parent, String headline)
   {
     Composite comp = new Composite(parent, SWT.NONE);
+		comp.setBackground(Style.COLOR_BG);
     comp.setLayout(new GridLayout());
     comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
     Label title = new Label(comp, SWT.NONE);
     title.setText(headline);
     title.setLayoutData(new GridData());
+    title.setFont(Style.FONT_H1);
+		title.setBackground(Style.COLOR_BG);
 
-    title.setFont(Style.FONT_HEADLINE);
     GridData data = new GridData(GridData.FILL_HORIZONTAL);
     data.heightHint = 3;
     dotLine = new Label(comp, SWT.NONE);
     dotLine.setText("");
+		dotLine.setBackground(Style.COLOR_BG);
     dotLine.setLayoutData(data);
 
     dotLine.addPaintListener(new PaintListener() {
@@ -82,6 +85,9 @@ public class Headline
 
 /*********************************************************************
  * $Log: Headline.java,v $
+ * Revision 1.2  2004/02/18 01:40:29  willuhn
+ * @N new white style
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
