@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Tree.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/19 01:43:27 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,7 +56,7 @@ public class Tree {
    * von Objekten des Typs DBObjectNode. Enthaelt der
    * Iterator Objekte, die <b>nicht</b> von DBObjectNode
    * abgeleitet sind, wird er eine ClassCastException werfen.
-   * @param Liste mit Objekten, fuer die der Baum erzeugt werden soll.
+   * @param list Liste mit Objekten, fuer die der Baum erzeugt werden soll.
    * @param controller der Controller, der bei der Auswahl eines Elements
    * aufgerufen werden soll.
    */
@@ -269,6 +269,9 @@ public class Tree {
 
 /*********************************************************************
  * $Log: Tree.java,v $
+ * Revision 1.2  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.1  2003/12/19 01:43:27  willuhn
  * @N added Tree
  *

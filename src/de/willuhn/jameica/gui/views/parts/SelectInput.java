@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2003/12/16 02:27:44 $
+ * $Revision: 1.15 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,8 +26,8 @@ import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
 
 /**
- * @author willuhn
  * Ist zustaendig fuer Eingabefelder des Typs "Select" aka "Combo".
+ * @author willuhn
  */
 public class SelectInput extends Input
 {
@@ -40,7 +40,6 @@ public class SelectInput extends Input
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param object das darzustellende Objekt. Es wird auch gleich verwendet,
    * um darueber eine Liste zu holen, mit der die Selectbox gefuellt wird. 
-   * @param preselected Wert des vorausgewaehlten Feldes.
    */
   public SelectInput(DBObject object)
   {
@@ -58,7 +57,7 @@ public class SelectInput extends Input
 
   /**
    * Initialisiert die Select-Box.
-   * @param list
+   * @param list Liste mit den anzuzeigenden Objekten.
    */
   private void init(DBIterator list)
   {
@@ -87,7 +86,7 @@ public class SelectInput extends Input
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
-   * @param list eine Liste von Objekten.
+   * @param list Liste mit den anzuzeigenden Objekten.
    * @param preselected Wert des vorausgewaehlten Feldes.
    */
   public SelectInput(DBIterator list, String preselected)
@@ -98,7 +97,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -123,14 +122,15 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
    */
   public String getValue()
   {
     return (String) values.get(combo.getText());
   }
+
   /**
-   * @see de.willuhn.jameica.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
    */
   public void focus()
   {
@@ -154,17 +154,20 @@ public class SelectInput extends Input
     combo.setEnabled(true);
   }
 
-
   /**
-   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
   }
+
 }
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.15  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.14  2003/12/16 02:27:44  willuhn
  * *** empty log message ***
  *

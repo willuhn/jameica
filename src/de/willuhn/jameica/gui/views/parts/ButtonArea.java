@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/ButtonArea.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,30 +56,10 @@ public class ButtonArea
   }
 
   /**
-   * Deaktiviert den Speichern-Knopf (er wird ausgegraut).
-   */
-  public void disableStoreButton()
-  {
-    if (storeButton == null)
-      return;
-    storeButton.setEnabled(false);
-  }
-
-  /**
-   * Aktiviert den Speichern-Knopf.
-   */
-  public void enableStoreButton()
-  {
-    if (storeButton == null)
-      return;
-    storeButton.setEnabled(true);
-  }
-
-  /**
    * Fuegt der Area einen Erstellen-Button hinzu.
    * Beim Click wird die Methode handleCreate() des Controllers ausgefuehrt.
-   * @param name
-   * @param controller
+   * @param name Bezeichnung des Buttons.
+   * @param controller Controller, der beim Klick aufgerufen werden soll.
    */
   public void addCreateButton(String name, final Controller controller)
   {
@@ -96,8 +76,7 @@ public class ButtonArea
   /**
    * Fuegt der Area einen Speichern-Button hinzu.
    * Beim Click wird die Methode handleStore() des Controllers ausgefuehrt.
-   * @param name
-   * @param controller
+   * @param controller Controller, der beim Klick aufgerufen werden soll.
    */
   public void addStoreButton(final Controller controller)
   {
@@ -124,8 +103,7 @@ public class ButtonArea
   /**
    * Fuegt der Area einen Abbrechen-Button hinzu.
    * Beim Click wird die Methode handleCancel() des Controllers ausgefuehrt.
-   * @param name
-   * @param controller
+   * @param controller Controller, der beim Klick aufgerufen werden soll.
    */
   public void addCancelButton(final Controller controller)
   {
@@ -142,8 +120,7 @@ public class ButtonArea
   /**
    * Fuegt der Area einen Loeschen-Button hinzu.
    * Beim Click wird die Methode handleDelete() des Controllers ausgefuehrt.
-   * @param name
-   * @param controller
+   * @param controller Controller, der beim Klick aufgerufen werden soll.
    */
   public void addDeleteButton(final Controller controller)
   {
@@ -187,6 +164,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.9  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.8  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

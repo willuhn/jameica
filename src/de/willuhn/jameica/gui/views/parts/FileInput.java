@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/FileInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/21 20:59:00 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,7 @@ public class FileInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -95,7 +95,7 @@ public class FileInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -103,7 +103,7 @@ public class FileInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -114,7 +114,7 @@ public class FileInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
    */
   public void focus()
   {
@@ -137,12 +137,13 @@ public class FileInput extends Input
     text.setEnabled(true);
   }
 
-
-
 }
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.2  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.1  2003/12/21 20:59:00  willuhn
  * @N added internal SSH tunnel
  *

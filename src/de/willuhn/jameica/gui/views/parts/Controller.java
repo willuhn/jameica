@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Controller.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,12 +18,12 @@ import de.willuhn.jameica.rmi.DBObject;
 
 /**
  * Diese Basis-Klasse ist das Bindeglied zwischen View und Model.
- * Einem Dialog werden via via ButtonArea Knoepfe hinzugefuegt.
+ * Einem Dialog werden via <code>ButtonArea</code> Knoepfe hinzugefuegt.
  * Die Funktion zum Hinzufuegen von Knoepfen erwartet als Parameter
- * u.a. einen Controller. Und genau dessen Methode handle() wird beim
+ * u.a. einen Controller. Und genau dessen Methode handleIrgendwas() wird beim
  * Klick auf diesen Button dann ausgefuehrt.
  * Alle Klassen, die Eingaben aus Dialogen verarbeiten, muessen also
- * diese hier erweitern, die Methode handle() implementieren und dort
+ * diese hier erweitern, die Methoden handleIrgendwas() implementieren und dort
  * ihre Aktionen vornehmen.
  * @author willuhn
  */
@@ -35,7 +35,7 @@ public abstract class Controller
 
   /**
    * Erzeugt einen neuen Controller der fuer das angegebene Business-Objekt zustaendig ist.
-   * @param object
+   * @param object das Business-Objekt.
    */
   public Controller(DBObject object)
   {
@@ -47,12 +47,13 @@ public abstract class Controller
    * jedes seiner Eingabefelder irgendwie im Controller registrieren.
    * Und das geschieht hier ueber Alias-Namen. Was ist also zu tun:
    * 1. Der Dialog erzeugt die Eingabefelder und uebergibt jedes einzeln
-   *    unter einem eindeutigen Namen an den Controller.
-   * 2. Beim Absenden des Dialogs wird die handle() Methode des Controllers
+   *    unter einem eindeutigen Namen an den Controller (mit dieser Methode hier).
+   * 2. Beim Absenden des Dialogs wird die jeweilige handleIrgendwas() Methode des Controllers
    *    aufgerufen.
-   * 3. Dieser iteriert ueber alle Fields ruft dort jeweils die Methode
-   *    getValue() auf, um an die Werte zu gelangen.
-   * @param field
+   * 3. Dieser muss dann ueber alle Eingabefelder iterieren und dort jeweils die Methode
+   *    getValue() aufrufen, um an die Werte zu gelangen.
+   * @param name Alias-Name des Eingabefeldes.
+   * @param field das zu registrierende Eingabefeld.
    */
   public void register(String name, Input field)
   {
@@ -72,7 +73,7 @@ public abstract class Controller
   
   /**
    * Liefert das Business-Objekt, fuer das dieser Controller zustaendig ist.
-   * @return
+   * @return Business-Objekt.
    */
   public DBObject getObject()
   {
@@ -115,6 +116,9 @@ public abstract class Controller
 
 /*********************************************************************
  * $Log: Controller.java,v $
+ * Revision 1.6  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.5  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

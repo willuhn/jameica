@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SearchInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/20 16:52:45 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,9 +29,9 @@ import de.willuhn.jameica.gui.views.SearchDialog;
 import de.willuhn.jameica.gui.views.util.Style;
 
 /**
- * @author willuhn
  * Ist zustaendig fuer Text-Eingabefelder, hinter denen sich jedoch noch ein
  * zusaetzlicher Link befindet ueber den der einzugebende Wert gesucht werden kann.
+ * @author willuhn
  */
 public class SearchInput extends Input
 {
@@ -54,7 +54,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -97,7 +97,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -105,7 +105,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -116,7 +116,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
    */
   public void focus()
   {
@@ -139,12 +139,13 @@ public class SearchInput extends Input
     text.setEnabled(true);
   }
 
-
-
 }
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.8  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.7  2003/12/20 16:52:45  willuhn
  * *** empty log message ***
  *

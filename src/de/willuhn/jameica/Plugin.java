@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Plugin.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,7 +35,7 @@ public interface Plugin
 
   /**
    * Liefert die Versionsnummer des Plugins.
-   * @return
+   * @return Versionsnummer des Plugins.
    */
   public double getVersion();
 
@@ -47,6 +47,9 @@ public interface Plugin
 
 /*********************************************************************
  * $Log: Plugin.java,v $
+ * Revision 1.4  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.3  2003/11/24 23:01:58  willuhn
  * @N added settings
  *

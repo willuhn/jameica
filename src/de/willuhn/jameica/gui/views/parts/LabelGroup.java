@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/28 22:58:27 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,10 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.views.util.Style;
 
 /**
+   * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
+   * Damit ist es einfacher, standardisierte Dialoge zu malen.
+   * Man erstellt pro Dialog einfach ein oder mehrere solcher
+   * Gruppen und tut dort seine Eingabefelder rein.
  * @author willuhn
  */
 public class LabelGroup
@@ -34,9 +38,7 @@ public class LabelGroup
   private Group group = null;
 
   /**
-   * Diese Klasse kapselt Dialog-Teile des Typs:
-   * Gruppe mit Bezeichnung und da drin eine Liste von
-   * Label- und Eingabefeldpaaren.
+   * ct.
    * @param parent Das Composite, in dem die Group gemalt werden soll.
    * @param name Name der Group.
    */
@@ -108,7 +110,7 @@ public class LabelGroup
 
   /**
    * Fuegt eine Tabelle zur Group hinzu.
-   * @param anzuzeigende Tabelle.
+   * @param table anzuzeigende Tabelle.
    */
   public void addTable(Table table)
   {
@@ -161,6 +163,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.12  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.11  2003/12/28 22:58:27  willuhn
  * @N synchronize mode
  *

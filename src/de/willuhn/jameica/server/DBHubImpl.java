@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/27 21:23:33 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,14 +23,14 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.rmi.DBHub;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
 
 /**
+ * Diese Klasse implementiert eine ueber RMI erreichbaren Datenbank. 
  * @author willuhn
- * Diese Klasse implementiert eine ueber RMI erreichbaren
- * Datenbank. 
  */
 public class DBHubImpl extends UnicastRemoteObject implements DBHub
 {
@@ -44,8 +44,10 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
   private boolean available = true;
 
-	/**
+  /**
 	 * Erzeugt eine neue Instanz.
+   * @param initParams HashMap mit Initialisierungsparametern.
+   * @throws RemoteException im Fehlerfall.
 	 */
 	public DBHubImpl(HashMap initParams) throws RemoteException
 	{
@@ -65,7 +67,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
   
 
   /**
-   * @see de.bbvag.dhl.easylog.hubs.Service#open()
+   * @see de.willuhn.jameica.rmi.Service#open()
    */
   public void open() throws RemoteException
   {
@@ -104,7 +106,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 
   /**
-   * @see de.bbvag.dhl.easylog.hubs.Service#close()
+   * @see de.willuhn.jameica.rmi.Service#close()
    */
   public void close() throws RemoteException
   {
@@ -143,7 +145,15 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
   static DBObject create(Connection conn, Class c) throws Exception
   {
     String className = findImplementationName(c);
-    Class clazz = Class.forName(className);
+    Class clazz = null;
+    try {
+      clazz = Class.forName(className);
+    }
+    catch (ClassNotFoundException e)
+    {
+      // mhh, sicher eine Klasse aus einem Plugin
+      clazz = Class.forName(className,true,PluginLoader.getPluginClassLoader());
+    }
 
     Constructor ct = clazz.getConstructor(new Class[]{});
     ct.setAccessible(true);
@@ -180,7 +190,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 
   /**
-   * @see de.bbvag.dhl.easylog.hubs.DBHub#createObject(java.lang.Class, java.lang.String)
+   * @see de.willuhn.jameica.rmi.DBHub#createObject(java.lang.Class, java.lang.String)
    */
   public DBObject createObject(Class c, String id) throws RemoteException
   {
@@ -206,8 +216,8 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
     }
   }
 
-	/**
-   * @see de.bbvag.dhl.easylog.hubs.DBHub#createList(java.lang.Class)
+  /**
+   * @see de.willuhn.jameica.rmi.DBHub#createList(java.lang.Class)
    */
   public DBIterator createList(Class c) throws RemoteException
 	{
@@ -287,6 +297,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.11  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.10  2003/12/27 21:23:33  willuhn
  * @N object serialization
  *

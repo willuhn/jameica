@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.24 $
- * $Date: 2003/12/28 22:58:27 $
+ * $Revision: 1.25 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -238,7 +238,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 	}
   
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBObject#store()
+   * @see de.willuhn.jameica.rmi.DBObject#store()
    */
   public void store() throws RemoteException, ApplicationException
   {
@@ -266,7 +266,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
   
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBObject#delete()
+   * @see de.willuhn.jameica.rmi.DBObject#delete()
    */
   public void delete() throws RemoteException, ApplicationException
   {
@@ -323,7 +323,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
 
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBObject#getID()
+   * @see de.willuhn.jameica.rmi.DBObject#getID()
    */
   public final String getID() throws RemoteException
   {
@@ -423,7 +423,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
   /**
    * Liefert ein String-Array mit allen Feldnamen dieses Objektes. 
-   * @return
+   * @return String-Array mit allen Feldnamen.
    */
   protected final String[] getFields()
   {
@@ -433,9 +433,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
 
 	/**
-   * Wird bei einem Insert aufgerufen, ermittelt die ID des erzeugten Datensatzes und speichert sie
-   * in diesem Objekt.
-   * @return
+   * Wird bei einem Insert aufgerufen, ermittelt die ID des erzeugten Datensatzes und speichert sie in diesem Objekt.
    */
   private void setLastId() throws RemoteException
 	{
@@ -462,8 +460,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * von einer Datenbank auf eine andere kopiert werden soll. Es kann jedoch
    * durchaus fehlschlagen, wenn ein Objekt mit dieser ID bereits in
    * der Datenbank existiert.
-   * @throws RemoteException
-   * @throws ApplicationException
+   * @throws RemoteException Wenn beim Speichern Fehler aufgetreten sind.
+   * @throws ApplicationException Durch <code>insertCheck()</code> erzeugte Benutzerfehler.
    */
   public void insert() throws RemoteException, ApplicationException
   {
@@ -511,8 +509,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * Aktualisiert das Objekt explizit in der Datenbank.
    * Wenn es sich um ein neues Objekt handelt, wird das Update fehlschlagen.
-   * @throws RemoteException
-   * @throws ApplicationException
+   * @throws RemoteException Wenn beim Update Fehler aufgetreten sind.
+   * @throws ApplicationException durch <code>updateCheck()</code> erzeugte Benutzer-Fehler.
    */
   private void update() throws RemoteException, ApplicationException
   {
@@ -573,7 +571,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Kann bei Bedarf überschrieben um ein vom dynamisch erzeugten
    * abweichendes Statement für die Speicherung zu verwenden.  
    * @return das erzeugte SQL-Statement.
-   * @throws RemoteException
+   * @throws RemoteException wenn beim Erzugen des Statements ein Fehler auftrat.
    */
   protected PreparedStatement getUpdateSQL() throws RemoteException
   {
@@ -617,7 +615,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Kann bei Bedarf überschrieben um ein vom dynamisch erzeugten
    * abweichendes Statement für die Speicherung zu verwenden.  
    * @return das erzeugte SQL-Statement.
-   * @throws RemoteException
+   * @throws RemoteException Wenn beim Erzeugen des Statements ein Fehler auftrat.
    */
   protected PreparedStatement getInsertSQL() throws RemoteException
   {
@@ -673,15 +671,15 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * Liefert das automatisch erzeugte SQL-Statement fuer die Erzeugung einer Liste
    * dieses Typs.
-   * ACHTUNG: Das Statement muss ein Feld mit der Bezeichnung "id" zurueckgeben,
-   * da das von DBIteratorImpl gelesen wird. Also z.Bsp. "select id from kunde".
-   * Kann bei Bedarf überschrieben um ein vom dynamisch erzeugten
-   * abweichendes Statement zu verwenden.
+   * ACHTUNG: Das Statement muss ein Feld mit der Bezeichnung zurueckgeben,
+   * die <code>getIDField</code> auch liefert, da das von DBIteratorImpl gelesen wird.
+   * Also z.Bsp. "select " + getIDField() + " from kunde".
+   * Kann bei Bedarf überschrieben um ein abweichendes Statement zu verwenden.
    * Die Funktion muss das Statement nur dewegen als String zurueckliefern,
    * weil es typischerweise von DBIterator weiterverwendet wird und dort eventuell
    * noch weitere Filterkriterien hinzugefuegt werden koennen muessen.  
    * @return das erzeugte SQL-Statement.
-   * @throws RemoteException
+   * @throws RemoteException Wenn beim Erzeugen des Statements ein Fehler auftrat.
    */
   protected String getListQuery() throws RemoteException
   {
@@ -690,10 +688,15 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
   /**
    * Macht sozusagen das Typ-Mapping bei Insert und Update.
-   * @param stmt
-   * @param index
-   * @param type
-   * @param value
+   * Hintergrund: Die Funktionen <code>getInsertSQL()</code> und
+   * <code>getUpdateSQL()</code> erzeugen ja die Statements fuer
+   * Insert und Update. Da ein PreparedStatement ja typsichere
+   * Werte haben muss, rufen beide Funktion diese hier auf, um
+   * hier die Werte korrekt setzen zu lassen.
+   * @param stmt das PreparedStatement.
+   * @param index der Index im Statement.
+   * @param type Bezeichnung des Feld-Typs entspechend der types-Mappingtabelle.
+   * @param value der Wert.
    */
   private void setStmtValue(PreparedStatement stmt, int index, String type, Object value)
   {
@@ -727,7 +730,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
   /**
    * Gibt an, ob das Objekt neu ist und somit ein Insert statt einem Update gemacht werden muss.
-   * @return
+   * @return true, wenn es ein neues Objekt ist, andernfalls false.
    */
   public final boolean isNewObject() throws  RemoteException
   {
@@ -788,14 +791,14 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Prueft, ob das angegebene Feld ein Fremschluessel zu einer
    * anderen Tabelle ist. Wenn das der Fall ist, liefert es die
    * Klasse, die die Fremd-Tabelle abbildet. Andernfalls null.
-   * @param field
-   * @return
-   * @throws RemoteException
+   * @param field das zu pruefende Feld.
+   * @return Klasse (abgeleitet von DBObject) welche den Fremdschluessel abbildet oder null. 
+   * @throws RemoteException im Fehlerfall.
    */
   protected abstract Class getForeignObject(String field) throws RemoteException;
   
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBObject#transactionBegin()
+   * @see de.willuhn.jameica.rmi.DBObject#transactionBegin()
    */
   public final void transactionBegin() throws RemoteException
   {
@@ -809,7 +812,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
 
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBObject#transactionRollback()
+   * @see de.willuhn.jameica.rmi.DBObject#transactionRollback()
    */
   public final void transactionRollback() throws RemoteException
   {
@@ -833,7 +836,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }  
 
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBObject#transactionCommit()
+   * @see de.willuhn.jameica.rmi.DBObject#transactionCommit()
    */
   public final void transactionCommit() throws RemoteException
   {
@@ -872,6 +875,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   {
     return new DBIteratorImpl(this,getConnection());
   }
+
   /**
    * @see de.willuhn.jameica.rmi.DBObject#overwrite(de.willuhn.jameica.rmi.DBObject)
    */
@@ -905,6 +909,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.25  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.24  2003/12/28 22:58:27  willuhn
  * @N synchronize mode
  *

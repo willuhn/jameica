@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.17 $
- * $Date: 2003/12/22 21:00:34 $
+ * $Revision: 1.18 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -312,7 +312,7 @@ public class PluginLoader extends ClassLoader
   /**
    * Liefert eine Liste mit Objekten des Types AbstractPlugin.
    * Das sind alle installierten Plugins.
-   * @return
+   * @return Liste aller installierten Plugins. Die Elemente sind vom Typ <code>Plugin</code>.
    */
   public static ArrayList getInstalledPlugins()
   {
@@ -338,7 +338,7 @@ public class PluginLoader extends ClassLoader
   /**
    * Liefert den Classloader ueber den die Plugins geladen wurden.
    * Denn der ist noetig, wenn eine Klasse aus dem Plugin geladen werden soll.
-   * @return
+   * @return Liefert einen ClassLoader, der alle geladenen Plugins kennt.
    */
   public static URLClassLoader getPluginClassLoader()
   {
@@ -349,6 +349,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.18  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.17  2003/12/22 21:00:34  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/28 22:58:27 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,14 +33,14 @@ public abstract class AbstractView
   }
 
   /**
-   * Wird aufgerufen, wenn der Dialog geoeffnet wird. Diese Methode muss von abgeleiteteten
-   * Klassen ueberschrieben werden, um dort den Content zu malen.
+   * Wird aufgerufen, wenn der Dialog geoeffnet wird.
+   * Diese Methode muss von abgeleiteteten Klassen ueberschrieben werden, um dort den Content zu malen.
    */
   public abstract void bind();
 
   /**
-   * Wird aufgerufen, wenn der Dialog verlassen wird. Diese Methode muss von abgeleiteten
-   * Klassen ueberschrieben werden, um dort Aufraeumarbeiten vorzunehmen.
+   * Wird aufgerufen, wenn der Dialog verlassen wird.
+   * Diese Methode muss von abgeleiteten Klassen ueberschrieben werden, um dort Aufraeumarbeiten vorzunehmen.
    * @throws ApplicationException darf vom Dialog geworfen werden, wenn der neue Dialog
    * nicht gestartet werden soll. Z.Bsp. weil Daten noch nicht gespeichert worden oder
    * ein Vorgang noch in Bearbeitung ist.
@@ -50,7 +50,7 @@ public abstract class AbstractView
 	
 	/**
    * Liefert das Composite, in dem der Dialog dargestellt werden soll.
-   * @return
+   * @return das Composite, in dem der Dialog angezeigt werden soll.
    */
   public Composite getParent()
 	{
@@ -59,7 +59,7 @@ public abstract class AbstractView
 
 	/**
    * Speichert das Composite, in dem der Dialog dargestellt werden soll.
-   * @param parent
+   * @param parent Composite, in dem der Dialog dargestellt werden soll.
    */
   public void setParent(Composite parent)
 	{
@@ -68,7 +68,7 @@ public abstract class AbstractView
 
 	/**
    * Liefert das dieser View uebergebene Daten-Objekt zurueck. 
-   * @return
+   * @return Liefert das Business-Objekt fuer das der Dialog zustaendig ist.
    */
   public Object getCurrentObject()
 	{
@@ -80,6 +80,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.8  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.7  2003/12/28 22:58:27  willuhn
  * @N synchronize mode
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/28 22:58:27 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,6 +61,9 @@ public class GUI
   private GUI() {
   }
   
+  /**
+   * Laedt die GUI.
+   */
   private void load() {
     Application.getLog().info("startup GUI");
 
@@ -73,7 +76,7 @@ public class GUI
     l.numColumns = 2;
     shell.setLayout(l);
     shell.setBounds(10, 10, 920, 720);
-    shell.setText("Jameica");
+    shell.setText(Jameica.getName() + " " + Jameica.getVersion());
     shell.setImage(Style.getImage("globe.gif"));
     
 
@@ -147,10 +150,10 @@ public class GUI
   }
 
   /**
-   * Fuegt dem Menu noch weitere Eintraege hinzu, die sich in dem uebergebenen
-   * Inputstream befinden. Der Stream muss eine menu.xml enthalten.
+   * Fuegt dem Menu noch weitere Eintraege hinzu, die sich in dem uebergebenen Inputstream befinden.
+   * Der Stream muss eine menu.xml enthalten.
    * Wird von Application nach der Initialisierung der Plugins aufgerufen.
-   * @param xml
+   * @param xml XML-File mit weiteren Menu-Eintraegen.
    */
   public void appendMenu(InputStream xml) {
     if (menu == null)
@@ -159,10 +162,10 @@ public class GUI
   }
 
   /**
-   * Fuegt der Navigation noch weitere Eintraege hinzu, die sich in dem uebergebenen
-   * Inputstream befinden. Der Stream muss eine navigation.xml enthalten.
+   * Fuegt der Navigation noch weitere Eintraege hinzu, die sich in dem uebergebenen Inputstream befinden.
+   * Der Stream muss eine navigation.xml enthalten.
    * Wird von Application nach der Initialisierung der Plugins aufgerufen.
-   * @param xml
+   * @param xml XML-File mit weiteren Navigations-Eintraegen.
    */
   public void appendNavigation(InputStream xml) {
     if (navi == null)
@@ -292,7 +295,7 @@ public class GUI
    * Erweitert das Menu der Anwendung um die in dem InputStream uebergebene menu.xml.
    * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
    * Diese Funktion wird vom PluginLoader ausgefuehrt.
-   * @param xml
+   * @param xml XML-File mit Menu-Eintraegen.
    */
   public static void addMenu(InputStream xml)
   {
@@ -306,7 +309,7 @@ public class GUI
    * Erweitert die Navigation der Anwendung um die in dem InputStream uebergebene navigation.xml.
    * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
    * Diese Funktion wird vom PluginLoader ausgefuehrt.
-   * @param xml
+   * @param xml XML-File mit Navigations-Eintraegen.
    */
   public static void addNavigation(InputStream xml)
   {
@@ -318,7 +321,7 @@ public class GUI
 
   /**
    * Liefert die Shell der Anwendung.
-   * @return
+   * @return Shell der Anwendung.
    */
   public static Shell getShell()
   {
@@ -327,7 +330,7 @@ public class GUI
   
   /**
    * Liefert das Display der Anwendung.
-   * @return
+   * @return Display der Anwendung.
    */
   public static Display getDisplay()
   {
@@ -336,7 +339,7 @@ public class GUI
 
   /**
    * Beendet die GUI.
-   * Wenn die Anwendung nicht im Servermode laeuft, wird nichts gemacht ;).
+   * Wenn die Anwendung nicht im Servermode laeuft, wird nichts gemacht.
    */
   public static void shutDown()
   {
@@ -374,6 +377,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.11  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.10  2003/12/28 22:58:27  willuhn
  * @N synchronize mode
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/27 21:23:33 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,6 @@ public class Settings
    * nur fuer diese Klasse gelten. Existieren bereits Settings
    * fuer die Klasse, werden sie gleich geladen.
    * @param clazz Klasse, fuer die diese Settings gelten.
-   * @return
    */
   public Settings(Class clazz)
   {
@@ -123,6 +122,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.3  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.2  2003/12/27 21:23:33  willuhn
  * @N object serialization
  *

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -94,9 +94,8 @@ public class View
 	}
 
   /**
-   * Liefert das Composite, in das die anzuzeigenden Dialoge bitte ihre
-   * Controls reinmalen sollen.
-   * @return
+   * Liefert das Composite, in das die anzuzeigenden Dialoge bitte ihre Controls reinmalen sollen.
+   * @return Composite, in das der Dialog seine Elemente reinmalen soll.
    */
   public Composite getContent()
 	{
@@ -108,6 +107,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.8  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.7  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

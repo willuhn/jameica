@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/DecimalInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/16 02:27:44 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * @author willuhn
- * Ist zustaendig fuer Standard-Eingabefelder.
+ * Malt ein Eingabefeld, in das nur Dezimalzahlen eingegeben werden koennen.
  */
 public class DecimalInput extends Input
 {
@@ -30,7 +30,7 @@ public class DecimalInput extends Input
   private Text text;
 
   /**
-   * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    */
   public DecimalInput(String value)
   {
@@ -38,7 +38,7 @@ public class DecimalInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -67,7 +67,7 @@ public class DecimalInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -75,7 +75,7 @@ public class DecimalInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -86,7 +86,7 @@ public class DecimalInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
    */
   public void focus()
   {
@@ -114,6 +114,9 @@ public class DecimalInput extends Input
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.5  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.4  2003/12/16 02:27:44  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/16 02:27:44 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,9 +17,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 /**
+ * Das ist ein Dummy-InputFeld.
+ * Denn es ist kein Eingabe-Feld sondern lediglich ein Text.
+ * Das Label ist z.Bsp. sinnvoll, wenn Werte zwar angezeigt aber nicht geaendert werden sollen.
  * @author willuhn
- * Das ist ein Dummy-InputFeld. Denn es ist kein Eingabe-Feld sondern
- * lediglich ein Hinweistext stattdessen ;)
  */
 public class LabelInput extends Input
 {
@@ -27,12 +28,16 @@ public class LabelInput extends Input
 
   /**
    * Erzeugt ein neues Label mit dem angegebenen Wert.
+   * @param value anzuzeigender Wert.
    */
   public LabelInput(String value)
   {
     this.value = value;
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
+   */
   public Control getControl()
   {
     Label label = new Label(parent,SWT.WRAP);
@@ -42,7 +47,7 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -50,14 +55,14 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
    */
   public void focus()
   {
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -82,6 +87,9 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.7  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.6  2003/12/16 02:27:44  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/16 02:27:44 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @author willuhn
  * Ist zustaendig fuer Standard-Eingabefelder.
+ * @author willuhn
  */
 public class TextInput extends Input
 {
@@ -30,6 +30,7 @@ public class TextInput extends Input
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+   * @param value anzuzeigender Wert.
    */
   public TextInput(String value)
   {
@@ -37,7 +38,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -54,7 +55,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -62,7 +63,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -73,7 +74,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
    */
   public void focus()
   {
@@ -96,12 +97,13 @@ public class TextInput extends Input
     text.setEnabled(true);
   }
 
-
-
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.10  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.9  2003/12/16 02:27:44  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBIterator.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/28 22:58:27 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
+ * Iterator fuer Datenbanktabellen auf Objekt-Ebene.
  * @author willuhn
  */
 public interface DBIterator extends Remote {
@@ -67,7 +68,7 @@ public interface DBIterator extends Remote {
 
   /**
    * Liefert die Anzahl der Elemente dieses Iterators.
-   * @return
+   * @return Anzahl der Elemente in dem Iterator.
    * @throws RemoteException
    */
   public int size() throws RemoteException;
@@ -85,6 +86,9 @@ public interface DBIterator extends Remote {
 
 /*********************************************************************
  * $Log: DBIterator.java,v $
+ * Revision 1.8  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.7  2003/12/28 22:58:27  willuhn
  * @N synchronize mode
  *

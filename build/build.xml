@@ -6,7 +6,9 @@
 
         <property environment="env"/>
 
-		<property name="define.jarfilename"  value="jameica.jar"/>
+		<property name="define.projectname"  value="Jameica"/>
+		<property name="define.jarfilename.win32"  value="jameica-win32.jar"/>
+		<property name="define.jarfilename.linux"  value="jameica-linux.jar"/>
 		<property name="define.package"      value="de.willuhn.jameica"/>
 
         <property name="build.dir" 			 value="build"/>
@@ -26,19 +28,19 @@
         <property name="project.javadoc" 	 value="${project.release}/javadoc"/>
         <property name="src.dir" 			 value="src"/>
         <property name="cfg.dir" 			 value="cfg"/>
+        <property name="db.dir" 			 value="db"/>
         <property name="icon.dir" 			 value="${src.dir}/img"/>
         <property name="lang.dir" 			 value="${src.dir}/lang"/>
         <property name="lib.dir" 			 value="lib"/>
         <property name="class.dir" 			 value="${project.tmp}/bin"/>
 
 
-
-		<fileset dir="">
-			<patternset id="lib.compileset">
-				<include name="${lib.dir}/**.jar"/>
-				<include name="${lib.dir}/linux/**.*"/>
-			</patternset>
-		</fileset>
+		<path id="compilepath">
+			<pathelement location="${lib.dir}/bb_util.jar"/>
+			<pathelement location="${lib.dir}/mckoidb.jar"/>
+			<pathelement location="${lib.dir}/mysql-connector-java-3.0.8-stable-bin.jar"/>
+			<pathelement location="${lib.dir}/linux/swt.jar"/>
+		</path>
 
     </target>
 
@@ -48,26 +50,23 @@
         <mkdir dir="${class.dir}"/>
 
 		<javac fork="true" debug="true" deprecation="true" destdir="${class.dir}" srcdir="${src.dir}">
-			<classpath>
-				<fileset dir="">
-					<patternset refid="lib.compileset"/>
-				</fileset>
-			</classpath>
+			<classpath refid="compilepath" />
         </javac>
 
         <rmic verify="true" base="${class.dir}">
             <include name="**/*.class"/>
-            <classpath>
-				<fileset dir="">
-					<patternset refid="lib.compileset"/>
-				</fileset>
-            </classpath>
+			<classpath refid="compilepath" />
         </rmic>
 
-        <copydir 	src="${icon.dir}" 					dest="${class.dir}/img"/>
-        <copydir 	src="${lang.dir}" 					dest="${class.dir}/lang"/>
-        <copyfile 	src="${src.dir}/navigation.xml" 	dest="${class.dir}/navigation.xml"/>
-        <copyfile 	src="${src.dir}/menu.xml"	 		dest="${class.dir}/menu.xml"/>
+		<copy todir="${class.dir}/img">
+			<fileset dir="${icon.dir}"></fileset>
+		</copy>
+		<copy todir="${class.dir}/lang">
+			<fileset dir="${lang.dir}"></fileset>
+		</copy>
+
+		<copy file="${src.dir}/navigation.xml" tofile="${class.dir}/navigation.xml" />
+		<copy file="${src.dir}/menu.xml"       tofile="${class.dir}/menu.xml" />
 
 	</target>
 
@@ -85,41 +84,60 @@
 
         <mkdir dir="${project.release}"/>
 
-	    <jar destfile="${project.release}/${define.jarfilename}">
+	    <jar destfile="${project.release}/${define.jarfilename.win32}">
 		    <manifest>
 		    	<attribute name="Built-By" value="${user.name}"/>
-		    	<attribute name="Implementation-Title" value="${define.package}"/>
+		    	<attribute name="Implementation-Title" value="${define.projectname}"/>
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="img lib/bb_util.jar lib/linux/swt.jar lib/linux/swt-pi.jar"/>
+		    	<attribute name="Class-Path" value="img lib/mckoidb.jar lib/mysql-connector-java-3.0.8-stable-bin.jar lib/bb_util.jar lib/linux/swt.jar lib/linux/swt-pi.jar lib/linux/swt-mozilla.jar"/>
 		    </manifest>
 		    <fileset dir="${class.dir}"/>
 		</jar>
 		
-		<mkdir dir="${project.release}/lib"/>
+	    <jar destfile="${project.release}/${define.jarfilename.linux}">
+		    <manifest>
+		    	<attribute name="Built-By" value="${user.name}"/>
+		    	<attribute name="Implementation-Title" value="${define.projectname}"/>
+		    	<attribute name="Implementation-Version" value="${version}"/>
+		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
+		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
+		    	<attribute name="Class-Path" value="img lib/mckoidb.jar lib/mysql-connector-java-3.0.8-stable-bin.jar lib/bb_util.jar lib/win32/swt.jar"/>
+		    </manifest>
+		    <fileset dir="${class.dir}"/>
+		</jar>
 
-        <copydir 	src="${cfg.dir}" 					dest="${project.release}/cfg"/>
+		<mkdir dir="${project.release}/lib"/>
+		<mkdir dir="${project.release}/cfg"/>
+		<mkdir dir="${project.release}/db"/>
 
 		<copy todir="${project.release}/lib">
 			<fileset dir="${lib.dir}"/>
 		</copy>
 
-		<copy file="${build.dir}/jameica.sh" tofile="${project.release}/jameica.sh" />
-		<copy file="${build.dir}/jameicaserver.sh" tofile="${project.release}/jameicaserver.sh" />
+		<copy todir="${project.release}/cfg">
+			<fileset dir="${cfg.dir}"/>
+		</copy>
+
+		<copy todir="${project.release}/db">
+			<fileset dir="${db.dir}"/>
+		</copy>
+
+		<copy file="${build.dir}/jameica.sh"        tofile="${project.release}/jameica.sh" />
+		<copy file="${build.dir}/jameicaserver.sh"  tofile="${project.release}/jameicaserver.sh" />
+
+		<copy file="${build.dir}/jameica.bat"       tofile="${project.release}/jameica.bat" />
+		<copy file="${build.dir}/jameicaserver.bat" tofile="${project.release}/jameicaserver.bat" />
 
     </target>
 
-    <target depends="jar" name="javadoc" description="creates the api doc">
+    <target depends="compile" name="javadoc" description="creates the api doc">
 
         <mkdir dir="${project.javadoc}"/>
 
         <javadoc destdir="${project.javadoc}" packagenames="${define.package}.*">
-			<classpath>
-				<fileset dir="">
-					<patternset refid="lib.compileset"/>
-				</fileset>
-			</classpath>
+			<classpath refid="compilepath" />
             <sourcepath>
                 <pathelement location="${src.dir}"/>
             </sourcepath>

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.13 $
- * $Date: 2003/12/28 22:58:27 $
+ * $Revision: 1.14 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,13 +93,20 @@ public abstract class Input
 
   /**
    * Positioniert und malt das Eingabefeld im uebergebenen Composite.
-   * @param comment
+   * Es wird dabei mit einer vorgegebenen Standard-Breite gemalt.
+   * @param parent Das Composite, in dem das Eingabefeld gemalt werden soll.
    */
   public void paint(Composite parent)
   {
     paint(parent,240);
   }
 
+  /**
+   * Positioniert und malt das Eingabefeld im uebergebenen Composite.
+   * Es wird jedoch mit der angegebenen Breite gemalt.
+   * @param parent Das Composite, in dem das Eingabefeld gemalt werden soll.
+   * @param width Breite des Composites.
+   */
   public void paint(Composite parent,int width)
   {
     if (this.comment != null)
@@ -180,6 +187,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.14  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.13  2003/12/28 22:58:27  willuhn
  * @N synchronize mode
  *

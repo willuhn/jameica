@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/CheckboxInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/25 18:27:49 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,7 @@ public class CheckboxInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -49,7 +49,7 @@ public class CheckboxInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -57,7 +57,7 @@ public class CheckboxInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -69,7 +69,7 @@ public class CheckboxInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
    */
   public void focus()
   {
@@ -98,6 +98,9 @@ public class CheckboxInput extends Input
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.3  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.2  2003/12/25 18:27:49  willuhn
  * @N added checkBox
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/12 21:11:29 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,8 @@ import java.util.Hashtable;
 import de.willuhn.jameica.Application;
 
 /**
- * Diese Klasse stellt Services (z.Bsp. eine Datenbankverbindung) via RMI zur Verfuegung.
+ * Diese Klasse stellt Services via RMI zur Verfuegung.
+ * Das kann z.Bsp. eine Datenbankverbindung sein.
  * @author willuhn
  */
 public class ServiceFactory
@@ -238,6 +239,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.8  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.7  2003/12/12 21:11:29  willuhn
  * @N ObjectMetaCache
  *

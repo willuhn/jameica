@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,7 @@ public abstract class SearchDialog
 
   /**
    * Setzt die Liste, die fuer den Dialog verwendet werden soll.
-   * @param table
+   * @param list die anzizeigende Liste.
    */
   protected void setList(DBIterator list)
   {
@@ -186,6 +186,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.7  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.6  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

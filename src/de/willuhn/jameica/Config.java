@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/27 21:23:33 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -193,8 +193,7 @@ public class Config
 
 
   /**
-   * Liefert einen Daten-Container mit allen fuer die Erzeugung eines Remote-Service
-   * notwendigen Daten.
+   * Liefert einen Daten-Container mit allen fuer die Erzeugung eines Remote-Service notwendigen Daten.
    * @param name Alias-Name des Service.
    * @return Daten-Container.
    */
@@ -204,8 +203,7 @@ public class Config
   }
   
   /**
-   * Liefert einen Daten-Container mit allen fuer die Erzeugung eines lokalen Services
-   * notwendigen Daten.
+   * Liefert einen Daten-Container mit allen fuer die Erzeugung eines lokalen Services notwendigen Daten.
    * @param name Alias-Name des Service.
    * @return Daten-Container.
    */
@@ -253,7 +251,7 @@ public class Config
 
   /**
    * Liefert das Verzeichnis mit den Plugins.
-   * @return
+   * @return Verzeichnis mit den Plugins.
    */
   public String getPluginDir()
   {
@@ -262,7 +260,7 @@ public class Config
 
   /**
    * Liefert den Pfad zum Log-File.
-   * @return
+   * @return Pfad zum Logfile.
    */
   public String getLogFile()
   {
@@ -271,7 +269,7 @@ public class Config
 
   /**
    * Liefert true, wenn die Anwendung um Debug-Mode laeuft.
-   * @return
+   * @return true, wenn die Anwendung im Debug-Mode laeuft.
    */
   public boolean debug()
   {
@@ -280,7 +278,7 @@ public class Config
 
   /**
    * Liefert true, wenn die Anwendung um IDE-Mode laeuft.
-   * @return
+   * @return true, wenn die Anwendung um IDE-Mode laeuft.
    */
   public boolean ide()
   {
@@ -289,7 +287,7 @@ public class Config
 
   /**
    * Liefert den Pfad zum Config-Verzeichnis.
-   * @return
+   * @return Pfad zum Config-Verzeichnis.
    */
   public String getConfigDir()
   {
@@ -300,6 +298,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.9  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.8  2003/12/27 21:23:33  willuhn
  * @N object serialization
  *

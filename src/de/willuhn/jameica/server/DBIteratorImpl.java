@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.17 $
- * $Date: 2003/12/28 22:58:27 $
+ * $Revision: 1.18 $
+ * $Date: 2003/12/29 16:29:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -202,7 +202,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 	}
 
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBIterator#hasNext()
+   * @see de.willuhn.jameica.rmi.DBIterator#hasNext()
    */
   public boolean hasNext() throws RemoteException
 	{
@@ -211,7 +211,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 	}
 
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBIterator#next()
+   * @see de.willuhn.jameica.rmi.DBIterator#next()
    */
   public DBObject next() throws RemoteException
 	{
@@ -226,7 +226,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 	}
   
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBIterator#previous()
+   * @see de.willuhn.jameica.rmi.DBIterator#previous()
    */
   public DBObject previous() throws RemoteException
   {
@@ -290,6 +290,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.18  2003/12/29 16:29:47  willuhn
+ * @N javadoc
+ *
  * Revision 1.17  2003/12/28 22:58:27  willuhn
  * @N synchronize mode
  *
