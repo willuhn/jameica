@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,7 @@ public class Start extends AbstractView
 
   public void bind()
   {
-    Headline headline = new Headline(getParent(),"Jameica");
+    new Headline(getParent(),"Jameica");
     
     LabelGroup plugins = new LabelGroup(getParent(),I18N.tr("installierte Plugins"));
     
@@ -55,6 +55,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.5  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.4  2003/11/24 23:01:58  willuhn
  * @N added settings
  *

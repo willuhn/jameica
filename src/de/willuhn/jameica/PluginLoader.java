@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/11/30 16:37:45 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -101,9 +101,6 @@ public class PluginLoader extends ClassLoader
     for(int i=0;i<jars.size();++i)
     {
       File file = (File) jars.get(i);
-      String filename   = file.getName();
-      String ext        = filename.substring(filename.lastIndexOf(".")+1);
-
 
       JarFile jar = null;
       try {
@@ -327,6 +324,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.10  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.9  2003/11/30 16:37:45  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/11/25 01:23:27 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -79,8 +79,6 @@ public class Menu
    */
   class MenuCascade {
 
-    private String path;
-
     /**
      * ct.
      * @param key Pfad zum aktuellen Menupunkt in der Config-Datei.
@@ -120,7 +118,7 @@ public class Menu
       String text = I18N.tr(xml.getString(s,"name",null));
       if (text != null && text.startsWith("-"))
       {
-        final MenuItem item = new MenuItem(parent,SWT.SEPARATOR);
+        new MenuItem(parent,SWT.SEPARATOR);
         return;
       }
       final MenuItem item = new MenuItem(parent,SWT.CASCADE);
@@ -176,6 +174,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.9  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.8  2003/11/25 01:23:27  willuhn
  * @N added Menu shortcuts
  *

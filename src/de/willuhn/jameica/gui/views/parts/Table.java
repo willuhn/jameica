@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/11/27 00:22:18 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -96,11 +96,8 @@ public class Table
       String field = fieldData[1];
       if (title == null) title = "";
       try {
-        if (DBObject.FIELDTYPE_DOUBLE.equals(_o.getFieldType(field)) ||
-            DBObject.FIELDTYPE_INT. equals(_o.getFieldType(field)))
-        {
+        if (DBObject.FIELDTYPE_DOUBLE.equals(_o.getFieldType(field)))
           col.setAlignment(SWT.RIGHT);
-        }
       }
       catch (Exception e)
       {
@@ -187,6 +184,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.7  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.6  2003/11/27 00:22:18  willuhn
  * @B paar Bugfixes aus Kombination RMI + Reflection
  * @N insertCheck(), deleteCheck(), updateCheck()

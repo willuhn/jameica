@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/01 21:22:58 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ public class SelectInput extends Input
 {
 
   private String[] values;
+  private Object[] data;
   private String preselected;
   private Combo combo;
 
@@ -72,13 +73,19 @@ public class SelectInput extends Input
     {
       DBIterator list = object.getList();
       this.values = new String[list.size()];
+      this.data = new Object[list.size()];
       DBObject o = null;
       int i = 0;
       String primaryField = object.getPrimaryField();
       while (list.hasNext())
       {
         o = list.next();
-        this.values[i++] = (String) o.getField(primaryField);
+        String value = (String) o.getField(primaryField);
+        if (value == null || "".equals(value))
+          continue; // skip empty values
+        this.data[i] = o;
+        this.values[i] = value;
+        ++i;
       }
     } catch (RemoteException e)
     {
@@ -100,12 +107,19 @@ public class SelectInput extends Input
     try
     {
       this.values = new String[list.size()];
+      this.data = new Object[list.size()];
       DBObject o = null;
       int i = 0;
       while (list.hasNext())
       {
         o = list.next();
-        this.values[i++] = o.getField(o.getPrimaryField()).toString();
+        String value = o.getField(o.getPrimaryField()).toString();
+        if (value == null || "".equals(value))
+          continue; // skip empty values
+
+        this.data[i] = o;
+        this.values[i] = value;
+        ++i;
       }
     } catch (RemoteException e)
     {
@@ -128,7 +142,8 @@ public class SelectInput extends Input
 
     for (int i = 0; i < values.length; ++i)
     {
-      combo.add((values[i] == null ? "" : values[i]));
+      combo.add(values[i]);
+      combo.setData(values[i],data[i]);
       if (preselected != null && preselected.equals(values[i]))
         selected = i;
     }
@@ -145,6 +160,15 @@ public class SelectInput extends Input
     return combo.getText();
   }
 
+  /**
+   * Liefert hinter dem angegebenen Namen hinterlegten Daten fuer diese Combo-Box.
+   * @param name Alias-Name fuer die Daten.
+   * @return Daten.
+   */
+  public Object getValue(String name)
+  {
+    return combo.getData(name);
+  }
   /**
    * @see de.willuhn.jameica.views.parts.Input#focus()
    */
@@ -163,6 +187,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.11  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.10  2003/12/01 21:22:58  willuhn
  * *** empty log message ***
  *

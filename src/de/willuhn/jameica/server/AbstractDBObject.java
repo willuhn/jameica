@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/11/30 16:23:09 $
+ * $Revision: 1.13 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -252,7 +252,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
         DBObject cachedObject = (DBObject) foreignObjectCache.get(foreign);
         if (cachedObject != null)
         {
-          cachedObject.load(o.toString());
+          String value = o.toString();
+          if (!value.equals(cachedObject.getID()))
+            cachedObject.load(value);
         }
         else {
           cachedObject = Application.getDefaultDatabase().createObject(foreign, o.toString());
@@ -686,6 +688,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.13  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.12  2003/11/30 16:23:09  willuhn
  * *** empty log message ***
  *

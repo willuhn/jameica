@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/01 23:02:00 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -119,8 +119,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 			stmt = conn.createStatement();
       sql = prepareSQL();
       
-      if (Application.DEBUG)
-        Application.getLog().debug("executing sql: " + sql);
+      Application.getLog().debug("executing sql: " + sql);
 			rs = stmt.executeQuery(sql);
 			while (rs.next())
 			{
@@ -212,6 +211,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.8  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.7  2003/12/01 23:02:00  willuhn
  * *** empty log message ***
  *

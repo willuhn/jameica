@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/01 21:22:58 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -127,7 +127,7 @@ public abstract class Input
       commentLabel = new Label(this.parent,SWT.NONE);
       commentLabel.setText(this.comment);
       commentLabel.setForeground(Style.COLOR_COMMENT);
-      commentLabel.setAlignment(SWT.RIGHT);
+      commentLabel.setAlignment(SWT.LEFT);
       commentLabel.setLayoutData(labelGrid);
     }
 
@@ -149,6 +149,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.8  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.7  2003/12/01 21:22:58  willuhn
  * *** empty log message ***
  *

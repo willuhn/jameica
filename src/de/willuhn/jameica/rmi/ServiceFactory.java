@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/27 00:22:18 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/05 17:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.lang.reflect.Constructor;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.security.Permission;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -154,9 +153,8 @@ public class ServiceFactory
   public static void shutDown()
   {
     Application.getLog().info("shutdown services");
-    Registry registry;
     try {
-      registry = LocateRegistry.getRegistry();
+      LocateRegistry.getRegistry();
     }
     catch (Exception ex)
     {
@@ -197,6 +195,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.5  2003/12/05 17:12:23  willuhn
+ * @C SelectInput
+ *
  * Revision 1.4  2003/11/27 00:22:18  willuhn
  * @B paar Bugfixes aus Kombination RMI + Reflection
  * @N insertCheck(), deleteCheck(), updateCheck()
