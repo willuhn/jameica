@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.14 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.15 $
+ * $Date: 2003/12/12 21:11:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
@@ -37,7 +38,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 {
 
   // Die Datenbank-Verbindung
-  protected Connection conn;
+  private Connection conn;
 
   // Der Primary-Key des Objektes
   private String id;
@@ -56,36 +57,94 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
   /**
    * ct
-   * @param conn die JDBC-Connection.
-   * @param id ID des zu ladenden Objektes oder null, wenn es neu angelegt werden soll.
    * @throws RemoteException
    */
-	public AbstractDBObject(Connection conn, String id) throws RemoteException
+	public AbstractDBObject() throws RemoteException
 	{
 		super(); // Konstruktor von UnicastRemoteObject
-    Application.getLog().debug("loading new object from database");
-		this.conn = conn;
-    try {
-      this.conn.setAutoCommit(false); // Auto-Commit schalten wir aus weil wir vorsichtig sind ;)
-    }
-    catch (SQLException e)
-    {
-      Application.getLog().error("  unable to set autocommit to false.");
-      throw new RemoteException("unable to set autocommit to false.",e);
-    }
-		if (this.conn == null) {
-      Application.getLog().error("  connection is null");
-      throw new RemoteException("Connection is null");
-		}
-		init();
-		load(id);
 	}
 
-	/**
-   * Holt sich die Meta-Daten der Tabelle und erzeugt die Properties.
+  /**
+   * Speichert die Connection im Objekt. Die einzelnen Schritte zum Initialisieren
+   * eines Objektes (Connection speichern, Init, Load) sind bewusst auseinandergedroeselt,
+   * damit wir einen Cache mit Meta-Daten fuer Fachobjekte halten koennen, ohne Referenzen
+   * zu den Objekten dort speichern zu muessen. 
+   * @param conn
    */
-  private void init() throws RemoteException
+  void setConnection(Connection conn) throws SQLException
   {
+    if (conn == null)
+      throw new SQLException("connection is null");
+
+    this.conn = conn;
+    this.conn.setAutoCommit(false); // Auto-Commit schalten wir aus weil wir vorsichtig sind ;)
+  }
+  
+  /**
+   * Liefert die Exception, die dieses Objekt gerade benutzt.
+   * @return die Connection dieses Objektes.
+   */
+  protected Connection getConnection()
+  {
+    return conn;
+  }
+  
+  /**
+   * Liefert die Metadaten des Objektes.
+   * Die kann man gut gebrauchen, um ein neues Objekt dieses
+   * Typs zu erzeugen, ohne dafuer die Metadaten aus der Datenbank
+   * neu lesen zu muessen.
+   * @return Die Metadaten des Objektes.
+   */
+  protected ObjectMetaData getObjectMetaData()
+  {
+    return new ObjectMetaData(this.types);
+  }
+
+  /**
+   * Speichert existierende ObjectMeta-Daten in dem Objekt.
+   * Ein anschliessendes init() ist dann nicht mehr noetig.
+   */
+  protected void setObjectmetaData(ObjectMetaData omd)
+  {
+    this.types = omd.getFields();
+
+    this.properties = new HashMap();
+    Iterator i = this.types.keySet().iterator();
+    while (i.hasNext())
+    {
+      this.properties.put(this.types.get(i.next()),null);
+    }
+  }
+
+  /**
+   * Prueft, ob die Datenbankverbindung existiert und funktioniert.
+   * @throws RemoteException wird geworfen, wenn die Connection kaputt ist.
+   */
+  private void checkConnection() throws RemoteException
+  {
+    if (conn == null)
+      throw new RemoteException("database connection not set.");
+  }
+
+
+  /**
+   * Holt sich die Meta-Daten der Tabelle und erzeugt die Properties.
+   * @throws SQLException Wenn beim Laden der Meta-Daten ein Datenbank-Fehler auftrat.
+   */
+  void init() throws SQLException
+  {
+    try {
+      checkConnection();
+    }
+    catch (RemoteException e)
+    {
+      throw new SQLException(e.getMessage());
+    }
+    
+    if (types.size() > 0)
+      return; // allready initialized
+
 		String tableName = getTableName();
 		ResultSet meta = null;
     Application.getLog().debug("trying to read meta data from table " + tableName);
@@ -105,9 +164,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		}
 		catch (SQLException e)
 		{
-			Application.getLog().error("  error while reading meta data");
-      e.printStackTrace();
-			throw new RemoteException("unable to get metadata from table " + tableName,e);
+			Application.getLog().error("  error while reading meta data from table " + tableName);
+      throw e;
 		}
 		finally {
 			try {
@@ -122,6 +180,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public final void load(String id) throws RemoteException
 	{
+    checkConnection();
+
 		this.id = ((id == null || id.equals("")) ? null : id);
 		if (this.id == null)
 			return; // nothing to load
@@ -191,6 +251,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     if (isNewObject())
       return; // no, we delete no new objects ;)
 
+    checkConnection();
     deleteCheck();
 
 		Statement stmt = null;
@@ -286,7 +347,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     }
     catch (Exception e)
     {
-      throw new RemoteException("unable to determine");
+      throw new RemoteException("unable to determine filed type of field " + fieldName);
     }
   }
 
@@ -321,8 +382,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * in diesem Objekt.
    * @return
    */
-  private void setLastId()
+  private void setLastId() throws RemoteException
 	{
+    checkConnection();
+
 		Statement stmt = null;
 		try {
 			stmt = conn.createStatement();
@@ -342,7 +405,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   private void insert() throws RemoteException, ApplicationException
   {
+    checkConnection();
     insertCheck();
+
     id = null;
 		PreparedStatement stmt = null;
     try {
@@ -383,7 +448,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   private void update() throws RemoteException, ApplicationException
   {
+    checkConnection();
     updateCheck();
+
 		PreparedStatement stmt = null;
     int affected = 0;
     try {
@@ -433,6 +500,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   protected PreparedStatement getUpdateSQL() throws RemoteException
   {
+    checkConnection();
+
     String sql = "update " + getTableName() + " set ";
     String[] fields = getFields();
 
@@ -468,6 +537,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   protected PreparedStatement getInsertSQL() throws RemoteException
   {
+    checkConnection();
 
     String sql = "insert into " + getTableName() + " ";
     String[] fields = getFields();
@@ -566,9 +636,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Liefert den Namen der repraesentierenden SQL-Tabelle.
    * Muss von allen abgeleiteten Klassen implementiert werden.
    * @return Name der repraesentierenden SQL-Tabelle.
-   * @throws RemoteException
    */
-  protected abstract String getTableName() throws RemoteException;
+  protected abstract String getTableName();
 
   /**
    * @see de.willuhn.jameica.rmi.DBObject#getPrimaryField()
@@ -618,6 +687,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public final void transactionBegin() throws RemoteException
   {
+    checkConnection();
+
     if (this.inTransaction)
       return;
 
@@ -630,6 +701,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public final void transactionRollback() throws RemoteException
   {
+    checkConnection();
+
     if (!this.inTransaction)
       return;
 
@@ -652,6 +725,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public final void transactionCommit() throws RemoteException
   {
+    checkConnection();
+
     if (!this.inTransaction)
       return;
 
@@ -690,6 +765,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.15  2003/12/12 21:11:29  willuhn
+ * @N ObjectMetaCache
+ *
  * Revision 1.14  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

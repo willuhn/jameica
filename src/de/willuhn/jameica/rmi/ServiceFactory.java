@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/12 21:11:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -185,18 +185,6 @@ public class ServiceFactory
   }
 
   /**
-   * Wird beim Beenden der Anwendung aufgerufen und sendet eine Benachrichtigung
-   * an alle verbundenen Clients, damit sie sich auch runterfahren. Denn wenn
-   * der von ihnen genutzte Service nicht mehr existiert, ist die fehlerfreie
-   * Funktion des Clients nicht mehr gewaehrleistet.
-   * @param service Der Service, der gerade heruntergefahren wird.
-   */
-  private static void notifiyClients(Service service)
-  {
-    // TODO: Notify Clients
-  }
-
-  /**
    * Faehrt die Remote-Services runter.
    */
   public static void shutDown()
@@ -227,8 +215,7 @@ public class ServiceFactory
 
 			try {
 				service = (Service) Naming.lookup(serviceData.getUrl());
-        notifiyClients(service);
-				service.close();
+				service.shutDown();
 			}
 			catch (Exception ex) {
         if (Application.DEBUG)
@@ -251,6 +238,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.7  2003/12/12 21:11:29  willuhn
+ * @N ObjectMetaCache
+ *
  * Revision 1.6  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

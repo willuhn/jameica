@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/12 21:11:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.server;
 
-import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
@@ -41,6 +40,8 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
   private boolean connected = false;
   private Connection conn;
 
+  private boolean available = true;
+
 	/**
 	 * Erzeugt eine neue Instanz.
 	 */
@@ -66,6 +67,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
    */
   public void open() throws RemoteException
   {
+    if (!available)
+      throw new RemoteException("server shut down. service no longer available.");
+
     try {
       Application.getLog().info("opening db connection. request from host: " + getClientHost());
     }
@@ -102,6 +106,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
    */
   public void close() throws RemoteException
   {
+    if (!available)
+      return;
+
     try {
       Application.getLog().info("closing db connection. request from host: " + getClientHost());
     }
@@ -128,6 +135,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
    */
   public DBObject createObject(Class c, String id) throws RemoteException
   {
+    if (!available)
+      throw new RemoteException("server shut down. service no longer available.");
+
     try {
       Application.getLog().info("try to create new DBObject. request from host: " + getClientHost());
     }
@@ -135,11 +145,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
     open();
     try {
-      String className = findImplementationName(c);
-    	Class clazz = Class.forName(className);
-      Constructor ct = clazz.getConstructor(new Class[]{Connection.class,String.class});
-      ct.setAccessible(true);
-      return (DBObject) ct.newInstance(new Object[] {conn,id});
+      DBObject o = ObjectMetaCache.create(conn,c);
+      o.load(id);
+      return o;
     }
     catch (Exception e)
     {
@@ -149,35 +157,14 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
     }
   }
 
-  /**
-   * Liefert den Klassennamen der Implementierung zum uebergebenen Interface oder RMI-Stub.
-   * @param clazz Stubs oder Interface.
-   * @return Name der Implementierung.
-   */
-  private String findImplementationName(Class clazz)
-  {
-
-    String className = clazz.getName();
-    className = className.replaceAll(".rmi.",".server."); 
-
-    // Normalerweise wollen wir ja bei der Erstellung nur die Klasse des
-    // Interfaces angeben und nicht die der Impl. Deswegen schreiben
-    // wir das "Impl" selbst hinten dran, um es instanziieren zu koennen.
-    if (!className.endsWith("Impl") && ! className.endsWith("_Stub"))
-      className += "Impl";
-
-    // Es sei denn, es ist RMI-Stub. Dann muessen wir das "_Stub" abschneiden.
-    if (className.endsWith("_Stub"))
-      className = className.substring(0,className.length()-5);
-
-    return className;    
-  }
-
 	/**
    * @see de.bbvag.dhl.easylog.hubs.DBHub#createList(java.lang.Class)
    */
   public DBIterator createList(Class c) throws RemoteException
 	{
+    if (!available)
+      throw new RemoteException("server shut down. service no longer available.");
+
     try {
       Application.getLog().info("try to create new DBIterator. request from host: " + getClientHost());
     }
@@ -185,12 +172,8 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
     open();
 		try {
-			String className = findImplementationName(c);
-			Class clazz = Class.forName(className);
-			Constructor ct = clazz.getConstructor(new Class[]{Connection.class,String.class});
-			ct.setAccessible(true);
-			AbstractDBObject object = (AbstractDBObject) ct.newInstance(new Object[] {conn,null});
-			return new DBIteratorImpl(object,conn);
+      DBObject o = ObjectMetaCache.create(conn,c);
+			return new DBIteratorImpl((AbstractDBObject)o,conn);
 		}
 		catch (Exception e)
 		{
@@ -200,10 +183,32 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 		}
 	}
 
+
+  /**
+   * @see de.willuhn.jameica.rmi.Service#isAvailable()
+   */
+  public boolean isAvailable() throws RemoteException
+  {
+    return available;
+  }
+
+
+  /**
+   * @see de.willuhn.jameica.rmi.Service#shutDown()
+   */
+  public void shutDown() throws RemoteException
+  {
+    available = false;
+    close();
+  }
+
 }
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.6  2003/12/12 21:11:29  willuhn
+ * @N ObjectMetaCache
+ *
  * Revision 1.5  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *
