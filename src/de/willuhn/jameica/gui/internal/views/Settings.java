@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/14 23:15:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/20 12:33:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,11 +15,10 @@ package de.willuhn.jameica.gui.internal.views;
 
 import java.rmi.RemoteException;
 
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-
 import de.willuhn.jameica.gui.AbstractView;
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
@@ -70,15 +69,21 @@ public class Settings extends AbstractView
 		colorGroup.addLabelPair(i18n.tr("Aktive Links"),control.getColorLinkActive());
 
 		ButtonArea colorButtons = colorGroup.createButtonArea(3);
-		colorButtons.addCustomButton(i18n.tr("Zurücksetzen"),new Listener()
+		colorButtons.addButton(i18n.tr("Zurücksetzen"),new Action()
     {
-      public void handleEvent(Event event)
+      public void handleAction(Object context) throws ApplicationException
       {
 				control.handleRestore();
       }
     });
-		colorButtons.addCancelButton(control);
-		colorButtons.addStoreButton(control);
+		colorButtons.addButton(i18n.tr("Zurück"), new Back());
+		colorButtons.addButton(i18n.tr("Speichern"), new Action()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+      	control.handleStore();
+      }
+    });
 
 		//
 		/////////////////////////////////////////////////////////////////
@@ -97,6 +102,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.3  2004/10/20 12:33:53  willuhn
+ * @C MVC-Refactoring (new Controllers)
+ *
  * Revision 1.2  2004/10/14 23:15:05  willuhn
  * @N maded locale configurable via GUI
  * @B fixed locale handling

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/FatalErrorView.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/20 12:33:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,10 +19,9 @@ import java.io.PrintStream;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.AbstractView;
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
@@ -78,23 +77,22 @@ public class FatalErrorView extends AbstractView
 		  }
 	    final String s = e1 + e2;
 	    ButtonArea buttons = new ButtonArea(getParent(),1);
-	    buttons.addCustomButton(i18n.tr("in Zwischenablage kopieren"),new Listener()
+	    buttons.addButton(i18n.tr("in Zwischenablage kopieren"),new Action()
       {
-        public void handleEvent(Event event)
+        public void handleAction(Object context) throws ApplicationException
         {
-	        final Clipboard cb = new Clipboard(GUI.getDisplay());
-	        TextTransfer textTransfer = TextTransfer.getInstance();
-	        String[] logEntries = Logger.getLastLines();
-	        StringBuffer sb = new StringBuffer();
-	        for (int i=0;i<logEntries.length;++i)
-	        {
-	          sb.append(logEntries[i]);
-	        }
-	        final String log = "\n" + i18n.tr("Auszug aus dem Systemprotokoll") + ":\n" + sb.toString();
-	        cb.setContents(new Object[]{(s + log)}, new Transfer[]{textTransfer});
-	      }
-	    });
-
+					final Clipboard cb = new Clipboard(GUI.getDisplay());
+					TextTransfer textTransfer = TextTransfer.getInstance();
+					String[] logEntries = Logger.getLastLines();
+					StringBuffer sb = new StringBuffer();
+					for (int i=0;i<logEntries.length;++i)
+					{
+						sb.append(logEntries[i]);
+					}
+					final String log = "\n" + i18n.tr("Auszug aus dem Systemprotokoll") + ":\n" + sb.toString();
+					cb.setContents(new Object[]{(s + log)}, new Transfer[]{textTransfer});
+        }
+      });
 		}
 		catch (Exception e)
 		{
@@ -122,6 +120,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.2  2004/10/20 12:33:53  willuhn
+ * @C MVC-Refactoring (new Controllers)
+ *
  * Revision 1.1  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/License.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/20 12:33:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.gui.internal.views;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.controller.LicenseControl;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
@@ -41,7 +42,7 @@ public class License extends AbstractView {
 		libs.paint(getParent());
 
 		ButtonArea buttons = new ButtonArea(getParent(),1);
-		buttons.addCancelButton(control);
+		buttons.addButton(i18n.tr("Zuruück"),new Back());
   }
 
   /**
@@ -55,6 +56,9 @@ public class License extends AbstractView {
 
 /**********************************************************************
  * $Log: License.java,v $
+ * Revision 1.2  2004/10/20 12:33:53  willuhn
+ * @C MVC-Refactoring (new Controllers)
+ *
  * Revision 1.1  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *
