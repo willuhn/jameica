@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginResources.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/04/13 23:15:23 $
+ * $Revision: 1.8 $
+ * $Date: 2004/04/14 22:16:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ public class PluginResources {
 	private EmbeddedDatabase db = null;
 	private I18N i18n = null;
 	private String workPath = null;
+	private String path = null;
 
   /**
    * ct.
@@ -48,14 +49,22 @@ public class PluginResources {
 
 	/**
 	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
+	 * Bei entpackten Plugins wird das Verzeichnis direkt zurueck-
+	 * gegeben. Bei Plugins, die sich in Jars befinden, wird
+	 * das Verzeichnis geliefert, in dem das Jar liegt.
 	 * @return Verzeichnis, in dem sich das Plugin befindet.
 	 */
 	public String getPath()
 	{
-		if (plugin.getFile().isFile())
-			return plugin.getFile().getParent();
+		if (path != null)
+			return path;	
 
-		return plugin.getFile().getPath();
+		// ist das Plugin ein File?
+		if (plugin.getFile().isFile())
+			path = plugin.getFile().getParentFile().getAbsolutePath();
+		else
+			path = plugin.getFile().getAbsolutePath();
+		return path;
 	}
 
 	/**
@@ -92,7 +101,6 @@ public class PluginResources {
 	 * Liefert die embedded Datenbank des Plugins. Damit ist keine JDBC-Verbindung
 	 * oder ein DB-Hub gemeint, sondern ein Objekt, mit dem man das Plugin
 	 * eine Datenbank fuer sich erstellen und mit Tabellen fuellen kann.
-	 * TODO: Username und Passwort?
 	 * @return die Embedded Datenbank des Plugins.
 	 */
 	public EmbeddedDatabase getDatabase()
@@ -134,6 +142,9 @@ public class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.8  2004/04/14 22:16:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/04/13 23:15:23  willuhn
  * *** empty log message ***
  *

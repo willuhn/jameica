@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.17 $
+ * $Date: 2004/04/14 22:16:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -136,7 +136,6 @@ public class Style
   
   /**
    * Erzeugt ein Canvas mit dem dem angegebenen Hintergrundbild.
-   * TODO: Derzeit wird das Bild immer rechts unten ausgerichtet.
    * @param parent Composite, in dem das Canvas gemalt werden soll.
    * Hinweis: Das Composite muss ein GridLayout haben.
    * @param image anzuzeigendes Hintergrundbild.
@@ -170,6 +169,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.17  2004/04/14 22:16:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms

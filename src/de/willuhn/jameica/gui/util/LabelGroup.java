@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/14 22:16:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -78,7 +78,7 @@ public class LabelGroup
   {
     // Label
     final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-    // labelGrid.widthHint = 130; // TODO Weite fuer Label
+    // labelGrid.widthHint = 130;
     labelGrid.verticalAlignment = GridData.CENTER;
     final Label label = new Label(group, SWT.NONE);
 		label.setBackground(Style.COLOR_BG);
@@ -222,6 +222,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.2  2004/04/14 22:16:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/03/18 01:24:47 $
+ * $Revision: 1.16 $
+ * $Date: 2004/04/14 22:16:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,8 @@ package de.willuhn.jameica;
 
 import java.io.File;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
+
+import de.willuhn.util.JarInfo;
 
 /**
  * Abstrakte Basis-Klasse aller Plugins.
@@ -28,6 +29,9 @@ public abstract class AbstractPlugin
 	private File file = null;
 	private PluginResources res = null;
 	private Settings settings = null;
+	
+	private String name = null;
+	private double version = -1;
 
 	/**
 	 * ct.
@@ -65,32 +69,22 @@ public abstract class AbstractPlugin
   /**
    * Diese Funktion versucht den Namen aus der Datei META-INF/MANIFEST.MF zu extrahieren
    * insofern es sich um ein Jar handelt.
-   * Sie versucht dabei, den Schluessel "Implementation-Title" zu parsen.
+   * Sie versucht dabei, den Schluessel "Implementation-Title" zu lesen.
    * Schlaegt das fehl, wird der Name der Datei/Verzeichnisses zurueckgeliefert.
    * @return Name des Plugins.
    */
   public String getName()
   {
-		String name = "unknown";
-    try {
-			if (!file.getName().endsWith(".jar"))
-				return file.getName();
+		if (name != null)
+			return name;
 
-			JarFile jar = new JarFile(file);
-      Manifest manifest = jar.getManifest();
-      name = manifest.getMainAttributes().getValue("Implementation-Title");
-      if (name == null) throw new Exception();
-      return name;
+    try {
+    	JarInfo info = new JarInfo(new JarFile(this.file));
+    	name = info.getAttribute(JarInfo.ATTRIBUTE_TITLE);
     }
     catch (Exception e)
     {
-      try {
-        name = file.getName();
-      }
-      catch (NullPointerException ee)
-      {
-      }
-      Application.getLog().error("unable to read name from plugin " + name);
+      name = this.file.getName();
     }
 		return name;
   }
@@ -104,28 +98,18 @@ public abstract class AbstractPlugin
    */
   public double getVersion()
   {
-    try {
-			if (!file.getName().endsWith(".jar"))
-				return 1.0;
+		if (version != -1)
+			return version;
 
-			JarFile jar = new JarFile(file);
-      Manifest manifest = jar.getManifest();
-      String version = manifest.getMainAttributes().getValue("Implementation-Version");
-      version = version.substring(2).replace('_','.');
-      return Double.parseDouble(version);
-    }
-    catch (Exception e)
-    {
-      String name = "unknown";
-      try {
-        name = file.getName();
-      }
-      catch (NullPointerException ee)
-      {
-      }
-      Application.getLog().error("unable to read version number from plugin " + name);
-    }
-    return 1.0;
+		try {
+			JarInfo info = new JarInfo(new JarFile(this.file));
+			version = info.getVersion();
+		}
+		catch (Exception e)
+		{
+			version = 1.0;
+		}
+		return version;
   }
   
 	/**
@@ -173,6 +157,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.16  2004/04/14 22:16:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/03/18 01:24:47  willuhn
  * @C refactoring
  *

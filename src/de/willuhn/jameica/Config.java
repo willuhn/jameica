@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/04/13 23:15:23 $
+ * $Revision: 1.24 $
+ * $Date: 2004/04/14 22:16:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,7 +85,7 @@ public class Config
 
 	private final static String defaultConfig =
 		"<config>\n" +
-		"  <logfile>dynameica.log</logfile>\n" +
+		"  <logfile>run/dynameica.log</logfile>\n" +
 		"  <loglevel>INFO</loglevel>\n" +
 		"  <defaultlanguage>de_de</defaultlanguage>\n" +
 		"  <rmiport>1099</rmiport>\n" +
@@ -570,6 +570,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.24  2004/04/14 22:16:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2004/04/13 23:15:23  willuhn
  * *** empty log message ***
  *
