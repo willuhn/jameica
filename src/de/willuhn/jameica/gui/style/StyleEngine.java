@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleEngine.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.4 $
+ * $Date: 2004/10/23 17:34:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,7 +26,6 @@ public class StyleEngine {
 	public static synchronized void init()
 	{
 		try {
-			// TODO: Wie zur Hoelle krieg ich es hin, dass der Classfinder die Klassen kennenlernt?
 			Application.getClassLoader().load(StyleFactoryDefaultImpl.class.getName());
 			Application.getClassLoader().load(StyleFactoryFlatImpl.class.getName());
 		}
@@ -40,6 +39,9 @@ public class StyleEngine {
 
 /**********************************************************************
  * $Log: StyleEngine.java,v $
+ * Revision 1.4  2004/10/23 17:34:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *
