@@ -40,6 +40,7 @@
 			<pathelement location="${lib.dir}/linux/swt.jar"/>
 			<pathelement location="${lib.dir}/nanoxml-2.2.3.jar"/>
 			<pathelement location="../util/bin/"/>
+			<pathelement location="../datasource/bin/"/>
 		</path>
 
     </target>
