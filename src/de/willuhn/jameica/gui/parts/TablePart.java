@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/08/11 23:37:21 $
+ * $Revision: 1.16 $
+ * $Date: 2004/08/16 19:15:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -216,7 +216,8 @@ public class TablePart implements Part
 				{
 					// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
 					GenericObject go = (GenericObject) value;
-					item.setText(i,go.getAttribute(go.getPrimaryAttribute()).toString());
+					Object attribute = go.getAttribute(go.getPrimaryAttribute());
+					item.setText(i,attribute == null ? "" : attribute.toString());
 				}
 
 				// Formatter vorhanden?
@@ -326,6 +327,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.16  2004/08/16 19:15:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/08/11 23:37:21  willuhn
  * @N Navigation ist jetzt modular erweiterbar
  *
