@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/19 02:14:00 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2005/02/22 00:04:59 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -38,7 +38,7 @@ public class JameicaSecurityManager extends SecurityManager
     super();
     try
     {
-      jameicaPath = new File(".").getCanonicalPath(); // current dir
+      jameicaPath = new File(".").getCanonicalPath() + File.separator; // current dir
       Logger.info("write permissions disabled for " + jameicaPath);
     }
     catch (IOException e)
@@ -101,6 +101,9 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.2  2005/02/22 00:04:59  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/01/19 02:14:00  willuhn
  * @N Wallet zum Verschluesseln von Benutzerdaten
  *
