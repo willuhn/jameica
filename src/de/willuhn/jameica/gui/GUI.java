@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/22 21:00:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -337,7 +337,7 @@ public class GUI
     // exit running gui loop
     stop = true;
   }
-
+  
   /**
    * Die Beenden-Methoden sind deshalb getrennt, damit es moeglich
    * ist, die GUI von einem anderen Thread beenden zu lassen
@@ -365,6 +365,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.9  2003/12/22 21:00:34  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

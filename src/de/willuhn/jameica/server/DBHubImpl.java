@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/15 19:08:01 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/22 21:00:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -254,10 +255,42 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
     Application.getLog().debug("object cache matches: " + ObjectMetaCache.getStats() + " %");
   }
 
+
+  /**
+   * @see de.willuhn.jameica.rmi.DBHub#ping()
+   */
+  public boolean ping() throws RemoteException
+  {
+    if (!available)
+      return false;
+    open();
+    try {
+      Application.getLog().debug("sending ping to database");
+      Statement stmt = conn.createStatement();
+      boolean b = stmt.execute("select 1");
+      if (b)
+        Application.getLog().debug("ok");
+      else
+        Application.getLog().debug("failed");
+      return b;
+      
+    }
+    catch (SQLException e)
+    {
+      if (Application.DEBUG)
+        e.printStackTrace();
+      Application.getLog().debug("failed");
+      return false;
+    }
+  }
+
 }
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.9  2003/12/22 21:00:34  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/12/15 19:08:01  willuhn
  * *** empty log message ***
  *

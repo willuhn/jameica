@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.16 $
- * $Date: 2003/12/22 16:25:48 $
+ * $Revision: 1.17 $
+ * $Date: 2003/12/22 21:00:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -265,13 +265,18 @@ public class PluginLoader extends ClassLoader
       
       Class clazz = null;
      
-      if (Application.IDE) {
-        clazz = Class.forName(classname);
+      try {
+        if (Application.IDE) {
+          clazz = Class.forName(classname);
+        }
+        else { 
+          clazz = Class.forName(classname,true,loader);
+        }
       }
-      else { 
-        clazz = Class.forName(classname,true,loader);
+      catch (ClassNotFoundException e)
+      {
+        return;
       }
-
       if (!checkPlugin(clazz))
         return; // no valid plugin
       
@@ -344,6 +349,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.17  2003/12/22 21:00:34  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2003/12/22 16:25:48  willuhn
  * *** empty log message ***
  *

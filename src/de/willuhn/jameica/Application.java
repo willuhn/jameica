@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.17 $
- * $Date: 2003/12/22 16:25:48 $
+ * $Revision: 1.18 $
+ * $Date: 2003/12/22 21:00:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@
 package de.willuhn.jameica;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
@@ -27,8 +28,8 @@ import de.willuhn.jameica.rmi.ServiceFactory;
  */
 public class Application {
 
-  public final static boolean DEBUG = true;
-  public final static boolean IDE   = true;
+  public static boolean DEBUG = true;
+  public static boolean IDE   = true;
   private static boolean serverMode = false;
 
   private static boolean cleanShutdown = false;
@@ -76,6 +77,22 @@ public class Application {
       return;
     }
     
+    Application.DEBUG = app.config.debug();
+    Application.IDE   = app.config.ide();
+
+    // switch logger to defined log file
+    try {
+      Application.getLog().info("switching to defined log file " + app.config.getLogFile());
+      app.log = new Logger(new FileOutputStream(app.config.getLogFile()));
+      Application.getLog().info("  done");
+    }
+    catch (FileNotFoundException e)
+    {
+      if (Application.DEBUG)
+        e.printStackTrace();
+      Application.getLog().error("  failed");
+      
+    }
     // init service factory
     ServiceFactory.init(); splash();
 
@@ -110,6 +127,7 @@ public class Application {
   {
     if (!serverMode) SplashScreen.add(10);
   }
+
 
   /**
    * Faehrt die gesamte Anwendung herunter.
@@ -171,6 +189,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.18  2003/12/22 21:00:34  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2003/12/22 16:25:48  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/15 19:08:01 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/22 21:00:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,6 +62,12 @@ public class Config
 
   private String pluginDir = "plugins";
 
+  private String logfile = null;
+  
+  private boolean debug = false;
+  
+  private boolean ide = false;
+  
   /**
    * ct.
    * @param fileName Pfad und Name zur Config-Datei.
@@ -157,6 +163,13 @@ public class Config
       Application.getLog().info("  not found. fallback to default language: " + defaultLanguage.toString());
     }
 
+    logfile = xml.getContent("/config/logfile");
+    String _debug = xml.getContent("/config/debug");
+    debug = "true".equalsIgnoreCase(_debug) || "yes".equalsIgnoreCase(_debug);
+    
+    String _ide = xml.getContent("/config/ide");
+    ide = "true".equalsIgnoreCase(_ide) || "yes".equalsIgnoreCase(_ide);
+
     // Read rmi port
     try {
       rmiPort = Integer.parseInt(xml.getContent("/config/rmiport"));
@@ -241,11 +254,41 @@ public class Config
     return pluginDir;
   }
 
+  /**
+   * Liefert den Pfad zum Log-File.
+   * @return
+   */
+  public String getLogFile()
+  {
+    return logfile;
+  }
+
+  /**
+   * Liefert true, wenn die Anwendung um Debug-Mode laeuft.
+   * @return
+   */
+  public boolean debug()
+  {
+    return debug;
+  }
+
+  /**
+   * Liefert true, wenn die Anwendung um IDE-Mode laeuft.
+   * @return
+   */
+  public boolean ide()
+  {
+    return ide;
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.7  2003/12/22 21:00:34  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/15 19:08:01  willuhn
  * *** empty log message ***
  *

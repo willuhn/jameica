@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBHub.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/05 22:46:19 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/22 21:00:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,11 +41,19 @@ public interface DBHub extends Service
    */
   public DBIterator createList(Class clazz) throws RemoteException;
 
+  /**
+   * Pingt die Datenbank an.
+   * @throws RemoteException
+   */
+  public boolean ping() throws RemoteException;
 
 }
 
 /*********************************************************************
  * $Log: DBHub.java,v $
+ * Revision 1.2  2003/12/22 21:00:34  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/05 22:46:19  willuhn
  * *** empty log message ***
  *
