@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.18 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import de.willuhn.jameica.Application;
 import de.willuhn.jameica.PluginContainer;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Bildet den Navigations-Baum im linken Frame ab.
@@ -70,12 +71,12 @@ public class Navigation {
 	{
 		if (container == null)
 		{
-			Application.getLog().warn("unable to add navigation, plugin container was null");
+			Logger.warn("unable to add navigation, plugin container was null");
 			return;
 		}
 		if (!container.isInstalled())
 		{
-			Application.getLog().warn("plugin is not installed, skipping navigation");
+			Logger.warn("plugin is not installed, skipping navigation");
 			return;
 		}
 		try {
@@ -85,13 +86,13 @@ public class Navigation {
 			}
 			catch (Exception e)
 			{
-				Application.getLog().warn("unable to load I18N for plugin");
+				Logger.warn("unable to load I18N for plugin");
 			}
 			appendNavigation(container.getNavigation(),i18n);
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("unable to add navigation",e);
+			Logger.error("unable to add navigation",e);
 		}
 	}
 
@@ -305,6 +306,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.18  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

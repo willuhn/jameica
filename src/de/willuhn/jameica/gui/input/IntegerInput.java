@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.jameica.Application;
+import de.willuhn.util.Logger;
 
 /**
  * @author willuhn
@@ -71,7 +71,7 @@ public class IntegerInput extends TextInput
     }
     catch (NumberFormatException e)
     {
-      Application.getLog().error("error while parsing from int input",e);
+      Logger.error("error while parsing from int input",e);
     }
     return null;
   }
@@ -94,6 +94,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.4  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/06/14 22:05:06 $
+ * $Revision: 1.8 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import de.willuhn.jameica.gui.input.AbstractInput;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
@@ -152,7 +153,7 @@ public class LabelGroup
     }
     catch (RemoteException e)
     {
-    	Application.getLog().error("error while reading table",e);
+    	Logger.error("error while reading table",e);
 			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Tabelle"));
     }
   }
@@ -223,6 +224,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.8  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *

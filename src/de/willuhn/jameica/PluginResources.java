@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginResources.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.11 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.io.File;
 
 import de.willuhn.datasource.db.EmbeddedDatabase;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Container, der zusaetzliche Informationen fuer das Plugin bereitstellt.
@@ -89,7 +90,7 @@ public class PluginResources {
 		{
 			if (!f.mkdirs())
 			{
-				Application.getLog().error("unable to create work dir " + workPath);
+				Logger.error("unable to create work dir " + workPath);
 				throw new RuntimeException("unable to create work dir " + workPath);
 			}
 		}
@@ -97,18 +98,18 @@ public class PluginResources {
 		return workPath;
 	}
 
-	/**
+  /**
 	 * Liefert die embedded Datenbank des Plugins. Damit ist keine JDBC-Verbindung
 	 * oder ein DB-Hub gemeint, sondern ein Objekt, mit dem man das Plugin
 	 * eine Datenbank fuer sich erstellen und mit Tabellen fuellen kann.
 	 * @return die Embedded Datenbank des Plugins.
+   * @throws Exception Wenn die Datenbank nicht gelesen/angelegt werden konnte.
 	 */
-	public EmbeddedDatabase getDatabase()
+	public EmbeddedDatabase getDatabase() throws Exception
 	{
 		if (db != null)
 			return db;
 		db = new EmbeddedDatabase(getWorkPath() + "/db",plugin.getName(),plugin.getName());
-		db.setLogger(Application.getLog());
 		db.setClassLoader(Application.getClassLoader());
 		return db;
 	}
@@ -117,6 +118,9 @@ public class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.11  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

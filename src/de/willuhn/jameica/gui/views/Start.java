@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/05/27 23:38:25 $
+ * $Revision: 1.24 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,11 @@
 
 package de.willuhn.jameica.gui.views;
 
+import java.rmi.RemoteException;
 import java.util.Enumeration;
 
+import de.willuhn.datasource.pseudo.PseudoIterator;
+import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.AbstractPlugin;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.InfoReader;
@@ -22,8 +25,10 @@ import de.willuhn.jameica.PluginContainer;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 
 /**
@@ -50,7 +55,7 @@ public class Start extends AbstractView
 			InfoReader ir = pc.getInfo();
 			if (ir == null)
 			{
-				Application.getLog().warn("info.xml for plugin " + plugin.getName() + " not found, skipping");
+				Logger.warn("info.xml for plugin " + plugin.getName() + " not found, skipping");
 				continue;
 			}
 			LabelInput l = new LabelInput(": " + ir.getDescription());
@@ -59,7 +64,19 @@ public class Start extends AbstractView
 			
 		}
 
-		// TODO: Hier kontextsensitive Notizen anzeigen    
+		String[] messages = Application.getWelcomeMessages();
+		if (messages != null && messages.length > 0)
+		{
+			GenericObject[] go = new GenericObject[messages.length];
+			for (int i=0;i<messages.length;++i)
+			{
+				go[i] = new MessageObject(messages[i]);
+			}
+		
+			TablePart messageTable = new TablePart(PseudoIterator.fromArray(go),null);
+			messageTable.addColumn(i18n.tr("System-Meldungen"),"foo");
+			messageTable.paint(getParent());
+		}
 
   }        
 
@@ -70,10 +87,56 @@ public class Start extends AbstractView
   {
   }
 
+
+	private class MessageObject implements GenericObject
+	{
+
+		private String text = "";
+
+		private MessageObject(String text)
+		{
+			this.text = text;
+		}
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getAttribute(java.lang.String)
+     */
+    public Object getAttribute(String name) throws RemoteException
+    {
+      return text;
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getID()
+     */
+    public String getID() throws RemoteException
+    {
+      return text;
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getPrimaryAttribute()
+     */
+    public String getPrimaryAttribute() throws RemoteException
+    {
+      return "foo";
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#equals(de.willuhn.datasource.rmi.GenericObject)
+     */
+    public boolean equals(GenericObject other) throws RemoteException
+    {
+      return false;
+    }
+	}
 }
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.24  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2004/05/27 23:38:25  willuhn
  * @B deadlock in swt event queue while startGUITimeout
  *

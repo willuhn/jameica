@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.8 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Eine View, in der Hilfe-Texte angezeigt werden.
@@ -103,7 +104,7 @@ public class HelpView {
 			}
 			catch (Exception e)
 			{
-				Application.getLog().error("unable to paint help text",e);
+				Logger.error("unable to paint help text",e);
 			}
 			//
 			///////////////////////////////
@@ -124,6 +125,9 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.8  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

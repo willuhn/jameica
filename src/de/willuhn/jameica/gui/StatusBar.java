@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/06/17 22:07:12 $
+ * $Revision: 1.25 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,6 +35,7 @@ import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.History;
+import de.willuhn.util.Logger;
 
 /**
  * Bildet die Statusleiste der Anwendung ab.
@@ -131,7 +132,7 @@ public class StatusBar {
 					GUI.getView().snapOut();
 					return;					
 				}
-				showLastMessages(Application.getLog().getLastLines());
+				showLastMessages(Logger.getLastLines());
 				statusIn = true;
 			}
 		});
@@ -348,6 +349,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.25  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2004/06/17 22:07:12  willuhn
  * @C cleanup in tablePart and statusBar
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.7 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FontDialog;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.util.Logger;
 
 /**
  * Eingabefeld, zur Auswahl einer Schrift.
@@ -47,7 +47,7 @@ public class FontInput extends ButtonInput
  		{
     	public void mouseUp(MouseEvent e)
     	{
-    		Application.getLog().debug("starting font choose dialog");
+    		Logger.debug("starting font choose dialog");
     		FontDialog fd = new FontDialog(GUI.getShell());
     		FontData f = fd.open();
     		if (f == null)
@@ -98,6 +98,9 @@ public class FontInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.7  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

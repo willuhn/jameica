@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Server.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.2 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,8 @@ import java.io.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import de.willuhn.util.Logger;
+
 /**
  * Diese Klasse bildet den Serverloop der Anwendung ab.
  * @author willuhn
@@ -29,8 +31,19 @@ public class Server
   public static void init()
   {
 
-    Application.getLog().info("jameica up and running...");
+    Logger.info("jameica up and running...");
 
+		String[] welcome = Application.getWelcomeMessages();
+		if (welcome != null && welcome.length > 0)
+		{
+			System.out.println("----------------------------------------------------------------------");
+			System.out.println("Startup-Messages:");
+			for (int i=0;i<welcome.length;++i)
+			{
+				System.out.println("  " + welcome[i]); 
+			}
+			System.out.println("----------------------------------------------------------------------");
+		}
     System.out.println("\npress \"q\" to shut down the server.\n");
     InputStreamReader isr = new InputStreamReader(System.in);
     BufferedReader keyboard = new BufferedReader(isr);
@@ -55,6 +68,9 @@ public class Server
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.2  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

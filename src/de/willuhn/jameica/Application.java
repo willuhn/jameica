@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.41 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.42 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.jar.JarFile;
 
 import org.eclipse.swt.SWT;
@@ -50,10 +51,10 @@ public class Application {
   
   // singleton
   private static Application app;
-    private Logger log;
     private Config config;
     private MultipleClassLoader classLoader;
     private I18N i18n;
+		private ArrayList welcomeMessages = new ArrayList();
     
   /**
    * ct.
@@ -79,11 +80,9 @@ public class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
-		app.log = new Logger("Jameica");
-		app.log.addTarget(System.out);
-		app.log.setLevel(Logger.LEVEL_INFO);
-		Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
-		app.classLoader.setLogger(app.log);
+		Logger.addTarget(System.out);
+		Logger.setLevel(Logger.LEVEL_INFO);
+		Logger.info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -97,7 +96,7 @@ public class Application {
 			e.printStackTrace();
 			startupError(e);
 		}
-		app.log.setLevel(app.config.getLogLevel());
+		Logger.setLevel(app.config.getLogLevel());
 
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -126,12 +125,12 @@ public class Application {
 		////////////////////////////////////////////////////////////////////////////
     // switch logger to defined log file
     try {
-      Application.getLog().info("adding defined log file " + app.config.getLogFile());
-      app.log.addTarget(new FileOutputStream(app.config.getLogFile()));
+      Logger.info("adding defined log file " + app.config.getLogFile());
+      Logger.addTarget(new FileOutputStream(app.config.getLogFile()));
     }
     catch (FileNotFoundException e)
     {
-      Application.getLog().error("failed");
+      Logger.error("failed");
     }
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -236,7 +235,7 @@ public class Application {
     if (cleanShutdown) 
       return;
 
-    Application.getLog().info("shutting down jameica");
+    Logger.info("shutting down jameica");
 
     if (!serverMode)
       SplashScreen.shutDown();
@@ -245,22 +244,13 @@ public class Application {
       PluginLoader.shutDown();
     ServiceFactory.shutDown();
 
-    Application.getLog().info("shutdown complete");
-    Application.getLog().close();
+		Logger.info("shutdown complete");
+		Logger.close();
 
     cleanShutdown = true;
   }
 
 
-  /**
-   * Liefert den System-Logger.
-   * @return Logger.
-   */
-  public static Logger getLog()
-  {
-    return app.log;
-  }
-  
 	/**
 	 * Liefert einen Classloader, der alle installierten Plugins und
 	 * deren Jars kennt. Also quasi die gesamte Jameica-Umbegung.
@@ -327,11 +317,39 @@ public class Application {
 	{
 		return app.i18n;
 	}
+
+	/**
+	 * Speichert waehrend des Bootens einen Text.
+	 * Dieser wird dem Benutzer angezeigt, sowie die Anwendung mit dem Startvorgang fertig ist.
+	 * @param message der anzuzeigende Text.
+	 */
+	public static void addWelcomeMessage(String message)
+	{
+		if (app == null || message == null || message.length() == 0)
+			return;
+		app.welcomeMessages.add(message);
+	}
+  
+	/**
+	 * Liefert eine Liste aller bis dato angefallenen Welcome-Messages.
+	 * @return String-Array mit den Meldungen.
+	 */
+	public static String[] getWelcomeMessages()
+	{
+		if (app == null)
+			return new String[] {};
+		return (String[]) app.welcomeMessages.toArray(new String[app.welcomeMessages.size()]);
+	}
+
+
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.42  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.41  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

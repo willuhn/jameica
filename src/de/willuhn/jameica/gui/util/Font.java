@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/06/14 22:05:06 $
+ * $Revision: 1.5 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,9 +15,9 @@ package de.willuhn.jameica.gui.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.util.Logger;
 
 /**
  * Schrift-Informationen.
@@ -36,7 +36,7 @@ public class Font {
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("unable to find systemn font",e);
+			Logger.error("unable to find systemn font",e);
 		}
 	}
 
@@ -102,6 +102,9 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.5  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *

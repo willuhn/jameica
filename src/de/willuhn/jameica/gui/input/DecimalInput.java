@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.jameica.Application;
+import de.willuhn.util.Logger;
 
 /**
  * @author willuhn
@@ -90,7 +90,7 @@ public class DecimalInput extends TextInput
     }
     catch (ParseException e)
     {
-      Application.getLog().error("error while parsing from decimal input",e);
+      Logger.error("error while parsing from decimal input",e);
     }
     return null;
   }
@@ -116,6 +116,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.3  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

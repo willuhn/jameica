@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/06/14 22:05:06 $
+ * $Revision: 1.7 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.util.Logger;
 
 /**
  * Eingabefeld, zur Auswahl einer Farbe.
@@ -46,7 +46,7 @@ public class ColorInput extends ButtonInput
     {
     	public void mouseUp(MouseEvent e)
     	{
-    		Application.getLog().debug("starting color choose dialog");
+    		Logger.debug("starting color choose dialog");
     		ColorDialog cd = new ColorDialog(GUI.getShell());
     		RGB rgb = cd.open();
     		if (rgb == null)
@@ -94,6 +94,9 @@ public class ColorInput extends ButtonInput
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.7  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *

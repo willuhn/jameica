@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.27 $
- * $Date: 2004/05/09 17:40:06 $
+ * $Revision: 1.28 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -113,7 +113,7 @@ public class Config
 			dataDir = System.getProperty("user.home") + "/.jameica";
     }
 
-		Application.getLog().info("using " + dataDir + " as data dir.");
+		Logger.info("using " + dataDir + " as data dir.");
 		this.dir = new File(dataDir);
 		
 		if (this.dir.exists() && !this.dir.isDirectory())
@@ -121,7 +121,7 @@ public class Config
 		
 		if (!this.dir.exists())
 		{
-			Application.getLog().info("creating " + dataDir);
+			Logger.info("creating " + dataDir);
 			if (!this.dir.mkdir())
 				throw new Exception("creating of " + dataDir + " failed");		
 		}
@@ -129,7 +129,7 @@ public class Config
 		this.configDir  = new File(dataDir + "/cfg");
 		if (!this.configDir.exists())
 		{
-			Application.getLog().info("creating " + this.configDir.getAbsolutePath());
+			Logger.info("creating " + this.configDir.getAbsolutePath());
 			this.configDir.mkdir();
 		}
 
@@ -137,7 +137,7 @@ public class Config
 
 		if (!this.configFile.exists())
 		{
-			Application.getLog().info("creating new config file " + this.configFile.getAbsolutePath());
+			Logger.info("creating new config file " + this.configFile.getAbsolutePath());
 			try {
 				FileOutputStream fos = new FileOutputStream(this.configFile);
 				fos.write(defaultConfig.getBytes());
@@ -176,7 +176,7 @@ public class Config
     String type;
     String clazz;
     String description;
-    Application.getLog().info("loading service configuration");
+    Logger.info("loading service configuration");
   
     while (e.hasMoreElements())
     {
@@ -189,7 +189,7 @@ public class Config
       // process remote services
       if ("remoteservice".equals(key.getFullName())) 
       {
-        Application.getLog().info("found remote service \"" + name + "\" [type: "+type+"]");
+        Logger.info("found remote service \"" + name + "\" [type: "+type+"]");
         RemoteServiceData data = new RemoteServiceData();
         data.setClassName(clazz);
         data.setDescription(description);
@@ -202,7 +202,7 @@ public class Config
       // process local services
 			if ("localservice".equals(key.getFullName())) 
       {
-        Application.getLog().info("found local service \"" + name + "\" [type: "+type+"]");
+        Logger.info("found local service \"" + name + "\" [type: "+type+"]");
 				LocalServiceData data = new LocalServiceData();
 				data.setClassName(clazz);
 				data.setDescription(description);
@@ -226,14 +226,14 @@ public class Config
   
     // Read default language
     String _defaultLanguage = xml.getFirstChildNamed("defaultlanguage").getContent();
-    Application.getLog().info("choosen language: " + _defaultLanguage);
+    Logger.info("choosen language: " + _defaultLanguage);
     try {
       ResourceBundle.getBundle("lang/messages",new Locale(_defaultLanguage));
       defaultLanguage = new Locale(_defaultLanguage);
     }
     catch (Exception ex)
     {
-      Application.getLog().info("not found. fallback to default language: " + defaultLanguage.toString());
+      Logger.info("not found. fallback to default language: " + defaultLanguage.toString());
     }
 
     logfile = xml.getFirstChildNamed("logfile").getContent();
@@ -566,6 +566,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.28  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2004/05/09 17:40:06  willuhn
  * *** empty log message ***
  *

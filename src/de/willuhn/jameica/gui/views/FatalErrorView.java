@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.11 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * View, die gestartet wird, wenn der Main-GUI Loop gecrasht ist.
@@ -82,7 +83,7 @@ public class FatalErrorView extends AbstractView
 	      {
 	        final Clipboard cb = new Clipboard(GUI.getDisplay());
 	        TextTransfer textTransfer = TextTransfer.getInstance();
-	        String[] logEntries = Application.getLog().getLastLines();
+	        String[] logEntries = Logger.getLastLines();
 	        StringBuffer sb = new StringBuffer();
 	        for (int i=0;i<logEntries.length;++i)
 	        {
@@ -100,7 +101,7 @@ public class FatalErrorView extends AbstractView
 			// klappt. Dann koemmer die ganze Anwendung eigentlich in
 			// die Tonne treten.
 			try {
-				Application.getLog().error("unable to show fatal error view, giving up and exiting application",e);
+				Logger.error("unable to show fatal error view, giving up and exiting application",e);
 			}
 			catch (Exception e2)
 			{
@@ -120,6 +121,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.11  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/06/18 19:47:17 $
+ * $Revision: 1.23 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,7 @@ import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * 
@@ -81,7 +82,7 @@ public class SettingsControl extends AbstractControl
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("unable to load available stylefactories",e);
+			Logger.error("unable to load available stylefactories",e);
 			styleFactory = new LabelInput(i18n.tr("Fehler beim Laden der Styles"));
 		}
 		return styleFactory;
@@ -229,7 +230,7 @@ public class SettingsControl extends AbstractControl
     }
     catch (Exception e)
     {
-    	Application.getLog().error("error while writing config",e);
+    	Logger.error("error while writing config",e);
 			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Speichern der Einstellungen."));
     }
   	
@@ -275,7 +276,7 @@ public class SettingsControl extends AbstractControl
   	}
   	catch (Exception e)
   	{
-  		Application.getLog().error("error while restoring settings",e);
+  		Logger.error("error while restoring settings",e);
 			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Zurücksetzen"));
   	}
   	
@@ -341,6 +342,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.23  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2004/06/18 19:47:17  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/06/18 19:47:17 $
+ * $Revision: 1.8 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import de.willuhn.datasource.rmi.GenericIterator;
 import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.util.Logger;
 
 /**
  * Ist zustaendig fuer Eingabefelder des Typs "Select" aka "Combo".
@@ -98,7 +99,7 @@ public class SelectInput extends AbstractInput
     catch (RemoteException e)
     {
     	combo.add(Application.getI18n().tr("Fehler beim Laden der Daten"));
-    	Application.getLog().error("uanble to create combo box",e);
+    	Logger.error("uanble to create combo box",e);
     }
     combo.select(selected);
    	combo.setEnabled(enabled);
@@ -216,6 +217,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.8  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/06/18 19:47:17  willuhn
  * *** empty log message ***
  *

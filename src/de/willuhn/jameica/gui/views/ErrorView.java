@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.13 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Diese Fehlerseite wird angezeigt, wenn eine andere View in der
@@ -60,7 +61,7 @@ public class ErrorView extends AbstractView
   	catch (Exception e)
   	{
 			group.addText(unknownError,false);
-  		Application.getLog().error("exception while binding error page",e);
+  		Logger.error("exception while binding error page",e);
   	}
   }
 
@@ -76,6 +77,9 @@ public class ErrorView extends AbstractView
 
 /**********************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.13  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ServiceFactory.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/06/03 00:24:18 $
+ * $Revision: 1.8 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import de.willuhn.datasource.common.LocalServiceData;
 import de.willuhn.datasource.common.RemoteServiceData;
 import de.willuhn.datasource.rmi.Service;
+import de.willuhn.util.Logger;
 
 
 /**
@@ -43,7 +44,7 @@ public class ServiceFactory
   public static void init()
   {
 
-    Application.getLog().info("init network services");
+    Logger.info("init network services");
     Enumeration e = Application.getConfig().getLocalServiceData();
 		LocalServiceData service;
     while (e.hasMoreElements())
@@ -56,7 +57,7 @@ public class ServiceFactory
       	}
 	      catch (Exception ex)
 	      {
-	        Application.getLog().error("sharing of service " + service.getName() + " failed",ex);
+	        Logger.error("sharing of service " + service.getName() + " failed",ex);
   	    }
 			}
     }
@@ -69,13 +70,13 @@ public class ServiceFactory
   private static void startRegistry() throws RemoteException
   {
     try {
-      Application.getLog().info("trying to start new RMI registry");
+      Logger.info("trying to start new RMI registry");
 //      System.setSecurityManager(new NoSecurity());
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
     }
     catch (RemoteException e)
     {
-      Application.getLog().info("failed, trying to use an existing one");
+      Logger.info("failed, trying to use an existing one");
       LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
     }
     rmiStarted = true;
@@ -93,7 +94,7 @@ public class ServiceFactory
 
     Naming.rebind(service.getUrl(),getLocalServiceInstance(service)); 
 		bindings.put(service.getName(),service); 
-		Application.getLog().info("added " + service.getUrl());
+		Logger.info("added " + service.getUrl());
 	}
 
 
@@ -108,19 +109,18 @@ public class ServiceFactory
   	if (service == null)
   		return null;
 
-		Application.getLog().debug("searching for local service " + service.getName());
+		Logger.debug("searching for local service " + service.getName());
 		try {
 			Class clazz = Application.getClassLoader().load(service.getClassName());
 			Constructor ct = clazz.getConstructor(new Class[]{HashMap.class});
 			ct.setAccessible(true);
 			Service s = (Service) ct.newInstance(new Object[] {service.getInitParams()});
 			s.setClassLoader(Application.getClassLoader());
-			s.setLogger(Application.getLog());
 			return s;
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("service " + service.getName() + " not found");
+			Logger.error("service " + service.getName() + " not found");
 			throw e;
 		}
   }
@@ -136,7 +136,7 @@ public class ServiceFactory
 		if (service == null)
 			return null;
 
-		Application.getLog().debug("searching for remote service " + 
+		Logger.debug("searching for remote service " + 
 															service.getName() + " at " + service.getUrl());
 		try
 		{
@@ -144,7 +144,7 @@ public class ServiceFactory
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("service " + 
+			Logger.error("service " + 
 																 service.getName() + " not found at " + service.getUrl());
 			throw e;
 		}
@@ -187,7 +187,7 @@ public class ServiceFactory
    */
   public static void shutDown()
   {
-    Application.getLog().info("shutting down services");
+    Logger.info("shutting down services");
 
     Enumeration e = bindings.keys();
     String name;
@@ -199,14 +199,14 @@ public class ServiceFactory
       name = (String) e.nextElement();
 			serviceData = (LocalServiceData) bindings.get(name);
 
-			Application.getLog().info("closing service " + serviceData.getName());
+			Logger.info("closing service " + serviceData.getName());
 
 			try {
 				service = (Service) Naming.lookup(serviceData.getUrl());
 				service.shutDown();
 			}
 			catch (Exception ex) {
-				Application.getLog().error("error while closing service",ex);
+				Logger.error("error while closing service",ex);
       }
     }
   }
@@ -228,6 +228,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.8  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/06/03 00:24:18  willuhn
  * *** empty log message ***
  *

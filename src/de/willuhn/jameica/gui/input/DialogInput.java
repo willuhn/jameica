@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.7 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
+import de.willuhn.util.Logger;
 
 /**
  * Eingabe-Feld, welches beim Klick auf den Button einen Dialog zur Auswahl
@@ -60,7 +60,7 @@ public class DialogInput extends ButtonInput
 		{
 			public void mouseUp(MouseEvent e)
 			{
-				Application.getLog().debug("starting dialog");
+				Logger.debug("starting dialog");
 				try {
 					choosen = dialog.open();
 					text.redraw();
@@ -68,7 +68,7 @@ public class DialogInput extends ButtonInput
 				}
 				catch (Exception e1)
 				{
-					Application.getLog().error("error while opening dialog",e1);
+					Logger.error("error while opening dialog",e1);
 				}
 			}
 		});
@@ -120,6 +120,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.7  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract

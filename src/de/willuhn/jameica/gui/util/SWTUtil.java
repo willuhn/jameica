@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.6 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.util.Logger;
 
 /**
  * Diverse statische SWT-Hilfsfunktionen.
@@ -65,7 +66,7 @@ public class SWTUtil {
 		}
 		catch (Throwable t)
 		{
-			Application.getLog().error("error while disposing composite childs",t);
+			Logger.error("error while disposing composite childs",t);
 		}
 	}
 
@@ -127,7 +128,7 @@ public class SWTUtil {
 		}
 		catch (Throwable t)
 		{
-			Application.getLog().error("unable to load image " + filename,t);
+			Logger.error("unable to load image " + filename,t);
 		}
 		return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img" + "/empty.gif"));
 	}
@@ -181,6 +182,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.6  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

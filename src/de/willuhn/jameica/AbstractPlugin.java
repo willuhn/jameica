@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/04/19 22:05:27 $
+ * $Revision: 1.19 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica;
 import java.io.File;
 import java.util.jar.JarFile;
 
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.JarInfo;
 
 /**
@@ -93,8 +94,8 @@ public abstract class AbstractPlugin
   /**
    * Diese Funktion versucht die Versionsnummer aus der Datei META-INF/MANIFEST.MF zu extrahieren.
    * Sie versucht dabei, den Schluessel "Implementation-Version" zu parsen.
-   * Wenn der String das Format "V_&lt;Major-Number&gt;_&lt;Minor-Number&gt; hat, wird es funktionieren.
-   * Andernfalls liefert die Funktion "1.0".
+   * Wenn der String das Format "&lt;Major-Number&gt;.&lt;Minor-Number&gt; besitzt (also zb 1.3),
+   * wird die Versionsnummer als Double zurueckgeliefert. Andernfalls liefert die Funktion "1.0".
    * @return Version des Plugins.
    */
   public double getVersion()
@@ -144,31 +145,42 @@ public abstract class AbstractPlugin
 		return settings;
 	}
 
-	/**
+  /**
 	 * Diese Funktion wird beim Start der Anwendung ausgefuehrt. Hier kann die Plugin-
 	 * Implementierung also diverse Dinge durchfuehren, die es beim Start gern
-	 * automatisch durchgefuehrt haben moechte ;)
-	 * @return true, wenn das Plugin erfolgreich initialisiert wurde.
+	 * automatisch durchgefuehrt haben moechte.
+	 * Nur wenn die Funktion fehlerfrei durchlaeuft, wird das Plugin aktiviert.
+	 * Andernfalls wird der Text der geworfenen Exception dem Benutzer auf der
+	 * Start-Seite von Jameica angezeigt. Von daher empfiehlt es sich, verstaendliche
+	 * Formulierungen fuer ggf aufgetretene Fehler zu verwenden.
+   * @throws ApplicationException muss geworfen werden, wenn das Plugin nicht aktiviert werden soll.
 	 */
-	public abstract boolean init();
+	public abstract void init() throws ApplicationException;
 
 
 	/**
 	 * Diese Funktion wird beim Start der Anwendung aufgerufen, wenn das Plugin
 	 * zum ersten mal gestartet wird. Die install() Funktion wird solange bei
-	 * jedem Start aufgerufen, bis sie mit <code>true</code> antwortet.
-	 * @return true, wenn die Installation erfolgreich verlief.
+	 * jedem Start aufgerufen, bis sie fehlerfrei durchlaeuft.
+	 * Andernfalls wird der Text der geworfenen Exception dem Benutzer auf der
+	 * Start-Seite von Jameica angezeigt. Von daher empfiehlt es sich, verstaendliche
+	 * Formulierungen fuer ggf aufgetretene Fehler zu verwenden.
+   * @throws ApplicationException muss geworfen werden, wenn die Installation fehlschlug und das Plugin nicht aktiviert werden soll.
 	 */
-	public abstract boolean install();
+	public abstract void install() throws ApplicationException;
 
 	/**
 	 * Diese Funktion wird beim Start der Anwendung genau dann aufgerufen, wenn
 	 * das Plugin bereits erfolgreich installiert wurde, jedoch jetzt in einer
-	 * anderen Version vorliegt als die vorherige.
+	 * anderen Version vorliegt als die vorherige. Sie wird solange bei jedem Start
+	 * aufgerufen, bis sie fehlerfrei durchlaeuft.
+	 * Andernfalls wird der Text der geworfenen Exception dem Benutzer auf der
+	 * Start-Seite von Jameica angezeigt. Von daher empfiehlt es sich, verstaendliche
+	 * Formulierungen fuer ggf aufgetretene Fehler zu verwenden.
 	 * @param oldVersion Version, die vorher installiert war.
-	 * @return true, wenn das Update erfolgreich verlief.
+   * @throws ApplicationException muss geworfen werden, wenn das Update fehlschlug und das Plugin nicht aktiviert werden soll.
 	 */
-	public abstract boolean update(double oldVersion);
+	public abstract void update(double oldVersion) throws ApplicationException;
 
 	/**
 	 * Diese Funktion wird beim Beenden der Anwendung ausgefuehrt.
@@ -180,6 +192,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.19  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/04/19 22:05:27  willuhn
  * *** empty log message ***
  *

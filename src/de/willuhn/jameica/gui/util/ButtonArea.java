@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Diese Klasse erzeugt standardisierte Bereiche fuer die Dialog-Buttons.
@@ -155,13 +156,13 @@ public class ButtonArea
     if (adapter == null)
     {
       // button without adapter makes no sense ;)
-      Application.getLog().warn("a button without a mouseAdapter makes no sense - skipping");
+      Logger.warn("a button without a mouseAdapter makes no sense - skipping");
       return;
     }
     if (text == null || "".equals(text))
     {
       // button without text makes no sense ;)
-      Application.getLog().warn("a button without a text makes no sense - skipping");
+      Logger.warn("a button without a text makes no sense - skipping");
       return;
     }
 
@@ -175,6 +176,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.3  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

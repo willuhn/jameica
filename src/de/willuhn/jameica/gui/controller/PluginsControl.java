@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/PluginsControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/27 23:38:25 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Controller fuer den Dialog "installierte Plugins".
@@ -68,12 +69,12 @@ public class PluginsControl extends AbstractControl {
 			}
 			catch (Exception e1)
 			{
-				Application.getLog().error("unable to read info.xml from plugin " + plugin.getName(),e1);
+				Logger.error("unable to read info.xml from plugin " + plugin.getName(),e1);
 			}
 
 			if (ir == null)
 			{
-				Application.getLog().warn("info.xml for plugin " + plugin.getName() + " not found, skipping");
+				Logger.warn("info.xml for plugin " + plugin.getName() + " not found, skipping");
 				continue;
 			}
 
@@ -131,6 +132,9 @@ public class PluginsControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: PluginsControl.java,v $
+ * Revision 1.3  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/05/27 23:38:25  willuhn
  * @B deadlock in swt event queue while startGUITimeout
  *

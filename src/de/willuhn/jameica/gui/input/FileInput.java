@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/06/08 22:54:00 $
+ * $Revision: 1.6 $
+ * $Date: 2004/06/30 20:58:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.util.Logger;
 
 /**
  * @author willuhn
@@ -45,7 +45,7 @@ public class FileInput extends ButtonInput
 		{
 			public void mouseUp(MouseEvent e)
 			{
-				Application.getLog().debug("starting file dialog");
+				Logger.debug("starting file dialog");
 				FileDialog dialog = new FileDialog(GUI.getShell(),SWT.OPEN);
 				setValue(dialog.open());
 				text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
@@ -92,6 +92,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.6  2004/06/30 20:58:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/06/08 22:54:00  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.49 $
- * $Date: 2004/06/24 21:32:25 $
+ * $Revision: 1.50 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,6 +45,7 @@ import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.FatalErrorView;
 import de.willuhn.jameica.gui.views.HelpView;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.Logger;
 
 /**
  * Startet und beendet die GUI der Anwendung.
@@ -66,7 +67,7 @@ public class GUI
 		private Menu menu;
 		private HelpView help;
 		private AbstractView currentView;
-	
+		
 		private Stack history;
 		private boolean skipHistory = false;
 		private StyleFactory styleFactory;
@@ -104,7 +105,7 @@ public class GUI
 	 */
 	private void load()
 	{
-		Application.getLog().info("startup GUI");
+		Logger.info("startup GUI");
 
 		// init shell
 		shell.setLayout(createGrid(2, false));
@@ -146,7 +147,7 @@ public class GUI
 
 		////////////////////////////
 
-		Application.getLog().info("adding menu");
+		Logger.info("adding menu");
 		addMenu(shell);
 
 		SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
@@ -157,14 +158,14 @@ public class GUI
 
 		SashForm left = new SashForm(sash, SWT.VERTICAL);
 		left.setLayout(new FillLayout());
-		Application.getLog().info("adding navigation");
+		Logger.info("adding navigation");
 		addNavigation(left);
 
 		help = new HelpView(left);
 
 		Composite right = new Composite(sash, SWT.NONE);
 		right.setLayout(new FillLayout());
-		Application.getLog().info("adding content view");
+		Logger.info("adding content view");
 
 		addView(right);
 
@@ -176,7 +177,7 @@ public class GUI
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		bottom.setLayoutData(gd);
-		Application.getLog().info("adding status panel");
+		Logger.info("adding status panel");
 		addStatusBar(bottom);
 
 		shell.open();
@@ -224,7 +225,7 @@ public class GUI
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("unable to load menu", e);
+			Logger.error("unable to load menu", e);
 			// skip menu
 		}
 	}
@@ -241,7 +242,7 @@ public class GUI
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("unable to load navigation", e);
+			Logger.error("unable to load navigation", e);
 			// skip navi
 		}
 	}
@@ -284,19 +285,19 @@ public class GUI
 		}
 		catch (InstantiationException e)
 		{
-			Application.getLog().error("error while instanciating view", e);
+			Logger.error("error while instanciating view", e);
 		}
 		catch (IllegalAccessException e)
 		{
-			Application.getLog().error("not allowed to bind view", e);
+			Logger.error("not allowed to bind view", e);
 		}
 		catch (ClassNotFoundException e)
 		{
-			Application.getLog().error("view does not exist", e);
+			Logger.error("view does not exist", e);
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error(e.getLocalizedMessage(), e);
+			Logger.error(e.getLocalizedMessage(), e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -320,7 +321,7 @@ public class GUI
 	 */
 	public static void startView(final String className, final Object o)
 	{
-		Application.getLog().debug("starting view: " + className);
+		Logger.debug("starting view: " + className);
 
 		startSync(new Runnable() {
 
@@ -334,19 +335,19 @@ public class GUI
 						gui.currentView.unbind();
 
 						// dispose all childs
-						Application.getLog().debug("disposing previous view");
+						Logger.debug("disposing previous view");
 						SWTUtil.disposeChilds(gui.view.getContent());
-						Application.getLog().debug("dispose finished");
+						Logger.debug("dispose finished");
 
 					}
 					catch (ApplicationException e)
 					{
-						Application.getLog().debug("cancel sent from dialog (in unbind()");
+						Logger.debug("cancel sent from dialog (in unbind()");
 						return;
 					}
 					catch (Throwable t)
 					{
-						Application.getLog().error("error while unbind current view", t);
+						Logger.error("error while unbind current view", t);
 					}
 
 					if (!gui.skipHistory)
@@ -388,7 +389,7 @@ public class GUI
 					catch (Exception e)
 					{
 						getStatusBar().setErrorText("Fehler beim Anzeigen des Dialogs.");
-						Application.getLog().error("error while loading view " + className,
+						Logger.error("error while loading view " + className,
 								e);
 						GUI.startView(ErrorView.class.getName(), e);
 					}
@@ -398,15 +399,15 @@ public class GUI
 				}
 				catch (InstantiationException e)
 				{
-					Application.getLog().error("error while instanciating view", e);
+					Logger.error("error while instanciating view", e);
 				}
 				catch (IllegalAccessException e)
 				{
-					Application.getLog().error("not allowed to bind view", e);
+					Logger.error("not allowed to bind view", e);
 				}
 				catch (ClassNotFoundException e)
 				{
-					Application.getLog().error("view does not exist", e);
+					Logger.error("view does not exist", e);
 				}
 			}
 		});
@@ -475,7 +476,7 @@ public class GUI
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error(
+			Logger.error(
 					"unable to load configured stylefactory, using default", e);
 			gui.styleFactory = new StyleFactoryFlatImpl();
 		}
@@ -580,7 +581,7 @@ public class GUI
 						{
 							// Wir wollen nicht, dass unbefugter Zugriff auf die GUI
 							// stattfindet
-							Application.getLog().error(e.getLocalizedMessage(), e);
+							Logger.error(e.getLocalizedMessage(), e);
 						}
 						getStatusBar().stopProgress();
 					}
@@ -608,7 +609,7 @@ public class GUI
 			}
 			catch (Exception e)
 			{
-				Application.getLog().error("main loop crashed. showing error page", e);
+				Logger.error("main loop crashed. showing error page", e);
 				GUI.startView(FatalErrorView.class.getName(), e);
 			}
 		}
@@ -655,20 +656,22 @@ public class GUI
 
 		try
 		{
-			Application.getLog().info("shutting down GUI");
+			Logger.info("shutting down GUI");
 			gui.shell.dispose();
 			gui.display.dispose();
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("error while quitting GUI", e);
+			Logger.error("error while quitting GUI", e);
 		}
 	}
-
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.50  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.49  2004/06/24 21:32:25  willuhn
  * *** empty log message ***
  *

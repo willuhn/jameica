@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.45 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.46 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.willuhn.util.FileFinder;
+import de.willuhn.util.Logger;
 
 /**
  * Kontrolliert alle installierten Plugins.
@@ -48,7 +49,7 @@ public class PluginLoader
 	 */
 	public static void init()
 	{
-		Application.getLog().info("init plugins");
+		Logger.info("init plugins");
 		String[] dirs = Application.getConfig().getPluginDirs();
 		for (int i=0;i<dirs.length;++i)
 		{
@@ -74,7 +75,7 @@ public class PluginLoader
     if (plugindir == null)
     	return;
 
-		Application.getLog().debug("checking directory " + plugindir.getAbsolutePath());
+		Logger.debug("checking directory " + plugindir.getAbsolutePath());
 
     File[] jars = null;
     try {
@@ -86,7 +87,7 @@ public class PluginLoader
     }
     catch (MalformedURLException mue)
     {
-    	Application.getLog().error("loading of jars from plugin dir failed",mue);
+    	Logger.error("loading of jars from plugin dir failed",mue);
     	return;
     }
 
@@ -239,7 +240,7 @@ public class PluginLoader
 		}
 		catch (Throwable t)
 		{
-			Application.getLog().error("error while loading class " + classname,t);
+			Logger.error("error while loading class " + classname,t);
 			return null;
 		}
     
@@ -281,7 +282,7 @@ public class PluginLoader
 			return;
 		}
 
-		Application.getLog().info("trying to initialize " + pluginClass.getName());
+		Logger.info("trying to initialize " + pluginClass.getName());
 
 		///////////////////////////////////////////////////////////////
 		// Klasse instanziieren
@@ -295,7 +296,7 @@ public class PluginLoader
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("failed",e);
+			Logger.error("failed",e);
 			return;
 		}
 		container.setPlugin(plugin);
@@ -309,19 +310,18 @@ public class PluginLoader
     if (oldVersion == -1)
     {
       // Plugin wurde zum ersten mal gestartet
-      Application.getLog().info("Plugin started for the first time. Starting install");
+      Logger.info("Plugin started for the first time. Starting install");
 			Application.splash("installing plugin " + plugin.getName());
       try {
-        if (!plugin.install())
-        {
-					Application.getLog().error("failed");
-					return;
-        }
+        plugin.install();
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
-      	// Fuer den Fall, dass das Plugin eine RuntimeException beim Install macht.
-        Application.getLog().error("failed",e);
+				String error = t.getMessage() == null ? "" : ": " + t.getMessage();
+      	Application.addWelcomeMessage(
+      		Application.getI18n().tr("Fehler beim Installieren des Plugins \"") +
+      		plugin.getName() + "\"" + error);
+        Logger.error("failed",t);
         return;
       }
     }
@@ -331,20 +331,19 @@ public class PluginLoader
 
       if (oldVersion < newVersion)
       {
-        Application.getLog().info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
+        Logger.info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
         // hui, sogar eine neuere Version. Also starten wir dessen Update
 				Application.splash("updating plugin " + plugin.getName());
 				try {
-          if (!plugin.update(oldVersion))
-          {
-						Application.getLog().error("failed");
-						return;
-          }
+          plugin.update(oldVersion);
 				}
-				catch (Exception e)
+				catch (Throwable t)
 				{
-					// Fuer den Fall, dass das Plugin eine RuntimeException beim Update macht.
-					Application.getLog().error("failed",e);
+					String error = t.getMessage() == null ? "" : ": " + t.getMessage();
+					Application.addWelcomeMessage(
+						Application.getI18n().tr("Fehler beim Update des Plugins \"") +
+						plugin.getName() + "\"" + error);
+					Logger.error("failed",t);
 					return;
       	}
       }
@@ -353,21 +352,22 @@ public class PluginLoader
 		Application.splash("initializing plugin " + plugin.getName());
 
 		try {
-			if (!plugin.init())
-      {
-				Application.getLog().error("failed");
-        return;
-      }
+			plugin.init();
+
       // ok, wir haben alles durchlaufen, wir speichern die neue Version.
 			updateChecker.setAttribute(pluginClass.getName() + ".version",plugin.getVersion());
 			// und setzen es auf status "installed"
 			container.setInstalled(true);
-			Application.getLog().info("plugin " + plugin.getName() + " initialized successfully");
+			Logger.info("plugin " + plugin.getName() + " initialized successfully");
 		}
-		catch (Exception e)
+		catch (Throwable t)
 		{
-			// Fuer den Fall, dass das Plugin eine RuntimeException beim Init macht.
-      Application.getLog().error("failed",e);
+			String error = t.getMessage() == null ? "" : ": " + t.getMessage();
+			Application.addWelcomeMessage(
+				Application.getI18n().tr("Fehler beim Initialisieren des Plugins \"") +
+				plugin.getName() + "\"" + error);
+      Logger.error("failed",t);
+      return;
 		}
   }
 
@@ -489,7 +489,7 @@ public class PluginLoader
    */
   public static void shutDown()
   {
-    Application.getLog().info("shutting down plugins");
+    Logger.info("shutting down plugins");
 		Enumeration e = plugins.elements();
     while (e.hasMoreElements())
     {
@@ -497,7 +497,7 @@ public class PluginLoader
 			if (!pc.isInstalled())
 				continue; // nicht installierte Plugins muessen nicht runtergefahren werden
 			AbstractPlugin plugin = pc.getPlugin();
-      Application.getLog().debug(plugin.getClass().getName());
+      Logger.debug(plugin.getClass().getName());
 
 			try {
 				plugin.shutDown();
@@ -505,7 +505,7 @@ public class PluginLoader
 			catch (Exception e2)
 			{
 				// Fuer den Fall, dass das Plugin eine RuntimeException beim Init macht.
-				Application.getLog().error("failed",e2);
+				Logger.error("failed",e2);
 			}
     }
   }
@@ -514,6 +514,9 @@ public class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.46  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.45  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

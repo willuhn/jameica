@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/LicenseControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/08 22:28:45 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.util.FileFinder;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Controller fuer den Dialog Lizenzinformationen.
@@ -65,7 +66,7 @@ public class LicenseControl extends AbstractControl {
 				InfoReader ir = new InfoReader(new FileInputStream(infos[i]));
 				if (ir == null)
 				{
-					Application.getLog().warn("inforeader is null, skipping lib");
+					Logger.warn("inforeader is null, skipping lib");
 					continue;
 				}
 				buffer.append("<p>");
@@ -78,7 +79,7 @@ public class LicenseControl extends AbstractControl {
 			}
 			catch (Exception e)
 			{
-				Application.getLog().error("unable to parse " + infos[0],e);
+				Logger.error("unable to parse " + infos[0],e);
 			}
 		}
 		buffer.append("</form>");
@@ -123,6 +124,9 @@ public class LicenseControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
+ * Revision 1.4  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/06/08 22:28:45  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/05/27 23:12:58 $
+ * $Revision: 1.12 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,8 @@ import java.util.Properties;
 
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+
+import de.willuhn.util.Logger;
 
 /**
  * Diese Klasse stellt eine Art Storage-Provider fuer Einstellungen
@@ -63,7 +65,7 @@ public class Settings
     }
     catch (IOException e)
     {
-      Application.getLog().error("unable to load settings from " + getFile().getAbsoluteFile(),e);
+      Logger.error("unable to load settings from " + getFile().getAbsoluteFile(),e);
     }
 
   }
@@ -105,7 +107,7 @@ public class Settings
 		}
 		catch (NumberFormatException e)
 		{
-			Application.getLog().error("unable to parse value of param \"" + name + "\", value: " + s,e);
+			Logger.error("unable to parse value of param \"" + name + "\", value: " + s,e);
 		}
 		return defaultValue;
 	}
@@ -125,7 +127,7 @@ public class Settings
 		}
 		catch (NumberFormatException e)
 		{
-			Application.getLog().error("unable to parse value of param \"" + name + "\", value: " + s,e);
+			Logger.error("unable to parse value of param \"" + name + "\", value: " + s,e);
 		}
 		return defaultValue;
 	}
@@ -263,7 +265,7 @@ public class Settings
     }
     catch (Exception e1)
     {
-      Application.getLog().error("unable to create settings. Do you " +
+      Logger.error("unable to create settings. Do you " +
         "have write permissions in " + getFile().getAbsolutePath() + " ?",e1);
     }
 
@@ -273,6 +275,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.12  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/05/27 23:12:58  willuhn
  * @B NoSuchFieldError in Settings
  * @C s/java/javaw.exe in build/*.bat

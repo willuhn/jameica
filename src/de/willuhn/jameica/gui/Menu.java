@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.22 $
+ * $Date: 2004/06/30 20:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.PluginContainer;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Bildet das Dropdown-Menu ab.
@@ -66,12 +67,12 @@ public class Menu
 	{
 		if (container == null)
 		{
-			Application.getLog().warn("unable to add menu, plugin container was null");
+			Logger.warn("unable to add menu, plugin container was null");
 			return;
 		}
 		if (!container.isInstalled())
 		{
-			Application.getLog().warn("plugin is not installed, skipping menu");
+			Logger.warn("plugin is not installed, skipping menu");
 			return;
 		}
 		try {
@@ -81,13 +82,13 @@ public class Menu
 			}
 			catch (Exception e)
 			{
-				Application.getLog().warn("unable to load I18N for plugin");
+				Logger.warn("unable to load I18N for plugin");
 			}
 			appendMenu(container.getMenu(),i18n);
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("unable to add menu",e);
+			Logger.error("unable to add menu",e);
 		}
 	}
 
@@ -135,7 +136,7 @@ public class Menu
       if (text == null)
       {
 				// Das wuerde eh nen SWT-Fehler erzeugen
-				Application.getLog().warn("menu text was null, skipping");
+				Logger.warn("menu text was null, skipping");
 				return;
       }
       cascade.setText(i18n != null ? i18n.tr(text) : text);
@@ -173,7 +174,7 @@ public class Menu
 			if (text == null)
 			{
 				// Das wuerde eh nen SWT-Fehler erzeugen
-				Application.getLog().warn("menu text was null, skipping");
+				Logger.warn("menu text was null, skipping");
 				return;
 			}
 
@@ -201,7 +202,7 @@ public class Menu
       }
       catch (Exception e)
       {
-				Application.getLog().error("error while creating menu element",e);
+				Logger.error("error while creating menu element",e);
       }
       item.setText(text);
     }
@@ -227,7 +228,7 @@ public class Menu
     {
     	if (clazz == null || text == null)
     	{
-    		Application.getLog().warn("text or class of menu entry was null (text: " + text + ", class: " + clazz + "), skipping");
+    		Logger.warn("text or class of menu entry was null (text: " + text + ", class: " + clazz + "), skipping");
 				return;
     	}
       try {
@@ -238,7 +239,7 @@ public class Menu
       }
       catch (Exception e)
       {
-        Application.getLog().error("unable to execute menu entry.",e);
+        Logger.error("unable to execute menu entry.",e);
         throw new RuntimeException(e); // wir werfen eine RuntimeException, weil handleEvent nix werfen darf ;)
       }
     }
@@ -249,6 +250,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.22  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.21  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *
