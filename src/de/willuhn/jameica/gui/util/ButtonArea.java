@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.7 $
+ * $Date: 2004/09/17 14:40:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,7 +73,13 @@ public class ButtonArea
     button.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e) {
-        controller.handleCreate();
+				GUI.startSync(new Runnable()
+        {
+          public void run()
+          {
+						controller.handleCreate();
+          }
+        });
       }
     });
   }
@@ -89,16 +95,19 @@ public class ButtonArea
     storeButton.setText(i18n.tr("Speichern"));
     storeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-		//	Workaround. SWT does not seem to set rigth the default button if 
-		//	there is not control with focus. Bug: 14668
-//		storeButton.setFocus();
     GUI.getShell().setDefaultButton(storeButton);
 
 		storeButton.addSelectionListener(new SelectionAdapter()
     {
       public void widgetSelected(SelectionEvent e)
       {
-				controller.handleStore();
+      	GUI.startSync(new Runnable()
+        {
+          public void run()
+          {
+						controller.handleStore();
+          }
+        });
       }
     });
   }
@@ -116,7 +125,13 @@ public class ButtonArea
     button.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e) {
-        controller.handleCancel();
+				GUI.startSync(new Runnable()
+        {
+          public void run()
+          {
+						controller.handleCancel();
+          }
+        });
       }
     });
   }
@@ -134,7 +149,13 @@ public class ButtonArea
     button.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e) {
-        controller.handleDelete();
+				GUI.startSync(new Runnable()
+        {
+          public void run()
+          {
+						controller.handleDelete();
+          }
+        });
       }
     });
   }
@@ -166,19 +187,25 @@ public class ButtonArea
     {
       public void widgetSelected(SelectionEvent e)
       {
-      	// So ein Rotz - Wieso ist SelectionEvent nicht von Event abgeleitet?
-      	// Jetzt darf ich den ganzen Scheiss umkopieren
-      	Event event = new Event();
-      	event.data = e.data;
-      	event.detail = e.detail;
-      	event.display = e.display;
-      	event.doit = e.doit;
-      	event.item = e.item;
-      	event.width = e.width;
-      	event.height = e.height;
-      	event.x = e.x;
-      	event.y = e.y;
-      	listener.handleEvent(event);
+				// So ein Rotz - Wieso ist SelectionEvent nicht von Event abgeleitet?
+				// Jetzt darf ich den ganzen Scheiss umkopieren
+				final Event event = new Event();
+				event.data = e.data;
+				event.detail = e.detail;
+				event.display = e.display;
+				event.doit = e.doit;
+				event.item = e.item;
+				event.width = e.width;
+				event.height = e.height;
+				event.x = e.x;
+				event.y = e.y;
+      	GUI.startSync(new Runnable()
+        {
+          public void run()
+          {
+						listener.handleEvent(event);
+          }
+        });
       }
     });
   }
@@ -187,6 +214,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.7  2004/09/17 14:40:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

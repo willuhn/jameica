@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/09/14 23:27:57 $
+ * $Revision: 1.13 $
+ * $Date: 2004/09/17 14:40:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -314,6 +314,7 @@ public final class Application {
     app.pluginLoader.shutDown();
 
 		Logger.info("shutdown complete");
+		Logger.info("----------------------------------------------");
 		Logger.close();
 
     cleanShutdown = true;
@@ -474,6 +475,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.13  2004/09/17 14:40:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/09/14 23:27:57  willuhn
  * @C redesign of service handling
  *
