@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/01/19 16:31:27 $
+ * $Revision: 1.3 $
+ * $Date: 2005/01/30 20:54:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,7 @@ import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
@@ -52,15 +53,38 @@ public class SSLFactory
 		java.security.Security.addProvider(new BouncyCastleProvider());
 	}
 
-	// TODO JAMEICA Wallet Passwort beim ersten Start abfragen
-	private final static String PASSWORD = "jameica";
+	private KeyStore keystore							= null;
+	private X509Certificate certificate 	= null;
+	private PrivateKey privateKey 				= null;
+	private PublicKey publicKey						= null;
 
-	private KeyStore keystore						= null;
-	private X509Certificate certificate = null;
-	private PrivateKey privateKey 			= null;
-	private PublicKey publicKey					= null;
+	private SSLContext sslContext					= null;
 
-	private SSLContext sslContext				= null;
+	private ApplicationCallback callback 	= null;
+	private String password             	= null;
+
+  /**
+   * ct.
+   * @param callback Callback, der fuer Passwort-Abfragen benutzt werden soll.
+   */
+  public SSLFactory(ApplicationCallback callback)
+  {
+    super();
+    this.callback = callback;
+  }
+
+	/**
+	 * Liefert das Passwort ueber den Callback.
+   * @return Passwort.
+   */
+  private synchronized String getPassword() throws Exception
+	{
+		if (password != null)
+			return password;
+
+		password = callback.getPassword();
+		return password;
+	}
 
 	/**
 	 * Prueft die Zertifikate und erstellt sie bei Bedarf.
@@ -70,48 +94,35 @@ public class SSLFactory
 	{
 
 		Logger.info("init ssl factory");
-    Application.getStartupMonitor().setStatusText("init ssl factory");
+    Application.getCallback().getStartupMonitor().setStatusText("init ssl factory");
 
     if (Logger.getLevel().getValue() <= Level.DEBUG.getValue())
       System.setProperty("javax.net.debug","ssl hanshake");
 
-    System.setProperty("javax.net.ssl.trustStore",      getKeyStoreFile().getAbsolutePath());
-    System.setProperty("javax.net.ssl.keyStore",        getKeyStoreFile().getAbsolutePath());
-// TODO JAMEICA Wallet Passwort erst bei erster Verwendung abfragen
-//    System.setProperty("javax.net.ssl.keyStorePassword",PASSWORD);
-
 		File keyStoreFile = getKeyStoreFile();
 		if (keyStoreFile.exists() && keyStoreFile.canRead())
 		{
-			// Sicher ist sicher. Wir machen noch einen Lesetest des Key-Stores.
-			try
-			{
-				getCertificate();
-				return;
-			}
-			catch (Exception e)
-			{
-				Logger.error("unable to read jameica keystore file. creating a new one");
-			}
+			getCertificate();
+			return;
 		}
 
-		Application.getStartupMonitor().addPercentComplete(10);
+		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 		Logger.info("no ssl certificates found, creating...");
 
 
 		////////////////////////////////////////////////////////////////////////////
 		// Keys erstellen
-		Application.getStartupMonitor().setStatusText("generating new ssl keys and certificates");
+		Application.getCallback().getStartupMonitor().setStatusText("generating new ssl keys and certificates");
 
 		Logger.info("  generating rsa keypair");
 		KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-    kp.initialize(2048);
+    kp.initialize(1024);
 		KeyPair keypair = kp.generateKeyPair();
 
 		this.privateKey = keypair.getPrivate();
 		this.publicKey 	= keypair.getPublic();
 
-		Application.getStartupMonitor().addPercentComplete(10);
+		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -146,15 +157,18 @@ public class SSLFactory
 		// Keystore erstellen
 		Logger.info("  creating keystore");
     this.keystore = KeyStore.getInstance("JKS");
-		this.keystore.load(null,PASSWORD.toCharArray());
+
+		this.password = this.callback.createPassword();
+
+		this.keystore.load(null,getPassword().toCharArray());
 
 		Logger.info("  creating adding private key and x.509 certifcate");
 		this.keystore.setKeyEntry("jameica",this.privateKey,
-															PASSWORD.toCharArray(),
+															getPassword().toCharArray(),
 															new X509Certificate[]{this.certificate});
 
 		storeKeystore();
-		Application.getStartupMonitor().addPercentComplete(10);
+		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 		//
 		////////////////////////////////////////////////////////////////////////////
 	}
@@ -170,7 +184,7 @@ public class SSLFactory
 		{
 			Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
 			os = new FileOutputStream(getKeyStoreFile());
-			this.keystore.store(os,PASSWORD.toCharArray());
+			this.keystore.store(os,getPassword().toCharArray());
 		}
 		finally
 		{
@@ -212,7 +226,7 @@ public class SSLFactory
 		if (this.privateKey != null)
 			return this.privateKey;
 
-		this.privateKey = (PrivateKey) getKeyStore().getKey("jameica",PASSWORD.toCharArray());
+		this.privateKey = (PrivateKey) getKeyStore().getKey("jameica",getPassword().toCharArray());
 		return this.privateKey;
 	}
 
@@ -243,6 +257,10 @@ public class SSLFactory
 		InputStream is = null;
 		try
 		{
+			System.setProperty("javax.net.ssl.trustStore",      getKeyStoreFile().getAbsolutePath());
+			System.setProperty("javax.net.ssl.keyStore",        getKeyStoreFile().getAbsolutePath());
+			System.setProperty("javax.net.ssl.keyStorePassword",getPassword()); // TODO JAMEICA Ist das noetig?
+
 			File f = getKeyStoreFile();
 			Logger.info("reading keystore from file " + f.getAbsolutePath());
 			is = new FileInputStream(f);
@@ -251,12 +269,19 @@ public class SSLFactory
       this.keystore = KeyStore.getInstance("JKS");
 
 			Logger.info("reading keys");
-			this.keystore.load(is,PASSWORD.toCharArray());
+			this.keystore.load(is,getPassword().toCharArray());
 			return this.keystore;
 		}
 		finally
 		{
-			is.close();
+			try
+			{
+				is.close();
+			}
+			catch (Exception e) 
+			{
+				// useless
+			}
 		}
 	}
 	
@@ -297,7 +322,7 @@ public class SSLFactory
 
 		Logger.info("init SunX509 key manager");
 		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
-		keyManagerFactory.init(this.getKeyStore(),PASSWORD.toCharArray());
+		keyManagerFactory.init(this.getKeyStore(),getPassword().toCharArray());
 
 //	Wir benutzen unseren eignen TrustManager
 		Logger.info("init Jameica trust manager");
@@ -330,8 +355,8 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.2  2005/01/19 16:31:27  willuhn
- * @C increased keysize to 2048
+ * Revision 1.3  2005/01/30 20:54:58  willuhn
+ * *** empty log message ***
  *
  * Revision 1.1  2005/01/19 02:14:00  willuhn
  * @N Wallet zum Verschluesseln von Benutzerdaten
