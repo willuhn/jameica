@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/26 21:43:30 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/27 21:23:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,12 +25,13 @@ import de.willuhn.jameica.ApplicationException;
 public interface DBObject extends Remote
 {
 
-  public final static String FIELDTYPE_DATE    = "date";
-  public final static String FIELDTYPE_DATETIME= "datetime";
-  public final static String FIELDTYPE_INT     = "int";
-  public final static String FIELDTYPE_DOUBLE  = "double";
-  public final static String FIELDTYPE_DECIMAL = "decimal";
-  public final static String FIELDTYPE_VARCHAR = "varchar";
+  public final static String FIELDTYPE_DATE      = "date";
+  public final static String FIELDTYPE_TIMESTAMP = "timestamp";
+  public final static String FIELDTYPE_DATETIME  = "datetime";
+  public final static String FIELDTYPE_INT       = "int";
+  public final static String FIELDTYPE_DOUBLE    = "double";
+  public final static String FIELDTYPE_DECIMAL   = "decimal";
+  public final static String FIELDTYPE_VARCHAR   = "varchar";
   
 
   /**
@@ -145,12 +146,13 @@ public interface DBObject extends Remote
    * @throws RemoteException
    */
   public DBIterator getList() throws RemoteException;
-  
-
 }
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.12  2003/12/27 21:23:33  willuhn
+ * @N object serialization
+ *
  * Revision 1.11  2003/12/26 21:43:30  willuhn
  * @N customers changable
  *

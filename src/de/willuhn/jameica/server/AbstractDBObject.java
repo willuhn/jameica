@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.22 $
- * $Date: 2003/12/26 21:43:29 $
+ * $Revision: 1.23 $
+ * $Date: 2003/12/27 21:23:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
+import de.willuhn.jameica.*;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.ApplicationException;
 import de.willuhn.jameica.rmi.DBIterator;
@@ -36,9 +38,6 @@ import de.willuhn.jameica.rmi.DBObject;
  */
 public abstract class AbstractDBObject extends UnicastRemoteObject implements DBObject 
 {
-
-  // Die Datenbank-Verbindung
-  private Connection conn;
 
   // Der Primary-Key des Objektes
   private String id;
@@ -76,8 +75,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     if (conn == null)
       throw new SQLException("connection is null");
 
-    this.conn = conn;
-    this.conn.setAutoCommit(false); // Auto-Commit schalten wir aus weil wir vorsichtig sind ;)
+    conn.setAutoCommit(false); // Auto-Commit schalten wir aus weil wir vorsichtig sind ;)
+    ConnectionPool.setConnection(this,conn);
   }
   
   /**
@@ -86,7 +85,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   protected Connection getConnection()
   {
-    return conn;
+    return ConnectionPool.getConnection(this);
   }
   
   /**
@@ -95,7 +94,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   private void checkConnection() throws RemoteException
   {
-    if (conn == null)
+    if (getConnection() == null)
       throw new RemoteException("database connection not set.");
   }
 
@@ -139,7 +138,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		ResultSet meta = null;
     Application.getLog().debug("trying to read meta data from table " + tableName);
 		try {
-			meta = conn.getMetaData().getColumns(null,null,tableName,null);
+			meta = getConnection().getMetaData().getColumns(null,null,tableName,null);
 			String field;
 			while (meta.next())
 			{
@@ -199,11 +198,20 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		ResultSet data = null;
     Application.getLog().debug("trying to load object id ["+id+"] from table " + tableName);
 		try {
-			stmt = conn.createStatement();
-			data = stmt.executeQuery("select * from " + tableName + " where " + this.getIDField() + " = '"+this.id+"'");
+			stmt = getConnection().createStatement();
+      String sql = "";
+      try {
+        sql = "select * from " + tableName + " where " + this.getIDField() + " = "+Integer.parseInt(this.id);
+      }
+      catch (NumberFormatException e)
+      {
+        sql = "select * from " + tableName + " where " + this.getIDField() + " = '"+this.id+"'";
+      }
+      data = stmt.executeQuery(sql);
 			if (!data.next())
       {
         this.id = null;
+        Application.getLog().debug(" object not found");
         return; // record not found.
       }
 
@@ -260,7 +268,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#delete()
    */
-  public final void delete() throws RemoteException, ApplicationException
+  public void delete() throws RemoteException, ApplicationException
   {
     if (isNewObject())
       return; // no, we delete no new objects ;)
@@ -275,10 +283,18 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		Statement stmt = null;
     Application.getLog().debug("deleting object id ["+id+"] from table " + getTableName());
     try {
-    	stmt = conn.createStatement();
-      stmt.execute("delete from " + getTableName() + " where "+this.getIDField()+" = '"+id+"'");
+    	stmt = getConnection().createStatement();
+      String sql = null;
+      try {
+        sql = "delete from " + getTableName() + " where "+this.getIDField()+" = "+Integer.parseInt(id);
+      }
+      catch (NumberFormatException e)
+      {
+        sql = "delete from " + getTableName() + " where "+this.getIDField()+" = '"+id+"'";
+      }
+      stmt.execute(sql);
       if (!this.inTransaction)
-        conn.commit();
+        getConnection().commit();
       this.id = null;
       Application.getLog().debug("  done");
     }
@@ -288,7 +304,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       Application.getLog().error(msg);
       if (!this.inTransaction) {
         try {
-          conn.rollback();
+          getConnection().rollback();
           e.printStackTrace();
           Application.getLog().warn("rollback successful");
         }
@@ -413,7 +429,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 		Statement stmt = null;
 		try {
-			stmt = conn.createStatement();
+			stmt = getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("select max("+this.getIDField()+") from " + getTableName());
 			rs.next();
 			this.id = rs.getString(1);
@@ -445,7 +461,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       stmt.execute();
       setLastId();
       if (!this.inTransaction)
-  			conn.commit();
+  			getConnection().commit();
       Application.getLog().debug("  done");
     }
     catch (SQLException e)
@@ -454,7 +470,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
         String msg = "error while insert into table " + getTableName();
         Application.getLog().error(msg);
         try {
-          conn.rollback();
+          getConnection().rollback();
           e.printStackTrace();
           Application.getLog().warn("rollback successful");
         }
@@ -496,7 +512,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
         throw new SQLException();
       }
       if (!this.inTransaction)
-        conn.commit();
+        getConnection().commit();
       Application.getLog().debug("  done");
     }
     catch (SQLException e)
@@ -505,7 +521,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
         String msg = "error while update in table " + getTableName();
         Application.getLog().error(msg);
         try {
-          conn.rollback();
+          getConnection().rollback();
           e.printStackTrace();
           Application.getLog().warn("rollback successful");
         }
@@ -544,9 +560,16 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 				continue; // skip the id field
       sql += fields[i] + "=?,";
     }
-    sql = sql.substring(0,sql.length()-1) + " where "+this.getIDField()+"="+id+""; // remove last ","
+    sql = sql.substring(0,sql.length()-1); // remove last ","
     try {
-      PreparedStatement stmt = conn.prepareStatement(sql);
+      sql += " where "+this.getIDField()+"="+Integer.parseInt(getID());
+    }
+    catch (NumberFormatException e)
+    {
+      sql += " where "+this.getIDField()+"='"+getID()+"'";
+    }
+    try {
+      PreparedStatement stmt = getConnection().prepareStatement(sql);
       for (int i=0;i<fields.length;++i)
       {
         String type  = (String) types.get(fields[i]);
@@ -589,7 +612,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     values = values.substring(0,values.length()-1) + ")"; // remove last "," and append ")"
 
     try {
-      PreparedStatement stmt = conn.prepareStatement(sql + names + values);
+      PreparedStatement stmt = getConnection().prepareStatement(sql + names + values);
       for (int i=0;i<fields.length;++i)
       {
         String type  = (String) types.get(fields[i]);
@@ -638,6 +661,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
       else if (FIELDTYPE_DATE.equalsIgnoreCase(type) || FIELDTYPE_DATETIME.equalsIgnoreCase(type))
         stmt.setDate(index,new java.sql.Date(((Date) value).getTime()));
+
+      else if (FIELDTYPE_TIMESTAMP.equalsIgnoreCase(type))
+        stmt.setTimestamp(index,new Timestamp(((Date) value).getTime()));
 
       else if (FIELDTYPE_INT.equalsIgnoreCase(type))
         stmt.setInt(index,((Integer) value).intValue());
@@ -750,7 +776,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       return;
 
     try {
-      conn.rollback();
+      getConnection().rollback();
       this.inTransaction = false;
       Application.getLog().debug("connection rolled back");
     }
@@ -775,7 +801,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
     Application.getLog().debug("committing open transaction");
     try {
-      conn.commit();
+      getConnection().commit();
       this.inTransaction = false;
     }
     catch (SQLException se)
@@ -783,7 +809,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       se.printStackTrace();
       Application.getLog().error("commit failed");
       try {
-        conn.rollback();
+        getConnection().rollback();
         this.inTransaction = false;
         Application.getLog().warn("rollback successful");
       }
@@ -803,11 +829,13 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   {
     return new DBIteratorImpl(this,getConnection());
   }
-
 }
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.23  2003/12/27 21:23:33  willuhn
+ * @N object serialization
+ *
  * Revision 1.22  2003/12/26 21:43:29  willuhn
  * @N customers changable
  *

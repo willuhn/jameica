@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/27 21:23:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -74,7 +74,7 @@ public class Settings
    */
   private File getFile()
   {
-    return new File("cfg/"+className+ ".properties");
+    return new File(Application.getConfig().getConfigDir()+"/"+className+ ".properties");
   }
   
   /**
@@ -123,6 +123,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.2  2003/12/27 21:23:33  willuhn
+ * @N object serialization
+ *
  * Revision 1.1  2003/11/24 23:01:58  willuhn
  * @N added settings
  *

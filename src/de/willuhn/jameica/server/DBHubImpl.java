@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/22 21:00:34 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/27 21:23:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -179,7 +179,6 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
   }
 
 
-
   /**
    * @see de.bbvag.dhl.easylog.hubs.DBHub#createObject(java.lang.Class, java.lang.String)
    */
@@ -288,6 +287,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.10  2003/12/27 21:23:33  willuhn
+ * @N object serialization
+ *
  * Revision 1.9  2003/12/22 21:00:34  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/22 21:00:34 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/27 21:23:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
+import java.io.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
@@ -68,6 +69,8 @@ public class Config
   
   private boolean ide = false;
   
+  private String configDir = "cfg";
+  
   /**
    * ct.
    * @param fileName Pfad und Name zur Config-Datei.
@@ -105,6 +108,9 @@ public class Config
     }
     if (file == null)
       throw new FileNotFoundException("alert: config file " + fileName + " not found.");
+
+    File f = new File(fileName);
+    configDir = f.getParent();
 
     xml.read(file);
 
@@ -281,11 +287,22 @@ public class Config
     return ide;
   }
 
+  /**
+   * Liefert den Pfad zum Config-Verzeichnis.
+   * @return
+   */
+  public String getConfigDir()
+  {
+    return configDir;
+  }
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.8  2003/12/27 21:23:33  willuhn
+ * @N object serialization
+ *
  * Revision 1.7  2003/12/22 21:00:34  willuhn
  * *** empty log message ***
  *
