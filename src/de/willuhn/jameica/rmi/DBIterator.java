@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBIterator.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/30 16:23:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,12 @@ public interface DBIterator extends Remote {
    */
   public void addFilter(String filter) throws RemoteException;
   
+  /**
+   * Fuegt dem Iterator eine Sortierung hinzu.
+   * @param order
+   * @throws RemoteException
+   */
+  public void setOrder(String order) throws RemoteException;
 	/**
 	 * Liefert true, wenn weitere Elemente in diesem Iterator existieren.
 	 * @return true, wenn weitere Elemente vorhanden sind.
@@ -93,6 +99,9 @@ public interface DBIterator extends Remote {
 
 /*********************************************************************
  * $Log: DBIterator.java,v $
+ * Revision 1.5  2003/11/30 16:23:09  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

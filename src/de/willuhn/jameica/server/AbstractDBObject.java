@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/11/27 00:22:18 $
+ * $Revision: 1.12 $
+ * $Date: 2003/11/30 16:23:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -425,6 +425,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Kann bei Bedarf überschrieben um ein vom dynamisch erzeugten
    * abweichendes Statement für die Speicherung zu verwenden.  
    * @return das erzeugte SQL-Statement.
+   * @throws RemoteException
    */
   protected PreparedStatement getUpdateSQL() throws RemoteException
   {
@@ -459,6 +460,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Kann bei Bedarf überschrieben um ein vom dynamisch erzeugten
    * abweichendes Statement für die Speicherung zu verwenden.  
    * @return das erzeugte SQL-Statement.
+   * @throws RemoteException
    */
   protected PreparedStatement getInsertSQL() throws RemoteException
   {
@@ -493,6 +495,24 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     {
       throw new RemoteException("unable to prepare insert sql statement",e);
     }
+  }
+
+  /**
+   * Liefert das automatisch erzeugte SQL-Statement fuer die Erzeugung einer Liste
+   * dieses Typs.
+   * ACHTUNG: Das Statement muss ein Feld mit der Bezeichnung "id" zurueckgeben,
+   * da das von DBIteratorImpl gelesen wird. Also z.Bsp. "select id from kunde".
+   * Kann bei Bedarf überschrieben um ein vom dynamisch erzeugten
+   * abweichendes Statement zu verwenden.
+   * Die Funktion muss das Statement nur dewegen als String zurueckliefern,
+   * weil es typischerweise von DBIterator weiterverwendet wird und dort eventuell
+   * noch weitere Filterkriterien hinzugefuegt werden koennen muessen.  
+   * @return das erzeugte SQL-Statement.
+   * @throws RemoteException
+   */
+  protected String getListQuery() throws RemoteException
+  {
+    return "select id from " + getTableName();
   }
 
   /**
@@ -666,6 +686,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.12  2003/11/30 16:23:09  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2003/11/27 00:22:18  willuhn
  * @B paar Bugfixes aus Kombination RMI + Reflection
  * @N insertCheck(), deleteCheck(), updateCheck()

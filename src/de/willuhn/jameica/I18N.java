@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/I18N.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/30 16:23:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ public class I18N
   private static Properties properties;
   private static Locale currentLocale;
 
+  private static String RESOURCE_PATH = "lang/messages";
   /**
    * Initialisiert diese Klasse mit dem angegebenen Locale.
    * @param l das zu verwendende Locale.
@@ -39,7 +40,12 @@ public class I18N
   public static void init(Locale l)
   {
     currentLocale = l;
-    bundle = ResourceBundle.getBundle("lang/messages",l);
+    try {
+      bundle = ResourceBundle.getBundle(RESOURCE_PATH,l);
+    }
+    catch (MissingResourceException mre) {
+      Application.getLog().error("unable to find resource bunde in " + RESOURCE_PATH);
+    }
     properties = new Properties();
   }
   
@@ -54,7 +60,8 @@ public class I18N
   {
     String translated = null;
     try {
-      translated = bundle.getString(key);
+      if (bundle != null)
+        translated = bundle.getString(key);
     }
     catch(MissingResourceException e) {}
 
@@ -91,6 +98,9 @@ public class I18N
 
 /*********************************************************************
  * $Log: I18N.java,v $
+ * Revision 1.4  2003/11/30 16:23:09  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

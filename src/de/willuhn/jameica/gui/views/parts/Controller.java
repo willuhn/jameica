@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Controller.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/24 17:27:50 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/30 16:23:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -74,7 +74,7 @@ public abstract class Controller
    * Liefert das Business-Objekt, fuer das dieser Controller zustaendig ist.
    * @return
    */
-  protected DBObject getObject()
+  public DBObject getObject()
   {
     return object;
   }
@@ -115,6 +115,9 @@ public abstract class Controller
 
 /*********************************************************************
  * $Log: Controller.java,v $
+ * Revision 1.4  2003/11/30 16:23:09  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/24 17:27:50  willuhn
  * @N Context menu in table
  *

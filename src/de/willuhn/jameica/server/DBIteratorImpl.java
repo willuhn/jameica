@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/30 16:23:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import de.willuhn.jameica.Application;
+
 /**
  * @author willuhn
  * Kleiner Hilfsiterator zum Holen von Listen von Objekten aus der Datenbank.
@@ -31,6 +33,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 	private ArrayList list = new ArrayList();
 	private int index = 0;
   private String filter = "";
+  private String order = "";
   private boolean initialized = false;
 
 	/**
@@ -51,12 +54,25 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 		this.conn = conn;
   }
 
+  /**
+   * @see de.willuhn.jameica.rmi.DBIterator#setOrder(java.lang.String)
+   */
+  public void setOrder(String order) throws RemoteException {
+    this.order = " " + order;
+  }
 
+  /**
+   * @see de.willuhn.jameica.rmi.DBIterator#addFilter(java.lang.String)
+   */
   public void addFilter(String filter) throws RemoteException {
     if ("".equals(this.filter))
-      this.filter = " where 1 and " + filter;
-    else
+    {
+      this.filter = " where " + filter;
+    }
+    else {
       this.filter += " and " + filter;
+    }
+
   }
 
   /**
@@ -65,18 +81,28 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    */
   private void init() throws RemoteException {
 		Statement stmt = null;
+    String sql = null;
 		ResultSet rs = null;
 		try {
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("select id from " + object.getTableName() + filter);
+      sql = object.getListQuery();
+      
+      if (sql.indexOf(" where ") == -1)
+       sql = sql + filter + order;
+
+      if (Application.DEBUG)
+        Application.getLog().debug("executing sql: " + sql);
+			rs = stmt.executeQuery(sql);
 			while (rs.next())
 			{
-				list.add(rs.getString("ID"));
+				list.add(rs.getString("id"));
 			}
       this.initialized = true;
 		}
 		catch (SQLException e)
 		{
+      if (Application.DEBUG)
+        e.printStackTrace();
       // wenn das Statement ungueltig ist, ist halt der Iterator leer ;)
 		}
 		finally {
@@ -157,6 +183,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.5  2003/11/30 16:23:09  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *
