@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source:
  * /export/CVS/willuhn/own/jameica/dev/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.47 $ $Date: 2004/06/17 22:07:11 $ $Author: willuhn $ $Locker:  $
+ * $Revision: 1.48 $ $Date: 2004/06/24 21:31:36 $ $Author: willuhn $ $Locker:  $
  * $State: Exp $
  * 
  * Copyright (c) by willuhn.webdesign All rights reserved
@@ -55,28 +55,19 @@ public class GUI
 
 	// singleton
 	private static GUI gui;
-
-	private final Display display = new Display();
-
-	private final Shell shell = new Shell();
-
-	private Navigation navi;
-
-	private View view;
-
-	private StatusBar statusBar;
-
-	private Menu menu;
-
-	private HelpView help;
-
-	private AbstractView currentView;
-
-	private Stack history;
-
-	private boolean skipHistory = false;
-
-	private StyleFactory styleFactory;
+		private final Display display = new Display();
+		private final Shell shell = new Shell();
+	
+		private Navigation navi;
+		private View view;
+		private StatusBar statusBar;
+		private Menu menu;
+		private HelpView help;
+		private AbstractView currentView;
+	
+		private Stack history;
+		private boolean skipHistory = false;
+		private StyleFactory styleFactory;
 
 	private static boolean stop = false;
 
@@ -132,18 +123,11 @@ public class GUI
 		width = settings.getInt("window.width", width);
 		height = settings.getInt("window.height", height);
 
-		if (x >= gui.display.getBounds().width || x < 0) x = 10; // screen
-		// resolution
-		// smaller than
-		// last start
-		if (y >= gui.display.getBounds().height || y < 0) y = 10; // screen
-		// resolution
-		// smaller than
-		// last start
+		if (x >= gui.display.getBounds().width || x < 0) x = 10;
+		if (y >= gui.display.getBounds().height || y < 0) y = 10;
+
 		shell.setBounds(x, y, width, height);
-
 		shell.addDisposeListener(new DisposeListener() {
-
 			public void widgetDisposed(DisposeEvent e)
 			{
 				// Deswegen muessen wir uns das selbst ausrechnen
@@ -183,7 +167,6 @@ public class GUI
 		addView(right);
 
 		left.setWeights(new int[] { 1, 1 });
-
 		sash.setWeights(new int[] { 1, 3 });
 
 		Composite bottom = new Composite(shell, SWT.NONE);
@@ -684,6 +667,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.48  2004/06/24 21:31:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.47  2004/06/17 22:07:11  willuhn
  * @C cleanup in tablePart and statusBar
  *
