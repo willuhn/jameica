@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.39 $
- * $Date: 2004/04/26 21:00:11 $
+ * $Revision: 1.40 $
+ * $Date: 2004/04/29 23:05:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -38,6 +37,7 @@ import de.willuhn.jameica.PluginContainer;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
@@ -153,14 +153,14 @@ public class GUI
 
     Composite right = new Composite(sash,SWT.NONE);
 		right.setLayout(new FillLayout());
-    Application.getLog().info("adding content view"); addView(right);
+    Application.getLog().info("adding content view");
+
+    addView(right);
 
 
 		left.setWeights(new int[] {1,1});
 
 		sash.setWeights(new int[] {1,3});
-
-
 
 		Composite bottom = new Composite(shell,SWT.NONE);
 		bottom.setLayout(createGrid(1,true));
@@ -186,6 +186,7 @@ public class GUI
 		getStatusBar().setStatusText(Application.getI18n().tr("startup finished"));
   } 
   
+	public Composite test;
 
   /**
    * Initialisiert die GUI und startet den GUI-Loop. 
@@ -297,31 +298,6 @@ public class GUI
 	}
 
 	/**
-	 * Disposed den gesamten Dialog.
-   * @param c Composite, dessen Kinder disposed werden sollen.
-   */
-  private static void dispose(Composite c)
-	{
-		try {
-			Control[] childs = c.getChildren();
-			if (childs == null)
-				return;
-			for (int i=0;i<childs.length;++i)
-			{
-				// schauen, ob es ein Composite ist
-				if (childs[i] instanceof Composite)
-					dispose((Composite)childs[i]);
-				if (childs[i] != null && !childs[i].isDisposed())
-					childs[i].dispose();
-			}
-		}
-		catch (Throwable t)
-		{
-			Application.getLog().error("error while disposing composite childs",t);
-		}
-	}
-
-	/**
 	 * Zeigt die View im angegebenen Composite an.
    * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
 	 * @param o das Fachobjekt.
@@ -339,7 +315,7 @@ public class GUI
 
 						// dispose all childs
 						Application.getLog().debug("disposing previous view");
-						dispose(gui.view.getContent());
+						SWTUtil.disposeChilds(gui.view.getContent());
 						Application.getLog().debug("dispose finished");
 
 					}
@@ -623,6 +599,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.40  2004/04/29 23:05:54  willuhn
+ * @N new snapin feature
+ *
  * Revision 1.39  2004/04/26 21:00:11  willuhn
  * @N made menu and navigation entries translatable
  *

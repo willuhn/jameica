@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.16 $
+ * $Date: 2004/04/29 23:05:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,12 +16,15 @@ package de.willuhn.jameica.gui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.gui.util.Style;
 
 /**
@@ -30,8 +33,12 @@ import de.willuhn.jameica.gui.util.Style;
  */
 public class View
 {
+	private SashForm sash;
+
 	private Composite view;
 	private Composite content;
+	private Composite snapin;
+	private boolean snappedIn = false;
 
 	private Composite parent;
 	private CLabel title;
@@ -55,7 +62,10 @@ public class View
    */
   private void init()
 	{
-		view = new Composite(parent, SWT.BORDER);
+		sash = new SashForm(parent,SWT.VERTICAL);
+		sash.setLayout(new FillLayout());
+		
+		view = new Composite(sash, SWT.BORDER);
 		view.setBackground(Style.COLOR_WHITE);
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
@@ -65,6 +75,11 @@ public class View
 		layout.verticalSpacing = 0;
 		view.setLayout(layout);
 	
+		snapin = new Composite(sash, SWT.BORDER);
+		snapin.setLayoutData(new GridData(GridData.FILL_BOTH));
+		snapin.setLayout(new FillLayout());
+		sash.setMaximizedControl(view);
+
 		panelBg = Style.getCanvas(view,Style.getImage("panel.bmp"), SWT.TOP | SWT.RIGHT);
 		GridLayout layout2 = new GridLayout();
 		layout2.marginHeight = 0;
@@ -110,6 +125,47 @@ public class View
 		content.setLayout(l);
 		messages.setText("");
 		messages.layout();
+	}
+
+	/**
+   * Das Snapin-Composite wird angezeigt.
+   */
+  public void snapIn()
+	{
+		sash.setMaximizedControl(null);
+		sash.setWeights(new int[] {3,1});
+		snappedIn = true;
+	}
+
+	/**
+   * Das Snapin-Composite wird ausgeblendet.
+   */
+  public void snapOut()
+	{
+		sash.setMaximizedControl(view);
+		snappedIn = false;
+	}
+
+	/**
+	 * Prueft, ob das Snapin gerade angezeigt wird.
+   * @return true, wenn es angezeigt wird.
+   */
+  public boolean snappedIn()
+	{
+		return snappedIn;
+	}
+
+	/**
+	 * Liefert das SnapIn-Composite.
+	 * Die Funktion liefert immer ein leeres Snapin. Wenn sich also vorher
+	 * was drin befunden hat, wird es vorm erneuten Herausgeben geleert.
+	 * Hinweis: Das Composite enthaelt ein FillLayout.
+   * @return Snapin-Composite.
+   */
+  public Composite getSnapin()
+	{
+		SWTUtil.disposeChilds(snapin);
+		return snapin;
 	}
 
 	/**
@@ -174,6 +230,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.16  2004/04/29 23:05:54  willuhn
+ * @N new snapin feature
+ *
  * Revision 1.15  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *

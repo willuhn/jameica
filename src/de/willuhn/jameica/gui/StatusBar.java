@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/04/29 21:21:25 $
+ * $Revision: 1.20 $
+ * $Date: 2004/04/29 23:05:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,14 +22,10 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -53,8 +49,9 @@ public class StatusBar {
 		private ProgressBar noProgress;
   
   private History lastActionMessages;
-  
-  private Shell messages;
+
+	private boolean statusIn = false;
+	private boolean actionIn = false;
 
   /**
    * Erzeugt eine neue Statusleiste.
@@ -110,7 +107,22 @@ public class StatusBar {
 		{
 			public void mouseUp(MouseEvent e)
 			{
+				if (e.button != 1)
+				{
+					// Bei rechter oder mittlerer Maustaste machen wir nur den Text leer
+					setStatusText("");
+					return;
+				}
+
+				if (statusIn)
+				{
+					// wir werden schon angezeigt, dann zoomen wir uns wieder raus
+					statusIn = false;
+					GUI.getView().snapOut();
+					return;					
+				}
 				showLastMessages(new ArrayEnumeration(Application.getLog().getLastLines()),true);
+				statusIn = true;
 			}
 		});
 
@@ -124,10 +136,22 @@ public class StatusBar {
     {
       public void mouseUp(MouseEvent e)
       {
-      	if (e.button == 1)
-	      	showLastMessages(lastActionMessages.elements(),false);
-	      else
-	      	setSuccessText("");
+				if (e.button != 1)
+				{
+					// Bei rechter oder mittlerer Maustaste machen wir nur den Text leer
+					setSuccessText("");
+					return;
+				}
+
+				if (actionIn)
+				{
+					// wir werden schon angezeigt, dann zoomen wir uns wieder raus
+					actionIn = false;
+					GUI.getView().snapOut();
+					return;					
+				}
+				showLastMessages(lastActionMessages.elements(),false);
+				actionIn = true;
       }
     });
     
@@ -226,56 +250,26 @@ public class StatusBar {
    */
   private void showLastMessages(Enumeration e, boolean alignRight)
 	{
-		if (messages != null && !messages.isDisposed())
-			messages.dispose();
-
-		Display display = GUI.getDisplay();
-//		Shell shell = new Shell(GUI.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		messages = new Shell(GUI.getShell(), SWT.NONE);
-		messages.setText(Application.getI18n().tr("letzte Meldungen"));
-		GridLayout gl = new GridLayout(1,false);
-		gl.horizontalSpacing = 0;
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		gl.verticalSpacing = 0;
-		messages.setLayout(gl);
+		Composite snapin = GUI.getView().getSnapin();
 
 		TablePart table = new TablePart(e,null);
 		table.addColumn(Application.getI18n().tr("Meldungen"),null);
 		try
     {
-      table.paint(messages);
+      table.paint(snapin);
+      GUI.getView().snapIn();
     }
     catch (RemoteException re) {}
 
-		messages.pack();
-
-		Point pos = getAbsolutePosition(actionText);
-		messages.setLocation(pos.x,pos.y - 150);
-		messages.setSize(actionText.getBounds().width,150);
-		messages.open();
-		while (!messages.isDisposed()) {
-			if (!display.readAndDispatch()) display.sleep();
-		}
-	}
-
-
-	private Point getAbsolutePosition(Control c)
-	{
-		if (c == null)
-			return null;
-
-		Point current = c.getLocation();
-		Point parent = new Point(0,0);
-		if (c.getParent() != null)
-			parent = getAbsolutePosition(c.getParent());
-		return new Point(current.x + parent.x, current.y + parent.y);
 	}
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.20  2004/04/29 23:05:54  willuhn
+ * @N new snapin feature
+ *
  * Revision 1.19  2004/04/29 21:21:25  willuhn
  * *** empty log message ***
  *
