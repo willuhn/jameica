@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.34 $
- * $Date: 2004/04/14 23:53:44 $
+ * $Revision: 1.35 $
+ * $Date: 2004/04/20 12:42:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -78,6 +78,7 @@ public class Application {
 
 		// LockFile erzeugen
 		try {
+			// TODO: "run" erstellen, wenns fehlt
 			new Lock("run/jameica");
 		}
 		catch (RuntimeException e)
@@ -325,6 +326,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.35  2004/04/20 12:42:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.34  2004/04/14 23:53:44  willuhn
  * *** empty log message ***
  *
