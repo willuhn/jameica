@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.50 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.51 $
+ * $Date: 2004/07/04 17:07:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,7 @@ package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Stack;
 
@@ -184,10 +184,10 @@ public class GUI
 
 		// so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
 		// hinzu.
-		Enumeration e = PluginLoader.getPluginContainers();
-		while (e.hasMoreElements())
+		Iterator i = PluginLoader.getPluginContainers();
+		while (i.hasNext())
 		{
-			PluginContainer pc = (PluginContainer) e.nextElement();
+			PluginContainer pc = (PluginContainer) i.next();
 			menu.addPlugin(pc);
 			navi.addPlugin(pc);
 		}
@@ -669,6 +669,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.51  2004/07/04 17:07:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.50  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

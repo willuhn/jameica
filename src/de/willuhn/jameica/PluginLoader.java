@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.46 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.47 $
+ * $Date: 2004/07/04 17:07:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,8 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -34,7 +35,8 @@ public class PluginLoader
 {
 
   // Liste mit allen gefundenen Plugins.
-  private static Hashtable plugins = new Hashtable();
+  // Die Reihenfolge aus der config.xml bleibt
+  private static List plugins = new ArrayList();
 
   // BasisPlugin-Basis-Klasse
   private static Class pluginClass = AbstractPlugin.class;
@@ -138,7 +140,7 @@ public class PluginLoader
 				dp.setNavi(navi);
 				dp.setInfo(info);
 				dp.setPluginClass((Class)classes.get(i));
-				plugins.put(classes.get(i),dp);
+				plugins.add(dp);
 			}
 		}
 		//
@@ -212,7 +214,7 @@ public class PluginLoader
 					jp.setNavi(navi);
 					jp.setInfo(info);
 					jp.setPluginClass((Class)classes.get(j));
-					plugins.put(classes.get(j),jp);
+					plugins.add(jp);
 				}
 	    }
 		}
@@ -260,11 +262,10 @@ public class PluginLoader
   private static void initPlugins()
   {
 
-		Enumeration e = plugins.elements();
-		while (e.hasMoreElements())
+		int size = plugins.size();
+		for (int i=0;i<size;++i)
 		{
-			PluginContainer container = (PluginContainer) e.nextElement();
-
+			PluginContainer container = (PluginContainer) plugins.get(i);
 			initPlugin(container);
 		}
   }
@@ -375,17 +376,17 @@ public class PluginLoader
    * Liefert eine Liste mit allen installierten Plugins.
    * @return Liste aller installierten Plugins. Die Elemente sind vom Typ <code>AbstractPlugin</code>.
    */
-  public static Enumeration getInstalledPlugins()
+  public static Iterator getInstalledPlugins()
   {
   	Vector v = new Vector();
-  	Enumeration e = plugins.elements();
-  	while (e.hasMoreElements())
+  	int size = plugins.size();
+  	for (int i=0;i<size;++i)
   	{
-  		PluginContainer p = (PluginContainer) e.nextElement();
+  		PluginContainer p = (PluginContainer) plugins.get(i);
   		if (p.isInstalled())
   			v.add(p.getPlugin());
   	}
-		return v.elements();
+		return v.iterator();
   }
 
 	/**
@@ -397,9 +398,9 @@ public class PluginLoader
 	 * <code>getInstalledPlugins</code>.
 	 * @return Liste aller registrierten Plugin-Container.
 	 */
-	public static Enumeration getPluginContainers()
+	public static Iterator getPluginContainers()
 	{
-		return plugins.elements();
+		return plugins.iterator();
 	}
 
 	/**
@@ -409,7 +410,18 @@ public class PluginLoader
    */
   public static PluginContainer getPluginContainer(Class plugin)
 	{
-		return (PluginContainer) plugins.get(plugin);
+		if (plugin == null)
+			return null;
+
+		int size = plugins.size();
+		PluginContainer pc = null;
+		for (int i=0;i<size;++i)
+		{
+			pc = (PluginContainer) plugins.get(i);
+			if (pc.getPluginClass().equals(plugin))
+				return pc;
+		}
+		return null;
 	}
 
 	/**
@@ -419,8 +431,17 @@ public class PluginLoader
 	 */
 	public static AbstractPlugin getPlugin(Class plugin)
 	{
-		PluginContainer pc = (PluginContainer) plugins.get(plugin);
-		return pc == null ? null : pc.getPlugin();
+		if (plugin == null)
+			return null;
+		int size = plugins.size();
+		PluginContainer pc =null;
+		for (int i=0;i<size;++i)
+		{
+			pc = (PluginContainer) plugins.get(i);
+			if (pc.getPluginClass().equals(plugin))
+				return pc.getPlugin();
+		}
+		return null;
 	}
 
 	/**
@@ -490,10 +511,10 @@ public class PluginLoader
   public static void shutDown()
   {
     Logger.info("shutting down plugins");
-		Enumeration e = plugins.elements();
-    while (e.hasMoreElements())
+    int size = plugins.size();
+    for (int i=0;i<size;++i)
     {
-			PluginContainer pc = (PluginContainer) e.nextElement();
+			PluginContainer pc = (PluginContainer) plugins.get(i);
 			if (!pc.isInstalled())
 				continue; // nicht installierte Plugins muessen nicht runtergefahren werden
 			AbstractPlugin plugin = pc.getPlugin();
@@ -514,6 +535,9 @@ public class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.47  2004/07/04 17:07:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.46  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

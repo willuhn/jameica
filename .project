@@ -3,6 +3,8 @@
 	<name>jameica</name>
 	<comment></comment>
 	<projects>
+		<project>datasource</project>
+		<project>util</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

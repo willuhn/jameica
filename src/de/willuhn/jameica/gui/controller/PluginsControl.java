@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/PluginsControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.4 $
+ * $Date: 2004/07/04 17:07:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,7 @@
 package de.willuhn.jameica.gui.controller;
 
 import java.rmi.RemoteException;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import de.willuhn.jameica.AbstractPlugin;
 import de.willuhn.jameica.Application;
@@ -58,10 +58,10 @@ public class PluginsControl extends AbstractControl {
 		buffer.append("<form>");
 		buffer.append("<p><span color=\"header\" font=\"header\">" + i18n.tr("Installierte Plugins") + "</span></p>");
 
-		Enumeration e = PluginLoader.getPluginContainers();
-		while (e.hasMoreElements())
+		Iterator i = PluginLoader.getPluginContainers();
+		while (i.hasNext())
 		{
-			PluginContainer container = (PluginContainer) e.nextElement();
+			PluginContainer container = (PluginContainer) i.next();
 			AbstractPlugin plugin = container.getPlugin();
 			InfoReader ir = null;
 			try {
@@ -132,6 +132,9 @@ public class PluginsControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: PluginsControl.java,v $
+ * Revision 1.4  2004/07/04 17:07:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

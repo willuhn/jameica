@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.25 $
+ * $Date: 2004/07/04 17:07:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,7 @@
 package de.willuhn.jameica.gui.views;
 
 import java.rmi.RemoteException;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.GenericObject;
@@ -47,10 +47,10 @@ public class Start extends AbstractView
 		
 		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
 
-		Enumeration e = PluginLoader.getPluginContainers();
-		while (e.hasMoreElements())
+		Iterator it = PluginLoader.getPluginContainers();
+		while (it.hasNext())
 		{
-			PluginContainer pc = (PluginContainer) e.nextElement();
+			PluginContainer pc = (PluginContainer) it.next();
 			AbstractPlugin plugin = pc.getPlugin();
 			InfoReader ir = pc.getInfo();
 			if (ir == null)
@@ -134,6 +134,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.25  2004/07/04 17:07:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *
