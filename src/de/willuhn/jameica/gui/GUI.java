@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.54 $
- * $Date: 2004/07/25 17:15:20 $
+ * $Revision: 1.55 $
+ * $Date: 2004/07/27 19:17:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -677,11 +677,15 @@ public class GUI
 		{
 			Logger.error("error while quitting GUI", e);
 		}
+		Application.shutDown();
 	}
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.55  2004/07/27 19:17:07  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.54  2004/07/25 17:15:20  willuhn
  * @C PluginLoader is no longer static
  *

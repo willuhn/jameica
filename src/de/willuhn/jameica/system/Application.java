@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/07/25 17:15:20 $
+ * $Revision: 1.4 $
+ * $Date: 2004/07/27 19:17:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,6 @@ public class Application {
   private static int appMode = MODE_STANDALONE;
 
   private static boolean cleanShutdown = false;
-  private static ShutdownHook shutdownHook = new ShutdownHook();
   
   // singleton
   private static Application app;
@@ -184,12 +183,6 @@ public class Application {
     // close splash screen
     if (!inServerMode())
       SplashScreen.shutDown();
-
-		////////////////////////////////////////////////////////////////////////////
-    // add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
-    Runtime.getRuntime().addShutdownHook(shutdownHook);
-		//
-		////////////////////////////////////////////////////////////////////////////
 
     // start loops
     if (inServerMode()) Server.init();
@@ -414,6 +407,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.4  2004/07/27 19:17:07  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/07/25 17:15:20  willuhn
  * @C PluginLoader is no longer static
  *

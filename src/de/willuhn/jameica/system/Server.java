@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/27 19:17:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,12 @@ public class Server
    */
   public static void init()
   {
-
+  	////////////////////////////////////////////////////////////////////////////
+  	// add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
+  	Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+  	//
+  	////////////////////////////////////////////////////////////////////////////
+  	
     Logger.info("jameica up and running...");
 
 		String[] welcome = Application.getWelcomeMessages();
@@ -68,6 +73,9 @@ public class Server
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.2  2004/07/27 19:17:07  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *
