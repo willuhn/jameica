@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/10/23 22:36:34 $
+ * $Revision: 1.3 $
+ * $Date: 2003/10/29 00:41:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,9 +17,13 @@ package de.willuhn.jameica.views;
 public class Start extends AbstractView
 {
 
+  public Start(Object o)
+  {
+    super(o);
+  }
+
   public void bind()
   {
-    createMainGrid();
   }        
 
 
@@ -31,6 +35,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.3  2003/10/29 00:41:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/10/23 22:36:34  willuhn
  * @N added Menu
  *

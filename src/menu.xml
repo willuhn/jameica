@@ -3,18 +3,18 @@
 <menu>
 
   <cascade name="File">
-    <item name="Import Plugin..."    shortcut="" 	   class="de.willuhn.jameica.menu.ImportPlugin" />
-    <item name="Close"    			 shortcut="ALT+F4" class="de.willuhn.jameica.menu.FileClose" />
+    <item name="Import Plugin..."    class="de.willuhn.jameica.menu.ImportPlugin" />
+    <item name="Close"    			 class="de.willuhn.jameica.menu.FileClose" />
   </cascade>
 
   <cascade name="Edit">
-    <item name="Copy"                shortcut="CTRL+C" class="de.willuhn.jameica.menu.EditCopy" />
-    <item name="Cut"                 shortcut="CTRL+X" class="de.willuhn.jameica.menu.EditCut" />
-    <item name="Paste"    			 shortcut="CTRL+V" class="de.willuhn.jameica.menu.EditPaste" />
+    <item name="Copy"                class="de.willuhn.jameica.menu.EditCopy" />
+    <item name="Cut"                 class="de.willuhn.jameica.menu.EditCut" />
+    <item name="Paste"    			 class="de.willuhn.jameica.menu.EditPaste" />
   </cascade>
 
   <cascade name="Help">
-    <item name="about..."            shortcut=""       class="de.willuhn.jameica.menu.About" />
+    <item name="about..."            class="de.willuhn.jameica.menu.About" />
   </cascade>
 
 </menu>

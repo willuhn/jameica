@@ -1,16 +1,15 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/10/23 21:49:46 $
+ * $Revision: 1.2 $
+ * $Date: 2003/10/29 00:41:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by  bbv AG
  * All rights reserved
  *
  **********************************************************************/
-
 package de.willuhn.jameica;
 
 import java.util.Enumeration;
@@ -30,16 +29,24 @@ public class Navigation {
 
 	private XmlFile xml;
 
+	/**
+   * Erzeugt die Navigation.
+   */
   protected Navigation()
 	{
 		xml  = new XmlFile();
 		xml.read(getClass().getResourceAsStream("/navigation.xml"));
 
 		// add elements
-		new Item(null,"/navigation/item/"); 
+		Item root = new Item(null,"/navigation/item/");
+    root.expandChilds(); 
 
 	}
 
+	/**
+   * Behandelt das Event "Ordner auf".
+   * @param event das ausgeloeste Event.
+   */
   private static void handleFolderOpen(Event event)
 	{
 		Widget widget = event.item;
@@ -52,6 +59,10 @@ public class Navigation {
 		}
 	}
 
+	/**
+	 * Behandelt das Event "Ordner zu".
+	 * @param event das ausgeloeste Event.
+	 */
 	private static void handleFolderClose(Event event)
 	{
 		Widget widget = event.item;
@@ -64,6 +75,10 @@ public class Navigation {
 		}
 	}
 
+	/**
+	 * Behandelt das Event "action". 
+	 * @param event das ausgeloeste Event.
+	 */
 	private static void handleSelect(Event event)
 	{
 		Widget widget = event.item;
@@ -72,27 +87,30 @@ public class Navigation {
 		TreeItem item = (TreeItem) widget;
 
 		String action = (String) item.getData("action");
-		try {
-			Application.startView(action);
-			Application.setStatusText((String) item.getData("name"));
-		}
-		catch (ClassNotFoundException e){
-		  Application.getLog().warn("class " + action + " not found.");
-		}
+		GUI.startView(action,null);
+		GUI.setStatusText((String) item.getData("name"));
 	}
 
+	/**
+	 * Fuegt die Listener zum Tree hinzu.
+	 * @param tree
+	 */
 	private static void addListener(Tree tree) {
 
+		// Listener fuer "Folder auf machen"
 		tree.addListener(SWT.Expand, new Listener() {
 			public void handleEvent(Event event) {
 				Navigation.handleFolderOpen(event);
 			}
 		});
+		// Listener fuer "Folder auf machen"
 		tree.addListener(SWT.Collapse, new Listener() {
 			public void handleEvent(Event event) {
 				Navigation.handleFolderClose(event);
 			}
 		});
+
+		// Listener fuer die Aktionen
 		tree.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				Navigation.handleSelect(event);
@@ -101,26 +119,41 @@ public class Navigation {
 	}
 
 
+
+	/**
+   * @author willuhn
+   * Bildet ein einzelnes Element der Navigation ab.
+   * Es laedt rekursiv alle Kind-Elemente.
+   */
   class Item {
 
 		private String path;
 
 		private TreeItem parentItem;
 
+		/**
+		 * ct. Laed ein neues Element der Navigation.
+     * @param parent das Eltern-Element.
+     * @param sPath Pfad in der XML-Datei.
+     */
     Item(TreeItem parent, String sPath)
 		{
-			this.path       = sPath;
+			// store xml path
+			this.path = sPath;
+
+			// store parent
 			this.parentItem = parent;
 
 			TreeItem item;
 			// this is only needed for the first element
 			if (this.parentItem == null) {
 
-				// create Tree
-				Tree tree = new Tree(Application.shell, SWT.BORDER);
+				// Tree erzeugen
+				Tree tree = new Tree(GUI.shell, SWT.BORDER);
 
+				// Griddata erzeugen
 				final GridData gridData = new GridData(GridData.FILL_VERTICAL);
-				gridData.widthHint = 220;
+				gridData.widthHint = 230;
 				tree.setLayoutData(gridData);
 
 				Navigation.addListener(tree);
@@ -156,6 +189,9 @@ public class Navigation {
 
 		}
 
+		/**
+     * Laedt alle Kinder dieses Elements.
+     */
     void loadChilds() {
 
 			// iterate over childs
@@ -166,13 +202,31 @@ public class Navigation {
 				new Item(this.parentItem,path);
 			}
 		}
+    
+    void expandChilds()
+    {
+      enumAndExpand(this.parentItem);
+    }
+    
+    private void enumAndExpand(TreeItem treeItem)
+    {
+      TreeItem[] childItems = treeItem.getItems();
+      int count = childItems.length;
+      for (int i = 0; i < count; ++i)
+      {
+        childItems[i].setExpanded(true);
+        enumAndExpand(childItems[i]);
+      }
+      treeItem.setExpanded(true);
+    }
+    
 	}
 }
 
 
 /*********************************************************************
  * $Log: Navigation.java,v $
- * Revision 1.1  2003/10/23 21:49:46  willuhn
- * initial checkin
+ * Revision 1.2  2003/10/29 00:41:26  willuhn
+ * *** empty log message ***
  *
  **********************************************************************/
