@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextAreaInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.2 $
+ * $Date: 2004/11/04 23:59:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -56,6 +56,9 @@ public class TextAreaInput extends TextInput
 
 /*********************************************************************
  * $Log: TextAreaInput.java,v $
+ * Revision 1.2  2004/11/04 23:59:04  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *

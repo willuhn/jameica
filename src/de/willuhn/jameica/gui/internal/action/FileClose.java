@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/FileClose.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/08 16:41:58 $
+ * $Revision: 1.3 $
+ * $Date: 2004/11/04 23:59:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -35,6 +35,9 @@ public class FileClose implements Action
 
 /*********************************************************************
  * $Log: FileClose.java,v $
+ * Revision 1.3  2004/11/04 23:59:04  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *

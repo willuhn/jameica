@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/About.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/12 23:49:31 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/04 23:59:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -48,6 +48,9 @@ public class About implements Action
 
 /*********************************************************************
  * $Log: About.java,v $
+ * Revision 1.4  2004/11/04 23:59:04  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/10/12 23:49:31  willuhn
  * *** empty log message ***
  *
