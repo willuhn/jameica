@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/14 00:54:12 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/14 00:57:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,10 +30,18 @@ import java.util.jar.JarFile;
 public class PluginLoader extends ClassLoader
 {
 
+  // Liste mit allen gefundenen Plugins.
   private static ArrayList installedPlugins = new ArrayList();
 
+  // Verzeichnis, in dem sich die Plugins befinden
   private static File plugindir = null;
+
+  // der ClassLoader
   private static URLClassLoader loader = null;
+  
+  // Interface aller Plugins. Es werden nur Plugins geladen, die dieses Interface
+  // implementieren
+  private static Class pluginClass = Plugin.class;
   
   /**
    * Wird beim Start der Anwendung ausgefuehrt, sucht im Classpath
@@ -166,7 +174,7 @@ public class PluginLoader extends ClassLoader
     Class[] interfaces = plugin.getInterfaces();
     for (int i=0;i<interfaces.length;++i)
     {
-      if (interfaces[i].equals(Plugin.class))
+      if (interfaces[i].equals(pluginClass))
         return true;
     }
     return false;
@@ -215,6 +223,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.4  2003/11/14 00:57:38  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/14 00:54:12  willuhn
  * *** empty log message ***
  *
