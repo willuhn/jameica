@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/05/23 18:15:32 $
+ * $Revision: 1.21 $
+ * $Date: 2004/05/27 21:44:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class Settings extends AbstractView
 		// Farb-Einstellungen
 		LabelGroup colorGroup = new LabelGroup(getParent(),i18n.tr("Look and Feel"));
 
-		colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
+		//colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
 		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWhite());
 		colorGroup.addLabelPair(i18n.tr("Farbe von Kommentaren"),control.getColorComment());
 		colorGroup.addLabelPair(i18n.tr("Hintergrundfarbe"),control.getColorBackground());
@@ -85,6 +85,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.21  2004/05/27 21:44:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.20  2004/05/23 18:15:32  willuhn
  * *** empty log message ***
  *
