@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.9 $
+ * $Date: 2003/11/30 16:37:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,8 @@ public class PluginLoader extends ClassLoader
     Application.getLog().info("init plugins");
     
     // TODO: Nur fuer IDE
-    loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","/work/willuhn/eclipse/fibu/src");
+    //loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","/work/willuhn/eclipse/fibu/src");
+    loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","../fibu/src");
     // loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","d:/work/fibu/src");
 
     try {
@@ -326,6 +327,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.9  2003/11/30 16:37:45  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/11/24 23:01:58  willuhn
  * @N added settings
  *
