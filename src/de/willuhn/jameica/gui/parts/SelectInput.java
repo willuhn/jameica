@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/12 00:49:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObject;
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.I18N;
 
@@ -50,6 +51,7 @@ public class SelectInput extends Input
     }
     catch (RemoteException e)
     {
+    	Application.getLog().error("error while reading list",e);
       GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
     }
     init(list);
@@ -194,6 +196,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.2  2004/02/12 00:49:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
