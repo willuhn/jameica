@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/12 21:11:29 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/13 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.server;
 
+import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
@@ -130,6 +131,54 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
     }
   }
   
+
+  /**
+   * Erzeugt ein neues Objekt aus der angegeben Klasse.
+   * @param conn die Connection, die im Objekt gespeichert werden soll.
+   * @param c Klasse des zu erstellenden Objekts.
+   * @return das erzeugte Objekt.
+   * @throws Exception wenn beim Erzeugen des Objektes ein Fehler auftrat.
+   */
+  private static DBObject create(Connection conn, Class c) throws Exception
+  {
+    String className = findImplementationName(c);
+
+    Class clazz = Class.forName(className);
+    Constructor ct = clazz.getConstructor(new Class[]{});
+    ct.setAccessible(true);
+
+    AbstractDBObject o = (AbstractDBObject) ct.newInstance(new Object[] {});
+    o.setConnection(conn);
+    o.init();
+    return o;
+  }
+
+  /**
+   * Liefert den Klassennamen der Implementierung zum uebergebenen Interface oder RMI-Stub.
+   * @param clazz Stubs oder Interface.
+   * @return Name der Implementierung.
+   */
+  private static String findImplementationName(Class clazz)
+  {
+
+    String className = clazz.getName();
+    className = className.replaceAll(".rmi.",".server."); 
+
+    // Normalerweise wollen wir ja bei der Erstellung nur die Klasse des
+    // Interfaces angeben und nicht die der Impl. Deswegen schreiben
+    // wir das "Impl" selbst hinten dran, um es instanziieren zu koennen.
+    if (!className.endsWith("Impl") && ! className.endsWith("_Stub"))
+      className += "Impl";
+
+    // Es sei denn, es ist RMI-Stub. Dann muessen wir das "_Stub" abschneiden.
+    if (className.endsWith("_Stub"))
+      className = className.substring(0,className.length()-5);
+
+    return className;    
+  }
+
+
+
   /**
    * @see de.bbvag.dhl.easylog.hubs.DBHub#createObject(java.lang.Class, java.lang.String)
    */
@@ -145,7 +194,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
     open();
     try {
-      DBObject o = ObjectMetaCache.create(conn,c);
+      DBObject o = create(conn,c);
       o.load(id);
       return o;
     }
@@ -172,7 +221,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
     open();
 		try {
-      DBObject o = ObjectMetaCache.create(conn,c);
+      DBObject o = create(conn,c);
 			return new DBIteratorImpl((AbstractDBObject)o,conn);
 		}
 		catch (Exception e)
@@ -200,12 +249,18 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
   {
     available = false;
     close();
+    
+    // print chache stats
+    Application.getLog().debug("object cache matches: " + ObjectMetaCache.getStats() + " %");
   }
 
 }
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.7  2003/12/13 20:05:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/12 21:11:29  willuhn
  * @N ObjectMetaCache
  *

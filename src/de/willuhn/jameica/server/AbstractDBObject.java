@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.15 $
- * $Date: 2003/12/12 21:11:29 $
+ * $Revision: 1.16 $
+ * $Date: 2003/12/13 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -90,34 +90,6 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
   
   /**
-   * Liefert die Metadaten des Objektes.
-   * Die kann man gut gebrauchen, um ein neues Objekt dieses
-   * Typs zu erzeugen, ohne dafuer die Metadaten aus der Datenbank
-   * neu lesen zu muessen.
-   * @return Die Metadaten des Objektes.
-   */
-  protected ObjectMetaData getObjectMetaData()
-  {
-    return new ObjectMetaData(this.types);
-  }
-
-  /**
-   * Speichert existierende ObjectMeta-Daten in dem Objekt.
-   * Ein anschliessendes init() ist dann nicht mehr noetig.
-   */
-  protected void setObjectmetaData(ObjectMetaData omd)
-  {
-    this.types = omd.getFields();
-
-    this.properties = new HashMap();
-    Iterator i = this.types.keySet().iterator();
-    while (i.hasNext())
-    {
-      this.properties.put(this.types.get(i.next()),null);
-    }
-  }
-
-  /**
    * Prueft, ob die Datenbankverbindung existiert und funktioniert.
    * @throws RemoteException wird geworfen, wenn die Connection kaputt ist.
    */
@@ -142,8 +114,26 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       throw new SQLException(e.getMessage());
     }
     
-    if (types.size() > 0)
+    if (isInitialized())
       return; // allready initialized
+
+    HashMap cachedMeta = ObjectMetaCache.getMetaData(this.getClass());
+
+    if (cachedMeta != null)
+    {
+      // Treffer. Die Daten nehmen wir.
+      Application.getLog().debug("reading meta data from cache");
+      this.types = cachedMeta;
+      Iterator i = cachedMeta.keySet().iterator();
+      while (i.hasNext())
+      {
+        String s = (String) i.next();
+        if (s == null) continue;
+        this.properties.put(s,null);
+      }
+      Application.getLog().debug("done");
+      return;
+    }
 
 		String tableName = getTableName();
 		ResultSet meta = null;
@@ -158,9 +148,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 					continue;
 				properties.put(field,null);
         types.put(field,meta.getString(6));
-        // System.out.println("FELD: " + field + ": " + meta.getString(6));
 			}
-      Application.getLog().debug("  done");
+      Application.getLog().debug("done");
+      ObjectMetaCache.addMetaData(this.getClass(),types);
 		}
 		catch (SQLException e)
 		{
@@ -176,6 +166,21 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
 
   /**
+   * Prueft, ob das Objekt initialisiert ist.
+   * @return
+   */
+  private boolean isInitialized()
+  {
+    return (
+      this.properties != null &&
+      this.properties.size() > 0 &&
+      this.types != null &&
+      this.types.size() > 0
+    );
+    
+  }
+
+  /**
    * @see de.willuhn.jameica.rmi.DBObject#load(java.lang.String)
    */
   public final void load(String id) throws RemoteException
@@ -186,6 +191,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		if (this.id == null)
 			return; // nothing to load
 
+    if (!isInitialized())
+      throw new RemoteException("object not initialized.");
+    
 		String tableName = getTableName();
 		Statement stmt = null;
 		ResultSet data = null;
@@ -235,6 +243,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public final void clear() throws RemoteException
   {
+    if (!isInitialized())
+      throw new RemoteException("object not initialized.");
+
     this.id = null;
     String fields[] = this.getFields();
     for (int i=0;i<fields.length;++i)
@@ -252,6 +263,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       return; // no, we delete no new objects ;)
 
     checkConnection();
+
+    if (!isInitialized())
+      throw new RemoteException("object not initialized.");
+
     deleteCheck();
 
 		Statement stmt = null;
@@ -301,6 +316,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public final Object getField(String fieldName) throws RemoteException
   {
+    if (!isInitialized())
+      throw new RemoteException("object not initialized.");
+
     Object o = properties.get(fieldName);
     if (o == null)
       return null;
@@ -342,6 +360,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public final String getFieldType(String fieldName) throws RemoteException
   {
+    if (!isInitialized())
+      throw new RemoteException("object not initialized.");
+
     try {
       return (String) types.get(fieldName);
     }
@@ -406,6 +427,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   private void insert() throws RemoteException, ApplicationException
   {
     checkConnection();
+
+    if (!isInitialized())
+      throw new RemoteException("object not initialized.");
+
     insertCheck();
 
     id = null;
@@ -449,6 +474,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   private void update() throws RemoteException, ApplicationException
   {
     checkConnection();
+
+    if (!isInitialized())
+      throw new RemoteException("object not initialized.");
+
     updateCheck();
 
 		PreparedStatement stmt = null;
@@ -765,6 +794,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.16  2003/12/13 20:05:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2003/12/12 21:11:29  willuhn
  * @N ObjectMetaCache
  *
