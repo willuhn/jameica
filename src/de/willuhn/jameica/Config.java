@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/04/14 22:16:43 $
+ * $Revision: 1.25 $
+ * $Date: 2004/04/25 17:07:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -156,7 +157,7 @@ public class Config
 
 
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(StdXMLReader.fileReader(this.configFile.getAbsolutePath()));
+		parser.setReader(new StdXMLReader(new FileInputStream(this.configFile.getAbsolutePath())));
 
 		xml = (IXMLElement) parser.parse();
 
@@ -570,6 +571,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.25  2004/04/25 17:07:21  willuhn
+ * @B StdXMLReader did not read the xml file correctly under win32
+ *
  * Revision 1.24  2004/04/14 22:16:43  willuhn
  * *** empty log message ***
  *
