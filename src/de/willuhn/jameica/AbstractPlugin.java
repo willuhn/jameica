@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/01/05 18:27:13 $
+ * $Revision: 1.8 $
+ * $Date: 2004/01/06 20:32:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -112,13 +112,37 @@ public abstract class AbstractPlugin implements Plugin
    */
   public EmbeddedDatabase getDatabase()
   {
-  	return new EmbeddedDatabase(getPath() + "/db");
+  	return new EmbeddedDatabase(getPath() + "/db",getUsername(),getPassword());
   }
 
+	/**
+	 * Liefert den Usernamen fuer die Embedded-Datenbank.
+	 * Sollte vom Plugin ueberschrieben werden, wenn die
+	 * Datenbank benutzt wird.
+   * @return Username fuer die Datenbank.
+   */
+  protected String getUsername()
+	{
+		return "jameica";
+	}
+
+	/**
+	 * Liefert das Passwort fuer die Embedded-Datenbank.
+	 * Sollte vom Plugin ueberschrieben werden, wenn die
+	 * Datenbank benutzt wird.
+	 * @return Passwort fuer die Datenbank.
+	 */
+  protected String getPassword()
+	{
+		return "jameica"; 
+	}
 }
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.8  2004/01/06 20:32:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/01/05 18:27:13  willuhn
  * *** empty log message ***
  *

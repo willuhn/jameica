@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/EmbeddedDatabase.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/01/05 19:14:45 $
+ * $Revision: 1.5 $
+ * $Date: 2004/01/06 20:32:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,10 +41,21 @@ public class EmbeddedDatabase
 	private DefaultDBConfig config = null;
 	private DBController control = null;
 	private DBHub db = null;
+	
+	private String username = null;
+	private String password = null;
 
-	public EmbeddedDatabase(String path)
+	/**
+	 * ct.
+   * @param path Pfad zur Datenbank.
+   * @param username Username.
+   * @param password Passwort.
+   */
+  public EmbeddedDatabase(String path, String username, String password)
 	{
 		this.path = new File(path);
+		this.username = username;
+		this.password = password;
 	}
 
 	/**
@@ -72,6 +83,12 @@ public class EmbeddedDatabase
    */
   public void create() throws IOException
 	{
+
+		if (username == null || password == null)
+		{
+			throw new IOException("please enter username and password");
+		}
+
     init();
 
 		if (!path.canWrite())
@@ -111,7 +128,7 @@ public class EmbeddedDatabase
 		  DBSystem session = null;
 
 			Application.getLog().info("creating database");
-			session = control.createDatabase(config,getUsername(),getPassword());
+			session = control.createDatabase(config,username,password);
 			session.close();
 			Application.getLog().info("done");
 	  }
@@ -165,7 +182,7 @@ public class EmbeddedDatabase
 
 			session = control.startDatabase(config);
 
-			conn = session.getConnection(getUsername(),getPassword());
+			conn = session.getConnection(username,password);
 			conn.setAutoCommit(false);
 
 			stmt = conn.createStatement();
@@ -199,25 +216,7 @@ public class EmbeddedDatabase
 		
 	}
 
-	/**
-	 * Liefert den Usernamen, der fuer die Embedded-DB verwendet werden soll.
-   * @return Username.
-   */
-  private String getUsername()
-  {
-  	return "jameica";
-  }
-
-	/**
-	 * Liefert das Passwort, das fuer die Embedded-DB verwendet werden soll.
-   * @return Passwort.
-   */
-  private String getPassword()
-  {
-		return "jameica";
-  }
-
-	/**
+  /**
 	 * Liefert einen DBHub zu dieser Datenbank.
    * @return DBHub.
    * @throws RemoteException
@@ -228,7 +227,7 @@ public class EmbeddedDatabase
 		{
 			HashMap map = new HashMap();
 			map.put("driver","com.mckoi.JDBCDriver");
-			map.put("jdbc-url",":jdbc:mckoi:local://" + path.getAbsolutePath() + "/db.conf?user=" + getUsername() + "&password=" + getPassword());
+			map.put("jdbc-url",":jdbc:mckoi:local://" + path.getAbsolutePath() + "/db.conf?user=" + username + "&password=" + password);
 			db = new DBHubImpl(map);
 		}
 		return db;
@@ -238,6 +237,9 @@ public class EmbeddedDatabase
 
 /**********************************************************************
  * $Log: EmbeddedDatabase.java,v $
+ * Revision 1.5  2004/01/06 20:32:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/01/05 19:14:45  willuhn
  * *** empty log message ***
  *
