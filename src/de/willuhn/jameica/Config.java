@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.26 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.27 $
+ * $Date: 2004/05/09 17:40:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -59,11 +59,6 @@ public class Config
   private Hashtable localServices   = null;
 
   /**
-   * Der Name des Services vom Typ "Datenbank".
-   */
-  public final static String SERVICETYPE_DATABASE = "database";
-
-  /**
    * Der TCP-Port, der fuer die lokale RMI-Registry verwendet werden soll.
    */
   private int rmiPort;
@@ -77,7 +72,7 @@ public class Config
 
   private String logfile = null;
   
-  private String logLevel = Logger.LEVEL_TEXT[Logger.LEVEL_DEBUG];
+  private String logLevel = Logger.LEVEL_TEXT[Logger.LEVEL_INFO];
   
 	private File dir 				= null;
   private File configDir  = null;
@@ -86,7 +81,7 @@ public class Config
 
 	private final static String defaultConfig =
 		"<config>\n" +
-		"  <logfile>run/dynameica.log</logfile>\n" +
+		"  <logfile>jameica.log</logfile>\n" +
 		"  <loglevel>INFO</loglevel>\n" +
 		"  <defaultlanguage>de_de</defaultlanguage>\n" +
 		"  <rmiport>1099</rmiport>\n" +
@@ -422,7 +417,7 @@ public class Config
    */
   public String getLogFile()
   {
-    return logfile;
+    return getDir() + "/" + logfile;
   }
 
 	/**
@@ -433,7 +428,7 @@ public class Config
 	{
 		if (logFile == null || "".equals(logFile))
 			return;
-		this.logfile = logFile;
+		this.logfile = getDir() + "/" + logFile;
 	}
 
   /**
@@ -571,6 +566,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.27  2004/05/09 17:40:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.26  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

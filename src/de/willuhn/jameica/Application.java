@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.37 $
- * $Date: 2004/04/21 22:28:56 $
+ * $Revision: 1.38 $
+ * $Date: 2004/05/09 17:40:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,6 @@
 
 package de.willuhn.jameica;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.jar.JarFile;
@@ -78,47 +77,47 @@ public class Application {
 		// init our classloader
 		app.classLoader = new MultipleClassLoader();
 
-		// LockFile erzeugen
-		try {
-			File dir = new File("run");
-			if (!dir.exists())
-				dir.mkdirs();
-			app.lock = new Lock("run/jameica");
-		}
-		catch (RuntimeException e)
-		{
-			startupError(e);
-		}
-
-		splash("starting jameica");
-
 		////////////////////////////////////////////////////////////////////////////
-    // init logger
-		splash("init system logger");
+		// init logger
 		app.log = new Logger("Jameica");
 		app.log.addTarget(System.out);
 		app.log.setLevel(Logger.LEVEL_INFO);
-    Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
+		Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
 		app.classLoader.setLogger(app.log);
 		//
 		////////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////////
-    // init config
-    try {
-			splash("init system config");
+		// init config
+		try {
 			app.config = new Config(dataDir);
-    }
-    catch (Exception e)
-    {
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 			startupError(e);
-    }
+		}
 		app.log.setLevel(app.config.getLogLevel());
 		//
 		////////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////////
-		// init config
+		// LockFile erzeugen
+		try {
+			app.lock = new Lock(app.config.getDir() + "/jameica");
+			// TODO: Readmes fuer .so File aendern
+		}
+		catch (RuntimeException e)
+		{
+			startupError(e);
+		}
+		//
+		////////////////////////////////////////////////////////////////////////////
+
+		splash("starting jameica");
+
+		////////////////////////////////////////////////////////////////////////////
+		// init i18n
 		app.i18n = new I18N("lang/messages",app.config.getLocale());
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -185,7 +184,7 @@ public class Application {
 		s.setText("Fehler");
 		Label l = new Label(s,SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l.setText(e.getMessage());
+		l.setText(""+e.getMessage());
 
 		Button b = new Button(s,SWT.BORDER);
 		b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -333,6 +332,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.38  2004/05/09 17:40:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.37  2004/04/21 22:28:56  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/04/20 17:14:50 $
+ * $Revision: 1.9 $
+ * $Date: 2004/05/09 17:40:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,7 @@ public class Main {
 		String configFile = null;
 		if (serverMode && args.length > 1)
 			configFile = args[1];
-		else if (args.length == 1)
+		else if (!serverMode && args.length == 1)
 			configFile = args[0];
 
     Application.newInstance(serverMode, configFile);
@@ -47,6 +47,9 @@ public class Main {
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.9  2004/05/09 17:40:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/04/20 17:14:50  willuhn
  * @B fix in parsing command line params
  *

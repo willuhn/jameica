@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/05/04 23:05:16 $
+ * $Revision: 1.5 $
+ * $Date: 2004/05/09 17:40:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,7 @@ public class TablePart implements Part
   private AbstractControl controller;
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
-  private Hashtable list2;
+  private Hashtable list2 = new Hashtable();
   private I18N i18n = null;
   private TableFormatter tableFormatter = null;
   private ArrayList menus = new ArrayList();
@@ -90,9 +90,13 @@ public class TablePart implements Part
 	 */
 	public TablePart(Enumeration list, AbstractControl controller)
 	{
-		while (list.hasMoreElements())
+		if (list != null)
 		{
-			list2.put(list.nextElement(),null);
+			while (list.hasMoreElements())
+			{
+				Object o = list.nextElement();
+				list2.put(o,o);
+			}
 		}
 		this.controller = controller;
 		init();
@@ -431,6 +435,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.5  2004/05/09 17:40:07  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/05/04 23:05:16  willuhn
  * *** empty log message ***
  *

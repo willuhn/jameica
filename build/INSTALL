@@ -40,16 +40,13 @@
    Windows:  "C:\Progamme\jameica"
    Linux:    "/opt/jameica"
 
-2) Pruefen Sie, ob Sie im Verzeichnis "run" Schreibrechte besitzen.
-   Jameica wird dort Log-und Lock-Dateien ablegen.
-3) Wechseln Sie in das Programm-Verzeichnis und geben Sie ein:
+2) Wechseln Sie in das Programm-Verzeichnis und geben Sie ein:
    Windows:  "jameica.bat"
    Linux:    "./jameica.sh"
 
-Hinweis: Abgesehen von o.g. Log-Dateien schreibt Jameica keinerlei
-         Dateien in das Programm-Verzeichnis. Alle Einstellungen
-         und Daten werden in einem Verzeichnis ".jameica" innerhalb
-         Ihres Homebereiches abgelegt. Das sind i.d.R.:
+Hinweis: Jameica schreibt keinerlei Dateien in das Programm-Verzeichnis.
+         Alle Einstellungen, Log-Files und Daten werden in einem Verzeichnis
+         ".jameica" innerhalb Ihres Homebereiches abgelegt. Das sind i.d.R.:
          Windows: "C:\Dokumente und Einstellungen\<benutzername>\.jameica"
          Linux:   "/home/<benutzername>/.jameica"
 
@@ -67,8 +64,8 @@ Hinweis: Abgesehen von o.g. Log-Dateien schreibt Jameica keinerlei
 Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
          dann nicht unter "Hilfe->installierte Plugins", dann
          pruefen Sie bitte die Log-Ausgaben in der Datei
-         "run/jameica.log" und senden Sie ggf. protokollierte
-         Fehler an den Autor des Plugins.
+         "jameica.log" innerhalb Ihres Work-Verzeichnisses und senden Sie
+         ggf. protokollierte Fehler an den Autor des Plugins.
 
 #                                                                         #
 ###########################################################################
@@ -94,7 +91,7 @@ Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
   "cfg/config.xml", welche folgendes Format besitzt.
 
   <config>
-    <logfile>run/jameica.log</logfile>
+    <logfile>jameica.log</logfile>
     <loglevel>INFO</loglevel>
     <defaultlanguage>de_de</defaultlanguage>
     <rmiport>1099</rmiport>
@@ -105,6 +102,8 @@ Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
   </config>
 
   <logfile>        : Hier koennen Sie eine abweichende Log-Datei definieren.
+                     Der hier angegebene Pfad+Dateiname bezieht sich relativ
+                     zum Workverzeichnis.
   <loglevel>       : Ueber diesen Parameter koennen Sie den Umfang der
                      Log-Ausgaben beeinflussen. Es existieren folgende
                      Log-Level:
