@@ -1,0 +1,6 @@
+<info>
+  <name>SWT - Standard Widget Toolkit</name>
+  <description>A Widget Toolkit for Java based on platform dependent OS widgets</description>
+  <url>http://www.eclipse.org/platform</url>
+  <license>CPL - http://www.eclipse.org/legal/cpl-v10.html</license>
+</info>
