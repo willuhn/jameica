@@ -6,6 +6,6 @@
     <classpathentry kind="lib" path="lib/bb_util.jar"/>
     <classpathentry kind="lib" path="lib/mysql-connector-java-3.0.8-stable-bin.jar"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry kind="lib" path="lib/mckoidb.jar"/>
+    <classpathentry kind="lib" path="lib/mckoidb.jar" sourcepath="/jameica/lib/mckoidb.src.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
