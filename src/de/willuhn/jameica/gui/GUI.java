@@ -1,7 +1,9 @@
 /*******************************************************************************
- * $Source:
- * /export/CVS/willuhn/own/jameica/dev/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.48 $ $Date: 2004/06/24 21:31:36 $ $Author: willuhn $ $Locker:  $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
+ * $Revision: 1.49 $
+ * $Date: 2004/06/24 21:32:25 $
+ * $Author: willuhn $
+ * $Locker:  $
  * $State: Exp $
  * 
  * Copyright (c) by willuhn.webdesign All rights reserved
@@ -667,6 +669,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.49  2004/06/24 21:32:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.48  2004/06/24 21:31:36  willuhn
  * *** empty log message ***
  *
