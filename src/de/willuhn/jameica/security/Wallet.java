@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/03/16 18:13:57 $
+ * $Revision: 1.5 $
+ * $Date: 2005/03/16 18:16:44 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.Serializable;
 import java.security.KeyPair;
 import java.util.Hashtable;
@@ -226,17 +224,14 @@ public final class Wallet
     OutputStream os        = new BufferedOutputStream(new FileOutputStream(tempfile));
     CipherOutputStream cos = new CipherOutputStream(os,cipher);
 
-		PipedOutputStream pos  = new PipedOutputStream();
-		PipedInputStream pis   = new PipedInputStream();
-		pos.connect(pis);
 		ObjectOutputStream oos = new ObjectOutputStream(cos);
 		oos.writeObject(this.serialized);
 
     // Wir koennen das Flushen und Schliessen nicht im finally() machen,
     // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
     // Das Umbenennen wuerde sonst _vorher_ passieren.
-    cos.flush();
-    cos.close();
+    oos.flush();
+    oos.close();
     
     // OK, Schreiben war erfolgreich. Jetzt kopieren wir die Temp-Datei rueber.
     file.delete();
@@ -247,6 +242,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.5  2005/03/16 18:16:44  web0
+ * @B bug 25
+ *
  * Revision 1.4  2005/03/16 18:13:57  web0
  * @B bug 25
  *
