@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/19 01:43:27 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/19 13:36:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,8 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.views.parts;
 
+import java.rmi.RemoteException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -19,6 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import de.willuhn.jameica.I18N;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.views.util.Style;
 
 /**
@@ -78,6 +82,31 @@ public class LabelGroup
   }
 
   /**
+   * Fuegt eine Tabelle zur Group hinzu.
+   * @param anzuzeigende Tabelle.
+   */
+  public void addTable(Table table)
+  {
+    try {
+      final GridData grid = new GridData(GridData.FILL_BOTH);
+      grid.horizontalSpan = 2;
+      final Composite comp = new Composite(group,SWT.NONE);
+      comp.setLayoutData(grid);
+
+      GridLayout layout = new GridLayout(1,true);
+      layout.marginHeight = 0;
+      layout.marginWidth = 0;
+      comp.setLayout(layout);
+
+      table.paint(comp);
+    }
+    catch (RemoteException e)
+    {
+      GUI.setActionText(I18N.tr("Fehler beim Lesen der Tabelle"));
+    }
+  }
+
+  /**
    * Fuegt eine Zwischenueberschrift zur Group hinzu.
    * @param text die anzuzeigende Ueberschrift.
    */
@@ -107,6 +136,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.9  2003/12/19 13:36:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/12/19 01:43:27  willuhn
  * @N added Tree
  *
