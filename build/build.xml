@@ -84,7 +84,7 @@
 
         <mkdir dir="${project.release}"/>
 
-	    <jar destfile="${project.release}/${define.jarfilename.win32}">
+	    <jar destfile="${project.release}/${define.jarfilename.linux}">
 		    <manifest>
 		    	<attribute name="Built-By" value="${user.name}"/>
 		    	<attribute name="Implementation-Title" value="${define.projectname}"/>
@@ -96,7 +96,7 @@
 		    <fileset dir="${class.dir}"/>
 		</jar>
 		
-	    <jar destfile="${project.release}/${define.jarfilename.linux}">
+	    <jar destfile="${project.release}/${define.jarfilename.win32}">
 		    <manifest>
 		    	<attribute name="Built-By" value="${user.name}"/>
 		    	<attribute name="Implementation-Title" value="${define.projectname}"/>
@@ -111,6 +111,7 @@
 		<mkdir dir="${project.release}/lib"/>
 		<mkdir dir="${project.release}/cfg"/>
 		<mkdir dir="${project.release}/db"/>
+		<mkdir dir="${project.release}/plugins"/>
 
 		<copy todir="${project.release}/lib">
 			<fileset dir="${lib.dir}"/>

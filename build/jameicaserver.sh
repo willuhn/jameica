@@ -1,1 +1,1 @@
-java -Djava.library.path=lib/linux -jar jameica.jar -server
+java -Djava.library.path=lib/linux -jar jameica-linux.jar -server
