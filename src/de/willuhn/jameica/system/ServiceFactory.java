@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/07/23 15:51:20 $
+ * $Revision: 1.4 $
+ * $Date: 2004/07/23 16:23:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -214,20 +214,30 @@ public class ServiceFactory
 			return; // keine lokalen Services runterzufahren
 
     Enumeration e = bindings.keys();
-    String serviceName;
-    Service service;
+    String serviceName = null;
+    Class service      = null;
 
     while (e.hasMoreElements())
     {
-      serviceName = (String) e.nextElement();
-			service = (Service) bindings.get(serviceName);
-
-			Logger.info("closing service " + serviceName);
+      try
+      {
+        serviceName = (String) e.nextElement();
+  			service = (Class) bindings.get(serviceName);
+  			Logger.info("closing service " + serviceName);
+        newInstance(service).shutDown();
+      }
+      catch (Throwable t)
+      {
+        Logger.error("error while closing service " + serviceName,t);
+      }
     }
   }
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.4  2004/07/23 16:23:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/07/23 15:51:20  willuhn
  * @C Rest des Refactorings
  *
