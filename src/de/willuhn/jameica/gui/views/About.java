@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/About.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/26 22:42:17 $
+ * $Revision: 1.3 $
+ * $Date: 2004/04/26 22:57:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,8 +46,7 @@ public class About extends AbstractView {
 
   	LabelGroup group = new LabelGroup(getParent(),i18n.tr("Jameica"));
  	
-  	group.addLabelPair(i18n.tr("Version"), 					new LabelInput(""+Application.getVersion()));
-		group.addLabelPair(i18n.tr("Build-Nummer"), 		new LabelInput(""+Application.getBuildnumber()));
+  	group.addLabelPair(i18n.tr("Version"), 					new LabelInput(""+Application.getVersion() + "-" + Application.getBuildnumber()));
 		group.addLabelPair(i18n.tr("Datenverzeichnis"), new LabelInput(""+Application.getConfig().getDir()));
 
   }
@@ -63,6 +62,9 @@ public class About extends AbstractView {
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.3  2004/04/26 22:57:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/04/26 22:42:17  willuhn
  * @N added InfoReader
  *
