@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SearchInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/16 02:27:44 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/20 16:52:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,7 @@ public class SearchInput extends Input
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
-   * @param value der einzufuegende Wert fuer das Eingabefeld.
+   * @param value der initial einzufuegende Wert fuer das Eingabefeld.
    * @param search der Suchdialog.
    */
   public SearchInput(String value,SearchDialog search)
@@ -145,6 +145,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.7  2003/12/20 16:52:45  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/16 02:27:44  willuhn
  * *** empty log message ***
  *
