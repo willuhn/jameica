@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/LocalServiceData.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/10/29 00:41:27 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/12 00:58:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,12 +13,12 @@ import de.bb.util.XmlFile;
 public class LocalServiceData extends AbstractServiceData {
 
 	private boolean shared = false;
-  private String param;
+  private String initParam;
 
   public LocalServiceData(XmlFile xml, String key)
 	{
 		super(xml,key);
-    param     = xml.getString(key,"param",null);
+    initParam = xml.getString(key,"initparam",null);
 
 		String s  = xml.getString(key,"shared","false");
 		shared    = ("true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s));
@@ -31,7 +31,7 @@ public class LocalServiceData extends AbstractServiceData {
   
   public String getInitParam()
   {
-    return param;
+    return initParam;
   }
 
   public String getUrl()
@@ -44,6 +44,9 @@ public class LocalServiceData extends AbstractServiceData {
 
 /*********************************************************************
  * $Log: LocalServiceData.java,v $
+ * Revision 1.2  2003/11/12 00:58:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/10/29 00:41:27  willuhn
  * *** empty log message ***
  *

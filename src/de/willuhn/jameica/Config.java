@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/10/29 00:41:26 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/12 00:58:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,9 @@ public class Config
 
   private Hashtable remoteServices  = new Hashtable();
   private Hashtable localServices   = new Hashtable();
+  private Hashtable defaultServices = new Hashtable();
   
+  public final static String SERVICETYPE_DATABASE = "database";
 
   private int rmiPort;
   private Locale defaultLanguage = new Locale("de_DE");
@@ -69,38 +71,43 @@ public class Config
   }
 
 
-
   private void readServices()
   {
+
     Enumeration e = xml.getSections("/config/services/").elements();
   
     String key;
-    String type;
     String name;
+    String type;
     Application.getLog().info("loading service configuration");
   
     while (e.hasMoreElements())
     {
       key = (String) e.nextElement();
-      type = xml.getString(key,"type",null);
       name = xml.getString(key,"name",null);
+      type = xml.getString(key,"type",null);
   
-  
-  
-      // process remote hubs
+      // process remote services
       if (key.startsWith("/config/services/remoteservice")) 
       {
-        Application.getLog().info("  found remote service \"" + name + "\"");
+        Application.getLog().info("  found remote service \"" + name + "\" [type: "+type+"]");
         remoteServices.put(name,new RemoteServiceData(xml,key));
       }
   
-      // process local hubs
+      // process local services
       if (key.startsWith("/config/services/localservice")) 
       {
-        Application.getLog().info("  found local service \"" + name + "\"");
+        Application.getLog().info("  found local service \"" + name + "\" [type: "+type+"]");
         localServices.put(name,new LocalServiceData(xml,key));
       }
   
+      // process default services
+      if (key.startsWith("/config/services/defaultservice") && type != null) 
+      {
+        Application.getLog().info("  default service for type "+type+"\": " + name + "\"");
+        defaultServices.put(type,name);
+      }
+
     }
     Application.getLog().info("done");
     ////////////////////////////////////////////
@@ -140,6 +147,12 @@ public class Config
     return (LocalServiceData) localServices.get(name);
   }
 
+
+  public String getDefaultServiceName(String serviceType)
+  {
+    return (String) defaultServices.get(serviceType);
+  }
+
   public Enumeration getLocalServiceNames()
   {
     return localServices.keys();
@@ -166,6 +179,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.3  2003/11/12 00:58:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/10/29 00:41:26  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/05 22:46:18 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/12 00:58:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica;
 
 import java.io.FileNotFoundException;
 
+import de.willuhn.jameica.objects.Test;
+import de.willuhn.jameica.rmi.DBHub;
 import de.willuhn.jameica.rmi.ServiceFactory;
 
 public class Application {
@@ -27,6 +29,7 @@ public class Application {
     private GUI gui = null;
     private Logger log;
     private Config config;
+    private DBHub db;
 
 
   private Application() {
@@ -64,6 +67,37 @@ public class Application {
     ServiceFactory.init();
     if (!serverMode) SplashScreen.add(10);
     
+    
+    Application.getLog().info("trying to connect to default database");
+    String defaultDB = Application.getConfig().getDefaultServiceName(Config.SERVICETYPE_DATABASE);
+
+    if (defaultDB == null)
+    {
+      Application.getLog().error("no default database configured. Exiting");
+      Application.shutDown();
+    }
+    try {
+      // connect to default database
+      app.db = (DBHub) ServiceFactory.lookupService(defaultDB);
+      Application.getLog().info("  done");
+      if (!serverMode) SplashScreen.add(10);
+    }
+    catch (Exception e)
+    {
+      Application.getLog().error("connect to default database failed. Exiting");
+      Application.shutDown();
+    }
+
+    try {
+      Test test = (Test) Application.getDefaultDatabase().createObject(Test.class,null);
+      test.setName("blubber");
+      test.setValue("fasel");
+      test.store();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+
     // start loops
     if (serverMode) {
       app.serverLoop();
@@ -134,11 +168,18 @@ public class Application {
     return app.config;
   }
 
+  public static DBHub getDefaultDatabase()
+  {
+    return app.db;
+  }
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.5  2003/11/12 00:58:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/05 22:46:18  willuhn
  * *** empty log message ***
  *

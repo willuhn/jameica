@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/05 22:46:19 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/12 00:58:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,7 +69,8 @@ public class SplashScreen
 		bar.setLayoutData(progressData);
 
     // passend zusammenstauchen
-		shell.pack();
+		//shell.pack();
+    shell.setSize(381,201);
 
     // Spalshscreen mittig positionieren
 		Rectangle splashRect = shell.getBounds();
@@ -112,6 +113,9 @@ public class SplashScreen
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.2  2003/11/12 00:58:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/05 22:46:19  willuhn
  * *** empty log message ***
  *

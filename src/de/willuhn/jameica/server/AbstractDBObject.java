@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/05 22:46:19 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/12 00:58:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * @param id ID des zu ladenden Objektes oder null, wenn es neu angelegt werden soll.
    * @throws RemoteException
    */
-	AbstractDBObject(Connection conn, String id) throws RemoteException
+	protected AbstractDBObject(Connection conn, String id) throws RemoteException
 	{
 		super(); // Konstruktor von UnicastRemoteObject
     Application.getLog().info("loading new object from database");
@@ -75,9 +75,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			while (meta.next())
 			{
 				field = meta.getString(4);
-				if (field == null) // skip empty fields
+				if (field == null || field.equalsIgnoreCase("id")) // skip empty fields and ID field
 					continue;
-				properties.put(field.toUpperCase(),null);
+				properties.put(field,null);
 			}
       Application.getLog().info("  done");
 		}
@@ -112,7 +112,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     Application.getLog().info("trying to load object id ["+id+"] from table " + tableName);
 		try {
 			stmt = conn.createStatement();
-			data = stmt.executeQuery("select * from " + tableName + " where id ='"+this.id+"'");
+			data = stmt.executeQuery("select * from " + tableName + " where id = "+this.id);
 			if (!data.next())
 				return; // record not found.
 
@@ -204,9 +204,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * @param fieldName Name des Feldes.
    * @return Wert des Feldes.
    */
-  String getField(String fieldName)
+  protected String getField(String fieldName)
   {
-    String value = (String) properties.get(fieldName.toUpperCase());
+    String value = (String) properties.get(fieldName);
     return (value == null ? null : value.trim());
   }
 
@@ -216,19 +216,19 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * @param value neuer Wert des Feldes.
    * @return vorheriger Wert des Feldes.
    */
-  String setField(String fieldName, String value)
+  protected String setField(String fieldName, String value)
   {
     if (fieldName == null)
       return null;
 
-    return (String) properties.put(fieldName.toUpperCase(), value);
+    return (String) properties.put(fieldName, value);
   }
 
   /**
    * Liefert ein String-Array mit allen Feldnamen dieses Objektes. 
    * @return
    */
-  String[] getFields()
+  protected String[] getFields()
   {
     Set s = properties.keySet();
     return (String[]) s.toArray(new String[s.size()]);
@@ -247,7 +247,6 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			ResultSet rs = stmt.executeQuery("select max(id) from " + getTableName());
 			rs.next();
 			this.id = rs.getString(1);
-			setField("id",this.id);
 			Application.getLog().info("  id: " + id);
 			return id;
 		}
@@ -263,7 +262,6 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   private void insert() throws RemoteException
   {
     id = null;
-		setField("id",null);
 		Statement stmt = null;
     try {
       Application.getLog().info("trying to insert new object into table " + getTableName());
@@ -342,7 +340,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Liefert das automatisch erzeugte SQL-Statement fuer ein Update.
    * @return das erzeugte SQL-Statement.
    */
-  String getUpdateSQL() throws RemoteException
+  protected String getUpdateSQL() throws RemoteException
   {
     String sql = "update " + getTableName() + " set ";
     String[] fields = getFields();
@@ -353,14 +351,14 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 				continue; // skip the id field
       sql += fields[i] + "='"+getField(fields[i])+"',";
     }
-    return sql.substring(0,sql.length()-1) + " where id='"+id+"'"; // remove last ","
+    return sql.substring(0,sql.length()-1) + " where id="+id+""; // remove last ","
   }
   
   /**
    * Liefert das automatisch erzeugte SQL-Statement fuer ein Insert.
    * @return das erzeugte SQL-Statement.
    */
-  String getInsertSQL() throws RemoteException
+  protected String getInsertSQL() throws RemoteException
   {
     String sql = "insert into " + getTableName() + " ";
     String[] fields = getFields();
@@ -396,7 +394,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#getTableName()
    */
-  abstract String getTableName() throws RemoteException;
+  protected abstract String getTableName() throws RemoteException;
 
 
   /**
@@ -468,6 +466,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.2  2003/11/12 00:58:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/05 22:46:19  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Database.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/05 22:46:18 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/12 00:58:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,7 @@ public class Database
     try {
       Class.forName("com.mckoi.JDBCDriver").newInstance();
       started = true;
-      Application.getLog().info("starting mckoi database");
+      Application.getLog().info("  done");
     }
     catch (Exception e)
     {
@@ -48,6 +48,9 @@ public class Database
 
 /*********************************************************************
  * $Log: Database.java,v $
+ * Revision 1.2  2003/11/12 00:58:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/05 22:46:18  willuhn
  * *** empty log message ***
  *

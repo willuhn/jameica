@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/05 22:46:19 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/12 00:58:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,9 +31,10 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 {
 
   private final static String driverClass = "com.mckoi.JDBCDriver";
-  private final static String jdbcUrl = ":jdbc:mckoi:local:db/db.conf";
   private final static String username = "jameica";
   private final static String password = "jameica";
+
+  private String jdbcUrl = ":jdbc:mckoi:local://./db/db.conf";
   
   private boolean connected = false;
   private Connection conn;
@@ -41,8 +42,10 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 	/**
 	 * Erzeugt eine neue Instanz.
 	 */
-	public DBHubImpl() throws RemoteException
+	public DBHubImpl(String jdbcUrl) throws RemoteException
 	{
+    if (jdbcUrl != null)
+      this.jdbcUrl = jdbcUrl;
 	}
   
 
@@ -165,6 +168,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.2  2003/11/12 00:58:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/05 22:46:19  willuhn
  * *** empty log message ***
  *
