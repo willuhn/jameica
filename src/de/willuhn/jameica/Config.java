@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/01/29 00:07:23 $
+ * $Revision: 1.19 $
+ * $Date: 2004/02/09 13:06:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,7 +68,7 @@ public class Config
    */
   private Locale defaultLanguage = new Locale("de_DE");
 
-  private String pluginDir = "plugins";
+  private ArrayList pluginDirs = new ArrayList();
 
   private String logfile = null;
   
@@ -196,10 +196,18 @@ public class Config
       rmiPort = 1099;
     }
 
-    String _pluginDir = xml.getFirstChildNamed("plugindir").getContent();
-    if (_pluginDir != null && !"".equals(_pluginDir))
-      pluginDir = _pluginDir;
-    
+		// Read plugin dirs
+		Enumeration dirs = xml.getFirstChildNamed("plugindirs").enumerateChildren();
+		IXMLElement pluginDir = null; 
+		String s = null;
+		while (dirs.hasMoreElements())
+		{
+			pluginDir = (IXMLElement) dirs.nextElement();
+			s = pluginDir.getContent();
+			if (s == null || s.length() == 0)
+				continue; // skip
+			this.pluginDirs.add(s);
+		}
   }
 
 
@@ -303,23 +311,27 @@ public class Config
 	}
 
   /**
-   * Liefert das Verzeichnis mit den Plugins.
-   * @return Verzeichnis mit den Plugins.
+   * Liefert die Namen aller Verzeichnisse mit Plugins.
+   * @return Liste aller Plugin-Verzeichnisse.
    */
-  public String getPluginDir()
+  public String[] getPluginDirs()
   {
-    return pluginDir;
+    return (String[]) pluginDirs.toArray(new String[pluginDirs.size()]);
   }
 
 	/**
-	 * Speichert das Verzeichnis mit den Plugins.
-   * @param pluginDir das Plugin-Verzeichnis.
+	 * Speichert die Verzeichnisse mit den Plugins.
+   * @param pluginDirs die Plugin-Verzeichnisse.
    */
-  public void setPluginDir(String pluginDir)
+  public void setPluginDirs(String[] pluginDirs)
 	{
-		if (pluginDir == null || "".equals(pluginDir))
+		if (pluginDirs == null || pluginDirs.length == 0)
 			return;
-		this.pluginDir = pluginDir;
+		this.pluginDirs = new ArrayList();
+		for (int i=0;i<pluginDirs.length;++i)
+		{
+			this.pluginDirs.add(pluginDirs[i]);
+		}
 	}
 
   /**
@@ -392,7 +404,21 @@ public class Config
 		xml.getFirstChildNamed("loglevel").setContent(this.logLevel);
 		xml.getFirstChildNamed("defaultlanguage").setContent(this.defaultLanguage.toString());
 		xml.getFirstChildNamed("rmiport").setContent(""+this.rmiPort);
-		xml.getFirstChildNamed("plugindir").setContent(this.pluginDir);
+
+		IXMLElement plugins = xml.getFirstChildNamed("plugindirs");
+		if (plugins != null)
+		{
+			xml.removeChild(plugins);
+		}
+		plugins = xml.createElement("plugindirs");		
+		for (int i=0;i<this.pluginDirs.size();++i)
+		{
+			IXMLElement pdir = plugins.createElement("dir");
+			pdir.setContent((String)this.pluginDirs.get(i));
+			plugins.addChild(pdir);
+		}
+		xml.addChild(plugins);
+		
 		
 		IXMLElement services = xml.getFirstChildNamed("services");
 		if (services != null)
@@ -461,6 +487,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.19  2004/02/09 13:06:33  willuhn
+ * @C added support for uncompressed plugins
+ *
  * Revision 1.18  2004/01/29 00:07:23  willuhn
  * @N Text widget
  *

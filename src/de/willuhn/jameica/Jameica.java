@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Jameica.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/30 02:35:11 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/09 13:06:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ public class Jameica
 {
 
   private static Manifest manifest = null;
+
   /**
    * Diese Funktion versucht den Namen aus der Datei jameica.jar/META-INF/MANIFEST.MF zu extrahieren.
    * Sie versucht dabei, den Schluessel Implementation-Title zu parsen.
@@ -48,7 +49,7 @@ public class Jameica
     }
     catch (Exception e)
     {
-      Application.getLog().error("unable to read application name");
+      Application.getLog().debug("unable to read application name");
     }
     return "Jameica";
   }
@@ -78,7 +79,7 @@ public class Jameica
     }
     catch (Exception e)
     {
-      Application.getLog().error("unable to read version number");
+      Application.getLog().debug("unable to read version number");
     }
     return 1.0;
   }
@@ -87,6 +88,9 @@ public class Jameica
 
 /*********************************************************************
  * $Log: Jameica.java,v $
+ * Revision 1.5  2004/02/09 13:06:33  willuhn
+ * @C added support for uncompressed plugins
+ *
  * Revision 1.4  2003/12/30 02:35:11  willuhn
  * *** empty log message ***
  *

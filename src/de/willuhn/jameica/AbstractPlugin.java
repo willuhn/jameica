@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.10 $
+ * $Date: 2004/02/09 13:06:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,61 +25,64 @@ import de.willuhn.datasource.db.*;
 public abstract class AbstractPlugin implements Plugin
 {
 
-  private JarFile jar = null;
+  private File file = null;
 
-  /**
-   * ct.
-   * @param jar das Jar-File in dem sich dieses Plugin befindet.
+	/**
+	 * ct.
+   * @param file Verzeichnis oder JarFile in dem sich das Plugin befindet.
    */
-  public AbstractPlugin(JarFile jar)
-  {
-    this.jar = jar;
-  }
+  public AbstractPlugin(File file)
+	{
+		this.file = file;
+	}
 
   /**
-   * Diese Funktion versucht den Namen aus der Datei META-INF/MANIFEST.MF zu extrahieren.
-   * Sie versucht dabei, den Schluessel Implementation-Title zu parsen.
-   * Schlaegt das fehl, wird sie den Namen des Jar-Files zurueckliefern. 
+   * Diese Funktion versucht den Namen aus der Datei META-INF/MANIFEST.MF zu extrahieren
+   * insofern es sich um ein Jar handelt.
+   * Sie versucht dabei, den Schluessel "Implementation-Title" zu parsen.
+   * Schlaegt das fehl, wird der Name der Datei/Verzeichnisses zurueckgeliefert.
    * @see de.willuhn.jameica.Plugin#getName()
    */
   public String getName()
   {
+		String name = "unknown";
     try {
+			if (!file.getName().endsWith(".jar"))
+				return file.getName();
+
+			JarFile jar = new JarFile(file);
       Manifest manifest = jar.getManifest();
-      String name = (String) manifest.getMainAttributes().getValue("Implementation-Title");
+      name = (String) manifest.getMainAttributes().getValue("Implementation-Title");
       if (name == null) throw new Exception();
       return name;
     }
     catch (Exception e)
     {
-      String name = "unknown";
       try {
-        name = jar.getName();
+        name = file.getName();
       }
       catch (NullPointerException ee)
       {
       }
       Application.getLog().error("unable to read name from plugin " + name);
     }
-		try {
-			return jar.getName();
-		}
-		catch (NullPointerException e)
-		{
-			return "unknown";
-		}
+		return name;
   }
 
   /**
    * Diese Funktion versucht die Versionsnummer aus der Datei META-INF/MANIFEST.MF zu extrahieren.
    * Sie versucht dabei, den Schluessel Implementation-Version zu parsen.
    * Wenn der String das Format "V_&lt;Major-Number&gt;_&lt;Minor-Number&gt; hat, wird es funktionieren.
-   * Andernfalls liefert die Funktion "1.0". 
+   * Andernfalls liefert die Funktion "1.0".
    * @see de.willuhn.jameica.Plugin#getVersion()
    */
   public double getVersion()
   {
     try {
+			if (!file.getName().endsWith(".jar"))
+				return 1.0;
+
+			JarFile jar = new JarFile(file);
       Manifest manifest = jar.getManifest();
       String version = (String) manifest.getMainAttributes().getValue("Implementation-Version");
       version = version.substring(2).replace('_','.');
@@ -89,7 +92,7 @@ public abstract class AbstractPlugin implements Plugin
     {
       String name = "unknown";
       try {
-        name = jar.getName();
+        name = file.getName();
       }
       catch (NullPointerException ee)
       {
@@ -104,9 +107,13 @@ public abstract class AbstractPlugin implements Plugin
    */
   public String getPath()
   {
-  	if (jar == null)
+  	if (file == null)
   		return null;
-  	return new File(jar.getName()).getParent();
+
+		if (!file.getName().endsWith(".jar"))
+			return file.getPath();
+
+  	return file.getParent();
   }
   
   /**
@@ -142,6 +149,9 @@ public abstract class AbstractPlugin implements Plugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.10  2004/02/09 13:06:33  willuhn
+ * @C added support for uncompressed plugins
+ *
  * Revision 1.9  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

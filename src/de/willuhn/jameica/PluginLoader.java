@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.32 $
- * $Date: 2004/01/28 20:51:25 $
+ * $Revision: 1.33 $
+ * $Date: 2004/02/09 13:06:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
@@ -22,6 +23,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.util.FileFinder;
 import de.willuhn.util.MultipleClassLoader;
 
 /**
@@ -34,9 +36,6 @@ public class PluginLoader extends ClassLoader
   // Liste mit allen gefundenen Plugins.
   private static ArrayList installedPlugins = new ArrayList();
 
-  // Verzeichnis, in dem sich die Plugins befinden
-  private static File plugindir = null;
-
   // Interface aller Plugins. Es werden nur Plugins geladen, die dieses Interface
   // implementieren
   private static Class pluginInterface = Plugin.class;
@@ -48,28 +47,42 @@ public class PluginLoader extends ClassLoader
   // Update-Methode aufrufen koennen.
   private static Settings updateChecker = new Settings(PluginLoader.class);
 
+	/**
+	 * Wird beim Start der Anwendung ausgefuehrt, sucht in den Plugin-Verzeichnissen
+	 * nach verfuegbaren Plugins und initialisiert diese.
+	 */
+	public static void init()
+	{
+		Application.getLog().info("init plugins");
+		String[] dirs = Application.getConfig().getPluginDirs();
+		for (int i=0;i<dirs.length;++i)
+		{
+			if (dirs[i] == null || dirs[i].length() == 0)
+				continue;
+			File f = new File(dirs[i]);
+			if (!f.exists())
+				continue; 
+			init(f);
+		}
+	}
 
   /**
-   * Wird beim Start der Anwendung ausgefuehrt, sucht im Classpath
-   * nach verfuegbaren Plugins und initialisiert diese.
+   * Laedt die Plugins aus dem angegebenen Verzeichnis.
+   * @param plugindir das Plugin-Verzeichnis.
    */
-  public static void init()
+  private static void init(File plugindir)
   {
-    Application.getLog().info("init plugins");
-    
-    try {
-      // Plugin-Verzeichnis ermitteln
-      plugindir = new File(Application.getConfig().getPluginDir()).getCanonicalFile();
-      Application.getLog().info("using directory " + plugindir.getPath());
-    }
-    catch (IOException e)
-    {
-      Application.getLog().error("unable to determine plugin dir, giving up",e);
-      return;
-    }
+    if (plugindir == null)
+    	return;
+
+		Application.getLog().info("checking directory " + plugindir.getAbsolutePath());
 
     File[] jars = null;
     try {
+    	// Wir fuegen das Verzeichnis zum ClassLoader hinzu.
+    	MultipleClassLoader.add(new File(plugindir.getPath() + File.separator + "bin"));
+    	
+    	// Und jetzt noch alle darin befindlichen Jars
     	jars = MultipleClassLoader.addJars(plugindir);
     }
     catch (MalformedURLException mue)
@@ -77,74 +90,128 @@ public class PluginLoader extends ClassLoader
     	Application.getLog().error("loading of jars from plugin dir failed",mue);
     	return;
     }
-    if (jars == null || jars.length < 1)
-    {
-			Application.getLog().info("no plugins found");
-			return;
-    }
 
-    // und jetzt gehen wir nochmal ueber alle Jars und ueber alle darin befindlichen Klassen
-    // und versuchen sie zu laden
-    for(int i=0;i<jars.length;++i)
-    {
-      File file = (File) jars[i];
 
-      JarFile jar = null;
-      try {
-        jar = new JarFile(file);
-      }
-      catch (IOException ioe) {
-        continue; // skip
-      }
-        
-      if (jar == null)
-        continue; // skip
-
-      // So, jetzt iterieren wir ueber alle Files in dem Jar
-      Enumeration jarEntries = jar.entries();
-      JarEntry entry = null;
-
+		{
+			///////////////////////////////////////////////////////////////////////////
+			// dekomprimierte Plugins
+			FileFinder ff = new FileFinder(plugindir);
+			File[] child = ff.findRecursive();
+			File menu = null;
+			File navi = null;
+			String name = null;
 			boolean pluginFound = false;
-			JarEntry menu = null;
-			JarEntry navi = null;
-      while (jarEntries.hasMoreElements())
-      {
-				entry = (JarEntry) jarEntries.nextElement();
-				String entryName = entry.getName();
-
-        if ("menu.xml".equals(entryName))
-          menu = entry; 
-
-        if ("navigation.xml".equals(entryName))
-          navi = entry; 
-
-				int idxClass = entryName.indexOf(".class");
-				if (idxClass == -1)
+			for (int i=0;i<child.length;++i)
+			{
+				name = child[i].getPath();
+				if (name.endsWith("menu.xml"))
+					menu = child[i];
+	
+				if (name.endsWith("navigation.xml"))
+					navi = child[i]; 
+	
+				if (!name.endsWith(".class"))
 					continue;
-
-				entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
-
+	
+				// Jetzt muessen wir vorn noch den Verzeichnisnamen abschneiden
+				name = name.substring(plugindir.getPath().length()+5); // "/bin/"
+				name = name.substring(0, name.indexOf(".class")).replace('/', '.').replace('\\', '.');
+	
 				// Wir laden das Plugin
-				pluginFound = loadPlugin(jar,entryName) || pluginFound;
-      }
+				pluginFound = loadPlugin(plugindir,name) || pluginFound;
+			}
 
 			if (pluginFound && menu != null)
 			{
-				Application.getLog().info("adding menu from plugin " + jar.getName());
-        try
-        {
-          GUI.addMenu(jar.getInputStream(menu));
-        } catch (IOException e1) {Application.getLog().error("failed",e1);}
+				Application.getLog().info("adding menu from plugin " + plugindir.getAbsolutePath());
+				try
+				{
+					GUI.addMenu(new FileInputStream(menu));
+				} catch (IOException e1) {Application.getLog().error("failed",e1);}
 			}
 			if (pluginFound && navi != null)
 			{
-        Application.getLog().info("adding navigation from plugin " + jar.getName());
-        try
-        {
-          GUI.addNavigation(jar.getInputStream(navi));
+				Application.getLog().info("adding navigation from plugin " + plugindir.getAbsolutePath());
+				try
+				{
+					GUI.addNavigation(new FileInputStream(navi));
 				} catch (IOException e1) {Application.getLog().error("failed",e1);}
-      }
-    }
+			}
+		}
+		//
+		///////////////////////////////////////////////////////////////////////////
+		
+
+		///////////////////////////////////////////////////////////////////////////
+		// Plugins in JAR Files
+		// jetzt gehen wir nochmal ueber alle Jars und ueber alle darin
+		// befindlichen Klassen und versuchen sie zu laden
+		if (jars == null || jars.length == 0)
+			return;
+		{
+	    for(int i=0;i<jars.length;++i)
+	    {
+	      File file = (File) jars[i];
+	
+	      JarFile jar = null;
+	      try {
+	        jar = new JarFile(file);
+	      }
+	      catch (IOException ioe) {
+	        continue; // skip
+	      }
+	        
+	      if (jar == null)
+	        continue; // skip
+	
+	      // So, jetzt iterieren wir ueber alle Files in dem Jar
+	      Enumeration jarEntries = jar.entries();
+	      JarEntry entry = null;
+	
+				boolean pluginFound = false;
+				JarEntry menu = null;
+				JarEntry navi = null;
+	      while (jarEntries.hasMoreElements())
+	      {
+					entry = (JarEntry) jarEntries.nextElement();
+					String entryName = entry.getName();
+	
+	        if ("menu.xml".equals(entryName))
+	          menu = entry; 
+	
+	        if ("navigation.xml".equals(entryName))
+	          navi = entry; 
+	
+					int idxClass = entryName.indexOf(".class");
+					if (idxClass == -1)
+						continue;
+	
+					entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
+	
+					// Wir laden das Plugin
+					pluginFound = loadPlugin(new File(jar.getName()),entryName) || pluginFound;
+	      }
+	
+				if (pluginFound && menu != null)
+				{
+					Application.getLog().info("adding menu from plugin " + jar.getName());
+	        try
+	        {
+	          GUI.addMenu(jar.getInputStream(menu));
+	        } catch (IOException e1) {Application.getLog().error("failed",e1);}
+				}
+				if (pluginFound && navi != null)
+				{
+	        Application.getLog().info("adding navigation from plugin " + jar.getName());
+	        try
+	        {
+	          GUI.addNavigation(jar.getInputStream(navi));
+					} catch (IOException e1) {Application.getLog().error("failed",e1);}
+	      }
+	    }
+		}
+		//
+		///////////////////////////////////////////////////////////////////////////
   }
   
 
@@ -172,11 +239,11 @@ public class PluginLoader extends ClassLoader
 
   /**
    * Laedt das angegebene Plugin.
-   * @param jar Jar-File in dem sich das Plugin befindet.
+   * @param file Jar-File oder Verzeichnis in dem sich das Plugin befindet.
    * @param classname Name der zu ladenden Klasse.
    * @return true, wenn es geladen und initialisiert werden konnte.
    */
-  private static boolean loadPlugin(JarFile jar, String classname)
+  private static boolean loadPlugin(File file, String classname)
   {
 
 		///////////////////////////////////////////////////////////////
@@ -207,14 +274,14 @@ public class PluginLoader extends ClassLoader
     
 		///////////////////////////////////////////////////////////////
 		// Klasse instanziieren
-    Application.getLog().debug("trying to initialize");
+    Application.getLog().debug("trying to initialize " + classname);
     Constructor ct = null;
     Plugin plugin = null;
     try
     {
-			ct = clazz.getConstructor(new Class[]{JarFile.class});
+			ct = clazz.getConstructor(new Class[]{File.class});
 			ct.setAccessible(true);
-      plugin = (Plugin) ct.newInstance(new Object[]{jar});
+			plugin = (Plugin) ct.newInstance(new Object[]{file});
     }
     catch (Exception e)
     {
@@ -340,6 +407,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.33  2004/02/09 13:06:33  willuhn
+ * @C added support for uncompressed plugins
+ *
  * Revision 1.32  2004/01/28 20:51:25  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
