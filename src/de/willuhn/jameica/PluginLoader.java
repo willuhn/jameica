@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.22 $
- * $Date: 2003/12/30 02:10:57 $
+ * $Revision: 1.23 $
+ * $Date: 2003/12/30 02:25:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -317,9 +317,11 @@ public class PluginLoader extends ClassLoader
       if (installed == null)
       {
         // Plugin wurde zum ersten mal gestartet
+        Application.getLog().info("Plugin started for the first time. Starting install");
         try {
           if (plugin.install())
           {
+            Application.getLog().info("  done");
             // Installation erfolgreich
             updateChecker.setAttribute(classname + ".version","" + plugin.getVersion());
           }
@@ -329,23 +331,27 @@ public class PluginLoader extends ClassLoader
           // Das machen wir nur, falls die install-Funktion des Plugins eine Runtime-Exception wirft
           if (Application.DEBUG)
             e.printStackTrace();
+          Application.getLog().error("  failed");
         }
       }
       else {
         // Huu - das Plugin war schon mal installiert. Mal schauen, in welcher Version
         try {
           double oldVersion = 1.0;
+          double newVersion = plugin.getVersion();
           try {
             oldVersion = Double.parseDouble(installed);
           }
           catch (NumberFormatException e) {}
-          if (oldVersion < plugin.getVersion())
+          if (oldVersion < newVersion)
           {
+            Application.getLog().info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
             // hui, sogar eine neuere Version. Also starten wir dessen Update
             if (plugin.update(oldVersion))
             {
+              Application.getLog().info("  done");
               // Update erfolgreich
-              updateChecker.setAttribute(classname + ".version","" + plugin.getVersion());
+              updateChecker.setAttribute(classname + ".version","" + newVersion);
             }
             
           }
@@ -355,6 +361,7 @@ public class PluginLoader extends ClassLoader
         // Das machen wir nur, falls die install-Funktion des Plugins eine Runtime-Exception wirft
         if (Application.DEBUG)
           e.printStackTrace();
+          Application.getLog().error("  failed");
         }
       }
       plugin.init();
@@ -410,6 +417,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.23  2003/12/30 02:25:35  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2003/12/30 02:10:57  willuhn
  * @N updateChecker
  *
