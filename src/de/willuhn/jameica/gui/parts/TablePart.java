@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.28 $
- * $Date: 2005/02/02 16:16:38 $
+ * $Revision: 1.29 $
+ * $Date: 2005/02/06 17:46:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,15 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
-import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,6 +41,7 @@ import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -48,7 +53,6 @@ import de.willuhn.util.I18N;
  */
 public class TablePart implements Part
 {
-	// Ordentliche Sortierung fehlt!
   private GenericIterator list					= null;
 	private Action action									= null;
   private ArrayList fields 							= new ArrayList();
@@ -65,6 +69,14 @@ public class TablePart implements Part
 	 
   private org.eclipse.swt.widgets.Table table = null;
 
+	// Fuer die Sortierung
+	private Hashtable sortTable					= new Hashtable();
+	private Hashtable textTable					= new Hashtable();
+	private int sortedBy 								= -1; // Index der sortierten Spalte
+	private boolean direction						= true; // Ausrichtung 
+	private Image up										= null;
+	private Image down									= null;
+
 	private int size = 0;
 
   /**
@@ -77,6 +89,8 @@ public class TablePart implements Part
     this.list = list;
     this.action = action;
 		i18n = Application.getI18n();
+		up = SWTUtil.getImage("up.gif");
+		down = SWTUtil.getImage("down.gif");
   }
   
 	/**
@@ -235,7 +249,9 @@ public class TablePart implements Part
 			});
 			
 		}
+		
 		item.setData(object);
+		String[] text = new String[this.fields.size()];
 
 		for (int i=0;i<this.fields.size();++i)
 		{
@@ -243,24 +259,48 @@ public class TablePart implements Part
 			String field = fieldData[1];
 			Object value = object.getAttribute(field);
 
-			if (value == null)
-				item.setText(i,"");
-			else
-				item.setText(i,value.toString());
+			String display = "";
 
 			if (value instanceof GenericObject)
 			{
 				// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
 				GenericObject go = (GenericObject) value;
-				Object attribute = go.getAttribute(go.getPrimaryAttribute());
-				item.setText(i,attribute == null ? "" : attribute.toString());
+				value = go.getAttribute(go.getPrimaryAttribute());
+				if (value != null && value.toString() != null)
+					display = value.toString();
+			}
+			else
+			{
+				if (value != null)
+					display = value.toString();
 			}
 
 			// Formatter vorhanden?
 			Formatter f = (Formatter) formatter.get(field);
 			if (f != null)
-				item.setText(i,f.format(value));
+				display = f.format(value);
+
+			item.setText(i,display);
+			text[i] = display;
+
+			////////////////////////////////////
+			// Sortierung
+			
+			// Mal schauen, ob wir fuer die Spalte schon eine Sortierung haben
+			List l = (List) sortTable.get(new Integer(i));
+			if (l == null)
+			{
+				// Ne, also erstellen wir eine
+				l = new LinkedList();
+				sortTable.put(new Integer(i),l);
+			}
+
+			l.add(new SortItem(value,object));
+			//
+			////////////////////////////////////
 		}
+		textTable.put(object,text);
+
 
 		// Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
 		// TableFormatter drueber
@@ -424,40 +464,100 @@ public class TablePart implements Part
    */
   private void orderBy(int index)
 	{
-		final TableItem[] items = table.getItems();
-		Collator collator = Collator.getInstance(Application.getConfig().getLocale());
 
-		for (int s = 1; s < items.length; ++s)
+		List l = (List) sortTable.get(new Integer(index));
+		if (l == null)
+			return; // nix zu sortieren.
+
+		// Alte Bilder entfernen
+		for (int i=0;i<table.getColumnCount();++i)
 		{
-
-			String value1 = table.getItem(s).getText(index);
-
-			for (int j = 0; j < s; ++j)
-			{
-
-				String value2 = table.getItem(j).getText(index);
-
-				if (collator.compare(value1, value2) < 0)
-				{
-					final TableItem item = new TableItem(table, SWT.NONE, j);
-					for (int r=0;r<table.getColumnCount();++r)
-					{
-						item.setText(r,items[s].getText(r));
-					}
-					item.setData(items[s].getData());
-					items[s].dispose();
-					if (tableFormatter != null)
-						tableFormatter.format(item);
-					break;
-				}
-
-			}
+			table.getColumn(i).setImage(null);
 		}
+		TableColumn col = table.getColumn(index);
+
+		if (index != this.sortedBy)
+		{
+			// Wir sortieren regulaer
+			Collections.sort(l);
+			col.setImage(down);
+			direction = true;
+		}
+		else
+		{
+			// Nach dieser Spalte haben wir schon sortiert. Also sortieren wir andersrum
+			Collections.reverse(l);
+			col.setImage(direction ? up : down);
+			direction = !direction;
+		}
+		this.sortedBy = index; // merken
+
+		// Machen die Tabelle leer
+		table.removeAll();
+
+		// Und schreiben sie sortiert neu
+		SortItem sort = null;
+		for (int i=0;i<l.size();++i)
+		{
+			sort = (SortItem) l.get(i);
+			final TableItem item = new TableItem(table,SWT.NONE,i);
+			item.setData(sort.data);
+			item.setText((String[])textTable.get(sort.data));
+			if (tableFormatter != null)
+				tableFormatter.format(item);
+		}
+	}
+	
+	/**
+	 * Kleine Hilfs-Klasse fuer die Sortierung.
+   */
+  private class SortItem implements Comparable
+	{
+		private Comparable attribute;
+		private Object data;
+
+		private SortItem(Object attribute, Object data)
+		{
+			try
+			{
+				this.attribute = (Comparable) attribute;
+			}
+			catch (Exception e)
+			{
+			}
+			this.data = data;
+		}
+
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(Object o)
+    {
+			if (attribute == null)
+				return -1;
+
+    	try
+    	{
+    		Comparable other = ((SortItem)o).attribute;
+    		if (other == null)
+    			return 1;
+    		
+				return attribute.compareTo(other);
+    	}
+    	catch (Exception e)
+    	{
+    		return 0;
+    	}
+    }
 	}
 }
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.29  2005/02/06 17:46:09  willuhn
+ * @N license text for jakarta commons cli
+ * @N table sort
+ *
  * Revision 1.28  2005/02/02 16:16:38  willuhn
  * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
  *
