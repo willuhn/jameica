@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.23 $
- * $Date: 2005/01/12 01:44:57 $
+ * $Revision: 1.24 $
+ * $Date: 2005/01/12 11:32:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,6 +63,13 @@ public final class ServiceFactory
   public synchronized void init() throws Exception
   {
 		Logger.info("init plugin services");
+
+    if (!sslStarted && SSL)
+    {
+      Logger.info("rmi over ssl enabled");
+      RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
+      sslStarted = true;
+    }
 
 		startRegistry();
 
@@ -132,13 +139,6 @@ public final class ServiceFactory
 
     try {
       Logger.info("trying to start new RMI registry");
-
-      if (SSL)
-      {
-				Logger.info("rmi over ssl enabled");
-				RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
-				sslStarted = true;
-      }
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
     }
     catch (Exception e)
@@ -319,12 +319,6 @@ public final class ServiceFactory
 			Logger.info("searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
 
-			if (!sslStarted && SSL)
-			{
-				Logger.info("rmi over ssl enabled");
-				RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
-				sslStarted = true;
-			}
 			Logger.debug("rmi lookup url: " + url);
 			s = (Service) Naming.lookup(url);
 			if (s != null)
@@ -378,6 +372,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.24  2005/01/12 11:32:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2005/01/12 01:44:57  willuhn
  * @N added test https server
  *

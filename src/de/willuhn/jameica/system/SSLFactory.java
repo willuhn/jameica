@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/01/12 01:44:57 $
+ * $Revision: 1.12 $
+ * $Date: 2005/01/12 11:32:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,11 +62,11 @@ public class SSLFactory
    */
   public synchronized void init() throws Exception
 	{
-		HTTPsServer s = new HTTPsServer();
-		s.run();
+//		HTTPsServer s = new HTTPsServer();
+//		s.run();
 
 //		System.setProperty("java.security.debug","all");
-//		System.setProperty("javax.net.debug","all");
+		System.setProperty("javax.net.debug","all");
 
 		Logger.info("init ssl factory");
 		Application.getStartupMonitor().setStatusText("init ssl factory");
@@ -118,7 +118,7 @@ public class SSLFactory
 		////////////////////////////////////////////////////////////////////////////
 		// Keystore erstellen
 		Logger.info("  creating keystore");
-		this.keystore = KeyStore.getInstance("PKCS12",BouncyCastleProvider.PROVIDER_NAME);
+    this.keystore = KeyStore.getInstance("JKS");
 		this.keystore.load(null,"jameica".toCharArray());
 
 		Logger.info("  creating adding private key and x.509 certifcate");
@@ -221,7 +221,7 @@ public class SSLFactory
 			is = new FileInputStream(f);
 
 			Logger.info("init keystore");
-			this.keystore = KeyStore.getInstance("PKCS12",BouncyCastleProvider.PROVIDER_NAME);
+      this.keystore = KeyStore.getInstance("JKS");
 
 			Logger.info("reading keys");
 			this.keystore.load(is,"jameica".toCharArray());
@@ -266,7 +266,7 @@ public class SSLFactory
 			return sslContext;
 
 		Logger.info("init ssl context");
-		this.sslContext = SSLContext.getInstance("TLS"); //BouncyCastleProvider.PROVIDER_NAME);
+		this.sslContext = SSLContext.getInstance("SSL");
 
 		Logger.info("init SunX509 key manager");
 		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
@@ -274,11 +274,11 @@ public class SSLFactory
 
 //	Wir benutzen unseren eignen TrustManager
 		Logger.info("init Jameica trust manager");
-		TrustManager trustManager = new JameicaTrustManager();
+    TrustManager trustManager = new JameicaTrustManager();
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
 												 new TrustManager[]{trustManager},null);
 
-// Loeasung mit SUN TrustManager
+// Loesung mit SUN TrustManager
 //		TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance("SunX509");
 //		trustManagerFactory.init(this.getKeyStore());
 //		this.sslContext.init(keyManagerFactory.getKeyManagers(),
@@ -291,6 +291,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.12  2005/01/12 11:32:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/01/12 01:44:57  willuhn
  * @N added test https server
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLRMISocketFactory.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/01/12 01:44:57 $
+ * $Revision: 1.7 $
+ * $Date: 2005/01/12 11:32:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,6 +41,9 @@ public class SSLRMISocketFactory extends RMISocketFactory {
   {
   	super();
   	Logger.info("init \"rmi over ssl\" socket factory");
+
+    RMISocketFactory.setFailureHandler(new SSLRMIFailureHandler());
+
   	SSLContext context 	= Application.getSSLFactory().getSSLContext();
     serverSocketFactory = context.getServerSocketFactory();
     socketFactory 			= context.getSocketFactory();
@@ -53,9 +56,7 @@ public class SSLRMISocketFactory extends RMISocketFactory {
   {
 		Logger.debug("Creating client socket to " + host + ":" + port);
     SSLSocket socket = (SSLSocket) socketFactory.createSocket(host, port);
-    socket.setEnabledCipherSuites(socket.getSupportedCipherSuites());
-    socket.setEnabledProtocols(socket.getSupportedProtocols());
-		//log(socket);
+		log(socket);
     return socket;
   }
 
@@ -66,55 +67,59 @@ public class SSLRMISocketFactory extends RMISocketFactory {
   {
 		Logger.info("Creating server socket at port " + port + "/tcp");
     SSLServerSocket socket = (SSLServerSocket) serverSocketFactory.createServerSocket(port);
-		socket.setEnabledCipherSuites(socket.getSupportedCipherSuites());
-		socket.setEnabledProtocols(socket.getSupportedProtocols());
-		//log(socket);
+		log(socket);
     socket.setNeedClientAuth(clientAuth);
     socket.setWantClientAuth(clientAuth);
     return socket;
   }
 
-	private void log(SSLSocket socket)
+	/**
+   * Loggt die vom Socket unterstuetzten Protokolle und Cipher-Suites.
+   * @param socket zu loggender Socket.
+   */
+  private void log(Object socket) throws IOException
 	{
-		String[] protos = socket.getEnabledProtocols();
-		Logger.debug("enabled protocols for CLIENT socket");
-		for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
+    String[] protos;
+    String[] cipher;
+    String socketType =  "CLIENT";
+    if (socket instanceof SSLServerSocket)
+    {
+      socketType = "SERVER";
+      SSLServerSocket s = (SSLServerSocket) socket;
+      protos = s.getEnabledProtocols();
+      cipher = s.getEnabledCipherSuites();
+      Logger.info(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
+    }
+    else
+    {
+      SSLSocket s = (SSLSocket) socket;
+      protos = s.getEnabledProtocols();
+      cipher = s.getEnabledCipherSuites();
+      Logger.info(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
+    }
+    StringBuffer sb = new StringBuffer("enabled protocols for " + socketType + " socket: ");
+    for (int i=0;i<protos.length;++i) 
+    {
+      sb.append(protos[i]);
+      sb.append(" ");
+    } 
+    Logger.debug(sb.toString());
 
-		String[] cipher = socket.getEnabledCipherSuites();
-		Logger.debug("enabled cipher suites for CLIENT socket");
-		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
-
-		protos = socket.getSupportedProtocols();
-		Logger.debug("supported protocols for CLIENT socket");
-		for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
-
-		cipher = socket.getSupportedCipherSuites();
-		Logger.debug("supported cipher suites for CLIENT socket");
-		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
-
-	}
-	private void log(SSLServerSocket socket)
-	{
-		String[] protos = socket.getEnabledProtocols();
-		Logger.debug("enabled protocols for SERVER socket");
-		for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
-
-		String[] cipher = socket.getEnabledCipherSuites();
-		Logger.debug("enabled cipher suites for SERVER socket");
-		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
-
-		protos = socket.getSupportedProtocols();
-		Logger.debug("supported protocols for SERVER socket");
-		for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
-
-		cipher = socket.getSupportedCipherSuites();
-		Logger.debug("supported cipher suites for SERVER socket");
-		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
-	}
+    sb = new StringBuffer("enabled cipher suites for " + socketType + " socket: ");
+    for (int i=0;i<cipher.length;++i) 
+    {
+      sb.append(cipher[i]);
+      sb.append(" ");
+    } 
+    Logger.debug(sb.toString());
+  }
 }
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.7  2005/01/12 11:32:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/01/12 01:44:57  willuhn
  * @N added test https server
  *
