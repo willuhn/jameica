@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/11/24 11:51:41 $
+ * $Revision: 1.8 $
+ * $Date: 2003/11/24 23:01:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -52,8 +53,9 @@ public class PluginLoader extends ClassLoader
   {
     Application.getLog().info("init plugins");
     
-    // loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","/work/willuhn/eclipse/fibu/src");
-    loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","d:/work/fibu/src");
+    // TODO: Nur fuer IDE
+    loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","/work/willuhn/eclipse/fibu/src");
+    // loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","d:/work/fibu/src");
 
     try {
       // Plugin-Verzeichnis ermitteln
@@ -62,6 +64,8 @@ public class PluginLoader extends ClassLoader
     }
     catch (IOException e)
     {
+      if (Application.DEBUG)
+        e.printStackTrace();
       Application.getLog().error("  unable to determine plugin dir, giving up");
       return;
     }
@@ -128,6 +132,8 @@ public class PluginLoader extends ClassLoader
           }
           catch (IOException e)
           {
+            if (Application.DEBUG)
+              e.printStackTrace();
             Application.getLog().error("  failed");
           }
 
@@ -140,6 +146,8 @@ public class PluginLoader extends ClassLoader
         }
         catch (IOException e)
         {
+          if (Application.DEBUG)
+            e.printStackTrace();
           Application.getLog().error("  failed");
         }
 
@@ -150,7 +158,7 @@ public class PluginLoader extends ClassLoader
 
         entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
         // Wir laden das Plugin
-        loadPlugin(entryName);
+        loadPlugin(jar,entryName);
       }
     }
     
@@ -170,10 +178,11 @@ public class PluginLoader extends ClassLoader
     try {
       Application.addMenu(new FileInputStream(path + "/menu.xml"));
       Application.addNavigation(new FileInputStream(path + "/navigation.xml"));
-      loadPlugin(clazz);
+      loadPlugin(null,clazz);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      if (Application.DEBUG)
+        e.printStackTrace();
     }
     //////////////////////////////////////////////////////////////////////////////////////////////
   }
@@ -243,23 +252,48 @@ public class PluginLoader extends ClassLoader
    * Laedt das angegebene Plugin.
    * @param classname Name der zu ladenden Klasse.
    */
-  private static void loadPlugin(String classname)
+  private static void loadPlugin(JarFile jar, String classname)
   {
     try {
-      Class clazz = loader.loadClass(classname);
+      
+      Class clazz = null;
+     
+      // TODO: Nur fuer IDE
+      if (loader == null) {
+        clazz = Class.forName(classname);
+      }
+      else { 
+        clazz = loader.loadClass(classname);
+      }
+
       if (!checkPlugin(clazz))
         return; // no valid plugin
       
       Application.getLog().info("  found " + classname + ", trying to initialize");
-      Plugin plugin = (Plugin) (clazz.newInstance());
+
+      Constructor ct = clazz.getConstructor(new Class[]{JarFile.class});
+      ct.setAccessible(true);
+      Plugin plugin = (Plugin) ct.newInstance(new Object[] {jar});
       plugin.init();
       installedPlugins.add(plugin);
       Application.getLog().info("  done");
     }
     catch (Exception e)
     {
+      if (Application.DEBUG)
+        e.printStackTrace();
       Application.getLog().info(" failed");
     }
+  }
+
+  /**
+   * Liefert eine Liste mit Objekten des Types AbstractPlugin.
+   * Das sind alle installierten Plugins.
+   * @return
+   */
+  public static ArrayList getInstalledPlugins()
+  {
+    return installedPlugins;
   }
 
   /**
@@ -292,6 +326,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.8  2003/11/24 23:01:58  willuhn
+ * @N added settings
+ *
  * Revision 1.7  2003/11/24 11:51:41  willuhn
  * *** empty log message ***
  *

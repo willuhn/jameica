@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Plugin.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/14 00:49:46 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/24 23:01:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,16 +26,30 @@ public interface Plugin
    * automatisch durchgefuehrt haben moechte ;)
    */
   public void init();
+  
+  /**
+   * Liefert den Namen des Plugins.
+   * @return Name des Plugins.
+   */
+  public String getName();
+
+  /**
+   * Liefert die Versionsnummer des Plugins.
+   * @return
+   */
+  public double getVersion();
 
   /**
    * Diese Funktion wird beim Beenden der Anwendung ausgefuehrt.
    */
   public void shutDown();
-
 }
 
 /*********************************************************************
  * $Log: Plugin.java,v $
+ * Revision 1.3  2003/11/24 23:01:58  willuhn
+ * @N added settings
+ *
  * Revision 1.2  2003/11/14 00:49:46  willuhn
  * *** empty log message ***
  *

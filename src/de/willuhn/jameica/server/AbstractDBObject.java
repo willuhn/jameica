@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/11/24 17:27:50 $
+ * $Revision: 1.10 $
+ * $Date: 2003/11/24 23:01:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,16 +48,19 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   // definiert, ob das Objekt gerade in einer manuellen Transaktion ist
   private boolean inTransaction = false;
 
+  // ein Cache fuer ForeignObjects
+  private HashMap foreignObjectCache = new HashMap();
+
   /**
    * ct
    * @param conn die JDBC-Connection.
    * @param id ID des zu ladenden Objektes oder null, wenn es neu angelegt werden soll.
    * @throws RemoteException
    */
-	protected AbstractDBObject(Connection conn, String id) throws RemoteException
+	public AbstractDBObject(Connection conn, String id) throws RemoteException
 	{
 		super(); // Konstruktor von UnicastRemoteObject
-    Application.getLog().info("loading new object from database");
+    Application.getLog().debug("loading new object from database");
 		this.conn = conn;
     try {
       this.conn.setAutoCommit(false); // Auto-Commit schalten wir aus weil wir vorsichtig sind ;)
@@ -82,7 +85,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   {
 		String tableName = getTableName();
 		ResultSet meta = null;
-    Application.getLog().info("trying to read meta data from table " + tableName);
+    Application.getLog().debug("trying to read meta data from table " + tableName);
 		try {
 			meta = conn.getMetaData().getColumns(null,null,tableName,null);
 			String field;
@@ -95,7 +98,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
         types.put(field,meta.getString(6));
         // System.out.println("FELD: " + field + ": " + meta.getString(6));
 			}
-      Application.getLog().info("  done");
+      Application.getLog().debug("  done");
 		}
 		catch (SQLException e)
 		{
@@ -110,13 +113,11 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		}
   	
   }
-	/**
-   * Laedt die Eigenschaften des Datensatzes mit der angegebenen ID aus der
-   * Datenbank und schreibt sie in die aktuelle Instanz.
-   * @param id
-   * @throws RemoteException
+
+  /**
+   * @see de.willuhn.jameica.rmi.DBObject#load(java.lang.String)
    */
-  protected void load(String id) throws RemoteException
+  public void load(String id) throws RemoteException
 	{
 		this.id = ((id == null || id.equals("")) ? null : id);
 		if (this.id == null)
@@ -125,7 +126,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		String tableName = getTableName();
 		Statement stmt = null;
 		ResultSet data = null;
-    Application.getLog().info("trying to load object id ["+id+"] from table " + tableName);
+    Application.getLog().debug("trying to load object id ["+id+"] from table " + tableName);
 		try {
 			stmt = conn.createStatement();
 			data = stmt.executeQuery("select * from " + tableName + " where id = "+this.id);
@@ -137,7 +138,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			{
 				setField(fields[i],data.getObject(fields[i]));
 			}
-      Application.getLog().info("  done");
+      Application.getLog().debug("  done");
 		}
 		catch (SQLException e)
 		{
@@ -188,14 +189,14 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       return; // no, we delete no new objects ;)
 
 		Statement stmt = null;
-    Application.getLog().info("deleting object id ["+id+"] from table " + getTableName());
+    Application.getLog().debug("deleting object id ["+id+"] from table " + getTableName());
     try {
     	stmt = conn.createStatement();
       stmt.execute("delete from " + getTableName() + " where id = '"+id+"'");
       if (!this.inTransaction)
         conn.commit();
       this.id = null;
-      Application.getLog().info("  done");
+      Application.getLog().debug("  done");
     }
     catch (SQLException e)
     {
@@ -238,14 +239,23 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     if (o == null)
       return null;
 
-    // wir checken erstmal, ob es sich um ein Objekt aus einer Framdtabelle
+    // wir checken erstmal, ob es sich um ein Objekt aus einer Fremdtabelle
     // handelt. Wenn das der Fall ist, liefern wir das statt der
     // lokalen ID aus.
     Class foreign = getForeignObject(fieldName);
     if (foreign != null)
     {
       try {
-        return Application.getDefaultDatabase().createObject(foreign, o.toString());
+        DBObject cachedObject = (DBObject) foreignObjectCache.get(foreign);
+        if (cachedObject != null)
+        {
+          cachedObject.load(o.toString());
+        }
+        else {
+          cachedObject = Application.getDefaultDatabase().createObject(foreign, o.toString());
+          foreignObjectCache.put(foreign,cachedObject);
+        }
+        return cachedObject;
       }
       catch (Exception e)
       {
@@ -327,14 +337,13 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     id = null;
 		PreparedStatement stmt = null;
     try {
-      Application.getLog().info("trying to insert new object into table " + getTableName());
+      Application.getLog().debug("trying to insert new object into table " + getTableName());
       stmt = getInsertSQL();
-      Application.getLog().debug("trying to execute query: " + stmt.toString());
       stmt.execute();
       setLastId();
       if (!this.inTransaction)
   			conn.commit();
-      Application.getLog().info("  done");
+      Application.getLog().debug("  done");
     }
     catch (SQLException e)
     {
@@ -368,9 +377,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		PreparedStatement stmt = null;
     int affected = 0;
     try {
-      Application.getLog().info("trying to update object id ["+id+"] from table " + getTableName());
+      Application.getLog().debug("trying to update object id ["+id+"] from table " + getTableName());
 			stmt = getUpdateSQL();
-      Application.getLog().debug("trying to execute query: " + stmt.toString());
       affected = stmt.executeUpdate();
       if (affected != 1)
       {
@@ -379,7 +387,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       }
       if (!this.inTransaction)
         conn.commit();
-      Application.getLog().info("  done");
+      Application.getLog().debug("  done");
     }
     catch (SQLException e)
     {
@@ -557,7 +565,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       return;
 
     this.inTransaction = true;
-    Application.getLog().info("starting new transaction");
+    Application.getLog().debug("starting new transaction");
   }
 
   /**
@@ -571,7 +579,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     try {
       conn.rollback();
       this.inTransaction = false;
-      Application.getLog().info("connection rolled back");
+      Application.getLog().debug("connection rolled back");
     }
     catch (SQLException e)
     {
@@ -590,7 +598,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     if (!this.inTransaction)
       return;
 
-    Application.getLog().info("committing open transaction");
+    Application.getLog().debug("committing open transaction");
     try {
       conn.commit();
       this.inTransaction = false;
@@ -625,6 +633,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.10  2003/11/24 23:01:58  willuhn
+ * @N added settings
+ *
  * Revision 1.9  2003/11/24 17:27:50  willuhn
  * @N Context menu in table
  *

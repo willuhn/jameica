@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/11/24 17:27:50 $
+ * $Revision: 1.8 $
+ * $Date: 2003/11/24 23:01:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -99,11 +99,9 @@ public class SelectInput extends Input
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
    * @param list eine Liste von Objekten.
-   * @param der Name des Feldes aus der Objektliste, welches fuer die Anzeige verwendet werden soll.
-   *        Das Feld muss vom Typ String sein.  
    * @param preselected Wert des vorausgewaehlten Feldes.
    */
-  public SelectInput(DBIterator list, String field, String preselected)
+  public SelectInput(DBIterator list, String preselected)
   {
 
     this.preselected = preselected;
@@ -116,7 +114,7 @@ public class SelectInput extends Input
       while (list.hasNext())
       {
         o = list.next();
-        this.values[i++] = (String) o.getField("field");
+        this.values[i++] = o.getField(o.getPrimaryField()).toString();
       }
     } catch (RemoteException e)
     {
@@ -214,6 +212,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.8  2003/11/24 23:01:58  willuhn
+ * @N added settings
+ *
  * Revision 1.7  2003/11/24 17:27:50  willuhn
  * @N Context menu in table
  *

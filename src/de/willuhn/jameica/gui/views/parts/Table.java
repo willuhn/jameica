@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/24 17:27:50 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/24 23:01:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -113,7 +113,7 @@ public class Table
       list.previous(); // zurueckblaettern nicht vergessen
     }
     catch (Exception e) {
-      // das kann ruhig schiefgehen
+      // nicht weiter tragisch, wenn das fehlschlaegt
     }
 
 
@@ -182,6 +182,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.5  2003/11/24 23:01:58  willuhn
+ * @N added settings
+ *
  * Revision 1.4  2003/11/24 17:27:50  willuhn
  * @N Context menu in table
  *

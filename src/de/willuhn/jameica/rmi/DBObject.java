@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/11/24 16:25:53 $
+ * $Revision: 1.7 $
+ * $Date: 2003/11/24 23:01:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,14 @@ public interface DBObject extends Remote
    */
   public void transactionBegin() throws RemoteException;
   
+  /**
+   * Laedt die Eigenschaften des Datensatzes mit der angegebenen
+   * ID aus der Datenbank und schreibt sie in die aktuelle Instanz.
+   * @param id
+   * @throws RemoteException
+   */
+  public void load(String id) throws RemoteException;
+
   /**
    * Beendet eine manuell gestartete Transaktion.
    * Wenn vorher kein transactionBegin aufgerufen wurde,
@@ -147,6 +155,9 @@ public interface DBObject extends Remote
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.7  2003/11/24 23:01:58  willuhn
+ * @N added settings
+ *
  * Revision 1.6  2003/11/24 16:25:53  willuhn
  * @N AbstractDBObject is now able to resolve foreign keys
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/11/18 19:13:12 $
+ * $Revision: 1.7 $
+ * $Date: 2003/11/24 23:01:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,9 @@
 package de.willuhn.jameica;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -142,13 +140,12 @@ public class Menu
     public void handleEvent(org.eclipse.swt.widgets.Event event)
     {
       try {
-        Class clazz = (Class) Class.forName(c);
-        Constructor ct = clazz.getConstructor(new Class[]{Event.class});
-        ct.setAccessible(true);
-        ct.newInstance(new Object[] {event});
+        GUI.startView(c,null);
       }
       catch (Exception e)
       {
+        if (Application.DEBUG)
+          e.printStackTrace();
         Application.getLog().warn("Class " + c + " not found");
       }
     }
@@ -159,6 +156,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.7  2003/11/24 23:01:58  willuhn
+ * @N added settings
+ *
  * Revision 1.6  2003/11/18 19:13:12  willuhn
  * *** empty log message ***
  *

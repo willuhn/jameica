@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/10/29 00:41:27 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/24 23:01:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,15 @@
  **********************************************************************/
 
 package de.willuhn.jameica.views;
+
+import java.util.ArrayList;
+
+import de.willuhn.jameica.I18N;
+import de.willuhn.jameica.Plugin;
+import de.willuhn.jameica.PluginLoader;
+import de.willuhn.jameica.views.parts.Headline;
+import de.willuhn.jameica.views.parts.LabelGroup;
+import de.willuhn.jameica.views.parts.LabelInput;
 
 
 public class Start extends AbstractView
@@ -24,6 +33,17 @@ public class Start extends AbstractView
 
   public void bind()
   {
+    Headline headline = new Headline(getParent(),"Jameica");
+    
+    LabelGroup plugins = new LabelGroup(getParent(),I18N.tr("installierte Plugins"));
+    
+    ArrayList installedPlugins = PluginLoader.getInstalledPlugins();
+    for (int i=0;i<installedPlugins.size();++i)
+    {
+      Plugin plugin = (Plugin) installedPlugins.get(i);
+      LabelInput pluginLabel = new LabelInput("Version: " + plugin.getVersion());
+      plugins.addLabelPair(plugin.getName(),pluginLabel);
+    }
   }        
 
 
@@ -35,6 +55,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.4  2003/11/24 23:01:58  willuhn
+ * @N added settings
+ *
  * Revision 1.3  2003/10/29 00:41:27  willuhn
  * *** empty log message ***
  *
