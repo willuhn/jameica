@@ -1,6 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.6 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/DecimalInput.java,v $
+ * $Revision: 1.1 $
  * $Date: 2003/12/01 20:28:58 $
  * $Author: willuhn $
  * $Locker:  $
@@ -16,22 +16,23 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
  * @author willuhn
  * Ist zustaendig fuer Standard-Eingabefelder.
  */
-public class TextInput extends Input
+public class DecimalInput extends Input
 {
-
-  private Text text;
   private String value;
+  private Text text;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
    */
-  public TextInput(String value)
+  public DecimalInput(String value)
   {
     this.value = value;
   }
@@ -42,7 +43,7 @@ public class TextInput extends Input
   public Control getControl()
   {
 
-    text = new Text(getParent(), SWT.BORDER);
+    text = new Text(parent, SWT.BORDER | SWT.RIGHT);
     text.setLayoutData(createGrid());
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
@@ -50,7 +51,19 @@ public class TextInput extends Input
         text.setSelection(0, text.getText().length());
       }
     });
-
+    text.addListener (SWT.Verify, new Listener() {
+      public void handleEvent (Event e) {
+        String t = e.text;
+        char [] chars = new char [t.length ()];
+        t.getChars (0, chars.length, chars, 0);
+        for (int i=0; i<chars.length; i++) {
+          if (!('0' <= chars[i] && chars[i] <= '9') && !(chars[i] == ',')) {
+            e.doit = false;
+            return;
+          }
+        }
+      }
+     });
     return text;
   }
 
@@ -74,25 +87,9 @@ public class TextInput extends Input
 }
 
 /*********************************************************************
- * $Log: TextInput.java,v $
- * Revision 1.6  2003/12/01 20:28:58  willuhn
+ * $Log: DecimalInput.java,v $
+ * Revision 1.1  2003/12/01 20:28:58  willuhn
  * @B filter in DBIteratorImpl
  * @N InputFelder generalisiert
- *
- * Revision 1.5  2003/11/24 14:21:53  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2003/11/24 11:51:41  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2003/11/22 20:43:05  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2003/11/21 02:10:21  willuhn
- * @N prepared Statements in AbstractDBObject
- * @N a lot of new SWT parts
- *
- * Revision 1.1  2003/11/20 03:48:42  willuhn
- * @N first dialogues
  *
  **********************************************************************/

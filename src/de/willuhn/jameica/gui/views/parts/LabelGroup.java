@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/24 14:21:53 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/01 20:28:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,7 +50,6 @@ public class LabelGroup
     // Label
     final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
     labelGrid.widthHint = 130;
-
     final Label label = new Label(group, SWT.NONE);
     label.setText(name);
     label.setLayoutData(labelGrid);
@@ -63,6 +62,10 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.5  2003/12/01 20:28:57  willuhn
+ * @B filter in DBIteratorImpl
+ * @N InputFelder generalisiert
+ *
  * Revision 1.4  2003/11/24 14:21:53  willuhn
  * *** empty log message ***
  *

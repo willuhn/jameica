@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/30 16:23:09 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/01 20:28:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,14 +65,46 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    * @see de.willuhn.jameica.rmi.DBIterator#addFilter(java.lang.String)
    */
   public void addFilter(String filter) throws RemoteException {
+    if (filter == null)
+      return;
+
     if ("".equals(this.filter))
     {
-      this.filter = " where " + filter;
+      this.filter = filter;
     }
     else {
       this.filter += " and " + filter;
     }
 
+  }
+
+  /**
+   * Baut das SQL-Statement fuer die Liste zusammen.
+   * @return das erzeugte Statement.
+   */
+  private String prepareSQL() throws RemoteException
+  {
+    String sql = object.getListQuery();
+
+    // mhh, da steht schon eine "where" klausel drin
+    if (sql.indexOf(" where ") != -1)
+    {
+      // also fuegen wir den Filter via "and" hinten dran. Aber nur, wenn auch einer da ist ;)
+      if (!"".equals(this.filter))
+        sql += " and " + filter;
+    }
+    else
+    {
+      // ansonsten pappen wir den Filter so hinten dran, wie er kommt
+      sql += " where " + filter;
+    }
+
+    // Statement enthaelt noch kein Order - also koennen wir unseres noch dranschreiben
+    if (sql.indexOf(" order ") != -1)
+    {
+      sql += order;
+    }
+    return sql;
   }
 
   /**
@@ -85,11 +117,8 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 		ResultSet rs = null;
 		try {
 			stmt = conn.createStatement();
-      sql = object.getListQuery();
+      sql = prepareSQL();
       
-      if (sql.indexOf(" where ") == -1)
-       sql = sql + filter + order;
-
       if (Application.DEBUG)
         Application.getLog().debug("executing sql: " + sql);
 			rs = stmt.executeQuery(sql);
@@ -183,6 +212,10 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.6  2003/12/01 20:28:58  willuhn
+ * @B filter in DBIteratorImpl
+ * @N InputFelder generalisiert
+ *
  * Revision 1.5  2003/11/30 16:23:09  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/01 20:28:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,19 +16,13 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.jameica.GUI;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
-import de.willuhn.jameica.views.util.Style;
 
 /**
  * @author willuhn
@@ -40,9 +34,6 @@ public class SelectInput extends Input
   private String[] values;
   private String preselected;
   private Combo combo;
-  private String comment;
-  private Listener commentListener;
-  private Label commentLabel;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
@@ -67,7 +58,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param object das darzustellende Objekt. Es wird auch gleich verwendet,
    * um darueber eine Liste zu holen, mit der die Selectbox gefuellt wird. 
    * @param preselected Wert des vorausgewaehlten Feldes.
@@ -124,61 +115,13 @@ public class SelectInput extends Input
   }
 
   /**
-   * Fuegt rechts neben die Combo-Box einen Kommentar hinzu.
-   * @param o
-   * @param method Methode, die bei jeder Aenderung
-   * @param parameterTypes
+   * @see de.willuhn.jameica.views.parts.Input#getControl()
    */
-  public void addComment(String comment, Listener l)
-  {
-    this.comment = comment;
-    this.commentListener = l;
-  }
-
-  public void updateComment(String newComment)
-  {
-    this.commentLabel.setText(newComment);
-    this.commentLabel.redraw();
-  }
-  /**
-   * @see de.willuhn.jameica.views.parts.Input#paint(org.eclipse.swt.widgets.Composite)
-   */
-  public void paint(Composite parent)
+  public Control getControl()
   {
 
-    final GridData grid = createGrid();
-    
-    // Wenn ein Kommentar da ist, muessen wir das Composite nochmal aufsplitten
-    if (comment != null)
-    {
-      Composite newParent = new Composite(parent, SWT.NONE);
-      newParent.setLayoutData(grid);
-      final GridLayout layout = new GridLayout(2, true);
-      layout.marginWidth = 0;
-      layout.marginHeight = 0;
-      layout.horizontalSpacing = 0;
-      newParent.setLayout(layout);
-
-      combo = new Combo(newParent, SWT.BORDER);
-      final GridData comboGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-      comboGrid.widthHint = 100;
-      combo.setLayoutData(comboGrid);
-      if (commentListener != null) {
-        combo.addListener(SWT.Selection,(Listener) commentListener);
-        combo.addFocusListener((FocusListener) commentListener);
-      }
-
-      commentLabel = new Label(newParent,SWT.NONE);
-      final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
-      commentLabel.setText(comment);
-      commentLabel.setForeground(Style.COLOR_COMMENT);
-      commentLabel.setAlignment(SWT.RIGHT);
-      commentLabel.setLayoutData(labelGrid);
-    }
-    else {
-      combo = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
-      combo.setLayoutData(grid);
-    }
+    combo = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
+    combo.setLayoutData(createGrid());
 
     int selected = 0;
     if (values == null || values.length == 0)
@@ -191,6 +134,8 @@ public class SelectInput extends Input
         selected = i;
     }
     combo.select(selected);
+
+    return combo;
   }
 
   /**
@@ -212,6 +157,10 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.9  2003/12/01 20:28:58  willuhn
+ * @B filter in DBIteratorImpl
+ * @N InputFelder generalisiert
+ *
  * Revision 1.8  2003/11/24 23:01:58  willuhn
  * @N added settings
  *
