@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/01/07 18:08:36 $
+ * $Revision: 1.6 $
+ * $Date: 2005/01/07 19:01:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -70,7 +70,7 @@ public class SSLFactory
 
 		Application.getStartupMonitor().addPercentComplete(10);
 
-		X509Name user = new X509Name(attributes);
+		X509Name user   = new X509Name(attributes);
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 
 		generator.setSubjectDN(user);
@@ -106,6 +106,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.6  2005/01/07 19:01:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/01/07 18:08:36  willuhn
  * *** empty log message ***
  *

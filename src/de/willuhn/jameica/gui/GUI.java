@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.66 $
- * $Date: 2004/11/17 19:02:24 $
+ * $Revision: 1.67 $
+ * $Date: 2005/01/07 19:01:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -207,6 +207,7 @@ public class GUI
 		addStatusBar(bottom);
 
 		getShell().open();
+    getShell().forceActive();
 
 		// so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
 		// hinzu.
@@ -671,6 +672,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.67  2005/01/07 19:01:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.66  2004/11/17 19:02:24  willuhn
  * *** empty log message ***
  *
