@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/19 13:36:59 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/26 21:43:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,8 @@ public class LabelGroup
     group = new Group(parent, SWT.NONE);
     group.setText(name);
     group.setLayout(new GridLayout(2, false));
-    group.setLayoutData(new GridData(GridData.FILL_BOTH));
+    GridData grid = new GridData(GridData.FILL_HORIZONTAL);
+    group.setLayoutData(grid);
   }
   
   /**
@@ -88,7 +89,7 @@ public class LabelGroup
   public void addTable(Table table)
   {
     try {
-      final GridData grid = new GridData(GridData.FILL_BOTH);
+      final GridData grid = new GridData(GridData.FILL_HORIZONTAL);
       grid.horizontalSpan = 2;
       final Composite comp = new Composite(group,SWT.NONE);
       comp.setLayoutData(grid);
@@ -136,6 +137,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.10  2003/12/26 21:43:30  willuhn
+ * @N customers changable
+ *
  * Revision 1.9  2003/12/19 13:36:59  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/19 01:43:27 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/26 21:43:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,12 +18,7 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.I18N;
@@ -68,14 +63,14 @@ public class Table
    */
   public void paint(Composite parent) throws RemoteException
   {
-
     int style = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
+
     final org.eclipse.swt.widgets.Table table = new org.eclipse.swt.widgets.Table(parent, style);
     final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
     table.setLayoutData(gridData);
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
-
+    
     // Das hier ist eigentlich nur noetig um die Ausrichtung der Spalten zu ermitteln
     DBObject _o = null;
     try {
@@ -173,7 +168,7 @@ public class Table
       TableColumn col = table.getColumn(i);
       col.pack();
     }
-    
+
     // So, und jetzt malen wir noch ein Label mit der Anzahl der Treffer drunter.
     Label summary = new Label(parent,SWT.NONE);
     summary.setText(list.size() + " " + (list.size() == 1 ? I18N.tr("Datensatz") : I18N.tr("Datensätze")) + ".");
@@ -196,6 +191,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.12  2003/12/26 21:43:30  willuhn
+ * @N customers changable
+ *
  * Revision 1.11  2003/12/19 01:43:27  willuhn
  * @N added Tree
  *

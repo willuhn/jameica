@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.21 $
- * $Date: 2003/12/22 16:41:19 $
+ * $Revision: 1.22 $
+ * $Date: 2003/12/26 21:43:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -200,7 +200,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     Application.getLog().debug("trying to load object id ["+id+"] from table " + tableName);
 		try {
 			stmt = conn.createStatement();
-			data = stmt.executeQuery("select * from " + tableName + " where " + this.getIDField() + " = "+this.id);
+			data = stmt.executeQuery("select * from " + tableName + " where " + this.getIDField() + " = '"+this.id+"'");
 			if (!data.next())
       {
         this.id = null;
@@ -636,7 +636,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       if (type == null || value == null)
         stmt.setNull(index,Types.NULL);
 
-      else if (FIELDTYPE_DATE.equalsIgnoreCase(type))
+      else if (FIELDTYPE_DATE.equalsIgnoreCase(type) || FIELDTYPE_DATETIME.equalsIgnoreCase(type))
         stmt.setDate(index,new java.sql.Date(((Date) value).getTime()));
 
       else if (FIELDTYPE_INT.equalsIgnoreCase(type))
@@ -808,6 +808,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.22  2003/12/26 21:43:29  willuhn
+ * @N customers changable
+ *
  * Revision 1.21  2003/12/22 16:41:19  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/19 01:43:27 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/26 21:43:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ public interface DBObject extends Remote
 {
 
   public final static String FIELDTYPE_DATE    = "date";
+  public final static String FIELDTYPE_DATETIME= "datetime";
   public final static String FIELDTYPE_INT     = "int";
   public final static String FIELDTYPE_DOUBLE  = "double";
   public final static String FIELDTYPE_DECIMAL = "decimal";
@@ -150,6 +151,9 @@ public interface DBObject extends Remote
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.11  2003/12/26 21:43:30  willuhn
+ * @N customers changable
+ *
  * Revision 1.10  2003/12/19 01:43:27  willuhn
  * @N added Tree
  *
