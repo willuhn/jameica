@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/26 21:43:30 $
+ * $Revision: 1.13 $
+ * $Date: 2003/12/29 20:07:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.gui.views.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -35,6 +36,7 @@ public class Table
   private DBIterator list;
   private Controller controller;
   private ArrayList fields = new ArrayList();
+  private HashMap formatter = new HashMap();
 
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
@@ -56,6 +58,21 @@ public class Table
   {
     this.fields.add(new String[]{title,field});
   }
+  
+  /**
+   * Fuegt der Tabelle eine neue Spalte hinzu und dazu noch einen Formatierer.
+   * @param title Name der Spaltenueberschrift.
+   * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
+   * @param f Formatter, der fuer die Anzeige des Wertes verwendet werden soll.
+   */
+  public void addColumn(String title, String field, Formatter f)
+  {
+    addColumn(title,field);
+    
+    if (field != null && f != null)
+      formatter.put(field,f);
+  }
+
   
   /**
    * Malt die Tabelle auf das uebergebene Composite.
@@ -88,9 +105,10 @@ public class Table
       String field = fieldData[1];
       if (title == null) title = "";
       try {
+        String type = _o.getFieldType(field);
         if (
-          DBObject.FIELDTYPE_DOUBLE.equals(_o.getFieldType(field)) ||
-          DBObject.FIELDTYPE_DECIMAL.equals(_o.getFieldType(field))
+          DBObject.FIELDTYPE_DOUBLE.equalsIgnoreCase(type) ||
+          DBObject.FIELDTYPE_DECIMAL.equalsIgnoreCase(type)
         )
           col.setAlignment(SWT.RIGHT);
       }
@@ -121,14 +139,26 @@ public class Table
         item.setData(o.getID());
         Object value = o.getField(field);
         if (value == null)
+        {
+          // Wert ist null. Also zeigen wir einen Leerstring an
           item.setText(i,"");
+        }
         else if (value instanceof DBObject)
         {
+          // Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
           DBObject dbo = (DBObject) value;
           item.setText(i,dbo.getField(dbo.getPrimaryField()).toString());
         }
         else
-          item.setText(i,value.toString());
+        {
+          // Regulaerer Wert.
+          // Wir schauen aber noch, ob wir einen Formatter haben
+          Formatter f = (Formatter) formatter.get(field);
+          if (f != null)
+            item.setText(i,f.format(value));
+          else 
+            item.setText(i,value.toString());
+        }
       }
     }
 
@@ -191,6 +221,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.13  2003/12/29 20:07:19  willuhn
+ * @N Formatter
+ *
  * Revision 1.12  2003/12/26 21:43:30  willuhn
  * @N customers changable
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/29 20:07:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
+import de.willuhn.jameica.gui.views.parts.*;
 import de.willuhn.jameica.gui.views.parts.Controller;
 import de.willuhn.jameica.gui.views.parts.Table;
 
@@ -83,6 +84,22 @@ public abstract class SearchDialog
     this.table.addColumn(title,field);
   }
   
+  /**
+   * Fuegt der Tabelle des Such-Dialogs eine weitere Spalte hinzu.
+   * @param title Ueberschrift der Spalte.
+   * @param field Feld fuer den anzuzeigenden Wert.
+   * @param f optionaler Formatierer.
+   */
+  protected void addColumn(String title, String field, Formatter f)
+  {
+    if (table == null)
+    {
+      Application.getLog().warn("table not initialized, skipping column " + title);
+      return;
+    }
+    this.table.addColumn(title,field,f);
+  }
+
   /**
    * Diese Funktion bitte aufrufen, um den Such-Dialog zu oeffnen.
    * @return den Wert des definierten Feldes des ausgewaehlten Objektes. 
@@ -186,6 +203,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.8  2003/12/29 20:07:19  willuhn
+ * @N Formatter
+ *
  * Revision 1.7  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

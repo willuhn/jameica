@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.25 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.26 $
+ * $Date: 2003/12/29 20:07:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -295,7 +295,6 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       stmt.execute(sql);
       if (!this.inTransaction)
         getConnection().commit();
-      this.id = null;
       Application.getLog().debug("  done");
     }
     catch (SQLException e)
@@ -909,6 +908,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.26  2003/12/29 20:07:19  willuhn
+ * @N Formatter
+ *
  * Revision 1.25  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

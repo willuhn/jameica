@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Tree.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/29 20:07:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -124,7 +124,7 @@ public class Tree {
 	 * Behandelt das Event "action". 
 	 * @param event das ausgeloeste Event.
 	 */
-	private void handleSelect(Event event)
+	private void handleChoose(Event event)
 	{
 		Widget widget = event.item;
 		if (!(widget instanceof TreeItem))
@@ -157,9 +157,9 @@ public class Tree {
 		});
 
 		// Listener fuer die Aktionen
-		tree.addListener(SWT.Selection, new Listener() {
+    tree.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				handleSelect(event);
+				handleChoose(event);
 			}
 		});
 	}
@@ -269,6 +269,9 @@ public class Tree {
 
 /*********************************************************************
  * $Log: Tree.java,v $
+ * Revision 1.3  2003/12/29 20:07:19  willuhn
+ * @N Formatter
+ *
  * Revision 1.2  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

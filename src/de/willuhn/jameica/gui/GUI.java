@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/29 20:07:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -210,7 +210,7 @@ public class GUI
       catch (ClassNotFoundException e)
       {
         // Mhh, scheint evtl. eine View aus einem Plugin zu sein. Wir versuchen es mal.
-        clazz = PluginLoader.getPluginClassLoader().loadClass(className);
+        clazz = Class.forName(className,true,PluginLoader.getPluginClassLoader());
       }
       if (clazz == null)
       {
@@ -377,6 +377,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.12  2003/12/29 20:07:19  willuhn
+ * @N Formatter
+ *
  * Revision 1.11  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *
