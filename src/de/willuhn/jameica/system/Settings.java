@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Settings.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.5 $
+ * $Date: 2004/12/15 01:43:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,8 @@ public final class Settings
   private String className;
   private Properties properties;
 
+	private boolean storeWhenRead = true;
+
   private Settings()
   {
     // disabled
@@ -70,6 +72,26 @@ public final class Settings
     }
 
   }
+
+	/**
+	 * Legt fest, ob die Einstellungen schon beim Lesen gespeichert werden sollen.
+	 * Hintergrund: Jede Get-Funktion (getString(), getBoolean(),..) besitzt einen
+	 * Parameter mit dem Default-Wert falls der Parameter noch nicht existiert.
+	 * Ist dies der Fall und die zugehoerige Set-Methode wird nie aufgerufen,
+	 * dann erscheint der Parameter nie physisch in der properties-Datei.
+	 * Diese muesste dann manuell mit den Parametern befuellt werden, um
+	 * sie aendern zu koennen. Da die Parameter-Namen aber nur in der
+	 * Java-Klasse bekannt sind, wird es einem Fremden schwer fallen, die
+	 * Namen der Parameter zu ermitteln. Fuer genau diesen Fall kann der
+	 * Parameter auf true gesetzt werden. Alle abgefragten Parameter, werden
+	 * dann nach der Abfrage mit dem aktuellen Wert (ggf. dem Default-Wert)
+	 * sofort gespeichert.
+   * @param b true, wenn sofort geschrieben werden soll.
+   */
+  public void setStoreWhenRead(boolean b)
+	{
+		this.storeWhenRead = b;
+	}
 
   /**
    * Liefert das File, in dem die Settings gespeichert werden.
@@ -108,8 +130,11 @@ public final class Settings
    */
   public boolean getBoolean(String name, boolean defaultValue)
 	{
-		String s = getString(name,defaultValue ? "true" : "false");
-		return "true".equalsIgnoreCase(s);
+		String s = getProperty(name,defaultValue ? "true" : "false");
+		boolean b = "true".equalsIgnoreCase(s);
+		if (storeWhenRead)
+			setAttribute(name,b);
+		return b;
 	}
 
 	/**
@@ -121,15 +146,18 @@ public final class Settings
 	 */
 	public int getInt(String name, int defaultValue)
 	{
-		String s = getString(name,""+defaultValue);
+		String s = getProperty(name,""+defaultValue);
+		int i = defaultValue;
 		try {
-			return Integer.parseInt(s);
+			i = Integer.parseInt(s);
 		}
 		catch (NumberFormatException e)
 		{
 			Logger.error("unable to parse value of param \"" + name + "\", value: " + s,e);
 		}
-		return defaultValue;
+		if (storeWhenRead)
+			setAttribute(name,i);
+		return i;
 	}
 
 	/**
@@ -141,15 +169,23 @@ public final class Settings
 	 */
 	public double getDouble(String name, double defaultValue)
 	{
-		String s = getString(name,""+defaultValue);
+		String s = getProperty(name,""+defaultValue);
+		double d = defaultValue;
 		try {
-			return Double.parseDouble(s);
+			d = Double.parseDouble(s);
 		}
 		catch (NumberFormatException e)
 		{
 			Logger.error("unable to parse value of param \"" + name + "\", value: " + s,e);
 		}
-		return defaultValue;
+		if (storeWhenRead)
+			setAttribute(name,d);
+		return d;
+	}
+
+  private String getProperty(String name, String defaultValue)
+	{
+		return properties.getProperty(name,defaultValue);
 	}
 
 	/**
@@ -161,7 +197,10 @@ public final class Settings
 	 */
 	public String getString(String name, String defaultValue)
 	{
-		return properties.getProperty(name,defaultValue);
+		String s = getProperty(name,defaultValue);
+		if (storeWhenRead)
+			setAttribute(name,s);
+		return s;
 	}
 
 	/**
@@ -290,11 +329,13 @@ public final class Settings
     }
 
   }
-
 }
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.5  2004/12/15 01:43:04  willuhn
+ * @N Properties koennen via Settings.getFoo() direkt beim Lesen gespeichert werden
+ *
  * Revision 1.4  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *
