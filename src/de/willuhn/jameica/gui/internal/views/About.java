@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Attic/About.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/11/05 20:00:43 $
+ * $Revision: 1.4 $
+ * $Date: 2005/01/13 19:31:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,7 @@ public class About extends AbstractView {
   	LabelGroup group = new LabelGroup(getParent(),i18n.tr("Jameica"));
  	
   	group.addLabelPair(i18n.tr("Version"), 					new LabelInput(""+Application.getManifest().getVersion()));
-		group.addLabelPair(i18n.tr("Datenverzeichnis"), new LabelInput(""+Application.getConfig().getDir()));
+		group.addLabelPair(i18n.tr("Datenverzeichnis"), new LabelInput(""+Application.getConfig().getWorkDir()));
 
   }
 
@@ -63,6 +63,10 @@ public class About extends AbstractView {
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.4  2005/01/13 19:31:38  willuhn
+ * @C SSLFactory geaendert
+ * @N Settings auf property-Format umgestellt
+ *
  * Revision 1.3  2004/11/05 20:00:43  willuhn
  * @D javadoc fixes
  *

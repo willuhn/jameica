@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Settings.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/12/15 01:43:04 $
+ * $Revision: 1.6 $
+ * $Date: 2005/01/13 19:31:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -191,7 +192,7 @@ public final class Settings
 	/**
 	 * Liefert den Wert des Attribute.
 	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
-	 * @param name Name des Attribut.
+	 * @param name Name des Attributs.
 	 * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
 	 * @return der Wert des Attributs.
 	 */
@@ -202,6 +203,36 @@ public final class Settings
 			setAttribute(name,s);
 		return s;
 	}
+
+  /**
+   * Liefert ein Array von Werten.
+   * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
+   * Es koennen maximal 256 Werte gelesen oder gespeichert werden.
+   * @param name Name des Attributs.
+   * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
+   * @return Werte des Attributs in Form eines String-Arrays.
+   */
+  public String[] getList(String name, String[] defaultValues)
+  {
+    ArrayList l = new ArrayList();
+    String s = null;
+    for (int i=0;i<255;++i)
+    {
+      s = getProperty(name + "." + i,null);
+      if (s == null) continue;
+      l.add(s);
+    }
+    if (l.size() == 0)
+    {
+      if (storeWhenRead)
+        setAttribute(name,defaultValues);
+      return defaultValues;
+    }
+    String[] result = (String[]) l.toArray(new String[l.size()]);
+    if (storeWhenRead)
+      setAttribute(name,result);
+    return result;
+  }
 
 	/**
 	 * Liefert den Wert des Attributes als Farbe.
@@ -301,8 +332,8 @@ public final class Settings
    * Speichert das Attribut <name> mit dem zugehoerigen Wert <value>.
    * Wenn ein gleichnamiges Attribut bereits existiert, wird es ueberschrieben.
    * Ist der Wert des Attributes <code>null</code>, wird es entfernt.
-   * @param name Name des Attribut.
-   * @param value Wert des Attribut.
+   * @param name Name des Attributs.
+   * @param value Wert des Attributs.
    */
   public void setAttribute(String name, String value)
   {
@@ -310,6 +341,41 @@ public final class Settings
   		properties.remove(name);
   	else
 	    properties.setProperty(name,value);
+    store();
+  }
+
+  /**
+   * Speichert das Attribut <name> mit der zugehoerigen Liste von Werten <value>.
+   * Wenn ein gleichnamiges Attribut bereits existiert, werden dessen Werte ueberschrieben.
+   * Ist der Wert des Attributes <code>null</code>, wird es entfernt.
+   * Von dem Array werden die ersten maximal 256 Elemente gespeichert.
+   * Alle darueber hinausgehenden Werte, werden ignoriert.
+   * @param name Name des Attributs.
+   * @param values Werte des Attributs.
+   */
+  public void setAttribute(String name, String[] values)
+  {
+    // Wir entfernen immer erst alle Werte. Denn wenn vorher
+    // ein laengeres Array drin steht, als wir jetzt reinschreiben,
+    // wuerden die alten Werte am Ende des grossen Arrays nicht mehr
+    // entfernt.
+    for (int i=0;i<255;++i)
+    {
+      properties.remove(name + "." + i);
+    }
+    
+    if (values == null || values.length == 0)
+    {
+      store();
+      return;
+    }
+      
+    for (int i=0;i<values.length;++i)
+    {
+      if (i >= 255)
+        break; // Schluss jetzt. Das waren genug Werte ;)
+      properties.setProperty(name + "." + i,values[i]);
+    }
     store();
   }
 
@@ -333,6 +399,10 @@ public final class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.6  2005/01/13 19:31:37  willuhn
+ * @C SSLFactory geaendert
+ * @N Settings auf property-Format umgestellt
+ *
  * Revision 1.5  2004/12/15 01:43:04  willuhn
  * @N Properties koennen via Settings.getFoo() direkt beim Lesen gespeichert werden
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/12/13 22:48:31 $
+ * $Revision: 1.8 $
+ * $Date: 2005/01/13 19:31:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -243,7 +243,6 @@ public class SettingsControl extends AbstractControl
 
 			LocaleObject lo = (LocaleObject) getLocale().getValue();
 			Application.getConfig().setLocale(lo.locale);
-			Application.getConfig().store();
 
 			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen gespeichert."));
 			
@@ -418,6 +417,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.8  2005/01/13 19:31:37  willuhn
+ * @C SSLFactory geaendert
+ * @N Settings auf property-Format umgestellt
+ *
  * Revision 1.7  2004/12/13 22:48:31  willuhn
  * *** empty log message ***
  *

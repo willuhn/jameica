@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/01/12 14:04:36 $
+ * $Revision: 1.14 $
+ * $Date: 2005/01/13 19:31:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,12 +34,11 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
-import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
-import org.bouncycastle.asn1.misc.NetscapeCertType;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 /**
@@ -65,14 +64,16 @@ public class SSLFactory
    */
   public synchronized void init() throws Exception
 	{
-//		HTTPsServer s = new HTTPsServer();
-//		s.run();
-
-//		System.setProperty("java.security.debug","all");
-		System.setProperty("javax.net.debug","all");
 
 		Logger.info("init ssl factory");
-		Application.getStartupMonitor().setStatusText("init ssl factory");
+    Application.getStartupMonitor().setStatusText("init ssl factory");
+
+    if (Logger.getLevel().getValue() <= Level.DEBUG.getValue())
+      System.setProperty("javax.net.debug","ssl hanshake");
+
+    System.setProperty("javax.net.ssl.trustStore",      getKeyStoreFile().getAbsolutePath());
+    System.setProperty("javax.net.ssl.keyStore",        getKeyStoreFile().getAbsolutePath());
+    System.setProperty("javax.net.ssl.keyStorePassword","jameica");
 
 		File keyStoreFile = getKeyStoreFile();
 		if (keyStoreFile.exists() && keyStoreFile.canRead())
@@ -121,14 +122,6 @@ public class SSLFactory
 		generator.setPublicKey(this.publicKey);
 		generator.setSignatureAlgorithm("MD5WITHRSA");
 
-//    generator.addExtension(X509Extensions.SubjectKeyIdentifier,false, createSubjectKeyId(this.publicKey));
-//    generator.addExtension(X509Extensions.BasicConstraints, false,new BasicConstraints(true));
-    generator.addExtension(MiscObjectIdentifiers.netscapeCertType,false,
-                           new NetscapeCertType(NetscapeCertType.sslServer |
-                                                NetscapeCertType.objectSigning |
-                                                NetscapeCertType.sslClient
-                                               ));
-
 		this.certificate = generator.generateX509Certificate(this.privateKey);
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -150,13 +143,6 @@ public class SSLFactory
 		////////////////////////////////////////////////////////////////////////////
 	}
 	
-//  private SubjectKeyIdentifier createSubjectKeyId(PublicKey pubKey) throws Exception
-//  {
-//    ByteArrayInputStream bIn = new ByteArrayInputStream(pubKey.getEncoded());
-//    SubjectPublicKeyInfo info = new SubjectPublicKeyInfo((ASN1Sequence) new DERInputStream(bIn).readObject());
-//    return new SubjectKeyIdentifier(info);
-//  }
-
 	/**
 	 * Speichert den Keystore.
    * @throws Exception
@@ -316,6 +302,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.14  2005/01/13 19:31:37  willuhn
+ * @C SSLFactory geaendert
+ * @N Settings auf property-Format umgestellt
+ *
  * Revision 1.13  2005/01/12 14:04:36  willuhn
  * @N netscape key usage
  *

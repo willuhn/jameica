@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/01/12 00:17:17 $
+ * $Revision: 1.13 $
+ * $Date: 2005/01/13 19:31:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,21 +13,11 @@
 package de.willuhn.jameica.system;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import net.n3.nanoxml.IXMLElement;
-import net.n3.nanoxml.IXMLParser;
-import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
-import net.n3.nanoxml.XMLWriter;
-import de.willuhn.io.FileCopy;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
@@ -38,52 +28,21 @@ import de.willuhn.logging.Logger;
 public final class Config
 {
 
-  /**
-   * Das XML-File.
-   */
-  private IXMLElement xml = null;
+	private File workDir   	   = null;
+  private File configDir     = null;
+  private File pluginDir     = null;
 
-  /**
-   * Der TCP-Port, der fuer die lokale RMI-Registry verwendet werden soll.
-   */
-  private int rmiPort;
+  private Locale locale      = null;
 
-  /**
-   * Die vorausgewaehlte Standard-Sprache.
-   */
-  private Locale defaultLanguage = Locale.GERMANY;
+  private Settings settings  = null;
 
-  private ArrayList pluginDirs = new ArrayList();
-
-  private String logfile = null;
-  
-  private String logLevel = Level.DEFAULT.getName();
-  
-	private File dir 				= null;
-  private File configDir  = null;
-  private File configFile = null;
-  private File pluginDir  = null;
-
-	private final static String defaultConfig =
-		"<config>\n" +
-		"  <logfile>jameica.log</logfile>\n" +
-    "  <!-- loglevel can be: ERROR,WARN,INFO or DEBUG //-->\n" +
-		"  <loglevel>INFO</loglevel>\n" +
-		"  <defaultlanguage>de_DE</defaultlanguage>\n" +
-		"  <rmiport>4840</rmiport>\n" +
-		"  <plugindirs>\n" +
-		"    <!-- <dir>path to additional plugins</dir> //-->\n" +
-		"  </plugindirs>\n" +
-		"</config>\n";
+  private String[] plugins   = null;
 
   /**
    * ct.
-   * @param dataDir Verzeichnis zu den variablen Daten. Kann null sein.
-   * @throws Exception
    */
-  protected Config(String dataDir) throws Exception
+  protected Config()
   {
-    init(dataDir);
   }
 
   /**
@@ -91,7 +50,7 @@ public final class Config
    * @param dataDir Verzeichnis zu den variablen Daten. Kann null sein.
    * @throws Exception
    */
-  private void init(String dataDir) throws Exception
+  protected synchronized void init(String dataDir) throws Exception
   {
     if (dataDir == null)
     {
@@ -99,15 +58,15 @@ public final class Config
     }
 
 		Logger.info("using " + dataDir + " as data dir.");
-		this.dir = new File(dataDir);
+		this.workDir = new File(dataDir);
 		
-		if (this.dir.exists() && !this.dir.isDirectory())
+		if (this.workDir.exists() && !this.workDir.isDirectory())
 			throw new Exception("File " + dataDir + " allready exists.");
 		
-		if (!this.dir.exists())
+		if (!this.workDir.exists())
 		{
 			Logger.info("creating " + dataDir);
-			if (!this.dir.mkdir())
+			if (!this.workDir.mkdir())
 				throw new Exception("creating of " + dataDir + " failed");		
 		}
 
@@ -118,23 +77,6 @@ public final class Config
 			this.configDir.mkdir();
 		}
 
-		this.configFile = new File(this.configDir.getAbsolutePath() + "/config.xml");
-
-		if (!this.configFile.exists())
-		{
-			Logger.info("creating new config file " + this.configFile.getAbsolutePath());
-			try {
-				FileOutputStream fos = new FileOutputStream(this.configFile);
-				fos.write(defaultConfig.getBytes());
-				fos.close();
-			}
-			catch (IOException e)
-			{
-				throw new Exception("unable to create new config file " + this.configFile.getAbsolutePath());
-			}
-		}
-		
-
 		// Wir erstellen noch ein userspezifisches Plugin-Verzeichnis
 		this.pluginDir = new File(dataDir + "/plugins");
 		if (!pluginDir.exists())
@@ -143,82 +85,8 @@ public final class Config
 			pluginDir.mkdir();
 		}
 
-		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(new StdXMLReader(new FileInputStream(this.configFile.getAbsolutePath())));
-
-		xml = (IXMLElement) parser.parse();
-
-    read();
-  }
-
-
-  /**
-   * Liest die Config-Datei.
-   */
-  private void read()
-  {
-
-    // Read default language
-    String lang = xml.getFirstChildNamed("defaultlanguage").getContent();
-    String country = "";
-		if (lang.indexOf("_") != -1)
-		{
-			int minus = lang.indexOf("_");
-			country   = lang.substring(minus+1);
-			lang      = lang.substring(0,minus);
-		}
-    
-		Logger.info("configured language: " + lang);
-		if (country.length() > 0)
-			Logger.info("configured country: " + country);
-
-    try {
-    	// Wir testen die Existenz der Bundles
-			Locale l = new Locale(lang,country);
-			Logger.info("checking resource bundle for language");
-      ResourceBundle.getBundle("lang/messages",l);
-      defaultLanguage = l;
-    }
-    catch (Exception ex)
-    {
-      Logger.info("not found. fallback to system default");
-    }
-
-		Logger.info("active language: " + defaultLanguage.getDisplayName());
-
-    logfile = xml.getFirstChildNamed("logfile").getContent();
-
-    logLevel = xml.getFirstChildNamed("loglevel").getContent();
-    
-    // Read rmi port
-    try {
-      rmiPort = Integer.parseInt(xml.getFirstChildNamed("rmiport").getContent());
-    }
-    catch (NumberFormatException nfe)
-    {
-      rmiPort = 4840;
-    }
-
-    // Das Verzeichnis "plugins" tun wir immer mit dazu.
-    this.pluginDirs.add("plugins");
-
-		// Im User-Verzeichnis kann es immer auch ein Plugin-Verzeichnis geben.
-		this.pluginDirs.add(this.pluginDir.getAbsolutePath());
-
-		// Read plugin dirs
-		Enumeration dirs = xml.getFirstChildNamed("plugindirs").enumerateChildren();
-		IXMLElement pluginDir = null; 
-		String s = null;
-		while (dirs.hasMoreElements())
-		{
-			pluginDir = (IXMLElement) dirs.nextElement();
-			s = pluginDir.getContent();
-			if (s == null || s.length() == 0)
-				continue; // skip
-			if (s.equals("plugins") || s.equals(this.pluginDir.getAbsolutePath()))
-				continue; // die haben wir schon
-			this.pluginDirs.add(s);
-		}
+    this.settings = new Settings(this.getClass());
+    this.settings.setStoreWhenRead(true);
   }
 
   /**
@@ -227,7 +95,7 @@ public final class Config
    */
   public int getRmiPort()
   {
-    return rmiPort;
+    return settings.getInt("jameica.system.rmi.serverport",4840);
   }
 
 	/**
@@ -236,7 +104,7 @@ public final class Config
    */
   public void setRmiPort(int port)
 	{
-		this.rmiPort = port;
+    settings.setAttribute("jameica.system.rmi.serverport",port);
 	}
 
   /**
@@ -245,7 +113,38 @@ public final class Config
    */
   public Locale getLocale()
   {
-    return defaultLanguage;
+    if (locale != null)
+      return locale;
+
+    Locale l = Locale.getDefault();
+    String lang = settings.getString("jameica.system.locale",l.getLanguage() + "_" + l.getCountry());
+    String country = "";
+    if (lang.indexOf("_") != -1)
+    {
+      int minus = lang.indexOf("_");
+      country   = lang.substring(minus+1);
+      lang      = lang.substring(0,minus);
+    }
+    
+    Logger.info("configured language: " + lang);
+    if (country.length() > 0)
+      Logger.info("configured country: " + country);
+
+    try {
+      // Wir testen die Existenz der Bundles
+      l = new Locale(lang,country);
+      Logger.info("checking resource bundle for language");
+      ResourceBundle.getBundle("lang/messages",l);
+      this.locale = l;
+      Logger.info("active language: " + this.locale.getDisplayName());
+      return this.locale;
+    }
+    catch (Exception ex)
+    {
+      Logger.info("not found. fallback to system default");
+    }
+    return Locale.getDefault();
+
   }
 
 	/**
@@ -256,7 +155,8 @@ public final class Config
 	{
 		if (l == null)
 			return;
-		this.defaultLanguage = l;
+    this.locale = l;
+    settings.setAttribute("jameica.system.locale",this.locale.getLanguage() + "_" + this.locale.getCountry());
 	}
 
   /**
@@ -265,7 +165,25 @@ public final class Config
    */
   public String[] getPluginDirs()
   {
-    return (String[]) pluginDirs.toArray(new String[pluginDirs.size()]);
+    if (this.plugins != null)
+      return this.plugins;
+
+    ArrayList l = new ArrayList();
+    l.add("plugins"); // Das System-Plugindir tun wir per Default rein
+    l.add(this.pluginDir.getAbsolutePath()); // Das Default-Dir des Users auch
+
+    String[] s = settings.getList("jameica.plugin.dir",new String[]{"plugins"});
+    if (s != null && s.length > 0)
+    {
+      for (int i=0;i<s.length;++i)
+      {
+        if (s[i].equals("plugins") || s[i].equals(this.pluginDir.getAbsolutePath()))
+          continue; // die haben wir schon oben reingetan
+        l.add(s[i]);
+      }
+    }
+    this.plugins = (String[]) l.toArray(new String[l.size()]);
+    return this.plugins;
   }
 
 	/**
@@ -274,33 +192,26 @@ public final class Config
    */
   public void setPluginDirs(String[] pluginDirs)
 	{
-		if (pluginDirs == null || pluginDirs.length == 0)
-			return;
-		this.pluginDirs = new ArrayList();
-		for (int i=0;i<pluginDirs.length;++i)
-		{
-			this.pluginDirs.add(pluginDirs[i]);
-		}
+    this.plugins = pluginDirs;
+    settings.setAttribute("jameica.plugin.dir",pluginDirs);
 	}
 
   /**
-   * Liefert den Pfad zum Log-File.
-   * @return Pfad zum Logfile.
+   * Liefert Pfad und Dateiname des Log-Files.
+   * @return Logfile.
    */
   public String getLogFile()
   {
-    return getDir() + "/" + logfile;
+    return settings.getString("jameica.system.log.file",getWorkDir() + "/jameica.log");
   }
 
 	/**
-	 * Speichert den Pfad zum LogFile.
-   * @param logFile Pfad zum Logfile.
+	 * Speichert Pfad und Dateiname des LogFiles.
+   * @param logFile.
    */
   public void setLogFile(String logFile)
 	{
-		if (logFile == null || "".equals(logFile))
-			return;
-		this.logfile = getDir() + "/" + logFile;
+    settings.setAttribute("jameica.system.log.file",logFile);
 	}
 
   /**
@@ -309,7 +220,7 @@ public final class Config
    */
   public String getLogLevel()
   {
-    return this.logLevel;
+    return settings.getString("jameica.system.log.level",Level.DEFAULT.getName());
   }
 
 	/**
@@ -318,7 +229,7 @@ public final class Config
    */
   public void setLoglevel(String name)
 	{
-		this.logLevel = name;
+    settings.setAttribute("jameica.system.log.level",name);
 	}
 
   /**
@@ -334,68 +245,25 @@ public final class Config
 	 * Liefert das Work-Verzeichnis von Jameica.
    * @return das Work-Verzeichnis von Jameica.
    */
-  public String getDir()
+  public String getWorkDir()
 	{
 		try {
-			return dir.getCanonicalPath();
+			return workDir.getCanonicalPath();
 		}
 		catch (IOException e)
 		{
-			return dir.getAbsolutePath();
+			return workDir.getAbsolutePath();
 		}
-	}
-
-  /**
-   * Speichert die Konfiguration ab.
-   * @throws Exception Wenn beim Speichern ein Fehler auftrat.
-   */
-  public void store() throws Exception
-	{
-		xml.getFirstChildNamed("logfile").setContent(this.logfile);
-		xml.getFirstChildNamed("loglevel").setContent(this.logLevel);
-		xml.getFirstChildNamed("defaultlanguage").setContent(this.defaultLanguage.getLanguage() + "_" + this.defaultLanguage.getCountry());
-		xml.getFirstChildNamed("rmiport").setContent(""+this.rmiPort);
-
-		IXMLElement plugins = xml.getFirstChildNamed("plugindirs");
-		if (plugins != null)
-		{
-			xml.removeChild(plugins);
-		}
-		plugins = xml.createElement("plugindirs");		
-		for (int i=0;i<this.pluginDirs.size();++i)
-		{
-			String s = (String)this.pluginDirs.get(i);
-			if (s.equals("plugins") || s.equals(this.pluginDir.getAbsolutePath()))
-				continue; // die werden ohnehin geladen
-
-			IXMLElement pdir = plugins.createElement("dir");
-			pdir.setContent(s);
-			plugins.addChild(pdir);
-		}
-		xml.addChild(plugins);
-		
-		// Backup der config erstellen
-		FileCopy.copy(configFile,new File(configFile.getAbsolutePath() + ".bak"),true);
-
-		java.io.Writer output = new FileWriter(configFile);
-		XMLWriter xmlwriter = new XMLWriter(output);
-		xmlwriter.write(xml,true); 
-	}
-
-	/**
-	 * Spielt das Backup der Config wieder zurueck.
-   * @throws Exception wenn Fehler beim Zurueckkopieren auftreten.
-   */
-  public void restore() throws Exception
-	{
-		FileCopy.copy(new File(configFile.getAbsolutePath() + ".bak"),configFile,true);
-		init(configFile.getAbsolutePath());
 	}
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.13  2005/01/13 19:31:37  willuhn
+ * @C SSLFactory geaendert
+ * @N Settings auf property-Format umgestellt
+ *
  * Revision 1.12  2005/01/12 00:17:17  willuhn
  * @N JameicaTrustManager
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.8 $
+ * $Date: 2005/01/13 19:31:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,7 +106,7 @@ public final class PluginResources {
 		if (workPath != null)
 			return workPath;
 
-		workPath = Application.getConfig().getDir();
+		workPath = Application.getConfig().getWorkDir();
 		File f = plugin.getFile();
 		
 		if (f.isFile())
@@ -131,6 +131,10 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.8  2005/01/13 19:31:37  willuhn
+ * @C SSLFactory geaendert
+ * @N Settings auf property-Format umgestellt
+ *
  * Revision 1.7  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

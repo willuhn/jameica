@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.23 $
- * $Date: 2005/01/11 00:00:52 $
+ * $Revision: 1.24 $
+ * $Date: 2005/01/13 19:31:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -118,7 +118,8 @@ public final class Application {
 		////////////////////////////////////////////////////////////////////////////
 		// init config
 		try {
-			this.config = new Config(dataDir);
+			this.config = new Config();
+      this.config.init(dataDir);
 		}
 		catch (Throwable t)
 		{
@@ -131,7 +132,7 @@ public final class Application {
 		////////////////////////////////////////////////////////////////////////////
 		// LockFile erzeugen
 		try {
-			new Lock(app.config.getDir() + "/jameica");
+			new Lock(app.config.getWorkDir() + "/jameica");
 		}
 		catch (Throwable t)
 		{
@@ -450,6 +451,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.24  2005/01/13 19:31:37  willuhn
+ * @C SSLFactory geaendert
+ * @N Settings auf property-Format umgestellt
+ *
  * Revision 1.23  2005/01/11 00:00:52  willuhn
  * @N SSLFactory
  *

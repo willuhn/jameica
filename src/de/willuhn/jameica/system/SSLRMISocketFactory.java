@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLRMISocketFactory.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/01/12 11:32:43 $
+ * $Revision: 1.8 $
+ * $Date: 2005/01/13 19:31:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,12 +18,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.server.RMISocketFactory;
 
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 public class SSLRMISocketFactory extends RMISocketFactory {
@@ -44,9 +44,9 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 
     RMISocketFactory.setFailureHandler(new SSLRMIFailureHandler());
 
-  	SSLContext context 	= Application.getSSLFactory().getSSLContext();
-    serverSocketFactory = context.getServerSocketFactory();
-    socketFactory 			= context.getSocketFactory();
+//  	SSLContext context 	= Application.getSSLFactory().getSSLContext();
+    serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+    socketFactory 			= (SSLSocketFactory) SSLSocketFactory.getDefault();
   }
 
   /**
@@ -79,6 +79,9 @@ public class SSLRMISocketFactory extends RMISocketFactory {
    */
   private void log(Object socket) throws IOException
 	{
+    if (Logger.getLevel().getValue() > Level.DEBUG.getValue())
+      return;
+
     String[] protos;
     String[] cipher;
     String socketType =  "CLIENT";
@@ -88,14 +91,14 @@ public class SSLRMISocketFactory extends RMISocketFactory {
       SSLServerSocket s = (SSLServerSocket) socket;
       protos = s.getEnabledProtocols();
       cipher = s.getEnabledCipherSuites();
-      Logger.info(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
+      Logger.debug(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
     }
     else
     {
       SSLSocket s = (SSLSocket) socket;
       protos = s.getEnabledProtocols();
       cipher = s.getEnabledCipherSuites();
-      Logger.info(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
+      Logger.debug(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
     }
     StringBuffer sb = new StringBuffer("enabled protocols for " + socketType + " socket: ");
     for (int i=0;i<protos.length;++i) 
@@ -117,6 +120,10 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.8  2005/01/13 19:31:37  willuhn
+ * @C SSLFactory geaendert
+ * @N Settings auf property-Format umgestellt
+ *
  * Revision 1.7  2005/01/12 11:32:43  willuhn
  * *** empty log message ***
  *
