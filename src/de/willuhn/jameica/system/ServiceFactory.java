@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/08/30 13:30:58 $
+ * $Revision: 1.9 $
+ * $Date: 2004/08/31 18:57:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -35,7 +35,8 @@ import de.willuhn.util.Logger;
  */
 public final class ServiceFactory
 {
-  
+
+	private SSLFactory sslFactory = new SSLFactory();  
   private Hashtable bindings = new Hashtable();
   private boolean rmiStarted = false;
 
@@ -43,11 +44,14 @@ public final class ServiceFactory
    * Initialisiert die ServiceFactory.
    * @throws RemoteException
    */
-  public synchronized void init() throws RemoteException
+  public synchronized void init() throws Exception
   {
+		Logger.info("init plugin services");
+
+		sslFactory.init();
+
 		startRegistry();
 
-    Logger.info("init plugin services");
     Iterator plugins = Application.getPluginLoader().getInstalledPlugins();
 
 		AbstractPlugin plugin = null;
@@ -221,7 +225,7 @@ public final class ServiceFactory
         serviceName = (String) e.nextElement();
   			service = (Class) bindings.get(serviceName);
   			Logger.info("closing service " + serviceName);
-        newInstance(service).shutDown();
+        newInstance(service).shutDown(false);
       }
       catch (Throwable t)
       {
@@ -230,8 +234,12 @@ public final class ServiceFactory
     }
   }
 }
+
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.9  2004/08/31 18:57:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/08/30 13:30:58  willuhn
  * @N neuer Security-Manager
  *

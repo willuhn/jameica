@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/JameicaSecurityManager.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/08/30 13:30:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/08/31 18:57:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -101,6 +101,9 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.2  2004/08/31 18:57:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/08/30 13:30:58  willuhn
  * @N neuer Security-Manager
  *
