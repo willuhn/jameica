@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.27 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/10/08 13:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,12 +11,14 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.gui.controller;
+package de.willuhn.jameica.gui.internal.controller;
 
 import java.rmi.RemoteException;
 
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
+import de.willuhn.jameica.gui.AbstractControl;
+import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
@@ -24,11 +26,10 @@ import de.willuhn.jameica.gui.input.ColorInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
+import de.willuhn.jameica.gui.internal.views.Settings;
+import de.willuhn.jameica.gui.internal.views.Start;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.views.AbstractView;
-import de.willuhn.jameica.gui.views.Settings;
-import de.willuhn.jameica.gui.views.Start;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
@@ -342,6 +343,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.1  2004/10/08 13:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *

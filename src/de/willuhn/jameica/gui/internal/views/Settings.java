@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/10/08 13:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,13 +11,14 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.gui.views;
+package de.willuhn.jameica.gui.internal.views;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.controller.SettingsControl;
+import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.system.Application;
@@ -84,6 +85,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.1  2004/10/08 13:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.25  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

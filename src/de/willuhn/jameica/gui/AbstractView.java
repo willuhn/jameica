@@ -1,13 +1,13 @@
 /*****************************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractView.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/10/08 13:38:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
  ****************************************************************************/
-package de.willuhn.jameica.gui.views;
+package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
 
@@ -90,6 +90,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.1  2004/10/08 13:38:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Plugins.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/License.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/10/08 13:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,10 +10,11 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views;
+package de.willuhn.jameica.gui.internal.views;
 
+import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.controller.PluginsControl;
+import de.willuhn.jameica.gui.internal.controller.LicenseControl;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
@@ -21,19 +22,20 @@ import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
- * Listet die installierten Plugins auf.
+ * View fuer die Lizenz-Informationen
  */
-public class Plugins extends AbstractView {
+public class License extends AbstractView {
 
   /**
    * @see de.willuhn.jameica.gui.views.AbstractView#bind()
    */
-  public void bind() throws Exception {
+  public void bind() throws Exception
+  {
 
 		I18N i18n = Application.getI18n();
-		GUI.getView().setTitle(i18n.tr("Installierte Plugins"));
+		GUI.getView().setTitle(i18n.tr("Lizenzinformationen"));
     
-		PluginsControl control = new PluginsControl(this);
+		LicenseControl control = new LicenseControl(this);
 
 		FormTextPart libs = control.getLibList();
 		libs.paint(getParent());
@@ -52,7 +54,10 @@ public class Plugins extends AbstractView {
 
 
 /**********************************************************************
- * $Log: Plugins.java,v $
+ * $Log: License.java,v $
+ * Revision 1.1  2004/10/08 13:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/07/23 15:51:20 $
+ * $Revision: 1.9 $
+ * $Date: 2004/10/08 13:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,10 +19,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.datasource.GenericIterator;
-import de.willuhn.jameica.gui.controller.AbstractControl;
+import de.willuhn.jameica.gui.AbstractControl;
+import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.parts.TablePart;
-import de.willuhn.jameica.gui.views.AbstractView;
 
 /**
  * Dialog, der eine Tabelle mit Daten aus einer Liste anzeigt.
@@ -154,6 +154,9 @@ public class ListDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.9  2004/10/08 13:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/07/23 15:51:20  willuhn
  * @C Rest des Refactorings
  *

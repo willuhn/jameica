@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.57 $
- * $Date: 2004/08/15 17:55:17 $
+ * $Revision: 1.58 $
+ * $Date: 2004/10/08 13:38:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,15 +32,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
-import de.willuhn.jameica.gui.dialogs.ViewDialog;
+import de.willuhn.jameica.gui.internal.views.ErrorView;
+import de.willuhn.jameica.gui.internal.views.FatalErrorView;
+import de.willuhn.jameica.gui.internal.views.HelpView;
 import de.willuhn.jameica.gui.style.StyleEngine;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.gui.views.AbstractView;
-import de.willuhn.jameica.gui.views.ErrorView;
-import de.willuhn.jameica.gui.views.FatalErrorView;
-import de.willuhn.jameica.gui.views.HelpView;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
@@ -270,43 +268,6 @@ public class GUI
 	private void addStatusBar(Composite parent)
 	{
 		statusBar = new StatusBar(parent);
-	}
-
-	/**
-	 * Startet die angegebene View in einem modalen Dialog.
-	 * @param className Name der Klasse, die als View im Content angezeigt werden
-	 *          soll. Muss von AbstractView abgeleitet sein.
-	 * @param title anzuzeigender Titel.
-	 * @param o ein optionaler Parameter, der der View uebergeben wird.
-	 */
-	public static void startDialog(final String className, final String title,
-			final Object o)
-	{
-		try
-		{
-			Class clazz = Application.getClassLoader().load(className);
-			ViewDialog dialog = new ViewDialog((AbstractView) clazz.newInstance(),
-					ViewDialog.POSITION_CENTER);
-			dialog.setTitle(title);
-			dialog.open();
-		}
-		catch (InstantiationException e)
-		{
-			Logger.error("error while instanciating view", e);
-		}
-		catch (IllegalAccessException e)
-		{
-			Logger.error("not allowed to bind view", e);
-		}
-		catch (ClassNotFoundException e)
-		{
-			Logger.error("view does not exist", e);
-		}
-		catch (Exception e)
-		{
-			Logger.error(e.getLocalizedMessage(), e);
-			throw new RuntimeException(e);
-		}
 	}
 
 	/**
@@ -674,6 +635,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.58  2004/10/08 13:38:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.57  2004/08/15 17:55:17  willuhn
  * @C sync handling
  *

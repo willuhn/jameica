@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Attic/ErrorView.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/10/08 13:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,8 +11,9 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.gui.views;
+package de.willuhn.jameica.gui.internal.views;
 
+import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
@@ -77,6 +78,9 @@ public class ErrorView extends AbstractView
 
 /**********************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.1  2004/10/08 13:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

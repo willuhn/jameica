@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/PluginsControl.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/07/25 17:15:20 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/LicenseControl.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/10/08 13:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,25 +10,26 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.controller;
+package de.willuhn.jameica.gui.internal.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.rmi.RemoteException;
-import java.util.Iterator;
 
+import de.willuhn.io.FileFinder;
+import de.willuhn.jameica.gui.AbstractControl;
+import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.FormTextPart;
-import de.willuhn.jameica.gui.views.AbstractView;
-import de.willuhn.jameica.plugin.AbstractPlugin;
-import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.util.InfoReader;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
 /**
- * Controller fuer den Dialog "installierte Plugins".
+ * Controller fuer den Dialog Lizenzinformationen.
  */
-public class PluginsControl extends AbstractControl {
+public class LicenseControl extends AbstractControl {
 
 	private FormTextPart libList = null;
 
@@ -36,13 +37,13 @@ public class PluginsControl extends AbstractControl {
    * ct.
    * @param view
    */
-  public PluginsControl(AbstractView view) {
+  public LicenseControl(AbstractView view) {
     super(view);
   }
 
 	/**
-	 * Liefert eine Liste mit allen installierten Plugins.
-   * @return Liste der Plugins.
+	 * Liefert eine Liste mit allen direkt von Jameica verwendeten Komponenten.
+   * @return Liste der Komponenten.
    * @throws RemoteException
    */
   public FormTextPart getLibList() throws RemoteException
@@ -55,39 +56,32 @@ public class PluginsControl extends AbstractControl {
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<form>");
-		buffer.append("<p><span color=\"header\" font=\"header\">" + i18n.tr("Installierte Plugins") + "</span></p>");
+		buffer.append("<p><span color=\"header\" font=\"header\">" + i18n.tr("Verwendete Komponenten") + "</span></p>");
 
-		Iterator i = Application.getPluginLoader().getPluginContainers();
-		while (i.hasNext())
+		FileFinder finder = new FileFinder(new File("lib"));
+		finder.matches(".*?info\\.xml$");
+		File[] infos = finder.findRecursive();
+		for (int i=0;i<infos.length;++i)
 		{
-			PluginContainer container = (PluginContainer) i.next();
-			AbstractPlugin plugin = container.getPlugin();
-			InfoReader ir = null;
 			try {
-				ir = container.getInfo();
-			}
-			catch (Exception e1)
-			{
-				Logger.error("unable to read info.xml from plugin " + plugin.getName(),e1);
-			}
-
-			if (ir == null)
-			{
-				Logger.warn("info.xml for plugin " + plugin.getName() + " not found, skipping");
-				continue;
-			}
-
-			buffer.append("<p>");
-			buffer.append("<b>" + (ir == null ? plugin.getName() : ir.getName()) + (container.isInstalled() ? "" : (" (" +i18n.tr("nicht aktiv") + ")")) + "</b>");
-			buffer.append("<br/>" + i18n.tr("installiert in") + ": " + container.getFile().getAbsolutePath());
-			buffer.append("<br/>" + i18n.tr("Version") + ": " + plugin.getVersion() + "-" + plugin.getBuildnumber());
-			if (ir != null)
-			{
+				InfoReader ir = new InfoReader(new FileInputStream(infos[i]));
+				if (ir == null)
+				{
+					Logger.warn("inforeader is null, skipping lib");
+					continue;
+				}
+				buffer.append("<p>");
+				buffer.append("<b>" + ir.getName() + "</b>");
 				buffer.append("<br/>" + i18n.tr("Beschreibung") + ": " + ir.getDescription());
+				buffer.append("<br/>" + i18n.tr("Verzeichnis") + ": " + infos[i].getParentFile().getAbsolutePath());
 				buffer.append("<br/>" + i18n.tr("URL") + ": " + ir.getUrl());
 				buffer.append("<br/>" + i18n.tr("Lizenz") + ": " + ir.getLicense());
+				buffer.append("</p>");
 			}
-			buffer.append("</p>");
+			catch (Exception e)
+			{
+				Logger.error("unable to parse " + infos[0],e);
+			}
 		}
 		buffer.append("</form>");
 
@@ -130,21 +124,24 @@ public class PluginsControl extends AbstractControl {
 
 
 /**********************************************************************
- * $Log: PluginsControl.java,v $
- * Revision 1.6  2004/07/25 17:15:20  willuhn
- * @C PluginLoader is no longer static
+ * $Log: LicenseControl.java,v $
+ * Revision 1.1  2004/10/08 13:38:20  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.6  2004/10/07 18:05:26  willuhn
+ * *** empty log message ***
  *
  * Revision 1.5  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *
- * Revision 1.4  2004/07/04 17:07:20  willuhn
+ * Revision 1.4  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *
- * Revision 1.3  2004/06/30 20:58:39  willuhn
+ * Revision 1.3  2004/06/08 22:28:45  willuhn
  * *** empty log message ***
  *
- * Revision 1.2  2004/05/27 23:38:25  willuhn
- * @B deadlock in swt event queue while startGUITimeout
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
  *
  * Revision 1.1  2004/04/26 22:42:18  willuhn
  * @N added InfoReader

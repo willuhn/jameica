@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO8859-1"?> 
+
+<system name="Jameica" version="1.0">
+
+	<description>Jameica - Java based messages interchange</description>
+	<url>http://www.willuhn.de/projects/jameica/releases/jameica.zip</url>
+	<homepage>http://www.willuhn.de/projects/jameica</homepage>
+	<license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
+
+	<menu>
+		<cascade name="Datei">
+			<item name="&amp;Einstellungen" 			shortcut="CTRL+E" 	action="de.willuhn.jameica.gui.internal.action.Settings" />
+			<item name="-" />
+			<item name="Beenden"    			 							action="de.willuhn.jameica.gui.internal.action.FileClose" />
+		</cascade>
+
+		<cascade name="Hilfe">
+			<item name="About"				 								action="de.willuhn.jameica.gui.internal.action.About" />
+			<item name="-" />
+		    <item name="Lizenzinformationen"	 							action="de.willuhn.jameica.gui.internal.action.License" />
+	  </cascade>
+	</menu>
+
+	<navigation>
+		<item name="Jameica" icon-close="base.gif" action="de.willuhn.jameica.gui.internal.action.Start" />
+	</navigation>
+
+</system>
+

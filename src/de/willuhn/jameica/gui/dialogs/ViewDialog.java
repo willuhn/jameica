@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/Attic/ViewDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.6 $
+ * $Date: 2004/10/08 13:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,8 +18,8 @@ import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.views.AbstractView;
 
 /**
  * Dialog, der eine komplette AbstractView anzeigen kann, die
@@ -81,6 +81,9 @@ public class ViewDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: ViewDialog.java,v $
+ * Revision 1.6  2004/10/08 13:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory
