@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/19 22:53:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -35,7 +37,8 @@ import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.controller.AbstractControl;
-import de.willuhn.jameica.gui.formatter.*;
+import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
@@ -53,12 +56,20 @@ public class TablePart implements Part
   private Enumeration list2;
   private I18N i18n = null;
   private TableFormatter tableFormatter = null;
+  private ArrayList menus = new ArrayList();
 
 	private Composite parent = null;
 	private Composite comp = null;
 	 
   private org.eclipse.swt.widgets.Table table;
 
+	/**
+   * Initialisiert die Tabelle.
+   */
+  private void init()
+	{
+		i18n = Application.getI18n();
+	}
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
    * @param list Liste mit Objekten, die angezeigt werden soll.
@@ -68,23 +79,9 @@ public class TablePart implements Part
   {
     this.list = list;
     this.controller = controller;
-    i18n = Application.getI18n();
+    init();
   }
   
-  /**
-	 * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
-	 * @param list Liste mit Objekten, die angezeigt werden soll.
-	 * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
-   * @param formatter Formatter zur SWT-maessigen Formatierung einer ganzen Zeile.
-	 */
-	public TablePart(DBIterator list, AbstractControl controller, TableFormatter formatter)
-	{
-		this.list = list;
-		this.controller = controller;
-		this.tableFormatter = formatter;
-		i18n = Application.getI18n();
-	}
-
 	/**
 	 * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
 	 * @param list Liste mit Objekten, die angezeigt werden sollen.
@@ -94,8 +91,31 @@ public class TablePart implements Part
 	{
 		this.list2 = list;
 		this.controller = controller;
-		i18n = Application.getI18n();
+		init();
 	}
+
+	/**
+	 * Definiert einen optionalen Formatierer, mit dem man SWT-maessig ganze Zeilen formatieren kann.
+   * @param formatter Formatter.
+   */
+  public void setFormatter(TableFormatter formatter)
+	{
+		this.tableFormatter = formatter;
+	}
+
+	/**
+	 * Fuegt einen neuen Kontext Menu-Eintrag zur Tabelle hinzu.
+   * @param title Name des Menu-Eintrages.
+   * @param l Listener, der ausgefuehrt werden soll. Er erhaelt in <code>event.data</code> das ausgewaehlte Objekt.
+   */
+  public void addMenu(String title,Listener l)
+	{
+		if (title == null || l == null)
+			return;
+		MenuEntry entry = new MenuEntry(title,l);
+		menus.add(entry);
+	}
+
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
    * @param title Name der Spaltenueberschrift.
@@ -266,35 +286,8 @@ public class TablePart implements Part
       }
     );
 
-//    // und jetzt fuegen wir noch die Kontext-Menues hinzu,
-//    Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
-//    table.setMenu(menu);
-//    {
-//      MenuItem editItem = new MenuItem(menu, SWT.PUSH);
-//      editItem.setText(i18n.tr("Neu..."));
-//      editItem.addListener (SWT.Selection, new Listener () {
-//        public void handleEvent (Event e) {
-//          controller.handleCreate();
-//        }
-//      });
-//    }
-//    {
-//      MenuItem editItem = new MenuItem(menu, SWT.PUSH);
-//      editItem.setText(i18n.tr("Öffnen"));
-//      editItem.addListener (SWT.Selection, new Listener () {
-//        public void handleEvent (Event e) {
-//          int i = table.getSelectionIndex();
-//          if (i == -1)
-//            return;
-//          TableItem item = table.getItem(i);
-//          if (item == null) return;
-//          Object o = item.getData();
-//          if (o == null) return;
-//          controller.handleOpen(o);
-//        }
-//      });
-//    }
-
+		addMenus();
+		
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
     int cols = table.getColumnCount();
     for (int i=0;i<cols;++i)
@@ -362,10 +355,65 @@ public class TablePart implements Part
 			}
 		}
 	}
+
+	private void addMenus()
+	{
+		if (menus.size() == 0)
+			return;
+
+		// und jetzt fuegen wir noch die Kontext-Menues hinzu,
+		Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
+		table.setMenu(menu);
+
+		for (int i=0;i<menus.size();++i)
+		{
+			final MenuEntry entry = (MenuEntry) menus.get(i);
+			if ("-".equals(entry.name))
+			{
+				new MenuItem(menu, SWT.SEPARATOR);
+				continue;
+			}
+
+			final MenuItem item = new MenuItem(menu, SWT.PUSH);
+			item.setText(entry.name);
+			item.addListener(SWT.Selection,new Listener() {
+				// Wir packen hier noch einen eigenen Listener drum,
+				// damit der Aufrufer das Objekt direkt aus dem Event
+				// holen kann und nicht erst den selectionIndex-Mist machen muss
+				public void handleEvent(Event event) {
+					int i = table.getSelectionIndex();
+					if (i == -1)
+						return;
+					TableItem item = table.getItem(i);
+					if (item == null) return;
+					Object o = item.getData();
+					if (o == null) return;
+					Event e = new Event();
+					e.data = o;
+					entry.listener.handleEvent(e);
+				}
+			});
+		}
+	}
+
+	private class MenuEntry
+	{
+		private String name;
+		private Listener listener;
+
+		private MenuEntry(String name,Listener l)
+		{
+			this.name = name;
+			this.listener = l;
+		}
+	}
 }
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.2  2004/04/19 22:53:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms
