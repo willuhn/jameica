@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.5 $
+ * $Date: 2004/10/04 15:44:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,6 +64,7 @@ public class DecimalInput extends TextInput
           if (!('0' <= chars[i] &&
                 chars[i] <= '9') &&
                 !(chars[i] == ',') &&
+								!(chars[i] == '.') &&
 								!(chars[i] == '-')
              )
           {
@@ -116,6 +117,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.5  2004/10/04 15:44:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *
