@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.22 $
- * $Date: 2005/01/12 00:17:17 $
+ * $Revision: 1.23 $
+ * $Date: 2005/01/12 01:44:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -143,7 +143,7 @@ public final class ServiceFactory
     }
     catch (Exception e)
     {
-      Logger.warn("failed to init RMI registry, trying to use an existing one." +      	"communication may be not encrypted");
+      Logger.error("failed to init RMI registry, trying to use an existing one." +      	"communication may be not encrypted",e);
       LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
     }
     rmiStarted = true;
@@ -378,6 +378,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.23  2005/01/12 01:44:57  willuhn
+ * @N added test https server
+ *
  * Revision 1.22  2005/01/12 00:17:17  willuhn
  * @N JameicaTrustManager
  *

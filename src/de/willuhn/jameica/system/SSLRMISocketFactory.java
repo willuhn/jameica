@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLRMISocketFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/01/12 00:17:17 $
+ * $Revision: 1.6 $
+ * $Date: 2005/01/12 01:44:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,6 +53,9 @@ public class SSLRMISocketFactory extends RMISocketFactory {
   {
 		Logger.debug("Creating client socket to " + host + ":" + port);
     SSLSocket socket = (SSLSocket) socketFactory.createSocket(host, port);
+    socket.setEnabledCipherSuites(socket.getSupportedCipherSuites());
+    socket.setEnabledProtocols(socket.getSupportedProtocols());
+		//log(socket);
     return socket;
   }
 
@@ -63,23 +66,58 @@ public class SSLRMISocketFactory extends RMISocketFactory {
   {
 		Logger.info("Creating server socket at port " + port + "/tcp");
     SSLServerSocket socket = (SSLServerSocket) serverSocketFactory.createServerSocket(port);
-
-    String[] protos = socket.getEnabledProtocols();
-		Logger.debug("enabled protocols for server socket");
-    for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
-
-		String[] cipher = socket.getEnabledCipherSuites();
-		Logger.debug("enabled cipher suites for server socket");
-		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
-
+		socket.setEnabledCipherSuites(socket.getSupportedCipherSuites());
+		socket.setEnabledProtocols(socket.getSupportedProtocols());
+		//log(socket);
     socket.setNeedClientAuth(clientAuth);
     socket.setWantClientAuth(clientAuth);
     return socket;
   }
+
+	private void log(SSLSocket socket)
+	{
+		String[] protos = socket.getEnabledProtocols();
+		Logger.debug("enabled protocols for CLIENT socket");
+		for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
+
+		String[] cipher = socket.getEnabledCipherSuites();
+		Logger.debug("enabled cipher suites for CLIENT socket");
+		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
+
+		protos = socket.getSupportedProtocols();
+		Logger.debug("supported protocols for CLIENT socket");
+		for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
+
+		cipher = socket.getSupportedCipherSuites();
+		Logger.debug("supported cipher suites for CLIENT socket");
+		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
+
+	}
+	private void log(SSLServerSocket socket)
+	{
+		String[] protos = socket.getEnabledProtocols();
+		Logger.debug("enabled protocols for SERVER socket");
+		for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
+
+		String[] cipher = socket.getEnabledCipherSuites();
+		Logger.debug("enabled cipher suites for SERVER socket");
+		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
+
+		protos = socket.getSupportedProtocols();
+		Logger.debug("supported protocols for SERVER socket");
+		for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
+
+		cipher = socket.getSupportedCipherSuites();
+		Logger.debug("supported cipher suites for SERVER socket");
+		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
+	}
 }
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.6  2005/01/12 01:44:57  willuhn
+ * @N added test https server
+ *
  * Revision 1.5  2005/01/12 00:17:17  willuhn
  * @N JameicaTrustManager
  *

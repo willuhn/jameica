@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/01/12 00:59:38 $
+ * $Revision: 1.11 $
+ * $Date: 2005/01/12 01:44:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,6 +62,8 @@ public class SSLFactory
    */
   public synchronized void init() throws Exception
 	{
+		HTTPsServer s = new HTTPsServer();
+		s.run();
 
 //		System.setProperty("java.security.debug","all");
 //		System.setProperty("javax.net.debug","all");
@@ -264,7 +266,7 @@ public class SSLFactory
 			return sslContext;
 
 		Logger.info("init ssl context");
-		this.sslContext = SSLContext.getInstance("SSL");
+		this.sslContext = SSLContext.getInstance("TLS"); //BouncyCastleProvider.PROVIDER_NAME);
 
 		Logger.info("init SunX509 key manager");
 		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
@@ -289,6 +291,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.11  2005/01/12 01:44:57  willuhn
+ * @N added test https server
+ *
  * Revision 1.10  2005/01/12 00:59:38  willuhn
  * *** empty log message ***
  *
