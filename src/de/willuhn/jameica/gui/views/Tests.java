@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Tests.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/25 23:11:57 $
+ * $Revision: 1.4 $
+ * $Date: 2004/04/01 00:23:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,14 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.views;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.ColorDialog;
+
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -23,20 +31,15 @@ public class Tests extends AbstractView {
    */
   public void bind() throws Exception {
 
-//  	b.setText("PIN");
-//  	b.addMouseListener(new MouseAdapter() {
-//      public void mouseUp(MouseEvent e) {
-//      	PINDialog pd = new PINDialog(PINDialog.POSITION_CENTER);
-//				try {
-//					pd.open();
-//				}
-//				catch (Exception e2)
-//				{
-//					Application.getLog().error(e2.getLocalizedMessage(),e2);
-//					GUI.setActionText(e2.getLocalizedMessage());
-//				}
-//      }
-//    });
+			Button b = new Button(getParent(),SWT.BORDER);
+  		b.setText("Test");
+	  	b.addMouseListener(new MouseAdapter() {
+	      public void mouseUp(MouseEvent e) {
+	      	ColorDialog cd = new ColorDialog(GUI.getShell());
+	      	RGB foo = cd.open();
+	      	System.out.println(foo);
+	      }
+    });
   }
 
   /**
@@ -51,6 +54,12 @@ public class Tests extends AbstractView {
 
 /**********************************************************************
  * $Log: Tests.java,v $
+ * Revision 1.4  2004/04/01 00:23:24  willuhn
+ * @N FontInput
+ * @N ColorInput
+ * @C improved ClassLoader
+ * @N Tabs in Settings
+ *
  * Revision 1.3  2004/02/25 23:11:57  willuhn
  * *** empty log message ***
  *

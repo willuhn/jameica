@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/03/29 23:20:49 $
+ * $Revision: 1.13 $
+ * $Date: 2004/04/01 00:23:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,8 @@ public class Style
   /**
    * Standard-Hintergrundfarbe.
    */
-  public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 251, 251, 251);
+//  public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 251, 251, 251);
+	public final static Color COLOR_BG      = GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 
   /**
    * Standard-Vordergrundfarbe.
@@ -153,6 +154,12 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.13  2004/04/01 00:23:24  willuhn
+ * @N FontInput
+ * @N ColorInput
+ * @C improved ClassLoader
+ * @N Tabs in Settings
+ *
  * Revision 1.12  2004/03/29 23:20:49  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.15 $
+ * $Date: 2004/04/01 00:23:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,14 +13,21 @@
 
 package de.willuhn.jameica.gui.views;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.GridData;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.SettingsControl;
 import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.parts.ColorInput;
+import de.willuhn.jameica.gui.parts.FontInput;
 import de.willuhn.jameica.gui.parts.LabelGroup;
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -38,48 +45,112 @@ public class Settings extends AbstractView
   {
 
 		final I18N i18n = Application.getI18n();
-		GUI.getView().setTitle(i18n.tr("Einstellungen"));
 
+		GUI.getView().setTitle(i18n.tr("Einstellungen"));
 		final SettingsControl control = new SettingsControl(this);
 
-  	LabelGroup mainSettings = new LabelGroup(getParent(),i18n.tr("Grundeinstellungen"));
 
-		mainSettings.addLabelPair("Log-Datei",control.getLogFile());
-		mainSettings.addLabelPair("Log-Level", control.getLoglevel());
+		CTabFolder folder = new CTabFolder(getParent(),SWT.TOP);
+		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		mainSettings.addText("",false);
-		mainSettings.addHeadline(i18n.tr("Lokale Services"));
-		mainSettings.addTable(control.getLocalServices());
+		/////////////////////////////////////////////////////////////////
+		// Grund-Einstellungen
+		CTabItem main = new CTabItem(folder,SWT.NONE);
+		main.setText(i18n.tr("Grundeinstellungen"));
+		LabelGroup mainGroup = new LabelGroup(folder,"");
+
+		mainGroup.addText("",false);
+		mainGroup.addLabelPair("Log-Datei",control.getLogFile());
+		mainGroup.addLabelPair("Log-Level", control.getLoglevel());
+
+		ButtonArea mainButtons = mainGroup.createButtonArea(3);
+		mainButtons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
+		{
+			public void mouseUp(MouseEvent e)
+			{
+				control.handleRestore();
+			}
+		});
+		mainButtons.addCancelButton(control);
+		mainButtons.addStoreButton(control);
+
+		main.setControl(mainGroup.getControl());
+		//
+		/////////////////////////////////////////////////////////////////
+
+		/////////////////////////////////////////////////////////////////
+		// Farb-Einstellungen
+		CTabItem color = new CTabItem(folder,SWT.NONE);
+		color.setText(i18n.tr("Style"));
+		LabelGroup colorGroup = new LabelGroup(folder,"");
+
+		colorGroup.addText("",false);
+
+		colorGroup.addLabelPair("Hintergrundfarbe",new ColorInput(Style.COLOR_BG));
+		colorGroup.addLabelPair("Überschriften",new FontInput(Style.FONT_H1));
+
+		ButtonArea colorButtons = colorGroup.createButtonArea(3);
+		colorButtons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
+		{
+			public void mouseUp(MouseEvent e)
+			{
+				control.handleRestore();
+			}
+		});
+		colorButtons.addCancelButton(control);
+		colorButtons.addStoreButton(control);
+
+		color.setControl(colorGroup.getControl());
+		//
+		/////////////////////////////////////////////////////////////////
+
+
+		/////////////////////////////////////////////////////////////////
+		// Service-Einstellungen
+		CTabItem service = new CTabItem(folder,SWT.NONE);
+		service.setText(i18n.tr("Services"));
+		LabelGroup serviceGroup = new LabelGroup(folder,"");
+		serviceGroup.addText("",false);
+		serviceGroup.addHeadline(i18n.tr("Lokale Services"));
+		serviceGroup.addTable(control.getLocalServices());
 		
-		mainSettings.addText("",false);
-		mainSettings.addHeadline(i18n.tr("Netzwerkservices"));
-		mainSettings.addTable(control.getRemoteServices());
+		serviceGroup.addText("",false);
+		serviceGroup.addHeadline(i18n.tr("Netzwerkservices"));
+		serviceGroup.addTable(control.getRemoteServices());
 
-
-		ButtonArea buttons = new ButtonArea(getParent(),5);
-		buttons.addCustomButton(i18n.tr("lokalen Service erstellen"),new MouseAdapter()
+		ButtonArea serviceButtons = serviceGroup.createButtonArea(5);
+		serviceButtons.addCustomButton(i18n.tr("lokalen Service erstellen"),new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
 			{
 				control.handleRestore();
 			}
 		});
-		buttons.addCustomButton(i18n.tr("Netzwerk-Service erstellen"),new MouseAdapter()
+		serviceButtons.addCustomButton(i18n.tr("Netzwerk-Service erstellen"),new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
 			{
 				control.handleRestore();
 			}
 		});
-		buttons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
+		serviceButtons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
     {
       public void mouseUp(MouseEvent e)
       {
       	control.handleRestore();
       }
     });
-		buttons.addCancelButton(control);
-		buttons.addStoreButton(control);
+		serviceButtons.addCancelButton(control);
+		serviceButtons.addStoreButton(control);
+
+		service.setControl(serviceGroup.getControl());
+		//
+		/////////////////////////////////////////////////////////////////
+
+
+
+		folder.setSelection(main);
+
   }
 
   /**
@@ -94,6 +165,12 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.15  2004/04/01 00:23:24  willuhn
+ * @N FontInput
+ * @N ColorInput
+ * @C improved ClassLoader
+ * @N Tabs in Settings
+ *
  * Revision 1.14  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.14 $
+ * $Date: 2004/04/01 00:23:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ package de.willuhn.jameica.gui.controller;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Config;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.parts.AbstractInput;
 import de.willuhn.jameica.gui.parts.FileInput;
 import de.willuhn.jameica.gui.parts.SelectInput;
@@ -151,6 +152,11 @@ public class SettingsControl extends AbstractControl
   public void handleRestore()
   {
   	try {
+  		YesNoDialog prompt = new YesNoDialog(YesNoDialog.POSITION_CENTER);
+  		prompt.setTitle(i18n.tr("Sicher?"));
+  		prompt.setText(i18n.tr("Alle Einstellungen werden auf die zuvor gespeicherten Werte zurückgesetzt"));
+  		if (!((Boolean) prompt.open()).booleanValue())
+  			return;
 			Application.getConfig().restore();
 			GUI.startView(Settings.class.getName(),null);
 			GUI.getStatusBar().setSuccessText(i18n.tr("letzte gespeicherte Konfiguaration wieder hergestellt."));
@@ -168,6 +174,12 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.14  2004/04/01 00:23:24  willuhn
+ * @N FontInput
+ * @N ColorInput
+ * @C improved ClassLoader
+ * @N Tabs in Settings
+ *
  * Revision 1.13  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

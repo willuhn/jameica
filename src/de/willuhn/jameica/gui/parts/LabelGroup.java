@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/03/30 22:08:25 $
+ * $Revision: 1.12 $
+ * $Date: 2004/04/01 00:23:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
@@ -57,6 +58,15 @@ public class LabelGroup
     group.setLayoutData(grid);
   }
   
+	/**
+	 * Liefert das allumfassende Control der Gruppe.
+   * @return
+   */
+  public Control getControl()
+	{
+		return group;
+	}
+
   /**
    * Fuegt ein weiteres Label-Paar hinzu.
    * @param name Name des Feldes.
@@ -230,6 +240,12 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.12  2004/04/01 00:23:24  willuhn
+ * @N FontInput
+ * @N ColorInput
+ * @C improved ClassLoader
+ * @N Tabs in Settings
+ *
  * Revision 1.11  2004/03/30 22:08:25  willuhn
  * *** empty log message ***
  *

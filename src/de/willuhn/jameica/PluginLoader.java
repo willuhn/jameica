@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.39 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.40 $
+ * $Date: 2004/04/01 00:23:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -172,7 +172,7 @@ public class PluginLoader extends ClassLoader
 	      {
 					entry = (JarEntry) jarEntries.nextElement();
 					String entryName = entry.getName();
-	
+
 	        if ("menu.xml".equals(entryName))
 	          menu = entry; 
 	
@@ -423,6 +423,12 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.40  2004/04/01 00:23:24  willuhn
+ * @N FontInput
+ * @N ColorInput
+ * @C improved ClassLoader
+ * @N Tabs in Settings
+ *
  * Revision 1.39  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *
