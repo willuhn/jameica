@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/12/31 19:33:50 $
+ * $Revision: 1.22 $
+ * $Date: 2005/01/03 23:04:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,19 +18,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-
 import de.willuhn.io.Lock;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
+import de.willuhn.jameica.gui.StartupError;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.util.BackgroundTask;
@@ -259,36 +250,7 @@ public final class Application {
 		if (inServerMode())
 			throw new RuntimeException(t);
 
-		Display d = Display.getCurrent();
-		if (d == null)
-			d = new Display();
-		final Shell s = new Shell();
-		s.setLayout(new GridLayout());
-		s.setText("Fehler");
-		Label l = new Label(s,SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l.setText(""+t.getMessage());
-
-		Button b = new Button(s,SWT.BORDER);
-		b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		b.setText("OK");
-		b.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
-      {
-				s.close();
-      }
-    });
-		s.pack();
-		s.open();
-		while (!s.isDisposed()) {
-			if (!d.readAndDispatch()) d.sleep();
-		}
-		try {
-			s.dispose();
-			d.dispose();
-		}
-		catch (Exception e2) {}
+		StartupError.show(t);
 		System.exit(1);
 	}
 
@@ -466,6 +428,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.22  2005/01/03 23:04:54  willuhn
+ * @N separater StartupError Handler
+ *
  * Revision 1.21  2004/12/31 19:33:50  willuhn
  * *** empty log message ***
  *
