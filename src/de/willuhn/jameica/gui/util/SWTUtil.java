@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.10 $
+ * $Date: 2004/08/29 19:31:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -84,7 +84,14 @@ public class SWTUtil {
       public void run() {
       	GUI.getDisplay().asyncExec(new Runnable() {
           public void run() {
-						l.handleEvent(null);
+          	try
+          	{
+							l.handleEvent(null);
+          	}
+          	catch (Throwable t)
+          	{
+          		Logger.error("error while executing listener",t);
+          	}
           }
         });
       }
@@ -167,6 +174,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.10  2004/08/29 19:31:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *
