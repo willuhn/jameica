@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/18 18:56:08 $
+ * $Revision: 1.6 $
+ * $Date: 2003/11/18 19:13:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -119,33 +119,49 @@ public class Menu
     {
       final MenuItem item = new MenuItem(parent,SWT.CASCADE);
       final String s = ckey;
-      item.addListener (SWT.Selection, new Listener()
-      {
-        public void handleEvent(org.eclipse.swt.widgets.Event event)
-        {
-					String c = xml.getString(s,"class",null);
-					try {
-						Class clazz = (Class) Class.forName(c);
-						Constructor ct = clazz.getConstructor(new Class[]{Event.class});
-						ct.setAccessible(true);
-						ct.newInstance(new Object[] {event});
-					}
-					catch (Exception e)
-					{
-						Application.getLog().warn("Class " + c + " not found");
-					}
-        }
-      });
+      String c = xml.getString(s,"class",null);
+      
+      item.addListener (SWT.Selection, new MenuListener(c));
       String text = I18N.tr(xml.getString(s,"name",null));
       item.setText(text);
       // closeitem.setAccelerator(SWT.ALT + SWT.F4);
     }
+  }
+  
+  class MenuListener implements Listener
+  {
+    private String c = null;
+    MenuListener(String clazz)
+    {
+      c = clazz;
+    }
+
+    /**
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void handleEvent(org.eclipse.swt.widgets.Event event)
+    {
+      try {
+        Class clazz = (Class) Class.forName(c);
+        Constructor ct = clazz.getConstructor(new Class[]{Event.class});
+        ct.setAccessible(true);
+        ct.newInstance(new Object[] {event});
+      }
+      catch (Exception e)
+      {
+        Application.getLog().warn("Class " + c + " not found");
+      }
+    }
+    
   }
 
 }
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.6  2003/11/18 19:13:12  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/11/18 18:56:08  willuhn
  * @N added support for pluginmenus and plugin navigation
  *
