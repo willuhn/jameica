@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginResources.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/03/03 22:27:11 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/18 01:24:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,16 +22,17 @@ import de.willuhn.util.I18N;
  */
 public class PluginResources {
 
-	private File file = null;
+	private AbstractPlugin plugin = null;
+	private EmbeddedDatabase db = null;
 	private I18N i18n = null;
 
   /**
    * ct.
    * Das Plugin-File oder Verzeichnis.
    */
-  protected PluginResources(File file)
+  protected PluginResources(AbstractPlugin plugin)
   {
-  	this.file = file;
+  	this.plugin = plugin;
 		this.i18n = new I18N(getPath() + File.separator + "lang/messages",
 												 Application.getConfig().getLocale());
   }
@@ -51,24 +52,10 @@ public class PluginResources {
 	 */
 	public String getPath()
 	{
-		if (file == null)
-			return null;
+		if (!plugin.getFile().getName().endsWith(".jar"))
+			return plugin.getFile().getPath();
 
-		if (!file.getName().endsWith(".jar"))
-			return file.getPath();
-
-		return file.getParent();
-	}
-
-	/**
-	 * Liefert das Jar-File, in dem sich das Plugin befindet.
-	 * Ist es ein dekomprimiertes Plugin, wird das Verzeichnis
-	 * zurueckgegeben, in dem es sich befindet.
-   * @return File, in dem sich das Plugin befindet.
-   */
-  public File getFile()
-	{
-		return file;
+		return plugin.getFile().getParent();
 	}
 
 	/**
@@ -80,7 +67,12 @@ public class PluginResources {
 	 */
 	public EmbeddedDatabase getDatabase()
 	{
-		return new EmbeddedDatabase(getPath() + "/db",getUsername(),getPassword());
+		if (db != null)
+			return db;
+		db = new EmbeddedDatabase(getPath() + "/db",plugin.getName(),plugin.getName());
+		db.setLogger(Application.getLog());
+		db.setClassLoader(Application.getClassLoader());
+		return db;
 	}
 
 	/**
@@ -110,6 +102,9 @@ public class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.3  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
  * Revision 1.2  2004/03/03 22:27:11  willuhn
  * @N help texts
  * @C refactoring

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/DecimalInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/03/16 23:59:40 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/18 01:24:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,7 @@ public class DecimalInput extends TextInput
    */
   public DecimalInput(double value, DecimalFormat format)
   {
-  	super(null);
+  	super(""+value);
     this.value = value;
     this.format = format;
   }
@@ -49,6 +49,7 @@ public class DecimalInput extends TextInput
   public Control getControl()
   {
 		Control c = super.getControl();
+		text.setText(format.format(value));
     text.addListener (SWT.Verify, new Listener() {
       public void handleEvent (Event e) {
         String t = e.text;
@@ -67,11 +68,13 @@ public class DecimalInput extends TextInput
 
   /**
    * Die Funktion liefert ein Objekt des Typs java.lang.Double zurueck
-   * oder <code>null</code> wenn die Zahl nicht ermittelt werden konnte.
+   * oder <code>null</code> wenn nicht eingegeben wurde.
    * @see de.willuhn.jameica.gui.parts.TextInput#getValue()
    */
   public Object getValue()
   {
+		if (text.getText() == null || text.getText().length() == 0)
+			return null;
     try {
       return new Double(format.parse(text.getText()).doubleValue());
     }
@@ -100,6 +103,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.6  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
  * Revision 1.5  2004/03/16 23:59:40  willuhn
  * @N 2 new Input fields
  *

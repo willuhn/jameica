@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.30 $
- * $Date: 2004/03/16 23:59:40 $
+ * $Revision: 1.31 $
+ * $Date: 2004/03/18 01:24:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,6 @@ import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.FatalErrorView;
 import de.willuhn.jameica.gui.views.HelpView;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Startet und beendet die GUI der Anwendung.
@@ -294,7 +293,7 @@ public class GUI
 	public static void startDialog(final String className, final String title, final Object o)
 	{
 		try {
-			Class clazz = MultipleClassLoader.load(className);
+			Class clazz = Application.getClassLoader().load(className);
 			ViewDialog dialog = new ViewDialog((AbstractView) clazz.newInstance(),ViewDialog.POSITION_CENTER);
 			dialog.setTitle(title);
 			dialog.open();
@@ -343,7 +342,7 @@ public class GUI
 		
 		    try
 		    {
-		      Class clazz = MultipleClassLoader.load(className);
+		      Class clazz = Application.getClassLoader().load(className);
 		
 		      gui.view.cleanContent();
 		
@@ -666,6 +665,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.31  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
  * Revision 1.30  2004/03/16 23:59:40  willuhn
  * @N 2 new Input fields
  *

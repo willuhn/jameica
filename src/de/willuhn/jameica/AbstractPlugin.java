@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/03/16 23:59:40 $
+ * $Revision: 1.15 $
+ * $Date: 2004/03/18 01:24:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import java.util.jar.Manifest;
 public abstract class AbstractPlugin
 {
 
+	private File file = null;
 	private PluginResources res = null;
 	private Settings settings = null;
 
@@ -35,8 +36,21 @@ public abstract class AbstractPlugin
    */
   public AbstractPlugin(File file)
 	{
-		this.res = new PluginResources(file);
+		this.file = file;
+		this.res = new PluginResources(this);
 		this.settings = new Settings(this.getClass());
+	}
+
+	/**
+	 * Liefert ein File-Objekt, welches das Plugin enthaelt.
+	 * Befindet sich das Plugin in einem Jar, wird dieses
+	 * zurueckgegeben, sonst das Verzeichnis, in dem sich das
+	 * Plugin befindet.
+   * @return File, in dem sich das Plugin befindet.
+   */
+  protected final File getFile()
+	{
+		return file;
 	}
 
 	/**
@@ -58,7 +72,6 @@ public abstract class AbstractPlugin
   public String getName()
   {
 		String name = "unknown";
-		File file = res.getFile();
     try {
 			if (!file.getName().endsWith(".jar"))
 				return file.getName();
@@ -91,7 +104,6 @@ public abstract class AbstractPlugin
    */
   public double getVersion()
   {
-		File file = res.getFile();
     try {
 			if (!file.getName().endsWith(".jar"))
 				return 1.0;
@@ -161,6 +173,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.15  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
  * Revision 1.14  2004/03/16 23:59:40  willuhn
  * @N 2 new Input fields
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.36 $
- * $Date: 2004/03/16 23:59:40 $
+ * $Revision: 1.37 $
+ * $Date: 2004/03/18 01:24:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,6 @@ import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.FileFinder;
-import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Kontrolliert alle installierten Plugins.
@@ -91,10 +90,10 @@ public class PluginLoader extends ClassLoader
     File[] jars = null;
     try {
     	// Wir fuegen das Verzeichnis zum ClassLoader hinzu.
-    	MultipleClassLoader.add(new File(plugindir.getPath() + File.separator + "bin"));
+    	Application.getClassLoader().add(new File(plugindir.getPath() + File.separator + "bin"));
     	
     	// Und jetzt noch alle darin befindlichen Jars
-    	jars = MultipleClassLoader.addJars(plugindir);
+    	jars = Application.getClassLoader().addJars(plugindir);
     }
     catch (MalformedURLException mue)
     {
@@ -251,7 +250,7 @@ public class PluginLoader extends ClassLoader
 		// Klasse laden
     Class clazz = null;
     try {
-			clazz = MultipleClassLoader.load(classname);
+			clazz = Application.getClassLoader().load(classname);
     }
     catch (ClassNotFoundException e)
     {
@@ -425,6 +424,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.37  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
  * Revision 1.36  2004/03/16 23:59:40  willuhn
  * @N 2 new Input fields
  *

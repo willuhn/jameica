@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.28 $
- * $Date: 2004/03/03 22:27:11 $
+ * $Revision: 1.29 $
+ * $Date: 2004/03/18 01:24:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,7 @@ public class Application {
   private static Application app;
     private Logger log;
     private Config config;
+    private MultipleClassLoader classLoader;
     
   /**
    * ct.
@@ -60,22 +61,20 @@ public class Application {
     // start application
     app = new Application();
 
+		// init our classloader
+		app.classLoader = new MultipleClassLoader();
+
 		// LockFile erzeugen
 		new Lock("jameica");
 
 		////////////////////////////////////////////////////////////////////////////
     // init logger
 		splash("init system logger");
-		app.log = new Logger();
+		app.log = new Logger("Jameica");
 		app.log.addTarget(System.out);
 		app.log.setLevel(Logger.LEVEL_INFO);
     Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
-		//
-		////////////////////////////////////////////////////////////////////////////
-
-		////////////////////////////////////////////////////////////////////////////
-		// register logger in ClassLoader
-		MultipleClassLoader.setLogger(app.log);
+		app.classLoader.setLogger(app.log);
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -194,6 +193,16 @@ public class Application {
     return app.log;
   }
   
+	/**
+	 * Liefert einen Classloader, der alle installierten Plugins und
+	 * deren Jars kennt. Also quasi die gesamte Jameica-Umbegung.
+   * @return Jameicas ClassLoader.
+   */
+  public static MultipleClassLoader getClassLoader()
+	{
+		return app.classLoader;
+	}
+
   /**
    * Liefert die System-Config.
    * @return Config.
@@ -217,6 +226,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.29  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
  * Revision 1.28  2004/03/03 22:27:11  willuhn
  * @N help texts
  * @C refactoring

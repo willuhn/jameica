@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/03/11 08:56:55 $
+ * $Revision: 1.10 $
+ * $Date: 2004/03/18 01:24:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -336,7 +336,10 @@ public class Table
 				{
 					final TableItem item = new TableItem(table, SWT.NONE, j);
 					for (int r=0;r<table.getColumnCount();++r)
+					{
 						item.setText(r,items[s].getText(r));
+						// TODO: Hier werden die Events und data Objekte vergessen
+					}
 					items[s].dispose();
 					break;
 				}
@@ -348,6 +351,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.10  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
  * Revision 1.9  2004/03/11 08:56:55  willuhn
  * @C some refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/IntegerInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/03/16 23:59:40 $
+ * $Revision: 1.2 $
+ * $Date: 2004/03/18 01:24:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,6 @@ import de.willuhn.jameica.Application;
  */
 public class IntegerInput extends TextInput
 {
-  private int value;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -33,8 +32,7 @@ public class IntegerInput extends TextInput
    */
   public IntegerInput(int value)
   {
-  	super(null);
-    this.value = value;
+  	super(""+value);
   }
 
   /**
@@ -61,11 +59,13 @@ public class IntegerInput extends TextInput
 
   /**
    * Die Funktion liefert ein Objekt des Typs java.lang.Integer zurueck
-   * oder <code>null</code> wenn die Zahl nicht ermittelt werden konnte.
+   * oder <code>null</code> wenn nichts eingegeben wurde.
    * @see de.willuhn.jameica.gui.parts.TextInput#getValue()
    */
   public Object getValue()
   {
+  	if (text.getText() == null || text.getText().length() == 0)
+  		return null;
     try {
       return new Integer((String)text.getText());
     }
@@ -94,6 +94,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.2  2004/03/18 01:24:46  willuhn
+ * @C refactoring
+ *
  * Revision 1.1  2004/03/16 23:59:40  willuhn
  * @N 2 new Input fields
  *

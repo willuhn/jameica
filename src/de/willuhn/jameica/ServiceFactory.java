@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ServiceFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/11 00:10:42 $
+ * $Revision: 1.5 $
+ * $Date: 2004/03/18 01:24:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,6 @@ import java.util.Hashtable;
 import de.willuhn.datasource.common.LocalServiceData;
 import de.willuhn.datasource.common.RemoteServiceData;
 import de.willuhn.datasource.rmi.Service;
-import de.willuhn.util.MultipleClassLoader;
 
 
 /**
@@ -112,10 +111,11 @@ public class ServiceFactory
 
 		Application.getLog().debug("searching for local service " + service.getName());
 		try {
-			Class clazz = MultipleClassLoader.load(service.getClassName());
+			Class clazz = Application.getClassLoader().load(service.getClassName());
 			Constructor ct = clazz.getConstructor(new Class[]{HashMap.class});
 			ct.setAccessible(true);
 			Service s = (Service) ct.newInstance(new Object[] {service.getInitParams()});
+			s.setClassLoader(Application.getClassLoader());
 			s.setLogger(Application.getLog());
 			return s;
 		}
@@ -229,6 +229,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.5  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
  * Revision 1.4  2004/02/11 00:10:42  willuhn
  * *** empty log message ***
  *
