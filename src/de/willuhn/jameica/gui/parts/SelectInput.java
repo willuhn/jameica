@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.10 $
+ * $Date: 2004/04/05 23:29:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -182,6 +182,15 @@ public class SelectInput extends AbstractInput
     return values.get(combo.getText());
   }
 
+	/**
+	 * Liefert den angezeigten Text zurueck.
+   * @return Text.
+   */
+  public String getText()
+	{
+		return combo.getText();
+	}
+
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
    */
@@ -219,6 +228,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.10  2004/04/05 23:29:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *

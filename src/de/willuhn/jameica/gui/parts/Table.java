@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/04/01 22:07:07 $
+ * $Revision: 1.14 $
+ * $Date: 2004/04/05 23:29:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,8 +28,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -52,7 +50,12 @@ public class Table
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
   private Enumeration list2;
-  
+  private I18N i18n = null;
+  private TableFormatter tableFormatter = null;
+
+	private Composite parent = null;
+	private Composite comp = null;
+	 
   private org.eclipse.swt.widgets.Table table;
 
   /**
@@ -64,8 +67,23 @@ public class Table
   {
     this.list = list;
     this.controller = controller;
+    i18n = Application.getI18n();
   }
   
+  /**
+	 * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
+	 * @param list Liste mit Objekten, die angezeigt werden soll.
+	 * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
+   * @param formatter Formatter zur SWT-maessigen Formatierung einer ganzen Zeile.
+	 */
+	public Table(DBIterator list, AbstractControl controller, TableFormatter formatter)
+	{
+		this.list = list;
+		this.controller = controller;
+		this.tableFormatter = formatter;
+		i18n = Application.getI18n();
+	}
+
 	/**
 	 * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
 	 * @param list Liste mit Objekten, die angezeigt werden sollen.
@@ -75,6 +93,7 @@ public class Table
 	{
 		this.list2 = list;
 		this.controller = controller;
+		i18n = Application.getI18n();
 	}
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
@@ -108,10 +127,12 @@ public class Table
    */
   public void paint(Composite parent) throws RemoteException
   {
+		this.parent = parent;
 
-		I18N i18n = Application.getI18n();
+		if (comp != null && !comp.isDisposed())
+			comp.dispose();
 
-    Composite comp = new Composite(parent,SWT.NONE);
+    comp = new Composite(parent,SWT.NONE);
     // final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		final GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
     comp.setLayoutData(gridData);
@@ -175,26 +196,22 @@ public class Table
 
     }
 
-    try {
-      list.previous(); // zurueckblaettern nicht vergessen
-    }
-    catch (Exception e) {
-      // nicht weiter tragisch, wenn das fehlschlaegt
-    }
-
-
     // Iterieren ueber alle Elemente der Liste
 		if (list != null)
 		{
+			list.begin(); // zurueckblaettern nicht vergessen
 			while (list.hasNext())
 			{
 				final TableItem item = new TableItem(table, SWT.NONE);
 				final DBObject o = list.next();
+				item.setData(o);
+				if (tableFormatter != null)
+					tableFormatter.format(item);
+
 				for (int i=0;i<this.fields.size();++i)
 				{
 					String[] fieldData = (String[]) fields.get(i);
 					String field = fieldData[1];
-					item.setData(o);
 					Object value = o.getField(field);
 					if (value == null)
 					{
@@ -250,34 +267,34 @@ public class Table
       }
     );
 
-    // und jetzt fuegen wir noch die Kontext-Menues hinzu,
-    Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
-    table.setMenu(menu);
-    {
-      MenuItem editItem = new MenuItem(menu, SWT.PUSH);
-      editItem.setText(i18n.tr("Neu..."));
-      editItem.addListener (SWT.Selection, new Listener () {
-        public void handleEvent (Event e) {
-          controller.handleCreate();
-        }
-      });
-    }
-    {
-      MenuItem editItem = new MenuItem(menu, SWT.PUSH);
-      editItem.setText(i18n.tr("Öffnen"));
-      editItem.addListener (SWT.Selection, new Listener () {
-        public void handleEvent (Event e) {
-          int i = table.getSelectionIndex();
-          if (i == -1)
-            return;
-          TableItem item = table.getItem(i);
-          if (item == null) return;
-          Object o = item.getData();
-          if (o == null) return;
-          controller.handleOpen(o);
-        }
-      });
-    }
+//    // und jetzt fuegen wir noch die Kontext-Menues hinzu,
+//    Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
+//    table.setMenu(menu);
+//    {
+//      MenuItem editItem = new MenuItem(menu, SWT.PUSH);
+//      editItem.setText(i18n.tr("Neu..."));
+//      editItem.addListener (SWT.Selection, new Listener () {
+//        public void handleEvent (Event e) {
+//          controller.handleCreate();
+//        }
+//      });
+//    }
+//    {
+//      MenuItem editItem = new MenuItem(menu, SWT.PUSH);
+//      editItem.setText(i18n.tr("Öffnen"));
+//      editItem.addListener (SWT.Selection, new Listener () {
+//        public void handleEvent (Event e) {
+//          int i = table.getSelectionIndex();
+//          if (i == -1)
+//            return;
+//          TableItem item = table.getItem(i);
+//          if (item == null) return;
+//          Object o = item.getData();
+//          if (o == null) return;
+//          controller.handleOpen(o);
+//        }
+//      });
+//    }
 
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
     int cols = table.getColumnCount();
@@ -338,6 +355,8 @@ public class Table
 					}
 					item.setData(items[s].getData());
 					items[s].dispose();
+					if (tableFormatter != null)
+						tableFormatter.format(item);
 					break;
 				}
 
@@ -348,6 +367,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.14  2004/04/05 23:29:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/04/01 22:07:07  willuhn
  * *** empty log message ***
  *

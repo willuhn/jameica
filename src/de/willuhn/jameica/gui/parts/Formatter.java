@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Formatter.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/03/11 08:56:55 $
+ * $Revision: 1.3 $
+ * $Date: 2004/04/05 23:29:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.parts;
 
-import de.willuhn.jameica.gui.util.StyleContainer;
 
 /**
  * Kleine Formatierer-Klasse.
@@ -30,23 +29,13 @@ public interface Formatter
    */
   public String format(Object o);
 
-  /**
-   * Liefert einen Style-Container, der alle relevanten Styling-Informationen enthaelt.
-   * @return
-   */
-  public StyleContainer getStyle();
-  
-  /**
-   * Speichert den Style-Container.
-   * @param style
-   */
-  public void setStyle(StyleContainer style);
-  
-  
 }
 
 /*********************************************************************
  * $Log: Formatter.java,v $
+ * Revision 1.3  2004/04/05 23:29:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/03/11 08:56:55  willuhn
  * @C some refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/03/25 00:45:49 $
+ * $Revision: 1.11 $
+ * $Date: 2004/04/05 23:29:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -146,6 +146,15 @@ public class SearchInput extends AbstractInput
     return choosen;
   }
 
+	/**
+	 * Liefert den angezeigten Text zurueck.
+	 * @return Text.
+	 */
+	public String getText()
+	{
+		return text.getText();
+	}
+
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.String)
    */
@@ -189,6 +198,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.11  2004/04/05 23:29:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/03/25 00:45:49  willuhn
  * *** empty log message ***
  *

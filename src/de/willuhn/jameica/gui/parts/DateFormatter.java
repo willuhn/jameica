@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/DateFormatter.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/03/11 08:56:55 $
+ * $Revision: 1.3 $
+ * $Date: 2004/04/05 23:29:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,7 +21,7 @@ import java.util.Date;
  * Formatierer fuer Datums-Angaben.
  * @author willuhn
  */
-public class DateFormatter extends AbstractFormatter
+public class DateFormatter implements Formatter
 {
 
   private DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
@@ -67,6 +67,9 @@ public class DateFormatter extends AbstractFormatter
 
 /*********************************************************************
  * $Log: DateFormatter.java,v $
+ * Revision 1.3  2004/04/05 23:29:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/03/11 08:56:55  willuhn
  * @C some refactoring
  *
