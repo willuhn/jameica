@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/21 23:54:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/07/23 15:51:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import de.willuhn.datasource.rmi.Service;
+import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.util.ApplicationException;
@@ -228,6 +228,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.3  2004/07/23 15:51:20  willuhn
+ * @C Rest des Refactorings
+ *
  * Revision 1.2  2004/07/21 23:54:53  willuhn
  * @C massive Refactoring ;)
  *

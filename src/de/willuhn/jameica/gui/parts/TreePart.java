@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/09 00:12:46 $
+ * $Revision: 1.6 $
+ * $Date: 2004/07/23 15:51:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-import de.willuhn.datasource.rmi.GenericIterator;
-import de.willuhn.datasource.rmi.GenericObjectNode;
+import de.willuhn.datasource.GenericIterator;
+import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.util.SWTUtil;
@@ -277,6 +277,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.6  2004/07/23 15:51:20  willuhn
+ * @C Rest des Refactorings
+ *
  * Revision 1.5  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *

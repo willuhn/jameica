@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.26 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.27 $
+ * $Date: 2004/07/23 15:51:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,8 +16,8 @@ package de.willuhn.jameica.gui.views;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
+import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
-import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -134,6 +134,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.27  2004/07/23 15:51:20  willuhn
+ * @C Rest des Refactorings
+ *
  * Revision 1.26  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *
