@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.23 $
- * $Date: 2003/12/30 02:25:35 $
+ * $Revision: 1.24 $
+ * $Date: 2003/12/30 19:11:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -319,6 +319,7 @@ public class PluginLoader extends ClassLoader
         // Plugin wurde zum ersten mal gestartet
         Application.getLog().info("Plugin started for the first time. Starting install");
         try {
+					Application.splash("installing plugin " + plugin.getName());
           if (plugin.install())
           {
             Application.getLog().info("  done");
@@ -347,6 +348,7 @@ public class PluginLoader extends ClassLoader
           {
             Application.getLog().info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
             // hui, sogar eine neuere Version. Also starten wir dessen Update
+						Application.splash("updating plugin " + plugin.getName());
             if (plugin.update(oldVersion))
             {
               Application.getLog().info("  done");
@@ -364,6 +366,7 @@ public class PluginLoader extends ClassLoader
           Application.getLog().error("  failed");
         }
       }
+			Application.splash("initializing plugin " + plugin.getName());
       plugin.init();
 
       installedPlugins.add(plugin);
@@ -417,6 +420,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.24  2003/12/30 19:11:27  willuhn
+ * @N new splashscreen
+ *
  * Revision 1.23  2003/12/30 02:25:35  willuhn
  * *** empty log message ***
  *

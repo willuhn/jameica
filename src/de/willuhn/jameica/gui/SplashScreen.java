@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/22 14:53:37 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/30 19:11:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,13 +17,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
+
+import de.willuhn.jameica.Application;
 
 /**
  * Der Splash-Screen der Anwendung ;).
@@ -40,49 +41,44 @@ public class SplashScreen
 
   // singleton
   private static SplashScreen splash;
-    final ProgressBar bar = new ProgressBar(shell, SWT.SMOOTH);
+    private ProgressBar bar;
+    private Label label;
+    private Label text; 
   
   /**
    * Erzeugt einen neuen Splashscreen.
    */
   private SplashScreen() {
 
-    // Komponenten
-    final Image image = new Image(display, shell.getClass().getResourceAsStream("/img/splash.jpg"));
+		GridLayout l = new GridLayout(1,false);
+		l.marginWidth = 0;
+		l.marginHeight = 0;
+		l.horizontalSpacing = 0;
+		l.verticalSpacing = 0;
+		shell.setLayout(l);
 
-    // Maximum definieren
+		
+    // Label erzeugen und Image drauf pappen
+		label = new Label(shell, SWT.NONE);
+		label.setImage(new Image(display, shell.getClass().getResourceAsStream("/img/splash.jpg")));
+		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+
+		bar = new ProgressBar(shell, SWT.SMOOTH);
 		bar.setMaximum(200);
 
-    // Vorder- und Hintergrund des Balkens
-    bar.setBackground(new Color(display,243,244,238));
-    bar.setForeground(new Color(display,255,204,0));
+		// Vorder- und Hintergrund des Balkens
+		bar.setBackground(new Color(display,243,244,238));
+		bar.setForeground(new Color(display,255,204,0));
+		bar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
-    // Label erzeugen und Image drauf pappen
-		Label label = new Label(shell, SWT.NONE);
-		label.setImage(image);
+		// Label erzeugen und Image drauf pappen
+		text = new Label(shell, SWT.NONE);
+		text.setText(" starting...");
+		text.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
-    // Layout erzeugen und auf Shell pappen
-		FormLayout layout = new FormLayout();
-		shell.setLayout(layout);
+    shell.setSize(381,243);
 
-    
-		FormData labelData = new FormData();
-		labelData.right = new FormAttachment(100, 0);
-		labelData.bottom = new FormAttachment(100, 0);
-		label.setLayoutData(labelData);
-
-    // Progess balken positionieren
-		FormData progressData = new FormData ();
-		progressData.left = new FormAttachment(0, 5);
-		progressData.right = new FormAttachment(100, -5);
-		progressData.bottom = new FormAttachment(100, -5);
-		bar.setLayoutData(progressData);
-
-    // passend zusammenstauchen
-		//shell.pack();
-    shell.setSize(381,201);
-
-    // Spalshscreen mittig positionieren
+    // Splashscreen mittig positionieren
 		Rectangle splashRect = shell.getBounds();
 		Rectangle displayRect = display.getBounds();
 		int x = (displayRect.width - splashRect.width) / 2;
@@ -100,19 +96,44 @@ public class SplashScreen
    */
   public static void add(int add)
   {
+  	if (Application.inServerMode())
+  		return;
     if (splash == null)
       splash = new SplashScreen();
 
     count = (count+add) > 200 ? 200 : count+add; 
     splash.bar.setSelection(count);
+    splash.bar.redraw();
+    splash.label.redraw();
     display.readAndDispatch();
+		try {
+			Thread.sleep(100);
+		}
+		catch (Exception e) {}
   }
+
+	/**
+	 * Zeigt den uebergebenen Text im Splashscreen an.
+   * @param text anzuzeigender Text.
+   */
+  public static void setText(String text)
+	{
+		if (Application.inServerMode())
+			return;
+		if (splash == null)
+			splash = new SplashScreen();
+
+		splash.text.setText(" " + text + " ...");
+		splash.text.redraw();		
+	}
   
   /**
    * Setzt den Ladebalken auf 100% und schliesst danach den Splash-Screen. 
    */
   public static void shutDown()
   {
+		if (Application.inServerMode())
+			return;
     try {
       splash.bar.setSelection(200);
       display.readAndDispatch();
@@ -124,41 +145,13 @@ public class SplashScreen
     {
     }
   }
-
 }
 
 
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
- * Revision 1.6  2003/12/22 14:53:37  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2003/12/12 01:28:05  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2003/12/11 21:00:54  willuhn
- * @C refactoring
- *
- * Revision 1.3  2003/11/13 00:37:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2003/11/12 00:58:55  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2003/11/05 22:46:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2003/10/29 21:14:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2003/10/29 21:12:00  willuhn
- * win32 fix
- *
- * Revision 1.2  2003/10/29 21:06:14  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2003/10/29 20:41:29  willuhn
- * @N added splash screen ;)
+ * Revision 1.7  2003/12/30 19:11:27  willuhn
+ * @N new splashscreen
  *
  ***************************************************************************/

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.18 $
- * $Date: 2003/12/22 21:00:34 $
+ * $Revision: 1.19 $
+ * $Date: 2003/12/30 19:11:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,19 +55,19 @@ public class Application {
 
     Application.serverMode = serverMode;
 
-    splash();
+    splash("starting jameica");
 
     // start application
     app = new Application();
 
     // init logger
-    app.log = new Logger(null); splash();
+		splash("init system logger");app.log = new Logger(null);
 
     Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
 
     // init config
     try {
-      app.config = new Config(configFile); splash();
+			splash("init system config");app.config = new Config(configFile);
     }
     catch (FileNotFoundException e)
     {
@@ -94,10 +94,10 @@ public class Application {
       
     }
     // init service factory
-    ServiceFactory.init(); splash();
+		splash("init local and remote services"); ServiceFactory.init();
 
     // init plugins
-    PluginLoader.init(); splash();
+		splash("loading plugins"); PluginLoader.init();
 
     // close splash screen
     if (!serverMode)
@@ -122,10 +122,15 @@ public class Application {
    * bei jedem erneuten Aufruf um ein weiteres Stueck.
    * Wenn die Anwendung im Servermode laeuft, kehrt die Funktion
    * tatenlos zurueck ohne den Splash-Screen anzuzeigen.
+   * @param text im Splashscreen anzuzeigender Text.
    */
-  private static void splash()
+  public static void splash(String text)
   {
-    if (!serverMode) SplashScreen.add(10);
+    if (serverMode)
+    	return;
+
+		SplashScreen.setText(text);
+    SplashScreen.add(10);
   }
 
 
@@ -189,6 +194,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.19  2003/12/30 19:11:27  willuhn
+ * @N new splashscreen
+ *
  * Revision 1.18  2003/12/22 21:00:34  willuhn
  * *** empty log message ***
  *
