@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/01/12 00:17:17 $
+ * $Revision: 1.10 $
+ * $Date: 2005/01/12 00:59:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Hashtable;
@@ -123,14 +124,31 @@ public class SSLFactory
 															"jameica".toCharArray(),
 															new X509Certificate[]{this.certificate});
 
-		Logger.info("  storing keystore: " + keyStoreFile.getAbsolutePath());
-		OutputStream storeOut = new FileOutputStream(keyStoreFile);
-		this.keystore.store(storeOut,"jameica".toCharArray());
+		storeKeystore();
 		Application.getStartupMonitor().addPercentComplete(10);
 		//
 		////////////////////////////////////////////////////////////////////////////
 	}
 	
+	/**
+	 * Speichert den Keystore.
+   * @throws Exception
+   */
+  private synchronized void storeKeystore() throws Exception
+	{
+		OutputStream os = null;
+		try
+		{
+			Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
+			os = new FileOutputStream(getKeyStoreFile());
+			this.keystore.store(os,"jameica".toCharArray());
+		}
+		finally
+		{
+			os.close();
+		}
+	}
+
 	/**
 	 * Liefert die Datei mit dem Keystore.
 	 * @return Keystore.
@@ -214,6 +232,28 @@ public class SSLFactory
 	}
 	
 	/**
+	 * Fuegt dem Keystore ein Zertifikat aus dem genannten Inputstream hinzu.
+   * @param alias Alias-Name des Zertifikats.
+   * @param is Inputstream.
+   * @throws Exception
+   */
+  public synchronized void addTrustedCertificate(String alias, InputStream is) throws Exception
+	{
+		try
+		{
+			Logger.info("adding certifcate " + alias + " to keystore");
+			CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			X509Certificate cert = (X509Certificate)cf.generateCertificate(is);
+			getKeyStore().setCertificateEntry(alias,cert);
+			storeKeystore();
+		}
+		finally
+		{
+			is.close();
+		}
+	}	
+	
+	/**
 	 * Liefert einen fertig konfigurierten SSLContext mit den Jameica-Zertifikaten.
    * @return SSLContect.
    * @throws Exception
@@ -224,21 +264,24 @@ public class SSLFactory
 			return sslContext;
 
 		Logger.info("init ssl context");
-		this.sslContext = SSLContext.getInstance("TLS");
+		this.sslContext = SSLContext.getInstance("SSL");
 
 		Logger.info("init SunX509 key manager");
 		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
 		keyManagerFactory.init(this.getKeyStore(),"jameica".toCharArray());
 
+//	Wir benutzen unseren eignen TrustManager
 		Logger.info("init Jameica trust manager");
 		TrustManager trustManager = new JameicaTrustManager();
-
-// Wir benutzen unseren eignen TrustManager
-//		TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance("SunX509");
-//		trustManagerFactory.init(this.getKeyStore());
-				
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
 												 new TrustManager[]{trustManager},null);
+
+// Loeasung mit SUN TrustManager
+//		TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance("SunX509");
+//		trustManagerFactory.init(this.getKeyStore());
+//		this.sslContext.init(keyManagerFactory.getKeyManagers(),
+//												 trustManagerFactory.getTrustManagers(),null);
+				
 		return this.sslContext;
 	}
 }
@@ -246,6 +289,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.10  2005/01/12 00:59:38  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/01/12 00:17:17  willuhn
  * @N JameicaTrustManager
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/01/03 23:04:54 $
+ * $Revision: 1.6 $
+ * $Date: 2005/01/12 00:59:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,6 @@ public final class Server
   	//
   	////////////////////////////////////////////////////////////////////////////
   	
-		Logger.info("free mem: " + (Runtime.getRuntime().freeMemory() / (1024^2)) + " mb");
     Logger.info("jameica up and running...");
 
 		String[] welcome = Application.getWelcomeMessages();
@@ -74,6 +73,9 @@ public final class Server
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.6  2005/01/12 00:59:38  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/01/03 23:04:54  willuhn
  * @N separater StartupError Handler
  *
