@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/07/20 00:16:16 $
+ * $Revision: 1.12 $
+ * $Date: 2004/07/20 21:47:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,8 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -49,16 +47,16 @@ import de.willuhn.util.I18N;
 public class TablePart implements Part
 {
 	//TODO: Sortierung!
-  private GenericIterator list;
+  private GenericIterator list					= null;
 
-  private AbstractControl controller;
-  private ArrayList fields = new ArrayList();
-  private HashMap formatter = new HashMap();
-  private I18N i18n = null;
+  private AbstractControl controller    = null;
+  private ArrayList fields 							= new ArrayList();
+  private HashMap formatter 						= new HashMap();
+  private I18N i18n 										= null;
   private TableFormatter tableFormatter = null;
-  private ArrayList menus = new ArrayList();
+	private ContextMenu menu 							= null;
 
-	private Composite comp = null;
+	private Composite comp 								= null;
 	 
   private org.eclipse.swt.widgets.Table table;
 
@@ -83,17 +81,13 @@ public class TablePart implements Part
 		this.tableFormatter = formatter;
 	}
 
-	/**
-	 * Fuegt einen neuen Kontext Menu-Eintrag zur Tabelle hinzu.
-   * @param title Name des Menu-Eintrages.
-   * @param l Listener, der ausgefuehrt werden soll. Er erhaelt in <code>event.data</code> das ausgewaehlte Objekt.
+  /**
+	 * Fuegt ein KontextMenu zur Tabelle hinzu.
+   * @param menu das anzuzeigende Menu.
    */
-  public void addMenu(String title,Listener l)
+  public void setContextMenu(ContextMenu menu)
 	{
-		if (title == null || l == null)
-			return;
-		MenuEntry entry = new MenuEntry(title,l);
-		menus.add(entry);
+		this.menu = menu;
 	}
 
   /**
@@ -124,7 +118,7 @@ public class TablePart implements Part
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint(Composite parent) throws RemoteException
+  public synchronized void paint(Composite parent) throws RemoteException
   {
 		if (comp != null && !comp.isDisposed())
 			SWTUtil.disposeChilds(comp);
@@ -236,7 +230,21 @@ public class TablePart implements Part
       }
     );
 
-		addMenus();
+		// jetzt noch dem Menu Bescheid sagen, wenn ein Element markiert wurde
+		table.addListener(SWT.MouseDown,new Listener()
+    {
+      public void handleEvent(Event e)
+      {
+      	if (menu == null) return;
+
+				TableItem item = table.getItem( new Point(e.x,e.y));
+				menu.setCurrentObject(item != null ? item.getData() : null);
+      }
+    });
+    
+    // Und jetzt noch das ContextMenu malen
+    if (menu != null)
+    	menu.paint(table);
 		
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
     int cols = table.getColumnCount();
@@ -294,68 +302,13 @@ public class TablePart implements Part
 			}
 		}
 	}
-
-	/**
-   * Fuegt die Menus hinzu.
-   */
-  private void addMenus()
-	{
-		if (menus.size() == 0)
-			return;
-
-		// und jetzt fuegen wir noch die Kontext-Menues hinzu,
-		Menu menu = new Menu(comp.getShell(), SWT.POP_UP);
-		table.setMenu(menu);
-
-		for (int i=0;i<menus.size();++i)
-		{
-			final MenuEntry entry = (MenuEntry) menus.get(i);
-			if ("-".equals(entry.name))
-			{
-				new MenuItem(menu, SWT.SEPARATOR);
-				continue;
-			}
-
-			final MenuItem item = new MenuItem(menu, SWT.PUSH);
-			item.setText(entry.name);
-			item.addListener(SWT.Selection,new Listener() {
-				// Wir packen hier noch einen eigenen Listener drum,
-				// damit der Aufrufer das Objekt direkt aus dem Event
-				// holen kann und nicht erst den selectionIndex-Mist machen muss
-				public void handleEvent(Event event) {
-					int i = table.getSelectionIndex();
-					if (i == -1)
-						return;
-					TableItem item = table.getItem(i);
-					if (item == null) return;
-					Object o = item.getData();
-					if (o == null) return;
-					Event e = new Event();
-					e.data = o;
-					entry.listener.handleEvent(e);
-				}
-			});
-		}
-	}
-
-	/**
-	 * Hilfklasse fuer die Menu-Eintraege.
-   */
-  private class MenuEntry
-	{
-		private String name;
-		private Listener listener;
-
-		private MenuEntry(String name,Listener l)
-		{
-			this.name = name;
-			this.listener = l;
-		}
-	}
 }
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.12  2004/07/20 21:47:44  willuhn
+ * @N ContextMenu
+ *
  * Revision 1.11  2004/07/20 00:16:16  willuhn
  * *** empty log message ***
  *

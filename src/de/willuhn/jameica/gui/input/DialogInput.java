@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.9 $
+ * $Date: 2004/07/20 21:47:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -90,6 +90,8 @@ public class DialogInput extends ButtonInput
    */
   public String getText()
   {
+		if (text != null && !text.isDisposed())
+			return text.getText();
   	return value;
   }
 
@@ -120,6 +122,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.9  2004/07/20 21:47:44  willuhn
+ * @N ContextMenu
+ *
  * Revision 1.8  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *
