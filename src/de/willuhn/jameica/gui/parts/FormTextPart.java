@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/05/23 16:34:19 $
+ * $Revision: 1.4 $
+ * $Date: 2004/07/09 00:12:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,9 +30,11 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
+import de.willuhn.jameica.gui.*;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.util.Logger;
 
 /**
  * Freiformatierbarer Text.
@@ -128,14 +130,20 @@ public class FormTextPart implements Part {
 	public void setText(String s)
 	{
 		content = new StringBuffer(s);
-		refresh();
+		try {
+			refresh();
+		}
+		catch (RemoteException e)
+		{
+			Logger.error("error while refreshing formTextPart",e);
+		}
 	}
 
 
-	/**
-   * Aktualisiert die Anzeige.
+  /**
+   * @see de.willuhn.jameica.gui.Part#refresh()
    */
-  private void refresh()
+  public void refresh() throws RemoteException
 	{
 		if (text == null || content == null)
 			return;
@@ -157,7 +165,7 @@ public class FormTextPart implements Part {
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Part#paint(org.eclipse.swt.widgets.Composite)
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent) throws RemoteException {
 
@@ -207,6 +215,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.4  2004/07/09 00:12:46  willuhn
+ * @C Redesign
+ *
  * Revision 1.3  2004/05/23 16:34:19  willuhn
  * *** empty log message ***
  *

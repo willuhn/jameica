@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.14 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,7 @@ import de.willuhn.util.Logger;
  * Exception wird dann hier angezeigt. Zum Verstaendnis: Eine ErrorView
  * kann durchaus im regulaeren Betrieb verwendet werden, indem die
  * View ihre Exceptions nicht faengt. Allerdings sollte die View dann
- * aber darauf achten, dass Exception mit lokalisierten und fuer den
+ * aber darauf achten, dass Exceptions mit lokalisierten und fuer den
  * Benutzer verstaendlichen Texten geworfen werden. Im Gegensatz dazu wird
  * die View <code>FatalErrorView</code> wenn ein fataler Fehler aufgetreten
  * ist, der nicht zum geplanten Anwendungsablauf gehoert. Daher wird
@@ -54,7 +54,7 @@ public class ErrorView extends AbstractView
   		Exception e = (Exception) getCurrentObject();
   		
   		if (e != null)
-	  		group.addText(""+e.getLocalizedMessage(),true);
+	  		group.addText(""+e.getMessage(),true);
 	  	else
 	  		group.addText(unknownError,false);
   	}
@@ -77,6 +77,9 @@ public class ErrorView extends AbstractView
 
 /**********************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.14  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.13  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

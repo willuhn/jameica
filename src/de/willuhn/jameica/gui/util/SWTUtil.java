@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.7 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -164,24 +164,14 @@ public class SWTUtil {
 		return canvas;
 	}
 
-	/**
-	 * Liefert eine Factory zum Erzeugen von Controls.
-	 * @return Factory.
-	 */
-	public static FormToolkit getToolkit()
-	{
-		if (toolkit != null)
-			return toolkit;
-		toolkit = new FormToolkit(GUI.getDisplay());
-		return toolkit;
-	}
-
-
 }
 
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.7  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.6  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.4 $
+ * $Date: 2004/07/09 00:12:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 
 /**
@@ -148,7 +149,7 @@ public class TextPart implements Part
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Part#paint(org.eclipse.swt.widgets.Composite)
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent) throws RemoteException
 	{
@@ -167,6 +168,9 @@ public class TextPart implements Part
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.4  2004/07/09 00:12:46  willuhn
+ * @C Redesign
+ *
  * Revision 1.3  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/06/18 19:47:17 $
+ * $Revision: 1.7 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
   public Control getControl()
   {
@@ -50,7 +50,7 @@ public class TextInput extends AbstractInput
 
   /**
    * Liefert den angezeigten Text als String.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
   {
@@ -58,7 +58,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -69,7 +69,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.Input#focus()
    */
   public void focus()
   {
@@ -77,7 +77,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.Input#disable()
    */
   public void disable()
   {
@@ -87,7 +87,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.Input#enable()
    */
   public void enable()
   {
@@ -100,6 +100,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.7  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.6  2004/06/18 19:47:17  willuhn
  * *** empty log message ***
  *

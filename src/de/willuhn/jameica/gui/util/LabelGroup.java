@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/06/30 20:58:40 $
+ * $Revision: 1.9 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.input.AbstractInput;
+import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.input.CheckboxInput;
-import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -75,7 +75,7 @@ public class LabelGroup
    * @param name Name des Feldes.
    * @param input Das Eingabefeld.
    */
-  public void addLabelPair(String name, AbstractInput input)
+  public void addLabelPair(String name, Input input)
   {
     // Label
     // TODO: Ausrichtung des Labels muss oben sein
@@ -132,10 +132,10 @@ public class LabelGroup
   }
 
   /**
-   * Fuegt eine Tabelle zur Group hinzu.
+   * Fuegt ein generisches GUI-Element hinzu.
    * @param table anzuzeigende Tabelle.
    */
-  public void addTable(TablePart table)
+  public void addPart(Part part)
   {
     try {
       final GridData grid = new GridData(GridData.FILL_HORIZONTAL);
@@ -149,7 +149,7 @@ public class LabelGroup
       layout.marginWidth = 0;
       comp.setLayout(layout);
 
-      table.paint(comp);
+      part.paint(comp);
     }
     catch (RemoteException e)
     {
@@ -224,6 +224,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.9  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.8  2004/06/30 20:58:40  willuhn
  * *** empty log message ***
  *

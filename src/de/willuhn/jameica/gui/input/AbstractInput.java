@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/06/14 22:05:06 $
+ * $Revision: 1.7 $
+ * $Date: 2004/07/09 00:12:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ import de.willuhn.util.I18N;
  * Basisklasse fuer Eingabefelder.
  * @author willuhn
  */
-public abstract class AbstractInput
+public abstract class AbstractInput implements Input
 {
 
 	I18N i18n;
@@ -52,28 +52,6 @@ public abstract class AbstractInput
 	}
 
   /**
-   * Liefert den Wert des Eingabefelds.
-   * @return Wert des Feldes.
-   */
-  public abstract Object getValue();
-
-  /**
-   * Schreibt einen neuen Wert in das Eingabefeld.
-   * @param value der neu anzuzeigende Wert.
-   */
-  public abstract void setValue(Object value);
-
-  /**
-   * Liefert das eigentliche Eingabecontrol. Es muss von jeder
-   * abgeleiteten Klasse implementiert werden und das Eingabe-Feld
-   * zurueckliefern. Da der Implementierer das Composite benoetigt,
-   * in dem das Control positioniert werden soll, kann er sich
-   * der Methode getParent() in dieser Klasse bedienen.
-   * @return das zu zeichnende Control.
-   */
-  public abstract Control getControl();
-
-  /**
    * Liefert das Composite, in dem das Control gemalt werden soll.
    * @return das Composite, in dem das Control platziert wird.
    */
@@ -82,12 +60,8 @@ public abstract class AbstractInput
     return this.parent;
   }
 
-	/**
-	 * Fuegt dem Eingabe-Feld einen Listener hinzu, der bei jedem Focus-Wechsel ausgeloest wird.
-	 * Besteht das Eingabe-Feld aus mehreren Teilen (z.Bsp. bei SearchInput aus Eingabe-Feld
-	 * + Knopf dahinter) dann wird der Listener bei Focus-Wechsel jedes dieser
-	 * Teile ausgeloest.
-   * @param l zu registrierender Listener.
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#addListener(org.eclipse.swt.widgets.Listener)
    */
   public final void addListener(Listener l)
 	{
@@ -95,13 +69,7 @@ public abstract class AbstractInput
 	}
 
   /**
-   * Fuegt hinter das Eingabefeld noch einen Kommentar.
-   * Existiert der Kommentar bereits, wird er gegen den neuen ersetzt.
-   * Hinweis: Wird die Funktion nicht aufgerufen, bevor das Eingabe-Feld
-   * gemalt wird, dann wird es auch nicht angezeigt. Denn vorm Malen
-   * muss bekannt sein, ob es angezeigt werden soll, damit der Platz
-   * dafuer reserviert werden kann.
-   * @param comment Kommentar.
+   * @see de.willuhn.jameica.gui.input.Input#setComment(java.lang.String)
    */
   public final void setComment(String comment)
   {
@@ -114,9 +82,7 @@ public abstract class AbstractInput
   }
 
   /**
-   * Positioniert und malt das Eingabefeld im uebergebenen Composite.
-   * Es wird dabei mit einer vorgegebenen Standard-Breite gemalt.
-   * @param parent Das Composite, in dem das Eingabefeld gemalt werden soll.
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public final void paint(Composite parent)
   {
@@ -186,25 +152,13 @@ public abstract class AbstractInput
 			}
     }
   }
-
-  /**
-   * Gibt diesem Eingabefeld den Focus.
-   */
-  public abstract void focus();
-  
-  /**
-   * Deaktiviert das Eingabefeld.
-   */
-  public abstract void disable();
-  
-  /**
-   * Aktiviert das Eingabefeld.
-   */
-  public abstract void enable();
 }
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.7  2004/07/09 00:12:46  willuhn
+ * @C Redesign
+ *
  * Revision 1.6  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *

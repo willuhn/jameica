@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Attic/MultiLineLabelInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/06/14 22:05:06 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class MultiLineLabelInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
   public Control getControl()
   {
@@ -59,7 +59,7 @@ public class MultiLineLabelInput extends AbstractInput
 
   /**
    * Liefert immer <code>null</code>.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
   {
@@ -67,7 +67,7 @@ public class MultiLineLabelInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.Input#focus()
    */
   public void focus()
   {
@@ -75,7 +75,7 @@ public class MultiLineLabelInput extends AbstractInput
 
   /**
    * Erwartet ein Objekt des Typs <code>java.lang.String</code>.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -90,14 +90,14 @@ public class MultiLineLabelInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.Input#disable()
    */
   public void disable()
   {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.Input#enable()
    */
   public void enable()
   {
@@ -108,6 +108,9 @@ public class MultiLineLabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: MultiLineLabelInput.java,v $
+ * Revision 1.2  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.1  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *

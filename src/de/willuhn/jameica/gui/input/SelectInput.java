@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/06/30 20:58:40 $
+ * $Revision: 1.9 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,7 +71,7 @@ public class SelectInput extends AbstractInput
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
   public Control getControl()
   {
@@ -110,11 +110,22 @@ public class SelectInput extends AbstractInput
   /**
    * Liefert das ausgewaehlte GenericObject.
    * Folglich kann der Rueckgabewert direkt nach GenericObject gecastet werden.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
   {
-    return values.get(combo.getText());
+    Object o = values.get(combo.getText());
+    if (o instanceof StringObject)
+    {
+    	try {
+				return ((StringObject)o).getAttribute(null);
+    	}
+    	catch (RemoteException e)
+    	{
+    		Logger.error("unable to read from select box",e);
+    	}
+    }
+    return o;
   }
 
 	/**
@@ -127,7 +138,7 @@ public class SelectInput extends AbstractInput
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.Input#focus()
    */
   public void focus()
   {
@@ -136,7 +147,7 @@ public class SelectInput extends AbstractInput
 
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.Input#disable()
    */
   public void disable()
   {
@@ -146,7 +157,7 @@ public class SelectInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.Input#enable()
    */
   public void enable()
   {
@@ -155,7 +166,7 @@ public class SelectInput extends AbstractInput
 
   /**
    * Die Funktion macht nichts.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object o)
   {
@@ -217,6 +228,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.9  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.8  2004/06/30 20:58:40  willuhn
  * *** empty log message ***
  *

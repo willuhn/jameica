@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.51 $
- * $Date: 2004/07/04 17:07:20 $
+ * $Revision: 1.52 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -315,6 +315,15 @@ public class GUI
 	}
 
 	/**
+	 * Liefert die aktuelle View.
+   * @return aktuelle View.
+   */
+  public static AbstractView getCurrentView()
+	{
+		return gui.currentView;
+	}
+
+	/**
 	 * Zeigt die View im angegebenen Composite an.
 	 * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
 	 * @param o das Fachobjekt.
@@ -389,9 +398,14 @@ public class GUI
 					catch (Exception e)
 					{
 						getStatusBar().setErrorText("Fehler beim Anzeigen des Dialogs.");
-						Logger.error("error while loading view " + className,
-								e);
+						Logger.error("error while loading view " + className,e);
 						GUI.startView(ErrorView.class.getName(), e);
+					}
+					catch (Throwable t)
+					{
+						getStatusBar().setErrorText("Fataler Fehler beim Anzeigen des Dialogs.");
+						Logger.error("error while loading view " + className,t);
+						GUI.startView(FatalErrorView.class.getName(), t);
 					}
 
 					// View aktualisieren
@@ -607,10 +621,10 @@ public class GUI
 			{
 				if (!display.readAndDispatch()) display.sleep();
 			}
-			catch (Exception e)
+			catch (Throwable t)
 			{
-				Logger.error("main loop crashed. showing error page", e);
-				GUI.startView(FatalErrorView.class.getName(), e);
+				Logger.error("main loop crashed. showing error page", t);
+				GUI.startView(FatalErrorView.class.getName(), t);
 			}
 		}
 		// save window position and size
@@ -669,6 +683,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.52  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.51  2004/07/04 17:07:20  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.24 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,8 +21,8 @@ import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
-import de.willuhn.jameica.gui.input.AbstractInput;
 import de.willuhn.jameica.gui.input.ColorInput;
+import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.style.StyleFactory;
@@ -40,16 +40,16 @@ public class SettingsControl extends AbstractControl
 {
 
 	private I18N i18n;
-	private AbstractInput colorWidgetBG;
-	private AbstractInput colorWidgetFG;
-	private AbstractInput colorBackground;
-	private AbstractInput colorComment;
-	private AbstractInput colorError;
-	private AbstractInput colorSuccess;
-	private AbstractInput colorLink;
-	private AbstractInput colorLinkActive;
+	private Input colorWidgetBG;
+	private Input colorWidgetFG;
+	private Input colorBackground;
+	private Input colorComment;
+	private Input colorError;
+	private Input colorSuccess;
+	private Input colorLink;
+	private Input colorLinkActive;
 	
-	private AbstractInput styleFactory;
+	private Input styleFactory;
 	
   /**
    * ct.
@@ -65,7 +65,7 @@ public class SettingsControl extends AbstractControl
 	 * Liefert ein Auswahl-Feld fuer die Style-Factory.
    * @return
    */
-  public AbstractInput getStyleFactory()
+  public Input getStyleFactory()
 	{
 		if (styleFactory != null)
 			return styleFactory;
@@ -92,7 +92,7 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
    * @return
    */
-  public AbstractInput getColorWidgetBG()
+  public Input getColorWidgetBG()
 	{
 		if (colorWidgetBG != null)
 			return colorWidgetBG;
@@ -104,7 +104,7 @@ public class SettingsControl extends AbstractControl
    * Auswahlfeld.
    * @return
    */
-  public AbstractInput getColorWidgetFG()
+  public Input getColorWidgetFG()
   {
   	if (colorWidgetFG != null)
   		return colorWidgetFG;
@@ -116,7 +116,7 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
 	 * @return
 	 */
-	public AbstractInput getColorComment()
+	public Input getColorComment()
 	{
 		if (colorComment != null)
 			return colorComment;
@@ -128,7 +128,7 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
 	 * @return
 	 */
-	public AbstractInput getColorBackground()
+	public Input getColorBackground()
 	{
 		if (colorBackground != null)
 			return colorBackground;
@@ -140,7 +140,7 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
 	 * @return
 	 */
-	public AbstractInput getColorError()
+	public Input getColorError()
 	{
 		if (colorError != null)
 			return colorError;
@@ -152,7 +152,7 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
 	 * @return
 	 */
-	public AbstractInput getColorSuccess()
+	public Input getColorSuccess()
 	{
 		if (colorSuccess != null)
 			return colorSuccess;
@@ -164,7 +164,7 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
 	 * @return
 	 */
-	public AbstractInput getColorLink()
+	public Input getColorLink()
 	{
 		if (colorLink != null)
 			return colorLink;
@@ -176,7 +176,7 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
 	 * @return
 	 */
-	public AbstractInput getColorLinkActive()
+	public Input getColorLinkActive()
 	{
 		if (colorLinkActive != null)
 			return colorLinkActive;
@@ -342,6 +342,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.24  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.23  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/06/17 22:07:12 $
+ * $Revision: 1.10 $
+ * $Date: 2004/07/09 00:12:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,15 +30,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.datasource.rmi.GenericIterator;
 import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
 
 /**
@@ -119,19 +120,21 @@ public class TablePart implements Part
       formatter.put(field,f);
   }
 
-  
+ 
   /**
-   * @see de.willuhn.jameica.gui.parts.Part#paint(org.eclipse.swt.widgets.Composite)
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent) throws RemoteException
   {
-
 		if (comp != null && !comp.isDisposed())
-			comp.dispose();
+			SWTUtil.disposeChilds(comp);
+		else
+		{
+			comp = new Composite(parent,SWT.NONE);
+			GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
+			comp.setLayoutData(gridData);
+		}
 
-    comp = new Composite(parent,SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
-    comp.setLayoutData(gridData);
     comp.setBackground(Color.BACKGROUND.getSWTColor());
 
 		GridLayout layout = new GridLayout();
@@ -151,6 +154,7 @@ public class TablePart implements Part
 
 		// Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
 		// Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
+		list.begin();
 		GenericObject test = list.hasNext() ? list.next() : null;
 
     for (int i=0;i<this.fields.size();++i)
@@ -185,8 +189,6 @@ public class TablePart implements Part
 			final TableItem item = new TableItem(table, SWT.NONE);
 			final GenericObject o = list.next();
 			item.setData(o);
-			if (tableFormatter != null)
-				tableFormatter.format(item);
 
 			for (int i=0;i<this.fields.size();++i)
 			{
@@ -198,11 +200,11 @@ public class TablePart implements Part
 					// Wert ist null. Also zeigen wir einen Leerstring an
 					item.setText(i,"");
 				}
-				else if (value instanceof DBObject)
+				else if (value instanceof GenericObject)
 				{
 					// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
-					DBObject dbo = (DBObject) value;
-					item.setText(i,dbo.getAttribute(dbo.getPrimaryAttribute()).toString());
+					GenericObject go = (GenericObject) value;
+					item.setText(i,go.getAttribute(go.getPrimaryAttribute()).toString());
 				}
 				else
 				{
@@ -217,6 +219,12 @@ public class TablePart implements Part
 						item.setText(i,value.toString());
 				}
 			}
+
+			// Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
+			// TableFormatter drueber
+			if (tableFormatter != null)
+				tableFormatter.format(item);
+
 		}
 
     // noch der Listener fuer den Doppelklick drauf.
@@ -353,6 +361,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.10  2004/07/09 00:12:46  willuhn
+ * @C Redesign
+ *
  * Revision 1.9  2004/06/17 22:07:12  willuhn
  * @C cleanup in tablePart and statusBar
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/06/30 20:58:40 $
+ * $Revision: 1.7 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,7 +56,7 @@ public class FileInput extends ButtonInput
 
   /**
    * Liefert ein Objekt des Typs java.lang.String.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
   {
@@ -65,7 +65,7 @@ public class FileInput extends ButtonInput
 
   /**
    * Erwartet ein Objekt des Typs java.lang.String.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -79,7 +79,7 @@ public class FileInput extends ButtonInput
     this.text.redraw();
   }
 
-	/**
+  /**
 	 * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
 	 */
   public Control getClientControl(Composite parent) {
@@ -92,6 +92,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.7  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.6  2004/06/30 20:58:40  willuhn
  * *** empty log message ***
  *

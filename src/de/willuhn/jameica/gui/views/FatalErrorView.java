@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.12 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,7 +46,7 @@ public class FatalErrorView extends AbstractView
 		try {
 			GUI.getView().setTitle(i18n.tr("Fehler"));
 	    
-	    Exception e = (Exception) getCurrentObject();
+	    Throwable t = (Throwable) getCurrentObject();
 	
 	    LabelGroup stacktrace = new LabelGroup(getParent(),"Unerwarteter Fehler");
 	    
@@ -54,23 +54,23 @@ public class FatalErrorView extends AbstractView
 	
 			String e1 = "";
 			String e2 = "";
-			if (e != null)
+			if (t != null)
 			{
 		    stacktrace.addHeadline("Stacktrace");
 		    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		    e.printStackTrace(new PrintStream(bos));
+		    t.printStackTrace(new PrintStream(bos));
 		    e1 = bos.toString();
         e1 = e1.replaceAll("\r\n","\n");
 		    stacktrace.addText(e1,false);
 		
 		    e2 = "";
-		    Throwable t = e.getCause();
-		    if (t != null)
+		    Throwable t2 = t.getCause();
+		    if (t2 != null)
 		    {
 		      stacktrace.addHeadline("caused by");
 		  
 		      bos = new ByteArrayOutputStream();
-		      t.printStackTrace(new PrintStream(bos));
+		      t2.printStackTrace(new PrintStream(bos));
 		      e2 += bos.toString();
 		      stacktrace.addText(e2,false);
 		    }
@@ -121,6 +121,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.12  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.11  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/06/17 00:05:26 $
+ * $Revision: 1.5 $
+ * $Date: 2004/07/09 00:12:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.rmi.GenericIterator;
 import de.willuhn.datasource.rmi.GenericObjectNode;
+import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.util.SWTUtil;
 
@@ -71,11 +72,8 @@ public class TreePart implements Part
     this.list = list;
   }
 
-
   /**
-   * Malt den Baum in das uebergebene Composite.
-   * @param parent das Composite.
-   * @throws RemoteException
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent) throws RemoteException
   {
@@ -279,6 +277,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.5  2004/07/09 00:12:46  willuhn
+ * @C Redesign
+ *
  * Revision 1.4  2004/06/17 00:05:26  willuhn
  * *** empty log message ***
  *

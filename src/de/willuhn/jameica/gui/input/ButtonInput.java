@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.5 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,7 @@ public abstract class ButtonInput extends AbstractInput
   public abstract Control getClientControl(Composite parent);
   
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
   public final Control getControl()
   {
@@ -123,7 +123,7 @@ public abstract class ButtonInput extends AbstractInput
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.Input#focus()
    */
   public final void focus()
   {
@@ -131,7 +131,7 @@ public abstract class ButtonInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.Input#disable()
    */
   public final void disable()
   {
@@ -140,7 +140,7 @@ public abstract class ButtonInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.Input#enable()
    */
   public final void enable()
   {
@@ -191,6 +191,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.5  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.4  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/06/30 20:58:40 $
+ * $Revision: 1.8 $
+ * $Date: 2004/07/09 00:12:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,7 +72,7 @@ public class FontInput extends ButtonInput
   /**
    * Liefert die aktuell ausgewaehlte Schriftart.
    * Rueckgabewert vom Typ <code>org.eclipse.swt.graphics.Font</code>.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
   {
@@ -81,7 +81,7 @@ public class FontInput extends ButtonInput
 
   /**
    * Erwartet ein Object vom Typ <code>org.eclipse.swt.graphics.Font</code>.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -98,6 +98,9 @@ public class FontInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.8  2004/07/09 00:12:46  willuhn
+ * @C Redesign
+ *
  * Revision 1.7  2004/06/30 20:58:40  willuhn
  * *** empty log message ***
  *

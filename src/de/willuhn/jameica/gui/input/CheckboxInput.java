@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.5 $
+ * $Date: 2004/07/09 00:12:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,7 @@ public class CheckboxInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
   public Control getControl()
   {
@@ -54,7 +54,7 @@ public class CheckboxInput extends AbstractInput
 
   /**
    * Liefert ein Objekt des Typs java.lang.Boolean.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
   {
@@ -63,7 +63,7 @@ public class CheckboxInput extends AbstractInput
 
   /**
    * Erwartet ein Objekt des Typs java.lang.Boolean.
-   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -78,7 +78,7 @@ public class CheckboxInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.Input#focus()
    */
   public void focus()
   {
@@ -86,7 +86,7 @@ public class CheckboxInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.Input#disable()
    */
   public void disable()
   {
@@ -96,7 +96,7 @@ public class CheckboxInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.Input#enable()
    */
   public void enable()
   {
@@ -109,6 +109,9 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.5  2004/07/09 00:12:47  willuhn
+ * @C Redesign
+ *
  * Revision 1.4  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory
