@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.13 $
+ * $Date: 2004/11/17 19:02:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -126,27 +126,29 @@ public class SplashScreen extends Thread implements ProgressMonitor
   
       while (!shell.isDisposed() && !closed)
       {
-        if (!display.readAndDispatch()) display.sleep();
+				if (!display.readAndDispatch()) display.sleep();
       }
   
       try
       {
-        Logger.debug("disposing splash screen shell");
+        Logger.debug("disposing splash screen");
         shell.dispose();
       }
       catch (Throwable t)
       {
-        Logger.error("error while disposing splash screen shell",t);
+        Logger.error("error while disposing splash screen",t);
       }
-      try
-      {
-        Logger.debug("disposing splash screen display");
-        display.dispose();
-      }
-      catch (Throwable t)
-      {
-        Logger.error("error while disposing splash screen display",t);
-      }
+
+			try
+			{
+				Logger.debug("disposing splash screen display");
+				display.dispose();
+			}
+			catch (Throwable t)
+			{
+				Logger.error("error while disposing splash screen",t);
+			}
+
     }
     finally
     {
@@ -263,6 +265,9 @@ public class SplashScreen extends Thread implements ProgressMonitor
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.13  2004/11/17 19:02:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/11/12 18:23:59 $
+ * $Revision: 1.12 $
+ * $Date: 2004/11/17 19:02:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -28,7 +27,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
@@ -66,36 +64,6 @@ public class SWTUtil {
 		{
 			Logger.error("error while disposing composite childs",t);
 		}
-	}
-
-	/**
-	 * Startet einen Timeout in genannter Hoehe. Ist dieses erreicht, wird der Listener ausgeloest.
-	 * Das ist zB sinnvoll, wenn angezeigter Fehlertext nach einer definierten Zeit automatisch
-	 * wieder verschwinden soll.
-   * @param millis Anzahl der Millisekunden, die gewartet wird.
-   * @param l der auszuloesende Listener.
-   */
-  public static void startGUITimeout(final long millis, final Listener l)
-	{
-		if (l == null || millis < 1)
-			return;
-
-		timer.schedule(new TimerTask() {
-      public void run() {
-      	GUI.getDisplay().asyncExec(new Runnable() {
-          public void run() {
-          	try
-          	{
-							l.handleEvent(null);
-          	}
-          	catch (Throwable t)
-          	{
-          		Logger.error("error while executing listener",t);
-          	}
-          }
-        });
-      }
-    },millis);
 	}
 
 	/**
@@ -174,6 +142,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.12  2004/11/17 19:02:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

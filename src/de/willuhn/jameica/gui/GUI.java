@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.65 $
- * $Date: 2004/11/15 18:09:32 $
+ * $Revision: 1.66 $
+ * $Date: 2004/11/17 19:02:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,13 +52,12 @@ import de.willuhn.util.ApplicationException;
  */
 public class GUI
 {
-
 	private static Settings settings = new Settings(GUI.class);
 
 	// singleton
 	private static GUI gui;
-		private final Display display = new Display();
-		private final Shell shell = new Shell();
+		private Display display;
+		private Shell shell;
 	
 		private Navigation navi;
 		private View view;
@@ -94,7 +93,6 @@ public class GUI
 	 */
 	private GUI()
 	{
-		// Nothing to do here
 	}
 
 	private static GridLayout createGrid(int numColumns, boolean makeEqualsWidth)
@@ -115,11 +113,11 @@ public class GUI
 		Logger.info("startup GUI");
 
 		// init shell
-		shell.setLayout(createGrid(2, false));
-		shell.setLayoutData(new GridData(GridData.FILL_BOTH));
-		shell.setImage(SWTUtil.getImage("globe.gif"));
+		getShell().setLayout(createGrid(2, false));
+		getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
+		getShell().setImage(SWTUtil.getImage("globe.gif"));
 
-		shell.setText("Jameica " + Application.getManifest().getVersion());
+		getShell().setText("Jameica " + Application.getManifest().getVersion());
 
 		StyleEngine.init();
 
@@ -134,16 +132,16 @@ public class GUI
 		width = settings.getInt("window.width", width);
 		height = settings.getInt("window.height", height);
 
-		if (x >= gui.display.getBounds().width || x < 0) x = 10;
-		if (y >= gui.display.getBounds().height || y < 0) y = 10;
+		if (x >= getDisplay().getBounds().width || x < 0) x = 10;
+		if (y >= getDisplay().getBounds().height || y < 0) y = 10;
 
-		shell.setBounds(x, y, width, height);
-		shell.addDisposeListener(new DisposeListener() {
+		getShell().setBounds(x, y, width, height);
+		getShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e)
 			{
 				// Deswegen muessen wir uns das selbst ausrechnen
-				Rectangle bounds = gui.shell.getBounds();
-				Rectangle area = gui.shell.getClientArea();
+				Rectangle bounds = getShell().getBounds();
+				Rectangle area = getShell().getClientArea();
 				settings.setAttribute("window.width",
 						(bounds.width + (bounds.width - area.width)));
 				settings.setAttribute("window.height",
@@ -158,14 +156,14 @@ public class GUI
 		Logger.info("adding menu");
 		try
 		{
-			menu = new Menu(shell);
+			menu = new Menu(getShell());
 		}
 		catch (Exception e)
 		{
 			Logger.error("error while loading menu, skipping",e);
 		}
 
-		SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
+		SashForm sash = new SashForm(getShell(), SWT.HORIZONTAL);
 		sash.setLayout(createGrid(1, false));
 		GridData sgd = new GridData(GridData.FILL_BOTH);
 		sgd.horizontalSpan = 2;
@@ -208,7 +206,7 @@ public class GUI
 		Logger.info("adding status panel");
 		addStatusBar(bottom);
 
-		shell.open();
+		getShell().open();
 
 		// so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
 		// hinzu.
@@ -606,6 +604,11 @@ public class GUI
 	 */
 	public static Shell getShell()
 	{
+		if (gui.shell != null)
+			return gui.shell;
+
+		gui.shell = new Shell(getDisplay());
+		
 		return gui.shell;
 	}
 
@@ -615,6 +618,14 @@ public class GUI
 	 */
 	public static Display getDisplay()
 	{
+		if (gui.display != null)
+			return gui.display;
+		
+		gui.display = Display.findDisplay(Thread.currentThread());
+
+		if (gui.display == null)
+			gui.display = new Display();
+
 		return gui.display;
 	}
 
@@ -640,7 +651,7 @@ public class GUI
     Logger.info("shutting down GUI");
 		try
 		{
-			gui.shell.dispose();
+			getShell().dispose();
 		}
 		catch (Exception e)
 		{
@@ -648,7 +659,7 @@ public class GUI
 		}
     try
     {
-      gui.display.dispose();
+      getDisplay().dispose();
     }
     catch (Exception e)
     {
@@ -660,6 +671,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.66  2004/11/17 19:02:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.65  2004/11/15 18:09:32  willuhn
  * *** empty log message ***
  *

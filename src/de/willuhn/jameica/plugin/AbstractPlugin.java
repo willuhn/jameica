@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/10/11 15:39:21 $
+ * $Revision: 1.5 $
+ * $Date: 2004/11/17 19:02:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -80,6 +80,8 @@ public abstract class AbstractPlugin
 	 * Andernfalls wird der Text der geworfenen Exception dem Benutzer auf der
 	 * Start-Seite von Jameica angezeigt. Von daher empfiehlt es sich, verstaendliche
 	 * Formulierungen fuer ggf aufgetretene Fehler zu verwenden.
+	 * Hinweis: Diese Funktion wird von Jameica <b>vor</b> dem Initialisieren
+	 * der Services aufgerufen.
    * @throws ApplicationException muss geworfen werden, wenn das Plugin nicht aktiviert werden soll.
 	 */
 	public abstract void init() throws ApplicationException;
@@ -92,6 +94,8 @@ public abstract class AbstractPlugin
 	 * Andernfalls wird der Text der geworfenen Exception dem Benutzer auf der
 	 * Start-Seite von Jameica angezeigt. Von daher empfiehlt es sich, verstaendliche
 	 * Formulierungen fuer ggf aufgetretene Fehler zu verwenden.
+	 * Hinweis: Diese Funktion wird von Jameica <b>vor</b> dem Initialisieren
+	 * der Services aufgerufen.
    * @throws ApplicationException muss geworfen werden, wenn die Installation fehlschlug und das Plugin nicht aktiviert werden soll.
 	 */
 	public abstract void install() throws ApplicationException;
@@ -104,6 +108,8 @@ public abstract class AbstractPlugin
 	 * Andernfalls wird der Text der geworfenen Exception dem Benutzer auf der
 	 * Start-Seite von Jameica angezeigt. Von daher empfiehlt es sich, verstaendliche
 	 * Formulierungen fuer ggf aufgetretene Fehler zu verwenden.
+	 * Hinweis: Diese Funktion wird von Jameica <b>vor</b> dem Initialisieren
+	 * der Services aufgerufen.
 	 * @param oldVersion Version, die vorher installiert war.
    * @throws ApplicationException muss geworfen werden, wenn das Update fehlschlug und das Plugin nicht aktiviert werden soll.
 	 */
@@ -150,6 +156,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.5  2004/11/17 19:02:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/10/11 15:39:21  willuhn
  * *** empty log message ***
  *

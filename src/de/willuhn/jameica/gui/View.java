@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.26 $
- * $Date: 2004/11/10 16:19:19 $
+ * $Revision: 1.27 $
+ * $Date: 2004/11/17 19:02:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,9 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
@@ -220,10 +218,11 @@ public class View implements Part
 				lastClick = currentClick;
       }
     });
-    SWTUtil.startGUITimeout(10000l,new Listener() {
-      public void handleEvent(Event event) {
-
-				if (currentClick == lastClick) // nur entfernen, wenn wir der letzte Klick waren
+    GUI.getDisplay().timerExec(10000,new Runnable()
+    {
+      public void run()
+      {
+				if (currentClick == lastClick && !messages.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
 					messages.setText("");
       }
     });
@@ -261,6 +260,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.27  2004/11/17 19:02:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.26  2004/11/10 16:19:19  willuhn
  * *** empty log message ***
  *

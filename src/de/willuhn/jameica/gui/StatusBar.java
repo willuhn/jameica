@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.35 $
- * $Date: 2004/11/15 00:38:20 $
+ * $Revision: 1.36 $
+ * $Date: 2004/11/17 19:02:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 
 import de.willuhn.datasource.GenericIterator;
@@ -33,7 +31,6 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.History;
@@ -265,10 +262,12 @@ public class StatusBar {
 				lastClick = currentClick;
       }
     });
-    SWTUtil.startGUITimeout(10000l,new Listener() {
-      public void handleEvent(Event event) {
-				if (currentClick == lastClick) // nur entfernen, wenn wir der letzte Klick waren
-	        actionText.setText("");
+    GUI.getDisplay().timerExec(10000,new Runnable()
+    {
+      public void run()
+      {
+				if (currentClick == lastClick && !actionText.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
+					actionText.setText("");
       }
     });
   }
@@ -358,6 +357,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.36  2004/11/17 19:02:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.35  2004/11/15 00:38:20  willuhn
  * *** empty log message ***
  *
