@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/05/09 17:40:07 $
+ * $Revision: 1.6 $
+ * $Date: 2004/05/11 23:32:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,7 +49,7 @@ import de.willuhn.util.I18N;
  */
 public class TablePart implements Part
 {
-
+	//TODO: Sortierung!
   private DBIterator list;
   private AbstractControl controller;
   private ArrayList fields = new ArrayList();
@@ -435,6 +435,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.6  2004/05/11 23:32:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/05/09 17:40:07  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/11 23:32:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class LabelInput extends AbstractInput
   {
     label = new Label(getParent(),SWT.WRAP);
 		label.setBackground(Style.COLOR_BG);
-    label.setText(value);
+    label.setText(value == null ? "" : value);
     return label;
 
   }
@@ -101,6 +101,9 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.4  2004/05/11 23:32:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

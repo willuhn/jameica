@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/04/29 19:15:11 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/11 23:32:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -203,8 +203,9 @@ public class DialogInput extends AbstractInput
   {
     if (value == null)
       return;
-    this.text.setText(value.toString());
-    this.text.redraw();
+    this.value = value.toString();
+    if (this.text != null && !this.text.isDisposed())
+	    this.text.setText(value.toString());
   }
 
   /**
@@ -276,6 +277,9 @@ public class DialogInput extends AbstractInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.4  2004/05/11 23:32:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/04/29 19:15:11  willuhn
  * *** empty log message ***
  *

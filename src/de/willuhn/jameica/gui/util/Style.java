@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/04/26 23:40:26 $
+ * $Revision: 1.19 $
+ * $Date: 2004/05/11 23:32:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,8 @@ import de.willuhn.jameica.gui.GUI;
 public class Style
 {
 
+	// TODO: Factory zum Erzeugen der Widgets
+	// TODO: Farben konfigurierbar
   private static Map imagecache = new HashMap();
   private static FormToolkit toolkit = null;
 
@@ -182,6 +184,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.19  2004/05/11 23:32:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/04/26 23:40:26  willuhn
  * *** empty log message ***
  *
