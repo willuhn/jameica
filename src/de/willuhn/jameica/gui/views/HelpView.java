@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.2 $
+ * $Date: 2004/03/04 00:26:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -92,11 +92,18 @@ public class HelpView {
 				///////////////////////////////
 	
 			///////////////////////////////
+			// Separator
+			Label sep = new Label(myParent,SWT.SEPARATOR | SWT.HORIZONTAL);
+			sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			//
+			///////////////////////////////
+
+			///////////////////////////////
 			// Der eigentliche Container fuer den Text.
 			container = new ScrolledComposite(myParent,SWT.V_SCROLL | SWT.NONE);
 			container.setBackground(Style.COLOR_BG);
-			container.setLayout(new GridLayout());
 			container.setLayoutData(new GridData(GridData.FILL_BOTH));
+			container.setLayout(new GridLayout());
 
 			text = new StyledText(container,SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
 			text.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -124,7 +131,8 @@ public class HelpView {
 
 	private void refresh()
 	{
-		text.setSize(text.computeSize(text.getParent().getClientArea().width, SWT.DEFAULT));
+		text.setSize(text.computeSize(text.getParent().getClientArea().width,SWT.DEFAULT));
+
 	}
 
 	/**
@@ -169,6 +177,9 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.2  2004/03/04 00:26:34  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring
