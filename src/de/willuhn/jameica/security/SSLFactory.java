@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/03/03 23:47:51 $
+ * $Revision: 1.8 $
+ * $Date: 2005/03/15 01:35:58 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -40,7 +40,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
-import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 /**
@@ -82,8 +81,8 @@ public class SSLFactory
 		Logger.info("init ssl factory");
     Application.getCallback().getStartupMonitor().setStatusText("init ssl factory");
 
-    if (Logger.getLevel().getValue() <= Level.DEBUG.getValue())
-      System.setProperty("javax.net.debug","ssl hanshake");
+//    if (Logger.getLevel().getValue() <= Level.DEBUG.getValue())
+//      System.setProperty("javax.net.debug","ssl hanshake");
 
 		File keyStoreFile = getKeyStoreFile();
 		if (keyStoreFile.exists() && keyStoreFile.canRead())
@@ -336,10 +335,10 @@ public class SSLFactory
 			return sslContext;
 
 		Logger.info("init ssl context");
-		this.sslContext = SSLContext.getInstance("TLS",BouncyCastleProvider.PROVIDER_NAME);
+		this.sslContext = SSLContext.getInstance("TLS");
 
 		Logger.info("init key manager [using algorithm: " + KeyManagerFactory.getDefaultAlgorithm() + "]");
-		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm(),BouncyCastleProvider.PROVIDER_NAME);
+		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 		keyManagerFactory.init(this.getKeyStore(),this.callback.getPassword().toCharArray());
 
 		// Wir benutzen unseren eignen TrustManager
@@ -367,6 +366,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.8  2005/03/15 01:35:58  web0
+ * @B SSL fixes
+ *
  * Revision 1.7  2005/03/03 23:47:51  web0
  * @B Bugzilla http://www.willuhn.de/bugzilla/show_bug.cgi?id=17
  *
