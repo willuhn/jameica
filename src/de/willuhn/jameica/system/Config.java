@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.4 $
+ * $Date: 2004/08/11 00:39:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ import de.willuhn.util.Logger;
  * Liest die System-Konfiguration aus config.xml. 
  * @author willuhn
  */
-public class Config
+public final class Config
 {
 
   /**
@@ -370,6 +370,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.4  2004/08/11 00:39:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

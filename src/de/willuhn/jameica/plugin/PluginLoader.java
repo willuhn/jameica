@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/25 17:15:20 $
+ * $Revision: 1.3 $
+ * $Date: 2004/08/11 00:39:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,7 @@ import de.willuhn.util.Logger;
  * Kontrolliert alle installierten Plugins.
  * @author willuhn
  */
-public class PluginLoader
+public final class PluginLoader
 {
 
   // Liste mit allen gefundenen Plugins.
@@ -536,6 +536,9 @@ public class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.3  2004/08/11 00:39:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/07/25 17:15:20  willuhn
  * @C PluginLoader is no longer static
  *

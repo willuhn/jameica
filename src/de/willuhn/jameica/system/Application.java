@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/08/09 22:24:16 $
+ * $Revision: 1.6 $
+ * $Date: 2004/08/11 00:39:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.plugin.PluginLoader;
+import de.willuhn.jameica.util.*;
 import de.willuhn.util.I18N;
 import de.willuhn.util.JarInfo;
 import de.willuhn.util.Lock;
@@ -43,7 +44,7 @@ import de.willuhn.util.MultipleClassLoader;
  * initialsiert, startet und beendet diese.
  * @author willuhn
  */
-public class Application {
+public final class Application {
 
 	public final static int MODE_STANDALONE		= 0;
 	public final static int MODE_SERVER				= 1;
@@ -413,13 +414,18 @@ public class Application {
 			Logger.warn("background task is null, skipping");
 			return;
 		}
-		task.start();
+		Thread t = new Thread(task);
+		t.setName("[Jameica Backgroundtask] " + task.getClass().getName());
+		t.start();
 	}
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.6  2004/08/11 00:39:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/08/09 22:24:16  willuhn
  * *** empty log message ***
  *

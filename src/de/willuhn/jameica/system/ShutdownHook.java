@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/ShutdownHook.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/08/11 00:39:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,7 @@ import de.willuhn.util.Logger;
  * unter allen Umstaenden sicher zu beenden.
  * @author willuhn
  */
-public class ShutdownHook extends Thread {
+public final class ShutdownHook extends Thread {
 
 	/**
    * Diese Methode wird beim Beenden der JVM aufgerufen und beendet vorher
@@ -38,6 +38,9 @@ public class ShutdownHook extends Thread {
 
 /*********************************************************************
  * $Log: ShutdownHook.java,v $
+ * Revision 1.2  2004/08/11 00:39:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *

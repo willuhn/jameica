@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.10 $
+ * $Date: 2004/08/11 00:39:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,6 +51,7 @@ public class HelpView {
 		///////////////////////////////
 		// Eigenes Parent, damit wir ein GridLayout verwenden koennen
 		myParent = new Composite(parent,SWT.BORDER);
+		myParent.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
 		GridLayout myLayout = new GridLayout();
 		myLayout.horizontalSpacing = 0;
 		myLayout.verticalSpacing = 0;
@@ -125,6 +126,9 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.10  2004/08/11 00:39:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

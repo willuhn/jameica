@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Settings.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/21 23:54:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/08/11 00:39:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,7 @@ import de.willuhn.util.Logger;
  * Einstellungen nicht kuemmern, sondern holt sie sich hier. 
  * @author willuhn
  */
-public class Settings
+public final class Settings
 {
 
   private String className;
@@ -295,6 +295,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.3  2004/08/11 00:39:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/07/21 23:54:53  willuhn
  * @C massive Refactoring ;)
  *

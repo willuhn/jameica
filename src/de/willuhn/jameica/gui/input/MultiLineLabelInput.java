@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Attic/MultiLineLabelInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.3 $
+ * $Date: 2004/08/11 00:39:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,6 +47,7 @@ public class MultiLineLabelInput extends AbstractInput
   public Control getControl()
   {
   	Composite comp = new Composite(getParent(),SWT.NONE);
+  	comp.setBackground(Color.BACKGROUND.getSWTColor());
   	comp.setLayout(new GridLayout());
   	
     label = new Label(comp,SWT.WRAP);
@@ -108,6 +109,9 @@ public class MultiLineLabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: MultiLineLabelInput.java,v $
+ * Revision 1.3  2004/08/11 00:39:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *

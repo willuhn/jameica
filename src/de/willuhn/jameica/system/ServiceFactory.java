@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/25 17:15:20 $
+ * $Revision: 1.6 $
+ * $Date: 2004/08/11 00:39:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ import de.willuhn.util.Logger;
  * im Server-Mode gestartet, dann werden alle Services via RMI in Netz
  * zur Verfuegung gestellt. Andernfalls nur lokal.
  */
-public class ServiceFactory
+public final class ServiceFactory
 {
   
   private Hashtable bindings = new Hashtable();
@@ -252,6 +252,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.6  2004/08/11 00:39:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/07/25 17:15:20  willuhn
  * @C PluginLoader is no longer static
  *
