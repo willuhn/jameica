@@ -1,0 +1,159 @@
+/**********************************************************************
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/07/21 20:08:45 $
+ * $Author: willuhn $
+ * $Locker:  $
+ * $State: Exp $
+ *
+ * Copyright (c) by willuhn.webdesign
+ * All rights reserved
+ *
+ **********************************************************************/
+package de.willuhn.jameica.plugin;
+
+import java.io.File;
+
+import de.willuhn.datasource.db.EmbeddedDatabase;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
+
+/**
+ * Container, der zusaetzliche Informationen fuer das Plugin bereitstellt.
+ */
+public class PluginResources {
+
+	private AbstractPlugin plugin = null;
+	private EmbeddedDatabase db = null;
+	private I18N i18n = null;
+	private String workPath = null;
+	private String path = null;
+
+  /**
+   * ct.
+   * @param plugin Das Plugin-File oder Verzeichnis.
+   */
+  protected PluginResources(AbstractPlugin plugin)
+  {
+  	this.plugin = plugin;
+		this.i18n = new I18N("lang/messages", Application.getConfig().getLocale());
+  }
+
+	/**
+	 * Liefert das Language-Pack fuer das Plugin.
+   * @return Language-Pack.
+   */
+  public I18N getI18N()
+	{
+		return i18n;
+	}
+
+	/**
+	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
+	 * Bei entpackten Plugins wird das Verzeichnis direkt zurueck-
+	 * gegeben. Bei Plugins, die sich in Jars befinden, wird
+	 * das Verzeichnis geliefert, in dem das Jar liegt.
+	 * @return Verzeichnis, in dem sich das Plugin befindet.
+	 */
+	public String getPath()
+	{
+		if (path != null)
+			return path;	
+
+		// ist das Plugin ein File?
+		if (plugin.getFile().isFile())
+			path = plugin.getFile().getParentFile().getAbsolutePath();
+		else
+			path = plugin.getFile().getAbsolutePath();
+		return path;
+	}
+
+	/**
+	 * Liefert das Verzeichnis, in dem das Plugin seine Daten ablegen darf.
+	 * @return Verzeichnis, in dem das Plugin Daten speichern darf.
+	 */
+	public String getWorkPath()
+	{
+		if (workPath != null)
+			return workPath;
+
+		workPath = Application.getConfig().getDir();
+		File f = plugin.getFile();
+		
+		if (f.isFile())
+			workPath += "/" + f.getName().substring(0,f.getName().lastIndexOf('.')); // Datei-Endung abschneiden
+		else
+			workPath += "/" + f.getName();
+
+		f = new File(workPath);
+		if (!f.exists())
+		{
+			if (!f.mkdirs())
+			{
+				Logger.error("unable to create work dir " + workPath);
+				throw new RuntimeException("unable to create work dir " + workPath);
+			}
+		}
+		
+		return workPath;
+	}
+
+  /**
+	 * Liefert die embedded Datenbank des Plugins. Damit ist keine JDBC-Verbindung
+	 * oder ein DB-Hub gemeint, sondern ein Objekt, mit dem man das Plugin
+	 * eine Datenbank fuer sich erstellen und mit Tabellen fuellen kann.
+	 * @return die Embedded Datenbank des Plugins.
+   * @throws Exception Wenn die Datenbank nicht gelesen/angelegt werden konnte.
+	 */
+	public EmbeddedDatabase getDatabase() throws Exception
+	{
+		if (db != null)
+			return db;
+		db = new EmbeddedDatabase(getWorkPath() + "/db",plugin.getName(),plugin.getName());
+		db.setClassLoader(Application.getClassLoader());
+		return db;
+	}
+}
+
+
+/**********************************************************************
+ * $Log: PluginResources.java,v $
+ * Revision 1.1  2004/07/21 20:08:45  willuhn
+ * @C massive Refactoring ;)
+ *
+ * Revision 1.11  2004/06/30 20:58:39  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.10  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
+ * Revision 1.9  2004/04/22 23:47:11  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.8  2004/04/14 22:16:43  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.7  2004/04/13 23:15:23  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.6  2004/04/01 22:07:07  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.5  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.4  2004/03/29 23:20:49  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.3  2004/03/18 01:24:47  willuhn
+ * @C refactoring
+ *
+ * Revision 1.2  2004/03/03 22:27:11  willuhn
+ * @N help texts
+ * @C refactoring
+ *
+ * Revision 1.1  2004/02/25 23:11:57  willuhn
+ * *** empty log message ***
+ *
+ **********************************************************************/
