@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.15 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,6 +35,7 @@ public class View
 
 	private Composite parent;
 	private CLabel title;
+	private CLabel messages;
 	private Canvas panelBg;
 	
 
@@ -42,7 +43,7 @@ public class View
    * Erzeugt ein neues Content-Frame.
 	 * @param parent
    */
-  public View(Composite parent)
+  protected View(Composite parent)
 	{
     this.parent = parent;
 		init();
@@ -80,13 +81,19 @@ public class View
 
 		Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		messages = new CLabel(view,SWT.NONE);
+		messages.setFont(Style.FONT_H2);
+		messages.setBackground(Style.COLOR_BG);
+		messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 	}
 	
   /**
    * Leert die Anzeige.
    * Wird beim Wechsel von einem Dialog auf den naechsten aufgerufen.
    */
-  public void cleanContent()
+  protected void cleanContent()
 	{
 		if (content != null)
 			content.dispose();
@@ -101,6 +108,8 @@ public class View
 		l.marginHeight = 6;
 		l.marginWidth = 6;
 		content.setLayout(l);
+		messages.setText("");
+		messages.layout();
 	}
 
 	/**
@@ -113,10 +122,40 @@ public class View
 		panelBg.layout();
 	}
 
+	/**
+	 * Schreibt einen Fehlertext oben in die View.
+   * @param text anzuzeigender Text. 
+   */
+  public void setErrorText(final String text)
+	{
+		GUI.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				messages.setText(text);
+				messages.setForeground(Style.COLOR_ERROR);
+				messages.layout();
+			}
+		});
+	}
+
+	/**
+	 * Schreibt einen Erfolgstext oben in die View.
+	 * @param text anzuzeigender Text. 
+	 */
+	public void setSuccessText(final String text)
+	{
+		GUI.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				messages.setText(text);
+				messages.setForeground(Style.COLOR_SUCCESS);
+				messages.layout();
+			}
+		});
+	}
+
   /**
    * Aktualisiert die Anzeige.
    */
-  public void refreshContent()
+  protected void refreshContent()
 	{
 		view.layout();
 	}
@@ -125,7 +164,7 @@ public class View
    * Liefert das Composite, in das die anzuzeigenden Dialoge bitte ihre Controls reinmalen sollen.
    * @return Composite, in das der Dialog seine Elemente reinmalen soll.
    */
-  public Composite getContent()
+  protected Composite getContent()
 	{
 		return content;
 	}
@@ -135,6 +174,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.15  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.14  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

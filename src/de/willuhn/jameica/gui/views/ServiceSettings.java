@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ServiceSettings.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,7 +35,7 @@ public class ServiceSettings extends AbstractView
 		
 		I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
 
-		GUI.setTitleText(i18n.tr("Eigenschaften des Services") + " " + control.getServiceData());
+		GUI.getView().setTitle(i18n.tr("Eigenschaften des Services") + " " + control.getServiceData());
 
   }
 
@@ -51,6 +51,9 @@ public class ServiceSettings extends AbstractView
 
 /**********************************************************************
  * $Log: ServiceSettings.java,v $
+ * Revision 1.8  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.7  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/ServiceSettingsControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/03/03 22:27:11 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class ServiceSettingsControl extends AbstractControl {
 		catch (RemoteException e)
 		{
 			Application.getLog().error("unable to read service data",e);
-			GUI.setActionText(PluginLoader.getPlugin(Jameica.class).getResources().getI18N().tr("Fehler beim Lesen des Services."));
+			GUI.getStatusBar().setErrorText(PluginLoader.getPlugin(Jameica.class).getResources().getI18N().tr("Fehler beim Lesen des Services."));
 		}
   }
 
@@ -102,6 +102,9 @@ public class ServiceSettingsControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: ServiceSettingsControl.java,v $
+ * Revision 1.4  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.3  2004/03/03 22:27:11  willuhn
  * @N help texts
  * @C refactoring

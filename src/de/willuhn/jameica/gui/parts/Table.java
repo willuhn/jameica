@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/03/18 01:24:47 $
+ * $Revision: 1.11 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,6 @@ import de.willuhn.util.I18N;
 
 /**
  * Erzeugt eine Standard-Tabelle.
- * TODO Spaltenbreiten und Sortierung beim Verlassen speichern
  * @author willuhn
  */
 public class Table
@@ -338,8 +337,8 @@ public class Table
 					for (int r=0;r<table.getColumnCount();++r)
 					{
 						item.setText(r,items[s].getText(r));
-						// TODO: Hier werden die Events und data Objekte vergessen
 					}
+					item.setData(items[s].getData());
 					items[s].dispose();
 					break;
 				}
@@ -351,6 +350,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.11  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.10  2004/03/18 01:24:47  willuhn
  * @C refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.11 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -228,7 +228,6 @@ public abstract class AbstractDialog
   public final Object open() throws Exception
   {
 		try {
-			// TODO: Das in GUI.syncExec ausfuehren
 			if (parent.isDisposed()) init(); // Dialog wurde nochmal geoeffnet
 			shell.setText(titleText == null ? "" : titleText);
 			title.setText(titleText == null ? "" : titleText);
@@ -246,7 +245,7 @@ public abstract class AbstractDialog
         }
       });
 
-			if (ex.getCause() != null) // TODO: Das muesste noch schoener werden ;)
+			if (ex.getCause() != null) // Das hier eigentlich nur, um an die Exception zu kommen ;)
 				throw (Exception) ex.getCause();
 
 			shell.pack();
@@ -298,6 +297,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.11  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.10  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

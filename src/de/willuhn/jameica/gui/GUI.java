@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.31 $
- * $Date: 2004/03/18 01:24:47 $
+ * $Revision: 1.32 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -184,7 +184,7 @@ public class GUI
       appendNavigation(entry);
     }
 
-		GUI.setActionText(jameica.getResources().getI18N().tr("startup finished"));
+		getStatusBar().setStatusText(jameica.getResources().getI18N().tr("startup finished"));
   } 
   
 
@@ -360,7 +360,7 @@ public class GUI
 					}
 					catch (Exception e)
 					{
-						setActionText("Fehler beim Anzeigen des Dialogs.");
+						getStatusBar().setErrorText("Fehler beim Anzeigen des Dialogs.");
 						Application.getLog().error("error while loading view " + className,e);
 						GUI.startView(ErrorView.class.getName(),e);
 					}
@@ -410,41 +410,24 @@ public class GUI
 		gui.help.setText(new InputStreamReader(is));
 	}
 
-	/**
-	 * Setzt den aktuellen Dialog-Titel.
-   * @param text anzuzeigender Titel.
+  /**
+   * Liefert die View-Komponente von Jameica.
+   * Das ist quasi der Content-Bereich.
+   * @return die View.
    */
-  public static void setTitleText(String text)
+  public static View getView()
 	{
-		gui.view.setTitle(text);
+		return gui.view;
 	}
 
   /**
-   * Setzt den uebergebenen String als aktuellen Statustext in der Anwendung (links unten).
-   * @param status String mit dem anzuzeigenden Status-Text.
+   * Liefert die StatusBar.
+   * @return StatusBar.
    */
-  public static void setStatusText(String status)
+  public static StatusBar getStatusBar()
   {
-    gui.statusBar.setStatusText(status);
+    return gui.statusBar;
   }
-
-  /**
-   * Setzt den uebergebenen String als aktuellen Statustext in der Anwendung (rechts unten).
-   * @param status String mit dem anzuzeigenden Status-Text.
-   */
-  public static void setActionText(String status)
-  {
-    gui.statusBar.setActionText(status);
-  }
-
-	/**
-	 * Setzt den uebergebenen String als aktuellen Fehlertext in der Anwendung (rechts unten).
-	 * @param status String mit dem anzuzeigenden Status-Text.
-	 */
-	public static void setErrorText(String status)
-	{
-		gui.statusBar.setErrorText(status);
-	}
 
 	/**
 	 * Zeigt den uebergebenen Hilfetext an.
@@ -520,7 +503,7 @@ public class GUI
 	public static void startAsync(final Runnable job)
 	{
 
-		startProgress();
+		getStatusBar().startProgress();
 
 		Runnable r = new Runnable() {
       public void run() {
@@ -535,7 +518,7 @@ public class GUI
 							// Wir wollen nicht, dass unbefugter Zugriff auf die GUI stattfindet
 							Application.getLog().error(e.getLocalizedMessage(),e);
 						}
-						stopProgress();
+						getStatusBar().stopProgress();
 					}
 				};
 				t.start();
@@ -546,22 +529,6 @@ public class GUI
       }
     };
 		getDisplay().asyncExec(r);
-	}
-
-	/**
-   * Startet den Progress-Bar in der Statusleiste.
-   */
-  public static void startProgress()
-	{
-		gui.statusBar.startProgress();
-	}
-
-	/**
-	 * Beendet den Progress-Bar in der Statusleiste.
-	 */
-	public static void stopProgress()
-	{
-		gui.statusBar.stopProgress();
 	}
 
   /**
@@ -665,6 +632,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.32  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.31  2004/03/18 01:24:47  willuhn
  * @C refactoring
  *

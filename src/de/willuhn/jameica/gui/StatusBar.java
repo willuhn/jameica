@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/03/05 00:40:46 $
+ * $Revision: 1.16 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -135,7 +135,7 @@ public class StatusBar {
 	/**
    * Schaltet den Progress-Balken ein.
    */
-  protected synchronized void startProgress()
+  public synchronized void startProgress()
 	{
 		Thread t = new Thread("progress")
 		{
@@ -150,7 +150,7 @@ public class StatusBar {
 	/**
 	 * Schaltet den Progress-Balken aus.
 	 */
-	protected synchronized void stopProgress()
+	public synchronized void stopProgress()
 	{
 		GUI.getDisplay().syncExec(new Runnable() {
       public void run() {
@@ -167,17 +167,21 @@ public class StatusBar {
    * Ersetzt den aktuellen Statustext links unten gegen den uebergebenen.
    * @param message anzuzeigender Text.
    */
-  protected void setStatusText(String message)
+  public void setStatusText(final String message)
 	{
-		statusText.setText(" " + (message == null ? "" : message));
-    status.layout();
+		GUI.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				statusText.setText(" " + (message == null ? "" : message));
+		    status.layout();
+			}
+		});
 	}
 
   /**
    * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
    * @param message anzuzeigender Text.
    */
-  protected void setActionText(final String message)
+  public void setSuccessText(final String message)
   {
 		if (message == null)
 			return;
@@ -190,6 +194,7 @@ public class StatusBar {
 				actionText.setForeground(Style.COLOR_SUCCESS);
 				actionText.setText(message);
 				status.layout();
+				GUI.getView().setSuccessText("");
       }
     });
   }
@@ -199,7 +204,7 @@ public class StatusBar {
 	 * Formatiert die Anzeige hierbei aber rot als Fehler.
 	 * @param message anzuzeigender Text.
 	 */
-	protected void setErrorText(final String message)
+	public void setErrorText(final String message)
 	{
 		if (message == null)
 			return;
@@ -212,6 +217,7 @@ public class StatusBar {
 				actionText.setForeground(Style.COLOR_ERROR);
 				actionText.setText(message);
 				status.layout();
+				GUI.getView().setSuccessText("");
 			}
 		});
 	}
@@ -250,6 +256,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.16  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.15  2004/03/05 00:40:46  willuhn
  * *** empty log message ***
  *

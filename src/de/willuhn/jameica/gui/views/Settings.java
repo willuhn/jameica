@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.13 $
+ * $Date: 2004/03/24 00:46:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,7 @@ public class Settings extends AbstractView
   {
 
 		final I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
-		GUI.setTitleText(i18n.tr("Einstellungen"));
+		GUI.getView().setTitle(i18n.tr("Einstellungen"));
 
 		final SettingsControl control = new SettingsControl(this);
 
@@ -95,6 +95,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.13  2004/03/24 00:46:02  willuhn
+ * @C refactoring
+ *
  * Revision 1.12  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/03/11 08:56:55 $
+ * $Revision: 1.9 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,7 +57,7 @@ public class SelectInput extends AbstractInput
     catch (RemoteException e)
     {
     	Application.getLog().error("error while reading list",e);
-      GUI.setActionText(i18n.tr("Fehler beim Lesen der Liste."));
+			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Liste."));
     }
     init(list);
   }
@@ -127,7 +127,7 @@ public class SelectInput extends AbstractInput
     }
     catch (RemoteException e)
     {
-      GUI.setActionText(i18n.tr("Fehler beim Lesen der Liste."));
+			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Liste."));
     }
     
   }
@@ -219,6 +219,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.9  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.8  2004/03/11 08:56:55  willuhn
  * @C some refactoring
  *

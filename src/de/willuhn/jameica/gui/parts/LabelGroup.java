@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/03/19 01:44:01 $
+ * $Revision: 1.10 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -161,7 +161,7 @@ public class LabelGroup
     }
     catch (RemoteException e)
     {
-      GUI.setActionText(i18n.tr("Fehler beim Lesen der Tabelle"));
+			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Tabelle"));
     }
   }
 
@@ -231,6 +231,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.10  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.9  2004/03/19 01:44:01  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.13 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -118,7 +118,7 @@ public class Navigation {
 
 		String action = (String) item.getData("action");
 		GUI.startView(action,null);
-		GUI.setStatusText((String) item.getData("name"));
+		GUI.getStatusBar().setStatusText((String) item.getData("name"));
 	}
 
 	/**
@@ -258,6 +258,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.13  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.12  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

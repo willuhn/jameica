@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/03/11 08:56:55 $
+ * $Revision: 1.9 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,6 +51,7 @@ public class SearchInput extends AbstractInput
   private Text text;
   private Button button;
   private String value;
+  private boolean enabled = true;
 
   private Object choosen;
 
@@ -104,6 +105,7 @@ public class SearchInput extends AbstractInput
 		text.setLayoutData(comboFD2);
 		text.setBackground(Style.COLOR_WHITE);
     text.setText((value == null ? "" : value));
+    text.setEnabled(enabled);
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
         text.setSelection(0, text.getText().length());
@@ -168,6 +170,9 @@ public class SearchInput extends AbstractInput
    */
   public void disable()
   {
+  	enabled = false;
+  	if (text == null)
+  		return;
     text.setEnabled(false);
   }
 
@@ -176,6 +181,9 @@ public class SearchInput extends AbstractInput
    */
   public void enable()
   {
+		enabled = true;
+		if (text == null)
+			return;
     text.setEnabled(true);
   }
 
@@ -183,6 +191,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.9  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.8  2004/03/11 08:56:55  willuhn
  * @C some refactoring
  *

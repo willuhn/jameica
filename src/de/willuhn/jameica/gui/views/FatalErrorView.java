@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/24 00:46:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class FatalErrorView extends AbstractView
   	final I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
 
 		try {
-			GUI.setTitleText(i18n.tr("Fehler"));
+			GUI.getView().setTitle(i18n.tr("Fehler"));
 	    
 	    Exception e = (Exception) getCurrentObject();
 	
@@ -122,6 +122,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.8  2004/03/24 00:46:02  willuhn
+ * @C refactoring
+ *
  * Revision 1.7  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

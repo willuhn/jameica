@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/03/11 08:56:56 $
+ * $Revision: 1.12 $
+ * $Date: 2004/03/24 00:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -121,12 +121,12 @@ public class SettingsControl extends AbstractControl
   	try
     {
       config.store();
-      GUI.setActionText(i18n.tr("Konfiguaration gespeichert."));
+			GUI.getStatusBar().setSuccessText(i18n.tr("Konfiguaration gespeichert."));
     }
     catch (Exception e)
     {
     	Application.getLog().error("error while writing config",e);
-    	GUI.setActionText(i18n.tr("Fehler beim Speichern der Konfiguration."));
+			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Speichern der Konfiguration."));
     }
   	
   }
@@ -154,12 +154,12 @@ public class SettingsControl extends AbstractControl
   	try {
 			Application.getConfig().restore();
 			GUI.startView(Settings.class.getName(),null);
-			GUI.setActionText(i18n.tr("letzte gespeicherte Konfiguaration wieder hergestellt."));
+			GUI.getStatusBar().setSuccessText(i18n.tr("letzte gespeicherte Konfiguaration wieder hergestellt."));
   	}
   	catch (Exception e)
   	{
   		Application.getLog().error("error while restoreing config",e);
-  		GUI.setActionText(i18n.tr("Fehler beim Wiederherstellen der Konfiguration"));
+			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Wiederherstellen der Konfiguration"));
   	}
   	
   }
@@ -169,6 +169,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.12  2004/03/24 00:46:03  willuhn
+ * @C refactoring
+ *
  * Revision 1.11  2004/03/11 08:56:56  willuhn
  * @C some refactoring
  *

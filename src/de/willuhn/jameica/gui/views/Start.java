@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.17 $
+ * $Date: 2004/03/24 00:46:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,7 +35,7 @@ public class Start extends AbstractView
   public void bind()
   {
   	I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
-		GUI.setTitleText(i18n.tr("Start"));
+		GUI.getView().setTitle(i18n.tr("Start"));
     
 		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
 		
@@ -64,6 +64,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.17  2004/03/24 00:46:02  willuhn
+ * @C refactoring
+ *
  * Revision 1.16  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *
