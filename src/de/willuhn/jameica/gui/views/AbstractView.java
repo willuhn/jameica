@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/10/23 21:50:06 $
+ * $Revision: 1.2 $
+ * $Date: 2003/10/23 22:36:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,14 +13,8 @@
 
 package de.willuhn.jameica.views;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-
-import de.willuhn.jameica.Application;
 
 public abstract class AbstractView
 {
@@ -31,18 +25,16 @@ public abstract class AbstractView
 
   public abstract void unbind();
 
-  public void setHeadline(String headline)
-	{
-		final Label label = new Label(getParent(), SWT.NONE);
-		FontData format = new FontData();
-		format.height = 8;
-		format.setName("Verdana");
-		format.setStyle(SWT.BOLD);
-		label.setFont(new Font(Application.display,format));
-		label.setForeground(new Color(Application.display,0,0,0));
-		label.setText(headline);
-	}
-	
+  protected void createMainGrid()
+  { 
+    GridLayout layout = new GridLayout();
+    layout.horizontalSpacing = 5;
+    layout.verticalSpacing   = 5;
+    layout.marginHeight      = 5;
+    layout.marginWidth       = 10;
+    parent.setLayout(layout);
+  }	
+  
   public Composite getParent()
 	{
 		return parent;
@@ -59,6 +51,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.2  2003/10/23 22:36:34  willuhn
+ * @N added Menu
+ *
  * Revision 1.1  2003/10/23 21:50:06  willuhn
  * initial checkin
  *

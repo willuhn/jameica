@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/10/23 21:49:46 $
+ * $Revision: 1.2 $
+ * $Date: 2003/10/23 22:36:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,9 +37,12 @@ public class Application {
 
 	// singleton
 	private static Application app;
+
 		private Navigation navi;
 	  private View view;
+    private Menu menu;
 		private StatusBar statusBar;
+
 		private AbstractView currentView;
     private Logger log;
     private Config config;
@@ -84,6 +87,9 @@ public class Application {
 		shell.setImage(Style.getImage("globe.gif"));
 
 		// add controls
+    Application.getLog().info("adding menu");
+    addMenu();
+
 		Application.getLog().info("adding navigation");
 		addNavigation();
 		Application.getLog().info("adding content view");
@@ -134,6 +140,9 @@ public class Application {
 		}
 	}
 
+  private void addMenu() {
+    menu = new Menu();
+  }
 	private void addNavigation() {
 		navi = new Navigation();
 	}
@@ -196,6 +205,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.2  2003/10/23 22:36:35  willuhn
+ * @N added Menu
+ *
  * Revision 1.1  2003/10/23 21:49:46  willuhn
  * initial checkin
  *
