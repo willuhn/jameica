@@ -2,8 +2,6 @@
 <classpath>
     <classpathentry kind="src" path="src"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry kind="src" path="/datasource"/>
-    <classpathentry kind="src" path="/util"/>
     <classpathentry exported="true" kind="lib"
         path="lib/mckoi/mckoidb.jar" sourcepath="/jameica/lib.src/mckoi/mckoidb.src.zip"/>
     <classpathentry kind="lib" path="lib/mysql/mysql-connector-java-3.0.8-stable-bin.jar"/>
@@ -17,5 +15,7 @@
     <classpathentry exported="true" kind="lib" path="lib/swt/jface.jar"/>
     <classpathentry exported="true" kind="lib"
         path="lib/swtcalendar/swtcalendar.jar" sourcepath="/jameica/lib.src/swtcalendar/swtcalendar.src.zip"/>
+    <classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
