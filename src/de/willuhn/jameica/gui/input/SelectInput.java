@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/04 23:05:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,15 +65,16 @@ public class SelectInput extends AbstractInput
   }
 
 	/**
-	 * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
-	 * @param list Liste mit den anzuzeigenden Objekten.
+	 * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+	 * @param list Liste mit den anzuzeigenden Objekten. Aus der Hashtable werden
+	 * die Keys angezeigt und die Values in <code>getValue()</code> zurueckgeliefert.
 	 * @param preselected Wert des vorausgewaehlten Feldes.
 	 */
-	public SelectInput(DBIterator list, String preselected)
+	public SelectInput(Hashtable list, String preselected)
 	{
 
 		this.preselected = preselected;
-		init(list);
+		this.values = list;
 	}
 
 	/**
@@ -233,6 +234,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.4  2004/05/04 23:05:16  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

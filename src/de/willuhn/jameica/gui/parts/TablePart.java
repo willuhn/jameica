@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/04 23:05:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -53,7 +54,7 @@ public class TablePart implements Part
   private AbstractControl controller;
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
-  private Enumeration list2;
+  private Hashtable list2;
   private I18N i18n = null;
   private TableFormatter tableFormatter = null;
   private ArrayList menus = new ArrayList();
@@ -89,7 +90,23 @@ public class TablePart implements Part
 	 */
 	public TablePart(Enumeration list, AbstractControl controller)
 	{
-		this.list2 = list;
+		while (list.hasMoreElements())
+		{
+			list2.put(list.nextElement(),null);
+		}
+		this.controller = controller;
+		init();
+	}
+
+	/**
+	 * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
+	 * @param list Liste mit Objekten, die angezeigt werden sollen.
+	 * Hierbei werden die Keys angezeigt und die Values bei Auswahl zurueckgeliefert.
+	 * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
+	 */
+	public TablePart(Hashtable list, AbstractControl controller)
+	{
+		list2 = list;
 		this.controller = controller;
 		init();
 	}
@@ -260,15 +277,18 @@ public class TablePart implements Part
 		}
 		else if (list2 != null)
 		{
-			while (list2.hasMoreElements())
+			Enumeration e = list2.keys();
+			while (e.hasMoreElements())
 			{
 				final TableItem item = new TableItem(table, SWT.NONE);
-				final Object o = list2.nextElement();
+				final Object o = e.nextElement();
 				if (o == null)
 					item.setText(0,"");
 				else
 					item.setText(0,o.toString());
-					item.setData(o.toString());
+
+				Object val = list2.get(o);
+				item.setData(val == null ? o.toString() : val);
 			}
 		}
 
@@ -411,6 +431,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.4  2004/05/04 23:05:16  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *
