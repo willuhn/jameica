@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/10/07 18:05:26 $
+ * $Revision: 1.5 $
+ * $Date: 2004/11/04 19:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,8 +32,6 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class ProgressBar implements ProgressMonitor, Part
 {
-	private static int BAR_MAXIMUM	= 300;
-
 	private int status	= BackgroundTask.STATUS_NONE;
 
 	private TextPart log																= null;
@@ -41,29 +39,27 @@ public class ProgressBar implements ProgressMonitor, Part
 	private org.eclipse.swt.widgets.ProgressBar bar			= null;
 	private Label barLabel															= null;
 
+  private int current = 0;
+
   /**
    * @see de.willuhn.jameica.util.ProgressMonitor#percentComplete(int)
    */
-  public void percentComplete(final int percent)
+  public void percentComplete(int percent)
   {
+    if (percent < 0)
+      percent = 0;
+    if (percent > 100)
+      percent = 100;
+    
+    current = percent;
+    
 		if (bar != null && !bar.isDisposed())
 		{
 			GUI.getDisplay().syncExec(new Runnable()
 			{
 				public void run()
 				{
-					if (percent < 0)
-					{
-						bar.setSelection(0);
-						return;
-					} 
-					if (percent > 100)
-					{
-						bar.setSelection(100);
-						return;
-					}
-
-					bar.setSelection(percent * (BAR_MAXIMUM / 100));
+  				bar.setSelection(current);
 				}
 			});
 		}
@@ -143,9 +139,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 		bar = new org.eclipse.swt.widgets.ProgressBar(this.parent, SWT.SMOOTH);
 		GridData g = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		g.widthHint = BAR_MAXIMUM;
+		g.widthHint = 100;
 		bar.setLayoutData(g);
-		bar.setMaximum(BAR_MAXIMUM);
+		bar.setMaximum(100);
 		bar.setSelection(0);
 
 		barLabel = new Label(this.parent,SWT.NONE);
@@ -169,11 +165,22 @@ public class ProgressBar implements ProgressMonitor, Part
 		log.setWordWrap(false);
 		log.paint(comp);
   }
+
+  /**
+   * @see de.willuhn.util.ProgressMonitor#percentComplete()
+   */
+  public int percentComplete()
+  {
+    return current;
+  }
 }
 
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.5  2004/11/04 19:29:22  willuhn
+ * @N TextAreaInput
+ *
  * Revision 1.4  2004/10/07 18:05:26  willuhn
  * *** empty log message ***
  *

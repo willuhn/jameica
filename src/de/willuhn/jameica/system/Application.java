@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/10/12 23:49:31 $
+ * $Revision: 1.16 $
+ * $Date: 2004/11/04 19:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 import de.willuhn.util.MultipleClassLoader;
+import de.willuhn.util.ProgressMonitor;
 
 /**
  * Basisklasse der Anwendung.
@@ -73,6 +74,8 @@ public final class Application {
 
     private I18N 								i18n;
 		private ArrayList 					welcomeMessages = new ArrayList();
+
+    private ProgressMonitor     splash;
     
   /**
    * Erzeugt eine neue Instanz der Anwendung.
@@ -143,7 +146,19 @@ public final class Application {
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-		splash("starting jameica");
+    if (!inServerMode())
+      app.splash = new SplashScreen();
+    else
+      app.splash = new ProgressMonitor()
+      {
+        public void percentComplete(int percent) {}
+        public int percentComplete() {return 0;}
+        public void setStatus(int status) {}
+        public void setStatusText(String text) {}
+        public void log(String msg) {}
+      };
+		
+    splash.setStatusText("starting jameica");
 
 		////////////////////////////////////////////////////////////////////////////
 		// init i18n
@@ -180,7 +195,7 @@ public final class Application {
 		// End Migration
 
 		// init plugins
-		splash("loading plugins");
+		splash.setStatusText("loading plugins");
 		try {
 			this.pluginLoader = new PluginLoader();
 			// Das Init muessen wir separat machen, damit ein Application.getPluginLoader()
@@ -193,7 +208,7 @@ public final class Application {
 			startupError(t);
 		}
 
-		splash("init services");
+		splash.setStatusText("init services");
 		try {
 			this.serviceFactory = new ServiceFactory();
 			// Siehe PluginLoader
@@ -207,9 +222,11 @@ public final class Application {
 		//
 		////////////////////////////////////////////////////////////////////////////
 
+    Application.getStartupMonitor().percentComplete(100);
+
     // close splash screen
     if (!inServerMode())
-      SplashScreen.shutDown();
+      app.splash.setStatus(0);
 
     // Jetzt checken wir noch, ob wir ueberhaupt Plugins haben
     if (!Application.getPluginLoader().getPluginContainers().hasNext())
@@ -273,25 +290,6 @@ public final class Application {
 	}
 
   /**
-   * Zeigt den Splash-Screen an und vergroessert den Fortschrittsbalken
-   * bei jedem erneuten Aufruf um ein weiteres Stueck.
-   * Wenn die Anwendung im Servermode laeuft, kehrt die Funktion
-   * tatenlos zurueck ohne den Splash-Screen anzuzeigen.
-   * @param text im Splashscreen anzuzeigender Text.
-   */
-  public static void splash(String text)
-  {
-    Logger.info(text);
-
-    if (inServerMode())
-      return;
-
-		SplashScreen.setText(text);
-    SplashScreen.add(10);
-  }
-
-
-  /**
    * Faehrt die gesamte Anwendung herunter.
    * Die Funktion ist synchronized, damit nicht mehrere gleichzeitig die Anwendung runterfahren ;).
    */
@@ -306,7 +304,7 @@ public final class Application {
     Logger.info("shutting down jameica");
 
     if (!inServerMode())
-      SplashScreen.shutDown();
+      app.splash.setStatus(0);
 
     GUI.shutDown();     
 		app.serviceFactory.shutDown();
@@ -393,6 +391,17 @@ public final class Application {
 		return app.i18n;
 	}
 
+  /**
+   * Liefert einen Progress-Monitor, der waehrend des Startvorgangs ueber den
+   * Start-Fortschritt informiert wird.
+   * Im GUI-Mode ist dies ein Splash-Screen.
+   * @return Progress-Monitor.
+   */
+  public static ProgressMonitor getStartupMonitor()
+  {
+    return app.splash;
+  }
+
 	/**
 	 * Speichert waehrend des Bootens einen Text.
 	 * Dieser wird dem Benutzer angezeigt, sowie die Anwendung mit dem Startvorgang fertig ist.
@@ -454,6 +463,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.16  2004/11/04 19:29:22  willuhn
+ * @N TextAreaInput
+ *
  * Revision 1.15  2004/10/12 23:49:31  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/08/31 18:57:23 $
+ * $Revision: 1.2 $
+ * $Date: 2004/11/04 19:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,7 +46,7 @@ public class SSLFactory
 	{
 
 		Logger.info("init ssl factory");
-		Application.splash("init ssl factory");
+		Application.getStartupMonitor().setStatusText("init ssl factory");
 
 		String cn = "jameica@"  + InetAddress.getLocalHost().getCanonicalHostName();
 
@@ -63,10 +63,12 @@ public class SSLFactory
 		Hashtable attributes = new Hashtable();
 		attributes.put(X509Name.CN,cn);
 
-		Application.splash("generating new ssl keys");
+    Application.getStartupMonitor().setStatusText("generating new ssl keys");
 		Logger.info("  generating rsa keypair");
 		KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
 		KeyPair keypair = kp.generateKeyPair();
+
+    Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
 
 		X509Name user = new X509Name(attributes);
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
@@ -81,6 +83,8 @@ public class SSLFactory
 
 		Logger.info("  generating x509 certificate");
 		X509Certificate cert = generator.generateX509Certificate(keypair.getPrivate());
+
+    Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
 
 		Logger.info("  storing x509 certificate: " + certFile.getAbsolutePath());
 		FileOutputStream certOut = new FileOutputStream(certFile);
@@ -102,6 +106,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.2  2004/11/04 19:29:22  willuhn
+ * @N TextAreaInput
+ *
  * Revision 1.1  2004/08/31 18:57:23  willuhn
  * *** empty log message ***
  *

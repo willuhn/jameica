@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/06/17 22:07:12 $
+ * $Revision: 1.5 $
+ * $Date: 2004/11/04 19:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,8 @@ package de.willuhn.jameica.gui.style;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
@@ -43,10 +45,33 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Text createText(Composite parent)
   {
-		Text text = new Text(parent,SWT.BORDER);
+		Text text = new Text(parent,SWT.BORDER | SWT.SINGLE);
 		text.setForeground(Color.WIDGET_FG.getSWTColor());
 		text.setBackground(Color.WIDGET_BG.getSWTColor());
 		return text;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createTextArea(org.eclipse.swt.widgets.Composite)
+   */
+  public Text createTextArea(Composite parent)
+  {
+    Composite myParent = new Composite(parent,SWT.NONE);
+    GridData gd = new GridData(GridData.FILL_BOTH);
+    gd.horizontalSpan = 2;
+    gd.heightHint = 130;
+    myParent.setLayoutData(gd);
+    FillLayout fl = new FillLayout();
+    fl.spacing = 0;
+    fl.marginHeight = 2;
+    fl.marginWidth = 1;
+    myParent.setLayout(fl);
+    
+    Text text = new Text(myParent,SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+    text.setSize(SWT.DEFAULT,130);
+    text.setForeground(Color.WIDGET_FG.getSWTColor());
+    text.setBackground(Color.WIDGET_BG.getSWTColor());
+    return text;
   }
 
   /**
@@ -74,12 +99,14 @@ public class StyleFactoryDefaultImpl implements StyleFactory
     return "Default-Look";
   }
 
-
 }
 
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
+ * Revision 1.5  2004/11/04 19:29:22  willuhn
+ * @N TextAreaInput
+ *
  * Revision 1.4  2004/06/17 22:07:12  willuhn
  * @C cleanup in tablePart and statusBar
  *

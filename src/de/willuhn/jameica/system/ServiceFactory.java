@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/10/11 15:39:21 $
+ * $Revision: 1.14 $
+ * $Date: 2004/11/04 19:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -84,6 +84,9 @@ public final class ServiceFactory
 				{
 					try 
 					{
+            Application.getStartupMonitor().setStatusText(manifest.getName() + ": init service " + serviceNames[i]);
+            Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
+
 						Logger.info("    init service " + serviceNames[i]);
 						service = plugin.getService(serviceNames[i]);
 						if (service == null)
@@ -114,6 +117,9 @@ public final class ServiceFactory
   {
   	if (!Application.inServerMode() || rmiStarted) return;
 
+    Application.getStartupMonitor().setStatusText("starting rmi registry");
+    Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 5);
+
     try {
       Logger.info("trying to start new RMI registry");
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
@@ -138,6 +144,10 @@ public final class ServiceFactory
   private void bind(AbstractPlugin plugin, String serviceName, Class service)
   	throws RemoteException
 	{
+    Application.getStartupMonitor().setStatusText("binding service " + serviceName);
+    Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 5);
+
+
 		String fullName = plugin.getClass().getName() + "." + serviceName;
 		Logger.info("      binding...");
 		if (Application.inServerMode() || Application.inStandaloneMode())
@@ -279,6 +289,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.14  2004/11/04 19:29:22  willuhn
+ * @N TextAreaInput
+ *
  * Revision 1.13  2004/10/11 15:39:21  willuhn
  * *** empty log message ***
  *

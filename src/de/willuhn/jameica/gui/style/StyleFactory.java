@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/17 22:07:12 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/04 19:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,13 @@ public interface StyleFactory
    */
   public Text createText(Composite parent);
 
+  /**
+   * Erzeugt ein mehrzeiliges Text-Feld.
+   * @param parent
+   * @return Text-Area.
+   */
+  public Text createTextArea(Composite parent);
+
 	/**
 	 * Erzeugt ein Combo.
    * @param parent Parent.
@@ -64,6 +71,9 @@ public interface StyleFactory
 
 /*********************************************************************
  * $Log: StyleFactory.java,v $
+ * Revision 1.4  2004/11/04 19:29:22  willuhn
+ * @N TextAreaInput
+ *
  * Revision 1.3  2004/06/17 22:07:12  willuhn
  * @C cleanup in tablePart and statusBar
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/11/01 23:11:18 $
+ * $Revision: 1.10 $
+ * $Date: 2004/11/04 19:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -91,11 +91,26 @@ public class TextInput extends AbstractInput
 	}
 
   /**
+   * Erzeugt das Text-Widget.
+   * Ist eine extra Funktion damit es zum Beispiel von TextAreaInput
+   * ueberschriebn werden kann.
+   * @return das Text-Widget.
+   */
+  Text getTextWidget()
+  {
+    return GUI.getStyleFactory().createText(getParent());
+  }
+
+  /**
    * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
   public Control getControl()
   {
-		text = GUI.getStyleFactory().createText(getParent());
+    text = getTextWidget();
+
+    if (maxLength > 0)
+      text.setTextLimit(maxLength);
+
 		text.setEnabled(enabled);
     text.setText((value == null ? "" : value));
 
@@ -133,20 +148,6 @@ public class TextInput extends AbstractInput
 					}
 				}
 			});
-		}
-
-		if (maxLength > 0)
-		{
-			text.addListener (SWT.Verify, new Listener()
-			{
-				public void handleEvent(Event e)
-				{
-					if ((text.getText() + e.text).length() > maxLength)
-					{
-						e.doit = false;
-					}
-				}
-			 });
 		}
     return text;
   }
@@ -202,6 +203,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.10  2004/11/04 19:29:22  willuhn
+ * @N TextAreaInput
+ *
  * Revision 1.9  2004/11/01 23:11:18  willuhn
  * @N setValidChars und setInvalidChars in TextInput
  *
