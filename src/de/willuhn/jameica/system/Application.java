@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Revision: 1.7 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 
 package de.willuhn.jameica.system;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -152,6 +153,17 @@ public final class Application {
 
 		////////////////////////////////////////////////////////////////////////////
     // init service factory and plugins
+
+		// Migration
+		// Der PluginLoader ist in das Package "plugin" verschoben worden. Damit
+		// seine Einstellungen bei einem Update erhalten bleiben, benennen wir
+		// die properties-Datei ggf.
+		File oldFile = new File(getConfig().getConfigDir() + "/de.willuhn.jameica.PluginLoader.properties");
+		File newFile = new File(getConfig().getConfigDir() + "/de.willuhn.jameica.plugin.PluginLoader.properties");
+		if (oldFile.exists() && !newFile.exists())
+			oldFile.renameTo(newFile);
+
+		// End Migration
 
 		// init plugins
 		splash("loading plugins");
@@ -414,15 +426,25 @@ public final class Application {
 			Logger.warn("background task is null, skipping");
 			return;
 		}
-		Thread t = new Thread(task);
-		t.setName("[Jameica Backgroundtask] " + task.getClass().getName());
-		t.start();
+		if (inServerMode())
+		{
+			Thread t = new Thread(task);
+			t.setName("[Jameica Backgroundtask] " + task.getClass().getName());
+			t.start();
+		}
+		else
+		{
+			GUI.startAsync(task);
+		}
 	}
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.7  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.6  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *

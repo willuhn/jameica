@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/07/31 15:03:05 $
+ * $Revision: 1.20 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,6 +95,7 @@ public abstract class AbstractDialog
 
   private Shell shell;
   private Display display;
+  private boolean ownDisplay = false;
 	private ArrayList listeners = new ArrayList();
 	private Object choosen = null;
   
@@ -127,9 +128,12 @@ public abstract class AbstractDialog
    */
   private void init()
 	{
-		display = Display.getCurrent();
+		display = Display.findDisplay(Thread.currentThread());
 		if (display == null)
+		{
 			display = new Display();
+			ownDisplay = true;
+		}
 		shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		shell.setLocation(display.getCursorLocation());
 		GridLayout shellLayout = new GridLayout();
@@ -180,6 +184,24 @@ public abstract class AbstractDialog
   protected final void addShellListener(ShellListener l)
 	{
 		shell.addShellListener(l);
+	}
+
+	/**
+	 * Liefert das Display des Dialogs.
+   * @return Display.
+   */
+  protected final Display getDisplay()
+	{
+		return display;
+	}
+
+	/**
+	 * Liefert die Shell des Dialogs.
+   * @return Shell.
+   */
+  protected final Shell getShell()
+	{
+		return shell;
 	}
 
 	/**
@@ -255,17 +277,20 @@ public abstract class AbstractDialog
 			title.setText(titleText == null ? "" : titleText);
 	
 			final Exception ex = new Exception();
-			GUI.startSync(new Runnable() {
-        public void run() {
-					try {
-						paint(parent);
-					}
-					catch(Exception e)
-					{
-						ex.initCause(e);
-					}
-        }
-      });
+			paint(parent);
+			
+// TODO: Kann das raus?
+//			GUI.getDisplay().syncExec(new Runnable() {
+//        public void run() {
+//					try {
+//						paint(parent);
+//					}
+//					catch(Exception e)
+//					{
+//						ex.initCause(e);
+//					}
+//        }
+//      });
 
 			if (ex.getCause() != null) // Das hier eigentlich nur, um an die Exception zu kommen ;)
 				throw (Exception) ex.getCause();
@@ -302,10 +327,16 @@ public abstract class AbstractDialog
 			}
 			shell.setLocation(x, y);
 	
-			shell.open();
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) display.sleep();
-			}
+			display.syncExec(new Runnable()
+      {
+        public void run()
+        {
+					shell.open();
+//					while (!shell.isDisposed()) {
+//						if (!display.readAndDispatch()) display.sleep();
+//					}
+        }
+      });
 
 			choosen = getData();
 			return choosen;
@@ -327,6 +358,14 @@ public abstract class AbstractDialog
 		}
 		catch (Exception e) {/*useless*/}
 
+		if (ownDisplay)
+		{
+			try
+			{
+				display.dispose();
+			}
+			catch (Exception e) {/*useless*/}
+		}
 		try {
 			Listener l = null;
 			Event e = new Event();
@@ -343,6 +382,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.20  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.19  2004/07/31 15:03:05  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.8 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -83,7 +83,6 @@ public class YesNoDialog extends AbstractDialog {
 		yes = GUI.getStyleFactory().createButton(comp);
 		yes.setText("   " + i18n.tr("Ja") + "   ");
 		yes.setLayoutData(new GridData(GridData.BEGINNING));
-		GUI.getShell().setDefaultButton(yes);
 		yes.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -117,6 +116,9 @@ public class YesNoDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: YesNoDialog.java,v $
+ * Revision 1.8  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.7  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

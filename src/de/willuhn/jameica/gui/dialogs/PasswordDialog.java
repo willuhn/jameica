@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.12 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -137,7 +137,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 		button = GUI.getStyleFactory().createButton(comp);
 		button.setText(i18n.tr("OK"));
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GUI.getShell().setDefaultButton(button);
+		getShell().setDefaultButton(button);
 		button.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -216,6 +216,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.12  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.11  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SimpleDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.8 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -78,7 +78,6 @@ public class SimpleDialog extends AbstractDialog {
 		button = GUI.getStyleFactory().createButton(comp);
 		button.setText("    OK    ");
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		GUI.getShell().setDefaultButton(button);
 		button.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -99,6 +98,9 @@ public class SimpleDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: SimpleDialog.java,v $
+ * Revision 1.8  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.7  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/08/11 23:37:21 $
+ * $Revision: 1.21 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,15 @@ public class Navigation {
   private Composite parent			= null;
   private Tree tree							= null;
   
+	/**
+	 * Mapping NavigationItem->TreeItem
+	 */
   private Map mapping						= new Hashtable();
+	
+	/**
+	 * Mapping Plugin -> NavigationItem
+	 */
+	private Map pluginMap					= new Hashtable();
 
   /**
    * Erzeugt die Navigation.
@@ -64,7 +72,7 @@ public class Navigation {
 		this.parent = parent;
 
 		// Tree erzeugen
-		this.tree = new Tree(Navigation.this.parent, SWT.BORDER);
+		this.tree = new Tree(this.parent, SWT.BORDER);
 		this.tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// Listener fuer "Folder auf machen"
 		tree.addListener(SWT.Expand, new Listener() {
@@ -85,6 +93,7 @@ public class Navigation {
 				handleSelect(event);
 			}
 		});
+
 
 		// add elements
 		root = new NavigationItemXml(null,xml.getFirstChildNamed("item"),Application.getI18n());
@@ -160,7 +169,21 @@ public class Navigation {
 		parser.setReader(new StdXMLReader(naviStream));
 		IXMLElement xml = (IXMLElement) parser.parse();
 
-		load(new NavigationItemXml(root,xml.getFirstChildNamed("item"),i18n));
+		NavigationItem item = new NavigationItemXml(root,xml.getFirstChildNamed("item"),i18n);
+		pluginMap.put(container.getPluginClass(),item);
+		load(item);
+	}
+
+	/**
+	 * Liefert das Navigation-Item, in dem das genannte Plugin einghaengt ist.
+	 * Will ein Plugin beispielsweise dynamisch seine Navigation erweitern,
+	 * erhaelt es hier genau das NavigationItem, an das es sich hinten dran haengen kann.
+   * @param pluginClass Klasse des Plugins, dessen oberstes NavigationItem geholt werden soll.
+   * @return das NavigationItem.
+   */
+  public NavigationItem getPluginNavigation(Class pluginClass)
+	{
+		return (NavigationItem) pluginMap.get(pluginClass);
 	}
 
 	/**
@@ -216,6 +239,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.21  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.20  2004/08/11 23:37:21  willuhn
  * @N Navigation ist jetzt modular erweiterbar
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.56 $
- * $Date: 2004/08/11 23:37:21 $
+ * $Revision: 1.57 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -331,6 +331,15 @@ public class GUI
 	}
 
 	/**
+	 * Liefert die Navigation (linker Tree) von Jameica.
+   * @return Navigation.
+   */
+  public static Navigation getNavigation()
+	{
+		return gui.navi;
+	}
+
+	/**
 	 * Zeigt die View im angegebenen Composite an.
 	 * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
 	 * @param o das Fachobjekt.
@@ -537,50 +546,13 @@ public class GUI
 
 		if (getDisplay() == null || getDisplay().isDisposed()) return;
 
-		Runnable r = new Runnable() {
-
-			boolean done = false;
-
-			public void run()
-			{
-
-				Thread t = new Thread(new Runnable() {
-
-					public void run()
-					{
-
-						getDisplay().syncExec(new Runnable() {
-
-							public void run()
-							{
-								job.run();
-							}
-						});
-
-						if (getDisplay().isDisposed()) return;
-
-						done = true;
-						getDisplay().wake();
-						getDisplay().syncExec(new Runnable() {
-
-							public void run()
-							{
-								if (getDisplay().isDisposed()) return;
-							}
-						});
-					}
-				});
-
-				t.start();
-				while (!done && !getShell().isDisposed())
-				{
-					if (!getDisplay().readAndDispatch()) getDisplay().sleep();
-				}
-
-			}
-		};
-
-		BusyIndicator.showWhile(getDisplay(), r);
+		getDisplay().syncExec(new Runnable()
+    {
+      public void run()
+      {
+				BusyIndicator.showWhile(getDisplay(), job);
+      }
+    });
 	}
 
 	/**
@@ -593,14 +565,16 @@ public class GUI
 	 */
 	public static void startAsync(final Runnable job)
 	{
+		if (getDisplay() == null || getDisplay().isDisposed()) return;
 
-		getStatusBar().startProgress();
+		getDisplay().asyncExec(new Runnable()
+    {
+      public void run()
+      {
 
-		Runnable r = new Runnable() {
+				getStatusBar().startProgress();
 
-			public void run()
-			{
-				Thread t = new Thread() {
+				Thread t = new Thread("[Jameica Backgroundtask] " + job.getClass().getName()) {
 
 					public void run()
 					{
@@ -608,23 +582,21 @@ public class GUI
 						{
 							job.run();
 						}
-						catch (Exception e)
+						catch (Throwable t)
 						{
 							// Wir wollen nicht, dass unbefugter Zugriff auf die GUI
 							// stattfindet
-							Logger.error(e.getLocalizedMessage(), e);
+							Logger.error("Error while running async thread", t);
 						}
-						getStatusBar().stopProgress();
+						finally
+						{
+							getStatusBar().stopProgress();
+						}
 					}
 				};
 				t.start();
-				while (!getShell().isDisposed())
-				{
-					if (!getDisplay().readAndDispatch()) getDisplay().sleep();
-				}
-			}
-		};
-		getDisplay().asyncExec(r);
+      }
+    });
 	}
 
 	/**
@@ -632,7 +604,8 @@ public class GUI
 	 */
 	private void loop()
 	{
-		while (!shell.isDisposed() && !stop)
+		int retry = 0;
+		while (!shell.isDisposed() && !stop && retry < 4)
 		{
 			try
 			{
@@ -640,8 +613,8 @@ public class GUI
 			}
 			catch (Throwable t)
 			{
-				Logger.error("main loop crashed. showing error page", t);
-				GUI.startView(FatalErrorView.class.getName(), t);
+				Logger.error("main loop crashed, retry", t);
+				retry++;
 			}
 		}
 		// save window position and size
@@ -701,6 +674,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.57  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.56  2004/08/11 23:37:21  willuhn
  * @N Navigation ist jetzt modular erweiterbar
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/NavigationItem.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/08/12 19:20:15 $
+ * $Revision: 1.3 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,11 +52,22 @@ public interface NavigationItem extends GenericObjectNode
    * @throws RemoteException
    */
   public Listener getListener() throws RemoteException;
+
+	/**
+	 * Fuegt dem Navigations-Element ein weitere Kind hinzu.
+   * @param item weitere Kind.
+   * @throws RemoteException
+   */
+  public void addChild(NavigationItem item) throws RemoteException;
+
 }
 
 
 /**********************************************************************
  * $Log: NavigationItem.java,v $
+ * Revision 1.3  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.2  2004/08/12 19:20:15  willuhn
  * *** empty log message ***
  *

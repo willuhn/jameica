@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/NavigationItemXml.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/08/11 23:37:21 $
+ * $Revision: 1.2 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ public class NavigationItemXml implements NavigationItem
 	private NavigationItem parent;
 	private IXMLElement path;
 	private I18N i18n;
+	private ArrayList childs = new ArrayList();
 
   /**
    * ct.
@@ -49,6 +50,13 @@ public class NavigationItemXml implements NavigationItem
   	this.parent = parent;
   	this.path = sPath;
   	this.i18n = i18n;
+
+		Enumeration e  = this.path.enumerateChildren();
+		while (e.hasMoreElements())
+		{
+			IXMLElement childPath = (IXMLElement) e.nextElement();
+			childs.add(new NavigationItemXml(this,childPath,i18n));
+		}
   }
 
   /**
@@ -106,14 +114,6 @@ public class NavigationItemXml implements NavigationItem
    */
   public GenericIterator getChilds() throws RemoteException
   {
-		// iterate over childs
-		ArrayList childs = new ArrayList();
-		Enumeration e  = this.path.enumerateChildren();
-		while (e.hasMoreElements())
-		{
-			IXMLElement childPath = (IXMLElement) e.nextElement();
-			childs.add(new NavigationItemXml(this,childPath,i18n));
-		}
 		return PseudoIterator.fromArray((NavigationItem[])childs.toArray(new NavigationItemXml[childs.size()]));
   }
 
@@ -184,11 +184,24 @@ public class NavigationItemXml implements NavigationItem
     	return false;
     return getID().equals(other.getID());
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.NavigationItem#addChild(de.willuhn.jameica.gui.NavigationItem)
+   */
+  public void addChild(NavigationItem item) throws RemoteException
+  {
+  	if (item == null)
+  		return;
+  	childs.add(item);
+  }
 }
 
 
 /**********************************************************************
  * $Log: NavigationItemXml.java,v $
+ * Revision 1.2  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.1  2004/08/11 23:37:21  willuhn
  * @N Navigation ist jetzt modular erweiterbar
  *

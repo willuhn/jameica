@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Revision: 1.4 $
+ * $Date: 2004/08/15 17:55:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,13 +45,14 @@ public final class PluginLoader
   
   // Den brauchen wir, damit wir Updates an Plugins triggern und deren
   // Update-Methode aufrufen koennen.
-  private Settings updateChecker = new Settings(PluginLoader.class);
+  private Settings updateChecker = null;
 
 	/**
    * Sucht nach allen verfuegbaren Plugins und initialisiert sie.
    */
   public synchronized void init()
 	{
+		updateChecker = new Settings(PluginLoader.class);
 		Logger.info("init plugins");
 		String[] dirs = Application.getConfig().getPluginDirs();
 		for (int i=0;i<dirs.length;++i)
@@ -536,6 +537,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.4  2004/08/15 17:55:17  willuhn
+ * @C sync handling
+ *
  * Revision 1.3  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *
