@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/09/13 23:27:12 $
+ * $Revision: 1.11 $
+ * $Date: 2004/09/14 23:27:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,8 +37,16 @@ public final class ServiceFactory
 {
 
 	private SSLFactory sslFactory = new SSLFactory();  
-  private Hashtable bindings = new Hashtable();
   private boolean rmiStarted = false;
+
+	// an RMI gebundene Services - unabhaengig ob lokal oder remote.
+	private Hashtable bindings = new Hashtable();
+
+	// gestartete Services.
+	private Hashtable startedServices = new Hashtable();
+
+	// Service-Lookup-Cache.
+	private Hashtable serviceCache = new Hashtable();
 
   /**
    * Initialisiert die ServiceFactory.
@@ -127,22 +135,38 @@ public final class ServiceFactory
   private void bind(AbstractPlugin plugin, String serviceName, Class service)
   	throws RemoteException
 	{
-		serviceName = plugin.getClass().getName() + "." + serviceName;
-		if (Application.inServerMode())
+		String fullName = plugin.getClass().getName() + "." + serviceName;
+		Logger.info("      binding...");
+		if (Application.inServerMode() || Application.inStandaloneMode())
 		{
 			try {
-				// Wir instanziieren den Service
-				
-				Naming.rebind("rmi://127.0.0.1:" + Application.getConfig().getRmiPort() +
-											"/" + serviceName,newInstance(service));
+				// Wir instanziieren den Service und starten ihn
+				Logger.info("      instantiating...");
+				Service s = newInstance(service);
+				if (s.isStartable())
+				{
+					Logger.info("      starting...");
+					s.start();
+					startedServices.put(fullName,s);
+				}
+				else
+				{
+					Logger.info("      service not startable");
+				}
+
+				if (Application.inServerMode())
+				{
+					// Im Server-Mode binden wir den Service noch an die RMI-Registry
+					Naming.rebind("rmi://127.0.0.1:" + Application.getConfig().getRmiPort() +
+												"/" + fullName,s);
+				}
 			}
 			catch (Exception e)
 			{
 				throw new RemoteException("error while binding service " + serviceName,e);
 			}
 		}
-
-		bindings.put(serviceName,service);
+		bindings.put(fullName,service);
 	}
 
   /**
@@ -171,13 +195,21 @@ public final class ServiceFactory
    */
   public Service lookup(AbstractPlugin plugin, String serviceName) throws Exception
   {
-  	if (serviceName == null)
+  	if (serviceName == null || plugin == null)
   		return null;
 
-		Logger.debug("searching for service " + serviceName);
-
 		String fullName	= plugin.getClass().getName() + "." + serviceName;
-		Class local   	= (Class) bindings.get(fullName);
+
+		Logger.info("searching for service " + serviceName + " for plugin " + plugin.getClass().getName());
+
+		Service s = (Service) serviceCache.get(fullName);
+		if (s != null)
+		{
+			Logger.info("found in cache");
+			return s;
+		}
+		
+		Class local = (Class) bindings.get(fullName);
 
 		// Wir schauen remote
 		if (Application.inClientMode())
@@ -185,52 +217,58 @@ public final class ServiceFactory
 			if (local == null)
 				throw new ApplicationException(Application.getI18n().tr("Zum Service \"{0}\" existiert kein lokales Binding",serviceName));
 
-			Logger.debug("  running in client mode, looking for remote service " + fullName);
+			Logger.info("  running in client mode, looking for remote service " + fullName);
 			String host = ServiceLookup.getLookupHost(fullName);
 			int port    = ServiceLookup.getLookupPort(fullName);
 
 			if (host == null || host.length() == 0 || port == -1)
 				throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
 
-			Logger.debug("  searching for service at " + host + ":" + port);
+			Logger.info("  searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
-			return (Service) Naming.lookup(url);
+			s = (Service) Naming.lookup(url);
+			if (s != null)
+				serviceCache.put(fullName,s);
+			return s;
 		}
 
 		// Wir schauen lokal
-		Logger.debug("  running in standalone/server mode, looking for local service");
+		Logger.info("  running in standalone/server mode, looking for local service");
 		if (local == null)
 			throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht gefunden",serviceName));
-		return newInstance(local);
+		s = (Service)startedServices.get(fullName);
+		if (s == null)
+			throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht instanziiert",serviceName));
+
+		serviceCache.put(fullName,s);
+		return s;
 
   }
 
   /**
    * Faehrt die Services runter.
+   * Beendet werden hierbei nur die lokal gestarteten Services, nicht remote verbundene.
    */
   public synchronized void shutDown()
   {
-    Logger.info("shutting down services");
+    Logger.info("shutting down local services");
 
-		if (Application.inClientMode())
-			return; // keine lokalen Services runterzufahren
-
-    Enumeration e = bindings.keys();
-    String serviceName = null;
-    Class service      = null;
+    Enumeration e = startedServices.keys();
+    String fullName = null;
+    Service service = null;
 
     while (e.hasMoreElements())
     {
       try
       {
-        serviceName = (String) e.nextElement();
-  			service = (Class) bindings.get(serviceName);
-  			Logger.info("closing service " + serviceName);
-        newInstance(service).shutDown(false);
+      	fullName = (String) e.nextElement();
+  			service = (Service) startedServices.get(fullName);
+  			Logger.info("closing service " + fullName);
+        service.stop(false);
       }
       catch (Throwable t)
       {
-        Logger.error("error while closing service " + serviceName,t);
+        Logger.error("error while closing service " + fullName,t);
       }
     }
   }
@@ -238,6 +276,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.11  2004/09/14 23:27:57  willuhn
+ * @C redesign of service handling
+ *
  * Revision 1.10  2004/09/13 23:27:12  willuhn
  * *** empty log message ***
  *

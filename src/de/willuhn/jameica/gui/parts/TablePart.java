@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/09/13 23:27:12 $
+ * $Revision: 1.18 $
+ * $Date: 2004/09/14 23:27:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,6 @@ import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
@@ -58,6 +57,7 @@ public class TablePart implements Part
 
 	private boolean showSummary						= true;
 
+	private Composite parent							= null;
 	private Composite comp 								= null;
 	 
   private org.eclipse.swt.widgets.Table table;
@@ -137,16 +137,17 @@ public class TablePart implements Part
    */
   public synchronized void paint(Composite parent) throws RemoteException
   {
+		this.parent = parent;
+
 		if (comp != null && !comp.isDisposed())
-			SWTUtil.disposeChilds(comp);
-		else
 		{
-			comp = new Composite(parent,SWT.NONE);
-			GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
-			comp.setLayoutData(gridData);
+			comp.dispose();
 		}
 
-    comp.setBackground(Color.BACKGROUND.getSWTColor());
+		comp = new Composite(parent,SWT.NONE);
+		GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
+		comp.setLayoutData(gridData);
+		comp.setBackground(Color.BACKGROUND.getSWTColor());
 
 		GridLayout layout = new GridLayout();
 		layout.horizontalSpacing = 0;
@@ -328,6 +329,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.18  2004/09/14 23:27:57  willuhn
+ * @C redesign of service handling
+ *
  * Revision 1.17  2004/09/13 23:27:12  willuhn
  * *** empty log message ***
  *

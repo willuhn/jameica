@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/08/30 15:03:28 $
+ * $Revision: 1.12 $
+ * $Date: 2004/09/14 23:27:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -367,6 +367,15 @@ public final class Application {
   }
   
 	/**
+	 * Preuft ob die Anwendung im Standalone-Mode laeuft.
+	 * @return true, wenn sie im Standalone-Mode laeuft.
+	 */
+	public static boolean inStandaloneMode()
+	{
+		return appMode == Application.MODE_STANDALONE;
+	}
+	
+	/**
 	 * Preuft ob die Anwendung im Client-Mode laeuft.
 	 * @return true, wenn sie im Client-Mode laeuft.
 	 */
@@ -465,6 +474,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.12  2004/09/14 23:27:57  willuhn
+ * @C redesign of service handling
+ *
  * Revision 1.11  2004/08/30 15:03:28  willuhn
  * @N neuer Security-Manager
  *
