@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.23 $
+ * $Date: 2004/04/13 23:15:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ import de.willuhn.util.Logger;
 /**
  * Liest die System-Konfiguration aus config.xml. 
  * @author willuhn
- * TODO Konfiguration als Service remote aenderbar machen 
  */
 public class Config
 {
@@ -78,35 +78,85 @@ public class Config
   
   private String logLevel = Logger.LEVEL_TEXT[Logger.LEVEL_DEBUG];
   
-	private File dir 				= new File("./");
-  private File configDir  = new File("cfg");
-  private File configFile = new File("cfg/config.xml");
+	private File dir 				= null;
+  private File configDir  = null;
+  private File configFile = null;
+
+
+	private final static String defaultConfig =
+		"<config>\n" +
+		"  <logfile>dynameica.log</logfile>\n" +
+		"  <loglevel>INFO</loglevel>\n" +
+		"  <defaultlanguage>de_de</defaultlanguage>\n" +
+		"  <rmiport>1099</rmiport>\n" +
+		"  <plugindirs>\n" +
+		"    <dir>plugins</dir>\n" +
+		"	 </plugindirs>\n" +
+		"  <services/>\n" +
+		"</config>\n";
 
   /**
    * ct.
-   * @param fileName Pfad und Name zur Config-Datei.
+   * @param dataDir Verzeichnis zu den variablen Daten. Kann null sein.
    * @throws Exception
    */
-  protected Config(String fileName) throws Exception
+  protected Config(String dataDir) throws Exception
   {
-    init(fileName);
+    init(dataDir);
   }
 
   /**
    * Initialisiert die Konfiguration.
-   * @param fileName Pfad und Name zur Config-Datei.
+   * @param dataDir Verzeichnis zu den variablen Daten. Kann null sein.
    * @throws Exception
    */
-  private void init(String fileName) throws Exception
+  private void init(String dataDir) throws Exception
   {
-    if (fileName == null)
-      fileName = "cfg/config.xml"; // fallback to default if config file not set
+    if (dataDir == null)
+    {
+			dataDir = System.getProperty("user.home") + "/.jameica";
+    }
 
-		configFile = new File(fileName);
-    configDir  = configFile.getParentFile();
+		Application.getLog().info("using " + dataDir + " as data dir.");
+		this.dir = new File(dataDir);
+		
+		if (this.dir.exists() && !this.dir.isDirectory())
+			throw new Exception("File " + dataDir + " allready exists.");
+		
+		if (!this.dir.exists())
+		{
+			Application.getLog().info("creating " + dataDir);
+			if (!this.dir.mkdir())
+				throw new Exception("creating of " + dataDir + " failed");		
+		}
+
+		this.configDir  = new File(dataDir + "/cfg");
+		if (!this.configDir.exists())
+		{
+			Application.getLog().info("creating " + this.configDir.getAbsolutePath());
+			this.configDir.mkdir();
+		}
+
+		this.configFile = new File(this.configDir.getAbsolutePath() + "/config.xml");
+
+		if (!this.configFile.exists())
+		{
+			Application.getLog().info("creating new config file " + this.configFile.getAbsolutePath());
+			try {
+				FileOutputStream fos = new FileOutputStream(this.configFile);
+				fos.write(defaultConfig.getBytes());
+				fos.close();
+			}
+			catch (IOException e)
+			{
+				throw new Exception("unable to create new config file " + this.configFile.getAbsolutePath());
+			}
+		}
+		
+
 
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(StdXMLReader.fileReader(fileName));
+		parser.setReader(StdXMLReader.fileReader(this.configFile.getAbsolutePath()));
 
 		xml = (IXMLElement) parser.parse();
 
@@ -413,7 +463,7 @@ public class Config
   }
 
 	/**
-	 * Liefert das Installations-Verzeichnis von Jameica.
+	 * Liefert das Work-Verzeichnis von Jameica.
    * @return
    */
   public String getDir()
@@ -520,6 +570,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.23  2004/04/13 23:15:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

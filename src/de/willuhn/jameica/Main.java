@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.5 $
+ * $Date: 2004/04/13 23:15:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,7 @@ public class Main {
    * @param args die via Kommandozeile uebergebenen Parameter.
    * Parameter 1: "-server" als Parameter fuehrt dazu, dass die
    *              Anwendung im Server-Mode startet und die GUI weglaesst.
-   * Parameter 2: Optionales Config-File (Default: cfg/config.xml).
+   * Parameter 2: Optionales Datenverzeichnis (Default: ~/.jameica).
    */
   public static void main(String[] args) {
 
@@ -42,6 +42,9 @@ public class Main {
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.5  2004/04/13 23:15:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

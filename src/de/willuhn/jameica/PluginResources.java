@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginResources.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/04/01 22:07:07 $
+ * $Revision: 1.7 $
+ * $Date: 2004/04/13 23:15:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica;
+
+import java.io.File;
 
 import de.willuhn.datasource.db.EmbeddedDatabase;
 import de.willuhn.util.I18N;
@@ -23,6 +25,7 @@ public class PluginResources {
 	private AbstractPlugin plugin = null;
 	private EmbeddedDatabase db = null;
 	private I18N i18n = null;
+	private String workPath = null;
 
   /**
    * ct.
@@ -49,10 +52,40 @@ public class PluginResources {
 	 */
 	public String getPath()
 	{
-		if (!plugin.getFile().getName().endsWith(".jar"))
-			return plugin.getFile().getPath();
+		if (plugin.getFile().isFile())
+			return plugin.getFile().getParent();
 
-		return plugin.getFile().getParent();
+		return plugin.getFile().getPath();
+	}
+
+	/**
+	 * Liefert das Verzeichnis, in dem das Plugin seine Daten ablegen darf.
+	 * @return Verzeichnis, in dem das Plugin Daten speichern darf.
+	 */
+	public String getWorkPath()
+	{
+		if (workPath != null)
+			return workPath;
+
+		workPath = Application.getConfig().getDir();
+		File f = plugin.getFile();
+		
+		if (f.isFile())
+			workPath += "/" + f.getName().substring(0,f.getName().lastIndexOf('.')); // Datei-Endung abschneiden
+		else
+			workPath += "/" + f.getName();
+
+		f = new File(workPath);
+		if (!f.exists())
+		{
+			if (!f.mkdirs())
+			{
+				Application.getLog().error("unable to create work dir " + workPath);
+				throw new RuntimeException("unable to create work dir " + workPath);
+			}
+		}
+		
+		return workPath;
 	}
 
 	/**
@@ -66,7 +99,7 @@ public class PluginResources {
 	{
 		if (db != null)
 			return db;
-		db = new EmbeddedDatabase(getPath() + "/db",plugin.getName(),plugin.getName());
+		db = new EmbeddedDatabase(getWorkPath() + "/db",plugin.getName(),plugin.getName());
 		db.setLogger(Application.getLog());
 		db.setClassLoader(Application.getClassLoader());
 		return db;
@@ -101,6 +134,9 @@ public class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.7  2004/04/13 23:15:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/04/01 22:07:07  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.36 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.37 $
+ * $Date: 2004/04/13 23:15:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Stack;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -65,12 +66,19 @@ public class GUI
     private Menu menu;
     private HelpView help;
     
-		private AbstractView previousView;
-		private Object previousObject;
     private AbstractView currentView;
+
+		private Stack history;
+		private boolean skipHistory = false;
 
 
   private static boolean stop = false;  
+
+	private static class HistoryEntry
+	{
+		private AbstractView view;
+		private Object object;
+	}
 
   /**
    * Erzeugt die GUI-Instanz.
@@ -116,7 +124,6 @@ public class GUI
 
 		shell.addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
-				// TODO So ein Schrott, die Hoehe des Titels wird nicht mitgerechnet.
 				// Deswegen muessen wir uns das selbst ausrechnen
 				Rectangle bounds = gui.shell.getBounds();
 				Rectangle area   = gui.shell.getClientArea();
@@ -180,6 +187,8 @@ public class GUI
       appendNavigation(entry);
     }
 
+		// History initialisieren
+		history = new Stack();
 		getStatusBar().setStatusText(Application.getI18n().tr("startup finished"));
   } 
   
@@ -314,13 +323,16 @@ public class GUI
 	}
 
 	/**
-   * 
+   * Startet die vorherige View.
+   * Existiert keine solche, kehrt die Funktion tatenlos zurueck.
    */
   public static void startPreviousView()
 	{
-		if (gui.previousView == null)
+		HistoryEntry entry = (HistoryEntry) gui.history.pop();
+		if (entry == null)
 			return;
-		startView(gui.previousView.getClass().getName(),gui.previousObject);
+		gui.skipHistory = true;
+		startView(entry.view.getClass().getName(),entry.object);
 	}
 
 	/**
@@ -335,26 +347,40 @@ public class GUI
 		startSync(new Runnable() {
       public void run() {
 
-		    if (gui.currentView != null) {
-		      try {
-		        gui.currentView.unbind();
-		      }
-		      catch (ApplicationException e)
-		      {
-		        Application.getLog().debug("cancel sent from dialog (in unbind()");
-		        return;
-		      }
-		    }
-		
+				if (gui.currentView != null) {
+					try {
+						gui.currentView.unbind();
+					}
+					catch (ApplicationException e)
+					{
+						Application.getLog().debug("cancel sent from dialog (in unbind()");
+						return;
+					}
+
+					if (!gui.skipHistory)
+					{
+						// wir machen das erst nach dem unbind, damit sichergestellt
+						// ist, dass die Seite nicht mehrfach in der History landet,
+						// wenn ihr unbind() eine Exception wirft.
+						HistoryEntry entry = new HistoryEntry();
+						entry.view = gui.currentView;
+						entry.object = o;
+						gui.history.push(entry);
+						if (gui.history.size() > 10)
+							gui.history.remove(0);
+					}
+					// jetzt koennen wir skipHistory auf jeden Fall wieder
+					// ausschalten
+					gui.skipHistory = false;
+
+				}
+
 		    try
 		    {
 		      Class clazz = Application.getClassLoader().load(className);
 		
 		      gui.view.cleanContent();
 		
-					gui.previousView = gui.currentView;
-					gui.previousObject = o;
-
 		      gui.currentView = (AbstractView) clazz.newInstance();
 					gui.currentView.setParent(gui.view.getContent());
 		      gui.currentView.setCurrentObject(o);
@@ -635,6 +661,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.37  2004/04/13 23:15:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.36  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.31 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.32 $
+ * $Date: 2004/04/13 23:15:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,9 +62,9 @@ public class Application {
   /**
    * Erzeugt eine neue Instanz der Anwendung.
    * @param serverMode legt fest, ob die Anwendung im Server-Mode (also ohne GUI starten soll).
-   * @param configFile optionaler Pfad zu einer Config-Datei.
+   * @param dataDir optionaler Pfad zum Datenverzeichnis.
    */
-  public static void newInstance(boolean serverMode, String configFile) {
+  public static void newInstance(boolean serverMode, String dataDir) {
 
     Application.serverMode = serverMode;
 
@@ -76,38 +76,11 @@ public class Application {
 
 		// LockFile erzeugen
 		try {
-			new Lock("jameica");
+			new Lock(System.getProperty("user.home") + "/.jameica");
 		}
 		catch (RuntimeException e)
 		{
-			if (serverMode)
-				throw e;
-			Display d = new Display();
-			final Shell s = new Shell();
-			s.setLayout(new GridLayout());
-			s.setText("Fehler");
-			Label l = new Label(s,SWT.NONE);
-			l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			l.setText(e.getMessage());
-			Button b = new Button(s,SWT.BORDER);
-			b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			b.setText("OK");
-			b.addMouseListener(new MouseAdapter() {
-        public void mouseUp(MouseEvent e) {
-        	s.close();
-        }
-      });
-      s.pack();
-			s.open();
-			while (!s.isDisposed()) {
-				if (!d.readAndDispatch()) d.sleep();
-			}
-			try {
-				s.dispose();
-				d.dispose();
-			}
-			catch (Exception e2) {}
-			System.exit(1);
+			startupError(e);
 		}
 
 		splash("starting jameica");
@@ -127,13 +100,11 @@ public class Application {
     // init config
     try {
 			splash("init system config");
-			app.config = new Config(configFile);
+			app.config = new Config(dataDir);
     }
     catch (Exception e)
     {
-    	Application.getLog().error("unable to parse config",e);
-      Application.shutDown();
-      return;
+			startupError(e);
     }
 		app.log.setLevel(app.config.getLogLevel());
 		//
@@ -190,6 +161,42 @@ public class Application {
     System.exit(0);
 
   }
+
+	/**
+	 * Startup-Error zeigt eine Fehlermeldung an und beendet Jameica dann.
+   * @param e anzuzeigender Fehler.
+   */
+  private static void startupError(Exception e)
+	{
+		if (serverMode)
+			throw new RuntimeException(e);
+		Display d = Display.getCurrent();
+		final Shell s = new Shell();
+		s.setLayout(new GridLayout());
+		s.setText("Fehler");
+		Label l = new Label(s,SWT.NONE);
+		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		l.setText(e.getMessage());
+		Button b = new Button(s,SWT.BORDER);
+		b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		b.setText("OK");
+		b.addMouseListener(new MouseAdapter() {
+			public void mouseUp(MouseEvent e) {
+				s.close();
+			}
+		});
+		s.pack();
+		s.open();
+		while (!s.isDisposed()) {
+			if (!d.readAndDispatch()) d.sleep();
+		}
+		try {
+			s.dispose();
+			d.dispose();
+		}
+		catch (Exception e2) {}
+		System.exit(1);
+	}
 
   /**
    * Zeigt den Splash-Screen an und vergroessert den Fortschrittsbalken
@@ -296,6 +303,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.32  2004/04/13 23:15:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.31  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *
