@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.40 $
- * $Date: 2004/05/23 18:15:32 $
+ * $Revision: 1.41 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,6 @@ public class Application {
     private Config config;
     private MultipleClassLoader classLoader;
     private I18N i18n;
-    private Lock lock;
     
   /**
    * ct.
@@ -106,7 +105,7 @@ public class Application {
 		////////////////////////////////////////////////////////////////////////////
 		// LockFile erzeugen
 		try {
-			app.lock = new Lock(app.config.getDir() + "/jameica");
+			new Lock(app.config.getDir() + "/jameica");
 		}
 		catch (RuntimeException e)
 		{
@@ -333,6 +332,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.41  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.40  2004/05/23 18:15:32  willuhn
  * *** empty log message ***
  *

@@ -1,15 +1,12 @@
-/**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.44 $
- * $Date: 2004/06/03 00:24:18 $
- * $Author: willuhn $
- * $Locker:  $
+/*******************************************************************************
+ * $Source:
+ * /export/CVS/willuhn/own/jameica/dev/src/de/willuhn/jameica/gui/GUI.java,v $
+ * $Revision: 1.45 $ $Date: 2004/06/10 20:56:53 $ $Author: willuhn $ $Locker:  $
  * $State: Exp $
- *
- * Copyright (c) by willuhn.webdesign
- * All rights reserved
- *
- **********************************************************************/
+ * 
+ * Copyright (c) by willuhn.webdesign All rights reserved
+ *  
+ ******************************************************************************/
 package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
@@ -56,126 +53,149 @@ public class GUI
 
 	private static Settings settings = new Settings(GUI.class);
 
-  // singleton
-  private static GUI gui;
-    private final Display display = new Display();
-    private final Shell shell = new Shell();
+	// singleton
+	private static GUI gui;
 
-    private Navigation navi;
-    private View view;
-    private StatusBar statusBar;
-    private Menu menu;
-    private HelpView help;
-    
-    private AbstractView currentView;
+	private final Display display = new Display();
 
-		private Stack history;
-		private boolean skipHistory = false;
-		
-		private StyleFactory styleFactory;
+	private final Shell shell = new Shell();
 
+	private Navigation navi;
 
-  private static boolean stop = false;  
+	private View view;
+
+	private StatusBar statusBar;
+
+	private Menu menu;
+
+	private HelpView help;
+
+	private AbstractView currentView;
+
+	private Stack history;
+
+	private boolean skipHistory = false;
+
+	private StyleFactory styleFactory;
+
+	private static boolean stop = false;
 
 	private static class HistoryEntry
 	{
+
 		private AbstractView view;
+
 		private Object object;
 	}
 
-  /**
-   * Erzeugt die GUI-Instanz.
-   */
-  private GUI() {
-  }
-  
+	/**
+	 * Erzeugt die GUI-Instanz.
+	 */
+	private GUI()
+	{
+		// Nothing to do here
+	}
+
 	private static GridLayout createGrid(int numColumns, boolean makeEqualsWidth)
 	{
-		final GridLayout l = new GridLayout(numColumns,makeEqualsWidth);
+		final GridLayout l = new GridLayout(numColumns, makeEqualsWidth);
 		l.marginWidth = 0;
 		l.marginHeight = 0;
 		l.horizontalSpacing = 0;
 		l.verticalSpacing = 0;
 		return l;
 	}
-  /**
-   * Laedt die GUI.
-   */
-  private void load() {
-    Application.getLog().info("startup GUI");
 
-    // init shell
-    shell.setLayout(createGrid(2,false));
-    shell.setLayoutData(new GridData(GridData.FILL_BOTH));
-    shell.setText("Jameica " + Application.getVersion());
-    shell.setImage(SWTUtil.getImage("globe.gif"));
+	/**
+	 * Laedt die GUI.
+	 */
+	private void load()
+	{
+		Application.getLog().info("startup GUI");
+
+		// init shell
+		shell.setLayout(createGrid(2, false));
+		shell.setLayoutData(new GridData(GridData.FILL_BOTH));
+		shell.setText("Jameica " + Application.getVersion());
+		shell.setImage(SWTUtil.getImage("globe.gif"));
 
 		////////////////////////////
 		// size and position restore
-		int x = 10; int y = 10;
-		int width = 920; int height = 720;
-		x 		 = settings.getInt("window.x",x);
-		y 		 = settings.getInt("window.y",y);
-		width  = settings.getInt("window.width",width);
-		height = settings.getInt("window.height",height);
+		int x = 10;
+		int y = 10;
+		int width = 920;
+		int height = 720;
+		x = settings.getInt("window.x", x);
+		y = settings.getInt("window.y", y);
+		width = settings.getInt("window.width", width);
+		height = settings.getInt("window.height", height);
 
-		if (x >= gui.display.getBounds().width || x < 0)
-			x = 10; // screen resolution smaller than last start
-		if (y >= gui.display.getBounds().height || y < 0)
-			y = 10; // screen resolution smaller than last start
-		shell.setBounds(x,y,width,height);
+		if (x >= gui.display.getBounds().width || x < 0) x = 10; // screen
+		// resolution
+		// smaller than
+		// last start
+		if (y >= gui.display.getBounds().height || y < 0) y = 10; // screen
+		// resolution
+		// smaller than
+		// last start
+		shell.setBounds(x, y, width, height);
 
 		shell.addDisposeListener(new DisposeListener() {
-      public void widgetDisposed(DisposeEvent e) {
+
+			public void widgetDisposed(DisposeEvent e)
+			{
 				// Deswegen muessen wir uns das selbst ausrechnen
 				Rectangle bounds = gui.shell.getBounds();
-				Rectangle area   = gui.shell.getClientArea();
-				settings.setAttribute("window.width",(bounds.width + (bounds.width - area.width)));
-				settings.setAttribute("window.height",(bounds.height + (bounds.height - area.height)));
-				settings.setAttribute("window.x",bounds.x);
-				settings.setAttribute("window.y",bounds.y);
-      }
-    });
+				Rectangle area = gui.shell.getClientArea();
+				settings.setAttribute("window.width",
+						(bounds.width + (bounds.width - area.width)));
+				settings.setAttribute("window.height",
+						(bounds.height + (bounds.height - area.height)));
+				settings.setAttribute("window.x", bounds.x);
+				settings.setAttribute("window.y", bounds.y);
+			}
+		});
 
 		////////////////////////////
-    
-    Application.getLog().info("adding menu");
-    addMenu(shell);
 
-    SashForm sash = new SashForm(shell,SWT.HORIZONTAL);
-		sash.setLayout(createGrid(1,false));
+		Application.getLog().info("adding menu");
+		addMenu(shell);
+
+		SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
+		sash.setLayout(createGrid(1, false));
 		GridData sgd = new GridData(GridData.FILL_BOTH);
 		sgd.horizontalSpan = 2;
 		sash.setLayoutData(sgd);
 
-    SashForm left = new SashForm(sash,SWT.VERTICAL);
-    left.setLayout(new FillLayout());
-    Application.getLog().info("adding navigation");
-    addNavigation(left);
+		SashForm left = new SashForm(sash, SWT.VERTICAL);
+		left.setLayout(new FillLayout());
+		Application.getLog().info("adding navigation");
+		addNavigation(left);
 
 		help = new HelpView(left);
 
-    Composite right = new Composite(sash,SWT.NONE);
+		Composite right = new Composite(sash, SWT.NONE);
 		right.setLayout(new FillLayout());
-    Application.getLog().info("adding content view");
+		Application.getLog().info("adding content view");
 
-    addView(right);
+		addView(right);
 
+		left.setWeights(new int[] { 1, 1 });
 
-		left.setWeights(new int[] {1,1});
+		sash.setWeights(new int[] { 1, 3 });
 
-		sash.setWeights(new int[] {1,3});
-
-		Composite bottom = new Composite(shell,SWT.NONE);
-		bottom.setLayout(createGrid(1,true));
+		Composite bottom = new Composite(shell, SWT.NONE);
+		bottom.setLayout(createGrid(1, true));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		bottom.setLayoutData(gd);
-    Application.getLog().info("adding status panel"); addStatusBar(bottom);
+		Application.getLog().info("adding status panel");
+		addStatusBar(bottom);
 
-    shell.open();
+		shell.open();
 
-    // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins hinzu.
+		// so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
+		// hinzu.
 		Enumeration e = PluginLoader.getPluginContainers();
 		while (e.hasMoreElements())
 		{
@@ -184,138 +204,147 @@ public class GUI
 			navi.addPlugin(pc);
 		}
 
-
 		// History initialisieren
 		history = new Stack();
 		getStatusBar().setStatusText(Application.getI18n().tr("startup finished"));
-  } 
-  
-	public Composite test;
+	}
 
-  /**
-   * Initialisiert die GUI und startet den GUI-Loop. 
-   */
-  public static void init()
-  {
+	/**
+	 * Initialisiert die GUI und startet den GUI-Loop.
+	 */
+	public static void init()
+	{
 
-    if (gui != null)
-      return; // allready started.
+		if (gui != null) return; // allready started.
 
 		StyleEngine.init();
-    gui = new GUI();
-    gui.load();
+		gui = new GUI();
+		gui.load();
 
-    // GUI Loop starten
-    gui.loop(); 
+		// GUI Loop starten
+		gui.loop();
 
-  }
-  
+	}
 
-
-  /**
-   * Fuegt der Anwendung das Dropdown-Menu hinzu.
-   */
-  private void addMenu(Decorations parent) {
-		try {
+	/**
+	 * Fuegt der Anwendung das Dropdown-Menu hinzu.
+	 * @param parent
+	 */
+	private void addMenu(Decorations parent)
+	{
+		try
+		{
 			menu = new Menu(parent);
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("unable to load menu",e);
+			Application.getLog().error("unable to load menu", e);
 			// skip menu
 		}
-  }
+	}
 
-  /**
-   * Fuegt der Anwendung die Navigation hinzu.
-   */
-  private void addNavigation(Composite parent) {
-    try
-    {
-      navi = new Navigation(parent);
-    }
-    catch (Exception e)
-    {
-			Application.getLog().error("unable to load navigation",e);
+	/**
+	 * Fuegt der Anwendung die Navigation hinzu.
+	 * @param parent
+	 */
+	private void addNavigation(Composite parent)
+	{
+		try
+		{
+			navi = new Navigation(parent);
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("unable to load navigation", e);
 			// skip navi
-    }
-  }
-  
-  /**
-   * Erzeugt das Content-Frame.
-   */
-  private void addView(Composite parent) {
-    view = new View(parent);
-  }
+		}
+	}
 
-  /**
-   * Erzeugt die untere Status-Leiste.
-   */
-  private void addStatusBar(Composite parent) {
-    statusBar = new StatusBar(parent);
-  }
+	/**
+	 * Erzeugt das Content-Frame.
+	 * @param parent
+	 */
+	private void addView(Composite parent)
+	{
+		view = new View(parent);
+	}
+
+	/**
+	 * Erzeugt die untere Status-Leiste.
+	 * @param parent
+	 */
+	private void addStatusBar(Composite parent)
+	{
+		statusBar = new StatusBar(parent);
+	}
 
 	/**
 	 * Startet die angegebene View in einem modalen Dialog.
-	 * @param className Name der Klasse, die als View im Content angezeigt
-	 * werden soll. Muss von AbstractView abgeleitet sein.
+	 * @param className Name der Klasse, die als View im Content angezeigt werden
+	 *          soll. Muss von AbstractView abgeleitet sein.
 	 * @param title anzuzeigender Titel.
 	 * @param o ein optionaler Parameter, der der View uebergeben wird.
 	 */
-	public static void startDialog(final String className, final String title, final Object o)
+	public static void startDialog(final String className, final String title,
+			final Object o)
 	{
-		try {
+		try
+		{
 			Class clazz = Application.getClassLoader().load(className);
-			ViewDialog dialog = new ViewDialog((AbstractView) clazz.newInstance(),ViewDialog.POSITION_CENTER);
+			ViewDialog dialog = new ViewDialog((AbstractView) clazz.newInstance(),
+					ViewDialog.POSITION_CENTER);
 			dialog.setTitle(title);
 			dialog.open();
 		}
 		catch (InstantiationException e)
 		{
-			Application.getLog().error("error while instanciating view",e);
+			Application.getLog().error("error while instanciating view", e);
 		}
 		catch (IllegalAccessException e)
 		{
-			Application.getLog().error("not allowed to bind view",e);
+			Application.getLog().error("not allowed to bind view", e);
 		}
 		catch (ClassNotFoundException e)
 		{
-			Application.getLog().error("view does not exist",e);
+			Application.getLog().error("view does not exist", e);
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error(e.getLocalizedMessage(),e);
+			Application.getLog().error(e.getLocalizedMessage(), e);
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-   * Startet die vorherige View.
-   * Existiert keine solche, kehrt die Funktion tatenlos zurueck.
-   */
-  public static void startPreviousView()
+	 * Startet die vorherige View. Existiert keine solche, kehrt die Funktion
+	 * tatenlos zurueck.
+	 */
+	public static void startPreviousView()
 	{
 		HistoryEntry entry = (HistoryEntry) gui.history.pop();
-		if (entry == null)
-			return;
+		if (entry == null) return;
 		gui.skipHistory = true;
-		startView(entry.view.getClass().getName(),entry.object);
+		startView(entry.view.getClass().getName(), entry.object);
 	}
 
 	/**
 	 * Zeigt die View im angegebenen Composite an.
-   * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
+	 * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
 	 * @param o das Fachobjekt.
-   */
-  public static void startView(final String className, final Object o)
+	 */
+	public static void startView(final String className, final Object o)
 	{
-    Application.getLog().debug("starting view: " + className);
+		Application.getLog().debug("starting view: " + className);
 
 		startSync(new Runnable() {
-      public void run() {
 
-				if (gui.currentView != null) {
-					try {
+			public void run()
+			{
+
+				if (gui.currentView != null)
+				{
+					try
+					{
 						gui.currentView.unbind();
 
 						// dispose all childs
@@ -331,7 +360,7 @@ public class GUI
 					}
 					catch (Throwable t)
 					{
-						Application.getLog().error("error while unbind current view",t);
+						Application.getLog().error("error while unbind current view", t);
 					}
 
 					if (!gui.skipHistory)
@@ -343,8 +372,7 @@ public class GUI
 						entry.view = gui.currentView;
 						entry.object = o;
 						gui.history.push(entry);
-						if (gui.history.size() > 10)
-							gui.history.remove(0);
+						if (gui.history.size() > 10) gui.history.remove(0);
 					}
 					// jetzt koennen wir skipHistory auf jeden Fall wieder
 					// ausschalten
@@ -352,19 +380,20 @@ public class GUI
 
 				}
 
-		    try
-		    {
-		      Class clazz = Application.getClassLoader().load(className);
-		
-		      gui.view.cleanContent();
-		
-		      gui.currentView = (AbstractView) clazz.newInstance();
-					gui.currentView.setParent(gui.view.getContent());
-		      gui.currentView.setCurrentObject(o);
+				try
+				{
+					Class clazz = Application.getClassLoader().load(className);
 
-					try {
+					gui.view.cleanContent();
+
+					gui.currentView = (AbstractView) clazz.newInstance();
+					gui.currentView.setParent(gui.view.getContent());
+					gui.currentView.setCurrentObject(o);
+
+					try
+					{
 						gui.currentView.bind();
-						
+
 						// Bis hierher hat alles geklappt, dann koennen wir mal
 						// schauen, ob's fuer die View eine Hilfe-Seite gibt.
 						loadHelp(gui.currentView);
@@ -373,171 +402,175 @@ public class GUI
 					catch (Exception e)
 					{
 						getStatusBar().setErrorText("Fehler beim Anzeigen des Dialogs.");
-						Application.getLog().error("error while loading view " + className,e);
-						GUI.startView(ErrorView.class.getName(),e);
+						Application.getLog().error("error while loading view " + className,
+								e);
+						GUI.startView(ErrorView.class.getName(), e);
 					}
-		
-		      // View aktualisieren
-		      gui.view.refreshContent();
-		    }
-		    catch (InstantiationException e)
-		    {
-		    	Application.getLog().error("error while instanciating view",e);
-		    }
-		    catch (IllegalAccessException e)
-		    {
-					Application.getLog().error("not allowed to bind view",e);
-		    }
-		    catch (ClassNotFoundException e)
-		    {
-					Application.getLog().error("view does not exist",e);
-		    }
+
+					// View aktualisieren
+					gui.view.refreshContent();
+				}
+				catch (InstantiationException e)
+				{
+					Application.getLog().error("error while instanciating view", e);
+				}
+				catch (IllegalAccessException e)
+				{
+					Application.getLog().error("not allowed to bind view", e);
+				}
+				catch (ClassNotFoundException e)
+				{
+					Application.getLog().error("view does not exist", e);
+				}
 			}
 		});
 
-  }
+	}
 
 	/**
-	 * Schaut, ob fuer diese View eine Hilfe-Seite existiert und laedt diese.
-	 * Es wird versucht, eine Hilfe-Seite der konfigurierten Sprache zu laden.
-   * @param view die View, fuer die nach der Hilfe-Seite gesucht werden soll.
-   */
-  private static void loadHelp(AbstractView view)
+	 * Schaut, ob fuer diese View eine Hilfe-Seite existiert und laedt diese. Es
+	 * wird versucht, eine Hilfe-Seite der konfigurierten Sprache zu laden.
+	 * @param view die View, fuer die nach der Hilfe-Seite gesucht werden soll.
+	 */
+	private static void loadHelp(AbstractView view)
 	{
 
-		String path = "help/" + 
-									Application.getConfig().getLocale().toString().toLowerCase() +
-									"/" + view.getClass().getName() + ".txt";
+		String path = "help/"
+				+ Application.getConfig().getLocale().toString().toLowerCase() + "/"
+				+ view.getClass().getName() + ".txt";
 		InputStream is = Application.getClassLoader().getResourceAsStream(path);
 		if (is == null)
 		{
-			path = "help/" + Locale.getDefault().toString().toLowerCase() + 
-						 "/" + view.getClass().getName() + ".txt";
+			path = "help/" + Locale.getDefault().toString().toLowerCase() + "/"
+					+ view.getClass().getName() + ".txt";
 			is = Application.getClassLoader().getResourceAsStream(path);
 		}
-		if (is == null)
-			return;
+		if (is == null) return;
 
-		try {
+		try
+		{
 			gui.help.setText(new InputStreamReader(is));
 		}
 		catch (Exception e)
-		{}
+		{/* ignore */}
 	}
 
-  /**
-   * Liefert die View-Komponente von Jameica.
-   * Das ist quasi der Content-Bereich.
-   * @return die View.
-   */
-  public static View getView()
+	/**
+	 * Liefert die View-Komponente von Jameica. Das ist quasi der Content-Bereich.
+	 * @return die View.
+	 */
+	public static View getView()
 	{
 		return gui.view;
 	}
 
-  /**
-   * Liefert die StatusBar.
-   * @return StatusBar.
-   */
-  public static StatusBar getStatusBar()
-  {
-    return gui.statusBar;
-  }
-  
-  /**
-   * Liefert die konfigurierte Style-Factory.
-   * @return
-   */
-  public static StyleFactory getStyleFactory()
-  {
-  	if (gui.styleFactory != null)
-  		return gui.styleFactory;
-		String className = settings.getString("stylefactory",StyleFactoryFlatImpl.class.getName());
-		try {
-			gui.styleFactory = (StyleFactory) Application.getClassLoader().load(className).newInstance();
+	/**
+	 * Liefert die StatusBar.
+	 * @return StatusBar.
+	 */
+	public static StatusBar getStatusBar()
+	{
+		return gui.statusBar;
+	}
+
+	/**
+	 * Liefert die konfigurierte Style-Factory.
+	 * @return
+	 */
+	public static StyleFactory getStyleFactory()
+	{
+		if (gui.styleFactory != null) return gui.styleFactory;
+		String className = settings.getString("stylefactory",
+				StyleFactoryFlatImpl.class.getName());
+		try
+		{
+			gui.styleFactory = (StyleFactory) Application.getClassLoader().load(
+					className).newInstance();
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("unable to load configured stylefactory, using default",e);
+			Application.getLog().error(
+					"unable to load configured stylefactory, using default", e);
 			gui.styleFactory = new StyleFactoryFlatImpl();
 		}
-  	return gui.styleFactory;
-  }
+		return gui.styleFactory;
+	}
 
 	/**
 	 * Speichert die zu verwendende StyleFactory.
-   * @param factory die zu verwendende StyleFactory.
-   */
-  public static void setStyleFactory(StyleFactory factory)
+	 * @param factory die zu verwendende StyleFactory.
+	 */
+	public static void setStyleFactory(StyleFactory factory)
 	{
-		if (factory == null)
-			return;
+		if (factory == null) return;
 		gui.styleFactory = factory;
-		settings.setAttribute("stylefactory",factory.getClass().getName());
+		settings.setAttribute("stylefactory", factory.getClass().getName());
 	}
 
 	/**
 	 * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
 	 * Waehrend der Ausfuehrung wird eine Sanduhr angezeigt und die GUI geblockt.
-	 * Das Runnable wird in einem extra Thread gestartet.
-	 * Von daher muss kein Thread uebergeben werden.
-	 * Das Runnable hat Zugriff auf die GUI.
-   * @param job
-   */
-  public static void startSync(final Runnable job)
+	 * Das Runnable wird in einem extra Thread gestartet. Von daher muss kein
+	 * Thread uebergeben werden. Das Runnable hat Zugriff auf die GUI.
+	 * @param job
+	 */
+	public static void startSync(final Runnable job)
 	{
 
-		if (getDisplay() == null || getDisplay().isDisposed())
-			return;
+		if (getDisplay() == null || getDisplay().isDisposed()) return;
 
 		Runnable r = new Runnable() {
 
 			boolean done = false;
 
-      public void run() {
+			public void run()
+			{
 
 				Thread t = new Thread(new Runnable() {
-					public void run() {
+
+					public void run()
+					{
 
 						getDisplay().syncExec(new Runnable() {
-              public void run() {
-								job.run();
-              }
-            });
 
-						if (getDisplay().isDisposed())
-							return;
+							public void run()
+							{
+								job.run();
+							}
+						});
+
+						if (getDisplay().isDisposed()) return;
 
 						done = true;
 						getDisplay().wake();
 						getDisplay().syncExec(new Runnable() {
-              public void run() {
-              	if (getDisplay().isDisposed())
-              		return;
-              }
-            });
+
+							public void run()
+							{
+								if (getDisplay().isDisposed()) return;
+							}
+						});
 					}
 				});
 
 				t.start();
-				while (!done && !getShell().isDisposed()) {
-					if (!getDisplay().readAndDispatch())
-						getDisplay().sleep();
-	      }
+				while (!done && !getShell().isDisposed())
+				{
+					if (!getDisplay().readAndDispatch()) getDisplay().sleep();
+				}
 
-      }
-    };
+			}
+		};
 
 		BusyIndicator.showWhile(getDisplay(), r);
 	}
 
 	/**
 	 * Startet einen Job asynchron zur GUI, der typischerweise laenger dauert.
-	 * Waehrend der Ausfuehrung wird die nicht GUI geblockt. Informativ
-	 * wird unten rechts ein ProgressBar angezeigt.
-	 * Das Runnable wird in einem extra Thread gestartet.
-	 * Von daher muss kein Thread uebergeben werden.
-	 * Das Runnable hat <b>keinen</b> direkten Zugriff auf die GUI.
+	 * Waehrend der Ausfuehrung wird die nicht GUI geblockt. Informativ wird unten
+	 * rechts ein ProgressBar angezeigt. Das Runnable wird in einem extra Thread
+	 * gestartet. Von daher muss kein Thread uebergeben werden. Das Runnable hat
+	 * <b>keinen </b> direkten Zugriff auf die GUI.
 	 * @param job
 	 */
 	public static void startAsync(final Runnable job)
@@ -546,103 +579,113 @@ public class GUI
 		getStatusBar().startProgress();
 
 		Runnable r = new Runnable() {
-      public void run() {
+
+			public void run()
+			{
 				Thread t = new Thread() {
 
-					public void run() {
-						try {
+					public void run()
+					{
+						try
+						{
 							job.run();
 						}
 						catch (Exception e)
 						{
-							// Wir wollen nicht, dass unbefugter Zugriff auf die GUI stattfindet
-							Application.getLog().error(e.getLocalizedMessage(),e);
+							// Wir wollen nicht, dass unbefugter Zugriff auf die GUI
+							// stattfindet
+							Application.getLog().error(e.getLocalizedMessage(), e);
 						}
 						getStatusBar().stopProgress();
 					}
 				};
 				t.start();
-				while (!getShell().isDisposed()) {
-					if (!getDisplay().readAndDispatch())
-						getDisplay().sleep();
+				while (!getShell().isDisposed())
+				{
+					if (!getDisplay().readAndDispatch()) getDisplay().sleep();
 				}
-      }
-    };
+			}
+		};
 		getDisplay().asyncExec(r);
 	}
 
-  /**
-   * Startet den GUI-Loop.
-   */
-  public void loop()
-  {
-    while (!shell.isDisposed() && !stop) {
-      try {
-        if (!display.readAndDispatch ()) display.sleep();
-      }
-      catch(Exception e){
-        Application.getLog().error("main loop crashed. showing error page",e);
-        GUI.startView(FatalErrorView.class.getName(),e);
-      }
-    }
+	/**
+	 * Startet den GUI-Loop.
+	 */
+	public void loop()
+	{
+		while (!shell.isDisposed() && !stop)
+		{
+			try
+			{
+				if (!display.readAndDispatch()) display.sleep();
+			}
+			catch (Exception e)
+			{
+				Application.getLog().error("main loop crashed. showing error page", e);
+				GUI.startView(FatalErrorView.class.getName(), e);
+			}
+		}
 		// save window position and size
-    quit();
-  }
-  
-  /**
-   * Liefert die Shell der Anwendung.
-   * @return Shell der Anwendung.
-   */
-  public static Shell getShell()
-  {
-    return gui.shell;
-  }
-  
-  /**
-   * Liefert das Display der Anwendung.
-   * @return Display der Anwendung.
-   */
-  public static Display getDisplay()
-  {
-    return gui.display;
-  }
+		quit();
+	}
 
-  /**
-   * Beendet die GUI.
-   * Wenn die Anwendung nicht im Servermode laeuft, wird nichts gemacht.
-   */
-  public static void shutDown()
-  {
-    if (Application.inServerMode())
-      return;
+	/**
+	 * Liefert die Shell der Anwendung.
+	 * @return Shell der Anwendung.
+	 */
+	public static Shell getShell()
+	{
+		return gui.shell;
+	}
 
-    // exit running gui loop
-    stop = true;
-  }
-  
-  /**
-   * Die Beenden-Methoden sind deshalb getrennt, damit es moeglich
-   * ist, die GUI von einem anderen Thread beenden zu lassen
-   * (z.Bsp. vom ShutdownHook).
-   */
-  private static void quit()
-  {
+	/**
+	 * Liefert das Display der Anwendung.
+	 * @return Display der Anwendung.
+	 */
+	public static Display getDisplay()
+	{
+		return gui.display;
+	}
 
-    try {
-      Application.getLog().info("shutting down GUI");
-      gui.shell.dispose();
-      gui.display.dispose();
-    }
-    catch (Exception e)
-    {
-			Application.getLog().error("error while quitting GUI",e);
-    }
-  }
-  
+	/**
+	 * Beendet die GUI. Wenn die Anwendung nicht im Servermode laeuft, wird nichts
+	 * gemacht.
+	 */
+	public static void shutDown()
+	{
+		if (Application.inServerMode()) return;
+
+		// exit running gui loop
+		stop = true;
+	}
+
+	/**
+	 * Die Beenden-Methoden sind deshalb getrennt, damit es moeglich ist, die GUI
+	 * von einem anderen Thread beenden zu lassen (z.Bsp. vom ShutdownHook).
+	 */
+	private static void quit()
+	{
+
+		try
+		{
+			Application.getLog().info("shutting down GUI");
+			gui.shell.dispose();
+			gui.display.dispose();
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("error while quitting GUI", e);
+		}
+	}
+
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.45  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.44  2004/06/03 00:24:18  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,15 +25,50 @@ import de.willuhn.jameica.gui.GUI;
  */
 public class Color {
 	
+	/**
+	 * Hintergrundfarbe von Widgets.
+	 */
 	public final static Color WIDGET_BG   = new Color("color.widgetbg",			new RGB(255,255,255));
-	public final static Color WIDGET_FG   = new Color("color.widgetfg",		  new RGB(0,0,0));
-	public final static Color BACKGROUND 	= new Color("color.background",		GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
-	public final static Color BORDER 			= new Color("color.border",				new RGB(0,0,0));
-	public final static Color COMMENT 		= new Color("color.comment",			new RGB(140,140,140));
-	public final static Color ERROR				= new Color("color.error",				new RGB(250,10,10));
-	public final static Color SUCCESS			= new Color("color.success",			new RGB(0,0,0));
-	public final static Color LINK				= new Color("color.link",					new RGB(0,0,100));
-	public final static Color LINK_ACTIVE	= new Color("color.link.active",	new RGB(0,0,200));
+
+  /**
+   * Vordergrundfarbe von Widgets.
+   */
+  public final static Color WIDGET_FG   = new Color("color.widgetfg",		  new RGB(0,0,0));
+
+  /**
+   * Hintergrundfarbe der Views.
+   */
+  public final static Color BACKGROUND 	= new Color("color.background",		GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
+
+  /**
+   * Rahmenfarbe von Elementen (zB Tabellen).
+   */
+  public final static Color BORDER 			= new Color("color.border",				new RGB(0,0,0));
+
+  /**
+   * Farbe von Kommentaren.
+   */
+  public final static Color COMMENT 		= new Color("color.comment",			new RGB(140,140,140));
+
+  /**
+   * Farbe von Fehlertexten.
+   */
+  public final static Color ERROR				= new Color("color.error",				new RGB(250,10,10));
+
+  /**
+   * Farbe von Erfolgsmeldungen.
+   */
+  public final static Color SUCCESS			= new Color("color.success",			new RGB(0,0,0));
+
+  /**
+   * Farbe von Links.
+   */
+  public final static Color LINK				= new Color("color.link",					new RGB(0,0,100));
+
+  /**
+   * Farbe von aktiven Links.
+   */
+  public final static Color LINK_ACTIVE	= new Color("color.link.active",	new RGB(0,0,200));
 
 	private String name;
 	private RGB value;
@@ -90,6 +125,9 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.4  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.3  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract

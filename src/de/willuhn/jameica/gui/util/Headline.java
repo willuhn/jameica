@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Headline.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/05/25 23:23:36 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/10 20:56:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.Label;
 public class Headline
 {
 
-  private Label dotLine;
-
   /**
    * Erzeugt eine neue Standardueberschrift im angegebenen Composite mit dem uebergebenen Namen.
    * @param parent das Composite in dem die Ueberschrift gemalt werden soll.
@@ -43,6 +41,9 @@ public class Headline
 
 /*********************************************************************
  * $Log: Headline.java,v $
+ * Revision 1.4  2004/06/10 20:56:54  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.3  2004/05/25 23:23:36  willuhn
  * *** empty log message ***
  *

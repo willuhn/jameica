@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginResources.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/04/22 23:47:11 $
+ * $Revision: 1.10 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ public class PluginResources {
 
   /**
    * ct.
-   * Das Plugin-File oder Verzeichnis.
+   * @param plugin Das Plugin-File oder Verzeichnis.
    */
   protected PluginResources(AbstractPlugin plugin)
   {
@@ -117,6 +117,9 @@ public class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.10  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.9  2004/04/22 23:47:11  willuhn
  * *** empty log message ***
  *

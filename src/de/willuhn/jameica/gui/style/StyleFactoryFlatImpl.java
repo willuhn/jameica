@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/06/03 00:24:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.util.StyleFactory#createButton(org.eclipse.swt.widgets.Composite)
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createButton(org.eclipse.swt.widgets.Composite)
    */
   public Button createButton(Composite parent)
   {
@@ -53,7 +53,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
   }
 
   /**
-   * @see de.willuhn.jameica.gui.util.StyleFactory#createLabel(org.eclipse.swt.widgets.Composite)
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createLabel(org.eclipse.swt.widgets.Composite)
    */
   public Label createLabel(Composite parent)
   {
@@ -67,7 +67,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
   }
 
   /**
-   * @see de.willuhn.jameica.gui.util.StyleFactory#createText(org.eclipse.swt.widgets.Composite)
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createText(org.eclipse.swt.widgets.Composite)
    */
   public Text createText(Composite parent)
   {
@@ -80,8 +80,8 @@ public class StyleFactoryFlatImpl implements StyleFactory
 		return text;
   }
 
-	/**
-   * @see de.willuhn.jameica.gui.util.StyleFactory#createCombo(org.eclipse.swt.widgets.Composite)
+  /**
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createCombo(org.eclipse.swt.widgets.Composite)
    */
   public CCombo createCombo(Composite parent)
 	{
@@ -94,7 +94,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.util.StyleFactory#getName()
+   * @see de.willuhn.jameica.gui.style.StyleFactory#getName()
    */
   public String getName() {
     return "Flat-Look";
@@ -105,6 +105,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.2  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.1  2004/06/03 00:24:18  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.44 $
- * $Date: 2004/05/11 21:11:11 $
+ * $Revision: 1.45 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -223,7 +223,7 @@ public class PluginLoader
   /**
    * Prueft ob die uebergebene Klasse ein gueltiges Plugin ist.
    * Und versucht, die zugehoerige Klasse zu laden
-   * @param className Name des zu checkenden Plugins.
+   * @param classname zu ladende Klasse.
    * @return Klasse, wenn es gueltig ist und geladen werden konnte. Andernfalls null.
    */
   private static Class load(String classname)
@@ -514,6 +514,9 @@ public class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.45  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.44  2004/05/11 21:11:11  willuhn
  * *** empty log message ***
  *

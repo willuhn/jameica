@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/27 23:12:58 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,9 +40,20 @@ public class Font {
 		}
 	}
 
+	/**
+   * Schrift fuer Ueberschriften erster Ordnung.
+	 */
 	public final static Font H1				= new Font("font.h1",						new FontData(systemFont, 10, SWT.BOLD));
-	public final static Font H2 			= new Font("font.h2",						new FontData(systemFont, 8, SWT.BOLD));
-	public final static Font DEFAULT  = new Font("font.default",			new FontData());
+
+  /**
+   * Schrift fuer Ueberschriften zweiter Ordnung.
+   */
+  public final static Font H2 			= new Font("font.h2",						new FontData(systemFont, 8, SWT.BOLD));
+	
+  /**
+   * Standard-Schrift.
+   */
+  public final static Font DEFAULT  = new Font("font.default",			new FontData());
 
 	private String name;
 	private FontData value;
@@ -91,6 +102,9 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.3  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.2  2004/05/27 23:12:58  willuhn
  * @B NoSuchFieldError in Settings
  * @C s/java/javaw.exe in build/*.bat

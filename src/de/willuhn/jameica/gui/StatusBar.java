@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/05/26 23:23:23 $
+ * $Revision: 1.23 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,6 +58,7 @@ public class StatusBar {
 
   /**
    * Erzeugt eine neue Statusleiste.
+   * @param parent Das Composite, in den die Statusbar gemalt werden soll.
    */
   protected StatusBar(Composite parent) {
 
@@ -268,8 +269,10 @@ public class StatusBar {
 		});
 	}
 
-	/**
+  /**
    * Zeigt die letzten Meldungen an.
+   * @param e Enumeration mit den Melduingen.
+   * @param alignRight Ausrichtung.
    */
   private void showLastMessages(Enumeration e, boolean alignRight)
 	{
@@ -290,6 +293,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.23  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.22  2004/05/26 23:23:23  willuhn
  * @N Timeout fuer Messages in Statusbars
  *

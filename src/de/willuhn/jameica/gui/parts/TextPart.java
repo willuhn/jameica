@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -147,9 +147,8 @@ public class TextPart implements Part
 			stext.setTopIndex(stext.getLineCount());
 	}
 
-	/**
-	 * Malt den Text in das angegebene Composite.
-   * @param parent Composite.
+  /**
+   * @see de.willuhn.jameica.gui.parts.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent) throws RemoteException
 	{
@@ -168,6 +167,9 @@ public class TextPart implements Part
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.3  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.2  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

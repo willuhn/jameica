@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,6 +44,11 @@ public abstract class ButtonInput extends AbstractInput
 	private Image  buttonImage;
 	private ArrayList buttonListeners = new ArrayList();
 
+  /**
+   * Liefert das einzubettende Eingabefeld.
+   * @param parent Composite, in dem sich das ClientControl malen soll.
+   * @return das fertig gemalte Control.
+   */
   public abstract Control getClientControl(Composite parent);
   
   /**
@@ -99,7 +104,6 @@ public abstract class ButtonInput extends AbstractInput
 
 	/**
 	 * Definiert das auf dem Button anzuzeigende Image.
-	 * @see #setButtonText(String).
    * @param image anzuzeigendes Image.
    */
   public final void setButtonImage(Image image)
@@ -187,6 +191,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.4  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.3  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract

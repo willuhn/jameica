@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.17 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,8 +44,10 @@ public class Navigation {
   
   private Composite parent;
 
-	/**
+  /**
    * Erzeugt die Navigation.
+   * @param parent Das Eltern-Element.
+   * @throws Exception
    */
   protected Navigation(Composite parent) throws Exception
 	{
@@ -303,6 +305,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.17  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.16  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

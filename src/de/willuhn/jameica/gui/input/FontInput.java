@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.6 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,6 @@ public class FontInput extends ButtonInput
 {
 
   private CLabel label;
-  private boolean enabled = true;
 
 	private Font font;
 
@@ -99,6 +98,9 @@ public class FontInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.6  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.5  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract

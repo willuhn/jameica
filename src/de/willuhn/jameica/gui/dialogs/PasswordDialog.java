@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/05/23 16:34:18 $
+ * $Revision: 1.10 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -83,6 +83,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 	 * Diese Funktion sollte aus <code>checkPassword(String)</code> heraus
 	 * aufgerufen werden, um dem benutzer zu zeigen, <b>warum</b> seine
 	 * Passwort-Eingabe falsch war. 
+   * @param text Der anzuzeigende Fehlertext.
    */
   protected final void setErrorText(String text)
 	{
@@ -210,6 +211,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.10  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.9  2004/05/23 16:34:18  willuhn
  * *** empty log message ***
  *

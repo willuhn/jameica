@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/05/23 16:34:18 $
+ * $Revision: 1.7 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -112,6 +112,7 @@ public class HelpView {
 	/**
 	 * Zeigt den Text aus dem uebergebenen Reader an.
    * @param reader auszulesender Reader.
+   * @throws IOException Wenn der Text aus dem Reader nicht gelesen werden kann.
    */
   public void setText(Reader reader) throws IOException
 	{
@@ -123,6 +124,9 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.7  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.6  2004/05/23 16:34:18  willuhn
  * *** empty log message ***
  *

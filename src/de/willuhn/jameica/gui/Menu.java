@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/04/26 21:00:11 $
+ * $Revision: 1.21 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,8 @@ public class Menu
 
   /**
    * Erzeugt eine neue Instanz des Dropdown-Menus.
+   * @param parent Das Eltern-Element.
+   * @throws Exception
    */
   protected Menu(Decorations parent) throws Exception
   {
@@ -247,6 +249,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.21  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.20  2004/04/26 21:00:11  willuhn
  * @N made menu and navigation entries translatable
  *

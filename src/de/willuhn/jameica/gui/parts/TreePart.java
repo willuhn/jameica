@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -186,7 +186,7 @@ public class TreePart implements Part
 		/**
 		 * ct. Laed ein neues Element des Baumes.
      * @param parent das Eltern-Element.
-     * @param das aktuelle Element.
+     * @param element das aktuelle Element.
      * @throws RemoteException
      */
     Item(TreeItem parent, DBObjectNode element) throws RemoteException
@@ -237,8 +237,10 @@ public class TreePart implements Part
 
 		}
 
-		/**
+
+    /**
      * Laedt alle Kinder dieses Elements.
+     * @throws RemoteException
      */
     void loadChilds() throws RemoteException
     {
@@ -277,6 +279,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.3  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.2  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

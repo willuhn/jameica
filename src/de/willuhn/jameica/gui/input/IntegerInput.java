@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,7 +67,7 @@ public class IntegerInput extends TextInput
   	if (text.getText() == null || text.getText().length() == 0)
   		return null;
     try {
-      return new Integer((String)text.getText());
+      return new Integer(text.getText());
     }
     catch (NumberFormatException e)
     {
@@ -94,6 +94,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.3  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

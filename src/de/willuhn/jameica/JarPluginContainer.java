@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/JarPluginContainer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/04/26 22:42:18 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/10 20:56:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class JarPluginContainer implements PluginContainer {
 
 	/**
 	 * Speichert die Navi.
-	 * @param menu
+   * @param navi
 	 */
 	void setNavi(JarEntry navi)
 	{
@@ -152,6 +152,9 @@ public class JarPluginContainer implements PluginContainer {
 
 /**********************************************************************
  * $Log: JarPluginContainer.java,v $
+ * Revision 1.4  2004/06/10 20:56:53  willuhn
+ * @D javadoc comments fixed
+ *
  * Revision 1.3  2004/04/26 22:42:18  willuhn
  * @N added InfoReader
  *
