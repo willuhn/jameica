@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/02/02 16:16:38 $
+ * $Revision: 1.2 $
+ * $Date: 2005/02/04 00:34:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class StartupParams
 
 	private Options options = null;
 
-	private String workDir  = ".";
+	private String workDir  = null;
 	private String password = null;
 	private int mode 				= MODE_STANDALONE;
 
@@ -151,6 +151,9 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.2  2005/02/04 00:34:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/02/02 16:16:38  willuhn
  * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
  *
