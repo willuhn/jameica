@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.34 $
- * $Date: 2005/03/21 21:46:47 $
+ * $Revision: 1.35 $
+ * $Date: 2005/03/24 17:33:12 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -91,6 +91,15 @@ public final class Application {
 		// init logger
 		Logger.addTarget(new OutputStreamTarget(System.out));
 		Logger.info(getI18n().tr("starting jameica..."));
+
+    Level level = Level.findByName(getConfig().getLogLevel());
+    if (level == null)
+    {
+      Logger.warn("unable to detect defined log level, fallback to default level");
+      level = Level.DEFAULT;
+    }
+    Logger.info("using log level " + level.getName() + "[" + level.getValue() + "]");
+    Logger.setLevel(level);
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -360,8 +369,6 @@ public final class Application {
 		{
 			app.startupError(t);
 		}
-		Logger.setLevel(Level.findByName(getConfig().getLogLevel()));
-
     return app.config;
   }
 
@@ -491,6 +498,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.35  2005/03/24 17:33:12  web0
+ * @B bug in Level.findByName
+ *
  * Revision 1.34  2005/03/21 21:46:47  web0
  * @N added manifest tag "built-date"
  * @N version number, built-date and buildnumber are written to log now
