@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/10/15 20:06:08 $
+ * $Revision: 1.9 $
+ * $Date: 2004/11/01 23:11:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,6 +30,8 @@ public class TextInput extends AbstractInput
   protected Text text;
   private String value;
   private boolean enabled = true;
+  private String validChars = null;
+	private String invalidChars = null;
 
 	private int maxLength = 0;
 
@@ -53,6 +55,41 @@ public class TextInput extends AbstractInput
 		this.maxLength = maxLength;
 	}
 
+	/**
+	 * Definiert die maximal eingebbare Menge von Zeichen.
+   * @param maxLength
+   */
+  public void setMaxLength(int maxLength)
+	{
+		this.maxLength = maxLength;
+	}
+
+	/**
+	 * Definiert eine Liste von Zeichen, die eingegeben werden koennen.
+	 * Wird diese Funktion verwendet, dann duerfen nur noch die hier
+	 * angegebenen Zeichen eingegeben werden.
+	 * Werden beide Funktionen <code>setValidChars</code> <b>und</b>
+	 * <code>setInvalidChars</code> benutzt, kann nur noch die verbleibende
+	 * Restmenge eingegeben werden. Das sind die Zeichen, die in validChars
+	 * angegeben und in invalidChars nicht enthalten sind. 
+   * @param chars
+   */
+  public void setValidChars(String chars)
+	{
+		this.validChars = chars;
+	}
+
+	/**
+	 * Definiert eine Liste von Zeichen, die nicht eingegeben werden koennen.
+	 * Wird diese Funktion verwendet, dann duerfen die angegebenen Zeichen nicht
+	 * mehr verwendet werden.
+   * @param chars
+   */
+  public void setInvalidChars(String chars)
+	{
+		this.invalidChars = chars;
+	}
+
   /**
    * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
@@ -62,9 +99,46 @@ public class TextInput extends AbstractInput
 		text.setEnabled(enabled);
     text.setText((value == null ? "" : value));
 
+		if ((validChars != null && validChars.length() > 0))
+		{
+			text.addListener(SWT.Verify, new Listener()
+			{
+				public void handleEvent(Event e)
+				{
+					char[] chars = e.text.toCharArray();
+					for (int i=0; i<chars.length; i++) {
+						if (validChars.indexOf(chars[i]) == -1) // eingegebenes Zeichen nicht enthalten
+						{
+							e.doit = false;
+							return;
+						}
+					}
+				}
+			});
+		}
+
+		if ((invalidChars != null && invalidChars.length() > 0))
+		{
+			text.addListener(SWT.Verify, new Listener()
+			{
+				public void handleEvent(Event e)
+				{
+					char[] chars = e.text.toCharArray();
+					for (int i=0; i<chars.length; i++) {
+						if (invalidChars.indexOf(chars[i]) != -1) // eingegebenes Zeichen enthalten
+						{
+							e.doit = false;
+							return;
+						}
+					}
+				}
+			});
+		}
+
 		if (maxLength > 0)
 		{
-			text.addListener (SWT.Verify, new Listener() {
+			text.addListener (SWT.Verify, new Listener()
+			{
 				public void handleEvent(Event e)
 				{
 					if ((text.getText() + e.text).length() > maxLength)
@@ -124,11 +198,13 @@ public class TextInput extends AbstractInput
   	if (text != null && !text.isDisposed())
 	    text.setEnabled(true);
   }
-
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.9  2004/11/01 23:11:18  willuhn
+ * @N setValidChars und setInvalidChars in TextInput
+ *
  * Revision 1.8  2004/10/15 20:06:08  willuhn
  * @N added maxLength to TextInput
  * @N double comma check in DecimalInput

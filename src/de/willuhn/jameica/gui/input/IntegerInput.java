@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.6 $
+ * $Date: 2004/11/01 23:11:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,9 +43,7 @@ public class IntegerInput extends TextInput
 		Control c = super.getControl();
     text.addListener (SWT.Verify, new Listener() {
       public void handleEvent (Event e) {
-        String t = e.text;
-        char [] chars = new char [t.length ()];
-        t.getChars (0, chars.length, chars, 0);
+				char[] chars = e.text.toCharArray();
         for (int i=0; i<chars.length; i++) {
           if (!('0' <= chars[i] && chars[i] <= '9')) {
             e.doit = false;
@@ -94,6 +92,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.6  2004/11/01 23:11:19  willuhn
+ * @N setValidChars und setInvalidChars in TextInput
+ *
  * Revision 1.5  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *
