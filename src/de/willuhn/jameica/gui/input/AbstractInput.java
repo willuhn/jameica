@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/21 22:28:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -180,7 +180,7 @@ public abstract class AbstractInput
 			control.addListener(SWT.FocusIn,l);
 			control.addListener(SWT.FocusOut,l);
       
-			// Es kann sein, dass das Control ein Composite ist (z.Bsp. bei SearchInput)
+			// Es kann sein, dass das Control ein Composite ist (z.Bsp. bei DialogInput)
 			// Wenn es also aus mehren Elementen besteht, dann muessen wir
 			// den Listener an alle haengen.
 			if (control instanceof Composite)
@@ -215,6 +215,9 @@ public abstract class AbstractInput
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.2  2004/04/21 22:28:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

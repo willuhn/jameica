@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.5 $
+ * $Date: 2004/04/21 22:28:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,14 +12,11 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.jameica.gui.controller.AbstractControl;
@@ -37,7 +34,6 @@ public class ListDialog extends AbstractDialog
 {
 
   private Object object = null;
-  private ArrayList listeners = new ArrayList();
   private DBIterator list = null;
   private Hashtable fields = new Hashtable();
   private Hashtable formatter = new Hashtable();
@@ -83,18 +79,6 @@ public class ListDialog extends AbstractDialog
 			return;
 		this.formatter.put(title,f);
   }
-
-	/**
-	 * Fuegt einen Listener hinzu, der bei Doppelklick auf eines der Elemente ausgeloest wird.
-	 * Dabei wird die Methode <code>handleEvent(Event)</code> des Listeners
-	 * aufgerufen. Das ausgewaehlte Objekt befindet sich dann im Member <code>data</code>
-	 * des Events.
-   * @param l zu registrierender Listener.
-   */
-  public void addListener(Listener l)
-	{
-		listeners.add(l);
-	}
 
 	/**
 	 * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
@@ -160,15 +144,7 @@ public class ListDialog extends AbstractDialog
     public void handleOpen(Object o)
     {
       object = o;
-      Listener l = null;
-      Event e = new Event();
-      e.data = object;
-      for (int i=0;i<listeners.size();++i)
-      {
-      	l = (Listener) listeners.get(i);
-      	l.handleEvent(e);
-      }
-      // Schliessen des Dialogs nicht vergessen ;)
+      // Wir schliessen den Dialog bei Auswahl eines Objektes.
       close();
     }
     
@@ -178,6 +154,9 @@ public class ListDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.5  2004/04/21 22:28:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms

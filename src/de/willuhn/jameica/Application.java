@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.36 $
- * $Date: 2004/04/20 17:14:50 $
+ * $Revision: 1.37 $
+ * $Date: 2004/04/21 22:28:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,6 +55,7 @@ public class Application {
     private Config config;
     private MultipleClassLoader classLoader;
     private I18N i18n;
+    private Lock lock;
     
   /**
    * ct.
@@ -82,7 +83,7 @@ public class Application {
 			File dir = new File("run");
 			if (!dir.exists())
 				dir.mkdirs();
-			new Lock("run/jameica");
+			app.lock = new Lock("run/jameica");
 		}
 		catch (RuntimeException e)
 		{
@@ -177,12 +178,15 @@ public class Application {
 		if (serverMode)
 			throw new RuntimeException(e);
 		Display d = Display.getCurrent();
+		if (d == null)
+			d = new Display();
 		final Shell s = new Shell();
 		s.setLayout(new GridLayout());
 		s.setText("Fehler");
 		Label l = new Label(s,SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		l.setText(e.getMessage());
+
 		Button b = new Button(s,SWT.BORDER);
 		b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		b.setText("OK");
@@ -329,6 +333,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.37  2004/04/21 22:28:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.36  2004/04/20 17:14:50  willuhn
  * @B fix in parsing command line params
  *

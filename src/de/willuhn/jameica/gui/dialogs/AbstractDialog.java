@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.14 $
+ * $Date: 2004/04/21 22:28:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,8 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ShellListener;
@@ -20,7 +22,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
@@ -89,6 +93,8 @@ public abstract class AbstractDialog
 
   private Shell shell;
   private Display display;
+	private ArrayList listeners = new ArrayList();
+	private Object choosen = null;
   
   private Composite parent;
   private CLabel title;
@@ -172,6 +178,21 @@ public abstract class AbstractDialog
   protected final void addShellListener(ShellListener l)
 	{
 		shell.addShellListener(l);
+	}
+
+	/**
+	 * Fuegt einen Listener hinzu, der beim Schliessen des Fensters
+	 * ausgeloest wird. Ob das Schliessen nun durch Klick auf
+	 * den Schliessen-Button oder z.Bsp. durch Auswahl eines
+	 * Elements im Dialog stattfindet, ist egal.
+	 * Dabei wird die Methode <code>handleEvent(Event)</code> des Listeners
+	 * aufgerufen. Das ausgewaehlte Objekt befindet sich dann im Member <code>data</code>
+	 * des Events.
+	 * @param l zu registrierender Listener.
+	 */
+	public void addCloseListener(Listener l)
+	{
+		listeners.add(l);
 	}
 
   /**
@@ -274,7 +295,9 @@ public abstract class AbstractDialog
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) display.sleep();
 			}
-			return getData();
+
+			choosen = getData();
+			return choosen;
 		}
 		finally
 		{
@@ -287,6 +310,20 @@ public abstract class AbstractDialog
    */
   public final void close()
 	{
+
+		try {
+			Listener l = null;
+			Event e = new Event();
+			e.data = choosen;
+			for (int i=0;i<listeners.size();++i)
+			{
+				l = (Listener) listeners.get(i);
+				l.handleEvent(e);
+			}
+		}
+		catch (Exception e) {/*useless*/}
+
+
 		try {
 			shell.dispose();
 		}
@@ -296,6 +333,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.14  2004/04/21 22:28:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *
