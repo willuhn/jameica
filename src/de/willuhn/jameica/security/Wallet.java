@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/03/16 18:16:44 $
+ * $Revision: 1.6 $
+ * $Date: 2005/03/19 18:17:37 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,8 @@ package de.willuhn.jameica.security;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,7 +31,6 @@ import java.util.Iterator;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -155,7 +156,6 @@ public final class Wallet
 		Logger.info("reading wallet file " + getFilename());
 		
     InputStream is        = null;
-    CipherInputStream cis = null;
 
 		try
 		{
@@ -174,15 +174,32 @@ public final class Wallet
 			Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
 			cipher.init(Cipher.DECRYPT_MODE,this.pair.getPrivate());
 
-      cis = new CipherInputStream(is,cipher);
-			ObjectInputStream ois = new ObjectInputStream(cis);
+			// Einlesen und entschluesseln
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+			int size = cipher.getBlockSize();
+			Logger.info("using block size (in bytes): " + size);
+
+			Logger.info("decrypting wallet");
+			byte[] buf = new byte[size];
+			while (is.read(buf) > 0)
+			{
+//				bos.write(cipher.doFinal(buf));
+				bos.write(buf);
+				CipherInputStream cis;
+			}
+
+			Logger.info("deserializing wallet");
+			ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+			ObjectInputStream ois = new ObjectInputStream(bis);
 			this.serialized = (Hashtable) ois.readObject();
+			Logger.info("reading wallet done");
 		}
 		finally
 		{
 			try
 			{
-				cis.close();
+				is.close();
 			}
 			catch (Exception e)
 			{
@@ -220,28 +237,46 @@ public final class Wallet
 		Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
 		cipher.init(Cipher.ENCRYPT_MODE,this.pair.getPublic());
 
-		// Object serialisieren
-    OutputStream os        = new BufferedOutputStream(new FileOutputStream(tempfile));
-    CipherOutputStream cos = new CipherOutputStream(os,cipher);
+		// Objekt serialisieren
+    OutputStream os        			= new BufferedOutputStream(new FileOutputStream(tempfile));
 
-		ObjectOutputStream oos = new ObjectOutputStream(cos);
+		Logger.info("serializing wallet");
+		ByteArrayOutputStream bos 	= new ByteArrayOutputStream();
+		ObjectOutputStream oos 			= new ObjectOutputStream(bos);
 		oos.writeObject(this.serialized);
+		
+		ByteArrayInputStream bis 		= new ByteArrayInputStream(bos.toByteArray());
+
+		Logger.info("encrypting wallet");
+		int size = cipher.getBlockSize();
+		Logger.info("using block size (in bytes): " + size);
+		byte[] buf = new byte[size];
+		while (bis.read(buf) > 0)
+		{
+//			os.write(cipher.doFinal(buf));
+			os.write(buf);
+		}
 
     // Wir koennen das Flushen und Schliessen nicht im finally() machen,
     // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
     // Das Umbenennen wuerde sonst _vorher_ passieren.
-    oos.flush();
-    oos.close();
+    os.flush();
+    os.close();
+		Logger.info("renaming temp file");
     
     // OK, Schreiben war erfolgreich. Jetzt kopieren wir die Temp-Datei rueber.
     file.delete();
     tempfile.renameTo(file);
+		Logger.info("writing wallet done");
 	}
 }
 
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.6  2005/03/19 18:17:37  web0
+ * @B bloeder CipherInputStream
+ *
  * Revision 1.5  2005/03/16 18:16:44  web0
  * @B bug 25
  *

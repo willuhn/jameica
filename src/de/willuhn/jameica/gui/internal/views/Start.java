@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/12/13 22:48:31 $
- * $Author: willuhn $
+ * $Revision: 1.6 $
+ * $Date: 2005/03/19 18:17:37 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -80,7 +80,6 @@ public class Start extends AbstractView
 			messageTable.addColumn(i18n.tr("System-Meldungen"),"foo");
 			messageTable.paint(getParent());
 		}
-
   }        
 
   /**
@@ -144,6 +143,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.6  2005/03/19 18:17:37  web0
+ * @B bloeder CipherInputStream
+ *
  * Revision 1.5  2004/12/13 22:48:31  willuhn
  * *** empty log message ***
  *
