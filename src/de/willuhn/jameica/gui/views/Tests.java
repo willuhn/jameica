@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Tests.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,7 @@ public class Tests extends AbstractView {
       public void mouseUp(MouseEvent e) {
       	PINDialog pd = new PINDialog(PINDialog.POSITION_CENTER);
 				try {
-					pd.getPassword();
+					pd.open();
 				}
 				catch (Exception e2)
 				{
@@ -59,6 +59,9 @@ public class Tests extends AbstractView {
 
 /**********************************************************************
  * $Log: Tests.java,v $
+ * Revision 1.2  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.1  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

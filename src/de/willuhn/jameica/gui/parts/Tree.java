@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Tree.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -131,10 +131,10 @@ public class Tree {
 			return;
 		TreeItem item = (TreeItem) widget;
 
-    String id = (String) item.getData();
-    if (id == null)
+    Object o = item.getData();
+    if (o == null)
       return;
-    this.controller.handleLoad(id);
+    this.controller.handleOpen(o);
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class Tree {
 
 			// create tree item
 			item.setImage(Style.getImage("folder.gif"));
-			item.setData(element.getID());
+			item.setData(element);
 
 			item.setText(""+(String) element.getField(element.getPrimaryField()));
 
@@ -272,6 +272,9 @@ public class Tree {
 
 /*********************************************************************
  * $Log: Tree.java,v $
+ * Revision 1.3  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.2  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

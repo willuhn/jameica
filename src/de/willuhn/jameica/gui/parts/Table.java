@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -185,7 +185,7 @@ public class Table
 				{
 					String[] fieldData = (String[]) fields.get(i);
 					String field = fieldData[1];
-					item.setData(o.getID());
+					item.setData(o);
 					Object value = o.getField(field);
 					if (value == null)
 					{
@@ -232,9 +232,9 @@ public class Table
         		if (controller == null) return;
           TableItem item = table.getItem( new Point(e.x,e.y));
             if (item == null) return;
-            String id = (String) item.getData();
-            if (id == null) return;
-            controller.handleLoad(id);
+            Object o = item.getData();
+            if (o == null) return;
+            controller.handleOpen(o);
         }
       }
     );
@@ -320,6 +320,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.5  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.4  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

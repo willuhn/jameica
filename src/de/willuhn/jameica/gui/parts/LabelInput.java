@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/18 01:40:30 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ public class LabelInput extends Input
    */
   public Control getControl()
   {
-    label = new Label(parent,SWT.WRAP);
+    label = new Label(getParent(),SWT.WRAP);
 		label.setBackground(Style.COLOR_BG);
     label.setText(value);
     return label;
@@ -95,6 +95,9 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.4  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.3  2004/02/18 01:40:30  willuhn
  * @N new white style
  *

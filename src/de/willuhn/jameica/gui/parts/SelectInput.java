@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/18 17:14:40 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -138,7 +138,7 @@ public class SelectInput extends Input
   public Control getControl()
   {
 
-    Composite comp = new Composite(parent,SWT.NONE);
+    Composite comp = new Composite(getParent(),SWT.NONE);
     comp.setBackground(Style.COLOR_BORDER);
     combo = new CCombo(comp, SWT.FLAT | SWT.READ_ONLY);
     
@@ -214,6 +214,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.4  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.3  2004/02/18 17:14:40  willuhn
  * *** empty log message ***
  *

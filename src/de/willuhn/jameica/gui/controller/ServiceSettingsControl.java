@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/ServiceSettingsControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/11 00:10:42 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -91,9 +91,9 @@ public class ServiceSettingsControl extends AbstractControl {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleLoad(java.lang.String)
+   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleOpen(java.lang.Object)
    */
-  public void handleLoad(String id) {
+  public void handleOpen(Object o) {
   }
 
 }
@@ -101,6 +101,9 @@ public class ServiceSettingsControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: ServiceSettingsControl.java,v $
+ * Revision 1.2  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.1  2004/02/11 00:10:42  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/23 20:30:34 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,7 +95,7 @@ public abstract class PasswordDialog extends SimpleDialog {
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint(Composite parent) throws Exception
+  protected void paint(Composite parent) throws Exception
 	{
 		// Composite um alles drumrum.
 		comp = new Composite(parent,SWT.NONE);
@@ -210,21 +210,21 @@ public abstract class PasswordDialog extends SimpleDialog {
 		return (MAX_RETRIES - retries);
 	}
 
-	/**
-	 * Oeffnet den Dialog und liefert das Passwort nachdem OK gedrueckt wurde.
-   * @return das eingegebene Passwort.
-   * @throws Exception, wenn das Passwort falsch eingegeben wurde.
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
-  public String getPassword() throws Exception
-	{
-		super.open();
-		return enteredPassword;
-	}
+  protected Object getData() throws Exception {
+    return enteredPassword;
+  }
+
 }
 
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.5  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.4  2004/02/23 20:30:34  willuhn
  * @C refactoring in AbstractDialog
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/23 20:30:33 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,11 +23,49 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.util.Style;
 
 /**
- * Basisklasse fuer modalen Dialoge.
+ * Das ist die Basisklasse fuer modalen Dialogfenster.
+ * Modal heisst: Ist das Dialogfenster einmal geoeffnet, kann die
+ * restliche Anwendung solange nicht mehr bedient werden, bis dieses
+ * Fenster geschlossen wurde.
+ * Diese abstrakte Implementierung schreibt keinen Inhalt in den Dialog
+ * sondern stellt lediglich das Fenster mit einem definierten Design
+ * zu Verfuegung, behandelt die Dispatch-Vorgaenge mit dem Benutzer
+ * und definiert einen Fenster-Titel.
+ * Der Dialog kann mittels der beiden Konstanten <code>POSITION_MOUSE</code>
+ * und <code>POSITION_CENTER</code> im Konstruktor entweder mittig auf dem
+ * Bildschirm oder an der momentanen Position der Mouse dargestellt werden.
+ * Ableitende Klassen muessen die Methode <code>paint(Composite)</code>
+ * implementieren und dort ihre darzustellenden Elemente reinmalen.
+ * Der Dialog wird mittels <code>open()</code> geoeffnet. Beim Schliessen
+ * des Dialogs wird die Methode <code>getData()</code> aufgerufen. Das ist
+ * gleichzeitig der Rueckgabewert von <code>open()</code>.
+ * Eine ableitende Klasse muss also z.Bsp. in <code>paint(Composite)</code>
+ * einen OK-Button erzeugen, einen Listener anhaengen, der auf Druecken
+ * des Buttons reagiert, in der aufgerufenenen Methode des Listeners
+ * den zu uebergebenden Wert als Member speichern und danach <code>close()</code>
+ * aufrufen, um den Dialog zu schliessen. Bsp.:
+ * <code>
+ * protected void paint(Composite parent) throws Exception
+ * {
+ *   // [...]
+ *   final Text text = new Text(parent, SWT.BORDER);
+ *   final Button button = new Button(parent, SWT.BORDER);
+ *   button.setText("OK");
+ *   button.addMouseListener(new MouseAdapter() {
+ *     public void mouseUp(MouseEvent e) {
+ *       this.enteredText = text.getText();
+ *       close();
+ *     }
+ *   }
+ * }
+ * protected Object getData() throws Exception
+ * {
+ *   return this.enteredText;
+ * }
+ * </code>
  * @author willuhn
  */
 public abstract class AbstractDialog
@@ -51,6 +89,10 @@ public abstract class AbstractDialog
 
 	private int pos = POSITION_CENTER;
 
+	private String titleText = "";
+	private int height = SWT.DEFAULT;
+	private int width = SWT.DEFAULT;
+
 	 
   /**
    * Erzeugt einen neuen Dialog.
@@ -61,7 +103,14 @@ public abstract class AbstractDialog
   public AbstractDialog(int position)
 	{
 		this.pos = position;
-
+		init();
+	}
+	
+	/**
+   * Initialisiert alle Elemente.
+   */
+  private void init()
+	{
 		display = Display.getCurrent();
 		if (display == null)
 			display = new Display();
@@ -88,6 +137,7 @@ public abstract class AbstractDialog
 		title.setBackground(Style.COLOR_WHITE);
 		title.setLayoutData(new GridData(GridData.FILL_BOTH));
 		title.setFont(Style.FONT_H2);
+		title.setText(this.titleText);
 
 		Label image = new Label(comp,SWT.NONE);
 		image.setImage(Style.getImage("gradient.gif"));
@@ -123,12 +173,25 @@ public abstract class AbstractDialog
    */
   public final void setTitle(String text)
   {
-    if (text == null || "".equals(text))
-      Application.getLog().debug("given title for dialog is null, skipping.");
-    
-		shell.setText(text == null ? "" : text);
+		this.titleText = "" + text;
+  	shell.setText(text == null ? "" : text);
 		title.setText(text);
   }
+
+	/**
+	 * Legt Breite und Hoehe des Dialogs fest.
+	 * Wird die Funktion nicht aufgerufen, dann wird der Dialog genauso gross
+	 * gemalt, wie der Inhalt.
+	 * Wenn eine der beiden Groessen nicht bekannt ist oder nicht gesetzt werden
+	 * soll, kann man auch <code>SWT.DEFAULT</code> uebergeben.
+   * @param width gewuenschte Breite.
+   * @param height gewuenschte Hoehe.
+   */
+  public final void setSize(int width, int height)
+	{
+		this.width = width;
+		this.height = height;
+	}
 
 	/**
 	 * Muss vom abgeleiteten Dialog ueberschrieben werden.
@@ -138,7 +201,7 @@ public abstract class AbstractDialog
 	 * @throws Exception Kann von der abgeleiteten Klasse geworfen
 	 * werden. Tut sie das, wird der Dialog nicht angezeigt.
    */
-  public abstract void paint(Composite parent) throws Exception;
+  protected abstract void paint(Composite parent) throws Exception;
 	
 	/**
 	 * Diese Funktion wird beim Schliessen des Dialogs in open()
@@ -148,7 +211,7 @@ public abstract class AbstractDialog
    * @return das ausgewaehlte Objekt.
    * @throws Exception
    */
-  public abstract Object getData() throws Exception;
+  protected abstract Object getData() throws Exception;
 
   /**
    * Oeffnet den Dialog.
@@ -158,9 +221,24 @@ public abstract class AbstractDialog
   public final Object open() throws Exception
   {
 		try {
+			// TODO: Bei init() auch Titel und alles neu malen
+			// TODO: Das in GUI.syncExec ausfuehren
+			if (parent.isDisposed()) 
+			{
+				init();
+				setTitle(titleText);
+			} 
 			paint(parent);
 			shell.pack();
-			// shell.setSize(300,shell.getBounds().height);
+
+			this.height = (this.height == SWT.DEFAULT ? shell.getBounds().height : this.height);
+			this.width  = (this.width  == SWT.DEFAULT ? shell.getBounds().width  :  this.width);
+
+			if (this.height != SWT.DEFAULT || this.width != SWT.DEFAULT)
+			{
+				shell.setSize(this.width,this.height);
+			}
+
 			if (pos == POSITION_MOUSE)
 			{
 				shell.setLocation(
@@ -203,6 +281,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.5  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.4  2004/02/23 20:30:33  willuhn
  * @C refactoring in AbstractDialog
  *

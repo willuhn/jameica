@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/AbstractControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/23 00:29:04 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,10 +62,11 @@ public abstract class AbstractControl
   public abstract void handleCreate();
 
   /**
-   * Ueber diese Funktion kann das Objekt mit der genannten ID geladen werden.
-   * @param id die ID des ausgewaehlten Objektes.
+   * Diese Funktion wird aufgerufen, wenn der Controller das Objekt
+   * oeffnen und typischerweise anzeigen soll.
+   * @param o
    */
-  public abstract void handleLoad(String id);
+  public abstract void handleOpen(Object o);
 
 	/**
 	 * Liefert das aktuelle Business-Objekt des Dialogs.
@@ -79,6 +80,9 @@ public abstract class AbstractControl
 
 /*********************************************************************
  * $Log: AbstractControl.java,v $
+ * Revision 1.2  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.1  2004/01/23 00:29:04  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Input.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/18 01:40:30 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.parts;
+
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -29,11 +31,11 @@ import de.willuhn.jameica.gui.util.Style;
 public abstract class Input
 {
 
-  protected Composite parent = null;
-  protected String comment = null;
-  protected Label commentLabel = null;
-  protected Listener commentListener = null;
-  protected Control control = null;
+  private Composite parent = null;
+  private String comment = null;
+  private Label commentLabel = null;
+  private Control control = null;
+	private ArrayList listeners = new ArrayList();
 
   /**
    * Liefert den Wert des Eingabefelds.
@@ -65,30 +67,40 @@ public abstract class Input
   {
     return this.parent;
   }
-  /**
-   * Fuegt hinter das Eingabefeld noch einen Kommentar. Wenn sich dieser
-   * abhaengig von der Eingabe aendern soll, muss ausserdem noch ein
-   * Listener uebergeben werden, der die Aenderung vornimmt.
-   * @param comment Kommentar.
-   * @param commentListener optionaler Listener, der das Kommentarfeld aendern kann.
+
+	/**
+	 * Fuegt dem Eingabe-Feld einen Listener hinzu, der bei jedem Focus-Wechsel ausgeloest wird.
+	 * Besteht das Eingabe-Feld aus mehreren Teilen (z.Bsp. bei SearchInput aus Eingabe-Feld
+	 * + Knopf dahinter) dann wird der Listener bei Focus-Wechsel jedes dieser
+	 * Teile ausgeloest.
+   * @param l zu registrierender Listener.
    */
-  public void addComment(String comment, Listener commentListener)
-  {
-    this.comment = comment;
-    this.commentListener = commentListener;
-  }
+  public void addListener(Listener l)
+	{
+		listeners.add(l);
+	}
 
   /**
-   * Aktualisiert das Kommentarfeld.
-   * @param comment neuer anzuzeigender Text.
+   * Fuegt hinter das Eingabefeld noch einen Kommentar.
+   * Existiert der Kommentar bereits, wird er gegen den neuen ersetzt.
+   * Hinweis: Wird die Funktion nicht aufgerufen, bevor das Eingabe-Feld
+   * gemalt wird, dann wird es auch nicht angezeigt. Denn vorm Malen
+   * muss bekannt sein, ob es angezeigt werden soll, damit der Platz
+   * dafuer reserviert werden kann.
+   * @param comment Kommentar.
    */
-  public void updateComment(String comment)
+  public void setComment(String comment)
   {
-    if (comment == null || commentLabel == null)
-      return;
-    
-    commentLabel.setText(comment);
-    commentLabel.redraw();
+    this.comment = ""+comment;
+		try {
+			commentLabel.setText(this.comment); // wegen NullPointer
+			commentLabel.redraw();
+		}
+		catch(Exception e)
+		{
+			// nicht schlimm. Das passiert, wenn das Eingabe-Feld noch
+			// nicht gemalt wurde.
+		}
   }
 
   /**
@@ -147,27 +159,29 @@ public abstract class Input
       commentLabel.setLayoutData(labelGrid);
     }
 
-    // den Kommentarlistener noch dran haengen
-    if (commentListener != null)
+    // die Listener noch dran haengen
+    Listener l = null;
+    for (int i=0;i<listeners.size();++i)
     {
-      control.addListener(SWT.Selection,commentListener);
-      control.addListener(SWT.FocusIn,commentListener);
-      control.addListener(SWT.FocusOut,commentListener);
+    	l = (Listener) listeners.get(i);
+			control.addListener(SWT.Selection,l);
+			control.addListener(SWT.FocusIn,l);
+			control.addListener(SWT.FocusOut,l);
       
-      // Es kann sein, dass das Control ein Composite ist (z.Bsp. bei SearchInput)
-      // Wenn es also aus mehren Elementen besteht, dann muessen wir
-      // den Listener an alle haengen.
-      if (control instanceof Composite)
-      {
-        Composite c = (Composite) control;
-        Control[] children = c.getChildren();
-        for (int i=0;i<children.length;++i)
-        {
-          children[i].addListener(SWT.Selection,commentListener);
-          children[i].addListener(SWT.FocusIn,commentListener);
-          children[i].addListener(SWT.FocusOut,commentListener);
-        }
-      }
+			// Es kann sein, dass das Control ein Composite ist (z.Bsp. bei SearchInput)
+			// Wenn es also aus mehren Elementen besteht, dann muessen wir
+			// den Listener an alle haengen.
+			if (control instanceof Composite)
+			{
+				Composite c = (Composite) control;
+				Control[] children = c.getChildren();
+				for (int j=0;j<children.length;++j)
+				{
+					children[i].addListener(SWT.Selection,l);
+					children[i].addListener(SWT.FocusIn,l);
+					children[i].addListener(SWT.FocusOut,l);
+				}
+			}
     }
   }
 
@@ -189,6 +203,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.3  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.2  2004/02/18 01:40:30  willuhn
  * @N new white style
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/23 20:30:34 $
+ * $Revision: 1.6 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,19 +28,26 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.dialogs.SearchDialog;
+import de.willuhn.jameica.gui.dialogs.ListDialog;
 import de.willuhn.jameica.gui.util.Style;
 
 /**
- * Ist zustaendig fuer Text-Eingabefelder, hinter denen sich jedoch noch ein
- * zusaetzlicher Link befindet ueber den der einzugebende Wert gesucht werden kann.
+ * Text-Eingabefeld, welches jedoch noch einen Button hinten dran
+ * besitzt (mit einer Lupe drauf). Klickt man auf den, wird der im Konstruktor
+ * uebergeben ListDialog ausgefuehrt.
+ * Achtung: Beim Schliessen des Dialogs wird ein lapidares <code>Object</code>
+ * zurueckgeliefert. Da das Eingabe-Feld natuerlich nicht wissen kann,
+ * wie es das in sich reinschreiben soll, wird der Rueckgabewert des Dialogs
+ * nicht ausgewertet. Es ist Sache des Benutzers, an den ListDialog einen
+ * Listener dranzuhaengen, in dessen <code>handleEvent</code> das ausgewaehlte
+ * Objekt auszulesen und die Objekt-Werte in die Eingabe-Felder zu schreiben.
  * @author willuhn
  */
 public class SearchInput extends Input
 {
 
   private Composite comp;
-  private SearchDialog searchDialog;
+  private ListDialog dialog;
   private Text text;
   private Button button;
   private String value;
@@ -48,12 +55,12 @@ public class SearchInput extends Input
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param value der initial einzufuegende Wert fuer das Eingabefeld.
-   * @param search der Suchdialog.
+   * @param d der ListDialog.
    */
-  public SearchInput(String value,SearchDialog search)
+  public SearchInput(String value,ListDialog d)
   {
     this.value = value;
-    this.searchDialog = search;
+    this.dialog = d;
   }
 
   /**
@@ -93,10 +100,7 @@ public class SearchInput extends Input
   
     text = new Text(around2, SWT.NONE);
 		text.setLayoutData(comboFD2);
-//    GridData grid = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-//    grid.widthHint = 60;
 		text.setBackground(Style.COLOR_WHITE);
-//    text.setLayoutData(grid);
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
@@ -112,12 +116,16 @@ public class SearchInput extends Input
     {
       public void mouseUp(MouseEvent e)
       {
-        Application.getLog().debug("starting search dialog");
-        String s = (String) searchDialog.open();
-        if (s != null && !"".equals(s))
-          text.setText(s); // wir schreiben den Wert nur rein, wenn etwas uebergeben wurde
-        text.redraw();
-        text.forceFocus(); // das muessen wir machen, damit die CommentLister ausgeloest werden
+        Application.getLog().debug("starting list dialog");
+				try {
+					dialog.open();
+					text.redraw();
+					text.forceFocus(); // das muessen wir machen, damit die CommentLister ausgeloest werden
+				}
+				catch (Exception e1)
+				{
+					Application.getLog().error("error while opening listDialog",e1);
+				}
       }
     });
  
@@ -171,6 +179,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.6  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.5  2004/02/23 20:30:34  willuhn
  * @C refactoring in AbstractDialog
  *

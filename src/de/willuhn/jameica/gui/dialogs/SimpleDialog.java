@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SimpleDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/23 20:30:33 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/24 22:46:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,7 +63,7 @@ public class SimpleDialog extends AbstractDialog {
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint(Composite parent) throws Exception
+  protected void paint(Composite parent) throws Exception
 	{
 		comp = new Composite(parent,SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -86,7 +86,7 @@ public class SimpleDialog extends AbstractDialog {
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
-  public Object getData() throws Exception {
+  protected Object getData() throws Exception {
     return null;
   }
 }
@@ -94,6 +94,9 @@ public class SimpleDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: SimpleDialog.java,v $
+ * Revision 1.4  2004/02/24 22:46:53  willuhn
+ * @N GUI refactoring
+ *
  * Revision 1.3  2004/02/23 20:30:33  willuhn
  * @C refactoring in AbstractDialog
  *
