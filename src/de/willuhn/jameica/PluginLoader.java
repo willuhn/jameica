@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.14 $
- * $Date: 2003/12/21 20:59:00 $
+ * $Revision: 1.15 $
+ * $Date: 2003/12/22 15:07:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,9 +56,11 @@ public class PluginLoader extends ClassLoader
   {
     Application.getLog().info("init plugins");
     
-    // TODO: Nur fuer IDE
-    loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","../fibu/src");
-    loadPluginFromIDE("de.willuhn.jameica.dynameica.Dynameica","../dynameica/src");
+    if (Application.IDE)
+    {
+      loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","../fibu/src");
+      loadPluginFromIDE("de.willuhn.jameica.dynameica.Dynameica","../dynameica/src");
+    }
 
     try {
       // Plugin-Verzeichnis ermitteln
@@ -173,8 +175,9 @@ public class PluginLoader extends ClassLoader
    */
   private static void loadPluginFromIDE(String clazz, String path)
   {
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    // TODO: Das hier ist nur zum Entwickeln in der IDE damit die Plugins auch ohne Jar funktionieren
+    if (!Application.IDE)
+      return;
+
     try {
       try {
         GUI.addMenu(new FileInputStream(path + "/menu.xml"));
@@ -189,7 +192,6 @@ public class PluginLoader extends ClassLoader
       if (Application.DEBUG)
         e.printStackTrace();
     }
-    //////////////////////////////////////////////////////////////////////////////////////////////
   }
 
   /**
@@ -263,8 +265,7 @@ public class PluginLoader extends ClassLoader
       
       Class clazz = null;
      
-      // TODO: Nur fuer IDE
-      if (loader == null) {
+      if (Application.IDE) {
         clazz = Class.forName(classname);
       }
       else { 
@@ -331,6 +332,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.15  2003/12/22 15:07:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2003/12/21 20:59:00  willuhn
  * @N added internal SSH tunnel
  *

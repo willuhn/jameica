@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.15 $
- * $Date: 2003/12/21 20:59:00 $
+ * $Revision: 1.16 $
+ * $Date: 2003/12/22 15:07:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,8 @@ import de.willuhn.jameica.rmi.ServiceFactory;
  */
 public class Application {
 
-  public final static boolean DEBUG = true;
+  public final static boolean DEBUG = false;
+  public final static boolean IDE   = false;
   private static boolean serverMode = false;
 
   private static boolean cleanShutdown = false;
@@ -170,6 +171,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.16  2003/12/22 15:07:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2003/12/21 20:59:00  willuhn
  * @N added internal SSH tunnel
  *
