@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.26 $
- * $Date: 2003/12/29 20:07:19 $
+ * $Revision: 1.27 $
+ * $Date: 2003/12/29 22:07:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -904,10 +904,31 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     }
   }
 
+  /**
+   * @see de.willuhn.jameica.rmi.DBObject#equals(de.willuhn.jameica.rmi.DBObject)
+   */
+  public boolean equals(DBObject o) throws RemoteException
+  {
+    if (o == null)
+      return false;
+
+    String id        = o.getID();
+    String className = o.getClass().getName();
+
+    if (id == null)
+      return false;
+      
+    return (this.getClass().getName().equals(className)) && id.equals(this.getID());
+    
+  }
+
 }
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.27  2003/12/29 22:07:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.26  2003/12/29 20:07:19  willuhn
  * @N Formatter
  *

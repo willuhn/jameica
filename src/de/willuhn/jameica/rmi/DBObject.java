@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.14 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.15 $
+ * $Date: 2003/12/29 22:07:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -159,10 +159,22 @@ public interface DBObject extends Remote
    * @throws RemoteException
    */
   public DBIterator getList() throws RemoteException;
+
+  /**
+   * Vergleicht dieses Objekt mit dem uebergebenen.
+   * Hinweis: Es wird nicht der Inhalt verglichen sondern nur die ID und der Typ.
+   * @param o das zu vergleichende Objekt.
+   * @return true, wenn sie vom gleichen Typ sind und die selbe ID haben.
+   * @throws RemoteException
+   */
+  public boolean equals(DBObject o) throws RemoteException;
 }
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.15  2003/12/29 22:07:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *
