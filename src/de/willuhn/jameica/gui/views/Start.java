@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,16 +11,16 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.views;
+package de.willuhn.jameica.gui.views;
 
 import java.util.ArrayList;
 
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.Plugin;
 import de.willuhn.jameica.PluginLoader;
-import de.willuhn.jameica.views.parts.Headline;
-import de.willuhn.jameica.views.parts.LabelGroup;
-import de.willuhn.jameica.views.parts.LabelInput;
+import de.willuhn.jameica.gui.views.parts.Headline;
+import de.willuhn.jameica.gui.views.parts.LabelGroup;
+import de.willuhn.jameica.gui.views.parts.LabelInput;
 
 
 public class Start extends AbstractView
@@ -55,6 +55,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.6  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.5  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Controller.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/30 16:23:09 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.views.parts;
+package de.willuhn.jameica.gui.views.parts;
 
 import java.util.HashMap;
 
@@ -115,6 +115,9 @@ public abstract class Controller
 
 /*********************************************************************
  * $Log: Controller.java,v $
+ * Revision 1.5  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.4  2003/11/30 16:23:09  willuhn
  * *** empty log message ***
  *

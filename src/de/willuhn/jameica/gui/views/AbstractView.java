@@ -1,13 +1,13 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
  ****************************************************************************/
-package de.willuhn.jameica.views;
+package de.willuhn.jameica.gui.views;
 
 import org.eclipse.swt.widgets.Composite;
 
@@ -75,6 +75,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.6  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.5  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/10 23:51:55 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.rmi;
+package de.willuhn.jameica.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -21,6 +21,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.rmi.DBIterator;
+import de.willuhn.jameica.rmi.DBObject;
 
 /**
  * @author willuhn
@@ -219,6 +221,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.12  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.11  2003/12/10 23:51:55  willuhn
  * *** empty log message ***
  *

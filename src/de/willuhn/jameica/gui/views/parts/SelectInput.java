@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/10 23:51:55 $
+ * $Revision: 1.13 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.views.parts;
+package de.willuhn.jameica.gui.views.parts;
 
 import java.rmi.RemoteException;
 import java.util.Enumeration;
@@ -20,7 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 
-import de.willuhn.jameica.GUI;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
@@ -147,6 +147,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.13  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.12  2003/12/10 23:51:55  willuhn
  * *** empty log message ***
  *

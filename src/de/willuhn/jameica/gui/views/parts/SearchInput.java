@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SearchInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.views.parts;
+package de.willuhn.jameica.gui.views.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.views.SearchDialog;
-import de.willuhn.jameica.views.util.Style;
+import de.willuhn.jameica.gui.views.SearchDialog;
+import de.willuhn.jameica.gui.views.util.Style;
 
 /**
  * @author willuhn
@@ -85,7 +85,9 @@ public class SearchInput extends Input
       public void mouseUp(MouseEvent e)
       {
         Application.getLog().debug("starting search dialog");
-        text.setText(""+searchDialog.open());
+        String s = searchDialog.open();
+        if (s != null && !"".equals(s))
+          text.setText(s); // wir schreiben den Wert nur rein, wenn etwas uebergeben wurde
         text.redraw();
         text.forceFocus(); // das muessen wir machen, damit die CommentLister ausgeloest werden
       }
@@ -126,6 +128,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.5  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.4  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

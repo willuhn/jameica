@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.views.parts;
+package de.willuhn.jameica.gui.views.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.views.util.Style;
+import de.willuhn.jameica.gui.views.util.Style;
 
 /**
  * @author willuhn
@@ -106,6 +106,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.7  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.6  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

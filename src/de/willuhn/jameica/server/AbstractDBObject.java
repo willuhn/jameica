@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.13 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.14 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.rmi;
+package de.willuhn.jameica.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -26,6 +26,8 @@ import java.util.Set;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.ApplicationException;
+import de.willuhn.jameica.rmi.DBIterator;
+import de.willuhn.jameica.rmi.DBObject;
 
 /**
  * Basisklasse fuer alle Business-Objekte 
@@ -688,6 +690,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.14  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.13  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *

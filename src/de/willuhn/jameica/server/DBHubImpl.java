@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/27 00:22:17 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.rmi;
+package de.willuhn.jameica.server;
 
 import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
@@ -22,6 +22,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.rmi.DBHub;
+import de.willuhn.jameica.rmi.DBIterator;
+import de.willuhn.jameica.rmi.DBObject;
 
 /**
  * @author willuhn
@@ -132,15 +135,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
     open();
     try {
-      String className = c.getName();
-
-      if (!className.endsWith("Impl") && ! className.endsWith("_Stub"))
-        className += "Impl";
-
-      // Es sei denn, es ist RMI-Stub. Dann muessen wir das "_Stub" abschneiden.
-      if (className.endsWith("_Stub"))
-        className = className.substring(0,className.length()-5);
-
+      String className = findImplementationName(c);
     	Class clazz = Class.forName(className);
       Constructor ct = clazz.getConstructor(new Class[]{Connection.class,String.class});
       ct.setAccessible(true);
@@ -152,6 +147,30 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
       e.printStackTrace();
       throw new RemoteException("unable to create object " + c.getName(),e);
     }
+  }
+
+  /**
+   * Liefert den Klassennamen der Implementierung zum uebergebenen Interface oder RMI-Stub.
+   * @param clazz Stubs oder Interface.
+   * @return Name der Implementierung.
+   */
+  private String findImplementationName(Class clazz)
+  {
+
+    String className = clazz.getName();
+    className = className.replaceAll(".rmi.",".server."); 
+
+    // Normalerweise wollen wir ja bei der Erstellung nur die Klasse des
+    // Interfaces angeben und nicht die der Impl. Deswegen schreiben
+    // wir das "Impl" selbst hinten dran, um es instanziieren zu koennen.
+    if (!className.endsWith("Impl") && ! className.endsWith("_Stub"))
+      className += "Impl";
+
+    // Es sei denn, es ist RMI-Stub. Dann muessen wir das "_Stub" abschneiden.
+    if (className.endsWith("_Stub"))
+      className = className.substring(0,className.length()-5);
+
+    return className;    
   }
 
 	/**
@@ -166,17 +185,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
     open();
 		try {
-			String className = c.getName();
-
-      // Normalerweise wollen wir ja bei der Erstellung nur die Klasse des
-      // Interfaces angeben und nicht die der Impl. Deswegen schreiben
-      // wir das "Impl" selbst hinten dran, um es instanziieren zu koennen.
-      if (!className.endsWith("Impl") && ! className.endsWith("_Stub"))
-        className += "Impl";
-
-      // Es sei denn, es ist RMI-Stub. Dann muessen wir das "_Stub" abschneiden.
-      if (className.endsWith("_Stub"))
-        className = className.substring(0,className.length()-5);
+			String className = findImplementationName(c);
 			Class clazz = Class.forName(className);
 			Constructor ct = clazz.getConstructor(new Class[]{Connection.class,String.class});
 			ct.setAccessible(true);
@@ -195,6 +204,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.5  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.4  2003/11/27 00:22:17  willuhn
  * @B paar Bugfixes aus Kombination RMI + Reflection
  * @N insertCheck(), deleteCheck(), updateCheck()

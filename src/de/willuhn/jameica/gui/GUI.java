@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/09 11:38:50 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica;
+package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -21,8 +21,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.views.util.Style;
-import de.willuhn.jameica.views.AbstractView;
+import de.willuhn.jameica.Application;
+import de.willuhn.jameica.I18N;
+import de.willuhn.jameica.PluginLoader;
+import de.willuhn.jameica.gui.views.AbstractView;
+import de.willuhn.jameica.gui.views.util.Style;
 
 /**
  * Startet und beendet die GUI der Anwendung. 
@@ -99,7 +102,7 @@ public class GUI
    * Wird von Application nach der Initialisierung der Plugins aufgerufen.
    * @param xml
    */
-  protected void appendMenu(InputStream xml) {
+  public void appendMenu(InputStream xml) {
     if (menu == null)
       addMenu();
     menu.appendMenu(xml);
@@ -111,7 +114,7 @@ public class GUI
    * Wird von Application nach der Initialisierung der Plugins aufgerufen.
    * @param xml
    */
-  protected void appendNavigation(InputStream xml) {
+  public void appendNavigation(InputStream xml) {
     if (navi == null)
       addNavigation();
     navi.appendNavigation(xml);
@@ -210,7 +213,7 @@ public class GUI
   /**
    * Startet den GUI-Loop.
    */
-  protected void clientLoop()
+  public void clientLoop()
   {
     while (!shell.isDisposed()) {
       try {
@@ -280,6 +283,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.7  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.6  2003/12/09 11:38:50  willuhn
  * @N error page
  *

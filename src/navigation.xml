@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO8859-1"?> 
 <navigation>
-  <item name="Jameica" icon-close="base.gif" action="de.willuhn.jameica.views.Start">
+  <item name="Jameica" icon-close="base.gif" action="de.willuhn.jameica.gui.views.Start">
   </item>
 </navigation>

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/ButtonArea.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/10 01:12:55 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.views.parts;
+package de.willuhn.jameica.gui.views.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.GUI;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.I18N;
 
 /**
@@ -187,6 +187,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.7  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.6  2003/12/10 01:12:55  willuhn
  * *** empty log message ***
  *

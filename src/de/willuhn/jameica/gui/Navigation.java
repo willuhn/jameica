@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/05 18:43:01 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica;
+package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -24,7 +24,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 import de.bb.util.XmlFile;
-import de.willuhn.jameica.views.util.Style;
+import de.willuhn.jameica.I18N;
+import de.willuhn.jameica.gui.views.util.Style;
 
 /**
  * Bildet den Navigations-Baum im linken Frame ab.
@@ -248,6 +249,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.6  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.5  2003/12/05 18:43:01  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.views.parts;
+package de.willuhn.jameica.gui.views.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.jameica.views.util.Style;
+import de.willuhn.jameica.gui.views.util.Style;
 
 /**
  * Basisklasse fuer Eingabefelder.
@@ -165,6 +165,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.11  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.10  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

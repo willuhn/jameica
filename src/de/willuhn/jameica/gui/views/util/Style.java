@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/util/Attic/Style.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/05 18:43:01 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.views.util;
+package de.willuhn.jameica.gui.views.util;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
-import de.willuhn.jameica.GUI;
+import de.willuhn.jameica.gui.GUI;
 
 /**
  * Diese Klasse ist fuer Styling-Kram in Jameica zustaendig.
@@ -74,6 +74,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.3  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.2  2003/12/05 18:43:01  willuhn
  * *** empty log message ***
  *

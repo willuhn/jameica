@@ -3,17 +3,17 @@
 <menu>
 
   <cascade name="File">
-    <item name="Close"    			 class="de.willuhn.jameica.menu.FileClose" />
+    <item name="Close"    			 class="de.willuhn.jameica.gui.menu.FileClose" />
   </cascade>
 
   <cascade name="Edit">
-    <item name="Copy"                class="de.willuhn.jameica.menu.EditCopy" />
-    <item name="Cut"                 class="de.willuhn.jameica.menu.EditCut" />
-    <item name="Paste"    			 class="de.willuhn.jameica.menu.EditPaste" />
+    <item name="Copy"                class="de.willuhn.jameica.gui.menu.EditCopy" />
+    <item name="Cut"                 class="de.willuhn.jameica.gui.menu.EditCut" />
+    <item name="Paste"    			 class="de.willuhn.jameica.gui.menu.EditPaste" />
   </cascade>
 
   <cascade name="Help">
-    <item name="about..."            class="de.willuhn.jameica.menu.About" />
+    <item name="about..."            class="de.willuhn.jameica.gui.menu.About" />
   </cascade>
 
 </menu>

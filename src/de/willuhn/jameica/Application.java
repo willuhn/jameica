@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/11/24 11:51:41 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.rmi.DBHub;
 import de.willuhn.jameica.rmi.ServiceFactory;
 
@@ -253,6 +255,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.10  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.9  2003/11/24 11:51:41  willuhn
  * *** empty log message ***
  *

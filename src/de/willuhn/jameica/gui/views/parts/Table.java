@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.views.parts;
+package de.willuhn.jameica.gui.views.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -194,6 +194,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.10  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.9  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

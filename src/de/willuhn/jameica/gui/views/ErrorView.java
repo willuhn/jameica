@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,7 +11,7 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.views;
+package de.willuhn.jameica.gui.views;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -23,11 +23,11 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.GUI;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.I18N;
-import de.willuhn.jameica.views.parts.ButtonArea;
-import de.willuhn.jameica.views.parts.Headline;
-import de.willuhn.jameica.views.parts.LabelGroup;
+import de.willuhn.jameica.gui.views.parts.ButtonArea;
+import de.willuhn.jameica.gui.views.parts.Headline;
+import de.willuhn.jameica.gui.views.parts.LabelGroup;
 
 public class ErrorView extends AbstractView
 {
@@ -94,6 +94,9 @@ public class ErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.3  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.2  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/13 00:37:36 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/11 21:00:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,7 +11,7 @@
  *
  ****************************************************************************/
 
-package de.willuhn.jameica;
+package de.willuhn.jameica.gui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -130,6 +130,9 @@ public class SplashScreen
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.4  2003/12/11 21:00:54  willuhn
+ * @C refactoring
+ *
  * Revision 1.3  2003/11/13 00:37:36  willuhn
  * *** empty log message ***
  *
