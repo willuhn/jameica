@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/13 00:37:35 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/14 00:49:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,6 +66,7 @@ public class Config
    */
   private Locale defaultLanguage = new Locale("de_DE");
 
+  private String pluginDir = "plugins";
 
   /**
    * ct.
@@ -177,6 +178,11 @@ public class Config
     {
       rmiPort = 1099;
     }
+
+    String _pluginDir = xml.getContent("/config/plugindir");
+    if (_pluginDir != null && !"".equals(_pluginDir))
+      pluginDir = _pluginDir;
+    
   }
 
 
@@ -251,12 +257,23 @@ public class Config
     return defaultLanguage;
   }
 
+  /**
+   * Liefert das Verzeichnis mit den Plugins.
+   * @return
+   */
+  public String getPluginDir()
+  {
+    return pluginDir;
+  }
 
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.5  2003/11/14 00:49:46  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/13 00:37:35  willuhn
  * *** empty log message ***
  *

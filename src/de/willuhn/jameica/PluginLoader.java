@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/14 00:49:46 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/14 00:54:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,7 +55,7 @@ public class PluginLoader extends ClassLoader
     }
 
     // Liste aller Jars aus dem plugin-Verzeichnis holen
-    ArrayList jars = findPlugins(plugindir,null);
+    ArrayList jars = findPlugins(plugindir);
 
     if (jars == null || jars.size() < 1)
     {
@@ -118,13 +118,11 @@ public class PluginLoader extends ClassLoader
   /**
    * Sucht rekursiv im angegebenen Verzeichnis nach Dateien des Schemas *.zip und *.jar.
    * @param dir Verzeichnis, in dem gesucht werden soll.
-   * @param appendTo ArrayList mit Files, die ausserdem noch hinzugefuegt werden soll. Kann null sein. 
    * @return Liste mit allen gefundenen gefundenen Files.
    */
-  private static ArrayList findPlugins(File dir, ArrayList appendTo)
+  private static ArrayList findPlugins(File dir)
   {
-    if (appendTo == null)
-      appendTo = new ArrayList();
+    ArrayList found = new ArrayList();
 
     // Alle Dateien des Verzeichnisses suchen
     File[] files = dir.listFiles(new FilenameFilter()
@@ -137,7 +135,7 @@ public class PluginLoader extends ClassLoader
     });
     for (int i=0;i<files.length;++i)
     {
-      appendTo.add(files[i]);
+      found.add(files[i]);
     }
 
     // So, und jetzt alle Unterverzeichnisse
@@ -152,10 +150,10 @@ public class PluginLoader extends ClassLoader
     for (int i=0;i<dirs.length;++i)
     {
       // und jetzt kommt die Rekursion
-      findPlugins(dirs[i],appendTo);
+      found.addAll(findPlugins(dirs[i]));
     }
 
-    return appendTo;    
+    return found;    
   }
 
   /**
@@ -217,6 +215,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.3  2003/11/14 00:54:12  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/11/14 00:49:46  willuhn
  * *** empty log message ***
  *
