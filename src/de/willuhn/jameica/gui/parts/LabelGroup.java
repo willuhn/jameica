@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/03/11 08:56:56 $
+ * $Revision: 1.9 $
+ * $Date: 2004/03/19 01:44:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -125,7 +125,7 @@ public class LabelGroup
    */
   public void addText(Text text)
 	{
-		final GridData grid = new GridData(GridData.FILL_HORIZONTAL);
+		final GridData grid = new GridData(GridData.FILL_BOTH);
 		grid.horizontalSpan = 2;
 		final Composite comp = new Composite(group,SWT.NONE);
 		comp.setBackground(Style.COLOR_BG);
@@ -231,6 +231,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.9  2004/03/19 01:44:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/03/11 08:56:56  willuhn
  * @C some refactoring
  *

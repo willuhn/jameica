@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Text.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/19 01:44:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,7 +21,6 @@ import java.io.IOException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.util.Style;
@@ -34,6 +33,9 @@ public class Text
 
 	private StringBuffer content = new StringBuffer();
 	private boolean wrap = true;
+	private StyledText stext = null;
+	
+	private boolean autoscroll = false; 
 
   /**
    * ct.
@@ -41,33 +43,22 @@ public class Text
    */
   public Text(String text)
   {
-		appendText(text);
+		content = new StringBuffer(text);
   }
   
   /**
-   * 
+   * ct.
    */
   public Text()
   {
   }
 
 	/**
-	 * Fuegt weiteren Text hinzu.
-   * @param text anzuzeigender Text.
-   */
-  public void appendText(String text)
-	{
-		if (text == null)
-			return;
-		content.append(text);
-	}
-
-  /**
-	 * Zeigt die angegebene Plaintext-Datei an.
-   * @param text die PlainText-Datei.
-   * @throws IOException Wenn beim Lesen der Datei Fehler auftreten.
-   */
-  public void setContent(File text) throws IOException
+	 * ct.
+	 * @param text die PlainText-Datei.
+	 * @throws IOException Wenn beim Lesen der Datei Fehler auftreten.
+	 */
+	public Text(File text) throws IOException
 	{
 		BufferedReader br =  null;
 		
@@ -98,13 +89,60 @@ public class Text
 	}
 
 	/**
+	 * Definiert, ob der Text automatisch immer zu Ende scrollen soll.
+	 * Sinnvoll fuer Log-Ausgaben.
+   * @param b true, wenn gescrollt werden soll.
+   */
+  public void setAutoscroll(boolean b)
+	{
+		autoscroll = b;
+	}
+
+	/**
 	 * Gibt an, ob Zeilenumbrueche automatisch gemacht werden sollen.
 	 * Per Default ist die Option auf "true" gesetzt.
-   * @param wrap Zeilenumbruch.
-   */
-  public void setWordWrap(boolean wrap)
+	 * @param wrap Zeilenumbruch.
+	 */
+	public void setWordWrap(boolean wrap)
 	{
 		this.wrap = wrap;
+	}
+
+	/**
+	 * Fuegt weiteren Text hinzu.
+   * @param text anzuzeigender Text.
+   */
+  public void appendText(String text)
+	{
+		if (text == null || text.length() == 0)
+			return;
+
+		if (stext == null || stext.isDisposed())
+			return;
+
+		stext.append(text);
+		scroll();
+	}
+
+	/**
+	 * Loescht den Inhalt des Textes.
+	 */
+	public void clear()
+	{
+		content = new StringBuffer();
+
+		if (stext == null || stext.isDisposed())
+			return;
+		stext.setText("");
+	}
+
+  private void scroll()
+	{
+		if (stext == null || stext.isDisposed())
+			return;
+
+		if (autoscroll)
+			stext.setTopIndex(stext.getLineCount());
 	}
 
 	/**
@@ -113,22 +151,14 @@ public class Text
    */
   public void paint(Composite parent)
 	{
-		final GridLayout layout = new GridLayout();
-		layout.marginHeight = 1;
-		layout.marginWidth  = 1;
-		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		Composite box = new Composite(parent, SWT.NONE); // das brauchen wir fuer den Rand.
-		box.setLayoutData(gridData);
-		box.setLayout(layout);
-		box.setBackground(Style.COLOR_BG);
-
-		final StyledText stext = new StyledText(box,SWT.READ_ONLY | SWT.H_SCROLL);
+//		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		stext = new StyledText(parent,SWT.READ_ONLY | SWT.V_SCROLL);
  		stext.setBackground(Style.COLOR_BG);
 		stext.setEditable(false);
-		stext.setEnabled(false);
 		stext.setWordWrap(wrap);
 		stext.setLayoutData(new GridData(GridData.FILL_BOTH));
-		stext.append(content.toString());
+		if (content != null)
+			stext.append(content.toString());
 	}
 
 }
@@ -136,6 +166,9 @@ public class Text
 
 /**********************************************************************
  * $Log: Text.java,v $
+ * Revision 1.4  2004/03/19 01:44:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *
