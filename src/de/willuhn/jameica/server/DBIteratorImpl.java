@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.15 $
- * $Date: 2003/12/19 01:43:26 $
+ * $Revision: 1.16 $
+ * $Date: 2003/12/19 19:45:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,8 +75,23 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
       throw new RemoteException("given connection is null");
 
     this.object = object;
-    this.list = list;
     this.conn = conn;
+
+    try {
+      for (int i=0;i<list.size();++i)
+      {
+        DBObject o = DBHubImpl.create(this.conn,object.getClass());
+        o.load((String)list.get(i));
+        this.list.add(o);
+      }
+    }
+    catch (Exception e)
+    {
+      if (Application.DEBUG)
+        e.printStackTrace();
+      Application.getLog().error("unable to load list");
+      throw new RemoteException(e.getMessage());
+    }
     this.initialized = true;
   }
 
@@ -158,7 +173,17 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 			rs = stmt.executeQuery(sql);
 			while (rs.next())
 			{
-				list.add(rs.getString(object.getIDField()));
+        try {
+          DBObject o = DBHubImpl.create(this.conn,object.getClass());
+          o.load(rs.getString(object.getIDField()));
+  				list.add(o);
+        }
+        catch (Exception e)
+        {
+          if (Application.DEBUG)
+            e.printStackTrace();
+          throw new RemoteException(e.getMessage());
+        }
 			}
       this.initialized = true;
 		}
@@ -192,9 +217,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 	{
     if (!initialized) init();
     try {
-      DBObject o = DBHubImpl.create(conn,object.getClass());
-      o.load((String) list.get(index++));
-      return o;
+      return (DBObject) list.get(index++);
     }
     catch (Exception e)
     {
@@ -209,9 +232,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
   {
     if (!initialized) init();
     try {
-      DBObject o = DBHubImpl.create(conn,object.getClass());
-      o.load((String) list.get(index--));
-      return o;
+      return (DBObject) list.get(index--);
     }
     catch (Exception e)
     {
@@ -268,6 +289,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.16  2003/12/19 19:45:02  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2003/12/19 01:43:26  willuhn
  * @N added Tree
  *
