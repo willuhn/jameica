@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBIterator.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/21 02:10:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,17 @@ import java.rmi.RemoteException;
  */
 public interface DBIterator extends Remote {
 
+
+  /**
+   * Fuegt dem Iterator einen zusaetzlichen Filter hinzu, der
+   * sich auf die Anzahl der Treffer auswirkt. Bsp:
+   * addFilter("kontonummer='2020'");
+   * Bewirkt, dass eine zusaetzliche Where-Klausel "where kontonummer='2020'"
+   * hinzugefuegt wird.
+   * @throws RemoteException
+   */
+  public void addFilter(String filter) throws RemoteException;
+  
 	/**
 	 * Liefert true, wenn weitere Elemente in diesem Iterator existieren.
 	 * @return
@@ -75,6 +86,10 @@ public interface DBIterator extends Remote {
 
 /*********************************************************************
  * $Log: DBIterator.java,v $
+ * Revision 1.3  2003/11/21 02:10:21  willuhn
+ * @N prepared Statements in AbstractDBObject
+ * @N a lot of new SWT parts
+ *
  * Revision 1.2  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

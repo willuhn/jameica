@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/21 02:10:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,9 +15,12 @@ package de.willuhn.jameica.rmi;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -38,6 +41,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
   // Haelt die Eigenschaften des Objektes.
   private HashMap properties = new HashMap();
+  
+  // Haelt die Datentypen der Properties.
+  private HashMap types      = new HashMap();
 
   // definiert, ob das Objekt gerade in einer manuellen Transaktion ist
   private boolean inTransaction = false;
@@ -53,6 +59,14 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 		super(); // Konstruktor von UnicastRemoteObject
     Application.getLog().info("loading new object from database");
 		this.conn = conn;
+    try {
+      this.conn.setAutoCommit(false); // Auto-Commit schalten wir aus weil wir vorsichtig sind ;)
+    }
+    catch (SQLException e)
+    {
+      Application.getLog().error("  unable to set autocommit to false.");
+      throw new RemoteException("unable to set autocommit to false.",e);
+    }
 		if (this.conn == null) {
       Application.getLog().error("  connection is null");
       throw new RemoteException("Connection is null");
@@ -75,10 +89,11 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			while (meta.next())
 			{
 				field = meta.getString(4);
-        // System.out.println("6: " + meta.getString(6));
 				if (field == null || field.equalsIgnoreCase("id")) // skip empty fields and ID field
 					continue;
 				properties.put(field,null);
+        types.put(field,meta.getString(6));
+        // System.out.println("FELD: " + field + ": " + meta.getString(6));
 			}
       Application.getLog().info("  done");
 		}
@@ -120,7 +135,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			String[] fields = getFields();
 			for (int i=0;i<fields.length;++i)
 			{
-				setField(fields[i],data.getString(fields[i]));
+				setField(fields[i],data.getObject(fields[i]));
 			}
       Application.getLog().info("  done");
 		}
@@ -166,6 +181,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       stmt.execute("delete from " + getTableName() + " where id = '"+id+"'");
       if (!this.inTransaction)
         conn.commit();
+      this.id = null;
       Application.getLog().info("  done");
     }
     catch (SQLException e)
@@ -209,17 +225,18 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
 
   /**
-   * Speichert einen neuen Wert in den Properties.
+   * Speichert einen neuen Wert in den Properties
+   * und liefert den vorherigen zurueck.
    * @param fieldName Name des Feldes.
-   * @param value neuer Wert des Feldes.
+   * @param value neuer Wert des Feldes. Muss vom Typ String, Date, Timestamp, Double oder Integer sein.
    * @return vorheriger Wert des Feldes.
    */
-  protected String setField(String fieldName, String value)
+  protected Object setField(String fieldName, Object value)
   {
     if (fieldName == null)
       return null;
 
-    return (String) properties.put(fieldName, value);
+    return properties.put(fieldName, value);
   }
 
   /**
@@ -259,12 +276,12 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   private void insert() throws RemoteException
   {
     id = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
     try {
       Application.getLog().info("trying to insert new object into table " + getTableName());
-      stmt = conn.createStatement();
-      String sql = getInsertSQL();
-      stmt.execute(sql);
+      stmt = getInsertSQL();
+      Application.getLog().debug("trying to execute query: " + stmt.toString());
+      stmt.execute();
       setLastId();
       if (!this.inTransaction)
   			conn.commit();
@@ -299,11 +316,18 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   private void update() throws RemoteException
   {
-		Statement stmt = null;
+		PreparedStatement stmt = null;
+    int affected = 0;
     try {
       Application.getLog().info("trying to update object id ["+id+"] from table " + getTableName());
-			stmt = conn.createStatement();
-      stmt.execute(getUpdateSQL());
+			stmt = getUpdateSQL();
+      Application.getLog().debug("trying to execute query: " + stmt.toString());
+      affected = stmt.executeUpdate();
+      if (affected != 1)
+      {
+        // Wenn nicht genau ein Datensatz geaendert wurde, ist was faul.
+        throw new SQLException();
+      }
       if (!this.inTransaction)
         conn.commit();
       Application.getLog().info("  done");
@@ -337,7 +361,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Liefert das automatisch erzeugte SQL-Statement fuer ein Update.
    * @return das erzeugte SQL-Statement.
    */
-  protected String getUpdateSQL() throws RemoteException
+  protected PreparedStatement getUpdateSQL() throws RemoteException
   {
     String sql = "update " + getTableName() + " set ";
     String[] fields = getFields();
@@ -346,17 +370,32 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     {
 			if (fields[i].equalsIgnoreCase("id"))
 				continue; // skip the id field
-      sql += fields[i] + "='"+getField(fields[i])+"',";
+      sql += fields[i] + "=?,";
     }
-    return sql.substring(0,sql.length()-1) + " where id="+id+""; // remove last ","
+    sql = sql.substring(0,sql.length()-1) + " where id="+id+""; // remove last ","
+    try {
+      PreparedStatement stmt = conn.prepareStatement(sql);
+      for (int i=0;i<fields.length;++i)
+      {
+        String type  = (String) types.get(fields[i]);
+        Object value = getField(fields[i]);
+        setStmtValue(stmt,i,type,value);
+      }
+      return stmt;
+    }
+    catch (Exception e)
+    {
+      throw new RemoteException("unable to prepare update sql statement",e);
+    }
   }
   
   /**
    * Liefert das automatisch erzeugte SQL-Statement fuer ein Insert.
    * @return das erzeugte SQL-Statement.
    */
-  protected String getInsertSQL() throws RemoteException
+  protected PreparedStatement getInsertSQL() throws RemoteException
   {
+
     String sql = "insert into " + getTableName() + " ";
     String[] fields = getFields();
 
@@ -365,18 +404,62 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
     for (int i=0;i<fields.length;++i)
     {
-			if (fields[i] == null || fields[i].equals(""))
-				continue; // skip empty fields
+      if (fields[i] == null || fields[i].equals("")) // die sollte es zwar eigentlich nicht geben, aber sicher ist sicher ;)
+        continue; // skip empty fields
       names += fields[i] + ",";
-			if (getField(fields[i]) == null)
-				values += "null,";
-			else 
-	      values += "'" + getField(fields[i]) + "',";
+      values += "?,";
     }
     names = names.substring(0,names.length()-1) + ")"; // remove last "," and append ")"
     values = values.substring(0,values.length()-1) + ")"; // remove last "," and append ")"
 
-    return sql + names + values;
+    try {
+      PreparedStatement stmt = conn.prepareStatement(sql + names + values);
+      for (int i=0;i<fields.length;++i)
+      {
+        String type  = (String) types.get(fields[i]);
+        Object value = getField(fields[i]);
+        setStmtValue(stmt,i,type,value);
+      }
+      return stmt;
+    }
+    catch (Exception e)
+    {
+      throw new RemoteException("unable to prepare insert sql statement",e);
+    }
+  }
+
+  /**
+   * Macht sozusagen das Typ-Mapping bei Insert und Update.
+   * @param stmt
+   * @param index
+   * @param type
+   * @param value
+   */
+  private void setStmtValue(PreparedStatement stmt, int index, String type, Object value)
+  {
+    index++;  // Wer zur Hoelle hat sich ausgedacht, dass Arrays bei Index 0, PreparedStatements aber bei 1 anfangen?? Grr
+    try {
+      if (type == null || value == null)
+        stmt.setNull(index,Types.NULL);
+
+      else if ("date".equalsIgnoreCase(type))
+        stmt.setDate(index,new java.sql.Date(((Date) value).getTime()));
+
+      else if ("int".equalsIgnoreCase(type))
+        stmt.setInt(index,((Integer) value).intValue());
+
+      else if ("double".equalsIgnoreCase(type))
+        stmt.setDouble(index,((Double) value).doubleValue());
+
+      else stmt.setString(index,(String) value);
+    }
+    catch (Exception e)
+    {
+      try {
+        stmt.setString(index,""+value);
+      }
+      catch (Exception e2) {/* useless */}
+    }
   }
 
   /**
@@ -475,6 +558,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.5  2003/11/21 02:10:21  willuhn
+ * @N prepared Statements in AbstractDBObject
+ * @N a lot of new SWT parts
+ *
  * Revision 1.4  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/21 02:10:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,8 +20,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import de.willuhn.jameica.Application;
-
 /**
  * @author willuhn
  * Kleiner Hilfsiterator zum Holen von Listen von Objekten aus der Datenbank.
@@ -32,6 +30,8 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 	private AbstractDBObject object;
 	private ArrayList list = new ArrayList();
 	private int index = 0;
+  private String filter = "";
+  private boolean initialized = false;
 
 	/**
 	 * Erzeugt einen neuen Iterator.
@@ -49,27 +49,41 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 		this.object = object;
 		this.conn = conn;
+  }
 
+
+  public void addFilter(String filter) throws RemoteException {
+    if ("".equals(this.filter))
+      this.filter = " where 1 and " + filter;
+    else
+      this.filter += " and " + filter;
+  }
+
+  /**
+   * Initialisiert den Iterator.
+   * @throws RemoteException
+   */
+  private void init() throws RemoteException {
 		Statement stmt = null;
 		ResultSet rs = null;
 		try {
 			stmt = conn.createStatement();
-			rs = stmt.executeQuery("select id from " + object.getTableName());
+			rs = stmt.executeQuery("select id from " + object.getTableName() + filter);
 			while (rs.next())
 			{
 				list.add(rs.getString("ID"));
 			}
+      this.initialized = true;
 		}
 		catch (SQLException e)
 		{
-			Application.getLog().error("unable to create list for table " + object.getTableName());
-			throw new RemoteException("unable to get metadata from table " + object.getTableName(),e);
+      // wenn das Statement ungueltig ist, ist halt der Iterator leer ;)
 		}
 		finally {
 			try {
 				rs.close();
 				stmt.close();
-			} catch (SQLException se) {/*useless*/}
+			} catch (Exception se) {/*useless*/}
 		}
 	}
 
@@ -78,6 +92,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    */
   public boolean hasNext() throws RemoteException
 	{
+    if (!initialized) init();
 		return (index < list.size());
 	}
 
@@ -86,6 +101,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    */
   public DBObject next() throws RemoteException
 	{
+    if (!initialized) init();
 		object.load((String) list.get(index++));
 		return object;
 	}
@@ -96,6 +112,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    */
   public void transactionBegin() throws RemoteException
   {
+    if (!initialized) init();
     object.transactionBegin();
   }
 
@@ -104,6 +121,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    */
   public void transactionCommit() throws RemoteException
   {
+    if (!initialized) init();
     object.transactionCommit();
   }
 
@@ -112,6 +130,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    */
   public void transactionRollback() throws RemoteException
   {
+    if (!initialized) init();
     object.transactionRollback();
   }
 
@@ -120,6 +139,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
    */
   public int size() throws RemoteException
   {
+    if (!initialized) init();
     return list.size();
   }
 }
@@ -127,6 +147,10 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.3  2003/11/21 02:10:21  willuhn
+ * @N prepared Statements in AbstractDBObject
+ * @N a lot of new SWT parts
+ *
  * Revision 1.2  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

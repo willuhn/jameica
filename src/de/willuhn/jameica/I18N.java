@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/I18N.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/13 00:37:35 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/21 02:10:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,10 +13,6 @@
 
 package de.willuhn.jameica;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
@@ -78,23 +74,27 @@ public class I18N
   public static void flush()
   {
     if (!Application.DEBUG) return;
-    try
-    {
-      File file = File.createTempFile("messages_" + currentLocale.toString() + "_",".properties");
-      properties.store(new FileOutputStream(file), null);
-      Application.getLog().debug("stored unknown language keys in file " + file.getAbsolutePath());
-    } catch (FileNotFoundException e)
-    {
-      e.printStackTrace();
-    } catch (IOException e)
-    {
-      e.printStackTrace();
-    }
+//    try
+//    {
+//      File file = File.createTempFile("messages_" + currentLocale.toString() + "_",".properties");
+//      properties.store(new FileOutputStream(file), null);
+//      Application.getLog().debug("stored unknown language keys in file " + file.getAbsolutePath());
+//    } catch (FileNotFoundException e)
+//    {
+//      e.printStackTrace();
+//    } catch (IOException e)
+//    {
+//      e.printStackTrace();
+//    }
   }
 }
 
 /*********************************************************************
  * $Log: I18N.java,v $
+ * Revision 1.3  2003/11/21 02:10:21  willuhn
+ * @N prepared Statements in AbstractDBObject
+ * @N a lot of new SWT parts
+ *
  * Revision 1.2  2003/11/13 00:37:35  willuhn
  * *** empty log message ***
  *

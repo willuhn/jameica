@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/21 02:10:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,8 @@ public class SelectInput extends Input
 {
 
   private String[] values;
+  private String preselected;
+  private Combo combo;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
@@ -40,8 +42,8 @@ public class SelectInput extends Input
    */
   public SelectInput(String[] values, String preselected)
   {
-    super(preselected);
-    this.values = values;
+    this.preselected = preselected;
+    this.values      = values;
   }
 
   /**
@@ -51,8 +53,8 @@ public class SelectInput extends Input
    */
   public SelectInput(ArrayList values, String preselected)
   {
-    super(preselected);
-    this.values = (String[]) values.toArray(new String[]{});
+    this.preselected = preselected;
+    this.values      = (String[]) values.toArray(new String[]{});
   }
 
   /**
@@ -64,7 +66,8 @@ public class SelectInput extends Input
    */
   public SelectInput(DBObject object) throws RemoteException
   {
-    super((String) object.getField(object.getPrimaryField()));
+    this.preselected = (String) object.getField(object.getPrimaryField());
+
     try {
       DBIterator list = object.getList();
       this.values = new String[list.size()];
@@ -93,7 +96,9 @@ public class SelectInput extends Input
    */
   public SelectInput(DBIterator list, String field, String preselected)
   {
-    super(preselected);
+
+    this.preselected = preselected;
+
     try {
       this.values = new String[list.size()];
       DBObject o = null;
@@ -117,7 +122,7 @@ public class SelectInput extends Input
   public void paint(Group group)
   {
 
-    final Combo combo = new Combo(group,SWT.BORDER | SWT.READ_ONLY);
+    combo = new Combo(group,SWT.BORDER | SWT.READ_ONLY);
     combo.setLayoutData(createGrid());
     int selected = 0;
     if (values == null || values.length == 0)
@@ -131,10 +136,22 @@ public class SelectInput extends Input
     }
     combo.select(selected);
   }
+
+  /**
+   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   */
+  public String getValue()
+  {
+    return combo.getText();
+  }
 }
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.2  2003/11/21 02:10:21  willuhn
+ * @N prepared Statements in AbstractDBObject
+ * @N a lot of new SWT parts
+ *
  * Revision 1.1  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

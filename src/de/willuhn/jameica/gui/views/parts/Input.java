@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/21 02:10:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,24 +22,14 @@ import org.eclipse.swt.widgets.Group;
 public abstract class Input
 {
 
-  private String value = "";
-
-  /**
-   * Erzeugt ein neues Eingabefeld mit dem angegebenen Wert.
-   */
-  public Input(String value)
-  {
-    this.value = value;
-  }
-  
   /**
    * Liefert den Wert des Eingabefelds.
-   * @return Wert des Eingabefeldes oder einen Leerstring. Niemald jedoch null.
+   * Diese Funktion muss von allen abgeleiteten Klassen ueberschrieben
+   * werden, denn ueber diese Funktion kommt der Controller an die Daten
+   * des Dialogs.
+   * @return Wert des Feldes.
    */
-  protected String getValue()
-  {
-    return (value == null) ? "" : value;
-  }
+  public abstract String getValue();
 
   /**
    * Malt das Inputfeld in die uebergebene Gruppe.
@@ -64,6 +54,10 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.2  2003/11/21 02:10:21  willuhn
+ * @N prepared Statements in AbstractDBObject
+ * @N a lot of new SWT parts
+ *
  * Revision 1.1  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

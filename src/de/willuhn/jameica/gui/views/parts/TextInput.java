@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/21 02:10:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,13 +24,15 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TextInput extends Input
 {
+  private String value;
+  private Text text;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
    */
   public TextInput(String value)
   {
-    super(value);
+    this.value = value;
   }
 
   /**
@@ -38,14 +40,22 @@ public class TextInput extends Input
    */
   public void paint(Group group)
   {
-    final Text text = new Text(group, SWT.BORDER);
+    text = new Text(group, SWT.BORDER);
     text.setLayoutData(createGrid());
-    text.setText(getValue());
+    text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
-        text.setSelection(0, text.getText().length());
+        text.setSelection(text.getText().length(), text.getText().length());
       }
     });
+  }
+
+  /**
+   * @see de.willuhn.jameica.views.parts.Input#getValue()
+   */
+  public String getValue()
+  {
+    return text.getText();
   }
 
 
@@ -53,6 +63,10 @@ public class TextInput extends Input
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.2  2003/11/21 02:10:21  willuhn
+ * @N prepared Statements in AbstractDBObject
+ * @N a lot of new SWT parts
+ *
  * Revision 1.1  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

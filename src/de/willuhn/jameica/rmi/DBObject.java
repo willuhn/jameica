@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/21 02:10:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,7 +64,7 @@ public interface DBObject extends Remote
 	public void delete() throws RemoteException;
 
 	/**
-	 * Liefert die ID des Objektes.
+	 * Liefert die ID des Objektes oder null bei neuen Objekten.
 	 * @return
 	 * @throws RemoteException
 	 */
@@ -107,6 +107,10 @@ public interface DBObject extends Remote
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.3  2003/11/21 02:10:21  willuhn
+ * @N prepared Statements in AbstractDBObject
+ * @N a lot of new SWT parts
+ *
  * Revision 1.2  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *
