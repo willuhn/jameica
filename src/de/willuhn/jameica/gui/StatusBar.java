@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.18 $
+ * $Date: 2004/04/12 19:16:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.parts.Table;
+import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.ArrayEnumeration;
 import de.willuhn.util.History;
@@ -226,7 +226,7 @@ public class StatusBar {
 		shell.setText(Application.getI18n().tr("letzte Meldungen"));
 		shell.setLayout(new GridLayout(1,false));
 
-		Table table = new Table(e,null);
+		TablePart table = new TablePart(e,null);
 		table.addColumn(Application.getI18n().tr("Meldungen"),null);
 		try
     {
@@ -250,6 +250,10 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.18  2004/04/12 19:16:00  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.17  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

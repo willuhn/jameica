@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.4 $
+ * $Date: 2004/04/12 19:15:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.jameica.gui.controller.AbstractControl;
-import de.willuhn.jameica.gui.parts.Formatter;
-import de.willuhn.jameica.gui.parts.Table;
+import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.views.AbstractView;
 
 /**
@@ -101,7 +101,7 @@ public class ListDialog extends AbstractDialog
 	 */
 	protected void paint(Composite parent) throws Exception {
 
-		Table table = new Table(list,new ListController(null));
+		TablePart table = new TablePart(list,new ListController(null));
 
 		Enumeration keys = this.fields.keys();
 		while (keys.hasMoreElements())
@@ -178,6 +178,10 @@ public class ListDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.4  2004/04/12 19:15:59  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.3  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

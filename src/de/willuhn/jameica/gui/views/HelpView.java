@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.4 $
+ * $Date: 2004/04/12 19:15:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,22 +12,18 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.views;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
@@ -36,9 +32,9 @@ import de.willuhn.util.I18N;
  */
 public class HelpView {
 
-	private ScrolledComposite container;
+	private FormTextPart text;
+
 	private CLabel title;
-	private StyledText text;
 	private Composite myParent;
 
   /**
@@ -97,77 +93,26 @@ public class HelpView {
 			///////////////////////////////
 
 			///////////////////////////////
-			// Der eigentliche Container fuer den Text.
-			container = new ScrolledComposite(myParent,SWT.V_SCROLL | SWT.NONE);
-			container.setBackground(Style.COLOR_BG);
-			container.setLayoutData(new GridData(GridData.FILL_BOTH));
-			container.setLayout(new GridLayout());
-
-			text = new StyledText(container,SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
-			text.setLayoutData(new GridData(GridData.FILL_BOTH));
-			text.setBackground(Style.COLOR_BG);
-
-			container.setContent(text);
-			container.addListener(SWT.Resize, new Listener() {
-				public void handleEvent(Event event) {
-					refresh();
-				}
-			});
+			// Der eigentliche Text.
+			text = new FormTextPart();
+			try {
+				text.paint(myParent);
+			}
+			catch (Exception e)
+			{
+				Application.getLog().error("unable to paint help text",e);
+			}
 			//
 			///////////////////////////////
   }
 
 	/**
-	 * Zeigt den uebergebenen Hilfe-Text an.
-   * @param s anzuzeigender Hilfe-Text.
-   */
-  public void setText(String s)
-	{
-		text.setText(s);
-		refresh();
-	}
-
-	private void refresh()
-	{
-		text.setSize(text.computeSize(text.getParent().getClientArea().width,SWT.DEFAULT));
-
-	}
-
-	/**
 	 * Zeigt den Text aus dem uebergebenen Reader an.
    * @param reader auszulesender Reader.
    */
-  public void setText(Reader reader)
+  public void setText(Reader reader) throws IOException
 	{
-		BufferedReader br = null;
-		String thisLine = null;
-		StringBuffer all = new StringBuffer();
-
-		try {
-			br =  new BufferedReader(reader);
-			while ((thisLine = br.readLine()) != null)
-			{
-				if (thisLine.length() == 0) // Leerzeile
-				{
-					all.append("\n\n");
-					continue;
-				}
-				all.append(thisLine.trim() + " "); // Leerzeichen am Ende einfuegen.
-			}
-		}
-		catch (IOException e)
-		{
-			Application.getLog().error("error while reading help text",e);
-			return;
-		}
-		finally
-		{
-			try {
-				br.close();
-			}
-			catch (Exception e) {}
-		}
-		setText(all.toString());
+		text.setText(reader);
 	}
 
 }
@@ -175,6 +120,10 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.4  2004/04/12 19:15:58  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.3  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

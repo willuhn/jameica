@@ -10,5 +10,12 @@
         path="lib/linux/swt-pi.jar" sourcepath="/jameica/lib.src/linux/swt-pisrc.zip"/>
     <classpathentry kind="src" path="/datasource"/>
     <classpathentry kind="src" path="/util"/>
+    <classpathentry kind="lib"
+        path="/hbci/lib/hbci4java-2.4.7pre-20040204.jar" sourcepath="/hbci/lib.src/hbci4java-2.4.7pre-20040204.src.zip"/>
+    <classpathentry exported="true" kind="lib" path="lib/forms.jar" sourcepath="/jameica/lib.src/forms.src.zip"/>
+    <classpathentry exported="true" kind="lib" path="lib/jface.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/runtime.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/ui.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/workbench.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,9 +1,18 @@
-Willkommen bei Jameica.
+<form>
+	<p>
+		<span color="header" font="header">Willkommen bei Jameica.</span>
+	</p>
 
-Auf der Startseite sehen Sie die derzeit installierten
-Plugins. In der Statusleiste am unteren Rand der Anwendung
-werden Ihnen nützliche Informationen über die gerade ausgeführten
-Anweisungen angezeigt. Klicken Sie in den rechten Bereich
-der Statusleiste um eine Liste der letzten Meldungen oder in
-den linken Bereich um einen Auszug des System-Protokolls
-zu öffnen.
+	<li>
+		Auf der Startseite sehen Sie die derzeit installierten Plugins.
+	</li>
+	<li>
+		In der Statusleiste am unteren Rand der Anwendung werden Ihnen
+		nützliche Informationen über die gerade ausgeführten Anweisungen angezeigt.
+	</li>
+	<li>
+		Klicken Sie in den rechten Bereich der Statusleiste um eine Liste
+		der letzten Meldungen oder in den linken Bereich um einen Auszug
+		des System-Protokolls zu öffnen.
+	</li>
+</form>

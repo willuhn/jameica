@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/04/01 00:23:24 $
+ * $Revision: 1.15 $
+ * $Date: 2004/04/12 19:16:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,10 +17,10 @@ import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Config;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
-import de.willuhn.jameica.gui.parts.AbstractInput;
-import de.willuhn.jameica.gui.parts.FileInput;
-import de.willuhn.jameica.gui.parts.SelectInput;
-import de.willuhn.jameica.gui.parts.Table;
+import de.willuhn.jameica.gui.input.AbstractInput;
+import de.willuhn.jameica.gui.input.FileInput;
+import de.willuhn.jameica.gui.input.SelectInput;
+import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ServiceSettings;
 import de.willuhn.jameica.gui.views.Settings;
@@ -74,9 +74,9 @@ public class SettingsControl extends AbstractControl
 	 * Liefert eine Tabelle mit den lokalen Services.
    * @return Tabelle mit den lokalen Services.
    */
-  public Table getLocalServices()
+  public TablePart getLocalServices()
 	{
-		Table t = new Table(config.getLocalServiceData(),this);
+		TablePart t = new TablePart(config.getLocalServiceData(),this);
 		t.addColumn(i18n.tr("Name"),null);
 		return t;
 	}
@@ -85,9 +85,9 @@ public class SettingsControl extends AbstractControl
 	 * Liefert eine Tabelle mit den remote Services.
 	 * @return Tabelle mit den remote Services.
 	 */
-	public Table getRemoteServices()
+	public TablePart getRemoteServices()
 	{
-		Table t = new Table(config.getRemoteServiceData(),this);
+		TablePart t = new TablePart(config.getRemoteServiceData(),this);
 		t.addColumn(i18n.tr("Name"),null);
 		return t;
 	}
@@ -174,6 +174,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.15  2004/04/12 19:16:00  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.14  2004/04/01 00:23:24  willuhn
  * @N FontInput
  * @N ColorInput

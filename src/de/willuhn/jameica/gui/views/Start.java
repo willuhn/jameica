@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.19 $
+ * $Date: 2004/04/12 19:15:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,7 @@ import de.willuhn.jameica.AbstractPlugin;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.parts.LabelGroup;
+import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.util.I18N;
 
 
@@ -32,12 +32,14 @@ public class Start extends AbstractView
   /**
    * @see de.willuhn.jameica.gui.views.AbstractView#bind()
    */
-  public void bind()
+  public void bind() throws Exception
   {
   	I18N i18n = Application.getI18n();
 		GUI.getView().setTitle(i18n.tr("Start"));
     
-		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<form>");
+		buffer.append("<p><span color=\"header\" font=\"header\">" + i18n.tr("Installierte Plugins") + "</span></p>");
 		
     Enumeration installedPlugins = PluginLoader.getInstalledPlugins();
 		AbstractPlugin plugin = null;
@@ -48,8 +50,14 @@ public class Start extends AbstractView
       pt = plugin.getName();
       if (pt == null || pt.length() == 0)
       	continue;
-      group.addText(pt,false);
+      buffer.append("<li>" + pt + "</li>");
     }
+
+		buffer.append("</form>");
+
+		FormTextPart text = new FormTextPart(buffer.toString());
+
+		text.paint(getParent());
 
   }        
 
@@ -64,6 +72,10 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.19  2004/04/12 19:15:58  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.18  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

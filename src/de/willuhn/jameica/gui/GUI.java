@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.35 $
- * $Date: 2004/04/01 19:06:26 $
+ * $Revision: 1.36 $
+ * $Date: 2004/04/12 19:15:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,6 +65,8 @@ public class GUI
     private Menu menu;
     private HelpView help;
     
+		private AbstractView previousView;
+		private Object previousObject;
     private AbstractView currentView;
 
 
@@ -312,6 +314,16 @@ public class GUI
 	}
 
 	/**
+   * 
+   */
+  public static void startPreviousView()
+	{
+		if (gui.previousView == null)
+			return;
+		startView(gui.previousView.getClass().getName(),gui.previousObject);
+	}
+
+	/**
 	 * Zeigt die View im angegebenen Composite an.
    * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
 	 * @param o das Fachobjekt.
@@ -340,6 +352,9 @@ public class GUI
 		
 		      gui.view.cleanContent();
 		
+					gui.previousView = gui.currentView;
+					gui.previousObject = o;
+
 		      gui.currentView = (AbstractView) clazz.newInstance();
 					gui.currentView.setParent(gui.view.getContent());
 		      gui.currentView.setCurrentObject(o);
@@ -400,7 +415,11 @@ public class GUI
 		if (is == null)
 			return;
 
-		gui.help.setText(new InputStreamReader(is));
+		try {
+			gui.help.setText(new InputStreamReader(is));
+		}
+		catch (Exception e)
+		{}
 	}
 
   /**
@@ -421,15 +440,6 @@ public class GUI
   {
     return gui.statusBar;
   }
-
-	/**
-	 * Zeigt den uebergebenen Hilfetext an.
-   * @param helptext anzuzeigender Hilfe-Text.
-   */
-  public static void setHelpText(String helptext)
-	{
-		gui.help.setText(helptext == null ? "" : helptext);
-	}
 
 	/**
 	 * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
@@ -625,6 +635,10 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.36  2004/04/12 19:15:59  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.35  2004/04/01 19:06:26  willuhn
  * *** empty log message ***
  *

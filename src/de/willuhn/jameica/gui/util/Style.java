@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/04/01 22:07:06 $
+ * $Revision: 1.16 $
+ * $Date: 2004/04/12 19:15:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,6 +77,8 @@ public class Style
 	 */
 	public final static Color COLOR_SUCCESS = new Color(GUI.getDisplay(),   0,   0,   0);
 
+	public final static Color COLOR_LINK = new Color(GUI.getDisplay(),0,0,100);
+	public final static Color COLOR_LINK_ACTIVE = new Color(GUI.getDisplay(),0,0,200);
   /**
    * Font fuer Ueberschriften erster Ordnung.
    */
@@ -168,6 +170,10 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.16  2004/04/12 19:15:59  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.15  2004/04/01 22:07:06  willuhn
  * *** empty log message ***
  *

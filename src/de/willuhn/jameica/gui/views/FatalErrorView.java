@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.10 $
+ * $Date: 2004/04/12 19:15:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,8 @@ import org.eclipse.swt.events.MouseEvent;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.parts.ButtonArea;
-import de.willuhn.jameica.gui.parts.LabelGroup;
+import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -120,6 +120,10 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.10  2004/04/12 19:15:58  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.9  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

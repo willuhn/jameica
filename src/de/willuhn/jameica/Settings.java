@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.9 $
+ * $Date: 2004/04/12 19:15:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import org.eclipse.swt.graphics.RGB;
 
 /**
  * Diese Klasse stellt eine Art Storage-Provider fuer Einstellungen
@@ -128,7 +130,7 @@ public class Settings
 	}
 
 	/**
-	 * Liefert den Wert des Attribute <name>.
+	 * Liefert den Wert des Attribute.
 	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
 	 * @param name Name des Attribut.
 	 * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
@@ -137,6 +139,38 @@ public class Settings
 	public String getString(String name, String defaultValue)
 	{
 		return properties.getProperty(name,defaultValue);
+	}
+
+	/**
+	 * Liefert den Wert des Attributes als Farbe.
+	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
+	 * @param name Name des Attribut.
+	 * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
+	 * @return der Wert des Attributs.
+	 */
+	public RGB getRGB(String name, RGB defaultValue)
+	{
+		if (defaultValue == null) defaultValue = new RGB(0,0,0);
+
+		return new RGB(
+			getInt(name + ".r",defaultValue.red),
+			getInt(name + ".g",defaultValue.green),
+			getInt(name + ".b",defaultValue.blue)
+		);
+	}
+
+	/**
+	 * Speichert einen Farb-Wert.
+	 * @param name Name des Attributs.
+	 * @param value Wert des Attributs.
+	 */
+	public void setAttribute(String name, RGB value)
+	{
+		if (value == null)
+			return;
+		setAttribute(name + ".r",value.red);
+		setAttribute(name + ".g",value.green);
+		setAttribute(name + ".b",value.blue);
 	}
 
 	/**
@@ -206,6 +240,10 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.9  2004/04/12 19:15:59  willuhn
+ * @C refactoring
+ * @N forms
+ *
  * Revision 1.8  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *
