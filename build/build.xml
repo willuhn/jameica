@@ -28,7 +28,6 @@
         <property name="project.javadoc" 	 value="${project.release}/javadoc"/>
         <property name="src.dir" 			 value="src"/>
         <property name="cfg.dir" 			 value="cfg"/>
-        <property name="db.dir" 			 value="db"/>
         <property name="icon.dir" 			 value="${src.dir}/img"/>
         <property name="lang.dir" 			 value="${src.dir}/lang"/>
         <property name="lib.dir" 			 value="lib"/>
@@ -110,7 +109,6 @@
 
 		<mkdir dir="${project.release}/lib"/>
 		<mkdir dir="${project.release}/cfg"/>
-		<mkdir dir="${project.release}/db"/>
 		<mkdir dir="${project.release}/plugins"/>
 
 		<copy todir="${project.release}/lib">
@@ -119,10 +117,6 @@
 
 		<copy todir="${project.release}/cfg">
 			<fileset dir="${cfg.dir}"/>
-		</copy>
-
-		<copy todir="${project.release}/db">
-			<fileset dir="${db.dir}"/>
 		</copy>
 
 		<copy file="${build.dir}/jameica.sh"        tofile="${project.release}/jameica.sh" />

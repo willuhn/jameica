@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Tree.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/29 20:07:19 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/30 03:41:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,9 @@ package de.willuhn.jameica.gui.views.parts;
 import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Event;
@@ -124,9 +127,9 @@ public class Tree {
 	 * Behandelt das Event "action". 
 	 * @param event das ausgeloeste Event.
 	 */
-	private void handleChoose(Event event)
+	private void handleSelect(MouseEvent event)
 	{
-		Widget widget = event.item;
+		Widget widget = tree.getItem(new Point(event.x,event.y));
 		if (!(widget instanceof TreeItem))
 			return;
 		TreeItem item = (TreeItem) widget;
@@ -157,11 +160,13 @@ public class Tree {
 		});
 
 		// Listener fuer die Aktionen
-    tree.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				handleChoose(event);
-			}
-		});
+    tree.addMouseListener(new MouseAdapter()
+    {
+      public void mouseDoubleClick(MouseEvent e)
+      {
+        handleSelect(e);
+      }
+    });
 	}
 
 
@@ -269,6 +274,9 @@ public class Tree {
 
 /*********************************************************************
  * $Log: Tree.java,v $
+ * Revision 1.4  2003/12/30 03:41:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/12/29 20:07:19  willuhn
  * @N Formatter
  *
