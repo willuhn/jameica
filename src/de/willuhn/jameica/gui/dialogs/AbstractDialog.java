@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/21 19:49:41 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,9 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Style;
-import de.willuhn.util.I18N;
 
 /**
  * Basisklasse fuer modalen Dialoge.
@@ -152,8 +150,10 @@ public abstract class AbstractDialog
 	
   /**
    * Oeffnet den Dialog.
+   * @throws Exception wenn es beim Oeffnen zu einem Fehler gekommen ist
+   * oder paint() manuell eine Exception wirft.
    */
-  public final void open()
+  public final void open() throws Exception
   {
 		try {
 			paint();
@@ -180,11 +180,6 @@ public abstract class AbstractDialog
 				if (!display.readAndDispatch()) display.sleep();
 			}
 		}
-		catch (Exception e)
-		{
-			Application.getLog().error("error while opening dialog",e);
-			GUI.setActionText(I18N.tr("Fehler beim Öffnen des Dialogs"));
-		}
 		finally
 		{
 			close();
@@ -205,6 +200,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.3  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.2  2004/02/21 19:49:41  willuhn
  * *** empty log message ***
  *

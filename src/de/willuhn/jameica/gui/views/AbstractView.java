@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/02/20 20:45:24 $
+ * $Revision: 1.13 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,9 +13,7 @@ import java.rmi.RemoteException;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.gui.parts.Headline;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.I18N;
 
 /**
  * Basis-Klasse fuer alles Views.
@@ -68,15 +66,6 @@ public abstract class AbstractView
 	}
 
 	/**
-	 * Zeigt den uebergebenen Text als Dialog-Ueberschrift an.
-   * @param text anzuzeigende Ueberschrift.
-   */
-  public final void addHeadline(String text)
-	{
-		new Headline(getParent(),I18N.tr(text == null ? "" : text));
-	}
-
-	/**
 	 * Liefert das Composite, in dem der Dialog gemalt wird.
    * @return Parent-Composite.
    */
@@ -101,6 +90,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.13  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.12  2004/02/20 20:45:24  willuhn
  * *** empty log message ***
  *

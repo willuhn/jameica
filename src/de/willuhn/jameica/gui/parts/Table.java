@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/18 17:14:40 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -103,7 +103,8 @@ public class Table
   {
 
     Composite comp = new Composite(parent,SWT.NONE);
-    final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+    // final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		final GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
     comp.setLayoutData(gridData);
     comp.setBackground(Style.COLOR_BORDER);
     
@@ -255,12 +256,12 @@ public class Table
 
 
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
-    int cols = table.getColumnCount();
-    for (int i=0;i<cols;++i)
-    {
-      TableColumn col = table.getColumn(i);
-      col.pack();
-    }
+//    int cols = table.getColumnCount();
+//    for (int i=0;i<cols;++i)
+//    {
+//      TableColumn col = table.getColumn(i);
+//      col.pack();
+//    }
 
     // So, und jetzt malen wir noch ein Label mit der Anzahl der Treffer drunter.
 		if (list != null)
@@ -319,6 +320,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.4  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.3  2004/02/18 17:14:40  willuhn
  * *** empty log message ***
  *

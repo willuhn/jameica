@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/18 20:28:45 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.views.SearchDialog;
+import de.willuhn.jameica.gui.dialogs.SearchDialog;
 import de.willuhn.jameica.gui.util.Style;
 
 /**
@@ -171,6 +171,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.4  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.3  2004/02/18 20:28:45  willuhn
  * @N jameica now stores window position and size
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/02/18 17:14:40 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SearchDialog.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views;
+package de.willuhn.jameica.gui.dialogs;
 
 import java.rmi.RemoteException;
 
@@ -26,6 +26,7 @@ import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.parts.Formatter;
 import de.willuhn.jameica.gui.parts.Table;
 import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.util.I18N;
 
 /**
@@ -205,6 +206,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.1  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.12  2004/02/18 17:14:40  willuhn
  * *** empty log message ***
  *

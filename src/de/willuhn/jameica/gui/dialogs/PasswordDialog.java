@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/21 19:49:41 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,11 +44,12 @@ public abstract class PasswordDialog extends SimpleDialog {
 	private int retries = 0;
 
 	private Composite comp = null;
-	private Label label = null;
-	private Label pLabel = null;
+	private CLabel label = null;
+	private CLabel pLabel = null;
 	private CLabel error = null;
 	private Text password = null;
 	private Button button = null;
+	private Button cancel = null;
 	
 	private String labelText 					= I18N.tr("Passwort");
 	private String errorText					= "";
@@ -96,53 +97,68 @@ public abstract class PasswordDialog extends SimpleDialog {
    */
   public void paint() throws Exception
 	{
+		// Composite um alles drumrum.
 		comp = new Composite(getParent(),SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		comp.setLayout(new GridLayout(2,false));
+		comp.setLayout(new GridLayout(3,false));
 		
-		label = new Label(comp,SWT.WRAP);
-		label.setText(getText() + "\n");
-		GridData grid = new GridData(GridData.FILL_BOTH);
-		grid.horizontalSpan = 2;
+		// Text
+		label = new CLabel(comp,SWT.WRAP);
+		label.setText(getText());
+		GridData grid = new GridData(GridData.FILL_HORIZONTAL);
+		grid.horizontalSpan = 3;
 		label.setLayoutData(grid);
 		
-		pLabel = new Label(comp,SWT.NONE);
+		// Fehlertext 
+		error = new CLabel(comp, SWT.WRAP);
+		error.setForeground(Style.COLOR_ERROR);
+		GridData grid2 = new GridData(GridData.FILL_HORIZONTAL);
+		grid2.horizontalSpan = 3;
+		grid2.horizontalIndent = 0;
+		error.setLayoutData(grid2);
+
+		// Label vor Eingabefeld
+		pLabel = new CLabel(comp,SWT.NONE);
 		pLabel.setText(labelText);
 		pLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-		password = new Text(comp,SWT.SINGLE | SWT.BORDER);
-		password.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		// Eingabe-Feld. Das packen wir wegen des FLAT-Styles noch
+		// in ein Composite
+		Composite border = new Composite(comp,SWT.NONE);
+		GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
+		grid3.horizontalSpan = 2;
+		border.setLayoutData(grid3);
+		border.setBackground(Style.COLOR_BORDER);
+		GridLayout l = new GridLayout();
+		l.horizontalSpacing = 0;
+		l.verticalSpacing = 0;
+		l.marginHeight = 1;
+		l.marginWidth = 1;
+		border.setLayout(l);
+		password = new Text(border,SWT.SINGLE);
+		password.setBackground(Style.COLOR_WHITE);
 		password.setEchoChar('*');
+		password.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Composite bComp = new Composite(comp,SWT.NONE);
-		GridData grid2 = new GridData(GridData.FILL_BOTH);
-		grid2.horizontalSpan = 2;
-		bComp.setLayoutData(grid2);
-		GridLayout gl = new GridLayout(2,false);
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		bComp.setLayout(gl);
+		// Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
+		Label dummy = new Label(comp,SWT.NONE);
+		dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		error = new CLabel(bComp, SWT.WRAP);
-		error.setLayoutData(new GridData(GridData.FILL_BOTH));
-		error.setForeground(Style.COLOR_ERROR);
-		
-		button = new Button(bComp, SWT.NONE);
-		button.setText("   OK   ");
-		button.setLayoutData(new GridData(GridData.END));
+		// OK-Button
+		button = new Button(comp, SWT.FLAT);
+		button.setText(I18N.tr("OK"));
+		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
 				String p = password.getText();
 				retries++;
+
 				if (!checkPassword(p))
 				{
 					if (retries >= MAX_RETRIES)
 					{
 						// maximale Anzahl der Fehlversuche erreicht.
-						// Wir schliessen den Dialog und rufen vorher
-						// noch cancel() auf.
-						cancel();
-						close();
+						throw new RuntimeException(MAX_RETRIES + " falsche Passwort-Eingaben");
 					}
 					return;
 				}
@@ -150,6 +166,16 @@ public abstract class PasswordDialog extends SimpleDialog {
 				close();
 			}
 		});
+
+		// Abbrechen-Button
+		cancel = new Button(comp,SWT.FLAT);
+		cancel.setText(I18N.tr("Abbrechen"));
+		cancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		cancel.addMouseListener(new MouseAdapter() {
+      public void mouseUp(MouseEvent e) {
+				throw new RuntimeException("Dialog abgebrochen");
+      }
+    });
 
 		// so und jetzt noch der Shell-Listener, damit der
 		// User den Dialog nicht schliessen kann ohne was
@@ -175,11 +201,6 @@ public abstract class PasswordDialog extends SimpleDialog {
   protected abstract boolean checkPassword(String password);
 	
 	/**
-   * Wird aufgerufen, wenn das Passwort 3 mal falsch eingegeben wurde.
-   */
-  protected abstract void cancel();
-	
-	/**
 	 * Liefert die Anzahl der moeglichen Rest-Versuche zur
 	 * Eingabe bevor der Dialog abgebrochen wird.
    * @return Anzahl der Restversuche.
@@ -191,9 +212,10 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 	/**
 	 * Oeffnet den Dialog und liefert das Passwort nachdem OK gedrueckt wurde.
-   * @return
+   * @return das eingegebene Passwort.
+   * @throws Exception, wenn das Passwort falsch eingegeben wurde.
    */
-  public String getPassword()
+  public String getPassword() throws Exception
 	{
 		super.open();
 		return enteredPassword;
@@ -203,6 +225,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.3  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.2  2004/02/21 19:49:41  willuhn
  * *** empty log message ***
  *

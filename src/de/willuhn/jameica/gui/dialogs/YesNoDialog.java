@@ -1,6 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SimpleDialog.java,v $
- * $Revision: 1.2 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
+ * $Revision: 1.1 $
  * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
@@ -21,24 +21,29 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import de.willuhn.util.I18N;
+
 /**
- * Billiger Dialog, der nur einen Text und einen OK-Button enthaelt.
+ * Dialog, der nur einen Text und einen Ja/Nein-Button enthaelt.
  */
-public class SimpleDialog extends AbstractDialog {
+public class YesNoDialog extends AbstractDialog {
 
 	private Composite comp = null;
 	private Label label = null;
-	private Button button = null;
+	private Button yes = null;
+	private Button no = null;
 	
 	private String text = null;
 
+	private boolean choice = false;
+
 	/**
-	 * Erzeugt einen neuen simplen Dialog mit OK-Knopf.
+	 * Erzeugt einen neuen Dialog.
 	 * @param position Position des Dialogs.
 	 * @see Dialog#POSITION_MOUSE
 	 * @see Dialog#POSITION_CENTER
 	 */
-  public SimpleDialog(int position) {
+  public YesNoDialog(int position) {
     super(position);
   }
 
@@ -60,6 +65,17 @@ public class SimpleDialog extends AbstractDialog {
 		return text;
 	}
 
+  /**
+   * Oeffnet den Dialog und liefert ein Boolean - je nach Auswahl von Ja/Nein.
+   * @return true, wenn Ja gedrueckt wurde, sonst false.
+   * @throws Exception
+   */
+  public boolean getChoice() throws Exception
+	{
+		super.open();
+		return choice;
+	}
+
 	/**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint()
    */
@@ -67,17 +83,30 @@ public class SimpleDialog extends AbstractDialog {
 	{
 		comp = new Composite(getParent(),SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		comp.setLayout(new GridLayout(1,false));
+		comp.setLayout(new GridLayout(2,false));
 		
 		label = new Label(comp,SWT.WRAP);
 		label.setText(getText() + "\n");
-		label.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
 		
-		button = new Button(comp, SWT.FLAT);
-		button.setText("    OK    ");
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		button.addMouseListener(new MouseAdapter() {
+		yes = new Button(comp, SWT.FLAT);
+		yes.setText("   " + I18N.tr("Ja") + "   ");
+		yes.setLayoutData(new GridData(GridData.BEGINNING));
+		yes.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
+				choice = true;
+				close();
+			}
+		});
+
+		no = new Button(comp, SWT.FLAT);
+		no.setText("   " + I18N.tr("Nein") + "   ");
+		no.setLayoutData(new GridData(GridData.BEGINNING));
+		no.addMouseListener(new MouseAdapter() {
+			public void mouseUp(MouseEvent e) {
+				choice = false;
 				close();
 			}
 		});
@@ -86,8 +115,8 @@ public class SimpleDialog extends AbstractDialog {
 
 
 /**********************************************************************
- * $Log: SimpleDialog.java,v $
- * Revision 1.2  2004/02/22 20:05:21  willuhn
+ * $Log: YesNoDialog.java,v $
+ * Revision 1.1  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *
  * Revision 1.1  2004/02/20 20:45:24  willuhn

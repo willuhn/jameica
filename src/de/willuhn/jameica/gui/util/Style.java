@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/02/20 01:25:06 $
+ * $Revision: 1.7 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,10 +17,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.GUI;
 
@@ -76,10 +82,45 @@ public class Style
     return image;
   }
   
+  /**
+   * Erzeugt ein Canvas mit dem dem angegebenen Hintergrundbild.
+   * TODO: Derzeit wird das Bild immer rechts unten ausgerichtet.
+   * @param parent Composite, in dem das Canvas gemalt werden soll.
+   * Hinweis: Das Composite muss ein GridLayout haben.
+   * @param image anzuzeigendes Hintergrundbild.
+   * @param align logische Kombinationen aus SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT.
+   * @return das erzeuigte Canvas.
+   */
+  public static Canvas getCanvas(final Composite parent, final Image image, final int align)
+  {
+		final Rectangle i = image.getBounds();
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint = i.height;
+		Canvas canvas = new Canvas(parent,SWT.NONE);
+		canvas.setLayoutData(gd);
+		canvas.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				Rectangle r = parent.getBounds();
+				int x = 0;
+				int y = 0;
+				
+				if ((align & SWT.BOTTOM) != 0) y = r.height - i.height;
+				if ((align & SWT.RIGHT) != 0) x = r.width - i.width;
+
+				e.gc.drawImage(image,x,y);
+			}
+		});
+		return canvas;
+  }
+  
 }
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.7  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.6  2004/02/20 01:25:06  willuhn
  * @N nice dialog
  * @N busy indicator

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/02/18 01:40:30 $
+ * $Revision: 1.12 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,10 @@ package de.willuhn.jameica.gui;
 
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
@@ -32,6 +34,9 @@ public class View
 	private Composite content;
 
 	private Composite parent;
+	private CLabel title;
+	private Canvas panelBg;
+	
 
 	/**
    * Erzeugt ein neues Content-Frame.
@@ -49,7 +54,7 @@ public class View
    */
   private void setLayout()
 	{
-		view = new Composite(parent, SWT.NONE);
+		view = new Composite(parent, SWT.BORDER);
 		view.setBackground(Style.COLOR_WHITE);
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
@@ -65,9 +70,23 @@ public class View
    */
   private void setLogoPanel()
 	{
-		Label logoPanel = new Label(view, SWT.NONE);
-		logoPanel.setImage(Style.getImage("logo.jpg"));
-		logoPanel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+		panelBg = Style.getCanvas(view,Style.getImage("panel.bmp"), SWT.TOP | SWT.RIGHT);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		panelBg.setLayout(layout);
+		panelBg.setBackground(Style.COLOR_WHITE);
+
+		title = new CLabel(panelBg,SWT.NONE);
+		title.setFont(Style.FONT_H1);
+		title.setBackground(Style.COLOR_WHITE);
+		title.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+		Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+		sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	
   /**
@@ -82,13 +101,23 @@ public class View
 		// Wir machen hier deshalb nicht nur ein layout() oder redraw()
 		// weil wir wollen, dass die gesamte View disposed und entfernt
 		// wird, bevor eine neue drauf kommt.
-		content = new Composite(view, SWT.BORDER);
+		content = new Composite(view, SWT.NONE);
 		content.setBackground(Style.COLOR_BG);
+		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout l = new GridLayout();
 		l.marginHeight = 6;
 		l.marginWidth = 6;
 		content.setLayout(l);
-		content.setLayoutData(new GridData(GridData.FILL_BOTH));
+	}
+
+	/**
+	 * Aktualisiert den Titel der View.
+   * @param text anzuzeigender Titel.
+   */
+  public void setTitle(String text)
+	{
+		title.setText(text == null ? "" : " " + text);
+		panelBg.layout();
 	}
 
   /**
@@ -113,6 +142,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.12  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.11  2004/02/18 01:40:30  willuhn
  * @N new white style
  *

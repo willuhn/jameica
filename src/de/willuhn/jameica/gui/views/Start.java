@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/02/20 20:45:24 $
+ * $Revision: 1.14 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import de.willuhn.jameica.Plugin;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.WelcomeText;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.Text;
+import de.willuhn.util.I18N;
 
 
 /**
@@ -32,7 +34,7 @@ public class Start extends AbstractView
    */
   public void bind()
   {
-    addHeadline("Jameica");
+		GUI.setTitleText(I18N.tr("Start"));
     
 		Text t = new Text();
     ArrayList installedPlugins = PluginLoader.getInstalledPlugins();
@@ -59,6 +61,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.14  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.13  2004/02/20 20:45:24  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/20 20:45:24 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,7 @@ public class FatalErrorView extends AbstractView
   {
 
 		try {
-	    addHeadline("Fehler");
+			GUI.setTitleText(I18N.tr("Fehler"));
 	    
 	    Exception e = (Exception) getCurrentObject();
 	
@@ -115,6 +115,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.4  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.3  2004/02/20 20:45:24  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/01/25 18:39:56 $
+ * $Revision: 1.26 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,6 +77,10 @@ public class Application {
       return;
     }
     
+		// init language pack
+		// TODO: Languages fuer jedes Plugin extra.
+		I18N.init("lang/messages",Application.getConfig().getLocale());
+
 		app.log.setLevel(app.config.getLogLevel());
 
     // switch logger to defined log file
@@ -190,6 +194,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.26  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.25  2004/01/25 18:39:56  willuhn
  * *** empty log message ***
  *

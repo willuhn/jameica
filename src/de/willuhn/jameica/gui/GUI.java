@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/02/21 19:49:41 $
+ * $Revision: 1.25 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -184,9 +184,6 @@ public class GUI
     if (gui != null)
       return; // allready started.
 
-    // init language pack
-    I18N.init("lang/messages",Application.getConfig().getLocale());
-    
     gui = new GUI();
     gui.load();
     setActionText(I18N.tr("startup finished."));
@@ -304,6 +301,11 @@ public class GUI
 		{
 			Application.getLog().error("view does not exist",e);
 		}
+		catch (Exception e)
+		{
+			Application.getLog().error(e.getLocalizedMessage(),e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -370,6 +372,15 @@ public class GUI
 		});
 
   }
+
+	/**
+	 * Setzt den aktuellen Dialog-Titel.
+   * @param text anzuzeigender Titel.
+   */
+  public static void setTitleText(String text)
+	{
+		gui.view.setTitle(text);
+	}
 
   /**
    * Setzt den uebergebenen String als aktuellen Statustext in der Anwendung (links unten).
@@ -563,6 +574,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.25  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.24  2004/02/21 19:49:41  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Tree.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/22 20:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -202,7 +202,8 @@ public class Tree {
         tree = new org.eclipse.swt.widgets.Tree(composite, SWT.BORDER);
 
         // Griddata erzeugen
-        final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+        // final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+				final GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
         tree.setLayoutData(gridData);
         
         addListener(tree);
@@ -221,7 +222,7 @@ public class Tree {
 			item.setImage(Style.getImage("folder.gif"));
 			item.setData(element.getID());
 
-			item.setText((String) element.getField(element.getPrimaryField()));
+			item.setText(""+(String) element.getField(element.getPrimaryField()));
 
 			// make this item the parent
 			this.parentItem = item;
@@ -271,6 +272,9 @@ public class Tree {
 
 /*********************************************************************
  * $Log: Tree.java,v $
+ * Revision 1.2  2004/02/22 20:05:21  willuhn
+ * @N new Logo panel
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
