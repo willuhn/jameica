@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.35 $
- * $Date: 2004/04/20 12:42:03 $
+ * $Revision: 1.36 $
+ * $Date: 2004/04/20 17:14:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 
 package de.willuhn.jameica;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.jar.JarFile;
@@ -78,7 +79,9 @@ public class Application {
 
 		// LockFile erzeugen
 		try {
-			// TODO: "run" erstellen, wenns fehlt
+			File dir = new File("run");
+			if (!dir.exists())
+				dir.mkdirs();
 			new Lock("run/jameica");
 		}
 		catch (RuntimeException e)
@@ -326,6 +329,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.36  2004/04/20 17:14:50  willuhn
+ * @B fix in parsing command line params
+ *
  * Revision 1.35  2004/04/20 12:42:03  willuhn
  * *** empty log message ***
  *

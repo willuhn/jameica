@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/04/20 12:40:27 $
+ * $Revision: 1.8 $
+ * $Date: 2004/04/20 17:14:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,10 +33,13 @@ public class Main {
 
     boolean serverMode = args.length >= 1 && serverParam.equalsIgnoreCase(args[0]);
 
-    // Starten
-    // TODO: ArrayIndexOutOfBounds wenn gar kein Argument gegeben.
-    String configFile = args.length > 1 ? args[1] : null;
-    Application.newInstance(serverMode, (configFile == null && !serverMode ? args[0] : configFile));
+		String configFile = null;
+		if (serverMode && args.length > 1)
+			configFile = args[1];
+		else if (args.length == 1)
+			configFile = args[0];
+
+    Application.newInstance(serverMode, configFile);
 
    }
 }
@@ -44,6 +47,9 @@ public class Main {
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.8  2004/04/20 17:14:50  willuhn
+ * @B fix in parsing command line params
+ *
  * Revision 1.7  2004/04/20 12:40:27  willuhn
  * *** empty log message ***
  *
