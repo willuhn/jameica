@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/10/08 16:41:58 $
+ * $Revision: 1.25 $
+ * $Date: 2004/10/08 17:18:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,19 +12,17 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
-import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
 
 import net.n3.nanoxml.IXMLElement;
-import net.n3.nanoxml.IXMLParser;
-import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MenuItem;
 
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
@@ -40,6 +38,15 @@ public class Menu
   private final org.eclipse.swt.widgets.Menu bar;
 	private final org.eclipse.swt.widgets.Menu plugins;
 
+  /**
+   * Mapping MenuItem->MenuItem(SWT)
+   */
+  private Map mapping           = new Hashtable();
+
+  /**
+   * Mapping Plugin -> NavigationItem
+   */
+  private Map pluginMap         = new Hashtable();
 
   /**
    * Erzeugt eine neue Instanz des Dropdown-Menus.
@@ -51,63 +58,85 @@ public class Menu
 
     bar = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
 		parent.setMenuBar(bar);
-		appendMenu(getClass().getResourceAsStream("/menu.xml"),Application.getI18n());
 
-		MenuItem p = new MenuItem(bar,SWT.CASCADE);
+    // System-Menu laden
+    load(new Manifest(null,getClass().getResourceAsStream("system.xml")).getMenu());
+
+    org.eclipse.swt.widgets.MenuItem p = new org.eclipse.swt.widgets.MenuItem(bar,SWT.CASCADE);
 		p.setText(Application.getI18n().tr("Plugins"));
 		plugins = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
 		p.setMenu(plugins);
   }
 
-	/**
-	 * Fuer zur Navigation den Navi-Tree eines Plugins hinzu.
-	 * @param container der PluginContainer.
-	 */
-	protected void addPlugin(PluginContainer container)
+  /**
+   * Liefert das Menu-Item, in dem das genannte Plugin einghaengt ist.
+   * Will ein Plugin beispielsweise dynamisch sein Menu erweitern,
+   * erhaelt es hier genau das MenuItem, an das es sich einhaengen kann.
+   * @param pluginClass Klasse des Plugins, dessen oberstes MenuItem geholt werden soll.
+   * @return das MenuItem.
+   */
+  public MenuItem getPluginMenu(String pluginClass)
+  {
+    return (MenuItem) pluginMap.get(pluginClass);
+  }
+
+  /**
+   * Fuegt zum Menu die Items eines Plugins hinzu.
+   * @param container der PluginContainer.
+   * @throws Exception
+   */
+	protected void addPlugin(PluginContainer container) throws Exception
 	{
-		if (container == null)
-		{
-			Logger.warn("unable to add menu, plugin container was null");
-			return;
-		}
-		if (!container.isInstalled())
-		{
-			Logger.warn("plugin is not installed, skipping menu");
-			return;
-		}
-		try {
-			I18N i18n = null;
-			try {
-				i18n = container.getPlugin().getResources().getI18N();
-			}
-			catch (Exception e)
-			{
-				Logger.warn("unable to load I18N for plugin");
-			}
-			appendMenu(container.getMenu(),i18n);
-		}
-		catch (Exception e)
-		{
-			Logger.error("unable to add menu",e);
-		}
+    if (container == null)
+    {
+      Logger.warn("unable to add menu, plugin container was null");
+      return;
+    }
+    if (!container.isInstalled())
+    {
+      Logger.warn("plugin is not installed, skipping menu");
+      return;
+    }
+
+    load(container.getManifest().getMenu());
 	}
 
   /**
-   * Fuegt dem Menu noch weitere Eintraege hinzu, die sich in dem uebergebenen
-   * Inputstream befinden. Der Stream muss eine menu.xml enthalten.
-   * Wird von GUI nach der Initialisierung der Plugins aufgerufen.
-   * @param menu der InputStream mit dem Menu im XML-Format.
-   * @param i18n optionaler Uebersetzer, um die Menu-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
+   * Laedt das Menu-Item und dessen Kinder.
+   * @param element das zu ladende Item.
    * @throws Exception
    */
-  private void appendMenu(InputStream menu, I18N i18n) throws Exception
+  private void load(MenuItem element) throws Exception
   {
-    if (menu == null)
+    if (element == null)
       return;
 
-		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(new StdXMLReader(menu));
-		IXMLElement xml = (IXMLElement) parser.parse();
+    // Wir malen uns erstmal selbst.
+    org.eclipse.swt.widgets.MenuItem item = null;
+    org.eclipse.swt.widgets.Menu     menu = null;
+
+    MenuItem myParent = (MenuItem) element.getParent();
+    if (myParent == null)
+    {
+      // Wir sind die ersten
+      
+      item = new org.eclipse.swt.widgets.MenuItem(bar,SWT.CASCADE);
+    }
+    else
+    {
+      // Wir holen uns das TreeItem vom Parent
+      org.eclipse.swt.widgets.MenuItem mi = (org.eclipse.swt.widgets.MenuItem) mapping.get(myParent);
+      item = new org.eclipse.swt.widgets.MenuItem(mi,SWT.DROP_DOWN);
+    }
+
+    if (element.getParent() == null)
+    {
+      // wir sind auf oberster Ebene, dann muessen wir ein neues Menu machen
+      org.eclipse.swt.widgets.MenuItem  p = new org.eclipse.swt.widgets.MenuItem(bar,SWT.CASCADE);
+      p.setText(element.getName());
+      plugins = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
+      p.setMenu(plugins);
+    }
 
 		// add elements
 		Enumeration e = xml.enumerateChildren();
@@ -131,7 +160,7 @@ public class Menu
      */
     private MenuCascade(IXMLElement key,I18N i18n)
     {
-      final MenuItem cascade = new MenuItem(plugins != null ? plugins : bar,SWT.CASCADE);
+      final org.eclipse.swt.widgets.MenuItem cascade = new org.eclipse.swt.widgets.MenuItem(plugins != null ? plugins : bar,SWT.CASCADE);
       String text = key.getAttribute("name",null);
       if (text == null)
       {
@@ -180,13 +209,13 @@ public class Menu
 
       if ("-".equals(text))
       {
-        new MenuItem(parent,SWT.SEPARATOR);
+        new org.eclipse.swt.widgets.MenuItem(parent,SWT.SEPARATOR);
         return;
       }
 
 			if (i18n != null) text = i18n.tr(text);
 
-      final MenuItem item = new MenuItem(parent,SWT.CASCADE);
+      final org.eclipse.swt.widgets.MenuItem item = new org.eclipse.swt.widgets.MenuItem(parent,SWT.CASCADE);
       
       item.addListener(SWT.Selection, new MenuListener(c, target, text));
 
@@ -247,6 +276,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.25  2004/10/08 17:18:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *

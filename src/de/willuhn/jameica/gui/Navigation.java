@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/10/08 16:41:58 $
+ * $Revision: 1.24 $
+ * $Date: 2004/10/08 17:18:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,8 +38,6 @@ import de.willuhn.util.Logger;
  */
 public class Navigation {
 
-  private NavigationItem root		= null;
-  
   private Composite parent			= null;
   private Tree tree							= null;
   
@@ -86,14 +84,13 @@ public class Navigation {
 		});
 
 
-		// add elements
-		root = new Manifest(null,getClass().getResourceAsStream("system.xml")).getNavigation();
-		load(root);
+		// System-Navigation laden
+		load(new Manifest(null,getClass().getResourceAsStream("system.xml")).getNavigation());
 	}
 
 	/**
-	 * Laedt rekursiv alle Kinder.
-   * @param element Laedt alles Kinder.
+	 * Laedt das Navigation-Item und dessen Kinder.
+   * @param element das zu ladende Item.
    * @throws Exception
    */
   private void load(NavigationItem element) throws Exception
@@ -111,7 +108,7 @@ public class Navigation {
 		else
 		{
 			// Wir holen uns das TreeItem vom Parent
-			TreeItem ti = (TreeItem) mapping.get(element.getParent());
+			TreeItem ti = (TreeItem) mapping.get(myParent);
 			item = new TreeItem(ti,SWT.NONE);
 		}
 		item.setImage(element.getIconClose());
@@ -131,7 +128,7 @@ public class Navigation {
 	}
 
   /**
-	 * Fuer zur Navigation den Navi-Tree eines Plugins hinzu.
+	 * Fuegt zur Navigation den Tree eines Plugins hinzu.
    * @param container der PluginContainer.
    * @throws Exception
    */
@@ -224,6 +221,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.24  2004/10/08 17:18:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *
