@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/08/30 15:03:28 $
+ * $Revision: 1.14 $
+ * $Date: 2004/10/17 16:28:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,8 @@ import de.willuhn.util.Logger;
 
 /**
  * Ist zustaendig fuer Eingabefelder des Typs "Select" aka "Combo".
+ * Wird die Combo-Box mit einer Liste von GenericObjects erzeugt,
+ * dann wird dasPrimaer-Attribut eines jeden Objektes angezeigt.
  * @author willuhn
  */
 public class SelectInput extends AbstractInput
@@ -39,6 +41,8 @@ public class SelectInput extends AbstractInput
 	private Hashtable values = new Hashtable();
 
   private boolean enabled = true;
+
+	private String attribute = null;
 
   /**
    * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
@@ -75,6 +79,19 @@ public class SelectInput extends AbstractInput
     }
 	}
 
+	/**
+	 * Ueberschreibt den Namen des anzuzeigenden Attributes.
+	 * Normalerweise wird einfach das Primaer-Attribut angezeigt, mit dieser
+	 * Funktion kann auch ein anderes gewaehlt werden.
+   * @param name Name des anzuzeigenden Attributes (muss im GenericObject
+   * via getAttribute(String) abrufbar sein).
+   */
+  public void setAttribute(String name)
+	{
+		if (name != null)
+			this.attribute = name;
+	}
+
   /**
    * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
@@ -90,8 +107,21 @@ public class SelectInput extends AbstractInput
       while (list.hasNext())
       {
       	final GenericObject current = list.next();
-      	String name = current.getAttribute(current.getPrimaryAttribute()).toString();
+
+				String s = current.getPrimaryAttribute();
+				if (this.attribute != null)
+					s = this.attribute;
+
+				Object o = current.getAttribute(s);
+
+				if (o == null || "".equals(o))
+					continue; // Primaer-Attribut leer, ignorieren
+
+      	String name = o.toString(); // ToString kann ggf. ueberschrieben sein
       
+				if (name == null || "".equals(name))
+					continue; // Primaer-Attribut leer, ignorieren
+
       	// Da CCombo und Combo nicht fuer jeden Eintrag Daten speichern
       	// koennen, muessen wir das selbst tun.
       	values.put(name,current);
@@ -233,6 +263,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.14  2004/10/17 16:28:45  willuhn
+ * @N Die ersten Dauerauftraege abgerufen ;)
+ *
  * Revision 1.13  2004/08/30 15:03:28  willuhn
  * @N neuer Security-Manager
  *
