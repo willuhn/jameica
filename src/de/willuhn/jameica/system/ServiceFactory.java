@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.17 $
+ * $Date: 2004/12/07 01:28:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -190,7 +190,19 @@ public final class ServiceFactory
    */
   private Service newInstance(Class serviceClass) throws Exception
 	{
-		Constructor ct = serviceClass.getConstructor(new Class[]{});
+		Class impl = serviceClass;
+		try
+		{
+			// Mal schauen, ob wir auch eine Implementierung dazu finden
+			Class[] impls = Application.getClassLoader().getClassFinder().findImplementors(serviceClass);
+			if (impls != null && impls.length > 0)
+				impl = impls[0];
+		}
+		catch (Throwable t)
+		{
+			// ignore
+		}
+		Constructor ct = impl.getConstructor(new Class[]{});
 		ct.setAccessible(true);
 		Service s = (Service) ct.newInstance(new Object[] {});
 		return s;
@@ -201,19 +213,19 @@ public final class ServiceFactory
    * Die Funktion liefert niemals <code>null</code>. Entweder der
    * Service wird gefunden und zurueckgeliefert oder es wird eine
    * Exception geworfen.
-   * @param plugin das Plugin, fuer welches der Service geladen werden soll.
+   * @param pluginClass Klasse des Plugins, fuer welches der Service geladen werden soll.
    * @param serviceName Name des Service.
    * @return die Instanz des Services.
    * @throws Exception
    */
-  public Service lookup(AbstractPlugin plugin, String serviceName) throws Exception
+  public Service lookup(Class pluginClass, String serviceName) throws Exception
   {
-  	if (serviceName == null || plugin == null)
+  	if (serviceName == null || pluginClass == null)
   		return null;
 
-		String fullName	= plugin.getClass().getName() + "." + serviceName;
+		String fullName	= pluginClass.getName() + "." + serviceName;
 
-		Logger.info("searching for service " + serviceName + " for plugin " + plugin.getClass().getName());
+		Logger.info("searching for service " + serviceName + " for plugin " + pluginClass.getName());
 
 		Service s = (Service) serviceCache.get(fullName);
 		if (s != null)
@@ -289,6 +301,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.17  2004/12/07 01:28:12  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *
