@@ -127,7 +127,7 @@
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Buildnumber" value="${build.number}"/>
         <attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-        <attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar lib/swt/linux/swt-pi.jar lib/swt/linux/swt-mozilla.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar img lang help"/>
+        <attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar lib/swt/linux/swt-pi.jar lib/swt/linux/swt-mozilla.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help"/>
       </manifest>
       <fileset dir="${class.dir}" includes="**/Main.class"/>
     </jar>
@@ -139,7 +139,7 @@
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Buildnumber" value="${build.number}"/>
         <attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-        <attribute name="Class-Path" value="${define.jarfilename} lib/swt/win32/swt.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar img lang help"/>
+        <attribute name="Class-Path" value="${define.jarfilename} lib/swt/win32/swt.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help"/>
       </manifest>
       <fileset dir="${class.dir}" includes="**/Main.class"/>
     </jar>
@@ -153,6 +153,7 @@
 
     <copy file="${build.dir}/jameica.sh"        tofile="${project.zipdir}/jameica.sh" />
     <copy file="${build.dir}/jameicaserver.sh"  tofile="${project.zipdir}/jameicaserver.sh" />
+    <copy file="${build.dir}/rcjameica"  		tofile="${project.zipdir}/rcjameica" />
 
     <copy file="${build.dir}/jameica.bat"       tofile="${project.zipdir}/jameica.bat" />
     <copy file="${build.dir}/jameicaserver.bat" tofile="${project.zipdir}/jameicaserver.bat" />

@@ -1,1 +1,1 @@
-java -jar jameica-linux.jar -server $1
+java -jar jameica-linux.jar -server $@
