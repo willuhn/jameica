@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.60 $
- * $Date: 2004/10/12 23:49:31 $
+ * $Revision: 1.61 $
+ * $Date: 2004/10/29 16:16:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,10 +73,12 @@ public class GUI
 
 	private static class HistoryEntry
 	{
+    private AbstractView view;
 
-		private AbstractView view;
-
-		private Object object;
+    private HistoryEntry(AbstractView view)
+    {
+      this.view = view;
+    }
 	}
 
 	/**
@@ -269,7 +271,7 @@ public class GUI
 		HistoryEntry entry = (HistoryEntry) gui.history.pop();
 		if (entry == null) return;
 		gui.skipHistory = true;
-		startView(entry.view.getClass().getName(), entry.object);
+		startView(entry.view.getClass().getName(), entry.view.getCurrentObject());
 	}
 
 	/**
@@ -297,6 +299,13 @@ public class GUI
 	 */
 	public static void startView(final String className, final Object o)
 	{
+
+    if (className == null)
+    {
+      Logger.warn("no classname for view given, skipping request");
+      return;
+    }
+
 		Logger.debug("starting view: " + className);
 
 		startSync(new Runnable() {
@@ -334,18 +343,34 @@ public class GUI
 					catch (Throwable t)
 					{
 						Logger.error("error while unbind current view", t);
+            getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Beenden des aktuellen Dialogs"));
 					}
 
-					if (!gui.skipHistory)
+          // Die alte View ist entfernt, wir koennen sie jetzt
+          // in die History aufnehmen
+					if (!gui.skipHistory && gui.currentView != null)
 					{
 						// wir machen das erst nach dem unbind, damit sichergestellt
 						// ist, dass die Seite nicht mehrfach in der History landet,
 						// wenn ihr unbind() eine Exception wirft.
-						HistoryEntry entry = new HistoryEntry();
-						entry.view = gui.currentView;
-						entry.object = o;
-						gui.history.push(entry);
-						if (gui.history.size() > 10) gui.history.remove(0);
+            
+            // Und nochwas: Wenn die neue Seite und und die aktuelle
+            // sowie deren Objekte identisch sind, muessen wir sie
+            // nicht der History hinzufuegen
+            if (gui.currentView.getCurrentObject() != o ||
+                !gui.currentView.getClass().getName().equals(className))
+            {
+              HistoryEntry entry = new HistoryEntry(gui.currentView);
+              gui.history.push(entry);
+              Logger.debug("adding view " + gui.currentView.getClass().getName() + " to history");
+
+              // wenn wir bei Groesse 10 angekommen sind, werfen wir das erste raus
+              if (gui.history.size() > 10) gui.history.remove(0);
+            }
+            else
+            {
+              Logger.debug("gui view reload detected, skipping history entry");
+            }
 					}
 					// jetzt koennen wir skipHistory auf jeden Fall wieder
 					// ausschalten
@@ -625,6 +650,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.61  2004/10/29 16:16:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.60  2004/10/12 23:49:31  willuhn
  * *** empty log message ***
  *

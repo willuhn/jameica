@@ -1,15 +1,13 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractView.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:19 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/29 16:16:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
  ****************************************************************************/
 package de.willuhn.jameica.gui;
-
-import java.rmi.RemoteException;
 
 import org.eclipse.swt.widgets.Composite;
 
@@ -49,9 +47,8 @@ public abstract class AbstractView
 	/**
    * Liefert das dieser View uebergebene Daten-Objekt zurueck. 
    * @return Liefert das Business-Objekt fuer das der Dialog zustaendig ist.
-   * @throws RemoteException Wenn beim Laden oder Erstellen des Objektes ein Fehler aufgetreten ist.
    */
-  public final Object getCurrentObject() throws RemoteException
+  public final Object getCurrentObject()
 	{
 		return currentObject;
 	}
@@ -90,6 +87,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.2  2004/10/29 16:16:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/10/08 13:38:19  willuhn
  * *** empty log message ***
  *

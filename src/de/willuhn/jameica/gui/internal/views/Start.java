@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/11 15:39:21 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/29 16:16:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,16 +46,26 @@ public class Start extends AbstractView
 		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
 
 		Iterator it = Application.getPluginLoader().getInstalledPlugins();
+
 		AbstractPlugin plugin = null;
 		Manifest manifest 		= null;
-		while (it.hasNext())
-		{
-			plugin = (AbstractPlugin) it.next();
-			manifest = plugin.getManifest();
-			LabelInput l = new LabelInput(": " + manifest.getDescription());
-			l.setComment(manifest.getHomepage());
-			group.addLabelPair(manifest.getName(),l);
-		}
+
+    if (!it.hasNext())
+    {
+      group.addText(i18n.tr("Keine Plugins aktiv"),false);
+    }
+    else
+    {
+      do
+      {
+        plugin = (AbstractPlugin) it.next();
+        manifest = plugin.getManifest();
+        LabelInput l = new LabelInput(": " + manifest.getDescription());
+        l.setComment(manifest.getHomepage());
+        group.addLabelPair(manifest.getName(),l);
+      }
+      while (it.hasNext());
+    }
 
 		String[] messages = Application.getWelcomeMessages();
 		if (messages != null && messages.length > 0)
@@ -127,6 +137,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.3  2004/10/29 16:16:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/10/11 15:39:21  willuhn
  * *** empty log message ***
  *

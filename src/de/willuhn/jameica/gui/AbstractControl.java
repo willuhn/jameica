@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/20 12:08:17 $
+ * $Revision: 1.4 $
+ * $Date: 2004/10/29 16:16:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
-import java.rmi.RemoteException;
 
 
 /**
@@ -43,9 +42,8 @@ public abstract class AbstractControl
 	/**
 	 * Liefert das aktuelle Business-Objekt des Dialogs.
    * @return aktuelles Business-Objekt.
-	 * @throws RemoteException
    */
-  public Object getCurrentObject() throws RemoteException
+  public Object getCurrentObject()
 	{
 		return this.view.getCurrentObject();
 	}
@@ -53,6 +51,9 @@ public abstract class AbstractControl
 
 /*********************************************************************
  * $Log: AbstractControl.java,v $
+ * Revision 1.4  2004/10/29 16:16:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/10/20 12:08:17  willuhn
  * @C MVC-Refactoring (new Controllers)
  *

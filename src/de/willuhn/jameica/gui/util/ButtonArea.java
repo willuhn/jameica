@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/10/19 23:33:44 $
+ * $Revision: 1.10 $
+ * $Date: 2004/10/29 16:16:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,8 +35,6 @@ public class ButtonArea
 	private I18N i18n;
 
   private Composite buttonArea;
-  private Button storeButton; // den Store-Button speichern wir extra damit wir ihn
-                              // deaktivieren koennen, wenn Fehler auf dem Dialog sind.
 
   /**
    * Erzeugt einen neuen Standard-Button-Bereich.
@@ -96,7 +94,7 @@ public class ButtonArea
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		if (isDefault)
-			GUI.getShell().setDefaultButton(storeButton);
+			GUI.getShell().setDefaultButton(button);
 
 		button.addSelectionListener(new SelectionAdapter()
 		{
@@ -122,6 +120,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.10  2004/10/29 16:16:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/10/19 23:33:44  willuhn
  * *** empty log message ***
  *
