@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/EmbeddedDatabase.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/01/04 18:48:36 $
+ * $Revision: 1.3 $
+ * $Date: 2004/01/05 18:27:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,7 @@ public class EmbeddedDatabase
 
 	public EmbeddedDatabase(String path)
 	{
-		this.path = new File(path + "/db");
+		this.path = new File(path);
 	}
 
 	/**
@@ -235,6 +235,9 @@ public class EmbeddedDatabase
 
 /**********************************************************************
  * $Log: EmbeddedDatabase.java,v $
+ * Revision 1.3  2004/01/05 18:27:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/01/04 18:48:36  willuhn
  * @N config store support
  *

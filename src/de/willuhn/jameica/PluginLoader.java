@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.27 $
- * $Date: 2004/01/05 18:04:46 $
+ * $Revision: 1.28 $
+ * $Date: 2004/01/05 18:27:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -358,17 +358,19 @@ public class PluginLoader extends ClassLoader
 
 		Application.splash("initializing plugin " + plugin.getName());
 		try {
-			plugin.init();
+			if (plugin.init())
+      {
+        installedPlugins.add(plugin);
+        Application.getLog().info("done");
+        return true;
+      }
 		}
 		catch (Exception e)
 		{
-			Application.getLog().error("failed",e);
-			return false;
+      Application.getLog().error("failed",e);
 		}
-
-    installedPlugins.add(plugin);
-    Application.getLog().info("done");
-    return true;
+    Application.getLog().error("failed");
+    return false;
   }
 
   /**
@@ -417,6 +419,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.28  2004/01/05 18:27:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2004/01/05 18:04:46  willuhn
  * @N added MultipleClassLoader
  *

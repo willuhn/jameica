@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.7 $
+ * $Date: 2004/01/05 18:27:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,11 +33,6 @@ public abstract class AbstractPlugin implements Plugin
   {
     this.jar = jar;
   }
-
-  /**
-   * @see de.willuhn.jameica.Plugin#init()
-   */
-  public abstract void init();
 
   /**
    * Diese Funktion versucht den Namen aus der Datei META-INF/MANIFEST.MF zu extrahieren.
@@ -124,6 +119,9 @@ public abstract class AbstractPlugin implements Plugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.7  2004/01/05 18:27:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

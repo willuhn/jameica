@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Plugin.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.7 $
+ * $Date: 2004/01/05 18:27:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,9 @@ public interface Plugin
    * Diese Funktion wird beim Start der Anwendung ausgefuehrt. Hier kann die Plugin-
    * Implementierung also diverse Dinge durchfuehren, die es beim Start gern
    * automatisch durchgefuehrt haben moechte ;)
+   * @return true, wenn das Plugin erfolgreich initialisiert wurde.
    */
-  public void init();
+  public boolean init();
   
   /**
    * Diese Funktion wird beim Start der Anwendung aufgerufen, wenn das Plugin
@@ -79,6 +80,9 @@ public interface Plugin
 
 /*********************************************************************
  * $Log: Plugin.java,v $
+ * Revision 1.7  2004/01/05 18:27:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml
