@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/02/26 18:47:03 $
+ * $Revision: 1.8 $
+ * $Date: 2004/02/27 01:09:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -199,6 +199,7 @@ public abstract class AbstractDialog
 	 * In dieser Funktion soll er sich bitte malen.
 	 * Sie wird anschliessend von open() ausgefuehrt.
 	 * @param parent das Composite, in dem der Dialog gemalt werden soll.
+	 * Hinweis: Das Composite enthaelt bereits ein einspaltiges <code>GridLayout</code>.
 	 * @throws Exception Kann von der abgeleiteten Klasse geworfen
 	 * werden. Tut sie das, wird der Dialog nicht angezeigt.
    */
@@ -292,6 +293,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.8  2004/02/27 01:09:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/02/26 18:47:03  willuhn
  * *** empty log message ***
  *
