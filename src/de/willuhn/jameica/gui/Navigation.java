@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/18 18:56:07 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/05 18:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 import de.bb.util.XmlFile;
-import de.willuhn.jameica.util.Style;
+import de.willuhn.jameica.views.util.Style;
 
 /**
  * Bildet den Navigations-Baum im linken Frame ab.
@@ -248,6 +248,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.5  2003/12/05 18:43:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/18 18:56:07  willuhn
  * @N added support for pluginmenus and plugin navigation
  *

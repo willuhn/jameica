@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Headline.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/05 18:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.GUI;
-import de.willuhn.jameica.util.Style;
+import de.willuhn.jameica.views.util.Style;
 
 /**
  * Malt eine Standard-Ueberschrift in den Dialog.
@@ -49,7 +49,7 @@ public class Headline
     title.setText(headline);
     title.setLayoutData(new GridData());
 
-    title.setFont(Style.getFont("Verdana", 8, SWT.BOLD));
+    title.setFont(Style.FONT_HEADLINE);
     title.setForeground(new Color(GUI.display,0,0,0));
     GridData data = new GridData(GridData.FILL_HORIZONTAL);
     data.heightHint = 3;
@@ -83,6 +83,9 @@ public class Headline
 
 /*********************************************************************
  * $Log: Headline.java,v $
+ * Revision 1.2  2003/12/05 18:43:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

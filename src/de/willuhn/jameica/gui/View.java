@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/20 03:48:41 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/05 18:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,7 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.util.Style;
+import de.willuhn.jameica.views.util.Style;
 
 /**
  * Bildet das Content-Frame ab.
@@ -108,6 +108,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.5  2003/12/05 18:43:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/20 03:48:41  willuhn
  * @N first dialogues
  *

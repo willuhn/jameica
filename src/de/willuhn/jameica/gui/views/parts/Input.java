@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/05 18:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -108,6 +108,7 @@ public abstract class Input
       final GridData g = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
       g.widthHint = 240;
       this.parent.setLayoutData(g);
+
       control = getControl();
       final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
       inputGrid.widthHint = 110;
@@ -149,6 +150,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.9  2003/12/05 18:43:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *
