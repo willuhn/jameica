@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.19 $
+ * $Date: 2004/07/31 15:03:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -277,21 +277,30 @@ public abstract class AbstractDialog
 	
 			shell.setSize(width, height);
 	
+			Rectangle shellRect = shell.getBounds();
+			Rectangle displayRect = display.getBounds();
+
+			// Per Default POSITION_CENTER
+			int x = (displayRect.width - shellRect.width) / 2;
+			int y = (displayRect.height - shellRect.height) / 2;
 			if (pos == POSITION_MOUSE)
 			{
-				shell.setLocation(
-					display.getCursorLocation().x - (shell.getSize().x / 2),
-					display.getCursorLocation().y - (shell.getSize().y / 2)
-				);
+				x = display.getCursorLocation().x - (shell.getSize().x / 2);
+				y = display.getCursorLocation().y - (shell.getSize().y / 2);
+				// Jetzt mussen wir noch checken, ob das Fenster ueber
+				// die Display-Groesse hinausgeht
+				if ((x + shell.getSize().x) > displayRect.width)
+				{
+					// Fenster wuerde ueber den rechten Rand hinausgehen
+					x = displayRect.width - shell.getSize().x - 4; // 4 Pixel Puffer zum Rand
+				}
+				if ((y + shell.getSize().y) > displayRect.height)
+				{
+					// Fenster wuerde ueber den unteren Rand hinausgehen
+					y = displayRect.height - shell.getSize().y - 4; // 4 Pixel Puffer zum Rand
+				}
 			}
-			else
-			{
-				Rectangle splashRect = shell.getBounds();
-				Rectangle displayRect = display.getBounds();
-				int x = (displayRect.width - splashRect.width) / 2;
-				int y = (displayRect.height - splashRect.height) / 2;
-				shell.setLocation(x, y);
-			}
+			shell.setLocation(x, y);
 	
 			shell.open();
 			while (!shell.isDisposed()) {
@@ -334,6 +343,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.19  2004/07/31 15:03:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

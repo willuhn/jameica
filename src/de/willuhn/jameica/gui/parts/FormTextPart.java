@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/07/09 00:12:46 $
+ * $Revision: 1.5 $
+ * $Date: 2004/07/31 15:03:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -171,7 +171,9 @@ public class FormTextPart implements Part {
 
 		container = new ScrolledComposite(parent,SWT.H_SCROLL | SWT.V_SCROLL);
 		container.setBackground(Color.BACKGROUND.getSWTColor());
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalIndent = 4;
+		container.setLayoutData(gd);
 		container.setLayout(new FillLayout());
 		container.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
@@ -215,6 +217,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.5  2004/07/31 15:03:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *
