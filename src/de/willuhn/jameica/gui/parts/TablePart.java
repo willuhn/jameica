@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/07/09 00:12:46 $
+ * $Revision: 1.11 $
+ * $Date: 2004/07/20 00:16:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -195,29 +195,24 @@ public class TablePart implements Part
 				String[] fieldData = (String[]) fields.get(i);
 				String field = fieldData[1];
 				Object value = o.getAttribute(field);
+
 				if (value == null)
-				{
-					// Wert ist null. Also zeigen wir einen Leerstring an
 					item.setText(i,"");
-				}
-				else if (value instanceof GenericObject)
+				else
+					item.setText(i,value.toString());
+
+				if (value instanceof GenericObject)
 				{
 					// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
 					GenericObject go = (GenericObject) value;
 					item.setText(i,go.getAttribute(go.getPrimaryAttribute()).toString());
 				}
-				else
-				{
-					// Regulaerer Wert.
-					// Wir schauen aber noch, ob wir einen Formatter haben
-					Formatter f = (Formatter) formatter.get(field);
-					if (f != null)
-					{
-						item.setText(i,f.format(value));
-					}
-					else 
-						item.setText(i,value.toString());
-				}
+
+				// Formatter vorhanden?
+				Formatter f = (Formatter) formatter.get(field);
+				if (f != null)
+					item.setText(i,f.format(value));
+
 			}
 
 			// Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
@@ -361,6 +356,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.11  2004/07/20 00:16:16  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *
