@@ -3,7 +3,6 @@
 <project basedir=".." default="all" name="All">
 
 
-
   <target name="init" description="inits the build">
 
 	    <property environment="env"/>
@@ -35,7 +34,7 @@
     	<echo message="CVS-Tag: ${tag}"/>
 	    <echo message="BUILD  : ${build.number}"/>
 
-	    <property name="define.projectname"      	value="Jameica"/>
+	    <property name="define.projectname"      	value="jameica"/>
 	    <property name="define.jarfilename"      	value="jameica.jar"/>
 	    <property name="define.jarfilename.win32"   value="jameica-win32.jar"/>
 	    <property name="define.jarfilename.linux"   value="jameica-linux.jar"/>
@@ -52,6 +51,9 @@
 	    <property name="help.dir"            		value="${src.dir}/help"/>
 	    <property name="lib.dir"            		value="lib"/>
 	    <property name="class.dir"            		value="${project.tmp}/bin"/>
+
+	    <property name="project.zipdir"        value="${project.release}/${define.projectname}"/>
+	    <property name="project.zipfilename"   value="${define.projectname}.zip"/>
 
 	    <path id="compilepath">
 			<fileset dir="${lib.dir}">
@@ -106,8 +108,9 @@
   <target depends="compile" name="jar" description="generates the jar file">
 
     <mkdir dir="${project.release}"/>
+    <mkdir dir="${project.zipdir}"/>
 
-    <jar destfile="${project.release}/${define.jarfilename}">
+    <jar destfile="${project.zipdir}/${define.jarfilename}">
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
         <attribute name="Implementation-Title" value="${define.projectname}"/>
@@ -118,7 +121,7 @@
     </jar>
 
 
-    <jar destfile="${project.release}/${define.jarfilename.linux}">
+    <jar destfile="${project.zipdir}/${define.jarfilename.linux}">
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
         <attribute name="Implementation-Title" value="${define.projectname}"/>
@@ -130,7 +133,7 @@
       <fileset dir="${class.dir}" includes="**/Main.class"/>
     </jar>
 
-    <jar destfile="${project.release}/${define.jarfilename.win32}">
+    <jar destfile="${project.zipdir}/${define.jarfilename.win32}">
       <manifest>
         <attribute name="Built-By" value="${user.name}"/>
         <attribute name="Implementation-Title" value="${define.projectname}"/>
@@ -142,27 +145,36 @@
       <fileset dir="${class.dir}" includes="**/Main.class"/>
     </jar>
 
-    <mkdir dir="${project.release}/lib"/>
-    <mkdir dir="${project.release}/plugins"/>
+    <mkdir dir="${project.zipdir}/lib"/>
+    <mkdir dir="${project.zipdir}/plugins"/>
 
-    <copy todir="${project.release}/lib">
+    <copy todir="${project.zipdir}/lib">
       <fileset dir="${lib.dir}"/>
     </copy>
 
-    <copy file="${build.dir}/jameica.sh"        tofile="${project.release}/jameica.sh" />
-    <copy file="${build.dir}/jameicaserver.sh"  tofile="${project.release}/jameicaserver.sh" />
+    <copy file="${build.dir}/jameica.sh"        tofile="${project.zipdir}/jameica.sh" />
+    <copy file="${build.dir}/jameicaserver.sh"  tofile="${project.zipdir}/jameicaserver.sh" />
 
-    <copy file="${build.dir}/jameica.bat"       tofile="${project.release}/jameica.bat" />
-    <copy file="${build.dir}/jameicaserver.bat" tofile="${project.release}/jameicaserver.bat" />
+    <copy file="${build.dir}/jameica.bat"       tofile="${project.zipdir}/jameica.bat" />
+    <copy file="${build.dir}/jameicaserver.bat" tofile="${project.zipdir}/jameicaserver.bat" />
 
-    <copy file="${build.dir}/COPYING"           tofile="${project.release}/COPYING" />
-    <copy file="${build.dir}/README"            tofile="${project.release}/README" />
-    <copy file="${build.dir}/INSTALL"           tofile="${project.release}/INSTALL" />
+    <copy file="${build.dir}/COPYING"           tofile="${project.zipdir}/COPYING" />
+    <copy file="${build.dir}/README"            tofile="${project.zipdir}/README" />
+    <copy file="${build.dir}/INSTALL"           tofile="${project.zipdir}/INSTALL" />
 
-  	<checksum file="${project.release}/${define.jarfilename}" />
+
+	<!-- Jetzt muessen wir noch das ZIP-File erzeugen und signieren -->
+	<zip destfile="${project.release}/${project.zipfilename}">
+	    <fileset dir="${project.release}">
+	    	<include name="${define.projectname}"/>
+	    	<include name="${define.projectname}/**"/>
+	    </fileset>
+	</zip>
+
+  	<checksum file="${project.release}/${project.zipfilename}" />
   	<echo message="Creating PGP signature" />
   	<exec executable="kgpg" failonerror="true" timeout="60000">
-		<arg line="-S ${project.release}/${define.jarfilename}"/>
+		<arg line="-S ${project.release}/${project.zipfilename}"/>
   	</exec>
   	<echo message="done" />
 
