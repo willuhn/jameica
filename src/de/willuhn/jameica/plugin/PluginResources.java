@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/05 01:50:44 $
+ * $Revision: 1.5 $
+ * $Date: 2004/11/12 16:19:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,7 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -39,30 +39,33 @@ public final class PluginResources {
   {
   	this.plugin = plugin;
 
-  	String path = getPath() + "/lang";
-  	File f = new File(path);
-  	if (!f.exists())
-  	{
-			path = getPath() + "/bin/lang"; // Fallback
-			f = new File(path);
-  	}
+  	File f = new File(getPath());
 
-		if (f.exists())
-			this.i18n = new I18N(path + "/messages", Application.getConfig().getLocale(), Application.getClassLoader());
-		else
-		{
-			try
-			{
-				JarFile jar = new JarFile(getPath());
-				JarEntry entry = jar.getJarEntry("lang/messages_" + Application.getConfig().getLocale().toString() + ".properties");
-				this.i18n = new I18N(jar.getInputStream(entry));
-			}
-			catch (IOException e)
-			{
-				// gna
-				this.i18n = new I18N("lang/message",Application.getConfig().getLocale(),Application.getClassLoader());
-			}
-		}
+    try
+    {
+      if (f.isFile() && f.exists())
+      {
+        // es handelt sich um ein Jar-File.
+        // Wir holen uns das passende language-File raus
+        JarFile jar = new JarFile(f);
+        JarEntry entry = jar.getJarEntry("lang/messages_" + Application.getConfig().getLocale().toString() + ".properties");
+        this.i18n = new I18N(jar.getInputStream(entry));
+      }
+      else if (f.isDirectory() && f.exists())
+      {
+        // es handelt sich um ein entpacktes Plugin.
+        // Wir laden die Datei via Pfad.
+        String path = "/lang/messages_" + Application.getConfig().getLocale().toString() + ".properties";
+        File f2 = new File(f.getAbsolutePath() + path);
+        if (!f2.exists())
+          f2 = new File(f.getAbsolutePath() + "/bin" + path); // vielleicht im bin-Verzeichnis?
+        this.i18n = new I18N(new FileInputStream(f2));
+      }
+    }
+    catch (Exception e)
+    {
+      this.i18n = new I18N(Application.getConfig().getLocale());
+    }
   }
 
 	/**
@@ -128,6 +131,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.5  2004/11/12 16:19:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/11/05 01:50:44  willuhn
  * *** empty log message ***
  *
