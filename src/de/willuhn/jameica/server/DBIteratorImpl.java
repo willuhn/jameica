@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/10 01:12:55 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/10 23:51:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -157,7 +157,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 	{
     if (!initialized) init();
 		object.load((String) list.get(index++));
-		return object;
+    return object;
 	}
   
   /**
@@ -219,6 +219,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.11  2003/12/10 23:51:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2003/12/10 01:12:55  willuhn
  * *** empty log message ***
  *

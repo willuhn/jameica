@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/10 23:51:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,8 @@
 package de.willuhn.jameica.views.parts;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
@@ -31,67 +32,57 @@ import de.willuhn.jameica.rmi.DBObject;
 public class SelectInput extends Input
 {
 
-  private String[] values;
-  private Object[] data;
+  private Hashtable values = new Hashtable();
   private String preselected;
   private Combo combo;
-
-  /**
-   * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
-   * @param values Werteliste, mit denen die Select-Box gefuellt werden soll. 
-   * @param preselected Wert des vorausgewaehlten Feldes.
-   */
-  public SelectInput(String[] values, String preselected)
-  {
-    this.preselected = preselected;
-    this.values = values;
-  }
-
-  /**
-   * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
-   * @param values Werteliste, mit denen die Select-Box gefuellt werden soll. 
-   * @param preselected Wert des vorausgewaehlten Feldes.
-   */
-  public SelectInput(ArrayList values, String preselected)
-  {
-    this.preselected = preselected;
-    this.values = (String[]) values.toArray(new String[] {});
-  }
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param object das darzustellende Objekt. Es wird auch gleich verwendet,
    * um darueber eine Liste zu holen, mit der die Selectbox gefuellt wird. 
    * @param preselected Wert des vorausgewaehlten Feldes.
-   * @throws RemoteException
    */
-  public SelectInput(DBObject object) throws RemoteException
+  public SelectInput(DBObject object)
   {
-    this.preselected = (String) object.getField(object.getPrimaryField());
+    DBIterator list = null;
+    try {
+      this.preselected = (String) object.getField(object.getPrimaryField());
+      list = object.getList();
+    }
+    catch (RemoteException e)
+    {
+      GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
+    }
+    init(list);
+  }
 
+  /**
+   * Initialisiert die Select-Box.
+   * @param list
+   */
+  private void init(DBIterator list)
+  {
     try
     {
-      DBIterator list = object.getList();
-      this.values = new String[list.size()];
-      this.data = new Object[list.size()];
+      if (list == null)
+        throw new RemoteException();
+
       DBObject o = null;
-      int i = 0;
-      String primaryField = object.getPrimaryField();
       while (list.hasNext())
       {
         o = list.next();
-        String value = (String) o.getField(primaryField);
+        String value = o.getField(o.getPrimaryField()).toString();
         if (value == null || "".equals(value))
           continue; // skip empty values
-        this.data[i] = o;
-        this.values[i] = value;
-        ++i;
+        values.put(value,o.getID());
+
       }
-    } catch (RemoteException e)
+    }
+    catch (RemoteException e)
     {
       GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
-      this.values = new String[0];
     }
+    
   }
 
   /**
@@ -103,29 +94,7 @@ public class SelectInput extends Input
   {
 
     this.preselected = preselected;
-
-    try
-    {
-      this.values = new String[list.size()];
-      this.data = new Object[list.size()];
-      DBObject o = null;
-      int i = 0;
-      while (list.hasNext())
-      {
-        o = list.next();
-        String value = o.getField(o.getPrimaryField()).toString();
-        if (value == null || "".equals(value))
-          continue; // skip empty values
-
-        this.data[i] = o;
-        this.values[i] = value;
-        ++i;
-      }
-    } catch (RemoteException e)
-    {
-      GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
-      this.values = new String[0];
-    }
+    init(list);
   }
 
   /**
@@ -137,15 +106,16 @@ public class SelectInput extends Input
     combo = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
 
     int selected = 0;
-    if (values == null || values.length == 0)
-      values = new String[] { "" };
 
-    for (int i = 0; i < values.length; ++i)
+    Enumeration e = values.keys();
+    int i = 0;
+    while (e.hasMoreElements())
     {
-      combo.add(values[i]);
-      combo.setData(values[i],data[i]);
-      if (preselected != null && preselected.equals(values[i]))
+      String value = (String) e.nextElement();
+      combo.add(value);
+      if (preselected != null && preselected.equals(value))
         selected = i;
+      ++i;
     }
     combo.select(selected);
 
@@ -157,17 +127,7 @@ public class SelectInput extends Input
    */
   public String getValue()
   {
-    return combo.getText();
-  }
-
-  /**
-   * Liefert hinter dem angegebenen Namen hinterlegten Daten fuer diese Combo-Box.
-   * @param name Alias-Name fuer die Daten.
-   * @return Daten.
-   */
-  public Object getValue(String name)
-  {
-    return combo.getData(name);
+    return (String) values.get(combo.getText());
   }
   /**
    * @see de.willuhn.jameica.views.parts.Input#focus()
@@ -187,6 +147,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.12  2003/12/10 23:51:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *
