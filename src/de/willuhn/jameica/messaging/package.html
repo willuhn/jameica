@@ -1,0 +1,49 @@
+<html>
+
+  <head></head>
+
+  <body>
+    <h2>Messaging-System von Jameica.</h2>
+
+    <p>
+      Das Design-Pattern Listener/Event ist ein
+      sehr sinnvolles Prinzip, wenn ein Objekt
+      ueber Aenderungen eines anderen informiert
+      werden will. Es ist elementarer Bestandteil
+      (vermutlich) aller Widget-Toolkits um im
+      Programmcode ueber die Interaktionen des
+      Benutzers informiert zu werden. Mit dem
+      Jameica-Messaging-System steht eine Moeglichkeit
+      bereit, pluginuebergreifend in ganz Jameica
+      ueber Ereignisse benachrichtigt zu werden.
+      
+      Um als Nachrichten-Empgfaenger im System
+      registriert zu werden, genuegt es, das
+      Interface <code>MessageConsumer</code> zu
+      implementieren. Beim Start von Jameica
+      ermittelt die MessagingFactory selbstaendig
+      alle existierenden Nachrichten-Verbraucher
+      und registriert diese.<br/>
+      Von nun an kann jede Klasse mittels
+      <code>Application.getMessagingFactory().sendMessage(Message)</code>.
+      eine Nachricht versenden. Alle registrierten
+      MessageConsumer erhalten dann diese Nachricht
+      und koennen darauf reagieren. Auf diese
+      Weise kann z.Bsp. ein Plugin A Nachrichten
+      an ein Plugin B senden ohne pruefen zu
+      muessen, ob Plugin B ueberhaupt installiert
+      ist.
+    </p>
+    
+    <p>
+      WICHTIG: Die Nachrichtenzustellung erolgt in einem
+      separaten Thread. Das ist wichtig, damit ein Nachrichten-
+      Verbraucher Jameica nicht zum Stehen bringen kann,
+      wenn das Verarbeiten der Nachricht zeitaufwendig
+      ist. Also nicht vergessen: Nachrichten-Sender und
+      Verbraucher befinden sich in verschiedenen Threads.
+    </p>
+    
+    
+  </body>
+</html>

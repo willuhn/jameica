@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.31 $
- * $Date: 2005/02/02 16:16:38 $
+ * $Revision: 1.32 $
+ * $Date: 2005/02/11 09:33:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.messaging.MessagingFactory;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.security.JameicaSecurityManager;
@@ -51,6 +52,7 @@ public final class Application {
 		private SSLFactory 					sslFactory;  
     private ServiceFactory 			serviceFactory;
     private PluginLoader 				pluginLoader;
+    private MessagingFactory    messagingFactory;
 
     private I18N 								i18n;
 		private ArrayList 					welcomeMessages = new ArrayList();
@@ -148,6 +150,7 @@ public final class Application {
 		getSSLFactory();
 		getPluginLoader();
 		getServiceFactory();
+    getMessagingFactory();
 
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -299,6 +302,27 @@ public final class Application {
 	}
 
   /**
+   * Liefert die MessagingFactory von Jameica.
+   * @return die MessagingFactory.
+   */
+  public static MessagingFactory getMessagingFactory()
+  {
+    if (app.messagingFactory != null)
+      return app.messagingFactory;
+
+    getCallback().getStartupMonitor().setStatusText(getI18n().tr("starting internal messaging system"));
+    try {
+      app.messagingFactory = new MessagingFactory();
+      app.messagingFactory.init();
+    }
+    catch (Throwable t)
+    {
+      app.startupError(t);
+    }
+    return app.messagingFactory;
+  }
+
+  /**
    * Liefert die System-Config.
    * @return Config.
    */
@@ -445,6 +469,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.32  2005/02/11 09:33:48  willuhn
+ * @N messaging system
+ *
  * Revision 1.31  2005/02/02 16:16:38  willuhn
  * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
  *
