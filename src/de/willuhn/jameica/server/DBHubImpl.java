@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/27 00:22:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -132,7 +132,15 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
     open();
     try {
-			String className = c.getName()+"Impl";
+      String className = c.getName();
+
+      if (!className.endsWith("Impl") && ! className.endsWith("_Stub"))
+        className += "Impl";
+
+      // Es sei denn, es ist RMI-Stub. Dann muessen wir das "_Stub" abschneiden.
+      if (className.endsWith("_Stub"))
+        className = className.substring(0,className.length()-5);
+
     	Class clazz = Class.forName(className);
       Constructor ct = clazz.getConstructor(new Class[]{Connection.class,String.class});
       ct.setAccessible(true);
@@ -159,8 +167,16 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
     open();
 		try {
 			String className = c.getName();
-      if (!className.endsWith("Impl"))
+
+      // Normalerweise wollen wir ja bei der Erstellung nur die Klasse des
+      // Interfaces angeben und nicht die der Impl. Deswegen schreiben
+      // wir das "Impl" selbst hinten dran, um es instanziieren zu koennen.
+      if (!className.endsWith("Impl") && ! className.endsWith("_Stub"))
         className += "Impl";
+
+      // Es sei denn, es ist RMI-Stub. Dann muessen wir das "_Stub" abschneiden.
+      if (className.endsWith("_Stub"))
+        className = className.substring(0,className.length()-5);
 			Class clazz = Class.forName(className);
 			Constructor ct = clazz.getConstructor(new Class[]{Connection.class,String.class});
 			ct.setAccessible(true);
@@ -179,6 +195,11 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.4  2003/11/27 00:22:17  willuhn
+ * @B paar Bugfixes aus Kombination RMI + Reflection
+ * @N insertCheck(), deleteCheck(), updateCheck()
+ * @R AbstractDBObject#toString() da in RemoteObject ueberschrieben (RMI-Konflikt)
+ *
  * Revision 1.3  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

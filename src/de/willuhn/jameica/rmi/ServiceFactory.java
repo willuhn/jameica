@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/27 00:22:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,8 @@ import de.willuhn.jameica.Application;
 
 public class ServiceFactory
 {
+  
+  private final static boolean USE_RMI_FIRST = true;
 
   private static Hashtable bindings = new Hashtable();
 
@@ -91,7 +93,7 @@ public class ServiceFactory
   	if (service == null)
   		return null;
 
-		Application.getLog().info("searching for local service " + service.getName());
+		Application.getLog().debug("searching for local service " + service.getName());
 		try {
 			Class clazz = (Class) Class.forName(service.getClassName());
 			Constructor ct = clazz.getConstructor(new Class[]{HashMap.class});
@@ -110,7 +112,7 @@ public class ServiceFactory
 		if (service == null)
 			return null;
 
-		Application.getLog().info("searching for remote service " + 
+		Application.getLog().debug("searching for remote service " + 
 															service.getName() + " at " + service.getUrl());
 		try
 		{
@@ -127,13 +129,23 @@ public class ServiceFactory
 
   public static Service lookupService(String name) throws Exception
   {
-		Service service = getLocalServiceInstance(Application.getConfig().getLocalServiceData(name));
-  	if (service == null)
+    
+    Service service = null;
+
+    if (USE_RMI_FIRST) {
       service = getRemoteServiceInstance(Application.getConfig().getRemoteServiceData(name));
+      if (service == null)
+        service = getLocalServiceInstance(Application.getConfig().getLocalServiceData(name));
+    }
+    else {
+      service = getLocalServiceInstance(Application.getConfig().getLocalServiceData(name));
+      if (service == null)
+        service = getRemoteServiceInstance(Application.getConfig().getRemoteServiceData(name));
+    }
 
     if (service == null)
     {
-      throw new Exception("service " + name + "not found.");
+      throw new Exception("service " + name + " not found.");
     }
     return service;
   }
@@ -185,6 +197,11 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.4  2003/11/27 00:22:18  willuhn
+ * @B paar Bugfixes aus Kombination RMI + Reflection
+ * @N insertCheck(), deleteCheck(), updateCheck()
+ * @R AbstractDBObject#toString() da in RemoteObject ueberschrieben (RMI-Konflikt)
+ *
  * Revision 1.3  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.11 $
+ * $Date: 2003/11/27 00:22:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.ApplicationException;
 
 /**
  * Basisklasse fuer alle Business-Objekte 
@@ -117,7 +118,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.willuhn.jameica.rmi.DBObject#load(java.lang.String)
    */
-  public void load(String id) throws RemoteException
+  public final void load(String id) throws RemoteException
 	{
 		this.id = ((id == null || id.equals("")) ? null : id);
 		if (this.id == null)
@@ -158,7 +159,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#store()
    */
-  public void store() throws RemoteException
+  public final void store() throws RemoteException, ApplicationException
   {
     if (isNewObject())
       insert();
@@ -170,7 +171,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.willuhn.jameica.rmi.DBObject#clear()
    */
-  public void clear() throws RemoteException
+  public final void clear() throws RemoteException
   {
     this.id = null;
     String fields[] = this.getFields();
@@ -183,10 +184,12 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#delete()
    */
-  public void delete() throws RemoteException
+  public final void delete() throws RemoteException, ApplicationException
   {
     if (isNewObject())
       return; // no, we delete no new objects ;)
+
+    deleteCheck();
 
 		Statement stmt = null;
     Application.getLog().debug("deleting object id ["+id+"] from table " + getTableName());
@@ -225,7 +228,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#getID()
    */
-  public String getID() throws RemoteException
+  public final String getID() throws RemoteException
   {
     return id;
   }
@@ -233,7 +236,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.willuhn.jameica.rmi.DBObject#getField(java.lang.String)
    */
-  public Object getField(String fieldName) throws RemoteException
+  public final Object getField(String fieldName) throws RemoteException
   {
     Object o = properties.get(fieldName);
     if (o == null)
@@ -272,7 +275,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.willuhn.jameica.rmi.DBObject#getFieldType(java.lang.String)
    */
-  public String getFieldType(String fieldName) throws RemoteException
+  public final String getFieldType(String fieldName) throws RemoteException
   {
     try {
       return (String) types.get(fieldName);
@@ -290,7 +293,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * @param value neuer Wert des Feldes. Muss vom Typ String, Date, Timestamp, Double oder Integer sein.
    * @return vorheriger Wert des Feldes.
    */
-  protected Object setField(String fieldName, Object value)
+  protected final Object setField(String fieldName, Object value)
   {
     if (fieldName == null)
       return null;
@@ -302,7 +305,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Liefert ein String-Array mit allen Feldnamen dieses Objektes. 
    * @return
    */
-  protected String[] getFields()
+  protected final String[] getFields()
   {
     Set s = properties.keySet();
     return (String[]) s.toArray(new String[s.size()]);
@@ -329,11 +332,13 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			Application.getLog().error("  unable to determine insert id");
 		}
 	}
+
   /**
    * Speichert das Objekt als neuen Datensatz in der Datenbank.
    */
-  private void insert() throws RemoteException
+  private void insert() throws RemoteException, ApplicationException
   {
+    insertCheck();
     id = null;
 		PreparedStatement stmt = null;
     try {
@@ -372,8 +377,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * Aktualisiert das Objekt in der Datenbank
    */
-  private void update() throws RemoteException
+  private void update() throws RemoteException, ApplicationException
   {
+    updateCheck();
 		PreparedStatement stmt = null;
     int affected = 0;
     try {
@@ -416,6 +422,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
   /**
    * Liefert das automatisch erzeugte SQL-Statement fuer ein Update.
+   * Kann bei Bedarf überschrieben um ein vom dynamisch erzeugten
+   * abweichendes Statement für die Speicherung zu verwenden.  
    * @return das erzeugte SQL-Statement.
    */
   protected PreparedStatement getUpdateSQL() throws RemoteException
@@ -448,6 +456,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   
   /**
    * Liefert das automatisch erzeugte SQL-Statement fuer ein Insert.
+   * Kann bei Bedarf überschrieben um ein vom dynamisch erzeugten
+   * abweichendes Statement für die Speicherung zu verwenden.  
    * @return das erzeugte SQL-Statement.
    */
   protected PreparedStatement getInsertSQL() throws RemoteException
@@ -523,13 +533,16 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    * Gibt an, ob das Objekt neu ist und somit ein Insert statt einem Update gemacht werden muss.
    * @return
    */
-  public boolean isNewObject() throws  RemoteException
+  public final boolean isNewObject() throws  RemoteException
   {
     return id == null;
   }
 
   /**
-   * @see de.bbvag.dhl.easylog.objects.DBObject#getTableName()
+   * Liefert den Namen der repraesentierenden SQL-Tabelle.
+   * Muss von allen abgeleiteten Klassen implementiert werden.
+   * @return Name der repraesentierenden SQL-Tabelle.
+   * @throws RemoteException
    */
   protected abstract String getTableName() throws RemoteException;
 
@@ -539,27 +552,47 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   public abstract String getPrimaryField() throws RemoteException;
 
   /**
-   * @see de.willuhn.jameica.rmi.DBObject#getForeignObject(java.lang.String)
+   * Diese Methode wird intern vor der Ausfuehrung von delete()
+   * aufgerufen. Sie muss überschrieben werden, damit das Fachobjekt
+   * vor dem Durchführen der Löschaktion Prüfungen vornehmen kann.
+   * Z.Bsp. ob eventuell noch Abhaengigkeiten existieren und
+   * das Objekt daher nicht gelöscht werden kann.
+   * @throws ApplicationException wenn das Objekt nicht gelöscht werden darf.
    */
-  public abstract Class getForeignObject(String field) throws RemoteException;
-  
+  protected abstract void deleteCheck() throws ApplicationException;
+
   /**
-   * @see java.lang.Object#toString()
+   * Diese Methode wird intern vor der Ausfuehrung von insert()
+   * aufgerufen. Sie muss überschrieben werden, damit das Fachobjekt
+   * vor dem Durchführen der Speicherung Prüfungen vornehmen kann.
+   * Z.Bsp. ob alle Pflichtfelder ausgefüllt sind und korrekte Werte enthalten.
+   * @throws ApplicationException wenn das Objekt nicht gespeichert werden darf.
    */
-  public String toString()
-  {
-    try {
-      return getField(getPrimaryField()).toString();
-    }
-    catch (Exception e)
-    {
-      return "";
-    }
-  }
+  protected abstract void insertCheck() throws ApplicationException;
+
+  /**
+   * Diese Methode wird intern vor der Ausfuehrung von update()
+   * aufgerufen. Sie muss überschrieben werden, damit das Fachobjekt
+   * vor dem Durchführen der Speicherung Prüfungen vornehmen kann.
+   * Z.Bsp. ob alle Pflichtfelder ausgefüllt sind und korrekte Werte enthalten.
+   * @throws ApplicationException wenn das Objekt nicht gespeichert werden darf.
+   */
+  protected abstract void updateCheck() throws ApplicationException;
+
+  /**
+   * Prueft, ob das angegebene Feld ein Fremschluessel zu einer
+   * anderen Tabelle ist. Wenn das der Fall ist, liefert es die
+   * Klasse, die die Fremd-Tabelle abbildet. Andernfalls null.
+   * @param field
+   * @return
+   * @throws RemoteException
+   */
+  protected abstract Class getForeignObject(String field) throws RemoteException;
+  
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#transactionBegin()
    */
-  public void transactionBegin() throws RemoteException
+  public final void transactionBegin() throws RemoteException
   {
     if (this.inTransaction)
       return;
@@ -571,7 +604,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#transactionRollback()
    */
-  public void transactionRollback() throws RemoteException
+  public final void transactionRollback() throws RemoteException
   {
     if (!this.inTransaction)
       return;
@@ -593,7 +626,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#transactionCommit()
    */
-  public void transactionCommit() throws RemoteException
+  public final void transactionCommit() throws RemoteException
   {
     if (!this.inTransaction)
       return;
@@ -624,7 +657,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.willuhn.jameica.rmi.DBObject#getList()
    */
-  public DBIterator getList() throws RemoteException
+  public final DBIterator getList() throws RemoteException
   {
     return Application.getDefaultDatabase().createList(this.getClass());
   }
@@ -633,6 +666,11 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.11  2003/11/27 00:22:18  willuhn
+ * @B paar Bugfixes aus Kombination RMI + Reflection
+ * @N insertCheck(), deleteCheck(), updateCheck()
+ * @R AbstractDBObject#toString() da in RemoteObject ueberschrieben (RMI-Konflikt)
+ *
  * Revision 1.10  2003/11/24 23:01:58  willuhn
  * @N added settings
  *

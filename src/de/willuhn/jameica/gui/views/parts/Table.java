@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.6 $
+ * $Date: 2003/11/27 00:22:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -130,7 +130,12 @@ public class Table
         Object value = o.getField(field);
         if (value == null)
           item.setText(i,"");
-        else 
+        else if (value instanceof DBObject)
+        {
+          DBObject dbo = (DBObject) value;
+          item.setText(i,dbo.getField(dbo.getPrimaryField()).toString());
+        }
+        else
           item.setText(i,value.toString());
       }
     }
@@ -182,6 +187,11 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.6  2003/11/27 00:22:18  willuhn
+ * @B paar Bugfixes aus Kombination RMI + Reflection
+ * @N insertCheck(), deleteCheck(), updateCheck()
+ * @R AbstractDBObject#toString() da in RemoteObject ueberschrieben (RMI-Konflikt)
+ *
  * Revision 1.5  2003/11/24 23:01:58  willuhn
  * @N added settings
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.8 $
+ * $Date: 2003/11/27 00:22:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,8 @@ package de.willuhn.jameica.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+
+import de.willuhn.jameica.ApplicationException;
 
 /**
  * Basis-Interface fuer alle Business-Objekte.
@@ -68,14 +70,16 @@ public interface DBObject extends Remote
 	 * Speichert das Objekt in der Datenbank. Wenn es eine ID besitzt, wird
 	 * der existierende Datensatz aktualisiert, andernfalls hinzugefuegt.
 	 * @throws RemoteException
+   * @throws ApplicationException Wenn das Objekt nicht gespeichert werden darf.
 	 */
-	public void store() throws RemoteException;
+	public void store() throws RemoteException, ApplicationException;
 
 	/**
 	 * Loescht das Objekt aus der Datenbank.
 	 * @throws RemoteException
+   * @throws ApplicationException Wenn das Objekt nicht geloescht werden darf.
 	 */
-	public void delete() throws RemoteException;
+	public void delete() throws RemoteException, ApplicationException;
 
   /**
    * Loescht alle Eigenschaften (incl. ID) aus dem Objekt.
@@ -141,20 +145,15 @@ public interface DBObject extends Remote
    */
   public String getPrimaryField() throws RemoteException;
 
-  /**
-   * Prueft, ob das angegebene Feld ein Fremschluessel zu einer
-   * anderen Tabelle ist. Wenn das der Fall ist, liefert es die
-   * Klasse, die die Fremd-Tabelle abbildet. Andernfalls null.
-   * @param field
-   * @return
-   * @throws RemoteException
-   */
-  public Class getForeignObject(String field) throws RemoteException;
-
 }
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.8  2003/11/27 00:22:18  willuhn
+ * @B paar Bugfixes aus Kombination RMI + Reflection
+ * @N insertCheck(), deleteCheck(), updateCheck()
+ * @R AbstractDBObject#toString() da in RemoteObject ueberschrieben (RMI-Konflikt)
+ *
  * Revision 1.7  2003/11/24 23:01:58  willuhn
  * @N added settings
  *
