@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.35 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.36 $
+ * $Date: 2004/03/16 23:59:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -308,7 +308,7 @@ public class PluginLoader extends ClassLoader
     // Bevor wir das Plugin initialisieren, pruefen, ob vorher eine aeltere
     // Version des Plugins installiert war. Ist das der Fall rufen wir dessen
     // update() Methode vorher auf.
-    String installed = updateChecker.getAttribute(classname + ".version",null);
+    String installed = updateChecker.getString(classname + ".version",null);
     if (installed == null)
     {
       // Plugin wurde zum ersten mal gestartet
@@ -425,6 +425,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.36  2004/03/16 23:59:40  willuhn
+ * @N 2 new Input fields
+ *
  * Revision 1.35  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

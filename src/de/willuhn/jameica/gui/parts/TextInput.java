@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/TextInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/03/11 08:56:55 $
+ * $Revision: 1.5 $
+ * $Date: 2004/03/16 23:59:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,7 @@ import de.willuhn.jameica.gui.util.Style;
 public class TextInput extends AbstractInput
 {
 
-  private Text text;
+  protected Text text;
   private String value;
 
   /**
@@ -123,6 +123,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.5  2004/03/16 23:59:40  willuhn
+ * @N 2 new Input fields
+ *
  * Revision 1.4  2004/03/11 08:56:55  willuhn
  * @C some refactoring
  *

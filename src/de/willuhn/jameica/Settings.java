@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/16 23:59:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -74,6 +74,71 @@ public class Settings
     return new File(Application.getConfig().getConfigDir()+"/"+className+ ".properties");
   }
   
+	/**
+	 * Liefert den Wert des genannten Attributs als Boolean.
+	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
+   * @param name Name des Attributs.
+	 * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
+   * @return true oder false.
+   */
+  public boolean getBoolean(String name, boolean defaultValue)
+	{
+		String s = getString(name,defaultValue ? "true" : "false");
+		return "true".equalsIgnoreCase(s);
+	}
+
+	/**
+	 * Liefert den Wert des genannten Attributs als int.
+	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
+	 * @param name Name des Attributs.
+	 * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
+	 * @return der Wert des Attributs.
+	 */
+	public int getInt(String name, int defaultValue)
+	{
+		String s = getString(name,""+defaultValue);
+		try {
+			return Integer.parseInt(s);
+		}
+		catch (NumberFormatException e)
+		{
+			Application.getLog().error("unable to parse value of param \"" + name + "\", value: " + s,e);
+		}
+		return defaultValue;
+	}
+
+	/**
+	 * Liefert den Wert des Attribute <name>.
+	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
+	 * @param name Name des Attribut.
+	 * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
+	 * @return der Wert des Attributs.
+	 */
+	public String getString(String name, String defaultValue)
+	{
+		return properties.getProperty(name,defaultValue);
+	}
+
+	/**
+	 * Speichert einen boolschen Wert.
+   * @param name Name des Attributs.
+   * @param value Wert des Attributs.
+   */
+  public void setAttribute(String name, boolean value)
+	{
+		setAttribute(name, value ? "true" : "false");
+	}
+	
+	/**
+	 * Speichert einen Integer-Wert.
+   * @param name Name des Attributs.
+   * @param value Wert des Attributs.
+   */
+  public void setAttribute(String name, int value)
+	{
+		setAttribute(name,""+value);
+	}
+
   /**
    * Speichert das Attribut <name> mit dem zugehoerigen Wert <value>.
    * Wenn ein gleichnamiges Attribut bereits existiert, wird es ueberschrieben.
@@ -88,18 +153,6 @@ public class Settings
   	else
 	    properties.setProperty(name,value);
     store();
-  }
-
-  /**
-   * Liefert den Wert des Attribute <name>.
-   * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
-   * @param name Name des Attribut.
-   * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
-   * @return der Wert des Attributs.
-   */
-  public String getAttribute(String name, String defaultValue)
-  {
-    return properties.getProperty(name,defaultValue);
   }
 
   /**
@@ -123,6 +176,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.7  2004/03/16 23:59:40  willuhn
+ * @N 2 new Input fields
+ *
  * Revision 1.6  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

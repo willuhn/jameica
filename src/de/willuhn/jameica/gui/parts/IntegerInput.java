@@ -1,6 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/DecimalInput.java,v $
- * $Revision: 1.5 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/IntegerInput.java,v $
+ * $Revision: 1.1 $
  * $Date: 2004/03/16 23:59:40 $
  * $Author: willuhn $
  * $Locker:  $
@@ -12,9 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.parts;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -24,27 +21,24 @@ import de.willuhn.jameica.Application;
 
 /**
  * @author willuhn
- * Malt ein Eingabefeld, in das nur Dezimalzahlen eingegeben werden koennen.
+ * Malt ein Eingabefeld, in das nur ganze Zahlen eingegeben werden koennen.
  */
-public class DecimalInput extends TextInput
+public class IntegerInput extends TextInput
 {
-  private double value;
-  private DecimalFormat format;
+  private int value;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param value anzuzeigender Wert.
-   * @param format Formatter fuer die Anzeige.
    */
-  public DecimalInput(double value, DecimalFormat format)
+  public IntegerInput(int value)
   {
   	super(null);
     this.value = value;
-    this.format = format;
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -55,7 +49,7 @@ public class DecimalInput extends TextInput
         char [] chars = new char [t.length ()];
         t.getChars (0, chars.length, chars, 0);
         for (int i=0; i<chars.length; i++) {
-          if (!('0' <= chars[i] && chars[i] <= '9') && !(chars[i] == ',')) {
+          if (!('0' <= chars[i] && chars[i] <= '9')) {
             e.doit = false;
             return;
           }
@@ -66,31 +60,31 @@ public class DecimalInput extends TextInput
   }
 
   /**
-   * Die Funktion liefert ein Objekt des Typs java.lang.Double zurueck
+   * Die Funktion liefert ein Objekt des Typs java.lang.Integer zurueck
    * oder <code>null</code> wenn die Zahl nicht ermittelt werden konnte.
    * @see de.willuhn.jameica.gui.parts.TextInput#getValue()
    */
   public Object getValue()
   {
     try {
-      return new Double(format.parse(text.getText()).doubleValue());
+      return new Integer((String)text.getText());
     }
-    catch (ParseException e)
+    catch (NumberFormatException e)
     {
-      Application.getLog().error("error while parsing from decimal input",e);
+      Application.getLog().error("error while parsing from int input",e);
     }
     return null;
   }
 
   /**
-   * Erwartet ein Objekt des Typs java.lang.Double.
+   * Erwartet ein Objekt des Typs java.lang.Integer.
    * @see de.willuhn.jameica.gui.parts.TextInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
     if (value == null)
       return;
-    if (!(value instanceof Double))
+    if (!(value instanceof Integer))
       return;
 
     this.text.setText(value.toString());
@@ -99,37 +93,8 @@ public class DecimalInput extends TextInput
 }
 
 /*********************************************************************
- * $Log: DecimalInput.java,v $
- * Revision 1.5  2004/03/16 23:59:40  willuhn
+ * $Log: IntegerInput.java,v $
+ * Revision 1.1  2004/03/16 23:59:40  willuhn
  * @N 2 new Input fields
- *
- * Revision 1.4  2004/03/11 08:56:55  willuhn
- * @C some refactoring
- *
- * Revision 1.3  2004/03/06 18:24:23  willuhn
- * @D javadoc
- *
- * Revision 1.2  2004/02/18 20:28:45  willuhn
- * @N jameica now stores window position and size
- *
- * Revision 1.1  2004/01/28 20:51:24  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.5  2003/12/29 16:29:47  willuhn
- * @N javadoc
- *
- * Revision 1.4  2003/12/16 02:27:44  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2003/12/11 21:00:54  willuhn
- * @C refactoring
- *
- * Revision 1.2  2003/12/01 21:22:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2003/12/01 20:28:58  willuhn
- * @B filter in DBIteratorImpl
- * @N InputFelder generalisiert
  *
  **********************************************************************/

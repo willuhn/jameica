@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.29 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.30 $
+ * $Date: 2004/03/16 23:59:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -108,13 +108,11 @@ public class GUI
 		// size and position restore
 		int x = 10; int y = 10;
 		int width = 920; int height = 720;
-		try {
-			x 		 = Integer.parseInt(settings.getAttribute("window.x",null));
-			y 		 = Integer.parseInt(settings.getAttribute("window.y",null));
-			width  = Integer.parseInt(settings.getAttribute("window.width",null));
-			height = Integer.parseInt(settings.getAttribute("window.height",null));
-		}
-		catch (NumberFormatException e) {/*useless*/}
+		x 		 = settings.getInt("window.x",x);
+		y 		 = settings.getInt("window.y",y);
+		width  = settings.getInt("window.width",width);
+		height = settings.getInt("window.height",height);
+
 		if (x >= gui.display.getBounds().width || x < 0)
 			x = 10; // screen resolution smaller than last start
 		if (y >= gui.display.getBounds().height || y < 0)
@@ -127,10 +125,10 @@ public class GUI
 				// Deswegen muessen wir uns das selbst ausrechnen
 				Rectangle bounds = gui.shell.getBounds();
 				Rectangle area   = gui.shell.getClientArea();
-				settings.setAttribute("window.width",""+ (bounds.width + (bounds.width - area.width)));
-				settings.setAttribute("window.height",""+(bounds.height + (bounds.height - area.height)));
-				settings.setAttribute("window.x",""+bounds.x);
-				settings.setAttribute("window.y",""+bounds.y);
+				settings.setAttribute("window.width",(bounds.width + (bounds.width - area.width)));
+				settings.setAttribute("window.height",(bounds.height + (bounds.height - area.height)));
+				settings.setAttribute("window.x",bounds.x);
+				settings.setAttribute("window.y",bounds.y);
       }
     });
 
@@ -668,6 +666,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.30  2004/03/16 23:59:40  willuhn
+ * @N 2 new Input fields
+ *
  * Revision 1.29  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

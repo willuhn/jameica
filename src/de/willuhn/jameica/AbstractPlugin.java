@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.14 $
+ * $Date: 2004/03/16 23:59:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ public abstract class AbstractPlugin
 {
 
 	private PluginResources res = null;
+	private Settings settings = null;
 
 	/**
 	 * ct.
@@ -35,6 +36,7 @@ public abstract class AbstractPlugin
   public AbstractPlugin(File file)
 	{
 		this.res = new PluginResources(file);
+		this.settings = new Settings(this.getClass());
 	}
 
 	/**
@@ -115,6 +117,15 @@ public abstract class AbstractPlugin
   }
   
 	/**
+	 * Liefert ein Objekt, ueber welches das Plugin Einstellungen speichern kann.
+   * @return Settings.
+   */
+  public Settings getSettings()
+	{
+		return settings;
+	}
+
+	/**
 	 * Diese Funktion wird beim Start der Anwendung ausgefuehrt. Hier kann die Plugin-
 	 * Implementierung also diverse Dinge durchfuehren, die es beim Start gern
 	 * automatisch durchgefuehrt haben moechte ;)
@@ -150,6 +161,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.14  2004/03/16 23:59:40  willuhn
+ * @N 2 new Input fields
+ *
  * Revision 1.13  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *
