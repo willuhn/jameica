@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/03/19 18:17:37 $
+ * $Revision: 1.7 $
+ * $Date: 2005/03/21 23:02:16 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -184,9 +183,7 @@ public final class Wallet
 			byte[] buf = new byte[size];
 			while (is.read(buf) > 0)
 			{
-//				bos.write(cipher.doFinal(buf));
-				bos.write(buf);
-				CipherInputStream cis;
+				bos.write(cipher.doFinal(buf));
 			}
 
 			Logger.info("deserializing wallet");
@@ -253,8 +250,7 @@ public final class Wallet
 		byte[] buf = new byte[size];
 		while (bis.read(buf) > 0)
 		{
-//			os.write(cipher.doFinal(buf));
-			os.write(buf);
+			os.write(cipher.doFinal(buf));
 		}
 
     // Wir koennen das Flushen und Schliessen nicht im finally() machen,
@@ -274,6 +270,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.7  2005/03/21 23:02:16  web0
+ * @B removed debug code
+ *
  * Revision 1.6  2005/03/19 18:17:37  web0
  * @B bloeder CipherInputStream
  *
