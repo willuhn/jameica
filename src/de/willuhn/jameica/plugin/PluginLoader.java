@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/10/08 16:41:58 $
+ * $Revision: 1.8 $
+ * $Date: 2004/10/11 22:41:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -138,7 +138,7 @@ public final class PluginLoader
 				}
 				catch (Throwable t)
 				{
-					Logger.error("error while creating plugin container for plugin " + classes.get(i) + ", skipping",t);
+					Logger.error("reading manifest failed for plugin " + classes.get(i) + ", skipping",t);
 					Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Laden des Plugins " + classes.get(i)));
 				}
 			}
@@ -533,6 +533,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.8  2004/10/11 22:41:17  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *

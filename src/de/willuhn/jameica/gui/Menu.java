@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/10/08 17:18:11 $
+ * $Revision: 1.26 $
+ * $Date: 2004/10/11 22:41:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,20 +12,18 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
-import net.n3.nanoxml.IXMLElement;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
 /**
@@ -35,8 +33,8 @@ import de.willuhn.util.Logger;
 public class Menu
 {
 
-  private final org.eclipse.swt.widgets.Menu bar;
-	private final org.eclipse.swt.widgets.Menu plugins;
+  private final org.eclipse.swt.widgets.Menu mainMenu;
+	private final org.eclipse.swt.widgets.Menu pluginMenu;
 
   /**
    * Mapping MenuItem->MenuItem(SWT)
@@ -56,16 +54,16 @@ public class Menu
   protected Menu(Decorations parent) throws Exception
   {
 
-    bar = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
-		parent.setMenuBar(bar);
+    mainMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
+		parent.setMenuBar(mainMenu);
 
-    // System-Menu laden
-    load(new Manifest(null,getClass().getResourceAsStream("system.xml")).getMenu());
+		// System-Menu laden
+		load(new Manifest(null,getClass().getResourceAsStream("system.xml")).getMenu(),mainMenu);
 
-    org.eclipse.swt.widgets.MenuItem p = new org.eclipse.swt.widgets.MenuItem(bar,SWT.CASCADE);
-		p.setText(Application.getI18n().tr("Plugins"));
-		plugins = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
-		p.setMenu(plugins);
+    org.eclipse.swt.widgets.MenuItem mi = new org.eclipse.swt.widgets.MenuItem(mainMenu,SWT.CASCADE);
+		mi.setText(Application.getI18n().tr("Plugins"));
+		pluginMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
+		mi.setMenu(pluginMenu);
   }
 
   /**
@@ -98,15 +96,16 @@ public class Menu
       return;
     }
 
-    load(container.getManifest().getMenu());
+    load(container.getManifest().getMenu(),pluginMenu);
 	}
 
   /**
    * Laedt das Menu-Item und dessen Kinder.
    * @param element das zu ladende Item.
+   * @param parent Menu.
    * @throws Exception
    */
-  private void load(MenuItem element) throws Exception
+  private void load(final MenuItem element, org.eclipse.swt.widgets.Menu parent) throws Exception
   {
     if (element == null)
       return;
@@ -116,166 +115,78 @@ public class Menu
     org.eclipse.swt.widgets.Menu     menu = null;
 
     MenuItem myParent = (MenuItem) element.getParent();
-    if (myParent == null)
+		if (myParent != null)
     {
-      // Wir sind die ersten
-      
-      item = new org.eclipse.swt.widgets.MenuItem(bar,SWT.CASCADE);
+    	menu = parent;
     }
     else
     {
-      // Wir holen uns das TreeItem vom Parent
-      org.eclipse.swt.widgets.MenuItem mi = (org.eclipse.swt.widgets.MenuItem) mapping.get(myParent);
-      item = new org.eclipse.swt.widgets.MenuItem(mi,SWT.DROP_DOWN);
+			org.eclipse.swt.widgets.MenuItem mi = new org.eclipse.swt.widgets.MenuItem(parent,SWT.CASCADE);
+			mi.setText(element.getName());
+			menu = new org.eclipse.swt.widgets.Menu(parent);
+			mi.setMenu(menu);
     }
+		item = new org.eclipse.swt.widgets.MenuItem(menu,SWT.DROP_DOWN);
 
-    if (element.getParent() == null)
+    org.eclipse.swt.widgets.Menu m = (org.eclipse.swt.widgets.Menu) mapping.get(myParent);
+    item = new org.eclipse.swt.widgets.MenuItem(m,SWT.DROP_DOWN);
+
+		String text = element.getName();
+
+		if ("-".equals(text))
+		{
+			item = new org.eclipse.swt.widgets.MenuItem(parent,SWT.SEPARATOR);
+		}
+
+		item.addListener(SWT.Selection, new Listener()
     {
-      // wir sind auf oberster Ebene, dann muessen wir ein neues Menu machen
-      org.eclipse.swt.widgets.MenuItem  p = new org.eclipse.swt.widgets.MenuItem(bar,SWT.CASCADE);
-      p.setText(element.getName());
-      plugins = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
-      p.setMenu(plugins);
-    }
+      public void handleEvent(Event event)
+      {
+      	try
+      	{
+					element.getAction().handleAction(event);
+      	}
+      	catch (Exception e)
+      	{
+      		Logger.error("error while executing menu entry",e);
+      		GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Ausführen"));
+      	}
+      }
+    });
+
+		String shortCut = element.getShortcut();
+		if (shortCut != null)
+		try {
+			String modifier = shortCut.substring(0,shortCut.indexOf("+"));
+			String key = shortCut.substring(shortCut.indexOf("+")+1);
+			int modi = SWT.ALT;
+			if ("CTRL".equalsIgnoreCase(modifier)) modi = SWT.CTRL;
+			item.setAccelerator(modi + key.getBytes()[0]);
+			text += "\t" + shortCut;
+		}
+		catch (Exception e)
+		{
+			Logger.error("error while creating menu element",e);
+		}
+		item.setText(text);
+
 
 		// add elements
-		Enumeration e = xml.enumerateChildren();
-		while (e.hasMoreElements())
+		GenericIterator childs = element.getChilds();
+		if (childs == null || childs.size() == 0)
+			return;
+		while (childs.hasNext())
 		{
-			IXMLElement key = (IXMLElement) e.nextElement();
-			new MenuCascade(key,i18n);
+			load((MenuItem) childs.next(),menu);
 		}
   }
-
-  /**
-   * Innere Hilfsklasse zur Abbildung des Menu-Baumes.
-   * @author willuhn
-   */
-  private class MenuCascade {
-
-    /**
-     * ct.
-     * @param key Pfad zum aktuellen Menupunkt in der Config-Datei.
-	   * @param i18n optionaler Uebersetzer, um die Menu-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
-     */
-    private MenuCascade(IXMLElement key,I18N i18n)
-    {
-      final org.eclipse.swt.widgets.MenuItem cascade = new org.eclipse.swt.widgets.MenuItem(plugins != null ? plugins : bar,SWT.CASCADE);
-      String text = key.getAttribute("name",null);
-      if (text == null)
-      {
-				// Das wuerde eh nen SWT-Fehler erzeugen
-				Logger.warn("menu text was null, skipping");
-				return;
-      }
-      cascade.setText(i18n != null ? i18n.tr(text) : text);
-      final org.eclipse.swt.widgets.Menu submenu = new org.eclipse.swt.widgets.Menu(GUI.getShell(), SWT.DROP_DOWN);
-      cascade.setMenu(submenu);
-      Enumeration e = key.enumerateChildren();
-      while (e.hasMoreElements())
-      {
-        IXMLElement ckey = (IXMLElement) e.nextElement();
-        new MenuElement(submenu, ckey, i18n);
-      }
-
-    }
-  }
-
-  /**
-   * Innere Hilfsklasse zur Abbildung des Menu-Baumes.
-   * @author willuhn
-   */
-  private class MenuElement {
-
-    /**
-     * ct.
-     * @param parent Eltern-Element.
-     * @param ckey Pfad zum aktuellen Menupunkt in der Config-Datei.
-	   * @param i18n optionaler Uebersetzer, um die Menu-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
-     */
-    private MenuElement(org.eclipse.swt.widgets.Menu parent,IXMLElement ckey,I18N i18n)
-    {
-
-      String c      = ckey.getAttribute("class",null);
-      String text   = ckey.getAttribute("name",null);
-			String target = ckey.getAttribute("target",null);
-
-			if (text == null)
-			{
-				// Das wuerde eh nen SWT-Fehler erzeugen
-				Logger.warn("menu text was null, skipping");
-				return;
-			}
-
-      if ("-".equals(text))
-      {
-        new org.eclipse.swt.widgets.MenuItem(parent,SWT.SEPARATOR);
-        return;
-      }
-
-			if (i18n != null) text = i18n.tr(text);
-
-      final org.eclipse.swt.widgets.MenuItem item = new org.eclipse.swt.widgets.MenuItem(parent,SWT.CASCADE);
-      
-      item.addListener(SWT.Selection, new MenuListener(c, target, text));
-
-      String shortCut = ckey.getAttribute("shortcut",null);
-      if (shortCut != null)
-      try {
-        String modifier = shortCut.substring(0,shortCut.indexOf("+"));
-        String key = shortCut.substring(shortCut.indexOf("+")+1);
-        int m = SWT.ALT;
-        if ("CTRL".equalsIgnoreCase(modifier)) m = SWT.CTRL;
-        item.setAccelerator(m + key.getBytes()[0]);
-        text += "\t" + shortCut;
-      }
-      catch (Exception e)
-      {
-				Logger.error("error while creating menu element",e);
-      }
-      item.setText(text);
-    }
-  }
-  
-  private class MenuListener implements Listener
-  {
-    private String clazz = null;
-    private String target = null;
-    private String text = null;
-    
-    private MenuListener(String clazz, String target, String text)
-    {
-      this.clazz = clazz;
-      this.target = target;
-      this.text = text.replaceAll("&","");
-    }
-
-    /**
-     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-     */
-    public void handleEvent(org.eclipse.swt.widgets.Event event)
-    {
-    	if (clazz == null || text == null)
-    	{
-    		Logger.warn("text or class of menu entry was null (text: " + text + ", class: " + clazz + "), skipping");
-				return;
-    	}
-      try {
-        // TODO: hier Menu-Action ausloesen
-      }
-      catch (Exception e)
-      {
-        Logger.error("error while selecting menu item",e);
-        GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Ausführen"));
-      }
-    }
-    
-  }
-
 }
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.26  2004/10/11 22:41:17  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.25  2004/10/08 17:18:11  willuhn
  * *** empty log message ***
  *
