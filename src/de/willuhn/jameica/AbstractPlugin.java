@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/03/03 22:27:11 $
+ * $Revision: 1.13 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,7 @@ public abstract class AbstractPlugin
 
 	/**
 	 * ct.
-   * @param Das File, in dem sich das Plugin befindet.
+   * @param file Das File, in dem sich das Plugin befindet.
    * Ist i.d.R. das Jar des Plugins selbst.
    */
   public AbstractPlugin(File file)
@@ -51,7 +51,7 @@ public abstract class AbstractPlugin
    * insofern es sich um ein Jar handelt.
    * Sie versucht dabei, den Schluessel "Implementation-Title" zu parsen.
    * Schlaegt das fehl, wird der Name der Datei/Verzeichnisses zurueckgeliefert.
-   * @see de.willuhn.jameica.Plugin#getName()
+   * @return Name des Plugins.
    */
   public String getName()
   {
@@ -63,7 +63,7 @@ public abstract class AbstractPlugin
 
 			JarFile jar = new JarFile(file);
       Manifest manifest = jar.getManifest();
-      name = (String) manifest.getMainAttributes().getValue("Implementation-Title");
+      name = manifest.getMainAttributes().getValue("Implementation-Title");
       if (name == null) throw new Exception();
       return name;
     }
@@ -85,7 +85,7 @@ public abstract class AbstractPlugin
    * Sie versucht dabei, den Schluessel Implementation-Version zu parsen.
    * Wenn der String das Format "V_&lt;Major-Number&gt;_&lt;Minor-Number&gt; hat, wird es funktionieren.
    * Andernfalls liefert die Funktion "1.0".
-   * @see de.willuhn.jameica.Plugin#getVersion()
+   * @return Version des Plugins.
    */
   public double getVersion()
   {
@@ -96,7 +96,7 @@ public abstract class AbstractPlugin
 
 			JarFile jar = new JarFile(file);
       Manifest manifest = jar.getManifest();
-      String version = (String) manifest.getMainAttributes().getValue("Implementation-Version");
+      String version = manifest.getMainAttributes().getValue("Implementation-Version");
       version = version.substring(2).replace('_','.');
       return Double.parseDouble(version);
     }
@@ -150,6 +150,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.13  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.12  2004/03/03 22:27:11  willuhn
  * @N help texts
  * @C refactoring

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/21 19:49:41 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,6 +95,7 @@ public class Settings
    * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
    * @param name Name des Attribut.
    * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
+   * @return der Wert des Attributs.
    */
   public String getAttribute(String name, String defaultValue)
   {
@@ -122,6 +123,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.6  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.5  2004/02/21 19:49:41  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.10 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -105,8 +105,8 @@ public abstract class AbstractDialog
   /**
    * Erzeugt einen neuen Dialog.
    * @param position Position des Dialogs.
-	 * @see Dialog#POSITION_MOUSE
-	 * @see Dialog#POSITION_CENTER
+	 * @see AbstractDialog#POSITION_MOUSE
+	 * @see AbstractDialog#POSITION_CENTER
    */
   public AbstractDialog(int position)
 	{
@@ -292,12 +292,15 @@ public abstract class AbstractDialog
 		try {
 			shell.dispose();
 		}
-		catch (Exception e) {/*useless*/};
+		catch (Exception e) {/*useless*/}
 	}
 }
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.10  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.9  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

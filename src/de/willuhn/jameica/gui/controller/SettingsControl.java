@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/03/03 22:27:11 $
+ * $Revision: 1.10 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,14 +93,14 @@ public class SettingsControl extends AbstractControl
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleDelete()
+   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleDelete()
    */
   public void handleDelete()
   {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleCancel()
+   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCancel()
    */
   public void handleCancel()
   {
@@ -108,15 +108,15 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleStore()
+   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleStore()
    */
   public void handleStore()
   {
   	Config config = Application.getConfig();
 
-  	config.setLoglevel(logLevel.getValue());
+  	config.setLoglevel((String)logLevel.getValue());
   	Application.getLog().setLevel(config.getLogLevel()); // live umschaltung
-  	config.setLogFile(logFile.getValue());
+  	config.setLogFile((String)logFile.getValue());
 
   	try
     {
@@ -132,7 +132,7 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleCreate()
+   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCreate()
    */
   public void handleCreate()
   {
@@ -169,6 +169,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.10  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.9  2004/03/03 22:27:11  willuhn
  * @N help texts
  * @C refactoring

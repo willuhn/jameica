@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/Attic/ViewDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,7 @@ public class ViewDialog extends AbstractDialog {
 
   /**
    * Erzeugt einen neuen Dialog.
+   * @param view die anzuzeigende View.
    * @param position Position.
    * @see AbstractDialog#POSITION_CENTER
    * @see AbstractDialog#POSITION_MOUSE
@@ -61,10 +62,10 @@ public class ViewDialog extends AbstractDialog {
 				}
 				catch (Exception ex) {/*useless*/}
 			}
-			public void shellActivated(ShellEvent e) {};
-			public void shellDeactivated(ShellEvent e) {};
-			public void shellDeiconified(ShellEvent e) {};
-			public void shellIconified(ShellEvent e) {};
+			public void shellActivated(ShellEvent e) {}
+			public void shellDeactivated(ShellEvent e) {}
+			public void shellDeiconified(ShellEvent e) {}
+			public void shellIconified(ShellEvent e) {}
 		});
 		view.bind();
 	}
@@ -80,6 +81,9 @@ public class ViewDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: ViewDialog.java,v $
+ * Revision 1.4  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.3  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FileClose.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/01/29 00:07:23 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ public class FileClose {
 
 	/**
    * Diese Funktion wird beim Klick auf "Datei->Schliessen" aufgerufen.
+	 * @param c
    */
   public FileClose(Composite c)
 	{
@@ -33,6 +34,9 @@ public class FileClose {
 
 /*********************************************************************
  * $Log: FileClose.java,v $
+ * Revision 1.3  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.2  2004/01/29 00:07:23  willuhn
  * @N Text widget
  *

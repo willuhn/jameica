@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/DecimalInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/18 20:28:45 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,9 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.parts;
+
+import java.text.DecimalFormat;
+import java.text.ParseException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -24,6 +27,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.util.Style;
 
 /**
@@ -32,15 +36,19 @@ import de.willuhn.jameica.gui.util.Style;
  */
 public class DecimalInput extends Input
 {
-  private String value;
+  private double value;
+  private DecimalFormat format;
   private Text text;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+   * @param value anzuzeigender Wert.
+   * @param format Formatter fuer die Anzeige.
    */
-  public DecimalInput(String value)
+  public DecimalInput(double value, DecimalFormat format)
   {
     this.value = value;
+    this.format = format;
   }
 
   /**
@@ -66,7 +74,7 @@ public class DecimalInput extends Input
 		text.setBackground(Style.COLOR_WHITE);
 
 
-    text.setText((value == null ? "" : value));
+    text.setText(format.format(value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
         text.setSelection(0, text.getText().length());
@@ -89,21 +97,34 @@ public class DecimalInput extends Input
   }
 
   /**
+   * Die Funktion liefert ein Objekt des Typs java.lang.Double zurueck
+   * oder <code>null</code> wenn die Zahl nicht ermittelt werden konnte.
    * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
-  public String getValue()
+  public Object getValue()
   {
-    return text.getText();
+    try {
+      return new Double(format.parse(text.getText()).doubleValue());
+    }
+    catch (ParseException e)
+    {
+      Application.getLog().error("error while parsing from decimal input",e);
+    }
+    return null;
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
+   * Erwartet ein Objekt des Typs java.lang.Double.
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
    */
-  public void setValue(String value)
+  public void setValue(Object value)
   {
     if (value == null)
       return;
-    this.text.setText(value);
+    if (!(value instanceof Double))
+      return;
+
+    this.text.setText(value.toString());
     this.text.redraw();
   }
 
@@ -136,6 +157,9 @@ public class DecimalInput extends Input
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.3  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.2  2004/02/18 20:28:45  willuhn
  * @N jameica now stores window position and size
  *

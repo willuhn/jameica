@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Text.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/18 17:14:40 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ public class Text
 
   /**
    * ct.
+   * @param text der anzuzeigenden Text.
    */
   public Text(String text)
   {
@@ -63,7 +64,7 @@ public class Text
 
   /**
 	 * Zeigt die angegebene Plaintext-Datei an.
-   * @param file die PlainText-Datei.
+   * @param text die PlainText-Datei.
    * @throws IOException Wenn beim Lesen der Datei Fehler auftreten.
    */
   public void setContent(File text) throws IOException
@@ -135,6 +136,9 @@ public class Text
 
 /**********************************************************************
  * $Log: Text.java,v $
+ * Revision 1.3  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.2  2004/02/18 17:14:40  willuhn
  * *** empty log message ***
  *

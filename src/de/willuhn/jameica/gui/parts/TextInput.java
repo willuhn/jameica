@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/TextInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/18 17:14:40 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -76,21 +76,22 @@ public class TextInput extends Input
   }
 
   /**
+   * Liefert den angezeigten Text als String.
    * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
-  public String getValue()
+  public Object getValue()
   {
     return text.getText();
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
    */
-  public void setValue(String value)
+  public void setValue(Object value)
   {
     if (value == null)
       return;
-    this.text.setText(value);
+    this.text.setText(value.toString());
     this.text.redraw();
   }
 
@@ -122,6 +123,9 @@ public class TextInput extends Input
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.3  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.2  2004/02/18 17:14:40  willuhn
  * *** empty log message ***
  *

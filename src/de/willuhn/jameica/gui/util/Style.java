@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/03/05 00:40:45 $
+ * $Revision: 1.10 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,17 +40,45 @@ public class Style
 
   private static Map imagecache = new HashMap();
 
+  /**
+   * Farbe WEISS.
+   */
   public final static Color COLOR_WHITE   = new Color(GUI.getDisplay(), 255, 255, 255);
-	public final static Color COLOR_COMMENT = new Color(GUI.getDisplay(), 140, 140, 140);
-	public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 251, 251, 251);
+
+  /**
+   * Text-Farbe fuer Kommentare.
+   */
+  public final static Color COLOR_COMMENT = new Color(GUI.getDisplay(), 140, 140, 140);
+
+  /**
+   * Standard-Hintergrundfarbe.
+   */
+  public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 251, 251, 251);
+
+  /**
+   * Standard-Rahmenfarbe.
+   */
   public final static Color COLOR_BORDER  = new Color(GUI.getDisplay(), 100, 100, 100);
 
+	/**
+	 * Standard-Textfarbe bei Fehlern.
+	 */
 	public final static Color COLOR_ERROR   = new Color(GUI.getDisplay(), 250,  10,  10);
+
+	/**
+	 * Standard-Textfarbe bei Erfolgsmeldungen.
+	 */
 	public final static Color COLOR_SUCCESS = new Color(GUI.getDisplay(),   0,   0,   0);
 
-
+  /**
+   * Font fuer Ueberschriften erster Ordnung.
+   */
   public final static Font FONT_H1 = new Font(GUI.getDisplay(),"Verdana", 10, SWT.BOLD);
-	public final static Font FONT_H2 = new Font(GUI.getDisplay(),"Verdana", 8, SWT.BOLD);
+
+  /**
+   * Font fuer Ueberschriften zweiter Ordnung.
+   */
+  public final static Font FONT_H2 = new Font(GUI.getDisplay(),"Verdana", 8, SWT.BOLD);
 
   /**
    * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
@@ -121,6 +149,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.10  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.9  2004/03/05 00:40:45  willuhn
  * *** empty log message ***
  *

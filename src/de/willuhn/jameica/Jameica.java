@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Jameica.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/03/03 22:27:11 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,13 +50,6 @@ public class Jameica extends AbstractPlugin
   }
 
   /**
-   * @see de.willuhn.jameica.AbstractPlugin#getWelcomeText()
-   */
-  public String getWelcomeText() {
-    return "Jameica";
-  }
-
-  /**
    * @see de.willuhn.jameica.AbstractPlugin#shutDown()
    */
   public void shutDown() {
@@ -66,6 +59,9 @@ public class Jameica extends AbstractPlugin
 
 /*********************************************************************
  * $Log: Jameica.java,v $
+ * Revision 1.7  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.6  2004/03/03 22:27:11  willuhn
  * @N help texts
  * @C refactoring

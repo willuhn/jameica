@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,15 +51,14 @@ public abstract class PasswordDialog extends SimpleDialog {
 	private Button cancel = null;
 	
 	private String labelText 					= "";
-	private String errorText					= "";
 	
 	private String enteredPassword = "";
 
 	/**
 	 * Erzeugt einen neuen Passwort-Dialog.
 	 * @param position Position des Dialogs.
-	 * @see Dialog#POSITION_MOUSE
-	 * @see Dialog#POSITION_CENTER
+	 * @see AbstractDialog#POSITION_MOUSE
+	 * @see AbstractDialog#POSITION_CENTER
 	 */
   public PasswordDialog(int position) {
     super(position);
@@ -184,10 +183,10 @@ public abstract class PasswordDialog extends SimpleDialog {
 			public void shellClosed(ShellEvent e) {
 				throw new RuntimeException("dialog cancelled via close button");
 			}
-      public void shellActivated(ShellEvent e) {};
-      public void shellDeactivated(ShellEvent e) {};
-      public void shellDeiconified(ShellEvent e) {};
-      public void shellIconified(ShellEvent e) {};
+      public void shellActivated(ShellEvent e) {}
+      public void shellDeactivated(ShellEvent e) {}
+      public void shellDeiconified(ShellEvent e) {}
+      public void shellIconified(ShellEvent e) {}
     });
 	}		
 
@@ -222,6 +221,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.7  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.6  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

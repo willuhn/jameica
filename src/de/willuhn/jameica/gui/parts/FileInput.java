@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/FileInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -125,21 +125,27 @@ public class FileInput extends Input
   }
 
   /**
+   * Liefert ein Objekt des Typs java.lang.String.
    * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
-  public String getValue()
+  public Object getValue()
   {
     return text.getText();
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
+   * Erwartet ein Objekt des Typs java.lang.String.
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
    */
-  public void setValue(String value)
+  public void setValue(Object value)
   {
     if (value == null)
       return;
-    this.text.setText(value);
+
+    if (!(value instanceof String))
+			return;
+
+		this.text.setText((String) value);
     this.text.redraw();
   }
 
@@ -171,6 +177,9 @@ public class FileInput extends Input
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.7  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.6  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

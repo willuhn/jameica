@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Tree.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -182,7 +182,7 @@ public class Tree {
 		 * ct. Laed ein neues Element des Baumes.
      * @param parent das Eltern-Element.
      * @param das aktuelle Element.
-     * @throws RemoteException.
+     * @throws RemoteException
      */
     Item(TreeItem parent, DBObjectNode element) throws RemoteException
 		{
@@ -272,6 +272,9 @@ public class Tree {
 
 /*********************************************************************
  * $Log: Tree.java,v $
+ * Revision 1.4  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.3  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.16 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,6 +53,9 @@ public class Start extends AbstractView
 
   }        
 
+  /**
+   * @see de.willuhn.jameica.gui.views.AbstractView#unbind()
+   */
   public void unbind()
   {
   }
@@ -61,6 +64,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.16  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.15  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

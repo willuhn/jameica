@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.5 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,9 +51,10 @@ public class LabelInput extends Input
   }
 
   /**
+   * Liefert immer <code>null</code>.
    * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
-  public String getValue()
+  public Object getValue()
   {
     return null;
   }
@@ -66,13 +67,14 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
+   * Erwartet ein Objekt des Typs java.lang.String.
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
    */
-  public void setValue(String value)
+  public void setValue(Object value)
   {
 		if (value == null || label == null)
 			return;
-		this.label.setText(value);
+		this.label.setText(value.toString());
 		this.label.redraw();
   }
 
@@ -95,6 +97,9 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.5  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.4  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/03/03 22:27:11 $
+ * $Revision: 1.22 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -231,6 +231,7 @@ public class Config
 	/**
 	 * Fuegt einen Remote-Service hinzu.
    * @param data der Datencontainer fuer den Remote-Service.
+	 * @throws ApplicationException
    */
   public void addRemoteServiceData(RemoteServiceData data) throws ApplicationException
 	{
@@ -263,6 +264,7 @@ public class Config
 	/**
 	 * Fuegt einen Local-Service hinzu.
 	 * @param data der Datencontainer fuer den Local-Service.
+	 * @throws ApplicationException
 	 */
 	public void addLocalServiceData(LocalServiceData data) throws ApplicationException
 	{
@@ -394,7 +396,7 @@ public class Config
 
 	/**
 	 * Legt den Log-Level fest.
-   * @param String Name des Log-Levels.
+   * @param name Name des Log-Levels.
    */
   public void setLoglevel(String name)
 	{
@@ -518,6 +520,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.22  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.21  2004/03/03 22:27:11  willuhn
  * @N help texts
  * @C refactoring

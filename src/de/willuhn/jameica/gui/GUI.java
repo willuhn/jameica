@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.28 $
- * $Date: 2004/03/05 00:40:45 $
+ * $Revision: 1.29 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -323,7 +323,7 @@ public class GUI
 	/**
 	 * Zeigt die View im angegebenen Composite an.
    * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
-   * @param parent Parent-Composite.
+	 * @param o das Fachobjekt.
    */
   public static void startView(final String className, final Object o)
 	{
@@ -668,6 +668,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.29  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.28  2004/03/05 00:40:45  willuhn
  * *** empty log message ***
  *

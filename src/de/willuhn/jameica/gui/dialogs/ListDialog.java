@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/26 18:47:03 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -122,19 +122,41 @@ public class ListDialog extends AbstractDialog
 	}
 
 
-  class ListController extends AbstractControl
+  /**
+   * Controller, der an der Liste haengt und bei Selection Aktionen durchfuehrt.
+   */
+  private class ListController extends AbstractControl
   {
 
 
+    /**
+     * ct.
+     * @param view die View, fuer die der Controller zustaendig ist. 
+     */
     public ListController(AbstractView view)
     {
       super(view);
     }
 
+    /**
+     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleDelete()
+     */
     public void handleDelete() {}
+    /**
+     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCancel()
+     */
     public void handleCancel() {}
+    /**
+     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleStore()
+     */
     public void handleStore() {}
+    /**
+     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCreate()
+     */
     public void handleCreate() {}
+    /**
+     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleOpen(java.lang.Object)
+     */
     public void handleOpen(Object o)
     {
       object = o;
@@ -156,6 +178,9 @@ public class ListDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.3  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.2  2004/02/26 18:47:03  willuhn
  * *** empty log message ***
  *

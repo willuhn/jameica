@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Input.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.5 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,13 +54,13 @@ public abstract class Input
    * Liefert den Wert des Eingabefelds.
    * @return Wert des Feldes.
    */
-  public abstract String getValue();
+  public abstract Object getValue();
 
   /**
    * Schreibt einen neuen Wert in das Eingabefeld.
    * @param value der neu anzuzeigende Wert.
    */
-  public abstract void setValue(String value);
+  public abstract void setValue(Object value);
 
   /**
    * Liefert das eigentliche Eingabecontrol. Es muss von jeder
@@ -216,6 +216,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.5  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.4  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

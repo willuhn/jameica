@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.14 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,7 @@ public class View
 
 	/**
    * Erzeugt ein neues Content-Frame.
+	 * @param parent
    */
   public View(Composite parent)
 	{
@@ -134,6 +135,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.14  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.13  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -107,6 +107,7 @@ public class Table
   /**
    * Malt die Tabelle auf das uebergebene Composite.
    * @param parent das Composite, auf dem die Tabelle plaziert werden soll.
+   * @throws RemoteException
    */
   public void paint(Composite parent) throws RemoteException
   {
@@ -262,7 +263,7 @@ public class Table
           return;
         TableItem item = table.getItem(i);
         if (item == null) return;
-        Object o = (Object) item.getData();
+        Object o = item.getData();
         if (o == null) return;
         controller.handleOpen(o);
       }
@@ -335,6 +336,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.8  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.7  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

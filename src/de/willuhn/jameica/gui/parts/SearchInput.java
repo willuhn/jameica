@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,6 +51,8 @@ public class SearchInput extends Input
   private Text text;
   private Button button;
   private String value;
+
+  private Object choosen;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -118,7 +120,7 @@ public class SearchInput extends Input
       {
         Application.getLog().debug("starting list dialog");
 				try {
-					dialog.open();
+					choosen = dialog.open();
 					text.redraw();
 					text.forceFocus(); // das muessen wir machen, damit die CommentLister ausgeloest werden
 				}
@@ -133,21 +135,23 @@ public class SearchInput extends Input
   }
 
   /**
+   * Liefert das Objekt, welches in dem ListDialog ausgewaehlt wurde.
+   * Fuer gewoehnlich ist das ein Fach-Objekt.
    * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
-  public String getValue()
+  public Object getValue()
   {
-    return text.getText();
+    return choosen;
   }
 
   /**
    * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
    */
-  public void setValue(String value)
+  public void setValue(Object value)
   {
     if (value == null)
       return;
-    this.text.setText(value);
+    this.text.setText(value.toString());
     this.text.redraw();
   }
 
@@ -179,6 +183,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.7  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.6  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

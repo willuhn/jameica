@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.34 $
- * $Date: 2004/03/03 22:27:11 $
+ * $Revision: 1.35 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -162,11 +162,9 @@ public class PluginLoader extends ClassLoader
 		{
 	    for(int i=0;i<jars.length;++i)
 	    {
-	      File file = (File) jars[i];
-	
 	      JarFile jar = null;
 	      try {
-	        jar = new JarFile(file);
+	        jar = new JarFile(jars[i]);
 	      }
 	      catch (IOException ioe) {
 	        continue; // skip
@@ -427,6 +425,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.35  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.34  2004/03/03 22:27:11  willuhn
  * @N help texts
  * @C refactoring

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SimpleDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.5 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,8 +35,8 @@ public class SimpleDialog extends AbstractDialog {
 	/**
 	 * Erzeugt einen neuen simplen Dialog mit OK-Knopf.
 	 * @param position Position des Dialogs.
-	 * @see Dialog#POSITION_MOUSE
-	 * @see Dialog#POSITION_CENTER
+	 * @see AbstractDialog#POSITION_MOUSE
+	 * @see AbstractDialog#POSITION_CENTER
 	 */
   public SimpleDialog(int position) {
     super(position);
@@ -94,6 +94,9 @@ public class SimpleDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: SimpleDialog.java,v $
+ * Revision 1.5  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.4  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

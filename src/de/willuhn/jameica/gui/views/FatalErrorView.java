@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,9 @@ import de.willuhn.jameica.gui.parts.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
+/**
+ * View, die gestartet wird, wenn der Main-GUI Loop gecrasht ist.
+ */
 public class FatalErrorView extends AbstractView
 {
 
@@ -119,6 +122,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.7  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.6  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/AbstractControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/06 18:24:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,6 +71,7 @@ public abstract class AbstractControl
 	/**
 	 * Liefert das aktuelle Business-Objekt des Dialogs.
    * @return aktuelles Business-Objekt.
+	 * @throws RemoteException
    */
   public Object getCurrentObject() throws RemoteException
 	{
@@ -80,6 +81,9 @@ public abstract class AbstractControl
 
 /*********************************************************************
  * $Log: AbstractControl.java,v $
+ * Revision 1.3  2004/03/06 18:24:24  willuhn
+ * @D javadoc
+ *
  * Revision 1.2  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

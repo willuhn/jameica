@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/CheckboxInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/03/04 00:35:14 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/06 18:24:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,11 +28,9 @@ public class CheckboxInput extends Input
   private Button button;
   private boolean value;
   
-  public final static String ENABLED = "true";
-  public final static String DISABLED = "false"; 
-
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+   * @param value true, wenn die Checkbox aktiviert werden soll.
    */
   public CheckboxInput(boolean value)
   {
@@ -53,22 +51,27 @@ public class CheckboxInput extends Input
   }
 
   /**
+   * Liefert ein Objekt des Typs java.lang.Boolean.
    * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
-  public String getValue()
+  public Object getValue()
   {
-  	return button.getSelection() ? ENABLED : DISABLED;
+  	return new Boolean(button.getSelection());
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
+   * Erwartet ein Objekt des Typs java.lang.Boolean.
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.Object)
    */
-  public void setValue(String value)
+  public void setValue(Object value)
   {
     if (value == null)
       return;
 
-    this.button.setSelection(value.equalsIgnoreCase(ENABLED));
+    if (!(value instanceof Boolean))
+    	return;
+
+    this.button.setSelection(((Boolean)value).booleanValue());
     this.button.redraw();
   }
 
@@ -102,6 +105,9 @@ public class CheckboxInput extends Input
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.4  2004/03/06 18:24:23  willuhn
+ * @D javadoc
+ *
  * Revision 1.3  2004/03/04 00:35:14  willuhn
  * *** empty log message ***
  *
