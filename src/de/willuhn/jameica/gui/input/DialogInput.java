@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004/04/29 19:15:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,7 +57,8 @@ public class DialogInput extends AbstractInput
   private AbstractDialog dialog;
   private Text text;
   private String value;
-  private boolean enabled = true;
+	private boolean textEnabled = true;
+  private boolean buttonEnabled = true;
 
 	private Button button;
 	private String buttonText;
@@ -115,7 +116,7 @@ public class DialogInput extends AbstractInput
 		text.setLayoutData(comboFD2);
 		text.setBackground(Style.COLOR_WHITE);
     text.setText((value == null ? "" : value));
-    text.setEnabled(enabled);
+    text.setEnabled(textEnabled);
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
         text.setSelection(0, text.getText().length());
@@ -131,7 +132,7 @@ public class DialogInput extends AbstractInput
 			button.setText(this.buttonText);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.setAlignment(SWT.RIGHT);
-    button.setEnabled(enabled);
+    button.setEnabled(buttonEnabled);
     button.addMouseListener(new MouseAdapter()
     {
       public void mouseUp(MouseEvent e)
@@ -219,11 +220,8 @@ public class DialogInput extends AbstractInput
    */
   public void disable()
   {
-  	enabled = false;
-  	if (text != null && !text.isDisposed())
-	    text.setEnabled(false);
-	  if (button != null && !button.isDisposed())
-	  	button.setEnabled(false);
+  	disableButton();
+  	disableText();
   }
 
   /**
@@ -231,17 +229,56 @@ public class DialogInput extends AbstractInput
    */
   public void enable()
   {
-		enabled = true;
-		if (text != null && !text.isDisposed())
-	    text.setEnabled(true);
-		if (button != null && !button.isDisposed())
-			button.setEnabled(true);
+  	enableButton();
+  	enableText();
   }
 
+	/**
+   * Aktiviert nur den Text.
+   */
+  public void enableText()
+	{
+		textEnabled = true;
+		if (text != null && !text.isDisposed())
+			text.setEnabled(true);
+	}
+	
+	/**
+   * Aktiviert nur den Button.
+   */
+  public void enableButton()
+	{
+		buttonEnabled = true;
+		if (button != null && !button.isDisposed())
+			button.setEnabled(true);
+	}
+	
+	/**
+   * Deaktiviert nur den Text.
+   */
+  public void disableText()
+	{
+		textEnabled = false;
+		if (text != null && !text.isDisposed())
+			text.setEnabled(false);
+	}
+	
+	/**
+   * Deaktiviert nur den Button.
+   */
+  public void disableButton()
+	{
+		buttonEnabled = false;
+		if (button != null && !button.isDisposed())
+			button.setEnabled(false);
+	}
 }
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.3  2004/04/29 19:15:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *
