@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/18 01:40:29 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/18 17:14:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,9 @@ import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -98,11 +101,25 @@ public class Table
    */
   public void paint(Composite parent) throws RemoteException
   {
-    int style = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
 
-    table = new org.eclipse.swt.widgets.Table(parent, style);
+    Composite comp = new Composite(parent,SWT.NONE);
     final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-    table.setLayoutData(gridData);
+    comp.setLayoutData(gridData);
+    comp.setBackground(Style.COLOR_BORDER);
+    
+    comp.setLayout(new FormLayout());
+
+    FormData comboFD = new FormData();
+    comboFD.left = new FormAttachment(0, 1);
+    comboFD.top = new FormAttachment(0, 1);
+    comboFD.right = new FormAttachment(100, -1);
+    comboFD.bottom = new FormAttachment(100, -1);
+
+
+    int style = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
+
+    table = new org.eclipse.swt.widgets.Table(comp, style);
+    table.setLayoutData(comboFD);
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
     
@@ -302,6 +319,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.3  2004/02/18 17:14:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/02/18 01:40:29  willuhn
  * @N new white style
  *

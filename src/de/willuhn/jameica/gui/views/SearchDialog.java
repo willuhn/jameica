@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/01/28 20:51:25 $
+ * $Revision: 1.12 $
+ * $Date: 2004/02/18 17:14:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.parts.Formatter;
 import de.willuhn.jameica.gui.parts.Table;
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
 /**
@@ -116,6 +117,7 @@ public abstract class SearchDialog
       shell = new Shell(GUI.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
       shell.setText(title == null ? I18N.tr("Suche") : title);
       shell.setLocation(display.getCursorLocation());
+      shell.setBackground(Style.COLOR_BG);
       shell.setLayout(new GridLayout(1,false));
 
       table.paint(shell);
@@ -203,6 +205,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.12  2004/02/18 17:14:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/01/28 20:51:25  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/12 00:49:20 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/18 17:14:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,13 +17,18 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
 /**
@@ -35,7 +40,7 @@ public class SelectInput extends Input
 
   private Hashtable values = new Hashtable();
   private String preselected;
-  private Combo combo;
+  private CCombo combo;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -133,7 +138,20 @@ public class SelectInput extends Input
   public Control getControl()
   {
 
-    combo = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
+    Composite comp = new Composite(parent,SWT.NONE);
+    comp.setBackground(Style.COLOR_BORDER);
+    combo = new CCombo(comp, SWT.FLAT | SWT.READ_ONLY);
+    
+    comp.setLayout(new FormLayout());
+
+    FormData comboFD = new FormData();
+    comboFD.left = new FormAttachment(0, 1);
+    comboFD.top = new FormAttachment(0, 1);
+    comboFD.right = new FormAttachment(100, -1);
+    comboFD.bottom = new FormAttachment(100, -1);
+    combo.setLayoutData(comboFD);
+    
+    combo.setBackground(Style.COLOR_WHITE);
 
     int selected = 0;
 
@@ -149,7 +167,7 @@ public class SelectInput extends Input
     }
     combo.select(selected);
 
-    return combo;
+    return comp;
   }
 
   /**
@@ -196,6 +214,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.3  2004/02/18 17:14:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/02/12 00:49:20  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/18 01:40:30 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/18 17:14:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,9 +33,10 @@ public class Style
 
   private static Map imagecache = new HashMap();
 
-  public final static Color COLOR_WHITE   = new Color(GUI.getDisplay(),255,255,255);
-	public final static Color COLOR_COMMENT = new Color(GUI.getDisplay(),60,60,60);
-	public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 255, 255, 255);
+  public final static Color COLOR_WHITE   = new Color(GUI.getDisplay(), 255, 255, 255);
+	public final static Color COLOR_COMMENT = new Color(GUI.getDisplay(), 140, 140, 140);
+	public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 251, 251, 251);
+  public final static Color COLOR_BORDER  = new Color(GUI.getDisplay(), 100, 100, 100);
 
 
   public final static Font FONT_H1 = new Font(GUI.getDisplay(),"Verdana", 10, SWT.BOLD);
@@ -78,6 +79,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.4  2004/02/18 17:14:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/02/18 01:40:30  willuhn
  * @N new white style
  *

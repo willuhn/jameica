@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Text.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/29 00:07:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/18 17:14:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -113,16 +113,16 @@ public class Text
   public void paint(Composite parent)
 	{
 		final GridLayout layout = new GridLayout();
-		layout.marginHeight = 4;
-		layout.marginWidth  = 4;
+		layout.marginHeight = 1;
+		layout.marginWidth  = 1;
 		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		Composite box = new Composite(parent, SWT.BORDER); // das brauchen wir fuer den Rand.
+		Composite box = new Composite(parent, SWT.NONE); // das brauchen wir fuer den Rand.
 		box.setLayoutData(gridData);
 		box.setLayout(layout);
-		box.setBackground(Style.COLOR_WHITE);
+		box.setBackground(Style.COLOR_BG);
 
 		final StyledText stext = new StyledText(box,SWT.READ_ONLY | SWT.H_SCROLL);
- 		stext.setBackground(Style.COLOR_WHITE);
+ 		stext.setBackground(Style.COLOR_BG);
 		stext.setEditable(false);
 		stext.setEnabled(false);
 		stext.setWordWrap(wrap);
@@ -135,6 +135,9 @@ public class Text
 
 /**********************************************************************
  * $Log: Text.java,v $
+ * Revision 1.2  2004/02/18 17:14:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/01/29 00:07:24  willuhn
  * @N Text widget
  *

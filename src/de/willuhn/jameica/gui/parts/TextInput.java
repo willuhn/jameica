@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/TextInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/18 17:14:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,14 @@ package de.willuhn.jameica.gui.parts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+
+import de.willuhn.jameica.gui.util.Style;
 
 /**
  * Ist zustaendig fuer Standard-Eingabefelder.
@@ -43,7 +49,22 @@ public class TextInput extends Input
   public Control getControl()
   {
 
-    text = new Text(getParent(), SWT.BORDER);
+    Composite comp = new Composite(getParent(),SWT.NONE);
+    comp.setBackground(Style.COLOR_BORDER);
+    
+    text = new Text(comp, SWT.NONE);
+
+    comp.setLayout(new FormLayout());
+
+    FormData comboFD = new FormData();
+    comboFD.left = new FormAttachment(0, 1);
+    comboFD.top = new FormAttachment(0, 1);
+    comboFD.right = new FormAttachment(100, -1);
+    comboFD.bottom = new FormAttachment(100, -1);
+    text.setLayoutData(comboFD);
+    
+    text.setBackground(Style.COLOR_WHITE);
+
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
@@ -51,7 +72,7 @@ public class TextInput extends Input
       }
     });
 
-    return text;
+    return comp;
   }
 
   /**
@@ -101,6 +122,9 @@ public class TextInput extends Input
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.2  2004/02/18 17:14:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
