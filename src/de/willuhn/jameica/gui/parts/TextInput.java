@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/TextInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/03/16 23:59:40 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/25 00:45:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ public class TextInput extends AbstractInput
 
   protected Text text;
   private String value;
+  private boolean enabled = true;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
@@ -51,20 +52,18 @@ public class TextInput extends AbstractInput
 
     Composite comp = new Composite(getParent(),SWT.NONE);
     comp.setBackground(Style.COLOR_BORDER);
+		comp.setLayout(new FormLayout());
     
-    text = new Text(comp, SWT.NONE);
-
-    comp.setLayout(new FormLayout());
-
     FormData comboFD = new FormData();
     comboFD.left = new FormAttachment(0, 1);
     comboFD.top = new FormAttachment(0, 1);
     comboFD.right = new FormAttachment(100, -1);
     comboFD.bottom = new FormAttachment(100, -1);
-    text.setLayoutData(comboFD);
-    
-    text.setBackground(Style.COLOR_WHITE);
 
+		text = new Text(comp, SWT.NONE);
+		text.setEnabled(enabled);
+    text.setLayoutData(comboFD);
+    text.setBackground(Style.COLOR_WHITE);
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
@@ -108,7 +107,9 @@ public class TextInput extends AbstractInput
    */
   public void disable()
   {
-    text.setEnabled(false);
+  	enabled = false;
+  	if (text != null && !text.isDisposed())
+	    text.setEnabled(false);
   }
 
   /**
@@ -116,13 +117,18 @@ public class TextInput extends AbstractInput
    */
   public void enable()
   {
-    text.setEnabled(true);
+  	enabled = true;
+  	if (text != null && !text.isDisposed())
+	    text.setEnabled(true);
   }
 
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.6  2004/03/25 00:45:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/03/16 23:59:40  willuhn
  * @N 2 new Input fields
  *

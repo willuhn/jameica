@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/DecimalInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/22 22:53:43 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/25 00:45:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,7 +60,13 @@ public class DecimalInput extends TextInput
         char [] chars = new char [t.length ()];
         t.getChars (0, chars.length, chars, 0);
         for (int i=0; i<chars.length; i++) {
-          if (!('0' <= chars[i] && chars[i] <= '9') && !(chars[i] == ',')) {
+        	// Wir lassen nur 0-9, Komma und Minus zu
+          if (!('0' <= chars[i] &&
+                chars[i] <= '9') &&
+                !(chars[i] == ',') &&
+								!(chars[i] == '-')
+             )
+          {
             e.doit = false;
             return;
           }
@@ -110,6 +116,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.8  2004/03/25 00:45:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/03/22 22:53:43  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.10 $
+ * $Date: 2004/03/25 00:45:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -171,9 +171,8 @@ public class SearchInput extends AbstractInput
   public void disable()
   {
   	enabled = false;
-  	if (text == null)
-  		return;
-    text.setEnabled(false);
+  	if (text != null && !text.isDisposed())
+	    text.setEnabled(false);
   }
 
   /**
@@ -182,15 +181,17 @@ public class SearchInput extends AbstractInput
   public void enable()
   {
 		enabled = true;
-		if (text == null)
-			return;
-    text.setEnabled(true);
+		if (text != null && !text.isDisposed())
+	    text.setEnabled(true);
   }
 
 }
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.10  2004/03/25 00:45:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *
