@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.12 $
+ * $Date: 2004/03/30 22:08:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,8 +36,6 @@ import org.eclipse.swt.widgets.TableItem;
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
@@ -111,7 +109,7 @@ public class Table
   public void paint(Composite parent) throws RemoteException
   {
 
-		I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		I18N i18n = Application.getI18n();
 
     Composite comp = new Composite(parent,SWT.NONE);
     // final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
@@ -350,6 +348,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.12  2004/03/30 22:08:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *

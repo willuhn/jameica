@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/03/04 00:26:34 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,8 +28,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
@@ -49,7 +47,7 @@ public class HelpView {
    */
   public HelpView(Composite parent) {
 
-		I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		I18N i18n = Application.getI18n();
 		///////////////////////////////
 		// Eigenes Parent, damit wir ein GridLayout verwenden koennen
 		myParent = new Composite(parent,SWT.BORDER);
@@ -177,6 +175,9 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.3  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/03/04 00:26:34  willuhn
  * *** empty log message ***
  *

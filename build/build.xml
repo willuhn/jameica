@@ -93,15 +93,7 @@
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="lib/linux/swt.jar"/>
-		    	<attribute name="Class-Path" value="lib/linux/swt-pi.jar"/>
-		    	<attribute name="Class-Path" value="lib/linux/swt-mozilla.jar"/>
-		    	<attribute name="Class-Path" value="lib/de_willuhn_ds.jar"/>
-		    	<attribute name="Class-Path" value="lib/de_willuhn_util.jar"/>
-		    	<attribute name="Class-Path" value="lib/nanoxml-2.2.3.jar"/>
-		    	<attribute name="Class-Path" value="img"/>
-		    	<attribute name="Class-Path" value="lang"/>
-		    	<attribute name="Class-Path" value="help"/>
+		    	<attribute name="Class-Path" value="lib/linux/swt.jar lib/linux/swt-pi.jar lib/linux/swt-mozilla.jar lib/de_willuhn_ds.jar lib/de_willuhn_util.jar lib/nanoxml-2.2.3.jar img  lang help"/>
 		    </manifest>
 		    <fileset dir="${class.dir}"/>
 		</jar>
@@ -113,13 +105,7 @@
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="lib/win32/swt.jar"/>
-		    	<attribute name="Class-Path" value="lib/de_willuhn_ds.jar"/>
-		    	<attribute name="Class-Path" value="lib/de_willuhn_util.jar"/>
-		    	<attribute name="Class-Path" value="lib/nanoxml-2.2.3.jar"/>
-		    	<attribute name="Class-Path" value="img"/>
-		    	<attribute name="Class-Path" value="lang"/>
-		    	<attribute name="Class-Path" value="help"/>
+		    	<attribute name="Class-Path" value="lib/win32/swt.jar lib/de_willuhn_ds.jar lib/de_willuhn_util.jar lib/nanoxml-2.2.3.jar img lang help"/>
 		    </manifest>
 		    <fileset dir="${class.dir}"/>
 		</jar>

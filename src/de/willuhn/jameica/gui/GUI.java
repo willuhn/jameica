@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.33 $
- * $Date: 2004/03/29 23:20:50 $
+ * $Revision: 1.34 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,10 +32,7 @@ import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.AbstractPlugin;
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.gui.util.Style;
@@ -94,12 +91,10 @@ public class GUI
   private void load() {
     Application.getLog().info("startup GUI");
 
-		AbstractPlugin jameica = PluginLoader.getPlugin(Jameica.class);
-
     // init shell
     shell.setLayout(createGrid(2,false));
     shell.setLayoutData(new GridData(GridData.FILL_BOTH));
-    shell.setText(jameica.getName() + " " + jameica.getVersion());
+    shell.setText("Jameica " + Application.getVersion());
     shell.setImage(Style.getImage("globe.gif"));
 
 		////////////////////////////
@@ -183,7 +178,7 @@ public class GUI
       appendNavigation(entry);
     }
 
-		getStatusBar().setStatusText(jameica.getResources().getI18N().tr("startup finished"));
+		getStatusBar().setStatusText(Application.getI18n().tr("startup finished"));
   } 
   
 
@@ -630,6 +625,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.34  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.33  2004/03/29 23:20:50  willuhn
  * *** empty log message ***
  *

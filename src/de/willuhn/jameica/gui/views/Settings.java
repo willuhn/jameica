@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/03/24 00:46:02 $
+ * $Revision: 1.14 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,8 +16,7 @@ package de.willuhn.jameica.gui.views;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.SettingsControl;
 import de.willuhn.jameica.gui.parts.ButtonArea;
@@ -38,7 +37,7 @@ public class Settings extends AbstractView
   public void bind()
   {
 
-		final I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		final I18N i18n = Application.getI18n();
 		GUI.getView().setTitle(i18n.tr("Einstellungen"));
 
 		final SettingsControl control = new SettingsControl(this);
@@ -95,6 +94,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.14  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/03/24 00:46:02  willuhn
  * @C refactoring
  *

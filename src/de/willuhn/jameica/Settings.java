@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/16 23:59:40 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -108,6 +108,26 @@ public class Settings
 	}
 
 	/**
+	 * Liefert den Wert des genannten Attributs als double.
+	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
+	 * @param name Name des Attributs.
+	 * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
+	 * @return der Wert des Attributs.
+	 */
+	public double getDouble(String name, double defaultValue)
+	{
+		String s = getString(name,""+defaultValue);
+		try {
+			return Double.parseDouble(s);
+		}
+		catch (NumberFormatException e)
+		{
+			Application.getLog().error("unable to parse value of param \"" + name + "\", value: " + s,e);
+		}
+		return defaultValue;
+	}
+
+	/**
 	 * Liefert den Wert des Attribute <name>.
 	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
 	 * @param name Name des Attribut.
@@ -135,6 +155,16 @@ public class Settings
    * @param value Wert des Attributs.
    */
   public void setAttribute(String name, int value)
+	{
+		setAttribute(name,""+value);
+	}
+
+	/**
+	 * Speichert einen Double-Wert.
+	 * @param name Name des Attributs.
+	 * @param value Wert des Attributs.
+	 */
+	public void setAttribute(String name, double value)
 	{
 		setAttribute(name,""+value);
 	}
@@ -176,6 +206,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.8  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/03/16 23:59:40  willuhn
  * @N 2 new Input fields
  *

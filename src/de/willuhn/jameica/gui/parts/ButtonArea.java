@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/30 22:08:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,8 +25,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.util.Style;
@@ -51,7 +49,7 @@ public class ButtonArea
    */
   public ButtonArea(Composite parent, int numButtons)
   {
-		i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		i18n = Application.getI18n();
     GridLayout layout = new GridLayout();
     layout.marginHeight=0;
     layout.marginWidth=0;
@@ -178,6 +176,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.7  2004/03/30 22:08:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

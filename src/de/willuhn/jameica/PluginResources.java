@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginResources.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/03/29 23:20:49 $
+ * $Revision: 1.5 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -81,6 +81,7 @@ public class PluginResources {
 	 */
 	protected String getUsername()
 	{
+		//TODO: DB-User
 		return "jameica";
 	}
 
@@ -92,6 +93,7 @@ public class PluginResources {
 	 */
 	protected String getPassword()
 	{
+		//TODO: DB-Password
 		return "jameica"; 
 	}
 
@@ -100,6 +102,9 @@ public class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.5  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/03/29 23:20:49  willuhn
  * *** empty log message ***
  *

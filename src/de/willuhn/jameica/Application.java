@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.30 $
- * $Date: 2004/03/29 23:20:49 $
+ * $Revision: 1.31 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
+import de.willuhn.util.I18N;
 import de.willuhn.util.Lock;
 import de.willuhn.util.Logger;
 import de.willuhn.util.MultipleClassLoader;
@@ -50,6 +51,7 @@ public class Application {
     private Logger log;
     private Config config;
     private MultipleClassLoader classLoader;
+    private I18N i18n;
     
   /**
    * ct.
@@ -136,6 +138,13 @@ public class Application {
 		app.log.setLevel(app.config.getLogLevel());
 		//
 		////////////////////////////////////////////////////////////////////////////
+
+		////////////////////////////////////////////////////////////////////////////
+		// init config
+		app.i18n = new I18N("lang/messages",app.config.getLocale());
+		//
+		////////////////////////////////////////////////////////////////////////////
+
 
 		////////////////////////////////////////////////////////////////////////////
     // switch logger to defined log file
@@ -264,11 +273,32 @@ public class Application {
     return serverMode;
   }
   
+	/**
+	 * Liefert die aktuelle Versionsnummer von Jameica.
+   * @return Versionsnummer.
+   */
+  public static double getVersion()
+	{
+		// TODO: Versionsnummer aus Jar.
+		return 1.1;
+	}
+	
+	/**
+	 * Liefert das Language-Pack fuer Jameica selbst.
+   * @return Language-Pack.
+   */
+  public static I18N getI18n()
+	{
+		return app.i18n;
+	}
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.31  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.30  2004/03/29 23:20:49  willuhn
  * *** empty log message ***
  *

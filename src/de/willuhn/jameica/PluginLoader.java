@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.38 $
- * $Date: 2004/03/29 23:20:49 $
+ * $Revision: 1.39 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,12 +13,13 @@
 package de.willuhn.jameica;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -33,7 +34,7 @@ public class PluginLoader extends ClassLoader
 {
 
   // Liste mit allen gefundenen Plugins.
-  private static Hashtable installedPlugins = new Hashtable();
+  private static Hashtable plugins = new Hashtable();
 
   // BasisPlugin-Basis-Klasse
   private static Class pluginClass = AbstractPlugin.class;
@@ -48,8 +49,6 @@ public class PluginLoader extends ClassLoader
 	 */
 	public static void init()
 	{
-		initSelf();
-
 		Application.getLog().info("init plugins");
 		String[] dirs = Application.getConfig().getPluginDirs();
 		for (int i=0;i<dirs.length;++i)
@@ -61,20 +60,10 @@ public class PluginLoader extends ClassLoader
 				continue; 
 			init(f);
 		}
-	}
 
-	/**
-   * Wir initialisieren unser eigenes Plugin.
-   */
-  private static void initSelf()
-	{
-		// entpackt in der IDE
-		// TODO: Jar richtig erkennen
-		File f = new File(Application.getConfig().getDir() + "/jameica.jar");
-		if (!f.exists()) // deployed als Jar
-			f = new File(Application.getConfig().getDir());
-		AbstractPlugin jameica = new Jameica(f);
-		installedPlugins.put(Jameica.class,jameica);
+		// Wir machen das Initialisieren der Plugins zum Schluss, um
+		// sicherzustellen, dass der ClassLoader alle Daten hat.
+		initPlugins();
 	}
 
   /**
@@ -86,12 +75,12 @@ public class PluginLoader extends ClassLoader
     if (plugindir == null)
     	return;
 
-		Application.getLog().info("checking directory " + plugindir.getAbsolutePath());
+		Application.getLog().debug("checking directory " + plugindir.getAbsolutePath());
 
     File[] jars = null;
     try {
     	// Wir fuegen das Verzeichnis zum ClassLoader hinzu.
-    	Application.getClassLoader().add(new File(plugindir.getPath() + File.separator + "bin"));
+    	Application.getClassLoader().add(new File(plugindir.getPath() + "/bin"));
     	
     	// Und jetzt noch alle darin befindlichen Jars
     	jars = Application.getClassLoader().addJars(plugindir);
@@ -111,7 +100,9 @@ public class PluginLoader extends ClassLoader
 			File menu = null;
 			File navi = null;
 			String name = null;
-			boolean pluginFound = false;
+			ArrayList classes = new ArrayList();
+
+			// Wir iterieren ueber alle Dateien in dem Verzeichnis.
 			for (int i=0;i<child.length;++i)
 			{
 				name = child[i].getPath();
@@ -121,6 +112,7 @@ public class PluginLoader extends ClassLoader
 				if (name.endsWith("navigation.xml"))
 					navi = child[i]; 
 	
+				// Alle Klassen, die jetzt nicht mit ".class" aufhoeren, koennen wir ignorieren
 				if (!name.endsWith(".class"))
 					continue;
 	
@@ -128,25 +120,20 @@ public class PluginLoader extends ClassLoader
 				name = name.substring(plugindir.getPath().length()+5); // "/bin/"
 				name = name.substring(0, name.indexOf(".class")).replace('/', '.').replace('\\', '.');
 	
-				// Wir laden das Plugin
-				pluginFound = loadPlugin(plugindir,name) || pluginFound;
+				// Checken, ob es ein gueltiges Plugin ist
+				Class c = load(name);
+				if (c != null) classes.add(c);
 			}
 
-			if (pluginFound && menu != null)
+			// Jetzt erzeugen wir einen PluginContainer fuer jedes gefundene Plugin.
+			for (int i=0;i<classes.size();++i)
 			{
-				Application.getLog().info("adding menu from plugin " + plugindir.getAbsolutePath());
-				try
-				{
-					GUI.addMenu(new FileInputStream(menu));
-				} catch (IOException e1) {Application.getLog().error("failed",e1);}
-			}
-			if (pluginFound && navi != null)
-			{
-				Application.getLog().info("adding navigation from plugin " + plugindir.getAbsolutePath());
-				try
-				{
-					GUI.addNavigation(new FileInputStream(navi));
-				} catch (IOException e1) {Application.getLog().error("failed",e1);}
+				DirPluginContainer dp = new DirPluginContainer();
+				dp.setFile(plugindir);
+				dp.setMenu(menu);
+				dp.setNavi(navi);
+				dp.setPluginClass((Class)classes.get(i));
+				plugins.put(classes.get(i),dp);
 			}
 		}
 		//
@@ -159,6 +146,7 @@ public class PluginLoader extends ClassLoader
 		// befindlichen Klassen und versuchen sie zu laden
 		if (jars == null || jars.length == 0)
 			return;
+
 		{
 	    for(int i=0;i<jars.length;++i)
 	    {
@@ -177,9 +165,9 @@ public class PluginLoader extends ClassLoader
 	      Enumeration jarEntries = jar.entries();
 	      JarEntry entry = null;
 	
-				boolean pluginFound = false;
 				JarEntry menu = null;
 				JarEntry navi = null;
+				ArrayList classes = new ArrayList();
 	      while (jarEntries.hasMoreElements())
 	      {
 					entry = (JarEntry) jarEntries.nextElement();
@@ -192,31 +180,30 @@ public class PluginLoader extends ClassLoader
 	          navi = entry; 
 	
 					int idxClass = entryName.indexOf(".class");
+
+					// alles, was nicht mit ".class" aufhoert, koennen wir jetzt ignorieren
 					if (idxClass == -1)
 						continue;
 	
+					// wir machen einen Klassen-Namen draus
 					entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
-	
-					// Wir laden das Plugin
-					pluginFound = loadPlugin(new File(jar.getName()),entryName) || pluginFound;
-	      }
-	
-				if (pluginFound && menu != null)
-				{
-					Application.getLog().info("adding menu from plugin " + jar.getName());
-	        try
-	        {
-	          GUI.addMenu(jar.getInputStream(menu));
-	        } catch (IOException e1) {Application.getLog().error("failed",e1);}
+
+
+					// Checken, ob es ein gueltiges Plugin ist
+					Class c = load(entryName);
+					if (c != null) classes.add(c);
 				}
-				if (pluginFound && navi != null)
+
+				// Jetzt erzeugen wir einen PluginContainer fuer jedes gefundene Plugin.
+				for (int j=0;j<classes.size();++j)
 				{
-	        Application.getLog().info("adding navigation from plugin " + jar.getName());
-	        try
-	        {
-	          GUI.addNavigation(jar.getInputStream(navi));
-					} catch (IOException e1) {Application.getLog().error("failed",e1);}
-	      }
+					JarPluginContainer jp = new JarPluginContainer();
+					jp.setFile(jar);
+					jp.setMenu(menu);
+					jp.setNavi(navi);
+					jp.setPluginClass((Class)classes.get(j));
+					plugins.put(classes.get(j),jp);
+				}
 	    }
 		}
 		//
@@ -226,165 +213,156 @@ public class PluginLoader extends ClassLoader
 
   /**
    * Prueft ob die uebergebene Klasse ein gueltiges Plugin ist.
-   * @param plugin Klasse
-   * @return true, wenn es ein Plugin ist, ansonsten false.
+   * Und versucht, die zugehoerige Klasse zu laden
+   * @param className Name des zu checkenden Plugins.
+   * @return Klasse, wenn es gueltig ist und geladen werden konnte. Andernfalls null.
    */
-  private static boolean checkPlugin(Class plugin)
+  private static Class load(String classname)
   {
 
-    Class parent = plugin.getSuperclass();
+		Class clazz = null;
+		try {
+			clazz = Application.getClassLoader().load(classname);
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
+		catch (Throwable t)
+		{
+			Application.getLog().error("error while loading class " + classname,t);
+			return null;
+		}
+    
+		if (clazz == null)
+			return null;
+
+    Class parent = clazz.getSuperclass();
     if (parent != null && parent.equals(pluginClass))
-      return true;
-    return false;
+      return clazz;
+    return null;
   }
 
+
   /**
-   * Laedt das angegebene Plugin.
-   * @param file Jar-File oder Verzeichnis in dem sich das Plugin befindet.
-   * @param classname Name der zu ladenden Klasse.
-   * @return true, wenn es geladen und initialisiert werden konnte.
+   * Instanziiert die geladenen Plugins.
    */
-  private static boolean loadPlugin(File file, String classname)
+  private static void initPlugins()
   {
 
-		///////////////////////////////////////////////////////////////
-		// Klasse laden
-    Class clazz = null;
-    try {
-			clazz = Application.getClassLoader().load(classname);
-    }
-    catch (ClassNotFoundException e)
-    {
-			return false;
-    }
-    
-    if (clazz == null)
-    	return false;
-		//
-		///////////////////////////////////////////////////////////////
-
-		///////////////////////////////////////////////////////////////
-		// Klasse checken
-    if (!checkPlugin(clazz))
+		Enumeration e = plugins.elements();
+		while (e.hasMoreElements())
 		{
-			return false; // no valid plugin
-		}
-		//
-		///////////////////////////////////////////////////////////////
+			PluginContainer container = (PluginContainer) e.nextElement();
 
-    
+			initPlugin(container);
+		}
+  }
+  
+  /**
+   * Instanziiert das Plugin.
+   * @param container
+   */
+  private static void initPlugin(PluginContainer container)
+  {
+		Class pluginClass = container.getPluginClass();
+
+		if (container.isInstalled())
+		{
+			Application.getLog().debug("plugin " + pluginClass.getName() + " allready installed, skipping");
+			return;
+		}
+
+		Application.getLog().debug("trying to initialize " + pluginClass.getName());
+
 		///////////////////////////////////////////////////////////////
 		// Klasse instanziieren
-    Application.getLog().debug("trying to initialize " + classname);
-    Constructor ct = null;
-    AbstractPlugin plugin = null;
-    try
-    {
-			ct = clazz.getConstructor(new Class[]{File.class});
-			ct.setAccessible(true);
-			plugin = (AbstractPlugin) ct.newInstance(new Object[]{file});
-    }
-    catch (Exception e)
-    {
-	    Application.getLog().error("failed",e);
-	    return false;
-    }
-		//
-		///////////////////////////////////////////////////////////////
-
-
-		///////////////////////////////////////////////////////////////
-		// Pruefen, ob schon installiert
-		Application.getLog().debug("checking if allready loaded");
-		if (installedPlugins.get(plugin.getClass()) != null)
+		Constructor ct = null;
+		AbstractPlugin plugin = null;
+		try
 		{
-      Application.getLog().debug("yes, skipping");
-      return false;
-    }
+			ct = pluginClass.getConstructor(new Class[]{File.class});
+			ct.setAccessible(true);
+			plugin = (AbstractPlugin) ct.newInstance(new Object[]{container.getFile()});
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("failed",e);
+			return;
+		}
+		container.setPlugin(plugin);
 		//
 		///////////////////////////////////////////////////////////////
 
- 
     // Bevor wir das Plugin initialisieren, pruefen, ob vorher eine aeltere
     // Version des Plugins installiert war. Ist das der Fall rufen wir dessen
     // update() Methode vorher auf.
-    String installed = updateChecker.getString(classname + ".version",null);
-    if (installed == null)
+    double oldVersion = updateChecker.getDouble(pluginClass.getName() + ".version",-1);
+    if (oldVersion == -1)
     {
       // Plugin wurde zum ersten mal gestartet
-      Application.getLog().info("Plugin started for the first time. Starting install");
+      Application.getLog().debug("Plugin started for the first time. Starting install");
 			Application.splash("installing plugin " + plugin.getName());
       try {
         if (!plugin.install())
         {
 					Application.getLog().error("failed");
-					return false;
+					return;
         }
-        // Installation erfolgreich
-        updateChecker.setAttribute(classname + ".version","" + plugin.getVersion());
       }
       catch (Exception e)
       {
+      	// Fuer den Fall, dass das Plugin eine RuntimeException beim Install macht.
         Application.getLog().error("failed",e);
-        return false;
+        return;
       }
     }
     else {
       // Huu - das Plugin war schon mal installiert. Mal schauen, in welcher Version
-      double oldVersion = 1.0;
       double newVersion = plugin.getVersion();
-      try {
-        oldVersion = Double.parseDouble(installed);
-      }
-      catch (NumberFormatException e) {}
 
       if (oldVersion < newVersion)
       {
-        Application.getLog().info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
+        Application.getLog().debug("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
         // hui, sogar eine neuere Version. Also starten wir dessen Update
 				Application.splash("updating plugin " + plugin.getName());
 				try {
           if (!plugin.update(oldVersion))
           {
 						Application.getLog().error("failed");
-						return false;
+						return;
           }
-          // Update erfolgreich
-          updateChecker.setAttribute(classname + ".version","" + newVersion);
 				}
 				catch (Exception e)
 				{
+					// Fuer den Fall, dass das Plugin eine RuntimeException beim Update macht.
 					Application.getLog().error("failed",e);
-					return false;
+					return;
       	}
       }
     }
 
 		Application.splash("initializing plugin " + plugin.getName());
-		try {
 
-			// Das ist ist jetzt 'n bisschen bloed. Grund:
-			// In plugin.init() kann's durchaus sein, dass
-			// dort schon irgendwo PluginLoader.getPlugin(<foo>) aufgerufen wird.
-			// Daher muss das Plugin schon registriert sein, wenn es
-			// sich initialisiert. Falls es fehlschlaegt, muessmer
-			// es wieder rausnehmen.
-			installedPlugins.put(plugin.getClass(),plugin);
-			if (plugin.init())
+		try {
+			if (!plugin.init())
       {
-        return true;
+				Application.getLog().error("failed");
+        return;
       }
-      else {
-				installedPlugins.remove(plugin.getClass());
-      }
+      // ok, wir haben alles durchlaufen, wir speichern die neue Version.
+			updateChecker.setAttribute(pluginClass.getName() + ".version",plugin.getVersion());
+			// Menu hinzufuegen
+			GUI.addMenu(container.getMenu());
+			GUI.addNavigation(container.getNavigation());
+			// und setzen es auf status "installed"
+			container.setInstalled(true);
 		}
 		catch (Exception e)
 		{
-			installedPlugins.remove(plugin.getClass());
+			// Fuer den Fall, dass das Plugin eine RuntimeException beim Init macht.
       Application.getLog().error("failed",e);
 		}
-    Application.getLog().error("failed");
-    return false;
   }
 
   /**
@@ -393,7 +371,15 @@ public class PluginLoader extends ClassLoader
    */
   public static Enumeration getInstalledPlugins()
   {
-    return installedPlugins.elements();
+  	Vector v = new Vector();
+  	Enumeration e = plugins.elements();
+  	while (e.hasMoreElements())
+  	{
+  		PluginContainer p = (PluginContainer) e.nextElement();
+  		if (p.isInstalled())
+  			v.add(p.getPlugin());
+  	}
+		return v.elements();
   }
 
 	/**
@@ -403,7 +389,8 @@ public class PluginLoader extends ClassLoader
    */
   public static AbstractPlugin getPlugin(Class plugin)
 	{
-		return (AbstractPlugin) installedPlugins.get(plugin);
+		PluginContainer pc = (PluginContainer) plugins.get(plugin);
+		return pc == null ? null : pc.getPlugin();
 	}
 
   /**
@@ -412,19 +399,33 @@ public class PluginLoader extends ClassLoader
   public static void shutDown()
   {
     Application.getLog().info("shutting down plugins");
-		Enumeration e = installedPlugins.elements();
+		Enumeration e = plugins.elements();
     while (e.hasMoreElements())
     {
-			AbstractPlugin plugin = (AbstractPlugin) e.nextElement();
-      Application.getLog().info(plugin.getClass().getName());
-      plugin.shutDown();
+			PluginContainer pc = (PluginContainer) e.nextElement();
+			if (!pc.isInstalled())
+				continue; // nicht installierte Plugins muessen nicht runtergefahren werden
+			AbstractPlugin plugin = pc.getPlugin();
+      Application.getLog().debug(plugin.getClass().getName());
+
+			try {
+				plugin.shutDown();
+			}
+			catch (Exception e2)
+			{
+				// Fuer den Fall, dass das Plugin eine RuntimeException beim Init macht.
+				Application.getLog().error("failed",e2);
+			}
     }
   }
-
+  
 }
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.39  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.38  2004/03/29 23:20:49  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.13 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,11 +15,9 @@ package de.willuhn.jameica.gui.controller;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Config;
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.parts.FileInput;
 import de.willuhn.jameica.gui.parts.AbstractInput;
+import de.willuhn.jameica.gui.parts.FileInput;
 import de.willuhn.jameica.gui.parts.SelectInput;
 import de.willuhn.jameica.gui.parts.Table;
 import de.willuhn.jameica.gui.views.AbstractView;
@@ -39,6 +37,7 @@ public class SettingsControl extends AbstractControl
 	
 	private AbstractInput logFile  = new FileInput(config.getLogFile());
 	private AbstractInput logLevel = new SelectInput(Logger.LEVEL_TEXT,config.getLogLevel());
+
 	private I18N i18n;
 
   /**
@@ -48,7 +47,7 @@ public class SettingsControl extends AbstractControl
   public SettingsControl(AbstractView view)
   {
     super(view);
-    i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+    i18n = Application.getI18n();
   }
 
 
@@ -169,6 +168,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.13  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *

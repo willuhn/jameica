@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/03/29 23:20:50 $
+ * $Revision: 1.13 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,8 +11,6 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
-
-import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -25,8 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
@@ -113,14 +110,7 @@ public abstract class AbstractDialog
   public AbstractDialog(int position)
 	{
 		this.pos = position;
-		try {
-			this.i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
-		}
-		catch (Throwable e)
-		{
-			e.printStackTrace(); // useless
-			i18n = new I18N("lang",Locale.getDefault());
-		}
+		i18n = Application.getI18n();
 		init();
 	}
 	
@@ -306,6 +296,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.13  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/03/29 23:20:50  willuhn
  * *** empty log message ***
  *

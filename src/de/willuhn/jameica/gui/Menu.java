@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.18 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,9 +26,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
-import de.willuhn.util.I18N;
 
 /**
  * Bildet das Dropdown-Menu ab.
@@ -98,10 +95,9 @@ public class Menu
      */
     MenuCascade(IXMLElement key)
     {
-    	// TODO nicht plugintauglich
-    	I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+    	// TODO nicht plugin- und i18n-tauglich
       final MenuItem cascade = new MenuItem(bar,SWT.CASCADE);
-      String text = i18n.tr(key.getAttribute("name",null));
+      String text = key.getAttribute("name",null);
       cascade.setText(text);
       final org.eclipse.swt.widgets.Menu submenu = new org.eclipse.swt.widgets.Menu(GUI.getShell(), SWT.DROP_DOWN);
       cascade.setMenu(submenu);
@@ -128,11 +124,10 @@ public class Menu
      */
     MenuElement(org.eclipse.swt.widgets.Menu parent,IXMLElement ckey)
     {
-			// TODO Nicht plugintauglich
-			I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+			// TODO Nicht plugin- und i18n-tauglich
 
       String c      = ckey.getAttribute("class",null);
-      String text   = i18n.tr(ckey.getAttribute("name",null));
+      String text   = ckey.getAttribute("name",null);
 			String target = ckey.getAttribute("target",null);
       if (text != null && text.startsWith("-"))
       {
@@ -197,6 +192,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.18  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

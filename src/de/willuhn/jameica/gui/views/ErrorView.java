@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.11 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,6 @@
 package de.willuhn.jameica.gui.views;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.parts.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -45,7 +43,7 @@ public class ErrorView extends AbstractView
    */
   public void bind() throws Exception
   {
-  	I18N i18n = i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+  	I18N i18n = Application.getI18n();
 		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Fehler"));
 		String unknownError = "Es ist ein unerwarteter Fehler aufgetreten.\n" +
 			"Prüfen Sie bitte das Systemprotokoll (durch Klick auf\n" +
@@ -78,6 +76,9 @@ public class ErrorView extends AbstractView
 
 /**********************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.11  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

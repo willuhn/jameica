@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/AbstractInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/03/11 08:56:55 $
+ * $Revision: 1.2 $
+ * $Date: 2004/03/30 22:08:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
@@ -47,7 +46,7 @@ public abstract class AbstractInput
    */
   public AbstractInput()
 	{
-		i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		i18n = Application.getI18n();
 	}
 
   /**
@@ -216,6 +215,9 @@ public abstract class AbstractInput
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.2  2004/03/30 22:08:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/03/11 08:56:55  willuhn
  * @C some refactoring
  *

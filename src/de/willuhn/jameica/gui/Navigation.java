@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.14 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,12 +22,14 @@ import net.n3.nanoxml.XMLParserFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.util.Style;
-import de.willuhn.util.I18N;
 
 /**
  * Bildet den Navigations-Baum im linken Frame ab.
@@ -204,8 +206,8 @@ public class Navigation {
 
 			item.setData("action",action);
 
-			I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
-			item.setText(i18n.tr(name));
+			// TODO: Nicht plugin/i18n tauglich
+			item.setText(name);
 
 			// make this item the parent
 			this.parentItem = item;
@@ -258,6 +260,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.14  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *

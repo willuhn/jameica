@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.17 $
+ * $Date: 2004/03/30 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,13 +30,10 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.parts.Table;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.ArrayEnumeration;
 import de.willuhn.util.History;
-import de.willuhn.util.I18N;
 
 /**
  * Bildet die Statusleiste der Anwendung ab.
@@ -49,7 +46,6 @@ public class StatusBar {
   private Composite status;
 
 	private StackLayout progressStack;
-		private I18N i18n;
 		private Composite progressComp;
 		private ProgressBar progress;
 		private ProgressBar noProgress;
@@ -63,8 +59,6 @@ public class StatusBar {
 
 		// init lastActionMessage queue
 		lastActionMessages = new History(20);
-
-		i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
 
 		status = new Composite(parent, SWT.BORDER);
 		GridData data = new GridData();
@@ -89,7 +83,7 @@ public class StatusBar {
 		progressComp.setLayout(progressStack);
 		
 		progress = new ProgressBar(progressComp, SWT.INDETERMINATE);
-		progress.setToolTipText(i18n.tr("Vorgang wird bearbeitet..."));
+		progress.setToolTipText(Application.getI18n().tr("Vorgang wird bearbeitet..."));
 		noProgress = new ProgressBar(progressComp, SWT.NONE);
 		progressStack.topControl = noProgress;
 
@@ -107,7 +101,7 @@ public class StatusBar {
 		statusText = new CLabel(tComp, SWT.SHADOW_IN);
 		statusText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		statusText.setText("");
-		statusText.setToolTipText(i18n.tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen."));
+		statusText.setToolTipText(Application.getI18n().tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen."));
 		statusText.addMouseListener(new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
@@ -121,7 +115,7 @@ public class StatusBar {
 		actionText.setAlignment(SWT.RIGHT);
     actionText.setLayoutData(at);
     actionText.setText("");
-		actionText.setToolTipText(i18n.tr("Klicken Sie hier, um die letzten Meldungen der Anwendung anzuzeigen."));
+		actionText.setToolTipText(Application.getI18n().tr("Klicken Sie hier, um die letzten Meldungen der Anwendung anzuzeigen."));
     actionText.addMouseListener(new MouseAdapter()
     {
       public void mouseUp(MouseEvent e)
@@ -229,11 +223,11 @@ public class StatusBar {
 	{
 		Display display = GUI.getDisplay();
 		Shell shell = new Shell(GUI.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setText(i18n.tr("letzte Meldungen"));
+		shell.setText(Application.getI18n().tr("letzte Meldungen"));
 		shell.setLayout(new GridLayout(1,false));
 
 		Table table = new Table(e,null);
-		table.addColumn(i18n.tr("Meldungen"),null);
+		table.addColumn(Application.getI18n().tr("Meldungen"),null);
 		try
     {
       table.paint(shell);
@@ -256,6 +250,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.17  2004/03/30 22:08:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *

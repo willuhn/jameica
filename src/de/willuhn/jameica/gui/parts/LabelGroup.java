@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.11 $
+ * $Date: 2004/03/30 22:08:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,8 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.Jameica;
-import de.willuhn.jameica.PluginLoader;
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
@@ -47,7 +46,7 @@ public class LabelGroup
    */
   public LabelGroup(Composite parent, String name)
   {
-		i18n = i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		i18n = Application.getI18n();
     group = new Group(parent, SWT.NONE);
 		group.setBackground(Style.COLOR_BG);
     group.setText(name);
@@ -231,6 +230,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.11  2004/03/30 22:08:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *
