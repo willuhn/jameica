@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.6 $
+ * $Date: 2004/06/17 00:05:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,8 +19,8 @@ import java.util.Hashtable;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
 
-import de.willuhn.datasource.rmi.DBIterator;
-import de.willuhn.datasource.rmi.DBObject;
+import de.willuhn.datasource.rmi.GenericIterator;
+import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 
@@ -38,23 +38,26 @@ public class SelectInput extends AbstractInput
   private boolean enabled = true;
 
   /**
-   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+   * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
    * @param object das darzustellende Objekt. Es wird auch gleich verwendet,
    * um darueber eine Liste zu holen, mit der die Selectbox gefuellt wird. 
+   * @param list Liste von Objekten.
+   * @param preselected das Object, welches vorselektiert sein soll. Optional.
    */
-  public SelectInput(DBObject object)
+  public SelectInput(GenericIterator list, GenericObject preselected)
   {
   	super();
-    DBIterator list = null;
-    try {
-      this.preselected = (String) object.getField(object.getPrimaryField());
-      list = object.getList();
-    }
-    catch (RemoteException e)
-    {
-    	Application.getLog().error("error while reading list",e);
-			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Liste."));
-    }
+		if (preselected != null)
+		{
+			try {
+				this.preselected = preselected.getAttribute(preselected.getPrimaryAttribute()).toString();
+			}
+			catch (RemoteException e)
+			{
+				Application.getLog().error("error while reading list",e);
+				GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Liste."));
+			}
+		}
     init(list);
   }
 
@@ -94,9 +97,9 @@ public class SelectInput extends AbstractInput
 
 		for (int i=0;i<list.length;++i)
 		{
-			if (list[i] == null || "".equals(list[i]))
+			if (list[i] == null || list[i].length() == 0)
 				continue; // skip empty values
-			values.put(""+list[i],list[i]);
+			values.put(list[i],list[i]);
 		}
 	}
 
@@ -104,19 +107,19 @@ public class SelectInput extends AbstractInput
    * Initialisiert die Select-Box.
    * @param list Liste mit den anzuzeigenden Objekten.
    */
-  private void init(DBIterator list)
+  private void init(GenericIterator list)
   {
     try
     {
       if (list == null)
         throw new RemoteException();
 
-      DBObject o = null;
+      GenericObject o = null;
       while (list.hasNext())
       {
         o = list.next();
-        String value = o.getField(o.getPrimaryField()).toString();
-        if (value == null || "".equals(value))
+        String value = o.getAttribute(o.getPrimaryAttribute()).toString();
+        if (value == null || value.length() == 0)
           continue; // skip empty values
         values.put(value,o);
 
@@ -214,6 +217,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.6  2004/06/17 00:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

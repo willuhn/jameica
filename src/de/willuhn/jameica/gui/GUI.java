@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source:
  * /export/CVS/willuhn/own/jameica/dev/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.45 $ $Date: 2004/06/10 20:56:53 $ $Author: willuhn $ $Locker:  $
+ * $Revision: 1.46 $ $Date: 2004/06/17 00:05:26 $ $Author: willuhn $ $Locker:  $
  * $State: Exp $
  * 
  * Copyright (c) by willuhn.webdesign All rights reserved
@@ -612,7 +612,7 @@ public class GUI
 	/**
 	 * Startet den GUI-Loop.
 	 */
-	public void loop()
+	private void loop()
 	{
 		while (!shell.isDisposed() && !stop)
 		{
@@ -683,6 +683,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.46  2004/06/17 00:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.45  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

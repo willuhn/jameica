@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/17 00:05:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-import de.willuhn.datasource.rmi.DBIterator;
-import de.willuhn.datasource.rmi.DBObjectNode;
+import de.willuhn.datasource.rmi.GenericIterator;
+import de.willuhn.datasource.rmi.GenericObjectNode;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.util.SWTUtil;
 
@@ -40,8 +40,8 @@ public class TreePart implements Part
 
   private AbstractControl controller;
   private Composite composite;
-  private DBObjectNode object = null;
-  private DBIterator list = null;
+  private GenericObjectNode object = null;
+  private GenericIterator list = null;
   private org.eclipse.swt.widgets.Tree tree = null;
     
 	/**
@@ -50,7 +50,7 @@ public class TreePart implements Part
    * @param controller der AbstractControl, der bei der Auswahl eines Elements
    * aufgerufen werden soll.
    */
-  public TreePart(DBObjectNode object, AbstractControl controller)
+  public TreePart(GenericObjectNode object, AbstractControl controller)
 	{
     this.controller = controller;
     this.object = object;
@@ -59,13 +59,13 @@ public class TreePart implements Part
   /**
    * Erzeugt einen neuen Tree basierend auf der uebergebenen Liste
    * von Objekten des Typs DBObjectNode. Enthaelt der
-   * Iterator Objekte, die <b>nicht</b> von DBObjectNode
+   * Iterator Objekte, die <b>nicht</b> von GenericObjectNode
    * abgeleitet sind, wird er eine ClassCastException werfen.
    * @param list Liste mit Objekten, fuer die der Baum erzeugt werden soll.
    * @param controller der AbstractControl, der bei der Auswahl eines Elements
    * aufgerufen werden soll.
    */
-  public TreePart(DBIterator list, AbstractControl controller)
+  public TreePart(GenericIterator list, AbstractControl controller)
   {
     this.controller = controller;
     this.list = list;
@@ -93,7 +93,7 @@ public class TreePart implements Part
     {
       while (list.hasNext())
       {
-        final Item root = new Item(null,(DBObjectNode) list.next());
+        final Item root = new Item(null,(GenericObjectNode) list.next());
         root.expandChilds();
       }
     }
@@ -181,7 +181,7 @@ public class TreePart implements Part
 
 		private TreeItem parentItem;
     
-    private DBObjectNode element;
+    private GenericObjectNode element;
 
 		/**
 		 * ct. Laed ein neues Element des Baumes.
@@ -189,7 +189,7 @@ public class TreePart implements Part
      * @param element das aktuelle Element.
      * @throws RemoteException
      */
-    Item(TreeItem parent, DBObjectNode element) throws RemoteException
+    Item(TreeItem parent, GenericObjectNode element) throws RemoteException
 		{
 
 			// store parent
@@ -227,7 +227,7 @@ public class TreePart implements Part
 			item.setImage(SWTUtil.getImage("folder.gif"));
 			item.setData(element);
 
-			item.setText(""+(String) element.getField(element.getPrimaryField()));
+			item.setText(""+(String) element.getAttribute(element.getPrimaryAttribute()));
 
 			// make this item the parent
 			this.parentItem = item;
@@ -246,10 +246,10 @@ public class TreePart implements Part
     {
 
 			// iterate over childs
-      DBIterator list = element.getChilds();
+			GenericIterator list = element.getChilds();
       while(list.hasNext())
 			{
-				new Item(this.parentItem,(DBObjectNode)list.next());
+				new Item(this.parentItem,(GenericObjectNode)list.next());
 			}
 		}
     
@@ -279,6 +279,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.4  2004/06/17 00:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

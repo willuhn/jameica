@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.8 $
+ * $Date: 2004/06/17 00:05:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,8 +36,9 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObject;
+import de.willuhn.datasource.rmi.GenericIterator;
+import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.formatter.Formatter;
@@ -52,7 +53,7 @@ import de.willuhn.util.I18N;
 public class TablePart implements Part
 {
 	//TODO: Sortierung!
-  private DBIterator list;
+  private GenericIterator list;
   private AbstractControl controller;
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
@@ -78,7 +79,7 @@ public class TablePart implements Part
    * @param list Liste mit Objekten, die angezeigt werden soll.
    * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
    */
-  public TablePart(DBIterator list, AbstractControl controller)
+  public TablePart(GenericIterator list, AbstractControl controller)
   {
     this.list = list;
     this.controller = controller;
@@ -196,8 +197,7 @@ public class TablePart implements Part
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
     
-    // Das hier ist eigentlich nur noetig um die Ausrichtung der Spalten zu ermitteln
-    DBObject _o = null;
+		GenericObject _o = null;
 
 		try {
 			_o = list.next();
@@ -214,18 +214,22 @@ public class TablePart implements Part
       String title = fieldData[0];
       String field = fieldData[1];
       if (title == null) title = "";
-      try {
-        String type = _o.getFieldType(field);
-        if (
-          DBObject.FIELDTYPE_DOUBLE.equalsIgnoreCase(type) ||
-          DBObject.FIELDTYPE_DECIMAL.equalsIgnoreCase(type)
-        )
-          col.setAlignment(SWT.RIGHT);
-      }
-      catch (Exception e)
-      {
-        // nicht weiter tragisch, wenn das fehlschlaegt
-      }
+
+			if (_o instanceof DBObject)
+			{
+				try {
+					String type = ((DBObject)_o).getFieldType(field);
+					if (
+						DBObject.FIELDTYPE_DOUBLE.equalsIgnoreCase(type) ||
+						DBObject.FIELDTYPE_DECIMAL.equalsIgnoreCase(type)
+					)
+						col.setAlignment(SWT.RIGHT);
+				}
+				catch (Exception e)
+				{
+					// nicht weiter tragisch, wenn das fehlschlaegt
+				}
+			}
       col.setText(title);
 
 			// Sortierung
@@ -245,7 +249,7 @@ public class TablePart implements Part
 			while (list.hasNext())
 			{
 				final TableItem item = new TableItem(table, SWT.NONE);
-				final DBObject o = list.next();
+				final GenericObject o = list.next();
 				item.setData(o);
 				if (tableFormatter != null)
 					tableFormatter.format(item);
@@ -254,7 +258,7 @@ public class TablePart implements Part
 				{
 					String[] fieldData = (String[]) fields.get(i);
 					String field = fieldData[1];
-					Object value = o.getField(field);
+					Object value = o.getAttribute(field);
 					if (value == null)
 					{
 						// Wert ist null. Also zeigen wir einen Leerstring an
@@ -264,7 +268,7 @@ public class TablePart implements Part
 					{
 						// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
 						DBObject dbo = (DBObject) value;
-						item.setText(i,dbo.getField(dbo.getPrimaryField()).toString());
+						item.setText(i,dbo.getAttribute(dbo.getPrimaryAttribute()).toString());
 					}
 					else
 					{
@@ -437,6 +441,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.8  2004/06/17 00:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory
