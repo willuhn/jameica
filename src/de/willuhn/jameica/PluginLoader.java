@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.26 $
+ * $Date: 2004/01/04 18:48:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,6 @@ package de.willuhn.jameica;
 import java.io.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
@@ -27,6 +26,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.util.FileFinder;
 
 /**
  * Kontrolliert alle installierten Plugins.
@@ -81,19 +81,21 @@ public class PluginLoader extends ClassLoader
     }
 
     // Liste aller Jars aus dem plugin-Verzeichnis holen
-    ArrayList jars = findPlugins(plugindir);
+    FileFinder finder = new FileFinder(plugindir);
+    finder.contains("\\.jar");
+    File[] jars = finder.findRecursive();
 
-    if (jars == null || jars.size() < 1)
+    if (jars == null || jars.length < 1)
     {
       Application.getLog().info("  no plugins found");
       return;
     }
 
     // jetzt muessen wir den URLClassLoader mit allen URLs der Jars fuettern
-    URL[] urls = new URL[jars.size()];
-    for(int i=0;i<jars.size();++i)
+    URL[] urls = new URL[jars.length];
+    for(int i=0;i<jars.length;++i)
     {
-      File jar = (File) jars.get(i);
+      File jar = (File) jars[i];
       try {
         urls[i] = jar.toURL();
       }
@@ -107,9 +109,9 @@ public class PluginLoader extends ClassLoader
 
     // und jetzt gehen wir nochmal ueber alle Jars und ueber alle darin befindlichen Klassen
     // und versuchen sie zu laden
-    for(int i=0;i<jars.size();++i)
+    for(int i=0;i<jars.length;++i)
     {
-      File file = (File) jars.get(i);
+      File file = (File) jars[i];
 
       JarFile jar = null;
       try {
@@ -125,43 +127,47 @@ public class PluginLoader extends ClassLoader
       // So, jetzt iterieren wir ueber alle Files in dem Jar
       Enumeration jarEntries = jar.entries();
       JarEntry entry = null;
+
+			boolean pluginFound = false;
+			JarEntry menu = null;
+			JarEntry navi = null;
       while (jarEntries.hasMoreElements())
       {
-        entry = (JarEntry) jarEntries.nextElement();
-        String entryName = entry.getName();
+				entry = (JarEntry) jarEntries.nextElement();
+				String entryName = entry.getName();
 
-        // Wenn das Plugin eine menu.xml enthaelt, dann fuegen wir die dem Menu hinzu.
-        if ("menu.xml".equals(entryName))
-          try {
-            Application.getLog().info("  adding menu from plugin " + jar.getName());
-            GUI.addMenu(jar.getInputStream(entry));
-            Application.getLog().info("  done");
-          }
-          catch (IOException e)
-          {
-            Application.getLog().error("  failed",e);
-          }
+				int idxClass = entryName.indexOf(".class");
+				if (idxClass == -1)
+					continue;
 
-        // Wenn das Plugin eine navigation.xml enthaelt, dann fuegen wir die der Navigation hinzu.
-        if ("navigation.xml".equals(entryName))
-        try {
-          Application.getLog().info("  adding navigation from plugin " + jar.getName());
-          GUI.addNavigation(jar.getInputStream(entry));
-          Application.getLog().info("  done");
-        }
-        catch (IOException e)
+				entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
+				// Wir laden das Plugin
+				pluginFound = loadPlugin(jar,entryName) || pluginFound;
+
+				if ("menu.xml".equals(entryName))
+					menu = entry; 
+
+				if ("navigation.xml".equals(entryName))
+					navi = entry; 
+      }
+
+			if (pluginFound && menu != null)
+			{
+				Application.getLog().info("adding menu from plugin " + jar.getName());
+        try
         {
-          Application.getLog().error("  failed",e);
-        }
-
-        // Alles andere muessen class-Files sein
-        int idxClass = entryName.indexOf(".class");
-        if (idxClass == -1)
-          continue;
-
-        entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
-        // Wir laden das Plugin
-        loadPlugin(jar,entryName);
+          GUI.addMenu(jar.getInputStream(menu));
+        } catch (IOException e1) {Application.getLog().error("failed",e1);}
+				Application.getLog().info("done");
+			}
+			if (pluginFound && navi != null)
+			{
+        Application.getLog().info("adding navigation from plugin " + jar.getName());
+        try
+        {
+          GUI.addNavigation(jar.getInputStream(navi));
+				} catch (IOException e1) {Application.getLog().error("failed",e1);}
+        Application.getLog().info("done");
       }
     }
     
@@ -192,51 +198,6 @@ public class PluginLoader extends ClassLoader
     catch (Exception e) {
 			Application.getLog().error("error while loading plugin within IDE",e);
     }
-  }
-
-  /**
-   * Sucht rekursiv im angegebenen Verzeichnis nach Dateien des Schemas *.zip und *.jar.
-   * @param dir Verzeichnis, in dem gesucht werden soll.
-   * @return Liste mit allen gefundenen gefundenen Files.
-   */
-  private static ArrayList findPlugins(File dir)
-  {
-    ArrayList found = new ArrayList();
-
-    // Alle Dateien des Verzeichnisses suchen
-    File[] files = dir.listFiles(new FilenameFilter()
-    {
-      public boolean accept(File dir, String name)
-      {
-        File f = new File(dir.getPath() + "/" + name);
-        return (f.isFile() && (name.endsWith(".zip") || name.endsWith(".jar")));
-      }
-    });
-    
-    if (files == null)
-      return null;
-
-    for (int i=0;i<files.length;++i)
-    {
-      found.add(files[i]);
-    }
-
-    // So, und jetzt alle Unterverzeichnisse
-    File[] dirs = dir.listFiles(new FilenameFilter()
-    {
-      public boolean accept(File dir, String name)
-      {
-        File f = new File(dir.getPath() + "/" + name);
-        return (f.isDirectory());
-      }
-    });
-    for (int i=0;i<dirs.length;++i)
-    {
-      // und jetzt kommt die Rekursion
-      found.addAll(findPlugins(dirs[i]));
-    }
-
-    return found;    
   }
 
   /**
@@ -273,41 +234,42 @@ public class PluginLoader extends ClassLoader
 		///////////////////////////////////////////////////////////////
 		// Klasse laden
     Class clazz = null;
-		Application.getLog().info("trying to load class " + classname);
+		Application.getLog().debug("trying to load class " + classname);
     try {
-      if (Application.IDE) {
-        clazz = Class.forName(classname);
-      }
-      else { 
-        clazz = Class.forName(classname,true,loader);
-      }
+			clazz = Class.forName(classname,true,loader);
     }
     catch (ClassNotFoundException e)
     {
-    	Application.getLog().error("  failed",e);
-      return false;
+			try {
+				clazz = Class.forName(classname);
+			}
+			catch (ClassNotFoundException e2)
+			{
+				Application.getLog().debug("failed");
+				return false;
+			}
     }
-		Application.getLog().info("done");
+		Application.getLog().debug("done");
 		//
 		///////////////////////////////////////////////////////////////
 
 
 		///////////////////////////////////////////////////////////////
 		// Klasse checken
-		Application.getLog().info("checking plugin");
+		Application.getLog().debug("checking plugin");
     if (!checkPlugin(clazz))
 		{
-			Application.getLog().info("no valid plugin");
+			Application.getLog().debug("no valid plugin");
 			return false; // no valid plugin
 		}
-		Application.getLog().info("done");
+		Application.getLog().debug("done");
 		//
 		///////////////////////////////////////////////////////////////
 
     
 		///////////////////////////////////////////////////////////////
 		// Klasse instanziieren
-    Application.getLog().info("trying to initialize");
+    Application.getLog().debug("trying to initialize");
     Constructor ct = null;
     Plugin plugin = null;
     try
@@ -318,23 +280,23 @@ public class PluginLoader extends ClassLoader
     }
     catch (Exception e)
     {
-	    Application.getLog().error("  failed",e);
+	    Application.getLog().error("failed",e);
 	    return false;
     }
-		Application.getLog().info("done");
+		Application.getLog().debug("done");
 		//
 		///////////////////////////////////////////////////////////////
 
 
 		///////////////////////////////////////////////////////////////
 		// Pruefen, ob schon installiert
-		Application.getLog().info("checking if allready loaded");
+		Application.getLog().debug("checking if allready loaded");
     for (int i=0;i<installedPlugins.size();++i)
     {
       Plugin p = (Plugin) installedPlugins.get(i);
       if (p != null && p.getClass().equals(plugin.getClass()))
       {
-        Application.getLog().info("yes, skipping");
+        Application.getLog().debug("yes, skipping");
         return false;
       }
     }
@@ -471,6 +433,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.26  2004/01/04 18:48:36  willuhn
+ * @N config store support
+ *
  * Revision 1.25  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

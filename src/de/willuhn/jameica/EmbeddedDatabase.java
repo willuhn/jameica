@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/EmbeddedDatabase.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.2 $
+ * $Date: 2004/01/04 18:48:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,12 +13,10 @@
 
 package de.willuhn.jameica;
 
-import java.io.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -31,6 +29,7 @@ import com.mckoi.database.control.DefaultDBConfig;
 
 import de.willuhn.jameica.rmi.DBHub;
 import de.willuhn.jameica.server.DBHubImpl;
+import de.willuhn.util.FileCopy;
 
 /**
  * Embedded Datenbank.
@@ -92,11 +91,18 @@ public class EmbeddedDatabase
 		
 		// Config-Datei kopieren
 		Application.getLog().info("copy template config");
-		FileChannel srcChannel = new FileInputStream(Application.getConfig().getConfigDir() + "/db.conf.template").getChannel();
-		FileChannel dstChannel = new FileOutputStream(this.path + "/db.conf").getChannel();
-		dstChannel.transferFrom(srcChannel, 0, srcChannel.size());
-		srcChannel.close();
-		dstChannel.close();
+		try {
+			FileCopy.copy(
+				new File(Application.getConfig().getConfigDir() + "/db.conf.template"),
+				new File(this.path + "/db.conf"),
+				true
+			);
+		}
+		catch (FileCopy.FileExistsException fe)
+		{
+			Application.getLog().error("failed",fe);
+			throw new IOException(fe.getMessage());
+		}
 		Application.getLog().info("done");
 
 		try {
@@ -229,6 +235,9 @@ public class EmbeddedDatabase
 
 /**********************************************************************
  * $Log: EmbeddedDatabase.java,v $
+ * Revision 1.2  2004/01/04 18:48:36  willuhn
+ * @N config store support
+ *
  * Revision 1.1  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.29 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.30 $
+ * $Date: 2004/01/04 18:48:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -646,15 +646,12 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       }
     }
     else {
-      // TODO: UNIQUEKEY()
       // Weil die UNIQUEKEY() Funktion von McKoi nicht "select (max(id) + 1)" macht sondern
       // selbst bei 1 anfaengt zu zaehlen, kommt es dauernd vor, dass es eine ID ermittelt,
       // die es schon gibt. Naemlich genau dann, wenn in die Tabelle Zeilen eingefuegt wurden,
       // die ihre eigene ID mitgebracht haben :(
 
       values += "'" + createID() + "')";
-      //names = names.substring(0,names.length()-1) + ")"; // letzte Komma entfernen und ")" dranhaengen
-      //values = values.substring(0,values.length()-1) + ")";
     }
 
     try {
@@ -963,6 +960,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.30  2004/01/04 18:48:36  willuhn
+ * @N config store support
+ *
  * Revision 1.29  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

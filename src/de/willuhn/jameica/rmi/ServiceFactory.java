@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.10 $
+ * $Date: 2004/01/04 18:48:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -220,7 +220,6 @@ public class ServiceFactory
     Application.getLog().info("done");
   }
 
-  // TODO: dummy Security Manager to get full access.
   private static class NoSecurity extends SecurityManager
   {
     public void checkPermission(Permission p)
@@ -232,6 +231,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.10  2004/01/04 18:48:36  willuhn
+ * @N config store support
+ *
  * Revision 1.9  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

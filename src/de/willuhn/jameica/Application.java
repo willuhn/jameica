@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.21 $
+ * $Date: 2004/01/04 18:48:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.rmi.ServiceFactory;
+import de.willuhn.util.*;
 
 /**
  * Basisklasse der Anwendung.
@@ -191,6 +192,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.21  2004/01/04 18:48:36  willuhn
+ * @N config store support
+ *
  * Revision 1.20  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ConnectionPool.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/28 22:58:27 $
+ * $Revision: 1.3 $
+ * $Date: 2004/01/04 18:48:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.sql.Connection;
 import de.willuhn.jameica.rmi.DBObject;
 
 /**
- * TODO: Das ist noch gar nicht schoen.
  * Das Teil hat eigentlich nur folgenden Grund: Die Connection darf
  * kein Member eines DBObject sein, da es sich sonst nicht serialisieren
  * laesst. Die Serialisierung ist aber fuer den SynchronizeWatcher notwendig.
@@ -53,6 +52,9 @@ public class ConnectionPool
 
 /*********************************************************************
  * $Log: ConnectionPool.java,v $
+ * Revision 1.3  2004/01/04 18:48:36  willuhn
+ * @N config store support
+ *
  * Revision 1.2  2003/12/28 22:58:27  willuhn
  * @N synchronize mode
  *

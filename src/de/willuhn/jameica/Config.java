@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.11 $
+ * $Date: 2004/01/04 18:48:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,13 @@
 package de.willuhn.jameica;
 
 import java.io.*;
+import java.util.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import net.n3.nanoxml.*;
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
@@ -25,6 +27,7 @@ import net.n3.nanoxml.XMLParserFactory;
 
 import de.willuhn.jameica.rmi.LocalServiceData;
 import de.willuhn.jameica.rmi.RemoteServiceData;
+import de.willuhn.util.FileCopy;
 
 /**
  * Liest die System-Konfiguration aus config.xml. 
@@ -72,6 +75,7 @@ public class Config
   private boolean ide = false;
   
   private String configDir = "cfg";
+  private String configFile = null;
   
   /**
    * ct.
@@ -93,7 +97,8 @@ public class Config
     if (fileName == null)
       fileName = "cfg/config.xml"; // fallback to default if config file not set
 
-    configDir = (new File(fileName)).getParent();
+    configDir  = (new File(fileName)).getParent();
+		configFile = fileName;
 
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 		parser.setReader(StdXMLReader.fileReader(fileName));
@@ -188,6 +193,17 @@ public class Config
     return (RemoteServiceData) remoteServices.get(name);
   }
   
+	/**
+	 * Fuegt einen Remote-Service hinzu.
+   * @param data der Datencontainer fuer den Remote-Service.
+   */
+  public void addRemoteServiceData(RemoteServiceData data)
+	{
+		if (data == null || data.getName() == null || data.getName().equals(""))
+			return;
+		this.remoteServices.put(data.getName(),data);
+	}
+
   /**
    * Liefert einen Daten-Container mit allen fuer die Erzeugung eines lokalen Services notwendigen Daten.
    * @param name Alias-Name des Service.
@@ -198,6 +214,17 @@ public class Config
     return (LocalServiceData) localServices.get(name);
   }
 
+	/**
+	 * Fuegt einen Local-Service hinzu.
+	 * @param data der Datencontainer fuer den Local-Service.
+	 */
+	public void addLocalServiceData(LocalServiceData data)
+	{
+		if (data == null || data.getName() == null || data.getName().equals(""))
+			return;
+		this.localServices.put(data.getName(),data);
+	}
+	
 
   /**
    * Liefert eine Enumeration mit den Namen aller lokalen Services.
@@ -226,6 +253,15 @@ public class Config
     return rmiPort;
   }
 
+	/**
+	 * Speichert den zu verwendenden TCP-Port fuer die lokale RMI-Registry.
+   * @param port
+   */
+  public void setRmiPort(int port)
+	{
+		this.rmiPort = port;
+	}
+
   /**
    * Liefert das konfigurierte Locale (Sprach-Auswahl).
    * @return konfiguriertes Locale.
@@ -234,6 +270,17 @@ public class Config
   {
     return defaultLanguage;
   }
+
+	/**
+	 * Speichert das Locale (Sprach-Auswahl).
+   * @param l das zu verwendende Locale.
+   */
+  public void setLocale(Locale l)
+	{
+		if (l == null)
+			return;
+		this.defaultLanguage = l;
+	}
 
   /**
    * Liefert das Verzeichnis mit den Plugins.
@@ -244,6 +291,17 @@ public class Config
     return pluginDir;
   }
 
+	/**
+	 * Speichert das Verzeichnis mit den Plugins.
+   * @param pluginDir das Plugin-Verzeichnis.
+   */
+  public void setPluginDir(String pluginDir)
+	{
+		if (pluginDir == null || "".equals(pluginDir))
+			return;
+		this.pluginDir = pluginDir;
+	}
+
   /**
    * Liefert den Pfad zum Log-File.
    * @return Pfad zum Logfile.
@@ -252,6 +310,17 @@ public class Config
   {
     return logfile;
   }
+
+	/**
+	 * Speichert den Pfad zum LogFile.
+   * @param logFile Pfad zum Logfile.
+   */
+  public void setLogFile(String logFile)
+	{
+		if (logFile == null || "".equals(logFile))
+			return;
+		this.logfile = logFile;
+	}
 
   /**
    * Liefert true, wenn die Anwendung um Debug-Mode laeuft.
@@ -262,6 +331,14 @@ public class Config
     return debug;
   }
 
+	/**
+	 * Legt fest, ob die Anwendung im Debug-Mode laufen soll.
+   * @param b true, wenn sie im Debug-Mode laufen soll.
+   */
+  public void setDebug(boolean b)
+	{
+		this.debug = b;
+	}
   /**
    * Liefert true, wenn die Anwendung um IDE-Mode laeuft.
    * @return true, wenn die Anwendung um IDE-Mode laeuft.
@@ -271,6 +348,15 @@ public class Config
     return ide;
   }
 
+	/**
+	 * Legt fest, ob die Anwendung in der IDE laeuft. 
+   * @param i true, wenn sie in der IDE laeuft.
+   */
+  public void setIde(boolean i)
+	{
+		this.ide = i;
+	}
+
   /**
    * Liefert den Pfad zum Config-Verzeichnis.
    * @return Pfad zum Config-Verzeichnis.
@@ -279,11 +365,89 @@ public class Config
   {
     return configDir;
   }
+
+  /**
+   * Speichert die Konfiguration ab.
+   * @throws Exception Wenn beim Speichern ein Fehler auftrat.
+   */
+  public void store() throws Exception
+	{
+		xml.getFirstChildNamed("logfile").setContent(this.logfile);
+		xml.getFirstChildNamed("debug").setContent(this.debug ? "true" : "false");
+		xml.getFirstChildNamed("ide").setContent(this.ide ? "true" : "false");
+		xml.getFirstChildNamed("defaultlanguage").setContent(this.defaultLanguage.toString());
+		xml.getFirstChildNamed("rmiport").setContent(""+this.rmiPort);
+		xml.getFirstChildNamed("plugindir").setContent(this.pluginDir);
+		
+		IXMLElement services = xml.getFirstChildNamed("services");
+		if (services != null)
+		{
+			xml.removeChild(services);
+		}
+		services = xml.createElement("services");		
+		
+		// lokale Services schreiben
+		Enumeration e = this.localServices.keys();
+		while (e.hasMoreElements())
+		{
+			LocalServiceData lsd = getLocalServiceData((String) e.nextElement());
+			IXMLElement s = services.createElement("localservice");
+			s.setAttribute("name",lsd.getName());
+			s.setAttribute("class",lsd.getClassName());
+			s.setAttribute("type",lsd.getType());
+			s.setAttribute("shared",lsd.isShared() ? "true" : "false");
+			HashMap params = lsd.getInitParams();
+			Iterator paramKeys = params.keySet().iterator();
+			while (paramKeys.hasNext())
+			{
+				String name = (String) paramKeys.next();
+				IXMLElement initParam = s.createElement("initparam");
+				initParam.setAttribute("name",name);
+				initParam.setAttribute("value",(String)params.get(name));
+				s.addChild(initParam);
+			}
+			services.addChild(s);
+		}
+
+		// remote Services schreiben
+		e = this.remoteServices.keys();
+		while (e.hasMoreElements())
+		{
+			RemoteServiceData rsd = getRemoteServiceData((String) e.nextElement());
+			IXMLElement s = services.createElement("remoteservice");
+			s.setAttribute("name",rsd.getName());
+			s.setAttribute("class",rsd.getClassName());
+			s.setAttribute("type",rsd.getType());
+			s.setAttribute("host",rsd.getHost());
+			services.addChild(s);
+		}
+
+		xml.addChild(services);
+
+		// Backup der config erstellen
+		FileCopy.copy(new File(configFile),new File(configFile + ".bak"),true);
+
+		java.io.Writer output = new FileWriter(new File(configFile));
+		XMLWriter xmlwriter = new XMLWriter(output);
+		xmlwriter.write(xml,true); 
+	}
+
+	/**
+	 * Spielt das Backup der Config wieder zurueck.
+   * @throws Exception wenn Fehler beim Zurueckkopieren auftreten.
+   */
+  public void restore() throws Exception
+	{
+		FileCopy.copy(new File(configFile + ".bak"),new File(configFile),true);
+	}
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.11  2004/01/04 18:48:36  willuhn
+ * @N config store support
+ *
  * Revision 1.10  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml
