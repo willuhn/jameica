@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.20 $
+ * $Date: 2004/04/26 22:42:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,13 +13,8 @@
 
 package de.willuhn.jameica.gui.views;
 
-import java.util.Enumeration;
-
-import de.willuhn.jameica.AbstractPlugin;
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.util.I18N;
 
 
@@ -36,28 +31,8 @@ public class Start extends AbstractView
   {
   	I18N i18n = Application.getI18n();
 		GUI.getView().setTitle(i18n.tr("Start"));
-    
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<form>");
-		buffer.append("<p><span color=\"header\" font=\"header\">" + i18n.tr("Installierte Plugins") + "</span></p>");
-		
-    Enumeration installedPlugins = PluginLoader.getInstalledPlugins();
-		AbstractPlugin plugin = null;
-    String pt = null;
-    while (installedPlugins.hasMoreElements())
-    {
-      plugin = (AbstractPlugin) installedPlugins.nextElement();
-      pt = plugin.getName();
-      if (pt == null || pt.length() == 0)
-      	continue;
-      buffer.append("<li>" + pt + "</li>");
-    }
 
-		buffer.append("</form>");
-
-		FormTextPart text = new FormTextPart(buffer.toString());
-
-		text.paint(getParent());
+		// TODO: Hier kontextsensitive Notizen anzeigen    
 
   }        
 
@@ -72,6 +47,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.20  2004/04/26 22:42:17  willuhn
+ * @N added InfoReader
+ *
  * Revision 1.19  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Plugins.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/14 23:53:44 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/26 22:42:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,20 +12,11 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.views;
 
-import java.util.Enumeration;
-
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-
-import de.willuhn.jameica.AbstractPlugin;
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.controller.PluginsControl;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
-import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -42,33 +33,13 @@ public class Plugins extends AbstractView {
 		I18N i18n = Application.getI18n();
 		GUI.getView().setTitle(i18n.tr("Installierte Plugins"));
     
-		LabelGroup group = new LabelGroup(getParent(),i18n.tr("installierte Plugins"));
-		Control c = group.getControl();
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<form>");
-		
-		Enumeration installedPlugins = PluginLoader.getInstalledPlugins();
-		AbstractPlugin plugin = null;
-		while (installedPlugins.hasMoreElements())
-		{
-			plugin = (AbstractPlugin) installedPlugins.nextElement();
-			buffer.append("<li>" + plugin.getName() + "</li>");
-			buffer.append("<li style=\"text\" value=\"-\" bindent=\"10\">" + i18n.tr("Version") 		 + " " + plugin.getVersion() + "</li>");
-			buffer.append("<li style=\"text\" value=\"-\" bindent=\"10\">" + i18n.tr("Buildnummer") + " " + plugin.getBuildnumber() + "</li>");
-		}
+		PluginsControl control = new PluginsControl(this);
 
-		buffer.append("</form>");
+		FormTextPart libs = control.getLibList();
+		libs.paint(getParent());
 
-		FormTextPart text = new FormTextPart(buffer.toString());
-
-		text.paint((Composite)c);
-		
-		ButtonArea buttons = group.createButtonArea(1);
-		buttons.addCustomButton(i18n.tr("Zurück"), new MouseAdapter() {
-      public void mouseUp(MouseEvent e) {
-      	GUI.startPreviousView();
-      }
-    });
+		ButtonArea buttons = new ButtonArea(getParent(),1);
+		buttons.addCancelButton(control);
   }
 
   /**
@@ -82,6 +53,9 @@ public class Plugins extends AbstractView {
 
 /**********************************************************************
  * $Log: Plugins.java,v $
+ * Revision 1.2  2004/04/26 22:42:17  willuhn
+ * @N added InfoReader
+ *
  * Revision 1.1  2004/04/14 23:53:44  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/About.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/14 23:53:44 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/26 22:42:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,8 @@ public class About extends AbstractView {
 
 		FormTextPart text = new FormTextPart();
 		text.setText("<form>" +
-			"<p><b>Jameica - Java based message interchange</b></p>" +			"<p>Copyright by Olaf Willuhn [info@jameica.org]</p>" +			"<p>http://www.jameica.org</p>" +			"</form>");
+			"<p><b>Jameica - Java based message interchange</b></p>" +			"<br/>Licence: GPL (http://www.gnu.org/copyleft/gpl.html)" +
+			"<br/><p>Copyright by Olaf Willuhn [info@jameica.org]</p>" +			"<p>http://www.jameica.org</p>" +			"</form>");
 
 		text.paint(getParent());
 
@@ -62,6 +63,9 @@ public class About extends AbstractView {
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.2  2004/04/26 22:42:17  willuhn
+ * @N added InfoReader
+ *
  * Revision 1.1  2004/04/14 23:53:44  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/JarPluginContainer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/22 23:47:11 $
+ * $Revision: 1.3 $
+ * $Date: 2004/04/26 22:42:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ public class JarPluginContainer implements PluginContainer {
 
 	private JarEntry menu 				= null;
 	private JarEntry navi 				= null;
+	private JarEntry info 				= null;
 	private JarFile  file 				= null;
 	private AbstractPlugin plugin = null;
 	private Class pluginClass			= null;
@@ -46,6 +47,15 @@ public class JarPluginContainer implements PluginContainer {
 	void setNavi(JarEntry navi)
 	{
 		this.navi = navi;
+	}
+
+	/**
+	 * Speichert die Info-Datei des Plugins.
+	 * @param info
+	 */
+	void setInfo(JarEntry info)
+	{
+		this.info = info;
 	}
 
 	/**
@@ -100,6 +110,15 @@ public class JarPluginContainer implements PluginContainer {
 		return file.getInputStream(navi);
   }
 
+	/**
+	 * @see de.willuhn.jameica.PluginContainer#getInfo()
+	 */
+	public InfoReader getInfo() throws Exception {
+		if (info == null)
+			return null;
+		return new InfoReader(file.getInputStream(info));
+	}
+
   /**
    * @see de.willuhn.jameica.PluginContainer#isInstalled()
    */
@@ -133,6 +152,9 @@ public class JarPluginContainer implements PluginContainer {
 
 /**********************************************************************
  * $Log: JarPluginContainer.java,v $
+ * Revision 1.3  2004/04/26 22:42:18  willuhn
+ * @N added InfoReader
+ *
  * Revision 1.2  2004/04/22 23:47:11  willuhn
  * *** empty log message ***
  *

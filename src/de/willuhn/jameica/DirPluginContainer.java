@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/DirPluginContainer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/22 23:47:11 $
+ * $Revision: 1.3 $
+ * $Date: 2004/04/26 22:42:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,8 @@ public class DirPluginContainer implements PluginContainer {
 
 	private File menu 						= null;
 	private File navi 						= null;
-	private File  file 						= null;
+	private File file 						= null;
+	private File info							= null;
 	private AbstractPlugin plugin = null;
 	private Class pluginClass			= null;
 	private boolean installed			= false;
@@ -45,6 +46,15 @@ public class DirPluginContainer implements PluginContainer {
   void setNavi(File navi)
 	{
 		this.navi = navi;
+	}
+
+	/**
+	 * Speichert die Info-Datei des Plugins.
+	 * @param info
+	 */
+	void setInfo(File info)
+	{
+		this.info = info;
 	}
 
 	/**
@@ -99,6 +109,15 @@ public class DirPluginContainer implements PluginContainer {
 		return new FileInputStream(navi);
   }
 
+	/**
+	 * @see de.willuhn.jameica.PluginContainer#getInfo()
+	 */
+	public InfoReader getInfo() throws Exception {
+		if (info == null)
+			return null;
+		return new InfoReader(new FileInputStream(info));
+	}
+
   /**
    * @see de.willuhn.jameica.PluginContainer#isInstalled()
    */
@@ -132,6 +151,9 @@ public class DirPluginContainer implements PluginContainer {
 
 /**********************************************************************
  * $Log: DirPluginContainer.java,v $
+ * Revision 1.3  2004/04/26 22:42:18  willuhn
+ * @N added InfoReader
+ *
  * Revision 1.2  2004/04/22 23:47:11  willuhn
  * *** empty log message ***
  *

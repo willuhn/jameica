@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.42 $
- * $Date: 2004/04/26 21:00:11 $
+ * $Revision: 1.43 $
+ * $Date: 2004/04/26 22:42:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -98,6 +98,7 @@ public class PluginLoader extends ClassLoader
 			File[] child = ff.findRecursive();
 			File menu = null;
 			File navi = null;
+			File info = null;
 			String name = null;
 			ArrayList classes = new ArrayList();
 
@@ -111,6 +112,9 @@ public class PluginLoader extends ClassLoader
 				if (name.endsWith("navigation.xml"))
 					navi = child[i]; 
 	
+				if (name.endsWith("info.xml"))
+					info = child[i]; 
+
 				// Alle Klassen, die jetzt nicht mit ".class" aufhoeren, koennen wir ignorieren
 				if (!name.endsWith(".class"))
 					continue;
@@ -131,6 +135,7 @@ public class PluginLoader extends ClassLoader
 				dp.setFile(plugindir);
 				dp.setMenu(menu);
 				dp.setNavi(navi);
+				dp.setInfo(info);
 				dp.setPluginClass((Class)classes.get(i));
 				plugins.put(classes.get(i),dp);
 			}
@@ -166,6 +171,7 @@ public class PluginLoader extends ClassLoader
 	
 				JarEntry menu = null;
 				JarEntry navi = null;
+				JarEntry info = null;
 				ArrayList classes = new ArrayList();
 	      while (jarEntries.hasMoreElements())
 	      {
@@ -178,6 +184,9 @@ public class PluginLoader extends ClassLoader
 	        if ("navigation.xml".equals(entryName))
 	          navi = entry; 
 	
+					if ("info.xml".equals(entryName))
+						info = entry;
+
 					int idxClass = entryName.indexOf(".class");
 
 					// alles, was nicht mit ".class" aufhoert, koennen wir jetzt ignorieren
@@ -200,6 +209,7 @@ public class PluginLoader extends ClassLoader
 					jp.setFile(jar);
 					jp.setMenu(menu);
 					jp.setNavi(navi);
+					jp.setInfo(info);
 					jp.setPluginClass((Class)classes.get(j));
 					plugins.put(classes.get(j),jp);
 				}
@@ -393,6 +403,16 @@ public class PluginLoader extends ClassLoader
 	}
 
 	/**
+	 * Liefert den Plugin-Container der angegebenen Plugin-Klasse.
+   * @param plugin Klasse des Plugins.
+   * @return der zugehoerige Plugin-Container.
+   */
+  public static PluginContainer getPluginContainer(Class plugin)
+	{
+		return (PluginContainer) plugins.get(plugin);
+	}
+
+	/**
 	 * Liefert die Instanz des Plugins mit der angegebenen Klasse.
 	 * @param plugin Klasse des Plugins.
 	 * @return Instanz des Plugins oder <code>null</code> wenn es nicht installiert ist.
@@ -434,6 +454,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.43  2004/04/26 22:42:17  willuhn
+ * @N added InfoReader
+ *
  * Revision 1.42  2004/04/26 21:00:11  willuhn
  * @N made menu and navigation entries translatable
  *

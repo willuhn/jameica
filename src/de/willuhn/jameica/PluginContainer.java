@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginContainer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/26 22:42:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,17 +37,30 @@ public interface PluginContainer {
 
 	/**
 	 * Liefert einen InputStream mit dem XML-Code fuer das Menu.
+	 * Hierzu muss sich im Jar-File oder im Basis-Verzeichnis
+	 * des Plugins eine Datei menu.xml befinden.
    * @return InputStream mit XML-Code fuer das Menu.
    * @throws IOException
    */
   public InputStream getMenu() throws IOException;
 
 	/**
-	 * Liefert einen InputStream mit dem XML-COde fuer die Navigation.
+	 * Liefert einen InputStream mit dem XML-Code fuer die Navigation.
+	 * Hierzu muss sich im Jar-File oder im Basis-Verzeichnis
+	 * des Plugins eine Datei navigation.xml befinden.
    * @return InputStream mit XML-Code fuer die Navigation.
    * @throws IOException
    */
   public InputStream getNavigation() throws IOException; 
+
+	/**
+	 * Liefert Lizenz-Informationen des Plugins.
+	 * Hierzu muss sich im Jar-File oder im Basis-Verzeichnis
+	 * des Plugins eine Datei info.xml befinden.
+   * @return einen Reader, der Lizenz-Informationen des Plugins ausgibt.
+   * @throws Exception
+   */
+  public InfoReader getInfo() throws Exception;
 
 	/**
 	 * Liefert true, wenn das Plugin erfolgreich installiert wurde.
@@ -78,6 +91,9 @@ public interface PluginContainer {
 
 /**********************************************************************
  * $Log: PluginContainer.java,v $
+ * Revision 1.2  2004/04/26 22:42:18  willuhn
+ * @N added InfoReader
+ *
  * Revision 1.1  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *
