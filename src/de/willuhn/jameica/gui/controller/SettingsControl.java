@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/05/23 16:34:19 $
+ * $Revision: 1.18 $
+ * $Date: 2004/05/23 18:15:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,12 +13,17 @@
 
 package de.willuhn.jameica.gui.controller;
 
+import java.util.Hashtable;
+
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.input.AbstractInput;
 import de.willuhn.jameica.gui.input.ColorInput;
+import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.StyleFactory;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
@@ -41,6 +46,8 @@ public class SettingsControl extends AbstractControl
 	private AbstractInput colorLink;
 	private AbstractInput colorLinkActive;
 	
+	private AbstractInput styleFactory;
+	
   /**
    * ct.
    * @param view
@@ -51,6 +58,31 @@ public class SettingsControl extends AbstractControl
     i18n = Application.getI18n();
   }
 
+	/**
+	 * Liefert ein Auswahl-Feld fuer die Style-Factory.
+   * @return
+   */
+  public AbstractInput getStyleFactory()
+	{
+		if (styleFactory != null)
+			return styleFactory;
+		try {
+			Class[] styles = Application.getClassLoader().getClassFinder().findImplementors(StyleFactory.class);
+			Hashtable ht = new Hashtable();
+			for (int i=0;i<styles.length;++i)
+			{
+				StyleFactory f = (StyleFactory) styles[i].newInstance();
+				ht.put(f.getName(),f);
+			}
+			styleFactory = new SelectInput(ht,GUI.getStyleFactory().getName());
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("unable to load available stylefactories",e);
+			styleFactory = new LabelInput(i18n.tr("Fehler beim Laden der Styles"));
+		}
+		return styleFactory;
+	}
 
 	/**
 	 * Auswahlfeld.
@@ -258,6 +290,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.18  2004/05/23 18:15:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/05/23 16:34:19  willuhn
  * *** empty log message ***
  *

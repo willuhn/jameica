@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 16:34:18 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/23 18:15:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,9 +26,10 @@ import de.willuhn.jameica.gui.GUI;
 /**
  * Implementierung der Style-Factory im Flat-Style.
  */
-public class StyleFactoryFlatImpl implements StyleFactory {
+public class StyleFactoryFlatImpl implements StyleFactory
+{
 
-	private static FormToolkit toolkit = new FormToolkit(Display.getCurrent());
+  private static FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 	
   /**
    * @see de.willuhn.jameica.gui.util.StyleFactory#createButton(org.eclipse.swt.widgets.Composite)
@@ -73,11 +74,22 @@ public class StyleFactoryFlatImpl implements StyleFactory {
 		toolkit.paintBordersFor(parent);
 		return combo;
 	}
+
+  /**
+   * @see de.willuhn.jameica.gui.util.StyleFactory#getName()
+   */
+  public String getName() {
+    return "Flat-Look";
+  }
+
 }
 
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.3  2004/05/23 18:15:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/05/23 16:34:18  willuhn
  * *** empty log message ***
  *

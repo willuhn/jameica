@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 18:15:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import de.willuhn.jameica.gui.GUI;
+
 /**
  * Default-Implementierung der Style-Factory.
  */
@@ -30,7 +32,9 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Button createButton(Composite parent)
   {
-  	return new Button(parent,SWT.BORDER);
+  	Button button = new Button(parent,SWT.BORDER);
+		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		return button;
   }
 
   /**
@@ -46,7 +50,10 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Text createText(Composite parent)
   {
-		return new Text(parent,SWT.BORDER);
+		Text text = new Text(parent,SWT.BORDER);
+		text.setForeground(Color.FOREGROUND.getSWTColor());
+		text.setBackground(Color.WIDGET_BG.getSWTColor());
+		return text;
   }
 
   /**
@@ -54,7 +61,17 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public CCombo createCombo(Composite parent)
   {
-    return new CCombo(parent,SWT.READ_ONLY);
+    CCombo combo = new CCombo(parent,SWT.READ_ONLY);
+		combo.setForeground(Color.FOREGROUND.getSWTColor());
+		combo.setBackground(Color.WIDGET_BG.getSWTColor());
+		return combo;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.util.StyleFactory#getName()
+   */
+  public String getName() {
+    return "Default-Look";
   }
 
 
@@ -63,6 +80,9 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
+ * Revision 1.2  2004/05/23 18:15:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

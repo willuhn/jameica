@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.39 $
- * $Date: 2004/05/23 15:30:53 $
+ * $Revision: 1.40 $
+ * $Date: 2004/05/23 18:15:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,6 +77,7 @@ public class Application {
 		// init our classloader
 		app.classLoader = new MultipleClassLoader();
 
+
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
 		app.log = new Logger("Jameica");
@@ -98,6 +99,7 @@ public class Application {
 			startupError(e);
 		}
 		app.log.setLevel(app.config.getLogLevel());
+
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -331,6 +333,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.40  2004/05/23 18:15:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.39  2004/05/23 15:30:53  willuhn
  * @N new color/font management
  * @N new styleFactory

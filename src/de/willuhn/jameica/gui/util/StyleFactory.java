@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/StyleFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 18:15:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,11 +52,20 @@ public interface StyleFactory
    * @return
    */
   public CCombo createCombo(Composite parent);
+  
+  /**
+   * Liefert den sprechenden Namen der Style-Factory.
+   * @return Name der Style-Factory.
+   */
+  public String getName();
 
 }
 
 /*********************************************************************
  * $Log: StyleFactory.java,v $
+ * Revision 1.2  2004/05/23 18:15:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory
