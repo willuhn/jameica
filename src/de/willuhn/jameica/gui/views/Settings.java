@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/06/03 00:24:18 $
+ * $Revision: 1.24 $
+ * $Date: 2004/07/20 22:52:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,8 @@
 
 package de.willuhn.jameica.gui.views;
 
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
@@ -57,13 +57,13 @@ public class Settings extends AbstractView
 		colorGroup.addLabelPair(i18n.tr("Aktive Links"),control.getColorLinkActive());
 
 		ButtonArea colorButtons = colorGroup.createButtonArea(3);
-		colorButtons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
-		{
-			public void mouseUp(MouseEvent e)
-			{
+		colorButtons.addCustomButton(i18n.tr("Zurücksetzen"),new Listener()
+    {
+      public void handleEvent(Event event)
+      {
 				control.handleRestore();
-			}
-		});
+      }
+    });
 		colorButtons.addCancelButton(control);
 		colorButtons.addStoreButton(control);
 
@@ -84,6 +84,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.24  2004/07/20 22:52:49  willuhn
+ * @C Refactoring
+ *
  * Revision 1.23  2004/06/03 00:24:18  willuhn
  * *** empty log message ***
  *

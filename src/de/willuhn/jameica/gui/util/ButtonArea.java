@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.4 $
+ * $Date: 2004/07/20 22:52:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,10 +13,8 @@
 package de.willuhn.jameica.gui.util;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -72,8 +70,9 @@ public class ButtonArea
     final Button button = GUI.getStyleFactory().createButton(buttonArea);
     button.setText(name);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.addMouseListener(new MouseAdapter() {
-      public void mouseUp(MouseEvent e) {
+    button.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e) {
         controller.handleCreate();
       }
     });
@@ -89,25 +88,17 @@ public class ButtonArea
     storeButton = GUI.getStyleFactory().createButton(buttonArea);
     storeButton.setText(i18n.tr("Speichern"));
     storeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+		//	Workaround. SWT does not seem to set rigth the default button if 
+		//	there is not control with focus. Bug: 14668
+		storeButton.setFocus();
     GUI.getShell().setDefaultButton(storeButton);
-    storeButton.addListener(SWT.Traverse, new Listener()
+
+		storeButton.addSelectionListener(new SelectionAdapter()
     {
-      public void handleEvent(Event event)
+      public void widgetSelected(SelectionEvent e)
       {
-        if (event.detail == SWT.TRAVERSE_RETURN)
-          controller.handleStore();
-      }
-    });
-		storeButton.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_RETURN) {
-					controller.handleStore();
-				}
-			}
-		});
-		storeButton.addMouseListener(new MouseAdapter() {
-      public void mouseUp(MouseEvent e) {
-        controller.handleStore();
+				controller.handleStore();
       }
     });
   }
@@ -122,8 +113,9 @@ public class ButtonArea
     final Button button = GUI.getStyleFactory().createButton(buttonArea);
     button.setText(i18n.tr("Zurück"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.addMouseListener(new MouseAdapter() {
-      public void mouseUp(MouseEvent e) {
+    button.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e) {
         controller.handleCancel();
       }
     });
@@ -139,8 +131,9 @@ public class ButtonArea
     final Button button = GUI.getStyleFactory().createButton(buttonArea);
     button.setText(i18n.tr("Löschen"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.addMouseListener(new MouseAdapter() {
-      public void mouseUp(MouseEvent e) {
+    button.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e) {
         controller.handleDelete();
       }
     });
@@ -149,11 +142,11 @@ public class ButtonArea
   /**
    * Fuegt einen Custom Button hinzu.
    * @param text Beschriftung des Buttons.
-   * @param adapter Adapter, der dem Button zugewiesen werden soll.
+   * @param listener Listener, der beim Klick ausgeloest werden soll
    */
-  public void addCustomButton(String text, MouseAdapter adapter)
+  public void addCustomButton(String text, final Listener listener)
   {
-    if (adapter == null)
+    if (listener == null)
     {
       // button without adapter makes no sense ;)
       Logger.warn("a button without a mouseAdapter makes no sense - skipping");
@@ -169,13 +162,34 @@ public class ButtonArea
     final Button button = GUI.getStyleFactory().createButton(buttonArea);
     button.setText(text);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.addMouseListener(adapter);
+    button.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+      	// So ein Rotz - Wieso ist SelectionEvent nicht von Event abgeleitet?
+      	// Jetzt darf ich den ganzen Scheiss umkopieren
+      	Event event = new Event();
+      	event.data = e.data;
+      	event.detail = e.detail;
+      	event.display = e.display;
+      	event.doit = e.doit;
+      	event.item = e.item;
+      	event.width = e.width;
+      	event.height = e.height;
+      	event.x = e.x;
+      	event.y = e.y;
+      	listener.handleEvent(event);
+      }
+    });
   }
 
 }
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.4  2004/07/20 22:52:49  willuhn
+ * @C Refactoring
+ *
  * Revision 1.3  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

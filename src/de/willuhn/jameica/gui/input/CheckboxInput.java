@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.6 $
+ * $Date: 2004/07/20 22:52:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,8 +73,12 @@ public class CheckboxInput extends AbstractInput
     if (!(value instanceof Boolean))
     	return;
 
-    this.button.setSelection(((Boolean)value).booleanValue());
-    this.button.redraw();
+		this.value = ((Boolean)value).booleanValue();
+		if (this.button != null && !this.button.isDisposed())
+		{
+			this.button.setSelection(this.value);
+			this.button.redraw();
+		}
   }
 
   /**
@@ -109,6 +113,9 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.6  2004/07/20 22:52:49  willuhn
+ * @C Refactoring
+ *
  * Revision 1.5  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *

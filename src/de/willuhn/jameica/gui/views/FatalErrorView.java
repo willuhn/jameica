@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.13 $
+ * $Date: 2004/07/20 22:52:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,8 +19,8 @@ import java.io.PrintStream;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
@@ -77,10 +77,10 @@ public class FatalErrorView extends AbstractView
 		  }
 	    final String s = e1 + e2;
 	    ButtonArea buttons = new ButtonArea(getParent(),1);
-	    buttons.addCustomButton(i18n.tr("in Zwischenablage kopieren"),new MouseAdapter()
-	    {
-	      public void mouseUp(MouseEvent e)
-	      {
+	    buttons.addCustomButton(i18n.tr("in Zwischenablage kopieren"),new Listener()
+      {
+        public void handleEvent(Event event)
+        {
 	        final Clipboard cb = new Clipboard(GUI.getDisplay());
 	        TextTransfer textTransfer = TextTransfer.getInstance();
 	        String[] logEntries = Logger.getLastLines();
@@ -121,6 +121,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.13  2004/07/20 22:52:49  willuhn
+ * @C Refactoring
+ *
  * Revision 1.12  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *
