@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/ChangePassword.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/03/01 22:56:48 $
+ * $Revision: 1.2 $
+ * $Date: 2005/03/03 23:47:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -36,8 +36,7 @@ public class ChangePassword implements Action
   	try
   	{
 			Logger.warn("trying to change master password");
-  		Application.getCallback().changePassword();
-  		Application.getSSLFactory().storeKeystore();
+  		Application.getSSLFactory().changePassword();
 			Logger.warn("master password successfully changed");
 			GUI.getStatusBar().setSuccessText(i18n.tr("Master-Passwort erfolgreich geändert."));
   	}
@@ -56,6 +55,9 @@ public class ChangePassword implements Action
 
 /**********************************************************************
  * $Log: ChangePassword.java,v $
+ * Revision 1.2  2005/03/03 23:47:51  web0
+ * @B Bugzilla http://www.willuhn.de/bugzilla/show_bug.cgi?id=17
+ *
  * Revision 1.1  2005/03/01 22:56:48  web0
  * @N master password can now be changed
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/03/01 22:56:48 $
+ * $Revision: 1.7 $
+ * $Date: 2005/03/03 23:47:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -160,10 +160,42 @@ public class SSLFactory
 	}
 	
 	/**
+	 * Aendert das Passwort des Keystores.
+	 * Die Eingaben erfolgen ueber den ApplicationCallback.
+	 * @see ApplicationCallback#changePassword()
+   * @throws Exception
+   */
+  public synchronized void changePassword() throws Exception
+	{
+		Logger.warn("starting password change for keystore");
+
+		Logger.warn("  reading private key");
+		PrivateKey k 					= this.getPrivateKey();
+		X509Certificate cert 	= this.getCertificate();
+
+		this.certificate = null;
+		this.privateKey  = null;
+		this.publicKey	 = null;
+
+		Logger.warn("  starting password change dialog");
+		this.callback.changePassword();
+
+		Logger.warn("  changing password of private key");
+
+		this.keystore.setKeyEntry("jameica",k,
+															this.callback.getPassword().toCharArray(),
+															new X509Certificate[]{cert});
+
+		Logger.warn("  saving changed keystore");
+		storeKeystore();		
+		Logger.warn("keystore password successfully changed");
+	}
+
+	/**
 	 * Speichert den Keystore.
    * @throws Exception
    */
-  public synchronized void storeKeystore() throws Exception
+  private synchronized void storeKeystore() throws Exception
 	{
 		OutputStream os = null;
 		try
@@ -335,6 +367,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.7  2005/03/03 23:47:51  web0
+ * @B Bugzilla http://www.willuhn.de/bugzilla/show_bug.cgi?id=17
+ *
  * Revision 1.6  2005/03/01 22:56:48  web0
  * @N master password can now be changed
  *
