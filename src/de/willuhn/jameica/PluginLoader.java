@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.43 $
- * $Date: 2004/04/26 22:42:17 $
+ * $Revision: 1.44 $
+ * $Date: 2004/05/11 21:11:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,7 @@ import de.willuhn.util.FileFinder;
  * Kontrolliert alle installierten Plugins.
  * @author willuhn
  */
-public class PluginLoader extends ClassLoader
+public class PluginLoader
 {
 
   // Liste mit allen gefundenen Plugins.
@@ -278,11 +278,10 @@ public class PluginLoader extends ClassLoader
 
 		if (container.isInstalled())
 		{
-			Application.getLog().debug("plugin " + pluginClass.getName() + " allready installed, skipping");
 			return;
 		}
 
-		Application.getLog().debug("trying to initialize " + pluginClass.getName());
+		Application.getLog().info("trying to initialize " + pluginClass.getName());
 
 		///////////////////////////////////////////////////////////////
 		// Klasse instanziieren
@@ -310,7 +309,7 @@ public class PluginLoader extends ClassLoader
     if (oldVersion == -1)
     {
       // Plugin wurde zum ersten mal gestartet
-      Application.getLog().debug("Plugin started for the first time. Starting install");
+      Application.getLog().info("Plugin started for the first time. Starting install");
 			Application.splash("installing plugin " + plugin.getName());
       try {
         if (!plugin.install())
@@ -332,7 +331,7 @@ public class PluginLoader extends ClassLoader
 
       if (oldVersion < newVersion)
       {
-        Application.getLog().debug("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
+        Application.getLog().info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
         // hui, sogar eine neuere Version. Also starten wir dessen Update
 				Application.splash("updating plugin " + plugin.getName());
 				try {
@@ -363,6 +362,7 @@ public class PluginLoader extends ClassLoader
 			updateChecker.setAttribute(pluginClass.getName() + ".version",plugin.getVersion());
 			// und setzen es auf status "installed"
 			container.setInstalled(true);
+			Application.getLog().info("plugin " + plugin.getName() + " initialized successfully");
 		}
 		catch (Exception e)
 		{
@@ -423,6 +423,66 @@ public class PluginLoader extends ClassLoader
 		return pc == null ? null : pc.getPlugin();
 	}
 
+	/**
+	 * Liefert die Instanz des Plugins mit der angegebenen Klassennamen.
+	 * @param pluginClass Klassenname des Plugins.
+	 * @return Instanz des Plugins oder <code>null</code> wenn es nicht installiert ist.
+	 */
+	public static AbstractPlugin getPlugin(String pluginClass)
+	{
+		if (pluginClass == null || pluginClass.length() == 0)
+			return null;
+
+		Class c = null;
+		try {
+			c = Application.getClassLoader().load(pluginClass);
+		}
+		catch (Throwable t)
+		{
+			return null;
+		}
+		if (c == null)
+			return null;
+		PluginContainer pc = getPluginContainer(c);
+		if (pc == null) return null;
+		return pc.getPlugin();
+	}
+
+	/**
+	 * Prueft, ob das angegebene Plugin installiert ist <b>und</b> erfolgreich initialisiert ist.
+	 * @param pluginClass vollstaeniger Klassenname des Plugins.
+	 * Warum hier nicht ein Class-Objekt uebergeben wird? Wuerde das Plugin mittels
+	 * <code>PluginLoader.isInstalled(NeededPlugin.class)</code> pruefen wollen, ob
+	 * das benoetigte Plugin installiert ist, dann wuerde bereits das <code>NeededPlugin.class</code>
+	 * vom SystemClassLoader der JVM mit einer ClassNotFoundException aufgeben. Da wir
+	 * es hier mit dynamisch geladenen Klassen zu tun haben, sind die dem SystemClassLoader
+	 * nicht bekannt sondern nur unserem eigenen, der via <code>Application.getClassLoder()</code>
+	 * bezogen werden kann. 
+	 * @return true, wenn es installiert <b>und</b> aktiv ist.
+	 */
+	public static boolean isInstalled(String pluginClass)
+	{
+		if (pluginClass == null || pluginClass.length() == 0)
+			return false;
+
+		Class c = null;
+		try {
+			c = Application.getClassLoader().load(pluginClass);
+		}
+		catch (Throwable t)
+		{
+			return false;
+		}
+		if (c == null)
+			return false;
+		PluginContainer pc = getPluginContainer(c);
+		if (pc == null) return false; // es existiert ueberhaupt nicht.
+		
+		// Es kann sein, dass es nocht nicht initialisiert ist.
+		// Dann versuchen wir das mal.
+		initPlugin(pc);
+		return pc.isInstalled();
+	}
 
   /**
    * Wird beim Beenden der Anwendung ausgefuehrt und beendet alle Plugins.
@@ -454,6 +514,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.44  2004/05/11 21:11:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.43  2004/04/26 22:42:17  willuhn
  * @N added InfoReader
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.40 $
- * $Date: 2004/04/29 23:05:54 $
+ * $Revision: 1.41 $
+ * $Date: 2004/05/11 21:11:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -324,6 +324,10 @@ public class GUI
 						Application.getLog().debug("cancel sent from dialog (in unbind()");
 						return;
 					}
+					catch (Throwable t)
+					{
+						Application.getLog().error("error while unbind current view",t);
+					}
 
 					if (!gui.skipHistory)
 					{
@@ -599,6 +603,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.41  2004/05/11 21:11:10  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.40  2004/04/29 23:05:54  willuhn
  * @N new snapin feature
  *

@@ -2,59 +2,60 @@
 
 <project basedir=".." default="all" name="All">
 
-    <target name="init" description="inits the build">
+  <target name="init" description="inits the build">
 
-        <property environment="env"/>
+    <property environment="env"/>
 
     <property name="define.projectname"      value="Jameica"/>
     <property name="define.jarfilename"      value="jameica.jar"/>
     <property name="define.jarfilename.win32"    value="jameica-win32.jar"/>
     <property name="define.jarfilename.linux"    value="jameica-linux.jar"/>
     <property name="define.package"          value="de.willuhn.jameica"/>
-        <property name="build.dir"            value="build"/>
+    <property name="build.dir"            value="build"/>
 
     <buildnumber file="${build.dir}/BUILD"/>
-      <loadfile property="version" srcFile="${build.dir}/RELEASE">
-        <filterchain>
-          <striplinebreaks/>
-        </filterchain>
-      </loadfile>
+
+    <loadfile property="version" srcFile="${build.dir}/RELEASE">
+      <filterchain>
+        <striplinebreaks/>
+      </filterchain>
+    </loadfile>
 
     <echo message="VERSION: ${version}"/>
     <echo message="BUILD  : ${build.number}"/>
 
-        <property name="project.release"       value="releases/${version}-${build.number}"/>
-        <property name="project.src"          value="${project.release}/src/classes"/>
-        <property name="project.tmp"          value="${project.release}/tmp"/>
-        <property name="project.javadoc"        value="${project.release}/javadoc"/>
-        <property name="src.dir"            value="src"/>
-        <property name="icon.dir"            value="${src.dir}/img"/>
-        <property name="lang.dir"            value="${src.dir}/lang"/>
-        <property name="help.dir"            value="${src.dir}/help"/>
-        <property name="lib.dir"            value="lib"/>
-        <property name="class.dir"            value="${project.tmp}/bin"/>
+    <property name="project.release"       value="releases/${version}-${build.number}"/>
+    <property name="project.src"          value="${project.release}/src/classes"/>
+    <property name="project.tmp"          value="${project.release}/tmp"/>
+    <property name="project.javadoc"        value="${project.release}/javadoc"/>
+    <property name="src.dir"            value="src"/>
+    <property name="icon.dir"            value="${src.dir}/img"/>
+    <property name="lang.dir"            value="${src.dir}/lang"/>
+    <property name="help.dir"            value="${src.dir}/help"/>
+    <property name="lib.dir"            value="lib"/>
+    <property name="class.dir"            value="${project.tmp}/bin"/>
 
     <path id="compilepath">
-        <fileset dir="${lib.dir}">
-          <include name="**/*.jar"/>
-        </fileset>
+      <fileset dir="${lib.dir}">
+        <include name="**/*.jar"/>
+      </fileset>
     </path>
 
-    </target>
+  </target>
 
 
-    <target depends="init" name="compile" description="compiles everything">
+  <target depends="init" name="compile" description="compiles everything">
 
-        <mkdir dir="${class.dir}"/>
+    <mkdir dir="${class.dir}"/>
 
     <javac fork="true" debug="true" deprecation="true" destdir="${class.dir}" srcdir="${src.dir}">
       <classpath refid="compilepath" />
-        </javac>
+    </javac>
 
-        <rmic verify="true" base="${class.dir}">
-            <include name="**/*.class"/>
+    <rmic verify="true" base="${class.dir}">
+      <include name="**/*.class"/>
       <classpath refid="compilepath" />
-        </rmic>
+    </rmic>
 
     <copy todir="${class.dir}/img">
       <fileset dir="${icon.dir}" />
@@ -74,49 +75,50 @@
 
   <target depends="compile" name="cvstag" description="tags the source in the CVS">
 
-      <exec executable="cvs" failonerror="true" dir="${basedir}">
-        <arg line="tag ${version}_BUILD_${build.number}"/>
-      </exec>
+    <exec executable="cvs" failonerror="true" dir="${basedir}">
+      <arg line="tag ${version}_BUILD_${build.number}"/>
+    </exec>
 
   </target>
 
 
-    <target depends="compile" name="jar" description="generates the jar file">
+  <target depends="compile" name="jar" description="generates the jar file">
 
-        <mkdir dir="${project.release}"/>
+    <mkdir dir="${project.release}"/>
 
-      <jar destfile="${project.release}/${define.jarfilename}">
-        <manifest>
-          <attribute name="Built-By" value="${user.name}"/>
-          <attribute name="Implementation-Title" value="${define.projectname}"/>
-          <attribute name="Implementation-Version" value="${version}"/>
-          <attribute name="Implementation-Buildnumber" value="${build.number}"/>
-        </manifest>
-        <fileset dir="${class.dir}"/>
+    <jar destfile="${project.release}/${define.jarfilename}">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Implementation-Title" value="${define.projectname}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Buildnumber" value="${build.number}"/>
+      </manifest>
+      <fileset dir="${class.dir}"/>
     </jar>
 
-      <jar destfile="${project.release}/${define.jarfilename.linux}">
-        <manifest>
-          <attribute name="Built-By" value="${user.name}"/>
-          <attribute name="Implementation-Title" value="${define.projectname}"/>
-          <attribute name="Implementation-Version" value="${version}"/>
-          <attribute name="Implementation-Buildnumber" value="${build.number}"/>
-          <attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-          <attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar lib/swt/linux/swt-pi.jar lib/swt/linux/swt-mozilla.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar img lang help"/>
-        </manifest>
-        <fileset dir="${class.dir}" includes="**/Main.class"/>
+
+    <jar destfile="${project.release}/${define.jarfilename.linux}">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Implementation-Title" value="${define.projectname}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Buildnumber" value="${build.number}"/>
+        <attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
+        <attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar lib/swt/linux/swt-pi.jar lib/swt/linux/swt-mozilla.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar img lang help"/>
+      </manifest>
+      <fileset dir="${class.dir}" includes="**/Main.class"/>
     </jar>
 
-      <jar destfile="${project.release}/${define.jarfilename.win32}">
-        <manifest>
-          <attribute name="Built-By" value="${user.name}"/>
-          <attribute name="Implementation-Title" value="${define.projectname}"/>
-          <attribute name="Implementation-Version" value="${version}"/>
-          <attribute name="Implementation-Buildnumber" value="${build.number}"/>
-          <attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-          <attribute name="Class-Path" value="${define.jarfilename} lib/swt/win32/swt.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar img lang help"/>
-        </manifest>
-        <fileset dir="${class.dir}" includes="**/Main.class"/>
+    <jar destfile="${project.release}/${define.jarfilename.win32}">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Implementation-Title" value="${define.projectname}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Buildnumber" value="${build.number}"/>
+        <attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
+        <attribute name="Class-Path" value="${define.jarfilename} lib/swt/win32/swt.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar img lang help"/>
+      </manifest>
+      <fileset dir="${class.dir}" includes="**/Main.class"/>
     </jar>
 
     <mkdir dir="${project.release}/lib"/>
@@ -137,28 +139,28 @@
     <copy file="${build.dir}/README"            tofile="${project.release}/README" />
     <copy file="${build.dir}/INSTALL"           tofile="${project.release}/INSTALL" />
 
-    </target>
+  </target>
 
-    <target depends="compile" name="javadoc" description="creates the api doc">
+  <target depends="compile" name="javadoc" description="creates the api doc">
 
-        <mkdir dir="${project.javadoc}"/>
+    <mkdir dir="${project.javadoc}"/>
 
-        <javadoc destdir="${project.javadoc}" packagenames="${define.package}.*">
+    <javadoc destdir="${project.javadoc}" packagenames="${define.package}.*">
       <classpath refid="compilepath" />
-            <sourcepath>
-                <pathelement location="${src.dir}"/>
-            </sourcepath>
-        </javadoc>
+      <sourcepath>
+        <pathelement location="${src.dir}"/>
+       </sourcepath>
+    </javadoc>
 
-    </target>
+  </target>
 
-    <target name="clean" description="cleanup">
-        <delete dir="${project.tmp}"/>
-    </target>
+  <target name="clean" description="cleanup">
+    <delete dir="${project.tmp}"/>
+  </target>
 
 
-    <target depends="init,compile,cvstag,jar,javadoc,clean" description="build an official release" name="all" />
+  <target depends="init,compile,cvstag,jar,javadoc,clean" description="build an official release" name="all" />
 
-    <target depends="init,compile,jar,clean" description="build inofficial release" name="fast" />
+  <target depends="init,compile,jar,clean" description="build inofficial release" name="fast" />
 
 </project>
