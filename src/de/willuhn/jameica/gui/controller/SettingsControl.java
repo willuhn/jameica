@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/04/19 22:05:27 $
+ * $Revision: 1.17 $
+ * $Date: 2004/05/23 16:34:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,18 +14,15 @@
 package de.willuhn.jameica.gui.controller;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Config;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.input.AbstractInput;
-import de.willuhn.jameica.gui.input.FileInput;
-import de.willuhn.jameica.gui.input.SelectInput;
-import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.input.ColorInput;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * 
@@ -33,13 +30,17 @@ import de.willuhn.util.Logger;
 public class SettingsControl extends AbstractControl
 {
 
-	private Config config = Application.getConfig();
-	
-	private AbstractInput logFile  = new FileInput(config.getLogFile());
-	private AbstractInput logLevel = new SelectInput(Logger.LEVEL_TEXT,config.getLogLevel());
-
 	private I18N i18n;
-
+	private AbstractInput colorWhite;
+	private AbstractInput colorComment;
+	private AbstractInput colorBackground;
+	private AbstractInput colorForeground;
+	private AbstractInput colorBorder;
+	private AbstractInput colorError;
+	private AbstractInput colorSuccess;
+	private AbstractInput colorLink;
+	private AbstractInput colorLinkActive;
+	
   /**
    * ct.
    * @param view
@@ -52,43 +53,111 @@ public class SettingsControl extends AbstractControl
 
 
 	/**
-	 * Liefert das Eingabe-Feld fuer das Logfile.
-   * @return Eingabe-Feld fuer das Logfile.
+	 * Auswahlfeld.
+   * @return
    */
-  public AbstractInput getLogFile()
+  public AbstractInput getColorWhite()
 	{
-		return logFile;
+		if (colorWhite != null)
+			return colorWhite;
+		colorWhite = new ColorInput(Color.WIDGET_BG.getSWTColor());
+		return colorWhite;
 	}
 
 	/**
-	 * Liefert das Eingabefeld fuer das Loglevel.
-   * @return Eingabe-Feld fuer das Loglevel.
-   */
-  public AbstractInput getLoglevel()
-	{
-		return logLevel;
-	}
-
-	/**
-	 * Liefert eine Tabelle mit den lokalen Services.
-   * @return Tabelle mit den lokalen Services.
-   */
-  public TablePart getLocalServices()
-	{
-		TablePart t = new TablePart(config.getLocalServiceData(),this);
-		t.addColumn(i18n.tr("Name"),null);
-		return t;
-	}
-
-	/**
-	 * Liefert eine Tabelle mit den remote Services.
-	 * @return Tabelle mit den remote Services.
+	 * Auswahlfeld.
+	 * @return
 	 */
-	public TablePart getRemoteServices()
+	public AbstractInput getColorComment()
 	{
-		TablePart t = new TablePart(config.getRemoteServiceData(),this);
-		t.addColumn(i18n.tr("Name"),null);
-		return t;
+		if (colorComment != null)
+			return colorComment;
+		colorComment = new ColorInput(Color.COMMENT.getSWTColor());
+		return colorComment;
+	}
+
+	/**
+	 * Auswahlfeld.
+	 * @return
+	 */
+	public AbstractInput getColorBackground()
+	{
+		if (colorBackground != null)
+			return colorBackground;
+		colorBackground = new ColorInput(Color.BACKGROUND.getSWTColor());
+		return colorBackground;
+	}
+
+	/**
+	 * Auswahlfeld.
+	 * @return
+	 */
+	public AbstractInput getColorForeground()
+	{
+		if (colorForeground != null)
+			return colorForeground;
+		colorForeground = new ColorInput(Color.FOREGROUND.getSWTColor());
+		return colorForeground;
+	}
+
+	/**
+	 * Auswahlfeld.
+	 * @return
+	 */
+	public AbstractInput getColorBorder()
+	{
+		if (colorBorder != null)
+			return colorBorder;
+		colorBorder = new ColorInput(Color.BORDER.getSWTColor());
+		return colorBorder;
+	}
+
+	/**
+	 * Auswahlfeld.
+	 * @return
+	 */
+	public AbstractInput getColorError()
+	{
+		if (colorError != null)
+			return colorError;
+		colorError = new ColorInput(Color.ERROR.getSWTColor());
+		return colorError;
+	}
+
+	/**
+	 * Auswahlfeld.
+	 * @return
+	 */
+	public AbstractInput getColorSuccess()
+	{
+		if (colorSuccess != null)
+			return colorSuccess;
+		colorSuccess = new ColorInput(Color.SUCCESS.getSWTColor());
+		return colorSuccess;
+	}
+
+	/**
+	 * Auswahlfeld.
+	 * @return
+	 */
+	public AbstractInput getColorLink()
+	{
+		if (colorLink != null)
+			return colorLink;
+		colorLink = new ColorInput(Color.LINK.getSWTColor());
+		return colorLink;
+	}
+
+	/**
+	 * Auswahlfeld.
+	 * @return
+	 */
+	public AbstractInput getColorLinkActive()
+	{
+		if (colorLinkActive != null)
+			return colorLinkActive;
+		colorLinkActive = new ColorInput(Color.LINK_ACTIVE.getSWTColor());
+		return colorLinkActive;
 	}
 
   /**
@@ -111,21 +180,28 @@ public class SettingsControl extends AbstractControl
    */
   public void handleStore()
   {
-  	Config config = Application.getConfig();
-
-  	config.setLoglevel((String)logLevel.getValue());
-  	Application.getLog().setLevel(config.getLogLevel()); // live umschaltung
-  	config.setLogFile((String)logFile.getValue());
 
   	try
     {
-      config.store();
-			GUI.getStatusBar().setSuccessText(i18n.tr("Konfiguaration gespeichert."));
+    	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWhite().getValue());
+			Color.COMMENT.setSWTColor((org.eclipse.swt.graphics.Color)getColorComment().getValue());
+			Color.BACKGROUND.setSWTColor((org.eclipse.swt.graphics.Color)getColorBackground().getValue());
+
+			Color.FOREGROUND.setSWTColor((org.eclipse.swt.graphics.Color)getColorForeground().getValue());
+			Color.BORDER.setSWTColor((org.eclipse.swt.graphics.Color)getColorBorder().getValue());
+
+			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
+			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
+
+			Color.LINK.setSWTColor((org.eclipse.swt.graphics.Color)getColorLink().getValue());
+			Color.LINK_ACTIVE.setSWTColor((org.eclipse.swt.graphics.Color)getColorLinkActive().getValue());
+
+			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen gespeichert."));
     }
     catch (Exception e)
     {
     	Application.getLog().error("error while writing config",e);
-			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Speichern der Konfiguration."));
+			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Speichern der Einstellungen."));
     }
   	
   }
@@ -152,17 +228,27 @@ public class SettingsControl extends AbstractControl
   	try {
   		YesNoDialog prompt = new YesNoDialog(YesNoDialog.POSITION_CENTER);
   		prompt.setTitle(i18n.tr("Sicher?"));
-  		prompt.setText(i18n.tr("Alle Einstellungen werden auf die zuvor gespeicherten Werte zurückgesetzt"));
+  		prompt.setText(i18n.tr("Alle Einstellungen werden auf die Standard-Werte zurückgesetzt"));
   		if (!((Boolean) prompt.open()).booleanValue())
   			return;
-			Application.getConfig().restore();
+
+			Color.WIDGET_BG.reset();
+			Color.COMMENT.reset();
+			Color.BACKGROUND.reset();
+			Color.FOREGROUND.reset();
+			Color.BORDER.reset();
+			Color.ERROR.reset();
+			Color.SUCCESS.reset();
+			Color.LINK.reset();
+			Color.LINK_ACTIVE.reset();
+
 			GUI.startView(Settings.class.getName(),null);
-			GUI.getStatusBar().setSuccessText(i18n.tr("letzte gespeicherte Konfiguaration wieder hergestellt."));
+			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen zurückgesetzt."));
   	}
   	catch (Exception e)
   	{
-  		Application.getLog().error("error while restoreing config",e);
-			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Wiederherstellen der Konfiguration"));
+  		Application.getLog().error("error while restoring settings",e);
+			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Zurücksetzen"));
   	}
   	
   }
@@ -172,6 +258,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.17  2004/05/23 16:34:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/04/19 22:05:27  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 16:34:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import de.willuhn.jameica.gui.GUI;
+
 /**
  * Implementierung der Style-Factory im Flat-Style.
  */
@@ -35,7 +37,7 @@ public class StyleFactoryFlatImpl implements StyleFactory {
   {
 		Button button = toolkit.createButton(parent,"",SWT.PUSH);
 		toolkit.paintBordersFor(parent);
-		button.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		return button;
   }
 
@@ -53,6 +55,8 @@ public class StyleFactoryFlatImpl implements StyleFactory {
   public Text createText(Composite parent)
   {
 		Text text = toolkit.createText(parent,"");
+		text.setForeground(Color.FOREGROUND.getSWTColor());
+		text.setBackground(Color.WIDGET_BG.getSWTColor());
 		toolkit.paintBordersFor(parent);
 		return text;
   }
@@ -64,6 +68,8 @@ public class StyleFactoryFlatImpl implements StyleFactory {
 	{
 		CCombo combo = new CCombo(parent,SWT.READ_ONLY);
 		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		combo.setForeground(Color.FOREGROUND.getSWTColor());
+		combo.setBackground(Color.WIDGET_BG.getSWTColor());
 		toolkit.paintBordersFor(parent);
 		return combo;
 	}
@@ -72,6 +78,9 @@ public class StyleFactoryFlatImpl implements StyleFactory {
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.2  2004/05/23 16:34:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

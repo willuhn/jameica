@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 16:34:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,7 @@ import de.willuhn.jameica.gui.GUI;
  */
 public class Color {
 	
-	public final static Color WHITE   		= new Color("color.white",				new RGB(255,255,255));
+	public final static Color WIDGET_BG   = new Color("color.widgetbg",			new RGB(255,255,255));
 	public final static Color COMMENT 		= new Color("color.comment",			new RGB(140,140,140));
 	public final static Color BACKGROUND 	= new Color("color.background",		GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
 	public final static Color FOREGROUND  = new Color("color.foreground",		new RGB(0,0,0));
@@ -77,11 +77,22 @@ public class Color {
 		settings.setAttribute(name,value);
 	}
 
+	/**
+   * Setzt die Farbe wieder auf den Default-Wert zurueck.
+   */
+  public final void reset()
+	{
+		value = defaultValue;
+		settings.setAttribute(name,value);
+	}
 }
 
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.2  2004/05/23 16:34:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.16 $
+ * $Date: 2004/05/23 16:34:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -147,16 +147,16 @@ public abstract class AbstractDialog
 		compLayout.marginWidth = 0;
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		comp.setLayout(compLayout);
-		comp.setBackground(Color.WHITE.getSWTColor());
+		comp.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 		
 		title = new CLabel(comp,SWT.NONE);
-		title.setBackground(Color.WHITE.getSWTColor());
+		title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 		title.setLayoutData(new GridData(GridData.FILL_BOTH));
 		title.setFont(Font.H2.getSWTFont());
 
 		Label image = new Label(comp,SWT.NONE);
 		image.setImage(SWTUtil.getImage("gradient.gif"));
-		title.setBackground(Color.WHITE.getSWTColor());
+		title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 		image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		parent = new Composite(shell,SWT.NONE);
@@ -335,6 +335,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.16  2004/05/23 16:34:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

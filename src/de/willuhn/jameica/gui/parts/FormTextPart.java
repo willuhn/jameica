@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/23 16:34:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -174,7 +174,6 @@ public class FormTextPart implements Part {
 		text = new FormText(container,SWT.WRAP);
 
 		text.setBackground(Color.BACKGROUND.getSWTColor());
-		text.setForeground(Color.FOREGROUND.getSWTColor());
 
 		text.setColor("header",Color.COMMENT.getSWTColor());
 		text.setFont("header", Font.H1.getSWTFont());
@@ -182,9 +181,9 @@ public class FormTextPart implements Part {
 		container.setContent(text);
 	
 		HyperlinkSettings hs = new HyperlinkSettings(GUI.getDisplay());
-		hs.setBackground(Color.WHITE.getSWTColor());
+		hs.setBackground(Color.WIDGET_BG.getSWTColor());
 		hs.setForeground(Color.LINK.getSWTColor());
-		hs.setActiveBackground(Color.WHITE.getSWTColor());
+		hs.setActiveBackground(Color.WIDGET_BG.getSWTColor());
 		hs.setActiveForeground(Color.LINK_ACTIVE.getSWTColor());
 
 		text.setHyperlinkSettings(hs);
@@ -208,6 +207,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.3  2004/05/23 16:34:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.18 $
+ * $Date: 2004/05/23 16:34:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,7 +67,7 @@ public class View
 		sash.setLayout(new FillLayout());
 		
 		view = new Composite(sash, SWT.BORDER);
-		view.setBackground(Color.WHITE.getSWTColor());
+		view.setBackground(Color.BACKGROUND.getSWTColor());
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -88,11 +88,11 @@ public class View
 		layout2.horizontalSpacing = 0;
 		layout2.verticalSpacing = 0;
 		panelBg.setLayout(layout2);
-		panelBg.setBackground(Color.WHITE.getSWTColor());
+		panelBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 
 		title = new CLabel(panelBg,SWT.NONE);
 		title.setFont(Font.H1.getSWTFont());
-		title.setBackground(Color.WHITE.getSWTColor());
+		title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 		title.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
 		Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -231,6 +231,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.18  2004/05/23 16:34:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

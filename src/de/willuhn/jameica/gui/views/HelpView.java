@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.6 $
+ * $Date: 2004/05/23 16:34:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,14 +17,15 @@ import java.io.Reader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.FormTextPart;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
@@ -68,21 +69,21 @@ public class HelpView {
 			headLayout.marginWidth = 0;
 			head.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			head.setLayout(headLayout);
-			head.setBackground(Color.WHITE.getSWTColor());
+			head.setBackground(new Color(GUI.getDisplay(),255,255,255));
 			//
 			///////////////////////////////
 			
 				///////////////////////////////
 				// Der Titel selbst
 				title = new CLabel(head,SWT.NONE);
-				title.setBackground(Color.WHITE.getSWTColor());
+				title.setBackground(new Color(GUI.getDisplay(),255,255,255));
 				title.setLayoutData(new GridData(GridData.FILL_BOTH));
 				title.setFont(Font.H2.getSWTFont());
 				title.setText(i18n.tr("Hilfe"));
 		
 				Label image = new Label(head,SWT.NONE);
 				image.setImage(SWTUtil.getImage("gradient.gif"));
-				title.setBackground(Color.WHITE.getSWTColor());
+				title.setBackground(new Color(GUI.getDisplay(),255,255,255));
 				image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				//
 				///////////////////////////////
@@ -122,6 +123,9 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.6  2004/05/23 16:34:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

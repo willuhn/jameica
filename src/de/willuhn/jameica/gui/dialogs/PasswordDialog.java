@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.9 $
+ * $Date: 2004/05/23 16:34:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -123,7 +123,6 @@ public abstract class PasswordDialog extends SimpleDialog {
 		pLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
 		password = GUI.getStyleFactory().createText(comp);
-		password.setBackground(Color.WHITE.getSWTColor());
 		password.setEchoChar('*');
 		GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
 		grid3.horizontalSpan = 2;
@@ -211,6 +210,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.9  2004/05/23 16:34:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

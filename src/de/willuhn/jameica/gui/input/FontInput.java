@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/23 16:34:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -80,7 +80,7 @@ public class FontInput extends AbstractInput
 		comboFD.bottom = new FormAttachment(100, -1);
     
 		Composite around2 = new Composite(around,SWT.NONE);
-		around2.setBackground(Color.WHITE.getSWTColor());
+		around2.setBackground(Color.WIDGET_BG.getSWTColor());
 		around2.setLayout(new FormLayout());
 		around2.setLayoutData(comboFD);
 
@@ -177,6 +177,9 @@ public class FontInput extends AbstractInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.4  2004/05/23 16:34:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

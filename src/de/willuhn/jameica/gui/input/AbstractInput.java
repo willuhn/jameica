@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/23 16:34:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -135,6 +135,7 @@ public abstract class AbstractInput
 
     // neues Composite erstellen, welches Platz fuer den Kommentar laesst.
     this.parent = new Composite(parent, SWT.NONE);
+		this.parent.setBackground(Color.BACKGROUND.getSWTColor());
     GridLayout layout = new GridLayout(2, true);
     layout.marginHeight = 2;
     layout.marginWidth = 1;
@@ -155,6 +156,7 @@ public abstract class AbstractInput
       commentLabel = new Label(this.parent,SWT.NONE);
       commentLabel.setText(this.comment);
       commentLabel.setForeground(Color.COMMENT.getSWTColor());
+      commentLabel.setBackground(Color.BACKGROUND.getSWTColor());
       commentLabel.setAlignment(SWT.LEFT);
       commentLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
@@ -203,6 +205,9 @@ public abstract class AbstractInput
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.4  2004/05/23 16:34:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

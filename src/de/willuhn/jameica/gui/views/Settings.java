@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.19 $
+ * $Date: 2004/05/23 16:34:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,21 +13,13 @@
 
 package de.willuhn.jameica.gui.views;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.layout.GridData;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.SettingsControl;
-import de.willuhn.jameica.gui.input.ColorInput;
-import de.willuhn.jameica.gui.input.FontInput;
 import de.willuhn.jameica.gui.util.ButtonArea;
-import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -49,45 +41,20 @@ public class Settings extends AbstractView
 		GUI.getView().setTitle(i18n.tr("Einstellungen"));
 		final SettingsControl control = new SettingsControl(this);
 
-
-		CTabFolder folder = new CTabFolder(getParent(),SWT.TOP);
-		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		/////////////////////////////////////////////////////////////////
-		// Grund-Einstellungen
-		CTabItem main = new CTabItem(folder,SWT.NONE);
-		main.setText(i18n.tr("Grundeinstellungen"));
-		LabelGroup mainGroup = new LabelGroup(folder,"");
-
-		mainGroup.addText("",false);
-		mainGroup.addLabelPair("Log-Datei",control.getLogFile());
-		mainGroup.addLabelPair("Log-Level", control.getLoglevel());
-
-		ButtonArea mainButtons = mainGroup.createButtonArea(3);
-		mainButtons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
-		{
-			public void mouseUp(MouseEvent e)
-			{
-				control.handleRestore();
-			}
-		});
-		mainButtons.addCancelButton(control);
-		mainButtons.addStoreButton(control);
-
-		main.setControl(mainGroup.getControl());
-		//
-		/////////////////////////////////////////////////////////////////
-
 		/////////////////////////////////////////////////////////////////
 		// Farb-Einstellungen
-		CTabItem color = new CTabItem(folder,SWT.NONE);
-		color.setText(i18n.tr("Style"));
-		LabelGroup colorGroup = new LabelGroup(folder,"");
+		LabelGroup colorGroup = new LabelGroup(getParent(),i18n.tr("Farbeinstellungen"));
 
-		colorGroup.addText("",false);
+		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWhite());
+		colorGroup.addLabelPair(i18n.tr("Farbe von Kommentaren"),control.getColorComment());
+		colorGroup.addLabelPair(i18n.tr("Hintergrundfarbe"),control.getColorBackground());
 
-		colorGroup.addLabelPair("Hintergrundfarbe",new ColorInput(Color.BACKGROUND.getSWTColor()));
-		colorGroup.addLabelPair("Überschriften",new FontInput(Font.H1.getSWTFont()));
+		colorGroup.addLabelPair(i18n.tr("Vordergrundfarbe"),control.getColorForeground());
+		colorGroup.addLabelPair(i18n.tr("Rahmenfarbe"),control.getColorBorder());
+		colorGroup.addLabelPair(i18n.tr("Fehlermeldungen"),control.getColorError());
+		colorGroup.addLabelPair(i18n.tr("Erfolgsmeldungen"),control.getColorSuccess());
+		colorGroup.addLabelPair(i18n.tr("Links"),control.getColorLink());
+		colorGroup.addLabelPair(i18n.tr("Aktive Links"),control.getColorLinkActive());
 
 		ButtonArea colorButtons = colorGroup.createButtonArea(3);
 		colorButtons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
@@ -100,14 +67,8 @@ public class Settings extends AbstractView
 		colorButtons.addCancelButton(control);
 		colorButtons.addStoreButton(control);
 
-		color.setControl(colorGroup.getControl());
 		//
 		/////////////////////////////////////////////////////////////////
-
-
-
-
-		folder.setSelection(main);
 
   }
 
@@ -123,6 +84,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.19  2004/05/23 16:34:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory
