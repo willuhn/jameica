@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/PasswordDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/17 00:53:47 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/20 01:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.gui.views;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
 /**
@@ -32,16 +34,20 @@ public class PasswordDialog extends Dialog {
 	private Composite comp = null;
 	private Label label = null;
 	private Label pLabel = null;
+	private CLabel error = null;
 	private Text password = null;
 	private Button button = null;
 
 	private String enteredPassword = "";
 
-  /**
-   * Erzeugt den Dialog.
-   */
-  public PasswordDialog() {
-    super();
+	/**
+	 * Erzeugt einen neuen Passwort-Dialog.
+	 * @param position Position des Dialogs.
+	 * @see Dialog#POSITION_MOUSE
+	 * @see Dialog#POSITION_CENTER
+	 */
+  public PasswordDialog(int position) {
+    super(position);
   }
 
 	/**
@@ -50,21 +56,21 @@ public class PasswordDialog extends Dialog {
    */
   public void setText(String text)
 	{
+		// Es ist schon alles initialisiert. Dann aktualisieren
+		// wir nur den Text.
 		if (label != null && comp != null)
 		{
 			label.setText(text);
+			label.redraw();
 			return;
 		}
 
-		shell.setLayout(new GridLayout(1,false));
-		shell.setSize(300,150);
-
-		comp = new Composite(shell,SWT.NONE);
+		comp = new Composite(getParent(),SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout(2,false));
 		
 		label = new Label(comp,SWT.WRAP);
-		label.setText(text);
+		label.setText(text + "\n");
 		GridData grid = new GridData(GridData.FILL_BOTH);
 		grid.horizontalSpan = 2;
 		label.setLayoutData(grid);
@@ -77,19 +83,45 @@ public class PasswordDialog extends Dialog {
 		password.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		password.setEchoChar('*');
 
-		button = new Button(comp, SWT.NONE);
-		button.setText("    OK    ");
-		GridData grid2 = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		Composite bComp = new Composite(comp,SWT.NONE);
+		GridData grid2 = new GridData(GridData.FILL_BOTH);
 		grid2.horizontalSpan = 2;
-		button.setLayoutData(grid2);
+		bComp.setLayoutData(grid2);
+		GridLayout gl = new GridLayout(2,false);
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		bComp.setLayout(gl);
+
+		error = new CLabel(bComp, SWT.WRAP);
+		error.setLayoutData(new GridData(GridData.FILL_BOTH));
+		error.setForeground(Style.COLOR_ERROR);
+		
+		button = new Button(bComp, SWT.NONE);
+		button.setText("   OK   ");
+		button.setLayoutData(new GridData(GridData.END));
 		button.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
+				if (!checkPassword())
+					return;
 				enteredPassword = password.getText();
 				close();
 			}
 		});
-	}
 
+	}		
+
+	/**
+   * Prueft ob ein Passwort eingegeben wurde.
+   */
+  private boolean checkPassword()
+	{
+		if (password.getText() != null && password.getText().length() > 0)
+			return true;
+		error.setText(I18N.tr("Fehler: Bitte geben Sie ein Passwort ein"));
+		error.layout();
+		return false;
+	}
+	
 	/**
 	 * Oeffnet den Dialog und liefert das Passwort nachdem OK gedrueckt wurde.
    * @return
@@ -104,6 +136,11 @@ public class PasswordDialog extends Dialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.2  2004/02/20 01:25:06  willuhn
+ * @N nice dialog
+ * @N busy indicator
+ * @N new status bar
+ *
  * Revision 1.1  2004/02/17 00:53:47  willuhn
  * *** empty log message ***
  *

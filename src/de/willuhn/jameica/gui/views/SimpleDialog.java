@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SimpleDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/17 00:53:47 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/20 01:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,11 +30,14 @@ public class SimpleDialog extends Dialog {
 	private Label label = null;
 	private Button button = null;
 	
-  /**
-   * Erzeugt den Dialog.
-   */
-  public SimpleDialog() {
-    super();
+	/**
+	 * Erzeugt einen neuen simplen Dialog mit OK-Knopf.
+	 * @param position Position des Dialogs.
+	 * @see Dialog#POSITION_MOUSE
+	 * @see Dialog#POSITION_CENTER
+	 */
+  public SimpleDialog(int position) {
+    super(position);
   }
 
 	/**
@@ -49,9 +52,7 @@ public class SimpleDialog extends Dialog {
 			return;
 		}
 
-		shell.setLayout(new GridLayout(1,false));
-
-		comp = new Composite(shell,SWT.NONE);
+		comp = new Composite(getParent(),SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout(1,false));
 		
@@ -73,6 +74,11 @@ public class SimpleDialog extends Dialog {
 
 /**********************************************************************
  * $Log: SimpleDialog.java,v $
+ * Revision 1.3  2004/02/20 01:25:06  willuhn
+ * @N nice dialog
+ * @N busy indicator
+ * @N new status bar
+ *
  * Revision 1.2  2004/02/17 00:53:47  willuhn
  * *** empty log message ***
  *

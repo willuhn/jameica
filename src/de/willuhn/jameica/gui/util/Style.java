@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/18 20:28:45 $
+ * $Revision: 1.6 $
+ * $Date: 2004/02/20 01:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ public class Style
 	public final static Color COLOR_COMMENT = new Color(GUI.getDisplay(), 140, 140, 140);
 	public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 251, 251, 251);
   public final static Color COLOR_BORDER  = new Color(GUI.getDisplay(), 100, 100, 100);
+	public final static Color COLOR_ERROR   = new Color(GUI.getDisplay(), 250, 10,  10);
 
 
   public final static Font FONT_H1 = new Font(GUI.getDisplay(),"Verdana", 10, SWT.BOLD);
@@ -79,6 +80,11 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.6  2004/02/20 01:25:06  willuhn
+ * @N nice dialog
+ * @N busy indicator
+ * @N new status bar
+ *
  * Revision 1.5  2004/02/18 20:28:45  willuhn
  * @N jameica now stores window position and size
  *

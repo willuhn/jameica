@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/01/29 00:07:23 $
+ * $Revision: 1.12 $
+ * $Date: 2004/02/20 01:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,6 +55,7 @@ public class Start extends AbstractView
 
 		t.appendText(WelcomeText.getText());
 		t.paint(getParent());
+
   }        
 
 
@@ -66,6 +67,11 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.12  2004/02/20 01:25:06  willuhn
+ * @N nice dialog
+ * @N busy indicator
+ * @N new status bar
+ *
  * Revision 1.11  2004/01/29 00:07:23  willuhn
  * @N Text widget
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/18 20:28:45 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/20 01:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.gui.parts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -95,7 +97,14 @@ public class ButtonArea
           controller.handleStore();
       }
     });
-    storeButton.addMouseListener(new MouseAdapter() {
+		storeButton.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_RETURN) {
+					controller.handleStore();
+				}
+			}
+		});
+		storeButton.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
         controller.handleStore();
       }
@@ -166,6 +175,11 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.5  2004/02/20 01:25:06  willuhn
+ * @N nice dialog
+ * @N busy indicator
+ * @N new status bar
+ *
  * Revision 1.4  2004/02/18 20:28:45  willuhn
  * @N jameica now stores window position and size
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/02/12 23:46:27 $
+ * $Revision: 1.12 $
+ * $Date: 2004/02/20 01:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,13 +18,15 @@ import java.util.Date;
 import java.util.Enumeration;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
@@ -39,9 +41,14 @@ import de.willuhn.util.I18N;
  */
 public class StatusBar {
 
-	private Label statusText;
-  private Label actionText;
+	private CLabel statusText;
+  private CLabel actionText;
   private Composite status;
+
+	private StackLayout progressStack;
+		private Composite progressComp;
+		private ProgressBar progress;
+		private ProgressBar noProgress;
   
   private History lastActionMessages;
 
@@ -54,25 +61,45 @@ public class StatusBar {
 		lastActionMessages = new History(20);
 
 		status = new Composite(parent, SWT.BORDER);
-
 		GridData data = new GridData();
 		data.grabExcessHorizontalSpace = true;
-		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = 17;
+		data.heightHint = 20;
 		status.setLayoutData(data);
 
-    GridLayout layout = new GridLayout();
-    layout.makeColumnsEqualWidth = true;
+    GridLayout layout = new GridLayout(2,false);
     layout.marginHeight = 1;
     layout.marginWidth = 1;
-    layout.numColumns = 2;
     layout.horizontalSpacing = 1;
     layout.verticalSpacing = 1;
 		status.setLayout(layout);
 
-		statusText = new Label(status, SWT.NONE);
-    statusText.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		progressComp = new Composite(status, SWT.NONE);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.widthHint = 60;
+		gd.heightHint = 18;
+		progressComp.setLayoutData(gd);
+		progressStack = new StackLayout();
+		progressComp.setLayout(progressStack);
+		
+		progress = new ProgressBar(progressComp, SWT.INDETERMINATE);
+		progress.setToolTipText(I18N.tr("Vorgang wird bearbeitet..."));
+		noProgress = new ProgressBar(progressComp, SWT.NONE);
+		progressStack.topControl = noProgress;
+
+
+
+		Composite tComp = new Composite(status,SWT.NONE);
+		tComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout tgd = new GridLayout(2,true);
+		tgd.marginHeight = 0;
+		tgd.marginWidth = 0;
+		tgd.horizontalSpacing = 0;
+		tgd.verticalSpacing = 0;
+		tComp.setLayout(tgd);
+
+		statusText = new CLabel(tComp, SWT.SHADOW_IN);
+		statusText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		statusText.setText("");
 		statusText.setToolTipText(I18N.tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen."));
 		statusText.addMouseListener(new MouseAdapter()
@@ -83,9 +110,10 @@ public class StatusBar {
 			}
 		});
 
-    actionText = new Label(status, SWT.NONE);
-    GridData right = new GridData(GridData.HORIZONTAL_ALIGN_END);
-    actionText.setLayoutData(right);
+    actionText = new CLabel(tComp, SWT.SHADOW_IN);
+    GridData at = new GridData(GridData.FILL_HORIZONTAL);
+		actionText.setAlignment(SWT.RIGHT);
+    actionText.setLayoutData(at);
     actionText.setText("");
 		actionText.setToolTipText(I18N.tr("Klicken Sie hier, um die letzten Meldungen der Anwendung anzuzeigen."));
     actionText.addMouseListener(new MouseAdapter()
@@ -98,6 +126,27 @@ public class StatusBar {
     
 	}
 	
+	/**
+   * Schaltet den Progress-Balken ein.
+   */
+  protected synchronized void startProgress()
+	{
+		progressStack.topControl = progress;
+		progressComp.layout();
+	}
+
+	/**
+	 * Schaltet den Progress-Balken aus.
+	 */
+	protected synchronized void stopProgress()
+	{
+		if (progressComp.isDisposed())
+			return;
+		progressStack.topControl = noProgress;
+		progressComp.layout();
+	}
+
+
   /**
    * Ersetzt den aktuellen Statustext links unten gegen den uebergebenen.
    * @param message anzuzeigender Text.
@@ -162,6 +211,11 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.12  2004/02/20 01:25:06  willuhn
+ * @N nice dialog
+ * @N busy indicator
+ * @N new status bar
+ *
  * Revision 1.11  2004/02/12 23:46:27  willuhn
  * *** empty log message ***
  *

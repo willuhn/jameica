@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/02/18 20:28:45 $
+ * $Revision: 1.22 $
+ * $Date: 2004/02/20 01:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -44,7 +45,6 @@ import de.willuhn.util.MultipleClassLoader;
 /**
  * Startet und beendet die GUI der Anwendung.
  * @author willuhn
- * TODO Fenster-Groesse und -Position beim Beenden speichern
  */
 public class GUI
 {
@@ -107,21 +107,22 @@ public class GUI
 			height = Integer.parseInt(settings.getAttribute("window.height",null));
 		}
 		catch (NumberFormatException e) {/*useless*/}
-		if (x >= gui.display.getBounds().width)
+		if (x >= gui.display.getBounds().width || x < 0)
 			x = 10; // screen resolution smaller than last start
-		if (y >= gui.display.getBounds().height)
+		if (y >= gui.display.getBounds().height || y < 0)
 			y = 10; // screen resolution smaller than last start
-		shell.setSize(width,height);
-		shell.setLocation(x,y);
+		shell.setBounds(x,y,width,height);
 
 		shell.addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
-				Point rect = gui.shell.getSize();
-				Point pos  = gui.shell.getLocation();
-				settings.setAttribute("window.width",""+rect.x);
-				settings.setAttribute("window.height",""+rect.y);
-				settings.setAttribute("window.x",""+pos.x);
-				settings.setAttribute("window.y",""+pos.y);
+				// TODO So ein Schrott, die Hoehe des Titels wird nicht mitgerechnet.
+				// Deswegen muessen wir uns das selbst ausrechnen
+				Rectangle bounds = gui.shell.getBounds();
+				Rectangle area   = gui.shell.getClientArea();
+				settings.setAttribute("window.width",""+ (bounds.width + (bounds.width - area.width)));
+				settings.setAttribute("window.height",""+(bounds.height + (bounds.height - area.height)));
+				settings.setAttribute("window.x",""+bounds.x);
+				settings.setAttribute("window.y",""+bounds.y);
       }
     });
 
@@ -283,67 +284,73 @@ public class GUI
    * werden soll. Muss von AbstractView abgeleitet sein.
    * @param o ein optionaler Parameter, der der View uebergeben wird.
    */
-  public static void startView(String className, Object o)
+  public static void startView(final String className, final Object o)
   {
     Application.getLog().debug("starting view: " + className);
 
-    if (gui.currentView != null) {
-      try {
-        gui.currentView.unbind();
-      }
-      catch (ApplicationException e)
-      {
-        Application.getLog().debug("cancel sent from dialog (in unbind()");
-        return;
-      }
-    }
+		startJob(new Runnable() {
+      public void run() {
 
-    try
-    {
-      Class clazz = MultipleClassLoader.load(className);
-
-      gui.view.cleanContent();
-
-      Constructor ct = clazz.getConstructor(new Class[]{Composite.class});
-      ct.setAccessible(true);
-      gui.currentView = (AbstractView) ct.newInstance(new Object[] {gui.view.getContent()});
-
-      // Neuen Inhalt anzeigen
-      gui.currentView.setCurrentObject(o);
-
-			try {
-				gui.currentView.bind();
+		    if (gui.currentView != null) {
+		      try {
+		        gui.currentView.unbind();
+		      }
+		      catch (ApplicationException e)
+		      {
+		        Application.getLog().debug("cancel sent from dialog (in unbind()");
+		        return;
+		      }
+		    }
+		
+		    try
+		    {
+		      Class clazz = MultipleClassLoader.load(className);
+		
+		      gui.view.cleanContent();
+		
+		      Constructor ct = clazz.getConstructor(new Class[]{Composite.class});
+		      ct.setAccessible(true);
+		      gui.currentView = (AbstractView) ct.newInstance(new Object[] {gui.view.getContent()});
+		
+		      // Neuen Inhalt anzeigen
+		      gui.currentView.setCurrentObject(o);
+		
+					try {
+						gui.currentView.bind();
+					}
+					catch (Exception e)
+					{
+						setActionText("Fehler beim Anzeigen des Dialogs.");
+						Application.getLog().error("error while loading view " + className,e);
+						GUI.startView(ErrorView.class.getName(),e);
+					}
+		
+		      // View aktualisieren
+		      gui.view.refreshContent();
+		    }
+		    catch (InstantiationException e)
+		    {
+		    	Application.getLog().error("error while instanciating view",e);
+		    }
+		    catch (NoSuchMethodException e)
+		    {
+					Application.getLog().error("nt a valid view",e);
+		    }
+		    catch (InvocationTargetException e)
+		    {
+					Application.getLog().error("error occured while loading view",e);
+		    }
+		    catch (IllegalAccessException e)
+		    {
+					Application.getLog().error("not allowed to bind view",e);
+		    }
+		    catch (ClassNotFoundException e)
+		    {
+					Application.getLog().error("view does not exist",e);
+		    }
 			}
-			catch (Exception e)
-			{
-				setActionText("Fehler beim Anzeigen des Dialogs.");
-				Application.getLog().error("error while loading view " + className,e);
-				GUI.startView(ErrorView.class.getName(),e);
-			}
+		});
 
-      // View aktualisieren
-      gui.view.refreshContent();
-    }
-    catch (InstantiationException e)
-    {
-    	Application.getLog().error("error while instanciating view",e);
-    }
-    catch (NoSuchMethodException e)
-    {
-			Application.getLog().error("nt a valid view",e);
-    }
-    catch (InvocationTargetException e)
-    {
-			Application.getLog().error("error occured while loading view",e);
-    }
-    catch (IllegalAccessException e)
-    {
-			Application.getLog().error("not allowed to bind view",e);
-    }
-    catch (ClassNotFoundException e)
-    {
-			Application.getLog().error("view does not exist",e);
-    }
   }
 
   /**
@@ -363,6 +370,77 @@ public class GUI
   {
     gui.statusBar.setActionText(status);
   }
+
+	/**
+	 * Startet einen Job, der typischerweise laenger dauert.
+	 * Daher wird waehrend dessen Laufzeit eine Sanduhr eingeblendet
+	 * und der ProgressBar in der Statusleiste wird animiert.
+	 * Das Runnable wird in einem extra Thread gestartet.
+	 * Von daher muss kein Thread uebergeben werden.
+   * @param job
+   */
+  public static void startJob(final Runnable job)
+	{
+
+		startProgress();
+
+		Runnable r = new Runnable() {
+
+			boolean done = false;
+
+      public void run() {
+
+				Thread t = new Thread(new Runnable() {
+					public void run() {
+
+						getDisplay().syncExec(new Runnable() {
+              public void run() {
+								job.run();
+              }
+            });
+
+						if (getDisplay().isDisposed())
+							return;
+
+						done = true;
+						getDisplay().wake();
+						getDisplay().syncExec(new Runnable() {
+              public void run() {
+              	if (getDisplay().isDisposed())
+              		return;
+								stopProgress();
+              }
+            });
+					}
+				});
+
+				t.start();
+				while (!done && !getShell().isDisposed()) {
+					if (!getDisplay().readAndDispatch())
+						getDisplay().sleep();
+	      }
+
+      }
+    };
+
+		BusyIndicator.showWhile(getDisplay(), r);
+	}
+
+	/**
+   * Startet den Progress-Bar in der Statusleiste.
+   */
+  public static void startProgress()
+	{
+		gui.statusBar.startProgress();
+	}
+
+	/**
+	 * Beendet den Progress-Bar in der Statusleiste.
+	 */
+	public static void stopProgress()
+	{
+		gui.statusBar.stopProgress();
+	}
 
   /**
    * Startet den GUI-Loop.
@@ -467,6 +545,11 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.22  2004/02/20 01:25:06  willuhn
+ * @N nice dialog
+ * @N busy indicator
+ * @N new status bar
+ *
  * Revision 1.21  2004/02/18 20:28:45  willuhn
  * @N jameica now stores window position and size
  *
