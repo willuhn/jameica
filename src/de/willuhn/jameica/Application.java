@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/10/29 00:41:26 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/05 22:46:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,10 +17,6 @@ import java.io.FileNotFoundException;
 
 import de.willuhn.jameica.rmi.ServiceFactory;
 
-/**
- * Basis-Klasse der Anwendung.
- * @author willuhn
- */
 public class Application {
 
   public final static boolean DEBUG = true;
@@ -33,9 +29,6 @@ public class Application {
     private Config config;
 
 
-  /**
-   * Konstruktor
-   */
   private Application() {
   }
 
@@ -43,14 +36,18 @@ public class Application {
 
     Application.serverMode = serverMode;
 
+    if (!serverMode) SplashScreen.add(10);
+
     // start application
     app = new Application();
     app.log = new Logger(null);
+    if (!serverMode) SplashScreen.add(10);
 
     Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
 
     try {
       app.config = new Config(configFile);
+      if (!serverMode) SplashScreen.add(10);
     }
     catch (FileNotFoundException e)
     {
@@ -59,13 +56,20 @@ public class Application {
       shutDown();
     }
 
+    // init database
+    Database.init();
+    if (!serverMode) SplashScreen.add(10);
+
+
     ServiceFactory.init();
+    if (!serverMode) SplashScreen.add(10);
     
     // start loops
     if (serverMode) {
       app.serverLoop();
     }
     else {
+      if (!serverMode) SplashScreen.close();
       app.gui = GUI.getInstance();
       app.gui.clientLoop(); 
     }
@@ -90,6 +94,8 @@ public class Application {
         app.gui.shutDown();     
 
       ServiceFactory.shutDown();
+
+      Database.shutDown();
 
       Application.getLog().info("shutdown complete");
       Application.getLog().close();
@@ -133,6 +139,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.4  2003/11/05 22:46:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/10/29 00:41:26  willuhn
  * *** empty log message ***
  *
