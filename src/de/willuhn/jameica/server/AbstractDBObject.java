@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.20 $
- * $Date: 2003/12/19 01:43:26 $
+ * $Revision: 1.21 $
+ * $Date: 2003/12/22 16:41:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -202,7 +202,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			stmt = conn.createStatement();
 			data = stmt.executeQuery("select * from " + tableName + " where " + this.getIDField() + " = "+this.id);
 			if (!data.next())
-				return; // record not found.
+      {
+        this.id = null;
+        return; // record not found.
+      }
 
 			String[] fields = getFields();
 			for (int i=0;i<fields.length;++i)
@@ -805,6 +808,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.21  2003/12/22 16:41:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.20  2003/12/19 01:43:26  willuhn
  * @N added Tree
  *
