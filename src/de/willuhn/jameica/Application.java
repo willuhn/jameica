@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/15 19:08:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
-import de.willuhn.jameica.rmi.DBHub;
 import de.willuhn.jameica.rmi.ServiceFactory;
 
 /**
@@ -38,7 +37,6 @@ public class Application {
   private static Application app;
     private Logger log;
     private Config config;
-    private DBHub db;
     
   /**
    * ct.
@@ -79,30 +77,6 @@ public class Application {
 
     // init service factory
     ServiceFactory.init(); splash();
-
-    // init default database.    
-    Application.getLog().info("trying to connect to default database");
-    String defaultDB = Application.getConfig().getDefaultServiceName(Config.SERVICETYPE_DATABASE);
-    if (defaultDB == null)
-    {
-      Application.getLog().error("no default database configured. Exiting");
-      Application.shutDown();
-      return;
-    }
-    try {
-      // connect to default database
-      app.db = (DBHub) ServiceFactory.lookupService(defaultDB);
-      Application.getLog().info("  done"); splash();
-    }
-    catch (Exception e)
-    {
-      if (Application.DEBUG)
-        e.printStackTrace();
-      Application.getLog().error("connect to default database failed. Exiting");
-      Application.shutDown();
-      return;
-    }
-
 
     // init plugins
     PluginLoader.init(); splash();
@@ -183,15 +157,6 @@ public class Application {
   }
 
   /**
-   * Liefert den als Default konfigurierten DBHub.
-   * @return dbHub
-   */
-  public static DBHub getDefaultDatabase()
-  {
-    return app.db;
-  }
-  
-  /**
    * Preuft ob die Anwendung im Server-Mode (Also ohne GUI) laeuft.
    * @return true, wenn sie im Servermode laeuft.
    */
@@ -205,6 +170,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.12  2003/12/15 19:08:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/13 20:05:21 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/15 19:08:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -139,11 +139,11 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
    * @return das erzeugte Objekt.
    * @throws Exception wenn beim Erzeugen des Objektes ein Fehler auftrat.
    */
-  private static DBObject create(Connection conn, Class c) throws Exception
+  static DBObject create(Connection conn, Class c) throws Exception
   {
     String className = findImplementationName(c);
-
     Class clazz = Class.forName(className);
+
     Constructor ct = clazz.getConstructor(new Class[]{});
     ct.setAccessible(true);
 
@@ -258,6 +258,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.8  2003/12/15 19:08:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2003/12/13 20:05:21  willuhn
  * *** empty log message ***
  *

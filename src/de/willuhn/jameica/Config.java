@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/14 00:49:46 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/15 19:08:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,12 +45,6 @@ public class Config
    */
   private Hashtable localServices   = new Hashtable();
 
-  /**
-   * Die Liste aller Default-Services.
-   * Darf pro Service-Typ nur einen Eintrag enthalten.
-   */
-  private Hashtable defaultServices = new Hashtable();
-  
   /**
    * Der Name des Services vom Typ "Datenbank".
    */
@@ -145,13 +139,6 @@ public class Config
         localServices.put(name,new LocalServiceData(xml,key));
       }
   
-      // process default services
-      if (key.startsWith("/config/services/defaultservice") && type != null) 
-      {
-        Application.getLog().info("  default service for type "+type+"\": " + name + "\"");
-        defaultServices.put(type,name);
-      }
-
     }
     Application.getLog().info("done");
     ////////////////////////////////////////////
@@ -210,18 +197,6 @@ public class Config
 
 
   /**
-   * Liefert den Alias-Namen des als Default konfigurierten Services fuer den angegebenen
-   * Service-Typ.
-   * @param serviceType Name des Service-Typs.
-   * @see Config.SERVICETYPE_xxxx
-   * @return Alias-Name des Services.
-   */
-  public String getDefaultServiceName(String serviceType)
-  {
-    return (String) defaultServices.get(serviceType);
-  }
-
-  /**
    * Liefert eine Enumeration mit den Namen aller lokalen Services.
    * @return Enumeration mit den lokalen Services.
    */
@@ -271,6 +246,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.6  2003/12/15 19:08:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/11/14 00:49:46  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.16 $
- * $Date: 2003/12/13 20:05:21 $
+ * $Revision: 1.17 $
+ * $Date: 2003/12/15 19:08:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -338,7 +338,8 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
             cachedObject.load(value);
         }
         else {
-          cachedObject = Application.getDefaultDatabase().createObject(foreign, o.toString());
+          cachedObject = DBHubImpl.create(getConnection(),foreign);
+          cachedObject.load(o.toString());
           foreignObjectCache.put(foreign,cachedObject);
         }
         return cachedObject;
@@ -781,19 +782,22 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     }
 
   }
-  
+
   /**
    * @see de.willuhn.jameica.rmi.DBObject#getList()
    */
-  public final DBIterator getList() throws RemoteException
+  public DBIterator getList() throws RemoteException
   {
-    return Application.getDefaultDatabase().createList(this.getClass());
+    return new DBIteratorImpl(this,getConnection());
   }
 
 }
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.17  2003/12/15 19:08:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2003/12/13 20:05:21  willuhn
  * *** empty log message ***
  *
@@ -844,53 +848,4 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
  *
  * Revision 1.1  2003/11/05 22:46:19  willuhn
  * *** empty log message ***
- *
- * Revision 1.16  2003/10/29 20:56:49  willuhn
- * @N added transactionRollback
- *
- * Revision 1.15  2003/10/29 15:18:15  willuhn
- * @N added transactionBegin() and transactionCommit()
- *
- * Revision 1.14  2003/10/29 11:33:22  andre
- * @N isNewObject
- *
- * Revision 1.13  2003/10/28 19:43:41  willuhn
- * @N Sendungserfassung seems to be complete
- *
- * Revision 1.12  2003/10/28 12:36:57  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2003/10/27 23:42:31  willuhn
- * *** empty log message ***
- *
- * Revision 1.10  2003/10/27 23:36:39  willuhn
- * @N debug messages
- *
- * Revision 1.9  2003/10/27 23:16:23  willuhn
- * @C AbstractDBObject.getField returns null when field does not exist
- *
- * Revision 1.8  2003/10/27 22:50:19  willuhn
- * @N Uebergabeparameter an Views
- *
- * Revision 1.7  2003/10/27 19:03:28  willuhn
- * @R removed unused statement
- *
- * Revision 1.6  2003/10/27 17:35:37  willuhn
- * @B typo
- *
- * Revision 1.5  2003/10/27 16:31:53  willuhn
- * @N Preise werden jetzt aus der Datenbank gelesen
- *
- * Revision 1.4  2003/10/27 11:49:12  willuhn
- * @N added DBIterator
- *
- * Revision 1.3  2003/10/26 19:22:10  willuhn
- * @B fixes in object mapper
- *
- * Revision 1.2  2003/10/26 17:46:30  willuhn
- * @N DBObject
- *
- * Revision 1.1  2003/10/25 19:49:47  willuhn
- * *** empty log message ***
- *
  **********************************************************************/

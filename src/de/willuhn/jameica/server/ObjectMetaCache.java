@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/ObjectMetaCache.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/13 20:05:21 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/15 19:08:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,7 +32,7 @@ import java.util.HashMap;
 public class ObjectMetaCache
 {
 
-  private static HashMap objectCache = new HashMap();
+  private static HashMap metaCache = new HashMap();
   
   private static long found = 0;
   private static long all = 0;
@@ -45,30 +45,37 @@ public class ObjectMetaCache
   static HashMap getMetaData(Class clazz)
   {
     ++all;
-    HashMap m = (HashMap) objectCache.get(clazz);
+    HashMap m = (HashMap) metaCache.get(clazz);
     if (m != null) ++found;
     return m;
   }
 
   /**
-   * Fuegt dem Cache die Metwa-Daten einer DBObject-Klasse hinzu.
+   * Fuegt dem Cache die Meta-Daten einer DBObject-Klasse hinzu.
    * @param clazz Klasse.
    * @param fields Hashmap mit den Metadaten (key=Feldnamen,value=Datentyp).
    */
   static void addMetaData(Class clazz, HashMap fields)
   {
-    objectCache.put(clazz,fields);
+    metaCache.put(clazz,fields);
   }
 
+  /**
+   * Liefert den prozentualen Anteil zwischen Cache-Abfragen insgesamt und erfolgreich
+   * beantworteten Abfragen.
+   * @return Anteil der erfolgreich beantworteten Anfragen in Prozent.
+   */
   public static int getStats()
   {
     return (int) ((100 * found) / all);
   }
-
 }
 
 /*********************************************************************
  * $Log: ObjectMetaCache.java,v $
+ * Revision 1.4  2003/12/15 19:08:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/12/13 20:05:21  willuhn
  * *** empty log message ***
  *

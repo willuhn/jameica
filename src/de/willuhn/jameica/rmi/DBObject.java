@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/11/27 00:22:18 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/15 19:08:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -128,14 +128,6 @@ public interface DBObject extends Remote
 	 */
 	public boolean isNewObject() throws RemoteException;
 
-
-  /**
-   * Liefert eine Liste mit allen Objekten dieser Tabelle.
-   * @return
-   * @throws RemoteException
-   */
-  public DBIterator getList() throws RemoteException;
-  
   /**
    * Liefert den Namen des Primaer-Feldes dieses Objektes.
    * Hintergrund: Wenn man z.Bsp. in einer Select-Box nur einen Wert
@@ -145,10 +137,21 @@ public interface DBObject extends Remote
    */
   public String getPrimaryField() throws RemoteException;
 
+  /**
+   * Liefert eine Liste aller Objekte des aktuellen Types.
+   * @return Liste mit allen Objekten dieser Tabelle.
+   * @throws RemoteException
+   */
+  public DBIterator getList() throws RemoteException;
+  
+
 }
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.9  2003/12/15 19:08:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/11/27 00:22:18  willuhn
  * @B paar Bugfixes aus Kombination RMI + Reflection
  * @N insertCheck(), deleteCheck(), updateCheck()
