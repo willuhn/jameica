@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.21 $
- * $Date: 2005/01/11 00:52:52 $
+ * $Revision: 1.22 $
+ * $Date: 2005/01/12 00:17:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,6 +38,8 @@ import de.willuhn.util.ApplicationException;
  */
 public final class ServiceFactory
 {
+
+	private final static boolean SSL = true;
 
   private boolean rmiStarted = false;
   private boolean sslStarted = false;
@@ -130,8 +132,13 @@ public final class ServiceFactory
 
     try {
       Logger.info("trying to start new RMI registry");
-			RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
-			sslStarted = true;
+
+      if (SSL)
+      {
+				Logger.info("rmi over ssl enabled");
+				RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
+				sslStarted = true;
+      }
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
     }
     catch (Exception e)
@@ -230,8 +237,10 @@ public final class ServiceFactory
 				// Im Server-Mode binden wir den Service noch an die RMI-Registry
 				Logger.info("binding service " + name);
 				Application.getStartupMonitor().setStatusText("binding service " + name);
-				Naming.rebind("rmi://127.0.0.1:" + Application.getConfig().getRmiPort() +
-											"/" + fullName,s);
+
+				String rmiUrl = "rmi://127.0.0.1:" + Application.getConfig().getRmiPort() + "/" + fullName;
+				Logger.debug("rmi url: " + rmiUrl);
+				Naming.rebind(rmiUrl,s);
 			}
 		}
 		catch (Exception e)
@@ -309,11 +318,14 @@ public final class ServiceFactory
 
 			Logger.info("searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
-			if (!sslStarted)
+
+			if (!sslStarted && SSL)
 			{
+				Logger.info("rmi over ssl enabled");
 				RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
 				sslStarted = true;
 			}
+			Logger.debug("rmi lookup url: " + url);
 			s = (Service) Naming.lookup(url);
 			if (s != null)
 				serviceCache.put(fullName,s);
@@ -366,6 +378,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.22  2005/01/12 00:17:17  willuhn
+ * @N JameicaTrustManager
+ *
  * Revision 1.21  2005/01/11 00:52:52  willuhn
  * @RMI over SSL works
  *

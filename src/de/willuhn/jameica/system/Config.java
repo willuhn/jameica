@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/01/05 15:18:08 $
+ * $Revision: 1.12 $
+ * $Date: 2005/01/12 00:17:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -70,7 +70,7 @@ public final class Config
     "  <!-- loglevel can be: ERROR,WARN,INFO or DEBUG //-->\n" +
 		"  <loglevel>INFO</loglevel>\n" +
 		"  <defaultlanguage>de_DE</defaultlanguage>\n" +
-		"  <rmiport>1099</rmiport>\n" +
+		"  <rmiport>4840</rmiport>\n" +
 		"  <plugindirs>\n" +
 		"    <!-- <dir>path to additional plugins</dir> //-->\n" +
 		"  </plugindirs>\n" +
@@ -196,7 +196,7 @@ public final class Config
     }
     catch (NumberFormatException nfe)
     {
-      rmiPort = 1099;
+      rmiPort = 4840;
     }
 
     // Das Verzeichnis "plugins" tun wir immer mit dazu.
@@ -396,6 +396,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.12  2005/01/12 00:17:17  willuhn
+ * @N JameicaTrustManager
+ *
  * Revision 1.11  2005/01/05 15:18:08  willuhn
  * *** empty log message ***
  *

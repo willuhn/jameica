@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/01/11 00:52:52 $
+ * $Revision: 1.9 $
+ * $Date: 2005/01/12 00:17:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ import java.util.Hashtable;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.TrustManager;
 
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
@@ -61,6 +61,9 @@ public class SSLFactory
    */
   public synchronized void init() throws Exception
 	{
+
+//		System.setProperty("java.security.debug","all");
+//		System.setProperty("javax.net.debug","all");
 
 		Logger.info("init ssl factory");
 		Application.getStartupMonitor().setStatusText("init ssl factory");
@@ -221,18 +224,21 @@ public class SSLFactory
 			return sslContext;
 
 		Logger.info("init ssl context");
-		this.sslContext = SSLContext.getInstance("SSL");
+		this.sslContext = SSLContext.getInstance("TLS");
 
 		Logger.info("init SunX509 key manager");
 		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
 		keyManagerFactory.init(this.getKeyStore(),"jameica".toCharArray());
 
-		Logger.info("init SunX509 trust manager");
-		TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance("SunX509");
-		trustManagerFactory.init(this.getKeyStore());
+		Logger.info("init Jameica trust manager");
+		TrustManager trustManager = new JameicaTrustManager();
+
+// Wir benutzen unseren eignen TrustManager
+//		TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance("SunX509");
+//		trustManagerFactory.init(this.getKeyStore());
 				
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
-												 trustManagerFactory.getTrustManagers(),null);
+												 new TrustManager[]{trustManager},null);
 		return this.sslContext;
 	}
 }
@@ -240,6 +246,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.9  2005/01/12 00:17:17  willuhn
+ * @N JameicaTrustManager
+ *
  * Revision 1.8  2005/01/11 00:52:52  willuhn
  * @RMI over SSL works
  *

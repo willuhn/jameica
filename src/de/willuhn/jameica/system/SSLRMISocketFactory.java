@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLRMISocketFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/01/11 00:52:52 $
+ * $Revision: 1.5 $
+ * $Date: 2005/01/12 00:17:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,6 +51,7 @@ public class SSLRMISocketFactory extends RMISocketFactory {
    */
   public Socket createSocket(String host, int port) throws IOException
   {
+		Logger.debug("Creating client socket to " + host + ":" + port);
     SSLSocket socket = (SSLSocket) socketFactory.createSocket(host, port);
     return socket;
   }
@@ -60,15 +61,28 @@ public class SSLRMISocketFactory extends RMISocketFactory {
    */
   public ServerSocket createServerSocket(int port) throws IOException
   {
+		Logger.info("Creating server socket at port " + port + "/tcp");
     SSLServerSocket socket = (SSLServerSocket) serverSocketFactory.createServerSocket(port);
 
+    String[] protos = socket.getEnabledProtocols();
+		Logger.debug("enabled protocols for server socket");
+    for (int i=0;i<protos.length;++i) Logger.debug("  " + protos[i]);
+
+		String[] cipher = socket.getEnabledCipherSuites();
+		Logger.debug("enabled cipher suites for server socket");
+		for (int i=0;i<cipher.length;++i) Logger.debug("  " + cipher[i]);
+
     socket.setNeedClientAuth(clientAuth);
+    socket.setWantClientAuth(clientAuth);
     return socket;
   }
 }
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.5  2005/01/12 00:17:17  willuhn
+ * @N JameicaTrustManager
+ *
  * Revision 1.4  2005/01/11 00:52:52  willuhn
  * @RMI over SSL works
  *
