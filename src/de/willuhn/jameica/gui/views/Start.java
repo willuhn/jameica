@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/05/27 21:35:02 $
+ * $Revision: 1.22 $
+ * $Date: 2004/05/27 23:12:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,6 +46,8 @@ public class Start extends AbstractView
 		{
 			PluginContainer pc = (PluginContainer) e.nextElement();
 			InfoReader ir = pc.getInfo();
+			if (ir == null)
+				continue;
 			LabelInput l = new LabelInput(": " + ir.getDescription());
 			l.setComment(ir.getUrl());
 			group.addLabelPair(ir.getName(),l);
@@ -67,6 +69,10 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.22  2004/05/27 23:12:58  willuhn
+ * @B NoSuchFieldError in Settings
+ * @C s/java/javaw.exe in build/*.bat
+ *
  * Revision 1.21  2004/05/27 21:35:02  willuhn
  * @N PGP signing in ant script
  * @N MD5 checksum in ant script

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.42 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.43 $
+ * $Date: 2004/05/27 23:12:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -465,6 +465,9 @@ public class GUI
   public static void startSync(final Runnable job)
 	{
 
+		if (getDisplay() == null || getDisplay().isDisposed())
+			return;
+
 		Runnable r = new Runnable() {
 
 			boolean done = false;
@@ -618,6 +621,10 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.43  2004/05/27 23:12:58  willuhn
+ * @B NoSuchFieldError in Settings
+ * @C s/java/javaw.exe in build/*.bat
+ *
  * Revision 1.42  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

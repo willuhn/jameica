@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/27 23:12:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.GUI;
 
@@ -25,8 +26,22 @@ import de.willuhn.jameica.gui.GUI;
  */
 public class Font {
 
-	public final static Font H1				= new Font("font.h1",						new FontData("Verdana", 10, SWT.BOLD));
-	public final static Font H2 			= new Font("font.h2",						new FontData("Verdana", 8, SWT.BOLD));
+	private static String systemFont;
+	static
+	{
+		// Determine System-Font
+		try {
+			org.eclipse.swt.graphics.Font sysFont = GUI.getDisplay().getSystemFont();
+			systemFont = sysFont.getFontData()[0].getName();
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("unable to find systemn font",e);
+		}
+	}
+
+	public final static Font H1				= new Font("font.h1",						new FontData(systemFont, 10, SWT.BOLD));
+	public final static Font H2 			= new Font("font.h2",						new FontData(systemFont, 8, SWT.BOLD));
 	public final static Font DEFAULT  = new Font("font.default",			new FontData());
 
 	private String name;
@@ -76,6 +91,10 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.2  2004/05/27 23:12:58  willuhn
+ * @B NoSuchFieldError in Settings
+ * @C s/java/javaw.exe in build/*.bat
+ *
  * Revision 1.1  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

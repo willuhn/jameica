@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.11 $
+ * $Date: 2004/05/27 23:12:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -172,9 +172,9 @@ public class Settings
 		if (defaultValue == null) defaultValue = new FontData();
 
 		return new FontData(
-			getString(name + ".name",defaultValue.name),
-			getInt(name + ".height",defaultValue.height),
-			getInt(name + ".style",defaultValue.style)
+			getString(name + ".name",defaultValue.getName()),
+			getInt(name + ".height",defaultValue.getHeight()),
+			getInt(name + ".style",defaultValue.getStyle())
 		);
 	}
 
@@ -201,9 +201,9 @@ public class Settings
 	{
 		if (value == null)
 			return;
-		setAttribute(name + ".name",value.name);
-		setAttribute(name + ".height",value.height);
-		setAttribute(name + ".style",value.style);
+		setAttribute(name + ".name",value.getName());
+		setAttribute(name + ".height",value.getHeight());
+		setAttribute(name + ".style",value.getStyle());
 	}
 
 	/**
@@ -273,6 +273,10 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.11  2004/05/27 23:12:58  willuhn
+ * @B NoSuchFieldError in Settings
+ * @C s/java/javaw.exe in build/*.bat
+ *
  * Revision 1.10  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory
