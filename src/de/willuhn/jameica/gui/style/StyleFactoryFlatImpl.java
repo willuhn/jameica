@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/14 22:05:06 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/17 22:07:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -31,10 +32,8 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
   private static FormToolkit toolkit;
 
-	private static void check()
+	static
 	{
-		if (toolkit != null)
-			return;
 		toolkit = new FormToolkit(Display.getCurrent());
 		toolkit.setBorderStyle(SWT.NULL);
 	}
@@ -44,7 +43,6 @@ public class StyleFactoryFlatImpl implements StyleFactory
    */
   public Button createButton(Composite parent)
   {
-  	check();
 		Button button = toolkit.createButton(parent,"",SWT.PUSH);
 		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		toolkit.paintBordersFor(parent);
@@ -56,7 +54,6 @@ public class StyleFactoryFlatImpl implements StyleFactory
    */
   public Text createText(Composite parent)
   {
-		check();
   	Text text = toolkit.createText(parent,"");
   	text.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
   	text.setForeground(Color.WIDGET_FG.getSWTColor());
@@ -70,12 +67,22 @@ public class StyleFactoryFlatImpl implements StyleFactory
    */
   public CCombo createCombo(Composite parent)
 	{
-		check();
   	final CCombo combo = new CCombo(parent,SWT.READ_ONLY);
 		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		combo.setForeground(Color.WIDGET_FG.getSWTColor());
 		toolkit.paintBordersFor(parent);
 		return combo;
+	}
+
+	/**
+	 * @see de.willuhn.jameica.gui.style.StyleFactory#createTable(org.eclipse.swt.widgets.Composite, int)
+	 */
+	public Table createTable(Composite parent, int style)
+	{
+		Table table = new Table(parent, SWT.BORDER ^ style);
+		table.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		toolkit.paintBordersFor(parent);
+		return table;
 	}
 
   /**
@@ -90,6 +97,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.4  2004/06/17 22:07:12  willuhn
+ * @C cleanup in tablePart and statusBar
+ *
  * Revision 1.3  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *

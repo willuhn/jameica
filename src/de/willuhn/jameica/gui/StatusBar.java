@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.24 $
+ * $Date: 2004/06/17 22:07:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,6 @@ package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.Enumeration;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -29,11 +28,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 
+import de.willuhn.datasource.pseudo.PseudoIterator;
+import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.util.ArrayEnumeration;
 import de.willuhn.util.History;
 
 /**
@@ -131,7 +131,7 @@ public class StatusBar {
 					GUI.getView().snapOut();
 					return;					
 				}
-				showLastMessages(new ArrayEnumeration(Application.getLog().getLastLines()),true);
+				showLastMessages(Application.getLog().getLastLines());
 				statusIn = true;
 			}
 		});
@@ -166,7 +166,7 @@ public class StatusBar {
 					GUI.getView().snapOut();
 					return;					
 				}
-				showLastMessages(lastActionMessages.elements(),false);
+				showLastMessages(lastActionMessages.toArray(new String[lastActionMessages.size()]));
 				actionIn = true;
       }
     });
@@ -271,15 +271,20 @@ public class StatusBar {
 
   /**
    * Zeigt die letzten Meldungen an.
-   * @param e Enumeration mit den Melduingen.
-   * @param alignRight Ausrichtung.
+   * @param list Liste mit den letzten Meldungen.
    */
-  private void showLastMessages(Enumeration e, boolean alignRight)
+  private void showLastMessages(Object[] list)
 	{
+		LogObject[] logs = new LogObject[list.length];
+		for (int i=0;i<list.length;++i)
+		{
+			logs[i] = new LogObject((String)list[i]);
+		}
+
 		Composite snapin = GUI.getView().getSnapin();
 
-		TablePart table = new TablePart(e,null);
-		table.addColumn(Application.getI18n().tr("Meldungen"),null);
+		TablePart table = new TablePart(PseudoIterator.fromArray(logs),null);
+		table.addColumn(Application.getI18n().tr("Meldungen"),"foo");
 		try
     {
       table.paint(snapin);
@@ -288,11 +293,64 @@ public class StatusBar {
     catch (RemoteException re) {}
 
 	}
+	
+	/**
+	 * Kleines Hilfsobjekt zum Anzeigen der Log-Meldungen in einer Tabelle.
+   */
+  private class LogObject implements GenericObject
+	{
+
+		private String message;
+
+		/**
+		 * ct.
+     * @param message
+     */
+    private LogObject(String message)
+		{
+			this.message = message;
+		}
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getAttribute(java.lang.String)
+     */
+    public Object getAttribute(String name) throws RemoteException
+    {
+      return message;
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getID()
+     */
+    public String getID() throws RemoteException
+    {
+      return message;
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getPrimaryAttribute()
+     */
+    public String getPrimaryAttribute() throws RemoteException
+    {
+      return "text";
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#equals(de.willuhn.datasource.rmi.GenericObject)
+     */
+    public boolean equals(GenericObject other) throws RemoteException
+    {
+      return false;
+    }
+	}
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.24  2004/06/17 22:07:12  willuhn
+ * @C cleanup in tablePart and statusBar
+ *
  * Revision 1.23  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

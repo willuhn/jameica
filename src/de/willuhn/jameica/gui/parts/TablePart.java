@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/06/17 00:05:26 $
+ * $Revision: 1.9 $
+ * $Date: 2004/06/17 22:07:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,18 +15,12 @@ package de.willuhn.jameica.gui.parts;
 import java.rmi.RemoteException;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -40,6 +34,7 @@ import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.datasource.rmi.GenericIterator;
 import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
@@ -54,26 +49,18 @@ public class TablePart implements Part
 {
 	//TODO: Sortierung!
   private GenericIterator list;
+
   private AbstractControl controller;
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
-  private Map list2 = new TreeMap();
   private I18N i18n = null;
   private TableFormatter tableFormatter = null;
   private ArrayList menus = new ArrayList();
 
-	private Composite parent = null;
 	private Composite comp = null;
 	 
   private org.eclipse.swt.widgets.Table table;
 
-	/**
-   * Initialisiert die Tabelle.
-   */
-  private void init()
-	{
-		i18n = Application.getI18n();
-	}
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
    * @param list Liste mit Objekten, die angezeigt werden soll.
@@ -83,41 +70,9 @@ public class TablePart implements Part
   {
     this.list = list;
     this.controller = controller;
-    init();
+		i18n = Application.getI18n();
   }
   
-	/**
-	 * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
-	 * @param list Liste mit Objekten, die angezeigt werden sollen.
-	 * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
-	 */
-	public TablePart(Enumeration list, AbstractControl controller)
-	{
-		if (list != null)
-		{
-			while (list.hasMoreElements())
-			{
-				Object o = list.nextElement();
-				list2.put(o,o);
-			}
-		}
-		this.controller = controller;
-		init();
-	}
-
-	/**
-	 * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
-	 * @param list Liste mit Objekten, die angezeigt werden sollen.
-	 * Hierbei werden die Keys angezeigt und die Values bei Auswahl zurueckgeliefert.
-	 * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
-	 */
-	public TablePart(Map list, AbstractControl controller)
-	{
-		list2 = list;
-		this.controller = controller;
-		init();
-	}
-
 	/**
 	 * Definiert einen optionalen Formatierer, mit dem man SWT-maessig ganze Zeilen formatieren kann.
    * @param formatter Formatter.
@@ -170,42 +125,33 @@ public class TablePart implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
-		this.parent = parent;
 
 		if (comp != null && !comp.isDisposed())
 			comp.dispose();
 
     comp = new Composite(parent,SWT.NONE);
-    // final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		final GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
+		GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
     comp.setLayoutData(gridData);
-    comp.setBackground(Color.BORDER.getSWTColor());
-    
-    comp.setLayout(new FormLayout());
+    comp.setBackground(Color.BACKGROUND.getSWTColor());
 
-    FormData comboFD = new FormData();
-    comboFD.left = new FormAttachment(0, 1);
-    comboFD.top = new FormAttachment(0, 1);
-    comboFD.right = new FormAttachment(100, -1);
-    comboFD.bottom = new FormAttachment(100, -1);
-
+		GridLayout layout = new GridLayout();
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		comp.setLayout(layout);
 
     int flags = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
 
-    table = new org.eclipse.swt.widgets.Table(comp, flags);
-    table.setLayoutData(comboFD);
+    table = GUI.getStyleFactory().createTable(comp, flags);
+    table.setLayoutData(new GridData(GridData.FILL_BOTH));
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
     
-		GenericObject _o = null;
 
-		try {
-			_o = list.next();
-		}
-		catch (Exception e)
-		{
-			// nicht weiter tragisch, wenn das fehlschlaegt
-		}
+		// Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
+		// Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
+		GenericObject test = list.hasNext() ? list.next() : null;
 
     for (int i=0;i<this.fields.size();++i)
     {
@@ -213,24 +159,7 @@ public class TablePart implements Part
       String[] fieldData = (String[]) fields.get(i);
       String title = fieldData[0];
       String field = fieldData[1];
-      if (title == null) title = "";
-
-			if (_o instanceof DBObject)
-			{
-				try {
-					String type = ((DBObject)_o).getFieldType(field);
-					if (
-						DBObject.FIELDTYPE_DOUBLE.equalsIgnoreCase(type) ||
-						DBObject.FIELDTYPE_DECIMAL.equalsIgnoreCase(type)
-					)
-						col.setAlignment(SWT.RIGHT);
-				}
-				catch (Exception e)
-				{
-					// nicht weiter tragisch, wenn das fehlschlaegt
-				}
-			}
-      col.setText(title);
+			col.setText(title == null ? "" : title);
 
 			// Sortierung
 			final int p = i;
@@ -240,65 +169,53 @@ public class TablePart implements Part
 				}
 			});
 
+			// Evtl. rechts ausrichten
+			if (test != null)
+			{
+				Object value = test.getAttribute(field);
+				if (value instanceof Double)  col.setAlignment(SWT.RIGHT);
+				if (value instanceof Integer) col.setAlignment(SWT.RIGHT);
+				if (value instanceof Number)  col.setAlignment(SWT.RIGHT);
+			}
     }
 
-    // Iterieren ueber alle Elemente der Liste
-		if (list != null)
+		list.begin(); // zurueckblaettern nicht vergessen
+		while (list.hasNext())
 		{
-			list.begin(); // zurueckblaettern nicht vergessen
-			while (list.hasNext())
-			{
-				final TableItem item = new TableItem(table, SWT.NONE);
-				final GenericObject o = list.next();
-				item.setData(o);
-				if (tableFormatter != null)
-					tableFormatter.format(item);
+			final TableItem item = new TableItem(table, SWT.NONE);
+			final GenericObject o = list.next();
+			item.setData(o);
+			if (tableFormatter != null)
+				tableFormatter.format(item);
 
-				for (int i=0;i<this.fields.size();++i)
+			for (int i=0;i<this.fields.size();++i)
+			{
+				String[] fieldData = (String[]) fields.get(i);
+				String field = fieldData[1];
+				Object value = o.getAttribute(field);
+				if (value == null)
 				{
-					String[] fieldData = (String[]) fields.get(i);
-					String field = fieldData[1];
-					Object value = o.getAttribute(field);
-					if (value == null)
-					{
-						// Wert ist null. Also zeigen wir einen Leerstring an
-						item.setText(i,"");
-					}
-					else if (value instanceof DBObject)
-					{
-						// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
-						DBObject dbo = (DBObject) value;
-						item.setText(i,dbo.getAttribute(dbo.getPrimaryAttribute()).toString());
-					}
-					else
-					{
-						// Regulaerer Wert.
-						// Wir schauen aber noch, ob wir einen Formatter haben
-						Formatter f = (Formatter) formatter.get(field);
-						if (f != null)
-						{
-							item.setText(i,f.format(value));
-						}
-						else 
-							item.setText(i,value.toString());
-					}
+					// Wert ist null. Also zeigen wir einen Leerstring an
+					item.setText(i,"");
 				}
-			}
-		}
-		else if (list2 != null)
-		{
-			Iterator i = list2.keySet().iterator();
-			while (i.hasNext())
-			{
-				final TableItem item = new TableItem(table, SWT.NONE);
-				final Object o = i.next();
-				if (o == null)
-					item.setText(0,"");
+				else if (value instanceof DBObject)
+				{
+					// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
+					DBObject dbo = (DBObject) value;
+					item.setText(i,dbo.getAttribute(dbo.getPrimaryAttribute()).toString());
+				}
 				else
-					item.setText(0,o.toString());
-
-				Object val = list2.get(o);
-				item.setData(val == null ? o.toString() : val);
+				{
+					// Regulaerer Wert.
+					// Wir schauen aber noch, ob wir einen Formatter haben
+					Formatter f = (Formatter) formatter.get(field);
+					if (f != null)
+					{
+						item.setText(i,f.format(value));
+					}
+					else 
+						item.setText(i,value.toString());
+				}
 			}
 		}
 
@@ -325,26 +242,15 @@ public class TablePart implements Part
       TableColumn col = table.getColumn(i);
       col.pack();
     }
-    //table.pack();
 
-    // So, und jetzt malen wir noch ein Label mit der Anzahl der Treffer drunter.
-		if (list != null)
-		{
-			Label summary = new Label(parent,SWT.NONE);
-			summary.setBackground(Color.BACKGROUND.getSWTColor());
-			summary.setText(list.size() + " " + (list.size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
-		}
+		Label summary = new Label(comp,SWT.NONE);
+		summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		summary.setBackground(Color.BACKGROUND.getSWTColor());
+		summary.setText(list.size() + " " + (list.size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
 
     // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
     // Damit kann das Control wiederverwendet werden ;) 
-    try {
-			if (list != null)
-	      this.list.begin();
-    }
-    catch (RemoteException e)
-    {
-      Application.getLog().warn("unable to restore list back to first element. this list will not be reusable.");
-    }
+	  this.list.begin();
 
   }
 
@@ -386,13 +292,16 @@ public class TablePart implements Part
 		}
 	}
 
-	private void addMenus()
+	/**
+   * Fuegt die Menus hinzu.
+   */
+  private void addMenus()
 	{
 		if (menus.size() == 0)
 			return;
 
 		// und jetzt fuegen wir noch die Kontext-Menues hinzu,
-		Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
+		Menu menu = new Menu(comp.getShell(), SWT.POP_UP);
 		table.setMenu(menu);
 
 		for (int i=0;i<menus.size();++i)
@@ -426,7 +335,10 @@ public class TablePart implements Part
 		}
 	}
 
-	private class MenuEntry
+	/**
+	 * Hilfklasse fuer die Menu-Eintraege.
+   */
+  private class MenuEntry
 	{
 		private String name;
 		private Listener listener;
@@ -441,6 +353,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.9  2004/06/17 22:07:12  willuhn
+ * @C cleanup in tablePart and statusBar
+ *
  * Revision 1.8  2004/06/17 00:05:26  willuhn
  * *** empty log message ***
  *

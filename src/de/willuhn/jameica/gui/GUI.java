@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source:
  * /export/CVS/willuhn/own/jameica/dev/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.46 $ $Date: 2004/06/17 00:05:26 $ $Author: willuhn $ $Locker:  $
+ * $Revision: 1.47 $ $Date: 2004/06/17 22:07:11 $ $Author: willuhn $ $Locker:  $
  * $State: Exp $
  * 
  * Copyright (c) by willuhn.webdesign All rights reserved
@@ -119,6 +119,8 @@ public class GUI
 		shell.setText("Jameica " + Application.getVersion());
 		shell.setImage(SWTUtil.getImage("globe.gif"));
 
+		StyleEngine.init();
+
 		////////////////////////////
 		// size and position restore
 		int x = 10;
@@ -217,7 +219,6 @@ public class GUI
 
 		if (gui != null) return; // allready started.
 
-		StyleEngine.init();
 		gui = new GUI();
 		gui.load();
 
@@ -683,6 +684,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.47  2004/06/17 22:07:11  willuhn
+ * @C cleanup in tablePart and statusBar
+ *
  * Revision 1.46  2004/06/17 00:05:26  willuhn
  * *** empty log message ***
  *

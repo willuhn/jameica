@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/06/14 22:05:06 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/17 22:07:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.style;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -34,16 +35,24 @@ public interface StyleFactory
   /**
    * Erzeugt einen Text.
    * @param parent
-   * @return
+   * @return Text.
    */
   public Text createText(Composite parent);
 
 	/**
 	 * Erzeugt ein Combo.
-   * @param parent
-   * @return
+   * @param parent Parent.
+   * @return Combo.
    */
   public CCombo createCombo(Composite parent);
+  
+  /**
+   * Erzeugt eine neue Tabelle.
+   * @param parent Parent.
+   * @param style
+   * @return Table.
+   */
+  public Table createTable(Composite parent, int style);
   
   /**
    * Liefert den sprechenden Namen der Style-Factory.
@@ -55,6 +64,9 @@ public interface StyleFactory
 
 /*********************************************************************
  * $Log: StyleFactory.java,v $
+ * Revision 1.3  2004/06/17 22:07:12  willuhn
+ * @C cleanup in tablePart and statusBar
+ *
  * Revision 1.2  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/14 22:05:06 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/17 22:07:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
@@ -58,6 +59,14 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 		return combo;
   }
 
+	/**
+	 * @see de.willuhn.jameica.gui.style.StyleFactory#createTable(org.eclipse.swt.widgets.Composite, int)
+	 */
+	public Table createTable(Composite parent, int style)
+	{
+		return new Table(parent, SWT.BORDER | style);
+	}
+
   /**
    * @see de.willuhn.jameica.gui.style.StyleFactory#getName()
    */
@@ -65,11 +74,15 @@ public class StyleFactoryDefaultImpl implements StyleFactory
     return "Default-Look";
   }
 
+
 }
 
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
+ * Revision 1.4  2004/06/17 22:07:12  willuhn
+ * @C cleanup in tablePart and statusBar
+ *
  * Revision 1.3  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *
