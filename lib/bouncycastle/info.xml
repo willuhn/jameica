@@ -1,6 +1,6 @@
 <info>
-  <name>MySQL</name>
-  <description>JDBC-Driver for the OpenSource Database MySQL</description>
-  <url>http://www.mysql.com/products/connector/j</url>
-  <license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
+  <name>BouncyCastle</name>
+  <description>An implemenation of the Java Crypto API (JCA)</description>
+  <url>http://www.bouncycastle.org/</url>
+  <license>http://www.bouncycastle.org/licence.html</license>
 </info>

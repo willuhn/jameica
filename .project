@@ -11,8 +11,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>il.net.inter.genadyb.rmi.generation.RMIBuilder</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
 			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;project&gt;/.externalToolBuilders/il.net.inter.genadyb.rmi.generation.RMIBuilder.launch</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
