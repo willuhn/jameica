@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Attic/About.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/12 23:49:31 $
+ * $Revision: 1.3 $
+ * $Date: 2004/11/05 20:00:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ import de.willuhn.util.I18N;
 public class About extends AbstractView {
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#bind()
+   * @see de.willuhn.jameica.gui.AbstractView#bind()
    */
   public void bind() throws Exception {
   	I18N i18n = Application.getI18n();
@@ -53,7 +53,7 @@ public class About extends AbstractView {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#unbind()
+   * @see de.willuhn.jameica.gui.AbstractView#unbind()
    */
   public void unbind() throws ApplicationException {
   }
@@ -63,6 +63,9 @@ public class About extends AbstractView {
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.3  2004/11/05 20:00:43  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.2  2004/10/12 23:49:31  willuhn
  * *** empty log message ***
  *

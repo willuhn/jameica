@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.7 $
+ * $Date: 2004/11/05 20:00:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,7 +75,7 @@ public class Font {
 	
 	/**
 	 * Liefert die Schrift.
-   * @return
+   * @return die zugehoerige SWT-Schrift.
    */
   public final org.eclipse.swt.graphics.Font getSWTFont()
 	{
@@ -102,6 +102,9 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.7  2004/11/05 20:00:44  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.6  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

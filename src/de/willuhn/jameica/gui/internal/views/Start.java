@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/29 16:16:24 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/05 20:00:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,7 @@ public class Start extends AbstractView
 {
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#bind()
+   * @see de.willuhn.jameica.gui.AbstractView#bind()
    */
   public void bind() throws Exception
   {
@@ -84,7 +84,7 @@ public class Start extends AbstractView
   }        
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#unbind()
+   * @see de.willuhn.jameica.gui.AbstractView#unbind()
    */
   public void unbind()
   {
@@ -137,6 +137,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.4  2004/11/05 20:00:43  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.3  2004/10/29 16:16:24  willuhn
  * *** empty log message ***
  *

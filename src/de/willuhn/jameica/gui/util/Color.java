@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.6 $
+ * $Date: 2004/11/05 20:00:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -90,7 +90,7 @@ public class Color {
 	
 	/**
 	 * Liefert das zugehoerige SWT-Color-Objekt.
-   * @return
+   * @return die zugehoerige SWT-Farbe.
    */
   public final org.eclipse.swt.graphics.Color getSWTColor()
 	{
@@ -125,6 +125,9 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.6  2004/11/05 20:00:44  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.5  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/MenuItemXml.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/12 23:49:31 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/05 20:00:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,11 +24,10 @@ import de.willuhn.util.I18N;
  */
 public class MenuItemXml extends AbstractItemXml implements MenuItem 
 {
-
   /**
    * ct.
    * @param parent das Eltern-Element.
-   * @param sPath Pfad in der XML-Datei.
+   * @param path Pfad in der XML-Datei.
    * @param i18n optionaler Uebersetzer, um die Menu-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
    */
   public MenuItemXml(MenuItem parent, IXMLElement path, I18N i18n)
@@ -55,6 +54,9 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
 
 /*********************************************************************
  * $Log: MenuItemXml.java,v $
+ * Revision 1.4  2004/11/05 20:00:44  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.3  2004/10/12 23:49:31  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/FatalErrorView.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/25 17:59:15 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/05 20:00:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,7 @@ public class FatalErrorView extends AbstractView
 {
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#bind()
+   * @see de.willuhn.jameica.gui.AbstractView#bind()
    */
   public void bind() throws Exception
   {
@@ -115,7 +115,7 @@ public class FatalErrorView extends AbstractView
   }        
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#unbind()
+   * @see de.willuhn.jameica.gui.AbstractView#unbind()
    */
   public void unbind() throws ApplicationException
   {
@@ -125,6 +125,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.4  2004/11/05 20:00:43  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.3  2004/10/25 17:59:15  willuhn
  * @N aenderbare Tabellen
  *

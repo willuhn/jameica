@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Attic/ErrorView.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/25 17:59:15 $
+ * $Revision: 1.3 $
+ * $Date: 2004/11/05 20:00:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ public class ErrorView extends AbstractView
    * Die Exception steht zwar hier in der Methoden-Signatur
    * drin, wird jedoch nie geworfen, weil es sonst zu einem
    * Loop kommen wuerde.
-   * @see de.willuhn.jameica.gui.views.AbstractView#bind()
+   * @see de.willuhn.jameica.gui.AbstractView#bind()
    */
   public void bind() throws Exception
   {
@@ -67,7 +67,7 @@ public class ErrorView extends AbstractView
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#unbind()
+   * @see de.willuhn.jameica.gui.AbstractView#unbind()
    */
   public void unbind() throws ApplicationException
   {
@@ -78,6 +78,9 @@ public class ErrorView extends AbstractView
 
 /**********************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.3  2004/11/05 20:00:43  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.2  2004/10/25 17:59:15  willuhn
  * @N aenderbare Tabellen
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/10/26 23:47:23 $
+ * $Revision: 1.23 $
+ * $Date: 2004/11/05 20:00:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -70,7 +70,7 @@ public class TablePart implements Part
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
    * @param list Liste mit Objekten, die angezeigt werden soll.
-   * @param action, die beim Doppelklick auf ein Element ausgefuehrt wird.
+   * @param action die beim Doppelklick auf ein Element ausgefuehrt wird.
    */
   public TablePart(GenericIterator list, Action action)
   {
@@ -436,6 +436,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.23  2004/11/05 20:00:43  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.22  2004/10/26 23:47:23  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/11/04 22:41:36 $
+ * $Revision: 1.7 $
+ * $Date: 2004/11/05 20:00:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,7 +67,7 @@ public class ProgressBar implements ProgressMonitor, Part
   }
 
   /**
-   * @see de.willuhn.jameica.util.ProgressMonitor#setStatus(int)
+   * @see de.willuhn.util.ProgressMonitor#setStatus(int)
    */
   public void setStatus(int status)
   {
@@ -75,7 +75,7 @@ public class ProgressBar implements ProgressMonitor, Part
   }
 
   /**
-   * @see de.willuhn.jameica.util.ProgressMonitor#setStatusText(java.lang.String)
+   * @see de.willuhn.util.ProgressMonitor#setStatusText(java.lang.String)
    */
   public void setStatusText(final String text)
   {
@@ -101,7 +101,7 @@ public class ProgressBar implements ProgressMonitor, Part
   }
 
   /**
-   * @see de.willuhn.jameica.util.ProgressMonitor#log(java.lang.String)
+   * @see de.willuhn.util.ProgressMonitor#log(java.lang.String)
    */
   public void log(final String msg)
   {
@@ -165,6 +165,7 @@ public class ProgressBar implements ProgressMonitor, Part
 		log.setWordWrap(false);
 		log.paint(comp);
   }
+
   /**
    * @see de.willuhn.util.ProgressMonitor#addPercentComplete(int)
    */
@@ -188,6 +189,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.7  2004/11/05 20:00:44  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.6  2004/11/04 22:41:36  willuhn
  * *** empty log message ***
  *

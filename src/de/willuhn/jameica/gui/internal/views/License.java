@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/License.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/20 12:33:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/11/05 20:00:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,7 @@ import de.willuhn.util.I18N;
 public class License extends AbstractView {
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#bind()
+   * @see de.willuhn.jameica.gui.AbstractView#bind()
    */
   public void bind() throws Exception
   {
@@ -46,7 +46,7 @@ public class License extends AbstractView {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.AbstractView#unbind()
+   * @see de.willuhn.jameica.gui.AbstractView#unbind()
    */
   public void unbind() throws ApplicationException {
   }
@@ -56,6 +56,9 @@ public class License extends AbstractView {
 
 /**********************************************************************
  * $Log: License.java,v $
+ * Revision 1.3  2004/11/05 20:00:43  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.2  2004/10/20 12:33:53  willuhn
  * @C MVC-Refactoring (new Controllers)
  *

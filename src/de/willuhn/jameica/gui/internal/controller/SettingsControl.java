@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/10/23 18:13:59 $
+ * $Revision: 1.5 $
+ * $Date: 2004/11/05 20:00:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,7 +67,7 @@ public class SettingsControl extends AbstractControl
 
 	/**
 	 * Liefert ein Auswahl-Feld fuer die Style-Factory.
-   * @return
+   * @return Auswahl-Feld.
    */
   public Input getStyleFactory()
 	{
@@ -124,7 +124,7 @@ public class SettingsControl extends AbstractControl
 
 	/**
 	 * Auswahlfeld.
-   * @return
+   * @return Auswahl-Feld.
    */
   public Input getColorWidgetBG()
 	{
@@ -136,7 +136,7 @@ public class SettingsControl extends AbstractControl
 
   /**
    * Auswahlfeld.
-   * @return
+   * @return Auswahl-Feld.
    */
   public Input getColorWidgetFG()
   {
@@ -148,7 +148,7 @@ public class SettingsControl extends AbstractControl
 
   /**
 	 * Auswahlfeld.
-	 * @return
+   * @return Auswahl-Feld.
 	 */
 	public Input getColorComment()
 	{
@@ -160,7 +160,7 @@ public class SettingsControl extends AbstractControl
 
 	/**
 	 * Auswahlfeld.
-	 * @return
+   * @return Auswahl-Feld.
 	 */
 	public Input getColorBackground()
 	{
@@ -172,7 +172,7 @@ public class SettingsControl extends AbstractControl
 
 	/**
 	 * Auswahlfeld.
-	 * @return
+   * @return Auswahl-Feld.
 	 */
 	public Input getColorError()
 	{
@@ -184,7 +184,7 @@ public class SettingsControl extends AbstractControl
 
 	/**
 	 * Auswahlfeld.
-	 * @return
+   * @return Auswahl-Feld.
 	 */
 	public Input getColorSuccess()
 	{
@@ -196,7 +196,7 @@ public class SettingsControl extends AbstractControl
 
 	/**
 	 * Auswahlfeld.
-	 * @return
+   * @return Auswahl-Feld.
 	 */
 	public Input getColorLink()
 	{
@@ -208,7 +208,7 @@ public class SettingsControl extends AbstractControl
 
 	/**
 	 * Auswahlfeld.
-	 * @return
+   * @return Auswahl-Feld.
 	 */
 	public Input getColorLinkActive()
 	{
@@ -402,6 +402,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.5  2004/11/05 20:00:44  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.4  2004/10/23 18:13:59  willuhn
  * *** empty log message ***
  *

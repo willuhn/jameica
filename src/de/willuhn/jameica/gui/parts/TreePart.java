@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/10/20 12:08:17 $
+ * $Revision: 1.9 $
+ * $Date: 2004/11/05 20:00:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,7 +50,7 @@ public class TreePart implements Part
 	/**
    * Erzeugt einen neuen Tree basierend auf dem uebergebenen Objekt.
    * @param object Das Objekt, fuer das der Baum erzeugt werden soll. 
-   * @param action, Action, die bei der Auswahl eines Elements
+   * @param action Action, die bei der Auswahl eines Elements
    * ausgeloest werden soll.
    */
   public TreePart(GenericObjectNode object, Action action)
@@ -65,7 +65,7 @@ public class TreePart implements Part
    * Iterator Objekte, die <b>nicht</b> von GenericObjectNode
    * abgeleitet sind, wird er eine ClassCastException werfen.
    * @param list Liste mit Objekten, fuer die der Baum erzeugt werden soll.
-   * @param action, Action, die bei der Auswahl eines Elements
+   * @param action Action, die bei der Auswahl eines Elements
    * ausgeloest werden soll.
    */
   public TreePart(GenericIterator list, Action action)
@@ -286,6 +286,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.9  2004/11/05 20:00:44  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.8  2004/10/20 12:08:17  willuhn
  * @C MVC-Refactoring (new Controllers)
  *

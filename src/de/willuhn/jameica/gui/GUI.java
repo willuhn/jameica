@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.61 $
- * $Date: 2004/10/29 16:16:23 $
+ * $Revision: 1.62 $
+ * $Date: 2004/11/05 20:00:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -478,7 +478,7 @@ public class GUI
 
 	/**
 	 * Liefert die konfigurierte Style-Factory.
-	 * @return
+	 * @return die aktuelle Style-Factory.
 	 */
 	public static StyleFactory getStyleFactory()
 	{
@@ -650,6 +650,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.62  2004/11/05 20:00:44  willuhn
+ * @D javadoc fixes
+ *
  * Revision 1.61  2004/10/29 16:16:23  willuhn
  * *** empty log message ***
  *
