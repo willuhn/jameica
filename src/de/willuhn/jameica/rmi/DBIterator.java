@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBIterator.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,17 +33,24 @@ public interface DBIterator extends Remote {
   
 	/**
 	 * Liefert true, wenn weitere Elemente in diesem Iterator existieren.
-	 * @return
+	 * @return true, wenn weitere Elemente vorhanden sind.
 	 * @throws RemoteException
 	 */
 	public boolean hasNext() throws RemoteException;
 
 	/**
-	 * Liefert das naechste Element der Iteration.
-	 * @return
+	 * Liefert das aktuelle Element der Iteration und blaettert um ein Element weiter.
+	 * @return aktuelles Element.
 	 * @throws RemoteException
 	 */
 	public DBObject next() throws RemoteException;
+
+  /**
+   * Liefert das aktuelle Element der Iteration und blaetter um ein Element zurueck.
+   * @return aktuelles Element.
+   * @throws RemoteException
+   */
+  public DBObject previous() throws RemoteException;
 
 
   /**
@@ -86,6 +93,9 @@ public interface DBIterator extends Remote {
 
 /*********************************************************************
  * $Log: DBIterator.java,v $
+ * Revision 1.4  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

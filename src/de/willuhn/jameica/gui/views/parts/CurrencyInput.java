@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/CurrencyInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -45,12 +44,12 @@ public class CurrencyInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#paint(org.eclipse.swt.widgets.Group)
+   * @see de.willuhn.jameica.views.parts.Input#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint(Group group)
+  public void paint(Composite parent)
   {
 
-    Composite comp = new Composite(group, SWT.NONE);
+    Composite comp = new Composite(parent, SWT.NONE);
     GridLayout layout = new GridLayout(2, false);
     layout.marginHeight=0;
     layout.marginWidth=0;
@@ -58,7 +57,7 @@ public class CurrencyInput extends Input
     comp.setLayoutData(createGrid());
 
     text = new Text(comp, SWT.BORDER);
-    text.setText(""+value);
+    text.setText((""+value).replace('.',','));
     text.setLayoutData(new GridData(GridData.FILL_BOTH));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
@@ -67,11 +66,11 @@ public class CurrencyInput extends Input
     });
     text.addListener (SWT.Verify, new Listener() {
       public void handleEvent (Event e) {
-        String text = e.text;
-        char [] chars = new char [text.length ()];
-        text.getChars (0, chars.length, chars, 0);
+        String t = e.text;
+        char [] chars = new char [t.length ()];
+        t.getChars (0, chars.length, chars, 0);
         for (int i=0; i<chars.length; i++) {
-          if (!('0' <= chars[i] && chars[i] <= '9') && !(chars[i] == ',') && !(chars[i] == '.')) {
+          if (!('0' <= chars[i] && chars[i] <= '9') && !(chars[i] == ',')) {
             e.doit = false;
             return;
           }
@@ -98,6 +97,9 @@ public class CurrencyInput extends Input
 
 /*********************************************************************
  * $Log: CurrencyInput.java,v $
+ * Revision 1.2  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

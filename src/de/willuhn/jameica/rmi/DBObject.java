@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,12 @@ import java.rmi.RemoteException;
  */
 public interface DBObject extends Remote
 {
+
+  public final static String FIELDTYPE_DATE    = "date";
+  public final static String FIELDTYPE_INT     = "int";
+  public final static String FIELDTYPE_DOUBLE  = "double";
+  public final static String FIELDTYPE_VARCHAR = "varchar";
+  
 
   /**
    * Damit kann man manuell eine Transaktion starten.
@@ -78,6 +84,15 @@ public interface DBObject extends Remote
    */
   public Object getField(String name) throws RemoteException;
 
+  /**
+   * Liefert den Feldtyp des uebergebenen Feldes.
+   * Siehe DBObject.FIELDTYPE_*.
+   * @param fieldname
+   * @return Konstante fuer den Feldtype. Siehe DBObject.FIELDTYPE_*.
+   * @throws RemoteException
+   */
+  public String getFieldType(String fieldname) throws RemoteException;
+
 	/**
 	 * Gibt an, ob das Objekt neu ist und somit 
 	 * ein Insert statt einem Update gemacht werden muss.
@@ -107,6 +122,9 @@ public interface DBObject extends Remote
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.4  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

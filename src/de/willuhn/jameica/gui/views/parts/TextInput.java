@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,7 @@ package de.willuhn.jameica.views.parts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -36,11 +36,11 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#paint(org.eclipse.swt.widgets.Group)
+   * @see de.willuhn.jameica.views.parts.Input#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint(Group group)
+  public void paint(Composite parent)
   {
-    text = new Text(group, SWT.BORDER);
+    text = new Text(parent, SWT.BORDER);
     text.setLayoutData(createGrid());
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
@@ -63,6 +63,9 @@ public class TextInput extends Input
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.3  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

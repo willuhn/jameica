@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Controller.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -109,18 +109,27 @@ public abstract class Controller
   public abstract void handleStore(Button button);
 
   /**
-   * Diese Funktion wird beim Klick auf einen Custom-Button ausgefuehrt und
+   * Diese Funktion wird beim Klick auf einen Create-Button ausgefuehrt und
    * kriegt eben jenen Button als Parameter. Aus dem kann sich die
    * Methode dann alle relevanten Daten (u.a. den Namen des gedrueckten
    * Buttons holen.
    * @param button
    */
-  public abstract void handle(Button button);
+  public abstract void handleCreate(Button button);
 
+  /**
+   * Diese Funktion wird bei der Auswahl eines Eintrages aus einer Liste
+   * aufgerufen und kriegt die ID des ausgewaehlten Objektes als Parameter.
+   * @param id die ID des ausgewaehlten Objektes.
+   */
+  public abstract void handleChooseFromList(String id);
 }
 
 /*********************************************************************
  * $Log: Controller.java,v $
+ * Revision 1.2  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/ButtonArea.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,19 +53,19 @@ public class ButtonArea
   }
 
   /**
-   * Fuegt der Area einen generischen Button hinzu.
-   * Beim Click wird die Methode handle(Button) des Controllers ausgefuehrt.
+   * Fuegt der Area einen Erstellen-Button hinzu.
+   * Beim Click wird die Methode handleCreate(Button) des Controllers ausgefuehrt.
    * @param name
    * @param controller
    */
-  public void addButton(String name, final Controller controller)
+  public void addCreateButton(String name, final Controller controller)
   {
     final Button button = new Button(buttonArea,SWT.NONE);
     button.setText(name);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
-        controller.handle(button);
+        controller.handleCreate(button);
       }
     });
   }
@@ -107,7 +107,7 @@ public class ButtonArea
   public void addCancelButton(final Controller controller)
   {
     final Button button = new Button(buttonArea,SWT.NONE);
-    button.setText(I18N.tr("Abbrechen"));
+    button.setText(I18N.tr("Zurück"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
@@ -138,6 +138,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.2  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

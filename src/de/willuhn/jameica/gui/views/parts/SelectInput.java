@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.GUI;
 import de.willuhn.jameica.I18N;
@@ -117,12 +117,12 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.views.parts.Input#paint(org.eclipse.swt.widgets.Group)
+   * @see de.willuhn.jameica.views.parts.Input#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint(Group group)
+  public void paint(Composite parent)
   {
 
-    combo = new Combo(group,SWT.BORDER | SWT.READ_ONLY);
+    combo = new Combo(parent,SWT.BORDER | SWT.READ_ONLY);
     combo.setLayoutData(createGrid());
     int selected = 0;
     if (values == null || values.length == 0)
@@ -148,6 +148,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.3  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

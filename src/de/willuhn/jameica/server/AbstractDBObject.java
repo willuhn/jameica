@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.6 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 {
 
   // Die Datenbank-Verbindung
-  private Connection conn;
+  protected Connection conn;
 
   // Der Primary-Key des Objektes
   private String id;
@@ -219,9 +219,23 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.willuhn.jameica.rmi.DBObject#getField(java.lang.String)
    */
-  public Object getField(String fieldName)
+  public Object getField(String fieldName) throws RemoteException
   {
     return properties.get(fieldName);
+  }
+
+  /**
+   * @see de.willuhn.jameica.rmi.DBObject#getFieldType(java.lang.String)
+   */
+  public String getFieldType(String fieldName) throws RemoteException
+  {
+    try {
+      return (String) types.get(fieldName);
+    }
+    catch (Exception e)
+    {
+      throw new RemoteException("unable to determine");
+    }
   }
 
   /**
@@ -442,13 +456,13 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       if (type == null || value == null)
         stmt.setNull(index,Types.NULL);
 
-      else if ("date".equalsIgnoreCase(type))
+      else if (FIELDTYPE_DATE.equalsIgnoreCase(type))
         stmt.setDate(index,new java.sql.Date(((Date) value).getTime()));
 
-      else if ("int".equalsIgnoreCase(type))
+      else if (FIELDTYPE_INT.equalsIgnoreCase(type))
         stmt.setInt(index,((Integer) value).intValue());
 
-      else if ("double".equalsIgnoreCase(type))
+      else if (FIELDTYPE_DOUBLE.equalsIgnoreCase(type))
         stmt.setDouble(index,((Double) value).doubleValue());
 
       else stmt.setString(index,(String) value);
@@ -558,6 +572,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.6  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,7 @@
 package de.willuhn.jameica.views.parts;
 
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Basisklasse fuer Eingabefelder.
@@ -32,12 +32,12 @@ public abstract class Input
   public abstract String getValue();
 
   /**
-   * Malt das Inputfeld in die uebergebene Gruppe.
+   * Malt das Inputfeld in das uebergebene Composite.
    * Grund: Jedes Inputfeld sieht anders aus (Text, Combo, etc.) - daher muss
    * das auch jedes Input selbst machen.
    * @param group
    */
-  public abstract void paint(Group group);
+  public abstract void paint(Composite parent);
 
   /**
    * Erzeugt ein neues Grid, welches fuer das Input verwendet werden muss.
@@ -54,6 +54,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.3  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/22 20:43:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,6 +106,16 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 		return object;
 	}
   
+  /**
+   * @see de.bbvag.dhl.easylog.objects.DBIterator#previous()
+   */
+  public DBObject previous() throws RemoteException
+  {
+    if (!initialized) init();
+    object.load((String) list.get(index--));
+    return object;
+  }
+
   
   /**
    * @see de.bbvag.dhl.easylog.objects.DBIterator#transactionBegin()
@@ -147,6 +157,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.4  2003/11/22 20:43:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts
