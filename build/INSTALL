@@ -1,0 +1,146 @@
+###########################################################################
+# Jameica                                                                 #
+#                                                                         #
+# Copyright (C) 2004 Olaf Willuhn                                         #
+# email: info@jameica.org                                                 #
+# www  : http://www.jameica.org                                           #
+#                                                                         #
+# This program is free software; you can redistribute it and/or modify    #
+# it under the terms of the GNU General Public License as published by    #
+# the Free Software Foundation; either version 2 of the License, or       #
+# (at your option) any later version.                                     #
+#                                                                         #
+# This program is distributed in the hope that it will be useful,         #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+# GNU General Public License for more details.                            #
+#                                                                         #
+# You should have received a copy of the GNU General Public License       #
+# along with this program; if not, write to the Free Software             #
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.               #
+#                                                                         #
+###########################################################################
+
+###########################################################################
+# 1. Systemvoraussetzungen                                                #
+###########################################################################
+
+- Java 1.4 oder hoeher (JRE oder SDK)
+  Geben Sie "java -version" an einer Shell (Windows: Eingabeaufforderung)
+  ein um die Version zu ueberpruefen.
+
+  Java koennen Sie von http://java.sun.com/j2se/index.jsp herunterladen.
+
+###########################################################################
+# 2. INSTALLATION                                                         #
+###########################################################################
+
+1) Kopieren Sie den Inhalt dieser ZIP-Datei in ein Verzeichnis Ihrer Wahl.
+   z.Bsp.:
+   Windows:  "C:\Progamme\jameica"
+   Linux:    "/opt/jameica"
+
+2) Pruefen Sie, ob Sie im Verzeichnis "run" Schreibrechte besitzen.
+   Jameica wird dort Log-und Lock-Dateien ablegen.
+3) Wechseln Sie in das Programm-Verzeichnis und geben Sie ein:
+   Windows:  "jameica.bat"
+   Linux:    "./jameica.sh"
+
+Hinweis: Abgesehen von o.g. Log-Dateien schreibt Jameica keinerlei
+         Dateien in das Programm-Verzeichnis. Alle Einstellungen
+         und Daten werden in einem Verzeichnis ".jameica" innerhalb
+         Ihres Homebereiches abgelegt. Das sind i.d.R.:
+         Windows: "C:\Dokumente und Einstellungen\<benutzername>\.jameica"
+         Linux:   "/home/<benutzername>/.jameica"
+
+#                                                                         #
+###########################################################################
+
+###########################################################################
+# 3. Installation zusaetzlicher Plugins                                   #
+###########################################################################
+
+1) Beenden Sie ggf. Jameica.
+2) Entpacken Sie das Plugin in das Verzeichnis "plugins" von Jameica.
+3) Starten Sie Jameica erneut.
+
+Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
+         dann nicht unter "Hilfe->installierte Plugins", dann
+         pruefen Sie bitte die Log-Ausgaben in der Datei
+         "run/jameica.log" und senden Sie ggf. protokollierte
+         Fehler an den Autor des Plugins.
+
+#                                                                         #
+###########################################################################
+
+###########################################################################
+# 4. Optionale Startparameter                                             #
+###########################################################################
+
+- Sie koennen Jameica auch ein abweichendes Daten-Verzeichnis ueber einen
+  Startparameter mitgeben. Somit ist es z.Bsp. moeglich mehrere System-
+  konfigurationen parallel zu benutzen. Bsp.:
+  Windows:  "jameica.bat d:\daten\.jameica"
+  Linux:    "./jameica.sh /tmp/jameicatest"
+
+#                                                                         #
+###########################################################################
+
+###########################################################################
+# 5. "Experten-Einstellungen"                                             #
+###########################################################################
+
+- In Ihrem Datenverzeichnis ".jameica" befindet sich eine Datei
+  "cfg/config.xml", welche folgendes Format besitzt.
+
+  <config>
+    <logfile>run/jameica.log</logfile>
+    <loglevel>INFO</loglevel>
+    <defaultlanguage>de_de</defaultlanguage>
+    <rmiport>1099</rmiport>
+    <plugindirs>
+      <dir>plugins</dir>
+    </plugindirs>
+    <services/>
+  </config>
+
+  <logfile>        : Hier koennen Sie eine abweichende Log-Datei definieren.
+  <loglevel>       : Ueber diesen Parameter koennen Sie den Umfang der
+                     Log-Ausgaben beeinflussen. Es existieren folgende
+                     Log-Level:
+                     ERROR: Es werden nur Fehler ausgegeben.
+                     WARN : Fehler und Warnungen
+                     INFO : Informative Meldungen, Warnungen und Fehler
+                     DEBUG: alle o.g. Ausgaben und zusaetzlich fuer
+                            Debugging-Zwecke relevante Ausgaben.
+  <defaultlanguage>: Zu verwendendes Locale. Beachten Sie bitte, dass
+                     bei Veraenderung des Wertes auch die entsprechenden
+                     Sprach-Uebersetzungen vorhanden sein muessen.
+  <rmiport>        : Wird derzeit noch nicht verwendet. Hintergrund:
+                     Jameica ist vollstaendig RMI-tauglich und kann
+                     somit auch in einem Client-Server-Szenario eingesetzt
+                     werden. Aus Sicherheitsgruenden wird diese Funktionali-
+                     taet derzeit jedoch noch nicht verwendet.
+                     Ueber diesen Parameter koennen Sie den TCP-Port
+                     definieren, welcher von der RMIRegistry benutzt werden
+                     soll.
+  <plugindirs>     : Hier koennen Sie zusaetzliche Verzeichnisse fuer
+                     Plugins angeben. Somit ist es z.Bsp. moeglich, auf
+                     einem Fileserver ein zentrales Repository von Jameica-
+                     Plugins bereitzustellen, welches von allen Clients
+                     im LAN gemeinsam benutzt werden kann. Fuegen Sie
+                     hierfuer weitere Zeilen im Format
+                     <dir>Pluginverzeichnis</dir> hinzu.
+  <services>       : Wird derzeit noch nicht verwendet. In dieser Sektion
+                     koennen Initialisierungsparameter fuer Services
+                     definiert werden, welche via RMI anderen Clients
+                     angeboten werden koennen. (siehe "<rmiport>").
+
+- Sie koennen Jameica auch im "Server-Mode" via "jameicaserver.sh"
+  bzw. "jameicaserver.bat" starten. Hierbei wird die grafische Oberflaeche
+  nicht mit gestartet. Dieser Betriebsmodus macht ohne RMI jedoch noch
+  keinen Sinn.
+
+#                                                                         #
+###########################################################################
+
