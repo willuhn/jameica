@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/04/19 22:05:27 $
+ * $Revision: 1.18 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,8 +26,9 @@ import de.willuhn.jameica.gui.controller.SettingsControl;
 import de.willuhn.jameica.gui.input.ColorInput;
 import de.willuhn.jameica.gui.input.FontInput;
 import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.LabelGroup;
-import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -85,8 +86,8 @@ public class Settings extends AbstractView
 
 		colorGroup.addText("",false);
 
-		colorGroup.addLabelPair("Hintergrundfarbe",new ColorInput(Style.COLOR_BG));
-		colorGroup.addLabelPair("Überschriften",new FontInput(Style.FONT_H1));
+		colorGroup.addLabelPair("Hintergrundfarbe",new ColorInput(Color.BACKGROUND.getSWTColor()));
+		colorGroup.addLabelPair("Überschriften",new FontInput(Font.H1.getSWTFont()));
 
 		ButtonArea colorButtons = colorGroup.createButtonArea(3);
 		colorButtons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
@@ -122,6 +123,10 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.18  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.17  2004/04/19 22:05:27  willuhn
  * *** empty log message ***
  *

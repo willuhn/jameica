@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/04/26 21:00:11 $
+ * $Revision: 1.16 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.PluginContainer;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
 
 /**
@@ -125,7 +125,7 @@ public class Navigation {
 		TreeItem item = (TreeItem) widget;
 		String icon = (String) item.getData("iconOpen");
 		if (icon != null) {
-			item.setImage(Style.getImage(icon));
+			item.setImage(SWTUtil.getImage(icon));
 		}
 	}
 
@@ -141,7 +141,7 @@ public class Navigation {
 		TreeItem item = (TreeItem) widget;
 		String icon = (String) item.getData("iconClose");
 		if (icon != null) {
-			item.setImage(Style.getImage(icon));
+			item.setImage(SWTUtil.getImage(icon));
 		}
 	}
 
@@ -243,7 +243,7 @@ public class Navigation {
 			String iconOpen 	= this.path.getAttribute("icon-open",null);
 			String action			= this.path.getAttribute("action",null);
 
-			item.setImage(Style.getImage(iconClose));
+			item.setImage(SWTUtil.getImage(iconClose));
 			item.setData("iconClose",iconClose);
 			item.setData("iconOpen",iconOpen);
 			item.setData("name",name);
@@ -303,6 +303,10 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.16  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.15  2004/04/26 21:00:11  willuhn
  * @N made menu and navigation entries translatable
  *

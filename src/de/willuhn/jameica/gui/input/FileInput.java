@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,38 +13,20 @@
 package de.willuhn.jameica.gui.input;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Style;
 
 /**
  * @author willuhn
  * Ist zustaendig fuer Text-Eingabefelder, hinter denen sich jedoch noch ein
  * zusaetzlicher Button fuer eine Dateisuche befindet.
  */
-public class FileInput extends AbstractInput
+public class FileInput extends ButtonInput
 {
-
-  private Composite comp;
-  private Text text;
-  private Button button;
-  private String value;
-  private boolean enabled = true;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -52,80 +34,22 @@ public class FileInput extends AbstractInput
    */
   public FileInput(String value)
   {
-  	super();
-    this.value = value;
+  	super(value);
+		addButtonListener(new MouseAdapter()
+		{
+			public void mouseUp(MouseEvent e)
+			{
+				Application.getLog().debug("starting file dialog");
+				FileDialog dialog = new FileDialog(GUI.getShell(),SWT.OPEN);
+				String s = dialog.open();
+				if (s != null && !"".equals(s))
+					text.setText(s); // wir schreiben den Wert nur rein, wenn etwas uebergeben wurde
+				text.redraw();
+				text.forceFocus(); // das muessen wir machen, damit die CommentLister ausgeloest werden
+			}
+		});
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
-   */
-  public Control getControl()
-  {
-
-    comp = new Composite(getParent(),SWT.NONE);
-		comp.setBackground(Style.COLOR_BG);
-    GridLayout layout = new GridLayout(2, false);
-    layout.marginHeight=0;
-    layout.marginWidth=0;
-    comp.setLayout(layout);
-  
-    Composite around = new Composite(comp,SWT.NONE);
-    around.setBackground(Style.COLOR_BORDER);
-    around.setLayout(new FormLayout());
-		around.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-    FormData comboFD = new FormData();
-    comboFD.left = new FormAttachment(0, 1);
-    comboFD.top = new FormAttachment(0, 1);
-    comboFD.right = new FormAttachment(100, -1);
-    comboFD.bottom = new FormAttachment(100, -1);
-    
-    Composite around2 = new Composite(around,SWT.NONE);
-    around2.setBackground(Style.COLOR_WHITE);
-    around2.setLayout(new FormLayout());
-    around2.setLayoutData(comboFD);
-
-    FormData comboFD2 = new FormData();
-    comboFD2.left = new FormAttachment(0, 2);
-    comboFD2.top = new FormAttachment(0, 2);
-    comboFD2.right = new FormAttachment(100, -2);
-    comboFD2.bottom = new FormAttachment(100, -2);
-
-    text = new Text(around2, SWT.NONE);
-    text.setBackground(Style.COLOR_WHITE);
-    text.setLayoutData(comboFD2);
-    text.setEnabled(enabled);
-//    GridData grid = new GridData(GridData.FILL_HORIZONTAL);
-//    text.setLayoutData(grid);
-    text.setText((value == null ? "" : value));
-    text.addFocusListener(new FocusAdapter(){
-      public void focusGained(FocusEvent e){
-        text.setSelection(0, text.getText().length());
-      }
-    });
-
-    button = new Button(comp,SWT.FLAT);
-    //button.setImage(Style.getImage("search.gif"));
-    button.setText(i18n.tr("öffnen..."));
-    button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.setAlignment(SWT.RIGHT);
-    button.setEnabled(enabled);
-    button.addMouseListener(new MouseAdapter()
-    {
-      public void mouseUp(MouseEvent e)
-      {
-        Application.getLog().debug("starting file dialog");
-        FileDialog dialog = new FileDialog(GUI.getShell(),SWT.OPEN);
-        String s = dialog.open();
-        if (s != null && !"".equals(s))
-          text.setText(s); // wir schreiben den Wert nur rein, wenn etwas uebergeben wurde
-        text.redraw();
-        text.forceFocus(); // das muessen wir machen, damit die CommentLister ausgeloest werden
-      }
-    });
- 
-    return comp;
-  }
 
   /**
    * Liefert ein Objekt des Typs java.lang.String.
@@ -152,42 +76,14 @@ public class FileInput extends AbstractInput
     this.text.redraw();
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
-   */
-  public void focus()
-  {
-    text.setFocus();
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
-   */
-  public void disable()
-  {
-  	enabled = false;
-  	if (text != null && !text.isDisposed())
-	    text.setEnabled(false);
-		if (button != null && !button.isDisposed())
-			button.setEnabled(false);
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
-   */
-  public void enable()
-  {
-		enabled = true;
-		if (text != null && !text.isDisposed())
-			text.setEnabled(true);
-		if (button != null && !button.isDisposed())
-			button.setEnabled(true);
-  }
-
 }
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.3  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

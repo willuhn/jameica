@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.8 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Dialog zu Passwort-Eingabe.
@@ -110,7 +111,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 		
 		// Fehlertext 
 		error = new CLabel(comp, SWT.WRAP);
-		error.setForeground(Style.COLOR_ERROR);
+		error.setForeground(Color.ERROR.getSWTColor());
 		GridData grid2 = new GridData(GridData.FILL_HORIZONTAL);
 		grid2.horizontalSpan = 3;
 		grid2.horizontalIndent = 0;
@@ -121,30 +122,19 @@ public abstract class PasswordDialog extends SimpleDialog {
 		pLabel.setText(labelText);
 		pLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-		// Eingabe-Feld. Das packen wir wegen des FLAT-Styles noch
-		// in ein Composite
-		Composite border = new Composite(comp,SWT.NONE);
+		password = GUI.getStyleFactory().createText(comp);
+		password.setBackground(Color.WHITE.getSWTColor());
+		password.setEchoChar('*');
 		GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
 		grid3.horizontalSpan = 2;
-		border.setLayoutData(grid3);
-		border.setBackground(Style.COLOR_BORDER);
-		GridLayout l = new GridLayout();
-		l.horizontalSpacing = 0;
-		l.verticalSpacing = 0;
-		l.marginHeight = 1;
-		l.marginWidth = 1;
-		border.setLayout(l);
-		password = new Text(border,SWT.SINGLE);
-		password.setBackground(Style.COLOR_WHITE);
-		password.setEchoChar('*');
-		password.setLayoutData(new GridData(GridData.FILL_BOTH));
+		password.setLayoutData(grid3);
 
 		// Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
 		Label dummy = new Label(comp,SWT.NONE);
 		dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// OK-Button
-		button = new Button(comp, SWT.FLAT);
+		button = GUI.getStyleFactory().createButton(comp);
 		button.setText(i18n.tr("OK"));
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addMouseListener(new MouseAdapter() {
@@ -167,7 +157,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 		});
 
 		// Abbrechen-Button
-		cancel = new Button(comp,SWT.FLAT);
+		cancel = GUI.getStyleFactory().createButton(comp);
 		cancel.setText(i18n.tr("Abbrechen"));
 		cancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		cancel.addMouseListener(new MouseAdapter() {
@@ -221,6 +211,10 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.8  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.7  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/05/11 23:32:18 $
+ * $Revision: 1.5 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,30 +12,15 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
-import de.willuhn.jameica.gui.util.Style;
 
 /**
- * Text-Eingabefeld, welches jedoch noch einen Button hinten dran
- * besitzt (mit einer Lupe drauf). Klickt man auf den, wird der im Konstruktor
- * uebergeben AbstractDialog ausgefuehrt.
+ * Eingabe-Feld, welches beim Klick auf den Button einen Dialog zur Auswahl
+ * eines Objektes oeffnet.
  * Achtung: Der Dialog liefert beim Schliessen ein lapidares <code>Object</code>
  * zurueckg. Da das Text-Eingabefeld natuerlich nicht wissen kann,
  * wie es das anzeigen soll, wird der Rueckgabewert des Dialogs
@@ -50,20 +35,10 @@ import de.willuhn.jameica.gui.util.Style;
  * </p>
  * @author willuhn
  */
-public class DialogInput extends AbstractInput
+public class DialogInput extends ButtonInput
 {
 
-  private Composite comp;
   private AbstractDialog dialog;
-  private Text text;
-  private String value;
-	private boolean textEnabled = true;
-  private boolean buttonEnabled = true;
-
-	private Button button;
-	private String buttonText;
-	private Image  buttonImage;
-
   private Object choosen;
 
   /**
@@ -73,71 +48,13 @@ public class DialogInput extends AbstractInput
    */
   public DialogInput(String value,AbstractDialog d)
   {
-    this.value = value;
+  	super(value);
     this.dialog = d;
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
-   */
-  public Control getControl()
-  {
-
-		comp = new Composite(getParent(),SWT.NONE);
-		comp.setBackground(Style.COLOR_BG);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight=0;
-		layout.marginWidth=0;
-		comp.setLayout(layout);
-  
-		Composite around = new Composite(comp,SWT.NONE);
-		around.setBackground(Style.COLOR_BORDER);
-		around.setLayout(new FormLayout());
-		around.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		FormData comboFD = new FormData();
-		comboFD.left = new FormAttachment(0, 1);
-		comboFD.top = new FormAttachment(0, 1);
-		comboFD.right = new FormAttachment(100, -1);
-		comboFD.bottom = new FormAttachment(100, -1);
-    
-		Composite around2 = new Composite(around,SWT.NONE);
-		around2.setBackground(Style.COLOR_WHITE);
-		around2.setLayout(new FormLayout());
-		around2.setLayoutData(comboFD);
-
-		FormData comboFD2 = new FormData();
-		comboFD2.left = new FormAttachment(0, 2);
-		comboFD2.top = new FormAttachment(0, 2);
-		comboFD2.right = new FormAttachment(100, -2);
-		comboFD2.bottom = new FormAttachment(100, -2);
-  
-    text = new Text(around2, SWT.NONE);
-		text.setLayoutData(comboFD2);
-		text.setBackground(Style.COLOR_WHITE);
-    text.setText((value == null ? "" : value));
-    text.setEnabled(textEnabled);
-    text.addFocusListener(new FocusAdapter(){
-      public void focusGained(FocusEvent e){
-        text.setSelection(0, text.getText().length());
-      }
-    });
-
-    button = new Button(comp,SWT.NONE);
-		if (this.buttonImage == null && this.buttonText == null)
-	    button.setImage(Style.getImage("search.gif"));
-	  else if (this.buttonImage != null)
-			button.setImage(this.buttonImage);
-		else if (this.buttonText != null)
-			button.setText(this.buttonText);
-    button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.setAlignment(SWT.RIGHT);
-    button.setEnabled(buttonEnabled);
-    button.addMouseListener(new MouseAdapter()
-    {
-      public void mouseUp(MouseEvent e)
-      {
-        Application.getLog().debug("starting dialog");
+    addButtonListener(new MouseAdapter()
+		{
+			public void mouseUp(MouseEvent e)
+			{
+				Application.getLog().debug("starting dialog");
 				try {
 					choosen = dialog.open();
 					text.redraw();
@@ -147,35 +64,9 @@ public class DialogInput extends AbstractInput
 				{
 					Application.getLog().error("error while opening dialog",e1);
 				}
-      }
-    });
- 
-    return comp;
+			}
+		});
   }
-
-	/**
-	 * Definiert den auf dem Button anzuzeigenden Text.
-	 * Leider kann auf dem Button nicht Image <b>und</b> Text
-	 * angezeigt werden. Wenn also sowohl <code>setButtonText</code> und
-	 * <code>setButtonImage</code> gesetzt werden, wird nur das Image
-	 * angezeigt.
-	 * Wird nichts von beiden gesetzt, wird ein Image mit einer Lupe angezeigt.
-   * @param text auf dem Button anzuzeigender Text.
-   */
-  public void setButtonText(String text)
-	{
-		this.buttonText = text;
-	}
-
-	/**
-	 * Definiert das auf dem Button anzuzeigende Image.
-	 * @see #setButtonText(String).
-   * @param image anzuzeigendes Image.
-   */
-  public void setButtonImage(Image image)
-	{
-		this.buttonImage = image;
-	}
 
   /**
    * Liefert das Objekt, welches in dem Dialog ausgewaehlt wurde.
@@ -187,14 +78,6 @@ public class DialogInput extends AbstractInput
     return choosen;
   }
 
-	/**
-	 * Liefert den angezeigten Text zurueck.
-	 * @return Text.
-	 */
-	public String getText()
-	{
-		return text.getText();
-	}
 
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
@@ -207,76 +90,14 @@ public class DialogInput extends AbstractInput
     if (this.text != null && !this.text.isDisposed())
 	    this.text.setText(value.toString());
   }
-
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
-   */
-  public void focus()
-  {
-    text.setFocus();
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
-   */
-  public void disable()
-  {
-  	disableButton();
-  	disableText();
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
-   */
-  public void enable()
-  {
-  	enableButton();
-  	enableText();
-  }
-
-	/**
-   * Aktiviert nur den Text.
-   */
-  public void enableText()
-	{
-		textEnabled = true;
-		if (text != null && !text.isDisposed())
-			text.setEnabled(true);
-	}
-	
-	/**
-   * Aktiviert nur den Button.
-   */
-  public void enableButton()
-	{
-		buttonEnabled = true;
-		if (button != null && !button.isDisposed())
-			button.setEnabled(true);
-	}
-	
-	/**
-   * Deaktiviert nur den Text.
-   */
-  public void disableText()
-	{
-		textEnabled = false;
-		if (text != null && !text.isDisposed())
-			text.setEnabled(false);
-	}
-	
-	/**
-   * Deaktiviert nur den Button.
-   */
-  public void disableButton()
-	{
-		buttonEnabled = false;
-		if (button != null && !button.isDisposed())
-			button.setEnabled(false);
-	}
 }
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.5  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.4  2004/05/11 23:32:18  willuhn
  * *** empty log message ***
  *

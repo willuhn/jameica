@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Simpler Text, der automatisch nach unten
@@ -155,7 +155,7 @@ public class TextPart implements Part
 	{
 //		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		stext = new StyledText(parent,SWT.READ_ONLY | SWT.V_SCROLL);
- 		stext.setBackground(Style.COLOR_BG);
+ 		stext.setBackground(Color.BACKGROUND.getSWTColor());
 		stext.setEditable(false);
 		stext.setWordWrap(wrap);
 		stext.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -168,6 +168,10 @@ public class TextPart implements Part
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.2  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/04/29 23:05:54 $
+ * $Revision: 1.21 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.parts.TablePart;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.util.ArrayEnumeration;
 import de.willuhn.util.History;
 
@@ -114,6 +114,12 @@ public class StatusBar {
 					return;
 				}
 
+				if (actionIn)
+				{
+					// huh, die andere Seite ist schon offen, machen wir erstmal zu
+					actionIn = false;
+					GUI.getView().snapOut();
+				}
 				if (statusIn)
 				{
 					// wir werden schon angezeigt, dann zoomen wir uns wieder raus
@@ -143,6 +149,12 @@ public class StatusBar {
 					return;
 				}
 
+				if (statusIn)
+				{
+					// huh, die andere Seite ist schon offen, machen wir erstmal zu
+					statusIn = false;
+					GUI.getView().snapOut();
+				}
 				if (actionIn)
 				{
 					// wir werden schon angezeigt, dann zoomen wir uns wieder raus
@@ -216,7 +228,7 @@ public class StatusBar {
 
 		GUI.getDisplay().asyncExec(new Runnable() {
       public void run() {
-				actionText.setForeground(Style.COLOR_SUCCESS);
+				actionText.setForeground(Color.SUCCESS.getSWTColor());
 				actionText.setText(message);
 				// GUI.getView().setSuccessText("");
       }
@@ -238,7 +250,7 @@ public class StatusBar {
 
 		GUI.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				actionText.setForeground(Style.COLOR_ERROR);
+				actionText.setForeground(Color.ERROR.getSWTColor());
 				actionText.setText(message);
 				// GUI.getView().setSuccessText("");
 			}
@@ -267,6 +279,10 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.21  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.20  2004/04/29 23:05:54  willuhn
  * @N new snapin feature
  *

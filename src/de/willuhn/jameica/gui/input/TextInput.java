@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,17 +12,12 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.GUI;
 
 /**
  * Ist zustaendig fuer Standard-Eingabefelder.
@@ -49,29 +44,16 @@ public class TextInput extends AbstractInput
    */
   public Control getControl()
   {
-
-    Composite comp = new Composite(getParent(),SWT.NONE);
-    comp.setBackground(Style.COLOR_BORDER);
-		comp.setLayout(new FormLayout());
-    
-    FormData comboFD = new FormData();
-    comboFD.left = new FormAttachment(0, 1);
-    comboFD.top = new FormAttachment(0, 1);
-    comboFD.right = new FormAttachment(100, -1);
-    comboFD.bottom = new FormAttachment(100, -1);
-
-		text = new Text(comp, SWT.NONE);
+		text = GUI.getStyleFactory().createText(getParent());
 		text.setEnabled(enabled);
-    text.setLayoutData(comboFD);
-    text.setBackground(Style.COLOR_WHITE);
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
-        text.setSelection(0, text.getText().length());
+        text.selectAll();
       }
     });
 
-    return comp;
+    return text;
   }
 
   /**
@@ -126,6 +108,10 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.3  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.5 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,9 @@ import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.parts.FormTextPart;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
 
 /**
@@ -66,21 +68,21 @@ public class HelpView {
 			headLayout.marginWidth = 0;
 			head.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			head.setLayout(headLayout);
-			head.setBackground(Style.COLOR_WHITE);
+			head.setBackground(Color.WHITE.getSWTColor());
 			//
 			///////////////////////////////
 			
 				///////////////////////////////
 				// Der Titel selbst
 				title = new CLabel(head,SWT.NONE);
-				title.setBackground(Style.COLOR_WHITE);
+				title.setBackground(Color.WHITE.getSWTColor());
 				title.setLayoutData(new GridData(GridData.FILL_BOTH));
-				title.setFont(Style.FONT_H2);
+				title.setFont(Font.H2.getSWTFont());
 				title.setText(i18n.tr("Hilfe"));
 		
 				Label image = new Label(head,SWT.NONE);
-				image.setImage(Style.getImage("gradient.gif"));
-				title.setBackground(Style.COLOR_WHITE);
+				image.setImage(SWTUtil.getImage("gradient.gif"));
+				title.setBackground(Color.WHITE.getSWTColor());
 				image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				//
 				///////////////////////////////
@@ -120,6 +122,10 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.5  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.4  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

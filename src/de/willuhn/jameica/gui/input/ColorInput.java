@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Style;
 
 /**
  * Eingabefeld, zur Auswahl einer Farbe.
@@ -62,14 +61,14 @@ public class ColorInput extends AbstractInput
   {
 
 		comp = new Composite(getParent(),SWT.NONE);
-		comp.setBackground(Style.COLOR_BG);
+		comp.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight=0;
 		layout.marginWidth=0;
 		comp.setLayout(layout);
   
 		Composite around = new Composite(comp,SWT.NONE);
-		around.setBackground(Style.COLOR_BORDER);
+		around.setBackground(de.willuhn.jameica.gui.util.Color.BORDER.getSWTColor());
 		around.setLayout(new FormLayout());
 		around.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -80,7 +79,7 @@ public class ColorInput extends AbstractInput
 		comboFD.bottom = new FormAttachment(100, -1);
     
 		Composite around2 = new Composite(around,SWT.NONE);
-		around2.setBackground(Style.COLOR_WHITE);
+		around2.setBackground(de.willuhn.jameica.gui.util.Color.WHITE.getSWTColor());
 		around2.setLayout(new FormLayout());
 		around2.setLayoutData(comboFD);
 
@@ -94,7 +93,7 @@ public class ColorInput extends AbstractInput
 		label.setLayoutData(comboFD2);
 		label.setBackground(color);
 
-    button = new Button(comp,SWT.NONE);
+    button = GUI.getStyleFactory().createButton(comp);
     button.setText("...");
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.setAlignment(SWT.RIGHT);
@@ -175,6 +174,10 @@ public class ColorInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.3  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

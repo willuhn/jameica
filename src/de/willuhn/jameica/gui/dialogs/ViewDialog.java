@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/Attic/ViewDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/03/06 18:24:24 $
+ * $Revision: 1.5 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,7 @@ import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.views.AbstractView;
 
 /**
@@ -49,7 +49,7 @@ public class ViewDialog extends AbstractDialog {
 		// Die View zeigen wir nicht direkt in unserer View an, weil die
 		// zu wenig Rahmen hat.
 		Composite comp = new Composite(parent,SWT.NONE);
-		comp.setBackground(Style.COLOR_BG);
+		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		comp.setLayout(new GridLayout());
 		
 		view.setParent(comp);
@@ -81,6 +81,10 @@ public class ViewDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: ViewDialog.java,v $
+ * Revision 1.5  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.4  2004/03/06 18:24:24  willuhn
  * @D javadoc
  *

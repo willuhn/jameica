@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.FontDialog;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Eingabefeld, zur Auswahl einer Schrift.
@@ -62,14 +62,14 @@ public class FontInput extends AbstractInput
   {
 
 		comp = new Composite(getParent(),SWT.NONE);
-		comp.setBackground(Style.COLOR_BG);
+		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight=0;
 		layout.marginWidth=0;
 		comp.setLayout(layout);
   
 		Composite around = new Composite(comp,SWT.NONE);
-		around.setBackground(Style.COLOR_BORDER);
+		around.setBackground(Color.BORDER.getSWTColor());
 		around.setLayout(new FormLayout());
 		around.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -80,7 +80,7 @@ public class FontInput extends AbstractInput
 		comboFD.bottom = new FormAttachment(100, -1);
     
 		Composite around2 = new Composite(around,SWT.NONE);
-		around2.setBackground(Style.COLOR_WHITE);
+		around2.setBackground(Color.WHITE.getSWTColor());
 		around2.setLayout(new FormLayout());
 		around2.setLayoutData(comboFD);
 
@@ -95,7 +95,7 @@ public class FontInput extends AbstractInput
 		label.setText("ABCDEFabcdef");
 		label.setFont(font);
 
-    button = new Button(comp,SWT.NONE);
+    button = GUI.getStyleFactory().createButton(comp);
     button.setText("...");
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.setAlignment(SWT.RIGHT);
@@ -177,6 +177,10 @@ public class FontInput extends AbstractInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.3  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

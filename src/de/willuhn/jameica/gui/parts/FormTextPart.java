@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,8 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Font;
 
 /**
  * Freiformatierbarer Text.
@@ -161,7 +162,7 @@ public class FormTextPart implements Part {
   public void paint(Composite parent) throws RemoteException {
 
 		container = new ScrolledComposite(parent,SWT.H_SCROLL | SWT.V_SCROLL);
-		container.setBackground(Style.COLOR_BG);
+		container.setBackground(Color.BACKGROUND.getSWTColor());
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new FillLayout());
 		container.addListener(SWT.Resize, new Listener() {
@@ -172,19 +173,19 @@ public class FormTextPart implements Part {
 
 		text = new FormText(container,SWT.WRAP);
 
-		text.setBackground(Style.COLOR_BG);
-		text.setForeground(Style.COLOR_FG);
+		text.setBackground(Color.BACKGROUND.getSWTColor());
+		text.setForeground(Color.FOREGROUND.getSWTColor());
 
-		text.setColor("header",Style.COLOR_COMMENT);
-		text.setFont("header", Style.FONT_H1);
+		text.setColor("header",Color.COMMENT.getSWTColor());
+		text.setFont("header", Font.H1.getSWTFont());
 
 		container.setContent(text);
 	
 		HyperlinkSettings hs = new HyperlinkSettings(GUI.getDisplay());
-		hs.setBackground(Style.COLOR_WHITE);
-		hs.setForeground(Style.COLOR_LINK);
-		hs.setActiveBackground(Style.COLOR_WHITE);
-		hs.setActiveForeground(Style.COLOR_LINK_ACTIVE);
+		hs.setBackground(Color.WHITE.getSWTColor());
+		hs.setForeground(Color.LINK.getSWTColor());
+		hs.setActiveBackground(Color.WHITE.getSWTColor());
+		hs.setActiveForeground(Color.LINK_ACTIVE.getSWTColor());
 
 		text.setHyperlinkSettings(hs);
 
@@ -207,6 +208,10 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.2  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

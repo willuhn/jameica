@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/05/11 23:32:18 $
+ * $Revision: 1.7 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,9 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -40,7 +42,7 @@ import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.util.I18N;
 
 /**
@@ -54,7 +56,7 @@ public class TablePart implements Part
   private AbstractControl controller;
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
-  private Hashtable list2 = new Hashtable();
+  private Map list2 = new TreeMap();
   private I18N i18n = null;
   private TableFormatter tableFormatter = null;
   private ArrayList menus = new ArrayList();
@@ -108,7 +110,7 @@ public class TablePart implements Part
 	 * Hierbei werden die Keys angezeigt und die Values bei Auswahl zurueckgeliefert.
 	 * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
 	 */
-	public TablePart(Hashtable list, AbstractControl controller)
+	public TablePart(Map list, AbstractControl controller)
 	{
 		list2 = list;
 		this.controller = controller;
@@ -176,7 +178,7 @@ public class TablePart implements Part
     // final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		final GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
     comp.setLayoutData(gridData);
-    comp.setBackground(Style.COLOR_BORDER);
+    comp.setBackground(Color.BORDER.getSWTColor());
     
     comp.setLayout(new FormLayout());
 
@@ -281,11 +283,11 @@ public class TablePart implements Part
 		}
 		else if (list2 != null)
 		{
-			Enumeration e = list2.keys();
-			while (e.hasMoreElements())
+			Iterator i = list2.keySet().iterator();
+			while (i.hasNext())
 			{
 				final TableItem item = new TableItem(table, SWT.NONE);
-				final Object o = e.nextElement();
+				final Object o = i.next();
 				if (o == null)
 					item.setText(0,"");
 				else
@@ -325,7 +327,7 @@ public class TablePart implements Part
 		if (list != null)
 		{
 			Label summary = new Label(parent,SWT.NONE);
-			summary.setBackground(Style.COLOR_BG);
+			summary.setBackground(Color.BACKGROUND.getSWTColor());
 			summary.setText(list.size() + " " + (list.size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
 		}
 
@@ -435,6 +437,10 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.7  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.6  2004/05/11 23:32:18  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.10 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
 /**
@@ -160,6 +161,24 @@ public class Settings
 	}
 
 	/**
+	 * Liefert den Wert des Attributes als Font.
+	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
+	 * @param name Name des Attribut.
+	 * @param defaultValue DefaultWert, wenn das Attribut nicht existiert.
+	 * @return der Wert des Attributs.
+	 */
+	public FontData getFontData(String name, FontData defaultValue)
+	{
+		if (defaultValue == null) defaultValue = new FontData();
+
+		return new FontData(
+			getString(name + ".name",defaultValue.name),
+			getInt(name + ".height",defaultValue.height),
+			getInt(name + ".style",defaultValue.style)
+		);
+	}
+
+	/**
 	 * Speichert einen Farb-Wert.
 	 * @param name Name des Attributs.
 	 * @param value Wert des Attributs.
@@ -171,6 +190,20 @@ public class Settings
 		setAttribute(name + ".r",value.red);
 		setAttribute(name + ".g",value.green);
 		setAttribute(name + ".b",value.blue);
+	}
+
+	/**
+	 * Speichert einen Font-Wert.
+	 * @param name Name des Attributs.
+	 * @param value Wert des Attributs.
+	 */
+	public void setAttribute(String name, FontData value)
+	{
+		if (value == null)
+			return;
+		setAttribute(name + ".name",value.name);
+		setAttribute(name + ".height",value.height);
+		setAttribute(name + ".style",value.style);
 	}
 
 	/**
@@ -240,6 +273,10 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.10  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.9  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms

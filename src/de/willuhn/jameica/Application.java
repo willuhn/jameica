@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.38 $
- * $Date: 2004/05/09 17:40:06 $
+ * $Revision: 1.39 $
+ * $Date: 2004/05/23 15:30:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -105,7 +105,6 @@ public class Application {
 		// LockFile erzeugen
 		try {
 			app.lock = new Lock(app.config.getDir() + "/jameica");
-			// TODO: Readmes fuer .so File aendern
 		}
 		catch (RuntimeException e)
 		{
@@ -332,6 +331,10 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.39  2004/05/23 15:30:53  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.38  2004/05/09 17:40:06  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.41 $
- * $Date: 2004/05/11 21:11:10 $
+ * $Revision: 1.42 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,8 @@ import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.StyleFactory;
+import de.willuhn.jameica.gui.util.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.FatalErrorView;
@@ -69,6 +70,8 @@ public class GUI
 
 		private Stack history;
 		private boolean skipHistory = false;
+		
+		private StyleFactory styleFactory;
 
 
   private static boolean stop = false;  
@@ -104,7 +107,7 @@ public class GUI
     shell.setLayout(createGrid(2,false));
     shell.setLayoutData(new GridData(GridData.FILL_BOTH));
     shell.setText("Jameica " + Application.getVersion());
-    shell.setImage(Style.getImage("globe.gif"));
+    shell.setImage(SWTUtil.getImage("globe.gif"));
 
 		////////////////////////////
 		// size and position restore
@@ -438,6 +441,18 @@ public class GUI
   {
     return gui.statusBar;
   }
+  
+  /**
+   * Liefert die konfigurierte Style-Factory.
+   * @return
+   */
+  public static StyleFactory getStyleFactory()
+  {
+  	if (gui.styleFactory != null)
+  		return gui.styleFactory;
+  	gui.styleFactory = new StyleFactoryFlatImpl();
+  	return gui.styleFactory;
+  }
 
 	/**
 	 * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
@@ -603,6 +618,10 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.42  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.41  2004/05/11 21:11:10  willuhn
  * *** empty log message ***
  *

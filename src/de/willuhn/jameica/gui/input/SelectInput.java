@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/05/04 23:05:16 $
+ * $Revision: 1.5 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,19 +16,13 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Style;
 
 /**
  * Ist zustaendig fuer Eingabefelder des Typs "Select" aka "Combo".
@@ -141,21 +135,7 @@ public class SelectInput extends AbstractInput
   public Control getControl()
   {
 
-    Composite comp = new Composite(getParent(),SWT.NONE);
-    comp.setBackground(Style.COLOR_BORDER);
-    combo = new CCombo(comp, SWT.FLAT | SWT.READ_ONLY);
-    
-    comp.setLayout(new FormLayout());
-
-    FormData comboFD = new FormData();
-    comboFD.left = new FormAttachment(0, 1);
-    comboFD.top = new FormAttachment(0, 1);
-    comboFD.right = new FormAttachment(100, -1);
-    comboFD.bottom = new FormAttachment(100, -1);
-    combo.setLayoutData(comboFD);
-    
-    combo.setBackground(Style.COLOR_WHITE);
-
+		combo = GUI.getStyleFactory().createCombo(getParent());
     int selected = 0;
 
     Enumeration e = values.keys();
@@ -171,7 +151,7 @@ public class SelectInput extends AbstractInput
     combo.select(selected);
    	combo.setEnabled(enabled);
 
-    return comp;
+    return combo;
   }
 
   /**
@@ -234,6 +214,10 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.5  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.4  2004/05/04 23:05:16  willuhn
  * *** empty log message ***
  *

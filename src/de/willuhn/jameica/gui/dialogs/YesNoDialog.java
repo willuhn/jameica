@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.6 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
+import de.willuhn.jameica.gui.GUI;
 
 /**
  * Dialog, der nur einen Text und einen Ja/Nein-Button enthaelt.
@@ -78,7 +80,7 @@ public class YesNoDialog extends AbstractDialog {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 		
-		yes = new Button(comp, SWT.FLAT);
+		yes = GUI.getStyleFactory().createButton(comp);
 		yes.setText("   " + i18n.tr("Ja") + "   ");
 		yes.setLayoutData(new GridData(GridData.BEGINNING));
 		yes.addMouseListener(new MouseAdapter() {
@@ -88,7 +90,7 @@ public class YesNoDialog extends AbstractDialog {
 			}
 		});
 
-		no = new Button(comp, SWT.FLAT);
+		no = GUI.getStyleFactory().createButton(comp);
 		no.setText("   " + i18n.tr("Nein") + "   ");
 		no.setLayoutData(new GridData(GridData.BEGINNING));
 		no.addMouseListener(new MouseAdapter() {
@@ -110,6 +112,10 @@ public class YesNoDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: YesNoDialog.java,v $
+ * Revision 1.6  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.5  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

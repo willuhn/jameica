@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/21 22:28:56 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.util.I18N;
 
 /**
@@ -36,8 +36,10 @@ public abstract class AbstractInput
 	I18N i18n;
 
   private Composite parent = null;
+
   private String comment = null;
   private Label commentLabel = null;
+
   private Control control = null;
 	private ArrayList listeners = new ArrayList();
 
@@ -75,7 +77,7 @@ public abstract class AbstractInput
    * Liefert das Composite, in dem das Control gemalt werden soll.
    * @return das Composite, in dem das Control platziert wird.
    */
-  protected Composite getParent()
+  protected final Composite getParent()
   {
     return this.parent;
   }
@@ -87,7 +89,7 @@ public abstract class AbstractInput
 	 * Teile ausgeloest.
    * @param l zu registrierender Listener.
    */
-  public void addListener(Listener l)
+  public final void addListener(Listener l)
 	{
 		listeners.add(l);
 	}
@@ -101,17 +103,13 @@ public abstract class AbstractInput
    * dafuer reserviert werden kann.
    * @param comment Kommentar.
    */
-  public void setComment(String comment)
+  public final void setComment(String comment)
   {
-    this.comment = ""+comment;
-		try {
-			commentLabel.setText(this.comment); // wegen NullPointer
-			commentLabel.redraw();
-		}
-		catch(Exception e)
+    this.comment = ""+comment; // wegen NullPointer
+		if (commentLabel != null && ! commentLabel.isDisposed())
 		{
-			// nicht schlimm. Das passiert, wenn das Eingabe-Feld noch
-			// nicht gemalt wurde.
+			commentLabel.setText(this.comment);
+			commentLabel.redraw();
 		}
   }
 
@@ -120,7 +118,7 @@ public abstract class AbstractInput
    * Es wird dabei mit einer vorgegebenen Standard-Breite gemalt.
    * @param parent Das Composite, in dem das Eingabefeld gemalt werden soll.
    */
-  public void paint(Composite parent)
+  public final void paint(Composite parent)
   {
     paint(parent,240);
   }
@@ -131,44 +129,34 @@ public abstract class AbstractInput
    * @param parent Das Composite, in dem das Eingabefeld gemalt werden soll.
    * @param width Breite des Composites.
    */
-  public void paint(Composite parent,int width)
+  public final void paint(Composite parent,int width)
   {
-    if (this.comment != null)
-    {
+		boolean hasComment = this.comment != null;
 
-      // neues Composite erstellen, welches Platz fuer den Kommentar laesst.
-      this.parent = new Composite(parent, SWT.NONE);
-			this.parent.setBackground(Style.COLOR_BG);
-      GridLayout layout = new GridLayout(2, false);
-      layout.marginHeight=0;
-      layout.marginWidth=0;
-      this.parent.setLayout(layout);
-      final GridData g = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-      g.widthHint = width;
-      this.parent.setLayoutData(g);
+    // neues Composite erstellen, welches Platz fuer den Kommentar laesst.
+    this.parent = new Composite(parent, SWT.NONE);
+    GridLayout layout = new GridLayout(2, true);
+    layout.marginHeight = 2;
+    layout.marginWidth = 1;
+    layout.horizontalSpacing = 5;
+    layout.verticalSpacing = 0;
+    this.parent.setLayout(layout);
+    final GridData g = new GridData(GridData.FILL_HORIZONTAL);
+    this.parent.setLayoutData(g);
 
-      control = getControl();
-      final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-      inputGrid.widthHint = width / 2;
-      control.setLayoutData(inputGrid);
-    }
-    else {
-      this.parent = parent;
-      control = getControl();
-      final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-      inputGrid.widthHint = width;
-      control.setLayoutData(inputGrid);
-    }
+    control = getControl();
+    final GridData inputGrid = new GridData(GridData.FILL_HORIZONTAL); // HORIZONTAL_ALIGN_BEGINNING
+    inputGrid.widthHint = hasComment ? width / 2 : width;
+    inputGrid.horizontalSpan = hasComment ? 1 : 2;
+    control.setLayoutData(inputGrid);
 
     // den Kommentar hinten dran fuegen
-    if (this.comment != null) {
-      final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
+    if (hasComment) {
       commentLabel = new Label(this.parent,SWT.NONE);
       commentLabel.setText(this.comment);
-      commentLabel.setForeground(Style.COLOR_COMMENT);
-			commentLabel.setBackground(Style.COLOR_BG);
+      commentLabel.setForeground(Color.COMMENT.getSWTColor());
       commentLabel.setAlignment(SWT.LEFT);
-      commentLabel.setLayoutData(labelGrid);
+      commentLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     // die Listener noch dran haengen
@@ -215,6 +203,10 @@ public abstract class AbstractInput
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.3  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.2  2004/04/21 22:28:56  willuhn
  * *** empty log message ***
  *

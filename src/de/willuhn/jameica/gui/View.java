@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/04/29 23:05:54 $
+ * $Revision: 1.17 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,9 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.gui.util.Style;
 
 /**
  * Bildet das Content-Frame ab.
@@ -66,7 +67,7 @@ public class View
 		sash.setLayout(new FillLayout());
 		
 		view = new Composite(sash, SWT.BORDER);
-		view.setBackground(Style.COLOR_WHITE);
+		view.setBackground(Color.WHITE.getSWTColor());
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -80,26 +81,26 @@ public class View
 		snapin.setLayout(new FillLayout());
 		sash.setMaximizedControl(view);
 
-		panelBg = Style.getCanvas(view,Style.getImage("panel.bmp"), SWT.TOP | SWT.RIGHT);
+		panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel.bmp"), SWT.TOP | SWT.RIGHT);
 		GridLayout layout2 = new GridLayout();
 		layout2.marginHeight = 0;
 		layout2.marginWidth = 0;
 		layout2.horizontalSpacing = 0;
 		layout2.verticalSpacing = 0;
 		panelBg.setLayout(layout2);
-		panelBg.setBackground(Style.COLOR_WHITE);
+		panelBg.setBackground(Color.WHITE.getSWTColor());
 
 		title = new CLabel(panelBg,SWT.NONE);
-		title.setFont(Style.FONT_H1);
-		title.setBackground(Style.COLOR_WHITE);
+		title.setFont(Font.H1.getSWTFont());
+		title.setBackground(Color.WHITE.getSWTColor());
 		title.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
 		Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		messages = new CLabel(view,SWT.NONE);
-		messages.setFont(Style.FONT_H2);
-		messages.setBackground(Style.COLOR_BG);
+		messages.setFont(Font.H2.getSWTFont());
+		messages.setBackground(Color.BACKGROUND.getSWTColor());
 		messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	}
@@ -117,7 +118,7 @@ public class View
 		// weil wir wollen, dass die gesamte View disposed und entfernt
 		// wird, bevor eine neue drauf kommt.
 		content = new Composite(view, SWT.NONE);
-		content.setBackground(Style.COLOR_BG);
+		content.setBackground(Color.BACKGROUND.getSWTColor());
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout l = new GridLayout();
 		l.marginHeight = 6;
@@ -187,7 +188,7 @@ public class View
 		GUI.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				messages.setText(text);
-				messages.setForeground(Style.COLOR_ERROR);
+				messages.setForeground(Color.ERROR.getSWTColor());
 				messages.layout();
 			}
 		});
@@ -202,7 +203,7 @@ public class View
 		GUI.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				messages.setText(text);
-				messages.setForeground(Style.COLOR_SUCCESS);
+				messages.setForeground(Color.SUCCESS.getSWTColor());
 				messages.layout();
 			}
 		});
@@ -230,6 +231,10 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.17  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.16  2004/04/29 23:05:54  willuhn
  * @N new snapin feature
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SimpleDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/03/06 18:24:23 $
+ * $Revision: 1.6 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
+import de.willuhn.jameica.gui.GUI;
 
 /**
  * Billiger Dialog, der nur einen Text und einen OK-Button enthaelt.
@@ -73,7 +75,7 @@ public class SimpleDialog extends AbstractDialog {
 		label.setText(getText() + "\n");
 		label.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		button = new Button(comp, SWT.FLAT);
+		button = GUI.getStyleFactory().createButton(comp);
 		button.setText("    OK    ");
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		button.addMouseListener(new MouseAdapter() {
@@ -94,6 +96,10 @@ public class SimpleDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: SimpleDialog.java,v $
+ * Revision 1.6  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.5  2004/03/06 18:24:23  willuhn
  * @D javadoc
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,12 +19,16 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObjectNode;
-import de.willuhn.jameica.gui.controller.*;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.controller.AbstractControl;
+import de.willuhn.jameica.gui.util.SWTUtil;
 
 /**
  * Erzeugt einen Baum.
@@ -105,7 +109,7 @@ public class TreePart implements Part
 		if (!(widget instanceof TreeItem))
 			return;
 		TreeItem item = (TreeItem) widget;
-		item.setImage(Style.getImage("folderopen.gif"));
+		item.setImage(SWTUtil.getImage("folderopen.gif"));
 	}
 
 	/**
@@ -118,7 +122,7 @@ public class TreePart implements Part
 		if (!(widget instanceof TreeItem))
 			return;
 		TreeItem item = (TreeItem) widget;
-  	item.setImage(Style.getImage("folder.gif"));
+  	item.setImage(SWTUtil.getImage("folder.gif"));
 	}
 
 	/**
@@ -220,7 +224,7 @@ public class TreePart implements Part
 			}
 
 			// create tree item
-			item.setImage(Style.getImage("folder.gif"));
+			item.setImage(SWTUtil.getImage("folder.gif"));
 			item.setData(element);
 
 			item.setText(""+(String) element.getField(element.getPrimaryField()));
@@ -273,6 +277,10 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.2  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

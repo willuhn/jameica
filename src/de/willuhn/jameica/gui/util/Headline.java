@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Headline.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,6 @@ package de.willuhn.jameica.gui.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,21 +40,21 @@ public class Headline
   public Headline(Composite parent, String headline)
   {
     Composite comp = new Composite(parent, SWT.NONE);
-		comp.setBackground(Style.COLOR_BG);
+		comp.setBackground(Color.BACKGROUND.getSWTColor());
     comp.setLayout(new GridLayout());
     comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
     Label title = new Label(comp, SWT.NONE);
     title.setText(headline);
     title.setLayoutData(new GridData());
-    title.setFont(Style.FONT_H1);
-		title.setBackground(Style.COLOR_BG);
+    title.setFont(Font.H1.getSWTFont());
+		title.setBackground(Color.BACKGROUND.getSWTColor());
 
     GridData data = new GridData(GridData.FILL_HORIZONTAL);
     data.heightHint = 3;
     dotLine = new Label(comp, SWT.NONE);
     dotLine.setText("");
-		dotLine.setBackground(Style.COLOR_BG);
+		dotLine.setBackground(Color.BACKGROUND.getSWTColor());
     dotLine.setLayoutData(data);
 
     dotLine.addPaintListener(new PaintListener() {
@@ -74,7 +73,7 @@ public class Headline
     Point p = dotLine.getSize();
     e.gc.setLineWidth(1); 
     e.gc.setLineStyle(SWT.LINE_SOLID); 
-    e.gc.setForeground(new Color(GUI.getDisplay(), 125, 125, 125)); 
+    e.gc.setForeground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(), 125, 125, 125)); 
     for (int i=0; i<p.x;) {
       e.gc.drawLine(i,0,i,0);
       i=i+3;
@@ -84,6 +83,10 @@ public class Headline
 
 /*********************************************************************
  * $Log: Headline.java,v $
+ * Revision 1.2  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.1  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms

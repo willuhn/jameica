@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,7 +55,7 @@ public class ButtonArea
     layout.numColumns = numButtons;
 
     buttonArea = new Composite(parent, SWT.NONE);
-		buttonArea.setBackground(Style.COLOR_BG);
+		buttonArea.setBackground(Color.BACKGROUND.getSWTColor());
     buttonArea.setLayout(layout);
     buttonArea.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
   }
@@ -68,7 +68,7 @@ public class ButtonArea
    */
   public void addCreateButton(String name, final AbstractControl controller)
   {
-    final Button button = new Button(buttonArea,SWT.FLAT);
+    final Button button = GUI.getStyleFactory().createButton(buttonArea);
     button.setText(name);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
@@ -85,7 +85,7 @@ public class ButtonArea
    */
   public void addStoreButton(final AbstractControl controller)
   {
-    storeButton = new Button(buttonArea,SWT.FLAT);
+    storeButton = GUI.getStyleFactory().createButton(buttonArea);
     storeButton.setText(i18n.tr("Speichern"));
     storeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     GUI.getShell().setDefaultButton(storeButton);
@@ -118,7 +118,7 @@ public class ButtonArea
    */
   public void addCancelButton(final AbstractControl controller)
   {
-    final Button button = new Button(buttonArea,SWT.FLAT);
+    final Button button = GUI.getStyleFactory().createButton(buttonArea);
     button.setText(i18n.tr("Zurück"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
@@ -135,7 +135,7 @@ public class ButtonArea
    */
   public void addDeleteButton(final AbstractControl controller)
   {
-    final Button button = new Button(buttonArea,SWT.FLAT);
+    final Button button = GUI.getStyleFactory().createButton(buttonArea);
     button.setText(i18n.tr("Löschen"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
@@ -165,7 +165,7 @@ public class ButtonArea
       return;
     }
 
-    final Button button = new Button(buttonArea,SWT.FLAT);
+    final Button button = GUI.getStyleFactory().createButton(buttonArea);
     button.setText(text);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(adapter);
@@ -175,6 +175,10 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.2  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.1  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms

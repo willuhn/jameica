@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/04/21 22:28:56 $
+ * $Revision: 1.15 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,9 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
 
 /**
@@ -59,8 +61,8 @@ import de.willuhn.util.I18N;
  * protected void paint(Composite parent) throws Exception
  * {
  *   // [...]
- *   final Text text = new Text(parent, SWT.BORDER);
- *   final Button button = new Button(parent, SWT.BORDER);
+ *   final Text text = GUI.getStyleFactory().createText(parent);
+ *   final Button button = GUI.getStyleFactory().createButton(parent);
  *   button.setText("OK");
  *   button.addMouseListener(new MouseAdapter() {
  *     public void mouseUp(MouseEvent e) {
@@ -145,23 +147,23 @@ public abstract class AbstractDialog
 		compLayout.marginWidth = 0;
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		comp.setLayout(compLayout);
-		comp.setBackground(Style.COLOR_WHITE);
+		comp.setBackground(Color.WHITE.getSWTColor());
 		
 		title = new CLabel(comp,SWT.NONE);
-		title.setBackground(Style.COLOR_WHITE);
+		title.setBackground(Color.WHITE.getSWTColor());
 		title.setLayoutData(new GridData(GridData.FILL_BOTH));
-		title.setFont(Style.FONT_H2);
+		title.setFont(Font.H2.getSWTFont());
 
 		Label image = new Label(comp,SWT.NONE);
-		image.setImage(Style.getImage("gradient.gif"));
-		title.setBackground(Style.COLOR_WHITE);
+		image.setImage(SWTUtil.getImage("gradient.gif"));
+		title.setBackground(Color.WHITE.getSWTColor());
 		image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		parent = new Composite(shell,SWT.NONE);
 		GridLayout parentLayout = new GridLayout();
 		parentLayout.marginHeight = 0;
 		parentLayout.marginWidth = 0;
-		parent.setBackground(Style.COLOR_BG);
+		parent.setBackground(Color.BACKGROUND.getSWTColor());
 		parent.setLayout(parentLayout);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
@@ -333,6 +335,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.15  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.14  2004/04/21 22:28:56  willuhn
  * *** empty log message ***
  *

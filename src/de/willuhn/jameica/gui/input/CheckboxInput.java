@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/23 15:30:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 
-import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.jameica.gui.util.Color;
 
 /**
  * @author willuhn
@@ -47,7 +47,7 @@ public class CheckboxInput extends AbstractInput
 			return button;
     button = new Button(getParent(), SWT.CHECK);
     button.setSelection(value);
-		button.setBackground(Style.COLOR_BG);
+		button.setBackground(Color.BACKGROUND.getSWTColor());
 		button.setEnabled(enabled);
     return button;
   }
@@ -109,6 +109,10 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.4  2004/05/23 15:30:52  willuhn
+ * @N new color/font management
+ * @N new styleFactory
+ *
  * Revision 1.3  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *
