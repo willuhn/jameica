@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/10/07 18:05:26 $
+ * $Revision: 1.7 $
+ * $Date: 2004/10/14 23:15:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,7 +50,7 @@ public final class Config
   /**
    * Die vorausgewaehlte Standard-Sprache.
    */
-  private Locale defaultLanguage = new Locale("de_DE");
+  private Locale defaultLanguage = Locale.GERMANY;
 
   private ArrayList pluginDirs = new ArrayList();
 
@@ -68,7 +68,7 @@ public final class Config
 		"  <logfile>jameica.log</logfile>\n" +
     "  <!-- loglevel can be: ERROR,WARN,INFO or DEBUG //-->\n" +
 		"  <loglevel>INFO</loglevel>\n" +
-		"  <defaultlanguage>de_de</defaultlanguage>\n" +
+		"  <defaultlanguage>de_DE</defaultlanguage>\n" +
 		"  <rmiport>1099</rmiport>\n" +
 		"  <plugindirs>\n" +
 		"    <!-- <dir>path to additional plugins</dir> //-->\n" +
@@ -159,16 +159,32 @@ public final class Config
   {
 
     // Read default language
-    String _defaultLanguage = xml.getFirstChildNamed("defaultlanguage").getContent();
-    Logger.info("choosen language: " + _defaultLanguage);
+    String lang = xml.getFirstChildNamed("defaultlanguage").getContent();
+    String country = "";
+		if (lang.indexOf("_") != -1)
+		{
+			int minus = lang.indexOf("_");
+			country   = lang.substring(minus+1);
+			lang      = lang.substring(0,minus);
+		}
+    
+		Logger.info("configured language: " + lang);
+		if (country.length() > 0)
+			Logger.info("configured country: " + country);
+
     try {
-      ResourceBundle.getBundle("lang/messages",new Locale(_defaultLanguage));
-      defaultLanguage = new Locale(_defaultLanguage);
+    	// Wir testen die Existenz der Bundles
+			Locale l = new Locale(lang,country);
+			Logger.info("checking resource bundle for language");
+      ResourceBundle.getBundle("lang/messages",l);
+      defaultLanguage = l;
     }
     catch (Exception ex)
     {
-      Logger.info("not found. fallback to default language: " + defaultLanguage.toString());
+      Logger.info("not found. fallback to system default");
     }
+
+		Logger.info("active language: " + defaultLanguage.getDisplayName());
 
     logfile = xml.getFirstChildNamed("logfile").getContent();
 
@@ -335,7 +351,7 @@ public final class Config
 	{
 		xml.getFirstChildNamed("logfile").setContent(this.logfile);
 		xml.getFirstChildNamed("loglevel").setContent(this.logLevel);
-		xml.getFirstChildNamed("defaultlanguage").setContent(this.defaultLanguage.toString());
+		xml.getFirstChildNamed("defaultlanguage").setContent(this.defaultLanguage.getLanguage() + "_" + this.defaultLanguage.getCountry());
 		xml.getFirstChildNamed("rmiport").setContent(""+this.rmiPort);
 
 		IXMLElement plugins = xml.getFirstChildNamed("plugindirs");
@@ -374,6 +390,11 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.7  2004/10/14 23:15:05  willuhn
+ * @N maded locale configurable via GUI
+ * @B fixed locale handling
+ * @B DecimalInput now honors locale
+ *
  * Revision 1.6  2004/10/07 18:05:26  willuhn
  * *** empty log message ***
  *

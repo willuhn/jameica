@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/14 23:15:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,8 @@
  **********************************************************************/
 
 package de.willuhn.jameica.gui.internal.views;
+
+import java.rmi.RemoteException;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -24,6 +26,7 @@ import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * Dialog fuer die Programm-Einstellungen.
@@ -46,6 +49,15 @@ public class Settings extends AbstractView
 		// Farb-Einstellungen
 		LabelGroup colorGroup = new LabelGroup(getParent(),i18n.tr("Look and Feel"));
 
+		try
+		{
+			colorGroup.addLabelPair(i18n.tr("installierte Sprache"), control.getLocale());
+		}
+		catch (RemoteException e)
+		{
+			Logger.error("error while reading locale settings",e);
+			GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Laden der Sprach-Einstellungen"));
+		}
 		colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
 		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWidgetBG());
 		colorGroup.addLabelPair(i18n.tr("Textfarbe von Eingabefeldern"),control.getColorWidgetFG());
@@ -85,6 +97,11 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.2  2004/10/14 23:15:05  willuhn
+ * @N maded locale configurable via GUI
+ * @B fixed locale handling
+ * @B DecimalInput now honors locale
+ *
  * Revision 1.1  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

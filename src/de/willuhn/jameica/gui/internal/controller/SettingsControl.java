@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/14 23:15:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,9 @@
 package de.willuhn.jameica.gui.internal.controller;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
@@ -52,6 +55,8 @@ public class SettingsControl extends AbstractControl
 	
 	private Input styleFactory;
 	
+	private SelectInput locale;
+	
   /**
    * ct.
    * @param view
@@ -87,6 +92,36 @@ public class SettingsControl extends AbstractControl
 			styleFactory = new LabelInput(i18n.tr("Fehler beim Laden der Styles"));
 		}
 		return styleFactory;
+	}
+
+  /**
+	 * Auswahlfeld fuer die Sprache.
+   * @return Sprach-Auswahl.
+   * @throws RemoteException
+   */
+  public SelectInput getLocale() throws RemoteException
+	{
+		if (locale != null)
+			return locale;
+
+		Locale[] available = Locale.getAvailableLocales();
+		ArrayList al = new ArrayList();
+		for (int i=0;i<available.length;++i)
+		{
+			try
+			{
+				// Wir ueberspringen nicht vorhandene Sprachen
+				ResourceBundle.getBundle("lang/messages",available[i]);
+				al.add(new LocaleObject(available[i]));
+			}
+			catch (Exception e)
+			{
+			}
+		}
+		
+		LocaleObject[] lo = (LocaleObject[]) al.toArray(new LocaleObject[al.size()]);
+		locale = new SelectInput(PseudoIterator.fromArray(lo),new LocaleObject(Application.getConfig().getLocale()));
+		return locale;
 	}
 
 	/**
@@ -222,6 +257,11 @@ public class SettingsControl extends AbstractControl
 
 			StyleFactoryObject fo = (StyleFactoryObject) getStyleFactory().getValue();
 			GUI.setStyleFactory(fo.factory);
+
+			LocaleObject lo = (LocaleObject) getLocale().getValue();
+			Application.getConfig().setLocale(lo.locale);
+			Application.getConfig().store();
+
 			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen gespeichert."));
 			
 			SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
@@ -338,11 +378,66 @@ public class SettingsControl extends AbstractControl
     }
   }
 
+	/**
+	 * Hilfsklasse zum Behandeln der Locales.
+   */
+  private static class LocaleObject implements GenericObject
+	{
+		private Locale locale;
+
+		/**
+		 * ct.
+     * @param l
+     */
+    private LocaleObject(Locale l)
+		{
+			this.locale = l;
+		}
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
+     */
+    public Object getAttribute(String arg0) throws RemoteException
+    {
+      return locale.getDisplayName();
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getID()
+     */
+    public String getID() throws RemoteException
+    {
+      return locale.getLanguage() + "_" + locale.getCountry();
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
+     */
+    public String getPrimaryAttribute() throws RemoteException
+    {
+      return "name";
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
+     */
+    public boolean equals(GenericObject arg0) throws RemoteException
+    {
+    	if (arg0 == null)
+    		return false;
+      return arg0.getID().equals(this.getID());
+    }
+	}
 }
 
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.2  2004/10/14 23:15:05  willuhn
+ * @N maded locale configurable via GUI
+ * @B fixed locale handling
+ * @B DecimalInput now honors locale
+ *
  * Revision 1.1  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

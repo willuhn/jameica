@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/10/04 15:44:40 $
+ * $Revision: 1.6 $
+ * $Date: 2004/10/14 23:15:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.Logger;
 
 /**
@@ -29,7 +30,7 @@ import de.willuhn.util.Logger;
 public class DecimalInput extends TextInput
 {
   private double value;
-  private DecimalFormat format;
+  private DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Application.getConfig().getLocale());
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -40,7 +41,9 @@ public class DecimalInput extends TextInput
   {
   	super(""+value);
     this.value = value;
-    this.format = format;
+
+    if (format != null)
+	    this.format = format;
   }
 
   /**
@@ -49,10 +52,7 @@ public class DecimalInput extends TextInput
   public Control getControl()
   {
 		Control c = super.getControl();
-		if (format != null)
-			text.setText(format.format(value));
-		else
-			text.setText(""+value);
+		text.setText(format.format(value));
 		
     text.addListener (SWT.Verify, new Listener() {
       public void handleEvent (Event e) {
@@ -63,8 +63,7 @@ public class DecimalInput extends TextInput
         	// Wir lassen nur 0-9, Komma und Minus zu
           if (!('0' <= chars[i] &&
                 chars[i] <= '9') &&
-                !(chars[i] == ',') &&
-								!(chars[i] == '.') &&
+                !(chars[i] == format.getDecimalFormatSymbols().getDecimalSeparator()) &&
 								!(chars[i] == '-')
              )
           {
@@ -107,16 +106,18 @@ public class DecimalInput extends TextInput
     if (!(value instanceof Double))
       return;
 
-		if (format != null)
-			this.text.setText(format.format(((Double)value).doubleValue()));
-		else
-	    this.text.setText(value.toString());
+		this.text.setText(format.format(((Double)value).doubleValue()));
     this.text.redraw();
   }
 }
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.6  2004/10/14 23:15:05  willuhn
+ * @N maded locale configurable via GUI
+ * @B fixed locale handling
+ * @B DecimalInput now honors locale
+ *
  * Revision 1.5  2004/10/04 15:44:40  willuhn
  * *** empty log message ***
  *
