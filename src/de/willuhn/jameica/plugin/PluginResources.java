@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/11/12 16:25:45 $
+ * $Revision: 1.7 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,8 +18,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * Container, der zusaetzliche Informationen fuer das Plugin bereitstellt.
@@ -131,6 +131,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.7  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/11/12 16:25:45  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/About.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/04 23:59:04 $
+ * $Revision: 1.5 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,8 +16,8 @@ package de.willuhn.jameica.gui.internal.action;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.Logger;
 
 /**
  * @author willuhn
@@ -48,6 +48,9 @@ public class About implements Action
 
 /*********************************************************************
  * $Log: About.java,v $
+ * Revision 1.5  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/11/04 23:59:04  willuhn
  * *** empty log message ***
  *

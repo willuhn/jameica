@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/11/10 17:48:18 $
+ * $Revision: 1.25 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,9 +38,9 @@ import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * Erzeugt eine Standard-Tabelle.
@@ -447,6 +447,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.25  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2004/11/10 17:48:18  willuhn
  * *** empty log message ***
  *

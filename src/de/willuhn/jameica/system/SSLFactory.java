@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/11/04 22:41:36 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,7 +26,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Diese Klasse uebernimmt die Erstellung der SSL-Zertifikate fuer die sichere RMI-Kommunikation.
@@ -106,6 +106,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.4  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/11/04 22:41:36  willuhn
  * *** empty log message ***
  *

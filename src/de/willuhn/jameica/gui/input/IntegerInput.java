@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/11/01 23:11:19 $
+ * $Revision: 1.7 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * @author willuhn
@@ -92,6 +92,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.7  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/11/01 23:11:19  willuhn
  * @N setValidChars und setInvalidChars in TextInput
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/11/04 22:41:36 $
+ * $Revision: 1.12 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,7 @@ import java.util.jar.JarFile;
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Kontrolliert alle installierten Plugins.
@@ -548,6 +548,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.12  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/11/04 22:41:36  willuhn
  * *** empty log message ***
  *

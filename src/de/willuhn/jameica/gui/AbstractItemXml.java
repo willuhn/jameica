@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/05 20:00:44 $
+ * $Revision: 1.5 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,8 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * @author willuhn
@@ -181,6 +181,9 @@ public abstract class AbstractItemXml implements Item
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.5  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/11/05 20:00:44  willuhn
  * @D javadoc fixes
  *

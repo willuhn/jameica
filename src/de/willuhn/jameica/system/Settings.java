@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Settings.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Diese Klasse stellt eine Art Storage-Provider fuer Einstellungen
@@ -295,6 +295,9 @@ public final class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.4  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *

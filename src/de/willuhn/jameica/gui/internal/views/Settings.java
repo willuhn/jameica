@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/05 20:00:43 $
+ * $Revision: 1.5 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,9 +23,9 @@ import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * Dialog fuer die Programm-Einstellungen.
@@ -102,6 +102,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.5  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/11/05 20:00:43  willuhn
  * @D javadoc fixes
  *

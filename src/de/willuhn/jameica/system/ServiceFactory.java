@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/11/04 22:41:36 $
+ * $Revision: 1.16 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,8 @@ import java.util.Iterator;
 import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.Logger;
 
 
 /**
@@ -289,6 +289,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.16  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/11/04 22:41:36  willuhn
  * *** empty log message ***
  *

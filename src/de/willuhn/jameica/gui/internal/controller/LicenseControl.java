@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/LicenseControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/20 12:08:16 $
+ * $Revision: 1.3 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,8 @@ import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.util.InfoReader;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * Controller fuer den Dialog Lizenzinformationen.
@@ -93,6 +93,9 @@ public class LicenseControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
+ * Revision 1.3  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/10/20 12:08:16  willuhn
  * @C MVC-Refactoring (new Controllers)
  *

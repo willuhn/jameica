@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/11/10 17:48:18 $
+ * $Revision: 1.20 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,8 +34,9 @@ import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.util.BackgroundTask;
+import de.willuhn.logging.Level;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 import de.willuhn.util.MultipleClassLoader;
 import de.willuhn.util.ProgressMonitor;
 
@@ -110,7 +111,6 @@ public final class Application {
 		// init logger
 		Logger.addTarget(System.out);
     
-		Logger.setLevel(Logger.LEVEL_INFO);
 		Logger.info("starting jameica...");
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ public final class Application {
 		{
 			startupError(t);
 		}
-		Logger.setLevel(this.config.getLogLevel());
+		Logger.setLevel(Level.findByName(app.config.getLogLevel()));
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -465,6 +465,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.20  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.19  2004/11/10 17:48:18  willuhn
  * *** empty log message ***
  *

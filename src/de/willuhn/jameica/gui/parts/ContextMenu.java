@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenu.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/19 23:33:44 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,8 +26,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.Logger;
 
 /**
  * Bildet ein Context-Menu in Jameica ab.
@@ -137,6 +137,9 @@ public class ContextMenu implements Part
 
 /**********************************************************************
  * $Log: ContextMenu.java,v $
+ * Revision 1.4  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/10/19 23:33:44  willuhn
  * *** empty log message ***
  *

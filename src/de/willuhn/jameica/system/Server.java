@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,7 @@ import java.io.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Diese Klasse bildet den Serverloop der Anwendung ab.
@@ -73,6 +73,9 @@ public final class Server
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.4  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/08/29 19:31:13 $
+ * $Revision: 1.11 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Diverse statische SWT-Hilfsfunktionen.
@@ -174,6 +174,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.11  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/08/29 19:31:13  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/10/08 00:19:19 $
+ * $Revision: 1.12 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Eingabe-Feld, welches beim Klick auf den Button einen Dialog zur Auswahl
@@ -134,6 +134,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.12  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/10/08 00:19:19  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/10/15 20:06:09 $
+ * $Revision: 1.8 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * @author willuhn
@@ -121,6 +121,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.8  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/10/15 20:06:09  willuhn
  * @N added maxLength to TextInput
  * @N double comma check in DecimalInput

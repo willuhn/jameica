@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.9 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * @author willuhn
@@ -92,6 +92,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.9  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

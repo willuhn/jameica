@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/11/04 22:41:36 $
+ * $Revision: 1.12 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ProgressMonitor;
 
 /**
@@ -263,6 +263,9 @@ public class SplashScreen extends Thread implements ProgressMonitor
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.12  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/11/04 22:41:36  willuhn
  * *** empty log message ***
  *

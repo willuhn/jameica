@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/11/05 20:00:44 $
+ * $Revision: 1.8 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.FontData;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Settings;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Schrift-Informationen.
@@ -102,6 +102,9 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.8  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/11/05 20:00:44  willuhn
  * @D javadoc fixes
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.7 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ import de.willuhn.jameica.gui.*;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Freiformatierbarer Text.
@@ -217,6 +217,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.7  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *

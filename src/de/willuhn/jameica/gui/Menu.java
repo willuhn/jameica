@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.27 $
- * $Date: 2004/10/12 23:49:31 $
+ * $Revision: 1.28 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Listener;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Bildet das Dropdown-Menu ab.
@@ -176,6 +176,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.28  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2004/10/12 23:49:31  willuhn
  * *** empty log message ***
  *

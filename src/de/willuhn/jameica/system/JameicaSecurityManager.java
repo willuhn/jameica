@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/JameicaSecurityManager.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/08/31 18:57:23 $
+ * $Revision: 1.3 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Permission;
 
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Security-Manager von Jameica.
@@ -101,6 +101,9 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.3  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/08/31 18:57:23  willuhn
  * *** empty log message ***
  *

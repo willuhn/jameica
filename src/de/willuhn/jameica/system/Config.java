@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/11/05 17:23:52 $
+ * $Revision: 1.10 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,8 @@ import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 import net.n3.nanoxml.XMLWriter;
 import de.willuhn.io.FileCopy;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Level;
+import de.willuhn.logging.Logger;
 
 /**
  * Liest die System-Konfiguration aus config.xml. 
@@ -56,7 +57,7 @@ public final class Config
 
   private String logfile = null;
   
-  private String logLevel = Logger.LEVEL_TEXT[Logger.LEVEL_INFO];
+  private String logLevel = Level.DEFAULT.getName();
   
 	private File dir 				= null;
   private File configDir  = null;
@@ -395,6 +396,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.10  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/11/05 17:23:52  willuhn
  * *** empty log message ***
  *

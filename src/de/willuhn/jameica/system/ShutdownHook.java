@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/ShutdownHook.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Revision: 1.3 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,7 @@
 
 package de.willuhn.jameica.system;
 
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Hilfsklasse, die in der JVM registriert wird, um die Anwendung
@@ -38,6 +38,9 @@ public final class ShutdownHook extends Thread {
 
 /*********************************************************************
  * $Log: ShutdownHook.java,v $
+ * Revision 1.3  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *

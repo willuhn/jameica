@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/10/17 16:28:45 $
+ * $Revision: 1.15 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,7 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.Logger;
+import de.willuhn.logging.Logger;
 
 /**
  * Ist zustaendig fuer Eingabefelder des Typs "Select" aka "Combo".
@@ -263,6 +263,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.15  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/10/17 16:28:45  willuhn
  * @N Die ersten Dauerauftraege abgerufen ;)
  *

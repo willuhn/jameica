@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/10/25 17:59:15 $
+ * $Revision: 1.14 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,8 +27,8 @@ import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
@@ -240,6 +240,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.14  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/10/25 17:59:15  willuhn
  * @N aenderbare Tabellen
  *

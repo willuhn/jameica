@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Attic/ErrorView.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/11/05 20:00:43 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/12 18:23:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,9 +16,9 @@ package de.willuhn.jameica.gui.internal.views;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * Diese Fehlerseite wird angezeigt, wenn eine andere View in der
@@ -78,6 +78,9 @@ public class ErrorView extends AbstractView
 
 /**********************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.4  2004/11/12 18:23:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/11/05 20:00:43  willuhn
  * @D javadoc fixes
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.63 $
- * $Date: 2004/11/10 15:53:23 $
+ * $Revision: 1.64 $
+ * $Date: 2004/11/12 18:23:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,8 +43,8 @@ import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.Logger;
 
 /**
  * Startet und beendet die GUI der Anwendung.
@@ -648,6 +648,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.64  2004/11/12 18:23:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.63  2004/11/10 15:53:23  willuhn
  * @N Panel
  *
