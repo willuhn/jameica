@@ -102,7 +102,7 @@
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="${define.jarfilename} lib/linux/swt.jar lib/linux/swt-pi.jar lib/linux/swt-mozilla.jar lib/forms.jar lib/jface.jar lib/de_willuhn_ds.jar lib/de_willuhn_util.jar lib/nanoxml-2.2.3.jar img  lang help"/>
+		    	<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar lib/swt/linux/swt-pi.jar lib/swt/linux/swt-mozilla.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn/de_willuhn_ds.jar lib/de_willuhn/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar img lang help"/>
 		    </manifest>
 		    <fileset dir="${class.dir}" includes="**/Main.class"/>
 		</jar>
@@ -114,7 +114,7 @@
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="${define.jarfilename} lib/win32/swt.jar lib/forms.jar lib/jface.jar lib/de_willuhn_ds.jar lib/de_willuhn_util.jar lib/nanoxml-2.2.3.jar img lang help"/>
+		    	<attribute name="Class-Path" value="${define.jarfilename} lib/swt/win32/swt.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn/de_willuhn_ds.jar lib/de_willuhn/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar img lang help"/>
 		    </manifest>
 		    <fileset dir="${class.dir}" includes="**/Main.class"/>
 		</jar>

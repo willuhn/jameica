@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/JarPluginContainer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/03/30 22:08:25 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/22 23:47:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -86,6 +86,8 @@ public class JarPluginContainer implements PluginContainer {
    * @see de.willuhn.jameica.PluginContainer#getMenu()
    */
   public InputStream getMenu() throws IOException {
+  	if (menu == null)
+  		return null;
     return file.getInputStream(menu);
   }
 
@@ -93,6 +95,8 @@ public class JarPluginContainer implements PluginContainer {
    * @see de.willuhn.jameica.PluginContainer#getNavigation()
    */
   public InputStream getNavigation() throws IOException {
+  	if (navi == null)
+  		return null;
 		return file.getInputStream(navi);
   }
 
@@ -129,6 +133,9 @@ public class JarPluginContainer implements PluginContainer {
 
 /**********************************************************************
  * $Log: JarPluginContainer.java,v $
+ * Revision 1.2  2004/04/22 23:47:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/03/30 22:08:25  willuhn
  * *** empty log message ***
  *

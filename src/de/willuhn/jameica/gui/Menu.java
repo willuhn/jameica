@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.19 $
+ * $Date: 2004/04/22 23:47:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,18 +45,7 @@ public class Menu
 
     bar = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
 		parent.setMenuBar(bar);
-
-		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(new StdXMLReader(getClass().getResourceAsStream("/menu.xml")));
-		IXMLElement xml = (IXMLElement) parser.parse();
-
-    // add elements
-    Enumeration e = xml.enumerateChildren();
-    while (e.hasMoreElements())
-    {
-      IXMLElement key = (IXMLElement) e.nextElement();
-      new MenuCascade(key);
-    }
+		appendMenu(getClass().getResourceAsStream("/menu.xml"));
   }
 
   /**
@@ -192,6 +181,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.19  2004/04/22 23:47:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

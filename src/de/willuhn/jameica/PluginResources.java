@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginResources.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/04/14 22:16:43 $
+ * $Revision: 1.9 $
+ * $Date: 2004/04/22 23:47:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -112,36 +112,14 @@ public class PluginResources {
 		db.setClassLoader(Application.getClassLoader());
 		return db;
 	}
-
-	/**
-	 * Liefert den Usernamen fuer die Embedded-Datenbank.
-	 * Sollte vom Plugin ueberschrieben werden, wenn die
-	 * Datenbank benutzt wird.
-	 * @return Username fuer die Datenbank.
-	 */
-	protected String getUsername()
-	{
-		//TODO: DB-User
-		return "jameica";
-	}
-
-	/**
-	 * Liefert das Passwort fuer die Embedded-Datenbank.
-	 * Sollte vom Plugin ueberschrieben werden, wenn die
-	 * Datenbank benutzt wird.
-	 * @return Passwort fuer die Datenbank.
-	 */
-	protected String getPassword()
-	{
-		//TODO: DB-Password
-		return "jameica"; 
-	}
-
 }
 
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.9  2004/04/22 23:47:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/04/14 22:16:43  willuhn
  * *** empty log message ***
  *
