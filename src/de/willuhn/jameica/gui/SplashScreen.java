@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/22 14:53:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,7 +51,7 @@ public class SplashScreen
     final Image image = new Image(display, shell.getClass().getResourceAsStream("/img/splash.jpg"));
 
     // Maximum definieren
-		bar.setMaximum(100);
+		bar.setMaximum(200);
 
     // Vorder- und Hintergrund des Balkens
     bar.setBackground(new Color(display,243,244,238));
@@ -103,11 +103,9 @@ public class SplashScreen
     if (splash == null)
       splash = new SplashScreen();
 
-    count = (count+add) > 100 ? 100 : count+add; 
+    count = (count+add) > 200 ? 200 : count+add; 
     splash.bar.setSelection(count);
     display.readAndDispatch();
-    if (count == 100)
-      shutDown();
   }
   
   /**
@@ -116,7 +114,7 @@ public class SplashScreen
   public static void shutDown()
   {
     try {
-      splash.bar.setSelection(100);
+      splash.bar.setSelection(200);
       display.readAndDispatch();
       splash.bar.dispose();
       shell.dispose();
@@ -133,6 +131,9 @@ public class SplashScreen
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.6  2003/12/22 14:53:37  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *
