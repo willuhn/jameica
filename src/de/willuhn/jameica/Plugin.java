@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Plugin.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/30 02:10:57 $
+ * $Revision: 1.6 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,14 +56,33 @@ public interface Plugin
    */
   public double getVersion();
 
+	/**
+	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
+	 * @return Verzeichnis, in dem sich das Plugin befindet.
+	 */
+	public String getPath();
+  
+  /**
+	 * Liefert die embedded Datenbank des Plugins. Damit ist keine JDBC-Verbindung
+	 * oder ein DB-Hub gemeint, sondern ein Objekt, mit dem man das Plugin
+	 * eine Datenbank fuer sich erstellen und mit Tabellen fuellen kann.
+	 * @return die Embedded Datenbank des Plugins.
+	 */
+	public EmbeddedDatabase getDatabase();
+
   /**
    * Diese Funktion wird beim Beenden der Anwendung ausgefuehrt.
    */
   public void shutDown();
+
 }
 
 /*********************************************************************
  * $Log: Plugin.java,v $
+ * Revision 1.6  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.5  2003/12/30 02:10:57  willuhn
  * @N updateChecker
  *

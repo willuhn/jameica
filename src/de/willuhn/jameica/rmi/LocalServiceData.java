@@ -1,17 +1,18 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/LocalServiceData.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/20 03:48:42 $
+ * $Revision: 1.4 $
+ * $Date: 2004/01/03 18:08:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  **********************************************************************/
 package de.willuhn.jameica.rmi;
 
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import de.bb.util.XmlFile;
+import net.n3.nanoxml.IXMLElement;
+
 
 /**
  * Haelt die Konfigurationsdaten von lokalen Services vor.
@@ -25,20 +26,19 @@ public class LocalServiceData extends AbstractServiceData {
 
   /**
    * Erzeugt einen neuen Datencontainer fuer lokale Services.
-   * @param xml die config.xml.
-   * @param key die Sektion, welche die Config-Daten des Services enthaelt.
+   * @param xml der XML-Key.
    */
-  public LocalServiceData(XmlFile xml, String key)
+  public LocalServiceData(IXMLElement xml)
 	{
-		super(xml,key);
-    Iterator i = xml.getSections(key).iterator();
-    while (i.hasNext())
+		super(xml);
+		Enumeration e = xml.enumerateChildren();
+    while (e.hasMoreElements())
     {
-      String s = (String) i.next();
-      initParams.put(xml.getString(s,"name",""),xml.getString(s,"value",""));
+      IXMLElement xe = (IXMLElement) e.nextElement();
+      initParams.put(xe.getAttribute("name",""),xe.getAttribute("value",""));
     }
 
-		String s  = xml.getString(key,"shared","false");
+		String s  = xml.getAttribute("shared","false");
 		shared    = ("true".equalsIgnoreCase(s) || "yes".equalsIgnoreCase(s));
 	}
 
@@ -84,6 +84,10 @@ public class LocalServiceData extends AbstractServiceData {
 
 /*********************************************************************
  * $Log: LocalServiceData.java,v $
+ * Revision 1.4  2004/01/03 18:08:06  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.3  2003/11/20 03:48:42  willuhn
  * @N first dialogues
  *

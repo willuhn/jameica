@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/29 20:07:19 $
+ * $Revision: 1.13 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -132,14 +132,29 @@ public class GUI
    * Fuegt der Anwendung das Dropdown-Menu hinzu.
    */
   private void addMenu() {
-    menu = new Menu();
+		try {
+			menu = new Menu();
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("unable to load menu",e);
+			// skip menu
+		}
   }
 
   /**
    * Fuegt der Anwendung die Navigation hinzu.
    */
   private void addNavigation() {
-    navi = new Navigation();
+    try
+    {
+      navi = new Navigation();
+    }
+    catch (Exception e)
+    {
+			Application.getLog().error("unable to load navigation",e);
+			// skip navi
+    }
   }
   
   /**
@@ -158,7 +173,14 @@ public class GUI
   public void appendMenu(InputStream xml) {
     if (menu == null)
       addMenu();
-    menu.appendMenu(xml);
+
+		try {
+			menu.appendMenu(xml);
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("unable to add menu",e);
+		}
   }
 
   /**
@@ -170,7 +192,14 @@ public class GUI
   public void appendNavigation(InputStream xml) {
     if (navi == null)
       addNavigation();
-    navi.appendNavigation(xml);
+    try
+    {
+      navi.appendNavigation(xml);
+    }
+    catch (Exception e)
+    {
+			Application.getLog().error("unable to add navigation",e);
+    }
   }
 
   /**
@@ -281,9 +310,7 @@ public class GUI
         if (!display.readAndDispatch ()) display.sleep();
       }
       catch(Exception e){
-        if (Application.DEBUG)
-          e.printStackTrace();
-        Application.getLog().error("main loop crashed. showing error page");
+        Application.getLog().error("main loop crashed. showing error page",e);
         GUI.startView(ErrorView.class.getName(),e);
       }
     }
@@ -368,8 +395,7 @@ public class GUI
     }
     catch (Exception e)
     {
-      if (Application.DEBUG)
-        e.printStackTrace();
+			Application.getLog().error("error while quitting GUI",e);
     }
   }
   
@@ -377,6 +403,10 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.13  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.12  2003/12/29 20:07:19  willuhn
  * @N Formatter
  *

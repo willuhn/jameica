@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.28 $
- * $Date: 2003/12/30 02:10:57 $
+ * $Revision: 1.29 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -378,9 +378,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       }
       catch (Exception e)
       {
-        if (Application.DEBUG)
-          e.printStackTrace();
-        Application.getLog().error("unable to create foreign object for field " + fieldName);
+        Application.getLog().error("unable to create foreign object for field " + fieldName,e);
         return o;
       }
     }
@@ -693,8 +691,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     }
     catch (SQLException e)
     {
-      if (Application.DEBUG)
-        e.printStackTrace();
+			Application.getLog().error("error while creating ID",e);
       throw new RemoteException(e.getMessage());
     }
     finally
@@ -966,6 +963,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.29  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.28  2003/12/30 02:10:57  willuhn
  * @N updateChecker
  *

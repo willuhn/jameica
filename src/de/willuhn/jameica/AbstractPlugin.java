@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/30 17:44:54 $
+ * $Revision: 1.6 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
+import java.io.File;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -100,11 +101,33 @@ public abstract class AbstractPlugin implements Plugin
     }
     return 1.0;
   }
+  
+  /**
+   * @see de.willuhn.jameica.Plugin#getPath()
+   */
+  public String getPath()
+  {
+  	if (jar == null)
+  		return null;
+  	return new File(jar.getName()).getParent();
+  }
+  
+  /**
+   * @see de.willuhn.jameica.Plugin#getDatabase()
+   */
+  public EmbeddedDatabase getDatabase()
+  {
+  	return new EmbeddedDatabase(getPath() + "/db");
+  }
 
 }
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.6  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.5  2003/12/30 17:44:54  willuhn
  * *** empty log message ***
  *

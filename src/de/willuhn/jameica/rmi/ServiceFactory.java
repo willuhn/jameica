@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,20 +53,18 @@ public class ServiceFactory
       registryOk = true;
     } catch (RemoteException e1)
     {
-      if (Application.DEBUG)
-        e1.printStackTrace();
-      Application.getLog().error("  failed");
+      Application.getLog().error("failed",e1);
     }
 
 
     Application.getLog().info("init HUB services");
     if (!registryOk)
     {
-      Application.getLog().info("  unable to share network services because startup of RMI registry failed.");
+      Application.getLog().info("unable to share network services because startup of RMI registry failed.");
       return;
     }
 
-    Application.getLog().info("  init network services");
+    Application.getLog().info("init network services");
     Enumeration e = Application.getConfig().getLocalServiceNames();
     String name;
 		LocalServiceData service;
@@ -81,13 +79,11 @@ public class ServiceFactory
       	}
 	      catch (Exception ex)
 	      {
-          if (Application.DEBUG)
-            ex.printStackTrace();
-	        Application.getLog().error("    sharing of service " + service.getName() + " failed");
+	        Application.getLog().error("sharing of service " + service.getName() + " failed",ex);
   	    }
 			}
     }
-    Application.getLog().info("  done");
+    Application.getLog().info("done");
   }
 	
   /**
@@ -196,9 +192,7 @@ public class ServiceFactory
     }
     catch (Exception ex)
     {
-      if (Application.DEBUG)
-        ex.printStackTrace();
-      Application.getLog().error("  RMI registry not found. useless.");
+      Application.getLog().error("RMI registry not found. useless.",ex);
       return;
     }
 
@@ -212,17 +206,16 @@ public class ServiceFactory
       name = (String) e.nextElement();
 			serviceData = (LocalServiceData) bindings.get(name);
 
-			Application.getLog().info("  closing hub " + serviceData.getName());
+			Application.getLog().info("closing hub " + serviceData.getName());
 
 			try {
 				service = (Service) Naming.lookup(serviceData.getUrl());
 				service.shutDown();
 			}
 			catch (Exception ex) {
-        if (Application.DEBUG)
-          ex.printStackTrace();
+				Application.getLog().error("error while closing hub",ex);
       }
-			Application.getLog().info("  done");
+			Application.getLog().info("done");
     }
     Application.getLog().info("done");
   }
@@ -239,6 +232,10 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.9  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.8  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.18 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.19 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -87,9 +87,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
     }
     catch (Exception e)
     {
-      if (Application.DEBUG)
-        e.printStackTrace();
-      Application.getLog().error("unable to load list");
+      Application.getLog().error("unable to load list",e);
       throw new RemoteException(e.getMessage());
     }
     this.initialized = true;
@@ -180,8 +178,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
         }
         catch (Exception e)
         {
-          if (Application.DEBUG)
-            e.printStackTrace();
+					Application.getLog().error("unable to init iterator",e);
           throw new RemoteException(e.getMessage());
         }
 			}
@@ -189,9 +186,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 		}
 		catch (SQLException e)
 		{
-      if (Application.DEBUG)
-        e.printStackTrace();
-      // wenn das Statement ungueltig ist, ist halt der Iterator leer ;)
+			Application.getLog().error("unable to init iterator",e);
 		}
 		finally {
 			try {
@@ -290,6 +285,10 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.19  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.18  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

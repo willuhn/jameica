@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.13 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,11 +15,15 @@ package de.willuhn.jameica.gui;
 import java.io.InputStream;
 import java.util.Enumeration;
 
+import net.n3.nanoxml.IXMLElement;
+import net.n3.nanoxml.IXMLParser;
+import net.n3.nanoxml.StdXMLReader;
+import net.n3.nanoxml.XMLParserFactory;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
 
-import de.bb.util.XmlFile;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.I18N;
 
@@ -30,27 +34,27 @@ import de.willuhn.jameica.I18N;
 public class Menu
 {
 
-  private XmlFile xml;
   private final org.eclipse.swt.widgets.Menu bar;
 
 
   /**
    * Erzeugt eine neue Instanz des Dropdown-Menus.
    */
-  protected Menu()
+  protected Menu() throws Exception
   {
 
     bar = new org.eclipse.swt.widgets.Menu(GUI.getShell(),SWT.BAR);
 		GUI.getShell().setMenuBar(bar);
 
-    xml  = new XmlFile();
-    xml.read(getClass().getResourceAsStream("/menu.xml"));
+		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+		parser.setReader(new StdXMLReader(getClass().getResourceAsStream("/menu.xml")));
+		IXMLElement xml = (IXMLElement) parser.parse();
 
     // add elements
-    Enumeration e = xml.getSections("/menu/").elements();
+    Enumeration e = xml.enumerateChildren();
     while (e.hasMoreElements())
     {
-      String key = (String) e.nextElement();
+      IXMLElement key = (IXMLElement) e.nextElement();
       new MenuCascade(key);
     }
   }
@@ -61,18 +65,22 @@ public class Menu
    * Wird von GUI nach der Initialisierung der Plugins aufgerufen.
    * @param menu
    */
-  protected void appendMenu(InputStream menu)
+  protected void appendMenu(InputStream menu) throws Exception
   {
     if (menu == null)
       return;
-    xml.read(menu);
-    // add elements
-    Enumeration e = xml.getSections("/menu/").elements();
-    while (e.hasMoreElements())
-    {
-      String key = (String) e.nextElement();
-      new MenuCascade(key);
-    }
+
+		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+		parser.setReader(new StdXMLReader(menu));
+		IXMLElement xml = (IXMLElement) parser.parse();
+
+		// add elements
+		Enumeration e = xml.enumerateChildren();
+		while (e.hasMoreElements())
+		{
+			IXMLElement key = (IXMLElement) e.nextElement();
+			new MenuCascade(key);
+		}
   }
 
   /**
@@ -85,17 +93,17 @@ public class Menu
      * ct.
      * @param key Pfad zum aktuellen Menupunkt in der Config-Datei.
      */
-    MenuCascade(String key)
+    MenuCascade(IXMLElement key)
     {
       final MenuItem cascade = new MenuItem(bar,SWT.CASCADE);
-      String text = I18N.tr(xml.getString(key,"name",null));
+      String text = I18N.tr(key.getAttribute("name",null));
       cascade.setText(text);
       final org.eclipse.swt.widgets.Menu submenu = new org.eclipse.swt.widgets.Menu(GUI.getShell(), SWT.DROP_DOWN);
       cascade.setMenu(submenu);
-      Enumeration e = xml.getSections(key).elements();
+      Enumeration e = key.enumerateChildren();
       while (e.hasMoreElements())
       {
-        String ckey = (String) e.nextElement();
+        IXMLElement ckey = (IXMLElement) e.nextElement();
         new MenuElement(submenu, ckey);
       }
 
@@ -113,11 +121,10 @@ public class Menu
      * @param parent Eltern-Element.
      * @param ckey Pfad zum aktuellen Menupunkt in der Config-Datei.
      */
-    MenuElement(org.eclipse.swt.widgets.Menu parent,String ckey)
+    MenuElement(org.eclipse.swt.widgets.Menu parent,IXMLElement ckey)
     {
-      final String s = ckey;
-      String c    = xml.getString(s,"class",null);
-      String text = I18N.tr(xml.getString(s,"name",null));
+      String c    = ckey.getAttribute("class",null);
+      String text = I18N.tr(ckey.getAttribute("name",null));
       if (text != null && text.startsWith("-"))
       {
         new MenuItem(parent,SWT.SEPARATOR);
@@ -127,7 +134,7 @@ public class Menu
       
       item.addListener (SWT.Selection, new MenuListener(c));
 
-      String shortCut = xml.getString(s,"shortcut",null);
+      String shortCut = ckey.getAttribute("shortcut",null);
       if (shortCut != null)
       try {
         String modifier = shortCut.substring(0,shortCut.indexOf("+"));
@@ -139,8 +146,7 @@ public class Menu
       }
       catch (Exception e)
       {
-        if (Application.DEBUG)
-          e.printStackTrace();
+				Application.getLog().error("error while creating menu element",e);
       }
       item.setText(text);
     }
@@ -164,9 +170,7 @@ public class Menu
       }
       catch (Exception e)
       {
-        if (Application.DEBUG)
-          e.printStackTrace();
-        Application.getLog().error("unable to execute menu entry. exception: " + e.getClass() + "["+e.getMessage()+"]");
+        Application.getLog().error("unable to execute menu entry.",e);
         throw new RuntimeException(e); // wir werfen eine RuntimeException, weil handleEvent nix werfen darf ;)
       }
     }
@@ -177,6 +181,10 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.13  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.12  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

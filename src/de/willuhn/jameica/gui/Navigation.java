@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.8 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,11 @@ package de.willuhn.jameica.gui;
 import java.io.InputStream;
 import java.util.Enumeration;
 
+import net.n3.nanoxml.IXMLElement;
+import net.n3.nanoxml.IXMLParser;
+import net.n3.nanoxml.StdXMLReader;
+import net.n3.nanoxml.XMLParserFactory;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Event;
@@ -23,7 +28,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-import de.bb.util.XmlFile;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.views.util.Style;
 
@@ -33,19 +37,20 @@ import de.willuhn.jameica.gui.views.util.Style;
  */
 public class Navigation {
 
-	private XmlFile xml;
   private Item root;
 
 	/**
    * Erzeugt die Navigation.
    */
-  protected Navigation()
+  protected Navigation() throws Exception
 	{
-		xml  = new XmlFile();
-		xml.read(getClass().getResourceAsStream("/navigation.xml"));
+
+		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+		parser.setReader(new StdXMLReader(getClass().getResourceAsStream("/navigation.xml")));
+		IXMLElement xml = (IXMLElement) parser.parse();
 
 		// add elements
-		root = new Item(null,"/navigation/item/");
+		root = new Item(null,xml.getFirstChildNamed("item"));
     root.expandChilds(); 
 	}
 
@@ -55,12 +60,15 @@ public class Navigation {
    * Wird von GUI nach der Initialisierung der Plugins aufgerufen.
    * @param navi
    */
-  protected void appendNavigation(InputStream navi)
+  protected void appendNavigation(InputStream navi) throws Exception
   {
     if (navi == null)
       return;
-    xml.read(navi);
-    new Item(root.parentItem,"/navigation/item/");
+		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+		parser.setReader(new StdXMLReader(navi));
+		IXMLElement xml = (IXMLElement) parser.parse();
+
+    new Item(root.parentItem,xml.getFirstChildNamed("item"));
     root.expandChilds(); 
   }
 
@@ -147,7 +155,7 @@ public class Navigation {
    */
   class Item {
 
-		private String path;
+		private IXMLElement path;
 
 		private TreeItem parentItem;
 
@@ -156,7 +164,7 @@ public class Navigation {
      * @param parent das Eltern-Element.
      * @param sPath Pfad in der XML-Datei.
      */
-    Item(TreeItem parent, String sPath)
+    Item(TreeItem parent, IXMLElement sPath)
 		{
 			// store xml path
 			this.path = sPath;
@@ -185,10 +193,10 @@ public class Navigation {
 			}
 
 			// create tree item
-			String name 			= xml.getString(this.path,"name",null);
-			String iconClose 	= xml.getString(this.path,"icon-close",null);
-			String iconOpen 	= xml.getString(this.path,"icon-open",null);
-			String action			= xml.getString(this.path,"action",null);
+			String name 			= this.path.getAttribute("name",null);
+			String iconClose 	= this.path.getAttribute("icon-close",null);
+			String iconOpen 	= this.path.getAttribute("icon-open",null);
+			String action			= this.path.getAttribute("action",null);
 
 			item.setImage(Style.getImage(iconClose));
 			item.setData("iconClose",iconClose);
@@ -205,7 +213,7 @@ public class Navigation {
   		loadChilds();
 
 			// extend path
-			this.path = this.path + "item/";
+			this.path = this.path.getFirstChildNamed("item");
 
 		}
 
@@ -215,10 +223,10 @@ public class Navigation {
     void loadChilds() {
 
 			// iterate over childs
-			Enumeration e  = xml.getSections(this.path).elements();
+			Enumeration e  = this.path.enumerateChildren();
 			while (e.hasMoreElements())
 			{
-				String path = (String) e.nextElement();
+				IXMLElement path = (IXMLElement) e.nextElement();
 				new Item(this.parentItem,path);
 			}
 		}
@@ -249,6 +257,10 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.8  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.7  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

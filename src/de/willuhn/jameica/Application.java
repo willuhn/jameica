@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.19 $
- * $Date: 2003/12/30 19:11:27 $
+ * $Revision: 1.20 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,10 +69,9 @@ public class Application {
     try {
 			splash("init system config");app.config = new Config(configFile);
     }
-    catch (FileNotFoundException e)
+    catch (Exception e)
     {
-      e.printStackTrace();
-      Application.getLog().error("config file not found. giving up.");
+    	Application.getLog().error("unable to parse config",e);
       Application.shutDown();
       return;
     }
@@ -84,15 +83,13 @@ public class Application {
     try {
       Application.getLog().info("switching to defined log file " + app.config.getLogFile());
       app.log = new Logger(new FileOutputStream(app.config.getLogFile()));
-      Application.getLog().info("  done");
+      Application.getLog().info("done");
     }
     catch (FileNotFoundException e)
     {
-      if (Application.DEBUG)
-        e.printStackTrace();
-      Application.getLog().error("  failed");
-      
+      Application.getLog().error("failed");
     }
+
     // init service factory
 		splash("init local and remote services"); ServiceFactory.init();
 
@@ -194,6 +191,10 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.20  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.19  2003/12/30 19:11:27  willuhn
  * @N new splashscreen
  *

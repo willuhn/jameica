@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.13 $
- * $Date: 2003/12/29 20:07:19 $
+ * $Revision: 1.14 $
+ * $Date: 2004/01/03 18:08:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -210,8 +210,6 @@ public class Table
     }
     catch (RemoteException e)
     {
-      if (Application.DEBUG)
-        e.printStackTrace();
       Application.getLog().warn("unable to restore list back to first element. this list will not be reusable.");
     }
 
@@ -221,6 +219,10 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.14  2004/01/03 18:08:06  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.13  2003/12/29 20:07:19  willuhn
  * @N Formatter
  *

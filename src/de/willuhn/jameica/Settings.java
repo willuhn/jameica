@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.4 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,9 +60,7 @@ public class Settings
     }
     catch (IOException e)
     {
-      if (Application.DEBUG)
-        e.printStackTrace();
-      Application.getLog().error("unable to load settings from " + getFile().getAbsoluteFile());
+      Application.getLog().error("unable to load settings from " + getFile().getAbsoluteFile(),e);
     }
 
   }
@@ -110,10 +108,8 @@ public class Settings
     }
     catch (Exception e1)
     {
-      if (Application.DEBUG)
-        e1.printStackTrace();
       Application.getLog().error("unable to create settings. Do you " +
-        "have write permissions in " + getFile().getAbsolutePath() + " ?");
+        "have write permissions in " + getFile().getAbsolutePath() + " ?",e1);
     }
 
   }
@@ -122,6 +118,10 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.4  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.3  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

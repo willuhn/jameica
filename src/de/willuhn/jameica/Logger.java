@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Logger.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.4 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,10 @@
 
 package de.willuhn.jameica;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Date;
 import java.util.Vector;
 
@@ -87,6 +89,29 @@ public class Logger
     write(ERROR,message);
   }
 
+	/**
+	 * Schreibt den Fehler ins Log.
+	 * @param message zu loggende Nachricht.
+   * @param t Exception oder Error.
+   */
+  public void error(String message, Throwable t)
+	{
+		write(ERROR,message);
+		ByteArrayOutputStream bos = null;
+		try {
+			bos = new ByteArrayOutputStream();
+			t.printStackTrace(new PrintStream(bos));
+			write(ERROR,bos.toString());
+		}
+		finally {
+			try {
+				bos.close();
+			}
+			catch (Exception npe) {}
+		}
+		
+	}
+
   /**
    * Schliesst den Logger und die damit verbundene Log-Datei.
    */
@@ -142,6 +167,10 @@ public class Logger
 
 /*********************************************************************
  * $Log: Logger.java,v $
+ * Revision 1.4  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.3  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

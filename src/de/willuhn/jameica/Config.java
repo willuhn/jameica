@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.10 $
+ * $Date: 2004/01/03 18:08:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,14 +13,16 @@
 package de.willuhn.jameica;
 
 import java.io.*;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import de.bb.util.XmlFile;
+import net.n3.nanoxml.IXMLElement;
+import net.n3.nanoxml.IXMLParser;
+import net.n3.nanoxml.StdXMLReader;
+import net.n3.nanoxml.XMLParserFactory;
+
 import de.willuhn.jameica.rmi.LocalServiceData;
 import de.willuhn.jameica.rmi.RemoteServiceData;
 
@@ -34,7 +36,7 @@ public class Config
   /**
    * Das XML-File.
    */
-  private XmlFile xml = new XmlFile();
+  private IXMLElement xml = null;
 
   /**
    * Die Liste aller Remote-Services.
@@ -74,9 +76,9 @@ public class Config
   /**
    * ct.
    * @param fileName Pfad und Name zur Config-Datei.
-   * @throws FileNotFoundException
+   * @throws Exception
    */
-  protected Config(String fileName) throws FileNotFoundException
+  protected Config(String fileName) throws Exception
   {
     init(fileName);
   }
@@ -84,71 +86,55 @@ public class Config
   /**
    * Initialisiert die Konfiguration.
    * @param fileName Pfad und Name zur Config-Datei.
-   * @throws FileNotFoundException wenn die Config-Datei nicht gefunden wurde.
+   * @throws Exception
    */
-  private void init(String fileName) throws FileNotFoundException
+  private void init(String fileName) throws Exception
   {
     if (fileName == null)
-      fileName = "cfg/config.xml";
+      fileName = "cfg/config.xml"; // fallback to default if config file not set
 
-    FileInputStream file = null;
-    try {
-      file = new FileInputStream(fileName);
-    }
-    catch (FileNotFoundException e)
-    {
-      fileName = "cfg/config.xml";
-      // mhh, Path invalid. Try default path
-      try {
-        file = new FileInputStream(fileName);
-      }
-      catch (FileNotFoundException e2)
-      {
-      }
-    }
-    if (file == null)
-      throw new FileNotFoundException("alert: config file " + fileName + " not found.");
+    configDir = (new File(fileName)).getParent();
 
-    File f = new File(fileName);
-    configDir = f.getParent();
+		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+		parser.setReader(StdXMLReader.fileReader(fileName));
 
-    xml.read(file);
+		xml = (IXMLElement) parser.parse();
 
-    readServices();
+    read();
   }
 
 
   /**
-   * Liest die Service-Sektion aus der Config-Datei.
+   * Liest die Config-Datei.
    */
-  private void readServices()
+  private void read()
   {
 
-    Enumeration e = xml.getSections("/config/services/").elements();
+		Enumeration e = xml.getFirstChildNamed("services").enumerateChildren();
   
-    String key;
+    IXMLElement key;
     String name;
     String type;
     Application.getLog().info("loading service configuration");
   
     while (e.hasMoreElements())
     {
-      key = (String) e.nextElement();
-      name = xml.getString(key,"name",null);
-      type = xml.getString(key,"type",null);
+      key = (IXMLElement) e.nextElement();
+      name = key.getAttribute("name",null);
+      type = key.getAttribute("type",null);
   
       // process remote services
-      if (key.startsWith("/config/services/remoteservice")) 
+      if ("remoteservice".equals(key.getFullName())) 
       {
         Application.getLog().info("  found remote service \"" + name + "\" [type: "+type+"]");
-        remoteServices.put(name,new RemoteServiceData(xml,key));
+        remoteServices.put(name,new RemoteServiceData(key));
       }
   
       // process local services
-      if (key.startsWith("/config/services/localservice")) 
+			if ("localservice".equals(key.getFullName())) 
       {
         Application.getLog().info("  found local service \"" + name + "\" [type: "+type+"]");
-        localServices.put(name,new LocalServiceData(xml,key));
+        localServices.put(name,new LocalServiceData(key));
       }
   
     }
@@ -156,9 +142,8 @@ public class Config
     ////////////////////////////////////////////
   
   
-  
     // Read default language
-    String _defaultLanguage = xml.getContent("/config/defaultlanguage");
+    String _defaultLanguage = xml.getFirstChildNamed("defaultlanguage").getContent();
     Application.getLog().info("choosen language: " + _defaultLanguage);
     try {
       ResourceBundle.getBundle("lang/messages",new Locale(_defaultLanguage));
@@ -169,23 +154,24 @@ public class Config
       Application.getLog().info("  not found. fallback to default language: " + defaultLanguage.toString());
     }
 
-    logfile = xml.getContent("/config/logfile");
-    String _debug = xml.getContent("/config/debug");
+    logfile = xml.getFirstChildNamed("logfile").getContent();
+
+    String _debug = xml.getFirstChildNamed("debug").getContent();
     debug = "true".equalsIgnoreCase(_debug) || "yes".equalsIgnoreCase(_debug);
     
-    String _ide = xml.getContent("/config/ide");
+    String _ide = xml.getFirstChildNamed("ide").getContent();
     ide = "true".equalsIgnoreCase(_ide) || "yes".equalsIgnoreCase(_ide);
 
     // Read rmi port
     try {
-      rmiPort = Integer.parseInt(xml.getContent("/config/rmiport"));
+      rmiPort = Integer.parseInt(xml.getFirstChildNamed("rmiport").getContent());
     }
     catch (NumberFormatException nfe)
     {
       rmiPort = 1099;
     }
 
-    String _pluginDir = xml.getContent("/config/plugindir");
+    String _pluginDir = xml.getFirstChildNamed("plugindir").getContent();
     if (_pluginDir != null && !"".equals(_pluginDir))
       pluginDir = _pluginDir;
     
@@ -298,6 +284,10 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.10  2004/01/03 18:08:05  willuhn
+ * @N Exception logging
+ * @C replaced bb.util xml parser with nanoxml
+ *
  * Revision 1.9  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *
