@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/07/23 15:51:20 $
+ * $Revision: 1.15 $
+ * $Date: 2004/08/11 23:37:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,6 +55,8 @@ public class TablePart implements Part
   private I18N i18n 										= null;
   private TableFormatter tableFormatter = null;
 	private ContextMenu menu 							= null;
+
+	private boolean showSummary						= true;
 
 	private Composite comp 								= null;
 	 
@@ -114,7 +116,22 @@ public class TablePart implements Part
       formatter.put(field,f);
   }
 
- 
+	/**
+   * Schaltet die Anzeige einer Summenzeile am Ende der Tabelle an (Default).
+   */
+  public void enableSummary()
+	{ 
+		this.showSummary = true;
+	}
+
+	/**
+	 * Schaltet die Anzeige einer Summenzeile am Ende der Tabelle aus.
+	 */
+	public void disableSummary()
+	{
+		this.showSummary = false;
+	}
+	
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
@@ -254,10 +271,13 @@ public class TablePart implements Part
       col.pack();
     }
 
-		Label summary = new Label(comp,SWT.NONE);
-		summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		summary.setBackground(Color.BACKGROUND.getSWTColor());
-		summary.setText(list.size() + " " + (list.size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
+		if (showSummary)
+		{
+			Label summary = new Label(comp,SWT.NONE);
+			summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			summary.setBackground(Color.BACKGROUND.getSWTColor());
+			summary.setText(list.size() + " " + (list.size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
+		}
 
     // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
     // Damit kann das Control wiederverwendet werden ;) 
@@ -306,6 +326,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.15  2004/08/11 23:37:21  willuhn
+ * @N Navigation ist jetzt modular erweiterbar
+ *
  * Revision 1.14  2004/07/23 15:51:20  willuhn
  * @C Rest des Refactorings
  *

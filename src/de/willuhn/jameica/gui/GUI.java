@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.55 $
- * $Date: 2004/07/27 19:17:07 $
+ * $Revision: 1.56 $
+ * $Date: 2004/08/11 23:37:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.gui.style.StyleEngine;
 import de.willuhn.jameica.gui.style.StyleFactory;
@@ -188,7 +189,14 @@ public class GUI
 		{
 			PluginContainer pc = (PluginContainer) i.next();
 			menu.addPlugin(pc);
-			navi.addPlugin(pc);
+			try
+			{
+				navi.addPlugin(pc);
+			}
+			catch (Throwable t)
+			{
+				Logger.error("error while loading navigation for plugin",t);
+			}
 		}
 
 		// History initialisieren
@@ -350,7 +358,17 @@ public class GUI
 					}
 					catch (ApplicationException e)
 					{
-						Logger.debug("cancel sent from dialog (in unbind()");
+						Logger.debug("cancel sent from dialog (in unbind())");
+						SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
+						d.setTitle(Application.getI18n().tr("Fehler"));
+						d.setText(e.getMessage());
+						try {
+							d.open();
+						}
+						catch (Exception e2)
+						{
+							Logger.error("error while showing unbind dialog",e2);
+						}
 						return;
 					}
 					catch (Throwable t)
@@ -683,6 +701,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.56  2004/08/11 23:37:21  willuhn
+ * @N Navigation ist jetzt modular erweiterbar
+ *
  * Revision 1.55  2004/07/27 19:17:07  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.27 $
- * $Date: 2004/07/23 15:51:20 $
+ * $Revision: 1.28 $
+ * $Date: 2004/08/11 23:37:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -285,6 +285,7 @@ public class StatusBar {
 		Composite snapin = GUI.getView().getSnapin();
 
 		TablePart table = new TablePart(PseudoIterator.fromArray(logs),null);
+		table.disableSummary();
 		table.addColumn(Application.getI18n().tr("Meldungen"),"foo");
 		try
     {
@@ -349,6 +350,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.28  2004/08/11 23:37:21  willuhn
+ * @N Navigation ist jetzt modular erweiterbar
+ *
  * Revision 1.27  2004/07/23 15:51:20  willuhn
  * @C Rest des Refactorings
  *

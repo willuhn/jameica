@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.20 $
+ * $Date: 2004/08/11 23:37:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,8 @@
 package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
-import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
 
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
@@ -21,6 +22,7 @@ import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -29,7 +31,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
@@ -41,9 +43,12 @@ import de.willuhn.util.Logger;
  */
 public class Navigation {
 
-  private Item root;
+  private NavigationItem root		= null;
   
-  private Composite parent;
+  private Composite parent			= null;
+  private Tree tree							= null;
+  
+  private Map mapping						= new Hashtable();
 
   /**
    * Erzeugt die Navigation.
@@ -52,22 +57,84 @@ public class Navigation {
    */
   protected Navigation(Composite parent) throws Exception
 	{
-
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 		parser.setReader(new StdXMLReader(getClass().getResourceAsStream("/navigation.xml")));
 		IXMLElement xml = (IXMLElement) parser.parse();
 
-		// add elements
 		this.parent = parent;
-		root = new Item(null,xml.getFirstChildNamed("item"),Application.getI18n());
-    root.expandChilds(); 
+
+		// Tree erzeugen
+		this.tree = new Tree(Navigation.this.parent, SWT.BORDER);
+		this.tree.setLayoutData(new GridData(GridData.FILL_BOTH));
+		// Listener fuer "Folder auf machen"
+		tree.addListener(SWT.Expand, new Listener() {
+			public void handleEvent(Event event) {
+				handleFolderOpen(event);
+			}
+		});
+		// Listener fuer "Folder auf machen"
+		tree.addListener(SWT.Collapse, new Listener() {
+			public void handleEvent(Event event) {
+				handleFolderClose(event);
+			}
+		});
+
+		// Listener fuer die Aktionen
+		tree.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				handleSelect(event);
+			}
+		});
+
+		// add elements
+		root = new NavigationItemXml(null,xml.getFirstChildNamed("item"),Application.getI18n());
+		load(root);
+	}
+
+	/**
+	 * Laedt rekursiv alle Kinder.
+   * @param element Laedt alles Kinder.
+   * @throws Exception
+   */
+  private void load(NavigationItem element) throws Exception
+	{
+		if (element == null)
+			return;
+		// Wir malen uns erstmal selbst.
+		TreeItem item = null;
+		NavigationItem myParent = (NavigationItem) element.getParent();
+		if (myParent == null)
+		{
+			// Wir sind die ersten
+			item = new TreeItem(this.tree,SWT.NONE);
+		}
+		else
+		{
+			// Wir holen uns das TreeItem vom Parent
+			TreeItem ti = (TreeItem) mapping.get(element.getParent());
+			item = new TreeItem(ti,SWT.NONE);
+		}
+		item.setImage(element.getIconClose());
+		item.setData("iconClose",element.getIconClose());
+		item.setData("iconOpen",element.getIconOpen());
+		item.setData("listener",element.getListener());
+		item.setText(element.getName());
+		mapping.put(element,item);
+
+		GenericIterator childs = element.getChilds();
+		if (childs == null || childs.size() == 0)
+			return;
+		while (childs.hasNext())
+		{
+			load((NavigationItem) childs.next());
+		}
 	}
 
   /**
 	 * Fuer zur Navigation den Navi-Tree eines Plugins hinzu.
    * @param container der PluginContainer.
    */
-  protected void addPlugin(PluginContainer container)
+  protected void addPlugin(PluginContainer container) throws Exception
 	{
 		if (container == null)
 		{
@@ -79,56 +146,36 @@ public class Navigation {
 			Logger.warn("plugin is not installed, skipping navigation");
 			return;
 		}
-		try {
-			I18N i18n = null;
-			try {
-				i18n = container.getPlugin().getResources().getI18N();
-			}
-			catch (Exception e)
-			{
-				Logger.warn("unable to load I18N for plugin");
-			}
-			appendNavigation(container.getNavigation(),i18n);
-		}
-		catch (Exception e)
-		{
-			Logger.error("unable to add navigation",e);
-		}
-	}
 
-  /**
-   * Fuegt der Navigation noch weitere Eintraege hinzu, die sich in dem uebergebenen
-   * Inputstream befinden. Der Stream muss eine navigation.xml enthalten.
-   * Wird von GUI nach der Initialisierung der Plugins aufgerufen.
-   * @param navi der InputStream mit dem Navigationsbaum.
-   * @param i18n optionaler Uebersetzer, um die Navi-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
-   * @throws Exception
-   */
-  private void appendNavigation(InputStream navi,I18N i18n) throws Exception
-  {
-    if (navi == null)
-      return;
+		InputStream naviStream = container.getNavigation();
+		if (naviStream == null)
+		{
+			Logger.warn("plugin contains no navigation, skipping");
+			return;
+		}
+
+		I18N i18n = container.getPlugin().getResources().getI18N();
+
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(new StdXMLReader(navi));
+		parser.setReader(new StdXMLReader(naviStream));
 		IXMLElement xml = (IXMLElement) parser.parse();
 
-    new Item(root.parentItem,xml.getFirstChildNamed("item"),i18n);
-    root.expandChilds(); 
-  }
+		load(new NavigationItemXml(root,xml.getFirstChildNamed("item"),i18n));
+	}
 
 	/**
    * Behandelt das Event "Ordner auf".
    * @param event das ausgeloeste Event.
    */
-  private static void handleFolderOpen(Event event)
+  private void handleFolderOpen(Event event)
 	{
 		Widget widget = event.item;
 		if (!(widget instanceof TreeItem))
 			return;
 		TreeItem item = (TreeItem) widget;
-		String icon = (String) item.getData("iconOpen");
+		Image icon = (Image) item.getData("iconOpen");
 		if (icon != null) {
-			item.setImage(SWTUtil.getImage(icon));
+			item.setImage(icon);
 		}
 	}
 
@@ -136,176 +183,42 @@ public class Navigation {
 	 * Behandelt das Event "Ordner zu".
 	 * @param event das ausgeloeste Event.
 	 */
-	private static void handleFolderClose(Event event)
+	private void handleFolderClose(Event event)
 	{
 		Widget widget = event.item;
 		if (!(widget instanceof TreeItem))
 			return;
 		TreeItem item = (TreeItem) widget;
-		String icon = (String) item.getData("iconClose");
+		Image icon = (Image) item.getData("iconClose");
 		if (icon != null) {
-			item.setImage(SWTUtil.getImage(icon));
+			item.setImage(icon);
 		}
 	}
 
 	/**
-	 * Behandelt das Event "action". 
+	 * Behandelt das Event "listener". 
 	 * @param event das ausgeloeste Event.
 	 */
-	private static void handleSelect(Event event)
+	private void handleSelect(Event event)
 	{
 		Widget widget = event.item;
 		if (!(widget instanceof TreeItem))
 			return;
 		TreeItem item = (TreeItem) widget;
 
-		String action = (String) item.getData("action");
-		GUI.startView(action,null);
-		GUI.getStatusBar().setStatusText((String) item.getData("name"));
-	}
-
-	/**
-	 * Fuegt die Listener zum Tree hinzu.
-	 * @param tree
-	 */
-	private static void addListener(Tree tree) {
-
-		// Listener fuer "Folder auf machen"
-		tree.addListener(SWT.Expand, new Listener() {
-			public void handleEvent(Event event) {
-				Navigation.handleFolderOpen(event);
-			}
-		});
-		// Listener fuer "Folder auf machen"
-		tree.addListener(SWT.Collapse, new Listener() {
-			public void handleEvent(Event event) {
-				Navigation.handleFolderClose(event);
-			}
-		});
-
-		// Listener fuer die Aktionen
-		tree.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				Navigation.handleSelect(event);
-			}
-		});
-	}
-
-
-
-	/**
-   * Bildet ein einzelnes Element der Navigation ab.
-   * Es laedt rekursiv alle Kind-Elemente.
-   */
-  class Item {
-
-		private IXMLElement path;
-
-		private TreeItem parentItem;
-		
-		private I18N i18n;
-
-		/**
-		 * ct. Laed ein neues Element der Navigation.
-     * @param parent das Eltern-Element.
-     * @param sPath Pfad in der XML-Datei.
-	   * @param i18n optionaler Uebersetzer, um die Navi-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
-     */
-    Item(TreeItem parent, IXMLElement sPath, I18N i18n)
-		{
-			// store xml path
-			this.path = sPath;
-
-			// store parent
-			this.parentItem = parent;
-
-			// store i18n
-			this.i18n = i18n;
-
-			TreeItem item;
-			// this is only needed for the first element
-			if (this.parentItem == null) {
-
-				// Tree erzeugen
-				Tree tree = new Tree(Navigation.this.parent, SWT.BORDER);
-
-				// Griddata erzeugen
-				tree.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-				Navigation.addListener(tree);
-
-				item = new TreeItem(tree,SWT.BORDER);
-			}
-			else {
-				item = new TreeItem(this.parentItem,SWT.BORDER);
-			}
-
-			// create tree item
-			String name 			= this.path.getAttribute("name",null);
-			String iconClose 	= this.path.getAttribute("icon-close",null);
-			String iconOpen 	= this.path.getAttribute("icon-open",null);
-			String action			= this.path.getAttribute("action",null);
-
-			item.setImage(SWTUtil.getImage(iconClose));
-			item.setData("iconClose",iconClose);
-			item.setData("iconOpen",iconOpen);
-			item.setData("name",name);
-
-			item.setData("action",action);
-
-			item.setText(i18n != null ? i18n.tr(name) : name);
-
-			// make this item the parent
-			this.parentItem = item;
-
-			// load the childs
-  		loadChilds();
-
-			// extend path
-			this.path = this.path.getFirstChildNamed("item");
-
-		}
-
-		/**
-     * Laedt alle Kinder dieses Elements.
-     */
-    void loadChilds() {
-
-			// iterate over childs
-			Enumeration e  = this.path.enumerateChildren();
-			while (e.hasMoreElements())
-			{
-				IXMLElement path = (IXMLElement) e.nextElement();
-				new Item(this.parentItem,path,i18n);
-			}
-		}
-    
-    /**
-     * Klappt alle Kind-Elemente auf.
-     */
-    void expandChilds()
-    {
-      enumAndExpand(this.parentItem);
-    }
-    
-    private void enumAndExpand(TreeItem treeItem)
-    {
-      TreeItem[] childItems = treeItem.getItems();
-      int count = childItems.length;
-      for (int i = 0; i < count; ++i)
-      {
-        childItems[i].setExpanded(true);
-        enumAndExpand(childItems[i]);
-      }
-      treeItem.setExpanded(true);
-    }
-    
+		Listener l = (Listener) item.getData("listener");
+		if (l == null)
+			return;
+		l.handleEvent(event);
 	}
 }
 
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.20  2004/08/11 23:37:21  willuhn
+ * @N Navigation ist jetzt modular erweiterbar
+ *
  * Revision 1.19  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *
