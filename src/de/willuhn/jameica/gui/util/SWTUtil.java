@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/26 23:23:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import de.willuhn.jameica.Application;
@@ -61,6 +62,29 @@ public class SWTUtil {
 		{
 			Application.getLog().error("error while disposing composite childs",t);
 		}
+	}
+
+	/**
+	 * Startet einen Timeout in genannter Hoehe. Ist dieses erreicht, wird der Listener ausgeloest.
+	 * Das ist zB sinnvoll, wenn angezeigter Fehlertext nach einer definierten Zeit automatisch
+	 * wieder verschwinden soll.
+   * @param millis Anzahl der Millisekunden, die gewartet wird.
+   * @param l der auszuloesende Listener.
+   */
+  public static void startGUITimeout(final long millis, final Listener l)
+	{
+		if (l == null || millis < 1)
+			return;
+
+		GUI.getDisplay().asyncExec(new Thread() {
+			public void run() {
+				long end = System.currentTimeMillis() + millis;
+				while (!GUI.getShell().isDisposed() && end > System.currentTimeMillis()) {
+					if (!GUI.getDisplay().readAndDispatch ()) GUI.getDisplay().sleep();
+				}
+				l.handleEvent(null);
+			}
+		});
 	}
 
 	/**
@@ -152,6 +176,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.3  2004/05/26 23:23:23  willuhn
+ * @N Timeout fuer Messages in Statusbars
+ *
  * Revision 1.2  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

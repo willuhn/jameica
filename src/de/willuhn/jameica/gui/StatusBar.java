@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.22 $
+ * $Date: 2004/05/26 23:23:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,11 +25,14 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.ArrayEnumeration;
 import de.willuhn.util.History;
 
@@ -230,9 +233,13 @@ public class StatusBar {
       public void run() {
 				actionText.setForeground(Color.SUCCESS.getSWTColor());
 				actionText.setText(message);
-				// GUI.getView().setSuccessText("");
       }
     });
+		SWTUtil.startGUITimeout(10000l,new Listener() {
+			public void handleEvent(Event event) {
+				actionText.setText("");
+			}
+		});
   }
 
 	/**
@@ -252,7 +259,11 @@ public class StatusBar {
 			public void run() {
 				actionText.setForeground(Color.ERROR.getSWTColor());
 				actionText.setText(message);
-				// GUI.getView().setSuccessText("");
+			}
+		});
+		SWTUtil.startGUITimeout(10000l,new Listener() {
+			public void handleEvent(Event event) {
+				actionText.setText("");
 			}
 		});
 	}
@@ -279,6 +290,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.22  2004/05/26 23:23:23  willuhn
+ * @N Timeout fuer Messages in Statusbars
+ *
  * Revision 1.21  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

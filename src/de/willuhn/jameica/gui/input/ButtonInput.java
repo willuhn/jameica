@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.2 $
+ * $Date: 2004/05/26 23:23:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,6 @@ package de.willuhn.jameica.gui.input;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -79,11 +77,12 @@ public abstract class ButtonInput extends AbstractInput
 		text.setLayoutData(gd);
 		text.setText((value == null ? "" : value));
 		text.setEnabled(textEnabled);
-		text.addFocusListener(new FocusAdapter(){
-			public void focusGained(FocusEvent e){
-				text.selectAll();
-			}
-		});
+// geschieht scheinbar ohnehin schon
+//		text.addFocusListener(new FocusAdapter(){
+//			public void focusGained(FocusEvent e){
+//				text.selectAll();
+//			}
+//		});
   
     button = GUI.getStyleFactory().createButton(comp);
 		if (this.buttonImage == null && this.buttonText == null)
@@ -215,6 +214,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.2  2004/05/26 23:23:23  willuhn
+ * @N Timeout fuer Messages in Statusbars
+ *
  * Revision 1.1  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

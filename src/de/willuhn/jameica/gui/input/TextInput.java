@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/26 23:23:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,8 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
@@ -47,11 +45,12 @@ public class TextInput extends AbstractInput
 		text = GUI.getStyleFactory().createText(getParent());
 		text.setEnabled(enabled);
     text.setText((value == null ? "" : value));
-    text.addFocusListener(new FocusAdapter(){
-      public void focusGained(FocusEvent e){
-        text.selectAll();
-      }
-    });
+// Das wird scheinbar schon automatisch gemacht.
+//    text.addFocusListener(new FocusAdapter(){
+//      public void focusGained(FocusEvent e){
+//        text.selectAll();
+//      }
+//    });
 
     return text;
   }
@@ -108,6 +107,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.4  2004/05/26 23:23:23  willuhn
+ * @N Timeout fuer Messages in Statusbars
+ *
  * Revision 1.3  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

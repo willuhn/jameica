@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/05/23 16:34:18 $
+ * $Revision: 1.19 $
+ * $Date: 2004/05/26 23:23:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
@@ -192,6 +194,11 @@ public class View
 				messages.layout();
 			}
 		});
+		SWTUtil.startGUITimeout(10000l,new Listener() {
+      public void handleEvent(Event event) {
+				messages.setText("");
+      }
+    });
 	}
 
 	/**
@@ -205,6 +212,11 @@ public class View
 				messages.setText(text);
 				messages.setForeground(Color.SUCCESS.getSWTColor());
 				messages.layout();
+			}
+		});
+		SWTUtil.startGUITimeout(10000l,new Listener() {
+			public void handleEvent(Event event) {
+				messages.setText("");
 			}
 		});
 	}
@@ -231,6 +243,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.19  2004/05/26 23:23:23  willuhn
+ * @N Timeout fuer Messages in Statusbars
+ *
  * Revision 1.18  2004/05/23 16:34:18  willuhn
  * *** empty log message ***
  *
