@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/02/02 16:16:38 $
- * $Author: willuhn $
+ * $Revision: 1.4 $
+ * $Date: 2005/03/01 22:56:48 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -27,8 +27,10 @@ import de.willuhn.util.ProgressMonitor;
 public class ApplicationCallbackConsole implements ApplicationCallback
 {
 
-	private ProgressMonitor monitor;
-	private Settings settings = new Settings(ApplicationCallback.class);
+	private Settings settings 				= new Settings(ApplicationCallback.class);
+
+	private ProgressMonitor monitor		= null;
+	private String password 					= null;
 	
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#lockExists(java.lang.String)
@@ -57,22 +59,22 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public String createPassword() throws Exception
   {
-		String pw = Application.getStartupParams().getPassword();
-		if (pw != null)
+		this.password = Application.getStartupParams().getPassword();
+		if (this.password != null)
 		{
 			Logger.info("master password given via commandline");
 		}
 		else
 		{
 			System.out.print(Application.getI18n().tr("Sie starten Jameica zum ersten Mal.\n" +
-				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persÃ¶nlichen Daten:"));
+				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
 			InputStreamReader isr = new InputStreamReader(System.in);
 			BufferedReader keyboard = new BufferedReader(isr);
-			pw = keyboard.readLine();
+			this.password = keyboard.readLine();
 		}
 
-		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(pw.getBytes()));
-		return pw;
+		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
+		return this.password;
   }
 
   /**
@@ -81,18 +83,18 @@ public class ApplicationCallbackConsole implements ApplicationCallback
   public String getPassword() throws Exception
   {
 		String checksum = settings.getString("jameica.system.callback.checksum","");
-  	String pw 			= Application.getStartupParams().getPassword();
+  	this.password		= Application.getStartupParams().getPassword();
 
-  	if (pw != null)
+  	if (this.password != null)
   	{
   		Logger.info("master password given via commandline");
   		if (checksum == null)
-				return pw;
+				return this.password;
 
 			Logger.info("checksum found, testing");
-			if (checksum.equals(Checksum.md5(pw.getBytes())))
+			if (checksum.equals(Checksum.md5(this.password.getBytes())))
 			{
-				return pw;
+				return this.password;
 			}
 			Logger.info("checksum test failed, asking for password in interactive mode");
   	}
@@ -102,13 +104,28 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 		BufferedReader keyboard = new BufferedReader(isr);
 		for (int i=0;i<3;++i)
 		{
-			pw = keyboard.readLine();
-			if (pw != null && checksum.equals(Checksum.md5(pw.getBytes())))
-				return pw;
+			this.password = keyboard.readLine();
+			if (this.password != null && checksum.equals(Checksum.md5(this.password.getBytes())))
+				return this.password;
 			System.out.println(Application.getI18n().tr("Passwort falsch. Bitte versuchen Sie es erneut:"));
 		}
 		throw new Exception("Wrong jameica keystore password");
   }
+
+	/**
+	 * @see de.willuhn.jameica.system.ApplicationCallback#changePassword()
+	 */
+	public void changePassword() throws Exception
+	{
+		System.out.print(Application.getI18n().tr(
+			"Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\n" +
+			"Es wird anschließend bei jedem Start von Jameica benötigt:"));
+		InputStreamReader isr = new InputStreamReader(System.in);
+		BufferedReader keyboard = new BufferedReader(isr);
+		this.password = keyboard.readLine();
+
+		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
+	}
 
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#getStartupMonitor()
@@ -130,18 +147,20 @@ public class ApplicationCallbackConsole implements ApplicationCallback
   }
 
   /**
-   * @see de.willuhn.jameica.system.ApplicationCallback#startupError(java.lang.String)
+   * @see de.willuhn.jameica.system.ApplicationCallback#startupError(java.lang.String, java.lang.Throwable)
    */
-  public void startupError(String errorMessage)
+  public void startupError(String errorMessage, Throwable t)
   {
   	System.out.println(errorMessage);
   }
-
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.4  2005/03/01 22:56:48  web0
+ * @N master password can now be changed
+ *
  * Revision 1.3  2005/02/02 16:16:38  willuhn
  * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
  *

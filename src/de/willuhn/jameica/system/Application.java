@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.32 $
- * $Date: 2005/02/11 09:33:48 $
- * $Author: willuhn $
+ * $Revision: 1.33 $
+ * $Date: 2005/03/01 22:56:48 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -194,7 +194,7 @@ public final class Application {
 		String msg = t.getMessage();
 		if (msg == null || msg.length() == 0)
 			msg = "Fatal error while jameica startup";
-		getCallback().startupError(msg);
+		getCallback().startupError(msg,t);
 		System.exit(1);
 	}
 
@@ -469,6 +469,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.33  2005/03/01 22:56:48  web0
+ * @N master password can now be changed
+ *
  * Revision 1.32  2005/02/11 09:33:48  willuhn
  * @N messaging system
  *

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/02/19 16:53:40 $
- * $Author: willuhn $
+ * $Revision: 1.6 $
+ * $Date: 2005/03/01 22:56:48 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -61,7 +61,6 @@ public class SSLFactory
 	private SSLContext sslContext					= null;
 
 	private ApplicationCallback callback 	= null;
-	private String password             	= null;
 
   /**
    * ct.
@@ -72,19 +71,6 @@ public class SSLFactory
     super();
     this.callback = callback;
   }
-
-	/**
-	 * Liefert das Passwort ueber den Callback.
-   * @return Passwort.
-   */
-  private synchronized String getPassword() throws Exception
-	{
-		if (password != null)
-			return password;
-
-		password = callback.getPassword();
-		return password;
-	}
 
 	/**
 	 * Prueft die Zertifikate und erstellt sie bei Bedarf.
@@ -158,13 +144,13 @@ public class SSLFactory
 		Logger.info("  creating keystore");
     this.keystore = KeyStore.getInstance("JKS");
 
-		this.password = this.callback.createPassword();
+		this.callback.createPassword();
 
-		this.keystore.load(null,getPassword().toCharArray());
+		this.keystore.load(null,this.callback.getPassword().toCharArray());
 
 		Logger.info("  creating adding private key and x.509 certifcate");
 		this.keystore.setKeyEntry("jameica",this.privateKey,
-															getPassword().toCharArray(),
+															this.callback.getPassword().toCharArray(),
 															new X509Certificate[]{this.certificate});
 
 		storeKeystore();
@@ -177,14 +163,14 @@ public class SSLFactory
 	 * Speichert den Keystore.
    * @throws Exception
    */
-  private synchronized void storeKeystore() throws Exception
+  public synchronized void storeKeystore() throws Exception
 	{
 		OutputStream os = null;
 		try
 		{
 			Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
 			os = new FileOutputStream(getKeyStoreFile());
-			this.keystore.store(os,getPassword().toCharArray());
+			this.keystore.store(os,this.callback.getPassword().toCharArray());
 		}
 		finally
 		{
@@ -226,7 +212,7 @@ public class SSLFactory
 		if (this.privateKey != null)
 			return this.privateKey;
 
-		this.privateKey = (PrivateKey) getKeyStore().getKey("jameica",getPassword().toCharArray());
+		this.privateKey = (PrivateKey) getKeyStore().getKey("jameica",this.callback.getPassword().toCharArray());
 		return this.privateKey;
 	}
 
@@ -269,7 +255,7 @@ public class SSLFactory
       this.keystore = KeyStore.getInstance("JKS");
 
 			Logger.info("reading keys");
-			this.keystore.load(is,getPassword().toCharArray());
+			this.keystore.load(is,this.callback.getPassword().toCharArray());
 			return this.keystore;
 		}
 		finally
@@ -322,7 +308,7 @@ public class SSLFactory
 
 		Logger.info("init key manager [using algorithm: " + KeyManagerFactory.getDefaultAlgorithm() + "]");
 		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm(),BouncyCastleProvider.PROVIDER_NAME);
-		keyManagerFactory.init(this.getKeyStore(),getPassword().toCharArray());
+		keyManagerFactory.init(this.getKeyStore(),this.callback.getPassword().toCharArray());
 
 		// Wir benutzen unseren eignen TrustManager
 		Logger.info("init Jameica trust manager");
@@ -349,6 +335,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.6  2005/03/01 22:56:48  web0
+ * @N master password can now be changed
+ *
  * Revision 1.5  2005/02/19 16:53:40  willuhn
  * *** empty log message ***
  *

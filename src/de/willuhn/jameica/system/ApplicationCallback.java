@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/30 20:47:43 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2005/03/01 22:56:48 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -54,12 +54,33 @@ public interface ApplicationCallback
 	/**
 	 * Wird aufgerufen, wenn die SSLFactory das Passwort fuer den
 	 * existierenden Keystore benoetigt.
-	 * Sie fragt dies nur einmal zur Initialisierung.
+	 * Sie fragt dies jedesmal, wenn das Passwort benoetigt wird.
+	 * Also beim Oeffnen des Keystores, beim Erzeugen eines SSLContextes
+	 * und beim Speichern des Keystores. Es ist daher der implementierenden
+	 * Klasse ueberlassen, das eingegebene Passwort ueber die Dauer
+	 * der aktuellen Jameica-Sitzung zu cachen, um den Benutzer nicht
+	 * dauernd mit der Neueingabe des Passwortes zu nerven.
 	 * @return das existierende Passwort.
 	 * @throws Exception
 	 */
 	public String getPassword() throws Exception;
 	
+	/**
+	 * Ueber diese Funktion kann das Passwort des Keystores geaendert werden.
+	 * Alles, was die implementierende Klasse zu tun hat, ist einen
+	 * Dialog zur Passwort-Aenderung anzuzeigen und von nun an
+	 * in der Funktion <code>getPassword()</code> das neue Passwort zu
+	 * liefern. Es ist Sache des Aufrufers, anschliessend, noch
+	 * <code>Application.getSSLFactory.storeKeyStore()</code> auszufuehren,
+	 * um die Aenderung dauerhaft zu speichern.
+	 * Nochmals: Es ist nicht Aufgabe des ApplicationCallbacks, das Passwort
+	 * im System zu aendern sondern lediglich das neue Passwort vom Benutzer
+	 * abzufragen und es anschliessend ueber <code>getPassword()</code>
+	 * zur Verfuegung zu stellen.
+   * @throws Exception
+   */
+  public void changePassword() throws Exception;
+
 	/**
 	 * Liefert einen Progress-Monitor ueber den der Fortschritt des
 	 * System-Starts ausgegeben werden kann.
@@ -74,14 +95,18 @@ public interface ApplicationCallback
    * Fehlermeldung dem Benutzer anzeigen. Anschliessend beendet
    * sich Jameica.
    * @param errorMessage die anzuzeigende Fehlermeldung.
+   * @param t Ein ggf. existierender Fehler.
    */
-  public void startupError(String errorMessage);
+  public void startupError(String errorMessage, Throwable t);
 	
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.2  2005/03/01 22:56:48  web0
+ * @N master password can now be changed
+ *
  * Revision 1.1  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *
