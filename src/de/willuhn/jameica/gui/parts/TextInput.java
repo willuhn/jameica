@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/TextInput.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views.parts;
+package de.willuhn.jameica.gui.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -38,7 +38,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -55,7 +55,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -63,7 +63,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -74,7 +74,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.Input#focus()
    */
   public void focus()
   {
@@ -82,7 +82,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.Input#disable()
    */
   public void disable()
   {
@@ -90,7 +90,7 @@ public class TextInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.Input#enable()
    */
   public void enable()
   {
@@ -101,6 +101,10 @@ public class TextInput extends Input
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.1  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.10  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

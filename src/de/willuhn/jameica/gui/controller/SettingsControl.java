@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/01/23 00:29:04 $
+ * $Revision: 1.6 $
+ * $Date: 2004/01/28 20:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,9 +20,9 @@ import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ServiceSettings;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
-import de.willuhn.jameica.gui.views.parts.FileInput;
-import de.willuhn.jameica.gui.views.parts.Input;
-import de.willuhn.jameica.gui.views.parts.SelectInput;
+import de.willuhn.jameica.gui.parts.FileInput;
+import de.willuhn.jameica.gui.parts.Input;
+import de.willuhn.jameica.gui.parts.SelectInput;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -66,14 +66,14 @@ public class SettingsControl extends AbstractControl
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleDelete()
+   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleDelete()
    */
   public void handleDelete()
   {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleCancel()
+   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleCancel()
    */
   public void handleCancel()
   {
@@ -81,7 +81,7 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleStore()
+   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleStore()
    */
   public void handleStore()
   {
@@ -105,14 +105,14 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleCreate()
+   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleCreate()
    */
   public void handleCreate()
   {
   }
   
   /**
-   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleLoad(java.lang.String)
+   * @see de.willuhn.jameica.gui.parts.AbstractControl#handleLoad(java.lang.String)
    */
   public void handleLoad(String id)
   {
@@ -142,6 +142,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.6  2004/01/28 20:51:25  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.5  2004/01/23 00:29:04  willuhn
  * *** empty log message ***
  *

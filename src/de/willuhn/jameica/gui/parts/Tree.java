@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Tree.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Tree.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views.parts;
+package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
 
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.*;
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObjectNode;
 import de.willuhn.jameica.gui.controller.*;
-import de.willuhn.jameica.gui.views.util.Style;
+import de.willuhn.jameica.gui.util.Style;
 
 /**
  * Erzeugt einen Baum.
@@ -271,6 +271,10 @@ public class Tree {
 
 /*********************************************************************
  * $Log: Tree.java,v $
+ * Revision 1.1  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.6  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

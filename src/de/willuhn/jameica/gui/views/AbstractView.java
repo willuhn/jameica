@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.11 $
+ * $Date: 2004/01/28 20:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.gui.views.parts.Headline;
+import de.willuhn.jameica.gui.parts.Headline;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -99,6 +99,10 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.11  2004/01/28 20:51:25  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.10  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

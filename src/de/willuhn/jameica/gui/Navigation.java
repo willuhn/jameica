@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.11 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-import de.willuhn.jameica.gui.views.util.Style;
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
 /**
@@ -254,6 +254,10 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.11  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.10  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

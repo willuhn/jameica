@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Headline.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Headline.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views.parts;
+package de.willuhn.jameica.gui.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.views.util.Style;
+import de.willuhn.jameica.gui.util.Style;
 
 /**
  * Malt eine Standard-Ueberschrift in den Dialog.
@@ -82,6 +82,10 @@ public class Headline
 
 /*********************************************************************
  * $Log: Headline.java,v $
+ * Revision 1.1  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.4  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

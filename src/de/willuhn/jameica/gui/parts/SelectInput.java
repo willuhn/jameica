@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views.parts;
+package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
 import java.util.Enumeration;
@@ -126,7 +126,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -151,7 +151,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -159,7 +159,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.Input#focus()
    */
   public void focus()
   {
@@ -168,7 +168,7 @@ public class SelectInput extends Input
 
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.Input#disable()
    */
   public void disable()
   {
@@ -176,7 +176,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.Input#enable()
    */
   public void enable()
   {
@@ -184,7 +184,7 @@ public class SelectInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -194,6 +194,10 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.1  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.18  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

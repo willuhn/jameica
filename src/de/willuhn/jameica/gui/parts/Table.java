@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views.parts;
+package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
 import java.text.Collator;
@@ -31,6 +31,7 @@ import de.willuhn.util.I18N;
 
 /**
  * Erzeugt eine Standard-Tabelle.
+ * TODO Spaltenbreiten und Sortierung beim Verlassen speichern
  * @author willuhn
  */
 public class Table
@@ -299,6 +300,10 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.1  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.19  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

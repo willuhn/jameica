@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/util/Attic/Style.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/28 20:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views.util;
+package de.willuhn.jameica.gui.util;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -74,6 +74,10 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.1  2004/01/28 20:51:25  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.4  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.10 $
+ * $Date: 2004/01/28 20:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.Plugin;
 import de.willuhn.jameica.PluginLoader;
-import de.willuhn.jameica.gui.views.parts.LabelGroup;
+import de.willuhn.jameica.gui.parts.LabelGroup;
 import de.willuhn.util.I18N;
 
 
@@ -59,6 +59,10 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.10  2004/01/28 20:51:25  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.9  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

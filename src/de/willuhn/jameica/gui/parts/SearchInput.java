@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SearchInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views.parts;
+package de.willuhn.jameica.gui.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.views.SearchDialog;
-import de.willuhn.jameica.gui.views.util.Style;
+import de.willuhn.jameica.gui.util.Style;
 
 /**
  * Ist zustaendig fuer Text-Eingabefelder, hinter denen sich jedoch noch ein
@@ -54,7 +54,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -97,7 +97,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -105,7 +105,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
@@ -116,7 +116,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.Input#focus()
    */
   public void focus()
   {
@@ -124,7 +124,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.Input#disable()
    */
   public void disable()
   {
@@ -132,7 +132,7 @@ public class SearchInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.Input#enable()
    */
   public void enable()
   {
@@ -143,6 +143,10 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.1  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.9  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

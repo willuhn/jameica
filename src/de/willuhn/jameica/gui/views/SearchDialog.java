@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.11 $
+ * $Date: 2004/01/28 20:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,8 @@ import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.AbstractControl;
-import de.willuhn.jameica.gui.views.parts.Formatter;
-import de.willuhn.jameica.gui.views.parts.Table;
+import de.willuhn.jameica.gui.parts.Formatter;
+import de.willuhn.jameica.gui.parts.Table;
 import de.willuhn.util.I18N;
 
 /**
@@ -203,6 +203,10 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.11  2004/01/28 20:51:25  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.10  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

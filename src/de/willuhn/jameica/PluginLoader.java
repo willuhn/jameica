@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.31 $
- * $Date: 2004/01/25 18:39:56 $
+ * $Revision: 1.32 $
+ * $Date: 2004/01/28 20:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.util.ClassFinder;
 import de.willuhn.util.MultipleClassLoader;
 
 /**
@@ -196,10 +195,6 @@ public class PluginLoader extends ClassLoader
 		//
 		///////////////////////////////////////////////////////////////
 
-		// wir tun die Klasse noch in die Liste der bekannten Klassen.
-		ClassFinder.addClass(clazz);
-
-
 		///////////////////////////////////////////////////////////////
 		// Klasse checken
     if (!checkPlugin(clazz))
@@ -345,6 +340,10 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.32  2004/01/28 20:51:25  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.31  2004/01/25 18:39:56  willuhn
  * *** empty log message ***
  *

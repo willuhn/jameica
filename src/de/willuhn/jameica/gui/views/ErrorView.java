@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/01/25 18:39:56 $
+ * $Revision: 1.8 $
+ * $Date: 2004/01/28 20:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,7 @@ package de.willuhn.jameica.gui.views;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.views.parts.LabelGroup;
+import de.willuhn.jameica.gui.parts.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -85,6 +85,10 @@ public class ErrorView extends AbstractView
 
 /**********************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.8  2004/01/28 20:51:25  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.7  2004/01/25 18:39:56  willuhn
  * *** empty log message ***
  *

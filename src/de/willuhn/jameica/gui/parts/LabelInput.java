@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelInput.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.views.parts;
+package de.willuhn.jameica.gui.parts;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
@@ -36,7 +36,7 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.parts.Input#getControl()
    */
   public Control getControl()
   {
@@ -47,7 +47,7 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#getValue()
+   * @see de.willuhn.jameica.gui.parts.Input#getValue()
    */
   public String getValue()
   {
@@ -55,28 +55,28 @@ public class LabelInput extends Input
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#focus()
+   * @see de.willuhn.jameica.gui.parts.Input#focus()
    */
   public void focus()
   {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.parts.Input#setValue(java.lang.String)
    */
   public void setValue(String value)
   {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#disable()
+   * @see de.willuhn.jameica.gui.parts.Input#disable()
    */
   public void disable()
   {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Input#enable()
+   * @see de.willuhn.jameica.gui.parts.Input#enable()
    */
   public void enable()
   {
@@ -87,6 +87,10 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.1  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.8  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/25 18:39:56 $
+ * $Revision: 1.10 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.views.parts.Table;
+import de.willuhn.jameica.gui.parts.Table;
 import de.willuhn.util.ArrayEnumeration;
 import de.willuhn.util.History;
 import de.willuhn.util.I18N;
@@ -159,6 +159,10 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.10  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.9  2004/01/25 18:39:56  willuhn
  * *** empty log message ***
  *

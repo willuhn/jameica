@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/01/25 18:39:56 $
+ * $Revision: 1.17 $
+ * $Date: 2004/01/28 20:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import de.willuhn.util.Logger;
 /**
  * Liest die System-Konfiguration aus config.xml. 
  * @author willuhn
+ * TODO Konfiguration als Service remote aenderbar machen 
  */
 public class Config
 {
@@ -446,6 +447,10 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.17  2004/01/28 20:51:25  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.16  2004/01/25 18:39:56  willuhn
  * *** empty log message ***
  *

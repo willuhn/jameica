@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/01/25 18:39:56 $
+ * $Revision: 1.19 $
+ * $Date: 2004/01/28 20:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,14 +32,15 @@ import de.willuhn.jameica.Jameica;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.FatalErrorView;
-import de.willuhn.jameica.gui.views.util.Style;
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 import de.willuhn.util.MultipleClassLoader;
 
 /**
- * Startet und beendet die GUI der Anwendung. 
+ * Startet und beendet die GUI der Anwendung.
  * @author willuhn
+ * TODO Fenster-Groesse und -Position beim Beenden speichern
  */
 public class GUI
 {
@@ -431,6 +432,10 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.19  2004/01/28 20:51:24  willuhn
+ * @C gui.views.parts moved to gui.parts
+ * @C gui.views.util moved to gui.util
+ *
  * Revision 1.18  2004/01/25 18:39:56  willuhn
  * *** empty log message ***
  *
