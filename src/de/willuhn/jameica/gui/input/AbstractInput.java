@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/05/23 16:34:18 $
+ * $Revision: 1.5 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,7 +77,7 @@ public abstract class AbstractInput
    * Liefert das Composite, in dem das Control gemalt werden soll.
    * @return das Composite, in dem das Control platziert wird.
    */
-  protected final Composite getParent()
+  protected Composite getParent()
   {
     return this.parent;
   }
@@ -205,6 +205,10 @@ public abstract class AbstractInput
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.5  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.4  2004/05/23 16:34:18  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.6 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,15 +14,19 @@ package de.willuhn.jameica.gui.input;
 
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 
 /**
  * Eingabe-Feld, welches beim Klick auf den Button einen Dialog zur Auswahl
  * eines Objektes oeffnet.
  * Achtung: Der Dialog liefert beim Schliessen ein lapidares <code>Object</code>
- * zurueckg. Da das Text-Eingabefeld natuerlich nicht wissen kann,
+ * zurueck. Da das Text-Eingabefeld natuerlich nicht wissen kann,
  * wie es das anzeigen soll, wird der Rueckgabewert des Dialogs
  * nicht ausgewertet. Stattdessen muss an den Dialog via <code>addCloseListener</code>
  * ein Listener angehangen werden, der beim Schliessen des Dialogs ausgeloest
@@ -38,6 +42,8 @@ import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 public class DialogInput extends ButtonInput
 {
 
+	private String value;
+	private Text text;
   private AbstractDialog dialog;
   private Object choosen;
 
@@ -48,8 +54,8 @@ public class DialogInput extends ButtonInput
    */
   public DialogInput(String value,AbstractDialog d)
   {
-  	super(value);
-    this.dialog = d;
+  	this.value = value;
+  	this.dialog = d;
     addButtonListener(new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
@@ -58,7 +64,7 @@ public class DialogInput extends ButtonInput
 				try {
 					choosen = dialog.open();
 					text.redraw();
-					text.forceFocus(); // das muessen wir machen, damit die Lister ausgeloest werden
+					text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
 				}
 				catch (Exception e1)
 				{
@@ -77,6 +83,15 @@ public class DialogInput extends ButtonInput
   {
     return choosen;
   }
+  
+  /**
+   * Liefert den derzeit angezeigten Text.
+   * @return angezeigter Text.
+   */
+  public String getText()
+  {
+  	return value;
+  }
 
 
   /**
@@ -90,10 +105,25 @@ public class DialogInput extends ButtonInput
     if (this.text != null && !this.text.isDisposed())
 	    this.text.setText(value.toString());
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
+   */
+  public Control getClientControl(Composite parent) {
+  	text = GUI.getStyleFactory().createText(parent);
+  	if (value != null)
+  		text.setText(value);
+  	return text;
+  }
+  
 }
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.6  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.5  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

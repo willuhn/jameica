@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 18:15:32 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Label createLabel(Composite parent)
   {
-		return new Label(parent,SWT.NONE);
+		return new Label(parent,SWT.BORDER);
   }
 
   /**
@@ -51,7 +51,7 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   public Text createText(Composite parent)
   {
 		Text text = new Text(parent,SWT.BORDER);
-		text.setForeground(Color.FOREGROUND.getSWTColor());
+		text.setForeground(Color.WIDGET_FG.getSWTColor());
 		text.setBackground(Color.WIDGET_BG.getSWTColor());
 		return text;
   }
@@ -62,7 +62,7 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   public CCombo createCombo(Composite parent)
   {
     CCombo combo = new CCombo(parent,SWT.READ_ONLY);
-		combo.setForeground(Color.FOREGROUND.getSWTColor());
+		combo.setForeground(Color.WIDGET_FG.getSWTColor());
 		combo.setBackground(Color.WIDGET_BG.getSWTColor());
 		return combo;
   }
@@ -80,6 +80,10 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
+ * Revision 1.3  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.2  2004/05/23 18:15:32  willuhn
  * *** empty log message ***
  *

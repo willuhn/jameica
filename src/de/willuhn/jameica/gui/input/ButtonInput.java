@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/26 23:23:23 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,13 +22,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Color;
 
 /**
- * Text-Eingabefeld, welches jedoch noch einen Button hinten dran
+ * Eingabefeld, welches jedoch noch einen Button hinten dran
  * besitzt.
  * @author willuhn
  */
@@ -36,9 +34,9 @@ public abstract class ButtonInput extends AbstractInput
 {
 
   private Composite comp;
-  protected Text text;
+  protected Control clientControl;
   protected String value;
-	protected boolean textEnabled = true;
+	protected boolean clientControlEnabled = true;
   protected boolean buttonEnabled = true;
 
 	private Button button;
@@ -46,16 +44,8 @@ public abstract class ButtonInput extends AbstractInput
 	private Image  buttonImage;
 	private ArrayList buttonListeners = new ArrayList();
 
-  /**
-   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
-   * @param value der initial einzufuegende Wert fuer das Eingabefeld.
-   * @param d der Dialog.
-   */
-  public ButtonInput(String value)
-  {
-    this.value = value;
-  }
-
+  public abstract Control getClientControl(Composite parent);
+  
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
    */
@@ -63,7 +53,6 @@ public abstract class ButtonInput extends AbstractInput
   {
 
 		comp = new Composite(getParent(),SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight=0;
 		layout.marginWidth=0;
@@ -71,18 +60,11 @@ public abstract class ButtonInput extends AbstractInput
 		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
   
-		text = GUI.getStyleFactory().createText(comp);
+		clientControl = getClientControl(comp);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 1;
-		text.setLayoutData(gd);
-		text.setText((value == null ? "" : value));
-		text.setEnabled(textEnabled);
-// geschieht scheinbar ohnehin schon
-//		text.addFocusListener(new FocusAdapter(){
-//			public void focusGained(FocusEvent e){
-//				text.selectAll();
-//			}
-//		});
+		clientControl.setLayoutData(gd);
+		clientControl.setEnabled(clientControlEnabled);
   
     button = GUI.getStyleFactory().createButton(comp);
 		if (this.buttonImage == null && this.buttonText == null)
@@ -136,21 +118,12 @@ public abstract class ButtonInput extends AbstractInput
 		buttonListeners.add(l);
 	}
 
-	/**
-	 * Liefert den angezeigten Text zurueck.
-	 * @return Text.
-	 */
-	public final String getText()
-	{
-		return text.getText();
-	}
-
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
    */
   public final void focus()
   {
-    text.setFocus();
+    clientControl.setFocus();
   }
 
   /**
@@ -159,7 +132,7 @@ public abstract class ButtonInput extends AbstractInput
   public final void disable()
   {
   	disableButton();
-  	disableText();
+  	disableClientControl();
   }
 
   /**
@@ -168,17 +141,17 @@ public abstract class ButtonInput extends AbstractInput
   public final void enable()
   {
   	enableButton();
-  	enableText();
+  	enableClientControl();
   }
 
 	/**
-   * Aktiviert nur den Text.
+   * Aktiviert nur das ClientControl.
    */
-  public final void enableText()
+  public final void enableClientControl()
 	{
-		textEnabled = true;
-		if (text != null && !text.isDisposed())
-			text.setEnabled(true);
+		clientControlEnabled = true;
+		if (clientControl != null && !clientControl.isDisposed())
+			clientControl.setEnabled(true);
 	}
 	
 	/**
@@ -192,13 +165,13 @@ public abstract class ButtonInput extends AbstractInput
 	}
 	
 	/**
-   * Deaktiviert nur den Text.
+   * Deaktiviert nur das ClientControl.
    */
-  public final void disableText()
+  public final void disableClientControl()
 	{
-		textEnabled = false;
-		if (text != null && !text.isDisposed())
-			text.setEnabled(false);
+		clientControlEnabled = false;
+		if (clientControl != null && !clientControl.isDisposed())
+			clientControl.setEnabled(false);
 	}
 	
 	/**
@@ -214,6 +187,10 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.3  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.2  2004/05/26 23:23:23  willuhn
  * @N Timeout fuer Messages in Statusbars
  *

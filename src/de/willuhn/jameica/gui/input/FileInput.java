@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,10 @@ package de.willuhn.jameica.gui.input;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
@@ -28,24 +31,24 @@ import de.willuhn.jameica.gui.GUI;
 public class FileInput extends ButtonInput
 {
 
+	private Text text;
+	private String value;
+	
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param value der initial einzufuegende Wert fuer das Eingabefeld.
    */
   public FileInput(String value)
   {
-  	super(value);
+  	this.value = value;
 		addButtonListener(new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
 			{
 				Application.getLog().debug("starting file dialog");
 				FileDialog dialog = new FileDialog(GUI.getShell(),SWT.OPEN);
-				String s = dialog.open();
-				if (s != null && !"".equals(s))
-					text.setText(s); // wir schreiben den Wert nur rein, wenn etwas uebergeben wurde
-				text.redraw();
-				text.forceFocus(); // das muessen wir machen, damit die CommentLister ausgeloest werden
+				setValue(dialog.open());
+				text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
 			}
 		});
   }
@@ -76,10 +79,23 @@ public class FileInput extends ButtonInput
     this.text.redraw();
   }
 
+	/**
+	 * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
+	 */
+  public Control getClientControl(Composite parent) {
+  	text = GUI.getStyleFactory().createText(parent);
+  	text.setText(value);
+  	return text;
+  }
+
 }
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.4  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.3  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/05/23 18:15:32 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,15 +30,19 @@ public class StyleFactoryFlatImpl implements StyleFactory
 {
 
   private static FormToolkit toolkit = new FormToolkit(Display.getCurrent());
-	
+  static
+  {
+  	toolkit.setBorderStyle(SWT.NULL);
+  }
+
   /**
    * @see de.willuhn.jameica.gui.util.StyleFactory#createButton(org.eclipse.swt.widgets.Composite)
    */
   public Button createButton(Composite parent)
   {
 		Button button = toolkit.createButton(parent,"",SWT.PUSH);
-		toolkit.paintBordersFor(parent);
 		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		toolkit.paintBordersFor(parent);
 		return button;
   }
 
@@ -47,7 +51,12 @@ public class StyleFactoryFlatImpl implements StyleFactory
    */
   public Label createLabel(Composite parent)
   {
-		return new Label(parent,SWT.NONE);
+  	Label label = toolkit.createLabel(parent,"");
+  	label.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+  	label.setForeground(Color.WIDGET_FG.getSWTColor());
+  	label.setBackground(Color.WIDGET_BG.getSWTColor());
+  	toolkit.paintBordersFor(parent);
+  	return label;
   }
 
   /**
@@ -55,8 +64,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
    */
   public Text createText(Composite parent)
   {
-		Text text = toolkit.createText(parent,"");
-		text.setForeground(Color.FOREGROUND.getSWTColor());
+  	Text text = toolkit.createText(parent,"");
+  	text.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+  	text.setForeground(Color.WIDGET_FG.getSWTColor());
 		text.setBackground(Color.WIDGET_BG.getSWTColor());
 		toolkit.paintBordersFor(parent);
 		return text;
@@ -67,9 +77,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
    */
   public CCombo createCombo(Composite parent)
 	{
-		CCombo combo = new CCombo(parent,SWT.READ_ONLY);
+  	final CCombo combo = new CCombo(parent,SWT.READ_ONLY);
 		combo.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-		combo.setForeground(Color.FOREGROUND.getSWTColor());
+		combo.setForeground(Color.WIDGET_FG.getSWTColor());
 		combo.setBackground(Color.WIDGET_BG.getSWTColor());
 		toolkit.paintBordersFor(parent);
 		return combo;
@@ -87,6 +97,10 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.4  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.3  2004/05/23 18:15:32  willuhn
  * *** empty log message ***
  *

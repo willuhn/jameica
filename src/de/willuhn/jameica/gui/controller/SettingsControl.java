@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/05/27 23:38:25 $
+ * $Revision: 1.20 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,11 +37,10 @@ public class SettingsControl extends AbstractControl
 {
 
 	private I18N i18n;
-	private AbstractInput colorWhite;
-	private AbstractInput colorComment;
+	private AbstractInput colorWidgetBG;
+	private AbstractInput colorWidgetFG;
 	private AbstractInput colorBackground;
-	private AbstractInput colorForeground;
-	private AbstractInput colorBorder;
+	private AbstractInput colorComment;
 	private AbstractInput colorError;
 	private AbstractInput colorSuccess;
 	private AbstractInput colorLink;
@@ -89,15 +88,27 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
    * @return
    */
-  public AbstractInput getColorWhite()
+  public AbstractInput getColorWidgetBG()
 	{
-		if (colorWhite != null)
-			return colorWhite;
-		colorWhite = new ColorInput(Color.WIDGET_BG.getSWTColor());
-		return colorWhite;
+		if (colorWidgetBG != null)
+			return colorWidgetBG;
+		colorWidgetBG = new ColorInput(Color.WIDGET_BG.getSWTColor());
+		return colorWidgetBG;
 	}
 
-	/**
+  /**
+   * Auswahlfeld.
+   * @return
+   */
+  public AbstractInput getColorWidgetFG()
+  {
+  	if (colorWidgetFG != null)
+  		return colorWidgetFG;
+  	colorWidgetFG = new ColorInput(Color.WIDGET_FG.getSWTColor());
+  	return colorWidgetFG;
+  }
+
+  /**
 	 * Auswahlfeld.
 	 * @return
 	 */
@@ -119,30 +130,6 @@ public class SettingsControl extends AbstractControl
 			return colorBackground;
 		colorBackground = new ColorInput(Color.BACKGROUND.getSWTColor());
 		return colorBackground;
-	}
-
-	/**
-	 * Auswahlfeld.
-	 * @return
-	 */
-	public AbstractInput getColorForeground()
-	{
-		if (colorForeground != null)
-			return colorForeground;
-		colorForeground = new ColorInput(Color.FOREGROUND.getSWTColor());
-		return colorForeground;
-	}
-
-	/**
-	 * Auswahlfeld.
-	 * @return
-	 */
-	public AbstractInput getColorBorder()
-	{
-		if (colorBorder != null)
-			return colorBorder;
-		colorBorder = new ColorInput(Color.BORDER.getSWTColor());
-		return colorBorder;
 	}
 
 	/**
@@ -216,12 +203,11 @@ public class SettingsControl extends AbstractControl
 
   	try
     {
-    	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWhite().getValue());
+    	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
 			Color.COMMENT.setSWTColor((org.eclipse.swt.graphics.Color)getColorComment().getValue());
 			Color.BACKGROUND.setSWTColor((org.eclipse.swt.graphics.Color)getColorBackground().getValue());
 
-			Color.FOREGROUND.setSWTColor((org.eclipse.swt.graphics.Color)getColorForeground().getValue());
-			Color.BORDER.setSWTColor((org.eclipse.swt.graphics.Color)getColorBorder().getValue());
+			Color.WIDGET_FG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetFG().getValue());
 
 			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
 			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
@@ -271,10 +257,9 @@ public class SettingsControl extends AbstractControl
   			return;
 
 			Color.WIDGET_BG.reset();
-			Color.COMMENT.reset();
+			Color.WIDGET_FG.reset();
 			Color.BACKGROUND.reset();
-			Color.FOREGROUND.reset();
-			Color.BORDER.reset();
+			Color.COMMENT.reset();
 			Color.ERROR.reset();
 			Color.SUCCESS.reset();
 			Color.LINK.reset();
@@ -296,6 +281,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.20  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.19  2004/05/27 23:38:25  willuhn
  * @B deadlock in swt event queue while startGUITimeout
  *

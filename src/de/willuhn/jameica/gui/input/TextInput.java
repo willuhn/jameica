@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/05/26 23:23:23 $
+ * $Revision: 1.5 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,13 +45,6 @@ public class TextInput extends AbstractInput
 		text = GUI.getStyleFactory().createText(getParent());
 		text.setEnabled(enabled);
     text.setText((value == null ? "" : value));
-// Das wird scheinbar schon automatisch gemacht.
-//    text.addFocusListener(new FocusAdapter(){
-//      public void focusGained(FocusEvent e){
-//        text.selectAll();
-//      }
-//    });
-
     return text;
   }
 
@@ -107,6 +100,10 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.5  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.4  2004/05/26 23:23:23  willuhn
  * @N Timeout fuer Messages in Statusbars
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 16:34:18 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,10 +26,10 @@ import de.willuhn.jameica.gui.GUI;
 public class Color {
 	
 	public final static Color WIDGET_BG   = new Color("color.widgetbg",			new RGB(255,255,255));
-	public final static Color COMMENT 		= new Color("color.comment",			new RGB(140,140,140));
+	public final static Color WIDGET_FG   = new Color("color.widgetfg",		  new RGB(0,0,0));
 	public final static Color BACKGROUND 	= new Color("color.background",		GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
-	public final static Color FOREGROUND  = new Color("color.foreground",		new RGB(0,0,0));
-	public final static Color BORDER			= new Color("color.border",				new RGB(100,100,100));
+	public final static Color BORDER 			= new Color("color.border",				new RGB(0,0,0));
+	public final static Color COMMENT 		= new Color("color.comment",			new RGB(140,140,140));
 	public final static Color ERROR				= new Color("color.error",				new RGB(250,10,10));
 	public final static Color SUCCESS			= new Color("color.success",			new RGB(0,0,0));
 	public final static Color LINK				= new Color("color.link",					new RGB(0,0,100));
@@ -90,6 +90,10 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.3  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.2  2004/05/23 16:34:18  willuhn
  * *** empty log message ***
  *

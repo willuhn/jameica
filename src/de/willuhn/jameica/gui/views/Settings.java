@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/05/27 21:44:30 $
+ * $Revision: 1.22 $
+ * $Date: 2004/06/02 21:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,12 +46,11 @@ public class Settings extends AbstractView
 		LabelGroup colorGroup = new LabelGroup(getParent(),i18n.tr("Look and Feel"));
 
 		//colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
-		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWhite());
-		colorGroup.addLabelPair(i18n.tr("Farbe von Kommentaren"),control.getColorComment());
+		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWidgetBG());
+		colorGroup.addLabelPair(i18n.tr("Textfarbe von Eingabefeldern"),control.getColorWidgetFG());
 		colorGroup.addLabelPair(i18n.tr("Hintergrundfarbe"),control.getColorBackground());
 
-		colorGroup.addLabelPair(i18n.tr("Vordergrundfarbe"),control.getColorForeground());
-		colorGroup.addLabelPair(i18n.tr("Rahmenfarbe"),control.getColorBorder());
+		colorGroup.addLabelPair(i18n.tr("Farbe von Kommentaren"),control.getColorComment());
 		colorGroup.addLabelPair(i18n.tr("Fehlermeldungen"),control.getColorError());
 		colorGroup.addLabelPair(i18n.tr("Erfolgsmeldungen"),control.getColorSuccess());
 		colorGroup.addLabelPair(i18n.tr("Links"),control.getColorLink());
@@ -85,6 +84,10 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.22  2004/06/02 21:15:15  willuhn
+ * @B win32 fixes in flat style
+ * @C made ButtonInput more abstract
+ *
  * Revision 1.21  2004/05/27 21:44:30  willuhn
  * *** empty log message ***
  *
