@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/11/05 20:00:43 $
+ * $Revision: 1.24 $
+ * $Date: 2004/11/10 17:48:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -136,6 +136,17 @@ public class TablePart implements Part
 	{
 		this.showSummary = false;
 	}
+
+  /**
+   * Legt fest, bis zu welchem Element gescrollt werden soll.
+   * @param i Index des Elementes, welches nach dem Scrollen als erstes angezeigt werden soll.
+   */
+  public void setTopIndex(int i)
+  {
+    if (table == null)
+      return;
+    table.setTopIndex(i);
+  }
 
 	/**
 	 * Entfernt das genannte Element aus der Tabelle.
@@ -436,6 +447,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.24  2004/11/10 17:48:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2004/11/05 20:00:43  willuhn
  * @D javadoc fixes
  *

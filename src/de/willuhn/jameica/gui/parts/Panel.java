@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/11/10 15:53:23 $
+ * $Revision: 1.2 $
+ * $Date: 2004/11/10 17:48:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class Panel implements Part
   private Composite myParent;
 
   private Tracker tracker;
-
+  
   /**
    * ct.
    * @param title anzuzeigender Titel.
@@ -104,7 +104,7 @@ public class Panel implements Part
       head.setLayout(headLayout);
       head.setBackground(new Color(GUI.getDisplay(),255,255,255));
 
-//      head.addListener(SWT.MouseDown, new Listener() {
+//      form.addListener(SWT.MouseDown, new Listener() {
 //        public void handleEvent (Event e) {
 //          Tracker tracker = new Tracker(myParent,0);
 //          Point pt = myParent.getSize();
@@ -151,6 +151,9 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.2  2004/11/10 17:48:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/11/10 15:53:23  willuhn
  * @N Panel
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.32 $
- * $Date: 2004/10/08 00:19:19 $
+ * $Revision: 1.33 $
+ * $Date: 2004/11/10 17:48:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 
+import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -285,10 +286,12 @@ public class StatusBar {
 
 		try
     {
-      TablePart table = new TablePart(PseudoIterator.fromArray(logs),null);
+      GenericIterator elements = PseudoIterator.fromArray(logs);
+      TablePart table = new TablePart(elements,null);
       table.disableSummary();
       table.addColumn(Application.getI18n().tr("Meldungen"),"foo");
       table.paint(snapin);
+      table.setTopIndex(elements.size() - 1); //zum Ende scrollen
       GUI.getView().snapIn();
     }
     catch (RemoteException re) {
@@ -351,6 +354,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.33  2004/11/10 17:48:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.32  2004/10/08 00:19:19  willuhn
  * *** empty log message ***
  *

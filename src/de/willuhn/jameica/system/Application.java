@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/11/05 01:50:44 $
+ * $Revision: 1.19 $
+ * $Date: 2004/11/10 17:48:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -109,6 +109,7 @@ public final class Application {
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
 		Logger.addTarget(System.out);
+    
 		Logger.setLevel(Logger.LEVEL_INFO);
 		Logger.info("starting jameica...");
 		//
@@ -464,6 +465,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.19  2004/11/10 17:48:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/11/05 01:50:44  willuhn
  * *** empty log message ***
  *
