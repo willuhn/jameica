@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/01/12 11:32:43 $
+ * $Revision: 1.13 $
+ * $Date: 2005/01/12 14:04:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -33,6 +34,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
+import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
+import org.bouncycastle.asn1.misc.NetscapeCertType;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -85,6 +88,7 @@ public class SSLFactory
 
 		Logger.info("  generating rsa keypair");
 		KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+    kp.initialize(1024);
 		KeyPair keypair = kp.generateKeyPair();
 
 		this.privateKey = keypair.getPrivate();
@@ -103,13 +107,27 @@ public class SSLFactory
 		X509Name user   = new X509Name(attributes);
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 
+    byte[] serno = new byte[8];
+    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+    random.setSeed((long) (new Date().getTime()));
+    random.nextBytes(serno);
+    generator.setSerialNumber((new BigInteger(serno)).abs());
+
+    generator.setIssuerDN(user);
 		generator.setSubjectDN(user);
 		generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*4)));
 		generator.setNotBefore(new Date());
-		generator.setIssuerDN(user);
+
 		generator.setPublicKey(this.publicKey);
-		generator.setSerialNumber(new BigInteger("1"));
 		generator.setSignatureAlgorithm("MD5WITHRSA");
+
+//    generator.addExtension(X509Extensions.SubjectKeyIdentifier,false, createSubjectKeyId(this.publicKey));
+//    generator.addExtension(X509Extensions.BasicConstraints, false,new BasicConstraints(true));
+    generator.addExtension(MiscObjectIdentifiers.netscapeCertType,false,
+                           new NetscapeCertType(NetscapeCertType.sslServer |
+                                                NetscapeCertType.objectSigning |
+                                                NetscapeCertType.sslClient
+                                               ));
 
 		this.certificate = generator.generateX509Certificate(this.privateKey);
 		//
@@ -132,6 +150,13 @@ public class SSLFactory
 		////////////////////////////////////////////////////////////////////////////
 	}
 	
+//  private SubjectKeyIdentifier createSubjectKeyId(PublicKey pubKey) throws Exception
+//  {
+//    ByteArrayInputStream bIn = new ByteArrayInputStream(pubKey.getEncoded());
+//    SubjectPublicKeyInfo info = new SubjectPublicKeyInfo((ASN1Sequence) new DERInputStream(bIn).readObject());
+//    return new SubjectKeyIdentifier(info);
+//  }
+
 	/**
 	 * Speichert den Keystore.
    * @throws Exception
@@ -291,6 +316,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.13  2005/01/12 14:04:36  willuhn
+ * @N netscape key usage
+ *
  * Revision 1.12  2005/01/12 11:32:43  willuhn
  * *** empty log message ***
  *
