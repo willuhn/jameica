@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/23 20:30:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,22 +66,11 @@ public class YesNoDialog extends AbstractDialog {
 	}
 
   /**
-   * Oeffnet den Dialog und liefert ein Boolean - je nach Auswahl von Ja/Nein.
-   * @return true, wenn Ja gedrueckt wurde, sonst false.
-   * @throws Exception
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
-  public boolean getChoice() throws Exception
+  public void paint(Composite parent) throws Exception
 	{
-		super.open();
-		return choice;
-	}
-
-	/**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint()
-   */
-  public void paint() throws Exception
-	{
-		comp = new Composite(getParent(),SWT.NONE);
+		comp = new Composite(parent,SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout(2,false));
 		
@@ -111,11 +100,21 @@ public class YesNoDialog extends AbstractDialog {
 			}
 		});
 	}
+
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
+   */
+  public Object getData() throws Exception {
+    return new Boolean(choice);
+  }
 }
 
 
 /**********************************************************************
  * $Log: YesNoDialog.java,v $
+ * Revision 1.2  2004/02/23 20:30:34  willuhn
+ * @C refactoring in AbstractDialog
+ *
  * Revision 1.1  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

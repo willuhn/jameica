@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.26 $
+ * $Date: 2004/02/23 20:30:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -317,7 +317,7 @@ public class GUI
 	{
     Application.getLog().debug("starting view: " + className);
 
-		startJob(new Runnable() {
+		startSync(new Runnable() {
       public void run() {
 
 		    if (gui.currentView != null) {
@@ -401,18 +401,17 @@ public class GUI
   }
 
 	/**
-	 * Startet einen Job, der typischerweise laenger dauert.
-	 * Daher wird waehrend dessen Laufzeit eine Sanduhr eingeblendet
-	 * und der ProgressBar in der Statusleiste wird animiert.
+	 * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
+	 * Waehrend der Ausfuehrung wird eine Sanduhr angezeigt und die GUI geblockt.
 	 * Das Runnable wird in einem extra Thread gestartet.
 	 * Von daher muss kein Thread uebergeben werden.
+	 * Das Runnable hat Zugriff auf die GUI.
    * @param job
    */
-  public static void startJob(final Runnable job)
+  public static void startSync(final Runnable job)
 	{
 
-		startProgress();
-
+		// TODO Das sollte mal noch schoen gemacht werden
 		Runnable r = new Runnable() {
 
 			boolean done = false;
@@ -437,7 +436,6 @@ public class GUI
               public void run() {
               	if (getDisplay().isDisposed())
               		return;
-								stopProgress();
               }
             });
 					}
@@ -453,6 +451,46 @@ public class GUI
     };
 
 		BusyIndicator.showWhile(getDisplay(), r);
+	}
+
+	/**
+	 * Startet einen Job asynchron zur GUI, der typischerweise laenger dauert.
+	 * Waehrend der Ausfuehrung wird die nicht GUI geblockt. Informativ
+	 * wird unten rechts ein ProgressBar angezeigt.
+	 * Das Runnable wird in einem extra Thread gestartet.
+	 * Von daher muss kein Thread uebergeben werden.
+	 * Das Runnable hat <b>keinen</b> direkten Zugriff auf die GUI.
+	 * @param job
+	 */
+	public static void startAsync(final Runnable job)
+	{
+
+		startProgress();
+
+		Runnable r = new Runnable() {
+      public void run() {
+				Thread t = new Thread() {
+
+					public void run() {
+						try {
+							job.run();
+						}
+						catch (Exception e)
+						{
+							// Wir wollen nicht, dass unbefugter Zugriff auf die GUI stattfindet
+							Application.getLog().error(e.getLocalizedMessage(),e);
+						}
+						stopProgress();
+					}
+				};
+				t.start();
+				while (!getShell().isDisposed()) {
+					if (!getDisplay().readAndDispatch())
+						getDisplay().sleep();
+				}
+      }
+    };
+		getDisplay().asyncExec(r);
 	}
 
 	/**
@@ -574,6 +612,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.26  2004/02/23 20:30:34  willuhn
+ * @C refactoring in AbstractDialog
+ *
  * Revision 1.25  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

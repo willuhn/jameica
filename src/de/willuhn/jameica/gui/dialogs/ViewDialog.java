@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/Attic/ViewDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/20 20:45:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/23 20:30:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,14 +40,14 @@ public class ViewDialog extends AbstractDialog {
 		this.view = view;
   }
 
-	/**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint()
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint() throws Exception
+  public void paint(Composite parent) throws Exception
 	{
 		// Die View zeigen wir nicht direkt in unserer View an, weil die
 		// zu wenig Rahmen hat.
-		Composite comp = new Composite(getParent(),SWT.NONE);
+		Composite comp = new Composite(parent,SWT.NONE);
 		comp.setBackground(Style.COLOR_BG);
 		comp.setLayout(new GridLayout());
 		
@@ -68,11 +68,21 @@ public class ViewDialog extends AbstractDialog {
 		});
 		view.bind();
 	}
+
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
+   */
+  public Object getData() throws Exception {
+    return null;
+  }
 }
 
 
 /**********************************************************************
  * $Log: ViewDialog.java,v $
+ * Revision 1.2  2004/02/23 20:30:33  willuhn
+ * @C refactoring in AbstractDialog
+ *
  * Revision 1.1  2004/02/20 20:45:24  willuhn
  * *** empty log message ***
  *

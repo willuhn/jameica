@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SearchDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/23 20:30:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,22 +12,14 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
-import java.rmi.RemoteException;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.parts.Formatter;
 import de.willuhn.jameica.gui.parts.Table;
-import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.jameica.gui.views.AbstractView;
-import de.willuhn.util.I18N;
 
 /**
  * Basisklasse fuer Such-Dialoge.
@@ -35,40 +27,25 @@ import de.willuhn.util.I18N;
  * der ein Datensatz ausgewaehlt werden kann.
  * @author willuhn
  */
-public abstract class SearchDialog
+public abstract class SearchDialog extends AbstractDialog
 {
 
   private Table table;
-  private String title;
-  private Shell shell;
-
   private String id = null;
 
-  /**
-   * Setzt die Liste, die fuer den Dialog verwendet werden soll.
-   * @param list die anzizeigende Liste.
+	/**
+	 * ct.
+   * @param list anzuzeigende Liste.
+   * @param position Position.
+   * @see AbstractDialog#POSITION_CENTER
+   * @see AbstractDialog#POSITION_MOUSE
    */
-  protected void setList(DBIterator list)
-  {
-    if (list == null)
-    {
-      Application.getLog().error("unable to init a search dialog without given list.");
-      return;
-    }
-    this.table = new Table(list,new SearchController(null));
-  }
-
-  /**
-   * Setzt den Titel des Suchdialogs.
-   * @param title Titel des Such-Dialogs.
-   */
-  protected void setTitle(String title)
-  {
-    if (title == null || "".equals(title))
-      Application.getLog().debug("given title for search dialog is null, skipping.");
-    
-    this.title = title;
-  }
+  public SearchDialog(DBIterator list, int position)
+	{
+		super(position);
+		this.table = new Table(list,new SearchController(null));
+		
+	}
 
   /**
    * Fuegt der Tabelle des Such-Dialogs eine weitere Spalte hinzu.
@@ -101,53 +78,27 @@ public abstract class SearchDialog
     this.table.addColumn(title,field,f);
   }
 
-  /**
-   * Diese Funktion bitte aufrufen, um den Such-Dialog zu oeffnen.
-   * @return den Wert des definierten Feldes des ausgewaehlten Objektes. 
-   */
-  public String open()
-  {
+
+
+	/**
+	 * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
+	 */
+	public void paint(Composite parent) throws Exception {
     if (table == null)
     {
       Application.getLog().warn("table not initialized");
-      return null;
+      return;
     }
 
-    try {
-      Display display = GUI.getDisplay();
-      shell = new Shell(GUI.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-      shell.setText(title == null ? I18N.tr("Suche") : title);
-      shell.setLocation(display.getCursorLocation());
-      shell.setBackground(Style.COLOR_BG);
-      shell.setLayout(new GridLayout(1,false));
-
-      table.paint(shell);
-
-      shell.pack();
-      shell.setSize(shell.getBounds().width,300); // die Hoehe legen wir auf 300 Pixel fest (unabhaengig vom Inhalt)
-      shell.open();
-      while (!shell.isDisposed()) {
-        if (!display.readAndDispatch()) display.sleep();
-      }
-      return load(id);
-    }
-    catch (RemoteException e)
-    {
-      Application.getLog().error("unable to open search dialog");
-      GUI.setActionText(I18N.tr("Fehler beim Öffnen des Such-Dialogs."));
-    }
-    return "";
+    table.paint(parent);
   }
 
-  /**
-   * Diese Funktion muss von abgeleiteten Suchdialogen implementiert werden.
-   * Sie wird von der open() Funktion aufgerufen und uebergibt ihr die ID
-   * des ausgewaehlten Objektes. Es ist Sache des implementierenden Dialoges,
-   * welchen Wert des Objektes der Suchdialog letztendlich zurueckgeben soll.
-   * @param id ID des ausgewaehlten Objektes.
-   * @return der tatsaechlich zurueckzugebende Wert.
-   */
-  protected abstract String load(String id);
+	/**
+	 * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
+	 */
+	public Object getData() throws Exception {
+		return id;
+	}
 
   /**
    * Das ist eigentlich eher ein Dummy-AbstractControl. Wir erstellen hier nur einen,
@@ -197,7 +148,6 @@ public abstract class SearchDialog
     public void handleLoad(String s)
     {
       id = s;
-      shell.dispose();
     }
     
   }
@@ -206,6 +156,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.2  2004/02/23 20:30:34  willuhn
+ * @C refactoring in AbstractDialog
+ *
  * Revision 1.1  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

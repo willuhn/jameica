@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/23 20:30:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -104,15 +104,6 @@ public abstract class AbstractDialog
 	}
 	
 	/**
-	 * Liefert das Composite, in das sich die abgeleitetet Implementierung malen darf.
-   * @return das Composite.
-   */
-  protected final Composite getParent()
-	{
-		return parent;
-	}
-
-	/**
 	 * Fuegt dem Dialog einen Shell-Listener hinzu.
 	 * Der wird u.a. aufgerufen, wenn der User versucht,
 	 * den Dialog ueber den Schliessen-Knopf im Fenster-Rahmen
@@ -143,20 +134,31 @@ public abstract class AbstractDialog
 	 * Muss vom abgeleiteten Dialog ueberschrieben werden.
 	 * In dieser Funktion soll er sich bitte malen.
 	 * Sie wird anschliessend von open() ausgefuehrt.
+	 * @param parent das Composite, in dem der Dialog gemalt werden soll.
 	 * @throws Exception Kann von der abgeleiteten Klasse geworfen
 	 * werden. Tut sie das, wird der Dialog nicht angezeigt.
    */
-  public abstract void paint() throws Exception;
+  public abstract void paint(Composite parent) throws Exception;
 	
+	/**
+	 * Diese Funktion wird beim Schliessen des Dialogs in open()
+	 * aufgerufen und liefert die ausgewaehlten Daten zurueck.
+	 * Die ableitende Klasse sollte hier also die Informationen
+	 * rein tuen, die sie dem Aufrufer gern geben moechte.
+   * @return das ausgewaehlte Objekt.
+   * @throws Exception
+   */
+  public abstract Object getData() throws Exception;
+
   /**
    * Oeffnet den Dialog.
-   * @throws Exception wenn es beim Oeffnen zu einem Fehler gekommen ist
-   * oder paint() manuell eine Exception wirft.
+   * @throws Exception wenn es beim Oeffnen zu einem Fehler gekommen ist.
+   * @return das ausgewaehlte Objekt.
    */
-  public final void open() throws Exception
+  public final Object open() throws Exception
   {
 		try {
-			paint();
+			paint(parent);
 			shell.pack();
 			// shell.setSize(300,shell.getBounds().height);
 			if (pos == POSITION_MOUSE)
@@ -179,6 +181,7 @@ public abstract class AbstractDialog
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) display.sleep();
 			}
+			return getData();
 		}
 		finally
 		{
@@ -200,6 +203,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.4  2004/02/23 20:30:33  willuhn
+ * @C refactoring in AbstractDialog
+ *
  * Revision 1.3  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

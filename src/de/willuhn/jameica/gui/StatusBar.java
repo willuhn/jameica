@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/02/20 01:25:06 $
+ * $Revision: 1.13 $
+ * $Date: 2004/02/23 20:30:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -131,8 +131,14 @@ public class StatusBar {
    */
   protected synchronized void startProgress()
 	{
-		progressStack.topControl = progress;
-		progressComp.layout();
+		Thread t = new Thread("progress")
+		{
+			public void run() {
+				progressStack.topControl = progress;
+				progressComp.layout();
+			}
+		};
+		GUI.getDisplay().asyncExec(t);
 	}
 
 	/**
@@ -140,10 +146,14 @@ public class StatusBar {
 	 */
 	protected synchronized void stopProgress()
 	{
-		if (progressComp.isDisposed())
-			return;
-		progressStack.topControl = noProgress;
-		progressComp.layout();
+		GUI.getDisplay().syncExec(new Runnable() {
+      public void run() {
+				if (progressComp.isDisposed())
+					return;
+				progressStack.topControl = noProgress;
+				progressComp.layout();
+      }
+    });
 	}
 
 
@@ -211,6 +221,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.13  2004/02/23 20:30:34  willuhn
+ * @C refactoring in AbstractDialog
+ *
  * Revision 1.12  2004/02/20 01:25:06  willuhn
  * @N nice dialog
  * @N busy indicator

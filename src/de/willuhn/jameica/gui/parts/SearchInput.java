@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/23 20:30:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -113,7 +113,7 @@ public class SearchInput extends Input
       public void mouseUp(MouseEvent e)
       {
         Application.getLog().debug("starting search dialog");
-        String s = searchDialog.open();
+        String s = (String) searchDialog.open();
         if (s != null && !"".equals(s))
           text.setText(s); // wir schreiben den Wert nur rein, wenn etwas uebergeben wurde
         text.redraw();
@@ -171,6 +171,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.5  2004/02/23 20:30:34  willuhn
+ * @C refactoring in AbstractDialog
+ *
  * Revision 1.4  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

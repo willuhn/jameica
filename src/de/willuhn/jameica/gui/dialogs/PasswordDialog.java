@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/23 20:30:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -92,13 +92,13 @@ public abstract class PasswordDialog extends SimpleDialog {
 		error.layout();
 	}
 
-	/**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint()
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint() throws Exception
+  public void paint(Composite parent) throws Exception
 	{
 		// Composite um alles drumrum.
-		comp = new Composite(getParent(),SWT.NONE);
+		comp = new Composite(parent,SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout(3,false));
 		
@@ -182,7 +182,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 		// einzugeben ;)
 		addShellListener(new ShellListener() {
 			public void shellClosed(ShellEvent e) {
-				e.doit = false;
+				throw new RuntimeException("dialog cancelled via close button");
 			}
       public void shellActivated(ShellEvent e) {};
       public void shellDeactivated(ShellEvent e) {};
@@ -225,6 +225,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.4  2004/02/23 20:30:34  willuhn
+ * @C refactoring in AbstractDialog
+ *
  * Revision 1.3  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *
