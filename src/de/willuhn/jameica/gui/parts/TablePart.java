@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/10/25 17:59:15 $
+ * $Revision: 1.22 $
+ * $Date: 2004/10/26 23:47:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -151,7 +151,7 @@ public class TablePart implements Part
    */
   public void removeItem(GenericObject item) throws RemoteException
 	{
-		if (table == null || item == null)
+		if (table == null || item == null || table.isDisposed())
 			return;
 		TableItem[] items = table.getItems();
 		GenericObject o = null;
@@ -436,6 +436,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.22  2004/10/26 23:47:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.21  2004/10/25 17:59:15  willuhn
  * @N aenderbare Tabellen
  *
