@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/10/08 00:19:19 $
+ * $Revision: 1.24 $
+ * $Date: 2004/10/24 17:19:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -135,9 +135,15 @@ public class View
    */
   public void snapIn()
 	{
-		sash.setMaximizedControl(null);
-		sash.setWeights(new int[] {3,1});
-		snappedIn = true;
+		GUI.startSync(new Runnable()
+    {
+      public void run()
+      {
+				sash.setMaximizedControl(null);
+				sash.setWeights(new int[] {3,1});
+				snappedIn = true;
+      }
+    });
 	}
 
 	/**
@@ -145,8 +151,14 @@ public class View
    */
   public void snapOut()
 	{
-		sash.setMaximizedControl(view);
-		snappedIn = false;
+		GUI.startSync(new Runnable()
+    {
+      public void run()
+      {
+				sash.setMaximizedControl(view);
+				snappedIn = false;
+      }
+    });
 	}
 
 	/**
@@ -247,6 +259,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.24  2004/10/24 17:19:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2004/10/08 00:19:19  willuhn
  * *** empty log message ***
  *
