@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Part.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.2 $
+ * $Date: 2004/11/10 15:53:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,16 +18,21 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Generische GUI-Komponente.
- * Sie zeichent sich durch 2 Merkmale aus.
- * 1) Sie kann auf ein Composite gemalt werden.
- * 2) Durch die Methode refreh malt sie sich vollstaendig neu.
+ * Der primaere Vorteil gegenueber einem herkoemmlichen
+ * SWT-Widget liegt darin, dass die Komponente vollstaendig
+ * erzeugt werden kann noch bevor es gemalt wird. Hae? Alle
+ * SWT-Widgets verlangen im Konstruktor ein Parent (in der Regel
+ * ein Composite). Das heisst, man muss zum Zeitpunkt der Instanziierung
+ * bereits wissen, <b>wo</b> das Widget hingemalt werden soll.
+ * Dies ist hier nicht der Fall. Der <b>Part</b> wird erst gemalt,
+ * wenn dessen paint-Methode aufgerufen wird.
  */
 public interface Part {
 
 	/**
 	 * Malt die Komponente in das angegebene Composite.
    * @param parent das Composite.
-   * @throws RemoteException
+   * @throws Exception kann geworfen werden, wenn es beim Malen zu einem Fehler kommt.
    */
   public void paint(Composite parent) throws RemoteException;
 
@@ -36,6 +41,9 @@ public interface Part {
 
 /**********************************************************************
  * $Log: Part.java,v $
+ * Revision 1.2  2004/11/10 15:53:23  willuhn
+ * @N Panel
+ *
  * Revision 1.1  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *

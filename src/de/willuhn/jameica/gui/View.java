@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/10/24 17:19:11 $
+ * $Revision: 1.25 $
+ * $Date: 2004/11/10 15:53:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,8 @@
 package de.willuhn.jameica.gui;
 
 
+
+import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -34,7 +36,7 @@ import de.willuhn.jameica.gui.util.SWTUtil;
  * Bildet das Content-Frame ab.
  * @author willuhn
  */
-public class View
+public class View implements Part
 {
 	private SashForm sash;
 
@@ -49,23 +51,23 @@ public class View
 	private Canvas panelBg;
 	
 
-	/**
-   * Erzeugt ein neues Content-Frame.
-	 * @param parent
+  /**
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
-  protected View(Composite parent)
-	{
+  public void paint(Composite parent) throws RemoteException
+  {
     this.parent = parent;
-		init();
-		cleanContent();
-	}
-	
+    init();
+    cleanContent();
+  }
+
   /**
    * Initialisiert das Layout der View.
    */
   private void init()
 	{
 		sash = new SashForm(parent,SWT.VERTICAL);
+    sash.setLayoutData(new GridData(GridData.FILL_BOTH));
 		sash.setLayout(new FillLayout());
 		
 		view = new Composite(sash, SWT.BORDER);
@@ -259,6 +261,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.25  2004/11/10 15:53:23  willuhn
+ * @N Panel
+ *
  * Revision 1.24  2004/10/24 17:19:11  willuhn
  * *** empty log message ***
  *

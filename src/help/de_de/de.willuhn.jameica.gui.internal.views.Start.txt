@@ -1,0 +1,15 @@
+<form>
+	<p>
+		<span color="header" font="header">Willkommen bei Jameica.</span>
+	</p>
+
+	<li>
+		In der Statusleiste am unteren Rand der Anwendung werden Ihnen
+		nützliche Informationen über die gerade ausgeführten Anweisungen angezeigt.
+	</li>
+	<li>
+		Klicken Sie in den rechten Bereich der Statusleiste um eine Liste
+		der letzten Meldungen oder in den linken Bereich um einen Auszug
+		des System-Protokolls zu öffnen.
+	</li>
+</form>

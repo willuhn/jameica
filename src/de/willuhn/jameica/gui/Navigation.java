@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.26 $
- * $Date: 2004/10/25 17:59:15 $
+ * $Revision: 1.27 $
+ * $Date: 2004/11/10 15:53:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui;
+
+import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -32,7 +34,8 @@ import de.willuhn.util.Logger;
  * Bildet den Navigations-Baum im linken Frame ab.
  * @author willuhn
  */
-public class Navigation {
+public class Navigation implements Part
+{
 
   private Composite parent			= null;
   private Tree mainTree					= null;
@@ -41,41 +44,46 @@ public class Navigation {
   private TreeItem pluginTree		= null;
   
   /**
-   * Erzeugt die Navigation.
-   * @param parent Das Eltern-Element.
-   * @throws Exception
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
-  protected Navigation(Composite parent) throws Exception
-	{
-		this.parent = parent;
+  public void paint(Composite parent) throws RemoteException
+  {
+    this.parent = parent;
 
-		// Tree erzeugen
-		this.mainTree = new Tree(this.parent, SWT.BORDER);
-		this.mainTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		// Listener fuer "Folder auf machen"
-		this.mainTree.addListener(SWT.Expand, new Listener() {
-			public void handleEvent(Event event) {
-				handleFolderOpen(event);
-			}
-		});
-		// Listener fuer "Folder auf machen"
-		this.mainTree.addListener(SWT.Collapse, new Listener() {
-			public void handleEvent(Event event) {
-				handleFolderClose(event);
-			}
-		});
+    // Tree erzeugen
+    this.mainTree = new Tree(this.parent, SWT.NONE);
+    this.mainTree.setLayoutData(new GridData(GridData.FILL_BOTH));
+    // Listener fuer "Folder auf machen"
+    this.mainTree.addListener(SWT.Expand, new Listener() {
+      public void handleEvent(Event event) {
+        handleFolderOpen(event);
+      }
+    });
+    // Listener fuer "Folder auf machen"
+    this.mainTree.addListener(SWT.Collapse, new Listener() {
+      public void handleEvent(Event event) {
+        handleFolderClose(event);
+      }
+    });
 
-		// Listener fuer die Aktionen
-		this.mainTree.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				handleSelect(event);
-			}
-		});
+    // Listener fuer die Aktionen
+    this.mainTree.addListener(SWT.Selection, new Listener() {
+      public void handleEvent(Event event) {
+        handleSelect(event);
+      }
+    });
 
-
-		// System-Navigation laden
-		load(Application.getManifest().getNavigation(),null);
-	}
+    
+    try
+    {
+      // System-Navigation laden
+      load(Application.getManifest().getNavigation(),null);
+    }
+    catch (Exception e)
+    {
+      throw new RemoteException("error while loading navigation",e);
+    }
+  }
 
   /**
 	 * Laedt das Navigation-Item und dessen Kinder.
@@ -83,7 +91,7 @@ public class Navigation {
    * @param parentTree uebergeordnetes SWT-Element.
    * @throws Exception
    */
-  private void load(NavigationItem element, TreeItem parentTree) throws Exception
+  private void load(NavigationItem element, TreeItem parentTree) throws RemoteException
 	{
 		if (element == null)
 			return;
@@ -153,7 +161,7 @@ public class Navigation {
    * @param parentTree Parent.
    * @throws Exception
    */
-  private void loadChilds(NavigationItem element, TreeItem parentTree) throws Exception
+  private void loadChilds(NavigationItem element, TreeItem parentTree) throws RemoteException
 	{
 		GenericIterator childs = element.getChilds();
 		if (childs == null || childs.size() == 0)
@@ -246,6 +254,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.27  2004/11/10 15:53:23  willuhn
+ * @N Panel
+ *
  * Revision 1.26  2004/10/25 17:59:15  willuhn
  * @N aenderbare Tabellen
  *

@@ -1,12 +1,13 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.62 $
- * $Date: 2004/11/05 20:00:44 $
+ * $Revision: 1.63 $
+ * $Date: 2004/11/10 15:53:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  * 
- * Copyright (c) by willuhn.webdesign All rights reserved
+ * Copyright (c) by willuhn.webdesign 
+ * All rights reserved
  *  
  ******************************************************************************/
 package de.willuhn.jameica.gui;
@@ -33,7 +34,8 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.internal.views.ErrorView;
 import de.willuhn.jameica.gui.internal.views.FatalErrorView;
-import de.willuhn.jameica.gui.internal.views.HelpView;
+import de.willuhn.jameica.gui.parts.FormTextPart;
+import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.style.StyleEngine;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
@@ -62,7 +64,7 @@ public class GUI
 		private View view;
 		private StatusBar statusBar;
 		private Menu menu;
-		private HelpView help;
+		private FormTextPart help;
 		private AbstractView currentView;
 		
 		private Stack history;
@@ -167,22 +169,27 @@ public class GUI
 		left.setLayout(new FillLayout());
 
 		Logger.info("adding navigation");
+    navi = new Navigation();
+    Panel np = new Panel(Application.getI18n().tr("Navigation"),navi);
 		try
 		{
-			navi = new Navigation(left);
+      np.paint(left);
 		}
 		catch (Exception e)
 		{
 			Logger.error("error while loading navigation, skipping",e);
 		}
 
-		help = new HelpView(left);
+		help = new FormTextPart();
+    Panel p = new Panel(Application.getI18n().tr("Hilfe"),help);
+    p.paint(left);
 
 		Composite right = new Composite(sash, SWT.NONE);
 		right.setLayout(new FillLayout());
 		Logger.info("adding content view");
 
-		addView(right);
+    view = new View();
+    view.paint(right);
 
 		left.setWeights(new int[] { 1, 1 });
 		sash.setWeights(new int[] { 1, 3 });
@@ -242,15 +249,6 @@ public class GUI
 		// GUI Loop starten
 		gui.loop();
 
-	}
-
-	/**
-	 * Erzeugt das Content-Frame.
-	 * @param parent
-	 */
-	private void addView(Composite parent)
-	{
-		view = new View(parent);
 	}
 
 	/**
@@ -650,6 +648,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.63  2004/11/10 15:53:23  willuhn
+ * @N Panel
+ *
  * Revision 1.62  2004/11/05 20:00:44  willuhn
  * @D javadoc fixes
  *
