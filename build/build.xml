@@ -35,7 +35,6 @@
 
 
 		<path id="compilepath">
-			<pathelement location="${lib.dir}/bb_util.jar"/>
 			<pathelement location="${lib.dir}/mckoidb.jar"/>
 			<pathelement location="${lib.dir}/mysql-connector-java-3.0.8-stable-bin.jar"/>
 			<pathelement location="${lib.dir}/linux/swt.jar"/>
@@ -92,7 +91,7 @@
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="img lib/mckoidb.jar lib/mysql-connector-java-3.0.8-stable-bin.jar lib/bb_util.jar lib/linux/swt.jar lib/linux/swt-pi.jar lib/linux/swt-mozilla.jar"/>
+		    	<attribute name="Class-Path" value="img lib/mckoidb.jar lib/mysql-connector-java-3.0.8-stable-bin.jar lib/de_willuhn_util.jar lib/linux/swt.jar lib/linux/swt-pi.jar lib/linux/swt-mozilla.jar lib/nanoxml-2.2.3.jar"/>
 		    </manifest>
 		    <fileset dir="${class.dir}"/>
 		</jar>
@@ -104,7 +103,7 @@
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="img lib/mckoidb.jar lib/mysql-connector-java-3.0.8-stable-bin.jar lib/bb_util.jar lib/win32/swt.jar"/>
+		    	<attribute name="Class-Path" value="img lib/mckoidb.jar lib/mysql-connector-java-3.0.8-stable-bin.jar lib/de_willuhn_util.jar lib/win32/swt.jar  lib/nanoxml-2.2.3.jar"/>
 		    </manifest>
 		    <fileset dir="${class.dir}"/>
 		</jar>
