@@ -16,8 +16,7 @@
         path="lib/swtcalendar/swtcalendar.jar" sourcepath="/jameica/lib.src/swtcalendar/swtcalendar.src.zip"/>
     <classpathentry exported="true" kind="lib"
         path="lib/bouncycastle/bcprov-jdk14-124.jar" sourcepath="/jameica/lib.src/bouncycastle/bcprov-jdk14-124.zip"/>
-    <classpathentry exported="true" kind="lib"
-        path="lib/de_willuhn_ds/de_willuhn_ds.jar" sourcepath="/datasource/src"/>
     <classpathentry exported="true" kind="src" path="/util"/>
+    <classpathentry exported="true" kind="src" path="/datasource"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

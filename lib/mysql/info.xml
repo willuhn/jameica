@@ -1,6 +1,0 @@
-<info>
-  <name>MySQL</name>
-  <description>JDBC-Driver for the OpenSource Database MySQL</description>
-  <url>http://www.mysql.com/products/connector/j</url>
-  <license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
-</info>

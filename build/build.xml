@@ -34,26 +34,26 @@
       <echo message="CVS-Tag: ${tag}"/>
       <echo message="BUILD  : ${build.number}"/>
 
-      <property name="define.projectname"        value="jameica"/>
-      <property name="define.jarfilename"        value="jameica.jar"/>
-      <property name="define.jarfilename.win32"   value="jameica-win32.jar"/>
-      <property name="define.jarfilename.linux"   value="jameica-linux.jar"/>
-      <property name="define.srcfilename"        value="jameica.src.zip"/>
-      <property name="define.package"            value="de.willuhn.jameica"/>
+      <property name="define.projectname"        	value="jameica"/>
+      <property name="define.jarfilename"        	value="jameica.jar"/>
+      <property name="define.jarfilename.win32"   	value="jameica-win32.jar"/>
+      <property name="define.jarfilename.linux"   	value="jameica-linux.jar"/>
+      <property name="define.srcfilename"        	value="jameica.src.zip"/>
+      <property name="define.package"            	value="de.willuhn.jameica"/>
 
-      <property name="project.release"           value="releases/${version}-${build.number}"/>
-      <property name="project.src"              value="${project.release}/src/classes"/>
-      <property name="project.tmp"              value="${project.release}/tmp"/>
-      <property name="project.javadoc"          value="${project.release}/javadoc"/>
-      <property name="src.dir"                value="src"/>
-      <property name="icon.dir"                value="${src.dir}/img"/>
-      <property name="lang.dir"                value="${src.dir}/lang"/>
-      <property name="help.dir"                value="${src.dir}/help"/>
-      <property name="lib.dir"                value="lib"/>
-      <property name="class.dir"                value="${project.tmp}/bin"/>
+      <property name="project.release"           	value="releases/${version}-${build.number}"/>
+      <property name="project.src"              	value="${project.release}/src/classes"/>
+      <property name="project.tmp"              	value="${project.release}/tmp"/>
+      <property name="project.javadoc"          	value="${project.release}/javadoc"/>
+      <property name="src.dir"                		value="src"/>
+      <property name="icon.dir"                		value="${src.dir}/img"/>
+      <property name="lang.dir"                		value="${src.dir}/lang"/>
+      <property name="help.dir"                		value="${src.dir}/help"/>
+      <property name="lib.dir"                		value="lib"/>
+      <property name="class.dir"                	value="${project.tmp}/bin"/>
 
-      <property name="project.zipdir"        value="${project.release}/${define.projectname}"/>
-      <property name="project.zipfilename"   value="${define.projectname}.zip"/>
+      <property name="project.zipdir"        		value="${project.release}/${define.projectname}"/>
+      <property name="project.zipfilename"   		value="${define.projectname}.zip"/>
 
       <path id="compilepath">
       <fileset dir="${lib.dir}">
@@ -164,20 +164,13 @@
     <copy file="${build.dir}/INSTALL"           tofile="${project.zipdir}/INSTALL" />
 
 
-  <!-- Jetzt muessen wir noch das ZIP-File erzeugen und signieren -->
-  <zip destfile="${project.release}/${project.zipfilename}">
+    <!-- Jetzt muessen wir noch das ZIP-File erzeugen und signieren -->
+    <zip destfile="${project.release}/${project.zipfilename}">
       <fileset dir="${project.release}">
         <include name="${define.projectname}"/>
         <include name="${define.projectname}/**"/>
       </fileset>
-  </zip>
-
-    <checksum file="${project.release}/${project.zipfilename}" />
-    <echo message="Creating PGP signature" />
-    <exec executable="kgpg" failonerror="true" timeout="60000">
-    <arg line="-S ${project.release}/${project.zipfilename}"/>
-    </exec>
-    <echo message="done" />
+    </zip>
 
   </target>
 
@@ -198,21 +191,18 @@
 
 
 
-  <target depends="init" name="src" description="build source package, depends compile target to make sure, the code has no errors">
+  <target depends="compile" name="src" description="build source package, depends compile target to make sure, the code has no errors">
     <mkdir dir="${project.release}"/>
     <zip casesensitive="true" zipfile="${project.release}/${define.srcfilename}">
       <fileset dir="." >
+		<include name=".project"/>
+		<include name=".classpath"/>
+        <include name="${lib.dir}/**"/>
         <include name="${src.dir}/**"/>
         <include name="${build.dir}/**"/>
         <exclude name="${build.dir}/BUILD"/>
       </fileset>
     </zip>
-    <checksum file="${project.release}/${define.srcfilename}" />
-    <echo message="Creating PGP signature" />
-    <exec executable="kgpg" failonerror="true" timeout="60000">
-      <arg line="-S ${project.release}/${define.srcfilename}"/>
-    </exec>
-    <echo message="done" />
   </target>
 
 
@@ -220,6 +210,22 @@
     <delete dir="${project.tmp}"/>
   </target>
 
+
+  <target name="sign" description="signs the jar/zip file">
+    <checksum file="${project.release}/${project.zipfilename}" />
+    <echo message="Creating PGP signature" />
+    <exec executable="kgpg" failonerror="true" timeout="60000">
+      <arg line="-S ${project.release}/${project.zipfilename}"/>
+    </exec>
+  </target>
+
+  <target name="signsrc" description="signs the source zip">
+    <checksum file="${project.release}/${define.srcfilename}" />
+    <echo message="Creating PGP signature" />
+    <exec executable="kgpg" failonerror="true" timeout="60000">
+      <arg line="-S ${project.release}/${define.srcfilename}"/>
+    </exec>
+  </target>
 
 
   <target depends="init,compile,cvstag,jar,javadoc,src,clean" description="build an official release" name="all" />

@@ -1,5 +1,4 @@
 - Plugins vom Server downloadbar machen
-- per Default auf ~/.jameica/plugins in Plugin-Path aufnehmen
 - automatisches RMI-Lookup von Jameica-Servern via UDP-Multicast (wie bei Jini)
   --> http://www.javaworld.com/javaworld/jw-11-2001/jw-1121-jinirmi.html
 - RMI over SSL mit Authentifizierung ueber Client-Zertifikate

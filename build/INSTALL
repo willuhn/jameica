@@ -98,7 +98,6 @@ Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
     <plugindirs>
       <dir>plugins</dir>
     </plugindirs>
-    <services/>
   </config>
 
   <logfile>        : Hier koennen Sie eine abweichende Log-Datei definieren.
@@ -130,10 +129,6 @@ Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
                      im LAN gemeinsam benutzt werden kann. Fuegen Sie
                      hierfuer weitere Zeilen im Format
                      <dir>Pluginverzeichnis</dir> hinzu.
-  <services>       : Wird derzeit noch nicht verwendet. In dieser Sektion
-                     koennen Initialisierungsparameter fuer Services
-                     definiert werden, welche via RMI anderen Clients
-                     angeboten werden koennen. (siehe "<rmiport>").
 
 - Sie koennen Jameica auch im "Server-Mode" via "jameicaserver.sh"
   bzw. "jameicaserver.bat" starten. Hierbei wird die grafische Oberflaeche
