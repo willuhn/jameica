@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/11/12 18:23:59 $
+ * $Revision: 1.10 $
+ * $Date: 2005/01/18 23:00:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,7 @@ public class FileInput extends ButtonInput
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param value der initial einzufuegende Wert fuer das Eingabefeld.
    */
-  public FileInput(String value)
+  public FileInput(final String value)
   {
   	this.value = value;
 		addButtonListener(new Listener()
@@ -47,6 +47,7 @@ public class FileInput extends ButtonInput
       {
 				Logger.debug("starting file dialog");
 				FileDialog dialog = new FileDialog(GUI.getShell(),SWT.OPEN);
+				dialog.setFileName(value);
 				setValue(dialog.open());
 				text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
       }
@@ -92,6 +93,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.10  2005/01/18 23:00:32  willuhn
+ * @C Default focus to actual file
+ *
  * Revision 1.9  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *
