@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.5 $
+ * $Date: 2004/06/08 22:54:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -84,7 +84,7 @@ public class FileInput extends ButtonInput
 	 */
   public Control getClientControl(Composite parent) {
   	text = GUI.getStyleFactory().createText(parent);
-  	text.setText(value);
+  	text.setText(value == null ? "" : value);
   	return text;
   }
 
@@ -92,6 +92,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.5  2004/06/08 22:54:00  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract
