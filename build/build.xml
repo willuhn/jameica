@@ -25,6 +25,7 @@
         <property name="project.tmp" 		 value="${project.release}/tmp"/>
         <property name="project.javadoc" 	 value="${project.release}/javadoc"/>
         <property name="src.dir" 			 value="src"/>
+        <property name="cfg.dir" 			 value="cfg"/>
         <property name="icon.dir" 			 value="${src.dir}/img"/>
         <property name="lang.dir" 			 value="${src.dir}/lang"/>
         <property name="lib.dir" 			 value="lib"/>
@@ -67,7 +68,6 @@
         <copydir 	src="${lang.dir}" 					dest="${class.dir}/lang"/>
         <copyfile 	src="${src.dir}/navigation.xml" 	dest="${class.dir}/navigation.xml"/>
         <copyfile 	src="${src.dir}/menu.xml"	 		dest="${class.dir}/menu.xml"/>
-        <copyfile 	src="${src.dir}/config.xml" 		dest="${class.dir}/config.xml"/>
 
 	</target>
 
@@ -98,6 +98,8 @@
 		</jar>
 		
 		<mkdir dir="${project.release}/lib"/>
+
+        <copydir 	src="${cfg.dir}" 					dest="${project.release}/cfg"/>
 
 		<copy todir="${project.release}/lib">
 			<fileset dir="${lib.dir}"/>

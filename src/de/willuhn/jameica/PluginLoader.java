@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.15 $
- * $Date: 2003/12/22 15:07:11 $
+ * $Revision: 1.16 $
+ * $Date: 2003/12/22 16:25:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -280,7 +280,19 @@ public class PluginLoader extends ClassLoader
       Constructor ct = clazz.getConstructor(new Class[]{JarFile.class});
       ct.setAccessible(true);
       Plugin plugin = (Plugin) ct.newInstance(new Object[] {jar});
+
+
+      for (int i=0;i<installedPlugins.size();++i)
+      {
+        Plugin p = (Plugin) installedPlugins.get(i);
+        if (p != null && p.getClass().equals(plugin.getClass()))
+        {
+          Application.getLog().info("allready added");
+          return;
+        }
+      }
       plugin.init();
+
       installedPlugins.add(plugin);
       Application.getLog().info("  done");
     }
@@ -332,6 +344,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.16  2003/12/22 16:25:48  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2003/12/22 15:07:11  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.16 $
- * $Date: 2003/12/22 15:07:11 $
+ * $Revision: 1.17 $
+ * $Date: 2003/12/22 16:25:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,8 +27,8 @@ import de.willuhn.jameica.rmi.ServiceFactory;
  */
 public class Application {
 
-  public final static boolean DEBUG = false;
-  public final static boolean IDE   = false;
+  public final static boolean DEBUG = true;
+  public final static boolean IDE   = true;
   private static boolean serverMode = false;
 
   private static boolean cleanShutdown = false;
@@ -171,6 +171,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.17  2003/12/22 16:25:48  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2003/12/22 15:07:11  willuhn
  * *** empty log message ***
  *
