@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/08/15 18:45:30 $
+ * $Revision: 1.22 $
+ * $Date: 2004/09/13 23:27:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * <p>Das ist die Basisklasse fuer modalen Dialogfenster.</p>
@@ -295,7 +296,8 @@ public abstract class AbstractDialog
 					}
 					catch (Throwable t)
 					{
-						t.printStackTrace(); // TODO
+						Logger.error("error while painting dialog",t);
+						throw new RuntimeException(t);
 					}
 
 					shell.pack();
@@ -373,6 +375,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.22  2004/09/13 23:27:12  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.21  2004/08/15 18:45:30  willuhn
  * *** empty log message ***
  *

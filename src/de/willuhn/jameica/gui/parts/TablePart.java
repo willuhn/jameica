@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/08/16 19:15:32 $
+ * $Revision: 1.17 $
+ * $Date: 2004/09/13 23:27:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,7 +46,7 @@ import de.willuhn.util.I18N;
  */
 public class TablePart implements Part
 {
-	//TODO: Sortierung!
+	// Ordentliche Sortierung fehlt!
   private GenericIterator list					= null;
 
   private AbstractControl controller    = null;
@@ -199,6 +199,7 @@ public class TablePart implements Part
 		{
 			final TableItem item = new TableItem(table, SWT.NONE);
 			final GenericObject o = list.next();
+
 			item.setData(o);
 
 			for (int i=0;i<this.fields.size();++i)
@@ -327,6 +328,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.17  2004/09/13 23:27:12  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/08/16 19:15:32  willuhn
  * *** empty log message ***
  *

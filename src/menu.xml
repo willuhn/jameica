@@ -11,7 +11,7 @@
   <cascade name="Hilfe">
     <item name="About"				 			target="dialog"		class="de.willuhn.jameica.gui.views.About" />
 	<item name="-" />
-    <item name="installierte Plugins"	 							class="de.willuhn.jameica.gui.views.Plugins" />
+    <!--<item name="installierte Plugins"	 							class="de.willuhn.jameica.gui.views.Plugins" /> //-->
     <item name="Lizenzinformationen"	 							class="de.willuhn.jameica.gui.views.License" />
   </cascade>
 

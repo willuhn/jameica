@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.12 $
+ * $Date: 2004/09/13 23:27:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -78,7 +78,6 @@ public class LabelGroup
   public void addLabelPair(String name, Input input)
   {
     // Label
-    // TODO: Ausrichtung des Labels muss oben sein
     final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
     labelGrid.verticalAlignment = GridData.CENTER;
     final Label label = new Label(group, SWT.NONE);
@@ -224,6 +223,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.12  2004/09/13 23:27:12  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *
