@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Plugin.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/29 00:07:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,15 +73,25 @@ public interface Plugin
 	 */
 	public EmbeddedDatabase getDatabase();
 
+	/**
+	 * Kann vom Plugin implementiert werden wenn es moechte, dass auf
+	 * der Jameica-Startseite ein Welcome-Text angezeigt werden soll.
+   * @return der anzuzeigende Text.
+   */
+  public String getWelcomeText();
+
   /**
    * Diese Funktion wird beim Beenden der Anwendung ausgefuehrt.
    */
   public void shutDown();
-
+  
 }
 
 /*********************************************************************
  * $Log: Plugin.java,v $
+ * Revision 1.9  2004/01/29 00:07:23  willuhn
+ * @N Text widget
+ *
  * Revision 1.8  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

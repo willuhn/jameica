@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FileClose.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/04 18:48:36 $
+ * $Revision: 1.2 $
+ * $Date: 2004/01/29 00:07:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,8 +12,11 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.views;
 
+import org.eclipse.swt.widgets.Composite;
+
 /**
- * Behandelt das Event "Datei->Schliessen". 
+ * Behandelt das Event "Datei->Schliessen".
+ * TODO Menu Actions 
  * @author willuhn
  */
 public class FileClose {
@@ -21,7 +24,7 @@ public class FileClose {
 	/**
    * Diese Funktion wird beim Klick auf "Datei->Schliessen" aufgerufen.
    */
-  public FileClose(Object o)
+  public FileClose(Composite c)
 	{
 		System.exit(0);
 	}
@@ -30,6 +33,9 @@ public class FileClose {
 
 /*********************************************************************
  * $Log: FileClose.java,v $
+ * Revision 1.2  2004/01/29 00:07:23  willuhn
+ * @N Text widget
+ *
  * Revision 1.1  2004/01/04 18:48:36  willuhn
  * @N config store support
  *

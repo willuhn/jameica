@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/01/28 20:51:25 $
+ * $Revision: 1.11 $
+ * $Date: 2004/01/29 00:07:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.Plugin;
 import de.willuhn.jameica.PluginLoader;
-import de.willuhn.jameica.gui.parts.LabelGroup;
-import de.willuhn.util.I18N;
+import de.willuhn.jameica.WelcomeText;
+import de.willuhn.jameica.gui.parts.Text;
 
 
 public class Start extends AbstractView
@@ -40,14 +40,21 @@ public class Start extends AbstractView
   {
     addHeadline("Jameica");
     
-    LabelGroup plugins = new LabelGroup(getParent(),I18N.tr("installierte Plugins"));
-    
+		Text t = new Text();
     ArrayList installedPlugins = PluginLoader.getInstalledPlugins();
+    Plugin plugin = null;
+    String pt = null;
     for (int i=0;i<installedPlugins.size();++i)
     {
-      Plugin plugin = (Plugin) installedPlugins.get(i);
-      plugins.addText(plugin.getName() + " " + plugin.getVersion(),false);
+      plugin = (Plugin) installedPlugins.get(i);
+      pt = plugin.getWelcomeText();
+      if (pt == null || pt.length() == 0)
+      	continue;
+      t.appendText(pt + "\n");
     }
+
+		t.appendText(WelcomeText.getText());
+		t.paint(getParent());
   }        
 
 
@@ -59,6 +66,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.11  2004/01/29 00:07:23  willuhn
+ * @N Text widget
+ *
  * Revision 1.10  2004/01/28 20:51:25  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

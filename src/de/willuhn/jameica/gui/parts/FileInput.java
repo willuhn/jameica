@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/FileInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/01/29 00:07:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,10 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
@@ -137,6 +141,9 @@ public class FileInput extends Input
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.2  2004/01/29 00:07:24  willuhn
+ * @N Text widget
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/01/29 00:07:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -103,10 +103,30 @@ public class LabelGroup
   {
     final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
     labelGrid.horizontalSpan = 2;
+
     final Label label = new Label(group,linewrap ? SWT.WRAP : SWT.NONE);
     label.setText(text);
     label.setLayoutData(labelGrid);
   }
+
+	/**
+	 * Fuegt eigenformatierten Text zur Group hinzu.
+   * @param text anzuzeigender Text.
+   */
+  public void addText(Text text)
+	{
+		final GridData grid = new GridData(GridData.FILL_HORIZONTAL);
+		grid.horizontalSpan = 2;
+		final Composite comp = new Composite(group,SWT.NONE);
+		comp.setLayoutData(grid);
+
+		GridLayout layout = new GridLayout(1,true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		comp.setLayout(layout);
+
+		text.paint(comp);
+	}
 
   /**
    * Fuegt eine Tabelle zur Group hinzu.
@@ -181,6 +201,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.2  2004/01/29 00:07:24  willuhn
+ * @N Text widget
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

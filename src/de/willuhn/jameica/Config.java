@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/01/28 20:51:25 $
+ * $Revision: 1.18 $
+ * $Date: 2004/01/29 00:07:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -74,9 +74,10 @@ public class Config
   
   private String logLevel = Logger.LEVEL_TEXT[Logger.LEVEL_DEBUG];
   
-  private String configDir = "cfg";
-  private String configFile = null;
-  
+	private File dir 				= new File("./");
+  private File configDir  = new File("cfg");
+  private File configFile = new File("cfg/config.xml");
+
   /**
    * ct.
    * @param fileName Pfad und Name zur Config-Datei.
@@ -97,8 +98,8 @@ public class Config
     if (fileName == null)
       fileName = "cfg/config.xml"; // fallback to default if config file not set
 
-    configDir  = (new File(fileName)).getParent();
-		configFile = fileName;
+		configFile = new File(fileName);
+    configDir  = configFile.getParentFile();
 
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 		parser.setReader(StdXMLReader.fileReader(fileName));
@@ -365,8 +366,21 @@ public class Config
    */
   public String getConfigDir()
   {
-    return configDir;
+    return configDir.getAbsolutePath();
   }
+
+	/**
+	 * Liefert das Dokumenten-Verzeichnis basierend auf dem aktuellen Locale.
+   * @return Dokumentenverzeichnis.
+   */
+  public String getDocDir()
+	{
+		return dir.getAbsolutePath() + 
+					 File.separator +
+					 "doc" +
+					 File.separator +
+					 getLocale().toString();
+	}
 
   /**
    * Speichert die Konfiguration ab.
@@ -426,9 +440,9 @@ public class Config
 		xml.addChild(services);
 
 		// Backup der config erstellen
-		FileCopy.copy(new File(configFile),new File(configFile + ".bak"),true);
+		FileCopy.copy(configFile,new File(configFile.getAbsolutePath() + ".bak"),true);
 
-		java.io.Writer output = new FileWriter(new File(configFile));
+		java.io.Writer output = new FileWriter(configFile);
 		XMLWriter xmlwriter = new XMLWriter(output);
 		xmlwriter.write(xml,true); 
 	}
@@ -439,14 +453,17 @@ public class Config
    */
   public void restore() throws Exception
 	{
-		FileCopy.copy(new File(configFile + ".bak"),new File(configFile),true);
-		init(configFile);
+		FileCopy.copy(new File(configFile.getAbsolutePath() + ".bak"),configFile,true);
+		init(configFile.getAbsolutePath());
 	}
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.18  2004/01/29 00:07:23  willuhn
+ * @N Text widget
+ *
  * Revision 1.17  2004/01/28 20:51:25  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
