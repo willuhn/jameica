@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/01 20:28:58 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/01 21:22:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,12 @@ public abstract class Input
    * @return Wert des Feldes.
    */
   public abstract String getValue();
+
+  /**
+   * Schreibt einen neuen Wert in das Eingabefeld.
+   * @param value der neu anzuzeigende Wert.
+   */
+  public abstract void setValue(String value);
 
   /**
    * Liefert das eigentliche Eingabecontrol. Es muss von jeder
@@ -99,17 +105,21 @@ public abstract class Input
       layout.marginHeight=0;
       layout.marginWidth=0;
       this.parent.setLayout(layout);
-      this.parent.setLayoutData(createGrid());
+      final GridData g = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+      g.widthHint = 240;
+      this.parent.setLayoutData(g);
+      control = getControl();
+      final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+      inputGrid.widthHint = 110;
+      control.setLayoutData(inputGrid);
     }
     else {
       this.parent = parent;
+      control = getControl();
+      final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+      inputGrid.widthHint = 240;
+      control.setLayoutData(inputGrid);
     }
-
-    // das eigentliche Feld einfuegen
-    control = getControl();
-    final GridData controlGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-    controlGrid.widthHint = 100;
-    control.setLayoutData(controlGrid);
 
     // den Kommentar hinten dran fuegen
     if (this.comment != null) {
@@ -126,6 +136,7 @@ public abstract class Input
     {
       control.addListener(SWT.Selection,commentListener);
       control.addListener(SWT.FocusIn,commentListener);
+      control.addListener(SWT.FocusOut,commentListener);
     }
   }
 
@@ -134,21 +145,13 @@ public abstract class Input
    */
   public abstract void focus();
   
-  /**
-   * Erzeugt ein neues Grid, welches fuer das Input verwendet werden muss.
-   * @return
-   */
-  protected GridData createGrid()
-  {
-    final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-    inputGrid.widthHint = 240;
-    return inputGrid;
-  }
-
 }
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.7  2003/12/01 21:22:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/01 20:28:58  willuhn
  * @B filter in DBIteratorImpl
  * @N InputFelder generalisiert

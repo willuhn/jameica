@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/01 20:28:58 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/01 21:22:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,7 +37,6 @@ public class LabelInput extends Input
   {
     Label label = new Label(parent,SWT.NONE);
     label.setText(value);
-    label.setLayoutData(createGrid());
     return label;
 
   }
@@ -57,11 +56,21 @@ public class LabelInput extends Input
   {
   }
 
+  /**
+   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   */
+  public void setValue(String value)
+  {
+  }
+
 
 }
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.3  2003/12/01 21:22:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/12/01 20:28:58  willuhn
  * @B filter in DBIteratorImpl
  * @N InputFelder generalisiert

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/DecimalInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/01 20:28:58 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/01 21:22:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,6 @@ public class DecimalInput extends Input
   {
 
     text = new Text(parent, SWT.BORDER | SWT.RIGHT);
-    text.setLayoutData(createGrid());
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
@@ -76,6 +75,17 @@ public class DecimalInput extends Input
   }
 
   /**
+   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   */
+  public void setValue(String value)
+  {
+    if (value == null)
+      return;
+    this.text.setText(value);
+    this.text.redraw();
+  }
+
+  /**
    * @see de.willuhn.jameica.views.parts.Input#focus()
    */
   public void focus()
@@ -88,6 +98,9 @@ public class DecimalInput extends Input
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.2  2003/12/01 21:22:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/12/01 20:28:58  willuhn
  * @B filter in DBIteratorImpl
  * @N InputFelder generalisiert

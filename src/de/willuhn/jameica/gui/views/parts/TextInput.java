@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/01 20:28:58 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/01 21:22:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,6 @@ public class TextInput extends Input
   {
 
     text = new Text(getParent(), SWT.BORDER);
-    text.setLayoutData(createGrid());
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
@@ -63,6 +62,17 @@ public class TextInput extends Input
   }
 
   /**
+   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   */
+  public void setValue(String value)
+  {
+    if (value == null)
+      return;
+    this.text.setText(value);
+    this.text.redraw();
+  }
+
+  /**
    * @see de.willuhn.jameica.views.parts.Input#focus()
    */
   public void focus()
@@ -75,6 +85,9 @@ public class TextInput extends Input
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.7  2003/12/01 21:22:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/01 20:28:58  willuhn
  * @B filter in DBIteratorImpl
  * @N InputFelder generalisiert

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/01 20:28:58 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/01 21:22:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -121,7 +121,6 @@ public class SelectInput extends Input
   {
 
     combo = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
-    combo.setLayoutData(createGrid());
 
     int selected = 0;
     if (values == null || values.length == 0)
@@ -153,10 +152,20 @@ public class SelectInput extends Input
   {
     combo.setFocus();
   }
+
+  /**
+   * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
+   */
+  public void setValue(String value)
+  {
+  }
 }
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.10  2003/12/01 21:22:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2003/12/01 20:28:58  willuhn
  * @B filter in DBIteratorImpl
  * @N InputFelder generalisiert
