@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/06/17 00:05:26 $
+ * $Revision: 1.7 $
+ * $Date: 2004/06/18 19:47:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,12 +13,12 @@
 package de.willuhn.jameica.gui.input;
 
 import java.rmi.RemoteException;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
 
+import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.GenericIterator;
 import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.Application;
@@ -31,10 +31,12 @@ import de.willuhn.jameica.gui.GUI;
 public class SelectInput extends AbstractInput
 {
 
-  private Hashtable values = new Hashtable();
-  private String preselected;
+  private GenericIterator list;
+  private GenericObject preselected;
   private CCombo combo;
-  
+
+	private Hashtable values = new Hashtable();
+
   private boolean enabled = true;
 
   /**
@@ -47,90 +49,25 @@ public class SelectInput extends AbstractInput
   public SelectInput(GenericIterator list, GenericObject preselected)
   {
   	super();
-		if (preselected != null)
-		{
-			try {
-				this.preselected = preselected.getAttribute(preselected.getPrimaryAttribute()).toString();
-			}
-			catch (RemoteException e)
-			{
-				Application.getLog().error("error while reading list",e);
-				GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Liste."));
-			}
-		}
-    init(list);
+  	this.list = list;
+  	this.preselected = preselected;
   }
 
 	/**
-	 * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
-	 * @param list Liste mit den anzuzeigenden Objekten. Aus der Hashtable werden
-	 * die Keys angezeigt und die Values in <code>getValue()</code> zurueckgeliefert.
-	 * @param preselected Wert des vorausgewaehlten Feldes.
-	 */
-	public SelectInput(Hashtable list, String preselected)
+   * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
+   * @param list Liste der Werte.
+   * @param preselected der String, welcher vorselektiert sein soll. Optional.
+   */
+  public SelectInput(String[] list, String preselected)
 	{
-
-		this.preselected = preselected;
-		this.values = list;
-	}
-
-	/**
-	 * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
-	 * @param list Liste mit den anzuzeigenden Texten.
-	 * @param preselected Wert des vorausgewaehlten Feldes.
-	 */
-	public SelectInput(String[] list, String preselected)
-	{
-		this.preselected = preselected;
-		init(list);
-		
-	}
-
-	/**
-	 * Initialisiert die Select-Box.
-	 * @param list Liste mit den anzuzeigenden Texten.
-	 */
-	private void init(String[] list)
-	{
-		if (list == null)
-			list = new String[]{};
-
+		GenericObject[] s = new GenericObject[list.length];
 		for (int i=0;i<list.length;++i)
 		{
-			if (list[i] == null || list[i].length() == 0)
-				continue; // skip empty values
-			values.put(list[i],list[i]);
+			s[i] = new StringObject(list[i]);
 		}
+		this.preselected = preselected == null ? null : new StringObject(preselected);
+		this.list = PseudoIterator.fromArray(s);
 	}
-
-  /**
-   * Initialisiert die Select-Box.
-   * @param list Liste mit den anzuzeigenden Objekten.
-   */
-  private void init(GenericIterator list)
-  {
-    try
-    {
-      if (list == null)
-        throw new RemoteException();
-
-      GenericObject o = null;
-      while (list.hasNext())
-      {
-        o = list.next();
-        String value = o.getAttribute(o.getPrimaryAttribute()).toString();
-        if (value == null || value.length() == 0)
-          continue; // skip empty values
-        values.put(value,o);
-
-      }
-    }
-    catch (RemoteException e)
-    {
-			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Liste."));
-    }
-    
-  }
 
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
@@ -139,17 +76,29 @@ public class SelectInput extends AbstractInput
   {
 
 		combo = GUI.getStyleFactory().createCombo(getParent());
-    int selected = 0;
 
-    Enumeration e = values.keys();
-    int i = 0;
-    while (e.hasMoreElements())
+    int selected = 0;
+		int i = 0;
+    try
     {
-      String value = (String) e.nextElement();
-      combo.add(value);
-      if (preselected != null && preselected.equals(value))
-        selected = i;
-      ++i;
+      while (list.hasNext())
+      {
+      	final GenericObject current = list.next();
+      	String name = current.getAttribute(current.getPrimaryAttribute()).toString();
+      
+      	// Da CCombo und Combo nicht fuer jeden Eintrag Daten speichern
+      	// koennen, muessen wir das selbst tun.
+      	values.put(name,current);
+      	combo.add(name);
+      	if (preselected != null && current.equals(preselected))
+      		selected = i;
+      	++i;
+      }
+    }
+    catch (RemoteException e)
+    {
+    	combo.add(Application.getI18n().tr("Fehler beim Laden der Daten"));
+    	Application.getLog().error("uanble to create combo box",e);
     }
     combo.select(selected);
    	combo.setEnabled(enabled);
@@ -158,10 +107,8 @@ public class SelectInput extends AbstractInput
   }
 
   /**
-   * Liefert den ausgewaehlten Wert.
-   * Wenn die Select-Box mit einem String-Array aufgebaut wurde,
-   * wird der angezeigte String zurueckgegeben. Bei einem DBObject oder
-   * DBIterator wird direkt das Objekt zurueckgegeben.
+   * Liefert das ausgewaehlte GenericObject.
+   * Folglich kann der Rueckgabewert direkt nach GenericObject gecastet werden.
    * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
    */
   public Object getValue()
@@ -213,10 +160,65 @@ public class SelectInput extends AbstractInput
   {
   }
 
+	/**
+	 * Kleine Hilfsklasse, um String-Werte ueber GenericObject abzubilden.
+   */
+  private class StringObject implements GenericObject
+	{
+
+		private String value;
+
+		/**
+		 * ct.
+     * @param value
+     */
+    private StringObject(String value)
+		{
+			this.value = value;
+		}
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getAttribute(java.lang.String)
+     */
+    public Object getAttribute(String name) throws RemoteException
+    {
+      return value;
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getID()
+     */
+    public String getID() throws RemoteException
+    {
+      return value;
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getPrimaryAttribute()
+     */
+    public String getPrimaryAttribute() throws RemoteException
+    {
+      return "name";
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#equals(de.willuhn.datasource.rmi.GenericObject)
+     */
+    public boolean equals(GenericObject other) throws RemoteException
+    {
+    	if (other == null)
+    		return false;
+      return getID().equals(other.getID());
+    }
+	}
+
 }
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.7  2004/06/18 19:47:17  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/06/17 00:05:26  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.6 $
+ * $Date: 2004/06/18 19:47:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -100,6 +100,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.6  2004/06/18 19:47:17  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/04/24 19:05:05 $
+ * $Revision: 1.7 $
+ * $Date: 2004/06/18 19:47:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,7 @@ import java.util.Hashtable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.datasource.rmi.DBIterator;
+import de.willuhn.datasource.rmi.GenericIterator;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -34,7 +34,7 @@ public class ListDialog extends AbstractDialog
 {
 
   private Object object = null;
-  private DBIterator list = null;
+  private GenericIterator list = null;
   private Hashtable fields = new Hashtable();
   private Hashtable formatter = new Hashtable();
 
@@ -45,7 +45,7 @@ public class ListDialog extends AbstractDialog
    * @see AbstractDialog#POSITION_CENTER
    * @see AbstractDialog#POSITION_MOUSE
    */
-  public ListDialog(DBIterator list, int position)
+  public ListDialog(GenericIterator list, int position)
   {
     super(position);
     setSize(SWT.DEFAULT,250);
@@ -154,6 +154,9 @@ public class ListDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.7  2004/06/18 19:47:17  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/04/24 19:05:05  willuhn
  * *** empty log message ***
  *

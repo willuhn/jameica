@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/06/03 00:24:18 $
+ * $Revision: 1.22 $
+ * $Date: 2004/06/18 19:47:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,10 @@
 
 package de.willuhn.jameica.gui.controller;
 
-import java.util.Hashtable;
+import java.rmi.RemoteException;
 
+import de.willuhn.datasource.pseudo.PseudoIterator;
+import de.willuhn.datasource.rmi.GenericObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
@@ -68,13 +70,14 @@ public class SettingsControl extends AbstractControl
 			return styleFactory;
 		try {
 			Class[] styles = Application.getClassLoader().getClassFinder().findImplementors(StyleFactory.class);
-			Hashtable ht = new Hashtable();
+
+
+			GenericObject[] s = new GenericObject[styles.length];
 			for (int i=0;i<styles.length;++i)
 			{
-				StyleFactory f = (StyleFactory) styles[i].newInstance();
-				ht.put(f.getName(),f);
+				s[i] = new StyleFactoryObject((StyleFactory) styles[i].newInstance());
 			}
-			styleFactory = new SelectInput(ht,GUI.getStyleFactory().getName());
+			styleFactory = new SelectInput(PseudoIterator.fromArray(s),new StyleFactoryObject(GUI.getStyleFactory()));
 		}
 		catch (Exception e)
 		{
@@ -215,7 +218,8 @@ public class SettingsControl extends AbstractControl
 			Color.LINK.setSWTColor((org.eclipse.swt.graphics.Color)getColorLink().getValue());
 			Color.LINK_ACTIVE.setSWTColor((org.eclipse.swt.graphics.Color)getColorLinkActive().getValue());
 
-			GUI.setStyleFactory((StyleFactory) getStyleFactory().getValue());
+			StyleFactoryObject fo = (StyleFactoryObject) getStyleFactory().getValue();
+			GUI.setStyleFactory(fo.factory);
 			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen gespeichert."));
 			
 			SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
@@ -276,12 +280,70 @@ public class SettingsControl extends AbstractControl
   	}
   	
   }
+  
+  /**
+   * Hilfs-Klasse, die StyleFactories in GenericObjects wrappt, um sie einfacher
+   * in den GUI-Bibliotheken von Jameica anzeigen zu koennen.
+   */
+  private class StyleFactoryObject implements GenericObject
+  {
+
+		private StyleFactory factory;
+
+		/**
+		 * ct.
+     * @param f
+     */
+    private StyleFactoryObject(StyleFactory f)
+		{
+			this.factory = f;
+		}
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getAttribute(java.lang.String)
+     */
+    public Object getAttribute(String name) throws RemoteException
+    {
+    	if ("name".equalsIgnoreCase(name))
+    		return factory.getName();
+    	return factory;
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getID()
+     */
+    public String getID() throws RemoteException
+    {
+      return factory.getClass().getName();
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#getPrimaryAttribute()
+     */
+    public String getPrimaryAttribute() throws RemoteException
+    {
+      return "name";
+    }
+
+    /**
+     * @see de.willuhn.datasource.rmi.GenericObject#equals(de.willuhn.datasource.rmi.GenericObject)
+     */
+    public boolean equals(GenericObject other) throws RemoteException
+    {
+    	if (other == null)
+	      return false;
+			return getID().equals(other.getID());
+    }
+  }
 
 }
 
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.22  2004/06/18 19:47:17  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.21  2004/06/03 00:24:18  willuhn
  * *** empty log message ***
  *
