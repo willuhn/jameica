@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/LicenseControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/20 12:08:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,6 @@ import java.rmi.RemoteException;
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.util.InfoReader;
@@ -89,42 +88,14 @@ public class LicenseControl extends AbstractControl {
 		return libList;
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleDelete()
-   */
-  public void handleDelete() {
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCancel()
-   */
-  public void handleCancel() {
-  	GUI.startPreviousView();
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleStore()
-   */
-  public void handleStore() {
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCreate()
-   */
-  public void handleCreate() {
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleOpen(java.lang.Object)
-   */
-  public void handleOpen(Object o) {
-  }
-
 }
 
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
+ * Revision 1.2  2004/10/20 12:08:16  willuhn
+ * @C MVC-Refactoring (new Controllers)
+ *
  * Revision 1.1  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

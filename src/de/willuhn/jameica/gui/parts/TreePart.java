@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.8 $
+ * $Date: 2004/10/20 12:08:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,9 +27,11 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObjectNode;
-import de.willuhn.jameica.gui.AbstractControl;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Erzeugt einen Baum.
@@ -39,7 +41,7 @@ import de.willuhn.jameica.gui.util.SWTUtil;
 public class TreePart implements Part
 {
 
-  private AbstractControl controller;
+  private Action action;
   private Composite composite;
   private GenericObjectNode object = null;
   private GenericIterator list = null;
@@ -48,12 +50,12 @@ public class TreePart implements Part
 	/**
    * Erzeugt einen neuen Tree basierend auf dem uebergebenen Objekt.
    * @param object Das Objekt, fuer das der Baum erzeugt werden soll. 
-   * @param controller der AbstractControl, der bei der Auswahl eines Elements
-   * aufgerufen werden soll.
+   * @param action, Action, die bei der Auswahl eines Elements
+   * ausgeloest werden soll.
    */
-  public TreePart(GenericObjectNode object, AbstractControl controller)
+  public TreePart(GenericObjectNode object, Action action)
 	{
-    this.controller = controller;
+    this.action = action;
     this.object = object;
 	}
 
@@ -63,12 +65,12 @@ public class TreePart implements Part
    * Iterator Objekte, die <b>nicht</b> von GenericObjectNode
    * abgeleitet sind, wird er eine ClassCastException werfen.
    * @param list Liste mit Objekten, fuer die der Baum erzeugt werden soll.
-   * @param controller der AbstractControl, der bei der Auswahl eines Elements
-   * aufgerufen werden soll.
+   * @param action, Action, die bei der Auswahl eines Elements
+   * ausgeloest werden soll.
    */
-  public TreePart(GenericIterator list, AbstractControl controller)
+  public TreePart(GenericIterator list, Action action)
   {
-    this.controller = controller;
+		this.action = action;
     this.list = list;
   }
 
@@ -137,7 +139,14 @@ public class TreePart implements Part
     Object o = item.getData();
     if (o == null)
       return;
-    this.controller.handleOpen(o);
+    try
+    {
+			this.action.handleAction(o);
+    }
+    catch (ApplicationException e)
+    {
+    	GUI.getStatusBar().setErrorText(e.getMessage());
+    }
 	}
 
 	/**
@@ -277,6 +286,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.8  2004/10/20 12:08:17  willuhn
+ * @C MVC-Refactoring (new Controllers)
+ *
  * Revision 1.7  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.10 $
+ * $Date: 2004/10/20 12:08:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,10 +19,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.datasource.GenericIterator;
-import de.willuhn.jameica.gui.AbstractControl;
-import de.willuhn.jameica.gui.AbstractView;
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog, der eine Tabelle mit Daten aus einer Liste anzeigt.
@@ -85,7 +85,15 @@ public class ListDialog extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception {
 
-    TablePart table = new TablePart(list,new ListController(null));
+    TablePart table = new TablePart(list,new Action()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+				object = context;
+				// Wir schliessen den Dialog bei Auswahl eines Objektes.
+				close();
+      }
+    });
 
     Enumeration keys = this.fields.keys();
     while (keys.hasMoreElements())
@@ -104,56 +112,13 @@ public class ListDialog extends AbstractDialog
   protected Object getData() throws Exception {
     return object;
   }
-
-
-  /**
-   * Controller, der an der Liste haengt und bei Selection Aktionen durchfuehrt.
-   */
-  private class ListController extends AbstractControl
-  {
-
-
-    /**
-     * ct.
-     * @param view die View, fuer die der Controller zustaendig ist.
-     */
-    public ListController(AbstractView view)
-    {
-      super(view);
-    }
-
-    /**
-     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleDelete()
-     */
-    public void handleDelete() {}
-    /**
-     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCancel()
-     */
-    public void handleCancel() {}
-    /**
-     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleStore()
-     */
-    public void handleStore() {}
-    /**
-     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCreate()
-     */
-    public void handleCreate() {}
-    /**
-     * @see de.willuhn.jameica.gui.controller.AbstractControl#handleOpen(java.lang.Object)
-     */
-    public void handleOpen(Object o)
-    {
-      object = o;
-      // Wir schliessen den Dialog bei Auswahl eines Objektes.
-      close();
-    }
-
-  }
-
 }
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.10  2004/10/20 12:08:16  willuhn
+ * @C MVC-Refactoring (new Controllers)
+ *
  * Revision 1.9  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/14 23:15:05 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/20 12:08:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,6 @@ import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.internal.views.Settings;
-import de.willuhn.jameica.gui.internal.views.Start;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
@@ -221,22 +220,7 @@ public class SettingsControl extends AbstractControl
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleDelete()
-   */
-  public void handleDelete()
-  {
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCancel()
-   */
-  public void handleCancel()
-  {
-  	GUI.startView(Start.class.getName(),null);
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleStore()
+   * Speichert die Einstellungen.
    */
   public void handleStore()
   {
@@ -277,20 +261,6 @@ public class SettingsControl extends AbstractControl
   	
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleCreate()
-   */
-  public void handleCreate()
-  {
-  }
-  
-  /**
-   * @see de.willuhn.jameica.gui.controller.AbstractControl#handleOpen(java.lang.Object)
-   */
-  public void handleOpen(Object o)
-  {
-  }
-  
   /**
    * Setzt die Einstellungen zurueck.
    */
@@ -433,6 +403,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.3  2004/10/20 12:08:16  willuhn
+ * @C MVC-Refactoring (new Controllers)
+ *
  * Revision 1.2  2004/10/14 23:15:05  willuhn
  * @N maded locale configurable via GUI
  * @B fixed locale handling
