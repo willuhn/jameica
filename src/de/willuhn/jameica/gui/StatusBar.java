@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.11 $
+ * $Date: 2004/02/12 23:46:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -112,7 +112,7 @@ public class StatusBar {
    * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
    * @param message anzuzeigender Text.
    */
-  protected void setActionText(String message)
+  protected void setActionText(final String message)
   {
 		if (message == null)
 			return;
@@ -120,9 +120,12 @@ public class StatusBar {
 		if (!"".equals(message))
 	    lastActionMessages.push("[" + new Date().toString() + "] " + message);
 
-		// String lines[] = (String[]) lastActionMessages.toArray(new String[lastActionMessages.size()]);
-    actionText.setText(message);
-    status.layout();
+		GUI.getDisplay().asyncExec(new Runnable() {
+      public void run() {
+				actionText.setText(message);
+				status.layout();
+      }
+    });
   }
 
 	/**
@@ -159,6 +162,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.11  2004/02/12 23:46:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
