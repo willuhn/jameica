@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 
 <project basedir=".." default="all" name="All">
 
@@ -42,6 +42,8 @@
       <property name="define.package"            	value="de.willuhn.jameica"/>
 
       <property name="project.release"           	value="releases/${version}-${build.number}"/>
+      <property name="project.nightly"                  value="releases/nightly"/>
+
       <property name="project.src"              	value="${project.release}/src/classes"/>
       <property name="project.tmp"              	value="${project.release}/tmp"/>
       <property name="project.javadoc"          	value="${project.release}/javadoc"/>
@@ -63,6 +65,11 @@
 
   </target>
 
+  <target depends="init" name="cvs" description="performs cvs update">
+    <exec executable="cvs" failonerror="true" dir="${basedir}">
+      <arg line="update -d"/>
+    </exec>
+  </target>
 
 
   <target depends="init" name="compile" description="compiles everything">
@@ -231,9 +238,14 @@
 
   <target depends="init,compile,cvstag,jar,sign,javadoc,src,signsrc,clean" description="build an official release" name="all" />
 
-
-
   <target depends="init,compile,jar,src,clean" description="build inofficial release" name="fast" />
+
+  <target depends="cvs,fast" description="build nightly build" name="nightly">
+    <mkdir dir="${project.nightly}"/>
+    <tstamp/>
+    <copy file="${project.release}/${project.zipfilename}" tofile="${project.nightly}/${define.pluginname}-${version}-${DSTAMP}.zip" />
+    <delete dir="${project.release}"/>
+  </target>
 
 
 </project>
