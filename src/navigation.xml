@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO8859-1"?> 
+<navigation>
+  <item name="Jameica" icon-close="base.gif" action="de.willuhn.jameica.views.Start">
+    <item name="adresses" icon-close="folder.gif" icon-open="folderopen.gif" action="de.willuhn.jameica.views.Adresses" />
+  </item>
+
+</navigation>
