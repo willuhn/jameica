@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/02/18 01:40:29 $
+ * $Revision: 1.10 $
+ * $Date: 2004/02/20 20:45:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,10 +15,10 @@ package de.willuhn.jameica.gui.views;
 
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.controller.SettingsControl;
-import de.willuhn.jameica.gui.parts.*;
+import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.parts.LabelGroup;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -28,15 +28,6 @@ import de.willuhn.util.I18N;
  */
 public class Settings extends AbstractView
 {
-
-  /**
-   * ct.
-   * @param parent
-   */
-  public Settings(Composite parent)
-  {
-    super(parent);
-  }
 
   /**
    * @see de.willuhn.jameica.gui.views.AbstractView#bind()
@@ -100,6 +91,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.10  2004/02/20 20:45:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/02/18 01:40:29  willuhn
  * @N new white style
  *

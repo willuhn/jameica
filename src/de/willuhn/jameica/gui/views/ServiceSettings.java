@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ServiceSettings.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/11 00:10:42 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/20 20:45:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,6 @@
 
 package de.willuhn.jameica.gui.views;
 
-import org.eclipse.swt.widgets.Composite;
-
 import de.willuhn.jameica.gui.controller.ServiceSettingsControl;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -24,15 +22,6 @@ import de.willuhn.util.I18N;
  */
 public class ServiceSettings extends AbstractView
 {
-
-  /**
-   * ct.
-   * @param parent
-   */
-  public ServiceSettings(Composite parent)
-  {
-    super(parent);
-  }
 
   /**
    * @see de.willuhn.jameica.gui.views.AbstractView#bind()
@@ -57,6 +46,9 @@ public class ServiceSettings extends AbstractView
 
 /**********************************************************************
  * $Log: ServiceSettings.java,v $
+ * Revision 1.5  2004/02/20 20:45:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/02/11 00:10:42  willuhn
  * *** empty log message ***
  *

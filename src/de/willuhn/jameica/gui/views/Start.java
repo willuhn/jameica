@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/02/20 01:25:06 $
+ * $Revision: 1.13 $
+ * $Date: 2004/02/20 20:45:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,27 +15,21 @@ package de.willuhn.jameica.gui.views;
 
 import java.util.ArrayList;
 
-import org.eclipse.swt.widgets.Composite;
-
 import de.willuhn.jameica.Plugin;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.WelcomeText;
 import de.willuhn.jameica.gui.parts.Text;
 
 
+/**
+ * Startseite von Jameica.
+ */
 public class Start extends AbstractView
 {
 
   /**
-   * ct.
-   * @param parent
+   * @see de.willuhn.jameica.gui.views.AbstractView#bind()
    */
-  public Start(Composite parent)
-  {
-    super(parent);
-  }
-
-
   public void bind()
   {
     addHeadline("Jameica");
@@ -55,9 +49,7 @@ public class Start extends AbstractView
 
 		t.appendText(WelcomeText.getText());
 		t.paint(getParent());
-
   }        
-
 
   public void unbind()
   {
@@ -67,6 +59,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.13  2004/02/20 20:45:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/02/20 01:25:06  willuhn
  * @N nice dialog
  * @N busy indicator

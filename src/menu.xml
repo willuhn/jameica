@@ -4,6 +4,7 @@
 
   <cascade name="Datei">
     <item name="&amp;Einstellungen" 			shortcut="CTRL+E" class="de.willuhn.jameica.gui.views.Settings" />
+	<item name="-" />
     <item name="Beenden"    			 		class="de.willuhn.jameica.gui.views.FileClose" />
   </cascade>
 

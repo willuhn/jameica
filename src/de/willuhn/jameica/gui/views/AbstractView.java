@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/01/28 20:51:25 $
+ * $Revision: 1.12 $
+ * $Date: 2004/02/20 20:45:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,15 +28,6 @@ public abstract class AbstractView
 	private Composite parent;
 
   /**
-   * ct.
-   * @param parent Composite in dem die View angezeigt werden soll.
-   */
-  public AbstractView(Composite parent)
-  {
-    this.parent = parent;
-  }
- 
-  /**
    * Wird aufgerufen, wenn der Dialog geoeffnet wird.
    * Diese Methode muss von abgeleiteteten Klassen ueberschrieben werden, um dort den Content zu malen.
    * @throws Exception kann von der View geworfen werden, wenn ein Fehler
@@ -62,7 +53,7 @@ public abstract class AbstractView
    * @return Liefert das Business-Objekt fuer das der Dialog zustaendig ist.
    * @throws RemoteException Wenn beim Laden oder Erstellen des Objektes ein Fehler aufgetreten ist.
    */
-  public Object getCurrentObject() throws RemoteException
+  public final Object getCurrentObject() throws RemoteException
 	{
 		return currentObject;
 	}
@@ -71,7 +62,7 @@ public abstract class AbstractView
 	 * Speichert das zu dieser View gehoerende Daten-Objekt.
    * @param o das Business-Objekt.
    */
-  public void setCurrentObject(Object o)
+  public final void setCurrentObject(Object o)
 	{
 		this.currentObject = o;
 	}
@@ -80,7 +71,7 @@ public abstract class AbstractView
 	 * Zeigt den uebergebenen Text als Dialog-Ueberschrift an.
    * @param text anzuzeigende Ueberschrift.
    */
-  public void addHeadline(String text)
+  public final void addHeadline(String text)
 	{
 		new Headline(getParent(),I18N.tr(text == null ? "" : text));
 	}
@@ -89,9 +80,20 @@ public abstract class AbstractView
 	 * Liefert das Composite, in dem der Dialog gemalt wird.
    * @return Parent-Composite.
    */
-  protected Composite getParent()
+  public final Composite getParent()
 	{
 		return this.parent;
+	}
+
+	/**
+	 * Speichert das Composite, in dem der Dialog gemalt werden soll.
+	 * Wenn diese Funktion benutzt wird, muss sie zwingend vor
+	 * bind() geschehen, da es sonst zu spaet ist ;).
+   * @param p das Parent-Composite.
+   */
+  public final void setParent(Composite p)
+	{
+		this.parent = p;
 	}
 }
 
@@ -99,6 +101,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.12  2004/02/20 20:45:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/01/28 20:51:25  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

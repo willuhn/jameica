@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/02/20 01:25:06 $
+ * $Revision: 1.23 $
+ * $Date: 2004/02/20 20:45:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,6 @@
 package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -308,9 +306,8 @@ public class GUI
 		
 		      gui.view.cleanContent();
 		
-		      Constructor ct = clazz.getConstructor(new Class[]{Composite.class});
-		      ct.setAccessible(true);
-		      gui.currentView = (AbstractView) ct.newInstance(new Object[] {gui.view.getContent()});
+		      gui.currentView = (AbstractView) clazz.newInstance();
+					gui.currentView.setParent(gui.view.getContent());
 		
 		      // Neuen Inhalt anzeigen
 		      gui.currentView.setCurrentObject(o);
@@ -331,14 +328,6 @@ public class GUI
 		    catch (InstantiationException e)
 		    {
 		    	Application.getLog().error("error while instanciating view",e);
-		    }
-		    catch (NoSuchMethodException e)
-		    {
-					Application.getLog().error("nt a valid view",e);
-		    }
-		    catch (InvocationTargetException e)
-		    {
-					Application.getLog().error("error occured while loading view",e);
 		    }
 		    catch (IllegalAccessException e)
 		    {
@@ -545,6 +534,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.23  2004/02/20 20:45:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2004/02/20 01:25:06  willuhn
  * @N nice dialog
  * @N busy indicator
