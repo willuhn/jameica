@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.9 $
+ * $Date: 2005/03/31 22:35:37 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -30,10 +29,13 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 
 /**
  * Freiformatierbarer Text.
@@ -43,7 +45,6 @@ public class FormTextPart implements Part {
 	private StringBuffer content 				= new StringBuffer();
 	private ScrolledComposite container = null;
 	private FormText text								= null;
-	private ArrayList listener					= new ArrayList();
 
 	/**
 	 * ct.
@@ -69,15 +70,6 @@ public class FormTextPart implements Part {
 	public FormTextPart(Reader text) throws IOException
 	{
 		setText(text);
-	}
-
-	/**
-	 * Fuegt einen Listener hinzu, der beim Klick auf einen Link ausgeloest wird.
-   * @param l der Listener. Ihm wird der Wert des Links mitgegeben.
-   */
-  public void addHyperlinkListener(Listener l)
-	{
-		listener.add(l);
 	}
 
 	/**
@@ -192,13 +184,35 @@ public class FormTextPart implements Part {
 
 		text.addHyperlinkListener(new HyperlinkAdapter() {
       public void linkActivated(HyperlinkEvent e) {
-      	for (int i=0;i<listener.size();++i)
-      	{
-      		Event ev = new Event();
-      		ev.data = e.getHref();
-      		Listener l = (Listener) listener.get(i);
-      		l.handleEvent(ev);
-      	}
+     		Event ev = new Event();
+     		ev.data = e.getHref();
+        if (ev.data == null)
+        {
+          Logger.info("got hyperlink event, but data was null. nothing to do");
+          return;
+        }
+        if (!(ev.data instanceof String))
+        {
+          Logger.info("got hyperlink event, but data is not a string, skipping");
+          return;
+        }
+        String action = (String) ev.data;
+        if (action.indexOf(".") == -1)
+        {
+          Logger.info("given href \"" + action + "\" doesn't look like a java class, skipping");
+          return;
+        }
+        try
+        {
+          Logger.debug("trying to load class " + action);
+          Class c = Application.getClassLoader().load(action);
+          Action a = (Action) c.newInstance();
+          a.handleAction(e);
+        }
+        catch (Throwable t)
+        {
+          Logger.error("error while executing action " + action,t);
+        }
       }
     });
 
@@ -209,6 +223,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.9  2005/03/31 22:35:37  web0
+ * @N flexible Actions fuer FormTexte
+ *
  * Revision 1.8  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Attic/About.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/01/13 19:31:38 $
- * $Author: willuhn $
+ * $Revision: 1.5 $
+ * $Date: 2005/03/31 22:35:37 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.internal.action.Program;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.gui.util.SWTUtil;
@@ -36,12 +37,12 @@ public class About extends AbstractView {
   	I18N i18n = Application.getI18n();
 
 		Label l = new Label(getParent(),SWT.BORDER);
-		l.setImage(SWTUtil.getImage("splash3.jpg"));
+		l.setImage(SWTUtil.getImage("splash.jpg"));
 
 		FormTextPart text = new FormTextPart();
 		text.setText("<form>" +
-			"<p><b>Jameica - Java based message interchange</b></p>" +			"<br/>Licence: GPL (http://www.gnu.org/copyleft/gpl.html)" +
-			"<br/><p>Copyright by Olaf Willuhn [info@jameica.org]</p>" +			"<p>http://www.jameica.org</p>" +			"</form>");
+			"<p><b>Jameica - Java based message interchange</b></p>" +			"<br/><p>Licence: GPL [<a href=\"" + Program.class.getName() + "\">http://www.gnu.org/copyleft/gpl.html</a>]</p>" +
+			"<br/><p>Copyright by Olaf Willuhn [<a href=\"" + Program.class.getName() + "\">mailto:info@jameica.org</a>]</p>" +			"<p><a href=\"" + Program.class.getName() + "\">http://www.jameica.org</a></p>" +			"</form>");
 
 		text.paint(getParent());
 
@@ -63,6 +64,9 @@ public class About extends AbstractView {
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.5  2005/03/31 22:35:37  web0
+ * @N flexible Actions fuer FormTexte
+ *
  * Revision 1.4  2005/01/13 19:31:38  willuhn
  * @C SSLFactory geaendert
  * @N Settings auf property-Format umgestellt

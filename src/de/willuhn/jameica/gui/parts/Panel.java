@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/03/05 19:11:03 $
+ * $Revision: 1.4 $
+ * $Date: 2005/03/31 22:35:37 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -79,7 +79,7 @@ public class Panel implements Part
     ///////////////////////////////
     // Eigenes Parent, damit wir ein GridLayout verwenden koennen
     myParent = new Composite(parent,SWT.BORDER);
-    myParent.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
+    //myParent.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
     GridLayout myLayout = new GridLayout();
     myLayout.horizontalSpacing = 0;
     myLayout.verticalSpacing = 0;
@@ -148,6 +148,9 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.4  2005/03/31 22:35:37  web0
+ * @N flexible Actions fuer FormTexte
+ *
  * Revision 1.3  2005/03/05 19:11:03  web0
  * *** empty log message ***
  *
