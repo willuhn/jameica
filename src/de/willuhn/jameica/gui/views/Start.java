@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/29 17:44:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,6 @@ import de.willuhn.jameica.Plugin;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.views.parts.Headline;
 import de.willuhn.jameica.gui.views.parts.LabelGroup;
-import de.willuhn.jameica.gui.views.parts.LabelInput;
 
 
 public class Start extends AbstractView
@@ -41,8 +40,7 @@ public class Start extends AbstractView
     for (int i=0;i<installedPlugins.size();++i)
     {
       Plugin plugin = (Plugin) installedPlugins.get(i);
-      LabelInput pluginLabel = new LabelInput("Version: " + plugin.getVersion());
-      plugins.addLabelPair(plugin.getName(),pluginLabel);
+      plugins.addText(plugin.getName() + " " + plugin.getVersion(),false);
     }
   }        
 
@@ -55,6 +53,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.7  2003/12/29 17:44:10  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

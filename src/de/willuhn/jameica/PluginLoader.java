@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.19 $
- * $Date: 2003/12/29 17:11:49 $
+ * $Revision: 1.20 $
+ * $Date: 2003/12/29 17:44:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,7 +62,7 @@ public class PluginLoader extends ClassLoader
     if (Application.IDE)
     {
       // loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","../fibu/src");
-      loadPluginFromIDE("de.willuhn.jameica.dynameica.Dynameica","../dynameica/src");
+      // loadPluginFromIDE("de.willuhn.jameica.dynameica.Dynameica","../dynameica/src");
     }
 
     try {
@@ -358,6 +358,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.20  2003/12/29 17:44:10  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.19  2003/12/29 17:11:49  willuhn
  * *** empty log message ***
  *

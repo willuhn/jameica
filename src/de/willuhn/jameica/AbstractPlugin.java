@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/29 17:11:49 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/29 17:44:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,7 @@ public abstract class AbstractPlugin implements Plugin
   {
     try {
       Manifest manifest = jar.getManifest();
-      String name = (String) manifest.getEntries().get("Implementation-Title");
+      String name = (String) manifest.getMainAttributes().getValue("Implementation-Title");
       if (name == null) throw new Exception();
       return name;
     }
@@ -77,7 +77,7 @@ public abstract class AbstractPlugin implements Plugin
   {
     try {
       Manifest manifest = jar.getManifest();
-      String version = (String) manifest.getEntries().get("Implementation-Version");
+      String version = (String) manifest.getMainAttributes().getValue("Implementation-Version");
       version = version.substring(2).replace('_','.');
       return Double.parseDouble(version);
     }
@@ -104,6 +104,9 @@ public abstract class AbstractPlugin implements Plugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.3  2003/12/29 17:44:10  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/12/29 17:11:49  willuhn
  * *** empty log message ***
  *
