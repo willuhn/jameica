@@ -1,16 +1,161 @@
-Jameica (Generisches GUI-Framework)
-Copyright (C) 2004 Olaf Willuhn
+###########################################################################
+# Jameica                                                                 #
+#                                                                         #
+# Copyright (C) 2004 Olaf Willuhn                                         #
+# email: info@jameica.org                                                 #
+# www  : http://www.jameica.org                                           #
+#                                                                         #
+# This program is free software; you can redistribute it and/or modify    #
+# it under the terms of the GNU General Public License as published by    #
+# the Free Software Foundation; either version 2 of the License, or       #
+# (at your option) any later version.                                     #
+#                                                                         #
+# This program is distributed in the hope that it will be useful,         #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of          #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           #
+# GNU General Public License for more details.                            #
+#                                                                         #
+# You should have received a copy of the GNU General Public License       #
+# along with this program; if not, write to the Free Software             #
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.               #
+#                                                                         #
+###########################################################################
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+###########################################################################
+# 1. Systemvoraussetzungen                                                #
+###########################################################################
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+- Java 1.4 oder hoeher (JRE oder SDK)
+  Geben Sie "java -version" an einer Shell (Windows: Eingabeaufforderung)
+  ein um die Version zu ueberpruefen.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  Java koennen Sie von http://java.sun.com/j2se/index.jsp herunterladen.
+
+###########################################################################
+# 2. INSTALLATION                                                         #
+###########################################################################
+
+1) Kopieren Sie den Inhalt dieser ZIP-Datei in ein Verzeichnis Ihrer Wahl.
+   z.Bsp.:
+   Windows:  "C:\Progamme\jameica"
+   Linux:    "/opt/jameica"
+
+2) Wechseln Sie in das Programm-Verzeichnis und geben Sie ein:
+   Windows:  "jameica.bat"
+   Linux:    "./jameica.sh"
+
+Hinweis: Jameica schreibt keinerlei Dateien in das Programm-Verzeichnis.
+         Alle Einstellungen, Log-Files und Daten werden in einem Verzeichnis
+         ".jameica" innerhalb Ihres Homebereiches abgelegt. Das sind i.d.R.:
+         Windows: "C:\Dokumente und Einstellungen\<benutzername>\.jameica"
+         Linux:   "/home/<benutzername>/.jameica"
+
+#                                                                         #
+###########################################################################
+
+###########################################################################
+# 3. Installation zusaetzlicher Plugins                                   #
+###########################################################################
+
+1) Beenden Sie ggf. Jameica.
+2) Entpacken Sie das Plugin in das Verzeichnis "plugins" von Jameica.
+3) Starten Sie Jameica erneut.
+
+Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
+         dann nicht unter "Hilfe->installierte Plugins", dann
+         pruefen Sie bitte die Log-Ausgaben in der Datei
+         "jameica.log" innerhalb Ihres Work-Verzeichnisses und senden Sie
+         ggf. protokollierte Fehler an den Autor des Plugins.
+
+#                                                                         #
+###########################################################################
+
+###########################################################################
+# 4. Optionale Startparameter                                             #
+###########################################################################
+
+-h, --help
+  Zeigt einen Hilfe-Text mit allen moeglichen Startparametern an.
+  
+-f <Verzeichnis>, --file=<Verzeichnis>
+  Sie koennen Jameica auch ein abweichendes Daten-Verzeichnis ueber einen
+  Startparameter mitgeben. Somit ist es z.Bsp. moeglich mehrere System-
+  konfigurationen parallel zu benutzen. Bsp.:
+  Windows:  "jameica.bat -f d:\daten\.jameica"
+  Linux:    "./jameica.sh -f /tmp/jameicatest"
+
+-p <Passwort>, --password=<Passwort>
+ Ueber diesen Parameter kann das Master-Passwort ueber einen Startparameter
+ uebergeben werden. Dies kann zum Beispiel genutzt werden, wenn Jameica
+ im Server-Modus automatisch beim Booten des Betriebssystem gestartet
+ werden soll und keine Benutzerinteraktion moeglich ist.
+ WICHTIG: Bitte stellen Sie sicher, dass das Passwort hierbei nicht
+ fuer Dritte zugaenglich wird.
+ 
+-d, --server
+-c, --client
+-s, --standalone
+  Im Server-Modus wird die komplette GUI weggelassen. Alle installierten
+  und initialisierbaren Plugins werden via RMI im Netzwerk fuer
+  Jameica-Clients zur Verfuegung gestellt, die im Client-Mode laufen.
+  Es findet keine direkte Interaktion mit dem Benutzer statt.
+  Hierbei handelt es sich also um das klassische Client/Server Szenario.
+  Der Server kann somit auch als Daemon im Hintergrund gestartet
+  werden.
+
+  Im Client-Modus startet die Anwendung mit GUI.
+  Sie kann nur dann genutzt werden, wenn nach dem Start ein
+  Server angegeben wird, der die Backends fuer die installierten
+  Plugins bereitstellt.
+
+  Die Anwendung startet im Standalone-Modus mit GUI.
+  Es werden keine Dienste im Netzwerk freigegeben. Die Anwendung ist
+  "vollausgestattet" und somit nicht auf einen Server angewiesen.
+
+  Wird kein Parameter angegeben, startet die Anwendung im Standalone-Mode.
+
+#                                                                         #
+###########################################################################
+
+###########################################################################
+# 5. "Experten-Einstellungen"                                             #
+###########################################################################
+
+- In Ihrem Datenverzeichnis ".jameica" befindet sich eine Datei
+  "cfg/de.willuhn.jameica.system.Config.properties":
+
+  jameica.system.log.file:
+  	Hier koennen Sie eine abweichende Log-Datei definieren.
+
+  jameica.system.log.level:
+    Ueber diesen Parameter koennen Sie den Umfang der
+    Log-Ausgaben beeinflussen. Es existieren folgende
+	Log-Level:
+	ERROR: Es werden nur Fehler ausgegeben.
+	WARN : Fehler und Warnungen
+	INFO : Informative Meldungen, Warnungen und Fehler
+	DEBUG: alle o.g. Ausgaben und zusaetzlich fuer
+           Debugging-Zwecke relevante Ausgaben.
+
+  jameica.system.locale:
+    Zu verwendendes Locale. Beachten Sie bitte, dass
+    bei Veraenderung des Wertes auch die entsprechenden
+    Sprach-Uebersetzungen vorhanden sein muessen.
+    Die zu verwendende Sprache koennen Sie auch in Jameica unter
+    "Datei"->"Einstellungen" aendern.
+
+  jameica.plugin.dir.[x]
+    Hier koennen Sie zusaetzliche Verzeichnisse fuer
+    Plugins angeben. Somit ist es z.Bsp. moeglich, auf
+    einem Fileserver ein zentrales Repository von Jameica-
+    Plugins bereitzustellen, welches von allen Clients
+    im LAN gemeinsam benutzt werden kann. Fuegen Sie
+    weitere Zeilen hinzu, indem Sie die Index-Nummer jeweils
+    erhoehen. Bsp.:
+  jameica.plugin.dir.0=plugins
+  jameica.plugin.dir.1=/opt/jameica/plugins
+  jameica.plugin.dir.2=d:/jameica/externalplugins
+
+#                                                                         #
+###########################################################################
+

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/19 02:14:00 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2005/02/26 18:14:59 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -77,7 +77,7 @@ public class JameicaTrustManager implements X509TrustManager
   }
 
   /**
-   * @see com.sun.net.ssl.X509TrustManager#getAcceptedIssuers()
+   * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
    */
   public X509Certificate[] getAcceptedIssuers()
   {
@@ -88,6 +88,10 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.2  2005/02/26 18:14:59  web0
+ * @N new nightly builds
+ * @C readme file
+ *
  * Revision 1.1  2005/01/19 02:14:00  willuhn
  * @N Wallet zum Verschluesseln von Benutzerdaten
  *

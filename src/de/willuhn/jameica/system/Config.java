@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.16 $
- * $Date: 2005/02/02 16:16:38 $
- * $Author: willuhn $
+ * $Revision: 1.17 $
+ * $Date: 2005/02/26 18:14:59 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -225,7 +225,7 @@ public final class Config
 
 	/**
 	 * Speichert Pfad und Dateiname des LogFiles.
-   * @param logFile.
+   * @param logFile
    */
   public void setLogFile(String logFile)
 	{
@@ -278,6 +278,10 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.17  2005/02/26 18:14:59  web0
+ * @N new nightly builds
+ * @C readme file
+ *
  * Revision 1.16  2005/02/02 16:16:38  willuhn
  * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
  *
