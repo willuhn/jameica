@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/23 19:26:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,13 +16,18 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.GUI;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
+import de.willuhn.jameica.views.util.Style;
 
 /**
  * @author willuhn
@@ -34,6 +39,9 @@ public class SelectInput extends Input
   private String[] values;
   private String preselected;
   private Combo combo;
+  private String comment;
+  private Listener commentListener;
+  private Label commentLabel;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
@@ -43,7 +51,7 @@ public class SelectInput extends Input
   public SelectInput(String[] values, String preselected)
   {
     this.preselected = preselected;
-    this.values      = values;
+    this.values = values;
   }
 
   /**
@@ -54,7 +62,7 @@ public class SelectInput extends Input
   public SelectInput(ArrayList values, String preselected)
   {
     this.preselected = preselected;
-    this.values      = (String[]) values.toArray(new String[]{});
+    this.values = (String[]) values.toArray(new String[] {});
   }
 
   /**
@@ -68,7 +76,8 @@ public class SelectInput extends Input
   {
     this.preselected = (String) object.getField(object.getPrimaryField());
 
-    try {
+    try
+    {
       DBIterator list = object.getList();
       this.values = new String[list.size()];
       DBObject o = null;
@@ -79,8 +88,7 @@ public class SelectInput extends Input
         o = list.next();
         this.values[i++] = (String) o.getField(primaryField);
       }
-    }
-    catch (RemoteException e)
+    } catch (RemoteException e)
     {
       GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
       this.values = new String[0];
@@ -99,7 +107,8 @@ public class SelectInput extends Input
 
     this.preselected = preselected;
 
-    try {
+    try
+    {
       this.values = new String[list.size()];
       DBObject o = null;
       int i = 0;
@@ -108,8 +117,7 @@ public class SelectInput extends Input
         o = list.next();
         this.values[i++] = (String) o.getField("field");
       }
-    }
-    catch (RemoteException e)
+    } catch (RemoteException e)
     {
       GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
       this.values = new String[0];
@@ -117,18 +125,64 @@ public class SelectInput extends Input
   }
 
   /**
+   * Fuegt rechts neben die Combo-Box einen Kommentar hinzu.
+   * @param o
+   * @param method Methode, die bei jeder Aenderung
+   * @param parameterTypes
+   */
+  public void addComment(String comment, Listener l)
+  {
+    this.comment = comment;
+    this.commentListener = l;
+  }
+
+  public void updateComment(String newComment)
+  {
+    this.commentLabel.setText(newComment);
+    this.commentLabel.redraw();
+  }
+  /**
    * @see de.willuhn.jameica.views.parts.Input#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent)
   {
 
-    combo = new Combo(parent,SWT.BORDER | SWT.READ_ONLY);
-    combo.setLayoutData(createGrid());
+    final GridData grid = createGrid();
+
+    // Wenn ein Kommentar da ist, muessen wir das Composite nochmal aufsplitten
+    if (comment != null)
+    {
+      Composite newParent = new Composite(parent, SWT.NONE);
+      newParent.setLayoutData(grid);
+      final GridLayout layout = new GridLayout(2, false);
+      layout.marginWidth = 0;
+      newParent.setLayout(layout);
+
+      combo = new Combo(newParent, SWT.BORDER | SWT.READ_ONLY);
+      final GridData comboGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+      comboGrid.widthHint = 100;
+      combo.setLayoutData(comboGrid);
+      if (commentListener != null)
+        combo.addListener(SWT.Selection,commentListener);
+
+      commentLabel = new Label(newParent,SWT.NONE);
+      final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
+      labelGrid.widthHint = 95;
+      commentLabel.setText(comment);
+      commentLabel.setForeground(Style.COLOR_COMMENT);
+      commentLabel.setAlignment(SWT.RIGHT);
+      commentLabel.setLayoutData(labelGrid);
+    }
+    else {
+      combo = new Combo(parent, SWT.BORDER | SWT.READ_ONLY);
+      combo.setLayoutData(grid);
+    }
+
     int selected = 0;
     if (values == null || values.length == 0)
-      values = new String[] {""};
+      values = new String[] { "" };
 
-    for (int i=0;i<values.length;++i)
+    for (int i = 0; i < values.length; ++i)
     {
       combo.add((values[i] == null ? "" : values[i]));
       if (getValue().equals(values[i]))
@@ -148,6 +202,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.4  2003/11/23 19:26:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

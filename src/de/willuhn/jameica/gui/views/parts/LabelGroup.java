@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/21 02:10:21 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/23 19:26:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,7 @@ public class LabelGroup
   public void addLabelPair(String name, Input input)
   {
     // Label
-    final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
+    final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
     labelGrid.widthHint = 100;
 
     final Label label = new Label(group, SWT.NONE);
@@ -63,6 +63,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.3  2003/11/23 19:26:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/11/21 02:10:21  willuhn
  * @N prepared Statements in AbstractDBObject
  * @N a lot of new SWT parts
