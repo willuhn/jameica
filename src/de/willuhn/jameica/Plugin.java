@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Plugin.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/30 02:10:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,23 @@ public interface Plugin
   public void init();
   
   /**
+   * Diese Funktion wird beim Start der Anwendung aufgerufen, wenn das Plugin
+   * zum ersten mal gestartet wird. Die install() Funktion wird solange bei
+   * jedem Start aufgerufen, bis sie mit <code>true</code> antwortet.
+   * @return true, wenn die Installation erfolgreich verlief.
+   */
+  public boolean install();
+
+  /**
+   * Diese Funktion wird beim Start der Anwendung genau dann aufgerufen, wenn
+   * das Plugin bereits erfolgreich installiert wurde, jedoch jetzt in einer
+   * anderen Version vorliegt als die vorherige.
+   * @param oldVersion Version, die vorher installiert war.
+   * @return true, wenn das Update erfolgreich verlief.
+   */
+  public boolean update(double oldVersion);
+
+  /**
    * Liefert den Namen des Plugins.
    * @return Name des Plugins.
    */
@@ -47,6 +64,9 @@ public interface Plugin
 
 /*********************************************************************
  * $Log: Plugin.java,v $
+ * Revision 1.5  2003/12/30 02:10:57  willuhn
+ * @N updateChecker
+ *
  * Revision 1.4  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

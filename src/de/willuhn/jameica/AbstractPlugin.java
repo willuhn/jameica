@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/29 17:44:10 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/30 02:10:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,15 +95,13 @@ public abstract class AbstractPlugin implements Plugin
     return 1.0;
   }
 
-  /**
-   * @see de.willuhn.jameica.Plugin#shutDown()
-   */
-  public abstract void shutDown();
-
 }
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.4  2003/12/30 02:10:57  willuhn
+ * @N updateChecker
+ *
  * Revision 1.3  2003/12/29 17:44:10  willuhn
  * *** empty log message ***
  *

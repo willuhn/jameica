@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.27 $
- * $Date: 2003/12/29 22:07:40 $
+ * $Revision: 1.28 $
+ * $Date: 2003/12/30 02:10:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -634,10 +634,11 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       values += "?,";
     }
 
+    names  += getIDField() + ")";
+
     // Wenn das Objekt eine ID hat, dann haengen wir sie an's Insert-Statement mit dran.
     if (getID() != null)
     {
-      names  += getIDField() + ")";
       try {
         values += Integer.parseInt(getID()) + ")";
       }
@@ -647,8 +648,15 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       }
     }
     else {
-      names = names.substring(0,names.length()-1) + ")"; // remove last "," and append ")"
-      values = values.substring(0,values.length()-1) + ")"; // remove last "," and append ")"
+      // TODO: UNIQUEKEY()
+      // Weil die UNIQUEKEY() Funktion von McKoi nicht "select (max(id) + 1)" macht sondern
+      // selbst bei 1 anfaengt zu zaehlen, kommt es dauernd vor, dass es eine ID ermittelt,
+      // die es schon gibt. Naemlich genau dann, wenn in die Tabelle Zeilen eingefuegt wurden,
+      // die ihre eigene ID mitgebracht haben :(
+
+      values += "'" + createID() + "')";
+      //names = names.substring(0,names.length()-1) + ")"; // letzte Komma entfernen und ")" dranhaengen
+      //values = values.substring(0,values.length()-1) + ")";
     }
 
     try {
@@ -664,6 +672,38 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     catch (Exception e)
     {
       throw new RemoteException("unable to prepare insert sql statement",e);
+    }
+  }
+
+  /**
+   * Erzeugt eine neue noch nicht vergebene ID fuer das neue Objekt.
+   * @return die erzeugte ID.
+   * @throws RemoteException im Fehlerfall.
+   */
+  private String createID() throws RemoteException
+  {
+    Statement stmt = null;
+    ResultSet rs = null;
+    try {
+      stmt = getConnection().createStatement();
+      rs = stmt.executeQuery("select (max(" + getIDField() + ") + 1) from " + getTableName());
+      if (!rs.next())
+        throw new SQLException("select max(id) returned empty resultset");
+      return rs.getString(1);
+    }
+    catch (SQLException e)
+    {
+      if (Application.DEBUG)
+        e.printStackTrace();
+      throw new RemoteException(e.getMessage());
+    }
+    finally
+    {
+      try {
+        rs.close();
+        stmt.close();
+      }
+      catch (SQLException e) { /* useless */}
     }
   }
 
@@ -926,6 +966,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.28  2003/12/30 02:10:57  willuhn
+ * @N updateChecker
+ *
  * Revision 1.27  2003/12/29 22:07:40  willuhn
  * *** empty log message ***
  *
