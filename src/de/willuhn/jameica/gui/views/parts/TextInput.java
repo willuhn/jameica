@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.9 $
+ * $Date: 2003/12/16 02:27:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -80,11 +80,31 @@ public class TextInput extends Input
     text.setFocus();
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.views.parts.Input#disable()
+   */
+  public void disable()
+  {
+    text.setEnabled(false);
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.views.parts.Input#enable()
+   */
+  public void enable()
+  {
+    text.setEnabled(true);
+  }
+
+
 
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.9  2003/12/16 02:27:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

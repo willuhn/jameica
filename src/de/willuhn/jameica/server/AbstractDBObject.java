@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.17 $
- * $Date: 2003/12/15 19:08:01 $
+ * $Revision: 1.18 $
+ * $Date: 2003/12/16 02:27:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -229,7 +229,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#store()
    */
-  public final void store() throws RemoteException, ApplicationException
+  public void store() throws RemoteException, ApplicationException
   {
     if (isNewObject())
       insert();
@@ -795,6 +795,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.18  2003/12/16 02:27:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2003/12/15 19:08:01  willuhn
  * *** empty log message ***
  *

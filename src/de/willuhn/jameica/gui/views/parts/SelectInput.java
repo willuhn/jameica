@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.14 $
+ * $Date: 2003/12/16 02:27:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -137,6 +137,24 @@ public class SelectInput extends Input
     combo.setFocus();
   }
 
+
+  /**
+   * @see de.willuhn.jameica.gui.views.parts.Input#disable()
+   */
+  public void disable()
+  {
+    combo.setEnabled(false);
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.views.parts.Input#enable()
+   */
+  public void enable()
+  {
+    combo.setEnabled(true);
+  }
+
+
   /**
    * @see de.willuhn.jameica.views.parts.Input#setValue(java.lang.String)
    */
@@ -147,6 +165,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.14  2003/12/16 02:27:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

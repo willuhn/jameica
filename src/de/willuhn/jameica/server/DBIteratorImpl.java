@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.13 $
+ * $Date: 2003/12/16 02:27:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -158,8 +158,15 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
   public DBObject next() throws RemoteException
 	{
     if (!initialized) init();
-		object.load((String) list.get(index++));
-    return object;
+    try {
+      DBObject o = DBHubImpl.create(conn,object.getClass());
+      o.load((String) list.get(index++));
+      return o;
+    }
+    catch (Exception e)
+    {
+      throw new RemoteException(e.getMessage());
+    }
 	}
   
   /**
@@ -168,8 +175,15 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
   public DBObject previous() throws RemoteException
   {
     if (!initialized) init();
-    object.load((String) list.get(index--));
-    return object;
+    try {
+      DBObject o = DBHubImpl.create(conn,object.getClass());
+      o.load((String) list.get(index--));
+      return o;
+    }
+    catch (Exception e)
+    {
+      throw new RemoteException(e.getMessage());
+    }
   }
 
   
@@ -221,6 +235,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.13  2003/12/16 02:27:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/16 02:27:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -161,10 +161,22 @@ public abstract class Input
    */
   public abstract void focus();
   
+  /**
+   * Deaktiviert das Eingabefeld.
+   */
+  public abstract void disable();
+  
+  /**
+   * Aktiviert das Eingabefeld.
+   */
+  public abstract void enable();
 }
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.12  2003/12/16 02:27:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *
