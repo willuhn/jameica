@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/05/26 23:23:23 $
+ * $Revision: 1.4 $
+ * $Date: 2004/05/27 23:38:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.gui.util;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -39,6 +41,8 @@ public class SWTUtil {
 
 	private static Map imagecache = new HashMap();
 	private static FormToolkit toolkit = null;
+
+	private static Timer timer = new Timer();
 
 	/**
 	 * Disposed alle Kinder des Composites rekursiv jedoch nicht das Composite selbst.
@@ -76,15 +80,15 @@ public class SWTUtil {
 		if (l == null || millis < 1)
 			return;
 
-		GUI.getDisplay().asyncExec(new Thread() {
-			public void run() {
-				long end = System.currentTimeMillis() + millis;
-				while (!GUI.getShell().isDisposed() && end > System.currentTimeMillis()) {
-					if (!GUI.getDisplay().readAndDispatch ()) GUI.getDisplay().sleep();
-				}
-				l.handleEvent(null);
-			}
-		});
+		timer.schedule(new TimerTask() {
+      public void run() {
+      	GUI.getDisplay().asyncExec(new Runnable() {
+          public void run() {
+						l.handleEvent(null);
+          }
+        });
+      }
+    },millis);
 	}
 
 	/**
@@ -176,6 +180,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.4  2004/05/27 23:38:25  willuhn
+ * @B deadlock in swt event queue while startGUITimeout
+ *
  * Revision 1.3  2004/05/26 23:23:23  willuhn
  * @N Timeout fuer Messages in Statusbars
  *

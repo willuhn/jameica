@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/05/23 18:15:32 $
+ * $Revision: 1.19 $
+ * $Date: 2004/05/27 23:38:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.util.Hashtable;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.input.AbstractInput;
 import de.willuhn.jameica.gui.input.ColorInput;
@@ -229,6 +230,11 @@ public class SettingsControl extends AbstractControl
 			Color.LINK_ACTIVE.setSWTColor((org.eclipse.swt.graphics.Color)getColorLinkActive().getValue());
 
 			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen gespeichert."));
+			
+			SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
+			d.setTitle(i18n.tr("Neustart erforderlich"));
+			d.setText(i18n.tr("Bitte starten Sie Jameica neu, damit Ihre Änderungen wirksam werden."));
+			d.open();
     }
     catch (Exception e)
     {
@@ -290,6 +296,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.19  2004/05/27 23:38:25  willuhn
+ * @B deadlock in swt event queue while startGUITimeout
+ *
  * Revision 1.18  2004/05/23 18:15:32  willuhn
  * *** empty log message ***
  *

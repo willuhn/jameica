@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/05/27 23:12:58 $
+ * $Revision: 1.23 $
+ * $Date: 2004/05/27 23:38:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.views;
 
 import java.util.Enumeration;
 
+import de.willuhn.jameica.AbstractPlugin;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.InfoReader;
 import de.willuhn.jameica.PluginContainer;
@@ -45,9 +46,13 @@ public class Start extends AbstractView
 		while (e.hasMoreElements())
 		{
 			PluginContainer pc = (PluginContainer) e.nextElement();
+			AbstractPlugin plugin = pc.getPlugin();
 			InfoReader ir = pc.getInfo();
 			if (ir == null)
+			{
+				Application.getLog().warn("info.xml for plugin " + plugin.getName() + " not found, skipping");
 				continue;
+			}
 			LabelInput l = new LabelInput(": " + ir.getDescription());
 			l.setComment(ir.getUrl());
 			group.addLabelPair(ir.getName(),l);
@@ -69,6 +74,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.23  2004/05/27 23:38:25  willuhn
+ * @B deadlock in swt event queue while startGUITimeout
+ *
  * Revision 1.22  2004/05/27 23:12:58  willuhn
  * @B NoSuchFieldError in Settings
  * @C s/java/javaw.exe in build/*.bat
