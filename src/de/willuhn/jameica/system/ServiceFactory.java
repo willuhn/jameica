@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.24 $
- * $Date: 2005/01/12 11:32:43 $
+ * $Revision: 1.25 $
+ * $Date: 2005/01/14 00:48:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -147,7 +147,6 @@ public final class ServiceFactory
       LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
     }
     rmiStarted = true;
-    
   }
 
   /**
@@ -372,6 +371,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.25  2005/01/14 00:48:57  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2005/01/12 11:32:43  willuhn
  * *** empty log message ***
  *

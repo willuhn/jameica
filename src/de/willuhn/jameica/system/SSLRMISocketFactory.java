@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLRMISocketFactory.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/01/13 19:31:37 $
+ * $Revision: 1.9 $
+ * $Date: 2005/01/14 00:48:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,9 @@ import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 public class SSLRMISocketFactory extends RMISocketFactory {
+
+	/** Thread-local reference to the last SSLSocket created */
+	private static final ThreadLocal lastSocket = new ThreadLocal();
 
 	private SSLServerSocketFactory serverSocketFactory;
   private SSLSocketFactory socketFactory;
@@ -57,7 +60,7 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 		Logger.debug("Creating client socket to " + host + ":" + port);
     SSLSocket socket = (SSLSocket) socketFactory.createSocket(host, port);
 		log(socket);
-    return socket;
+    return new SSLSocketMonitor(socket);
   }
 
   /**
@@ -70,7 +73,7 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 		log(socket);
     socket.setNeedClientAuth(clientAuth);
     socket.setWantClientAuth(clientAuth);
-    return socket;
+    return new SSLServerSocketMonitor(socket);
   }
 
 	/**
@@ -116,10 +119,34 @@ public class SSLRMISocketFactory extends RMISocketFactory {
     } 
     Logger.debug(sb.toString());
   }
+
+	/**
+	 * Static method invoked by the InputStreamMonitor to register that
+	 * the specifed SSL socket was used to read.
+	 */
+	public static void setLocalThreadLastReadSocket(SSLSocket socket) {
+		Logger.info("connect from + " + socket);
+		lastSocket.set(socket);
+	}
+
+	/**
+	 * Returns the SSLSocket returned in the last SSLServerSocket.accept()
+	 * invocation in this thread, or one of its parents.
+	 *
+	 * @return the last SSLSocket object returned in this thread (or its
+	 *         parent), or null if no SSLSockets have bene processed
+	 */
+	public static SSLSocket getLocalThreadLastReadSocket() {
+		return((SSLSocket) lastSocket.get());
+	}
+
 }
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.9  2005/01/14 00:48:57  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/01/13 19:31:37  willuhn
  * @C SSLFactory geaendert
  * @N Settings auf property-Format umgestellt

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/01/13 19:31:37 $
+ * $Revision: 1.14 $
+ * $Date: 2005/01/14 00:48:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -116,7 +116,7 @@ public final class Config
     if (locale != null)
       return locale;
 
-    Locale l = Locale.getDefault();
+    Locale l = Locale.GERMANY;
     String lang = settings.getString("jameica.system.locale",l.getLanguage() + "_" + l.getCountry());
     String country = "";
     if (lang.indexOf("_") != -1)
@@ -260,6 +260,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.14  2005/01/14 00:48:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2005/01/13 19:31:37  willuhn
  * @C SSLFactory geaendert
  * @N Settings auf property-Format umgestellt

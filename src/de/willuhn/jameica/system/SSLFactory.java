@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/01/13 19:31:37 $
+ * $Revision: 1.15 $
+ * $Date: 2005/01/14 00:48:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,7 +77,18 @@ public class SSLFactory
 
 		File keyStoreFile = getKeyStoreFile();
 		if (keyStoreFile.exists() && keyStoreFile.canRead())
-			return;
+		{
+			// Sicher ist sicher. Wir machen noch einen Lesetest des Key-Stores.
+			try
+			{
+				getCertificate();
+				return;
+			}
+			catch (Exception e)
+			{
+				Logger.error("unable to read jameica keystore file. creating a new one");
+			}
+		}
 
 		Application.getStartupMonitor().addPercentComplete(10);
 		Logger.info("no ssl certificates found, creating...");
@@ -302,6 +313,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.15  2005/01/14 00:48:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/01/13 19:31:37  willuhn
  * @C SSLFactory geaendert
  * @N Settings auf property-Format umgestellt
