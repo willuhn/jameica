@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/Attic/ViewDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.7 $
+ * $Date: 2004/12/05 17:29:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,16 +71,20 @@ public class ViewDialog extends AbstractDialog {
 	}
 
   /**
+   * Das aktuelle Objekt der View (view.getCurrentObject()).
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
   protected Object getData() throws Exception {
-    return null;
+    return view.getCurrentObject();
   }
 }
 
 
 /**********************************************************************
  * $Log: ViewDialog.java,v $
+ * Revision 1.7  2004/12/05 17:29:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

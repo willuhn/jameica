@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/11/15 00:38:20 $
+ * $Revision: 1.17 $
+ * $Date: 2004/12/05 17:29:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -79,7 +79,54 @@ public class SelectInput extends AbstractInput
       throw new RuntimeException("error while initializing iterator");
     }
 	}
+	
+	/**
+	 * Aendert nachtraeglich das vorausgewaehlte Element.
+   * @param preselected neues vorausgewaehltes Element.
+   */
+  public void setPreselected(String preselected)
+	{
+		if (preselected == null)
+			return;
+		setPreselected(new StringObject(preselected));
+	}
 
+	/**
+	 * Aendert nachtraeglich das vorausgewaehlte Element.
+   * @param preselected neues vorausgewaehltes Element.
+   */
+  public void setPreselected(GenericObject preselected)
+	{
+		if (preselected == null)
+			return;
+		this.preselected = preselected;
+
+		if (combo != null && !combo.isDisposed())
+		{
+			try
+			{
+				String value = getAttributeValue(preselected);
+				if (value == null)
+					return;
+	
+				String[] items = combo.getItems();
+				for (int i=0;i<items.length;++i)
+				{
+					if (items[i].equals(value))
+					{
+						combo.select(i);
+						return;
+					}
+				}
+			}
+			catch (RemoteException e)
+			{
+				// skipping
+				Logger.error("error while reading attribute",e);
+			}
+		}
+	}
+	
 	/**
 	 * Ueberschreibt den Namen des anzuzeigenden Attributes.
 	 * Normalerweise wird einfach das Primaer-Attribut angezeigt, mit dieser
@@ -109,19 +156,9 @@ public class SelectInput extends AbstractInput
       {
       	final GenericObject current = list.next();
 
-				String s = current.getPrimaryAttribute();
-				if (this.attribute != null)
-					s = this.attribute;
-
-				Object o = current.getAttribute(s);
-
-				if (o == null || "".equals(o))
-					continue; // Primaer-Attribut leer, ignorieren
-
-      	String name = o.toString(); // ToString kann ggf. ueberschrieben sein
-      
-				if (name == null || "".equals(name))
-					continue; // Primaer-Attribut leer, ignorieren
+				String name = getAttributeValue(current);
+				if (name == null)
+					continue; // nichts zum Anzeigen da
 
       	// Da CCombo und Combo nicht fuer jeden Eintrag Daten speichern
       	// koennen, muessen wir das selbst tun.
@@ -139,9 +176,36 @@ public class SelectInput extends AbstractInput
     }
     combo.select(selected);
    	combo.setEnabled(enabled);
+   	if (!enabled)
+			combo.setForeground(Color.COMMENT.getSWTColor());
 
     return combo;
   }
+
+	/**
+	 * Kleine Hilfsfunktion, die den anzuzeigenden Wert des GenericObject
+	 * ermittelt.
+   * @param current Objekt.
+   * @return Anzuzeigender Wert oder <code>null</code> wenn er nicht ermittelbar ist.
+   * @throws RemoteException
+   */
+  private String getAttributeValue(GenericObject current) throws RemoteException
+	{
+		String s = current.getPrimaryAttribute();
+		if (this.attribute != null)
+			s = this.attribute;
+
+		Object o = current.getAttribute(s);
+
+		if (o == null)
+			return null; // Primaer-Attribut leer, ignorieren
+
+		String attribute = o.toString(); // ToString kann ggf. ueberschrieben sein
+      
+		if (attribute == null || "".equals(attribute))
+			return null; // Primaer-Attribut leer, ignorieren
+		return attribute;
+	}
 
   /**
    * Liefert das ausgewaehlte GenericObject.
@@ -200,8 +264,12 @@ public class SelectInput extends AbstractInput
    */
   public void enable()
   {
-    combo.setEnabled(true);
-		combo.setForeground(Color.WIDGET_FG.getSWTColor());
+  	enabled = true;
+		if (combo != null && !combo.isDisposed())
+		{
+	    combo.setEnabled(true);
+			combo.setForeground(Color.WIDGET_FG.getSWTColor());
+		}
   }
 
   /**
@@ -268,6 +336,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.17  2004/12/05 17:29:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/11/15 00:38:20  willuhn
  * *** empty log message ***
  *
