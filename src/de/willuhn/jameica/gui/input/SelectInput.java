@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.10 $
+ * $Date: 2004/07/21 23:54:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Control;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.GenericIterator;
 import de.willuhn.datasource.rmi.GenericObject;
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.Logger;
 
 /**
@@ -228,6 +228,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.10  2004/07/21 23:54:53  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.9  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *

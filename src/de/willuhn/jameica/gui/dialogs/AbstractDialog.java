@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/05/23 16:34:18 $
+ * $Revision: 1.17 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,11 +27,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
 /**
@@ -335,6 +335,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.17  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.16  2004/05/23 16:34:18  willuhn
  * *** empty log message ***
  *

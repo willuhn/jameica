@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/21 23:54:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,9 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -30,9 +27,6 @@ import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 import net.n3.nanoxml.XMLWriter;
-import de.willuhn.datasource.common.LocalServiceData;
-import de.willuhn.datasource.common.RemoteServiceData;
-import de.willuhn.util.ApplicationException;
 import de.willuhn.util.FileCopy;
 import de.willuhn.util.Logger;
 
@@ -47,16 +41,6 @@ public class Config
    * Das XML-File.
    */
   private IXMLElement xml = null;
-
-  /**
-   * Die Liste aller Remote-Services.
-   */
-  private Hashtable remoteServices  = null;
-
-  /**
-   * Die Liste aller lokalen Services.
-   */
-  private Hashtable localServices   = null;
 
   /**
    * Der TCP-Port, der fuer die lokale RMI-Registry verwendet werden soll.
@@ -166,64 +150,6 @@ public class Config
   private void read()
   {
 
-		localServices = new Hashtable();
-		remoteServices = new Hashtable();
-
-		Enumeration e = xml.getFirstChildNamed("services").enumerateChildren();
-  
-    IXMLElement key;
-    String name;
-    String type;
-    String clazz;
-    String description;
-    Logger.info("loading service configuration");
-  
-    while (e.hasMoreElements())
-    {
-      key   			= (IXMLElement) e.nextElement();
-      name  			= key.getAttribute("name",null);
-      type  			= key.getAttribute("type",null);
-      clazz 			= key.getAttribute("class",null);
-			description	= key.getAttribute("description",null);
-      
-      // process remote services
-      if ("remoteservice".equals(key.getFullName())) 
-      {
-        Logger.info("found remote service \"" + name + "\" [type: "+type+"]");
-        RemoteServiceData data = new RemoteServiceData();
-        data.setClassName(clazz);
-        data.setDescription(description);
-        data.setName(name);
-        data.setType(type);
-        data.setHost(key.getAttribute("host",null));
-        remoteServices.put(name,data);
-      }
-  
-      // process local services
-			if ("localservice".equals(key.getFullName())) 
-      {
-        Logger.info("found local service \"" + name + "\" [type: "+type+"]");
-				LocalServiceData data = new LocalServiceData();
-				data.setClassName(clazz);
-				data.setDescription(description);
-				data.setName(name);
-				data.setType(type);
-				data.setShared(key.getAttribute("shared","false").equalsIgnoreCase("true"));
-				Enumeration params = key.enumerateChildren();
-				while (params.hasMoreElements())
-				{
-					IXMLElement param = (IXMLElement) params.nextElement();
-					if (!"initparam".equals(param.getFullName()))
-						continue;
-					data.addInitParam(param.getAttribute("name",null),param.getAttribute("value",null));
-				}
-        localServices.put(name,data);
-      }
-  
-    }
-    ////////////////////////////////////////////
-  
-  
     // Read default language
     String _defaultLanguage = xml.getFirstChildNamed("defaultlanguage").getContent();
     Logger.info("choosen language: " + _defaultLanguage);
@@ -263,92 +189,6 @@ public class Config
 		}
   }
 
-
-  /**
-   * Liefert einen Daten-Container mit allen fuer die Erzeugung eines Remote-Service notwendigen Daten.
-   * @param name Alias-Name des Service.
-   * @return Daten-Container.
-   */
-  public RemoteServiceData getRemoteServiceData(String name)
-  {
-    return (RemoteServiceData) remoteServices.get(name);
-  }
-  
-	/**
-	 * Fuegt einen Remote-Service hinzu.
-   * @param data der Datencontainer fuer den Remote-Service.
-	 * @throws ApplicationException
-   */
-  public void addRemoteServiceData(RemoteServiceData data) throws ApplicationException
-	{
-		if (data == null || data.getName() == null || data.getName().equals(""))
-			throw new ApplicationException("Netzwerkservice ist nicht definiert.");
-
-		// wir checken, ob der Service vielleicht schon existiert.
-		Enumeration e = getRemoteServiceData();
-		RemoteServiceData d = null;
-		while (e.hasMoreElements())
-		{
-			d = (RemoteServiceData) e.nextElement();
-			if (data.getName().equals(d.getName()))
-				throw new ApplicationException("Ein Netzwerkservice mit diesem Namen existiert bereits.");
-			
-		}
-		this.remoteServices.put(data.getName(),data);
-	}
-
-  /**
-   * Liefert einen Daten-Container mit allen fuer die Erzeugung eines lokalen Services notwendigen Daten.
-   * @param name Alias-Name des Service.
-   * @return Daten-Container.
-   */
-  public LocalServiceData getLocalServiceData(String name)
-  {
-    return (LocalServiceData) localServices.get(name);
-  }
-
-	/**
-	 * Fuegt einen Local-Service hinzu.
-	 * @param data der Datencontainer fuer den Local-Service.
-	 * @throws ApplicationException
-	 */
-	public void addLocalServiceData(LocalServiceData data) throws ApplicationException
-	{
-		if (data == null || data.getName() == null || data.getName().equals(""))
-			throw new ApplicationException("Lokaler Service ist nicht definiert.");
-
-		// wir checken, ob der Service vielleicht schon existiert.
-		Enumeration e = getLocalServiceData();
-		LocalServiceData d = null;
-		while (e.hasMoreElements())
-		{
-			d = (LocalServiceData) e.nextElement();
-			if (data.getName().equals(d.getName()))
-				throw new ApplicationException("Ein lokaler Service mit diesem Namen existiert bereits.");
-		}
-
-		this.localServices.put(data.getName(),data);
-	}
-	
-
-  /**
-   * Liefert eine Enumeration aller lokalen Services.
-   * @return Enumeration mit den lokalen Services.
-   */
-  public Enumeration getLocalServiceData()
-  {
-    return localServices.elements();
-  }
-
-  /**
-   * Liefert eine Enumeration mit allen Remote-Services.
-   * @return Enumeration mit den Remote-Services.
-   */
-  public Enumeration getRemoteServiceData()
-  {
-    return remoteServices.elements();
-  }
-  
   /**
    * Liefert den fuer die lokale RMI-Registry zu verwendenden TCP-Port.
    * @return Nummer des TCP-Ports.
@@ -498,52 +338,6 @@ public class Config
 		}
 		xml.addChild(plugins);
 		
-		
-		IXMLElement services = xml.getFirstChildNamed("services");
-		if (services != null)
-		{
-			xml.removeChild(services);
-		}
-		services = xml.createElement("services");		
-		
-		// lokale Services schreiben
-		Enumeration e = this.localServices.keys();
-		while (e.hasMoreElements())
-		{
-			LocalServiceData lsd = getLocalServiceData((String) e.nextElement());
-			IXMLElement s = services.createElement("localservice");
-			s.setAttribute("name",lsd.getName());
-			s.setAttribute("class",lsd.getClassName());
-			s.setAttribute("type",lsd.getType());
-			s.setAttribute("shared",lsd.isShared() ? "true" : "false");
-			HashMap params = lsd.getInitParams();
-			Iterator paramKeys = params.keySet().iterator();
-			while (paramKeys.hasNext())
-			{
-				String name = (String) paramKeys.next();
-				IXMLElement initParam = s.createElement("initparam");
-				initParam.setAttribute("name",name);
-				initParam.setAttribute("value",(String)params.get(name));
-				s.addChild(initParam);
-			}
-			services.addChild(s);
-		}
-
-		// remote Services schreiben
-		e = this.remoteServices.keys();
-		while (e.hasMoreElements())
-		{
-			RemoteServiceData rsd = getRemoteServiceData((String) e.nextElement());
-			IXMLElement s = services.createElement("remoteservice");
-			s.setAttribute("name",rsd.getName());
-			s.setAttribute("class",rsd.getClassName());
-			s.setAttribute("type",rsd.getType());
-			s.setAttribute("host",rsd.getHost());
-			services.addChild(s);
-		}
-
-		xml.addChild(services);
-
 		// Backup der config erstellen
 		FileCopy.copy(configFile,new File(configFile.getAbsolutePath() + ".bak"),true);
 
@@ -566,6 +360,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.2  2004/07/21 23:54:53  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,6 @@ package de.willuhn.jameica.plugin;
 
 import java.io.File;
 
-import de.willuhn.datasource.db.EmbeddedDatabase;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
@@ -25,7 +24,6 @@ import de.willuhn.util.Logger;
 public class PluginResources {
 
 	private AbstractPlugin plugin = null;
-	private EmbeddedDatabase db = null;
 	private I18N i18n = null;
 	private String workPath = null;
 	private String path = null;
@@ -98,27 +96,14 @@ public class PluginResources {
 		
 		return workPath;
 	}
-
-  /**
-	 * Liefert die embedded Datenbank des Plugins. Damit ist keine JDBC-Verbindung
-	 * oder ein DB-Hub gemeint, sondern ein Objekt, mit dem man das Plugin
-	 * eine Datenbank fuer sich erstellen und mit Tabellen fuellen kann.
-	 * @return die Embedded Datenbank des Plugins.
-   * @throws Exception Wenn die Datenbank nicht gelesen/angelegt werden konnte.
-	 */
-	public EmbeddedDatabase getDatabase() throws Exception
-	{
-		if (db != null)
-			return db;
-		db = new EmbeddedDatabase(getWorkPath() + "/db",plugin.getName(),plugin.getName());
-		db.setClassLoader(Application.getClassLoader());
-		return db;
-	}
 }
 
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.2  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *

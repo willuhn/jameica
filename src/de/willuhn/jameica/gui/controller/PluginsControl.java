@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/PluginsControl.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/07/04 17:07:20 $
+ * $Revision: 1.5 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,14 +15,14 @@ package de.willuhn.jameica.gui.controller;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 
-import de.willuhn.jameica.AbstractPlugin;
-import de.willuhn.jameica.Application;
-import de.willuhn.jameica.InfoReader;
-import de.willuhn.jameica.PluginContainer;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.views.AbstractView;
+import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.PluginContainer;
+import de.willuhn.jameica.plugin.PluginLoader;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.InfoReader;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -132,6 +132,9 @@ public class PluginsControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: PluginsControl.java,v $
+ * Revision 1.5  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.4  2004/07/04 17:07:20  willuhn
  * *** empty log message ***
  *

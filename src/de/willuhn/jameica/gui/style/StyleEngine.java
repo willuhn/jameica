@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleEngine.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.style;
 
-import de.willuhn.jameica.Application;
+import de.willuhn.jameica.system.Application;
 
 
 /**
@@ -40,6 +40,9 @@ public class StyleEngine {
 
 /**********************************************************************
  * $Log: StyleEngine.java,v $
+ * Revision 1.3  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.2  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

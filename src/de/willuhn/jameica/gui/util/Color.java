@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.5 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,8 @@ package de.willuhn.jameica.gui.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
-import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.Settings;
 
 /**
  * Farbwerte.
@@ -125,6 +125,9 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.5  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.4  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -187,12 +187,46 @@ public abstract class AbstractPlugin
 	 * Diese Funktion wird beim Beenden der Anwendung ausgefuehrt.
 	 */
 	public abstract void shutDown();
+	
+	/**
+	 * Liefert die Namen aller Services, die dieses Plugin anbietet.
+	 * Hintergrund: Ein Plugin kann verschiedene Services verwenden,
+	 * Ein solcher Service kann von verschiedenster Art sein. Ob dies
+	 * nun eine Datenquelle ist, ueber die Objekte geladen und gespeichert
+	 * werden koennen, ein LDAP-Server oder irgendein Service zur Anbindung
+	 * von Daten sei dahingestellt. Entscheidend ist lediglich, dass dieser
+	 * Service das Interface <code>Service</code> implementiert und somit
+	 * netzwerktauglich ist. Laeuft Jameica im Client-Mode, dann werden
+	 * keine lokalen Services verwendet sondern Remote-Services vom jeweils
+	 * konfigurierten Server.
+	 * Daher: Services muessen generell ueber die ServiceFactory
+	 * via <code>ServiceFactory.lookup(AbstractPlugin,String)</code> geholt werden.
+	 * Nur sie weiss, wo sich der Service befindet - lokal oder remote. 
+	 * <br>Wenn das Plugin keine Services verwendet oder anbietet, kann
+	 * die Funktion als Dummy implementiert werden, indem sie generell <code>null</code>
+	 * zurueckliefert. 
+   * @return Liste aller Services.
+   */
+  public abstract String[] getServiceNames();
+	
+	/**
+	 * Liefert die Klasse des Service zum genannten Namen.
+	 * Diese Funktion wird von der ServiceFactory in der Methode
+	 * <code>lookup(AbstractPlugin,String)</code> aufgerufen, um
+	 * die Klasse zu ermitteln, fuer welche die Instanz erzeugt werden soll.
+   * @param serviceName Name des Services.
+   * @return die Klasse des Service.
+   */
+  public abstract Class getService(String serviceName);
 
 
 }
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.2  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *

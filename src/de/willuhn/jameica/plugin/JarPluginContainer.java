@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Attic/JarPluginContainer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import de.willuhn.jameica.gui.util.InfoReader;
+import de.willuhn.jameica.util.InfoReader;
 
 /**
  * Jar-Implementierung des Plugin-Containers.
@@ -154,6 +154,9 @@ public class JarPluginContainer implements PluginContainer {
 
 /**********************************************************************
  * $Log: JarPluginContainer.java,v $
+ * Revision 1.2  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *

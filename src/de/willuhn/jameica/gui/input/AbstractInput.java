@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/07/09 00:12:46 $
+ * $Revision: 1.8 $
+ * $Date: 2004/07/21 23:54:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
 /**
@@ -156,6 +156,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.8  2004/07/21 23:54:53  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.7  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *

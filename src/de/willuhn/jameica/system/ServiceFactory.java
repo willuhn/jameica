@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/21 23:54:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,63 +15,94 @@ package de.willuhn.jameica.system;
 
 import java.lang.reflect.Constructor;
 import java.rmi.Naming;
+import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 
-import de.willuhn.datasource.common.LocalServiceData;
-import de.willuhn.datasource.common.RemoteServiceData;
 import de.willuhn.datasource.rmi.Service;
+import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.PluginLoader;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.Logger;
 
 
 /**
- * Diese Klasse stellt Services via RMI zur Verfuegung.
- * Das kann z.Bsp. eine Datenbankverbindung sein.
- * @author willuhn
+ * Diese Klasse stellt alle von Plugins genutzen Services zur Verfuegung.
+ * Insbesondere sind das die Datenbank-Anbindungen. Wird die Anwendung
+ * im Server-Mode gestartet, dann werden alle Services via RMI in Netz
+ * zur Verfuegung gestellt. Andernfalls nur lokal.
  */
 public class ServiceFactory
 {
   
-  private final static boolean USE_RMI_FIRST = true;
   private static Hashtable bindings = new Hashtable();
   private static boolean rmiStarted = false;
+
   /**
    * Initialisiert die ServiceFactory.
+   * @throws RemoteException
    */
-  public static void init()
+  public static void init() throws RemoteException
   {
+		startRegistry();
 
-    Logger.info("init network services");
-    Enumeration e = Application.getConfig().getLocalServiceData();
-		LocalServiceData service;
-    while (e.hasMoreElements())
-    {
-			service = (LocalServiceData) e.nextElement();
+    Logger.info("init plugin services");
+    Iterator plugins = PluginLoader.getInstalledPlugins();
 
-			if (service.isShared()) {
-	      try {
-	      	bind(service);
-      	}
-	      catch (Exception ex)
-	      {
-	        Logger.error("sharing of service " + service.getName() + " failed",ex);
-  	    }
+		AbstractPlugin plugin = null;
+		Class service = null;
+
+		while (plugins.hasNext())
+		{
+			try {
+				plugin = (AbstractPlugin) plugins.next();
+				Logger.info("  init services for plugin " + plugin.getName() + "[version: " + plugin.getVersion() +"]");
+				String[] serviceNames = plugin.getServiceNames();
+				if (serviceNames == null || serviceNames.length == 0)
+				{
+					Logger.info("    no services found, skipping");
+					continue;
+				}
+				for (int i=0;i<serviceNames.length;++i)
+				{
+					try 
+					{
+						Logger.info("    init service " + serviceNames[i]);
+						service = plugin.getService(serviceNames[i]);
+						if (service == null)
+						{
+							Logger.info("    service " + serviceNames[i] + " does not exist, skipping");
+							continue;
+						}
+						bind(plugin,serviceNames[i],service);
+					}
+					catch (Throwable t)
+					{
+						Logger.error("error while initializing service, skipped",t);
+					}
+				}
 			}
-    }
+			catch (Throwable t)
+			{
+				Logger.error("error while initializing services for this plugin, skipped",t);
+			}
+		}
   }
 	
   /**
    * Startet die RMI-Registry.
    * @throws RemoteException Wenn ein Fehler beim Starten der Registry auftrat.
    */
-  private static void startRegistry() throws RemoteException
+  private static synchronized void startRegistry() throws RemoteException
   {
+  	if (!Application.inServerMode() || rmiStarted) return;
+
     try {
       Logger.info("trying to start new RMI registry");
-//      System.setSecurityManager(new NoSecurity());
+			System.setSecurityManager(new RMISecurityManager());
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
     }
     catch (RemoteException e)
@@ -82,104 +113,94 @@ public class ServiceFactory
     rmiStarted = true;
     
   }
-  /**
-   * Gibt einen lokalen Service im Netzwerk frei. 
-   * @param service der Datencontainer des Services.
-   * @throws Exception wenn das Freigeben fehlschlaegt.
-   */
-  private static void bind(LocalServiceData service) throws Exception
-	{
-    if (!rmiStarted)
-      startRegistry();
 
-    Naming.rebind(service.getUrl(),getLocalServiceInstance(service)); 
-		bindings.put(service.getName(),service); 
-		Logger.info("added " + service.getUrl());
+  /**
+   * Binden einen Service an die ServiceFactory. Laeuft die Anwendung
+   * im Server-Mode, wird der Service im Netz freigegeben. 
+   * @param plugin das Plugin, fuer welches dieser Service gebunden werden soll.
+   * @param serviceName Aliasname des Service.
+   * @param service Der Service selbst.
+   * @throws Exception wenn das Binden fehlschlaegt.
+   */
+  private static void bind(AbstractPlugin plugin, String serviceName, Class service)
+  	throws RemoteException
+	{
+		serviceName = plugin.getClass().getName() + "." + serviceName;
+		if (Application.inServerMode())
+		{
+			try {
+				// Wir instanziieren den Service
+				
+				Naming.rebind("rmi://127.0.0.1:" + Application.getConfig().getRmiPort() +
+											"/" + serviceName,newInstance(service));
+			}
+			catch (Exception e)
+			{
+				throw new RemoteException("error while binding service " + serviceName,e);
+			}
+		}
+
+		bindings.put(serviceName,service);
 	}
 
+  /**
+	 * Erstellt eine Instanz der angegebenen Service-Klasse.
+   * @param serviceClass zu instanziierende Klasse.
+   * @return die erzeugte Instanz.
+   * @throws Exception
+   */
+  private static Service newInstance(Class serviceClass) throws Exception
+	{
+		Constructor ct = serviceClass.getConstructor(new Class[]{});
+		ct.setAccessible(true);
+		Service s = (Service) ct.newInstance(new Object[] {});
+		return s;
+	}
 
   /**
-   * Sucht explizit lokal nach dem genannten Service.
-   * @param service Daten-Container des Services.
+   * Liefert den genannten Service des uebergebenen Plugins.
+   * Die Funktion liefert niemals <code>null</code>. Entweder der
+   * Service wird gefunden und zurueckgeliefert oder es wird eine
+   * Exception geworfen.
+   * @param plugin das Plugin, fuer welches der Service geladen werden soll.
+   * @param serviceName Name des Service.
    * @return die Instanz des Services.
-   * @throws Exception wenn beim Erstellen des Services ein Fehler aufgetreten ist.
+   * @throws Exception
    */
-  public static Service getLocalServiceInstance(LocalServiceData service) throws Exception
+  public static Service lookup(AbstractPlugin plugin, String serviceName) throws Exception
   {
-  	if (service == null)
+  	if (serviceName == null)
   		return null;
 
-		Logger.debug("searching for local service " + service.getName());
-		try {
-			Class clazz = Application.getClassLoader().load(service.getClassName());
-			Constructor ct = clazz.getConstructor(new Class[]{HashMap.class});
-			ct.setAccessible(true);
-			Service s = (Service) ct.newInstance(new Object[] {service.getInitParams()});
-			s.setClassLoader(Application.getClassLoader());
-			return s;
-		}
-		catch (Exception e)
+		Logger.debug("searching for service " + serviceName);
+
+		String fullName	= plugin.getClass().getName() + "." + serviceName;
+		Class local   	= (Class) bindings.get(fullName);
+
+		// Wir schauen remote
+		if (Application.inClientMode())
 		{
-			Logger.error("service " + service.getName() + " not found");
-			throw e;
+			if (local == null)
+				throw new ApplicationException(Application.getI18n().tr("Zum Service {0} existiert kein lokales Binding",serviceName));
+
+			Logger.debug("  running in client mode, looking for remote service");
+			String host = ServiceLookup.getLookupHost(serviceName);
+			int port    = ServiceLookup.getLookupPort(serviceName);
+
+			if (host == null || host.length() == 0 || port == -1)
+				throw new ApplicationException(Application.getI18n().tr("Für den Service {0} ist kein Server definiert",serviceName));
+
+			Logger.debug("  searching for service at " + host + ":" + port);
+			String url = "rmi://" + host + ":" + port + "/" + fullName;
+			return (Service) Naming.lookup(url);
 		}
-  }
 
-  /**
-   * Sucht explizit im Netzwerk nach dem genannten Service.
-   * @param service Remote-Daten-Container des Services. Enthaelt u.a. die URL, unter dem der Service zu finden ist.
-   * @return die Instanz des Services.
-   * @throws Exception wenn beim Erstellen des Services ein Fehler aufgetreten ist.
-   */
-  public static Service getRemoteServiceInstance(RemoteServiceData service) throws Exception
-	{
-		if (service == null)
-			return null;
+		// Wir schauen lokal
+		Logger.debug("  running in standalone/server mode, looking for local service");
+		if (local == null)
+			throw new ApplicationException(Application.getI18n().tr("Der Service {0} wurde nicht gefunden",serviceName));
+		return newInstance(local);
 
-		Logger.debug("searching for remote service " + 
-															service.getName() + " at " + service.getUrl());
-		try
-		{
-			return (Service) java.rmi.Naming.lookup(service.getUrl());
-		}
-		catch (Exception e)
-		{
-			Logger.error("service " + 
-																 service.getName() + " not found at " + service.getUrl());
-			throw e;
-		}
-		
-	}
-
-  /**
-   * Allgemeine Lookup-Funktion zum Laden von Services.
-   * Sie sucht lokal UND remote nach dem Service. In welcher Reihenfolge
-   * sie bei der Suche vorgeht, haengt von der internen Konfiguration ab.
-   * @param name Alias-Name des gewuenschten Services.
-   * @return die Instanz des Services.
-   * @throws Exception wenn beim Erstellen des Services ein Fehler aufgetreten ist.
-   */
-  public static Service lookupService(String name) throws Exception
-  {
-    
-    Service service = null;
-
-    if (USE_RMI_FIRST) {
-      service = getRemoteServiceInstance(Application.getConfig().getRemoteServiceData(name));
-      if (service == null)
-        service = getLocalServiceInstance(Application.getConfig().getLocalServiceData(name));
-    }
-    else {
-      service = getLocalServiceInstance(Application.getConfig().getLocalServiceData(name));
-      if (service == null)
-        service = getRemoteServiceInstance(Application.getConfig().getRemoteServiceData(name));
-    }
-
-    if (service == null)
-    {
-      throw new Exception("service " + name + " not found.");
-    }
-    return service;
   }
 
   /**
@@ -189,45 +210,27 @@ public class ServiceFactory
   {
     Logger.info("shutting down services");
 
+		if (Application.inClientMode())
+			return; // keine lokalen Services runterzufahren
+
     Enumeration e = bindings.keys();
-    String name;
-    LocalServiceData serviceData;
+    String serviceName;
     Service service;
 
     while (e.hasMoreElements())
     {
-      name = (String) e.nextElement();
-			serviceData = (LocalServiceData) bindings.get(name);
+      serviceName = (String) e.nextElement();
+			service = (Service) bindings.get(serviceName);
 
-			Logger.info("closing service " + serviceData.getName());
-
-			try {
-				service = (Service) Naming.lookup(serviceData.getUrl());
-				service.shutDown();
-			}
-			catch (Exception ex) {
-				Logger.error("error while closing service",ex);
-      }
+			Logger.info("closing service " + serviceName);
     }
   }
-
-//  /**
-//   * Dummy-Security-Manager.
-//   */
-//  private static class NoSecurity extends SecurityManager
-//  {
-//    /**
-//     * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
-//     */
-//    public void checkPermission(Permission p)
-//    {
-//      
-//    }
-//  }
-
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.2  2004/07/21 23:54:53  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/HelpView.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/06/30 20:58:39 $
+ * $Revision: 1.9 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,11 +23,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -125,6 +125,9 @@ public class HelpView {
 
 /**********************************************************************
  * $Log: HelpView.java,v $
+ * Revision 1.9  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.8  2004/06/30 20:58:39  willuhn
  * *** empty log message ***
  *

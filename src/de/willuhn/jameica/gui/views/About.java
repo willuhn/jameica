@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/About.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.5 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,11 +15,11 @@ package de.willuhn.jameica.gui.views;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -62,6 +62,9 @@ public class About extends AbstractView {
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.5  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.4  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

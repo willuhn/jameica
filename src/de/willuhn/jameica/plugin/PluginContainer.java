@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Attic/PluginContainer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:44 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.willuhn.jameica.gui.util.InfoReader;
+import de.willuhn.jameica.util.InfoReader;
 
 /**
  * Sammelbehaelter fuer die Eigenschaften eines Plugins.
@@ -93,6 +93,9 @@ public interface PluginContainer {
 
 /**********************************************************************
  * $Log: PluginContainer.java,v $
+ * Revision 1.2  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.1  2004/07/21 20:08:44  willuhn
  * @C massive Refactoring ;)
  *

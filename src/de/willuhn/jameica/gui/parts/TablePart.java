@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/07/20 21:47:44 $
+ * $Revision: 1.13 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.datasource.rmi.GenericIterator;
 import de.willuhn.datasource.rmi.GenericObject;
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.controller.AbstractControl;
@@ -38,6 +37,7 @@ import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
 /**
@@ -306,6 +306,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.13  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.12  2004/07/20 21:47:44  willuhn
  * @N ContextMenu
  *

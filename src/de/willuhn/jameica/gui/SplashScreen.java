@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/02/18 00:55:23 $
+ * $Revision: 1.9 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.Application;
+import de.willuhn.jameica.system.Application;
 
 /**
  * Der Splash-Screen der Anwendung ;).
@@ -154,6 +154,9 @@ public class SplashScreen
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.9  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.8  2004/02/18 00:55:23  willuhn
  * @N added new splash screen
  *

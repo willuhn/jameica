@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/07/04 17:07:20 $
+ * $Revision: 1.26 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,15 +18,15 @@ import java.util.Iterator;
 
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.GenericObject;
-import de.willuhn.jameica.AbstractPlugin;
-import de.willuhn.jameica.Application;
-import de.willuhn.jameica.InfoReader;
-import de.willuhn.jameica.PluginContainer;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.PluginContainer;
+import de.willuhn.jameica.plugin.PluginLoader;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.InfoReader;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -134,6 +134,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.26  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.25  2004/07/04 17:07:20  willuhn
  * *** empty log message ***
  *

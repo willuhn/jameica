@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/License.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/26 22:42:17 $
+ * $Revision: 1.3 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,11 +12,11 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.views;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.LicenseControl;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -54,6 +54,9 @@ public class License extends AbstractView {
 
 /**********************************************************************
  * $Log: License.java,v $
+ * Revision 1.3  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.2  2004/04/26 22:42:17  willuhn
  * @N added InfoReader
  *

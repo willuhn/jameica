@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.52 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.53 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,10 +31,6 @@ import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.Application;
-import de.willuhn.jameica.PluginContainer;
-import de.willuhn.jameica.PluginLoader;
-import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.gui.style.StyleEngine;
 import de.willuhn.jameica.gui.style.StyleFactory;
@@ -44,6 +40,10 @@ import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.FatalErrorView;
 import de.willuhn.jameica.gui.views.HelpView;
+import de.willuhn.jameica.plugin.PluginContainer;
+import de.willuhn.jameica.plugin.PluginLoader;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.Logger;
 
@@ -683,6 +683,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.53  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.52  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *

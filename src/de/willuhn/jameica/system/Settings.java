@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Settings.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/21 23:54:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Properties;
 
 import org.eclipse.swt.graphics.FontData;
@@ -79,6 +80,25 @@ public class Settings
     return new File(Application.getConfig().getConfigDir()+"/"+className+ ".properties");
   }
   
+	/**
+	 * Liefert eine Liste aller Attribut-Namen, die in dieser Settings-Instanz gespeichert wurden.
+   * @return Liste der Attribut-Namen.
+   */
+  public String[] getAttributes()
+	{
+		synchronized (properties)
+		{
+			Iterator it = properties.keySet().iterator();
+			String[] attributes = new String[properties.size()];
+			int i = 0;
+			while (it.hasNext())
+			{
+				attributes[i++] = (String) it.next();
+			}
+			return attributes;
+		}
+	}
+
 	/**
 	 * Liefert den Wert des genannten Attributs als Boolean.
 	 * Wird das Attribut nicht gefunden oder hat keinen Wert, wird defaultValue zurueckgegeben.
@@ -275,6 +295,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.2  2004/07/21 23:54:53  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *

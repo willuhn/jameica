@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/21 20:08:45 $
+ * $Revision: 1.2 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.system;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
 
@@ -45,7 +46,11 @@ import de.willuhn.util.MultipleClassLoader;
  */
 public class Application {
 
-  private static boolean serverMode = false;
+	public final static int MODE_STANDALONE		= 0;
+	public final static int MODE_SERVER				= 1;
+	public final static int MODE_CLIENT				= 2;
+
+  private static int appMode = MODE_STANDALONE;
 
   private static boolean cleanShutdown = false;
   private static ShutdownHook shutdownHook = new ShutdownHook();
@@ -65,12 +70,12 @@ public class Application {
 
   /**
    * Erzeugt eine neue Instanz der Anwendung.
-   * @param serverMode legt fest, ob die Anwendung im Server-Mode (also ohne GUI starten soll).
+   * @param appMode Konstante fuer den Betriebsmodus. Siehe MODE_*.
    * @param dataDir optionaler Pfad zum Datenverzeichnis.
    */
-  public static void newInstance(boolean serverMode, String dataDir) {
+  public static void newInstance(int appMode, String dataDir) {
 
-    Application.serverMode = serverMode;
+    Application.appMode = appMode;
 
     // start application
     app = new Application();
@@ -83,7 +88,7 @@ public class Application {
 		// init logger
 		Logger.addTarget(System.out);
 		Logger.setLevel(Logger.LEVEL_INFO);
-		Logger.info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
+		Logger.info("starting jameica...");
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -138,17 +143,26 @@ public class Application {
 
 		////////////////////////////////////////////////////////////////////////////
     // init service factory and plugins
-		splash("init local and remote services");
-		ServiceFactory.init();
 
-    // init plugins
+		// init plugins
 		splash("loading plugins");
 		PluginLoader.init();
+
+		splash("init services");
+		try {
+			ServiceFactory.init();
+		}
+		catch (RemoteException e)
+		{
+			Logger.error("error while initializing service factory",e);
+			startupError(e);
+		}
+
 		//
 		////////////////////////////////////////////////////////////////////////////
 
     // close splash screen
-    if (!serverMode)
+    if (!inServerMode())
       SplashScreen.shutDown();
 
 		////////////////////////////////////////////////////////////////////////////
@@ -158,8 +172,8 @@ public class Application {
 		////////////////////////////////////////////////////////////////////////////
 
     // start loops
-    if (serverMode) Server.init();
-    else               GUI.init();
+    if (inServerMode()) Server.init();
+    else                   GUI.init();
 
     // Das hier koennen wir uns jetzt erlauben, weil wir ja 'nen ShutdownHook haben ;)
     // Und da wir nicht wollen, dass Hinz und Kunz die Anwendung runterfahren lassen,
@@ -174,8 +188,9 @@ public class Application {
    */
   private static void startupError(Exception e)
 	{
-		if (serverMode)
+		if (inServerMode())
 			throw new RuntimeException(e);
+
 		Display d = Display.getCurrent();
 		if (d == null)
 			d = new Display();
@@ -216,7 +231,7 @@ public class Application {
    */
   public static void splash(String text)
   {
-    if (serverMode)
+    if (inServerMode())
     	return;
 
 		SplashScreen.setText(text);
@@ -238,12 +253,12 @@ public class Application {
 
     Logger.info("shutting down jameica");
 
-    if (!serverMode)
+    if (!inServerMode())
       SplashScreen.shutDown();
 
                GUI.shutDown();     
+		ServiceFactory.shutDown();
       PluginLoader.shutDown();
-    ServiceFactory.shutDown();
 
 		Logger.info("shutdown complete");
 		Logger.close();
@@ -273,11 +288,20 @@ public class Application {
 
   /**
    * Preuft ob die Anwendung im Server-Mode (Also ohne GUI) laeuft.
-   * @return true, wenn sie im Servermode laeuft.
+   * @return true, wenn sie im Server-Mode laeuft.
    */
   public static boolean inServerMode()
   {
-    return serverMode;
+    return appMode == Application.MODE_SERVER;
+  }
+  
+	/**
+	 * Preuft ob die Anwendung im Client-Mode laeuft.
+	 * @return true, wenn sie im Client-Mode laeuft.
+	 */
+  public static boolean inClientMode()
+  {
+  	return appMode == Application.MODE_CLIENT;
   }
   
 	/**
@@ -348,6 +372,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.2  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.1  2004/07/21 20:08:45  willuhn
  * @C massive Refactoring ;)
  *

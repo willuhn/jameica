@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/06/30 20:58:40 $
+ * $Revision: 1.6 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,8 @@ package de.willuhn.jameica.gui.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 
-import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.util.Logger;
 
 /**
@@ -102,6 +102,9 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.6  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.5  2004/06/30 20:58:40  willuhn
  * *** empty log message ***
  *

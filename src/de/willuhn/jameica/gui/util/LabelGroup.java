@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.10 $
+ * $Date: 2004/07/21 23:54:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,11 +22,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.Input;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -224,6 +224,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.10  2004/07/21 23:54:54  willuhn
+ * @C massive Refactoring ;)
+ *
  * Revision 1.9  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *
