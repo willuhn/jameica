@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/01/30 20:54:58 $
+ * $Revision: 1.4 $
+ * $Date: 2005/02/18 11:06:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -266,6 +266,10 @@ public class SSLFactory
 			is = new FileInputStream(f);
 
 			Logger.info("init keystore");
+      // TODO: Keystore so umbauen, dass IMMER BouncyCastle verwendet wird!
+      // Sonst kann es zu Fehlern kommen, wenn "starke" Verschluesselung
+      // auf einer SUN-JVM mit Export-Beschraenkungen laeuft.
+      
       this.keystore = KeyStore.getInstance("JKS");
 
 			Logger.info("reading keys");
@@ -355,6 +359,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.4  2005/02/18 11:06:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/01/30 20:54:58  willuhn
  * *** empty log message ***
  *
