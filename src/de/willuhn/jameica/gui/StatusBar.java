@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/10/29 00:41:26 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/13 00:37:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,12 +19,19 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+/**
+ * Bildet die Statusleiste der Anwendung ab.
+ * @author willuhn
+ */
 public class StatusBar {
 
 	private Label statusText;
   private Label actionText;
   private Composite status;
 
+  /**
+   * Erzeugt eine neue Statusleiste.
+   */
   protected StatusBar() {
 
 		status = new Composite(GUI.shell, SWT.BORDER);
@@ -56,12 +63,20 @@ public class StatusBar {
 
 	}
 	
+  /**
+   * Ersetzt den aktuellen Statustext links unten gegen den uebergebenen.
+   * @param message anzuzeigender Text.
+   */
   protected void setStatusText(String message)
 	{
 		statusText.setText(" " + (message == null ? "" : message));
     status.layout();
 	}
 
+  /**
+   * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
+   * @param message anzuzeigender Text.
+   */
   protected void setActionText(String message)
   {
     actionText.setText(" " + (message == null ? "" : message));
@@ -73,6 +88,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.3  2003/11/13 00:37:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/10/29 00:41:26  willuhn
  * *** empty log message ***
  *

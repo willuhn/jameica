@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/12 00:58:55 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/13 00:37:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,26 +23,65 @@ import de.bb.util.XmlFile;
 import de.willuhn.jameica.rmi.LocalServiceData;
 import de.willuhn.jameica.rmi.RemoteServiceData;
 
+/**
+ * Liest die System-Konfiguration aus config.xml. 
+ * @author willuhn
+ */
 public class Config
 {
 
+  /**
+   * Das XML-File.
+   */
   private XmlFile xml = new XmlFile();
 
+  /**
+   * Die Liste aller Remote-Services.
+   */
   private Hashtable remoteServices  = new Hashtable();
+
+  /**
+   * Die Liste aller lokalen Services.
+   */
   private Hashtable localServices   = new Hashtable();
+
+  /**
+   * Die Liste aller Default-Services.
+   * Darf pro Service-Typ nur einen Eintrag enthalten.
+   */
   private Hashtable defaultServices = new Hashtable();
   
+  /**
+   * Der Name des Services vom Typ "Datenbank".
+   */
   public final static String SERVICETYPE_DATABASE = "database";
 
+  /**
+   * Der TCP-Port, der fuer die lokale RMI-Registry verwendet werden soll.
+   */
   private int rmiPort;
+
+  /**
+   * Die vorausgewaehlte Standard-Sprache.
+   */
   private Locale defaultLanguage = new Locale("de_DE");
 
 
+  /**
+   * ct.
+   * @param fileName Pfad und Name zur Config-Datei.
+   * @throws FileNotFoundException
+   */
   protected Config(String fileName) throws FileNotFoundException
   {
     init(fileName);
   }
 
+  /**
+   * Initialisiert die Konfiguration.
+   * @param fileName Pfad und Name zur Config-Datei.
+   * @throws FileNotFoundException wenn die Config-Datei nicht gefunden wurde.
+   */
   private void init(String fileName) throws FileNotFoundException
   {
     if (fileName == null)
@@ -67,10 +106,14 @@ public class Config
       throw new FileNotFoundException("alert: config file " + fileName + " not found.");
 
     xml.read(file);
+
     readServices();
   }
 
 
+  /**
+   * Liest die Service-Sektion aus der Config-Datei.
+   */
   private void readServices()
   {
 
@@ -137,37 +180,72 @@ public class Config
   }
 
 
+  /**
+   * Liefert einen Daten-Container mit allen fuer die Erzeugung eines Remote-Service
+   * notwendigen Daten.
+   * @param name Alias-Name des Service.
+   * @return Daten-Container.
+   */
   public RemoteServiceData getRemoteServiceData(String name)
   {
     return (RemoteServiceData) remoteServices.get(name);
   }
   
+  /**
+   * Liefert einen Daten-Container mit allen fuer die Erzeugung eines lokalen Services
+   * notwendigen Daten.
+   * @param name Alias-Name des Service.
+   * @return Daten-Container.
+   */
   public LocalServiceData getLocalServiceData(String name)
   {
     return (LocalServiceData) localServices.get(name);
   }
 
 
+  /**
+   * Liefert den Alias-Namen des als Default konfigurierten Services fuer den angegebenen
+   * Service-Typ.
+   * @param serviceType Name des Service-Typs.
+   * @see Config.SERVICETYPE_xxxx
+   * @return Alias-Name des Services.
+   */
   public String getDefaultServiceName(String serviceType)
   {
     return (String) defaultServices.get(serviceType);
   }
 
+  /**
+   * Liefert eine Enumeration mit den Namen aller lokalen Services.
+   * @return Enumeration mit den lokalen Services.
+   */
   public Enumeration getLocalServiceNames()
   {
     return localServices.keys();
   }
 
+  /**
+   * Liefert eine Enumeration mit den Namen aller Remote-Services.
+   * @return Enumeration mit den Remote-Services.
+   */
   public Enumeration getRemoteServiceNames()
   {
     return remoteServices.keys();
   }
   
+  /**
+   * Liefert den fuer die lokale RMI-Registry zu verwendenden TCP-Port.
+   * @return Nummer des TCP-Ports.
+   */
   public int getRmiPort()
   {
     return rmiPort;
   }
 
+  /**
+   * Liefert das konfigurierte Locale (Sprach-Auswahl).
+   * @return konfiguriertes Locale.
+   */
   public Locale getLocale()
   {
     return defaultLanguage;
@@ -179,6 +257,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.4  2003/11/13 00:37:35  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/12 00:58:55  willuhn
  * *** empty log message ***
  *

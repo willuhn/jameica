@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/I18N.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/10/23 21:49:46 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/13 00:37:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,13 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+/**
+ * Diese Klasse behandelt die Internationalisierung.
+ * Sie uebersetzt nicht nur alle Strings sondern speichert auch alle
+ * nicht uebersetzbaren Strings waehrend der aktuellen Sitzung und
+ * speichert diese beim Beenden der Anwendung im Temp-Verzeichnis ab.
+ * @author willuhn
+ */
 public class I18N
 {
 
@@ -29,6 +36,10 @@ public class I18N
   private static Properties properties;
   private static Locale currentLocale;
 
+  /**
+   * Initialisiert diese Klasse mit dem angegebenen Locale.
+   * @param l das zu verwendende Locale.
+   */
   public static void init(Locale l)
   {
     currentLocale = l;
@@ -36,6 +47,13 @@ public class I18N
     properties = new Properties();
   }
   
+  /**
+   * Uebersetzt den angegebenen String und liefert die uebersetzte
+   * Version zurueck. Kann der String nicht uebersetzt werden, wird
+   * der Original-String zurueckgegeben.
+   * @param key zu uebersetzender String.
+   * @return uebersetzter String.
+   */
   public static String tr(String key)
   {
     String translated = null;
@@ -52,6 +70,11 @@ public class I18N
   }
 
 
+  /**
+   * Beendet die aktuelle Sitzung und schreibt alle Strings in eine Datei
+   * messages_xxx im Temp-Verzeichnis, die waehrend der aktuellen Sitzung
+   * nicht uebersetzt werden konnten.
+   */
   public static void flush()
   {
     if (!Application.DEBUG) return;
@@ -72,6 +95,9 @@ public class I18N
 
 /*********************************************************************
  * $Log: I18N.java,v $
+ * Revision 1.2  2003/11/13 00:37:35  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/10/23 21:49:46  willuhn
  * initial checkin
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/12 00:58:55 $
+ * $Revision: 1.6 $
+ * $Date: 2003/11/13 00:37:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,10 +15,15 @@ package de.willuhn.jameica;
 
 import java.io.FileNotFoundException;
 
-import de.willuhn.jameica.objects.Test;
 import de.willuhn.jameica.rmi.DBHub;
 import de.willuhn.jameica.rmi.ServiceFactory;
 
+/**
+ * Basisklasse der Anwendung.
+ * Diese Klasse ist sozusagen das Herzstueck. Sie enthaelt alle Komponenten,
+ * initialsiert, startet und beendet diese.
+ * @author willuhn
+ */
 public class Application {
 
   public final static boolean DEBUG = true;
@@ -32,9 +37,17 @@ public class Application {
     private DBHub db;
 
 
+  /**
+   * ct.
+   */
   private Application() {
   }
 
+  /**
+   * Erzeugt eine neue Instanz der Anwendung.
+   * @param serverMode legt fest, ob die Anwendung im Server-Mode (also ohne GUI starten soll).
+   * @param configFile optionaler Pfad zu einer Config-Datei.
+   */
   public static void newInstance(boolean serverMode, String configFile) {
 
     Application.serverMode = serverMode;
@@ -43,11 +56,14 @@ public class Application {
 
     // start application
     app = new Application();
+
+    // init logger
     app.log = new Logger(null);
     if (!serverMode) SplashScreen.add(10);
 
     Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
 
+    // init config
     try {
       app.config = new Config(configFile);
       if (!serverMode) SplashScreen.add(10);
@@ -63,14 +79,14 @@ public class Application {
     Database.init();
     if (!serverMode) SplashScreen.add(10);
 
-
+    // init service factory
     ServiceFactory.init();
     if (!serverMode) SplashScreen.add(10);
     
-    
+
+    // init default database.    
     Application.getLog().info("trying to connect to default database");
     String defaultDB = Application.getConfig().getDefaultServiceName(Config.SERVICETYPE_DATABASE);
-
     if (defaultDB == null)
     {
       Application.getLog().error("no default database configured. Exiting");
@@ -88,15 +104,10 @@ public class Application {
       Application.shutDown();
     }
 
-    try {
-      Test test = (Test) Application.getDefaultDatabase().createObject(Test.class,null);
-      test.setName("blubber");
-      test.setValue("fasel");
-      test.store();
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-    }
+
+    // init plugins
+    PluginLoader.init();
+    if (!serverMode) SplashScreen.add(10);
 
     // start loops
     if (serverMode) {
@@ -126,6 +137,8 @@ public class Application {
 
       if(!serverMode)
         app.gui.shutDown();     
+
+      PluginLoader.shutDown();
 
       ServiceFactory.shutDown();
 
@@ -177,6 +190,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.6  2003/11/13 00:37:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/11/12 00:58:55  willuhn
  * *** empty log message ***
  *

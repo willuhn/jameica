@@ -1,10 +1,13 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/12 00:58:55 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/13 00:37:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
+ *
+ * Copyright (c) by willuhn.webdesign
+ * All rights reserved
  *
  ****************************************************************************/
 
@@ -22,6 +25,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * Der Splash-Screen der Anwendung ;).
+ * @author willuhn
+ */
 public class SplashScreen
 {
   // steps
@@ -35,6 +42,9 @@ public class SplashScreen
   private static SplashScreen splash;
     final ProgressBar bar = new ProgressBar(shell, SWT.SMOOTH);
   
+  /**
+   * Erzeugt einen neuen Splashscreen.
+   */
   private SplashScreen() {
 
     // Komponenten
@@ -84,6 +94,10 @@ public class SplashScreen
     display.readAndDispatch();
 	}
 
+  /**
+   * Erhoeht den Ladebalken um die angegebenen Prozente.
+   * @param add
+   */
   public static void add(int add)
   {
     if (splash == null)
@@ -96,6 +110,9 @@ public class SplashScreen
       close();
   }
   
+  /**
+   * Setzt den Ladebalken auf 100% und schliesst danach den Splash-Screen. 
+   */
   public static void close()
   {
     splash.bar.setSelection(100);
@@ -113,6 +130,9 @@ public class SplashScreen
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.3  2003/11/13 00:37:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/11/12 00:58:55  willuhn
  * *** empty log message ***
  *

@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/10/29 00:41:26 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/13 00:37:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import de.bb.util.XmlFile;
 
 /**
+ * Bildet das Dropdown-Menu ab.
  * @author willuhn
  */
 public class Menu
@@ -32,6 +33,9 @@ public class Menu
   private final org.eclipse.swt.widgets.Menu bar;
 
 
+  /**
+   * Erzeugt eine neue Instanz des Dropdown-Menus.
+   */
   protected Menu()
   {
 
@@ -50,10 +54,18 @@ public class Menu
     }
   }
 
+  /**
+   * Innere Hilfsklasse zur Abbildung des Menu-Baumes.
+   * @author willuhn
+   */
   class MenuCascade {
 
     private String path;
 
+    /**
+     * ct.
+     * @param key Pfad zum aktuellen Menupunkt in der Config-Datei.
+     */
     MenuCascade(String key)
     {
       final MenuItem cascade = new MenuItem(bar,SWT.CASCADE);
@@ -71,8 +83,17 @@ public class Menu
     }
   }
 
+  /**
+   * Innere Hilfsklasse zur Abbildung des Menu-Baumes.
+   * @author willuhn
+   */
   class MenuElement {
 
+    /**
+     * ct.
+     * @param parent Eltern-Element.
+     * @param ckey Pfad zum aktuellen Menupunkt in der Config-Datei.
+     */
     MenuElement(org.eclipse.swt.widgets.Menu parent,String ckey)
     {
       final MenuItem item = new MenuItem(parent,SWT.CASCADE);
@@ -104,6 +125,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.4  2003/11/13 00:37:35  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/10/29 00:41:26  willuhn
  * *** empty log message ***
  *

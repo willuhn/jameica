@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/10/29 00:41:26 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/13 00:37:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -25,6 +25,10 @@ import org.eclipse.swt.widgets.Widget;
 import de.bb.util.XmlFile;
 import de.willuhn.jameica.util.Style;
 
+/**
+ * Bildet den Navigations-Baum im linken Frame ab.
+ * @author willuhn
+ */
 public class Navigation {
 
 	private XmlFile xml;
@@ -121,7 +125,6 @@ public class Navigation {
 
 
 	/**
-   * @author willuhn
    * Bildet ein einzelnes Element der Navigation ab.
    * Es laedt rekursiv alle Kind-Elemente.
    */
@@ -203,6 +206,9 @@ public class Navigation {
 			}
 		}
     
+    /**
+     * Klappt alle Kind-Elemente auf.
+     */
     void expandChilds()
     {
       enumAndExpand(this.parentItem);
@@ -226,6 +232,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.3  2003/11/13 00:37:35  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/10/29 00:41:26  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/10/29 00:41:26 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/13 00:37:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,19 @@
 
 package de.willuhn.jameica;
 
+/**
+ * Mutter aller Klassen ;)
+ * Diese Klasse startet die Anwendung.
+ * @author willuhn
+ */
 public class Main {
 
   /**
-   * starts jameica.
-   * @param args
+   * Startet die Anwendung.
+   * @param args die via Kommandozeile uebergebenen Parameter.
+   * Parameter 1: "-server" als Parameter fuehrt dazu, dass die
+   *              Anwendung im Server-Mode startet und die GUI weglaesst.
+   * Parameter 2: optional: Pfad und Dateiname zur Config-Datei.
    */
   public static void main(String[] args) {
     String serverParam = "-server";
@@ -40,13 +48,14 @@ public class Main {
       Application.newInstance(serverParam.equalsIgnoreCase(args[0]),args[1]);
     }
   }
-
-
 }
 
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.3  2003/11/13 00:37:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/10/29 00:41:26  willuhn
  * *** empty log message ***
  *

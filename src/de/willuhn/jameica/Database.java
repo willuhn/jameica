@@ -1,17 +1,28 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Database.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/12 00:58:55 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/13 00:37:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
+ *
+ * Copyright (c) by willuhn.webdesign
+ * All rights reserved
+ *
  **********************************************************************/
 package de.willuhn.jameica;
 
+/**
+ * Diese Klasse bildet die Anbindung an die embedded Datenbank ab. 
+ * @author willuhn
+ */
 public class Database
 {
   private static boolean started = false;
 
+  /**
+   * Initialisiert die Datenbank.
+   */
   public static synchronized void init()
   {
     Application.getLog().info("starting mckoi database");
@@ -27,6 +38,10 @@ public class Database
   }
 
 
+  /**
+   * Faehrt die Datenbank herunter.
+   * Wird beim Beenden der Anwendung aufgerufen.
+   */
   public static synchronized void shutDown()
   {
     Application.getLog().info("shutting down local database");
@@ -36,10 +51,13 @@ public class Database
       return;
     }
     
-    // TODO
     started = false;
   }
 
+  /**
+   * Prueft, ob die Datenbank initialisiert wurde.
+   * @return true, wenn sie initialisiert wurde.
+   */
   public static boolean isStarted()
   {
     return started;
@@ -48,6 +66,9 @@ public class Database
 
 /*********************************************************************
  * $Log: Database.java,v $
+ * Revision 1.3  2003/11/13 00:37:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/11/12 00:58:55  willuhn
  * *** empty log message ***
  *

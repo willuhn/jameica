@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/10/29 00:41:26 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/13 00:37:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import de.willuhn.jameica.util.Style;
 import de.willuhn.jameica.views.AbstractView;
 
 /**
- * starts the GUI 
+ * Startet und beendet die GUI der Anwendung. 
  * @author willuhn
  */
 public class GUI
@@ -32,57 +32,84 @@ public class GUI
   
   // singleton
   private static GUI gui;
+    private Navigation navi;
+    private View view;
+    private StatusBar statusBar;
+    private Menu menu;
+  
+    private AbstractView currentView;
+
   
   // globales Display und Shell
   public final static Display display = new Display();
   public static Shell shell = new Shell();
   
-  private Navigation navi;
-  private View view;
-  private StatusBar statusBar;
-  private Menu menu;
-
-  private AbstractView currentView;
-  
-  
+  /**
+   * ct.
+   */
   private GUI(){
   } 
   
+
+  /**
+   * Erzeugt eine neue Instanz der GUI oder liefert die existierende zurueck. 
+   * @return
+   */
   public static GUI getInstance()
   {
     // init language pack
     I18N.init(Application.getConfig().getLocale());
 
 
-    if (gui == null)
-      gui = new GUI();
+    if (gui != null)
+      return gui; // allready initted.
+
+    gui = new GUI();
     
     gui.init();
     return gui;
   }
   
 
+  /**
+   * Fuegt der Anwendung das Dropdown-Menu hinzu.
+   */
   private void addMenu() {
     menu = new Menu();
   }
 
+  /**
+   * Fuegt der Anwendung die Navigation hinzu.
+   */
   private void addNavigation() {
     navi = new Navigation();
   }
   
+  /**
+   * Erzeugt das Content-Frame.
+   */
   private void addView() {
     view = new View();
   }
 
+  /**
+   * Erzeugt die untere Status-Leiste.
+   */
   private void addStatusBar() {
     statusBar = new StatusBar();
   }
 
+  /**
+   * Startet die angegebene View.
+   * @param className Name der Klasse, die als View im Content angezeigt
+   * werden soll. Muss von AbstractView abgeleitet sein.
+   * @param o ein optionaler Parameter, der der View uebergeben wird.
+   */
   public static void startView(String className, Object o)
   {
     try
     {
-      Application.getLog().info("starting view: " + className);
+      Application.getLog().debug("starting view: " + className);
       Class clazz = Class.forName(className);
       
       if (gui.currentView != null) {
@@ -121,20 +148,31 @@ public class GUI
     }
     catch (ClassNotFoundException e)
     {
-      Application.getLog().warn("Class " +className+ " not found.");
+      Application.getLog().debug("Class " +className+ " not found.");
     }
   }
 
+  /**
+   * Setzt den uebergebenen String als aktuellen Statustext in der Anwendung (links unten).
+   * @param status String mit dem anzuzeigenden Status-Text.
+   */
   public static void setStatusText(String status)
   {
     gui.statusBar.setStatusText(status);
   }
 
+  /**
+   * Setzt den uebergebenen String als aktuellen Statustext in der Anwendung (rechts unten).
+   * @param status String mit dem anzuzeigenden Status-Text.
+   */
   public static void setActionText(String status)
   {
     gui.statusBar.setActionText(status);
   }
 
+  /**
+   * Startet den GUI-Loop.
+   */
   protected void clientLoop()
   {
     while (!shell.isDisposed()) {
@@ -149,6 +187,9 @@ public class GUI
     }
   }
   
+  /**
+   * Initialisiert die GUI.
+   */
   private void init()
   {
     // init shell
@@ -175,6 +216,10 @@ public class GUI
     shell.open ();
   }
 
+  /**
+   * Wechselt die GUI auf das angegebene Locale.
+   * @param l Locale, auf welches gewechselt werden soll.
+   */
   public static void changeLanguageTo(Locale l)
   {
     I18N.init(l);
@@ -184,6 +229,9 @@ public class GUI
     gui.clientLoop();
   }
   
+  /**
+   * Beendet die GUI.
+   */
   public void shutDown()
   {
     I18N.flush();
@@ -194,6 +242,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.2  2003/11/13 00:37:35  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/10/29 00:41:26  willuhn
  * *** empty log message ***
  *
