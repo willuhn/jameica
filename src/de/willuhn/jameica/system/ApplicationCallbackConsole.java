@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/30 20:47:43 $
+ * $Revision: 1.2 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,9 +15,8 @@ package de.willuhn.jameica.system;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.MessageDigest;
 
-import sun.misc.BASE64Encoder;
+import de.willuhn.security.Checksum;
 import de.willuhn.util.ProgressMonitor;
 
 /**
@@ -61,7 +60,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader keyboard = new BufferedReader(isr);
 		String pw = keyboard.readLine();
-		settings.setAttribute("jameica.system.callback.checksum",checksum(pw));
+		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(pw.getBytes()));
 		return pw;
   }
 
@@ -77,7 +76,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 		{
 			String pw = keyboard.readLine();
 			String checksum = settings.getString("jameica.system.callback.checksum","");
-			if (pw != null && checksum.equals(checksum(pw)))
+			if (pw != null && checksum.equals(Checksum.md5(pw.getBytes())))
 				return pw;
 			System.out.println(Application.getI18n().tr("Passwort falsch. Bitte versuchen Sie es erneut:"));
 		}
@@ -103,19 +102,6 @@ public class ApplicationCallbackConsole implements ApplicationCallback
     return monitor;
   }
 
-	/**
-	 * Liefert eine MD5-Checksumme des Strings.
-	 * @param s String.
-	 * @return Checksumme.
-	 */
-	private String checksum(String s) throws Exception
-	{
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		byte[] hashed = md.digest(s.getBytes());
-		BASE64Encoder encoder = new BASE64Encoder();
-		return encoder.encode(hashed);
-	}
-
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#startupError(java.lang.String)
    */
@@ -129,6 +115,9 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.2  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *

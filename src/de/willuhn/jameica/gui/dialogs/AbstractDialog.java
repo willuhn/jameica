@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/11/15 18:09:32 $
+ * $Revision: 1.26 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -101,6 +102,9 @@ public abstract class AbstractDialog
   
   private Composite parent;
   private CLabel title;
+  private Label imageLabel;
+  
+  private Image sideImage;
 
 	private int pos = POSITION_CENTER;
 
@@ -163,7 +167,19 @@ public abstract class AbstractDialog
 				title.setBackground(new org.eclipse.swt.graphics.Color(display,255,255,255));
 				image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-				parent = new Composite(shell,SWT.NONE);
+				Composite c = new Composite(shell,SWT.NONE);
+				GridLayout cl = new GridLayout(2,false);
+				cl.horizontalSpacing = 0;
+				cl.verticalSpacing = 0;
+				cl.marginHeight = 0;
+				cl.marginWidth = 0;
+				c.setLayoutData(new GridData(GridData.FILL_BOTH));
+				c.setLayout(cl);
+				c.setBackground(Color.BACKGROUND.getSWTColor());
+				imageLabel = new Label(c,SWT.NONE);
+				imageLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+				parent = new Composite(c,SWT.NONE);
 				GridLayout parentLayout = new GridLayout();
 				parentLayout.marginHeight = 2;
 				parentLayout.marginWidth = 2;
@@ -252,6 +268,15 @@ public abstract class AbstractDialog
 	}
 
 	/**
+	 * Fuegt dem Dialog links ein Bild hinzu.
+   * @param image Side-Image.
+   */
+  public final void setSideImage(Image image)
+	{
+		this.sideImage = image;
+	}
+
+	/**
 	 * Muss vom abgeleiteten Dialog ueberschrieben werden.
 	 * In dieser Funktion soll er sich bitte malen.
 	 * Sie wird anschliessend von open() ausgefuehrt.
@@ -289,6 +314,8 @@ public abstract class AbstractDialog
         {
 					shell.setText(titleText == null ? "" : titleText);
 					title.setText(titleText == null ? "" : titleText);
+					if (sideImage != null)
+						imageLabel.setImage(sideImage);
 	
 					try
 					{
@@ -375,6 +402,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.26  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.25  2004/11/15 18:09:32  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.5 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.style;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
@@ -46,6 +47,14 @@ public interface StyleFactory
    */
   public Text createTextArea(Composite parent);
 
+  /**
+	 * Erzeugt ein Label.
+   * @param parent
+   * @param style
+   * @return Label.
+   */
+  public Label createLabel(Composite parent, int style);
+
 	/**
 	 * Erzeugt ein Combo.
    * @param parent Parent.
@@ -71,6 +80,9 @@ public interface StyleFactory
 
 /*********************************************************************
  * $Log: StyleFactory.java,v $
+ * Revision 1.5  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/15 00:38:20 $
+ * $Revision: 1.5 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,8 @@ import org.vafada.swtcalendar.SWTCalendar;
 import org.vafada.swtcalendar.SWTCalendarEvent;
 import org.vafada.swtcalendar.SWTCalendarListener;
 
+import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 
 /**
@@ -72,11 +74,12 @@ public class CalendarDialog extends AbstractDialog {
   {
     comp = new Composite(parent,SWT.NONE);
     comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		comp.setBackground(Color.BACKGROUND.getSWTColor());
     comp.setLayout(new GridLayout(1,false));
 
 		if (text != null && text.length() > 0)
 		{
-			Label l = new Label(comp,SWT.NONE);
+			Label l = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
 			l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			l.setText(text);
 		}
@@ -108,6 +111,9 @@ public class CalendarDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: CalendarDialog.java,v $
+ * Revision 1.5  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/11/15 00:38:20  willuhn
  * *** empty log message ***
  *

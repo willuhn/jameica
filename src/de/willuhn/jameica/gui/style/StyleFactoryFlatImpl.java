@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.8 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -124,6 +125,16 @@ public class StyleFactoryFlatImpl implements StyleFactory
 		table.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
 		parent.addPaintListener(borderPainter);
 		return table;
+	}
+
+	/**
+	 * @see de.willuhn.jameica.gui.style.StyleFactory#createLabel(org.eclipse.swt.widgets.Composite, int)
+	 */
+	public Label createLabel(Composite parent, int style)
+	{
+		Label label = new Label(parent,style);
+		label.setBackground(Color.BACKGROUND.getSWTColor());
+		return label;
 	}
 
   /**
@@ -248,6 +259,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.8  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *

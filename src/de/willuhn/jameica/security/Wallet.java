@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/01/30 20:49:21 $
+ * $Revision: 1.3 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,10 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.Serializable;
 import java.security.KeyPair;
-import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.crypto.Cipher;
 
@@ -53,7 +55,7 @@ public final class Wallet
 	private Class clazz 	= null;
 	private KeyPair pair 	= null;
 
-	private HashMap	serialized = new HashMap();
+	private Hashtable	serialized = new Hashtable();
 
   /**
 	 * ct.
@@ -63,6 +65,7 @@ public final class Wallet
    */
   protected Wallet(Class clazz, KeyPair pair) throws Exception
 	{
+		Logger.info("creating wallet for class " + clazz.getName());
 		this.clazz = clazz;
 		this.pair = pair;
 		read();
@@ -71,23 +74,75 @@ public final class Wallet
 	/**
 	 * Speichert einen Datensatz verschluesselt in dem Wallet.
    * @param alias Alias-Name.
-   * @param data Nutzdaten, die verschluesselt gespeichert werden sollen.
+   * @param data Nutzdaten, die verschluesselt gespeichert werden sollen
+   * oder <code>null</code> wenn der Wet geloescht werden soll.
    * @throws Exception
    */
-  public void set(String alias, String data) throws Exception
+  public void set(String alias, Serializable data) throws Exception
 	{
-		this.serialized.put(alias,data);
+		if (alias == null)
+		{
+			Logger.warn("alias cannot be null");
+			return;
+		}
+		if (data == null)
+		{
+			Logger.debug("removing key " + alias);
+			this.serialized.remove(alias);
+		}
+		else
+		{
+			Logger.debug("storing key " + alias);
+			this.serialized.put(alias,data);
+		}
 		write();
 	}
 	
+  /**
+	 * Loescht alle Nutzdaten, deren Alias-Name mit dem angegebenen beginnt.
+	 * Wird als Prefix null oder ein Leerstring angegeben, wird das komplette
+	 * Wallet geleert.
+   * @param aliasPrefix Alias-Prefix.
+   * @throws Exception
+   */
+  public void delete(String aliasPrefix) throws Exception
+	{
+		if (aliasPrefix == null || aliasPrefix.length() == 0)
+		{
+			this.serialized.clear();
+			return;
+		}
+
+		Iterator i = this.serialized.keySet().iterator();
+		String s = null;
+		int count = 0;
+		while (i.hasNext())
+		{
+			s = (String) i.next();
+			if (s != null && s.startsWith(aliasPrefix))
+			{
+				Logger.debug("removing key " + s);
+				this.serialized.remove(s);
+				count++;
+			}
+		}
+		write();
+	}
+
 	/**
 	 * Liefert den Wert des genannten Alias-Namen entschluesselt.
    * @param alias Alias-Name.
    * @return Nutzdaten.
    */
-  public String getString(String alias)
+  public Serializable get(String alias)
 	{
-		return (String) this.serialized.get(alias);
+		if (alias == null)
+		{
+			Logger.warn("alias cannot be null");
+			return null;
+		}
+		Logger.debug("reading key " + alias);
+		return (Serializable) this.serialized.get(alias);
 	}
 
 	/**
@@ -100,7 +155,6 @@ public final class Wallet
 		InputStream is = null;
 		try
 		{
-			// Datei einlesen und in ein Byte-Array kopieren
 			try
 			{
 				is = new BufferedInputStream(new FileInputStream(getFilename()));
@@ -108,7 +162,7 @@ public final class Wallet
 			catch (FileNotFoundException e)
 			{
 				// Wallet existiert noch nicht. Dann erstellen wir ein neues
-				this.serialized = new HashMap();
+				this.serialized = new Hashtable();
 				return;
 			}
 
@@ -129,7 +183,7 @@ public final class Wallet
 			}
 
 			ObjectInputStream ois = new ObjectInputStream(pis);
-			this.serialized = (HashMap) ois.readObject();
+			this.serialized = (Hashtable) ois.readObject();
 		}
 		finally
 		{
@@ -202,6 +256,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.3  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/01/30 20:49:21  willuhn
  * *** empty log message ***
  *

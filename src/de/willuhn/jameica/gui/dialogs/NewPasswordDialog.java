@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/30 20:47:43 $
+ * $Revision: 1.2 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,6 @@
 package de.willuhn.jameica.gui.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
@@ -27,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
@@ -39,12 +39,12 @@ import de.willuhn.jameica.system.OperationCanceledException;
 public class NewPasswordDialog extends SimpleDialog {
 
 	private Composite comp = null;
-	private CLabel label = null;
-	private CLabel pLabel = null;
+	private Label label = null;
+	private Label pLabel = null;
 
-	private CLabel pLabel2 = null;
+	private Label pLabel2 = null;
 
-	private CLabel error = null;
+	private Label error = null;
 
 	private Text password = null;
 	private Text password2 = null;
@@ -67,6 +67,7 @@ public class NewPasswordDialog extends SimpleDialog {
     super(position);
     labelText = i18n.tr("Neues Passwort");
 		labelText2 = i18n.tr("Passwort-Wiederholung");
+		setSideImage(SWTUtil.getImage("password.gif"));
   }
 
 	/**
@@ -105,7 +106,6 @@ public class NewPasswordDialog extends SimpleDialog {
 		if (text == null || text.length() == 0)
 			return;
 		error.setText(text);
-		error.layout();
 	}
 
   /**
@@ -115,18 +115,20 @@ public class NewPasswordDialog extends SimpleDialog {
 	{
 		// Composite um alles drumrum.
 		comp = new Composite(parent,SWT.NONE);
+		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		comp.setLayout(new GridLayout(3,false));
+		GridLayout gl = new GridLayout(3,false);
+		comp.setLayout(gl);
 		
 		// Text
-		label = new CLabel(comp,SWT.LEFT);
+		label = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
 		label.setText(getText());
-		GridData grid = new GridData(GridData.FILL_BOTH);
+		GridData grid = new GridData(GridData.FILL_HORIZONTAL);
 		grid.horizontalSpan = 3;
 		label.setLayoutData(grid);
 		
 		// Fehlertext 
-		error = new CLabel(comp, SWT.WRAP);
+		error = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
 		error.setForeground(Color.ERROR.getSWTColor());
 		GridData grid2 = new GridData(GridData.FILL_HORIZONTAL);
 		grid2.horizontalSpan = 3;
@@ -134,7 +136,7 @@ public class NewPasswordDialog extends SimpleDialog {
 		error.setLayoutData(grid2);
 
 		// Label vor Eingabefeld
-		pLabel = new CLabel(comp,SWT.NONE);
+		pLabel = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
 		pLabel.setText(labelText);
 		pLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
@@ -144,7 +146,7 @@ public class NewPasswordDialog extends SimpleDialog {
 		grid3.horizontalSpan = 2;
 		password.setLayoutData(grid3);
 
-		pLabel2 = new CLabel(comp,SWT.NONE);
+		pLabel2 = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
 		pLabel2.setText(labelText2);
 		pLabel2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
@@ -155,12 +157,12 @@ public class NewPasswordDialog extends SimpleDialog {
 		password2.setLayoutData(grid4);
 
 		// Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
-		Label dummy = new Label(comp,SWT.NONE);
+		Label dummy = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
 		dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// OK-Button
 		button = GUI.getStyleFactory().createButton(comp);
-		button.setText(i18n.tr("OK"));
+		button.setText("    " + i18n.tr("OK") + "    ");
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		getShell().setDefaultButton(button);
 		button.addSelectionListener(new SelectionAdapter()
@@ -216,7 +218,7 @@ public class NewPasswordDialog extends SimpleDialog {
   							 password2 != null && password2.length() > 0 &&
   					     password.equals(password2));
     if (!b)
-    	setErrorText(i18n.tr("Die eingegebenen Passworte stimmen nicht ï¿½berein."));
+    	setErrorText(i18n.tr("Die eingegebenen Passworte stimmen nicht überein."));
     return b;
   }
 	
@@ -232,6 +234,9 @@ public class NewPasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: NewPasswordDialog.java,v $
+ * Revision 1.2  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *

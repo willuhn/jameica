@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/30 20:47:43 $
+ * $Revision: 1.2 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,8 +11,6 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.system;
-
-import java.security.MessageDigest;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,12 +22,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import sun.misc.BASE64Encoder;
 import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.gui.dialogs.NewPasswordDialog;
 import de.willuhn.jameica.gui.dialogs.PasswordDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.logging.Logger;
+import de.willuhn.security.Checksum;
 import de.willuhn.util.ProgressMonitor;
 
 /**
@@ -47,7 +45,7 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 	public boolean lockExists(String lockfile)
 	{
 		YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
-		d.setTitle(Application.getI18n().tr("Jameica lÃ¤uft bereits"));
+		d.setTitle(Application.getI18n().tr("Jameica läuft bereits"));
 		d.setText(Application.getI18n().tr("Wollen Sie den Startvorgang wirklich fortsetzen?"));
 		try
 		{
@@ -68,8 +66,8 @@ public class ApplicationCallbackSWT implements ApplicationCallback
   {
   	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
   	p.setText(Application.getI18n().tr(
-			"Sie starten Jameica zum ersten Mal.\n" +
-			"Bitte vergeben Sie ein Master-Passwort\nzum Schutz Ihrer persÃ¶nlichen Daten."));
+			"Sie starten Jameica zum ersten Mal.\n\n" +
+			"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +			"Es wird anschließend bei jedem Start von Jameica benötigt."));
 		p.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
 
 		String s = null;
@@ -83,7 +81,7 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 		}
 		// Wir speichern eine Checksumme des neuen Passwortes.
 		// Dann koennen wir spaeter checken, ob es ok ist.
-		settings.setAttribute("jameica.system.callback.checksum",checksum(s));
+		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(s.getBytes()));
 		return s;
   }
 
@@ -126,7 +124,7 @@ public class ApplicationCallbackSWT implements ApplicationCallback
     	}
     	try
     	{
-    		String pw       = checksum(password);
+    		String pw       = Checksum.md5(password.getBytes());
     		String checksum = settings.getString("jameica.system.callback.checksum","");
 				boolean b = checksum.equals(pw);
 				if (!b)
@@ -155,20 +153,6 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 
 	}
 
-	/**
-	 * Liefert eine MD5-Checksumme des Strings.
-   * @param s String.
-   * @return Checksumme.
-   */
-  private String checksum(String s) throws Exception
-	{
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		byte[] hashed = md.digest(s.getBytes());
-		BASE64Encoder encoder = new BASE64Encoder();
-		return encoder.encode(hashed);
-	}
-
-
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#getStartupMonitor()
    */
@@ -192,14 +176,14 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 			d = new Display();
 		final Shell s = new Shell();
 		s.setLayout(new GridLayout());
-		s.setText(Application.getI18n().tr("Beim Start von Jameica ist ein unerwarteter Fehler aufgetreten."));
+		s.setText(Application.getI18n().tr("Fehler beim Start von Jameica."));
 		Label l = new Label(s,SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l.setText(errorMessage);
+		l.setText(Application.getI18n().tr("Beim Start von Jameica ist ein unerwarteter Fehler aufgetreten:\n") + errorMessage);
 
 		Button b = new Button(s,SWT.BORDER);
 		b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		b.setText("OK");
+		b.setText("    OK    ");
 		b.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -225,6 +209,9 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.2  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *

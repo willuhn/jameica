@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/08/15 17:55:17 $
+ * $Revision: 1.9 $
+ * $Date: 2005/02/01 17:15:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Dialog, der nur einen Text und einen Ja/Nein-Button enthaelt.
@@ -73,8 +74,9 @@ public class YesNoDialog extends AbstractDialog {
 		comp = new Composite(parent,SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout(2,false));
+		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		
-		label = new Label(comp,SWT.WRAP);
+		label = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
 		label.setText(getText() + "\n");
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
@@ -116,6 +118,9 @@ public class YesNoDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: YesNoDialog.java,v $
+ * Revision 1.9  2005/02/01 17:15:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/08/15 17:55:17  willuhn
  * @C sync handling
  *
