@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/11/04 22:41:36 $
+ * $Revision: 1.18 $
+ * $Date: 2004/11/05 01:50:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -163,7 +163,7 @@ public final class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// init i18n
-		this.i18n = new I18N("lang/messages",this.config.getLocale());
+		this.i18n = new I18N("lang/messages",this.config.getLocale(),Application.getClassLoader());
 		//
 		////////////////////////////////////////////////////////////////////////////
 
@@ -464,6 +464,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.18  2004/11/05 01:50:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/11/04 22:41:36  willuhn
  * *** empty log message ***
  *

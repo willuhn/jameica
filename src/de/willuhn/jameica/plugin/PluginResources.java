@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/05 01:50:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,9 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
@@ -35,7 +38,31 @@ public final class PluginResources {
   protected PluginResources(AbstractPlugin plugin)
   {
   	this.plugin = plugin;
-		this.i18n = new I18N("lang/messages", Application.getConfig().getLocale());
+
+  	String path = getPath() + "/lang";
+  	File f = new File(path);
+  	if (!f.exists())
+  	{
+			path = getPath() + "/bin/lang"; // Fallback
+			f = new File(path);
+  	}
+
+		if (f.exists())
+			this.i18n = new I18N(path + "/messages", Application.getConfig().getLocale(), Application.getClassLoader());
+		else
+		{
+			try
+			{
+				JarFile jar = new JarFile(getPath());
+				JarEntry entry = jar.getJarEntry("lang/messages_" + Application.getConfig().getLocale().toString() + ".properties");
+				this.i18n = new I18N(jar.getInputStream(entry));
+			}
+			catch (IOException e)
+			{
+				// gna
+				this.i18n = new I18N("lang/message",Application.getConfig().getLocale(),Application.getClassLoader());
+			}
+		}
   }
 
 	/**
@@ -101,6 +128,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.4  2004/11/05 01:50:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *
