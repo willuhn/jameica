@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/10/14 23:15:05 $
+ * $Revision: 1.7 $
+ * $Date: 2004/10/15 20:06:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,19 +56,27 @@ public class DecimalInput extends TextInput
 		
     text.addListener (SWT.Verify, new Listener() {
       public void handleEvent (Event e) {
-        String t = e.text;
-        char [] chars = new char [t.length ()];
-        t.getChars (0, chars.length, chars, 0);
+
+				char komma = format.getDecimalFormatSymbols().getDecimalSeparator();
+				char[] chars = e.text.toCharArray();
+
+				// Wir lassen nur 0-9, Komma und Minus zu
         for (int i=0; i<chars.length; i++) {
-        	// Wir lassen nur 0-9, Komma und Minus zu
           if (!('0' <= chars[i] &&
                 chars[i] <= '9') &&
-                !(chars[i] == format.getDecimalFormatSymbols().getDecimalSeparator()) &&
+                !(chars[i] == komma) &&
 								!(chars[i] == '-')
              )
           {
             e.doit = false;
             return;
+          }
+          
+          // Jetzt checken wir noch, ob schon ein Komma eingegeben wurde
+          if ((text.getText()+"").indexOf(komma) != -1 && e.text.indexOf(komma) != -1)
+          {
+          	// Jepp, da ist schon ein Komma
+						e.doit = false;
           }
         }
       }
@@ -113,6 +121,10 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.7  2004/10/15 20:06:09  willuhn
+ * @N added maxLength to TextInput
+ * @N double comma check in DecimalInput
+ *
  * Revision 1.6  2004/10/14 23:15:05  willuhn
  * @N maded locale configurable via GUI
  * @B fixed locale handling

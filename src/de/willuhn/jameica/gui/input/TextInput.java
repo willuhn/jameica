@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.8 $
+ * $Date: 2004/10/15 20:06:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,10 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
@@ -28,14 +31,27 @@ public class TextInput extends AbstractInput
   private String value;
   private boolean enabled = true;
 
+	private int maxLength = 0;
+
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
    * @param value anzuzeigender Wert.
    */
   public TextInput(String value)
   {
-    this.value = value;
+    this(value,0);
   }
+
+	/**
+	 * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+	 * @param value anzuzeigender Wert.
+	 * @param maxLength maximale Anzahl von Zeichen.
+	 */
+	public TextInput(String value, int maxLength)
+	{
+		this.value = value;
+		this.maxLength = maxLength;
+	}
 
   /**
    * @see de.willuhn.jameica.gui.input.Input#getControl()
@@ -45,6 +61,19 @@ public class TextInput extends AbstractInput
 		text = GUI.getStyleFactory().createText(getParent());
 		text.setEnabled(enabled);
     text.setText((value == null ? "" : value));
+
+		if (maxLength > 0)
+		{
+			text.addListener (SWT.Verify, new Listener() {
+				public void handleEvent(Event e)
+				{
+					if ((text.getText() + e.text).length() > maxLength)
+					{
+						e.doit = false;
+					}
+				}
+			 });
+		}
     return text;
   }
 
@@ -100,6 +129,10 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.8  2004/10/15 20:06:08  willuhn
+ * @N added maxLength to TextInput
+ * @N double comma check in DecimalInput
+ *
  * Revision 1.7  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *
