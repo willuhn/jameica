@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.17 $
+ * $Date: 2004/04/19 22:05:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,6 @@ import de.willuhn.util.I18N;
 
 /**
  * Dialog fuer die Programm-Einstellungen.
- * TODO: Plugins via GUI installier- und deinstallierbar machen.
  */
 public class Settings extends AbstractView
 {
@@ -105,48 +104,6 @@ public class Settings extends AbstractView
 		/////////////////////////////////////////////////////////////////
 
 
-		/////////////////////////////////////////////////////////////////
-		// Service-Einstellungen
-		CTabItem service = new CTabItem(folder,SWT.NONE);
-		service.setText(i18n.tr("Services"));
-		LabelGroup serviceGroup = new LabelGroup(folder,"");
-		serviceGroup.addText("",false);
-		serviceGroup.addHeadline(i18n.tr("Lokale Services"));
-		serviceGroup.addTable(control.getLocalServices());
-		
-		serviceGroup.addText("",false);
-		serviceGroup.addHeadline(i18n.tr("Netzwerkservices"));
-		serviceGroup.addTable(control.getRemoteServices());
-
-		ButtonArea serviceButtons = serviceGroup.createButtonArea(5);
-		serviceButtons.addCustomButton(i18n.tr("lokalen Service erstellen"),new MouseAdapter()
-		{
-			public void mouseUp(MouseEvent e)
-			{
-				control.handleRestore();
-			}
-		});
-		serviceButtons.addCustomButton(i18n.tr("Netzwerk-Service erstellen"),new MouseAdapter()
-		{
-			public void mouseUp(MouseEvent e)
-			{
-				control.handleRestore();
-			}
-		});
-		serviceButtons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
-    {
-      public void mouseUp(MouseEvent e)
-      {
-      	control.handleRestore();
-      }
-    });
-		serviceButtons.addCancelButton(control);
-		serviceButtons.addStoreButton(control);
-
-		service.setControl(serviceGroup.getControl());
-		//
-		/////////////////////////////////////////////////////////////////
-
 
 
 		folder.setSelection(main);
@@ -165,6 +122,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.17  2004/04/19 22:05:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

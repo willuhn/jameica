@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/04/14 23:53:44 $
+ * $Revision: 1.18 $
+ * $Date: 2004/04/19 22:05:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -119,7 +119,7 @@ public abstract class AbstractPlugin
 	 * Andernfalls liefert die Funktion "1".
 	 * @return Version des Plugins.
 	 */
-	public double getBuildnumber()
+	public int getBuildnumber()
 	{
 		if (build != -1)
 			return build;
@@ -180,6 +180,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.18  2004/04/19 22:05:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/04/14 23:53:44  willuhn
  * *** empty log message ***
  *

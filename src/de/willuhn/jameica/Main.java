@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/04/13 23:15:23 $
+ * $Revision: 1.6 $
+ * $Date: 2004/04/19 22:05:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,8 @@ public class Main {
     boolean serverMode = args.length >= 1 && serverParam.equalsIgnoreCase(args[0]);
 
     // Starten
-    Application.newInstance(serverMode, args.length > 1 ? args[1] : null);
+    String configFile = args.length > 1 ? args[1] : null;
+    Application.newInstance(serverMode, (configFile == null && !serverMode ? args[0] : configFile));
 
    }
 }
@@ -42,6 +43,9 @@ public class Main {
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.6  2004/04/19 22:05:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/04/13 23:15:23  willuhn
  * *** empty log message ***
  *

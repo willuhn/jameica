@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/04/12 19:16:00 $
+ * $Revision: 1.16 $
+ * $Date: 2004/04/19 22:05:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,6 @@ import de.willuhn.jameica.gui.input.FileInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.views.AbstractView;
-import de.willuhn.jameica.gui.views.ServiceSettings;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
 import de.willuhn.util.I18N;
@@ -143,7 +142,6 @@ public class SettingsControl extends AbstractControl
    */
   public void handleOpen(Object o)
   {
-  	GUI.startView(ServiceSettings.class.getName(),o);
   }
   
   /**
@@ -174,6 +172,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.16  2004/04/19 22:05:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/04/12 19:16:00  willuhn
  * @C refactoring
  * @N forms
