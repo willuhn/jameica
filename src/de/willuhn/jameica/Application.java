@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.29 $
- * $Date: 2004/03/18 01:24:47 $
+ * $Revision: 1.30 $
+ * $Date: 2004/03/29 23:20:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,16 @@ package de.willuhn.jameica;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
@@ -56,8 +66,6 @@ public class Application {
 
     Application.serverMode = serverMode;
 
-    splash("starting jameica");
-
     // start application
     app = new Application();
 
@@ -65,7 +73,42 @@ public class Application {
 		app.classLoader = new MultipleClassLoader();
 
 		// LockFile erzeugen
-		new Lock("jameica");
+		try {
+			new Lock("jameica");
+		}
+		catch (RuntimeException e)
+		{
+			if (serverMode)
+				throw e;
+			Display d = new Display();
+			final Shell s = new Shell();
+			s.setLayout(new GridLayout());
+			s.setText("Fehler");
+			Label l = new Label(s,SWT.NONE);
+			l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			l.setText(e.getMessage());
+			Button b = new Button(s,SWT.BORDER);
+			b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			b.setText("OK");
+			b.addMouseListener(new MouseAdapter() {
+        public void mouseUp(MouseEvent e) {
+        	s.close();
+        }
+      });
+      s.pack();
+			s.open();
+			while (!s.isDisposed()) {
+				if (!d.readAndDispatch()) d.sleep();
+			}
+			try {
+				s.dispose();
+				d.dispose();
+			}
+			catch (Exception e2) {}
+			System.exit(1);
+		}
+
+		splash("starting jameica");
 
 		////////////////////////////////////////////////////////////////////////////
     // init logger
@@ -226,6 +269,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.30  2004/03/29 23:20:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.29  2004/03/18 01:24:47  willuhn
  * @C refactoring
  *

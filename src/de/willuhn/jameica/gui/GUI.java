@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.32 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.33 $
+ * $Date: 2004/03/29 23:20:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -393,15 +392,14 @@ public class GUI
   private static void loadHelp(AbstractView view)
 	{
 
-		String s = File.separator;
-		String path = s + "help" + s + 
+		String path = "/help/" + 
 									Application.getConfig().getLocale().toString().toLowerCase() +
-									s + view.getClass().getName() + ".txt";
+									"/" + view.getClass().getName() + ".txt";
 		InputStream is = GUI.class.getResourceAsStream(path);
 		if (is == null)
 		{
-			path = s + "help" + s + Locale.getDefault().toString().toLowerCase() + 
-						 s + view.getClass().getName() + ".txt";
+			path = "/help/" + Locale.getDefault().toString().toLowerCase() + 
+						 "/" + view.getClass().getName() + ".txt";
 			is = GUI.class.getResourceAsStream(path);
 		}
 		if (is == null)
@@ -632,6 +630,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.33  2004/03/29 23:20:50  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.32  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/03/11 08:56:56 $
+ * $Revision: 1.12 $
+ * $Date: 2004/03/29 23:20:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,7 +96,7 @@ public class Style
     Image image = (Image) imagecache.get(filename);
     if (image == null)
     {
-      InputStream is = Style.class.getResourceAsStream(File.separator + "img" + File.separator + filename);
+      InputStream is = Style.class.getResourceAsStream("/img/" + filename);
       ImageData data = new ImageData(is);
       ImageData data2 = null;
       if (data.transparentPixel > 0) {
@@ -112,7 +111,7 @@ public class Style
         imagecache.put(filename, image);
       }
       else {
-        return new Image(GUI.getDisplay(), Style.class.getClassLoader().getResourceAsStream("img" + File.separator + "empty.gif"));
+        return new Image(GUI.getDisplay(), Style.class.getClassLoader().getResourceAsStream("/img" + "/empty.gif"));
       }
     }
     return image;
@@ -154,6 +153,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.12  2004/03/29 23:20:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/03/11 08:56:56  willuhn
  * @C some refactoring
  *

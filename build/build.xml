@@ -7,7 +7,7 @@
         <property environment="env"/>
 
 		<property name="define.projectname"  		value="Jameica"/>
-		<property name="define.jarfilename"  		value="jameica-win32.jar"/>
+		<property name="define.jarfilename"  		value="jameica.jar"/>
 		<property name="define.jarfilename.win32"  	value="jameica-win32.jar"/>
 		<property name="define.jarfilename.linux"  	value="jameica-linux.jar"/>
 		<property name="define.package"      		value="de.willuhn.jameica"/>
@@ -31,17 +31,14 @@
         <property name="cfg.dir" 			 		value="cfg"/>
         <property name="icon.dir" 			 		value="${src.dir}/img"/>
         <property name="lang.dir" 			 		value="${src.dir}/lang"/>
+        <property name="help.dir" 			 		value="${src.dir}/help"/>
         <property name="lib.dir" 			 		value="lib"/>
         <property name="class.dir" 			 		value="${project.tmp}/bin"/>
 
-
 		<path id="compilepath">
-			<pathelement location="${lib.dir}/mckoidb.jar"/>
-			<pathelement location="${lib.dir}/mysql-connector-java-3.0.8-stable-bin.jar"/>
-			<pathelement location="${lib.dir}/linux/swt.jar"/>
-			<pathelement location="${lib.dir}/nanoxml-2.2.3.jar"/>
-			<pathelement location="../util/bin/"/>
-			<pathelement location="../datasource/bin/"/>
+	      <fileset dir="${lib.dir}">
+	        <include name="**/*.jar"/>
+	      </fileset>
 		</path>
 
     </target>
@@ -61,10 +58,13 @@
         </rmic>
 
 		<copy todir="${class.dir}/img">
-			<fileset dir="${icon.dir}"></fileset>
+			<fileset dir="${icon.dir}" />
 		</copy>
 		<copy todir="${class.dir}/lang">
-			<fileset dir="${lang.dir}"></fileset>
+			<fileset dir="${lang.dir}" />
+		</copy>
+		<copy todir="${class.dir}/help">
+			<fileset dir="${help.dir}" />
 		</copy>
 
 		<copy file="${src.dir}/navigation.xml" tofile="${class.dir}/navigation.xml" />
@@ -93,7 +93,15 @@
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="img lib/de_willuhn_ds.jar lib/de_willuhn_util.jar lib/linux/swt.jar lib/linux/swt-pi.jar lib/linux/swt-mozilla.jar lib/nanoxml-2.2.3.jar"/>
+		    	<attribute name="Class-Path" value="lib/linux/swt.jar"/>
+		    	<attribute name="Class-Path" value="lib/linux/swt-pi.jar"/>
+		    	<attribute name="Class-Path" value="lib/linux/swt-mozilla.jar"/>
+		    	<attribute name="Class-Path" value="lib/de_willuhn_ds.jar"/>
+		    	<attribute name="Class-Path" value="lib/de_willuhn_util.jar"/>
+		    	<attribute name="Class-Path" value="lib/nanoxml-2.2.3.jar"/>
+		    	<attribute name="Class-Path" value="img"/>
+		    	<attribute name="Class-Path" value="lang"/>
+		    	<attribute name="Class-Path" value="help"/>
 		    </manifest>
 		    <fileset dir="${class.dir}"/>
 		</jar>
@@ -105,7 +113,13 @@
 		    	<attribute name="Implementation-Version" value="${version}"/>
 		    	<attribute name="Implementation-Buildnumber" value="${build.number}"/>
 		    	<attribute name="Main-Class" value="de.willuhn.jameica.Main"/>
-		    	<attribute name="Class-Path" value="img lib/de_willuhn_ds.jar lib/de_willuhn_util.jar lib/win32/swt.jar  lib/nanoxml-2.2.3.jar"/>
+		    	<attribute name="Class-Path" value="lib/win32/swt.jar"/>
+		    	<attribute name="Class-Path" value="lib/de_willuhn_ds.jar"/>
+		    	<attribute name="Class-Path" value="lib/de_willuhn_util.jar"/>
+		    	<attribute name="Class-Path" value="lib/nanoxml-2.2.3.jar"/>
+		    	<attribute name="Class-Path" value="img"/>
+		    	<attribute name="Class-Path" value="lang"/>
+		    	<attribute name="Class-Path" value="help"/>
 		    </manifest>
 		    <fileset dir="${class.dir}"/>
 		</jar>
@@ -127,6 +141,10 @@
 
 		<copy file="${build.dir}/jameica.bat"       tofile="${project.release}/jameica.bat" />
 		<copy file="${build.dir}/jameicaserver.bat" tofile="${project.release}/jameicaserver.bat" />
+
+		<exec executable="ln" failonerror="true" dir="releases">
+			<arg line="-f -s ${version}-${build.number} latest"/>
+		</exec>
 
     </target>
 

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.37 $
- * $Date: 2004/03/18 01:24:47 $
+ * $Revision: 1.38 $
+ * $Date: 2004/03/29 23:20:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,7 +69,8 @@ public class PluginLoader extends ClassLoader
   private static void initSelf()
 	{
 		// entpackt in der IDE
-		File f = new File(Application.getConfig().getDir() + File.separator + "jameica.jar");
+		// TODO: Jar richtig erkennen
+		File f = new File(Application.getConfig().getDir() + "/jameica.jar");
 		if (!f.exists()) // deployed als Jar
 			f = new File(Application.getConfig().getDir());
 		AbstractPlugin jameica = new Jameica(f);
@@ -424,6 +425,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.38  2004/03/29 23:20:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.37  2004/03/18 01:24:47  willuhn
  * @C refactoring
  *

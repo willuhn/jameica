@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/03/24 00:46:03 $
+ * $Revision: 1.12 $
+ * $Date: 2004/03/29 23:20:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
+
+import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -111,7 +113,14 @@ public abstract class AbstractDialog
   public AbstractDialog(int position)
 	{
 		this.pos = position;
-		this.i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		try {
+			this.i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace(); // useless
+			i18n = new I18N("lang",Locale.getDefault());
+		}
 		init();
 	}
 	
@@ -297,6 +306,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.12  2004/03/29 23:20:50  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/03/24 00:46:03  willuhn
  * @C refactoring
  *

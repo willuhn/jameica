@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginResources.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/03/18 01:24:47 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/29 23:20:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,8 +11,6 @@
  *
  **********************************************************************/
 package de.willuhn.jameica;
-
-import java.io.File;
 
 import de.willuhn.datasource.db.EmbeddedDatabase;
 import de.willuhn.util.I18N;
@@ -33,7 +31,7 @@ public class PluginResources {
   protected PluginResources(AbstractPlugin plugin)
   {
   	this.plugin = plugin;
-		this.i18n = new I18N(getPath() + File.separator + "lang/messages",
+		this.i18n = new I18N(getPath() + "/lang/messages",
 												 Application.getConfig().getLocale());
   }
 
@@ -102,6 +100,9 @@ public class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.4  2004/03/29 23:20:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/03/18 01:24:47  willuhn
  * @C refactoring
  *
