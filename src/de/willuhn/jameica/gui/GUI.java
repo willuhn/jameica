@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.20 $
+ * $Date: 2004/01/29 01:11:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -276,8 +276,6 @@ public class GUI
       gui.currentView.setCurrentObject(o);
 
 			try {
-				if (!ErrorView.class.getName().equals(className))
-					setActionText("");
 				gui.currentView.bind();
 			}
 			catch (Exception e)
@@ -432,6 +430,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.20  2004/01/29 01:11:04  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.19  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
