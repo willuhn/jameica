@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/03/01 22:56:48 $
+ * $Revision: 1.5 $
+ * $Date: 2005/03/17 22:44:10 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.gui.dialogs.NewPasswordDialog;
 import de.willuhn.jameica.gui.dialogs.PasswordDialog;
+import de.willuhn.jameica.gui.dialogs.TextDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
@@ -276,11 +277,26 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 		}
 
 	}
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String)
+   */
+  public String askUser(String question, String labeltext) throws Exception
+  {
+  	TextDialog d = new TextDialog(TextDialog.POSITION_CENTER);
+  	d.setText(question);
+  	d.setTitle(labeltext);
+  	d.setLabelText(labeltext);
+  	return (String) d.open();
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.5  2005/03/17 22:44:10  web0
+ * @N added fallback if system is not able to determine hostname
+ *
  * Revision 1.4  2005/03/01 22:56:48  web0
  * @N master password can now be changed
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/03/15 01:35:58 $
+ * $Revision: 1.9 $
+ * $Date: 2005/03/17 22:44:10 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -116,7 +117,9 @@ public class SSLFactory
 		// Zertifikat erstellen
 		Logger.info("  generating selfsigned x.509 certificate");
 		Hashtable attributes = new Hashtable();
-		attributes.put(X509Name.CN,InetAddress.getLocalHost().getCanonicalHostName());
+		String hostname = getHostname();
+		Logger.info("  using hostname: " + hostname);
+		attributes.put(X509Name.CN,hostname);
 		X509Name user   = new X509Name(attributes);
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 
@@ -207,6 +210,46 @@ public class SSLFactory
 		{
 			os.close();
 		}
+	}
+
+	/**
+	 * Liefert den Hostnamen des Systems.
+	 * Dieser wird fuer die Erstellung des X.509-Zertifikats benoetigt.
+	 * Die Funktion wirft nur dann eine Exception, wenn alle Stricke
+	 * reissen - auch die manuelle Eingabe des Hostnamens durch den User.
+   * @return Hostname.
+   */
+  private String getHostname() throws Exception
+	{
+		String question =
+			Application.getI18n().tr("Der Hostname Ihres Computers konnte für die Erstellung des SSL-Zertifikates " +																"nicht ermittelt werden. Bitte geben Sie ihn manuell ein. Sollten Sie ihn " +																"nicht kennen, dann wählen Sie einen beliebigen Namen. Verwenden Sie bitte " +																"ausschliesslich Buchstaben oder Zahlen und ggf. \".\" oder \"-\"");
+		String label = Application.getI18n().tr("Hostname Ihres Computers");
+		try
+		{
+			InetAddress a = InetAddress.getLocalHost();
+			if (true == true)
+				throw new UnknownHostException("sydney");
+
+			String host = a.getCanonicalHostName();
+
+			if (host == null || host.length() == 0)
+				host = a.getHostName();
+
+			if (host == null || host.length() == 0)
+				host = a.getHostAddress();
+
+			if (host != null && host.length() > 0 && !host.equals("127.0.0.1"))
+				return host;
+			
+			return Application.getCallback().askUser(question,label);
+			
+		}
+		catch (Exception e)
+		{
+			Logger.error("unable to determine hostname, asking user",e);
+			return Application.getCallback().askUser(question,label);
+		}
+		
 	}
 
 	/**
@@ -366,6 +409,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.9  2005/03/17 22:44:10  web0
+ * @N added fallback if system is not able to determine hostname
+ *
  * Revision 1.8  2005/03/15 01:35:58  web0
  * @B SSL fixes
  *

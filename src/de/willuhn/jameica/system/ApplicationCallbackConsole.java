@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/03/01 22:56:48 $
+ * $Revision: 1.5 $
+ * $Date: 2005/03/17 22:44:10 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -153,11 +153,26 @@ public class ApplicationCallbackConsole implements ApplicationCallback
   {
   	System.out.println(errorMessage);
   }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String)
+   */
+  public String askUser(String question, String labeltext) throws Exception
+  {
+		System.out.println(question);
+		System.out.print(labeltext);
+		InputStreamReader isr = new InputStreamReader(System.in);
+		BufferedReader keyboard = new BufferedReader(isr);
+		return keyboard.readLine();
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.5  2005/03/17 22:44:10  web0
+ * @N added fallback if system is not able to determine hostname
+ *
  * Revision 1.4  2005/03/01 22:56:48  web0
  * @N master password can now be changed
  *

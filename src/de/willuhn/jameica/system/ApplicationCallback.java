@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/03/01 22:56:48 $
+ * $Revision: 1.3 $
+ * $Date: 2005/03/17 22:44:10 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -99,11 +99,23 @@ public interface ApplicationCallback
    */
   public void startupError(String errorMessage, Throwable t);
 	
+  /**
+	 * Benoetigt Jameica eine Benutzereingabe (zum Beispiel zur Abfrage des Hostnamens)
+	 * wird diese Funktion aufgerufen.
+   * @param question Die anzuzeigende Frage.
+   * @param labeltext Der Name des Attributes oder Feldes, welches eingegeben werden soll.
+   * @return der vom User eingegebene Text.
+   * @throws Exception
+   */
+  public String askUser(String question, String labeltext) throws Exception;
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.3  2005/03/17 22:44:10  web0
+ * @N added fallback if system is not able to determine hostname
+ *
  * Revision 1.2  2005/03/01 22:56:48  web0
  * @N master password can now be changed
  *
