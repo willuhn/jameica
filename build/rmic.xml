@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO8859-1"?>
+
+<project basedir=".." default="rmic">
+
+	<path id="compilepath">
+		<fileset dir=".">
+			<include name="lib/**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="rmic">
+		<rmic verify="true" base="bin">
+			<include name="**/*.class" />
+			<classpath refid="compilepath" />
+		</rmic>
+	</target>
+
+</project>

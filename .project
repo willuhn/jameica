@@ -15,13 +15,12 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/il.net.inter.genadyb.rmi.generation.RMIBuilder.launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/jameica rmic.xml [Builder].launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>il.net.inter.genadyb.rmi.generation.RMINature</nature>
 	</natures>
 </projectDescription>
