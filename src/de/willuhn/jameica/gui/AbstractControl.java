@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:19 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/19 23:33:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,29 +43,29 @@ public abstract class AbstractControl
   /**
    * Diese Funktion wird beim Klick auf einen Loeschen-Button ausgefuehrt.
    */
-  public abstract void handleDelete();
+  public abstract void ahandleDelete();
 
   /**
    * Diese Funktion wird beim Klick auf einen Abbrechen-Button ausgefuehrt.
    */
-  public abstract void handleCancel();
+  public abstract void ahandleCancel();
 
   /**
    * Diese Funktion wird beim Klick auf einen Speichern-Button ausgefuehrt.
    */
-  public abstract void handleStore();
+  public abstract void ahandleStore();
 
   /**
    * Diese Funktion wird beim Klick auf einen Create-Button ausgefuehrt.
    */
-  public abstract void handleCreate();
+  public abstract void ahandleCreate();
 
   /**
    * Diese Funktion wird aufgerufen, wenn der Controller das Objekt
    * oeffnen und typischerweise anzeigen soll.
    * @param o
    */
-  public abstract void handleOpen(Object o);
+  public abstract void ahandleOpen(Object o);
 
 	/**
 	 * Liefert das aktuelle Business-Objekt des Dialogs.
@@ -80,6 +80,9 @@ public abstract class AbstractControl
 
 /*********************************************************************
  * $Log: AbstractControl.java,v $
+ * Revision 1.2  2004/10/19 23:33:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/10/08 13:38:19  willuhn
  * *** empty log message ***
  *

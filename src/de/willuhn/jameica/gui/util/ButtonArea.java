@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.9 $
+ * $Date: 2004/10/19 23:33:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,14 +19,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.jameica.gui.AbstractControl;
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * Diese Klasse erzeugt standardisierte Bereiche fuer die Dialog-Buttons.
@@ -60,160 +58,73 @@ public class ButtonArea
   }
 
   /**
-   * Fuegt der Area einen Erstellen-Button hinzu.
-   * Beim Click wird die Methode handleCreate() des Controllers ausgefuehrt.
+   * Fuegt der Area einen Button hinzu.
+   * Beim Klick wird die Action ausgeloest.
    * @param name Bezeichnung des Buttons.
-   * @param controller AbstractControl, der beim Klick aufgerufen werden soll.
+   * @param action auszuloesende Action.
    */
-  public void addCreateButton(String name, final AbstractControl controller)
+  public void addButton(String name, final Action action)
   {
-    final Button button = GUI.getStyleFactory().createButton(buttonArea);
-    button.setText(name);
-    button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.addSelectionListener(new SelectionAdapter()
+		addButton(name,action,null,false);
+  }
+
+
+	/**
+   * Fuegt der Area einen Button hinzu.
+   * Beim Klick wird die Action ausgeloest.
+   * @param name Bezeichnung des Buttons.
+   * @param action auszuloesende Action.
+   * @param context Optionaler Context, der der Action mitgegeben wird.
+   */
+  public void addButton(String name, final Action action, final Object context)
+	{
+		addButton(name,action,context,false);
+	}
+
+	/**
+   * Fuegt der Area einen Button hinzu.
+   * Beim Klick wird die Action ausgeloest.
+   * @param name Bezeichnung des Buttons.
+   * @param action auszuloesende Action.
+   * @param context Optionaler Context, der der Action mitgegeben wird.
+   * @param isDefault markiert den per Default aktiven Button.
+   */
+  public void addButton(String name, final Action action, final Object context, boolean isDefault)
+	{
+		final Button button = GUI.getStyleFactory().createButton(buttonArea);
+		button.setText(name);
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+		if (isDefault)
+			GUI.getShell().setDefaultButton(storeButton);
+
+		button.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e) {
 				GUI.startSync(new Runnable()
-        {
-          public void run()
-          {
-						controller.handleCreate();
-          }
-        });
-      }
-    });
-  }
-
-  /**
-   * Fuegt der Area einen Speichern-Button hinzu.
-   * Beim Click wird die Methode handleStore() des Controllers ausgefuehrt.
-   * @param controller AbstractControl, der beim Klick aufgerufen werden soll.
-   */
-  public void addStoreButton(final AbstractControl controller)
-  {
-    storeButton = GUI.getStyleFactory().createButton(buttonArea);
-    storeButton.setText(i18n.tr("Speichern"));
-    storeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-    GUI.getShell().setDefaultButton(storeButton);
-
-		storeButton.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
-      {
-      	GUI.startSync(new Runnable()
-        {
-          public void run()
-          {
-						controller.handleStore();
-          }
-        });
-      }
-    });
-  }
-
-  /**
-   * Fuegt der Area einen Abbrechen-Button hinzu.
-   * Beim Click wird die Methode handleCancel() des Controllers ausgefuehrt.
-   * @param controller AbstractControl, der beim Klick aufgerufen werden soll.
-   */
-  public void addCancelButton(final AbstractControl controller)
-  {
-    final Button button = GUI.getStyleFactory().createButton(buttonArea);
-    button.setText(i18n.tr("Zurück"));
-    button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e) {
-				GUI.startSync(new Runnable()
-        {
-          public void run()
-          {
-						controller.handleCancel();
-          }
-        });
-      }
-    });
-  }
-
-  /**
-   * Fuegt der Area einen Loeschen-Button hinzu.
-   * Beim Click wird die Methode handleDelete() des Controllers ausgefuehrt.
-   * @param controller AbstractControl, der beim Klick aufgerufen werden soll.
-   */
-  public void addDeleteButton(final AbstractControl controller)
-  {
-    final Button button = GUI.getStyleFactory().createButton(buttonArea);
-    button.setText(i18n.tr("Löschen"));
-    button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e) {
-				GUI.startSync(new Runnable()
-        {
-          public void run()
-          {
-						controller.handleDelete();
-          }
-        });
-      }
-    });
-  }
-
-  /**
-   * Fuegt einen Custom Button hinzu.
-   * @param text Beschriftung des Buttons.
-   * @param listener Listener, der beim Klick ausgeloest werden soll
-   */
-  public void addCustomButton(String text, final Listener listener)
-  {
-    if (listener == null)
-    {
-      // button without adapter makes no sense ;)
-      Logger.warn("a button without a mouseAdapter makes no sense - skipping");
-      return;
-    }
-    if (text == null || "".equals(text))
-    {
-      // button without text makes no sense ;)
-      Logger.warn("a button without a text makes no sense - skipping");
-      return;
-    }
-
-    final Button button = GUI.getStyleFactory().createButton(buttonArea);
-    button.setText(text);
-    button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    button.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
-      {
-				// So ein Rotz - Wieso ist SelectionEvent nicht von Event abgeleitet?
-				// Jetzt darf ich den ganzen Scheiss umkopieren
-				final Event event = new Event();
-				event.data = e.data;
-				event.detail = e.detail;
-				event.display = e.display;
-				event.doit = e.doit;
-				event.item = e.item;
-				event.width = e.width;
-				event.height = e.height;
-				event.x = e.x;
-				event.y = e.y;
-      	GUI.startSync(new Runnable()
-        {
-          public void run()
-          {
-						listener.handleEvent(event);
-          }
-        });
-      }
-    });
-  }
-
+				{
+					public void run()
+					{
+						try
+						{
+							action.handleAction(context);
+						}
+						catch (ApplicationException e)
+						{
+							GUI.getStatusBar().setErrorText(e.getMessage());
+						}
+					}
+				});
+			}
+		});
+	}
 }
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.9  2004/10/19 23:33:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

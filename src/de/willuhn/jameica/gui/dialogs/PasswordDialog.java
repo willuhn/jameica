@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/10/18 23:37:42 $
+ * $Revision: 1.14 $
+ * $Date: 2004/10/19 23:33:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
  * Dialog zu Passwort-Eingabe.
@@ -150,7 +151,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 					if (retries >= MAX_RETRIES)
 					{
 						// maximale Anzahl der Fehlversuche erreicht.
-						throw new RuntimeException(MAX_RETRIES + " falsche Passwort-Eingaben");
+						throw new OperationCanceledException(MAX_RETRIES + " falsche Passwort-Eingaben");
 					}
 					return;
 				}
@@ -167,7 +168,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 		{
 			public void widgetSelected(SelectionEvent e)
 			{
-				throw new RuntimeException("Dialog abgebrochen"); // TODO OperationCancelledExceion werfen
+				throw new OperationCanceledException("Dialog abgebrochen");
       }
     });
 
@@ -176,7 +177,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 		// einzugeben ;)
 		addShellListener(new ShellListener() {
 			public void shellClosed(ShellEvent e) {
-				throw new RuntimeException("dialog cancelled via close button");
+				throw new OperationCanceledException("dialog cancelled via close button");
 			}
       public void shellActivated(ShellEvent e) {}
       public void shellDeactivated(ShellEvent e) {}
@@ -216,6 +217,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.14  2004/10/19 23:33:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/10/18 23:37:42  willuhn
  * *** empty log message ***
  *

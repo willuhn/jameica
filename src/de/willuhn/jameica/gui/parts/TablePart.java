@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.20 $
+ * $Date: 2004/10/19 23:33:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,13 +30,14 @@ import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
-import de.willuhn.jameica.gui.AbstractControl;
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
@@ -47,8 +48,7 @@ public class TablePart implements Part
 {
 	// Ordentliche Sortierung fehlt!
   private GenericIterator list					= null;
-
-  private AbstractControl controller    = null;
+	private Action action									= null;
   private ArrayList fields 							= new ArrayList();
   private HashMap formatter 						= new HashMap();
   private I18N i18n 										= null;
@@ -65,12 +65,12 @@ public class TablePart implements Part
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
    * @param list Liste mit Objekten, die angezeigt werden soll.
-   * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
+   * @param action, die beim Doppelklick auf ein Element ausgefuehrt wird.
    */
-  public TablePart(GenericIterator list, AbstractControl controller)
+  public TablePart(GenericIterator list, Action action)
   {
     this.list = list;
-    this.controller = controller;
+    this.action = action;
 		i18n = Application.getI18n();
   }
   
@@ -240,12 +240,19 @@ public class TablePart implements Part
     table.addListener(SWT.MouseDoubleClick,
       new Listener(){
         public void handleEvent(Event e){
-        		if (controller == null) return;
+        		if (action == null) return;
           TableItem item = table.getItem( new Point(e.x,e.y));
             if (item == null) return;
             Object o = item.getData();
             if (o == null) return;
-            controller.handleOpen(o);
+            try
+            {
+							action.handleAction(o);
+            }
+            catch (ApplicationException ae)
+            {
+            	GUI.getStatusBar().setErrorText(ae.getMessage());
+            }
         }
       }
     );
@@ -329,6 +336,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.20  2004/10/19 23:33:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.19  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

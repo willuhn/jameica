@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenu.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/18 23:37:42 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/19 23:33:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -101,7 +101,7 @@ public class ContextMenu implements Part
 					catch (ApplicationException e)
 					{
 						Logger.error("error while executing action",e);
-						GUI.getStatusBar().setErrorText(e.getMessage()); // TODO Hier braeuchte ich noch ein i18n
+						GUI.getStatusBar().setErrorText(e.getMessage());
 					}
         }
       });
@@ -137,6 +137,9 @@ public class ContextMenu implements Part
 
 /**********************************************************************
  * $Log: ContextMenu.java,v $
+ * Revision 1.3  2004/10/19 23:33:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/10/18 23:37:42  willuhn
  * *** empty log message ***
  *
