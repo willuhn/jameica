@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.71 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.72 $
+ * $Date: 2005/04/05 23:05:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -467,7 +467,8 @@ public class GUI
 
 		try
 		{
-			gui.help.setText(new InputStreamReader(is));
+      // BUGZILLA 4 http://www.willuhn.de/bugzilla/show_bug.cgi?id=4
+			gui.help.setText(new InputStreamReader(is,"ISO-8859-1"));
 		}
 		catch (Exception e)
 		{/* ignore */}
@@ -695,6 +696,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.72  2005/04/05 23:05:02  web0
+ * @B bug 4
+ *
  * Revision 1.71  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *

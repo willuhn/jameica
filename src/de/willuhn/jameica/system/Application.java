@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.35 $
- * $Date: 2005/03/24 17:33:12 $
+ * $Revision: 1.36 $
+ * $Date: 2005/04/05 23:05:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
 
+import de.willuhn.io.FileCopy;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.MessagingFactory;
 import de.willuhn.jameica.plugin.Manifest;
@@ -137,7 +138,21 @@ public final class Application {
     // switch logger to defined log file
     try {
       Logger.info(getI18n().tr("adding defined log file " + getConfig().getLogFile()));
-      Logger.addTarget(new OutputStreamTarget(new FileOutputStream(getConfig().getLogFile())));
+      // Wir kopieren das alte Log-Logfile vorher noch
+      File logFile = new File(getConfig().getLogFile());
+      if (logFile.exists())
+      {
+        try
+        {
+          Logger.info("moving old log file to " + getConfig().getLogFile() + ".old");
+          FileCopy.copy(logFile,new File(getConfig().getLogFile() + ".old"),true);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to move old log file",e);
+        }
+      }
+      Logger.addTarget(new OutputStreamTarget(new FileOutputStream(logFile)));
     }
     catch (FileNotFoundException e)
     {
@@ -498,6 +513,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.36  2005/04/05 23:05:02  web0
+ * @B bug 4
+ *
  * Revision 1.35  2005/03/24 17:33:12  web0
  * @B bug in Level.findByName
  *
