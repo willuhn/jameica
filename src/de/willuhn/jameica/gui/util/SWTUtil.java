@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/11/17 19:02:24 $
- * $Author: willuhn $
+ * $Revision: 1.13 $
+ * $Date: 2005/03/05 19:11:03 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -15,7 +15,6 @@ package de.willuhn.jameica.gui.util;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -38,8 +37,6 @@ import de.willuhn.logging.Logger;
 public class SWTUtil {
 
 	private static Map imagecache = new HashMap();
-
-	private static Timer timer = new Timer();
 
 	/**
 	 * Disposed alle Kinder des Composites rekursiv jedoch nicht das Composite selbst.
@@ -142,6 +139,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.13  2005/03/05 19:11:03  web0
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/11/17 19:02:24  willuhn
  * *** empty log message ***
  *

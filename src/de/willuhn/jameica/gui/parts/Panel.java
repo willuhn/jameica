@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/11/10 17:48:18 $
- * $Author: willuhn $
+ * $Revision: 1.3 $
+ * $Date: 2005/03/05 19:11:03 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -22,7 +22,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Tracker;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
@@ -44,8 +43,6 @@ public class Panel implements Part
   private CLabel title;
   private Composite myParent;
 
-  private Tracker tracker;
-  
   /**
    * ct.
    * @param title anzuzeigender Titel.
@@ -151,6 +148,9 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.3  2005/03/05 19:11:03  web0
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/11/10 17:48:18  willuhn
  * *** empty log message ***
  *
