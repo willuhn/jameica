@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/12/07 01:28:12 $
+ * $Revision: 1.18 $
+ * $Date: 2004/12/21 01:08:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import java.util.Iterator;
 import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.ServiceDescriptor;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -40,8 +41,11 @@ public final class ServiceFactory
 	private SSLFactory sslFactory = new SSLFactory();  
   private boolean rmiStarted = false;
 
-	// an RMI gebundene Services - unabhaengig ob lokal oder remote.
+	// Alle Bindings
 	private Hashtable bindings = new Hashtable();
+
+	// Alle instanziierten Services
+	private Hashtable allServices = new Hashtable();
 
 	// gestartete Services.
 	private Hashtable startedServices = new Hashtable();
@@ -64,37 +68,43 @@ public final class ServiceFactory
 
     Iterator plugins = Application.getPluginLoader().getInstalledPlugins();
 
-		AbstractPlugin plugin = null;
-		Manifest manifest = null;
-		Class service = null;
+		AbstractPlugin plugin 					= null;
+		Manifest manifest 							= null;
+		ServiceDescriptor[] descriptors = null;
 
 		while (plugins.hasNext())
 		{
 			try {
-				plugin = (AbstractPlugin) plugins.next();
-				manifest = plugin.getManifest();
-				Logger.info("  init services for plugin " + manifest.getName() + " [version: " + manifest.getVersion() +"]");
-				String[] serviceNames = plugin.getServiceNames();
-				if (serviceNames == null || serviceNames.length == 0)
+
+				plugin 			= (AbstractPlugin) plugins.next();
+				manifest 		= plugin.getManifest();
+
+				Logger.info("init services for plugin " + manifest.getName() + " [version: " + manifest.getVersion() +"]");
+				
+				descriptors = manifest.getServices();
+				
+				if (descriptors == null || descriptors.length == 0)
 				{
-					Logger.info("    no services found, skipping");
+					Logger.info("no services found, skipping");
 					continue;
 				}
-				for (int i=0;i<serviceNames.length;++i)
+				for (int i=0;i<descriptors.length;++i)
 				{
+					String fullName = plugin.getClass().getName() + "." + descriptors[i].getName();
+					if (allServices.get(fullName) != null)
+					{
+						Logger.debug("service " + descriptors[i].getName() + " allready started, skipping");
+						// Den haben wir schon.
+						continue;
+					}
+
 					try 
 					{
-            Application.getStartupMonitor().setStatusText(manifest.getName() + ": init service " + serviceNames[i]);
+            Application.getStartupMonitor().setStatusText(manifest.getName() + ": init service " + descriptors[i].getName());
 						Application.getStartupMonitor().addPercentComplete(10);
 
-						Logger.info("    init service " + serviceNames[i]);
-						service = plugin.getService(serviceNames[i]);
-						if (service == null)
-						{
-							Logger.info("    service " + serviceNames[i] + " does not exist, skipping");
-							continue;
-						}
-						bind(plugin,serviceNames[i],service);
+
+						install(plugin,descriptors[i]);
 					}
 					catch (Throwable t)
 					{
@@ -134,52 +144,100 @@ public final class ServiceFactory
   }
 
   /**
-   * Binden einen Service an die ServiceFactory. Laeuft die Anwendung
-   * im Server-Mode, wird der Service im Netz freigegeben. 
+   * Installiert einen Service in Jameica. Laeuft die Anwendung
+   * im Server-Mode und ist das Flag autostart des Services aktiv,
+   * wird der Service im Netz freigegeben. 
    * @param plugin das Plugin, fuer welches dieser Service gebunden werden soll.
-   * @param serviceName Aliasname des Service.
-   * @param service Der Service selbst.
+   * @param descriptor der Service-Deskriptor.
    * @throws RemoteException wenn das Binden fehlschlaegt.
    */
-  private void bind(AbstractPlugin plugin, String serviceName, Class service)
+  private void install(AbstractPlugin plugin, ServiceDescriptor descriptor)
   	throws RemoteException
 	{
-    Application.getStartupMonitor().setStatusText("binding service " + serviceName);
+
+    Application.getStartupMonitor().setStatusText("install service " + descriptor.getName());
 		Application.getStartupMonitor().addPercentComplete(5);
 
+		String name = descriptor.getName();
+		String fullName = plugin.getClass().getName() + "." + name;
 
-		String fullName = plugin.getClass().getName() + "." + serviceName;
-		Logger.info("      binding...");
-		if (Application.inServerMode() || Application.inStandaloneMode())
+		if (allServices.get(fullName) != null)
 		{
-			try {
-				// Wir instanziieren den Service und starten ihn
-				Logger.info("      instantiating...");
-				Service s = newInstance(service);
-				if (s.isStartable())
-				{
-					Logger.info("      starting...");
-					s.start();
-					startedServices.put(fullName,s);
-				}
-				else
-				{
-					Logger.info("      service not startable");
-				}
+			Logger.info("service " + name + " allready installed, skipping");
+			return;
+		}
+		Class serviceClass = null;
+		try {
 
-				if (Application.inServerMode())
+			Logger.info("loading service " + name);
+			serviceClass = Application.getClassLoader().load(descriptor.getClassname());
+			bindings.put(fullName,serviceClass);
+
+			if (Application.inClientMode())
+			{
+				Logger.info("jameica runs in client mode, skipping service instantiation");
+				return;
+			}
+
+			Logger.info("checking dependencies for service " + name);
+			String[] depends = descriptor.depends();
+			ServiceDescriptor[] deps = plugin.getManifest().getServices();
+			if (name != null && name.length() > 0 &&
+					depends != null && depends.length > 0 &&
+					deps != null && deps.length > 0)
+			{
+				for (int i=0;i<deps.length;++i)
 				{
-					// Im Server-Mode binden wir den Service noch an die RMI-Registry
-					Naming.rebind("rmi://127.0.0.1:" + Application.getConfig().getRmiPort() +
-												"/" + fullName,s);
+					for (int j=0;j<depends.length;++j)
+					{
+						if (name.equals(depends[j]))
+						{
+							continue; // Das sind wir selbst
+						}
+						if (depends[j].equals(deps[i].getName()))
+						{
+							Logger.info("dependency found");
+							install(plugin,deps[i]);
+						}
+					}
 				}
 			}
-			catch (Exception e)
+
+ 			Logger.info("instantiating service " + name);
+			Service s = newInstance(serviceClass);
+			allServices.put(fullName,s);
+
+			if (!descriptor.autostart())
 			{
-				throw new RemoteException("error while binding service " + serviceName,e);
+				Logger.info("autostart for service " + name + " disabled, skipping service start");
+				return;
+			}
+
+			if (s.isStartable())
+			{
+				Logger.info("starting service " + name);
+				Application.getStartupMonitor().setStatusText("starting service " + name);
+				s.start();
+				startedServices.put(fullName,s);
+			}
+			else
+			{
+				Logger.info("service not startable");
+			}
+
+			if (Application.inServerMode())
+			{
+				// Im Server-Mode binden wir den Service noch an die RMI-Registry
+				Logger.info("binding service " + name);
+				Application.getStartupMonitor().setStatusText("binding service " + name);
+				Naming.rebind("rmi://127.0.0.1:" + Application.getConfig().getRmiPort() +
+											"/" + fullName,s);
 			}
 		}
-		bindings.put(fullName,service);
+		catch (Exception e)
+		{
+			throw new RemoteException("error while installing service",e);
+		}
 	}
 
   /**
@@ -194,7 +252,7 @@ public final class ServiceFactory
 		try
 		{
 			// Mal schauen, ob wir auch eine Implementierung dazu finden
-			Class[] impls = Application.getClassLoader().getClassFinder().findImplementors(serviceClass);
+			Class[] impls = Application.getClassLoader().getClassFinder().findImplementors(impl);
 			if (impls != null && impls.length > 0)
 				impl = impls[0];
 		}
@@ -242,14 +300,14 @@ public final class ServiceFactory
 			if (local == null)
 				throw new ApplicationException(Application.getI18n().tr("Zum Service \"{0}\" existiert kein lokales Binding",serviceName));
 
-			Logger.info("  running in client mode, looking for remote service " + fullName);
+			Logger.info("running in client mode, looking for remote service " + fullName);
 			String host = ServiceSettings.getLookupHost(fullName);
 			int port    = ServiceSettings.getLookupPort(fullName);
 
 			if (host == null || host.length() == 0 || port == -1)
 				throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
 
-			Logger.info("  searching for service at " + host + ":" + port);
+			Logger.info("searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
 			s = (Service) Naming.lookup(url);
 			if (s != null)
@@ -258,13 +316,15 @@ public final class ServiceFactory
 		}
 
 		// Wir schauen lokal
-		Logger.info("  running in standalone/server mode, looking for local service");
+		Logger.info("running in standalone/server mode, looking for local service");
 		if (local == null)
 			throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht gefunden",serviceName));
-		s = (Service)startedServices.get(fullName);
-		if (s == null)
-			throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht instanziiert",serviceName));
 
+		s = (Service) allServices.get(fullName);
+		if (startedServices.get(fullName) == null)
+		{
+			Logger.warn("service " + serviceName + " was not started, you have to do this manually");
+		}
 		serviceCache.put(fullName,s);
 		return s;
 
@@ -301,6 +361,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.18  2004/12/21 01:08:01  willuhn
+ * @N new service configuration system in plugin.xml with auostart and dependencies
+ *
  * Revision 1.17  2004/12/07 01:28:12  willuhn
  * *** empty log message ***
  *

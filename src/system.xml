@@ -25,5 +25,6 @@
 		<item name="Jameica" icon-close="base.gif" action="de.willuhn.jameica.gui.internal.action.Start" />
 	</navigation>
 
+	<services/>
 </system>
 

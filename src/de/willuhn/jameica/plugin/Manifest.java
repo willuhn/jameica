@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/12/17 01:10:50 $
+ * $Revision: 1.5 $
+ * $Date: 2004/12/21 01:08:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.InputStream;
+import java.util.Iterator;
 
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
@@ -162,11 +163,34 @@ public class Manifest
     return navi == null ? null : new NavigationItemXml(null,navi,i18n);
   }
 
+	/**
+	 * Liefert eine Liste von Service-Desktriptoren zu diesem Plugin.
+   * @return Liste aller Service-Deskriptoren aus der plugin.xml oder
+   * <code>null</code> wenn keine definiert sind.
+   */
+  public ServiceDescriptor[] getServices()
+	{
+		IXMLElement services = root.getFirstChildNamed("services");
+		if (services == null || !services.hasChildren())
+			return null;
+
+		Iterator it = services.getChildren().iterator();
+		ServiceDescriptor[] s = new ServiceDescriptor[services.getChildrenCount()];
+		int i = 0;
+		while (it.hasNext())
+		{
+			s[i++] = new ServiceDescriptorXml((IXMLElement)it.next());
+		}
+		return s;
+	}
 }
 
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.5  2004/12/21 01:08:01  willuhn
+ * @N new service configuration system in plugin.xml with auostart and dependencies
+ *
  * Revision 1.4  2004/12/17 01:10:50  willuhn
  * *** empty log message ***
  *
