@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/11/24 14:21:53 $
+ * $Revision: 1.7 $
+ * $Date: 2003/11/24 17:27:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -189,7 +189,7 @@ public class SelectInput extends Input
     for (int i = 0; i < values.length; ++i)
     {
       combo.add((values[i] == null ? "" : values[i]));
-      if (getValue().equals(values[i]))
+      if (preselected != null && preselected.equals(values[i]))
         selected = i;
     }
     combo.select(selected);
@@ -214,6 +214,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.7  2003/11/24 17:27:50  willuhn
+ * @N Context menu in table
+ *
  * Revision 1.6  2003/11/24 14:21:53  willuhn
  * *** empty log message ***
  *

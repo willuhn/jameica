@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/11/24 16:25:53 $
+ * $Revision: 1.9 $
+ * $Date: 2003/11/24 17:27:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -427,7 +427,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       for (int i=0;i<fields.length;++i)
       {
         String type  = (String) types.get(fields[i]);
-        Object value = getField(fields[i]);
+        Object value = properties.get(fields[i]);
         setStmtValue(stmt,i,type,value);
       }
       return stmt;
@@ -466,7 +466,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       for (int i=0;i<fields.length;++i)
       {
         String type  = (String) types.get(fields[i]);
-        Object value = getField(fields[i]);
+        Object value = properties.get(fields[i]);
         setStmtValue(stmt,i,type,value);
       }
       return stmt;
@@ -625,6 +625,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.9  2003/11/24 17:27:50  willuhn
+ * @N Context menu in table
+ *
  * Revision 1.8  2003/11/24 16:25:53  willuhn
  * @N AbstractDBObject is now able to resolve foreign keys
  *

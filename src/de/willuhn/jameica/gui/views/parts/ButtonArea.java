@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/ButtonArea.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/24 17:27:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,7 @@ public class ButtonArea
 
   /**
    * Fuegt der Area einen Erstellen-Button hinzu.
-   * Beim Click wird die Methode handleCreate(Button) des Controllers ausgefuehrt.
+   * Beim Click wird die Methode handleCreate() des Controllers ausgefuehrt.
    * @param name
    * @param controller
    */
@@ -65,14 +65,14 @@ public class ButtonArea
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
-        controller.handleCreate(button);
+        controller.handleCreate();
       }
     });
   }
 
   /**
    * Fuegt der Area einen Speichern-Button hinzu.
-   * Beim Click wird die Methode handleStore(Button) des Controllers ausgefuehrt.
+   * Beim Click wird die Methode handleStore() des Controllers ausgefuehrt.
    * @param name
    * @param controller
    */
@@ -88,19 +88,19 @@ public class ButtonArea
       public void handleEvent(Event event)
       {
         if (event.detail == SWT.TRAVERSE_RETURN)
-          controller.handleStore(button);
+          controller.handleStore();
       }
     });
     button.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
-        controller.handleStore(button);
+        controller.handleStore();
       }
     });
   }
 
   /**
    * Fuegt der Area einen Abbrechen-Button hinzu.
-   * Beim Click wird die Methode handleCancel(Button) des Controllers ausgefuehrt.
+   * Beim Click wird die Methode handleCancel() des Controllers ausgefuehrt.
    * @param name
    * @param controller
    */
@@ -111,14 +111,14 @@ public class ButtonArea
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
-        controller.handleCancel(button);
+        controller.handleCancel();
       }
     });
   }
 
   /**
    * Fuegt der Area einen Loeschen-Button hinzu.
-   * Beim Click wird die Methode handleDelete(Button) des Controllers ausgefuehrt.
+   * Beim Click wird die Methode handleDelete() des Controllers ausgefuehrt.
    * @param name
    * @param controller
    */
@@ -129,7 +129,7 @@ public class ButtonArea
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
-        controller.handleDelete(button);
+        controller.handleDelete();
       }
     });
   }
@@ -138,6 +138,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.3  2003/11/24 17:27:50  willuhn
+ * @N Context menu in table
+ *
  * Revision 1.2  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

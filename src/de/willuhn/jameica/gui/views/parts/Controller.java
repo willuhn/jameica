@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Controller.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/24 17:27:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,6 @@
 package de.willuhn.jameica.views.parts;
 
 import java.util.HashMap;
-
-import org.eclipse.swt.widgets.Button;
 
 import de.willuhn.jameica.rmi.DBObject;
 
@@ -32,7 +30,7 @@ import de.willuhn.jameica.rmi.DBObject;
 public abstract class Controller
 {
   
-  private DBObject object;
+  protected DBObject object;
   private HashMap fields = new HashMap();
 
   /**
@@ -82,51 +80,44 @@ public abstract class Controller
   }
 
   /**
-   * Diese Funktion wird beim Klick auf einen Loeschen-Button ausgefuehrt und
-   * kriegt eben jenen Button als Parameter. Aus dem kann sich die
-   * Methode dann alle relevanten Daten (u.a. den Namen des gedrueckten
-   * Buttons holen.
-   * @param button
+   * Diese Funktion wird beim Klick auf einen Loeschen-Button ausgefuehrt.
    */
-  public abstract void handleDelete(Button button);
+  public abstract void handleDelete();
 
   /**
-   * Diese Funktion wird beim Klick auf einen Abbrechen-Button ausgefuehrt und
-   * kriegt eben jenen Button als Parameter. Aus dem kann sich die
-   * Methode dann alle relevanten Daten (u.a. den Namen des gedrueckten
-   * Buttons holen.
-   * @param button
+   * Zusaetzliche Loeschen-Funktion, wenn das Objekt nicht geladen ist.
+   * Hier kann es ueber seine ID geloescht werden.
+   * @param id ID des zu loeschenden Objektes.
    */
-  public abstract void handleCancel(Button button);
+  public abstract void handleDelete(String id);
 
   /**
-   * Diese Funktion wird beim Klick auf einen Speichern-Button ausgefuehrt und
-   * kriegt eben jenen Button als Parameter. Aus dem kann sich die
-   * Methode dann alle relevanten Daten (u.a. den Namen des gedrueckten
-   * Buttons holen.
-   * @param button
+   * Diese Funktion wird beim Klick auf einen Abbrechen-Button ausgefuehrt.
    */
-  public abstract void handleStore(Button button);
+  public abstract void handleCancel();
 
   /**
-   * Diese Funktion wird beim Klick auf einen Create-Button ausgefuehrt und
-   * kriegt eben jenen Button als Parameter. Aus dem kann sich die
-   * Methode dann alle relevanten Daten (u.a. den Namen des gedrueckten
-   * Buttons holen.
-   * @param button
+   * Diese Funktion wird beim Klick auf einen Speichern-Button ausgefuehrt.
    */
-  public abstract void handleCreate(Button button);
+  public abstract void handleStore();
 
   /**
-   * Diese Funktion wird bei der Auswahl eines Eintrages aus einer Liste
-   * aufgerufen und kriegt die ID des ausgewaehlten Objektes als Parameter.
+   * Diese Funktion wird beim Klick auf einen Create-Button ausgefuehrt.
+   */
+  public abstract void handleCreate();
+
+  /**
+   * Ueber diese Funktion kann das Objekt mit der genannten ID geladen werden.
    * @param id die ID des ausgewaehlten Objektes.
    */
-  public abstract void handleChooseFromList(String id);
+  public abstract void handleLoad(String id);
 }
 
 /*********************************************************************
  * $Log: Controller.java,v $
+ * Revision 1.3  2003/11/24 17:27:50  willuhn
+ * @N Context menu in table
+ *
  * Revision 1.2  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

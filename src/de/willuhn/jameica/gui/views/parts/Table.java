@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/24 16:25:53 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/24 17:27:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,9 +22,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import de.willuhn.jameica.GUI;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
@@ -114,6 +117,7 @@ public class Table
     }
 
 
+    // Iterieren ueber alle Elemente der Liste
     while (list.hasNext())
     {
       final TableItem item = new TableItem(table, SWT.NONE);
@@ -127,10 +131,11 @@ public class Table
         if (value == null)
           item.setText(i,"");
         else 
-          item.setText(i,""+value.toString());
+          item.setText(i,value.toString());
       }
     }
 
+    // noch der Listener fuer den Doppelklick drauf.
     table.addListener(SWT.MouseDoubleClick,
       new Listener(){
         public void handleEvent(Event e){
@@ -138,10 +143,25 @@ public class Table
             if (item == null) return;
             String id = (String) item.getData();
             if (id == null) return;
-            controller.handleChooseFromList(id);
+            controller.handleLoad(id);
         }
       }
     );
+
+    // und jetzt fuegen wir noch die Kontext-Menues hinzu,
+    Menu menu = new Menu(GUI.shell, SWT.POP_UP);
+    table.setMenu(menu);
+    MenuItem editItem = new MenuItem(menu, SWT.PUSH);
+    editItem.setText (I18N.tr("Bearbeiten"));
+    editItem.addListener (SWT.Selection, new Listener () {
+      public void handleEvent (Event e) {
+        TableItem item = table.getItem(table.getSelectionIndex());
+        if (item == null) return;
+        String id = (String) item.getData();
+        if (id == null) return;
+        controller.handleLoad(id);
+      }
+    });
 
 
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
@@ -162,6 +182,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.4  2003/11/24 17:27:50  willuhn
+ * @N Context menu in table
+ *
  * Revision 1.3  2003/11/24 16:25:53  willuhn
  * @N AbstractDBObject is now able to resolve foreign keys
  *
