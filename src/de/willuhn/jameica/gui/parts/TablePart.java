@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.29 $
- * $Date: 2005/02/06 17:46:09 $
- * $Author: willuhn $
+ * $Revision: 1.30 $
+ * $Date: 2005/02/20 19:04:38 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -258,6 +258,7 @@ public class TablePart implements Part
 			String[] fieldData = (String[]) fields.get(i);
 			String field = fieldData[1];
 			Object value = object.getAttribute(field);
+			Object orig = value;
 
 			String display = "";
 
@@ -278,7 +279,7 @@ public class TablePart implements Part
 			// Formatter vorhanden?
 			Formatter f = (Formatter) formatter.get(field);
 			if (f != null)
-				display = f.format(value);
+				display = f.format(orig);
 
 			item.setText(i,display);
 			text[i] = display;
@@ -554,6 +555,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.30  2005/02/20 19:04:38  web0
+ * *** empty log message ***
+ *
  * Revision 1.29  2005/02/06 17:46:09  willuhn
  * @N license text for jakarta commons cli
  * @N table sort
