@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBHub.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/22 21:00:34 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/30 17:44:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.rmi;
 
+import java.io.File;
 import java.rmi.RemoteException;
 
 /**
@@ -47,10 +48,20 @@ public interface DBHub extends Service
    */
   public boolean ping() throws RemoteException;
 
+	/**
+	 * Fuehrt das angegebene SQL-Script auf dieser Datenbank aus.
+   * @param file das SQL-File.
+   * @throws RemoteException im Fehlerfall.
+   */
+  public void executeSQLFile(File file) throws RemoteException;
+	
 }
 
 /*********************************************************************
  * $Log: DBHub.java,v $
+ * Revision 1.3  2003/12/30 17:44:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/12/22 21:00:34  willuhn
  * *** empty log message ***
  *

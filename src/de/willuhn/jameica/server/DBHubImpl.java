@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/30 17:44:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,9 @@
  **********************************************************************/
 package de.willuhn.jameica.server;
 
+import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
 import java.rmi.server.ServerNotActiveException;
@@ -293,10 +296,72 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
     }
   }
 
+
+  /**
+   * @see de.willuhn.jameica.rmi.DBHub#executeSQLFile(java.io.File)
+   */
+  public void executeSQLFile(File file) throws RemoteException
+  {
+		if (!available)
+			throw new RemoteException("server shut down. service no longer available.");
+
+		if (!file.canRead() || !file.exists())
+			throw new RemoteException("File does not exist or is not readable");
+		
+		Statement stmt = null;
+		try {
+
+			BufferedReader br =  new BufferedReader(new FileReader(file));
+
+			String thisLine;
+			StringBuffer all = new StringBuffer();
+			while ((thisLine =  br.readLine()) != null)
+			{
+				if (!(thisLine.length() > 0))
+					continue;
+					all.append(thisLine);
+			}
+			open();
+			boolean commit = conn.getAutoCommit();
+			conn.setAutoCommit(true);
+			stmt = conn.createStatement();
+			String[] tables = all.toString().split(";");
+			for (int i=0;i<tables.length;++i)
+			{
+				stmt.executeUpdate(tables[i]);
+			}
+			conn.commit();
+			conn.setAutoCommit(commit);
+		}
+		catch (Exception e)
+		{
+			try {
+				conn.rollback();
+			}
+			catch (Exception e2) {}
+
+			if (Application.DEBUG)
+				e.printStackTrace();
+			throw new RemoteException("exception while executing sql script",e);
+		}
+		finally {
+			try {
+				stmt.close();
+				close();
+			}
+			catch (Exception e2)
+			{
+			}
+		}
+  }
+
 }
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.12  2003/12/30 17:44:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

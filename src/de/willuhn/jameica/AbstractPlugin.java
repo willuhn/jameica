@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/30 02:10:57 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/30 17:44:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,7 +63,13 @@ public abstract class AbstractPlugin implements Plugin
       }
       Application.getLog().error("unable to read name from plugin " + name);
     }
-    return jar.getName();
+		try {
+			return jar.getName();
+		}
+		catch (NullPointerException e)
+		{
+			return "unknown";
+		}
   }
 
   /**
@@ -99,6 +105,9 @@ public abstract class AbstractPlugin implements Plugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.5  2003/12/30 17:44:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/12/30 02:10:57  willuhn
  * @N updateChecker
  *
