@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.37 $
- * $Date: 2004/12/13 22:48:31 $
+ * $Revision: 1.38 $
+ * $Date: 2004/12/31 19:33:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -282,7 +282,7 @@ public class StatusBar {
 		LogObject[] logs = new LogObject[list.length];
 		for (int i=0;i<list.length;++i)
 		{
-			logs[i] = new LogObject((String)list[i]);
+			logs[i] = new LogObject(list[i].toString());
 		}
 
 		Composite snapin = GUI.getView().getSnapin();
@@ -365,6 +365,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.38  2004/12/31 19:33:50  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.37  2004/12/13 22:48:31  willuhn
  * *** empty log message ***
  *

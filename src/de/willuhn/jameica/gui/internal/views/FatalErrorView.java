@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/FatalErrorView.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/11/12 18:23:59 $
+ * $Revision: 1.6 $
+ * $Date: 2004/12/31 19:33:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.logging.Message;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -88,11 +89,11 @@ public class FatalErrorView extends AbstractView
         {
 					final Clipboard cb = new Clipboard(GUI.getDisplay());
 					TextTransfer textTransfer = TextTransfer.getInstance();
-					String[] logEntries = Logger.getLastLines();
+					Message[] logEntries = Logger.getLastLines();
 					StringBuffer sb = new StringBuffer();
 					for (int i=0;i<logEntries.length;++i)
 					{
-						sb.append(logEntries[i]);
+						sb.append(logEntries[i].toString() + "\n");
 					}
 					final String log = "\n" + i18n.tr("Auszug aus dem Systemprotokoll") + ":\n" + sb.toString();
 					cb.setContents(new Object[]{(s + log)}, new Transfer[]{textTransfer});
@@ -125,6 +126,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.6  2004/12/31 19:33:50  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

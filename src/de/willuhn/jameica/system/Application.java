@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.21 $
+ * $Date: 2004/12/31 19:33:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,6 +36,7 @@ import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
+import de.willuhn.logging.targets.OutputStreamTarget;
 import de.willuhn.util.I18N;
 import de.willuhn.util.MultipleClassLoader;
 import de.willuhn.util.ProgressMonitor;
@@ -109,7 +110,7 @@ public final class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
-		Logger.addTarget(System.out);
+		Logger.addTarget(new OutputStreamTarget(System.out));
     
 		Logger.info("starting jameica...");
 		//
@@ -173,7 +174,7 @@ public final class Application {
     // switch logger to defined log file
     try {
       Logger.info("adding defined log file " + this.config.getLogFile());
-      Logger.addTarget(new FileOutputStream(this.config.getLogFile()));
+      Logger.addTarget(new OutputStreamTarget(new FileOutputStream(this.config.getLogFile())));
     }
     catch (FileNotFoundException e)
     {
@@ -465,6 +466,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.21  2004/12/31 19:33:50  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.20  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *
