@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/18 01:40:29 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/18 11:38:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,7 +66,7 @@ public class ButtonArea
    */
   public void addCreateButton(String name, final AbstractControl controller)
   {
-    final Button button = new Button(buttonArea,SWT.NONE);
+    final Button button = new Button(buttonArea,SWT.FLAT);
     button.setText(name);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
@@ -83,7 +83,7 @@ public class ButtonArea
    */
   public void addStoreButton(final AbstractControl controller)
   {
-    storeButton = new Button(buttonArea,SWT.PUSH);
+    storeButton = new Button(buttonArea,SWT.FLAT);
     storeButton.setText(I18N.tr("Speichern"));
     storeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     GUI.getShell().setDefaultButton(storeButton);
@@ -109,7 +109,7 @@ public class ButtonArea
    */
   public void addCancelButton(final AbstractControl controller)
   {
-    final Button button = new Button(buttonArea,SWT.NONE);
+    final Button button = new Button(buttonArea,SWT.FLAT);
     button.setText(I18N.tr("Zurück"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
@@ -126,7 +126,7 @@ public class ButtonArea
    */
   public void addDeleteButton(final AbstractControl controller)
   {
-    final Button button = new Button(buttonArea,SWT.NONE);
+    final Button button = new Button(buttonArea,SWT.FLAT);
     button.setText(I18N.tr("Löschen"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
@@ -156,7 +156,7 @@ public class ButtonArea
       return;
     }
 
-    final Button button = new Button(buttonArea,SWT.NONE);
+    final Button button = new Button(buttonArea,SWT.FLAT);
     button.setText(text);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(adapter);
@@ -166,6 +166,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.3  2004/02/18 11:38:49  willuhn
+ * @N flat style
+ *
  * Revision 1.2  2004/02/18 01:40:29  willuhn
  * @N new white style
  *
