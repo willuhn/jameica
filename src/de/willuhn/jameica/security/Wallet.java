@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/02/01 17:15:19 $
- * $Author: willuhn $
+ * $Revision: 1.4 $
+ * $Date: 2005/03/16 18:13:57 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -14,6 +14,7 @@ package de.willuhn.jameica.security;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,6 +30,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -152,7 +155,10 @@ public final class Wallet
   private synchronized void read() throws Exception
 	{
 		Logger.info("reading wallet file " + getFilename());
-		InputStream is = null;
+		
+    InputStream is        = null;
+    CipherInputStream cis = null;
+
 		try
 		{
 			try
@@ -166,30 +172,19 @@ public final class Wallet
 				return;
 			}
 
-			// Entschluesseln
+			// Cipher erzeugen
 			Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
 			cipher.init(Cipher.DECRYPT_MODE,this.pair.getPrivate());
 
-
-			PipedInputStream pis = new PipedInputStream();
-			PipedOutputStream pos = new PipedOutputStream();
-			pis.connect(pos);
-
-			byte[] buf = new byte[cipher.getBlockSize()];
-			while (is.available() > 0)
-			{
-				is.read(buf);
-				pos.write(cipher.doFinal(buf));
-			}
-
-			ObjectInputStream ois = new ObjectInputStream(pis);
+      cis = new CipherInputStream(is,cipher);
+			ObjectInputStream ois = new ObjectInputStream(cis);
 			this.serialized = (Hashtable) ois.readObject();
 		}
 		finally
 		{
 			try
 			{
-				is.close();
+				cis.close();
 			}
 			catch (Exception e)
 			{
@@ -214,48 +209,47 @@ public final class Wallet
   private synchronized void write() throws Exception
 	{
 		Logger.info("writing wallet file " + getFilename());
-		OutputStream os = null;
-		try
-		{
-			// Die eigentliche verschluesselte Datei.
-			os = new BufferedOutputStream(new FileOutputStream(getFilename()));
 
-			// Cipher erzeugen
-			Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-			cipher.init(Cipher.ENCRYPT_MODE,this.pair.getPublic());
+		// Wir schreiben die Daten erstmal in eine Temp-Datei
+    // und kopieren sie danach.
+    // BUGZILLA 25 http://www.willuhn.de/bugzilla/show_bug.cgi?id=25
+    File file       = new File(getFilename());
+    File directory  = file.getAbsoluteFile().getParentFile();
+    String prefix   = file.getName() + "_";
+    File tempfile   = File.createTempFile(prefix,"",directory);
 
-			// Object serialisieren
-			PipedOutputStream pos = new PipedOutputStream();
-			PipedInputStream pis = new PipedInputStream();
-			pos.connect(pis);
-			ObjectOutputStream oos = new ObjectOutputStream(pos);
-			oos.writeObject(this.serialized);
+		// Cipher erzeugen
+		Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+		cipher.init(Cipher.ENCRYPT_MODE,this.pair.getPublic());
 
-			byte[] buf = new byte[cipher.getBlockSize()];
-			while (pis.available() > 0)
-			{
-				pis.read(buf);
-				os.write(cipher.doFinal(buf));
-			}
-		}
-		finally
-		{
-			try
-			{
-				os.flush();
-				os.close();
-			}
-			catch(Exception e)
-			{
-				// ignore
-			}
-		}
+		// Object serialisieren
+    OutputStream os        = new BufferedOutputStream(new FileOutputStream(tempfile));
+    CipherOutputStream cos = new CipherOutputStream(os,cipher);
+
+		PipedOutputStream pos  = new PipedOutputStream();
+		PipedInputStream pis   = new PipedInputStream();
+		pos.connect(pis);
+		ObjectOutputStream oos = new ObjectOutputStream(cos);
+		oos.writeObject(this.serialized);
+
+    // Wir koennen das Flushen und Schliessen nicht im finally() machen,
+    // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
+    // Das Umbenennen wuerde sonst _vorher_ passieren.
+    cos.flush();
+    cos.close();
+    
+    // OK, Schreiben war erfolgreich. Jetzt kopieren wir die Temp-Datei rueber.
+    file.delete();
+    tempfile.renameTo(file);
 	}
 }
 
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.4  2005/03/16 18:13:57  web0
+ * @B bug 25
+ *
  * Revision 1.3  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *
