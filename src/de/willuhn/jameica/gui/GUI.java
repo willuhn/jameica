@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.37 $
- * $Date: 2004/04/13 23:15:23 $
+ * $Revision: 1.38 $
+ * $Date: 2004/04/20 15:51:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -336,6 +337,31 @@ public class GUI
 	}
 
 	/**
+	 * Disposed den gesamten Dialog.
+   * @param c Composite, dessen Kinder disposed werden sollen.
+   */
+  private static void dispose(Composite c)
+	{
+		try {
+			Control[] childs = c.getChildren();
+			if (childs == null)
+				return;
+			for (int i=0;i<childs.length;++i)
+			{
+				// schauen, ob es ein Composite ist
+				if (childs[i] instanceof Composite)
+					dispose((Composite)childs[i]);
+				if (childs[i] != null && !childs[i].isDisposed())
+					childs[i].dispose();
+			}
+		}
+		catch (Throwable t)
+		{
+			Application.getLog().error("error while disposing composite childs",t);
+		}
+	}
+
+	/**
 	 * Zeigt die View im angegebenen Composite an.
    * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
 	 * @param o das Fachobjekt.
@@ -350,6 +376,12 @@ public class GUI
 				if (gui.currentView != null) {
 					try {
 						gui.currentView.unbind();
+
+						// dispose all childs
+						Application.getLog().debug("disposing previous view");
+						dispose(gui.view.getContent());
+						Application.getLog().debug("dispose finished");
+
 					}
 					catch (ApplicationException e)
 					{
@@ -661,6 +693,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.38  2004/04/20 15:51:13  willuhn
+ * @N added recursive disposing
+ *
  * Revision 1.37  2004/04/13 23:15:23  willuhn
  * *** empty log message ***
  *
