@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/01/11 00:00:52 $
+ * $Revision: 1.8 $
+ * $Date: 2005/01/11 00:52:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,15 +19,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 import java.util.Hashtable;
 
@@ -68,14 +65,16 @@ public class SSLFactory
 		Logger.info("init ssl factory");
 		Application.getStartupMonitor().setStatusText("init ssl factory");
 
-		File certFile 		= getCertFile();
-		File privKeyFile 	= getPrivateKeyFile();
 		File keyStoreFile = getKeyStoreFile();
-		if (certFile.exists() && privKeyFile.exists() && keyStoreFile.exists())
+		if (keyStoreFile.exists() && keyStoreFile.canRead())
 			return;
 
 		Application.getStartupMonitor().addPercentComplete(10);
 		Logger.info("no ssl certificates found, creating...");
+
+
+		////////////////////////////////////////////////////////////////////////////
+		// Keys erstellen
 		Application.getStartupMonitor().setStatusText("generating new ssl keys and certificates");
 
 		Logger.info("  generating rsa keypair");
@@ -85,13 +84,14 @@ public class SSLFactory
 		this.privateKey = keypair.getPrivate();
 		this.publicKey 	= keypair.getPublic();
 
-		Logger.info("  storing private key: " + privKeyFile.getAbsolutePath());
-		OutputStream privOut = new FileOutputStream(privKeyFile);
-		privOut.write(this.privateKey.getEncoded());
-		privOut.close();
-
 		Application.getStartupMonitor().addPercentComplete(10);
+		//
+		////////////////////////////////////////////////////////////////////////////
 
+
+		////////////////////////////////////////////////////////////////////////////
+		// Zertifikat erstellen
+		Logger.info("  generating selfsigned x.509 certificate");
 		Hashtable attributes = new Hashtable();
 		attributes.put(X509Name.CN,InetAddress.getLocalHost().getCanonicalHostName());
 		X509Name user   = new X509Name(attributes);
@@ -105,61 +105,36 @@ public class SSLFactory
 		generator.setSerialNumber(new BigInteger("1"));
 		generator.setSignatureAlgorithm("MD5WITHRSA");
 
-		Logger.info("  generating x509 certificate");
 		this.certificate = generator.generateX509Certificate(this.privateKey);
+		//
+		////////////////////////////////////////////////////////////////////////////
 
-		Logger.info("  storing x509 certificate: " + certFile.getAbsolutePath());
-		OutputStream certOut = new FileOutputStream(certFile);
-		certOut.write(certificate.getEncoded());
-		certOut.close();
-
+		////////////////////////////////////////////////////////////////////////////
+		// Keystore erstellen
 		Logger.info("  creating keystore");
 		this.keystore = KeyStore.getInstance("PKCS12",BouncyCastleProvider.PROVIDER_NAME);
-		this.keystore.setCertificateEntry("jameica",this.certificate);
+		this.keystore.load(null,"jameica".toCharArray());
+
+		Logger.info("  creating adding private key and x.509 certifcate");
+		this.keystore.setKeyEntry("jameica",this.privateKey,
+															"jameica".toCharArray(),
+															new X509Certificate[]{this.certificate});
 
 		Logger.info("  storing keystore: " + keyStoreFile.getAbsolutePath());
 		OutputStream storeOut = new FileOutputStream(keyStoreFile);
 		this.keystore.store(storeOut,"jameica".toCharArray());
-
 		Application.getStartupMonitor().addPercentComplete(10);
-
+		//
+		////////////////////////////////////////////////////////////////////////////
 	}
 	
-	/**
-	 * Liefert die Datei mit dem Zertifikat.
-   * @return Zertifikat.
-   */
-  private File getCertFile()
-	{ 
-		return new File(getPathPrefix() + ".crt");
-	}
-	
-	/**
-	 * Liefert die Datei mit dem Private-Key.
-   * @return Private-Key.
-   */
-  private File getPrivateKeyFile()
-	{
-		return new File(getPathPrefix() + "_priv.key");
-	}
-
 	/**
 	 * Liefert die Datei mit dem Keystore.
 	 * @return Keystore.
 	 */
 	private File getKeyStoreFile()
 	{
-		return new File(getPathPrefix() + ".keystore");
-	}
-
-	/**
-	 * Liefert einen Pfad- und Dateinamen-Prefix, welcher bei den
-	 * Schluesseln und Zertifikaten identisch ist.
-   * @return Pfad-Prefix.
-   */
-  private String getPathPrefix()
-	{
-		return Application.getConfig().getConfigDir() + "/jameica";
+		return new File(Application.getConfig().getConfigDir() + "/jameica.keystore");
 	}
 
   /**
@@ -172,6 +147,7 @@ public class SSLFactory
 	{
 		if (this.publicKey != null)
 			return this.publicKey;
+
 		return getCertificate().getPublicKey();
 	}
 
@@ -186,29 +162,8 @@ public class SSLFactory
 		if (this.privateKey != null)
 			return this.privateKey;
 
-		InputStream is = null;
-		try
-		{
-			File f = getPrivateKeyFile();
-			Logger.info("reading private key from file " + f.getAbsolutePath());
-			is = new FileInputStream(f);
-			// Das sind nur paar hundert Byte. Die koennen wir en bloc lesen
-			byte[] keyBytes = new byte[(int) f.length()];
-			is.read(keyBytes);
-
-			Logger.info("init key factory");
-			PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(keyBytes);
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-
-			Logger.info("reading private key");
-			this.privateKey = keyFactory.generatePrivate(privateKeySpec);
-			return this.privateKey;
-
-		}
-		finally
-		{
-			is.close();
-		}
+		this.privateKey = (PrivateKey) getKeyStore().getKey("jameica","jameica".toCharArray());
+		return this.privateKey;
 	}
 
   /**
@@ -221,24 +176,8 @@ public class SSLFactory
 		if (this.certificate != null)
 			return this.certificate;
 
-		InputStream is = null;
-		try
-		{
-			File f = getCertFile();
-			Logger.info("reading x.509 certificate from file " + f.getAbsolutePath());
-			is = new FileInputStream(f);
-
-			Logger.info("init certificate factory");
-			CertificateFactory cf = CertificateFactory.getInstance("X.509");
-
-			Logger.info("reading certificate");
-			this.certificate = (X509Certificate)cf.generateCertificate(is);
-			return this.certificate;
-		}
-		finally
-		{
-			is.close();
-		}
+		this.certificate = (X509Certificate) getKeyStore().getCertificate("jameica");
+		return this.certificate;
 	}
 
 	/**
@@ -280,11 +219,15 @@ public class SSLFactory
 	{
 		if (sslContext != null)
 			return sslContext;
-		this.sslContext = SSLContext.getInstance("SSL",BouncyCastleProvider.PROVIDER_NAME);
 
+		Logger.info("init ssl context");
+		this.sslContext = SSLContext.getInstance("SSL");
+
+		Logger.info("init SunX509 key manager");
 		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
 		keyManagerFactory.init(this.getKeyStore(),"jameica".toCharArray());
 
+		Logger.info("init SunX509 trust manager");
 		TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance("SunX509");
 		trustManagerFactory.init(this.getKeyStore());
 				
@@ -297,6 +240,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.8  2005/01/11 00:52:52  willuhn
+ * @RMI over SSL works
+ *
  * Revision 1.7  2005/01/11 00:00:52  willuhn
  * @N SSLFactory
  *

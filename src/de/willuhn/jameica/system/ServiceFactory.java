@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.20 $
- * $Date: 2005/01/11 00:00:52 $
+ * $Revision: 1.21 $
+ * $Date: 2005/01/11 00:52:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,7 @@ public final class ServiceFactory
 {
 
   private boolean rmiStarted = false;
+  private boolean sslStarted = false;
 
 	// Alle Bindings
 	private Hashtable bindings = new Hashtable();
@@ -130,6 +131,7 @@ public final class ServiceFactory
     try {
       Logger.info("trying to start new RMI registry");
 			RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
+			sslStarted = true;
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
     }
     catch (Exception e)
@@ -307,6 +309,11 @@ public final class ServiceFactory
 
 			Logger.info("searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
+			if (!sslStarted)
+			{
+				RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
+				sslStarted = true;
+			}
 			s = (Service) Naming.lookup(url);
 			if (s != null)
 				serviceCache.put(fullName,s);
@@ -359,6 +366,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.21  2005/01/11 00:52:52  willuhn
+ * @RMI over SSL works
+ *
  * Revision 1.20  2005/01/11 00:00:52  willuhn
  * @N SSLFactory
  *

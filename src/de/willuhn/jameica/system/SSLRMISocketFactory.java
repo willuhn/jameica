@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLRMISocketFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/01/11 00:00:52 $
+ * $Revision: 1.4 $
+ * $Date: 2005/01/11 00:52:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,10 +18,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.server.RMISocketFactory;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+
+import de.willuhn.logging.Logger;
 
 public class SSLRMISocketFactory extends RMISocketFactory {
 
@@ -32,12 +35,15 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 
   /**
    * ct.
+   * @throws Exception
    */
-  public SSLRMISocketFactory()
+  public SSLRMISocketFactory() throws Exception
   {
   	super();
-    serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-    socketFactory 			= (SSLSocketFactory) SSLSocketFactory.getDefault();
+  	Logger.info("init \"rmi over ssl\" socket factory");
+  	SSLContext context 	= Application.getSSLFactory().getSSLContext();
+    serverSocketFactory = context.getServerSocketFactory();
+    socketFactory 			= context.getSocketFactory();
   }
 
   /**
@@ -63,6 +69,9 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.4  2005/01/11 00:52:52  willuhn
+ * @RMI over SSL works
+ *
  * Revision 1.3  2005/01/11 00:00:52  willuhn
  * @N SSLFactory
  *
