@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/LicenseControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/08 22:28:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,7 +57,7 @@ public class LicenseControl extends AbstractControl {
 		buffer.append("<p><span color=\"header\" font=\"header\">" + i18n.tr("Verwendete Komponenten") + "</span></p>");
 
 		FileFinder finder = new FileFinder(new File("lib"));
-		finder.contains("info\\.xml");
+		finder.matches(".*?info\\.xml$");
 		File[] infos = finder.findRecursive();
 		for (int i=0;i<infos.length;++i)
 		{
@@ -123,6 +123,9 @@ public class LicenseControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
+ * Revision 1.3  2004/06/08 22:28:45  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *
