@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.68 $
- * $Date: 2005/01/09 16:48:02 $
+ * $Revision: 1.69 $
+ * $Date: 2005/01/19 00:15:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -272,7 +272,7 @@ public class GUI
 		HistoryEntry entry = (HistoryEntry) gui.history.pop();
 		if (entry == null) return;
 		gui.skipHistory = true;
-		startView(entry.view.getClass().getName(), entry.view.getCurrentObject());
+		startView(entry.view.getClass(), entry.view.getCurrentObject());
 	}
 
 	/**
@@ -402,13 +402,13 @@ public class GUI
 					{
 						getStatusBar().setErrorText("Fehler beim Anzeigen des Dialogs.");
 						Logger.error("error while loading view " + className,e);
-						GUI.startView(ErrorView.class.getName(), e);
+						GUI.startView(ErrorView.class, e);
 					}
 					catch (Throwable t)
 					{
 						getStatusBar().setErrorText("Fataler Fehler beim Anzeigen des Dialogs.");
 						Logger.error("error while loading view " + className,t);
-						GUI.startView(FatalErrorView.class.getName(), t);
+						GUI.startView(FatalErrorView.class, t);
 					}
 
 					// View aktualisieren
@@ -429,6 +429,19 @@ public class GUI
 			}
 		});
 
+	}
+
+	/**
+	 * Macht das gleiche, wie die andere startView-Funktion.
+	 * Nur mit dem Unterschied, dass hier die zu ladende Klasse auch direkt
+	 * angegeben werden kann.
+	 * @see GUI#startView(String, Object)
+   * @param clazz
+   * @param o
+   */
+  public static void startView(Class clazz, final Object o)
+	{
+		startView(clazz.getName(),o);
 	}
 
 	/**
@@ -672,6 +685,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.69  2005/01/19 00:15:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.68  2005/01/09 16:48:02  willuhn
  * @R back to SWT build 3030
  *

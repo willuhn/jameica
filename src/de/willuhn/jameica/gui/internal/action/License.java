@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/License.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/11/04 23:59:04 $
+ * $Revision: 1.4 $
+ * $Date: 2005/01/19 00:15:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,7 @@ public class License implements Action
    */
   public void handleAction(Object context) throws ApplicationException
   {
-    GUI.startView(de.willuhn.jameica.gui.internal.views.License.class.getName(),null);
+    GUI.startView(de.willuhn.jameica.gui.internal.views.License.class,null);
   }
 
 }
@@ -36,6 +36,9 @@ public class License implements Action
 
 /*********************************************************************
  * $Log: License.java,v $
+ * Revision 1.4  2005/01/19 00:15:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/11/04 23:59:04  willuhn
  * *** empty log message ***
  *
