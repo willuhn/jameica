@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.29 $
- * $Date: 2005/01/19 02:14:00 $
+ * $Revision: 1.30 $
+ * $Date: 2005/01/30 20:47:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,22 +16,20 @@ package de.willuhn.jameica.system;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import de.willuhn.io.Lock;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.SplashScreen;
-import de.willuhn.jameica.gui.StartupError;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
-import de.willuhn.jameica.security.*;
+import de.willuhn.jameica.security.JameicaSecurityManager;
+import de.willuhn.jameica.security.SSLFactory;
 import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.logging.targets.OutputStreamTarget;
 import de.willuhn.util.I18N;
 import de.willuhn.util.MultipleClassLoader;
-import de.willuhn.util.ProgressMonitor;
 
 /**
  * Basisklasse der Anwendung.
@@ -53,9 +51,11 @@ public final class Application {
   /**
    * Konstante fuer "Anwendung laeuft im reinen Client-Mode".
 	 */
-	public final static int MODE_CLIENT				= 2;
+	public final static int MODE_CLIENT = 2;
+
 
   private static int appMode = MODE_STANDALONE;
+  private static String dataDir = ".";
 
   private static boolean cleanShutdown = false;
   
@@ -70,7 +70,7 @@ public final class Application {
     private I18N 								i18n;
 		private ArrayList 					welcomeMessages = new ArrayList();
 
-    private ProgressMonitor     splash;
+    private ApplicationCallback callback;
     
   /**
    * Erzeugt eine neue Instanz der Anwendung.
@@ -80,6 +80,7 @@ public final class Application {
   public static void newInstance(int appMode, String dataDir) {
 
     Application.appMode = appMode;
+    Application.dataDir = dataDir;
 
 		// Wir nehmen grundsaetzlich unseren eingenen Classloader.
 		MultipleClassLoader cl = new MultipleClassLoader();
@@ -91,107 +92,64 @@ public final class Application {
 		// Instanz erstellen.
 		app = new Application();
 		app.classLoader = cl;
-		app.init(dataDir);
+		app.init();
   }
 
   /**
-   * Initialisiert die Instanz.
-   * @param dataDir optionales Work-Verzeichnis.
+   * Initialisiert die Instanz.#
    */
-  private void init(String dataDir)
+  private void init()
 	{
 
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
 		Logger.addTarget(new OutputStreamTarget(System.out));
-    
-		Logger.info("starting jameica...");
+		Logger.info(getI18n().tr("starting jameica..."));
 		//
 		////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////
     // set securityManager
-    Logger.info("setting security manager");
+    Logger.info(getI18n().tr("setting security manager"));
     System.setSecurityManager(new JameicaSecurityManager());
     //
     ////////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////////
-		// init config
-		try {
-			this.config = new Config();
-      this.config.init(dataDir);
-		}
-		catch (Throwable t)
-		{
-			startupError(t);
-		}
-		Logger.setLevel(Level.findByName(app.config.getLogLevel()));
-		//
-		////////////////////////////////////////////////////////////////////////////
-
-		////////////////////////////////////////////////////////////////////////////
 		// LockFile erzeugen
+    File lock = new File(app.config.getWorkDir() + "/jameica.lock");
 		try {
-			new Lock(app.config.getWorkDir() + "/jameica");
-			// TODO JAMEICA Im Fehlerfall nicht vom User verlangen, die Lockdatei
-			// zu loeschen sondern ihn fragen, ob Jameica dennoch gestartet werden soll.
+			if (lock.exists())
+				throw new IOException("Lockfile allready exists");
+			lock.createNewFile();
+			lock.deleteOnExit();
 		}
-		catch (Throwable t)
+		catch (IOException ioe)
 		{
-			startupError(t);
+			if (!getCallback().lockExists(lock.getAbsolutePath()))
+				System.exit(1);
+			else
+			{
+				lock.deleteOnExit();
+			}
 		}
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-    if (!inServerMode())
-      app.splash = new SplashScreen();
-    else
-      app.splash = new ProgressMonitor()
-      {
-        public void setPercentComplete(int percent) {}
-				public void addPercentComplete(int percent) {}
-        public int getPercentComplete() {return 0;}
-        public void setStatus(int status) {}
-        public void setStatusText(String text) {}
-        public void log(String msg) {}
-      };
-		
-    splash.setStatusText("starting jameica");
-
-		////////////////////////////////////////////////////////////////////////////
-		// init i18n
-		this.i18n = new I18N("lang/messages",this.config.getLocale(),Application.getClassLoader());
-		//
-		////////////////////////////////////////////////////////////////////////////
-
+    getCallback().getStartupMonitor().setStatusText(getI18n().tr("starting jameica"));
 
 		////////////////////////////////////////////////////////////////////////////
     // switch logger to defined log file
     try {
-      Logger.info("adding defined log file " + this.config.getLogFile());
-      Logger.addTarget(new OutputStreamTarget(new FileOutputStream(this.config.getLogFile())));
+      Logger.info(getI18n().tr("adding defined log file " + getConfig().getLogFile()));
+      Logger.addTarget(new OutputStreamTarget(new FileOutputStream(getConfig().getLogFile())));
     }
     catch (FileNotFoundException e)
     {
-      Logger.error("failed");
+      Logger.error(getI18n().tr("failed"));
     }
 		//
 		////////////////////////////////////////////////////////////////////////////
-
-		////////////////////////////////////////////////////////////////////////////
-    // init service factory and plugins
-
-		// init ssl factory
-		splash.setStatusText("init ssl certificates");
-		try {
-			this.sslFactory = new SSLFactory();
-			this.sslFactory.init();
-		}
-		catch (Throwable t)
-		{
-			startupError(t);
-		}
 
 		// Migration
 		// Der PluginLoader ist in das Package "plugin" verschoben worden. Damit
@@ -201,47 +159,25 @@ public final class Application {
 		File newFile = new File(getConfig().getConfigDir() + "/de.willuhn.jameica.plugin.PluginLoader.properties");
 		if (oldFile.exists() && !newFile.exists())
 			oldFile.renameTo(newFile);
-
 		// End Migration
 
-		// init plugins
-		splash.setStatusText("loading plugins");
-		try {
-			this.pluginLoader = new PluginLoader();
-			// Das Init muessen wir separat machen, damit ein Application.getPluginLoader()
-			// keinen Nullpointer liefert, wenn es aus dem Init eines Plugins heraus
-			// aufgerufen wird.
-			this.pluginLoader.init();
-		}
-		catch (Throwable t)
-		{
-			startupError(t);
-		}
 
-		splash.setStatusText("init services");
-		try {
-			this.serviceFactory = new ServiceFactory();
-			// Siehe PluginLoader
-			this.serviceFactory.init();
-		}
-		catch (Throwable t)
-		{
-			startupError(t);
-		}
+		getSSLFactory();
+		getPluginLoader();
+		getServiceFactory();
 
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-    Application.getStartupMonitor().setPercentComplete(100);
+    getCallback().getStartupMonitor().setPercentComplete(100);
 
     // close splash screen
-    if (!inServerMode())
-      app.splash.setStatus(0);
+    getCallback().getStartupMonitor().setStatus(0);
 
     // Jetzt checken wir noch, ob wir ueberhaupt Plugins haben
-    if (!Application.getPluginLoader().getPluginContainers().hasNext())
+    if (!getPluginLoader().getPluginContainers().hasNext())
     {
-      Application.addWelcomeMessage(i18n.tr("Derzeit sind keine Plugins installiert. Das macht wenig Sinn ;)"));
+      addWelcomeMessage(i18n.tr("Derzeit sind keine Plugins installiert. Das macht wenig Sinn ;)"));
     }
 
     // start loops
@@ -259,14 +195,20 @@ public final class Application {
 	 * Startup-Error zeigt eine Fehlermeldung an und beendet Jameica dann.
    * @param t anzuzeigender Fehler.
    */
-  private static void startupError(Throwable t)
+  private void startupError(Throwable t)
 	{
-		t.printStackTrace();
-
-		if (inServerMode())
-			throw new RuntimeException(t);
-
-		StartupError.show(t);
+		try
+		{
+			Logger.error("FATAL ERROR WHILE JAMEICA STARTUP",t);
+		}
+		catch (Throwable t2)
+		{
+			t.printStackTrace();
+		}
+		String msg = t.getMessage();
+		if (msg == null || msg.length() == 0)
+			msg = "Fatal error while jameica startup";
+		getCallback().startupError(msg);
 		System.exit(1);
 	}
 
@@ -284,12 +226,11 @@ public final class Application {
 
     Logger.info("shutting down jameica");
 
-    if (!inServerMode())
-      app.splash.setStatus(0);
+		getCallback().getStartupMonitor().setStatus(0);
 
     GUI.shutDown();     
-		app.serviceFactory.shutDown();
-    app.pluginLoader.shutDown();
+		getServiceFactory().shutDown();
+    getPluginLoader().shutDown();
 
 		Logger.info("shutdown complete");
 		Logger.info("----------------------------------------------");
@@ -316,6 +257,19 @@ public final class Application {
    */
   public static SSLFactory getSSLFactory()
 	{
+		if (app.sslFactory != null)
+			return app.sslFactory;
+
+		// init ssl factory
+		getCallback().getStartupMonitor().setStatusText(getI18n().tr("init ssl certificates"));
+		try {
+			app.sslFactory = new SSLFactory(getCallback());
+			app.sslFactory.init();
+		}
+		catch (Throwable t)
+		{
+			app.startupError(t);
+		}
 		return app.sslFactory;
 	}
 
@@ -325,6 +279,18 @@ public final class Application {
    */
   public static ServiceFactory getServiceFactory()
 	{
+		if (app.serviceFactory != null)
+			return app.serviceFactory;
+
+		getCallback().getStartupMonitor().setStatusText(getI18n().tr("init services"));
+		try {
+			app.serviceFactory = new ServiceFactory();
+			app.serviceFactory.init();
+		}
+		catch (Throwable t)
+		{
+			app.startupError(t);
+		}
 		return app.serviceFactory;
 	}
 
@@ -334,6 +300,18 @@ public final class Application {
    */
   public static PluginLoader getPluginLoader()
 	{
+		if (app.pluginLoader != null)
+			return app.pluginLoader;
+
+		getCallback().getStartupMonitor().setStatusText(getI18n().tr("loading plugins"));
+		try {
+			app.pluginLoader = new PluginLoader();
+			app.pluginLoader.init();
+		}
+		catch (Throwable t)
+		{
+			app.startupError(t);
+		}
 		return app.pluginLoader;
 	}
 
@@ -343,6 +321,18 @@ public final class Application {
    */
   public static Config getConfig()
   {
+  	if (app.config != null)
+  		return app.config;
+		try {
+			app.config = new Config();
+			app.config.init(dataDir);
+		}
+		catch (Throwable t)
+		{
+			app.startupError(t);
+		}
+		Logger.setLevel(Level.findByName(getConfig().getLogLevel()));
+
     return app.config;
   }
 
@@ -379,18 +369,27 @@ public final class Application {
    */
   public static I18N getI18n()
 	{
+		if (app.i18n != null)
+			return app.i18n;
+		app.i18n = new I18N("lang/messages",getConfig().getLocale(),getClassLoader());
 		return app.i18n;
 	}
 
   /**
-   * Liefert einen Progress-Monitor, der waehrend des Startvorgangs ueber den
-   * Start-Fortschritt informiert wird.
-   * Im GUI-Mode ist dies ein Splash-Screen.
-   * @return Progress-Monitor.
+   * Liefert den Callback-Handler von Jameica.
+   * Dieser ist zur Benutzer-Interaktion waehrend des System-Starts zustaendig.
+   * @return Callback.
    */
-  public static ProgressMonitor getStartupMonitor()
+  public static ApplicationCallback getCallback()
   {
-    return app.splash;
+  	if (app.callback != null)
+  		return app.callback;
+
+		if (inServerMode())
+			app.callback = new ApplicationCallbackConsole();
+		else
+			app.callback = new ApplicationCallbackSWT();
+		return app.callback;
   }
 
 	/**
@@ -454,6 +453,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.30  2005/01/30 20:47:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.29  2005/01/19 02:14:00  willuhn
  * @N Wallet zum Verschluesseln von Benutzerdaten
  *

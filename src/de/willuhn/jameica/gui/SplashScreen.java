@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/11/17 19:02:24 $
+ * $Revision: 1.14 $
+ * $Date: 2005/01/30 20:47:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,7 +32,7 @@ import de.willuhn.util.ProgressMonitor;
  * Der Splash-Screen der Anwendung ;).
  * @author willuhn
  */
-public class SplashScreen extends Thread implements ProgressMonitor
+public class SplashScreen implements ProgressMonitor, Runnable
 {
 
 	private Display display;
@@ -44,116 +44,70 @@ public class SplashScreen extends Thread implements ProgressMonitor
   
   private int percentComplete = 0;
   
-  private boolean closed = false;
-  
-  private boolean startupOK  = false;
-  private boolean shutdownOK = false;
-  
+	private boolean closed = false;
+
 	/**
    * ct.
    */
   public SplashScreen()
 	{
     Logger.debug("init splash screen");
-    start();
-
-    // Wir warten noch, bis der Splash-Screen mit dem
-    // Malen fertig ist, bevor wir zurueckkehren.
-    while(!startupOK)
-    {
-      try
-      {
-        sleep(10);
-      }
-      catch (InterruptedException e)
-      {
-        Logger.error("error while waiting for splash screen",e);
-        closed = true;
-        return;
-      }
-    }
+		display = GUI.getDisplay();
+		shell = new Shell(SWT.NONE);
   }
   
+	/**
+   * Startet den Splash-Screen.
+   */
+  public synchronized void init()
+	{
+		display.syncExec(this);
+	}
+
   /**
    * @see java.lang.Runnable#run()
    */
   public void run()
   {
-    try
-    {
-      Logger.debug("starting splash screen thread");
-      display = new Display();
-      shell = new Shell(SWT.NONE);
-  
-      GridLayout l = new GridLayout(1,false);
-      l.marginWidth = 0;
-      l.marginHeight = 0;
-      l.horizontalSpacing = 0;
-      l.verticalSpacing = 0;
-      shell.setLayout(l);
-  
-      
-      // Label erzeugen und Image drauf pappen
-      label = new Label(shell, SWT.NONE);
-      label.setImage(new Image(display, shell.getClass().getResourceAsStream("/img/splash3.jpg")));
-      label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-  
-      bar = new ProgressBar(shell, SWT.SMOOTH);
-      bar.setMaximum(100);
-  
-      // Vorder- und Hintergrund des Balkens
-      bar.setBackground(new Color(display,243,244,238));
-      bar.setForeground(new Color(display,255,204,0));
-      bar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-  
-      // Label erzeugen und Image drauf pappen
-      textLabel = new Label(shell, SWT.NONE);
-      textLabel.setText(" starting...");
-      textLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-  
-      shell.setSize(377,206);
-  
-      // Splashscreen mittig positionieren
-      Rectangle splashRect = shell.getBounds();
-      Rectangle displayRect = display.getBounds();
-      int x = (displayRect.width - splashRect.width) / 2;
-      int y = (displayRect.height - splashRect.height) / 2;
-      shell.setLocation(x, y);
-      
-      // oeffnen
-      shell.open();
-      startupOK = true;
-  
-      while (!shell.isDisposed() && !closed)
-      {
-				if (!display.readAndDispatch()) display.sleep();
-      }
-  
-      try
-      {
-        Logger.debug("disposing splash screen");
-        shell.dispose();
-      }
-      catch (Throwable t)
-      {
-        Logger.error("error while disposing splash screen",t);
-      }
+    Logger.debug("starting splash screen thread");
 
-			try
-			{
-				Logger.debug("disposing splash screen display");
-				display.dispose();
-			}
-			catch (Throwable t)
-			{
-				Logger.error("error while disposing splash screen",t);
-			}
+    GridLayout l = new GridLayout(1,false);
+    l.marginWidth = 0;
+    l.marginHeight = 0;
+    l.horizontalSpacing = 0;
+    l.verticalSpacing = 0;
+		shell.setLayout(l);
+    
+    // Label erzeugen und Image drauf pappen
+    label = new Label(shell, SWT.NONE);
+    label.setImage(new Image(display, shell.getClass().getResourceAsStream("/img/splash3.jpg")));
+    label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
-    }
-    finally
-    {
-      shutdownOK = true;
-    }
+    bar = new ProgressBar(shell, SWT.SMOOTH);
+    bar.setMaximum(100);
+
+    // Vorder- und Hintergrund des Balkens
+    bar.setBackground(new Color(display,243,244,238));
+    bar.setForeground(new Color(display,255,204,0));
+    bar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+
+    // Label erzeugen und Image drauf pappen
+    textLabel = new Label(shell, SWT.NONE);
+    textLabel.setText(" starting...");
+    textLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+
+    shell.setSize(377,206);
+
+    // Splashscreen mittig positionieren
+    Rectangle splashRect = shell.getBounds();
+    Rectangle displayRect = display.getBounds();
+    int x = (displayRect.width - splashRect.width) / 2;
+    int y = (displayRect.height - splashRect.height) / 2;
+    shell.setLocation(x, y);
+    
+    // oeffnen
+    shell.open();
+    display.readAndDispatch();
   }
   
   /**
@@ -176,6 +130,7 @@ public class SplashScreen extends Thread implements ProgressMonitor
       {
         Logger.debug("startup completed: " + percentComplete + " %");
         bar.setSelection(percentComplete);
+				display.readAndDispatch();
       }
     });
   }
@@ -196,24 +151,16 @@ public class SplashScreen extends Thread implements ProgressMonitor
         public void run()
         {
           closed = true;
+          try
+          {
+          	shell.dispose();
+          }
+          catch (Exception e)
+          {
+          	// useless;
+          }
         }
       });
-
-      // Wir warten noch, bis der Splash-Screen mit dem
-      // Disposen fertig ist.
-      while(!shutdownOK)
-      {
-        try
-        {
-          sleep(10);
-        }
-        catch (InterruptedException e)
-        {
-          Logger.error("error while waiting for splash screen shutdown",e);
-          return;
-        }
-      }
-
     }
   }
 
@@ -231,6 +178,7 @@ public class SplashScreen extends Thread implements ProgressMonitor
       {
         textLabel.setText(" " + text + " ...");
         textLabel.redraw();
+				display.readAndDispatch();
       }
     });
   }
@@ -265,6 +213,9 @@ public class SplashScreen extends Thread implements ProgressMonitor
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.14  2005/01/30 20:47:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/11/17 19:02:24  willuhn
  * *** empty log message ***
  *

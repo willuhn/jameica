@@ -1,6 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.15 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
+ * $Revision: 1.1 $
  * $Date: 2005/01/30 20:47:43 $
  * $Author: willuhn $
  * $Locker:  $
@@ -30,29 +30,30 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
- * Dialog zu Passwort-Eingabe.
- * Die Klasse ist deshalb abstract, damit sie bei der konkreten
- * Verwendung abgeleitet wird und dort via <code>checkPassword(String)</code>
- * die Eingabe geprueft werden kann.
- * Hinweis: Diese Klasse hat einen internen Zaehler, der die Anzahl
- * der fehlgeschlagenen Aufrufe von <code>checkPassword(String)</code>
- * zaehlt. Nach 3 Versuchen wird die Funktion <code>cancel()</code>
- * aufgerufen und der Dialog geschlossen.
+ * Dialog zur Neuvergabe von Passworten.
+ * Die Klasse implementiert bereits die Funktion<code>checkPassword(String,String)</code>
+ * und prueft dort, ob ueberhaupt Passworter eingegeben wurden und ob beide
+ * uebereinstimmen. Sollen weitere Pruefungen vorgenommen werden, dann bitte
+ * einfach diese Funktion ueberschreiben.
  */
-public abstract class PasswordDialog extends SimpleDialog {
-
-	private final static int MAX_RETRIES = 3;
-	private int retries = 0;
+public class NewPasswordDialog extends SimpleDialog {
 
 	private Composite comp = null;
 	private CLabel label = null;
 	private CLabel pLabel = null;
+
+	private CLabel pLabel2 = null;
+
 	private CLabel error = null;
+
 	private Text password = null;
+	private Text password2 = null;
+
 	private Button button = null;
 	private Button cancel = null;
 	
 	private String labelText 					= "";
+	private String labelText2					= "";
 	
 	private String enteredPassword = "";
 
@@ -62,9 +63,10 @@ public abstract class PasswordDialog extends SimpleDialog {
 	 * @see AbstractDialog#POSITION_MOUSE
 	 * @see AbstractDialog#POSITION_CENTER
 	 */
-  public PasswordDialog(int position) {
+  public NewPasswordDialog(int position) {
     super(position);
-    labelText = i18n.tr("Passwort");
+    labelText = i18n.tr("Neues Passwort");
+		labelText2 = i18n.tr("Passwort-Wiederholung");
   }
 
 	/**
@@ -77,6 +79,18 @@ public abstract class PasswordDialog extends SimpleDialog {
 		if (text == null || text.length() == 0)
 			return;
 		labelText = text;
+	}
+
+	/**
+	 * Speichert den Text, der links neben dem Eingabefeld fuer die
+	 * Passwort-Wiederholung angezeigt werden soll (Optional).
+	 * @param text anzuzeigender Text.
+	 */
+	protected void setLabel2Text(String text)
+	{
+		if (text == null || text.length() == 0)
+			return;
+		labelText2 = text;
 	}
 
 	/**
@@ -105,9 +119,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 		comp.setLayout(new GridLayout(3,false));
 		
 		// Text
-		label = new CLabel(comp,SWT.WRAP);
+		label = new CLabel(comp,SWT.LEFT);
 		label.setText(getText());
-		GridData grid = new GridData(GridData.FILL_HORIZONTAL);
+		GridData grid = new GridData(GridData.FILL_BOTH);
 		grid.horizontalSpan = 3;
 		label.setLayoutData(grid);
 		
@@ -130,6 +144,16 @@ public abstract class PasswordDialog extends SimpleDialog {
 		grid3.horizontalSpan = 2;
 		password.setLayoutData(grid3);
 
+		pLabel2 = new CLabel(comp,SWT.NONE);
+		pLabel2.setText(labelText2);
+		pLabel2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+
+		password2 = GUI.getStyleFactory().createText(comp);
+		password2.setEchoChar('*');
+		GridData grid4 = new GridData(GridData.FILL_HORIZONTAL);
+		grid4.horizontalSpan = 2;
+		password2.setLayoutData(grid4);
+
 		// Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
 		Label dummy = new Label(comp,SWT.NONE);
 		dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -144,18 +168,11 @@ public abstract class PasswordDialog extends SimpleDialog {
 			public void widgetSelected(SelectionEvent e)
 			{
 				String p = password.getText();
-				retries++;
+				String p2 = password2.getText();
 
-				if (!checkPassword(p))
-				{
-					password.setText("");
-					if (retries >= MAX_RETRIES)
-					{
-						// maximale Anzahl der Fehlversuche erreicht.
-						throw new OperationCanceledException(MAX_RETRIES + " falsche Passwort-Eingaben");
-					}
+				if (!checkPassword(p,p2))
 					return;
-				}
+
 				enteredPassword = p;
 				close();
 			}
@@ -188,24 +205,21 @@ public abstract class PasswordDialog extends SimpleDialog {
 	}		
 
   /**
-   * Prueft die Eingabe des Passwortes.
-   * Hinweis: Der Dialog wird erst geschlossen, wenn diese
-   * Funktion <code>true</code> zurueckliefert.
+   * Prueft die Eingabe der Passworte.
    * @param password das gerade eingegebene Passwort.
+   * @param password2 die Passwort-Wiederholung.
    * @return true, wenn die Eingabe OK ist, andernfalls false.
    */
-  protected abstract boolean checkPassword(String password);
+  protected boolean checkPassword(String password, String password2)
+  {
+  	boolean b = (password != null && password.length() > 0 &&
+  							 password2 != null && password2.length() > 0 &&
+  					     password.equals(password2));
+    if (!b)
+    	setErrorText(i18n.tr("Die eingegebenen Passworte stimmen nicht �berein."));
+    return b;
+  }
 	
-	/**
-	 * Liefert die Anzahl der moeglichen Rest-Versuche zur
-	 * Eingabe bevor der Dialog abgebrochen wird.
-   * @return Anzahl der Restversuche.
-   */
-  protected int getRemainingRetries()
-	{
-		return (MAX_RETRIES - retries);
-	}
-
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
@@ -217,8 +231,8 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 
 /**********************************************************************
- * $Log: PasswordDialog.java,v $
- * Revision 1.15  2005/01/30 20:47:43  willuhn
+ * $Log: NewPasswordDialog.java,v $
+ * Revision 1.1  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *
  * Revision 1.14  2004/10/19 23:33:44  willuhn

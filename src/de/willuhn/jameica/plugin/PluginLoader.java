@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.13 $
+ * $Date: 2005/01/30 20:47:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -84,18 +84,18 @@ public final class PluginLoader
 
     File[] jars = null;
     try {
-      Application.getStartupMonitor().addPercentComplete(2);
+      Application.getCallback().getStartupMonitor().addPercentComplete(2);
 
     	// Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
     	Application.getClassLoader().add(new File(plugindir.getPath()));
 			Application.getClassLoader().add(new File(plugindir.getPath() + "/bin"));
     	
-      Application.getStartupMonitor().addPercentComplete(2);
+      Application.getCallback().getStartupMonitor().addPercentComplete(2);
 
     	// Und jetzt noch alle darin befindlichen Jars
     	jars = Application.getClassLoader().addJars(plugindir);
 
-      Application.getStartupMonitor().addPercentComplete(2);
+      Application.getCallback().getStartupMonitor().addPercentComplete(2);
     }
     catch (MalformedURLException mue)
     {
@@ -322,10 +322,10 @@ public final class PluginLoader
     {
       // Plugin wurde zum ersten mal gestartet
       Logger.info("Plugin started for the first time. Starting install");
-			Application.getStartupMonitor().setStatusText("installing plugin " + manifest.getName());
+			Application.getCallback().getStartupMonitor().setStatusText("installing plugin " + manifest.getName());
       try {
         plugin.install();
-        Application.getStartupMonitor().addPercentComplete(10);
+        Application.getCallback().getStartupMonitor().addPercentComplete(10);
       }
       catch (Throwable t)
       {
@@ -345,10 +345,10 @@ public final class PluginLoader
       {
         Logger.info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
         // hui, sogar eine neuere Version. Also starten wir dessen Update
-        Application.getStartupMonitor().setStatusText("updating plugin " + manifest.getName());
+        Application.getCallback().getStartupMonitor().setStatusText("updating plugin " + manifest.getName());
 				try {
           plugin.update(oldVersion);
-					Application.getStartupMonitor().addPercentComplete(10);
+					Application.getCallback().getStartupMonitor().addPercentComplete(10);
 				}
 				catch (Throwable t)
 				{
@@ -362,11 +362,11 @@ public final class PluginLoader
       }
     }
 
-    Application.getStartupMonitor().setStatusText("initializing plugin " + manifest.getName());
+    Application.getCallback().getStartupMonitor().setStatusText("initializing plugin " + manifest.getName());
 
 		try {
 			plugin.init();
-			Application.getStartupMonitor().addPercentComplete(10);
+			Application.getCallback().getStartupMonitor().addPercentComplete(10);
 
       // ok, wir haben alles durchlaufen, wir speichern die neue Version.
 			updateChecker.setAttribute(pluginClass.getName() + ".version",manifest.getVersion());
@@ -548,6 +548,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.13  2005/01/30 20:47:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

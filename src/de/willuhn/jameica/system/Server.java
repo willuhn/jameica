@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/01/12 00:59:38 $
+ * $Revision: 1.7 $
+ * $Date: 2005/01/30 20:47:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,20 +36,22 @@ public final class Server
   	//
   	////////////////////////////////////////////////////////////////////////////
   	
-    Logger.info("jameica up and running...");
+    Logger.info(Application.getI18n().tr("jameica up and running..."));
 
 		String[] welcome = Application.getWelcomeMessages();
 		if (welcome != null && welcome.length > 0)
 		{
 			System.out.println("----------------------------------------------------------------------");
-			System.out.println("Startup-Messages:");
+			System.out.println(Application.getI18n().tr("Startup-Messages:"));
 			for (int i=0;i<welcome.length;++i)
 			{
 				System.out.println("  " + welcome[i]); 
 			}
 			System.out.println("----------------------------------------------------------------------");
 		}
-    System.out.println("\npress \"q\" to shut down the server.\n");
+    System.out.println("\n");
+    System.out.println(Application.getI18n().tr("press \"q\" to shut down the server."));
+		System.out.println("\n");
     InputStreamReader isr = new InputStreamReader(System.in);
     BufferedReader keyboard = new BufferedReader(isr);
     String input;
@@ -73,6 +75,9 @@ public final class Server
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.7  2005/01/30 20:47:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/01/12 00:59:38  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.69 $
- * $Date: 2005/01/19 00:15:49 $
+ * $Revision: 1.70 $
+ * $Date: 2005/01/30 20:47:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -618,11 +618,10 @@ public class GUI
 	 */
 	public static Shell getShell()
 	{
-		if (gui.shell != null)
+		if (gui.shell != null && !gui.shell.isDisposed())
 			return gui.shell;
 
 		gui.shell = new Shell(getDisplay());
-		
 		return gui.shell;
 	}
 
@@ -632,12 +631,22 @@ public class GUI
 	 */
 	public static Display getDisplay()
 	{
-		if (gui.display != null)
+		// Mal schauen, ob wir schon eins haben
+		if (gui.display != null && !gui.display.isDisposed())
 			return gui.display;
 		
+		// Hat der Thread schon eins
 		gui.display = Display.findDisplay(Thread.currentThread());
 
-		if (gui.display == null)
+		// Gibts ueberhaupt eins?
+		if (gui.display == null || gui.display.isDisposed())
+			gui.display = Display.getCurrent();
+		
+		// Also ein neues
+		if (gui.display == null || gui.display.isDisposed())
+			gui.display = Display.getDefault();
+
+		if (gui.display == null || gui.display.isDisposed())
 			gui.display = new Display();
 
 		return gui.display;
@@ -685,6 +694,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.70  2005/01/30 20:47:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.69  2005/01/19 00:15:49  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.27 $
- * $Date: 2005/01/19 02:14:00 $
+ * $Revision: 1.28 $
+ * $Date: 2005/01/30 20:47:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,8 +106,8 @@ public final class ServiceFactory
 
 					try 
 					{
-            Application.getStartupMonitor().setStatusText(manifest.getName() + ": init service " + descriptors[i].getName());
-						Application.getStartupMonitor().addPercentComplete(10);
+            Application.getCallback().getStartupMonitor().setStatusText(manifest.getName() + ": init service " + descriptors[i].getName());
+						Application.getCallback().getStartupMonitor().addPercentComplete(10);
 
 
 						install(plugin,descriptors[i]);
@@ -133,8 +133,8 @@ public final class ServiceFactory
   {
   	if (!Application.inServerMode() || rmiStarted) return;
 
-    Application.getStartupMonitor().setStatusText("starting rmi registry");
-		Application.getStartupMonitor().addPercentComplete(5);
+    Application.getCallback().getStartupMonitor().setStatusText("starting rmi registry");
+		Application.getCallback().getStartupMonitor().addPercentComplete(5);
 
     try {
       Logger.info("trying to start new RMI registry");
@@ -160,8 +160,8 @@ public final class ServiceFactory
   	throws RemoteException
 	{
 
-    Application.getStartupMonitor().setStatusText("install service " + descriptor.getName());
-		Application.getStartupMonitor().addPercentComplete(5);
+    Application.getCallback().getStartupMonitor().setStatusText("install service " + descriptor.getName());
+		Application.getCallback().getStartupMonitor().addPercentComplete(5);
 
 		String name = descriptor.getName();
 		String fullName = plugin.getClass().getName() + "." + name;
@@ -221,7 +221,7 @@ public final class ServiceFactory
 			if (s.isStartable())
 			{
 				Logger.info("starting service " + name);
-				Application.getStartupMonitor().setStatusText("starting service " + name);
+				Application.getCallback().getStartupMonitor().setStatusText("starting service " + name);
 				s.start();
 				startedServices.put(fullName,s);
 			}
@@ -234,7 +234,7 @@ public final class ServiceFactory
 			{
 				// Im Server-Mode binden wir den Service noch an die RMI-Registry
 				Logger.info("binding service " + name);
-				Application.getStartupMonitor().setStatusText("binding service " + name);
+				Application.getCallback().getStartupMonitor().setStatusText("binding service " + name);
 
 				String rmiUrl = "rmi://127.0.0.1:" + Application.getConfig().getRmiPort() + "/" + fullName;
 				Logger.debug("rmi url: " + rmiUrl);
@@ -312,7 +312,7 @@ public final class ServiceFactory
 			int port    = ServiceSettings.getLookupPort(fullName);
 
 			if (host == null || host.length() == 0 || port == -1)
-				throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
+				throw new ApplicationException(Application.getI18n().tr("Fï¿½r den Service \"{0}\" ist kein Server definiert",serviceName));
 
 			Logger.info("searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
@@ -370,6 +370,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.28  2005/01/30 20:47:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2005/01/19 02:14:00  willuhn
  * @N Wallet zum Verschluesseln von Benutzerdaten
  *

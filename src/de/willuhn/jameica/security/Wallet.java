@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/19 02:14:00 $
+ * $Revision: 1.2 $
+ * $Date: 2005/01/30 20:49:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,8 +12,8 @@
  **********************************************************************/
 package de.willuhn.jameica.security;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.security.KeyPair;
 import java.util.HashMap;
 
@@ -29,6 +31,7 @@ import javax.crypto.Cipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 
 /**
  * Liefert eine Art Brieftasche, ueber die andere Klassen Daten
@@ -93,13 +96,14 @@ public final class Wallet
    */
   private synchronized void read() throws Exception
 	{
+		Logger.info("reading wallet file " + getFilename());
 		InputStream is = null;
 		try
 		{
 			// Datei einlesen und in ein Byte-Array kopieren
 			try
 			{
-				is = new FileInputStream(getFilename());
+				is = new BufferedInputStream(new FileInputStream(getFilename()));
 			}
 			catch (FileNotFoundException e)
 			{
@@ -113,18 +117,18 @@ public final class Wallet
 			cipher.init(Cipher.DECRYPT_MODE,this.pair.getPrivate());
 
 
-			byte[] buf = new byte[128];
+			PipedInputStream pis = new PipedInputStream();
+			PipedOutputStream pos = new PipedOutputStream();
+			pis.connect(pos);
+
+			byte[] buf = new byte[cipher.getBlockSize()];
 			while (is.available() > 0)
 			{
 				is.read(buf);
-				cipher.update(buf);
+				pos.write(cipher.doFinal(buf));
 			}
 
-			byte[] decrypted = cipher.doFinal();
-
-			// Deserialisieren
-			ByteArrayInputStream bis = new ByteArrayInputStream(decrypted);
-			ObjectInputStream ois = new ObjectInputStream(bis);
+			ObjectInputStream ois = new ObjectInputStream(pis);
 			this.serialized = (HashMap) ois.readObject();
 		}
 		finally
@@ -155,23 +159,30 @@ public final class Wallet
    */
   private synchronized void write() throws Exception
 	{
+		Logger.info("writing wallet file " + getFilename());
 		OutputStream os = null;
 		try
 		{
 			// Die eigentliche verschluesselte Datei.
-			os = new FileOutputStream(getFilename());
+			os = new BufferedOutputStream(new FileOutputStream(getFilename()));
 
 			// Cipher erzeugen
 			Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
 			cipher.init(Cipher.ENCRYPT_MODE,this.pair.getPublic());
 
 			// Object serialisieren
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			PipedOutputStream pos = new PipedOutputStream();
+			PipedInputStream pis = new PipedInputStream();
+			pos.connect(pis);
+			ObjectOutputStream oos = new ObjectOutputStream(pos);
 			oos.writeObject(this.serialized);
 
-			// Verschluesseln und speichern
-			os.write(cipher.doFinal(bos.toByteArray()));
+			byte[] buf = new byte[cipher.getBlockSize()];
+			while (pis.available() > 0)
+			{
+				pis.read(buf);
+				os.write(cipher.doFinal(buf));
+			}
 		}
 		finally
 		{
@@ -191,6 +202,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.2  2005/01/30 20:49:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/01/19 02:14:00  willuhn
  * @N Wallet zum Verschluesseln von Benutzerdaten
  *
