@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.27 $
- * $Date: 2005/01/19 01:00:39 $
+ * $Revision: 1.28 $
+ * $Date: 2005/02/02 16:16:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -214,17 +214,26 @@ public class TablePart implements Part
 		// Listener dran, der uns ueber das Loeschen des Objektes
 		// benachrichtigt. Dann koennen wir es automatisch aus der
 		// Tabelle werfen.
-		// TODO JAMEICA Das funktioniert noch nicht uebers Netz, da der Listener
-		// uebers Netz muss, aber die Tabelle nicht kennen darf
 		if (object instanceof DBObject)
 		{
 			((DBObject)object).addDeleteListener(new de.willuhn.datasource.rmi.Listener()
-      {
-        public void handleEvent(de.willuhn.datasource.rmi.Event e) throws RemoteException
-        {
-        	removeItem(e.getObject());
-        }
-      });
+			{
+				public void handleEvent(de.willuhn.datasource.rmi.Event e) throws RemoteException
+				{
+					try
+					{
+						removeItem(e.getObject());
+					}
+					catch (Exception e2)
+					{
+						// ignore
+						// Das funktioniert noch nicht uebers Netz, da der Listener
+						// uebers Netz muss, aber die Tabelle nicht kennen darf
+					}
+					
+				}
+			});
+			
 		}
 		item.setData(object);
 
@@ -449,6 +458,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.28  2005/02/02 16:16:38  willuhn
+ * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
+ *
  * Revision 1.27  2005/01/19 01:00:39  willuhn
  * *** empty log message ***
  *

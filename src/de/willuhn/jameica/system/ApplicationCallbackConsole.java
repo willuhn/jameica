@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/02/01 17:15:19 $
+ * $Revision: 1.3 $
+ * $Date: 2005/02/02 16:16:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ProgressMonitor;
 
@@ -56,10 +57,20 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public String createPassword() throws Exception
   {
-		System.out.print(Application.getI18n().tr("Sie starten Jameica zum ersten Mal.\n" +			"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
-		InputStreamReader isr = new InputStreamReader(System.in);
-		BufferedReader keyboard = new BufferedReader(isr);
-		String pw = keyboard.readLine();
+		String pw = Application.getStartupParams().getPassword();
+		if (pw != null)
+		{
+			Logger.info("master password given via commandline");
+		}
+		else
+		{
+			System.out.print(Application.getI18n().tr("Sie starten Jameica zum ersten Mal.\n" +
+				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
+			InputStreamReader isr = new InputStreamReader(System.in);
+			BufferedReader keyboard = new BufferedReader(isr);
+			pw = keyboard.readLine();
+		}
+
 		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(pw.getBytes()));
 		return pw;
   }
@@ -69,13 +80,29 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public String getPassword() throws Exception
   {
+		String checksum = settings.getString("jameica.system.callback.checksum","");
+  	String pw 			= Application.getStartupParams().getPassword();
+
+  	if (pw != null)
+  	{
+  		Logger.info("master password given via commandline");
+  		if (checksum == null)
+				return pw;
+
+			Logger.info("checksum found, testing");
+			if (checksum.equals(Checksum.md5(pw.getBytes())))
+			{
+				return pw;
+			}
+			Logger.info("checksum test failed, asking for password in interactive mode");
+  	}
+
 		System.out.println(Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein:"));
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader keyboard = new BufferedReader(isr);
 		for (int i=0;i<3;++i)
 		{
-			String pw = keyboard.readLine();
-			String checksum = settings.getString("jameica.system.callback.checksum","");
+			pw = keyboard.readLine();
 			if (pw != null && checksum.equals(Checksum.md5(pw.getBytes())))
 				return pw;
 			System.out.println(Application.getI18n().tr("Passwort falsch. Bitte versuchen Sie es erneut:"));
@@ -115,6 +142,9 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.3  2005/02/02 16:16:38  willuhn
+ * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
+ *
  * Revision 1.2  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/01/15 16:20:32 $
+ * $Revision: 1.16 $
+ * $Date: 2005/02/02 16:16:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,7 +57,7 @@ public final class Config
 			dataDir = System.getProperty("user.home") + "/.jameica";
     }
 
-		Logger.info("using " + dataDir + " as data dir.");
+		Logger.info("using workdir: " + dataDir);
 		this.workDir = new File(dataDir);
 		
 		if (this.workDir.exists() && !this.workDir.isDirectory())
@@ -278,6 +278,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.16  2005/02/02 16:16:38  willuhn
+ * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
+ *
  * Revision 1.15  2005/01/15 16:20:32  willuhn
  * *** empty log message ***
  *

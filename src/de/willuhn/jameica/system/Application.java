@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.30 $
- * $Date: 2005/01/30 20:47:43 $
+ * $Revision: 1.31 $
+ * $Date: 2005/02/02 16:16:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,28 +39,13 @@ import de.willuhn.util.MultipleClassLoader;
  */
 public final class Application {
 
-	/**
-	 * Konstante fuer "Anwendung laeuft standalone".
-	 */
-	public final static int MODE_STANDALONE		= 0;
-	/**
-   * Konstante fuer "Anwendung laeuft im Server-Mode ohne GUI".
-	 */
-	public final static int MODE_SERVER				= 1;
-
-  /**
-   * Konstante fuer "Anwendung laeuft im reinen Client-Mode".
-	 */
-	public final static int MODE_CLIENT = 2;
-
-
-  private static int appMode = MODE_STANDALONE;
-  private static String dataDir = ".";
-
-  private static boolean cleanShutdown = false;
   
   // singleton
   private static Application app;
+		private boolean cleanShutdown = false;
+		
+		private StartupParams 			params;
+
     private Config 							config;
     private MultipleClassLoader classLoader;
 		private SSLFactory 					sslFactory;  
@@ -74,13 +59,10 @@ public final class Application {
     
   /**
    * Erzeugt eine neue Instanz der Anwendung.
-   * @param appMode Konstante fuer den Betriebsmodus. Siehe MODE_*.
-   * @param dataDir optionaler Pfad zum Datenverzeichnis.
+   * @param params die Start-Parameter.
    */
-  public static void newInstance(int appMode, String dataDir) {
+  public static void newInstance(StartupParams params) {
 
-    Application.appMode = appMode;
-    Application.dataDir = dataDir;
 
 		// Wir nehmen grundsaetzlich unseren eingenen Classloader.
 		MultipleClassLoader cl = new MultipleClassLoader();
@@ -91,6 +73,7 @@ public final class Application {
 
 		// Instanz erstellen.
 		app = new Application();
+		app.params = params;
 		app.classLoader = cl;
 		app.init();
   }
@@ -221,7 +204,7 @@ public final class Application {
 
     // Das Boolean wird nach dem erfolgreichen Shutdown auf True gesetzt.
     // Somit ist sichergestellt, dass er wirklich nur einmal ausgefuehrt wird.
-    if (cleanShutdown) 
+    if (app.cleanShutdown) 
       return;
 
     Logger.info("shutting down jameica");
@@ -236,7 +219,7 @@ public final class Application {
 		Logger.info("----------------------------------------------");
 		Logger.close();
 
-    cleanShutdown = true;
+    app.cleanShutdown = true;
   }
 
 
@@ -325,7 +308,7 @@ public final class Application {
   		return app.config;
 		try {
 			app.config = new Config();
-			app.config.init(dataDir);
+			app.config.init(app.params.getWorkDir());
 		}
 		catch (Throwable t)
 		{
@@ -342,7 +325,7 @@ public final class Application {
    */
   public static boolean inServerMode()
   {
-    return appMode == Application.MODE_SERVER;
+    return app.params.getMode() == StartupParams.MODE_SERVER;
   }
   
 	/**
@@ -351,7 +334,7 @@ public final class Application {
 	 */
 	public static boolean inStandaloneMode()
 	{
-		return appMode == Application.MODE_STANDALONE;
+		return app.params.getMode() == StartupParams.MODE_STANDALONE;
 	}
 	
 	/**
@@ -360,7 +343,7 @@ public final class Application {
 	 */
   public static boolean inClientMode()
   {
-  	return appMode == Application.MODE_CLIENT;
+		return app.params.getMode() == StartupParams.MODE_CLIENT;
   }
   
 	/**
@@ -373,6 +356,15 @@ public final class Application {
 			return app.i18n;
 		app.i18n = new I18N("lang/messages",getConfig().getLocale(),getClassLoader());
 		return app.i18n;
+	}
+
+	/**
+	 * Liefert die Start-Parameter von Jameica.
+   * @return Start-Parameter von Jameica.
+   */
+  protected static StartupParams getStartupParams()
+	{
+		return app.params;
 	}
 
   /**
@@ -453,6 +445,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.31  2005/02/02 16:16:38  willuhn
+ * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
+ *
  * Revision 1.30  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *

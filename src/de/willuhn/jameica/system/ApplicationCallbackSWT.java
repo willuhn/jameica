@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/02/01 17:15:19 $
+ * $Revision: 1.3 $
+ * $Date: 2005/02/02 16:16:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,25 +64,32 @@ public class ApplicationCallbackSWT implements ApplicationCallback
    */
   public String createPassword() throws Exception
   {
-  	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
-  	p.setText(Application.getI18n().tr(
-			"Sie starten Jameica zum ersten Mal.\n\n" +
-			"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +			"Es wird anschließend bei jedem Start von Jameica benötigt."));
-		p.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
-
-		String s = null;
-		try
+		String pw = Application.getStartupParams().getPassword();
+		if (pw != null)
 		{
-			s = (String) p.open();
+			Logger.info("master password given via commandline");
 		}
-		catch (OperationCanceledException e)
+		else
 		{
-			throw new Exception(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
+	  	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
+	  	p.setText(Application.getI18n().tr(
+				"Sie starten Jameica zum ersten Mal.\n\n" +
+				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +				"Es wird anschließend bei jedem Start von Jameica benötigt."));
+			p.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
+
+			try
+			{
+				pw = (String) p.open();
+			}
+			catch (OperationCanceledException e)
+			{
+				throw new Exception(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
+			}
 		}
 		// Wir speichern eine Checksumme des neuen Passwortes.
 		// Dann koennen wir spaeter checken, ob es ok ist.
-		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(s.getBytes()));
-		return s;
+		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(pw.getBytes()));
+		return pw;
   }
 
   /**
@@ -90,6 +97,23 @@ public class ApplicationCallbackSWT implements ApplicationCallback
    */
   public String getPassword() throws Exception
   {
+		String checksum = settings.getString("jameica.system.callback.checksum","");
+		String pw 			= Application.getStartupParams().getPassword();
+
+		if (pw != null)
+		{
+			Logger.info("master password given via commandline");
+			if (checksum == null)
+				return pw;
+
+			Logger.info("checksum found, testing");
+			if (checksum.equals(Checksum.md5(pw.getBytes())))
+			{
+				return pw;
+			}
+			Logger.info("checksum test failed, asking for password in interactive mode");
+		}
+
 		PWD dialog = new PWD();
 		
 		String text = Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein.");
@@ -209,6 +233,9 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.3  2005/02/02 16:16:38  willuhn
+ * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
+ *
  * Revision 1.2  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *

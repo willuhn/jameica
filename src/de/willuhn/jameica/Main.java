@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.13 $
+ * $Date: 2005/02/02 16:16:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@
 package de.willuhn.jameica;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.StartupParams;
 
 /**
  * Mutter aller Klassen ;)
@@ -52,51 +53,38 @@ public class Main {
    *     Wird kein Parameter angegeben, startet die Anwendung im Standalone-Mode.
    *   </li>
    * </ul>
-   * Parameter 2: Optionales Datenverzeichnis. Das ist bei Linux
+   * Parameter 2 (-f): Optionales Datenverzeichnis. Das ist bei Linux
    * standardmaessig <b>~/.jameica</b> und bei Windows
    * <b>C:\dokumente und Einstellungen\benutzername\.jameica</b>.
+   * Parameter 3 (-p): Optionales Passwort fuer die SSLFactory. Jameica
+   * erzeugt beim ersten Start einen Keystore und speichert darin X.509-Zertifikate
+   * fuer die Verschluesselung von Daten. Zum Schutz des Keystore wird ein
+   * Passwort benoetigt. Wird dieses nicht als Kommandozeilen-Option
+   * angegeben, wird es waehrend des Starts abgefragt. Laeuft die Anwendung
+   * mit GUI, erscheint ein Passwort-Dialog, im Server-Mode wird das Passwort
+   * ueber die Kommando-Zeile abgefragt. Damit die Anwendung aber auch ohne
+   * Benutzer-Interkation (z.Bsp. als Service) direkt beim Booten des
+   * Betriebssystems startfaehig ist, kann das Passwort auch ueber diesen
+   * Parameter angegeben werden.<br/>
+   * Beispiele:<br/>
+   * <code>java de.willuhn.jameica.Main -server -f C:/jameica.work -p geheim</code><br/>
+   * <code>java de.willuhn.jameica.Main -client -f ~/.jameica.test</code><br/>
+   * <code>java de.willuhn.jameica.Main -standalone -f /tmp/jameicatest</code><br/>
+   * <code>java de.willuhn.jameica.Main</code>
    * @throws Throwable
    */
   public static void main(String[] args) throws Throwable
   {
-
-    String[] modes = {
-			"-server",
-			"-client",
-			"-standalone"
-    };
-    
-		int mode = Application.MODE_STANDALONE;
-
-		// Wurde ein gueltiger Modus angegeben? 
-    boolean modeGiven = args.length >= 1 && 
-    				(modes[0].equals(args[0]) ||
-						 modes[1].equals(args[0]) ||
-						 modes[2].equals(args[0])
-    				);
-
-		String configFile = null;
-
-		// Wenn ein Modus angegeben wurde, muss mehr als ein Parameter
-		// uebergeben worden sein, damit wir den zweiten als Pfad akzeptieren
-		if (modeGiven && args.length > 1) configFile = args[1];
-
-		// Ansonsten nehmen wir den ersten Parameter als Pfad
-		else if (!modeGiven && args.length == 1) configFile = args[0];
-
-		// Modus rausfinden
-		if (modeGiven && modes[0].equals(args[0])) mode = Application.MODE_SERVER;
-		if (modeGiven && modes[1].equals(args[0])) mode = Application.MODE_CLIENT;
-
-
-    Application.newInstance(mode, configFile);
-
-   }
+    Application.newInstance(new StartupParams(args));
+  }
 }
 
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.13  2005/02/02 16:16:38  willuhn
+ * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
+ *
  * Revision 1.12  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *
