@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenu.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/20 21:47:44 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/18 23:37:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.util.ApplicationException;
+import de.willuhn.util.Logger;
 
 /**
  * Bildet ein Context-Menu in Jameica ab.
@@ -88,11 +92,17 @@ public class ContextMenu implements Part
 				// Events tun koennen.
         public void handleEvent(Event event)
         {
-        	Listener l = item.getListener();
-        	if (l == null) return;
-					if (event == null) event = new Event();
-					event.data = currentObject;
-					l.handleEvent(event); 
+        	Action a = item.getAction();
+        	if (a == null) return;
+					try
+					{
+						a.handleAction(currentObject); 
+					}
+					catch (ApplicationException e)
+					{
+						Logger.error("error while executing action",e);
+						GUI.getStatusBar().setErrorText(e.getMessage()); // TODO Hier braeuchte ich noch ein i18n
+					}
         }
       });
       
@@ -123,34 +133,13 @@ public class ContextMenu implements Part
 			mi.setEnabled(item.isEnabledFor(object));
 		}
 	}
-
-	// Wir packen hier noch einen eigenen Listener drum,
-	// damit der Aufrufer das Objekt direkt aus dem Event
-	// holen kann und nicht erst den selectionIndex-Mist machen muss
-//	mi.addListener(SWT.Selection,new Listener() {
-//		public void handleEvent(Event event)
-//		{
-//			Listener l = item.getListener();
-//			if (l == null)
-//				return; // kein Listener am MenuItem definiert
-//			l.handleEvent(event);
-//		}
-//	});
-//	int i = table.getSelectionIndex();
-//	if (i == -1)
-//		return;
-//	TableItem item = table.getItem(i);
-//	if (item == null) return;
-//	Object o = item.getData();
-//	if (o == null) return;
-//	Event e = new Event();
-//	e.data = o;
-//	entry.listener.handleEvent(e);
-
 }
 
 /**********************************************************************
  * $Log: ContextMenu.java,v $
+ * Revision 1.2  2004/10/18 23:37:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/07/20 21:47:44  willuhn
  * @N ContextMenu
  *

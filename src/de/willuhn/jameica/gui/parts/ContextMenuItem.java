@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenuItem.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/18 23:37:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,8 @@
 package de.willuhn.jameica.gui.parts;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Listener;
+
+import de.willuhn.jameica.gui.Action;
 
 /**
  * Bildet ein Element eines Kontext-Menus ab.
@@ -22,7 +23,7 @@ public class ContextMenuItem
 {
 	private boolean separator = false;
 	private String text       = null;
-	private Listener listener = null;
+	private Action action     = null;
 	private Image image       = null;
 
 	/**
@@ -45,12 +46,12 @@ public class ContextMenuItem
 	/**
 	 * ct.
    * @param text Anzuzeigender Text.
-   * @param l Listener, der beim Klick ausgeloest werden soll.
+   * @param a Action, die beim Klick ausgefuehrt werden soll.
    */
-  public ContextMenuItem(String text, Listener l)
+  public ContextMenuItem(String text, Action a)
 	{
 		this.text = text;
-		this.listener = l;
+		this.action = a;
 	}
 
 	/**
@@ -73,52 +74,59 @@ public class ContextMenuItem
 	
 
   /**
-   * @return
+   * Ein optionales Image.
+   * @return Image.
    */
   public Image getImage()
   {
     return image;
   }
 
+	/**
+	 * Speichert das anzuzeigende Image.
+	 * @param image Image.
+	 */
+	public void setImage(Image image)
+	{
+		this.image = image;
+	}
+
   /**
-   * @return
+   * Liefert die auszufuehrende Aktion.
+   * @return auszufuehrende Aktion.
    */
-  public Listener getListener()
+  public Action getAction()
   {
-    return listener;
+    return action;
   }
 
   /**
-   * @return
+   * Liefert den anzuzeigenden Text.
+   * @return anzuzeigender Text.
    */
   public String getText()
   {
     return text;
   }
 
-  /**
-   * @param image
-   */
-  public void setImage(Image image)
-  {
-    this.image = image;
-  }
+	/**
+	 * Speichert den anzuzeigenden Text.
+	 * @param string
+	 */
+	public void setText(String string)
+	{
+		text = string;
+	}
 
   /**
-   * @param listener
+   * Speichert die auszufuehrende Action. 
+   * @param a Action.
    */
-  public void setListener(Listener listener)
+  public void setAction(Action a)
   {
-    this.listener = listener;
+    this.action = a;
   }
 
-  /**
-   * @param string
-   */
-  public void setText(String string)
-  {
-    text = string;
-  }
 
 	/**
 	 * Diese Funktion wird fuer jedes MenuItem aufgerufen, wenn sich das Kontext-Menu oeffnet.
@@ -127,6 +135,10 @@ public class ContextMenuItem
 	 * Diese Default-Implementierung liefert immer <code>true</code>.
 	 * Soll das Item also bei Bedarf deaktiviert werden, muss von dieser
 	 * Klasse abgeleitet und diese Methode ueberschrieben werden.
+	 * Alternativ kann auch bereits die abgeleitete Klasse CheckedContextMenuItem
+	 * verwendet werden, die nur dann <code>true</code> liefert, wenn das Objekt nicht
+	 * <code>null</code> ist. Sprich: Wenn nicht in leeren Raum geklickt wurde sondern
+	 * auf ein Objekt.
    * @param o das zu testende Objekt.
    * @return true, wenn das Item angezeigt werden soll. Andernfalls <code>false</code>.
    */
@@ -139,6 +151,9 @@ public class ContextMenuItem
 
 /**********************************************************************
  * $Log: ContextMenuItem.java,v $
+ * Revision 1.3  2004/10/18 23:37:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/08/15 17:55:17 $
+ * $Revision: 1.13 $
+ * $Date: 2004/10/18 23:37:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -167,7 +167,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 		{
 			public void widgetSelected(SelectionEvent e)
 			{
-				throw new RuntimeException("Dialog abgebrochen");
+				throw new RuntimeException("Dialog abgebrochen"); // TODO OperationCancelledExceion werfen
       }
     });
 
@@ -216,6 +216,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.13  2004/10/18 23:37:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/08/15 17:55:17  willuhn
  * @C sync handling
  *

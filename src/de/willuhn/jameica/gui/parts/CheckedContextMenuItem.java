@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/CheckedContextMenuItem.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/20 21:47:44 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/18 23:37:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.parts;
 
-import org.eclipse.swt.widgets.Listener;
+import de.willuhn.jameica.gui.Action;
 
 
 /**
@@ -33,11 +33,11 @@ public class CheckedContextMenuItem extends ContextMenuItem
   /**
    * ct.
    * @param text anzuzeigender Text.
-   * @param l Listener, der beim Klick ausgeloest werden soll.
+   * @param a Action, die beim Klick ausgeloest werden soll.
    */
-  public CheckedContextMenuItem(String text, Listener l)
+  public CheckedContextMenuItem(String text, Action a)
   {
-    super(text, l);
+    super(text, a);
   }
 
   /**
@@ -53,6 +53,9 @@ public class CheckedContextMenuItem extends ContextMenuItem
 
 /**********************************************************************
  * $Log: CheckedContextMenuItem.java,v $
+ * Revision 1.2  2004/10/18 23:37:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/07/20 21:47:44  willuhn
  * @N ContextMenu
  *
