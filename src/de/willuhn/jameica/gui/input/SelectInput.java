@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/24 19:05:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,8 @@ public class SelectInput extends AbstractInput
   private Hashtable values = new Hashtable();
   private String preselected;
   private CCombo combo;
+  
+  private boolean enabled = true;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -166,6 +168,7 @@ public class SelectInput extends AbstractInput
       ++i;
     }
     combo.select(selected);
+   	combo.setEnabled(enabled);
 
     return comp;
   }
@@ -205,7 +208,9 @@ public class SelectInput extends AbstractInput
    */
   public void disable()
   {
-    combo.setEnabled(false);
+		enabled = false;
+		if (combo != null && !combo.isDisposed())
+			combo.setEnabled(false);
   }
 
   /**
@@ -228,6 +233,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.2  2004/04/24 19:05:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/04/21 22:28:56 $
+ * $Revision: 1.6 $
+ * $Date: 2004/04/24 19:05:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,7 @@ import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.views.AbstractView;
 
 /**
- * Dialog, der eine Tabelle mit Daten aus einer Liste anzeigen.
+ * Dialog, der eine Tabelle mit Daten aus einer Liste anzeigt.
  * Aus dieser Tabelle kann einer ausgewaehlt werden. Dieses Objekt
  * wird dann von <code>open()</code> zurueckgegeben.
  * @author willuhn
@@ -38,20 +38,20 @@ public class ListDialog extends AbstractDialog
   private Hashtable fields = new Hashtable();
   private Hashtable formatter = new Hashtable();
 
-	/**
-	 * ct.
+  /**
+   * ct.
    * @param list anzuzeigende Liste.
    * @param position Position.
    * @see AbstractDialog#POSITION_CENTER
    * @see AbstractDialog#POSITION_MOUSE
    */
   public ListDialog(DBIterator list, int position)
-	{
-		super(position);
-		setSize(SWT.DEFAULT,250);
-		this.list = list;
-		
-	}
+  {
+    super(position);
+    setSize(SWT.DEFAULT,250);
+    this.list = list;
+
+  }
 
   /**
    * Fuegt der Tabelle eine weitere Spalte hinzu.
@@ -60,11 +60,11 @@ public class ListDialog extends AbstractDialog
    */
   public void addColumn(String title, String field)
   {
-  	if (title == null || field == null)
-  		return;
-  	this.fields.put(title,field);
+    if (title == null || field == null)
+      return;
+    this.fields.put(title,field);
   }
-  
+
   /**
    * Fuegt der Tabelle eine weitere Spalte hinzu.
    * @param title Ueberschrift der Spalte.
@@ -73,37 +73,37 @@ public class ListDialog extends AbstractDialog
    */
   public void addColumn(String title, String field, Formatter f)
   {
-		addColumn(title,field);
+    addColumn(title,field);
 
-		if (title == null || f == null)
-			return;
-		this.formatter.put(title,f);
+    if (title == null || f == null)
+      return;
+    this.formatter.put(title,f);
   }
 
-	/**
-	 * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
-	 */
-	protected void paint(Composite parent) throws Exception {
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
+   */
+  protected void paint(Composite parent) throws Exception {
 
-		TablePart table = new TablePart(list,new ListController(null));
+    TablePart table = new TablePart(list,new ListController(null));
 
-		Enumeration keys = this.fields.keys();
-		while (keys.hasMoreElements())
-		{
-			String title = (String) keys.nextElement();
-			String field = (String) this.fields.get(title);
-			Formatter f  = (Formatter) this.formatter.get(title);
-			table.addColumn(title,field,f);
-		}
+    Enumeration keys = this.fields.keys();
+    while (keys.hasMoreElements())
+    {
+      String title = (String) keys.nextElement();
+      String field = (String) this.fields.get(title);
+      Formatter f  = (Formatter) this.formatter.get(title);
+      table.addColumn(title,field,f);
+    }
     table.paint(parent);
   }
 
-	/**
-	 * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
-	 */
-	protected Object getData() throws Exception {
-		return object;
-	}
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
+   */
+  protected Object getData() throws Exception {
+    return object;
+  }
 
 
   /**
@@ -115,7 +115,7 @@ public class ListDialog extends AbstractDialog
 
     /**
      * ct.
-     * @param view die View, fuer die der Controller zustaendig ist. 
+     * @param view die View, fuer die der Controller zustaendig ist.
      */
     public ListController(AbstractView view)
     {
@@ -147,13 +147,16 @@ public class ListDialog extends AbstractDialog
       // Wir schliessen den Dialog bei Auswahl eines Objektes.
       close();
     }
-    
+
   }
 
 }
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.6  2004/04/24 19:05:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/04/21 22:28:56  willuhn
  * *** empty log message ***
  *

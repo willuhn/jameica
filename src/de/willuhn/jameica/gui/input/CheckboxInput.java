@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/24 19:05:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ public class CheckboxInput extends AbstractInput
 
   private Button button;
   private boolean value;
+  private boolean enabled = true;
   
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -47,6 +48,7 @@ public class CheckboxInput extends AbstractInput
     button = new Button(getParent(), SWT.CHECK);
     button.setSelection(value);
 		button.setBackground(Style.COLOR_BG);
+		button.setEnabled(enabled);
     return button;
   }
 
@@ -88,7 +90,9 @@ public class CheckboxInput extends AbstractInput
    */
   public void disable()
   {
-    button.setEnabled(false);
+		enabled = false;
+		if (button != null && !button.isDisposed())
+		button.setEnabled(false);
   }
 
   /**
@@ -105,6 +109,9 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.2  2004/04/24 19:05:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

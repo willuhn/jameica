@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/24 19:05:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,10 +72,14 @@ public class LabelInput extends AbstractInput
    */
   public void setValue(Object value)
   {
-		if (value == null || label == null)
+		if (value == null)
 			return;
-		this.label.setText(value.toString());
-		this.label.redraw();
+		this.value = (String) value;
+		if (this.label != null && !this.label.isDisposed())
+		{
+			this.label.setText(value.toString());
+			this.label.redraw();
+		}
   }
 
   /**
@@ -97,6 +101,9 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.2  2004/04/24 19:05:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms
