@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Attic/StartupError.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/03 23:04:54 $
+ * $Revision: 1.2 $
+ * $Date: 2005/01/05 15:18:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.system.Application;
-
 /**
  * Diese Klasse zeigt einen Fehlerdialog an, wenn es beim Start der
  * Anwendung zu einem kritischen Fehler gekommen ist, der den Start
@@ -43,7 +41,7 @@ public class StartupError
 			d = new Display();
 		final Shell s = new Shell();
 		s.setLayout(new GridLayout());
-		s.setText(Application.getI18n().tr("Fehler"));
+		s.setText("Fehler");
 		Label l = new Label(s,SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		l.setText(""+t.getMessage());
@@ -76,6 +74,9 @@ public class StartupError
 
 /**********************************************************************
  * $Log: StartupError.java,v $
+ * Revision 1.2  2005/01/05 15:18:08  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/01/03 23:04:54  willuhn
  * @N separater StartupError Handler
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.11 $
+ * $Date: 2005/01/05 15:18:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,7 +73,7 @@ public final class Config
 		"  <rmiport>1099</rmiport>\n" +
 		"  <plugindirs>\n" +
 		"    <!-- <dir>path to additional plugins</dir> //-->\n" +
-		"	 </plugindirs>\n" +
+		"  </plugindirs>\n" +
 		"</config>\n";
 
   /**
@@ -396,6 +396,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.11  2005/01/05 15:18:08  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *
