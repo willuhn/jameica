@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.22 $
- * $Date: 2005/01/03 23:04:54 $
+ * $Revision: 1.23 $
+ * $Date: 2005/01/11 00:00:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,6 +62,7 @@ public final class Application {
   private static Application app;
     private Config 							config;
     private MultipleClassLoader classLoader;
+		private SSLFactory 					sslFactory;  
     private ServiceFactory 			serviceFactory;
     private PluginLoader 				pluginLoader;
 
@@ -177,6 +178,17 @@ public final class Application {
 		////////////////////////////////////////////////////////////////////////////
     // init service factory and plugins
 
+		// init ssl factory
+		splash.setStatusText("init ssl certificates");
+		try {
+			this.sslFactory = new SSLFactory();
+			this.sslFactory.init();
+		}
+		catch (Throwable t)
+		{
+			startupError(t);
+		}
+
 		// Migration
 		// Der PluginLoader ist in das Package "plugin" verschoben worden. Damit
 		// seine Einstellungen bei einem Update erhalten bleiben, benennen wir
@@ -291,6 +303,16 @@ public final class Application {
   public static MultipleClassLoader getClassLoader()
 	{
 		return app.classLoader;
+	}
+
+	/**
+	 * Liefert die SSL-Factory von Jameica. Ueber diese kann der
+	 * Public- und Private-Key der Jameica-Instanz bezogen werden.
+   * @return SSL-Factory.
+   */
+  public static SSLFactory getSSLFactory()
+	{
+		return app.sslFactory;
 	}
 
 	/**
@@ -428,6 +450,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.23  2005/01/11 00:00:52  willuhn
+ * @N SSLFactory
+ *
  * Revision 1.22  2005/01/03 23:04:54  willuhn
  * @N separater StartupError Handler
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLRMISocketFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/09/13 23:27:12 $
+ * $Revision: 1.3 $
+ * $Date: 2005/01/11 00:00:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,13 +28,14 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 	private SSLServerSocketFactory serverSocketFactory;
   private SSLSocketFactory socketFactory;
 
-  private boolean clientAuth = true;
+  private boolean clientAuth = false;
 
   /**
    * ct.
    */
   public SSLRMISocketFactory()
   {
+  	super();
     serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
     socketFactory 			= (SSLSocketFactory) SSLSocketFactory.getDefault();
   }
@@ -62,6 +63,9 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.3  2005/01/11 00:00:52  willuhn
+ * @N SSLFactory
+ *
  * Revision 1.2  2004/09/13 23:27:12  willuhn
  * *** empty log message ***
  *

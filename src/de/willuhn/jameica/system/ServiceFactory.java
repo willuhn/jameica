@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.19 $
- * $Date: 2005/01/07 18:08:36 $
+ * $Revision: 1.20 $
+ * $Date: 2005/01/11 00:00:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.lang.reflect.Constructor;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.RMISocketFactory;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -38,7 +39,6 @@ import de.willuhn.util.ApplicationException;
 public final class ServiceFactory
 {
 
-	private SSLFactory sslFactory = new SSLFactory();  
   private boolean rmiStarted = false;
 
 	// Alle Bindings
@@ -60,8 +60,6 @@ public final class ServiceFactory
   public synchronized void init() throws Exception
   {
 		Logger.info("init plugin services");
-
-		sslFactory.init();
 
 		startRegistry();
 
@@ -131,11 +129,12 @@ public final class ServiceFactory
 
     try {
       Logger.info("trying to start new RMI registry");
+			RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
     }
-    catch (RemoteException e)
+    catch (Exception e)
     {
-      Logger.info("failed, trying to use an existing one");
+      Logger.warn("failed to init RMI registry, trying to use an existing one." +      	"communication may be not encrypted");
       LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
     }
     rmiStarted = true;
@@ -360,6 +359,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.20  2005/01/11 00:00:52  willuhn
+ * @N SSLFactory
+ *
  * Revision 1.19  2005/01/07 18:08:36  willuhn
  * *** empty log message ***
  *
