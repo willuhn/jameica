@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/08/15 17:55:17 $
+ * $Revision: 1.5 $
+ * $Date: 2004/10/07 18:05:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,9 +24,9 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
-import de.willuhn.util.FileFinder;
 import de.willuhn.util.Logger;
 
 /**
@@ -537,6 +537,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.5  2004/10/07 18:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/08/15 17:55:17  willuhn
  * @C sync handling
  *

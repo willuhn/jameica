@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/08/30 15:03:28 $
+ * $Revision: 1.6 $
+ * $Date: 2004/10/07 18:05:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,7 @@ import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 import net.n3.nanoxml.XMLWriter;
-import de.willuhn.util.FileCopy;
+import de.willuhn.io.FileCopy;
 import de.willuhn.util.Logger;
 
 /**
@@ -374,6 +374,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.6  2004/10/07 18:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/08/30 15:03:28  willuhn
  * @N neuer Security-Manager
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.4 $
+ * $Date: 2004/10/07 18:05:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.util.BackgroundTask;
-import de.willuhn.jameica.util.ProgressMonitor;
+import de.willuhn.util.ProgressMonitor;
 
 /**
  * Implementierung eines Progress-Monitors, der seine Ausgaben in
@@ -174,6 +174,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.4  2004/10/07 18:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *

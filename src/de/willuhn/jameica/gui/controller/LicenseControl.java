@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/LicenseControl.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.6 $
+ * $Date: 2004/10/07 18:05:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,12 +16,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.rmi.RemoteException;
 
+import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.util.InfoReader;
-import de.willuhn.util.FileFinder;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -124,6 +124,9 @@ public class LicenseControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
+ * Revision 1.6  2004/10/07 18:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/Attic/BackgroundTask.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/07 18:05:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.util;
+
+import de.willuhn.util.ProgressMonitor;
 
 /**
  * Klassen, die von dieser ableiten, koennen in
@@ -68,6 +70,9 @@ public abstract class BackgroundTask implements Runnable
 
 /**********************************************************************
  * $Log: BackgroundTask.java,v $
+ * Revision 1.3  2004/10/07 18:05:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *
