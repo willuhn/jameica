@@ -1,6 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.7 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Attic/MultiLineLabelInput.java,v $
+ * $Revision: 1.1 $
  * $Date: 2004/06/14 22:05:06 $
  * $Author: willuhn $
  * $Locker:  $
@@ -13,27 +13,30 @@
 package de.willuhn.jameica.gui.input;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.util.Color;
 
 /**
- * Das ist ein Dummy-InputFeld.
+ * Das ist ein mehrzeiliges ReadOnly-InputFeld.
  * Denn es ist kein Eingabe-Feld sondern lediglich ein Text.
  * Das Label ist z.Bsp. sinnvoll, wenn Werte zwar angezeigt aber nicht geaendert werden sollen.
  * @author willuhn
  */
-public class LabelInput extends AbstractInput
+public class MultiLineLabelInput extends AbstractInput
 {
-  private CLabel label;
+  private Label label;
   private String value;
 
   /**
    * Erzeugt ein neues Label mit dem angegebenen Wert.
    * @param value anzuzeigender Wert.
    */
-  public LabelInput(String value)
+  public MultiLineLabelInput(String value)
   {
     this.value = value;
   }
@@ -43,7 +46,11 @@ public class LabelInput extends AbstractInput
    */
   public Control getControl()
   {
-    label = new CLabel(getParent(),SWT.NONE);
+  	Composite comp = new Composite(getParent(),SWT.NONE);
+  	comp.setLayout(new GridLayout());
+  	
+    label = new Label(comp,SWT.WRAP);
+    label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     label.setBackground(Color.BACKGROUND.getSWTColor());
     label.setText(value == null ? "" : value);
     return label;
@@ -100,8 +107,8 @@ public class LabelInput extends AbstractInput
 }
 
 /*********************************************************************
- * $Log: LabelInput.java,v $
- * Revision 1.7  2004/06/14 22:05:06  willuhn
+ * $Log: MultiLineLabelInput.java,v $
+ * Revision 1.1  2004/06/14 22:05:06  willuhn
  * *** empty log message ***
  *
  * Revision 1.6  2004/05/27 21:35:03  willuhn

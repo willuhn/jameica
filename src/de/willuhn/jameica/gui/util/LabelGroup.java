@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/05/27 21:35:02 $
+ * $Revision: 1.7 $
+ * $Date: 2004/06/14 22:05:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,6 +77,7 @@ public class LabelGroup
   public void addLabelPair(String name, AbstractInput input)
   {
     // Label
+    // TODO: Ausrichtung des Labels muss oben sein
     final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
     labelGrid.verticalAlignment = GridData.CENTER;
     final Label label = new Label(group, SWT.NONE);
@@ -222,6 +223,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.7  2004/06/14 22:05:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/05/27 21:35:02  willuhn
  * @N PGP signing in ant script
  * @N MD5 checksum in ant script

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/14 22:05:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -50,20 +49,6 @@ public class StyleFactoryFlatImpl implements StyleFactory
 		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		toolkit.paintBordersFor(parent);
 		return button;
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.style.StyleFactory#createLabel(org.eclipse.swt.widgets.Composite)
-   */
-  public Label createLabel(Composite parent)
-  {
-		check();
-  	Label label = toolkit.createLabel(parent,"");
-  	label.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-  	label.setForeground(Color.WIDGET_FG.getSWTColor());
-  	label.setBackground(Color.WIDGET_BG.getSWTColor());
-  	toolkit.paintBordersFor(parent);
-  	return label;
   }
 
   /**
@@ -105,6 +90,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.3  2004/06/14 22:05:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

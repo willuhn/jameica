@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.4 $
+ * $Date: 2004/06/14 22:05:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,7 @@ public class Font {
   /**
    * Schrift fuer Ueberschriften zweiter Ordnung.
    */
-  public final static Font H2 			= new Font("font.h2",						new FontData(systemFont, 8, SWT.BOLD));
+  public final static Font H2 			= new Font("font.h2",						new FontData(systemFont, 9, SWT.BOLD));
 	
   /**
    * Standard-Schrift.
@@ -102,6 +102,9 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.4  2004/06/14 22:05:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/06/03 00:24:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004/06/14 22:05:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,6 @@ package de.willuhn.jameica.gui.style;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -31,13 +30,6 @@ public interface StyleFactory
    * @return Button.
    */
   public Button createButton(Composite parent);
-  
-  /**
-   * Erzeugt ein Label.
-   * @param parent Parent.
-   * @return Label.
-   */
-  public Label createLabel(Composite parent);
   
   /**
    * Erzeugt einen Text.
@@ -63,6 +55,9 @@ public interface StyleFactory
 
 /*********************************************************************
  * $Log: StyleFactory.java,v $
+ * Revision 1.2  2004/06/14 22:05:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/06/03 00:24:18  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/06/14 22:05:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
@@ -36,14 +35,6 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   	Button button = new Button(parent,SWT.BORDER);
 		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		return button;
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.style.StyleFactory#createLabel(org.eclipse.swt.widgets.Composite)
-   */
-  public Label createLabel(Composite parent)
-  {
-		return new Label(parent,SWT.BORDER);
   }
 
   /**
@@ -79,6 +70,9 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
+ * Revision 1.3  2004/06/14 22:05:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

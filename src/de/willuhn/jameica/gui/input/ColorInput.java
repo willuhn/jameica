@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.6 $
+ * $Date: 2004/06/14 22:05:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -61,7 +62,7 @@ public class ColorInput extends ButtonInput
    */
   public Control getClientControl(Composite parent)
   {
-    label = GUI.getStyleFactory().createLabel(parent);
+    label = new Label(parent,SWT.BORDER);
 		label.setBackground(color);
     return label;
   }
@@ -93,6 +94,9 @@ public class ColorInput extends ButtonInput
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.6  2004/06/14 22:05:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract
