@@ -1,8 +1,8 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/01/30 20:47:43 $
- * $Author: willuhn $
+ * $Revision: 1.15 $
+ * $Date: 2005/03/11 00:49:17 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -80,7 +80,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
     
     // Label erzeugen und Image drauf pappen
     label = new Label(shell, SWT.NONE);
-    label.setImage(new Image(display, shell.getClass().getResourceAsStream("/img/splash3.jpg")));
+    label.setImage(new Image(display, shell.getClass().getResourceAsStream("/img/splash.jpg")));
     label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
     bar = new ProgressBar(shell, SWT.SMOOTH);
@@ -213,6 +213,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.15  2005/03/11 00:49:17  web0
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *
