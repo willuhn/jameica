@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/13 00:37:35 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/14 00:49:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,86 +12,214 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 /**
  * Kontrolliert alle installierten Plugins.
  * @author willuhn
  */
 public class PluginLoader extends ClassLoader
 {
+
+  private static ArrayList installedPlugins = new ArrayList();
+
+  private static File plugindir = null;
+  private static URLClassLoader loader = null;
   
-  // singleton
-  private static PluginLoader loader;
-
-  private static Plugin[] installedPlugins = null;
-
-  private PluginLoader() {}
-
   /**
    * Wird beim Start der Anwendung ausgefuehrt, sucht im Classpath
    * nach verfuegbaren Plugins und initialisiert diese.
    */
   public static void init()
   {
-    loader = new PluginLoader();
     Application.getLog().info("init plugins");
 
-
     try {
-      String cp = System.getProperty("java.class.path");
-      Class clazz = loader.findClass("de.willuhn.jameica.fibu.Fibu");
-      Plugin pl = (Plugin) clazz.newInstance();
-      pl.init();
-      
+      // Plugin-Verzeichnis ermitteln
+      plugindir = new File(Application.getConfig().getPluginDir()).getCanonicalFile();
+      Application.getLog().info("  using directory " + plugindir.getPath());
     }
-    catch (Exception e)
-     {
-       e.printStackTrace();
-     }
+    catch (IOException e)
+    {
+      Application.getLog().error("  unable to determine plugin dir, giving up");
+      return;
+    }
 
-//    Class[] plugins = Plugin.class.getDeclaredClasses(); //TODO: getDeclaredClasses() ?
-//    installedPlugins = new Plugin[plugins.length];
-//
-//    if (installedPlugins.length == 0)
-//    {
-//      Application.getLog().info(" no plugins found...skipping");
-//      return;
-//    }
-//
-//    Plugin plugin = null;
-//    for (int i=0;i<plugins.length;++i)
-//    {
-//      Application.getLog().info("  found " + plugins[i].getName() + ", try to init...");
-//      try {
-//        plugin = (Plugin) plugins[i].newInstance();
-//        plugin.init();
-//        installedPlugins[i] = plugin;
-//      }
-//      catch (Exception e)
-//      {
-//        Application.getLog().info("  init of plugin " + plugins[i].getName() + " failed.");
-//      }
-//      Application.getLog().info("  done");
-//    }
+    // Liste aller Jars aus dem plugin-Verzeichnis holen
+    ArrayList jars = findPlugins(plugindir,null);
+
+    if (jars == null || jars.size() < 1)
+    {
+      Application.getLog().info("  no plugins found");
+      return;
+    }
+
+    // jetzt muessen wir den URLClassLoader mit allen URLs der Jars fuettern
+    URL[] urls = new URL[jars.size()];
+    for(int i=0;i<jars.size();++i)
+    {
+      File jar = (File) jars.get(i);
+      try {
+        urls[i] = jar.toURL();
+      }
+      catch (MalformedURLException e) 
+      {
+        // skip
+      }
+    }
+
+    loader = new URLClassLoader(urls);
+
+    // und jetzt gehen wir nochmal ueber alle Jars und ueber alle darin befindlichen Klassen
+    // und versuchen sie zu laden
+    for(int i=0;i<jars.size();++i)
+    {
+      File file = (File) jars.get(i);
+      String filename   = file.getName();
+      String ext        = filename.substring(filename.lastIndexOf(".")+1);
+
+
+      JarFile jar = null;
+      try {
+        jar = new JarFile(file);
+      }
+      catch (IOException ioe) {
+        continue; // skip
+      }
+        
+      if (jar == null)
+        continue; // skip
+
+      Enumeration jarEntries = jar.entries();
+      while (jarEntries.hasMoreElements())
+      {
+        String classname = ((JarEntry) jarEntries.nextElement()).getName();
+        int idxClass = classname.indexOf(".class");
+        if (idxClass == -1)
+          continue;
+
+        classname = classname.substring(0, idxClass).replace('/', '.').replace('\\', '.');
+        loadPlugin(classname);
+      }
+    }
+    Application.getLog().info("done");
   }
   
+
+  /**
+   * Sucht rekursiv im angegebenen Verzeichnis nach Dateien des Schemas *.zip und *.jar.
+   * @param dir Verzeichnis, in dem gesucht werden soll.
+   * @param appendTo ArrayList mit Files, die ausserdem noch hinzugefuegt werden soll. Kann null sein. 
+   * @return Liste mit allen gefundenen gefundenen Files.
+   */
+  private static ArrayList findPlugins(File dir, ArrayList appendTo)
+  {
+    if (appendTo == null)
+      appendTo = new ArrayList();
+
+    // Alle Dateien des Verzeichnisses suchen
+    File[] files = dir.listFiles(new FilenameFilter()
+    {
+      public boolean accept(File dir, String name)
+      {
+        File f = new File(dir.getPath() + "/" + name);
+        return (f.isFile() && (name.endsWith(".zip") || name.endsWith(".jar")));
+      }
+    });
+    for (int i=0;i<files.length;++i)
+    {
+      appendTo.add(files[i]);
+    }
+
+    // So, und jetzt alle Unterverzeichnisse
+    File[] dirs = dir.listFiles(new FilenameFilter()
+    {
+      public boolean accept(File dir, String name)
+      {
+        File f = new File(dir.getPath() + "/" + name);
+        return (f.isDirectory());
+      }
+    });
+    for (int i=0;i<dirs.length;++i)
+    {
+      // und jetzt kommt die Rekursion
+      findPlugins(dirs[i],appendTo);
+    }
+
+    return appendTo;    
+  }
+
+  /**
+   * Prueft ob die uebergebene Klasse ein gueltiges Plugin ist.
+   * @param plugin Klasse
+   * @return true, wenn es ein Plugin ist, ansonsten false.
+   */
+  private static boolean checkPlugin(Class plugin)
+  {
+    Class[] interfaces = plugin.getInterfaces();
+    for (int i=0;i<interfaces.length;++i)
+    {
+      if (interfaces[i].equals(Plugin.class))
+        return true;
+    }
+    return false;
+  }
+
+  /**
+   * Laedt das angegebene Plugin.
+   * @param classname Name der zu ladenden Klasse.
+   */
+  private static void loadPlugin(String classname)
+  {
+    try {
+      Class clazz = loader.loadClass(classname);
+      if (!checkPlugin(clazz))
+        return; // no valid plugin
+      
+      Application.getLog().info("  found " + classname + ", trying to initialize");
+      Plugin plugin = (Plugin) (clazz.newInstance());
+      plugin.init();
+      installedPlugins.add(plugin);
+      Application.getLog().info("  done");
+    }
+    catch (Exception e)
+    {
+      Application.getLog().info(" failed");
+    }
+  }
+
   /**
    * Wird beim Beenden der Anwendung ausgefuehrt und beendet alle Plugins.
    */
   public static void shutDown()
   {
     Application.getLog().info("shutting down plugins");
-    for (int i=0;i<installedPlugins.length;++i)
+    for (int i=0;i<installedPlugins.size();++i)
     {
-      Application.getLog().info("  " + installedPlugins[i].getClass().getName() + ":");
-      installedPlugins[i].shutDown();
+      Plugin plugin = (Plugin) installedPlugins.get(i);
+      Application.getLog().info("  " + plugin.getClass().getName());
+      plugin.shutDown();
       Application.getLog().info("  done");
     }
+    Application.getLog().info("done");
   }
 
 }
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.2  2003/11/14 00:49:46  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/13 00:37:35  willuhn
  * *** empty log message ***
  *
