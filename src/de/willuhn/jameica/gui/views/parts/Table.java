@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/08 15:41:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import de.willuhn.jameica.GUI;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
@@ -151,7 +150,7 @@ public class Table
     );
 
     // und jetzt fuegen wir noch die Kontext-Menues hinzu,
-    Menu menu = new Menu(GUI.shell, SWT.POP_UP);
+    Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
     table.setMenu(menu);
     MenuItem editItem = new MenuItem(menu, SWT.PUSH);
     editItem.setText (I18N.tr("Bearbeiten"));
@@ -184,6 +183,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.8  2003/12/08 15:41:09  willuhn
+ * @N searchInput
+ *
  * Revision 1.7  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *

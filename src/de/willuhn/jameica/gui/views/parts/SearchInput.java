@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SearchInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/05 18:43:01 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/08 15:41:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.views.parts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -22,6 +24,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
+import de.willuhn.jameica.Application;
+import de.willuhn.jameica.views.SearchDialog;
 import de.willuhn.jameica.views.util.Style;
 
 /**
@@ -33,16 +37,20 @@ public class SearchInput extends Input
 {
 
   private Composite comp;
+  private SearchDialog searchDialog;
   private Text text;
   private Button button;
   private String value;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+   * @param value der einzufuegende Wert fuer das Eingabefeld.
+   * @param search der Suchdialog.
    */
-  public SearchInput(String value)
+  public SearchInput(String value,SearchDialog search)
   {
     this.value = value;
+    this.searchDialog = search;
   }
 
   /**
@@ -72,6 +80,15 @@ public class SearchInput extends Input
     button.setImage(Style.getImage("search.gif"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.setAlignment(SWT.RIGHT);
+    button.addMouseListener(new MouseAdapter()
+    {
+      public void mouseUp(MouseEvent e)
+      {
+        Application.getLog().info("starting search dialog");
+        text.setText(searchDialog.open());
+        text.redraw();
+      }
+    });
  
     return comp;
   }
@@ -108,6 +125,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.2  2003/12/08 15:41:09  willuhn
+ * @N searchInput
+ *
  * Revision 1.1  2003/12/05 18:43:01  willuhn
  * *** empty log message ***
  *
