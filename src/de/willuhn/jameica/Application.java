@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/01/04 18:48:36 $
+ * $Revision: 1.22 $
+ * $Date: 2004/01/06 01:27:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,7 +62,10 @@ public class Application {
     app = new Application();
 
     // init logger
-		splash("init system logger");app.log = new Logger(null);
+		splash("init system logger");
+		app.log = new Logger();
+		app.log.addTarget(System.out);
+		app.log.setLevel(Logger.LEVEL_INFO);
 
     Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
 
@@ -79,11 +82,13 @@ public class Application {
     
     Application.DEBUG = app.config.debug();
     Application.IDE   = app.config.ide();
+		if (Application.DEBUG)
+			app.log.setLevel(Logger.LEVEL_DEBUG);
 
     // switch logger to defined log file
     try {
-      Application.getLog().info("switching to defined log file " + app.config.getLogFile());
-      app.log = new Logger(new FileOutputStream(app.config.getLogFile()));
+      Application.getLog().info("adding defined log file " + app.config.getLogFile());
+      app.log.addTarget(new FileOutputStream(app.config.getLogFile()));
       Application.getLog().info("done");
     }
     catch (FileNotFoundException e)
@@ -192,6 +197,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.22  2004/01/06 01:27:30  willuhn
+ * @N table order
+ *
  * Revision 1.21  2004/01/04 18:48:36  willuhn
  * @N config store support
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/04 19:51:01 $
+ * $Revision: 1.2 $
+ * $Date: 2004/01/06 01:27:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,13 @@
 package de.willuhn.jameica.gui.controller;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.Config;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.views.ServiceSettings;
+import de.willuhn.jameica.gui.views.Settings;
+import de.willuhn.jameica.gui.views.Start;
+import de.willuhn.jameica.gui.views.parts.CheckboxInput;
 import de.willuhn.jameica.gui.views.parts.Controller;
 import de.willuhn.jameica.rmi.DBObject;
 
@@ -31,7 +36,6 @@ public class SettingsControl extends Controller
   public SettingsControl(DBObject object)
   {
     super(object);
-    // TODO Auto-generated constructor stub
   }
 
   /**
@@ -39,8 +43,6 @@ public class SettingsControl extends Controller
    */
   public void handleDelete()
   {
-    // TODO Auto-generated method stub
-
   }
 
   /**
@@ -48,8 +50,6 @@ public class SettingsControl extends Controller
    */
   public void handleDelete(String id)
   {
-    // TODO Auto-generated method stub
-
   }
 
   /**
@@ -57,8 +57,7 @@ public class SettingsControl extends Controller
    */
   public void handleCancel()
   {
-    // TODO Auto-generated method stub
-
+  	GUI.startView(Start.class.getName(),null);
   }
 
   /**
@@ -66,8 +65,22 @@ public class SettingsControl extends Controller
    */
   public void handleStore()
   {
-    // TODO Auto-generated method stub
+  	Config config = Application.getConfig();
 
+  	config.setDebug(CheckboxInput.ENABLED.equals(getField("debug").getValue()));
+
+  	config.setLogFile(getField("logfile").getValue());
+  	try
+    {
+      config.store();
+      GUI.setActionText(I18N.tr("Konfiguaration gespeichert."));
+    }
+    catch (Exception e)
+    {
+    	Application.getLog().error("error while writing config",e);
+    	GUI.setActionText(I18N.tr("Fehler beim Speichern der Konfiguration."));
+    }
+  	
   }
 
   /**
@@ -75,8 +88,6 @@ public class SettingsControl extends Controller
    */
   public void handleCreate()
   {
-    // TODO Auto-generated method stub
-
   }
   
   /**
@@ -84,8 +95,7 @@ public class SettingsControl extends Controller
    */
   public void handleLoad(String id)
   {
-    // TODO Auto-generated method stub
-
+  	GUI.startView(ServiceSettings.class.getName(),id);
   }
   
   /**
@@ -95,6 +105,8 @@ public class SettingsControl extends Controller
   {
   	try {
 			Application.getConfig().restore();
+			GUI.startView(Settings.class.getName(),null);
+			GUI.setActionText(I18N.tr("letzte gespeicherte Konfiguaration wieder hergestellt."));
   	}
   	catch (Exception e)
   	{
@@ -109,6 +121,9 @@ public class SettingsControl extends Controller
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.2  2004/01/06 01:27:30  willuhn
+ * @N table order
+ *
  * Revision 1.1  2004/01/04 19:51:01  willuhn
  * *** empty log message ***
  *

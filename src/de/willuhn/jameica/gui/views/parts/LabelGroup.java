@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.13 $
+ * $Date: 2004/01/06 01:27:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -159,10 +159,31 @@ public class LabelGroup
     final Label line = new Label(group,SWT.SEPARATOR | SWT.HORIZONTAL);
     line.setLayoutData(lineGrid);
   }
+  
+  /**
+   * Erstellt eine neue ButtonAres in der Gruppe.
+   * @param numButtons Anzahl der Buttons.
+   * @return die Button-Area.
+   */
+  public ButtonArea createButtonArea(int numButtons)
+  {
+		final GridData g = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		g.horizontalSpan = 2;
+		final Composite comp = new Composite(group,SWT.NONE);
+		final GridLayout gl = new GridLayout();
+		gl.marginHeight = 1;
+		gl.marginWidth = 1;
+		comp.setLayout(gl);
+		comp.setLayoutData(g);
+  	return new ButtonArea(comp,numButtons);
+  }
 }
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.13  2004/01/06 01:27:30  willuhn
+ * @N table order
+ *
  * Revision 1.12  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

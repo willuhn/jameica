@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/01/04 19:51:01 $
+ * $Revision: 1.16 $
+ * $Date: 2004/01/06 01:27:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.gui.views.parts;
 
 import java.rmi.RemoteException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ public class Table
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
   private Enumeration list2;
+  
+  private org.eclipse.swt.widgets.Table table;
 
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
@@ -94,7 +97,7 @@ public class Table
   {
     int style = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
 
-    final org.eclipse.swt.widgets.Table table = new org.eclipse.swt.widgets.Table(parent, style);
+    table = new org.eclipse.swt.widgets.Table(parent, style);
     final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
     table.setLayoutData(gridData);
     table.setLinesVisible(true);
@@ -131,6 +134,15 @@ public class Table
         // nicht weiter tragisch, wenn das fehlschlaegt
       }
       col.setText(title);
+
+			// Sortierung
+			final int p = i;
+			col.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event e) {
+					orderBy(p);
+				}
+			});
+
     }
 
     try {
@@ -230,9 +242,11 @@ public class Table
     }
 
     // So, und jetzt malen wir noch ein Label mit der Anzahl der Treffer drunter.
-    Label summary = new Label(parent,SWT.NONE);
 		if (list != null)
-	    summary.setText(list.size() + " " + (list.size() == 1 ? I18N.tr("Datensatz") : I18N.tr("Datensätze")) + ".");
+		{
+			Label summary = new Label(parent,SWT.NONE);
+			summary.setText(list.size() + " " + (list.size() == 1 ? I18N.tr("Datensatz") : I18N.tr("Datensätze")) + ".");
+		}
 
     // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
     // Damit kann das Control wiederverwendet werden ;) 
@@ -247,10 +261,45 @@ public class Table
 
   }
 
+
+	/**
+	 * Sortiert die Tabelle nach der angegebenen Spaltennummer.
+   * @param index Spaltennummer.
+   */
+  public void orderBy(int index)
+	{
+		final TableItem[] items = table.getItems();
+		Collator collator = Collator.getInstance(Application.getConfig().getLocale());
+
+		for (int s = 1; s < items.length; ++s)
+		{
+
+			String value1 = table.getItem(s).getText(index);
+
+			for (int j = 0; j < s; ++j)
+			{
+
+				String value2 = table.getItem(j).getText(index);
+
+				if (collator.compare(value1, value2) < 0)
+				{
+					final TableItem item = new TableItem(table, SWT.NONE, j);
+					for (int r=0;r<table.getColumnCount();++r)
+						item.setText(r,items[s].getText(r));
+					items[s].dispose();
+					break;
+				}
+
+			}
+		}
+	}
 }
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.16  2004/01/06 01:27:30  willuhn
+ * @N table order
+ *
  * Revision 1.15  2004/01/04 19:51:01  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/01/04 18:48:36 $
+ * $Revision: 1.11 $
+ * $Date: 2004/01/06 01:27:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,7 +49,7 @@ public class ServiceFactory
 			Application.getLog().info("init RMI registry");
 			System.setSecurityManager(new NoSecurity());
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
-      Application.getLog().info("  done");
+      Application.getLog().info("done");
       registryOk = true;
     } catch (RemoteException e1)
     {
@@ -231,6 +231,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.11  2004/01/06 01:27:30  willuhn
+ * @N table order
+ *
  * Revision 1.10  2004/01/04 18:48:36  willuhn
  * @N config store support
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/01/04 18:48:36 $
+ * $Revision: 1.12 $
+ * $Date: 2004/01/06 01:27:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,12 +44,12 @@ public class Config
   /**
    * Die Liste aller Remote-Services.
    */
-  private Hashtable remoteServices  = new Hashtable();
+  private Hashtable remoteServices  = null;
 
   /**
    * Die Liste aller lokalen Services.
    */
-  private Hashtable localServices   = new Hashtable();
+  private Hashtable localServices   = null;
 
   /**
    * Der Name des Services vom Typ "Datenbank".
@@ -114,6 +114,9 @@ public class Config
    */
   private void read()
   {
+
+		localServices = new Hashtable();
+		remoteServices = new Hashtable();
 
 		Enumeration e = xml.getFirstChildNamed("services").enumerateChildren();
   
@@ -439,12 +442,16 @@ public class Config
   public void restore() throws Exception
 	{
 		FileCopy.copy(new File(configFile + ".bak"),new File(configFile),true);
+		init(configFile);
 	}
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.12  2004/01/06 01:27:30  willuhn
+ * @N table order
+ *
  * Revision 1.11  2004/01/04 18:48:36  willuhn
  * @N config store support
  *
