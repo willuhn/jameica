@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.7 $
+ * $Date: 2004/09/15 22:31:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Eingabefeld, welches jedoch noch einen Button hinten dran
@@ -67,6 +68,7 @@ public abstract class ButtonInput extends AbstractInput
 		layout.horizontalSpacing = 5;
 		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
+		comp.setBackground(Color.BACKGROUND.getSWTColor());
   
 		clientControl = getClientControl(comp);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -210,6 +212,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.7  2004/09/15 22:31:53  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

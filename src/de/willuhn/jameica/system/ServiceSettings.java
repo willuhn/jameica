@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/ServiceLookup.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/ServiceSettings.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/09/15 22:31:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,10 +18,10 @@ package de.willuhn.jameica.system;
  * werden kann, welcher Service ueber welchen Jameica-Server bezogen
  * werden kann. Genau diese Einstellungen werden hier gespeichert.
  */
-public final class ServiceLookup
+public final class ServiceSettings
 {
 
-	private static Settings settings = new Settings(ServiceLookup.class);
+	private static Settings settings = new Settings(ServiceSettings.class);
 
 	/**
 	 * Liefert eine Liste aller Service-Namen, fuer die bereits
@@ -79,7 +79,10 @@ public final class ServiceLookup
 
 
 /**********************************************************************
- * $Log: ServiceLookup.java,v $
+ * $Log: ServiceSettings.java,v $
+ * Revision 1.1  2004/09/15 22:31:53  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *
