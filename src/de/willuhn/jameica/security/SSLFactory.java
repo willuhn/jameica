@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/03/17 22:44:10 $
+ * $Revision: 1.10 $
+ * $Date: 2005/03/17 22:52:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -221,14 +220,13 @@ public class SSLFactory
    */
   private String getHostname() throws Exception
 	{
+		// BUGZILLA 26 http://www.willuhn.de/bugzilla/show_bug.cgi?id=26
 		String question =
-			Application.getI18n().tr("Der Hostname Ihres Computers konnte für die Erstellung des SSL-Zertifikates " +																"nicht ermittelt werden. Bitte geben Sie ihn manuell ein. Sollten Sie ihn " +																"nicht kennen, dann wählen Sie einen beliebigen Namen. Verwenden Sie bitte " +																"ausschliesslich Buchstaben oder Zahlen und ggf. \".\" oder \"-\"");
+			Application.getI18n().tr("Der Hostname Ihres Computers konnte für die Erstellung\n" +															 "des SSL-Zertifikates nicht ermittelt werden. Bitte geben\n" +															 "Sie ihn manuell ein. Sollten Sie ihn nicht kennen, dann\n" +															 "wählen Sie einen beliebigen Namen. Verwenden Sie bitte\n" +															 "ausschliesslich Buchstaben oder Zahlen und ggf. \".\" oder \"-\"");
 		String label = Application.getI18n().tr("Hostname Ihres Computers");
 		try
 		{
 			InetAddress a = InetAddress.getLocalHost();
-			if (true == true)
-				throw new UnknownHostException("sydney");
 
 			String host = a.getCanonicalHostName();
 
@@ -409,6 +407,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.10  2005/03/17 22:52:34  web0
+ * @B linewraps
+ * @B removed testcode
+ *
  * Revision 1.9  2005/03/17 22:44:10  web0
  * @N added fallback if system is not able to determine hostname
  *
