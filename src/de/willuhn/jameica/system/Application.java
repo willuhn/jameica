@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/08/15 17:55:17 $
+ * $Revision: 1.8 $
+ * $Date: 2004/08/15 18:45:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -418,7 +418,7 @@ public final class Application {
 	 * Startet einen Hintergrund-Task in Jameica.
    * @param task der auszufuehrende Task.
    */
-  public static void start(BackgroundTask task)
+  public static void start(final BackgroundTask task)
 	{
 		Logger.info("starting background task");
 		if (task == null)
@@ -442,6 +442,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.8  2004/08/15 18:45:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/08/15 17:55:17  willuhn
  * @C sync handling
  *

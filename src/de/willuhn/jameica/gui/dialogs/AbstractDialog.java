@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/08/15 17:55:17 $
+ * $Revision: 1.21 $
+ * $Date: 2004/08/15 18:45:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,7 +95,6 @@ public abstract class AbstractDialog
 
   private Shell shell;
   private Display display;
-  private boolean ownDisplay = false;
 	private ArrayList listeners = new ArrayList();
 	private Object choosen = null;
   
@@ -128,48 +127,50 @@ public abstract class AbstractDialog
    */
   private void init()
 	{
-		display = Display.findDisplay(Thread.currentThread());
-		if (display == null)
-		{
-			display = new Display();
-			ownDisplay = true;
-		}
-		shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setLocation(display.getCursorLocation());
-		GridLayout shellLayout = new GridLayout();
-		shellLayout.horizontalSpacing = 0;
-		shellLayout.verticalSpacing = 0;
-		shellLayout.marginHeight = 0;
-		shellLayout.marginWidth = 0;
-		shell.setLayout(shellLayout);
+		display = GUI.getDisplay();
 
-		Composite comp = new Composite(shell,SWT.NONE);
-		GridLayout compLayout = new GridLayout(2,true);
-		compLayout.horizontalSpacing = 0;
-		compLayout.verticalSpacing = 0;
-		compLayout.marginHeight = 0;
-		compLayout.marginWidth = 0;
-		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		comp.setLayout(compLayout);
-		comp.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+		display.syncExec(new Runnable()
+    {
+      public void run()
+      {
+				shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+				shell.setLocation(display.getCursorLocation());
+				GridLayout shellLayout = new GridLayout();
+				shellLayout.horizontalSpacing = 0;
+				shellLayout.verticalSpacing = 0;
+				shellLayout.marginHeight = 0;
+				shellLayout.marginWidth = 0;
+				shell.setLayout(shellLayout);
+
+				Composite comp = new Composite(shell,SWT.NONE);
+				GridLayout compLayout = new GridLayout(2,true);
+				compLayout.horizontalSpacing = 0;
+				compLayout.verticalSpacing = 0;
+				compLayout.marginHeight = 0;
+				compLayout.marginWidth = 0;
+				comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				comp.setLayout(compLayout);
+				comp.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 		
-		title = new CLabel(comp,SWT.NONE);
-		title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
-		title.setLayoutData(new GridData(GridData.FILL_BOTH));
-		title.setFont(Font.H2.getSWTFont());
+				title = new CLabel(comp,SWT.NONE);
+				title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+				title.setLayoutData(new GridData(GridData.FILL_BOTH));
+				title.setFont(Font.H2.getSWTFont());
 
-		Label image = new Label(comp,SWT.NONE);
-		image.setImage(SWTUtil.getImage("gradient.gif"));
-		title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
-		image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				Label image = new Label(comp,SWT.NONE);
+				image.setImage(SWTUtil.getImage("gradient.gif"));
+				title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+				image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-		parent = new Composite(shell,SWT.NONE);
-		GridLayout parentLayout = new GridLayout();
-		parentLayout.marginHeight = 0;
-		parentLayout.marginWidth = 0;
-		parent.setBackground(Color.BACKGROUND.getSWTColor());
-		parent.setLayout(parentLayout);
-		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+				parent = new Composite(shell,SWT.NONE);
+				GridLayout parentLayout = new GridLayout();
+				parentLayout.marginHeight = 0;
+				parentLayout.marginWidth = 0;
+				parent.setBackground(Color.BACKGROUND.getSWTColor());
+				parent.setLayout(parentLayout);
+				parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+      }
+    });
 	}
 	
 	/**
@@ -181,9 +182,15 @@ public abstract class AbstractDialog
 	 * jeden Fall ein Passwort eingegeben wurde.
    * @param l der ShellListener.
    */
-  protected final void addShellListener(ShellListener l)
+  protected final void addShellListener(final ShellListener l)
 	{
-		shell.addShellListener(l);
+		display.syncExec(new Runnable()
+    {
+      public void run()
+      {
+				shell.addShellListener(l);
+      }
+    });
 	}
 
 	/**
@@ -272,69 +279,61 @@ public abstract class AbstractDialog
   public final Object open() throws Exception
   {
 		try {
+
 			if (parent.isDisposed()) init(); // Dialog wurde nochmal geoeffnet
-			shell.setText(titleText == null ? "" : titleText);
-			title.setText(titleText == null ? "" : titleText);
-	
-			final Exception ex = new Exception();
-			paint(parent);
-			
-// TODO: Kann das raus?
-//			GUI.getDisplay().syncExec(new Runnable() {
-//        public void run() {
-//					try {
-//						paint(parent);
-//					}
-//					catch(Exception e)
-//					{
-//						ex.initCause(e);
-//					}
-//        }
-//      });
 
-			if (ex.getCause() != null) // Das hier eigentlich nur, um an die Exception zu kommen ;)
-				throw (Exception) ex.getCause();
-
-			shell.pack();
-	
-			height = (height == SWT.DEFAULT ? shell.getBounds().height : height);
-			width  = (width  == SWT.DEFAULT ? shell.getBounds().width  : width);
-	
-			shell.setSize(width, height);
-	
-			Rectangle shellRect = shell.getBounds();
-			Rectangle displayRect = display.getBounds();
-
-			// Per Default POSITION_CENTER
-			int x = (displayRect.width - shellRect.width) / 2;
-			int y = (displayRect.height - shellRect.height) / 2;
-			if (pos == POSITION_MOUSE)
-			{
-				x = display.getCursorLocation().x - (shell.getSize().x / 2);
-				y = display.getCursorLocation().y - (shell.getSize().y / 2);
-				// Jetzt mussen wir noch checken, ob das Fenster ueber
-				// die Display-Groesse hinausgeht
-				if ((x + shell.getSize().x) > displayRect.width)
-				{
-					// Fenster wuerde ueber den rechten Rand hinausgehen
-					x = displayRect.width - shell.getSize().x - 4; // 4 Pixel Puffer zum Rand
-				}
-				if ((y + shell.getSize().y) > displayRect.height)
-				{
-					// Fenster wuerde ueber den unteren Rand hinausgehen
-					y = displayRect.height - shell.getSize().y - 4; // 4 Pixel Puffer zum Rand
-				}
-			}
-			shell.setLocation(x, y);
-	
 			display.syncExec(new Runnable()
       {
         public void run()
         {
+					shell.setText(titleText == null ? "" : titleText);
+					title.setText(titleText == null ? "" : titleText);
+	
+					try
+					{
+						paint(parent);
+					}
+					catch (Throwable t)
+					{
+						t.printStackTrace(); // TODO
+					}
+
+					shell.pack();
+	
+					height = (height == SWT.DEFAULT ? shell.getBounds().height : height);
+					width  = (width  == SWT.DEFAULT ? shell.getBounds().width  : width);
+	
+					shell.setSize(width, height);
+	
+					Rectangle shellRect = shell.getBounds();
+					Rectangle displayRect = display.getBounds();
+
+					// Per Default POSITION_CENTER
+					int x = (displayRect.width - shellRect.width) / 2;
+					int y = (displayRect.height - shellRect.height) / 2;
+					if (pos == POSITION_MOUSE)
+					{
+						x = display.getCursorLocation().x - (shell.getSize().x / 2);
+						y = display.getCursorLocation().y - (shell.getSize().y / 2);
+						// Jetzt mussen wir noch checken, ob das Fenster ueber
+						// die Display-Groesse hinausgeht
+						if ((x + shell.getSize().x) > displayRect.width)
+						{
+							// Fenster wuerde ueber den rechten Rand hinausgehen
+							x = displayRect.width - shell.getSize().x - 4; // 4 Pixel Puffer zum Rand
+						}
+						if ((y + shell.getSize().y) > displayRect.height)
+						{
+							// Fenster wuerde ueber den unteren Rand hinausgehen
+							y = displayRect.height - shell.getSize().y - 4; // 4 Pixel Puffer zum Rand
+						}
+					}
+					shell.setLocation(x, y);
+	
 					shell.open();
-//					while (!shell.isDisposed()) {
-//						if (!display.readAndDispatch()) display.sleep();
-//					}
+					while (!shell.isDisposed()) {
+						if (!display.readAndDispatch()) display.sleep();
+					}
         }
       });
 
@@ -358,14 +357,6 @@ public abstract class AbstractDialog
 		}
 		catch (Exception e) {/*useless*/}
 
-		if (ownDisplay)
-		{
-			try
-			{
-				display.dispose();
-			}
-			catch (Exception e) {/*useless*/}
-		}
 		try {
 			Listener l = null;
 			Event e = new Event();
@@ -382,6 +373,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.21  2004/08/15 18:45:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.20  2004/08/15 17:55:17  willuhn
  * @C sync handling
  *
