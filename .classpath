@@ -6,10 +6,6 @@
         path="lib/mckoi/mckoidb.jar" sourcepath="/jameica/lib.src/mckoi/mckoidb.src.zip"/>
     <classpathentry exported="true" kind="lib"
         path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="/jameica/lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
-    <classpathentry exported="true" kind="lib"
-        path="lib/swt/linux/swt.jar" sourcepath="/jameica/lib.src/swt/linux/swtsrc.zip"/>
-    <classpathentry exported="true" kind="lib"
-        path="lib/swt/linux/swt-pi.jar" sourcepath="/jameica/lib.src/swt/linux/swt-pisrc.zip"/>
     <classpathentry exported="true" kind="lib" path="lib/swt/forms.jar" sourcepath="/jameica/lib.src/swt/forms.src.zip"/>
     <classpathentry exported="true" kind="lib" path="lib/swt/jface.jar"/>
     <classpathentry exported="true" kind="lib"
@@ -18,5 +14,6 @@
     <classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/swtcalendar/swtcalendar.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/swt/win32/swt.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
