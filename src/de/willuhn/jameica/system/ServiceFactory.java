@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.15 $
+ * $Date: 2004/11/04 22:41:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,7 +85,7 @@ public final class ServiceFactory
 					try 
 					{
             Application.getStartupMonitor().setStatusText(manifest.getName() + ": init service " + serviceNames[i]);
-            Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
+						Application.getStartupMonitor().addPercentComplete(10);
 
 						Logger.info("    init service " + serviceNames[i]);
 						service = plugin.getService(serviceNames[i]);
@@ -118,7 +118,7 @@ public final class ServiceFactory
   	if (!Application.inServerMode() || rmiStarted) return;
 
     Application.getStartupMonitor().setStatusText("starting rmi registry");
-    Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 5);
+		Application.getStartupMonitor().addPercentComplete(5);
 
     try {
       Logger.info("trying to start new RMI registry");
@@ -145,7 +145,7 @@ public final class ServiceFactory
   	throws RemoteException
 	{
     Application.getStartupMonitor().setStatusText("binding service " + serviceName);
-    Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 5);
+		Application.getStartupMonitor().addPercentComplete(5);
 
 
 		String fullName = plugin.getClass().getName() + "." + serviceName;
@@ -289,6 +289,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.15  2004/11/04 22:41:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *

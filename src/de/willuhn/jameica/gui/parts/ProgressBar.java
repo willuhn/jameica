@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.6 $
+ * $Date: 2004/11/04 22:41:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,9 +42,9 @@ public class ProgressBar implements ProgressMonitor, Part
   private int current = 0;
 
   /**
-   * @see de.willuhn.jameica.util.ProgressMonitor#percentComplete(int)
+   * @see de.willuhn.util.ProgressMonitor#setPercentComplete(int)
    */
-  public void percentComplete(int percent)
+  public void setPercentComplete(int percent)
   {
     if (percent < 0)
       percent = 0;
@@ -165,19 +165,32 @@ public class ProgressBar implements ProgressMonitor, Part
 		log.setWordWrap(false);
 		log.paint(comp);
   }
+  /**
+   * @see de.willuhn.util.ProgressMonitor#addPercentComplete(int)
+   */
+  public void addPercentComplete(int percent)
+  {
+  	if (percent < 1)
+  		return;
+  	setPercentComplete(getPercentComplete() + percent);
+  }
 
   /**
-   * @see de.willuhn.util.ProgressMonitor#percentComplete()
+   * @see de.willuhn.util.ProgressMonitor#getPercentComplete()
    */
-  public int percentComplete()
+  public int getPercentComplete()
   {
     return current;
   }
+
 }
 
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.6  2004/11/04 22:41:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.3 $
+ * $Date: 2004/11/04 22:41:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,7 +68,7 @@ public class SSLFactory
 		KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
 		KeyPair keypair = kp.generateKeyPair();
 
-    Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
+		Application.getStartupMonitor().addPercentComplete(10);
 
 		X509Name user = new X509Name(attributes);
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
@@ -84,7 +84,7 @@ public class SSLFactory
 		Logger.info("  generating x509 certificate");
 		X509Certificate cert = generator.generateX509Certificate(keypair.getPrivate());
 
-    Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
+		Application.getStartupMonitor().addPercentComplete(10);
 
 		Logger.info("  storing x509 certificate: " + certFile.getAbsolutePath());
 		FileOutputStream certOut = new FileOutputStream(certFile);
@@ -106,6 +106,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.3  2004/11/04 22:41:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *

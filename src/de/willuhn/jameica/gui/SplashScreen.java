@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.11 $
+ * $Date: 2004/11/04 22:41:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -155,9 +155,9 @@ public class SplashScreen extends Thread implements ProgressMonitor
   }
   
   /**
-   * @see de.willuhn.util.ProgressMonitor#percentComplete(int)
+   * @see de.willuhn.util.ProgressMonitor#setPercentComplete(int)
    */
-  public void percentComplete(int percent)
+  public void setPercentComplete(int percent)
   {
     if (Application.inServerMode() || closed || percent < percentComplete)
       return;
@@ -241,9 +241,19 @@ public class SplashScreen extends Thread implements ProgressMonitor
   }
 
   /**
-   * @see de.willuhn.util.ProgressMonitor#percentComplete()
+   * @see de.willuhn.util.ProgressMonitor#addPercentComplete(int)
    */
-  public int percentComplete()
+  public void addPercentComplete(int percent)
+  {
+  	if (percent < 1)
+  		return;
+  	setPercentComplete(getPercentComplete() + percent);
+  }
+
+  /**
+   * @see de.willuhn.util.ProgressMonitor#getPercentComplete()
+   */
+  public int getPercentComplete()
   {
     return percentComplete;
   }
@@ -253,6 +263,9 @@ public class SplashScreen extends Thread implements ProgressMonitor
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.11  2004/11/04 22:41:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *

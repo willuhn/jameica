@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.17 $
+ * $Date: 2004/11/04 22:41:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -151,8 +151,9 @@ public final class Application {
     else
       app.splash = new ProgressMonitor()
       {
-        public void percentComplete(int percent) {}
-        public int percentComplete() {return 0;}
+        public void setPercentComplete(int percent) {}
+				public void addPercentComplete(int percent) {}
+        public int getPercentComplete() {return 0;}
         public void setStatus(int status) {}
         public void setStatusText(String text) {}
         public void log(String msg) {}
@@ -222,7 +223,7 @@ public final class Application {
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-    Application.getStartupMonitor().percentComplete(100);
+    Application.getStartupMonitor().setPercentComplete(100);
 
     // close splash screen
     if (!inServerMode())
@@ -463,6 +464,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.17  2004/11/04 22:41:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/11/04 19:29:22 $
+ * $Revision: 1.11 $
+ * $Date: 2004/11/04 22:41:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -84,18 +84,18 @@ public final class PluginLoader
 
     File[] jars = null;
     try {
-      Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 2);
+      Application.getStartupMonitor().addPercentComplete(2);
 
     	// Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
     	Application.getClassLoader().add(new File(plugindir.getPath()));
 			Application.getClassLoader().add(new File(plugindir.getPath() + "/bin"));
     	
-      Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 2);
+      Application.getStartupMonitor().addPercentComplete(2);
 
     	// Und jetzt noch alle darin befindlichen Jars
     	jars = Application.getClassLoader().addJars(plugindir);
 
-      Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 2);
+      Application.getStartupMonitor().addPercentComplete(2);
     }
     catch (MalformedURLException mue)
     {
@@ -325,7 +325,7 @@ public final class PluginLoader
 			Application.getStartupMonitor().setStatusText("installing plugin " + manifest.getName());
       try {
         plugin.install();
-        Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
+        Application.getStartupMonitor().addPercentComplete(10);
       }
       catch (Throwable t)
       {
@@ -348,7 +348,7 @@ public final class PluginLoader
         Application.getStartupMonitor().setStatusText("updating plugin " + manifest.getName());
 				try {
           plugin.update(oldVersion);
-          Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
+					Application.getStartupMonitor().addPercentComplete(10);
 				}
 				catch (Throwable t)
 				{
@@ -366,7 +366,7 @@ public final class PluginLoader
 
 		try {
 			plugin.init();
-      Application.getStartupMonitor().percentComplete(Application.getStartupMonitor().percentComplete() + 10);
+			Application.getStartupMonitor().addPercentComplete(10);
 
       // ok, wir haben alles durchlaufen, wir speichern die neue Version.
 			updateChecker.setAttribute(pluginClass.getName() + ".version",manifest.getVersion());
@@ -548,6 +548,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.11  2004/11/04 22:41:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *
