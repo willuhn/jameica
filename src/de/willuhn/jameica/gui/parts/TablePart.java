@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.30 $
- * $Date: 2005/02/20 19:04:38 $
+ * $Revision: 1.31 $
+ * $Date: 2005/03/09 01:06:36 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -63,7 +63,6 @@ public class TablePart implements Part
 
 	private boolean showSummary						= true;
 
-	private Composite parent							= null;
 	private Composite comp 								= null;
 	private Label summary									= null;
 	 
@@ -172,9 +171,8 @@ public class TablePart implements Part
 	 * Hinweis: Der im Konstruktor verwendete GenericIterator zum initialen Befuellen
 	 * der Tabelle wird hierbei nicht angefasst. 
    * @param item zu entfernendes Element.
-   * @throws RemoteException
    */
-  public void removeItem(GenericObject item) throws RemoteException
+  public void removeItem(GenericObject item)
 	{
 		if (table == null || item == null || table.isDisposed())
 			return;
@@ -326,7 +324,6 @@ public class TablePart implements Part
    */
   public synchronized void paint(Composite parent) throws RemoteException
   {
-		this.parent = parent;
 
 		if (comp != null && !comp.isDisposed())
 		{
@@ -555,6 +552,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.31  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.30  2005/02/20 19:04:38  web0
  * *** empty log message ***
  *

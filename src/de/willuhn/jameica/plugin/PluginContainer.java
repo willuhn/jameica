@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Attic/PluginContainer.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/10/08 16:41:58 $
- * $Author: willuhn $
+ * $Revision: 1.5 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -70,7 +70,6 @@ public class PluginContainer {
   /**
    * Liefert das Manifest des Plugins.
    * @return Manifest.
-   * @throws IOException
    */
   public Manifest getManifest()
   {
@@ -118,6 +117,9 @@ public class PluginContainer {
 
 /**********************************************************************
  * $Log: PluginContainer.java,v $
+ * Revision 1.5  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.4  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLRMISocketFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/19 02:14:00 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -28,10 +28,11 @@ import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
-public class SSLRMISocketFactory extends RMISocketFactory {
-
-	/** Thread-local reference to the last SSLSocket created */
-	private static final ThreadLocal lastSocket = new ThreadLocal();
+/**
+ * Implementierung einer RMI-Socketfactory mit Unterstuetzung fuer SSL.
+ */
+public class SSLRMISocketFactory extends RMISocketFactory
+{
 
 	private SSLServerSocketFactory serverSocketFactory;
   private SSLSocketFactory socketFactory;
@@ -83,6 +84,7 @@ public class SSLRMISocketFactory extends RMISocketFactory {
 	/**
    * Loggt die vom Socket unterstuetzten Protokolle und Cipher-Suites.
    * @param socket zu loggender Socket.
+	 * @throws IOException
    */
   private void log(Object socket) throws IOException
 	{
@@ -123,31 +125,13 @@ public class SSLRMISocketFactory extends RMISocketFactory {
     } 
     Logger.debug(sb.toString());
   }
-
-	/**
-	 * Static method invoked by the InputStreamMonitor to register that
-	 * the specifed SSL socket was used to read.
-	 */
-	public static void setLocalThreadLastReadSocket(SSLSocket socket) {
-		Logger.info("connect from + " + socket);
-		lastSocket.set(socket);
-	}
-
-	/**
-	 * Returns the SSLSocket returned in the last SSLServerSocket.accept()
-	 * invocation in this thread, or one of its parents.
-	 *
-	 * @return the last SSLSocket object returned in this thread (or its
-	 *         parent), or null if no SSLSockets have bene processed
-	 */
-	public static SSLSocket getLocalThreadLastReadSocket() {
-		return((SSLSocket) lastSocket.get());
-	}
-
 }
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.2  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.1  2005/01/19 02:14:00  willuhn
  * @N Wallet zum Verschluesseln von Benutzerdaten
  *

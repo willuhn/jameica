@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/LicenseControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/11/12 18:23:58 $
- * $Author: willuhn $
+ * $Revision: 1.4 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -14,7 +14,6 @@ package de.willuhn.jameica.gui.internal.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.rmi.RemoteException;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.AbstractControl;
@@ -43,9 +42,8 @@ public class LicenseControl extends AbstractControl {
 	/**
 	 * Liefert eine Liste mit allen direkt von Jameica verwendeten Komponenten.
    * @return Liste der Komponenten.
-   * @throws RemoteException
    */
-  public FormTextPart getLibList() throws RemoteException
+  public FormTextPart getLibList()
 	{
 		if (libList != null)
 			return libList;
@@ -93,6 +91,9 @@ public class LicenseControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
+ * Revision 1.4  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.3  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.28 $
- * $Date: 2004/11/12 18:23:58 $
- * $Author: willuhn $
+ * $Revision: 1.29 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -80,7 +80,7 @@ public class Menu
   /**
    * Laedt das Menu-Item und dessen Kinder.
    * @param element das zu ladende Item.
-   * @param parent Menu.
+   * @param parentMenu
    * @throws Exception
    */
   private void load(final MenuItem element, org.eclipse.swt.widgets.Menu parentMenu) throws Exception
@@ -176,6 +176,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.29  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.28  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

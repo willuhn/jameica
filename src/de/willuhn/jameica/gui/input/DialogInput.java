@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/11/12 18:23:59 $
- * $Author: willuhn $
+ * $Revision: 1.13 $
+ * $Date: 2005/03/09 01:06:37 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -42,7 +42,6 @@ import de.willuhn.logging.Logger;
 public class DialogInput extends ButtonInput
 {
 
-	private String value;
 	private Text text;
   private AbstractDialog dialog;
   private Object choosen;
@@ -134,6 +133,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.13  2005/03/09 01:06:37  web0
+ * @D javadoc fixes
+ *
  * Revision 1.12  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

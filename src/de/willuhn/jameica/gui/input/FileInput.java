@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/01/18 23:00:32 $
- * $Author: willuhn $
+ * $Revision: 1.11 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -32,7 +32,6 @@ public class FileInput extends ButtonInput
 {
 
 	private Text text;
-	private String value;
 	
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -93,6 +92,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.11  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.10  2005/01/18 23:00:32  willuhn
  * @C Default focus to actual file
  *

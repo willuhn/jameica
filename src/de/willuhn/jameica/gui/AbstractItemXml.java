@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/12/13 22:48:30 $
- * $Author: willuhn $
+ * $Revision: 1.7 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -168,9 +168,8 @@ public abstract class AbstractItemXml implements Item
   /**
    * Fuegt ein Kind hinzu.
    * @param item
-   * @throws RemoteException
    */
-  public void addChild(NavigationItem item) throws RemoteException
+  public void addChild(NavigationItem item)
   {
     if (item == null)
       return;
@@ -189,6 +188,9 @@ public abstract class AbstractItemXml implements Item
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.7  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.6  2004/12/13 22:48:30  willuhn
  * *** empty log message ***
  *

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/10/29 16:16:24 $
- * $Author: willuhn $
+ * $Revision: 1.11 $
+ * $Date: 2005/03/09 01:06:37 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -22,9 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.I18N;
 
 /**
  * Diese Klasse erzeugt standardisierte Bereiche fuer die Dialog-Buttons.
@@ -32,8 +30,6 @@ import de.willuhn.util.I18N;
  */
 public class ButtonArea
 {
-	private I18N i18n;
-
   private Composite buttonArea;
 
   /**
@@ -43,7 +39,6 @@ public class ButtonArea
    */
   public ButtonArea(Composite parent, int numButtons)
   {
-		i18n = Application.getI18n();
     GridLayout layout = new GridLayout();
     layout.marginHeight=0;
     layout.marginWidth=0;
@@ -120,6 +115,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.11  2005/03/09 01:06:37  web0
+ * @D javadoc fixes
+ *
  * Revision 1.10  2004/10/29 16:16:24  willuhn
  * *** empty log message ***
  *

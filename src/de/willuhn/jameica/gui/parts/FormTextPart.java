@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/11/12 18:23:58 $
- * $Author: willuhn $
+ * $Revision: 1.8 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -30,11 +30,10 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
-import de.willuhn.jameica.gui.*;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
-import de.willuhn.logging.Logger;
 
 /**
  * Freiformatierbarer Text.
@@ -130,20 +129,13 @@ public class FormTextPart implements Part {
 	public void setText(String s)
 	{
 		content = new StringBuffer(s);
-		try {
-			refresh();
-		}
-		catch (RemoteException e)
-		{
-			Logger.error("error while refreshing formTextPart",e);
-		}
+		refresh();
 	}
 
 
   /**
-   * @throws RemoteException
    */
-  public void refresh() throws RemoteException
+  public void refresh()
 	{
 		if (text == null || content == null)
 			return;
@@ -217,6 +209,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.8  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.7  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

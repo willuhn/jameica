@@ -1,8 +1,8 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.70 $
- * $Date: 2005/01/30 20:47:43 $
- * $Author: willuhn $
+ * $Revision: 1.71 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  * 
@@ -107,6 +107,7 @@ public class GUI
 
 	/**
 	 * Laedt die GUI.
+	 * @throws Exception
 	 */
 	private void load() throws Exception
 	{
@@ -694,6 +695,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.71  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.70  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Part.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/11/10 15:53:23 $
- * $Author: willuhn $
+ * $Revision: 1.3 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -32,7 +32,7 @@ public interface Part {
 	/**
 	 * Malt die Komponente in das angegebene Composite.
    * @param parent das Composite.
-   * @throws Exception kann geworfen werden, wenn es beim Malen zu einem Fehler kommt.
+	 * @throws RemoteException
    */
   public void paint(Composite parent) throws RemoteException;
 
@@ -41,6 +41,9 @@ public interface Part {
 
 /**********************************************************************
  * $Log: Part.java,v $
+ * Revision 1.3  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.2  2004/11/10 15:53:23  willuhn
  * @N Panel
  *

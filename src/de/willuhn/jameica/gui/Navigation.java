@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.28 $
- * $Date: 2004/11/12 18:23:58 $
- * $Author: willuhn $
+ * $Revision: 1.29 $
+ * $Date: 2005/03/09 01:06:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -89,7 +89,7 @@ public class Navigation implements Part
 	 * Laedt das Navigation-Item und dessen Kinder.
    * @param element das zu ladende Item.
    * @param parentTree uebergeordnetes SWT-Element.
-   * @throws Exception
+   * @throws RemoteException
    */
   private void load(NavigationItem element, TreeItem parentTree) throws RemoteException
 	{
@@ -159,7 +159,7 @@ public class Navigation implements Part
 	 * Laedt nur die Kinder.
    * @param element Element.
    * @param parentTree Parent.
-   * @throws Exception
+	 * @throws RemoteException
    */
   private void loadChilds(NavigationItem element, TreeItem parentTree) throws RemoteException
 	{
@@ -254,6 +254,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.29  2005/03/09 01:06:36  web0
+ * @D javadoc fixes
+ *
  * Revision 1.28  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *
