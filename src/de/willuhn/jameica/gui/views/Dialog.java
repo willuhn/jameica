@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Dialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/12 23:46:27 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/17 00:53:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -59,6 +59,7 @@ public abstract class Dialog
   {
     shell.pack();
 		//shell.setSize(shell.getBounds().width,300);
+		shell.setLocation(display.getCursorLocation().x-shell.getBounds().width,display.getCursorLocation().y);
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
@@ -79,6 +80,9 @@ public abstract class Dialog
 
 /*********************************************************************
  * $Log: Dialog.java,v $
+ * Revision 1.2  2004/02/17 00:53:47  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/02/12 23:46:27  willuhn
  * *** empty log message ***
  *

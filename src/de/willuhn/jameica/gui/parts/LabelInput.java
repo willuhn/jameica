@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/17 00:53:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
  */
 public class LabelInput extends Input
 {
+	private Label label;
   private String value;
 
   /**
@@ -40,7 +41,7 @@ public class LabelInput extends Input
    */
   public Control getControl()
   {
-    Label label = new Label(parent,SWT.WRAP);
+    label = new Label(parent,SWT.WRAP);
     label.setText(value);
     return label;
 
@@ -66,6 +67,10 @@ public class LabelInput extends Input
    */
   public void setValue(String value)
   {
+		if (value == null || label == null)
+			return;
+		this.label.setText(value);
+		this.label.redraw();
   }
 
   /**
@@ -87,6 +92,9 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.2  2004/02/17 00:53:47  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

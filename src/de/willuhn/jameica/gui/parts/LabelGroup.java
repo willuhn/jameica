@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/01/29 00:07:24 $
+ * $Revision: 1.3 $
+ * $Date: 2004/02/17 00:53:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -187,20 +187,24 @@ public class LabelGroup
    */
   public ButtonArea createButtonArea(int numButtons)
   {
-		final GridData g = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		final GridData g = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
 		g.horizontalSpan = 2;
 		final Composite comp = new Composite(group,SWT.NONE);
+		comp.setLayoutData(g);
+
 		final GridLayout gl = new GridLayout();
 		gl.marginHeight = 1;
 		gl.marginWidth = 1;
 		comp.setLayout(gl);
-		comp.setLayoutData(g);
   	return new ButtonArea(comp,numButtons);
   }
 }
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.3  2004/02/17 00:53:47  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/01/29 00:07:24  willuhn
  * @N Text widget
  *
