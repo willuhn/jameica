@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.33 $
- * $Date: 2005/03/01 22:56:48 $
+ * $Revision: 1.34 $
+ * $Date: 2005/03/21 21:46:47 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.MessagingFactory;
@@ -135,6 +136,27 @@ public final class Application {
     }
 		//
 		////////////////////////////////////////////////////////////////////////////
+
+		try
+		{
+			Logger.info("starting Jameica Version " + getManifest().getVersion());
+		}
+		catch (Exception e)
+		{
+			Logger.warn("unable to detect Jameica Version number");
+		}
+
+		try
+		{
+			JarFile jar = new JarFile("jameica.jar");
+			java.util.jar.Manifest mf = jar.getManifest();
+			Logger.info("Built-Date : " + mf.getMainAttributes().getValue("Built-Date"));
+			Logger.info("Buildnumber: " + mf.getMainAttributes().getValue("Implementation-Buildnumber"));
+		}
+		catch (Exception e)
+		{
+			Logger.warn("unable to read jar manifest, running uncompressed within debugger?");
+		}
 
 		// Migration
 		// Der PluginLoader ist in das Package "plugin" verschoben worden. Damit
@@ -469,6 +491,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.34  2005/03/21 21:46:47  web0
+ * @N added manifest tag "built-date"
+ * @N version number, built-date and buildnumber are written to log now
+ *
  * Revision 1.33  2005/03/01 22:56:48  web0
  * @N master password can now be changed
  *

@@ -14,6 +14,8 @@
     <classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/swtcalendar/swtcalendar.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/swt/win32/swt.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/swt/linux/swt.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/swt/linux/swt-mozilla.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/swt/linux/swt-pi.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

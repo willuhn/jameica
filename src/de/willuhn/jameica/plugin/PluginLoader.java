@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/01/30 20:47:43 $
- * $Author: willuhn $
+ * $Revision: 1.14 $
+ * $Date: 2005/03/21 21:46:47 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -286,8 +286,23 @@ public final class PluginLoader
 		Class pluginClass = container.getPluginClass();
 		Manifest manifest = container.getManifest();
 
+		Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
+
+		try
+		{
+			JarFile jar = new JarFile(container.getFile());
+			java.util.jar.Manifest mf = jar.getManifest();
+			Logger.info("Built-Date : " + mf.getMainAttributes().getValue("Built-Date"));
+			Logger.info("Buildnumber: " + mf.getMainAttributes().getValue("Implementation-Buildnumber"));
+		}
+		catch (Exception e)
+		{
+			Logger.warn("unable to read jar manifest, running uncompressed within debugger?");
+		}
+
 		if (container.isInstalled())
 		{
+			Logger.info("plugin allready initialized, skipping");
 			return;
 		}
 
@@ -548,6 +563,10 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.14  2005/03/21 21:46:47  web0
+ * @N added manifest tag "built-date"
+ * @N version number, built-date and buildnumber are written to log now
+ *
  * Revision 1.13  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *
