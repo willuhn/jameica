@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/12 23:49:31 $
+ * $Revision: 1.4 $
+ * $Date: 2004/12/17 01:10:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -134,7 +134,8 @@ public class Manifest
         // ignore
       }
     }
-    return new MenuItemXml(null,root.getFirstChildNamed("menu"),i18n);
+    IXMLElement menu = root.getFirstChildNamed("menu");
+    return menu == null ? null : new MenuItemXml(null,menu,i18n);
   }
 
   /**
@@ -157,7 +158,8 @@ public class Manifest
         // ignore
       }
     }
-    return new NavigationItemXml(null,root.getFirstChildNamed("navigation"),i18n);
+    IXMLElement navi = root.getFirstChildNamed("navigation");
+    return navi == null ? null : new NavigationItemXml(null,navi,i18n);
   }
 
 }
@@ -165,6 +167,9 @@ public class Manifest
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.4  2004/12/17 01:10:50  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/10/12 23:49:31  willuhn
  * *** empty log message ***
  *
