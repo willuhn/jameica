@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/01/03 18:08:06 $
+ * $Revision: 1.15 $
+ * $Date: 2004/01/04 19:51:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.gui.views.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -37,6 +38,7 @@ public class Table
   private Controller controller;
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
+  private Enumeration list2;
 
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
@@ -49,6 +51,16 @@ public class Table
     this.controller = controller;
   }
   
+	/**
+	 * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
+	 * @param list Liste mit Objekten, die angezeigt werden sollen.
+	 * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
+	 */
+	public Table(Enumeration list, Controller controller)
+	{
+		this.list2 = list;
+		this.controller = controller;
+	}
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
    * @param title Name der Spaltenueberschrift.
@@ -90,12 +102,14 @@ public class Table
     
     // Das hier ist eigentlich nur noetig um die Ausrichtung der Spalten zu ermitteln
     DBObject _o = null;
-    try {
-      _o = list.next();
-    }
-    catch (Exception e) {
-      // das kann ruhig schiefgehen
-    }
+
+		try {
+			_o = list.next();
+		}
+		catch (Exception e)
+		{
+			// nicht weiter tragisch, wenn das fehlschlaegt
+		}
 
     for (int i=0;i<this.fields.size();++i)
     {
@@ -128,39 +142,55 @@ public class Table
 
 
     // Iterieren ueber alle Elemente der Liste
-    while (list.hasNext())
-    {
-      final TableItem item = new TableItem(table, SWT.NONE);
-      final DBObject o = list.next();
-      for (int i=0;i<this.fields.size();++i)
-      {
-        String[] fieldData = (String[]) fields.get(i);
-        String field = fieldData[1];
-        item.setData(o.getID());
-        Object value = o.getField(field);
-        if (value == null)
-        {
-          // Wert ist null. Also zeigen wir einen Leerstring an
-          item.setText(i,"");
-        }
-        else if (value instanceof DBObject)
-        {
-          // Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
-          DBObject dbo = (DBObject) value;
-          item.setText(i,dbo.getField(dbo.getPrimaryField()).toString());
-        }
-        else
-        {
-          // Regulaerer Wert.
-          // Wir schauen aber noch, ob wir einen Formatter haben
-          Formatter f = (Formatter) formatter.get(field);
-          if (f != null)
-            item.setText(i,f.format(value));
-          else 
-            item.setText(i,value.toString());
-        }
-      }
-    }
+		if (list != null)
+		{
+			while (list.hasNext())
+			{
+				final TableItem item = new TableItem(table, SWT.NONE);
+				final DBObject o = list.next();
+				for (int i=0;i<this.fields.size();++i)
+				{
+					String[] fieldData = (String[]) fields.get(i);
+					String field = fieldData[1];
+					item.setData(o.getID());
+					Object value = o.getField(field);
+					if (value == null)
+					{
+						// Wert ist null. Also zeigen wir einen Leerstring an
+						item.setText(i,"");
+					}
+					else if (value instanceof DBObject)
+					{
+						// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
+						DBObject dbo = (DBObject) value;
+						item.setText(i,dbo.getField(dbo.getPrimaryField()).toString());
+					}
+					else
+					{
+						// Regulaerer Wert.
+						// Wir schauen aber noch, ob wir einen Formatter haben
+						Formatter f = (Formatter) formatter.get(field);
+						if (f != null)
+							item.setText(i,f.format(value));
+						else 
+							item.setText(i,value.toString());
+					}
+				}
+			}
+		}
+		else if (list2 != null)
+		{
+			while (list2.hasMoreElements())
+			{
+				final TableItem item = new TableItem(table, SWT.NONE);
+				final Object o = list2.nextElement();
+				if (o == null)
+					item.setText(0,"");
+				else
+					item.setText(0,o.toString());
+					item.setData(o.toString());
+			}
+		}
 
     // noch der Listener fuer den Doppelklick drauf.
     table.addListener(SWT.MouseDoubleClick,
@@ -201,12 +231,14 @@ public class Table
 
     // So, und jetzt malen wir noch ein Label mit der Anzahl der Treffer drunter.
     Label summary = new Label(parent,SWT.NONE);
-    summary.setText(list.size() + " " + (list.size() == 1 ? I18N.tr("Datensatz") : I18N.tr("Datensätze")) + ".");
+		if (list != null)
+	    summary.setText(list.size() + " " + (list.size() == 1 ? I18N.tr("Datensatz") : I18N.tr("Datensätze")) + ".");
 
     // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
     // Damit kann das Control wiederverwendet werden ;) 
     try {
-      this.list.begin();
+			if (list != null)
+	      this.list.begin();
     }
     catch (RemoteException e)
     {
@@ -219,6 +251,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.15  2004/01/04 19:51:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/01/03 18:08:06  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

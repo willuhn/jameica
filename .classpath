@@ -7,5 +7,6 @@
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
     <classpathentry kind="lib" path="lib/mckoidb.jar" sourcepath="/jameica/lib.src/mckoidb.src.zip"/>
     <classpathentry kind="lib" path="lib/nanoxml-2.2.3.jar" sourcepath="/jameica/lib.src/nanoxml-2.2.3.src.jar"/>
+    <classpathentry kind="src" path="/util"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
