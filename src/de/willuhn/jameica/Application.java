@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.25 $
+ * $Date: 2004/01/25 18:39:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,6 @@ import de.willuhn.util.*;
  */
 public class Application {
 
-  public static boolean IDE   = true;
   private static boolean serverMode = false;
 
   private static boolean cleanShutdown = false;
@@ -78,15 +77,12 @@ public class Application {
       return;
     }
     
-    Application.IDE   = app.config.ide();
-
 		app.log.setLevel(app.config.getLogLevel());
 
     // switch logger to defined log file
     try {
       Application.getLog().info("adding defined log file " + app.config.getLogFile());
       app.log.addTarget(new FileOutputStream(app.config.getLogFile()));
-      Application.getLog().info("done");
     }
     catch (FileNotFoundException e)
     {
@@ -194,6 +190,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.25  2004/01/25 18:39:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

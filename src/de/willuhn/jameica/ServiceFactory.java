@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ServiceFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.3 $
+ * $Date: 2004/01/25 18:39:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import de.willuhn.datasource.common.LocalServiceData;
 import de.willuhn.datasource.common.RemoteServiceData;
 import de.willuhn.datasource.rmi.Service;
+import de.willuhn.util.MultipleClassLoader;
 
 
 /**
@@ -63,7 +64,6 @@ public class ServiceFactory
   	    }
 			}
     }
-    Application.getLog().info("done");
   }
 	
   /**
@@ -76,13 +76,11 @@ public class ServiceFactory
       Application.getLog().info("trying to start new RMI registry");
       System.setSecurityManager(new NoSecurity());
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
-      Application.getLog().info("done");
     }
     catch (RemoteException e)
     {
       Application.getLog().info("failed, trying to use an existing one");
       LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
-      Application.getLog().info("done");
     }
     rmiStarted = true;
     
@@ -116,7 +114,7 @@ public class ServiceFactory
 
 		Application.getLog().debug("searching for local service " + service.getName());
 		try {
-			Class clazz = (Class) Class.forName(service.getClassName());
+			Class clazz = MultipleClassLoader.load(service.getClassName());
 			Constructor ct = clazz.getConstructor(new Class[]{HashMap.class});
 			ct.setAccessible(true);
 			Service s = (Service) ct.newInstance(new Object[] {service.getInitParams()});
@@ -213,7 +211,6 @@ public class ServiceFactory
 			catch (Exception ex) {
 				Application.getLog().error("error while closing service",ex);
       }
-			Application.getLog().info("done");
     }
   }
 
@@ -234,6 +231,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.3  2004/01/25 18:39:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

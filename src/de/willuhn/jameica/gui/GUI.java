@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.18 $
+ * $Date: 2004/01/25 18:39:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -275,10 +275,14 @@ public class GUI
       gui.currentView.setCurrentObject(o);
 
 			try {
+				if (!ErrorView.class.getName().equals(className))
+					setActionText("");
 				gui.currentView.bind();
 			}
 			catch (Exception e)
 			{
+				setActionText("Fehler beim Anzeigen des Dialogs.");
+				Application.getLog().error("error while loading view " + className,e);
 				GUI.startView(ErrorView.class.getName(),e);
 			}
 
@@ -416,7 +420,6 @@ public class GUI
       Application.getLog().info("shutting down GUI");
       gui.shell.dispose();
       gui.display.dispose();
-      Application.getLog().info("done");
     }
     catch (Exception e)
     {
@@ -428,6 +431,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.18  2004/01/25 18:39:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

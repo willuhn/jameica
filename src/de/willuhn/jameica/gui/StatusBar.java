@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/25 18:39:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -114,10 +114,11 @@ public class StatusBar {
    */
   protected void setActionText(String message)
   {
-		if (message == null || "".equals(message))
+		if (message == null)
 			return;
 
-    lastActionMessages.push("[" + new Date().toString() + "] " + message);
+		if (!"".equals(message))
+	    lastActionMessages.push("[" + new Date().toString() + "] " + message);
 
 		// String lines[] = (String[]) lastActionMessages.toArray(new String[lastActionMessages.size()]);
     actionText.setText(message);
@@ -158,6 +159,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.9  2004/01/25 18:39:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

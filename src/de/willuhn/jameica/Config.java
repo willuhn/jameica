@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.16 $
+ * $Date: 2004/01/25 18:39:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,8 +73,6 @@ public class Config
   
   private String logLevel = Logger.LEVEL_TEXT[Logger.LEVEL_DEBUG];
   
-  private boolean ide = false;
-  
   private String configDir = "cfg";
   private String configFile = null;
   
@@ -138,7 +136,7 @@ public class Config
       // process remote services
       if ("remoteservice".equals(key.getFullName())) 
       {
-        Application.getLog().info("  found remote service \"" + name + "\" [type: "+type+"]");
+        Application.getLog().info("found remote service \"" + name + "\" [type: "+type+"]");
         RemoteServiceData data = new RemoteServiceData();
         data.setClassName(clazz);
         data.setName(name);
@@ -150,7 +148,7 @@ public class Config
       // process local services
 			if ("localservice".equals(key.getFullName())) 
       {
-        Application.getLog().info("  found local service \"" + name + "\" [type: "+type+"]");
+        Application.getLog().info("found local service \"" + name + "\" [type: "+type+"]");
 				LocalServiceData data = new LocalServiceData();
 				data.setClassName(clazz);
 				data.setName(name);
@@ -168,7 +166,6 @@ public class Config
       }
   
     }
-    Application.getLog().info("done");
     ////////////////////////////////////////////
   
   
@@ -181,16 +178,13 @@ public class Config
     }
     catch (Exception ex)
     {
-      Application.getLog().info("  not found. fallback to default language: " + defaultLanguage.toString());
+      Application.getLog().info("not found. fallback to default language: " + defaultLanguage.toString());
     }
 
     logfile = xml.getFirstChildNamed("logfile").getContent();
 
     logLevel = xml.getFirstChildNamed("loglevel").getContent();
     
-    String _ide = xml.getFirstChildNamed("ide").getContent();
-    ide = "true".equalsIgnoreCase(_ide) || "yes".equalsIgnoreCase(_ide);
-
     // Read rmi port
     try {
       rmiPort = Integer.parseInt(xml.getFirstChildNamed("rmiport").getContent());
@@ -363,23 +357,6 @@ public class Config
 	{
 		this.logLevel = name;
 	}
-  /**
-   * Liefert true, wenn die Anwendung um IDE-Mode laeuft.
-   * @return true, wenn die Anwendung um IDE-Mode laeuft.
-   */
-  public boolean ide()
-  {
-    return ide;
-  }
-
-	/**
-	 * Legt fest, ob die Anwendung in der IDE laeuft. 
-   * @param i true, wenn sie in der IDE laeuft.
-   */
-  public void setIde(boolean i)
-	{
-		this.ide = i;
-	}
 
   /**
    * Liefert den Pfad zum Config-Verzeichnis.
@@ -398,7 +375,6 @@ public class Config
 	{
 		xml.getFirstChildNamed("logfile").setContent(this.logfile);
 		xml.getFirstChildNamed("loglevel").setContent(this.logLevel);
-		xml.getFirstChildNamed("ide").setContent(this.ide ? "true" : "false");
 		xml.getFirstChildNamed("defaultlanguage").setContent(this.defaultLanguage.toString());
 		xml.getFirstChildNamed("rmiport").setContent(""+this.rmiPort);
 		xml.getFirstChildNamed("plugindir").setContent(this.pluginDir);
@@ -470,6 +446,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.16  2004/01/25 18:39:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

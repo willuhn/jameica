@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.30 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.31 $
+ * $Date: 2004/01/25 18:39:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,21 +12,17 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
-import java.io.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.util.FileFinder;
+import de.willuhn.util.ClassFinder;
 import de.willuhn.util.MultipleClassLoader;
 
 /**
@@ -42,9 +38,6 @@ public class PluginLoader extends ClassLoader
   // Verzeichnis, in dem sich die Plugins befinden
   private static File plugindir = null;
 
-  // der ClassLoader
-  // private static URLClassLoader loader = null;
-  
   // Interface aller Plugins. Es werden nur Plugins geladen, die dieses Interface
   // implementieren
   private static Class pluginInterface = Plugin.class;
@@ -56,6 +49,7 @@ public class PluginLoader extends ClassLoader
   // Update-Methode aufrufen koennen.
   private static Settings updateChecker = new Settings(PluginLoader.class);
 
+
   /**
    * Wird beim Start der Anwendung ausgefuehrt, sucht im Classpath
    * nach verfuegbaren Plugins und initialisiert diese.
@@ -64,49 +58,31 @@ public class PluginLoader extends ClassLoader
   {
     Application.getLog().info("init plugins");
     
-    if (Application.IDE)
-    {
-      // loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","../fibu/src");
-      loadPluginFromIDE("de.willuhn.jameica.dynameica.Dynameica","../dynameica/src");
-    }
-
     try {
       // Plugin-Verzeichnis ermitteln
       plugindir = new File(Application.getConfig().getPluginDir()).getCanonicalFile();
-      Application.getLog().info("  using directory " + plugindir.getPath());
+      Application.getLog().info("using directory " + plugindir.getPath());
     }
     catch (IOException e)
     {
-      Application.getLog().error("  unable to determine plugin dir, giving up",e);
+      Application.getLog().error("unable to determine plugin dir, giving up",e);
       return;
     }
 
-    // Liste aller Jars aus dem plugin-Verzeichnis holen
-    FileFinder finder = new FileFinder(plugindir);
-    finder.extension("jar");
-    File[] jars = finder.findRecursive();
-
+    File[] jars = null;
+    try {
+    	jars = MultipleClassLoader.addJars(plugindir);
+    }
+    catch (MalformedURLException mue)
+    {
+    	Application.getLog().error("loading of jars from plugin dir failed",mue);
+    	return;
+    }
     if (jars == null || jars.length < 1)
     {
-      Application.getLog().info("  no plugins found");
-      return;
+			Application.getLog().info("no plugins found");
+			return;
     }
-
-    // jetzt muessen wir den URLClassLoader mit allen URLs der Jars fuettern
-    URL[] urls = new URL[jars.length];
-    for(int i=0;i<jars.length;++i)
-    {
-      File jar = (File) jars[i];
-      try {
-        urls[i] = jar.toURL();
-      }
-      catch (MalformedURLException e) 
-      {
-        // skip
-      }
-    }
-
-    MultipleClassLoader.addClassloader(new URLClassLoader(urls));
 
     // und jetzt gehen wir nochmal ueber alle Jars und ueber alle darin befindlichen Klassen
     // und versuchen sie zu laden
@@ -148,6 +124,7 @@ public class PluginLoader extends ClassLoader
 					continue;
 
 				entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
+
 				// Wir laden das Plugin
 				pluginFound = loadPlugin(jar,entryName) || pluginFound;
       }
@@ -159,7 +136,6 @@ public class PluginLoader extends ClassLoader
         {
           GUI.addMenu(jar.getInputStream(menu));
         } catch (IOException e1) {Application.getLog().error("failed",e1);}
-				Application.getLog().info("done");
 			}
 			if (pluginFound && navi != null)
 			{
@@ -168,38 +144,10 @@ public class PluginLoader extends ClassLoader
         {
           GUI.addNavigation(jar.getInputStream(navi));
 				} catch (IOException e1) {Application.getLog().error("failed",e1);}
-        Application.getLog().info("done");
       }
     }
-    
-    Application.getLog().info("done");
   }
   
-
-  /**
-   * Hey, diese Funktion muss abgeklemmt werden wenn ausgeliefert wird ;)
-   * @param clazz
-   * @param path
-   */
-  private static void loadPluginFromIDE(String clazz, String path)
-  {
-    if (!Application.IDE)
-      return;
-
-    try {
-      try {
-        GUI.addMenu(new FileInputStream(path + "/menu.xml"));
-      } catch (FileNotFoundException e) {} // skip
-      try {
-        GUI.addNavigation(new FileInputStream(path + "/navigation.xml"));
-      } catch (FileNotFoundException e) {} // skip
-      
-      loadPlugin(null,clazz);
-    }
-    catch (Exception e) {
-			Application.getLog().error("error while loading plugin within IDE",e);
-    }
-  }
 
   /**
    * Prueft ob die uebergebene Klasse ein gueltiges Plugin ist.
@@ -242,8 +190,14 @@ public class PluginLoader extends ClassLoader
     {
 			return false;
     }
+    
+    if (clazz == null)
+    	return false;
 		//
 		///////////////////////////////////////////////////////////////
+
+		// wir tun die Klasse noch in die Liste der bekannten Klassen.
+		ClassFinder.addClass(clazz);
 
 
 		///////////////////////////////////////////////////////////////
@@ -272,7 +226,6 @@ public class PluginLoader extends ClassLoader
 	    Application.getLog().error("failed",e);
 	    return false;
     }
-		Application.getLog().debug("done");
 		//
 		///////////////////////////////////////////////////////////////
 
@@ -308,8 +261,6 @@ public class PluginLoader extends ClassLoader
 					Application.getLog().error("failed");
 					return false;
         }
-
-        Application.getLog().info("done");
         // Installation erfolgreich
         updateChecker.setAttribute(classname + ".version","" + plugin.getVersion());
       }
@@ -339,7 +290,6 @@ public class PluginLoader extends ClassLoader
 						Application.getLog().error("failed");
 						return false;
           }
-          Application.getLog().info("done");
           // Update erfolgreich
           updateChecker.setAttribute(classname + ".version","" + newVersion);
 				}
@@ -356,7 +306,6 @@ public class PluginLoader extends ClassLoader
 			if (plugin.init())
       {
         installedPlugins.add(plugin);
-        Application.getLog().info("done");
         return true;
       }
 		}
@@ -387,33 +336,18 @@ public class PluginLoader extends ClassLoader
     for (int i=0;i<installedPlugins.size();++i)
     {
       Plugin plugin = (Plugin) installedPlugins.get(i);
-      Application.getLog().info("  " + plugin.getClass().getName());
+      Application.getLog().info(plugin.getClass().getName());
       plugin.shutDown();
-      Application.getLog().info("  done");
     }
-    Application.getLog().info("done");
-  }
-
-  /**
-   * Liefert das Plugin mit der genannten Klasse.
-   * @param pluginClass Klasse des Plugins.
-   * @return das Plugin.
-   */
-  public static Plugin findByClass(Class pluginClass)
-  {
-  	for (int i=0;i<installedPlugins.size();++i)
-  	{
-  		Plugin p = (Plugin) installedPlugins.get(i);
-  		if (p.getClass().equals(pluginClass))
-  			return p;
-  	}
-  	return null;
   }
 
 }
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.31  2004/01/25 18:39:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.30  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *
