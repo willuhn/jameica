@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/01 20:28:58 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/01 23:02:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,14 +93,14 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
       if (!"".equals(this.filter))
         sql += " and " + filter;
     }
-    else
+    else if (filter != null && !"".equals(filter))
     {
       // ansonsten pappen wir den Filter so hinten dran, wie er kommt
       sql += " where " + filter;
     }
 
     // Statement enthaelt noch kein Order - also koennen wir unseres noch dranschreiben
-    if (sql.indexOf(" order ") != -1)
+    if (sql.indexOf(" order ") == -1)
     {
       sql += order;
     }
@@ -212,6 +212,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.7  2003/12/01 23:02:00  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/01 20:28:58  willuhn
  * @B filter in DBIteratorImpl
  * @N InputFelder generalisiert
