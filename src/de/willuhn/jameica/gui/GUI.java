@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.67 $
- * $Date: 2005/01/07 19:01:26 $
+ * $Revision: 1.68 $
+ * $Date: 2005/01/09 16:48:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -206,8 +206,8 @@ public class GUI
 		Logger.info("adding status panel");
 		addStatusBar(bottom);
 
+		Logger.info("open shell");
 		getShell().open();
-    getShell().forceActive();
 
 		// so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
 		// hinzu.
@@ -672,6 +672,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.68  2005/01/09 16:48:02  willuhn
+ * @R back to SWT build 3030
+ *
  * Revision 1.67  2005/01/07 19:01:26  willuhn
  * *** empty log message ***
  *
