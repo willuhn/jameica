@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/13 00:37:35 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/18 18:56:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
@@ -90,6 +91,30 @@ public class GUI
    */
   private void addView() {
     view = new View();
+  }
+
+  /**
+   * Fuegt dem Menu noch weitere Eintraege hinzu, die sich in dem uebergebenen
+   * Inputstream befinden. Der Stream muss eine menu.xml enthalten.
+   * Wird von Application nach der Initialisierung der Plugins aufgerufen.
+   * @param xml
+   */
+  protected void appendMenu(InputStream xml) {
+    if (menu == null)
+      addMenu();
+    menu.appendMenu(xml);
+  }
+
+  /**
+   * Fuegt der Navigation noch weitere Eintraege hinzu, die sich in dem uebergebenen
+   * Inputstream befinden. Der Stream muss eine navigation.xml enthalten.
+   * Wird von Application nach der Initialisierung der Plugins aufgerufen.
+   * @param xml
+   */
+  protected void appendNavigation(InputStream xml) {
+    if (navi == null)
+      addNavigation();
+    navi.appendNavigation(xml);
   }
 
   /**
@@ -242,6 +267,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.3  2003/11/18 18:56:08  willuhn
+ * @N added support for pluginmenus and plugin navigation
+ *
  * Revision 1.2  2003/11/13 00:37:35  willuhn
  * *** empty log message ***
  *

@@ -3,7 +3,6 @@
 <menu>
 
   <cascade name="File">
-    <item name="Import Plugin..."    class="de.willuhn.jameica.menu.ImportPlugin" />
     <item name="Close"    			 class="de.willuhn.jameica.menu.FileClose" />
   </cascade>
 

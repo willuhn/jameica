@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/13 00:37:35 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/18 18:56:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
+import java.io.InputStream;
 import java.util.Enumeration;
 
 import org.eclipse.swt.SWT;
@@ -32,6 +33,7 @@ import de.willuhn.jameica.util.Style;
 public class Navigation {
 
 	private XmlFile xml;
+  private Item root;
 
 	/**
    * Erzeugt die Navigation.
@@ -42,10 +44,24 @@ public class Navigation {
 		xml.read(getClass().getResourceAsStream("/navigation.xml"));
 
 		// add elements
-		Item root = new Item(null,"/navigation/item/");
+		root = new Item(null,"/navigation/item/");
     root.expandChilds(); 
-
 	}
+
+  /**
+   * Fuegt der Navigation noch weitere Eintraege hinzu, die sich in dem uebergebenen
+   * Inputstream befinden. Der Stream muss eine navigation.xml enthalten.
+   * Wird von GUI nach der Initialisierung der Plugins aufgerufen.
+   * @param navi
+   */
+  protected void appendNavigation(InputStream navi)
+  {
+    if (navi == null)
+      return;
+    xml.read(navi);
+    new Item(root.parentItem,"/navigation/item/");
+    root.expandChilds(); 
+  }
 
 	/**
    * Behandelt das Event "Ordner auf".
@@ -232,6 +248,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.4  2003/11/18 18:56:07  willuhn
+ * @N added support for pluginmenus and plugin navigation
+ *
  * Revision 1.3  2003/11/13 00:37:35  willuhn
  * *** empty log message ***
  *

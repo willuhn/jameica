@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/13 00:37:35 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/18 18:56:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 
@@ -45,6 +46,26 @@ public class Menu
     xml  = new XmlFile();
     xml.read(getClass().getResourceAsStream("/menu.xml"));
 
+    // add elements
+    Enumeration e = xml.getSections("/menu/").elements();
+    while (e.hasMoreElements())
+    {
+      String key = (String) e.nextElement();
+      new MenuCascade(key);
+    }
+  }
+
+  /**
+   * Fuegt dem Menu noch weitere Eintraege hinzu, die sich in dem uebergebenen
+   * Inputstream befinden. Der Stream muss eine menu.xml enthalten.
+   * Wird von GUI nach der Initialisierung der Plugins aufgerufen.
+   * @param menu
+   */
+  protected void appendMenu(InputStream menu)
+  {
+    if (menu == null)
+      return;
+    xml.read(menu);
     // add elements
     Enumeration e = xml.getSections("/menu/").elements();
     while (e.hasMoreElements())
@@ -125,6 +146,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.5  2003/11/18 18:56:08  willuhn
+ * @N added support for pluginmenus and plugin navigation
+ *
  * Revision 1.4  2003/11/13 00:37:35  willuhn
  * *** empty log message ***
  *

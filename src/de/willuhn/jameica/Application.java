@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/11/13 00:37:36 $
+ * $Revision: 1.7 $
+ * $Date: 2003/11/18 18:56:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,9 @@
 package de.willuhn.jameica;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import de.willuhn.jameica.rmi.DBHub;
 import de.willuhn.jameica.rmi.ServiceFactory;
@@ -35,6 +38,9 @@ public class Application {
     private Logger log;
     private Config config;
     private DBHub db;
+    
+    private ArrayList additionalMenus = new ArrayList();
+    private ArrayList additionalNavigation = new ArrayList();
 
 
   /**
@@ -116,13 +122,29 @@ public class Application {
     else {
       if (!serverMode) SplashScreen.close();
       app.gui = GUI.getInstance();
+      
+      // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins hinzu.
+      InputStream entry = null;
+      Iterator menus = app.additionalMenus.iterator();
+      while (menus.hasNext())
+      {
+        entry = (InputStream) menus.next();
+        app.gui.appendMenu(entry);
+      }
+      Iterator navigations = app.additionalNavigation.iterator();
+      while (navigations.hasNext())
+      {
+        entry = (InputStream) navigations.next();
+        app.gui.appendNavigation(entry);
+      }
+      
       app.gui.clientLoop(); 
     }
     shutDown();
   }
 
   /**
-   * Main-Loop for server mode.
+   * Startet den Mainloop fuer den Servermode.
    */
   private void serverLoop()
   {
@@ -130,6 +152,9 @@ public class Application {
     Runtime.getRuntime().addShutdownHook(new ShutdownHook());
   }
 
+  /**
+   * Faehrt die gesamte Anwendung herunter.
+   */
   public static void shutDown()
   {
     try {
@@ -164,7 +189,7 @@ public class Application {
 
 
   /**
-   * Retrieves the System-Logger.
+   * Liefert den System-Logger.
    * @return Logger.
    */
   public static Logger getLog()
@@ -173,7 +198,7 @@ public class Application {
   }
   
   /**
-   * Retrieves System-Config.
+   * Liefert die System-Config.
    * @return Config.
    */
   public static Config getConfig()
@@ -181,15 +206,60 @@ public class Application {
     return app.config;
   }
 
+  /**
+   * Liefert den als Default konfigurierten DBHub.
+   * @return dbHub
+   */
   public static DBHub getDefaultDatabase()
   {
     return app.db;
   }
+  
+  /**
+   * Preuft ob die Anwendung im Server-Mode (Also ohne GUI) laeuft.
+   * @return true, wenn sie im Servermode laeuft.
+   */
+  public static boolean inServerMode()
+  {
+    return serverMode;
+  }
+  
+  /**
+   * Erweitert das Menu der Anwendung um die in dem InputStream uebergebene menu.xml.
+   * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
+   * Diese Funktion wird vom PluginLoader ausgefuehrt.
+   * @param xml
+   */
+  protected static void addMenu(InputStream xml)
+  {
+    if (inServerMode())
+      return;
+
+    app.additionalMenus.add(xml);
+  }
+
+  /**
+   * Erweitert die Navigation der Anwendung um die in dem InputStream uebergebene navigation.xml.
+   * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
+   * Diese Funktion wird vom PluginLoader ausgefuehrt.
+   * @param xml
+   */
+  protected static void addNavigation(InputStream xml)
+  {
+    if (inServerMode())
+      return;
+
+    app.additionalNavigation.add(xml);
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.7  2003/11/18 18:56:07  willuhn
+ * @N added support for pluginmenus and plugin navigation
+ *
  * Revision 1.6  2003/11/13 00:37:36  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/14 00:57:38 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/18 18:56:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -107,16 +107,46 @@ public class PluginLoader extends ClassLoader
       if (jar == null)
         continue; // skip
 
+      // So, jetzt iterieren wir ueber alle Files in dem Jar
       Enumeration jarEntries = jar.entries();
+      JarEntry entry = null;
       while (jarEntries.hasMoreElements())
       {
-        String classname = ((JarEntry) jarEntries.nextElement()).getName();
-        int idxClass = classname.indexOf(".class");
+        entry = (JarEntry) jarEntries.nextElement();
+        String entryName = entry.getName();
+
+        // Wenn das Plugin eine menu.xml enthaelt, dann fuegen wir die dem Menu hinzu.
+        if ("menu.xml".equals(entryName))
+          try {
+            Application.getLog().info("  adding menu from plugin " + jar.getName());
+            Application.addMenu(jar.getInputStream(entry));
+            Application.getLog().info("  done");
+          }
+          catch (IOException e)
+          {
+            Application.getLog().error("  failed");
+          }
+
+        // Wenn das Plugin eine navigation.xml enthaelt, dann fuegen wir die der Navigation hinzu.
+        if ("navigation.xml".equals(entryName))
+        try {
+          Application.getLog().info("  adding navigation from plugin " + jar.getName());
+          Application.addNavigation(jar.getInputStream(entry));
+          Application.getLog().info("  done");
+        }
+        catch (IOException e)
+        {
+          Application.getLog().error("  failed");
+        }
+
+        // Alles andere muessen class-Files sein
+        int idxClass = entryName.indexOf(".class");
         if (idxClass == -1)
           continue;
 
-        classname = classname.substring(0, idxClass).replace('/', '.').replace('\\', '.');
-        loadPlugin(classname);
+        entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
+        // Wir laden das Plugin
+        loadPlugin(entryName);
       }
     }
     Application.getLog().info("done");
@@ -223,6 +253,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.5  2003/11/18 18:56:07  willuhn
+ * @N added support for pluginmenus and plugin navigation
+ *
  * Revision 1.4  2003/11/14 00:57:38  willuhn
  * *** empty log message ***
  *
