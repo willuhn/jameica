@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,7 +56,7 @@ public class ColorInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -121,7 +121,7 @@ public class ColorInput extends AbstractInput
   /**
    * Liefert die aktuell ausgewaehlte Farbe.
    * Rueckgabewert vom Typ <code>Color</code>.
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -129,7 +129,7 @@ public class ColorInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -144,7 +144,7 @@ public class ColorInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
    */
   public void focus()
   {
@@ -152,7 +152,7 @@ public class ColorInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
    */
   public void disable()
   {
@@ -162,7 +162,7 @@ public class ColorInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
    */
   public void enable()
   {
@@ -175,6 +175,9 @@ public class ColorInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

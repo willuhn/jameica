@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/19 22:53:59 $
+ * $Revision: 1.3 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -142,9 +142,9 @@ public class TablePart implements Part
 
   
   /**
-   * @see de.willuhn.jameica.gui.parts.Part#paint(java.awt.Composite)
+   * @see de.willuhn.jameica.gui.parts.Part#paint(org.eclipse.swt.widgets.Composite)
    */
-	public void paint(Composite parent) throws RemoteException
+  public void paint(Composite parent) throws RemoteException
   {
 		this.parent = parent;
 
@@ -411,6 +411,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.3  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.2  2004/04/19 22:53:59  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,7 @@ public class IntegerInput extends TextInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.Input#getControl()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -58,9 +58,9 @@ public class IntegerInput extends TextInput
   }
 
   /**
-   * Die Funktion liefert ein Objekt des Typs java.lang.Integer zurueck
+   * Die Funktion liefert ein Objekt des Typs <code>java.lang.Integer</code> zurueck
    * oder <code>null</code> wenn nichts eingegeben wurde.
-   * @see de.willuhn.jameica.gui.parts.TextInput#getValue()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -77,8 +77,8 @@ public class IntegerInput extends TextInput
   }
 
   /**
-   * Erwartet ein Objekt des Typs java.lang.Integer.
-   * @see de.willuhn.jameica.gui.parts.TextInput#setValue(java.lang.Object)
+   * Erwartet ein Objekt des Typs <code>java.lang.Integer</code>.
+   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -94,6 +94,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

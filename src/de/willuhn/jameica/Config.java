@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/04/25 17:07:21 $
+ * $Revision: 1.26 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -465,7 +465,7 @@ public class Config
 
 	/**
 	 * Liefert das Work-Verzeichnis von Jameica.
-   * @return
+   * @return das Work-Verzeichnis von Jameica.
    */
   public String getDir()
 	{
@@ -571,6 +571,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.26  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.25  2004/04/25 17:07:21  willuhn
  * @B StdXMLReader did not read the xml file correctly under win32
  *

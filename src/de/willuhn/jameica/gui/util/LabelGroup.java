@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/14 22:16:43 $
+ * $Revision: 1.3 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,7 +62,7 @@ public class LabelGroup
   
 	/**
 	 * Liefert das allumfassende Control der Gruppe.
-   * @return
+   * @return das Control der Group.
    */
   public Control getControl()
 	{
@@ -222,6 +222,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.3  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.2  2004/04/14 22:16:43  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/LicenseControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/26 22:42:18 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ public class LicenseControl extends AbstractControl {
 
 	/**
 	 * Liefert eine Liste mit allen direkt von Jameica verwendeten Komponenten.
-   * @return
+   * @return Liste der Komponenten.
    * @throws RemoteException
    */
   public FormTextPart getLibList() throws RemoteException
@@ -123,6 +123,9 @@ public class LicenseControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/26 22:42:18  willuhn
  * @N added InfoReader
  *

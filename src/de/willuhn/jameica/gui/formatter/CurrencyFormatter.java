@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/formatter/CurrencyFormatter.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,7 @@ public class CurrencyFormatter implements Formatter
    *  <li>Double</li>
    *  <li>BigDecimal</li>
    * </ul>
-   * @see de.willuhn.jameica.gui.parts.Formatter#format(java.lang.Object)
+   * @see de.willuhn.jameica.gui.formatter.Formatter#format(java.lang.Object)
    */
   public String format(Object o)
   {
@@ -72,6 +72,9 @@ public class CurrencyFormatter implements Formatter
 
 /*********************************************************************
  * $Log: CurrencyFormatter.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/21 22:28:56 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,7 +77,7 @@ public class DialogInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -131,6 +131,7 @@ public class DialogInput extends AbstractInput
 			button.setText(this.buttonText);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.setAlignment(SWT.RIGHT);
+    button.setEnabled(enabled);
     button.addMouseListener(new MouseAdapter()
     {
       public void mouseUp(MouseEvent e)
@@ -167,7 +168,7 @@ public class DialogInput extends AbstractInput
 
 	/**
 	 * Definiert das auf dem Button anzuzeigende Image.
-	 * @see setButtonText(String).
+	 * @see #setButtonText(String).
    * @param image anzuzeigendes Image.
    */
   public void setButtonImage(Image image)
@@ -178,7 +179,7 @@ public class DialogInput extends AbstractInput
   /**
    * Liefert das Objekt, welches in dem Dialog ausgewaehlt wurde.
    * Fuer gewoehnlich ist das ein Fach-Objekt.
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -195,7 +196,7 @@ public class DialogInput extends AbstractInput
 	}
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.String)
+   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -206,7 +207,7 @@ public class DialogInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
    */
   public void focus()
   {
@@ -214,29 +215,36 @@ public class DialogInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
    */
   public void disable()
   {
   	enabled = false;
   	if (text != null && !text.isDisposed())
 	    text.setEnabled(false);
+	  if (button != null && !button.isDisposed())
+	  	button.setEnabled(false);
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
    */
   public void enable()
   {
 		enabled = true;
 		if (text != null && !text.isDisposed())
 	    text.setEnabled(true);
+		if (button != null && !button.isDisposed())
+			button.setEnabled(true);
   }
 
 }
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/21 22:28:56  willuhn
  * *** empty log message ***
  *

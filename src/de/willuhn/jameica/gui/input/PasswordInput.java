@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/PasswordInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ public class PasswordInput extends TextInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.TextInput#getControl()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -42,6 +42,9 @@ public class PasswordInput extends TextInput
 
 /*********************************************************************
  * $Log: PasswordInput.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

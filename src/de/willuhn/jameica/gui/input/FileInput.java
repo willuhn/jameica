@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,6 +44,7 @@ public class FileInput extends AbstractInput
   private Text text;
   private Button button;
   private String value;
+  private boolean enabled = true;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -56,7 +57,7 @@ public class FileInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -93,6 +94,7 @@ public class FileInput extends AbstractInput
     text = new Text(around2, SWT.NONE);
     text.setBackground(Style.COLOR_WHITE);
     text.setLayoutData(comboFD2);
+    text.setEnabled(enabled);
 //    GridData grid = new GridData(GridData.FILL_HORIZONTAL);
 //    text.setLayoutData(grid);
     text.setText((value == null ? "" : value));
@@ -107,6 +109,7 @@ public class FileInput extends AbstractInput
     button.setText(i18n.tr("öffnen..."));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.setAlignment(SWT.RIGHT);
+    button.setEnabled(enabled);
     button.addMouseListener(new MouseAdapter()
     {
       public void mouseUp(MouseEvent e)
@@ -126,7 +129,7 @@ public class FileInput extends AbstractInput
 
   /**
    * Liefert ein Objekt des Typs java.lang.String.
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -135,7 +138,7 @@ public class FileInput extends AbstractInput
 
   /**
    * Erwartet ein Objekt des Typs java.lang.String.
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -150,7 +153,7 @@ public class FileInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
    */
   public void focus()
   {
@@ -158,25 +161,36 @@ public class FileInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
    */
   public void disable()
   {
-    text.setEnabled(false);
+  	enabled = false;
+  	if (text != null && !text.isDisposed())
+	    text.setEnabled(false);
+		if (button != null && !button.isDisposed())
+			button.setEnabled(false);
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
    */
   public void enable()
   {
-    text.setEnabled(true);
+		enabled = true;
+		if (text != null && !text.isDisposed())
+			text.setEnabled(true);
+		if (button != null && !button.isDisposed())
+			button.setEnabled(true);
   }
 
 }
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

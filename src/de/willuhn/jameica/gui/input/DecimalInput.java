@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,7 @@ public class DecimalInput extends TextInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -79,7 +79,7 @@ public class DecimalInput extends TextInput
   /**
    * Die Funktion liefert ein Objekt des Typs java.lang.Double zurueck
    * oder <code>null</code> wenn nicht eingegeben wurde.
-   * @see de.willuhn.jameica.gui.parts.TextInput#getValue()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -97,7 +97,7 @@ public class DecimalInput extends TextInput
 
   /**
    * Erwartet ein Objekt des Typs java.lang.Double.
-   * @see de.willuhn.jameica.gui.parts.TextInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -116,6 +116,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

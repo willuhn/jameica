@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:58 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getControl()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getControl()
    */
   public Control getControl()
   {
@@ -76,7 +76,7 @@ public class TextInput extends AbstractInput
 
   /**
    * Liefert den angezeigten Text als String.
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#getValue()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getValue()
    */
   public Object getValue()
   {
@@ -84,7 +84,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#setValue(java.lang.Object)
+   * @see de.willuhn.jameica.gui.input.AbstractInput#setValue(java.lang.Object)
    */
   public void setValue(Object value)
   {
@@ -95,7 +95,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#focus()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#focus()
    */
   public void focus()
   {
@@ -103,7 +103,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#disable()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#disable()
    */
   public void disable()
   {
@@ -113,7 +113,7 @@ public class TextInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractInput#enable()
+   * @see de.willuhn.jameica.gui.input.AbstractInput#enable()
    */
   public void enable()
   {
@@ -126,6 +126,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/12 19:15:58  willuhn
  * @C refactoring
  * @N forms

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/formatter/DateFormatter.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/04/12 19:15:59 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/27 00:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,7 +47,7 @@ public class DateFormatter implements Formatter
    *  <li>java.sql.Timestamp</li>
    *  <li>String</li>
    * </ul>
-   * @see de.willuhn.jameica.gui.parts.Formatter#format(java.lang.Object)
+   * @see de.willuhn.jameica.gui.formatter.Formatter#format(java.lang.Object)
    */
   public String format(Object o)
   {
@@ -67,6 +67,9 @@ public class DateFormatter implements Formatter
 
 /*********************************************************************
  * $Log: DateFormatter.java,v $
+ * Revision 1.2  2004/04/27 00:04:44  willuhn
+ * @D javadoc
+ *
  * Revision 1.1  2004/04/12 19:15:59  willuhn
  * @C refactoring
  * @N forms
