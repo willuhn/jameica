@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.28 $
- * $Date: 2004/01/05 18:27:13 $
+ * $Revision: 1.29 $
+ * $Date: 2004/01/05 19:14:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -82,7 +82,7 @@ public class PluginLoader extends ClassLoader
 
     // Liste aller Jars aus dem plugin-Verzeichnis holen
     FileFinder finder = new FileFinder(plugindir);
-    finder.contains(".+\\.jar");
+    finder.extension("jar");
     File[] jars = finder.findRecursive();
 
     if (jars == null || jars.length < 1)
@@ -136,6 +136,12 @@ public class PluginLoader extends ClassLoader
 				entry = (JarEntry) jarEntries.nextElement();
 				String entryName = entry.getName();
 
+        if ("menu.xml".equals(entryName))
+          menu = entry; 
+
+        if ("navigation.xml".equals(entryName))
+          navi = entry; 
+
 				int idxClass = entryName.indexOf(".class");
 				if (idxClass == -1)
 					continue;
@@ -143,12 +149,6 @@ public class PluginLoader extends ClassLoader
 				entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
 				// Wir laden das Plugin
 				pluginFound = loadPlugin(jar,entryName) || pluginFound;
-
-				if ("menu.xml".equals(entryName))
-					menu = entry; 
-
-				if ("navigation.xml".equals(entryName))
-					navi = entry; 
       }
 
 			if (pluginFound && menu != null)
@@ -234,29 +234,23 @@ public class PluginLoader extends ClassLoader
 		///////////////////////////////////////////////////////////////
 		// Klasse laden
     Class clazz = null;
-		Application.getLog().debug("trying to load class " + classname);
     try {
 			clazz = MultipleClassLoader.load(classname);
     }
     catch (ClassNotFoundException e)
     {
-			Application.getLog().debug("failed");
 			return false;
     }
-		Application.getLog().debug("done");
 		//
 		///////////////////////////////////////////////////////////////
 
 
 		///////////////////////////////////////////////////////////////
 		// Klasse checken
-		Application.getLog().debug("checking plugin");
     if (!checkPlugin(clazz))
 		{
-			Application.getLog().debug("no valid plugin");
 			return false; // no valid plugin
 		}
-		Application.getLog().debug("done");
 		//
 		///////////////////////////////////////////////////////////////
 
@@ -419,6 +413,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.29  2004/01/05 19:14:45  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.28  2004/01/05 18:27:13  willuhn
  * *** empty log message ***
  *

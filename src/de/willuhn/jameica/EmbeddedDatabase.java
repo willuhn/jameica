@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/EmbeddedDatabase.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/01/05 18:27:13 $
+ * $Revision: 1.4 $
+ * $Date: 2004/01/05 19:14:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,6 +72,7 @@ public class EmbeddedDatabase
    */
   public void create() throws IOException
 	{
+    init();
 
 		if (!path.canWrite())
 			throw new IOException("write permission failed in " + path.getAbsolutePath());
@@ -137,6 +138,8 @@ public class EmbeddedDatabase
    */
   public void executeSQLScript(File file) throws IOException, SQLException
 	{
+    init();
+
 		if (!exists())
 			throw new IOException("Database does not exist. Please create it first");
 
@@ -172,8 +175,8 @@ public class EmbeddedDatabase
 			for (int i=0;i<tables.length;++i)
 			{
 				stmt.executeUpdate(tables[i]);
+        conn.commit();
 			}
-			conn.commit();
 		}
 		catch (Exception e)
 		{
@@ -225,7 +228,7 @@ public class EmbeddedDatabase
 		{
 			HashMap map = new HashMap();
 			map.put("driver","com.mckoi.JDBCDriver");
-			map.put("jdbc-url",":jdbc:mckoi:local://" + path.getAbsolutePath() + "/db.conf?user=" + getUsername() + "&amp;password=" + getPassword());
+			map.put("jdbc-url",":jdbc:mckoi:local://" + path.getAbsolutePath() + "/db.conf?user=" + getUsername() + "&password=" + getPassword());
 			db = new DBHubImpl(map);
 		}
 		return db;
@@ -235,6 +238,9 @@ public class EmbeddedDatabase
 
 /**********************************************************************
  * $Log: EmbeddedDatabase.java,v $
+ * Revision 1.4  2004/01/05 19:14:45  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/01/05 18:27:13  willuhn
  * *** empty log message ***
  *
