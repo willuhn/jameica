@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.7 $
+ * $Date: 2003/11/24 14:21:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -164,6 +164,19 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     else 
       update();
     
+  }
+
+  /**
+   * @see de.willuhn.jameica.rmi.DBObject#clear()
+   */
+  public void clear() throws RemoteException
+  {
+    this.id = null;
+    String fields[] = this.getFields();
+    for (int i=0;i<fields.length;++i)
+    {
+      this.setField(fields[i],null);
+    }
   }
   
   /**
@@ -572,6 +585,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.7  2003/11/24 14:21:53  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/24 14:21:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,13 +40,18 @@ public abstract class Input
   public abstract void paint(Composite parent);
 
   /**
+   * Gibt diesem Eingabefeld den Focus.
+   */
+  public abstract void focus();
+  
+  /**
    * Erzeugt ein neues Grid, welches fuer das Input verwendet werden muss.
    * @return
    */
   protected GridData createGrid()
   {
-    final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-    inputGrid.widthHint = 200;
+    final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+    // inputGrid.widthHint = 300;
     return inputGrid;
   }
 
@@ -54,6 +59,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.4  2003/11/24 14:21:53  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

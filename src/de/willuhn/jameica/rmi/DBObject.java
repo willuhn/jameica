@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/24 14:21:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,6 +69,14 @@ public interface DBObject extends Remote
 	 */
 	public void delete() throws RemoteException;
 
+  /**
+   * Loescht alle Eigenschaften (incl. ID) aus dem Objekt.
+   * Es kann nun erneut befuellt und als neues Objekt in der Datenbank
+   * gespeichert werden.
+   * @throws RemoteException
+   */
+  public void clear() throws RemoteException;
+
 	/**
 	 * Liefert die ID des Objektes oder null bei neuen Objekten.
 	 * @return
@@ -122,6 +130,9 @@ public interface DBObject extends Remote
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.5  2003/11/24 14:21:53  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

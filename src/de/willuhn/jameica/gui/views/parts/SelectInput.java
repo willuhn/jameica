@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/24 11:51:41 $
+ * $Revision: 1.6 $
+ * $Date: 2003/11/24 14:21:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -160,12 +161,14 @@ public class SelectInput extends Input
       layout.horizontalSpacing = 0;
       newParent.setLayout(layout);
 
-      combo = new Combo(newParent, SWT.BORDER | SWT.READ_ONLY);
+      combo = new Combo(newParent, SWT.BORDER);
       final GridData comboGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
       comboGrid.widthHint = 100;
       combo.setLayoutData(comboGrid);
-      if (commentListener != null)
-        combo.addListener(SWT.Selection,commentListener);
+      if (commentListener != null) {
+        combo.addListener(SWT.Selection,(Listener) commentListener);
+        combo.addFocusListener((FocusListener) commentListener);
+      }
 
       commentLabel = new Label(newParent,SWT.NONE);
       final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
@@ -199,10 +202,21 @@ public class SelectInput extends Input
   {
     return combo.getText();
   }
+
+  /**
+   * @see de.willuhn.jameica.views.parts.Input#focus()
+   */
+  public void focus()
+  {
+    combo.setFocus();
+  }
 }
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.6  2003/11/24 14:21:53  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/11/24 11:51:41  willuhn
  * *** empty log message ***
  *

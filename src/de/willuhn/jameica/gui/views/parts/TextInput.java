@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/24 11:51:41 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/24 14:21:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,7 +46,7 @@ public class TextInput extends Input
     text.setText((value == null ? "" : value));
     text.addFocusListener(new FocusAdapter(){
       public void focusGained(FocusEvent e){
-        text.setSelection(text.getText().length(), text.getText().length());
+        text.setSelection(0, text.getText().length());
       }
     });
   }
@@ -59,11 +59,22 @@ public class TextInput extends Input
     return text.getText();
   }
 
+  /**
+   * @see de.willuhn.jameica.views.parts.Input#focus()
+   */
+  public void focus()
+  {
+    text.setFocus();
+  }
+
 
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.5  2003/11/24 14:21:53  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/24 11:51:41  willuhn
  * *** empty log message ***
  *
