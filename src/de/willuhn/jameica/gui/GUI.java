@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.64 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.65 $
+ * $Date: 2004/11/15 18:09:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,7 +71,13 @@ public class GUI
 		private boolean skipHistory = false;
 		private StyleFactory styleFactory;
 
-	private static boolean stop = false;
+	  private boolean stop = false;
+    private boolean running = false;
+
+  static
+  {
+    gui = new GUI();
+  }
 
 	private static class HistoryEntry
 	{
@@ -232,9 +238,7 @@ public class GUI
 	public static void init()
 	{
 
-		if (gui != null) return; // allready started.
-
-		gui = new GUI();
+		if (gui.running) return; // allready running.
 
 		try
 		{
@@ -578,6 +582,7 @@ public class GUI
 	 */
 	private void loop()
 	{
+    running = true;
 		int retry = 0;
 		while (!shell.isDisposed() && !stop && retry < 4)
 		{
@@ -622,7 +627,7 @@ public class GUI
 		if (Application.inServerMode()) return;
 
 		// exit running gui loop
-		stop = true;
+		gui.stop = true;
 	}
 
 	/**
@@ -632,22 +637,32 @@ public class GUI
 	private static void quit()
 	{
 
+    Logger.info("shutting down GUI");
 		try
 		{
-			Logger.info("shutting down GUI");
 			gui.shell.dispose();
-			gui.display.dispose();
 		}
 		catch (Exception e)
 		{
-			Logger.error("error while quitting GUI", e);
+			Logger.error("error while quitting shell", e);
 		}
+    try
+    {
+      gui.display.dispose();
+    }
+    catch (Exception e)
+    {
+      Logger.error("error while quitting display", e);
+    }
 		Application.shutDown();
 	}
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.65  2004/11/15 18:09:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.64  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

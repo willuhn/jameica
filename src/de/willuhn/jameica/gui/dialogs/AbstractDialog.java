@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.24 $
- * $Date: 2004/11/15 00:38:20 $
+ * $Revision: 1.25 $
+ * $Date: 2004/11/15 18:09:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -151,16 +151,16 @@ public abstract class AbstractDialog
 				compLayout.marginWidth = 0;
 				comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				comp.setLayout(compLayout);
-				comp.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+				comp.setBackground(new org.eclipse.swt.graphics.Color(display,255,255,255));
 		
 				title = new CLabel(comp,SWT.NONE);
-				title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+				title.setBackground(new org.eclipse.swt.graphics.Color(display,255,255,255));
 				title.setLayoutData(new GridData(GridData.FILL_BOTH));
 				title.setFont(Font.H2.getSWTFont());
 
 				Label image = new Label(comp,SWT.NONE);
 				image.setImage(SWTUtil.getImage("gradient.gif"));
-				title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+				title.setBackground(new org.eclipse.swt.graphics.Color(display,255,255,255));
 				image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 				parent = new Composite(shell,SWT.NONE);
@@ -375,6 +375,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.25  2004/11/15 18:09:32  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.24  2004/11/15 00:38:20  willuhn
  * *** empty log message ***
  *
