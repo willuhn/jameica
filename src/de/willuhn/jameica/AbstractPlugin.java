@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/04/14 22:16:43 $
+ * $Revision: 1.17 $
+ * $Date: 2004/04/14 23:53:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ public abstract class AbstractPlugin
 	
 	private String name = null;
 	private double version = -1;
+	private int build = -1;
 
 	/**
 	 * ct.
@@ -91,7 +92,7 @@ public abstract class AbstractPlugin
 
   /**
    * Diese Funktion versucht die Versionsnummer aus der Datei META-INF/MANIFEST.MF zu extrahieren.
-   * Sie versucht dabei, den Schluessel Implementation-Version zu parsen.
+   * Sie versucht dabei, den Schluessel "Implementation-Version" zu parsen.
    * Wenn der String das Format "V_&lt;Major-Number&gt;_&lt;Minor-Number&gt; hat, wird es funktionieren.
    * Andernfalls liefert die Funktion "1.0".
    * @return Version des Plugins.
@@ -112,6 +113,28 @@ public abstract class AbstractPlugin
 		return version;
   }
   
+	/**
+	 * Diese Funktion versucht die Build-Nummer aus der Datei META-INF/MANIFEST.MF zu extrahieren.
+	 * Sie versucht dabei, den Schluessel "Implementation-Buildnumber" zu parsen.
+	 * Andernfalls liefert die Funktion "1".
+	 * @return Version des Plugins.
+	 */
+	public double getBuildnumber()
+	{
+		if (build != -1)
+			return build;
+
+		try {
+			JarInfo info = new JarInfo(new JarFile(this.file));
+			build = info.getBuildnumber();
+		}
+		catch (Exception e)
+		{
+			build = 1;
+		}
+		return build;
+	}
+
 	/**
 	 * Liefert ein Objekt, ueber welches das Plugin Einstellungen speichern kann.
    * @return Settings.
@@ -157,6 +180,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.17  2004/04/14 23:53:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/04/14 22:16:43  willuhn
  * *** empty log message ***
  *

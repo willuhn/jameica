@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.33 $
- * $Date: 2004/04/14 22:16:43 $
+ * $Revision: 1.34 $
+ * $Date: 2004/04/14 23:53:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.jar.JarFile;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.util.I18N;
+import de.willuhn.util.JarInfo;
 import de.willuhn.util.Lock;
 import de.willuhn.util.Logger;
 import de.willuhn.util.MultipleClassLoader;
@@ -286,10 +288,30 @@ public class Application {
    */
   public static double getVersion()
 	{
-		// TODO: Versionsnummer aus Jar.
-		return 1.1;
+		try {
+			JarInfo info = new JarInfo(new JarFile("jameica.jar"));
+			return info.getVersion();
+		}
+		catch (Exception e) {/*ignore*/}
+		
+		return 1.0;
 	}
 	
+	/**
+	 * Liefert die aktuelle Buildnummer von Jameica.
+	 * @return Buildnummer.
+	 */
+	public static int getBuildnumber()
+	{
+		try {
+			JarInfo info = new JarInfo(new JarFile("jameica.jar"));
+			return info.getBuildnumber();
+		}
+		catch (Exception e) {/*ignore*/}
+		
+		return 1;
+	}
+
 	/**
 	 * Liefert das Language-Pack fuer Jameica selbst.
    * @return Language-Pack.
@@ -303,6 +325,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.34  2004/04/14 23:53:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.33  2004/04/14 22:16:43  willuhn
  * *** empty log message ***
  *

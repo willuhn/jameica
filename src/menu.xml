@@ -3,11 +3,17 @@
 <menu>
 
   <cascade name="Datei">
-    <item name="&amp;Einstellungen" 			shortcut="CTRL+E" class="de.willuhn.jameica.gui.views.Settings" />
+    <item name="&amp;Einstellungen" 			shortcut="CTRL+E" 	class="de.willuhn.jameica.gui.views.Settings" />
 	<item name="-" />
-    <item name="Tests"	    			 		class="de.willuhn.jameica.gui.views.Tests" />
-    <item name="DialogTests" target="dialog"	class="de.willuhn.jameica.gui.views.Tests" />
-    <item name="Beenden"    			 		class="de.willuhn.jameica.gui.views.FileClose" />
+    <item name="Tests"	    			 							class="de.willuhn.jameica.gui.views.Tests" />
+    <item name="Beenden"    			 							class="de.willuhn.jameica.gui.views.FileClose" />
+  </cascade>
+
+  <cascade name="Hilfe">
+    <item name="About"				 			target="dialog"		class="de.willuhn.jameica.gui.views.About" />
+	<item name="-" />
+    <item name="installierte Plugins"	 							class="de.willuhn.jameica.gui.views.Plugins" />
+    <item name="Lizenzinformationen"	 							class="de.willuhn.jameica.gui.views.License" />
   </cascade>
 
 </menu>
