@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/26 18:47:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,7 @@ public class ListDialog extends AbstractDialog
   public ListDialog(DBIterator list, int position)
 	{
 		super(position);
-		setSize(SWT.DEFAULT,300);
+		setSize(SWT.DEFAULT,250);
 		this.list = list;
 		
 	}
@@ -156,6 +156,9 @@ public class ListDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.2  2004/02/26 18:47:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.6 $
+ * $Date: 2004/02/26 18:47:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -240,28 +240,32 @@ public class Table
     );
 
     // und jetzt fuegen wir noch die Kontext-Menues hinzu,
-//    Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
-//    table.setMenu(menu);
-//    MenuItem editItem = new MenuItem(menu, SWT.PUSH);
-//    editItem.setText (I18N.tr("Bearbeiten"));
-//    editItem.addListener (SWT.Selection, new Listener () {
-//      public void handleEvent (Event e) {
-//        TableItem item = table.getItem(table.getSelectionIndex());
-//        if (item == null) return;
-//        String id = (String) item.getData();
-//        if (id == null) return;
-//        controller.handleLoad(id);
-//      }
-//    });
+    Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
+    table.setMenu(menu);
+    MenuItem editItem = new MenuItem(menu, SWT.PUSH);
+    editItem.setText(I18N.tr("Öffnen"));
+    editItem.addListener (SWT.Selection, new Listener () {
+      public void handleEvent (Event e) {
+        int i = table.getSelectionIndex();
+        if (i == -1)
+          return;
+        TableItem item = table.getItem(i);
+        if (item == null) return;
+        Object o = (Object) item.getData();
+        if (o == null) return;
+        controller.handleOpen(o);
+      }
+    });
 
 
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
-//    int cols = table.getColumnCount();
-//    for (int i=0;i<cols;++i)
-//    {
-//      TableColumn col = table.getColumn(i);
-//      col.pack();
-//    }
+    int cols = table.getColumnCount();
+    for (int i=0;i<cols;++i)
+    {
+      TableColumn col = table.getColumn(i);
+      col.pack();
+    }
+    //table.pack();
 
     // So, und jetzt malen wir noch ein Label mit der Anzahl der Treffer drunter.
 		if (list != null)
@@ -320,6 +324,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.6  2004/02/26 18:47:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

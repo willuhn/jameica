@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/26 18:47:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,6 +55,7 @@ public class FatalErrorView extends AbstractView
 		    ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		    e.printStackTrace(new PrintStream(bos));
 		    e1 = bos.toString();
+        e1 = e1.replaceAll("\r\n","\n");
 		    stacktrace.addText(e1,false);
 		
 		    e2 = "";
@@ -115,6 +116,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.5  2004/02/26 18:47:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

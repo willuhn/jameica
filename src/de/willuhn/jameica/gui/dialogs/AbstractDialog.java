@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/02/25 23:11:57 $
+ * $Revision: 1.7 $
+ * $Date: 2004/02/26 18:47:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -127,7 +127,7 @@ public abstract class AbstractDialog
 		shellLayout.marginWidth = 0;
 		shell.setLayout(shellLayout);
 
-		Composite comp = new Composite(shell,SWT.BORDER);
+		Composite comp = new Composite(shell,SWT.NONE);
 		GridLayout compLayout = new GridLayout(2,true);
 		compLayout.horizontalSpacing = 0;
 		compLayout.verticalSpacing = 0;
@@ -248,10 +248,7 @@ public abstract class AbstractDialog
 			height = (height == SWT.DEFAULT ? shell.getBounds().height : height);
 			width  = (width  == SWT.DEFAULT ? shell.getBounds().width  : width);
 	
-			if (height != SWT.DEFAULT || width != SWT.DEFAULT)
-			{
-				shell.setSize(width, height);
-			}
+			shell.setSize(width, height);
 	
 			if (pos == POSITION_MOUSE)
 			{
@@ -295,6 +292,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.7  2004/02/26 18:47:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/02/25 23:11:57  willuhn
  * *** empty log message ***
  *
