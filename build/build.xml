@@ -80,7 +80,7 @@
 	</target>
 
 
-    <target depends="strip" name="jar" description="generates the jar file">
+    <target depends="compile" name="jar" description="generates the jar file">
 
         <mkdir dir="${project.release}"/>
 
@@ -129,8 +129,8 @@
     </target>
 
 
-    <target depends="init,compile,cvstag,strip,jar,javadoc,clean" description="build an official release" name="all" />
+    <target depends="init,compile,cvstag,jar,javadoc,clean" description="build an official release" name="all" />
 
-    <target depends="init,compile,strip,jar,clean" description="build inofficial release" name="fast" />
+    <target depends="init,compile,jar,clean" description="build inofficial release" name="fast" />
 
 </project>

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/10/23 22:36:35 $
+ * $Revision: 1.2 $
+ * $Date: 2003/10/23 23:31:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,9 +12,13 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
+import java.util.Enumeration;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
+
+import de.bb.util.XmlFile;
 
 /**
  * @author willuhn
@@ -22,56 +26,75 @@ import org.eclipse.swt.widgets.MenuItem;
 public class Menu
 {
 
-  private org.eclipse.swt.widgets.Menu menu;
+  private XmlFile xml;
+  private org.eclipse.swt.widgets.Menu bar;
 
-  public Menu()
+
+  protected Menu()
   {
-    menu = new org.eclipse.swt.widgets.Menu(Application.shell,SWT.BAR);
-    Application.shell.setMenuBar(menu);
 
-    int index = 0;
-    /// FILE /////////////////////////////
-    MenuItem file = new MenuItem(menu,SWT.CASCADE);
-    file.setText("File");
+    bar = new org.eclipse.swt.widgets.Menu(Application.shell,SWT.BAR);
+    Application.shell.setMenuBar(bar);
 
-    org.eclipse.swt.widgets.Menu filemenu = new org.eclipse.swt.widgets.Menu(Application.shell, SWT.DROP_DOWN);
-    file.setMenu(filemenu);
+    xml  = new XmlFile();
+    xml.read(getClass().getResourceAsStream("/menu.xml"));
 
-    MenuItem closeitem = new MenuItem (filemenu, index++);
-    closeitem.addListener (SWT.Selection, new Listener()
+    // add elements
+    Enumeration e = xml.getSections("/menu/").elements();
+    while (e.hasMoreElements())
     {
-      public void handleEvent(org.eclipse.swt.widgets.Event event)
-      {
-        Application.shutDown();
-      }
-    });
-    closeitem.setText ("Close\tAlt+F4");
-    closeitem.setAccelerator(SWT.ALT + SWT.F4);
-    /// FILE /////////////////////////////
+      String key = (String) e.nextElement();
+      new MenuCascade(key);
+    }
+  }
 
+  class MenuCascade {
 
-    MenuItem edit = new MenuItem(menu,SWT.CASCADE);
-    edit.setText("Edit");
+    private String path;
 
-    org.eclipse.swt.widgets.Menu editmenu = new org.eclipse.swt.widgets.Menu(Application.shell, SWT.DROP_DOWN);
-    edit.setMenu(editmenu);
-
-    MenuItem copyitem = new MenuItem (editmenu, index++);
-    copyitem.addListener (SWT.Selection, new Listener()
+    MenuCascade(String key)
     {
-      public void handleEvent(org.eclipse.swt.widgets.Event event)
+      MenuItem cascade = new MenuItem(bar,SWT.CASCADE);
+      String text = I18N.tr(xml.getString(key,"name",null));
+      cascade.setText(text);
+      org.eclipse.swt.widgets.Menu submenu = new org.eclipse.swt.widgets.Menu(Application.shell, SWT.DROP_DOWN);
+      cascade.setMenu(submenu);
+      Enumeration e = xml.getSections(key).elements();
+      int index = 0;
+      while (e.hasMoreElements())
       {
+        String ckey = (String) e.nextElement();
+        new MenuElement(submenu, ckey,index++);
       }
-    });
-    copyitem.setText ("Copy\tCtrl+C");
-    copyitem.setAccelerator(SWT.CTRL + 'C');
 
+    }
+  }
+
+  class MenuElement {
+    
+    MenuElement(org.eclipse.swt.widgets.Menu parent,String ckey,int eindex)
+    {
+      MenuItem item = new MenuItem (parent, eindex);
+      item.addListener (SWT.Selection, new Listener()
+      {
+        public void handleEvent(org.eclipse.swt.widgets.Event event)
+        {
+          // TODO: Event
+        }
+      });
+      String text = I18N.tr(xml.getString(ckey,"name",null));
+      item.setText(text);
+      // closeitem.setAccelerator(SWT.ALT + SWT.F4);
+    }
   }
 
 }
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.2  2003/10/23 23:31:17  willuhn
+ * @N added Menu via xml
+ *
  * Revision 1.1  2003/10/23 22:36:35  willuhn
  * @N added Menu
  *
