@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ServiceFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/01/25 18:39:56 $
+ * $Revision: 1.4 $
+ * $Date: 2004/02/11 00:10:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,13 +46,11 @@ public class ServiceFactory
   {
 
     Application.getLog().info("init network services");
-    Enumeration e = Application.getConfig().getLocalServiceNames();
-    String name;
+    Enumeration e = Application.getConfig().getLocalServiceData();
 		LocalServiceData service;
     while (e.hasMoreElements())
     {
-			name = (String) e.nextElement();
-			service = Application.getConfig().getLocalServiceData(name);
+			service = (LocalServiceData) e.nextElement();
 
 			if (service.isShared()) {
 	      try {
@@ -231,6 +229,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.4  2004/02/11 00:10:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/01/25 18:39:56  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/02/09 13:06:33 $
+ * $Revision: 1.20 $
+ * $Date: 2004/02/11 00:10:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,21 +12,24 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import net.n3.nanoxml.*;
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
-
+import net.n3.nanoxml.XMLWriter;
 import de.willuhn.datasource.common.LocalServiceData;
 import de.willuhn.datasource.common.RemoteServiceData;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.FileCopy;
 import de.willuhn.util.Logger;
 
@@ -125,22 +128,24 @@ public class Config
     String name;
     String type;
     String clazz;
+    String description;
     Application.getLog().info("loading service configuration");
   
     while (e.hasMoreElements())
     {
-      key   = (IXMLElement) e.nextElement();
-      name  = key.getAttribute("name",null);
-      type  = key.getAttribute("type",null);
-      clazz = key.getAttribute("class",null);
+      key   			= (IXMLElement) e.nextElement();
+      name  			= key.getAttribute("name",null);
+      type  			= key.getAttribute("type",null);
+      clazz 			= key.getAttribute("class",null);
+			description	= key.getAttribute("description",null);
       
-  
       // process remote services
       if ("remoteservice".equals(key.getFullName())) 
       {
         Application.getLog().info("found remote service \"" + name + "\" [type: "+type+"]");
         RemoteServiceData data = new RemoteServiceData();
         data.setClassName(clazz);
+        data.setDescription(description);
         data.setName(name);
         data.setType(type);
         data.setHost(key.getAttribute("host",null));
@@ -153,6 +158,7 @@ public class Config
         Application.getLog().info("found local service \"" + name + "\" [type: "+type+"]");
 				LocalServiceData data = new LocalServiceData();
 				data.setClassName(clazz);
+				data.setDescription(description);
 				data.setName(name);
 				data.setType(type);
 				data.setShared(key.getAttribute("shared","false").equalsIgnoreCase("true"));
@@ -225,10 +231,21 @@ public class Config
 	 * Fuegt einen Remote-Service hinzu.
    * @param data der Datencontainer fuer den Remote-Service.
    */
-  public void addRemoteServiceData(RemoteServiceData data)
+  public void addRemoteServiceData(RemoteServiceData data) throws ApplicationException
 	{
 		if (data == null || data.getName() == null || data.getName().equals(""))
-			return;
+			throw new ApplicationException("Netzwerkservice ist nicht definiert.");
+
+		// wir checken, ob der Service vielleicht schon existiert.
+		Enumeration e = getRemoteServiceData();
+		RemoteServiceData d = null;
+		while (e.hasMoreElements())
+		{
+			d = (RemoteServiceData) e.nextElement();
+			if (data.getName().equals(d.getName()))
+				throw new ApplicationException("Ein Netzwerkservice mit diesem Namen existiert bereits.");
+			
+		}
 		this.remoteServices.put(data.getName(),data);
 	}
 
@@ -246,30 +263,41 @@ public class Config
 	 * Fuegt einen Local-Service hinzu.
 	 * @param data der Datencontainer fuer den Local-Service.
 	 */
-	public void addLocalServiceData(LocalServiceData data)
+	public void addLocalServiceData(LocalServiceData data) throws ApplicationException
 	{
 		if (data == null || data.getName() == null || data.getName().equals(""))
-			return;
+			throw new ApplicationException("Lokaler Service ist nicht definiert.");
+
+		// wir checken, ob der Service vielleicht schon existiert.
+		Enumeration e = getLocalServiceData();
+		LocalServiceData d = null;
+		while (e.hasMoreElements())
+		{
+			d = (LocalServiceData) e.nextElement();
+			if (data.getName().equals(d.getName()))
+				throw new ApplicationException("Ein lokaler Service mit diesem Namen existiert bereits.");
+		}
+
 		this.localServices.put(data.getName(),data);
 	}
 	
 
   /**
-   * Liefert eine Enumeration mit den Namen aller lokalen Services.
+   * Liefert eine Enumeration aller lokalen Services.
    * @return Enumeration mit den lokalen Services.
    */
-  public Enumeration getLocalServiceNames()
+  public Enumeration getLocalServiceData()
   {
-    return localServices.keys();
+    return localServices.elements();
   }
 
   /**
-   * Liefert eine Enumeration mit den Namen aller Remote-Services.
+   * Liefert eine Enumeration mit allen Remote-Services.
    * @return Enumeration mit den Remote-Services.
    */
-  public Enumeration getRemoteServiceNames()
+  public Enumeration getRemoteServiceData()
   {
-    return remoteServices.keys();
+    return remoteServices.elements();
   }
   
   /**
@@ -487,6 +515,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.20  2004/02/11 00:10:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.19  2004/02/09 13:06:33  willuhn
  * @C added support for uncompressed plugins
  *

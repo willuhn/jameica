@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/01/28 20:51:25 $
+ * $Revision: 1.7 $
+ * $Date: 2004/02/11 00:10:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import de.willuhn.jameica.gui.views.Start;
 import de.willuhn.jameica.gui.parts.FileInput;
 import de.willuhn.jameica.gui.parts.Input;
 import de.willuhn.jameica.gui.parts.SelectInput;
+import de.willuhn.jameica.gui.parts.Table;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -63,6 +64,28 @@ public class SettingsControl extends AbstractControl
   public Input getLoglevel()
 	{
 		return logLevel;
+	}
+
+	/**
+	 * Liefert eine Tabelle mit den lokalen Services.
+   * @return Tabelle mit den lokalen Services.
+   */
+  public Table getLocalServices()
+	{
+		Table t = new Table(config.getLocalServiceData(),this);
+		t.addColumn(I18N.tr("Name"),null);
+		return t;
+	}
+
+	/**
+	 * Liefert eine Tabelle mit den remote Services.
+	 * @return Tabelle mit den remote Services.
+	 */
+	public Table getRemoteServices()
+	{
+		Table t = new Table(config.getRemoteServiceData(),this);
+		t.addColumn(I18N.tr("Name"),null);
+		return t;
 	}
 
   /**
@@ -142,6 +165,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.7  2004/02/11 00:10:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/01/28 20:51:25  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

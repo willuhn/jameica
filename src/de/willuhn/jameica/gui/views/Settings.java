@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/01/29 00:45:42 $
+ * $Revision: 1.8 $
+ * $Date: 2004/02/11 00:10:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,33 +53,29 @@ public class Settings extends AbstractView
 		mainSettings.addLabelPair("Log-Datei",control.getLogFile());
 		mainSettings.addLabelPair("Log-Level", control.getLoglevel());
 
-//		LabelGroup services = new LabelGroup(getParent(),I18N.tr("Services"));
-//
-//		services.addText(I18N.tr("Lokale Services"),false);
-//		Table lt = new Table(config.getLocalServiceNames(),control);
-//		lt.addColumn(I18N.tr("Name"),null);
-//		services.addTable(lt);
-//		
-//		services.addText(I18N.tr("Netzwerk-Services"),false);
-//		Table rt = new Table(config.getRemoteServiceNames(),control);
-//		rt.addColumn(I18N.tr("Name"),null);
-//		services.addTable(rt);
-//
-//		ButtonArea sbuttons = services.createButtonArea(2);
-//		sbuttons.addCustomButton(I18N.tr("lokalen Service erstellen"),new MouseAdapter()
-//		{
-//			public void mouseUp(MouseEvent e)
-//			{
-//				control.handleRestore();
-//			}
-//		});
-//		sbuttons.addCustomButton(I18N.tr("Netzwerk-Service erstellen"),new MouseAdapter()
-//		{
-//			public void mouseUp(MouseEvent e)
-//			{
-//				control.handleRestore();
-//			}
-//		});
+		LabelGroup services = new LabelGroup(getParent(),I18N.tr("Services"));
+
+		services.addText(I18N.tr("Lokale Services"),false);
+		services.addTable(control.getLocalServices());
+		
+		services.addText(I18N.tr("Netzwerkservices"),false);
+		services.addTable(control.getRemoteServices());
+
+		ButtonArea sbuttons = services.createButtonArea(2);
+		sbuttons.addCustomButton(I18N.tr("lokalen Service erstellen"),new MouseAdapter()
+		{
+			public void mouseUp(MouseEvent e)
+			{
+				control.handleRestore();
+			}
+		});
+		sbuttons.addCustomButton(I18N.tr("Netzwerk-Service erstellen"),new MouseAdapter()
+		{
+			public void mouseUp(MouseEvent e)
+			{
+				control.handleRestore();
+			}
+		});
 
 		ButtonArea buttons = new ButtonArea(getParent(),3);
 		buttons.addCancelButton(control);
@@ -105,6 +101,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.8  2004/02/11 00:10:42  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/01/29 00:45:42  willuhn
  * *** empty log message ***
  *
