@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/01/06 20:32:59 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica;
 import java.io.File;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import de.willuhn.datasource.db.*;
 
 /**
  * Abstrakte Basis-Klasse aller Plugins.
@@ -140,6 +142,9 @@ public abstract class AbstractPlugin implements Plugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.9  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.8  2004/01/06 20:32:59  willuhn
  * *** empty log message ***
  *

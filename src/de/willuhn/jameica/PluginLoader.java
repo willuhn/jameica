@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.29 $
- * $Date: 2004/01/05 19:14:45 $
+ * $Revision: 1.30 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.FileFinder;
+import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Kontrolliert alle installierten Plugins.
@@ -413,6 +414,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.30  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.29  2004/01/05 19:14:45  willuhn
  * *** empty log message ***
  *

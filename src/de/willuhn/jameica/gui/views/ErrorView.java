@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.5 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,10 +24,10 @@ import org.eclipse.swt.events.MouseEvent;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.views.parts.ButtonArea;
 import de.willuhn.jameica.gui.views.parts.Headline;
 import de.willuhn.jameica.gui.views.parts.LabelGroup;
+import de.willuhn.util.I18N;
 
 public class ErrorView extends AbstractView
 {
@@ -94,6 +94,9 @@ public class ErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.5  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.4  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

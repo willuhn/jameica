@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/01/06 20:11:21 $
+ * $Revision: 1.4 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,14 +17,11 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.ApplicationException;
 import de.willuhn.jameica.Config;
-import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.controller.SettingsControl;
 import de.willuhn.jameica.gui.views.parts.*;
-import de.willuhn.jameica.gui.views.parts.FileInput;
-import de.willuhn.jameica.gui.views.parts.Headline;
-import de.willuhn.jameica.gui.views.parts.LabelGroup;
+import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
 /**
@@ -116,6 +113,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.4  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.3  2004/01/06 20:11:21  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/01/06 20:11:21 $
+ * $Revision: 1.24 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,6 @@ import java.io.FileOutputStream;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
-import de.willuhn.jameica.rmi.ServiceFactory;
 import de.willuhn.util.*;
 
 /**
@@ -195,6 +194,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.24  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.23  2004/01/06 20:11:21  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/01/06 01:27:30 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ServiceFactory.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,7 +11,7 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.rmi;
+package de.willuhn.jameica;
 
 import java.lang.reflect.Constructor;
 import java.rmi.Naming;
@@ -22,7 +22,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import de.willuhn.jameica.Application;
+import de.willuhn.datasource.db.rmi.LocalServiceData;
+import de.willuhn.datasource.db.rmi.RemoteServiceData;
+import de.willuhn.datasource.db.rmi.Service;
+
 
 /**
  * Diese Klasse stellt Services via RMI zur Verfuegung.
@@ -46,18 +49,28 @@ public class ServiceFactory
 
     try
     {
-			Application.getLog().info("init RMI registry");
-			System.setSecurityManager(new NoSecurity());
-      LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
-      Application.getLog().info("done");
-      registryOk = true;
-    } catch (RemoteException e1)
+			try {
+				Application.getLog().info("trying to start new RMI registry");
+				System.setSecurityManager(new NoSecurity());
+				LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
+				Application.getLog().info("done");
+				registryOk = true;
+			}
+			catch (RemoteException e)
+			{
+				Application.getLog().info("failed, trying to use an existing one");
+				LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
+				Application.getLog().info("done");
+				registryOk = true;
+			}
+    }
+    catch (RemoteException e1)
     {
       Application.getLog().error("failed",e1);
     }
 
 
-    Application.getLog().info("init HUB services");
+    Application.getLog().info("init services");
     if (!registryOk)
     {
       Application.getLog().info("unable to share network services because startup of RMI registry failed.");
@@ -115,7 +128,9 @@ public class ServiceFactory
 			Class clazz = (Class) Class.forName(service.getClassName());
 			Constructor ct = clazz.getConstructor(new Class[]{HashMap.class});
 			ct.setAccessible(true);
-			return (Service) ct.newInstance(new Object[] {service.getInitParams()});
+			Service s = (Service) ct.newInstance(new Object[] {service.getInitParams()});
+			s.setLogger(Application.getLog());
+			return s;
 		}
 		catch (Exception e)
 		{
@@ -231,6 +246,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.1  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.11  2004/01/06 01:27:30  willuhn
  * @N table order
  *

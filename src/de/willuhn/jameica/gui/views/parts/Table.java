@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/01/06 20:11:21 $
+ * $Revision: 1.18 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,10 +23,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
+import de.willuhn.datasource.db.rmi.DBIterator;
+import de.willuhn.datasource.db.rmi.DBObject;
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.I18N;
-import de.willuhn.jameica.rmi.DBIterator;
-import de.willuhn.jameica.rmi.DBObject;
+import de.willuhn.util.I18N;
 
 /**
  * Erzeugt eine Standard-Tabelle.
@@ -298,6 +298,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.18  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.17  2004/01/06 20:11:21  willuhn
  * *** empty log message ***
  *

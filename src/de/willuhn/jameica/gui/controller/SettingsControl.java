@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/01/06 20:11:22 $
+ * $Revision: 1.4 $
+ * $Date: 2004/01/08 20:50:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,15 +13,15 @@
 
 package de.willuhn.jameica.gui.controller;
 
+import de.willuhn.datasource.db.rmi.DBObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Config;
-import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.views.ServiceSettings;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
 import de.willuhn.jameica.gui.views.parts.Controller;
-import de.willuhn.jameica.rmi.DBObject;
+import de.willuhn.util.I18N;
 
 /**
  * 
@@ -121,6 +121,9 @@ public class SettingsControl extends Controller
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.4  2004/01/08 20:50:33  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.3  2004/01/06 20:11:22  willuhn
  * *** empty log message ***
  *

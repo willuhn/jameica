@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/29 20:07:19 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/08 20:50:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,14 +19,14 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.datasource.db.rmi.DBIterator;
+import de.willuhn.datasource.db.rmi.DBObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.I18N;
-import de.willuhn.jameica.rmi.DBIterator;
-import de.willuhn.jameica.rmi.DBObject;
-import de.willuhn.jameica.gui.views.parts.*;
 import de.willuhn.jameica.gui.views.parts.Controller;
+import de.willuhn.jameica.gui.views.parts.Formatter;
 import de.willuhn.jameica.gui.views.parts.Table;
+import de.willuhn.util.I18N;
 
 /**
  * Basisklasse fuer Such-Dialoge.
@@ -203,6 +203,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.9  2004/01/08 20:50:33  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.8  2003/12/29 20:07:19  willuhn
  * @N Formatter
  *

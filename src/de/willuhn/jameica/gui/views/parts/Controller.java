@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Controller.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.7 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,7 @@ package de.willuhn.jameica.gui.views.parts;
 
 import java.util.HashMap;
 
-import de.willuhn.jameica.rmi.DBObject;
+import de.willuhn.datasource.db.rmi.DBObject;
 
 /**
  * Diese Basis-Klasse ist das Bindeglied zwischen View und Model.
@@ -116,6 +116,9 @@ public abstract class Controller
 
 /*********************************************************************
  * $Log: Controller.java,v $
+ * Revision 1.7  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.6  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

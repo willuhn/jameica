@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ServiceSettings.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/06 01:27:30 $
+ * $Revision: 1.2 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,9 +13,9 @@
 
 package de.willuhn.jameica.gui.views;
 
-import de.willuhn.jameica.ApplicationException;
-import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.views.parts.Headline;
+import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
 
 /**
  * 
@@ -52,6 +52,9 @@ public class ServiceSettings extends AbstractView
 
 /**********************************************************************
  * $Log: ServiceSettings.java,v $
+ * Revision 1.2  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.1  2004/01/06 01:27:30  willuhn
  * @N table order
  *

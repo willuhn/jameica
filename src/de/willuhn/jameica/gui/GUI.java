@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/01/06 20:11:22 $
+ * $Revision: 1.16 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,9 @@ import de.willuhn.jameica.*;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.util.Style;
+import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
+import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Startet und beendet die GUI der Anwendung. 
@@ -112,7 +115,7 @@ public class GUI
       return; // allready started.
 
     // init language pack
-    I18N.init(Application.getConfig().getLocale());
+    I18N.init("lang/messages",Application.getConfig().getLocale());
     
     gui = new GUI();
     gui.load();
@@ -388,6 +391,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.16  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.15  2004/01/06 20:11:22  willuhn
  * *** empty log message ***
  *

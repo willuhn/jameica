@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/29 17:44:10 $
+ * $Revision: 1.8 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,11 +15,11 @@ package de.willuhn.jameica.gui.views;
 
 import java.util.ArrayList;
 
-import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.Plugin;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.views.parts.Headline;
 import de.willuhn.jameica.gui.views.parts.LabelGroup;
+import de.willuhn.util.I18N;
 
 
 public class Start extends AbstractView
@@ -53,6 +53,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.8  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.7  2003/12/29 17:44:10  willuhn
  * *** empty log message ***
  *

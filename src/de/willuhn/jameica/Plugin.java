@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Plugin.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/01/05 18:27:13 $
+ * $Revision: 1.8 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica;
+
+import de.willuhn.datasource.db.*;
 
 /**
  * Interface fuer alle Plugins.
@@ -80,6 +82,9 @@ public interface Plugin
 
 /*********************************************************************
  * $Log: Plugin.java,v $
+ * Revision 1.8  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.7  2004/01/05 18:27:13  willuhn
  * *** empty log message ***
  *

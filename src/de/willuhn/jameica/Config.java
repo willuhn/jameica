@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/01/06 20:11:21 $
+ * $Revision: 1.14 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,8 +25,8 @@ import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 
-import de.willuhn.jameica.rmi.LocalServiceData;
-import de.willuhn.jameica.rmi.RemoteServiceData;
+import de.willuhn.datasource.db.rmi.LocalServiceData;
+import de.willuhn.datasource.db.rmi.RemoteServiceData;
 import de.willuhn.util.FileCopy;
 import de.willuhn.util.Logger;
 
@@ -124,26 +124,47 @@ public class Config
     IXMLElement key;
     String name;
     String type;
+    String clazz;
     Application.getLog().info("loading service configuration");
   
     while (e.hasMoreElements())
     {
-      key = (IXMLElement) e.nextElement();
-      name = key.getAttribute("name",null);
-      type = key.getAttribute("type",null);
+      key   = (IXMLElement) e.nextElement();
+      name  = key.getAttribute("name",null);
+      type  = key.getAttribute("type",null);
+      clazz = key.getAttribute("class",null);
+      
   
       // process remote services
       if ("remoteservice".equals(key.getFullName())) 
       {
         Application.getLog().info("  found remote service \"" + name + "\" [type: "+type+"]");
-        remoteServices.put(name,new RemoteServiceData(key));
+        RemoteServiceData data = new RemoteServiceData();
+        data.setClassName(clazz);
+        data.setName(name);
+        data.setType(type);
+        data.setHost(key.getAttribute("host",null));
+        remoteServices.put(name,data);
       }
   
       // process local services
 			if ("localservice".equals(key.getFullName())) 
       {
         Application.getLog().info("  found local service \"" + name + "\" [type: "+type+"]");
-        localServices.put(name,new LocalServiceData(key));
+				LocalServiceData data = new LocalServiceData();
+				data.setClassName(clazz);
+				data.setName(name);
+				data.setType(type);
+				data.setShared(key.getAttribute("shared","false").equalsIgnoreCase("true"));
+				Enumeration params = key.enumerateChildren();
+				while (params.hasMoreElements())
+				{
+					IXMLElement param = (IXMLElement) params.nextElement();
+					if (!"initparam".equals(param.getFullName()))
+						continue;
+					data.addInitParam(param.getAttribute("name",null),param.getAttribute("value",null));
+				}
+        localServices.put(name,data);
       }
   
     }
@@ -449,6 +470,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.14  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.13  2004/01/06 20:11:21  willuhn
  * *** empty log message ***
  *

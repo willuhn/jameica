@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/01/06 01:27:30 $
+ * $Revision: 1.14 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.views.util.Style;
+import de.willuhn.util.I18N;
 
 /**
    * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
@@ -181,6 +181,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.14  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.13  2004/01/06 01:27:30  willuhn
  * @N table order
  *

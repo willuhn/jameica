@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/01/06 20:11:22 $
+ * $Revision: 1.7 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,11 +28,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.views.parts.Table;
 import de.willuhn.util.ArrayEnumeration;
-import de.willuhn.util.Queue;
-import de.willuhn.util.Queue.QueueFullException;
+import de.willuhn.util.History;
+import de.willuhn.util.I18N;
 
 /**
  * Bildet die Statusleiste der Anwendung ab.
@@ -44,7 +43,7 @@ public class StatusBar {
   private Label actionText;
   private Composite status;
   
-  private Queue lastActionMessages;
+  private History lastActionMessages;
 
   /**
    * Erzeugt eine neue Statusleiste.
@@ -52,7 +51,7 @@ public class StatusBar {
   protected StatusBar() {
 
 		// init lastActionMessage queue
-		lastActionMessages = new Queue(20);
+		lastActionMessages = new History(20);
 
 		status = new Composite(GUI.getShell(), SWT.BORDER);
 
@@ -118,15 +117,7 @@ public class StatusBar {
 		if (message == null || "".equals(message))
 			return;
 
-		synchronized(lastActionMessages)
-		{
-			if (lastActionMessages.full())
-				lastActionMessages.pop();
-				try
-        {
-          lastActionMessages.push("[" + new Date().toString() + "] " + message);
-        } catch (QueueFullException e) {} // CannotHappenException ;)
-		}
+    lastActionMessages.push("[" + new Date().toString() + "] " + message);
 
 		// String lines[] = (String[]) lastActionMessages.toArray(new String[lastActionMessages.size()]);
     actionText.setText(message);
@@ -167,6 +158,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.7  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.6  2004/01/06 20:11:22  willuhn
  * *** empty log message ***
  *

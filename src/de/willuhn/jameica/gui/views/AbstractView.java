@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/08 20:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,7 +11,7 @@ package de.willuhn.jameica.gui.views;
 
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.ApplicationException;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Basis-Klasse fuer alles Views.
@@ -80,6 +80,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.9  2004/01/08 20:50:32  willuhn
+ * @N database stuff separated from jameica
+ *
  * Revision 1.8  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *
