@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Jameica.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/29 18:10:32 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/30 02:35:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,13 @@ public class Jameica
     try {
       JarFile jar = null;
       if (manifest == null)
-        jar = new JarFile("jameica.jar");
+      try {
+        jar = new JarFile("jameica-linux.jar");
+      }
+      catch (IOException e)
+      {
+        jar = new JarFile("jameica-win32.jar");
+      }
       Manifest manifest = jar.getManifest();
       String name = (String) manifest.getMainAttributes().getValue("Implementation-Title");
       if (name == null) throw new Exception();
@@ -81,6 +87,9 @@ public class Jameica
 
 /*********************************************************************
  * $Log: Jameica.java,v $
+ * Revision 1.4  2003/12/30 02:35:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/12/29 18:10:32  willuhn
  * *** empty log message ***
  *
