@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/04/12 19:16:00 $
+ * $Revision: 1.19 $
+ * $Date: 2004/04/29 21:21:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,9 +22,11 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
@@ -51,6 +53,8 @@ public class StatusBar {
 		private ProgressBar noProgress;
   
   private History lastActionMessages;
+  
+  private Shell messages;
 
   /**
    * Erzeugt eine neue Statusleiste.
@@ -120,7 +124,10 @@ public class StatusBar {
     {
       public void mouseUp(MouseEvent e)
       {
-      	showLastMessages(lastActionMessages.elements(),false);
+      	if (e.button == 1)
+	      	showLastMessages(lastActionMessages.elements(),false);
+	      else
+	      	setSuccessText("");
       }
     });
     
@@ -187,8 +194,7 @@ public class StatusBar {
       public void run() {
 				actionText.setForeground(Style.COLOR_SUCCESS);
 				actionText.setText(message);
-				status.layout();
-				GUI.getView().setSuccessText("");
+				// GUI.getView().setSuccessText("");
       }
     });
   }
@@ -210,8 +216,7 @@ public class StatusBar {
 			public void run() {
 				actionText.setForeground(Style.COLOR_ERROR);
 				actionText.setText(message);
-				status.layout();
-				GUI.getView().setSuccessText("");
+				// GUI.getView().setSuccessText("");
 			}
 		});
 	}
@@ -221,35 +226,59 @@ public class StatusBar {
    */
   private void showLastMessages(Enumeration e, boolean alignRight)
 	{
+		if (messages != null && !messages.isDisposed())
+			messages.dispose();
+
 		Display display = GUI.getDisplay();
-		Shell shell = new Shell(GUI.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setText(Application.getI18n().tr("letzte Meldungen"));
-		shell.setLayout(new GridLayout(1,false));
+//		Shell shell = new Shell(GUI.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		messages = new Shell(GUI.getShell(), SWT.NONE);
+		messages.setText(Application.getI18n().tr("letzte Meldungen"));
+		GridLayout gl = new GridLayout(1,false);
+		gl.horizontalSpacing = 0;
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.verticalSpacing = 0;
+		messages.setLayout(gl);
 
 		TablePart table = new TablePart(e,null);
 		table.addColumn(Application.getI18n().tr("Meldungen"),null);
 		try
     {
-      table.paint(shell);
+      table.paint(messages);
     }
     catch (RemoteException re) {}
 
-		shell.pack();
-		shell.setSize(shell.getBounds().width,150);
-		if (alignRight)
-			shell.setLocation(display.getCursorLocation());
-		else 
-			shell.setLocation(display.getCursorLocation().x-shell.getBounds().width,display.getCursorLocation().y);
-		shell.open();
-		while (!shell.isDisposed()) {
+		messages.pack();
+
+		Point pos = getAbsolutePosition(actionText);
+		messages.setLocation(pos.x,pos.y - 150);
+		messages.setSize(actionText.getBounds().width,150);
+		messages.open();
+		while (!messages.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();
 		}
+	}
+
+
+	private Point getAbsolutePosition(Control c)
+	{
+		if (c == null)
+			return null;
+
+		Point current = c.getLocation();
+		Point parent = new Point(0,0);
+		if (c.getParent() != null)
+			parent = getAbsolutePosition(c.getParent());
+		return new Point(current.x + parent.x, current.y + parent.y);
 	}
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.19  2004/04/29 21:21:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/04/12 19:16:00  willuhn
  * @C refactoring
  * @N forms
