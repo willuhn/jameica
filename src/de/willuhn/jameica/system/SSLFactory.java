@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/SSLFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.5 $
+ * $Date: 2005/01/07 18:08:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,9 +48,9 @@ public class SSLFactory
 		Logger.info("init ssl factory");
 		Application.getStartupMonitor().setStatusText("init ssl factory");
 
-		String cn = "jameica@"  + InetAddress.getLocalHost().getCanonicalHostName();
+		String cn = InetAddress.getLocalHost().getCanonicalHostName();
 
-		String prefix = Application.getConfig().getConfigDir() + "/" + cn;
+		String prefix = Application.getConfig().getConfigDir() + "/jameica";
 		File certFile = new File(prefix + ".crt");
 		File pubKey   = new File(prefix + "_pub.key");
 		File privKey  = new File(prefix + "_priv.key");
@@ -58,7 +58,7 @@ public class SSLFactory
 		if (certFile.exists() && pubKey.exists() && privKey.exists())
 			return;
 
-		Logger.info("jameica started for the first time at this work dir, creating new SSL keys");
+		Logger.info("no ssl certificates found, creating new SSL keys");
 
 		Hashtable attributes = new Hashtable();
 		attributes.put(X509Name.CN,cn);
@@ -106,6 +106,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.5  2005/01/07 18:08:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

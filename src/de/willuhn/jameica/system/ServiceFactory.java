@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/12/21 01:08:01 $
+ * $Revision: 1.19 $
+ * $Date: 2005/01/07 18:08:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,8 +61,7 @@ public final class ServiceFactory
   {
 		Logger.info("init plugin services");
 
-		// TODO SSLFactory#init
-		//sslFactory.init();
+		sslFactory.init();
 
 		startRegistry();
 
@@ -361,6 +360,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.19  2005/01/07 18:08:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/12/21 01:08:01  willuhn
  * @N new service configuration system in plugin.xml with auostart and dependencies
  *
