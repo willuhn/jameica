@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/12 00:58:54 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/20 03:48:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import de.willuhn.jameica.Application;
 
@@ -30,11 +31,9 @@ import de.willuhn.jameica.Application;
 public class DBHubImpl extends UnicastRemoteObject implements DBHub
 {
 
-  private final static String driverClass = "com.mckoi.JDBCDriver";
-  private final static String username = "jameica";
-  private final static String password = "jameica";
+  private String driverClass = null;
 
-  private String jdbcUrl = ":jdbc:mckoi:local://./db/db.conf";
+  private String jdbcUrl = null;
   
   private boolean connected = false;
   private Connection conn;
@@ -42,10 +41,20 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 	/**
 	 * Erzeugt eine neue Instanz.
 	 */
-	public DBHubImpl(String jdbcUrl) throws RemoteException
+	public DBHubImpl(HashMap initParams) throws RemoteException
 	{
-    if (jdbcUrl != null)
-      this.jdbcUrl = jdbcUrl;
+    if (initParams == null)
+      throw new RemoteException("initParams are null");
+    
+    jdbcUrl = (String) initParams.get("jdbc-url");
+    if (jdbcUrl == null || "".equals(jdbcUrl)) {
+      throw new RemoteException("jdbc-url not set in config.xml");
+    }
+
+    driverClass = (String) initParams.get("driver");
+    if (driverClass == null || "".equals(driverClass)) {
+      throw new RemoteException("driver not set in config.xml");
+    }
 	}
   
 
@@ -73,7 +82,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
     }
 
     try {
-      conn = DriverManager.getConnection(jdbcUrl,username,password);    
+      conn = DriverManager.getConnection(jdbcUrl);    
     }
     catch (SQLException e2)
     {
@@ -149,7 +158,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
     open();
 		try {
-			String className = c.getName()+"Impl";
+			String className = c.getName();
+      if (!className.endsWith("Impl"))
+        className += "Impl";
 			Class clazz = Class.forName(className);
 			Constructor ct = clazz.getConstructor(new Class[]{Connection.class,String.class});
 			ct.setAccessible(true);
@@ -168,6 +179,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.3  2003/11/20 03:48:42  willuhn
+ * @N first dialogues
+ *
  * Revision 1.2  2003/11/12 00:58:54  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/10/29 00:41:27 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/20 03:48:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,8 +10,6 @@
 package de.willuhn.jameica.views;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -19,41 +17,69 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.GUI;
-import de.willuhn.jameica.util.SWTFactory;
 import de.willuhn.jameica.util.Style;
+import de.willuhn.jameica.views.parts.LabelGroup;
 
+/**
+ * Basis-Klasse fuer alles Views.
+ * @author willuhn
+ */
 public abstract class AbstractView
 {
 	private Label dotLine;
 	Composite parent;
   Object currentObject;
   
+  /**
+   * Konstruktor.
+   * @param o ein optionales Datenobjekt, welches in der View verarbeitet werden soll.
+   */
   public AbstractView(Object o)
   {
     currentObject = o;
   }
 
+  /**
+   * Wird aufgerufen, wenn der Dialog geoeffnet wird. Diese Methode muss von abgeleiteteten
+   * Klassen ueberschrieben werden, um dort den Content zu malen.
+   */
   public abstract void bind();
 
+  /**
+   * Wird aufgerufen, wenn der Dialog verlassen wird. Diese Methode muss von abgeleiteten
+   * Klassen ueberschrieben werden, um dort Aufraeumarbeiten vorzunehmen.
+   */
   public abstract void unbind();
 
+  /**
+   * Setzt die Ueberschrift des Dialogs.
+   * @param headline Name der Ueberschrift.
+   */
   public void setHeadline(String headline)
 	{
-		Composite comp = SWTFactory.getComposite(getParent(), new GridLayout());
+    Composite comp = new Composite(getParent(), SWT.NONE);
+    comp.setLayout(new GridLayout());
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = 5;
 		comp.setLayoutData(gd);
-		Label title = SWTFactory.getLabel(comp, headline, new GridData());
+
+    Label title = new Label(comp, SWT.NONE);
+    title.setText(headline);
+    title.setLayoutData(new GridData());
+
 		title.setFont(Style.getFont("Verdana", 8, SWT.BOLD));
 		title.setForeground(new Color(GUI.display,0,0,0));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 3;
-		// gepunktete Linie
-		dotLine = SWTFactory.getLabel(comp, "", data);
+    dotLine = new Label(comp, SWT.NONE);
+    dotLine.setText("");
+    dotLine.setLayoutData(data);
+
+
 		dotLine.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent e) {
 					drawDottedLine(e);
@@ -62,7 +88,7 @@ public abstract class AbstractView
 	}
 	
 	/**
-	 * Malt eine gepunktete Linie auf ein Label.
+	 * Zeichnet eine gepunktete Linie unter die Ueberschrift.
 	 * @param e PaintEvent
 	 */
 	private void drawDottedLine(PaintEvent e)
@@ -96,7 +122,7 @@ public abstract class AbstractView
 	}
 
 	/**
-   * Liefert das dieser View uebergebene Objekt zurueck. 
+   * Liefert das dieser View uebergebene Daten-Objekt zurueck. 
    * @return
    */
   public Object getCurrentObject()
@@ -104,30 +130,29 @@ public abstract class AbstractView
 		return currentObject;
 	}
 
-	public void addGlobalListener(Composite c)
-	{
-		final Control[] controls = c.getChildren();
-		for (int i=0;i<controls.length;++i)
-		{
-			controls[i].addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent e) {
-					onGlobalChange();
-				}
-			});
-			if (controls[i] instanceof Composite)
-				addGlobalListener((Composite) controls[i]);
-		}
-	}
+  /**
+   * Erzeugt eine Standard-Group fuer zweispaltige Dialoge (links Feldname, rechts Eingabefeld).
+   * @param name
+   * @return
+   */
+  protected LabelGroup createLabelGroup(String name)
+  {
+    Group group = new Group(parent, SWT.NONE);
+    group.setText(name);
+    group.setLayout(new GridLayout(2, false));
+    group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    return new LabelGroup(group);
+  }
 
-	public void onGlobalChange()
-	{
-	}
 }
 
 
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.4  2003/11/20 03:48:42  willuhn
+ * @N first dialogues
+ *
  * Revision 1.3  2003/10/29 00:41:27  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/05 22:46:19 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/20 03:48:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -70,6 +70,14 @@ public interface DBObject extends Remote
 	 */
 	public String getID() throws RemoteException;
 	
+  /**
+   * Liefert den Wert des angegebenen Feldes.
+   * @param name Name des Feldes.
+   * @return Wert des Feldes.
+   * @throws RemoteException
+   */
+  public Object getField(String name) throws RemoteException;
+
 	/**
 	 * Gibt an, ob das Objekt neu ist und somit 
 	 * ein Insert statt einem Update gemacht werden muss.
@@ -78,10 +86,30 @@ public interface DBObject extends Remote
 	 */
 	public boolean isNewObject() throws RemoteException;
 
+
+  /**
+   * Liefert eine Liste mit allen Objekten dieser Tabelle.
+   * @return
+   * @throws RemoteException
+   */
+  public DBIterator getList() throws RemoteException;
+  
+  /**
+   * Liefert den Namen des Primaer-Feldes dieses Objektes.
+   * Hintergrund: Wenn man z.Bsp. in einer Select-Box nur einen Wert
+   * anzeigen kann, dann wird dieser genommen.
+   * @return
+   * @throws RemoteException
+   */
+  public String getPrimaryField() throws RemoteException;
+
 }
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.2  2003/11/20 03:48:42  willuhn
+ * @N first dialogues
+ *
  * Revision 1.1  2003/11/05 22:46:19  willuhn
  * *** empty log message ***
  *

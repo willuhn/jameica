@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/13 00:37:36 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/20 03:48:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,6 +75,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			while (meta.next())
 			{
 				field = meta.getString(4);
+        // System.out.println("6: " + meta.getString(6));
 				if (field == null || field.equalsIgnoreCase("id")) // skip empty fields and ID field
 					continue;
 				properties.put(field,null);
@@ -200,14 +201,11 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
 
   /**
-   * Liefert den Wert des Feldes aus der angegebenen Spalte oder null, wenn er nicht existiert.
-   * @param fieldName Name des Feldes.
-   * @return Wert des Feldes.
+   * @see de.willuhn.jameica.rmi.DBObject#getField(java.lang.String)
    */
-  protected String getField(String fieldName)
+  public Object getField(String fieldName)
   {
-    String value = (String) properties.get(fieldName);
-    return (value == null ? null : value.trim());
+    return properties.get(fieldName);
   }
 
   /**
@@ -236,10 +234,11 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
 
 	/**
-   * Liefert die ID des zuletzt gespeicherten Datensatzes.
+   * Wird bei einem Insert aufgerufen, ermittelt die ID des erzeugten Datensatzes und speichert sie
+   * in diesem Objekt.
    * @return
    */
-  private String setLastId()
+  private void setLastId()
 	{
 		Statement stmt = null;
 		try {
@@ -247,13 +246,11 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 			ResultSet rs = stmt.executeQuery("select max(id) from " + getTableName());
 			rs.next();
 			this.id = rs.getString(1);
-			Application.getLog().info("  id: " + id);
-			return id;
+			Application.getLog().debug("  id: " + id);
 		}
 		catch (Exception e)
 		{
 			Application.getLog().error("  unable to determine insert id");
-			return null;
 		}
 	}
   /**
@@ -396,6 +393,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   protected abstract String getTableName() throws RemoteException;
 
+  /**
+   * @see de.willuhn.jameica.rmi.DBObject#getPrimaryField()
+   */
+  public abstract String getPrimaryField() throws RemoteException;
 
   /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#transactionBegin()
@@ -461,11 +462,22 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     }
 
   }
+  
+  /**
+   * @see de.willuhn.jameica.rmi.DBObject#getList()
+   */
+  public DBIterator getList() throws RemoteException
+  {
+    return Application.getDefaultDatabase().createList(this.getClass());
+  }
 
 }
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.4  2003/11/20 03:48:42  willuhn
+ * @N first dialogues
+ *
  * Revision 1.3  2003/11/13 00:37:36  willuhn
  * *** empty log message ***
  *

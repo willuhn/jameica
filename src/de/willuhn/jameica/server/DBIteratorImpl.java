@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/05 22:46:19 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/20 03:48:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -114,11 +114,22 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
   {
     object.transactionRollback();
   }
+
+  /**
+   * @see de.willuhn.jameica.rmi.DBIterator#size()
+   */
+  public int size() throws RemoteException
+  {
+    return list.size();
+  }
 }
 
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.2  2003/11/20 03:48:42  willuhn
+ * @N first dialogues
+ *
  * Revision 1.1  2003/11/05 22:46:19  willuhn
  * *** empty log message ***
  *

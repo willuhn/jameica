@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBIterator.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/05 22:46:19 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/20 03:48:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,11 +63,21 @@ public interface DBIterator extends Remote {
    */
   public void transactionRollback() throws RemoteException;
 
+
+  /**
+   * Liefert die Anzahl der Elemente dieses Iterators.
+   * @return
+   * @throws RemoteException
+   */
+  public int size() throws RemoteException;
 }
 
 
 /*********************************************************************
  * $Log: DBIterator.java,v $
+ * Revision 1.2  2003/11/20 03:48:42  willuhn
+ * @N first dialogues
+ *
  * Revision 1.1  2003/11/05 22:46:19  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/13 00:37:35 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/20 03:48:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,7 +21,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.util.SWTFactory;
 import de.willuhn.jameica.util.Style;
 
 /**
@@ -79,10 +78,9 @@ public class View
 			content.dispose();
 
 		content = new Composite(view, SWT.BORDER);
-		content.setBackground(SWTFactory.getDefaultBackgroundColor());
 		GridLayout l = new GridLayout();
-		l.marginHeight = 0;
-		l.marginWidth = 0;
+		l.marginHeight = 8;
+		l.marginWidth = 8;
 		content.setLayout(l);
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
@@ -110,6 +108,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.4  2003/11/20 03:48:41  willuhn
+ * @N first dialogues
+ *
  * Revision 1.3  2003/11/13 00:37:35  willuhn
  * *** empty log message ***
  *

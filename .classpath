@@ -2,9 +2,9 @@
 <classpath>
     <classpathentry kind="src" path="src"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry kind="lib" path="lib/linux/swt.jar" sourcepath="lib/linux/swtsrc.zip"/>
+    <classpathentry kind="lib" path="lib/linux/swt.jar" sourcepath="/jameica/lib/linux/swtsrc.zip"/>
     <classpathentry kind="lib" path="lib/linux/swt-pi.jar"/>
     <classpathentry kind="lib" path="lib/bb_util.jar"/>
-    <classpathentry kind="lib" path="lib/mckoidb.jar" sourcepath="lib/mckoidb.src.zip"/>
+    <classpathentry kind="lib" path="lib/mysql-connector-java-3.0.8-stable-bin.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

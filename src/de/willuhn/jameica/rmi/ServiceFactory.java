@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/12 00:58:54 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/20 03:48:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.security.Permission;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import de.willuhn.jameica.Application;
@@ -93,9 +94,9 @@ public class ServiceFactory
 		Application.getLog().info("searching for local service " + service.getName());
 		try {
 			Class clazz = (Class) Class.forName(service.getClassName());
-			Constructor ct = clazz.getConstructor(new Class[]{String.class});
+			Constructor ct = clazz.getConstructor(new Class[]{HashMap.class});
 			ct.setAccessible(true);
-			return (Service) ct.newInstance(new Object[] {service.getInitParam()});
+			return (Service) ct.newInstance(new Object[] {service.getInitParams()});
 		}
 		catch (Exception e)
 		{
@@ -184,6 +185,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.3  2003/11/20 03:48:42  willuhn
+ * @N first dialogues
+ *
  * Revision 1.2  2003/11/12 00:58:54  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/18 18:56:07 $
+ * $Revision: 1.6 $
+ * $Date: 2003/11/20 03:48:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -50,6 +51,8 @@ public class PluginLoader extends ClassLoader
   public static void init()
   {
     Application.getLog().info("init plugins");
+    
+    loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","/work/willuhn/eclipse/fibu/src");
 
     try {
       // Plugin-Verzeichnis ermitteln
@@ -149,9 +152,30 @@ public class PluginLoader extends ClassLoader
         loadPlugin(entryName);
       }
     }
+    
     Application.getLog().info("done");
   }
   
+
+  /**
+   * Hey, diese Funktion muss abgeklemmt werden wenn ausgeliefert wird ;)
+   * @param clazz
+   * @param path
+   */
+  private static void loadPluginFromIDE(String clazz, String path)
+  {
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // TODO: Das hier ist nur zum Entwickeln in der IDE damit die Plugins auch ohne Jar funktionieren
+    try {
+      Application.addMenu(new FileInputStream(path + "/menu.xml"));
+      Application.addNavigation(new FileInputStream(path + "/navigation.xml"));
+      loadPlugin(clazz);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////
+  }
 
   /**
    * Sucht rekursiv im angegebenen Verzeichnis nach Dateien des Schemas *.zip und *.jar.
@@ -249,10 +273,23 @@ public class PluginLoader extends ClassLoader
     Application.getLog().info("done");
   }
 
+  /**
+   * Liefert den Classloader ueber den die Plugins geladen wurden.
+   * Denn der ist noetig, wenn eine Klasse aus dem Plugin geladen werden soll.
+   * @return
+   */
+  public static URLClassLoader getPluginClassLoader()
+  {
+    return loader;
+  }
+
 }
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.6  2003/11/20 03:48:41  willuhn
+ * @N first dialogues
+ *
  * Revision 1.5  2003/11/18 18:56:07  willuhn
  * @N added support for pluginmenus and plugin navigation
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/11/18 18:56:07 $
+ * $Revision: 1.8 $
+ * $Date: 2003/11/20 03:48:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -80,10 +80,6 @@ public class Application {
       Application.getLog().error("config file not found. giving up.");
       shutDown();
     }
-
-    // init database
-    Database.init();
-    if (!serverMode) SplashScreen.add(10);
 
     // init service factory
     ServiceFactory.init();
@@ -166,8 +162,6 @@ public class Application {
       PluginLoader.shutDown();
 
       ServiceFactory.shutDown();
-
-      Database.shutDown();
 
       Application.getLog().info("shutdown complete");
       Application.getLog().close();
@@ -257,6 +251,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.8  2003/11/20 03:48:41  willuhn
+ * @N first dialogues
+ *
  * Revision 1.7  2003/11/18 18:56:07  willuhn
  * @N added support for pluginmenus and plugin navigation
  *

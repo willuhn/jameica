@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/18 18:56:08 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/20 03:48:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -135,8 +135,20 @@ public class GUI
     try
     {
       Application.getLog().debug("starting view: " + className);
-      Class clazz = Class.forName(className);
-      
+      Class clazz = null;
+      try {
+        clazz = Class.forName(className);
+      }
+      catch (ClassNotFoundException e)
+      {
+        // Mhh, scheint evtl. eine View aus einem Plugin zu sein. Wir versuchen es mal.
+        clazz = PluginLoader.getPluginClassLoader().loadClass(className);
+      }
+      if (clazz == null)
+      {
+        throw new ClassNotFoundException(className);
+      }
+
       if (gui.currentView != null) {
         gui.currentView.unbind();
       }
@@ -202,7 +214,7 @@ public class GUI
   {
     while (!shell.isDisposed()) {
       try {
-        if (!display.readAndDispatch ()) display.sleep ();
+        if (!display.readAndDispatch ()) display.sleep();
       }
       catch(Exception e){
         e.printStackTrace();
@@ -267,6 +279,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.4  2003/11/20 03:48:41  willuhn
+ * @N first dialogues
+ *
  * Revision 1.3  2003/11/18 18:56:08  willuhn
  * @N added support for pluginmenus and plugin navigation
  *
