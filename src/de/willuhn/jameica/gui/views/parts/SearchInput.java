@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SearchInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/12/08 15:41:09 $
+ * $Revision: 1.3 $
+ * $Date: 2003/12/08 16:19:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,7 +85,7 @@ public class SearchInput extends Input
       public void mouseUp(MouseEvent e)
       {
         Application.getLog().info("starting search dialog");
-        text.setText(searchDialog.open());
+        text.setText(""+searchDialog.open()); // TODO
         text.redraw();
       }
     });
@@ -125,6 +125,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.3  2003/12/08 16:19:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/12/08 15:41:09  willuhn
  * @N searchInput
  *

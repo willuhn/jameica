@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/08 15:41:09 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/08 16:19:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,9 @@ package de.willuhn.jameica.views;
 import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.Application;
@@ -24,23 +25,26 @@ import de.willuhn.jameica.GUI;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.rmi.DBObject;
 import de.willuhn.jameica.views.parts.Controller;
-import de.willuhn.jameica.views.parts.LabelGroup;
 import de.willuhn.jameica.views.parts.Table;
 
 /**
  * Basisklasse fuer Such-Dialoge.
  * @author willuhn
  */
-public abstract class SearchDialog
+public abstract class SearchDialog extends Dialog
 {
 
   private DBObject object;
 
-  /**
-   * Erzeugt einen neuen Suchdialog fuer das uebergebene Objekt.
-   * @param object das Objekt.
-   */
-  public SearchDialog(DBObject object)
+  public SearchDialog(Shell parent, int style) {
+    super(parent, style);
+  }
+
+  public SearchDialog(Shell parent) {
+    this(parent, 0);
+  }
+
+  public void setObject(DBObject object)
   {
     this.object = object;
   }
@@ -50,29 +54,32 @@ public abstract class SearchDialog
    * String mit dem ausgewaehlten Objekt zurueck.
    * @return
    */
-  public String open()
+  public Object open()
   {
     try {
-      final Shell shell = new Shell();
+      Shell parent = getParent();
+      Shell shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+      shell.setText(getText());
+      shell.setSize(400,200);
+      shell.setLayout(new GridLayout(1,false));
+
       final Table table = new Table(this.object.getList(),new SearchController(this.object));
       table.addColumn("Feld",object.getPrimaryField());
       table.paint(shell);
 
-      Label label = new Label(shell,SWT.BORDER);
-      label.setText("Foooo");
-      shell.setText ("Dialog");
-      // shell.setSize (200, 200);
       shell.open();
-      while (!shell.isDisposed ()) {
-        if (!display.readAndDispatch ()) display.sleep ();
+      Display display = parent.getDisplay();
+      while (!shell.isDisposed()) {
+        if (!display.readAndDispatch()) display.sleep();
       }
-      display.dispose ();    }
+      return object;
+    }
     catch (RemoteException e)
     {
       Application.getLog().error("unable to open search dialog");
       GUI.setActionText(I18N.tr("Fehler beim Öffnen des Such-Dialogs."));
     }
-    return "foo";
+    return null;
   }
 
   class SearchController extends Controller
@@ -136,6 +143,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.2  2003/12/08 16:19:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/12/08 15:41:09  willuhn
  * @N searchInput
  *
