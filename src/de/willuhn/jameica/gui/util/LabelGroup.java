@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.5 $
+ * $Date: 2004/05/25 23:23:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -151,6 +151,7 @@ public class LabelGroup
     }
     catch (RemoteException e)
     {
+    	Application.getLog().error("error while reading table",e);
 			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Tabelle"));
     }
   }
@@ -221,6 +222,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.5  2004/05/25 23:23:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

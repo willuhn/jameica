@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Headline.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.3 $
+ * $Date: 2004/05/25 23:23:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,15 +13,9 @@
 package de.willuhn.jameica.gui.util;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import de.willuhn.jameica.gui.GUI;
 
 /**
  * Malt eine Standard-Ueberschrift in den Dialog.
@@ -39,50 +33,19 @@ public class Headline
    */
   public Headline(Composite parent, String headline)
   {
-    Composite comp = new Composite(parent, SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
-    comp.setLayout(new GridLayout());
-    comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-    Label title = new Label(comp, SWT.NONE);
+    Label title = new Label(parent, SWT.NONE);
     title.setText(headline);
     title.setLayoutData(new GridData());
-    title.setFont(Font.H1.getSWTFont());
+    title.setFont(Font.H2.getSWTFont());
 		title.setBackground(Color.BACKGROUND.getSWTColor());
-
-    GridData data = new GridData(GridData.FILL_HORIZONTAL);
-    data.heightHint = 3;
-    dotLine = new Label(comp, SWT.NONE);
-    dotLine.setText("");
-		dotLine.setBackground(Color.BACKGROUND.getSWTColor());
-    dotLine.setLayoutData(data);
-
-    dotLine.addPaintListener(new PaintListener() {
-      public void paintControl(PaintEvent e) {
-        drawDottedLine(e);
-      }
-    });
-  }
-  
-  /**
-   * Zeichnet eine gepunktete Linie unter die Ueberschrift.
-   * @param e PaintEvent
-   */
-  private void drawDottedLine(PaintEvent e)
-  {
-    Point p = dotLine.getSize();
-    e.gc.setLineWidth(1); 
-    e.gc.setLineStyle(SWT.LINE_SOLID); 
-    e.gc.setForeground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(), 125, 125, 125)); 
-    for (int i=0; i<p.x;) {
-      e.gc.drawLine(i,0,i,0);
-      i=i+3;
-    }
   }
 }
 
 /*********************************************************************
  * $Log: Headline.java,v $
+ * Revision 1.3  2004/05/25 23:23:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory
