@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import de.willuhn.jameica.gui.GUI;
 
 /**
  * Kontrolliert alle installierten Plugins.
@@ -125,7 +127,7 @@ public class PluginLoader extends ClassLoader
         if ("menu.xml".equals(entryName))
           try {
             Application.getLog().info("  adding menu from plugin " + jar.getName());
-            Application.addMenu(jar.getInputStream(entry));
+            GUI.addMenu(jar.getInputStream(entry));
             Application.getLog().info("  done");
           }
           catch (IOException e)
@@ -139,7 +141,7 @@ public class PluginLoader extends ClassLoader
         if ("navigation.xml".equals(entryName))
         try {
           Application.getLog().info("  adding navigation from plugin " + jar.getName());
-          Application.addNavigation(jar.getInputStream(entry));
+          GUI.addNavigation(jar.getInputStream(entry));
           Application.getLog().info("  done");
         }
         catch (IOException e)
@@ -174,8 +176,8 @@ public class PluginLoader extends ClassLoader
     //////////////////////////////////////////////////////////////////////////////////////////////
     // TODO: Das hier ist nur zum Entwickeln in der IDE damit die Plugins auch ohne Jar funktionieren
     try {
-      Application.addMenu(new FileInputStream(path + "/menu.xml"));
-      Application.addNavigation(new FileInputStream(path + "/navigation.xml"));
+      GUI.addMenu(new FileInputStream(path + "/menu.xml"));
+      GUI.addNavigation(new FileInputStream(path + "/navigation.xml"));
       loadPlugin(null,clazz);
     }
     catch (Exception e) {
@@ -324,6 +326,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.11  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,8 +47,8 @@ public class View
    */
   private void setLayout()
 	{
-		view = new Composite(GUI.shell, SWT.NONE);
-		view.setBackground(new Color(GUI.display, 255, 255, 255));
+		view = new Composite(GUI.getShell(), SWT.NONE);
+		view.setBackground(new Color(GUI.getDisplay(), 255, 255, 255));
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -108,6 +108,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.7  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

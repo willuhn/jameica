@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/13 00:37:36 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,34 +25,26 @@ public class Main {
    * @param args die via Kommandozeile uebergebenen Parameter.
    * Parameter 1: "-server" als Parameter fuehrt dazu, dass die
    *              Anwendung im Server-Mode startet und die GUI weglaesst.
-   * Parameter 2: optional: Pfad und Dateiname zur Config-Datei.
+   * Parameter 2: Optionales Config-File (Default: cfg/config.xml).
    */
   public static void main(String[] args) {
+
     String serverParam = "-server";
 
-    if (args.length == 0)
-    {
-      // no parameter given -> starting in GUI mode with default config location
-      Application.newInstance(false,null);
-    }
-    else if (args.length == 1 && serverParam.equalsIgnoreCase(args[0])) {
-      // 1 parameter given and param is "-server" -> starting in server mode with default config location
-      Application.newInstance(true,null);
-    }
-    else if (args.length == 1 && !serverParam.equalsIgnoreCase(args[0])) {
-      // 1 parameter given and param is not "-server" -> starting in GUI mode with given config location
-      Application.newInstance(false,args[0]);
-    }
-    else {
-      // more than 1 parameter given -> starting with given data.
-      Application.newInstance(serverParam.equalsIgnoreCase(args[0]),args[1]);
-    }
-  }
+    boolean serverMode = args.length >= 1 && serverParam.equalsIgnoreCase(args[0]);
+
+    // Starten
+    Application.newInstance(serverMode, args.length > 1 ? args[1] : null);
+
+   }
 }
 
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.4  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/13 00:37:36  willuhn
  * *** empty log message ***
  *

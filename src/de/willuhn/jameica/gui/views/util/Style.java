@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/util/Attic/Style.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,9 +33,9 @@ public class Style
 
   private static Map imagecache = new HashMap();
 
-  public final static Color COLOR_COMMENT = new Color(GUI.display,60,60,60);
+  public final static Color COLOR_COMMENT = new Color(GUI.getDisplay(),60,60,60);
 
-  public final static Font FONT_HEADLINE = new Font(GUI.display,"Verdana", 8, SWT.BOLD);
+  public final static Font FONT_HEADLINE = new Font(GUI.getDisplay(),"Verdana", 8, SWT.BOLD);
 
   /**
    * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
@@ -54,17 +54,17 @@ public class Style
       ImageData data2 = null;
       if (data.transparentPixel > 0) {
         data2 = data.getTransparencyMask();
-        image = new Image(GUI.display, data, data2);
+        image = new Image(GUI.getDisplay(), data, data2);
       }
       else {
-        image = new Image(GUI.display, data);
+        image = new Image(GUI.getDisplay(), data);
       }
       
       if (image != null) {
         imagecache.put(filename, image);
       }
       else {
-        return new Image(GUI.display, Style.class.getClassLoader().getResourceAsStream("img/empty.gif"));
+        return new Image(GUI.getDisplay(), Style.class.getClassLoader().getResourceAsStream("img/empty.gif"));
       }
     }
     return image;
@@ -74,6 +74,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.4  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

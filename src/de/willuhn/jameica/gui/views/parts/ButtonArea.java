@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/ButtonArea.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -104,7 +104,7 @@ public class ButtonArea
     storeButton = new Button(buttonArea,SWT.PUSH);
     storeButton.setText(I18N.tr("Speichern"));
     storeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    GUI.shell.setDefaultButton(storeButton);
+    GUI.getShell().setDefaultButton(storeButton);
     // TODO Submit bei <ENTER> geht scheinbar nur unter Windows
     storeButton.addListener(SWT.Traverse, new Listener()
     {
@@ -187,6 +187,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.8  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

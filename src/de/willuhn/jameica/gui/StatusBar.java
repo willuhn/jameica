@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ public class StatusBar {
    */
   protected StatusBar() {
 
-		status = new Composite(GUI.shell, SWT.BORDER);
+		status = new Composite(GUI.getShell(), SWT.BORDER);
 
 		GridData data = new GridData();
 		data.grabExcessHorizontalSpace = true;
@@ -88,6 +88,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.5  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

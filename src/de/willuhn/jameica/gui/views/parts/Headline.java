@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Headline.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,7 +50,6 @@ public class Headline
     title.setLayoutData(new GridData());
 
     title.setFont(Style.FONT_HEADLINE);
-    title.setForeground(new Color(GUI.display,0,0,0));
     GridData data = new GridData(GridData.FILL_HORIZONTAL);
     data.heightHint = 3;
     dotLine = new Label(comp, SWT.NONE);
@@ -73,7 +72,7 @@ public class Headline
     Point p = dotLine.getSize();
     e.gc.setLineWidth(1); 
     e.gc.setLineStyle(SWT.LINE_SOLID); 
-    e.gc.setForeground(new Color(GUI.display, 125, 125, 125)); 
+    e.gc.setForeground(new Color(GUI.getDisplay(), 125, 125, 125)); 
     for (int i=0; i<p.x;) {
       e.gc.drawLine(i,0,i,0);
       i=i+3;
@@ -83,6 +82,9 @@ public class Headline
 
 /*********************************************************************
  * $Log: Headline.java,v $
+ * Revision 1.4  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

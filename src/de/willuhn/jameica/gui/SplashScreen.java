@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.5 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -107,21 +107,24 @@ public class SplashScreen
     splash.bar.setSelection(count);
     display.readAndDispatch();
     if (count == 100)
-      close();
+      shutDown();
   }
   
   /**
    * Setzt den Ladebalken auf 100% und schliesst danach den Splash-Screen. 
    */
-  public static void close()
+  public static void shutDown()
   {
-    splash.bar.setSelection(100);
-    display.readAndDispatch();
     try {
-      Thread.sleep(30);
+      splash.bar.setSelection(100);
+      display.readAndDispatch();
+      splash.bar.dispose();
+      shell.dispose();
+      display.dispose();
     }
-    catch (Exception e) {}
-    display.dispose();
+    catch (Exception e)
+    {
+    }
   }
 
 }
@@ -130,6 +133,9 @@ public class SplashScreen
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.5  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

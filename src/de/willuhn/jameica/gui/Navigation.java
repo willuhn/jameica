@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -169,7 +169,7 @@ public class Navigation {
 			if (this.parentItem == null) {
 
 				// Tree erzeugen
-				Tree tree = new Tree(GUI.shell, SWT.BORDER);
+				Tree tree = new Tree(GUI.getShell(), SWT.BORDER);
 
 				// Griddata erzeugen
 				final GridData gridData = new GridData(GridData.FILL_VERTICAL);
@@ -249,6 +249,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.7  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

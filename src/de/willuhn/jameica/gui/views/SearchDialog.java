@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -96,8 +96,8 @@ public abstract class SearchDialog
     }
 
     try {
-      Display display = GUI.display;
-      shell = new Shell(GUI.shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+      Display display = GUI.getDisplay();
+      shell = new Shell(GUI.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
       shell.setText(title == null ? I18N.tr("Suche") : title);
       shell.setLocation(display.getCursorLocation());
       shell.setLayout(new GridLayout(1,false));
@@ -186,6 +186,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.6  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ErrorView.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,7 +72,7 @@ public class ErrorView extends AbstractView
     {
       public void mouseUp(MouseEvent e)
       {
-        final Clipboard cb = new Clipboard(GUI.display);
+        final Clipboard cb = new Clipboard(GUI.getDisplay());
         TextTransfer textTransfer = TextTransfer.getInstance();
         String[] logEntries = Application.getLog().getLastLines();
         StringBuffer sb = new StringBuffer();
@@ -94,6 +94,9 @@ public class ErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: ErrorView.java,v $
+ * Revision 1.4  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

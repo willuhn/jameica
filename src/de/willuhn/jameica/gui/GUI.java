@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.8 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,8 @@ package de.willuhn.jameica.gui;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -25,6 +26,7 @@ import de.willuhn.jameica.Application;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.views.AbstractView;
+import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.util.Style;
 
 /**
@@ -33,9 +35,15 @@ import de.willuhn.jameica.gui.views.util.Style;
  */
 public class GUI
 {
+
+  private static ArrayList additionalMenus = new ArrayList();
+  private static ArrayList additionalNavigation = new ArrayList();
   
   // singleton
   private static GUI gui;
+    private final Display display = new Display();
+    private final Shell shell = new Shell();
+
     private Navigation navi;
     private View view;
     private StatusBar statusBar;
@@ -43,37 +51,78 @@ public class GUI
   
     private AbstractView currentView;
 
-  
-  // globales Display und Shell
-  public final static Display display = new Display();
-  public static Shell shell = new Shell();
-  
+
+  private static boolean stop = false;  
+
   /**
-   * ct.
+   * Erzeugt die GUI-Instanz.
    */
-  private GUI(){
+  private GUI() {
+  }
+  
+  private void load() {
+    Application.getLog().info("startup GUI");
+
+    // init shell
+    GridLayout l = new GridLayout();
+    l.marginWidth = 0;
+    l.marginHeight = 0;
+    l.horizontalSpacing = 0;
+    l.verticalSpacing = 0;
+    l.numColumns = 2;
+    shell.setLayout(l);
+    shell.setBounds(10, 10, 920, 720);
+    shell.setText("Jameica");
+    shell.setImage(Style.getImage("globe.gif"));
+    
+
+    Application.getLog().info("adding menu");         addMenu();
+    Application.getLog().info("adding navigation");   addNavigation();
+    Application.getLog().info("adding content view"); addView();
+    Application.getLog().info("adding status panel"); addStatusBar();
+
+    shell.open();
+
+    // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins hinzu.
+    InputStream entry = null;
+    Iterator menus = additionalMenus.iterator();
+    while (menus.hasNext())
+    {
+      entry = (InputStream) menus.next();
+      appendMenu(entry);
+    }
+    Iterator navigations = additionalNavigation.iterator();
+    while (navigations.hasNext())
+    {
+      entry = (InputStream) navigations.next();
+      appendNavigation(entry);
+    }
+
   } 
   
 
   /**
-   * Erzeugt eine neue Instanz der GUI oder liefert die existierende zurueck. 
-   * @return
+   * Initialisiert die GUI und startet den GUI-Loop. 
    */
-  public static GUI getInstance()
+  public static void init()
   {
+
+    if (gui != null)
+      return; // allready started.
+
     // init language pack
     I18N.init(Application.getConfig().getLocale());
 
-
-    if (gui != null)
-      return gui; // allready initted.
-
     gui = new GUI();
-    
-    gui.init();
-    return gui;
+    gui.load();
+    setActionText(I18N.tr("startup finished."));
+
+    // GUI Loop starten
+    gui.loop(); 
+
   }
   
+
 
   /**
    * Fuegt der Anwendung das Dropdown-Menu hinzu.
@@ -213,9 +262,9 @@ public class GUI
   /**
    * Startet den GUI-Loop.
    */
-  public void clientLoop()
+  public void loop()
   {
-    while (!shell.isDisposed()) {
+    while (!shell.isDisposed() && !stop) {
       try {
         if (!display.readAndDispatch ()) display.sleep();
       }
@@ -223,66 +272,102 @@ public class GUI
         if (Application.DEBUG)
           e.printStackTrace();
         Application.getLog().error("main loop crashed. showing error page");
-        GUI.startView("de.willuhn.jameica.views.ErrorView",e);
+        GUI.startView(ErrorView.class.getName(),e);
       }
     }
+    quit();
   }
   
+
   /**
-   * Initialisiert die GUI.
+   * Erweitert das Menu der Anwendung um die in dem InputStream uebergebene menu.xml.
+   * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
+   * Diese Funktion wird vom PluginLoader ausgefuehrt.
+   * @param xml
    */
-  private void init()
+  public static void addMenu(InputStream xml)
   {
-    // init shell
-    GridLayout l = new GridLayout();
-    l.marginWidth = 0;
-    l.marginHeight = 0;
-    l.horizontalSpacing = 0;
-    l.verticalSpacing = 0;
-    l.numColumns = 2;
-    shell.setLayout(l);
-    shell.setBounds(10, 10, 920, 720);
-    shell.setText("Jameica");
-    shell.setImage(Style.getImage("globe.gif"));
-    
+    if (Application.inServerMode())
+      return;
 
-    Application.getLog().info("adding menu");         addMenu();
-    Application.getLog().info("adding navigation");   addNavigation();
-    Application.getLog().info("adding content view"); addView();
-    Application.getLog().info("adding status panel"); addStatusBar();
-
-    Application.getLog().info("startup");
-    setActionText(I18N.tr("startup finished."));
-
-    shell.open ();
+    additionalMenus.add(xml);
   }
 
   /**
-   * Wechselt die GUI auf das angegebene Locale.
-   * @param l Locale, auf welches gewechselt werden soll.
+   * Erweitert die Navigation der Anwendung um die in dem InputStream uebergebene navigation.xml.
+   * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
+   * Diese Funktion wird vom PluginLoader ausgefuehrt.
+   * @param xml
    */
-  public static void changeLanguageTo(Locale l)
+  public static void addNavigation(InputStream xml)
   {
-    I18N.init(l);
-    shell.dispose();
-    shell = new Shell();
-    gui.init();
-    gui.clientLoop();
+    if (Application.inServerMode())
+      return;
+
+    additionalNavigation.add(xml);
+  }
+
+  /**
+   * Liefert die Shell der Anwendung.
+   * @return
+   */
+  public static Shell getShell()
+  {
+    return gui.shell;
   }
   
+  /**
+   * Liefert das Display der Anwendung.
+   * @return
+   */
+  public static Display getDisplay()
+  {
+    return gui.display;
+  }
+
   /**
    * Beendet die GUI.
+   * Wenn die Anwendung nicht im Servermode laeuft, wird nichts gemacht ;).
    */
-  public void shutDown()
+  public static void shutDown()
   {
+    if (Application.inServerMode())
+      return;
+      
+    // exit running gui loop
+    stop = true;
+  }
+
+  /**
+   * Die Beenden-Methoden sind deshalb getrennt, damit es moeglich
+   * ist, die GUI von einem anderen Thread beenden zu lassen
+   * (z.Bsp. vom ShutdownHook).
+   */
+  private static void quit()
+  {
+
+    Application.getLog().info("flush I18N");
     I18N.flush();
-    display.dispose();
+    try {
+      Application.getLog().info("shutting down GUI");
+      gui.shell.dispose();
+      gui.display.dispose();
+      Application.getLog().info("done");
+    }
+    catch (Exception e)
+    {
+      if (Application.DEBUG)
+        e.printStackTrace();
+    }
   }
   
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.8  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

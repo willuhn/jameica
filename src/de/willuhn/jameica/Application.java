@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,9 +14,6 @@
 package de.willuhn.jameica;
 
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
@@ -34,17 +31,15 @@ public class Application {
   public final static boolean DEBUG = true;
   private static boolean serverMode = false;
 
+  private static boolean cleanShutdown = false;
+  private static ShutdownHook shutdownHook = new ShutdownHook();
+  
   // singleton
   private static Application app;
-    private GUI gui = null;
     private Logger log;
     private Config config;
     private DBHub db;
     
-    private ArrayList additionalMenus = new ArrayList();
-    private ArrayList additionalNavigation = new ArrayList();
-
-
   /**
    * ct.
    */
@@ -60,33 +55,30 @@ public class Application {
 
     Application.serverMode = serverMode;
 
-    if (!serverMode) SplashScreen.add(10);
+    splash();
 
     // start application
     app = new Application();
 
     // init logger
-    app.log = new Logger(null);
-    if (!serverMode) SplashScreen.add(10);
+    app.log = new Logger(null); splash();
 
     Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
 
     // init config
     try {
-      app.config = new Config(configFile);
-      if (!serverMode) SplashScreen.add(10);
+      app.config = new Config(configFile); splash();
     }
     catch (FileNotFoundException e)
     {
       e.printStackTrace();
       Application.getLog().error("config file not found. giving up.");
-      shutDown();
+      Application.shutDown();
+      return;
     }
 
     // init service factory
-    ServiceFactory.init();
-    if (!serverMode) SplashScreen.add(10);
-    
+    ServiceFactory.init(); splash();
 
     // init default database.    
     Application.getLog().info("trying to connect to default database");
@@ -95,12 +87,12 @@ public class Application {
     {
       Application.getLog().error("no default database configured. Exiting");
       Application.shutDown();
+      return;
     }
     try {
       // connect to default database
       app.db = (DBHub) ServiceFactory.lookupService(defaultDB);
-      Application.getLog().info("  done");
-      if (!serverMode) SplashScreen.add(10);
+      Application.getLog().info("  done"); splash();
     }
     catch (Exception e)
     {
@@ -108,81 +100,67 @@ public class Application {
         e.printStackTrace();
       Application.getLog().error("connect to default database failed. Exiting");
       Application.shutDown();
+      return;
     }
 
 
     // init plugins
-    PluginLoader.init();
-    if (!serverMode) SplashScreen.add(10);
+    PluginLoader.init(); splash();
+
+    // close splash screen
+    if (!serverMode)
+      SplashScreen.shutDown();
+
+    // add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
+    Runtime.getRuntime().addShutdownHook(shutdownHook);
 
     // start loops
-    if (serverMode) {
-      app.serverLoop();
-    }
-    else {
-      if (!serverMode) SplashScreen.close();
-      app.gui = GUI.getInstance();
-      
-      // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins hinzu.
-      InputStream entry = null;
-      Iterator menus = app.additionalMenus.iterator();
-      while (menus.hasNext())
-      {
-        entry = (InputStream) menus.next();
-        app.gui.appendMenu(entry);
-      }
-      Iterator navigations = app.additionalNavigation.iterator();
-      while (navigations.hasNext())
-      {
-        entry = (InputStream) navigations.next();
-        app.gui.appendNavigation(entry);
-      }
-      
-      app.gui.clientLoop(); 
-    }
-    shutDown();
+    if (serverMode) Server.init();
+    else               GUI.init();
+
+    // Das hier koennen wir uns jetzt erlauben, weil wir ja 'nen ShutdownHook haben ;)
+    // Und da wir nicht wollen, dass Hinz und Kunz die Anwendung runterfahren lassen,
+    // verlassen wir uns drauf, dass der Hook zuschlaegt, wenn wir System.exit(0) aufrufen.
+    System.exit(0);
+
   }
 
   /**
-   * Startet den Mainloop fuer den Servermode.
+   * Zeigt den Splash-Screen an und vergroessert den Fortschrittsbalken
+   * bei jedem erneuten Aufruf um ein weiteres Stueck.
+   * Wenn die Anwendung im Servermode laeuft, kehrt die Funktion
+   * tatenlos zurueck ohne den Splash-Screen anzuzeigen.
    */
-  private void serverLoop()
+  private static void splash()
   {
-    Application.getLog().info("jameica up and running...");
-    Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+    if (!serverMode) SplashScreen.add(10);
   }
 
   /**
    * Faehrt die gesamte Anwendung herunter.
+   * Die Funktion ist synchronized, damit nicht mehrere gleichzeitig die Anwendung runterfahren ;).
    */
-  public static void shutDown()
+  public static synchronized void shutDown()
   {
-    try {
-      Application.getLog().info("shutting down jameica");
 
-      if(!serverMode)
-        app.gui.shutDown();     
+    // Das Boolean wird nach dem erfolgreichen Shutdown auf True gesetzt.
+    // Somit ist sichergestellt, dass er wirklich nur einmal ausgefuehrt wird.
+    if (cleanShutdown) 
+      return;
 
+    Application.getLog().info("shutting down jameica");
+
+    if (!serverMode)
+      SplashScreen.shutDown();
+
+               GUI.shutDown();     
       PluginLoader.shutDown();
+    ServiceFactory.shutDown();
 
-      ServiceFactory.shutDown();
+    Application.getLog().info("shutdown complete");
+    Application.getLog().close();
 
-      Application.getLog().info("shutdown complete");
-      Application.getLog().close();
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
-    finally
-    {
-      if (!serverMode)
-      {
-        // Ist noetig, damit die RMI-Registry beendet wird.
-        // Darf im ServerMoce nicht gemacht werden.
-        System.exit(0);
-      }
-    }
+    cleanShutdown = true;
   }
 
 
@@ -222,39 +200,14 @@ public class Application {
     return serverMode;
   }
   
-  /**
-   * Erweitert das Menu der Anwendung um die in dem InputStream uebergebene menu.xml.
-   * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
-   * Diese Funktion wird vom PluginLoader ausgefuehrt.
-   * @param xml
-   */
-  protected static void addMenu(InputStream xml)
-  {
-    if (inServerMode())
-      return;
-
-    app.additionalMenus.add(xml);
-  }
-
-  /**
-   * Erweitert die Navigation der Anwendung um die in dem InputStream uebergebene navigation.xml.
-   * Wird nur ausgefuehrt, wenn die Anwendung im GUI-Mode laeuft.
-   * Diese Funktion wird vom PluginLoader ausgefuehrt.
-   * @param xml
-   */
-  protected static void addNavigation(InputStream xml)
-  {
-    if (inServerMode())
-      return;
-
-    app.additionalNavigation.add(xml);
-  }
-
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.11  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

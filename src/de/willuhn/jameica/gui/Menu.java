@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.11 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.12 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,8 +40,8 @@ public class Menu
   protected Menu()
   {
 
-    bar = new org.eclipse.swt.widgets.Menu(GUI.shell,SWT.BAR);
-		GUI.shell.setMenuBar(bar);
+    bar = new org.eclipse.swt.widgets.Menu(GUI.getShell(),SWT.BAR);
+		GUI.getShell().setMenuBar(bar);
 
     xml  = new XmlFile();
     xml.read(getClass().getResourceAsStream("/menu.xml"));
@@ -90,7 +90,7 @@ public class Menu
       final MenuItem cascade = new MenuItem(bar,SWT.CASCADE);
       String text = I18N.tr(xml.getString(key,"name",null));
       cascade.setText(text);
-      final org.eclipse.swt.widgets.Menu submenu = new org.eclipse.swt.widgets.Menu(GUI.shell, SWT.DROP_DOWN);
+      final org.eclipse.swt.widgets.Menu submenu = new org.eclipse.swt.widgets.Menu(GUI.getShell(), SWT.DROP_DOWN);
       cascade.setMenu(submenu);
       Enumeration e = xml.getSections(key).elements();
       while (e.hasMoreElements())
@@ -177,6 +177,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.12  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

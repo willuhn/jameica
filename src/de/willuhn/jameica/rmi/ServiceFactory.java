@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/ServiceFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/05 17:12:23 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/12 01:28:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,10 @@ import java.util.Hashtable;
 
 import de.willuhn.jameica.Application;
 
+/**
+ * Diese Klasse stellt Services (z.Bsp. eine Datenbankverbindung) via RMI zur Verfuegung.
+ * @author willuhn
+ */
 public class ServiceFactory
 {
   
@@ -31,6 +35,9 @@ public class ServiceFactory
 
   private static Hashtable bindings = new Hashtable();
 
+  /**
+   * Initialisiert die ServiceFactory.
+   */
   public static void init()
   {
 
@@ -45,6 +52,8 @@ public class ServiceFactory
       registryOk = true;
     } catch (RemoteException e1)
     {
+      if (Application.DEBUG)
+        e1.printStackTrace();
       Application.getLog().error("  failed");
     }
 
@@ -71,14 +80,20 @@ public class ServiceFactory
       	}
 	      catch (Exception ex)
 	      {
+          if (Application.DEBUG)
+            ex.printStackTrace();
 	        Application.getLog().error("    sharing of service " + service.getName() + " failed");
-	        ex.printStackTrace();
   	    }
 			}
     }
     Application.getLog().info("  done");
   }
 	
+  /**
+   * Gibt einen lokalen Service im Netzwerk frei. 
+   * @param service der Datencontainer des Services.
+   * @throws Exception wenn das Freigeben fehlschlaegt.
+   */
   private static void bind(LocalServiceData service) throws Exception
 	{
 		Naming.rebind(service.getUrl(),getLocalServiceInstance(service)); 
@@ -87,6 +102,12 @@ public class ServiceFactory
 	}
 
 
+  /**
+   * Sucht explizit lokal nach dem genannten Service.
+   * @param service Daten-Container des Services.
+   * @return die Instanz des Services.
+   * @throws Exception wenn beim Erstellen des Services ein Fehler aufgetreten ist.
+   */
   public static Service getLocalServiceInstance(LocalServiceData service) throws Exception
   {
   	if (service == null)
@@ -106,6 +127,12 @@ public class ServiceFactory
 		}
   }
 
+  /**
+   * Sucht explizit im Netzwerk nach dem genannten Service.
+   * @param service Remote-Daten-Container des Services. Enthaelt u.a. die URL, unter dem der Service zu finden ist.
+   * @return die Instanz des Services.
+   * @throws Exception wenn beim Erstellen des Services ein Fehler aufgetreten ist.
+   */
   public static Service getRemoteServiceInstance(RemoteServiceData service) throws Exception
 	{
 		if (service == null)
@@ -126,6 +153,14 @@ public class ServiceFactory
 		
 	}
 
+  /**
+   * Allgemeine Lookup-Funktion zum Laden von Services.
+   * Sie sucht lokal UND remote nach dem Service. In welcher Reihenfolge
+   * sie bei der Suche vorgeht, haengt von der internen Konfiguration ab.
+   * @param name Alias-Name des gewuenschten Services.
+   * @return die Instanz des Services.
+   * @throws Exception wenn beim Erstellen des Services ein Fehler aufgetreten ist.
+   */
   public static Service lookupService(String name) throws Exception
   {
     
@@ -149,7 +184,21 @@ public class ServiceFactory
     return service;
   }
 
+  /**
+   * Wird beim Beenden der Anwendung aufgerufen und sendet eine Benachrichtigung
+   * an alle verbundenen Clients, damit sie sich auch runterfahren. Denn wenn
+   * der von ihnen genutzte Service nicht mehr existiert, ist die fehlerfreie
+   * Funktion des Clients nicht mehr gewaehrleistet.
+   * @param service Der Service, der gerade heruntergefahren wird.
+   */
+  private static void notifiyClients(Service service)
+  {
+    // TODO: Notify Clients
+  }
 
+  /**
+   * Faehrt die Remote-Services runter.
+   */
   public static void shutDown()
   {
     Application.getLog().info("shutdown services");
@@ -158,6 +207,8 @@ public class ServiceFactory
     }
     catch (Exception ex)
     {
+      if (Application.DEBUG)
+        ex.printStackTrace();
       Application.getLog().error("  RMI registry not found. useless.");
       return;
     }
@@ -171,13 +222,18 @@ public class ServiceFactory
     {
       name = (String) e.nextElement();
 			serviceData = (LocalServiceData) bindings.get(name);
+
 			Application.getLog().info("  closing hub " + serviceData.getName());
 
 			try {
-				service = (Service) java.rmi.Naming.lookup(serviceData.getUrl());
+				service = (Service) Naming.lookup(serviceData.getUrl());
+        notifiyClients(service);
 				service.close();
 			}
-			catch (Exception ex) {}
+			catch (Exception ex) {
+        if (Application.DEBUG)
+          ex.printStackTrace();
+      }
 			Application.getLog().info("  done");
     }
     Application.getLog().info("done");
@@ -195,6 +251,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.6  2003/12/12 01:28:05  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/12/05 17:12:23  willuhn
  * @C SelectInput
  *
