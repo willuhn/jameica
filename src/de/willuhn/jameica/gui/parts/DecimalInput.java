@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/DecimalInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/03/18 01:24:47 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/22 22:53:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,7 +49,11 @@ public class DecimalInput extends TextInput
   public Control getControl()
   {
 		Control c = super.getControl();
-		text.setText(format.format(value));
+		if (format != null)
+			text.setText(format.format(value));
+		else
+			text.setText(""+value);
+		
     text.addListener (SWT.Verify, new Listener() {
       public void handleEvent (Event e) {
         String t = e.text;
@@ -96,13 +100,19 @@ public class DecimalInput extends TextInput
     if (!(value instanceof Double))
       return;
 
-    this.text.setText(value.toString());
+		if (format != null)
+			this.text.setText(format.format(((Double)value).doubleValue()));
+		else
+	    this.text.setText(value.toString());
     this.text.redraw();
   }
 }
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.7  2004/03/22 22:53:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/03/18 01:24:47  willuhn
  * @C refactoring
  *
