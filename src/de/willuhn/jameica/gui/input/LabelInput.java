@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.6 $
+ * $Date: 2004/05/27 21:35:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ public class LabelInput extends AbstractInput
    */
   public Control getControl()
   {
-    label = new Label(getParent(),SWT.WRAP);
+    label = new Label(getParent(),SWT.NONE);
 		label.setBackground(Color.BACKGROUND.getSWTColor());
     label.setText(value == null ? "" : value);
     return label;
@@ -101,6 +101,10 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.6  2004/05/27 21:35:03  willuhn
+ * @N PGP signing in ant script
+ * @N MD5 checksum in ant script
+ *
  * Revision 1.5  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ServiceFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/03/18 01:24:47 $
+ * $Revision: 1.6 $
+ * $Date: 2004/05/27 21:35:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -188,7 +188,7 @@ public class ServiceFactory
    */
   public static void shutDown()
   {
-    Application.getLog().info("shutdown services");
+    Application.getLog().info("shutting down services");
 
     Enumeration e = bindings.keys();
     String name;
@@ -229,6 +229,10 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.6  2004/05/27 21:35:03  willuhn
+ * @N PGP signing in ant script
+ * @N MD5 checksum in ant script
+ *
  * Revision 1.5  2004/03/18 01:24:47  willuhn
  * @C refactoring
  *

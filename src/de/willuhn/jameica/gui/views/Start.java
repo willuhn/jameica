@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/04/26 22:42:17 $
+ * $Revision: 1.21 $
+ * $Date: 2004/05/27 21:35:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,15 @@
 
 package de.willuhn.jameica.gui.views;
 
+import java.util.Enumeration;
+
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.InfoReader;
+import de.willuhn.jameica.PluginContainer;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.util.I18N;
 
 
@@ -31,6 +38,19 @@ public class Start extends AbstractView
   {
   	I18N i18n = Application.getI18n();
 		GUI.getView().setTitle(i18n.tr("Start"));
+		
+		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
+
+		Enumeration e = PluginLoader.getPluginContainers();
+		while (e.hasMoreElements())
+		{
+			PluginContainer pc = (PluginContainer) e.nextElement();
+			InfoReader ir = pc.getInfo();
+			LabelInput l = new LabelInput(": " + ir.getDescription());
+			l.setComment(ir.getUrl());
+			group.addLabelPair(ir.getName(),l);
+			
+		}
 
 		// TODO: Hier kontextsensitive Notizen anzeigen    
 
@@ -47,6 +67,10 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.21  2004/05/27 21:35:02  willuhn
+ * @N PGP signing in ant script
+ * @N MD5 checksum in ant script
+ *
  * Revision 1.20  2004/04/26 22:42:17  willuhn
  * @N added InfoReader
  *
