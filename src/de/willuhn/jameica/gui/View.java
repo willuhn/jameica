@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.19 $
- * $Date: 2004/05/26 23:23:23 $
+ * $Revision: 1.20 $
+ * $Date: 2004/08/26 23:19:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -196,6 +196,7 @@ public class View
 		});
 		SWTUtil.startGUITimeout(10000l,new Listener() {
       public void handleEvent(Event event) {
+      	// TODO: Checken, ob der Text schon lange genug angezeigt wurde und ggf. lassen
 				messages.setText("");
       }
     });
@@ -216,6 +217,7 @@ public class View
 		});
 		SWTUtil.startGUITimeout(10000l,new Listener() {
 			public void handleEvent(Event event) {
+				// TODO: Checken, ob der Text schon lange genug angezeigt wurde und ggf. lassen
 				messages.setText("");
 			}
 		});
@@ -243,6 +245,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.20  2004/08/26 23:19:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.19  2004/05/26 23:23:23  willuhn
  * @N Timeout fuer Messages in Statusbars
  *
