@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.28 $
- * $Date: 2005/01/19 01:00:39 $
+ * $Revision: 1.29 $
+ * $Date: 2005/01/19 02:14:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.gui.StartupError;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
+import de.willuhn.jameica.security.*;
 import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
@@ -453,6 +454,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.29  2005/01/19 02:14:00  willuhn
+ * @N Wallet zum Verschluesseln von Benutzerdaten
+ *
  * Revision 1.28  2005/01/19 01:00:39  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.26 $
- * $Date: 2005/01/15 16:20:32 $
+ * $Revision: 1.27 $
+ * $Date: 2005/01/19 02:14:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
+import de.willuhn.jameica.security.*;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -369,6 +370,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.27  2005/01/19 02:14:00  willuhn
+ * @N Wallet zum Verschluesseln von Benutzerdaten
+ *
  * Revision 1.26  2005/01/15 16:20:32  willuhn
  * *** empty log message ***
  *
