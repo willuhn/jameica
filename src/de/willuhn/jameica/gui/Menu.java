@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/11/24 23:01:58 $
+ * $Revision: 1.8 $
+ * $Date: 2003/11/25 01:23:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -115,14 +115,34 @@ public class Menu
      */
     MenuElement(org.eclipse.swt.widgets.Menu parent,String ckey)
     {
-      final MenuItem item = new MenuItem(parent,SWT.CASCADE);
       final String s = ckey;
-      String c = xml.getString(s,"class",null);
+      String c    = xml.getString(s,"class",null);
+      String text = I18N.tr(xml.getString(s,"name",null));
+      if (text != null && text.startsWith("-"))
+      {
+        final MenuItem item = new MenuItem(parent,SWT.SEPARATOR);
+        return;
+      }
+      final MenuItem item = new MenuItem(parent,SWT.CASCADE);
       
       item.addListener (SWT.Selection, new MenuListener(c));
-      String text = I18N.tr(xml.getString(s,"name",null));
+
+      String shortCut = xml.getString(s,"shortcut",null);
+      if (shortCut != null)
+      try {
+        String modifier = shortCut.substring(0,shortCut.indexOf("+"));
+        String key = shortCut.substring(shortCut.indexOf("+")+1);
+        int m = SWT.ALT;
+        if ("CTRL".equalsIgnoreCase(modifier)) m = SWT.CTRL;
+        item.setAccelerator(m + key.getBytes()[0]);
+        text += "\t" + shortCut;
+      }
+      catch (Exception e)
+      {
+        if (Application.DEBUG)
+          e.printStackTrace();
+      }
       item.setText(text);
-      // closeitem.setAccelerator(SWT.ALT + SWT.F4);
     }
   }
   
@@ -156,6 +176,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.8  2003/11/25 01:23:27  willuhn
+ * @N added Menu shortcuts
+ *
  * Revision 1.7  2003/11/24 23:01:58  willuhn
  * @N added settings
  *
