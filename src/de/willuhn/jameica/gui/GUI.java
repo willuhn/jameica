@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/05 18:43:01 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/09 11:38:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -217,9 +217,10 @@ public class GUI
         if (!display.readAndDispatch ()) display.sleep();
       }
       catch(Exception e){
-        e.printStackTrace();
-        Application.getLog().error("main loop crashed. restaring gui");
-        gui.clientLoop();
+        if (Application.DEBUG)
+          e.printStackTrace();
+        Application.getLog().error("main loop crashed. showing error page");
+        GUI.startView("de.willuhn.jameica.views.ErrorView",e);
       }
     }
   }
@@ -279,6 +280,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.6  2003/12/09 11:38:50  willuhn
+ * @N error page
+ *
  * Revision 1.5  2003/12/05 18:43:01  willuhn
  * *** empty log message ***
  *
