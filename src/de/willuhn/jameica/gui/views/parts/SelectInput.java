@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.18 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,8 +20,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 
-import de.willuhn.datasource.db.rmi.DBIterator;
-import de.willuhn.datasource.db.rmi.DBObject;
+import de.willuhn.datasource.rmi.DBIterator;
+import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.I18N;
 
@@ -194,6 +194,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.18  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

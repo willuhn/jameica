@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.14 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.15 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -187,6 +187,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.15  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *
@@ -201,7 +204,7 @@ public abstract class Input
  *
  * Revision 1.10  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
- * @N ErrorView
+ * @N FatalErrorView
  *
  * Revision 1.9  2003/12/05 18:43:01  willuhn
  * *** empty log message ***

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/ButtonArea.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.12 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.controller.*;
 import de.willuhn.util.I18N;
 
 /**
@@ -59,9 +60,9 @@ public class ButtonArea
    * Fuegt der Area einen Erstellen-Button hinzu.
    * Beim Click wird die Methode handleCreate() des Controllers ausgefuehrt.
    * @param name Bezeichnung des Buttons.
-   * @param controller Controller, der beim Klick aufgerufen werden soll.
+   * @param controller AbstractControl, der beim Klick aufgerufen werden soll.
    */
-  public void addCreateButton(String name, final Controller controller)
+  public void addCreateButton(String name, final AbstractControl controller)
   {
     final Button button = new Button(buttonArea,SWT.NONE);
     button.setText(name);
@@ -76,9 +77,9 @@ public class ButtonArea
   /**
    * Fuegt der Area einen Speichern-Button hinzu.
    * Beim Click wird die Methode handleStore() des Controllers ausgefuehrt.
-   * @param controller Controller, der beim Klick aufgerufen werden soll.
+   * @param controller AbstractControl, der beim Klick aufgerufen werden soll.
    */
-  public void addStoreButton(final Controller controller)
+  public void addStoreButton(final AbstractControl controller)
   {
     storeButton = new Button(buttonArea,SWT.PUSH);
     storeButton.setText(I18N.tr("Speichern"));
@@ -102,9 +103,9 @@ public class ButtonArea
   /**
    * Fuegt der Area einen Abbrechen-Button hinzu.
    * Beim Click wird die Methode handleCancel() des Controllers ausgefuehrt.
-   * @param controller Controller, der beim Klick aufgerufen werden soll.
+   * @param controller AbstractControl, der beim Klick aufgerufen werden soll.
    */
-  public void addCancelButton(final Controller controller)
+  public void addCancelButton(final AbstractControl controller)
   {
     final Button button = new Button(buttonArea,SWT.NONE);
     button.setText(I18N.tr("Zurück"));
@@ -119,9 +120,9 @@ public class ButtonArea
   /**
    * Fuegt der Area einen Loeschen-Button hinzu.
    * Beim Click wird die Methode handleDelete() des Controllers ausgefuehrt.
-   * @param controller Controller, der beim Klick aufgerufen werden soll.
+   * @param controller AbstractControl, der beim Klick aufgerufen werden soll.
    */
-  public void addDeleteButton(final Controller controller)
+  public void addDeleteButton(final AbstractControl controller)
   {
     final Button button = new Button(buttonArea,SWT.NONE);
     button.setText(I18N.tr("Löschen"));
@@ -163,6 +164,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.12  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *
@@ -183,7 +187,7 @@ public class ButtonArea
  *
  * Revision 1.5  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
- * @N ErrorView
+ * @N FatalErrorView
  *
  * Revision 1.4  2003/11/24 23:01:58  willuhn
  * @N added settings

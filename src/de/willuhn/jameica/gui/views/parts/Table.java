@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.19 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,9 +23,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-import de.willuhn.datasource.db.rmi.DBIterator;
-import de.willuhn.datasource.db.rmi.DBObject;
+import de.willuhn.datasource.rmi.DBIterator;
+import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.gui.controller.*;
 import de.willuhn.util.I18N;
 
 /**
@@ -36,7 +37,7 @@ public class Table
 {
 
   private DBIterator list;
-  private Controller controller;
+  private AbstractControl controller;
   private ArrayList fields = new ArrayList();
   private HashMap formatter = new HashMap();
   private Enumeration list2;
@@ -48,7 +49,7 @@ public class Table
    * @param list Liste mit Objekten, die angezeigt werden soll.
    * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
    */
-  public Table(DBIterator list, Controller controller)
+  public Table(DBIterator list, AbstractControl controller)
   {
     this.list = list;
     this.controller = controller;
@@ -59,7 +60,7 @@ public class Table
 	 * @param list Liste mit Objekten, die angezeigt werden sollen.
 	 * @param controller der die ausgewaehlten Daten dieser Liste empfaengt.
 	 */
-	public Table(Enumeration list, Controller controller)
+	public Table(Enumeration list, AbstractControl controller)
 	{
 		this.list2 = list;
 		this.controller = controller;
@@ -298,6 +299,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.19  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *
@@ -328,7 +332,7 @@ public class Table
  *
  * Revision 1.9  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
- * @N ErrorView
+ * @N FatalErrorView
  *
  * Revision 1.8  2003/12/08 15:41:09  willuhn
  * @N searchInput

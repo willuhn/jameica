@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.17 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,13 +18,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.*;
+import de.willuhn.jameica.Application;
+import de.willuhn.jameica.Jameica;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
+import de.willuhn.jameica.gui.views.FatalErrorView;
 import de.willuhn.jameica.gui.views.util.Style;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -61,6 +68,15 @@ public class GUI
   private GUI() {
   }
   
+	private static GridLayout createGrid(int numColumns, boolean makeEqualsWidth)
+	{
+		final GridLayout l = new GridLayout(numColumns,makeEqualsWidth);
+		l.marginWidth = 0;
+		l.marginHeight = 0;
+		l.horizontalSpacing = 0;
+		l.verticalSpacing = 0;
+		return l;
+	}
   /**
    * Laedt die GUI.
    */
@@ -68,22 +84,39 @@ public class GUI
     Application.getLog().info("startup GUI");
 
     // init shell
-    GridLayout l = new GridLayout();
-    l.marginWidth = 0;
-    l.marginHeight = 0;
-    l.horizontalSpacing = 0;
-    l.verticalSpacing = 0;
-    l.numColumns = 2;
-    shell.setLayout(l);
+    shell.setLayout(createGrid(2,false));
+    shell.setLayoutData(new GridData(GridData.FILL_BOTH));
     shell.setBounds(10, 10, 920, 720);
     shell.setText(Jameica.getName() + " " + Jameica.getVersion());
     shell.setImage(Style.getImage("globe.gif"));
     
+    Application.getLog().info("adding menu");
+    addMenu();
 
-    Application.getLog().info("adding menu");         addMenu();
-    Application.getLog().info("adding navigation");   addNavigation();
-    Application.getLog().info("adding content view"); addView();
-    Application.getLog().info("adding status panel"); addStatusBar();
+    SashForm sash = new SashForm(shell,SWT.HORIZONTAL);
+		sash.setLayout(createGrid(1,false));
+		GridData sgd = new GridData(GridData.FILL_BOTH);
+		sgd.horizontalSpan = 2;
+		sash.setLayoutData(sgd);
+
+    Composite left = new Composite(sash,SWT.NONE);
+    left.setLayout(new FillLayout());
+    Application.getLog().info("adding navigation");   addNavigation(left);
+
+    Composite right = new Composite(sash,SWT.NONE);
+		right.setLayout(new FillLayout());
+    Application.getLog().info("adding content view"); addView(right);
+
+		sash.setWeights(new int[] {1,3});
+
+
+
+		Composite bottom = new Composite(shell,SWT.NONE);
+		bottom.setLayout(createGrid(1,true));
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		bottom.setLayoutData(gd);
+    Application.getLog().info("adding status panel"); addStatusBar(bottom);
 
     shell.open();
 
@@ -145,10 +178,10 @@ public class GUI
   /**
    * Fuegt der Anwendung die Navigation hinzu.
    */
-  private void addNavigation() {
+  private void addNavigation(Composite parent) {
     try
     {
-      navi = new Navigation();
+      navi = new Navigation(parent);
     }
     catch (Exception e)
     {
@@ -160,8 +193,8 @@ public class GUI
   /**
    * Erzeugt das Content-Frame.
    */
-  private void addView() {
-    view = new View();
+  private void addView(Composite parent) {
+    view = new View(parent);
   }
 
   /**
@@ -190,8 +223,6 @@ public class GUI
    * @param xml XML-File mit weiteren Navigations-Eintraegen.
    */
   public void appendNavigation(InputStream xml) {
-    if (navi == null)
-      addNavigation();
     try
     {
       navi.appendNavigation(xml);
@@ -205,8 +236,8 @@ public class GUI
   /**
    * Erzeugt die untere Status-Leiste.
    */
-  private void addStatusBar() {
-    statusBar = new StatusBar();
+  private void addStatusBar(Composite parent) {
+    statusBar = new StatusBar(parent);
   }
 
   /**
@@ -236,37 +267,43 @@ public class GUI
 
       gui.view.cleanContent();
 
-      Constructor ct = clazz.getConstructor(new Class[]{Object.class});
+      Constructor ct = clazz.getConstructor(new Class[]{Composite.class});
       ct.setAccessible(true);
-      gui.currentView = (AbstractView) ct.newInstance(new Object[] {o});
+      gui.currentView = (AbstractView) ct.newInstance(new Object[] {gui.view.getContent()});
 
       // Neuen Inhalt anzeigen
-      gui.currentView.setParent(gui.view.getContent());
+      gui.currentView.setCurrentObject(o);
 
-      gui.currentView.bind();
+			try {
+				gui.currentView.bind();
+			}
+			catch (Exception e)
+			{
+				GUI.startView(ErrorView.class.getName(),e);
+			}
 
       // View aktualisieren
       gui.view.refreshContent();
     }
     catch (InstantiationException e)
     {
-      e.printStackTrace();
+    	Application.getLog().error("error while instanciating view",e);
     }
     catch (NoSuchMethodException e)
     {
-      e.printStackTrace();
+			Application.getLog().error("nt a valid view",e);
     }
     catch (InvocationTargetException e)
     {
-      e.printStackTrace();
+			Application.getLog().error("error occured while loading view",e);
     }
     catch (IllegalAccessException e)
     {
-      e.printStackTrace();
+			Application.getLog().error("not allowed to bind view",e);
     }
     catch (ClassNotFoundException e)
     {
-      Application.getLog().debug("Class " +className+ " not found.");
+			Application.getLog().error("view does not exist",e);
     }
   }
 
@@ -299,7 +336,7 @@ public class GUI
       }
       catch(Exception e){
         Application.getLog().error("main loop crashed. showing error page",e);
-        GUI.startView(ErrorView.class.getName(),e);
+        GUI.startView(FatalErrorView.class.getName(),e);
       }
     }
     quit();
@@ -391,6 +428,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.17  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

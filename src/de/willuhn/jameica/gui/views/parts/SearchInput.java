@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SearchInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -143,6 +143,9 @@ public class SearchInput extends Input
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.9  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *
@@ -157,7 +160,7 @@ public class SearchInput extends Input
  *
  * Revision 1.4  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
- * @N ErrorView
+ * @N FatalErrorView
  *
  * Revision 1.3  2003/12/08 16:19:06  willuhn
  * *** empty log message ***

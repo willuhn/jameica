@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.15 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,10 +26,10 @@ import de.willuhn.jameica.gui.views.util.Style;
 import de.willuhn.util.I18N;
 
 /**
-   * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
-   * Damit ist es einfacher, standardisierte Dialoge zu malen.
-   * Man erstellt pro Dialog einfach ein oder mehrere solcher
-   * Gruppen und tut dort seine Eingabefelder rein.
+ * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
+ * Damit ist es einfacher, standardisierte Dialoge zu malen.
+ * Man erstellt pro Dialog einfach ein oder mehrere solcher
+ * Gruppen und tut dort seine Eingabefelder rein.
  * @author willuhn
  */
 public class LabelGroup
@@ -181,6 +181,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.15  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *
@@ -207,7 +210,7 @@ public class LabelGroup
  *
  * Revision 1.6  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
- * @N ErrorView
+ * @N FatalErrorView
  *
  * Revision 1.5  2003/12/01 20:28:57  willuhn
  * @B filter in DBIteratorImpl

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ServiceFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.2 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,9 +22,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import de.willuhn.datasource.db.rmi.LocalServiceData;
-import de.willuhn.datasource.db.rmi.RemoteServiceData;
-import de.willuhn.datasource.db.rmi.Service;
+import de.willuhn.datasource.common.LocalServiceData;
+import de.willuhn.datasource.common.RemoteServiceData;
+import de.willuhn.datasource.rmi.Service;
 
 
 /**
@@ -36,46 +36,13 @@ public class ServiceFactory
 {
   
   private final static boolean USE_RMI_FIRST = true;
-
   private static Hashtable bindings = new Hashtable();
-
+  private static boolean rmiStarted = false;
   /**
    * Initialisiert die ServiceFactory.
    */
   public static void init()
   {
-
-    boolean registryOk = false;
-
-    try
-    {
-			try {
-				Application.getLog().info("trying to start new RMI registry");
-				System.setSecurityManager(new NoSecurity());
-				LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
-				Application.getLog().info("done");
-				registryOk = true;
-			}
-			catch (RemoteException e)
-			{
-				Application.getLog().info("failed, trying to use an existing one");
-				LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
-				Application.getLog().info("done");
-				registryOk = true;
-			}
-    }
-    catch (RemoteException e1)
-    {
-      Application.getLog().error("failed",e1);
-    }
-
-
-    Application.getLog().info("init services");
-    if (!registryOk)
-    {
-      Application.getLog().info("unable to share network services because startup of RMI registry failed.");
-      return;
-    }
 
     Application.getLog().info("init network services");
     Enumeration e = Application.getConfig().getLocalServiceNames();
@@ -100,15 +67,39 @@ public class ServiceFactory
   }
 	
   /**
+   * Startet die RMI-Registry.
+   * @throws RemoteException Wenn ein Fehler beim Starten der Registry auftrat.
+   */
+  private static void startRegistry() throws RemoteException
+  {
+    try {
+      Application.getLog().info("trying to start new RMI registry");
+      System.setSecurityManager(new NoSecurity());
+      LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
+      Application.getLog().info("done");
+    }
+    catch (RemoteException e)
+    {
+      Application.getLog().info("failed, trying to use an existing one");
+      LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
+      Application.getLog().info("done");
+    }
+    rmiStarted = true;
+    
+  }
+  /**
    * Gibt einen lokalen Service im Netzwerk frei. 
    * @param service der Datencontainer des Services.
    * @throws Exception wenn das Freigeben fehlschlaegt.
    */
   private static void bind(LocalServiceData service) throws Exception
 	{
-		Naming.rebind(service.getUrl(),getLocalServiceInstance(service)); 
+    if (!rmiStarted)
+      startRegistry();
+
+    Naming.rebind(service.getUrl(),getLocalServiceInstance(service)); 
 		bindings.put(service.getName(),service); 
-		Application.getLog().info("    added " + service.getUrl());
+		Application.getLog().info("added " + service.getUrl());
 	}
 
 
@@ -197,19 +188,11 @@ public class ServiceFactory
   }
 
   /**
-   * Faehrt die Remote-Services runter.
+   * Faehrt die Services runter.
    */
   public static void shutDown()
   {
     Application.getLog().info("shutdown services");
-    try {
-      LocateRegistry.getRegistry();
-    }
-    catch (Exception ex)
-    {
-      Application.getLog().error("RMI registry not found. useless.",ex);
-      return;
-    }
 
     Enumeration e = bindings.keys();
     String name;
@@ -221,22 +204,27 @@ public class ServiceFactory
       name = (String) e.nextElement();
 			serviceData = (LocalServiceData) bindings.get(name);
 
-			Application.getLog().info("closing hub " + serviceData.getName());
+			Application.getLog().info("closing service " + serviceData.getName());
 
 			try {
 				service = (Service) Naming.lookup(serviceData.getUrl());
 				service.shutDown();
 			}
 			catch (Exception ex) {
-				Application.getLog().error("error while closing hub",ex);
+				Application.getLog().error("error while closing service",ex);
       }
 			Application.getLog().info("done");
     }
-    Application.getLog().info("done");
   }
 
+  /**
+   * Dummy-Security-Manager.
+   */
   private static class NoSecurity extends SecurityManager
   {
+    /**
+     * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
+     */
     public void checkPermission(Permission p)
     {
       
@@ -246,6 +234,9 @@ public class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.2  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

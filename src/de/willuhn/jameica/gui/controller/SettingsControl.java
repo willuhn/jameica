@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/01/08 20:50:33 $
+ * $Revision: 1.5 $
+ * $Date: 2004/01/23 00:29:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,46 +13,67 @@
 
 package de.willuhn.jameica.gui.controller;
 
-import de.willuhn.datasource.db.rmi.DBObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Config;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ServiceSettings;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
-import de.willuhn.jameica.gui.views.parts.Controller;
+import de.willuhn.jameica.gui.views.parts.FileInput;
+import de.willuhn.jameica.gui.views.parts.Input;
+import de.willuhn.jameica.gui.views.parts.SelectInput;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Logger;
 
 /**
  * 
  */
-public class SettingsControl extends Controller
+public class SettingsControl extends AbstractControl
 {
 
-  /**
-   * @param object
-   */
-  public SettingsControl(DBObject object)
-  {
-    super(object);
-  }
+	private Config config = Application.getConfig();
+	
+	private Input logFile  = new FileInput(config.getLogFile());
+	private Input logLevel = new SelectInput(Logger.LEVEL_TEXT,config.getLogLevel());
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Controller#handleDelete()
+   * ct.
+   * @param view
+   */
+  public SettingsControl(AbstractView view)
+  {
+    super(view);
+  }
+
+
+	/**
+	 * Liefert das Eingabe-Feld fuer das Logfile.
+   * @return Eingabe-Feld fuer das Logfile.
+   */
+  public Input getLogFile()
+	{
+		return logFile;
+	}
+
+	/**
+	 * Liefert das Eingabefeld fuer das Loglevel.
+   * @return Eingabe-Feld fuer das Loglevel.
+   */
+  public Input getLoglevel()
+	{
+		return logLevel;
+	}
+
+  /**
+   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleDelete()
    */
   public void handleDelete()
   {
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Controller#handleDelete(java.lang.String)
-   */
-  public void handleDelete(String id)
-  {
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.views.parts.Controller#handleCancel()
+   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleCancel()
    */
   public void handleCancel()
   {
@@ -60,15 +81,15 @@ public class SettingsControl extends Controller
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Controller#handleStore()
+   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleStore()
    */
   public void handleStore()
   {
   	Config config = Application.getConfig();
 
-  	config.setLoglevel(getField("loglevel").getValue());
+  	config.setLoglevel(logLevel.getValue());
   	Application.getLog().setLevel(config.getLogLevel()); // live umschaltung
-  	config.setLogFile(getField("logfile").getValue());
+  	config.setLogFile(logFile.getValue());
 
   	try
     {
@@ -84,14 +105,14 @@ public class SettingsControl extends Controller
   }
 
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Controller#handleCreate()
+   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleCreate()
    */
   public void handleCreate()
   {
   }
   
   /**
-   * @see de.willuhn.jameica.gui.views.parts.Controller#handleLoad(java.lang.String)
+   * @see de.willuhn.jameica.gui.views.parts.AbstractControl#handleLoad(java.lang.String)
    */
   public void handleLoad(String id)
   {
@@ -121,6 +142,9 @@ public class SettingsControl extends Controller
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.5  2004/01/23 00:29:04  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/01/08 20:50:33  willuhn
  * @N database stuff separated from jameica
  *

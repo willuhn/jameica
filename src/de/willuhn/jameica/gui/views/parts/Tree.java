@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Tree.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.6 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,8 +21,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-import de.willuhn.datasource.db.rmi.DBIterator;
-import de.willuhn.datasource.db.rmi.DBObjectNode;
+import de.willuhn.datasource.rmi.DBIterator;
+import de.willuhn.datasource.rmi.DBObjectNode;
+import de.willuhn.jameica.gui.controller.*;
 import de.willuhn.jameica.gui.views.util.Style;
 
 /**
@@ -32,7 +33,7 @@ import de.willuhn.jameica.gui.views.util.Style;
  */
 public class Tree {
 
-  private Controller controller;
+  private AbstractControl controller;
   private Composite composite;
   private DBObjectNode object = null;
   private DBIterator list = null;
@@ -41,10 +42,10 @@ public class Tree {
 	/**
    * Erzeugt einen neuen Tree basierend auf dem uebergebenen Objekt.
    * @param object Das Objekt, fuer das der Baum erzeugt werden soll. 
-   * @param controller der Controller, der bei der Auswahl eines Elements
+   * @param controller der AbstractControl, der bei der Auswahl eines Elements
    * aufgerufen werden soll.
    */
-  public Tree(DBObjectNode object, Controller controller)
+  public Tree(DBObjectNode object, AbstractControl controller)
 	{
     this.controller = controller;
     this.object = object;
@@ -56,10 +57,10 @@ public class Tree {
    * Iterator Objekte, die <b>nicht</b> von DBObjectNode
    * abgeleitet sind, wird er eine ClassCastException werfen.
    * @param list Liste mit Objekten, fuer die der Baum erzeugt werden soll.
-   * @param controller der Controller, der bei der Auswahl eines Elements
+   * @param controller der AbstractControl, der bei der Auswahl eines Elements
    * aufgerufen werden soll.
    */
-  public Tree(DBIterator list, Controller controller)
+  public Tree(DBIterator list, AbstractControl controller)
   {
     this.controller = controller;
     this.list = list;
@@ -270,6 +271,9 @@ public class Tree {
 
 /*********************************************************************
  * $Log: Tree.java,v $
+ * Revision 1.6  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

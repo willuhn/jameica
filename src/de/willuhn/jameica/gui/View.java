@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,11 +32,14 @@ public class View
 	private Composite view;
 	private Composite content;
 
-  /**
+	private Composite parent;
+
+	/**
    * Erzeugt ein neues Content-Frame.
    */
-  public View()
+  public View(Composite parent)
 	{
+    this.parent = parent;
 		setLayout();
 		setLogoPanel();
 		cleanContent();
@@ -47,7 +50,7 @@ public class View
    */
   private void setLayout()
 	{
-		view = new Composite(GUI.getShell(), SWT.NONE);
+		view = new Composite(parent, SWT.NONE);
 		view.setBackground(new Color(GUI.getDisplay(), 255, 255, 255));
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
@@ -77,10 +80,13 @@ public class View
 		if (content != null)
 			content.dispose();
 
+		// Wir machen hier deshalb nicht nur ein layout() oder redraw()
+		// weil wir wollen, dass die gesamte View disposed und entfernt
+		// wird, bevor eine neue drauf kommt.
 		content = new Composite(view, SWT.BORDER);
 		GridLayout l = new GridLayout();
-		l.marginHeight = 8;
-		l.marginWidth = 8;
+		l.marginHeight = 6;
+		l.marginWidth = 6;
 		content.setLayout(l);
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
@@ -107,6 +113,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.9  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

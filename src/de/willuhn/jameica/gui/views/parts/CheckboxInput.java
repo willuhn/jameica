@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/CheckboxInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.4 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,8 @@ public class CheckboxInput extends Input
    */
   public Control getControl()
   {
-
+		if (button != null)
+			return button;
     button = new Button(getParent(), SWT.CHECK);
     button.setSelection(value);
     return button;
@@ -53,7 +54,7 @@ public class CheckboxInput extends Input
    */
   public String getValue()
   {
-    return button.getSelection() ? ENABLED : DISABLED;
+  	return button.getSelection() ? ENABLED : DISABLED;
   }
 
   /**
@@ -98,6 +99,9 @@ public class CheckboxInput extends Input
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.4  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

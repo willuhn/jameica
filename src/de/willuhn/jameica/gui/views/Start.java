@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.9 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,9 +15,10 @@ package de.willuhn.jameica.gui.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.widgets.Composite;
+
 import de.willuhn.jameica.Plugin;
 import de.willuhn.jameica.PluginLoader;
-import de.willuhn.jameica.gui.views.parts.Headline;
 import de.willuhn.jameica.gui.views.parts.LabelGroup;
 import de.willuhn.util.I18N;
 
@@ -25,14 +26,19 @@ import de.willuhn.util.I18N;
 public class Start extends AbstractView
 {
 
-  public Start(Object o)
+  /**
+   * ct.
+   * @param parent
+   */
+  public Start(Composite parent)
   {
-    super(o);
+    super(parent);
   }
+
 
   public void bind()
   {
-    new Headline(getParent(),"Jameica");
+    addHeadline("Jameica");
     
     LabelGroup plugins = new LabelGroup(getParent(),I18N.tr("installierte Plugins"));
     
@@ -53,6 +59,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.9  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

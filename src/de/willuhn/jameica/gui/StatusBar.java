@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.8 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,12 +48,12 @@ public class StatusBar {
   /**
    * Erzeugt eine neue Statusleiste.
    */
-  protected StatusBar() {
+  protected StatusBar(Composite parent) {
 
 		// init lastActionMessage queue
 		lastActionMessages = new History(20);
 
-		status = new Composite(GUI.getShell(), SWT.BORDER);
+		status = new Composite(parent, SWT.BORDER);
 
 		GridData data = new GridData();
 		data.grabExcessHorizontalSpace = true;
@@ -158,6 +158,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.8  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

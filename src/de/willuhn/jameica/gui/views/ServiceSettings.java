@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ServiceSettings.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.3 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,9 +13,9 @@
 
 package de.willuhn.jameica.gui.views;
 
-import de.willuhn.jameica.gui.views.parts.Headline;
+import org.eclipse.swt.widgets.Composite;
+
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.I18N;
 
 /**
  * 
@@ -24,20 +24,21 @@ public class ServiceSettings extends AbstractView
 {
 
   /**
-   * @param o
+   * ct.
+   * @param parent
    */
-  public ServiceSettings(Object o)
+  public ServiceSettings(Composite parent)
   {
-    super(o);
+    super(parent);
   }
 
   /**
    * @see de.willuhn.jameica.gui.views.AbstractView#bind()
    */
-  public void bind()
+  public void bind() throws Exception
   {
   	String name = (String) getCurrentObject();
-  	new Headline(getParent(),I18N.tr("Eigenschaften des Services") + " " + name);
+  	addHeadline("Eigenschaften des Services" + " " + name);
   }
 
   /**
@@ -52,6 +53,9 @@ public class ServiceSettings extends AbstractView
 
 /**********************************************************************
  * $Log: ServiceSettings.java,v $
+ * Revision 1.3  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

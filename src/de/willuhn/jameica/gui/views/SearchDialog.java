@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/08 20:50:33 $
+ * $Revision: 1.10 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,11 +19,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.datasource.db.rmi.DBIterator;
-import de.willuhn.datasource.db.rmi.DBObject;
+import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.views.parts.Controller;
+import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.views.parts.Formatter;
 import de.willuhn.jameica.gui.views.parts.Table;
 import de.willuhn.util.I18N;
@@ -148,48 +147,49 @@ public abstract class SearchDialog
   protected abstract String load(String id);
 
   /**
-   * Das ist eigentlich eher ein Dummy-Controller. Wir erstellen hier nur einen,
+   * Das ist eigentlich eher ein Dummy-AbstractControl. Wir erstellen hier nur einen,
    * weil er von der Tabelle verlangt wird.
    * @author willuhn
    */
-  class SearchController extends Controller
+  class SearchController extends AbstractControl
   {
 
+
     /**
-     * @param object
+     * @param view
      */
-    public SearchController(DBObject object)
+    public SearchController(AbstractView view)
     {
-      super(object);
+      super(view);
     }
 
     /**
-     * @see de.willuhn.jameica.views.parts.Controller#handleDelete()
+     * @see de.willuhn.jameica.views.parts.AbstractControl#handleDelete()
      */
     public void handleDelete() {}
 
     /**
-     * @see de.willuhn.jameica.views.parts.Controller#handleDelete(java.lang.String)
+     * @see de.willuhn.jameica.views.parts.AbstractControl#handleDelete(java.lang.String)
      */
     public void handleDelete(String id) {}
 
     /**
-     * @see de.willuhn.jameica.views.parts.Controller#handleCancel()
+     * @see de.willuhn.jameica.views.parts.AbstractControl#handleCancel()
      */
     public void handleCancel() {}
 
     /**
-     * @see de.willuhn.jameica.views.parts.Controller#handleStore()
+     * @see de.willuhn.jameica.views.parts.AbstractControl#handleStore()
      */
     public void handleStore() {}
 
     /**
-     * @see de.willuhn.jameica.views.parts.Controller#handleCreate()
+     * @see de.willuhn.jameica.views.parts.AbstractControl#handleCreate()
      */
     public void handleCreate() {}
 
     /**
-     * @see de.willuhn.jameica.views.parts.Controller#handleLoad(java.lang.String)
+     * @see de.willuhn.jameica.views.parts.AbstractControl#handleLoad(java.lang.String)
      */
     public void handleLoad(String s)
     {
@@ -203,6 +203,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.10  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/01/08 20:50:33  willuhn
  * @N database stuff separated from jameica
  *
@@ -223,7 +226,7 @@ public abstract class SearchDialog
  *
  * Revision 1.3  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
- * @N ErrorView
+ * @N FatalErrorView
  *
  * Revision 1.2  2003/12/08 16:19:06  willuhn
  * *** empty log message ***

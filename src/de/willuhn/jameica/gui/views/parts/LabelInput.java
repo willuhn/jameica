@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.8 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -87,6 +87,9 @@ public class LabelInput extends Input
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.8  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *
@@ -98,7 +101,7 @@ public class LabelInput extends Input
  *
  * Revision 1.4  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
- * @N ErrorView
+ * @N FatalErrorView
  *
  * Revision 1.3  2003/12/01 21:22:58  willuhn
  * *** empty log message ***

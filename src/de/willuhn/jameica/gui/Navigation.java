@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.10 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,11 +34,13 @@ import de.willuhn.util.I18N;
 public class Navigation {
 
   private Item root;
+  
+  private Composite parent;
 
 	/**
    * Erzeugt die Navigation.
    */
-  protected Navigation() throws Exception
+  protected Navigation(Composite parent) throws Exception
 	{
 
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
@@ -46,6 +48,7 @@ public class Navigation {
 		IXMLElement xml = (IXMLElement) parser.parse();
 
 		// add elements
+		this.parent = parent;
 		root = new Item(null,xml.getFirstChildNamed("item"));
     root.expandChilds(); 
 	}
@@ -173,12 +176,10 @@ public class Navigation {
 			if (this.parentItem == null) {
 
 				// Tree erzeugen
-				Tree tree = new Tree(GUI.getShell(), SWT.BORDER);
+				Tree tree = new Tree(Navigation.this.parent, SWT.BORDER);
 
 				// Griddata erzeugen
-				final GridData gridData = new GridData(GridData.FILL_VERTICAL);
-				gridData.widthHint = 230;
-				tree.setLayoutData(gridData);
+				tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 				Navigation.addListener(tree);
 
@@ -253,6 +254,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.10  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

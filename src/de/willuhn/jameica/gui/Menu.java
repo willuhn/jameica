@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.15 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -181,6 +181,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.15  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *
@@ -196,7 +199,7 @@ public class Menu
  *
  * Revision 1.10  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
- * @N ErrorView
+ * @N FatalErrorView
  *
  * Revision 1.9  2003/12/05 17:12:23  willuhn
  * @C SelectInput

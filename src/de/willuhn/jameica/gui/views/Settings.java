@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.5 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,14 +15,12 @@ package de.willuhn.jameica.gui.views;
 
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.Application;
-import de.willuhn.jameica.Config;
 import de.willuhn.jameica.gui.controller.SettingsControl;
 import de.willuhn.jameica.gui.views.parts.*;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 /**
  * Dialog fuer die Programm-Einstellungen.
@@ -31,12 +29,12 @@ public class Settings extends AbstractView
 {
 
   /**
-   * Erstellt den Einstellungs-Dialog.
-   * @param o Dummy.
+   * ct.
+   * @param parent
    */
-  public Settings(Object o)
+  public Settings(Composite parent)
   {
-    super(o);
+    super(parent);
   }
 
   /**
@@ -45,21 +43,14 @@ public class Settings extends AbstractView
   public void bind()
   {
 
-		final SettingsControl control = new SettingsControl(null);
+		addHeadline("Einstellungen");
 
-  	new Headline(getParent(),I18N.tr("Einstellungen"));
-  	
-		Config config = Application.getConfig();
+		final SettingsControl control = new SettingsControl(this);
 
   	LabelGroup mainSettings = new LabelGroup(getParent(),I18N.tr("Grundeinstellungen"));
 
-  	FileInput fi = new FileInput(config.getLogFile());
-		mainSettings.addLabelPair("Log-Datei",fi);
-		control.register("logfile",fi);		
-
-		SelectInput loglevel = new SelectInput(Logger.LEVEL_TEXT,config.getLogLevel());
-		mainSettings.addLabelPair("Log-Level", loglevel);
-		control.register("loglevel",loglevel);		
+		mainSettings.addLabelPair("Log-Datei",control.getLogFile());
+		mainSettings.addLabelPair("Log-Level", control.getLoglevel());
 
 //		LabelGroup services = new LabelGroup(getParent(),I18N.tr("Services"));
 //
@@ -113,6 +104,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.5  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *

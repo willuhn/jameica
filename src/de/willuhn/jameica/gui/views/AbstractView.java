@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/08 20:50:32 $
+ * $Revision: 1.10 $
+ * $Date: 2004/01/23 00:29:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -9,9 +9,13 @@
  ****************************************************************************/
 package de.willuhn.jameica.gui.views;
 
+import java.rmi.RemoteException;
+
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.views.parts.Headline;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
 
 /**
  * Basis-Klasse fuer alles Views.
@@ -20,23 +24,29 @@ import de.willuhn.util.ApplicationException;
 public abstract class AbstractView
 {
 
-	Composite parent;
-  Object currentObject;
-  
-  /**
-   * Konstruktor.
-   * @param o ein optionales Datenobjekt, welches in der View verarbeitet werden soll.
-   */
-  public AbstractView(Object o)
-  {
-    currentObject = o;
-  }
+	private Object currentObject;
+	private Composite parent;
 
+  /**
+   * ct.
+   * @param parent Composite in dem die View angezeigt werden soll.
+   */
+  public AbstractView(Composite parent)
+  {
+    this.parent = parent;
+  }
+ 
   /**
    * Wird aufgerufen, wenn der Dialog geoeffnet wird.
    * Diese Methode muss von abgeleiteteten Klassen ueberschrieben werden, um dort den Content zu malen.
+   * @throws Exception kann von der View geworfen werden, wenn ein Fehler
+   * waehrend des Erstellens der View aufgetreten ist und die View diesen
+   * Fehler nicht behandeln moechte. Die GUI uebernimmt das dann, indem Sie
+   * stattdessen eine Fehlerseite mit dem Message-Text der Exception anzeigt.
+   * Es ist also ratsam, in den Text der Exception etwas sinnvolles reinzuschreiben,
+   * weil es dem Benutzer angezeigt wird.
    */
-  public abstract void bind();
+  public abstract void bind() throws Exception;
 
   /**
    * Wird aufgerufen, wenn der Dialog verlassen wird.
@@ -47,32 +57,41 @@ public abstract class AbstractView
    */
   public abstract void unbind() throws ApplicationException;
 
-	
-	/**
-   * Liefert das Composite, in dem der Dialog dargestellt werden soll.
-   * @return das Composite, in dem der Dialog angezeigt werden soll.
-   */
-  public Composite getParent()
-	{
-		return parent;
-	}
-
-	/**
-   * Speichert das Composite, in dem der Dialog dargestellt werden soll.
-   * @param parent Composite, in dem der Dialog dargestellt werden soll.
-   */
-  public void setParent(Composite parent)
-	{
-		this.parent = parent;
-	}
-
 	/**
    * Liefert das dieser View uebergebene Daten-Objekt zurueck. 
    * @return Liefert das Business-Objekt fuer das der Dialog zustaendig ist.
+   * @throws RemoteException Wenn beim Laden oder Erstellen des Objektes ein Fehler aufgetreten ist.
    */
-  public Object getCurrentObject()
+  public Object getCurrentObject() throws RemoteException
 	{
 		return currentObject;
+	}
+
+	/**
+	 * Speichert das zu dieser View gehoerende Daten-Objekt.
+   * @param o das Business-Objekt.
+   */
+  public void setCurrentObject(Object o)
+	{
+		this.currentObject = o;
+	}
+
+	/**
+	 * Zeigt den uebergebenen Text als Dialog-Ueberschrift an.
+   * @param text anzuzeigende Ueberschrift.
+   */
+  public void addHeadline(String text)
+	{
+		new Headline(getParent(),I18N.tr(text == null ? "" : text));
+	}
+
+	/**
+	 * Liefert das Composite, in dem der Dialog gemalt wird.
+   * @return Parent-Composite.
+   */
+  protected Composite getParent()
+	{
+		return this.parent;
 	}
 }
 
@@ -80,6 +99,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.10  2004/01/23 00:29:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/01/08 20:50:32  willuhn
  * @N database stuff separated from jameica
  *
