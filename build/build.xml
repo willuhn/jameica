@@ -240,10 +240,15 @@
 
   <target depends="init,compile,jar,src,clean" description="build inofficial release" name="fast" />
 
-  <target depends="cvs,fast" description="build nightly build" name="nightly">
+  <target depends="init,cvs,compile,jar" description="build nightly build" name="nightly">
     <mkdir dir="${project.nightly}"/>
+
     <tstamp/>
-    <copy file="${project.release}/${project.zipfilename}" tofile="${project.nightly}/${define.pluginname}-${version}-${DSTAMP}.zip" />
+    <copy file="${project.release}/${project.zipfilename}" tofile="${project.nightly}/${define.projectname}-${version}-${DSTAMP}.zip" />
+
+    <!-- Die Datei brauchen die anderen Plugins zum Kompilieren //-->
+    <copy file="${project.zipdir}/${define.jarfilename}" tofile="releases/jameica-lib.jar" />
+
     <delete dir="${project.release}"/>
   </target>
 
