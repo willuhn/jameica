@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/08/27 17:46:18 $
+ * $Revision: 1.22 $
+ * $Date: 2004/08/27 19:11:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -207,25 +207,17 @@ public class View
     });
     SWTUtil.startGUITimeout(10000l,new Listener() {
       public void handleEvent(Event event) {
-        long showTime = System.currentTimeMillis() - lastStatusText;
 
-        if (showTime >= 10000l)
-        {
-          messages.setText("");
-        }
-        else
-        {
-          // Der Statustext wurde noch nicht lange genug angezeigt.
-          // Wir warten die restliche Zeit.
-          System.out.println("Es fehlen noch " + ((10000l - showTime) / 1000l) + " Sekunden");
-          SWTUtil.startGUITimeout(10000l - showTime, new Listener()
-          {
-            public void handleEvent(Event event)
-            {
-              messages.setText("");
-            }
-          });
-        }
+				long showTime = System.currentTimeMillis() - lastStatusText;
+
+				// Wenn showTime kleiner als 10sek ist, muss zwischenzeitlich
+				// noch wer einen Text angezeigt haben. Das heisst, unser Text
+				// wird gar nicht mehr angezeigt sondern dessen. Folglich wuerden
+				// wir sonst den falschen Text loeschen 
+				if (showTime >= 1000l)
+				{
+					messages.setText("");
+				}
       }
     });
   }
@@ -263,6 +255,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.22  2004/08/27 19:11:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.21  2004/08/27 17:46:18  willuhn
  * *** empty log message ***
  *
