@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/08/26 23:19:44 $
+ * $Revision: 1.21 $
+ * $Date: 2004/08/27 17:46:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -187,20 +187,50 @@ public class View
    */
   public void setErrorText(final String text)
 	{
-		GUI.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				messages.setText(text);
-				messages.setForeground(Color.ERROR.getSWTColor());
-				messages.layout();
-			}
-		});
-		SWTUtil.startGUITimeout(10000l,new Listener() {
-      public void handleEvent(Event event) {
-      	// TODO: Checken, ob der Text schon lange genug angezeigt wurde und ggf. lassen
-				messages.setText("");
+    setStatusText(text,Color.ERROR);
+	}
+
+  /**
+   * Private Hilfs-Funktion, die den Text anzeigt.
+   * @param text anzuzeigender Text.
+   * @param color Farbe.
+   */
+  private void setStatusText(final String text, final Color color)
+  {
+    GUI.getDisplay().asyncExec(new Runnable() {
+      public void run() {
+        messages.setText(text);
+        messages.setForeground(color.getSWTColor());
+        messages.layout();
+        lastStatusText = System.currentTimeMillis();
       }
     });
-	}
+    SWTUtil.startGUITimeout(10000l,new Listener() {
+      public void handleEvent(Event event) {
+        long showTime = System.currentTimeMillis() - lastStatusText;
+
+        if (showTime >= 10000l)
+        {
+          messages.setText("");
+        }
+        else
+        {
+          // Der Statustext wurde noch nicht lange genug angezeigt.
+          // Wir warten die restliche Zeit.
+          System.out.println("Es fehlen noch " + ((10000l - showTime) / 1000l) + " Sekunden");
+          SWTUtil.startGUITimeout(10000l - showTime, new Listener()
+          {
+            public void handleEvent(Event event)
+            {
+              messages.setText("");
+            }
+          });
+        }
+      }
+    });
+  }
+
+  private long lastStatusText;
 
 	/**
 	 * Schreibt einen Erfolgstext oben in die View.
@@ -208,19 +238,7 @@ public class View
 	 */
 	public void setSuccessText(final String text)
 	{
-		GUI.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				messages.setText(text);
-				messages.setForeground(Color.SUCCESS.getSWTColor());
-				messages.layout();
-			}
-		});
-		SWTUtil.startGUITimeout(10000l,new Listener() {
-			public void handleEvent(Event event) {
-				// TODO: Checken, ob der Text schon lange genug angezeigt wurde und ggf. lassen
-				messages.setText("");
-			}
-		});
+    setStatusText(text,Color.SUCCESS);
 	}
 
   /**
@@ -245,6 +263,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.21  2004/08/27 17:46:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.20  2004/08/26 23:19:44  willuhn
  * *** empty log message ***
  *

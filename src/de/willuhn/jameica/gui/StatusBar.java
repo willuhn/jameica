@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.29 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.30 $
+ * $Date: 2004/08/27 17:46:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -225,50 +225,45 @@ public class StatusBar {
    */
   public void setSuccessText(final String message)
   {
-		if (message == null)
-			return;
-
-		if (!"".equals(message))
-	    lastActionMessages.push("[" + new Date().toString() + "] " + message);
-
-		GUI.getDisplay().asyncExec(new Runnable() {
-      public void run() {
-				actionText.setForeground(Color.SUCCESS.getSWTColor());
-				actionText.setText(message);
-      }
-    });
-		SWTUtil.startGUITimeout(10000l,new Listener() {
-			public void handleEvent(Event event) {
-				actionText.setText("");
-			}
-		});
+    setActionText(message,Color.SUCCESS);
   }
 
-	/**
-	 * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
-	 * Formatiert die Anzeige hierbei aber rot als Fehler.
-	 * @param message anzuzeigender Text.
-	 */
-	public void setErrorText(final String message)
-	{
-		if (message == null)
-			return;
+  /**
+   * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
+   * Formatiert die Anzeige hierbei aber rot als Fehler.
+   * @param message anzuzeigender Text.
+   */
+  public void setErrorText(final String message)
+  {
+    setActionText(message,Color.ERROR);
+  }
 
-		if (!"".equals(message))
-			lastActionMessages.push("[" + new Date().toString() + "] " + message);
+  /**
+   * Private Hilfs-Funktion, die den Action-Text setzt.
+   * @param message anzuzeigender Text.
+   * @param color Farbe.
+   */
+  private void setActionText(final String message, final Color color)
+  {
+    if (message == null)
+      return;
 
-		GUI.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				actionText.setForeground(Color.ERROR.getSWTColor());
-				actionText.setText(message);
-			}
-		});
-		SWTUtil.startGUITimeout(10000l,new Listener() {
-			public void handleEvent(Event event) {
-				actionText.setText("");
-			}
-		});
-	}
+    if (!"".equals(message))
+      lastActionMessages.push("[" + new Date().toString() + "] " + message);
+
+    GUI.getDisplay().asyncExec(new Runnable() {
+      public void run() {
+        if (actionText != null && !actionText.isDisposed())
+        actionText.setForeground(color.getSWTColor());
+        actionText.setText(message);
+      }
+    });
+    SWTUtil.startGUITimeout(10000l,new Listener() {
+      public void handleEvent(Event event) {
+        actionText.setText("");
+      }
+    });
+  }
 
   /**
    * Zeigt die letzten Meldungen an.
@@ -350,6 +345,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.30  2004/08/27 17:46:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.29  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *
