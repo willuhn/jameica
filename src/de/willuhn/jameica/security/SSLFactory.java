@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/01/19 02:14:00 $
+ * $Revision: 1.2 $
+ * $Date: 2005/01/19 16:31:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -105,7 +105,7 @@ public class SSLFactory
 
 		Logger.info("  generating rsa keypair");
 		KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-    kp.initialize(1024);
+    kp.initialize(2048);
 		KeyPair keypair = kp.generateKeyPair();
 
 		this.privateKey = keypair.getPrivate();
@@ -330,6 +330,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.2  2005/01/19 16:31:27  willuhn
+ * @C increased keysize to 2048
+ *
  * Revision 1.1  2005/01/19 02:14:00  willuhn
  * @N Wallet zum Verschluesseln von Benutzerdaten
  *
