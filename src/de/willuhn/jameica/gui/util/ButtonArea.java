@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.6 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -91,7 +91,7 @@ public class ButtonArea
 
 		//	Workaround. SWT does not seem to set rigth the default button if 
 		//	there is not control with focus. Bug: 14668
-		storeButton.setFocus();
+//		storeButton.setFocus();
     GUI.getShell().setDefaultButton(storeButton);
 
 		storeButton.addSelectionListener(new SelectionAdapter()
@@ -187,6 +187,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.6  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

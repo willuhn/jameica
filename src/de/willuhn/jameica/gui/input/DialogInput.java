@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/07/20 21:47:44 $
+ * $Revision: 1.10 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,10 +12,10 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
@@ -56,10 +56,10 @@ public class DialogInput extends ButtonInput
   {
   	this.value = value;
   	this.dialog = d;
-    addButtonListener(new MouseAdapter()
-		{
-			public void mouseUp(MouseEvent e)
-			{
+    addButtonListener(new Listener()
+    {
+      public void handleEvent(Event event)
+      {
 				Logger.debug("starting dialog");
 				try {
 					choosen = dialog.open();
@@ -70,8 +70,8 @@ public class DialogInput extends ButtonInput
 				{
 					Logger.error("error while opening dialog",e1);
 				}
-			}
-		});
+      }
+    });
   }
 
   /**
@@ -122,6 +122,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.10  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/07/20 21:47:44  willuhn
  * @N ContextMenu
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/21 23:54:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,7 +61,7 @@ public class Config
 	private File dir 				= null;
   private File configDir  = null;
   private File configFile = null;
-
+  private File pluginDir  = null;
 
 	private final static String defaultConfig =
 		"<config>\n" +
@@ -134,6 +134,13 @@ public class Config
 		}
 		
 
+		// Wir erstellen noch ein userspezifisches Plugin-Verzeichnis
+		this.pluginDir = new File(dataDir + "/plugins");
+		if (!pluginDir.exists())
+		{
+			Logger.info("creating " + pluginDir.getAbsolutePath());
+			pluginDir.mkdir();
+		}
 
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 		parser.setReader(new StdXMLReader(new FileInputStream(this.configFile.getAbsolutePath())));
@@ -174,6 +181,9 @@ public class Config
     {
       rmiPort = 1099;
     }
+
+		// zu allererst tun wir das Plugin-Verzeichnis des Users hinzu.
+		this.pluginDirs.add(this.pluginDir.getAbsolutePath());
 
 		// Read plugin dirs
 		Enumeration dirs = xml.getFirstChildNamed("plugindirs").enumerateChildren();
@@ -360,6 +370,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.3  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/07/21 23:54:53  willuhn
  * @C massive Refactoring ;)
  *

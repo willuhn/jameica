@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.18 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -314,6 +314,11 @@ public abstract class AbstractDialog
 	{
 
 		try {
+			shell.dispose();
+		}
+		catch (Exception e) {/*useless*/}
+
+		try {
 			Listener l = null;
 			Event e = new Event();
 			e.data = choosen;
@@ -324,17 +329,14 @@ public abstract class AbstractDialog
 			}
 		}
 		catch (Exception e) {/*useless*/}
-
-
-		try {
-			shell.dispose();
-		}
-		catch (Exception e) {/*useless*/}
 	}
 }
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.18  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.9 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,14 +13,14 @@
 package de.willuhn.jameica.gui.input;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.Logger;
@@ -42,18 +42,18 @@ public class ColorInput extends ButtonInput
   public ColorInput(Color color)
   {
     this.color = color;
-    addButtonListener(new MouseAdapter()
+    addButtonListener(new Listener()
     {
-    	public void mouseUp(MouseEvent e)
-    	{
-    		Logger.debug("starting color choose dialog");
-    		ColorDialog cd = new ColorDialog(GUI.getShell());
-    		RGB rgb = cd.open();
-    		if (rgb == null)
-    			return;
-    		setValue(new Color(GUI.getDisplay(),rgb));
-    		label.forceFocus(); // das muessen wir machen, damit der CommentListener ausgeloest wird
-    	}
+      public void handleEvent(Event event)
+      {
+				Logger.debug("starting color choose dialog");
+				ColorDialog cd = new ColorDialog(GUI.getShell());
+				RGB rgb = cd.open();
+				if (rgb == null)
+					return;
+				setValue(new Color(GUI.getDisplay(),rgb));
+				label.forceFocus(); // das muessen wir machen, damit der CommentListener ausgeloest wird
+      }
     });
   }
 
@@ -95,6 +95,9 @@ public class ColorInput extends ButtonInput
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.9  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SimpleDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/05/23 15:30:52 $
+ * $Revision: 1.7 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,8 @@
 package de.willuhn.jameica.gui.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -78,8 +78,11 @@ public class SimpleDialog extends AbstractDialog {
 		button = GUI.getStyleFactory().createButton(comp);
 		button.setText("    OK    ");
 		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		button.addMouseListener(new MouseAdapter() {
-			public void mouseUp(MouseEvent e) {
+		GUI.getShell().setDefaultButton(button);
+		button.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
 				close();
 			}
 		});
@@ -96,6 +99,9 @@ public class SimpleDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: SimpleDialog.java,v $
+ * Revision 1.7  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/05/23 15:30:52  willuhn
  * @N new color/font management
  * @N new styleFactory

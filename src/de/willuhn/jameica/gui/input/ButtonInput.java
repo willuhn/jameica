@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.6 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,13 +15,16 @@ package de.willuhn.jameica.gui.input;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
 
@@ -81,10 +84,26 @@ public abstract class ButtonInput extends AbstractInput
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.setAlignment(SWT.RIGHT);
     button.setEnabled(buttonEnabled);
-		for (int i=0;i<buttonListeners.size();++i)
-		{
-			button.addMouseListener((MouseListener) buttonListeners.get(i));
-		}
+		button.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+				Event event = new Event();
+				event.data = e.data;
+				event.detail = e.detail;
+				event.display = e.display;
+				event.doit = e.doit;
+				event.item = e.item;
+				event.width = e.width;
+				event.height = e.height;
+				event.x = e.x;
+				event.y = e.y;
+				for (int i=0;i<buttonListeners.size();++i)
+				{
+					((Listener)buttonListeners.get(i)).handleEvent(event);
+				}
+      }
+    });
     return comp;
   }
 
@@ -115,7 +134,7 @@ public abstract class ButtonInput extends AbstractInput
 	 * Fuegt zum Button einen Listener hinzu.
    * @param l Listener.
    */
-  protected final void addButtonListener(MouseListener l)
+  protected final void addButtonListener(Listener l)
 	{
 		if (l == null)
 			return;
@@ -191,6 +210,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.6  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *

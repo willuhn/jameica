@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/07/09 00:12:46 $
+ * $Revision: 1.9 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,13 +14,13 @@ package de.willuhn.jameica.gui.input;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FontDialog;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.util.Logger;
@@ -43,18 +43,18 @@ public class FontInput extends ButtonInput
   public FontInput(Font font)
   {
     this.font = font;
-    addButtonListener(new MouseAdapter()
- 		{
-    	public void mouseUp(MouseEvent e)
-    	{
-    		Logger.debug("starting font choose dialog");
-    		FontDialog fd = new FontDialog(GUI.getShell());
-    		FontData f = fd.open();
-    		if (f == null)
-    	    return;
-    		setValue(new Font(GUI.getDisplay(),f));
-    		label.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
-    	}
+    addButtonListener(new Listener()
+    {
+      public void handleEvent(Event event)
+      {
+				Logger.debug("starting font choose dialog");
+				FontDialog fd = new FontDialog(GUI.getShell());
+				FontData f = fd.open();
+				if (f == null)
+					return;
+				setValue(new Font(GUI.getDisplay(),f));
+				label.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
+      }
     });
   }
 
@@ -98,6 +98,9 @@ public class FontInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.9  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *

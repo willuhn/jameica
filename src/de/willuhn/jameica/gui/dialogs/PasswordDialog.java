@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/06/10 20:56:53 $
+ * $Revision: 1.11 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,8 @@ package de.willuhn.jameica.gui.dialogs;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridData;
@@ -137,8 +137,11 @@ public abstract class PasswordDialog extends SimpleDialog {
 		button = GUI.getStyleFactory().createButton(comp);
 		button.setText(i18n.tr("OK"));
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		button.addMouseListener(new MouseAdapter() {
-			public void mouseUp(MouseEvent e) {
+		GUI.getShell().setDefaultButton(button);
+		button.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
 				String p = password.getText();
 				retries++;
 
@@ -160,8 +163,10 @@ public abstract class PasswordDialog extends SimpleDialog {
 		cancel = GUI.getStyleFactory().createButton(comp);
 		cancel.setText(i18n.tr("Abbrechen"));
 		cancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		cancel.addMouseListener(new MouseAdapter() {
-      public void mouseUp(MouseEvent e) {
+		cancel.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
 				throw new RuntimeException("Dialog abgebrochen");
       }
     });
@@ -211,6 +216,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.11  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/06/10 20:56:53  willuhn
  * @D javadoc comments fixed
  *

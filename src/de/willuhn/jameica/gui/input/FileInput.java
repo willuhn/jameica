@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/07/09 00:12:47 $
+ * $Revision: 1.8 $
+ * $Date: 2004/07/27 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,11 @@
 package de.willuhn.jameica.gui.input;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
@@ -41,16 +41,16 @@ public class FileInput extends ButtonInput
   public FileInput(String value)
   {
   	this.value = value;
-		addButtonListener(new MouseAdapter()
-		{
-			public void mouseUp(MouseEvent e)
-			{
+		addButtonListener(new Listener()
+    {
+      public void handleEvent(Event event)
+      {
 				Logger.debug("starting file dialog");
 				FileDialog dialog = new FileDialog(GUI.getShell(),SWT.OPEN);
 				setValue(dialog.open());
 				text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
-			}
-		});
+      }
+    });
   }
 
 
@@ -92,6 +92,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.8  2004/07/27 23:41:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/07/09 00:12:47  willuhn
  * @C Redesign
  *
