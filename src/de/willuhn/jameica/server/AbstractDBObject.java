@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.7 $
- * $Date: 2003/11/24 14:21:53 $
+ * $Revision: 1.8 $
+ * $Date: 2003/11/24 16:25:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -234,7 +234,29 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public Object getField(String fieldName) throws RemoteException
   {
-    return properties.get(fieldName);
+    Object o = properties.get(fieldName);
+    if (o == null)
+      return null;
+
+    // wir checken erstmal, ob es sich um ein Objekt aus einer Framdtabelle
+    // handelt. Wenn das der Fall ist, liefern wir das statt der
+    // lokalen ID aus.
+    Class foreign = getForeignObject(fieldName);
+    if (foreign != null)
+    {
+      try {
+        return Application.getDefaultDatabase().createObject(foreign, o.toString());
+      }
+      catch (Exception e)
+      {
+        if (Application.DEBUG)
+          e.printStackTrace();
+        Application.getLog().error("unable to create foreign object for field " + fieldName);
+        return o;
+      }
+    }
+
+    return o;
   }
 
   /**
@@ -509,6 +531,24 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   public abstract String getPrimaryField() throws RemoteException;
 
   /**
+   * @see de.willuhn.jameica.rmi.DBObject#getForeignObject(java.lang.String)
+   */
+  public abstract Class getForeignObject(String field) throws RemoteException;
+  
+  /**
+   * @see java.lang.Object#toString()
+   */
+  public String toString()
+  {
+    try {
+      return getField(getPrimaryField()).toString();
+    }
+    catch (Exception e)
+    {
+      return "";
+    }
+  }
+  /**
    * @see de.bbvag.dhl.easylog.objects.DBObject#transactionBegin()
    */
   public void transactionBegin() throws RemoteException
@@ -585,6 +625,9 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.8  2003/11/24 16:25:53  willuhn
+ * @N AbstractDBObject is now able to resolve foreign keys
+ *
  * Revision 1.7  2003/11/24 14:21:53  willuhn
  * *** empty log message ***
  *

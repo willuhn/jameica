@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/11/24 14:21:53 $
+ * $Revision: 1.6 $
+ * $Date: 2003/11/24 16:25:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -86,6 +86,13 @@ public interface DBObject extends Remote
 	
   /**
    * Liefert den Wert des angegebenen Feldes.
+   * Aber die Funktion ist richtig schlau ;)
+   * Sie checkt naemlich den Typ des Feldes in der Datenbank und
+   * liefert nicht nur einen String sondern den korrespondierenden
+   * Java-Typ. Insofern die Businessklasse die Funktion
+   * getForeignObject(String field) sinnvoll uberschrieben hat, liefert
+   * die Funktion bei Fremdschluesseln sogar gleich das entsprechende
+   * Objekt aus der Verknuepfungstabelle.
    * @param name Name des Feldes.
    * @return Wert des Feldes.
    * @throws RemoteException
@@ -126,10 +133,23 @@ public interface DBObject extends Remote
    */
   public String getPrimaryField() throws RemoteException;
 
+  /**
+   * Prueft, ob das angegebene Feld ein Fremschluessel zu einer
+   * anderen Tabelle ist. Wenn das der Fall ist, liefert es die
+   * Klasse, die die Fremd-Tabelle abbildet. Andernfalls null.
+   * @param field
+   * @return
+   * @throws RemoteException
+   */
+  public Class getForeignObject(String field) throws RemoteException;
+
 }
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.6  2003/11/24 16:25:53  willuhn
+ * @N AbstractDBObject is now able to resolve foreign keys
+ *
  * Revision 1.5  2003/11/24 14:21:53  willuhn
  * *** empty log message ***
  *

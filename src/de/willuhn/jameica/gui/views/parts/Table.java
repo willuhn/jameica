@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/24 11:51:41 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/24 16:25:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -123,7 +123,11 @@ public class Table
         String[] fieldData = (String[]) fields.get(i);
         String field = fieldData[1];
         item.setData(o.getID());
-        item.setText(i,""+o.getField(field));
+        Object value = o.getField(field);
+        if (value == null)
+          item.setText(i,"");
+        else 
+          item.setText(i,""+value.toString());
       }
     }
 
@@ -158,6 +162,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.3  2003/11/24 16:25:53  willuhn
+ * @N AbstractDBObject is now able to resolve foreign keys
+ *
  * Revision 1.2  2003/11/24 11:51:41  willuhn
  * *** empty log message ***
  *
