@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/AbstractDBObject.java,v $
- * $Revision: 1.23 $
- * $Date: 2003/12/27 21:23:33 $
+ * $Revision: 1.24 $
+ * $Date: 2003/12/28 22:58:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,7 +64,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 	}
 
   /**
-   * Speichert die Connection im Objekt. Die einzelnen Schritte zum Initialisieren
+   * Speichert die Connection. Die einzelnen Schritte zum Initialisieren
    * eines Objektes (Connection speichern, Init, Load) sind bewusst auseinandergedroeselt,
    * damit wir einen Cache mit Meta-Daten fuer Fachobjekte halten koennen, ohne Referenzen
    * zu den Objekten dort speichern zu muessen. 
@@ -281,7 +281,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     deleteCheck();
 
 		Statement stmt = null;
-    Application.getLog().debug("deleting object id ["+id+"] from table " + getTableName());
+    Application.getLog().debug("deleting object id ["+getID()+"] from table " + getTableName());
     try {
     	stmt = getConnection().createStatement();
       String sql = null;
@@ -328,6 +328,20 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   public final String getID() throws RemoteException
   {
     return id;
+  }
+
+  /**
+   * Speichert die uebergeben ID in diesem Objekt. Diese Funktion
+   * ist mit aeusserster Vorsicht zu geniessen. Sie wird z.Bsp. dann
+   * gebraucht, wenn ein Objekt von einer DB auf eine andere kopiert
+   * wird und dabei zwingend mit der ID der Ursprungs-Datenbank
+   * angelegt werden muss.
+   * @param id
+   * @throws RemoteException
+   */
+  public final void setID(String id) throws RemoteException
+  {
+    this.id = id;
   }
 
   /**
@@ -442,9 +456,16 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 	}
 
   /**
-   * Speichert das Objekt als neuen Datensatz in der Datenbank.
+   * Speichert das Objekt explizit als neuen Datensatz in der Datenbank.
+   * Die Funktion wird auch dann ein Insert versuchen, wenn das Objekt
+   * bereits eine ID besitzt. Das ist z.Bsp. sinnvoll, wenn das Objekt
+   * von einer Datenbank auf eine andere kopiert werden soll. Es kann jedoch
+   * durchaus fehlschlagen, wenn ein Objekt mit dieser ID bereits in
+   * der Datenbank existiert.
+   * @throws RemoteException
+   * @throws ApplicationException
    */
-  private void insert() throws RemoteException, ApplicationException
+  public void insert() throws RemoteException, ApplicationException
   {
     checkConnection();
 
@@ -453,7 +474,6 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
 
     insertCheck();
 
-    id = null;
 		PreparedStatement stmt = null;
     try {
       Application.getLog().debug("trying to insert new object into table " + getTableName());
@@ -489,7 +509,10 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   }
   
   /**
-   * Aktualisiert das Objekt in der Datenbank
+   * Aktualisiert das Objekt explizit in der Datenbank.
+   * Wenn es sich um ein neues Objekt handelt, wird das Update fehlschlagen.
+   * @throws RemoteException
+   * @throws ApplicationException
    */
   private void update() throws RemoteException, ApplicationException
   {
@@ -498,12 +521,17 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
     if (!isInitialized())
       throw new RemoteException("object not initialized.");
 
+    if (isNewObject())
+    {
+      // Objekt hat keine ID. Von daher kann's auch nicht upgedated werden
+      throw new RemoteException("object is new - cannot update");
+    }
     updateCheck();
 
 		PreparedStatement stmt = null;
     int affected = 0;
     try {
-      Application.getLog().debug("trying to update object id ["+id+"] from table " + getTableName());
+      Application.getLog().debug("trying to update object id ["+getID()+"] from table " + getTableName());
 			stmt = getUpdateSQL();
       affected = stmt.executeUpdate();
       if (affected != 1)
@@ -608,8 +636,23 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
       names += fields[i] + ",";
       values += "?,";
     }
-    names = names.substring(0,names.length()-1) + ")"; // remove last "," and append ")"
-    values = values.substring(0,values.length()-1) + ")"; // remove last "," and append ")"
+
+    // Wenn das Objekt eine ID hat, dann haengen wir sie an's Insert-Statement mit dran.
+    if (getID() != null)
+    {
+      names  += getIDField() + ")";
+      try {
+        values += Integer.parseInt(getID()) + ")";
+      }
+      catch (NumberFormatException e)
+      {
+        values += "'" + getID() + "')";
+      }
+    }
+    else {
+      names = names.substring(0,names.length()-1) + ")"; // remove last "," and append ")"
+      values = values.substring(0,values.length()-1) + ")"; // remove last "," and append ")"
+    }
 
     try {
       PreparedStatement stmt = getConnection().prepareStatement(sql + names + values);
@@ -688,7 +731,7 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
    */
   public final boolean isNewObject() throws  RemoteException
   {
-    return id == null;
+    return getID() == null;
   }
 
   /**
@@ -829,10 +872,42 @@ public abstract class AbstractDBObject extends UnicastRemoteObject implements DB
   {
     return new DBIteratorImpl(this,getConnection());
   }
+  /**
+   * @see de.willuhn.jameica.rmi.DBObject#overwrite(de.willuhn.jameica.rmi.DBObject)
+   */
+  public void overwrite(DBObject object) throws RemoteException
+  {
+    if (object == null)
+      return;
+    if (!object.getClass().equals(this.getClass()))
+      return;
+
+    String[] fields = getFields();
+    
+    for (int i=0;i<fields.length;++i)
+    {
+      Class foreign = getForeignObject(fields[i]);
+      if (foreign != null)
+      {
+        // Fremdschluessel. Also ID holen
+        DBObject fObject = (DBObject) object.getField(fields[i]);
+        if (fObject == null)
+          continue;
+        setField(fields[i],fObject.getID());
+      }
+      else {
+        setField(fields[i],object.getField(fields[i]));
+      }
+    }
+  }
+
 }
 
 /*********************************************************************
  * $Log: AbstractDBObject.java,v $
+ * Revision 1.24  2003/12/28 22:58:27  willuhn
+ * @N synchronize mode
+ *
  * Revision 1.23  2003/12/27 21:23:33  willuhn
  * @N object serialization
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/22 21:00:34 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/28 22:58:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.jameica.*;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.PluginLoader;
@@ -184,9 +185,21 @@ public class GUI
    */
   public static void startView(String className, Object o)
   {
+    Application.getLog().debug("starting view: " + className);
+
+    if (gui.currentView != null) {
+      try {
+        gui.currentView.unbind();
+      }
+      catch (ApplicationException e)
+      {
+        Application.getLog().debug("cancel sent from dialog (in unbind()");
+        return;
+      }
+    }
+
     try
     {
-      Application.getLog().debug("starting view: " + className);
       Class clazz = null;
       try {
         clazz = Class.forName(className);
@@ -199,10 +212,6 @@ public class GUI
       if (clazz == null)
       {
         throw new ClassNotFoundException(className);
-      }
-
-      if (gui.currentView != null) {
-        gui.currentView.unbind();
       }
 
       gui.view.cleanContent();
@@ -365,6 +374,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.10  2003/12/28 22:58:27  willuhn
+ * @N synchronize mode
+ *
  * Revision 1.9  2003/12/22 21:00:34  willuhn
  * *** empty log message ***
  *

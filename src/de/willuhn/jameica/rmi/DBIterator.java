@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBIterator.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/28 22:58:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,45 +66,28 @@ public interface DBIterator extends Remote {
   public void begin() throws RemoteException;
 
   /**
-   * Damit kann man manuell eine Transaktion starten.
-   * Normalerweise wir bei store() oder delete() sofort
-   * bei Erfolg ein commit gemacht. Wenn man aber von
-   * aussen das Transaktionsverhalten beeinflussen will,
-   * kann man diese Methode aufruefen. Hat man dies
-   * getan, werden store() und delete() erst dann in
-   * der Datenbank ausgefuehrt, wenn man anschliessend
-   * transactionCommit() aufruft.
-   * Die Transaktion bezieht sich auf die gesamte Liste!
-   * @throws RemoteException
-   */
-  public void transactionBegin() throws RemoteException;
-  
-  /**
-   * Beendet eine manuell gestartete Transaktion.
-   * Wenn vorher kein transactionBegin aufgerufen wurde,
-   * wird dieser Aufruf ignoriert.
-   * @throws RemoteException
-   */
-  public void transactionCommit() throws RemoteException;
-
-  /**
-   * Rollt die angefangene Transaktion manuell zurueck.
-   * @throws RemoteException
-   */
-  public void transactionRollback() throws RemoteException;
-
-
-  /**
    * Liefert die Anzahl der Elemente dieses Iterators.
    * @return
    * @throws RemoteException
    */
   public int size() throws RemoteException;
+
+  /**
+   * Prueft, ob das uebergebene Objekt in der aktuellen Liste vorhanden ist.
+   * @param o das zu pruefende Objekt.
+   * @return null wenn kein Objekt uebereinstimmt, andernfalls das ueberinstimmende Objekt aus dieser Liste.
+   * @throws RemoteException
+   */
+  public DBObject contains(DBObject o) throws RemoteException;
+
 }
 
 
 /*********************************************************************
  * $Log: DBIterator.java,v $
+ * Revision 1.7  2003/12/28 22:58:27  willuhn
+ * @N synchronize mode
+ *
  * Revision 1.6  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

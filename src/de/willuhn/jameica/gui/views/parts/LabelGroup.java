@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.10 $
- * $Date: 2003/12/26 21:43:30 $
+ * $Revision: 1.11 $
+ * $Date: 2003/12/28 22:58:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,8 @@ public class LabelGroup
   {
     group = new Group(parent, SWT.NONE);
     group.setText(name);
-    group.setLayout(new GridLayout(2, false));
+    GridLayout layout = new GridLayout(2, false);
+    group.setLayout(layout);
     GridData grid = new GridData(GridData.FILL_HORIZONTAL);
     group.setLayoutData(grid);
   }
@@ -68,6 +69,29 @@ public class LabelGroup
     input.paint(group);
   }
   
+  /**
+   * Fuegt eine Checkbox mit Kommentar hinzu.
+   * @param checkbox die Checkbox.
+   * @param text Text dahinter.
+   */
+  public void addCheckbox(CheckboxInput checkbox, String text)
+  {
+    final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
+    labelGrid.horizontalSpan = 2;
+    final Composite comp = new Composite(group,SWT.NONE);
+    GridLayout gl = new GridLayout(2,false);
+    gl.marginHeight = 0;
+    gl.marginWidth = 0;
+    comp.setLayout(gl);
+    comp.setLayoutData(labelGrid);
+
+    checkbox.paint(comp,40);
+
+    final Label label = new Label(comp , SWT.NONE);
+    label.setText(text);
+    label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+  }
+
   /**
    * Fuegt Freitext zur Group hinzu.
    * @param text der anzuzeigende Text.
@@ -137,6 +161,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.11  2003/12/28 22:58:27  willuhn
+ * @N synchronize mode
+ *
  * Revision 1.10  2003/12/26 21:43:30  willuhn
  * @N customers changable
  *

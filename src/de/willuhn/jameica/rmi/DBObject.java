@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/rmi/Attic/DBObject.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/27 21:23:33 $
+ * $Revision: 1.13 $
+ * $Date: 2003/12/28 22:58:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -141,6 +141,15 @@ public interface DBObject extends Remote
   public String getPrimaryField() throws RemoteException;
 
   /**
+   * Ueberschreibt dieses Objekt mit den Eigenschaften des uebergebenen.
+   * Dabei werden nur die Werte der Eigenschaften ueberschrieben - nichts anderes.
+   * Also auch keine Meta-Daten oder aehnliches.
+   * @param object 
+   * @throws RemoteException
+   */
+  public void overwrite(DBObject object) throws RemoteException;
+  
+  /**
    * Liefert eine Liste aller Objekte des aktuellen Types.
    * @return Liste mit allen Objekten dieser Tabelle.
    * @throws RemoteException
@@ -150,6 +159,9 @@ public interface DBObject extends Remote
 
 /*********************************************************************
  * $Log: DBObject.java,v $
+ * Revision 1.13  2003/12/28 22:58:27  willuhn
+ * @N synchronize mode
+ *
  * Revision 1.12  2003/12/27 21:23:33  willuhn
  * @N object serialization
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.16 $
- * $Date: 2003/12/19 19:45:02 $
+ * $Revision: 1.17 $
+ * $Date: 2003/12/28 22:58:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -240,34 +240,6 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
     }
   }
 
-  
-  /**
-   * @see de.bbvag.dhl.easylog.objects.DBIterator#transactionBegin()
-   */
-  public void transactionBegin() throws RemoteException
-  {
-    if (!initialized) init();
-    object.transactionBegin();
-  }
-
-  /**
-   * @see de.bbvag.dhl.easylog.objects.DBIterator#transactionCommit()
-   */
-  public void transactionCommit() throws RemoteException
-  {
-    if (!initialized) init();
-    object.transactionCommit();
-  }
-
-  /**
-   * @see de.bbvag.dhl.easylog.objects.DBIterator#transactionRollback()
-   */
-  public void transactionRollback() throws RemoteException
-  {
-    if (!initialized) init();
-    object.transactionRollback();
-  }
-
   /**
    * @see de.willuhn.jameica.rmi.DBIterator#size()
    */
@@ -284,11 +256,43 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
   {
     this.index = 0;
   }
+
+  /**
+   * @see de.willuhn.jameica.rmi.DBIterator#contains(de.willuhn.jameica.rmi.DBObject)
+   */
+  public DBObject contains(DBObject o) throws RemoteException
+  {
+    if (!initialized) init();
+
+    if (o == null)
+      return null;
+
+    if (!o.getClass().equals(object.getClass()))
+      return null;
+
+    String id = null;
+    DBObject object = null;
+    for (int i=0;i<list.size();++i)
+    {
+      object = (DBObject) list.get(i);
+      id = object.getID();
+      if (id == null)
+        continue; // das kann eigentlich nie der Fall sein
+      if (id.equals(o.getID()))
+        return object;
+    }
+    
+    return null;
+    
+  }
 }
 
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.17  2003/12/28 22:58:27  willuhn
+ * @N synchronize mode
+ *
  * Revision 1.16  2003/12/19 19:45:02  willuhn
  * *** empty log message ***
  *

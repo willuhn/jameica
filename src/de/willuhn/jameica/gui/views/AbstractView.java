@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/AbstractView.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/12/11 21:00:54 $
+ * $Revision: 1.7 $
+ * $Date: 2003/12/28 22:58:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,6 +10,8 @@
 package de.willuhn.jameica.gui.views;
 
 import org.eclipse.swt.widgets.Composite;
+
+import de.willuhn.jameica.ApplicationException;
 
 /**
  * Basis-Klasse fuer alles Views.
@@ -39,8 +41,11 @@ public abstract class AbstractView
   /**
    * Wird aufgerufen, wenn der Dialog verlassen wird. Diese Methode muss von abgeleiteten
    * Klassen ueberschrieben werden, um dort Aufraeumarbeiten vorzunehmen.
+   * @throws ApplicationException darf vom Dialog geworfen werden, wenn der neue Dialog
+   * nicht gestartet werden soll. Z.Bsp. weil Daten noch nicht gespeichert worden oder
+   * ein Vorgang noch in Bearbeitung ist.
    */
-  public abstract void unbind();
+  public abstract void unbind() throws ApplicationException;
 
 	
 	/**
@@ -75,6 +80,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.7  2003/12/28 22:58:27  willuhn
+ * @N synchronize mode
+ *
  * Revision 1.6  2003/12/11 21:00:54  willuhn
  * @C refactoring
  *

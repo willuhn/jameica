@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Input.java,v $
- * $Revision: 1.12 $
- * $Date: 2003/12/16 02:27:44 $
+ * $Revision: 1.13 $
+ * $Date: 2003/12/28 22:58:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -90,11 +90,17 @@ public abstract class Input
     commentLabel.setText(comment);
     commentLabel.redraw();
   }
+
   /**
    * Positioniert und malt das Eingabefeld im uebergebenen Composite.
    * @param comment
    */
   public void paint(Composite parent)
+  {
+    paint(parent,240);
+  }
+
+  public void paint(Composite parent,int width)
   {
     if (this.comment != null)
     {
@@ -106,19 +112,19 @@ public abstract class Input
       layout.marginWidth=0;
       this.parent.setLayout(layout);
       final GridData g = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-      g.widthHint = 240;
+      g.widthHint = width;
       this.parent.setLayoutData(g);
 
       control = getControl();
       final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-      inputGrid.widthHint = 110;
+      inputGrid.widthHint = width / 2;
       control.setLayoutData(inputGrid);
     }
     else {
       this.parent = parent;
       control = getControl();
       final GridData inputGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-      inputGrid.widthHint = 240;
+      inputGrid.widthHint = width;
       control.setLayoutData(inputGrid);
     }
 
@@ -174,6 +180,9 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.13  2003/12/28 22:58:27  willuhn
+ * @N synchronize mode
+ *
  * Revision 1.12  2003/12/16 02:27:44  willuhn
  * *** empty log message ***
  *
