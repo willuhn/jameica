@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/02/18 11:06:13 $
+ * $Revision: 1.5 $
+ * $Date: 2005/02/19 16:53:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -259,17 +259,13 @@ public class SSLFactory
 		{
 			System.setProperty("javax.net.ssl.trustStore",      getKeyStoreFile().getAbsolutePath());
 			System.setProperty("javax.net.ssl.keyStore",        getKeyStoreFile().getAbsolutePath());
-			System.setProperty("javax.net.ssl.keyStorePassword",getPassword()); // TODO JAMEICA Ist das noetig?
+			// System.setProperty("javax.net.ssl.keyStorePassword",getPassword());
 
 			File f = getKeyStoreFile();
 			Logger.info("reading keystore from file " + f.getAbsolutePath());
 			is = new FileInputStream(f);
 
 			Logger.info("init keystore");
-      // TODO: Keystore so umbauen, dass IMMER BouncyCastle verwendet wird!
-      // Sonst kann es zu Fehlern kommen, wenn "starke" Verschluesselung
-      // auf einer SUN-JVM mit Export-Beschraenkungen laeuft.
-      
       this.keystore = KeyStore.getInstance("JKS");
 
 			Logger.info("reading keys");
@@ -300,7 +296,7 @@ public class SSLFactory
 		try
 		{
 			Logger.info("adding certifcate " + alias + " to keystore");
-			CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			CertificateFactory cf = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
 			X509Certificate cert = (X509Certificate)cf.generateCertificate(is);
 			getKeyStore().setCertificateEntry(alias,cert);
 			storeKeystore();
@@ -322,23 +318,17 @@ public class SSLFactory
 			return sslContext;
 
 		Logger.info("init ssl context");
-		this.sslContext = SSLContext.getInstance("SSL");
+		this.sslContext = SSLContext.getInstance("TLS",BouncyCastleProvider.PROVIDER_NAME);
 
-		Logger.info("init SunX509 key manager");
-		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance("SunX509");
+		Logger.info("init key manager [using algorithm: " + KeyManagerFactory.getDefaultAlgorithm() + "]");
+		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm(),BouncyCastleProvider.PROVIDER_NAME);
 		keyManagerFactory.init(this.getKeyStore(),getPassword().toCharArray());
 
-//	Wir benutzen unseren eignen TrustManager
+		// Wir benutzen unseren eignen TrustManager
 		Logger.info("init Jameica trust manager");
     TrustManager trustManager = new JameicaTrustManager();
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
 												 new TrustManager[]{trustManager},null);
-
-// alternative Loesung mit SUN TrustManager
-//		TrustManagerFactory trustManagerFactory=TrustManagerFactory.getInstance("SunX509");
-//		trustManagerFactory.init(this.getKeyStore());
-//		this.sslContext.init(keyManagerFactory.getKeyManagers(),
-//												 trustManagerFactory.getTrustManagers(),null);
 				
 		return this.sslContext;
 	}
@@ -359,6 +349,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.5  2005/02/19 16:53:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2005/02/18 11:06:13  willuhn
  * *** empty log message ***
  *
