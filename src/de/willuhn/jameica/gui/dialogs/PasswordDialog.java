@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/20 20:45:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/21 19:49:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,8 +30,18 @@ import de.willuhn.util.I18N;
 
 /**
  * Dialog zu Passwort-Eingabe.
+ * Die Klasse ist deshalb abstract, damit sie bei der konkreten
+ * Verwendung abgeleitet wird und dort via <code>checkPassword(String)</code>
+ * die Eingabe geprueft werden kann.
+ * Hinweis: Diese Klasse hat einen internen Zaehler, der die Anzahl
+ * der fehlgeschlagenen Aufrufe von <code>checkPassword(String)</code>
+ * zaehlt. Nach 3 Versuchen wird die Funktion <code>cancel()</code>
+ * aufgerufen und der Dialog geschlossen.
  */
-public class PasswordDialog extends SimpleDialog {
+public abstract class PasswordDialog extends SimpleDialog {
+
+	private final static int MAX_RETRIES = 3;
+	private int retries = 0;
 
 	private Composite comp = null;
 	private Label label = null;
@@ -39,6 +49,9 @@ public class PasswordDialog extends SimpleDialog {
 	private CLabel error = null;
 	private Text password = null;
 	private Button button = null;
+	
+	private String labelText 					= I18N.tr("Passwort");
+	private String errorText					= "";
 	
 	private String enteredPassword = "";
 
@@ -51,6 +64,32 @@ public class PasswordDialog extends SimpleDialog {
   public PasswordDialog(int position) {
     super(position);
   }
+
+	/**
+	 * Speichert den Text, der links neben dem Eingabefeld fuer die
+	 * Passwort-Eingabe angezeigt werden soll (Optional).
+   * @param text anzuzeigender Text.
+   */
+  protected void setLabelText(String text)
+	{
+		if (text == null || text.length() == 0)
+			return;
+		labelText = text;
+	}
+
+	/**
+	 * Zeigt den uebergebenen Text rot markiert links neben dem OK-Button an.
+	 * Diese Funktion sollte aus <code>checkPassword(String)</code> heraus
+	 * aufgerufen werden, um dem benutzer zu zeigen, <b>warum</b> seine
+	 * Passwort-Eingabe falsch war. 
+   */
+  protected final void setErrorText(String text)
+	{
+		if (text == null || text.length() == 0)
+			return;
+		error.setText(text);
+		error.layout();
+	}
 
 	/**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint()
@@ -68,7 +107,7 @@ public class PasswordDialog extends SimpleDialog {
 		label.setLayoutData(grid);
 		
 		pLabel = new Label(comp,SWT.NONE);
-		pLabel.setText(I18N.tr("Passwort"));
+		pLabel.setText(labelText);
 		pLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
 		password = new Text(comp,SWT.SINGLE | SWT.BORDER);
@@ -93,9 +132,21 @@ public class PasswordDialog extends SimpleDialog {
 		button.setLayoutData(new GridData(GridData.END));
 		button.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-				if (!checkPassword())
+				String p = password.getText();
+				retries++;
+				if (!checkPassword(p))
+				{
+					if (retries >= MAX_RETRIES)
+					{
+						// maximale Anzahl der Fehlversuche erreicht.
+						// Wir schliessen den Dialog und rufen vorher
+						// noch cancel() auf.
+						cancel();
+						close();
+					}
 					return;
-				enteredPassword = password.getText();
+				}
+				enteredPassword = p;
 				close();
 			}
 		});
@@ -114,18 +165,30 @@ public class PasswordDialog extends SimpleDialog {
     });
 	}		
 
-	/**
-   * Prueft ob ein Passwort eingegeben wurde.
+  /**
+   * Prueft die Eingabe des Passwortes.
+   * Hinweis: Der Dialog wird erst geschlossen, wenn diese
+   * Funktion <code>true</code> zurueckliefert.
+   * @param password das gerade eingegebene Passwort.
+   * @return true, wenn die Eingabe OK ist, andernfalls false.
    */
-  private boolean checkPassword()
-	{
-		if (password.getText() != null && password.getText().length() > 0)
-			return true;
-		error.setText(I18N.tr("Fehler: Bitte geben Sie ein Passwort ein"));
-		error.layout();
-		return false;
-	}
+  protected abstract boolean checkPassword(String password);
 	
+	/**
+   * Wird aufgerufen, wenn das Passwort 3 mal falsch eingegeben wurde.
+   */
+  protected abstract void cancel();
+	
+	/**
+	 * Liefert die Anzahl der moeglichen Rest-Versuche zur
+	 * Eingabe bevor der Dialog abgebrochen wird.
+   * @return Anzahl der Restversuche.
+   */
+  protected int getRemainingRetries()
+	{
+		return (MAX_RETRIES - retries);
+	}
+
 	/**
 	 * Oeffnet den Dialog und liefert das Passwort nachdem OK gedrueckt wurde.
    * @return
@@ -140,6 +203,9 @@ public class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.2  2004/02/21 19:49:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/02/20 20:45:24  willuhn
  * *** empty log message ***
  *

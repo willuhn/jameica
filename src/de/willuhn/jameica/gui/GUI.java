@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/02/20 20:45:24 $
+ * $Revision: 1.24 $
+ * $Date: 2004/02/21 19:49:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Jameica;
 import de.willuhn.jameica.Settings;
+import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
@@ -276,14 +277,42 @@ public class GUI
     statusBar = new StatusBar(parent);
   }
 
-  /**
-   * Startet die angegebene View.
-   * @param className Name der Klasse, die als View im Content angezeigt
-   * werden soll. Muss von AbstractView abgeleitet sein.
-   * @param o ein optionaler Parameter, der der View uebergeben wird.
+	/**
+	 * Startet die angegebene View in einem modalen Dialog.
+	 * @param className Name der Klasse, die als View im Content angezeigt
+	 * werden soll. Muss von AbstractView abgeleitet sein.
+	 * @param title anzuzeigender Titel.
+	 * @param o ein optionaler Parameter, der der View uebergeben wird.
+	 */
+	public static void startDialog(final String className, final String title, final Object o)
+	{
+		try {
+			Class clazz = MultipleClassLoader.load(className);
+			ViewDialog dialog = new ViewDialog((AbstractView) clazz.newInstance(),ViewDialog.POSITION_CENTER);
+			dialog.setTitle(title);
+			dialog.open();
+		}
+		catch (InstantiationException e)
+		{
+			Application.getLog().error("error while instanciating view",e);
+		}
+		catch (IllegalAccessException e)
+		{
+			Application.getLog().error("not allowed to bind view",e);
+		}
+		catch (ClassNotFoundException e)
+		{
+			Application.getLog().error("view does not exist",e);
+		}
+	}
+
+	/**
+	 * Zeigt die View im angegebenen Composite an.
+   * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
+   * @param parent Parent-Composite.
    */
   public static void startView(final String className, final Object o)
-  {
+	{
     Application.getLog().debug("starting view: " + className);
 
 		startJob(new Runnable() {
@@ -534,6 +563,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.24  2004/02/21 19:49:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2004/02/20 20:45:24  willuhn
  * *** empty log message ***
  *

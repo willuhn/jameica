@@ -5,6 +5,8 @@
   <cascade name="Datei">
     <item name="&amp;Einstellungen" 			shortcut="CTRL+E" class="de.willuhn.jameica.gui.views.Settings" />
 	<item name="-" />
+    <item name="Tests"	    			 		class="de.willuhn.jameica.gui.views.Tests" />
+    <item name="DialogTests" target="dialog"	class="de.willuhn.jameica.gui.views.Tests" />
     <item name="Beenden"    			 		class="de.willuhn.jameica.gui.views.FileClose" />
   </cascade>
 

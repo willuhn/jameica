@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Settings.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/21 19:49:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,12 +77,16 @@ public class Settings
   /**
    * Speichert das Attribut <name> mit dem zugehoerigen Wert <value>.
    * Wenn ein gleichnamiges Attribut bereits existiert, wird es ueberschrieben.
+   * Ist der Wert des Attributes <code>null</code>, wird es entfernt.
    * @param name Name des Attribut.
    * @param value Wert des Attribut.
    */
   public void setAttribute(String name, String value)
   {
-    properties.setProperty(name,value);
+  	if (value == null)
+  		properties.remove(name);
+  	else
+	    properties.setProperty(name,value);
     store();
   }
 
@@ -118,6 +122,9 @@ public class Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.5  2004/02/21 19:49:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

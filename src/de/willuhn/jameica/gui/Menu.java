@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/01/23 00:29:03 $
+ * $Revision: 1.16 $
+ * $Date: 2004/02/21 19:49:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -123,8 +123,9 @@ public class Menu
      */
     MenuElement(org.eclipse.swt.widgets.Menu parent,IXMLElement ckey)
     {
-      String c    = ckey.getAttribute("class",null);
-      String text = I18N.tr(ckey.getAttribute("name",null));
+      String c      = ckey.getAttribute("class",null);
+      String text   = I18N.tr(ckey.getAttribute("name",null));
+			String target = ckey.getAttribute("target",null);
       if (text != null && text.startsWith("-"))
       {
         new MenuItem(parent,SWT.SEPARATOR);
@@ -132,7 +133,7 @@ public class Menu
       }
       final MenuItem item = new MenuItem(parent,SWT.CASCADE);
       
-      item.addListener (SWT.Selection, new MenuListener(c));
+      item.addListener(SWT.Selection, new MenuListener(c, target, text));
 
       String shortCut = ckey.getAttribute("shortcut",null);
       if (shortCut != null)
@@ -154,10 +155,14 @@ public class Menu
   
   class MenuListener implements Listener
   {
-    private String c = null;
-    MenuListener(String clazz)
+    private String clazz = null;
+    private String target = null;
+    private String text = null;
+    MenuListener(String clazz, String target, String text)
     {
-      c = clazz;
+      this.clazz = clazz;
+      this.target = target;
+      this.text = text.replaceAll("&","");
     }
 
     /**
@@ -166,7 +171,10 @@ public class Menu
     public void handleEvent(org.eclipse.swt.widgets.Event event)
     {
       try {
-        GUI.startView(c,null);
+      	if (target != null && "dialog".equalsIgnoreCase(target))
+      		GUI.startDialog(clazz,text,null);
+				else
+	        GUI.startView(clazz,null);
       }
       catch (Exception e)
       {
@@ -181,6 +189,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.16  2004/02/21 19:49:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/01/23 00:29:03  willuhn
  * *** empty log message ***
  *

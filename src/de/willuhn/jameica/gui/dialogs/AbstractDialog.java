@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/02/20 20:45:24 $
+ * $Revision: 1.2 $
+ * $Date: 2004/02/21 19:49:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -123,7 +123,7 @@ public abstract class AbstractDialog
 	 * jeden Fall ein Passwort eingegeben wurde.
    * @param l der ShellListener.
    */
-  public final void addShellListener(ShellListener l)
+  protected final void addShellListener(ShellListener l)
 	{
 		shell.addShellListener(l);
 	}
@@ -205,6 +205,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.2  2004/02/21 19:49:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/02/20 20:45:24  willuhn
  * *** empty log message ***
  *
