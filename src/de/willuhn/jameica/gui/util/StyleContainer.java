@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/StyleContainer.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/03/11 08:56:56 $
+ * $Revision: 1.2 $
+ * $Date: 2004/04/01 22:07:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,9 +15,6 @@ package de.willuhn.jameica.gui.util;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-
-import de.willuhn.jameica.gui.GUI;
 
 /**
  * Kleine Hilfsklasse, die verschiedene Styling-Informationen in sich vereint.
@@ -29,15 +26,14 @@ import de.willuhn.jameica.gui.GUI;
  */
 public class StyleContainer {
 
-  private Color foreground;
-  private Color background;
-  private Font font;
+  private Color foreground = Style.COLOR_FG;
+  private Color background = Style.COLOR_BG;
+  private Font font			   = Style.FONT_DEFAULT;
 
   /**
    * ct.
    */
   public StyleContainer() {
-    font = new Font(GUI.getDisplay(),new FontData());
   }
   
   /**
@@ -99,6 +95,9 @@ public class StyleContainer {
 
 /**********************************************************************
  * $Log: StyleContainer.java,v $
+ * Revision 1.2  2004/04/01 22:07:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/03/11 08:56:56  willuhn
  * @C some refactoring
  *

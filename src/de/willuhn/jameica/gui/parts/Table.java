@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/03/30 22:08:25 $
+ * $Revision: 1.13 $
+ * $Date: 2004/04/01 22:07:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -126,9 +126,9 @@ public class Table
     comboFD.bottom = new FormAttachment(100, -1);
 
 
-    int style = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
+    int flags = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
 
-    table = new org.eclipse.swt.widgets.Table(comp, style);
+    table = new org.eclipse.swt.widgets.Table(comp, flags);
     table.setLayoutData(comboFD);
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
@@ -348,6 +348,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.13  2004/04/01 22:07:07  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/03/30 22:08:25  willuhn
  * *** empty log message ***
  *

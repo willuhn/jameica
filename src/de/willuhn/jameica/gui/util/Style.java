@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/04/01 19:06:26 $
+ * $Revision: 1.15 $
+ * $Date: 2004/04/01 22:07:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
@@ -85,6 +86,11 @@ public class Style
    * Font fuer Ueberschriften zweiter Ordnung.
    */
   public final static Font FONT_H2 = new Font(GUI.getDisplay(),"Verdana", 8, SWT.BOLD);
+
+	/**
+	 * Default-Font.
+	 */
+	public final static Font FONT_DEFAULT = new Font(GUI.getDisplay(),new FontData());
 
   /**
    * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
@@ -162,6 +168,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.15  2004/04/01 22:07:06  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/04/01 19:06:26  willuhn
  * *** empty log message ***
  *
