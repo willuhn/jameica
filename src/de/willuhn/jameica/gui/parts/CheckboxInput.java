@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/CheckboxInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/18 01:40:30 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/04 00:35:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,7 +32,7 @@ public class CheckboxInput extends Input
   public final static String DISABLED = "false"; 
 
   /**
-   * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    */
   public CheckboxInput(boolean value)
   {
@@ -102,6 +102,9 @@ public class CheckboxInput extends Input
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.3  2004/03/04 00:35:14  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/02/18 01:40:30  willuhn
  * @N new white style
  *
