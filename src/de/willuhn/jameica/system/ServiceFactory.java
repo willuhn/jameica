@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Revision: 1.7 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -120,7 +120,7 @@ public final class ServiceFactory
    * @param plugin das Plugin, fuer welches dieser Service gebunden werden soll.
    * @param serviceName Aliasname des Service.
    * @param service Der Service selbst.
-   * @throws Exception wenn das Binden fehlschlaegt.
+   * @throws RemoteException wenn das Binden fehlschlaegt.
    */
   private void bind(AbstractPlugin plugin, String serviceName, Class service)
   	throws RemoteException
@@ -252,6 +252,9 @@ public final class ServiceFactory
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.7  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.6  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *

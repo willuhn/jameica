@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.11 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -133,7 +133,7 @@ public class LabelGroup
 
   /**
    * Fuegt ein generisches GUI-Element hinzu.
-   * @param table anzuzeigende Tabelle.
+   * @param part anzuzeigender Part.
    */
   public void addPart(Part part)
   {
@@ -224,6 +224,9 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.11  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.10  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

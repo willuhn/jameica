@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.9 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
@@ -41,7 +40,6 @@ import de.willuhn.util.Logger;
 public class SWTUtil {
 
 	private static Map imagecache = new HashMap();
-	private static FormToolkit toolkit = null;
 
 	private static Timer timer = new Timer();
 
@@ -169,6 +167,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.9  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.8  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

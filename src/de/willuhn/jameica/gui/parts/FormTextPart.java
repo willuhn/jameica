@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/07/31 15:03:05 $
+ * $Revision: 1.6 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -141,7 +141,7 @@ public class FormTextPart implements Part {
 
 
   /**
-   * @see de.willuhn.jameica.gui.Part#refresh()
+   * @throws RemoteException
    */
   public void refresh() throws RemoteException
 	{
@@ -217,6 +217,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.6  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.5  2004/07/31 15:03:05  willuhn
  * *** empty log message ***
  *

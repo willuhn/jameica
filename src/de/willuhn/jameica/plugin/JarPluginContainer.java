@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Attic/JarPluginContainer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.3 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -79,7 +79,7 @@ public class JarPluginContainer implements PluginContainer {
 	}
 
 	/**
-	 * @see de.willuhn.jameica.PluginContainer#setPlugin(de.willuhn.jameica.AbstractPlugin)
+	 * @see de.willuhn.jameica.plugin.PluginContainer#setPlugin(de.willuhn.jameica.plugin.AbstractPlugin)
 	 */
 	public void setPlugin(AbstractPlugin p)
 	{
@@ -87,7 +87,7 @@ public class JarPluginContainer implements PluginContainer {
 	}
 
   /**
-   * @see de.willuhn.jameica.PluginContainer#setInstalled(boolean)
+   * @see de.willuhn.jameica.plugin.PluginContainer#setInstalled(boolean)
    */
   public void setInstalled(boolean b)
 	{
@@ -95,7 +95,7 @@ public class JarPluginContainer implements PluginContainer {
 	}
 
   /**
-   * @see de.willuhn.jameica.PluginContainer#getMenu()
+   * @see de.willuhn.jameica.plugin.PluginContainer#getMenu()
    */
   public InputStream getMenu() throws IOException {
   	if (menu == null)
@@ -104,7 +104,7 @@ public class JarPluginContainer implements PluginContainer {
   }
 
   /**
-   * @see de.willuhn.jameica.PluginContainer#getNavigation()
+   * @see de.willuhn.jameica.plugin.PluginContainer#getNavigation()
    */
   public InputStream getNavigation() throws IOException {
   	if (navi == null)
@@ -113,7 +113,7 @@ public class JarPluginContainer implements PluginContainer {
   }
 
 	/**
-	 * @see de.willuhn.jameica.PluginContainer#getInfo()
+	 * @see de.willuhn.jameica.plugin.PluginContainer#getInfo()
 	 */
 	public InfoReader getInfo() throws Exception {
 		if (info == null)
@@ -122,28 +122,28 @@ public class JarPluginContainer implements PluginContainer {
 	}
 
   /**
-   * @see de.willuhn.jameica.PluginContainer#isInstalled()
+   * @see de.willuhn.jameica.plugin.PluginContainer#isInstalled()
    */
   public boolean isInstalled() {
     return installed;
   }
 
   /**
-   * @see de.willuhn.jameica.PluginContainer#getFile()
+   * @see de.willuhn.jameica.plugin.PluginContainer#getFile()
    */
   public File getFile() {
   	return new File(file.getName());
   }
 
   /**
-   * @see de.willuhn.jameica.PluginContainer#getPluginClass()
+   * @see de.willuhn.jameica.plugin.PluginContainer#getPluginClass()
    */
   public Class getPluginClass() {
     return pluginClass;
   }
 
   /**
-   * @see de.willuhn.jameica.PluginContainer#getPlugin()
+   * @see de.willuhn.jameica.plugin.PluginContainer#getPlugin()
    */
   public AbstractPlugin getPlugin() {
     return plugin;
@@ -154,6 +154,9 @@ public class JarPluginContainer implements PluginContainer {
 
 /**********************************************************************
  * $Log: JarPluginContainer.java,v $
+ * Revision 1.3  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.2  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

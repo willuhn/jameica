@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenuItem.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/20 21:47:44 $
+ * $Revision: 1.2 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,9 @@ public class ContextMenuItem
 	private Listener listener = null;
 	private Image image       = null;
 
+	/**
+	 * Menu-Item, welches als Separator verwendet werden kann.
+	 */
 	public final static ContextMenuItem SEPARATOR = new ContextMenuItem();
 	
 	static
@@ -136,6 +139,9 @@ public class ContextMenuItem
 
 /**********************************************************************
  * $Log: ContextMenuItem.java,v $
+ * Revision 1.2  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.1  2004/07/20 21:47:44  willuhn
  * @N ContextMenu
  *

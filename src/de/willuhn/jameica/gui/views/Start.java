@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.28 $
- * $Date: 2004/07/25 17:15:20 $
+ * $Revision: 1.29 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -98,7 +98,7 @@ public class Start extends AbstractView
 		}
 
     /**
-     * @see de.willuhn.datasource.rmi.GenericObject#getAttribute(java.lang.String)
+     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
      */
     public Object getAttribute(String name) throws RemoteException
     {
@@ -106,7 +106,7 @@ public class Start extends AbstractView
     }
 
     /**
-     * @see de.willuhn.datasource.rmi.GenericObject#getID()
+     * @see de.willuhn.datasource.GenericObject#getID()
      */
     public String getID() throws RemoteException
     {
@@ -114,7 +114,7 @@ public class Start extends AbstractView
     }
 
     /**
-     * @see de.willuhn.datasource.rmi.GenericObject#getPrimaryAttribute()
+     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
      */
     public String getPrimaryAttribute() throws RemoteException
     {
@@ -122,7 +122,7 @@ public class Start extends AbstractView
     }
 
     /**
-     * @see de.willuhn.datasource.rmi.GenericObject#equals(de.willuhn.datasource.rmi.GenericObject)
+     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
      */
     public boolean equals(GenericObject other) throws RemoteException
     {
@@ -133,6 +133,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.29  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.28  2004/07/25 17:15:20  willuhn
  * @C PluginLoader is no longer static
  *

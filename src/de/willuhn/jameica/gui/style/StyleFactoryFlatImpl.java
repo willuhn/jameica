@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/06/24 21:32:49 $
+ * $Revision: 1.6 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -120,6 +120,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 	}
 
 	private static class VisibilityHandler extends FocusAdapter {
+		/**
+		 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+		 */
 		public void focusGained(FocusEvent e) {
 			Widget w = e.widget;
 			if (w instanceof Control) {
@@ -128,6 +131,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 		}
 	}
 	private static class KeyboardHandler extends KeyAdapter {
+		/**
+		 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+		 */
 		public void keyPressed(KeyEvent e) {
 			Widget w = e.widget;
 			if (w instanceof Control) {
@@ -139,11 +145,25 @@ public class StyleFactoryFlatImpl implements StyleFactory
 	private static class BorderPainter implements PaintListener
 	{
 
+		/**
+		 * Konstante fuer "Rahmen malen".
+		 */
 		public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
+
+    /**
+     * Konstante fuer "Rahmen malen".
+     */
 		public static final String TREE_BORDER = "treeBorder";
+
+    /**
+     * Konstante fuer "Rahmen malen".
+     */
 		public static final String TEXT_BORDER = "textBorder";
 
 
+		/**
+		 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
+		 */
 		public void paintControl(PaintEvent event)
 		{
 			Composite composite = (Composite) event.widget;
@@ -202,6 +222,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.6  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.5  2004/06/24 21:32:49  willuhn
  * *** empty log message ***
  *

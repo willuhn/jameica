@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/08/15 18:45:30 $
+ * $Revision: 1.9 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,8 +47,18 @@ import de.willuhn.util.MultipleClassLoader;
  */
 public final class Application {
 
+	/**
+	 * Konstante fuer "Anwendung laeuft standalone".
+	 */
 	public final static int MODE_STANDALONE		= 0;
+	/**
+   * Konstante fuer "Anwendung laeuft im Server-Mode ohne GUI".
+	 */
 	public final static int MODE_SERVER				= 1;
+
+  /**
+   * Konstante fuer "Anwendung laeuft im reinen Client-Mode".
+	 */
 	public final static int MODE_CLIENT				= 2;
 
   private static int appMode = MODE_STANDALONE;
@@ -57,7 +67,6 @@ public final class Application {
   
   // singleton
   private static Application app;
-  	private String 							dataDir;
     private Config 							config;
     private MultipleClassLoader classLoader;
     private ServiceFactory 			serviceFactory;
@@ -95,7 +104,6 @@ public final class Application {
   private void init(String dataDir)
 	{
 
-		this.dataDir = dataDir;
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
 		Logger.addTarget(System.out);
@@ -442,6 +450,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.9  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.8  2004/08/15 18:45:30  willuhn
  * *** empty log message ***
  *

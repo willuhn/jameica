@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.21 $
- * $Date: 2004/08/15 17:55:17 $
+ * $Revision: 1.22 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -142,6 +142,7 @@ public class Navigation {
   /**
 	 * Fuer zur Navigation den Navi-Tree eines Plugins hinzu.
    * @param container der PluginContainer.
+   * @throws Exception
    */
   protected void addPlugin(PluginContainer container) throws Exception
 	{
@@ -239,6 +240,9 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.22  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.21  2004/08/15 17:55:17  willuhn
  * @C sync handling
  *

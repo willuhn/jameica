@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/07/25 17:15:20 $
+ * $Revision: 1.12 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,6 +55,7 @@ public class Main {
    * Parameter 2: Optionales Datenverzeichnis. Das ist bei Linux
    * standardmaessig <b>~/.jameica</b> und bei Windows
    * <b>C:\dokumente und Einstellungen\benutzername\.jameica</b>.
+   * @throws Throwable
    */
   public static void main(String[] args) throws Throwable
   {
@@ -96,6 +97,9 @@ public class Main {
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.12  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.11  2004/07/25 17:15:20  willuhn
  * @C PluginLoader is no longer static
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/07/23 15:51:20 $
+ * $Revision: 1.12 $
+ * $Date: 2004/08/18 23:14:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,8 +42,6 @@ public class SelectInput extends AbstractInput
 
   /**
    * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
-   * @param object das darzustellende Objekt. Es wird auch gleich verwendet,
-   * um darueber eine Liste zu holen, mit der die Selectbox gefuellt wird. 
    * @param list Liste von Objekten.
    * @param preselected das Object, welches vorselektiert sein soll. Optional.
    */
@@ -190,7 +188,7 @@ public class SelectInput extends AbstractInput
 		}
 
     /**
-     * @see de.willuhn.datasource.rmi.GenericObject#getAttribute(java.lang.String)
+     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
      */
     public Object getAttribute(String name) throws RemoteException
     {
@@ -198,7 +196,7 @@ public class SelectInput extends AbstractInput
     }
 
     /**
-     * @see de.willuhn.datasource.rmi.GenericObject#getID()
+     * @see de.willuhn.datasource.GenericObject#getID()
      */
     public String getID() throws RemoteException
     {
@@ -206,7 +204,7 @@ public class SelectInput extends AbstractInput
     }
 
     /**
-     * @see de.willuhn.datasource.rmi.GenericObject#getPrimaryAttribute()
+     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
      */
     public String getPrimaryAttribute() throws RemoteException
     {
@@ -214,7 +212,7 @@ public class SelectInput extends AbstractInput
     }
 
     /**
-     * @see de.willuhn.datasource.rmi.GenericObject#equals(de.willuhn.datasource.rmi.GenericObject)
+     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
      */
     public boolean equals(GenericObject other) throws RemoteException
     {
@@ -228,6 +226,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.12  2004/08/18 23:14:19  willuhn
+ * @D Javadoc
+ *
  * Revision 1.11  2004/07/23 15:51:20  willuhn
  * @C Rest des Refactorings
  *
