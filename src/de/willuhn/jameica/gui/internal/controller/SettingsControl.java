@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.7 $
+ * $Date: 2004/12/13 22:48:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -345,6 +345,14 @@ public class SettingsControl extends AbstractControl
 	      return false;
 			return getID().equals(other.getID());
     }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
+     */
+    public String[] getAttributeNames() throws RemoteException
+    {
+      return new String[] {"name"};
+    }
   }
 
 	/**
@@ -396,12 +404,23 @@ public class SettingsControl extends AbstractControl
     		return false;
       return arg0.getID().equals(this.getID());
     }
+
+		/**
+		 * @see de.willuhn.datasource.GenericObject#getAttributeNames()
+		 */
+		public String[] getAttributeNames() throws RemoteException
+		{
+			return new String[] {"name"};
+		}
 	}
 }
 
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.7  2004/12/13 22:48:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

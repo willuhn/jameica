@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/12/05 17:29:19 $
+ * $Revision: 1.18 $
+ * $Date: 2004/12/13 22:48:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -330,12 +330,23 @@ public class SelectInput extends AbstractInput
     		return false;
       return getID().equals(other.getID());
     }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
+     */
+    public String[] getAttributeNames() throws RemoteException
+    {
+      return new String[] {"name"};
+    }
 	}
 
 }
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.18  2004/12/13 22:48:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/12/05 17:29:19  willuhn
  * *** empty log message ***
  *

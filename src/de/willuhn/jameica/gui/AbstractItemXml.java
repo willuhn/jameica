@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.6 $
+ * $Date: 2004/12/13 22:48:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -176,11 +176,22 @@ public abstract class AbstractItemXml implements Item
       return;
     childs.add(item);
   }
+  /**
+   * @see de.willuhn.datasource.GenericObject#getAttributeNames()
+   */
+  public String[] getAttributeNames() throws RemoteException
+  {
+    return new String[] {"name"};
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.6  2004/12/13 22:48:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

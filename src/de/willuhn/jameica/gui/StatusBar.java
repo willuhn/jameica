@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.36 $
- * $Date: 2004/11/17 19:02:24 $
+ * $Revision: 1.37 $
+ * $Date: 2004/12/13 22:48:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -351,12 +351,23 @@ public class StatusBar {
     {
       return false;
     }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
+     */
+    public String[] getAttributeNames() throws RemoteException
+    {
+      return new String[] {"text"};
+    }
 	}
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.37  2004/12/13 22:48:31  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.36  2004/11/17 19:02:24  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/MenuItemXml.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/05 20:00:44 $
+ * $Revision: 1.5 $
+ * $Date: 2004/12/13 22:48:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,8 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
 
   /**
    * @see de.willuhn.jameica.gui.MenuItem#getShortcut()
-   */  public String getShortcut() throws RemoteException
+   */
+  public String getShortcut() throws RemoteException
   {
     return (String) getAttribute("shortcut");
   }
@@ -54,6 +55,9 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
 
 /*********************************************************************
  * $Log: MenuItemXml.java,v $
+ * Revision 1.5  2004/12/13 22:48:30  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/11/05 20:00:44  willuhn
  * @D javadoc fixes
  *
