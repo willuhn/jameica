@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/07/27 19:17:07 $
+ * $Revision: 1.5 $
+ * $Date: 2004/08/09 22:24:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -401,12 +401,28 @@ public class Application {
 		return (String[]) app.welcomeMessages.toArray(new String[app.welcomeMessages.size()]);
 	}
 
-
+	/**
+	 * Startet einen Hintergrund-Task in Jameica.
+   * @param task der auszufuehrende Task.
+   */
+  public static void start(BackgroundTask task)
+	{
+		Logger.info("starting background task");
+		if (task == null)
+		{
+			Logger.warn("background task is null, skipping");
+			return;
+		}
+		task.start();
+	}
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.5  2004/08/09 22:24:16  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/07/27 19:17:07  willuhn
  * *** empty log message ***
  *
