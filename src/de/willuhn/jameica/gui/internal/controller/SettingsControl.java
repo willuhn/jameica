@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/20 12:08:16 $
+ * $Revision: 1.4 $
+ * $Date: 2004/10/23 18:13:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,6 @@ import de.willuhn.jameica.gui.input.ColorInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
-import de.willuhn.jameica.gui.internal.views.Settings;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
@@ -282,8 +281,8 @@ public class SettingsControl extends AbstractControl
 			Color.LINK.reset();
 			Color.LINK_ACTIVE.reset();
 
-			GUI.startView(Settings.class.getName(),null);
 			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen zurückgesetzt."));
+			new de.willuhn.jameica.gui.internal.action.Settings().handleAction(null);
   	}
   	catch (Exception e)
   	{
@@ -403,6 +402,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.4  2004/10/23 18:13:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/10/20 12:08:16  willuhn
  * @C MVC-Refactoring (new Controllers)
  *
