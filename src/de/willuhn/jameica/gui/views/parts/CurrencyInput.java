@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/CurrencyInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.3 $
+ * $Date: 2003/11/24 11:51:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,7 +56,7 @@ public class CurrencyInput extends Input
     comp.setLayout(layout);
     comp.setLayoutData(createGrid());
 
-    text = new Text(comp, SWT.BORDER);
+    text = new Text(comp, SWT.BORDER | SWT.RIGHT);
     text.setText((""+value).replace('.',','));
     text.setLayoutData(new GridData(GridData.FILL_BOTH));
     text.addFocusListener(new FocusAdapter(){
@@ -97,6 +97,9 @@ public class CurrencyInput extends Input
 
 /*********************************************************************
  * $Log: CurrencyInput.java,v $
+ * Revision 1.3  2003/11/24 11:51:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

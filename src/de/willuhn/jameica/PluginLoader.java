@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2003/11/20 03:48:41 $
+ * $Revision: 1.7 $
+ * $Date: 2003/11/24 11:51:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,8 @@ public class PluginLoader extends ClassLoader
   {
     Application.getLog().info("init plugins");
     
-    loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","/work/willuhn/eclipse/fibu/src");
+    // loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","/work/willuhn/eclipse/fibu/src");
+    loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","d:/work/fibu/src");
 
     try {
       // Plugin-Verzeichnis ermitteln
@@ -195,6 +196,10 @@ public class PluginLoader extends ClassLoader
         return (f.isFile() && (name.endsWith(".zip") || name.endsWith(".jar")));
       }
     });
+    
+    if (files == null)
+      return null;
+
     for (int i=0;i<files.length;++i)
     {
       found.add(files[i]);
@@ -287,6 +292,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.7  2003/11/24 11:51:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2003/11/20 03:48:41  willuhn
  * @N first dialogues
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/TextInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.4 $
+ * $Date: 2003/11/24 11:51:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,7 @@ public class TextInput extends Input
    */
   public void paint(Composite parent)
   {
+
     text = new Text(parent, SWT.BORDER);
     text.setLayoutData(createGrid());
     text.setText((value == null ? "" : value));
@@ -63,6 +64,9 @@ public class TextInput extends Input
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.4  2003/11/24 11:51:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/11/22 20:43:05 $
+ * $Revision: 1.2 $
+ * $Date: 2003/11/24 11:51:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -88,7 +88,6 @@ public class Table
     for (int i=0;i<this.fields.size();++i)
     {
       final TableColumn col = new TableColumn(table, SWT.NONE);
-      col.setAlignment(SWT.RIGHT);
       String[] fieldData = (String[]) fields.get(i);
       String title = fieldData[0];
       String field = fieldData[1];
@@ -140,6 +139,15 @@ public class Table
       }
     );
 
+
+    // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
+    int cols = table.getColumnCount();
+    for (int i=0;i<cols;++i)
+    {
+      TableColumn col = table.getColumn(i);
+      col.pack();
+    }
+    
     // So, und jetzt malen wir noch ein Label mit der Anzahl der Treffer drunter.
     Label summary = new Label(parent,SWT.NONE);
     summary.setText(list.size() + " " + (list.size() == 1 ? I18N.tr("Datensatz") : I18N.tr("Datensätze")) + ".");
@@ -150,6 +158,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.2  2003/11/24 11:51:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/11/22 20:43:05  willuhn
  * *** empty log message ***
  *

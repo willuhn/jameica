@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2003/11/23 19:26:27 $
+ * $Revision: 1.5 $
+ * $Date: 2003/11/24 11:51:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -148,14 +148,16 @@ public class SelectInput extends Input
   {
 
     final GridData grid = createGrid();
-
+    
     // Wenn ein Kommentar da ist, muessen wir das Composite nochmal aufsplitten
     if (comment != null)
     {
       Composite newParent = new Composite(parent, SWT.NONE);
       newParent.setLayoutData(grid);
-      final GridLayout layout = new GridLayout(2, false);
+      final GridLayout layout = new GridLayout(2, true);
       layout.marginWidth = 0;
+      layout.marginHeight = 0;
+      layout.horizontalSpacing = 0;
       newParent.setLayout(layout);
 
       combo = new Combo(newParent, SWT.BORDER | SWT.READ_ONLY);
@@ -166,8 +168,7 @@ public class SelectInput extends Input
         combo.addListener(SWT.Selection,commentListener);
 
       commentLabel = new Label(newParent,SWT.NONE);
-      final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
-      labelGrid.widthHint = 95;
+      final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
       commentLabel.setText(comment);
       commentLabel.setForeground(Style.COLOR_COMMENT);
       commentLabel.setAlignment(SWT.RIGHT);
@@ -202,6 +203,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.5  2003/11/24 11:51:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2003/11/23 19:26:27  willuhn
  * *** empty log message ***
  *

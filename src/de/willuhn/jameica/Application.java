@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.8 $
- * $Date: 2003/11/20 03:48:41 $
+ * $Revision: 1.9 $
+ * $Date: 2003/11/24 11:51:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -102,6 +102,8 @@ public class Application {
     }
     catch (Exception e)
     {
+      if (Application.DEBUG)
+        e.printStackTrace();
       Application.getLog().error("connect to default database failed. Exiting");
       Application.shutDown();
     }
@@ -251,6 +253,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.9  2003/11/24 11:51:41  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2003/11/20 03:48:41  willuhn
  * @N first dialogues
  *
