@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.40 $
- * $Date: 2004/04/01 00:23:24 $
+ * $Revision: 1.41 $
+ * $Date: 2004/04/01 19:06:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -79,7 +79,7 @@ public class PluginLoader extends ClassLoader
 
     File[] jars = null;
     try {
-    	// Wir fuegen das Verzeichnis zum ClassLoader hinzu.
+    	// Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
     	Application.getClassLoader().add(new File(plugindir.getPath() + "/bin"));
     	
     	// Und jetzt noch alle darin befindlichen Jars
@@ -423,6 +423,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.41  2004/04/01 19:06:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.40  2004/04/01 00:23:24  willuhn
  * @N FontInput
  * @N ColorInput

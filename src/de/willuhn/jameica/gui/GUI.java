@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.34 $
- * $Date: 2004/03/30 22:08:26 $
+ * $Revision: 1.35 $
+ * $Date: 2004/04/01 19:06:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -387,15 +387,15 @@ public class GUI
   private static void loadHelp(AbstractView view)
 	{
 
-		String path = "/help/" + 
+		String path = "help/" + 
 									Application.getConfig().getLocale().toString().toLowerCase() +
 									"/" + view.getClass().getName() + ".txt";
-		InputStream is = GUI.class.getResourceAsStream(path);
+		InputStream is = Application.getClassLoader().getResourceAsStream(path);
 		if (is == null)
 		{
-			path = "/help/" + Locale.getDefault().toString().toLowerCase() + 
+			path = "help/" + Locale.getDefault().toString().toLowerCase() + 
 						 "/" + view.getClass().getName() + ".txt";
-			is = GUI.class.getResourceAsStream(path);
+			is = Application.getClassLoader().getResourceAsStream(path);
 		}
 		if (is == null)
 			return;
@@ -625,6 +625,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.35  2004/04/01 19:06:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.34  2004/03/30 22:08:26  willuhn
  * *** empty log message ***
  *

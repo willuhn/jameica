@@ -128,10 +128,6 @@
 		<copy file="${build.dir}/jameica.bat"       tofile="${project.release}/jameica.bat" />
 		<copy file="${build.dir}/jameicaserver.bat" tofile="${project.release}/jameicaserver.bat" />
 
-		<exec executable="ln" failonerror="true" dir="releases">
-			<arg line="-f -s ${version}-${build.number} latest"/>
-		</exec>
-
     </target>
 
     <target depends="compile" name="javadoc" description="creates the api doc">

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/04/01 00:23:24 $
+ * $Revision: 1.14 $
+ * $Date: 2004/04/01 19:06:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 
 /**
@@ -95,11 +96,16 @@ public class Style
   public static Image getImage(String filename)
   {
     Image image = (Image) imagecache.get(filename);
-    if (image == null)
+    if (image != null)
+    	return image;
+
+    InputStream is = null;
+    
+    try
     {
-      InputStream is = Style.class.getResourceAsStream("/img/" + filename);
-      ImageData data = new ImageData(is);
-      ImageData data2 = null;
+    	is = Application.getClassLoader().getResourceAsStream("img/" + filename);
+	    ImageData data = new ImageData(is);
+	    ImageData data2 = null;
       if (data.transparentPixel > 0) {
         data2 = data.getTransparencyMask();
         image = new Image(GUI.getDisplay(), data, data2);
@@ -111,11 +117,13 @@ public class Style
       if (image != null) {
         imagecache.put(filename, image);
       }
-      else {
-        return new Image(GUI.getDisplay(), Style.class.getClassLoader().getResourceAsStream("/img" + "/empty.gif"));
-      }
+			return image;
     }
-    return image;
+    catch (Throwable t)
+    {
+    	Application.getLog().error("unable to load image " + filename,t);
+    }
+    return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img" + "/empty.gif"));
   }
   
   /**
@@ -154,6 +162,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.14  2004/04/01 19:06:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2004/04/01 00:23:24  willuhn
  * @N FontInput
  * @N ColorInput
