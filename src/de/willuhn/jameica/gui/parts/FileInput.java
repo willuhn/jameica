@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/FileInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/18 20:28:45 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,16 +22,15 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Style;
-import de.willuhn.util.I18N;
 
 /**
  * @author willuhn
@@ -52,6 +51,7 @@ public class FileInput extends Input
    */
   public FileInput(String value)
   {
+  	super();
     this.value = value;
   }
 
@@ -104,7 +104,7 @@ public class FileInput extends Input
 
     button = new Button(comp,SWT.FLAT);
     //button.setImage(Style.getImage("search.gif"));
-    button.setText(I18N.tr("öffnen..."));
+    button.setText(i18n.tr("öffnen..."));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.setAlignment(SWT.RIGHT);
     button.addMouseListener(new MouseAdapter()
@@ -171,6 +171,10 @@ public class FileInput extends Input
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.6  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.5  2004/02/18 20:28:45  willuhn
  * @N jameica now stores window position and size
  *

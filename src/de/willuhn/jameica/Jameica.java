@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Jameica.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/09 13:06:33 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/03 22:27:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,82 +12,64 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
-import java.io.IOException;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
+import java.io.File;
+
 
 /**
- * Hilfs-Klasse fuer Name und Versionsnummer von Jameica.
- * @author willuhn
+ * Ja, Jameica ist selbst auch nur ein Plugin ;).
  */
-public class Jameica
+public class Jameica extends AbstractPlugin
 {
 
-  private static Manifest manifest = null;
+  /**
+   * @param file
+   */
+  public Jameica(File file) {
+    super(file);
+  }
 
   /**
-   * Diese Funktion versucht den Namen aus der Datei jameica.jar/META-INF/MANIFEST.MF zu extrahieren.
-   * Sie versucht dabei, den Schluessel Implementation-Title zu parsen.
-   * Schlaegt das fehl, wird sie den Namen des Jar-Files zurueckliefern. 
+   * @see de.willuhn.jameica.AbstractPlugin#init()
    */
-  public static String getName()
-  {
-    try {
-      JarFile jar = null;
-      if (manifest == null)
-      try {
-        jar = new JarFile("jameica-linux.jar");
-      }
-      catch (IOException e)
-      {
-        jar = new JarFile("jameica-win32.jar");
-      }
-      Manifest manifest = jar.getManifest();
-      String name = (String) manifest.getMainAttributes().getValue("Implementation-Title");
-      if (name == null) throw new Exception();
-      return name;
-    }
-    catch (Exception e)
-    {
-      Application.getLog().debug("unable to read application name");
-    }
+  public boolean init() {
+    return true;
+  }
+
+  /**
+   * @see de.willuhn.jameica.AbstractPlugin#install()
+   */
+  public boolean install() {
+    return true;
+  }
+
+  /**
+   * @see de.willuhn.jameica.AbstractPlugin#update(double)
+   */
+  public boolean update(double oldVersion) {
+    return true;
+  }
+
+  /**
+   * @see de.willuhn.jameica.AbstractPlugin#getWelcomeText()
+   */
+  public String getWelcomeText() {
     return "Jameica";
   }
 
   /**
-   * Diese Funktion versucht die Versionsnummer aus der Datei jameica.jar/META-INF/MANIFEST.MF zu extrahieren.
-   * Sie versucht dabei, den Schluessel Implementation-Version zu parsen.
-   * Wenn der String das Format "V_&lt;Major-Number&gt;_&lt;Minor-Number&gt; hat, wird es funktionieren.
-   * Andernfalls liefert die Funktion "1.0". 
+   * @see de.willuhn.jameica.AbstractPlugin#shutDown()
    */
-  public static double getVersion()
-  {
-    try {
-      JarFile jar = null;
-      if (manifest == null)
-      try {
-        jar = new JarFile("jameica-linux.jar");
-      }
-      catch (IOException e)
-      {
-        jar = new JarFile("jameica-win32.jar");
-      }
-      Manifest manifest = jar.getManifest();
-      String version = (String) manifest.getMainAttributes().getValue("Implementation-Version");
-      version = version.substring(2).replace('_','.');
-      return Double.parseDouble(version);
-    }
-    catch (Exception e)
-    {
-      Application.getLog().debug("unable to read version number");
-    }
-    return 1.0;
+  public void shutDown() {
   }
 
 }
 
 /*********************************************************************
  * $Log: Jameica.java,v $
+ * Revision 1.6  2004/03/03 22:27:11  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.5  2004/02/09 13:06:33  willuhn
  * @C added support for uncompressed plugins
  *

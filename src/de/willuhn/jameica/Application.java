@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.27 $
- * $Date: 2004/02/25 23:11:57 $
+ * $Revision: 1.28 $
+ * $Date: 2004/03/03 22:27:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,9 @@ import java.io.FileOutputStream;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.SplashScreen;
-import de.willuhn.util.*;
+import de.willuhn.util.Lock;
+import de.willuhn.util.Logger;
+import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Basisklasse der Anwendung.
@@ -58,20 +60,30 @@ public class Application {
     // start application
     app = new Application();
 
+		// LockFile erzeugen
+		new Lock("jameica");
+
+		////////////////////////////////////////////////////////////////////////////
     // init logger
 		splash("init system logger");
 		app.log = new Logger();
 		app.log.addTarget(System.out);
 		app.log.setLevel(Logger.LEVEL_INFO);
-
     Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
+		//
+		////////////////////////////////////////////////////////////////////////////
 
+		////////////////////////////////////////////////////////////////////////////
 		// register logger in ClassLoader
 		MultipleClassLoader.setLogger(app.log);
+		//
+		////////////////////////////////////////////////////////////////////////////
 
+		////////////////////////////////////////////////////////////////////////////
     // init config
     try {
-			splash("init system config");app.config = new Config(configFile);
+			splash("init system config");
+			app.config = new Config(configFile);
     }
     catch (Exception e)
     {
@@ -79,13 +91,11 @@ public class Application {
       Application.shutDown();
       return;
     }
-    
-		// init language pack
-		// TODO: Languages fuer jedes Plugin extra.
-		I18N.init("lang/messages",Application.getConfig().getLocale());
-
 		app.log.setLevel(app.config.getLogLevel());
+		//
+		////////////////////////////////////////////////////////////////////////////
 
+		////////////////////////////////////////////////////////////////////////////
     // switch logger to defined log file
     try {
       Application.getLog().info("adding defined log file " + app.config.getLogFile());
@@ -95,19 +105,29 @@ public class Application {
     {
       Application.getLog().error("failed");
     }
+		//
+		////////////////////////////////////////////////////////////////////////////
 
-    // init service factory
-		splash("init local and remote services"); ServiceFactory.init();
+		////////////////////////////////////////////////////////////////////////////
+    // init service factory and plugins
+		splash("init local and remote services");
+		ServiceFactory.init();
 
     // init plugins
-		splash("loading plugins"); PluginLoader.init();
+		splash("loading plugins");
+		PluginLoader.init();
+		//
+		////////////////////////////////////////////////////////////////////////////
 
     // close splash screen
     if (!serverMode)
       SplashScreen.shutDown();
 
+		////////////////////////////////////////////////////////////////////////////
     // add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
     Runtime.getRuntime().addShutdownHook(shutdownHook);
+		//
+		////////////////////////////////////////////////////////////////////////////
 
     // start loops
     if (serverMode) Server.init();
@@ -197,6 +217,10 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.28  2004/03/03 22:27:11  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.27  2004/02/25 23:11:57  willuhn
  * *** empty log message ***
  *

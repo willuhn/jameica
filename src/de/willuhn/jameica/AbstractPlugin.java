@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/02/25 23:11:57 $
+ * $Revision: 1.12 $
+ * $Date: 2004/03/03 22:27:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,16 +16,16 @@ import java.io.File;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import de.willuhn.datasource.db.EmbeddedDatabase;
-
 /**
  * Abstrakte Basis-Klasse aller Plugins.
+ * Jedes Plugin muss diese Klasse erweitern, damit es beim Start von
+ * Jameica erkannt wird.
  * @author willuhn
  */
-public abstract class AbstractPlugin implements Plugin
+public abstract class AbstractPlugin
 {
 
-  private File file = null;
+	private PluginResources res = null;
 
 	/**
 	 * ct.
@@ -34,7 +34,16 @@ public abstract class AbstractPlugin implements Plugin
    */
   public AbstractPlugin(File file)
 	{
-		this.file = file;
+		this.res = new PluginResources(file);
+	}
+
+	/**
+	 * Liefert ein Objekt mit Resourcen, auf die das Plugin zugreifen kann.
+   * @return Resource-Pack.
+   */
+  public final PluginResources getResources()
+	{
+		return res;
 	}
 
   /**
@@ -47,6 +56,7 @@ public abstract class AbstractPlugin implements Plugin
   public String getName()
   {
 		String name = "unknown";
+		File file = res.getFile();
     try {
 			if (!file.getName().endsWith(".jar"))
 				return file.getName();
@@ -79,6 +89,7 @@ public abstract class AbstractPlugin implements Plugin
    */
   public double getVersion()
   {
+		File file = res.getFile();
     try {
 			if (!file.getName().endsWith(".jar"))
 				return 1.0;
@@ -104,56 +115,45 @@ public abstract class AbstractPlugin implements Plugin
   }
   
 	/**
-	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
-	 * @return Verzeichnis, in dem sich das Plugin befindet.
+	 * Diese Funktion wird beim Start der Anwendung ausgefuehrt. Hier kann die Plugin-
+	 * Implementierung also diverse Dinge durchfuehren, die es beim Start gern
+	 * automatisch durchgefuehrt haben moechte ;)
+	 * @return true, wenn das Plugin erfolgreich initialisiert wurde.
 	 */
-	public String getPath()
-	{
-		if (file == null)
-			return null;
+	public abstract boolean init();
 
-		if (!file.getName().endsWith(".jar"))
-			return file.getPath();
-
-		return file.getParent();
-	}
-  
-	/**
-	 * Liefert die embedded Datenbank des Plugins. Damit ist keine JDBC-Verbindung
-	 * oder ein DB-Hub gemeint, sondern ein Objekt, mit dem man das Plugin
-	 * eine Datenbank fuer sich erstellen und mit Tabellen fuellen kann.
-	 * @return die Embedded Datenbank des Plugins.
-	 */
-	public EmbeddedDatabase getDatabase()
-	{
-		return new EmbeddedDatabase(getPath() + "/db",getUsername(),getPassword());
-	}
 
 	/**
-	 * Liefert den Usernamen fuer die Embedded-Datenbank.
-	 * Sollte vom Plugin ueberschrieben werden, wenn die
-	 * Datenbank benutzt wird.
-   * @return Username fuer die Datenbank.
-   */
-  protected String getUsername()
-	{
-		return "jameica";
-	}
+	 * Diese Funktion wird beim Start der Anwendung aufgerufen, wenn das Plugin
+	 * zum ersten mal gestartet wird. Die install() Funktion wird solange bei
+	 * jedem Start aufgerufen, bis sie mit <code>true</code> antwortet.
+	 * @return true, wenn die Installation erfolgreich verlief.
+	 */
+	public abstract boolean install();
 
 	/**
-	 * Liefert das Passwort fuer die Embedded-Datenbank.
-	 * Sollte vom Plugin ueberschrieben werden, wenn die
-	 * Datenbank benutzt wird.
-	 * @return Passwort fuer die Datenbank.
+	 * Diese Funktion wird beim Start der Anwendung genau dann aufgerufen, wenn
+	 * das Plugin bereits erfolgreich installiert wurde, jedoch jetzt in einer
+	 * anderen Version vorliegt als die vorherige.
+	 * @param oldVersion Version, die vorher installiert war.
+	 * @return true, wenn das Update erfolgreich verlief.
 	 */
-  protected String getPassword()
-	{
-		return "jameica"; 
-	}
+	public abstract boolean update(double oldVersion);
+
+	/**
+	 * Diese Funktion wird beim Beenden der Anwendung ausgefuehrt.
+	 */
+	public abstract void shutDown();
+
+
 }
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.12  2004/03/03 22:27:11  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.11  2004/02/25 23:11:57  willuhn
  * *** empty log message ***
  *

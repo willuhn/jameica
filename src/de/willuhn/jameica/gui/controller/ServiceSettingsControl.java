@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/ServiceSettingsControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.3 $
+ * $Date: 2004/03/03 22:27:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,9 +17,10 @@ import java.rmi.RemoteException;
 import de.willuhn.datasource.common.LocalServiceData;
 import de.willuhn.datasource.rmi.ServiceData;
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.views.AbstractView;
-import de.willuhn.util.I18N;
 
 /**
  * Controller fuer den Dialog "Einstellungen eines Services".
@@ -44,7 +45,7 @@ public class ServiceSettingsControl extends AbstractControl {
 		catch (RemoteException e)
 		{
 			Application.getLog().error("unable to read service data",e);
-			GUI.setActionText(I18N.tr("Fehler beim Lesen des Services."));
+			GUI.setActionText(PluginLoader.getPlugin(Jameica.class).getResources().getI18N().tr("Fehler beim Lesen des Services."));
 		}
   }
 
@@ -101,6 +102,10 @@ public class ServiceSettingsControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: ServiceSettingsControl.java,v $
+ * Revision 1.3  2004/03/03 22:27:11  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.2  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

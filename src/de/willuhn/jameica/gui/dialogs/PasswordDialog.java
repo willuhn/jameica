@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.util.Style;
-import de.willuhn.util.I18N;
 
 /**
  * Dialog zu Passwort-Eingabe.
@@ -51,7 +50,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 	private Button button = null;
 	private Button cancel = null;
 	
-	private String labelText 					= I18N.tr("Passwort");
+	private String labelText 					= "";
 	private String errorText					= "";
 	
 	private String enteredPassword = "";
@@ -64,6 +63,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 	 */
   public PasswordDialog(int position) {
     super(position);
+    labelText = i18n.tr("Passwort");
   }
 
 	/**
@@ -146,7 +146,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 		// OK-Button
 		button = new Button(comp, SWT.FLAT);
-		button.setText(I18N.tr("OK"));
+		button.setText(i18n.tr("OK"));
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
@@ -169,7 +169,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 		// Abbrechen-Button
 		cancel = new Button(comp,SWT.FLAT);
-		cancel.setText(I18N.tr("Abbrechen"));
+		cancel.setText(i18n.tr("Abbrechen"));
 		cancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		cancel.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
@@ -222,6 +222,10 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.6  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.5  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Input.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.util.I18N;
 
 /**
  * Basisklasse fuer Eingabefelder.
@@ -31,11 +34,21 @@ import de.willuhn.jameica.gui.util.Style;
 public abstract class Input
 {
 
+	I18N i18n;
+
   private Composite parent = null;
   private String comment = null;
   private Label commentLabel = null;
   private Control control = null;
 	private ArrayList listeners = new ArrayList();
+
+	/**
+   * Erzeugt ein neues Eingabe-Feld.
+   */
+  public Input()
+	{
+		i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+	}
 
   /**
    * Liefert den Wert des Eingabefelds.
@@ -203,6 +216,10 @@ public abstract class Input
 
 /*********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.4  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.3  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

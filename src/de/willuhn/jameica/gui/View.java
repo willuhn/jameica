@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.13 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,15 +44,14 @@ public class View
   public View(Composite parent)
 	{
     this.parent = parent;
-		setLayout();
-		setLogoPanel();
+		init();
 		cleanContent();
 	}
 	
   /**
-   * Erzeugt das Layout.
+   * Initialisiert das Layout der View.
    */
-  private void setLayout()
+  private void init()
 	{
 		view = new Composite(parent, SWT.BORDER);
 		view.setBackground(Style.COLOR_WHITE);
@@ -63,21 +62,14 @@ public class View
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		view.setLayout(layout);
-	}
 	
-  /**
-   * Setzt das Panel mit dem Logo rein.
-   */
-  private void setLogoPanel()
-	{
-
 		panelBg = Style.getCanvas(view,Style.getImage("panel.bmp"), SWT.TOP | SWT.RIGHT);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		panelBg.setLayout(layout);
+		GridLayout layout2 = new GridLayout();
+		layout2.marginHeight = 0;
+		layout2.marginWidth = 0;
+		layout2.horizontalSpacing = 0;
+		layout2.verticalSpacing = 0;
+		panelBg.setLayout(layout2);
 		panelBg.setBackground(Style.COLOR_WHITE);
 
 		title = new CLabel(panelBg,SWT.NONE);
@@ -142,6 +134,10 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.13  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.12  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

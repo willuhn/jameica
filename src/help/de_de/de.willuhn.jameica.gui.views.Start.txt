@@ -1,0 +1,9 @@
+Willkommen bei Jameica.
+
+Auf der Startseite sehen Sie die derzeit installierten
+Plugins. In der Statusleiste am unteren Rand der Anwendung
+werden Ihnen nützliche Informationen über die gerade ausgeführten
+Anweisungen angezeigt. Klicken Sie in den rechten Bereich
+der Statusleiste um eine Liste der letzten Meldungen oder in
+den linken Bereich um einen Auszug des System-Protokolls
+zu öffnen.

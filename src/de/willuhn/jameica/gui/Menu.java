@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/02/21 19:49:41 $
+ * $Revision: 1.17 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,10 +21,13 @@ import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MenuItem;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.util.I18N;
 
 /**
@@ -40,11 +43,11 @@ public class Menu
   /**
    * Erzeugt eine neue Instanz des Dropdown-Menus.
    */
-  protected Menu() throws Exception
+  protected Menu(Decorations parent) throws Exception
   {
 
-    bar = new org.eclipse.swt.widgets.Menu(GUI.getShell(),SWT.BAR);
-		GUI.getShell().setMenuBar(bar);
+    bar = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
+		parent.setMenuBar(bar);
 
 		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
 		parser.setReader(new StdXMLReader(getClass().getResourceAsStream("/menu.xml")));
@@ -95,8 +98,10 @@ public class Menu
      */
     MenuCascade(IXMLElement key)
     {
+    	// TODO nicht plugintauglich
+    	I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
       final MenuItem cascade = new MenuItem(bar,SWT.CASCADE);
-      String text = I18N.tr(key.getAttribute("name",null));
+      String text = i18n.tr(key.getAttribute("name",null));
       cascade.setText(text);
       final org.eclipse.swt.widgets.Menu submenu = new org.eclipse.swt.widgets.Menu(GUI.getShell(), SWT.DROP_DOWN);
       cascade.setMenu(submenu);
@@ -123,8 +128,11 @@ public class Menu
      */
     MenuElement(org.eclipse.swt.widgets.Menu parent,IXMLElement ckey)
     {
+			// TODO Nicht plugintauglich
+			I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+
       String c      = ckey.getAttribute("class",null);
-      String text   = I18N.tr(ckey.getAttribute("name",null));
+      String text   = i18n.tr(ckey.getAttribute("name",null));
 			String target = ckey.getAttribute("target",null);
       if (text != null && text.startsWith("-"))
       {
@@ -189,6 +197,10 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.17  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.16  2004/02/21 19:49:41  willuhn
  * *** empty log message ***
  *

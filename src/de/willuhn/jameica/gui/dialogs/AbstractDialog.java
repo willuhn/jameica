@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/02/27 01:09:31 $
+ * $Revision: 1.9 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Style;
+import de.willuhn.util.I18N;
 
 /**
  * <p>Das ist die Basisklasse fuer modalen Dialogfenster.</p>
@@ -97,7 +100,8 @@ public abstract class AbstractDialog
 	private int height = SWT.DEFAULT;
 	private int width = SWT.DEFAULT;
 
-	 
+	I18N i18n;
+
   /**
    * Erzeugt einen neuen Dialog.
    * @param position Position des Dialogs.
@@ -107,6 +111,7 @@ public abstract class AbstractDialog
   public AbstractDialog(int position)
 	{
 		this.pos = position;
+		this.i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
 		init();
 	}
 	
@@ -293,6 +298,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.9  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.8  2004/02/27 01:09:31  willuhn
  * *** empty log message ***
  *

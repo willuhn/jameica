@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.12 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,8 @@ package de.willuhn.jameica.gui.views;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.SettingsControl;
 import de.willuhn.jameica.gui.parts.ButtonArea;
@@ -36,40 +38,41 @@ public class Settings extends AbstractView
   public void bind()
   {
 
-		GUI.setTitleText(I18N.tr("Einstellungen"));
+		final I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		GUI.setTitleText(i18n.tr("Einstellungen"));
 
 		final SettingsControl control = new SettingsControl(this);
 
-  	LabelGroup mainSettings = new LabelGroup(getParent(),I18N.tr("Grundeinstellungen"));
+  	LabelGroup mainSettings = new LabelGroup(getParent(),i18n.tr("Grundeinstellungen"));
 
 		mainSettings.addLabelPair("Log-Datei",control.getLogFile());
 		mainSettings.addLabelPair("Log-Level", control.getLoglevel());
 
 		mainSettings.addText("",false);
-		mainSettings.addHeadline(I18N.tr("Lokale Services"));
+		mainSettings.addHeadline(i18n.tr("Lokale Services"));
 		mainSettings.addTable(control.getLocalServices());
 		
 		mainSettings.addText("",false);
-		mainSettings.addHeadline(I18N.tr("Netzwerkservices"));
+		mainSettings.addHeadline(i18n.tr("Netzwerkservices"));
 		mainSettings.addTable(control.getRemoteServices());
 
 
 		ButtonArea buttons = new ButtonArea(getParent(),5);
-		buttons.addCustomButton(I18N.tr("lokalen Service erstellen"),new MouseAdapter()
+		buttons.addCustomButton(i18n.tr("lokalen Service erstellen"),new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
 			{
 				control.handleRestore();
 			}
 		});
-		buttons.addCustomButton(I18N.tr("Netzwerk-Service erstellen"),new MouseAdapter()
+		buttons.addCustomButton(i18n.tr("Netzwerk-Service erstellen"),new MouseAdapter()
 		{
 			public void mouseUp(MouseEvent e)
 			{
 				control.handleRestore();
 			}
 		});
-		buttons.addCustomButton(I18N.tr("Zurücksetzen"),new MouseAdapter()
+		buttons.addCustomButton(i18n.tr("Zurücksetzen"),new MouseAdapter()
     {
       public void mouseUp(MouseEvent e)
       {
@@ -92,6 +95,10 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.12  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.11  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.26 $
- * $Date: 2004/02/23 20:30:34 $
+ * $Revision: 1.27 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,9 +12,12 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
+import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -26,19 +29,22 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.jameica.AbstractPlugin;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.FatalErrorView;
+import de.willuhn.jameica.gui.views.HelpView;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.I18N;
 import de.willuhn.util.MultipleClassLoader;
 
 /**
@@ -62,7 +68,8 @@ public class GUI
     private View view;
     private StatusBar statusBar;
     private Menu menu;
-  
+    private HelpView help;
+    
     private AbstractView currentView;
 
 
@@ -89,10 +96,12 @@ public class GUI
   private void load() {
     Application.getLog().info("startup GUI");
 
+		AbstractPlugin jameica = PluginLoader.getPlugin(Jameica.class);
+
     // init shell
     shell.setLayout(createGrid(2,false));
     shell.setLayoutData(new GridData(GridData.FILL_BOTH));
-    shell.setText(Jameica.getName() + " " + Jameica.getVersion());
+    shell.setText(jameica.getName() + " " + jameica.getVersion());
     shell.setImage(Style.getImage("globe.gif"));
 
 		////////////////////////////
@@ -128,7 +137,7 @@ public class GUI
 		////////////////////////////
     
     Application.getLog().info("adding menu");
-    addMenu();
+    addMenu(shell);
 
     SashForm sash = new SashForm(shell,SWT.HORIZONTAL);
 		sash.setLayout(createGrid(1,false));
@@ -136,13 +145,19 @@ public class GUI
 		sgd.horizontalSpan = 2;
 		sash.setLayoutData(sgd);
 
-    Composite left = new Composite(sash,SWT.NONE);
+    SashForm left = new SashForm(sash,SWT.VERTICAL);
     left.setLayout(new FillLayout());
-    Application.getLog().info("adding navigation");   addNavigation(left);
+    Application.getLog().info("adding navigation");
+    addNavigation(left);
+
+		help = new HelpView(left);
 
     Composite right = new Composite(sash,SWT.NONE);
 		right.setLayout(new FillLayout());
     Application.getLog().info("adding content view"); addView(right);
+
+
+		left.setWeights(new int[] {1,1});
 
 		sash.setWeights(new int[] {1,3});
 
@@ -172,6 +187,7 @@ public class GUI
       appendNavigation(entry);
     }
 
+		GUI.setActionText(jameica.getResources().getI18N().tr("startup finished"));
   } 
   
 
@@ -186,7 +202,6 @@ public class GUI
 
     gui = new GUI();
     gui.load();
-    setActionText(I18N.tr("startup finished."));
 
     // GUI Loop starten
     gui.loop(); 
@@ -198,9 +213,9 @@ public class GUI
   /**
    * Fuegt der Anwendung das Dropdown-Menu hinzu.
    */
-  private void addMenu() {
+  private void addMenu(Decorations parent) {
 		try {
-			menu = new Menu();
+			menu = new Menu(parent);
 		}
 		catch (Exception e)
 		{
@@ -238,9 +253,6 @@ public class GUI
    * @param xml XML-File mit weiteren Menu-Eintraegen.
    */
   public void appendMenu(InputStream xml) {
-    if (menu == null)
-      addMenu();
-
 		try {
 			menu.appendMenu(xml);
 		}
@@ -339,12 +351,15 @@ public class GUI
 		
 		      gui.currentView = (AbstractView) clazz.newInstance();
 					gui.currentView.setParent(gui.view.getContent());
-		
-		      // Neuen Inhalt anzeigen
 		      gui.currentView.setCurrentObject(o);
-		
+
 					try {
 						gui.currentView.bind();
+						
+						// Bis hierher hat alles geklappt, dann koennen wir mal
+						// schauen, ob's fuer die View eine Hilfe-Seite gibt.
+						loadHelp(gui.currentView);
+
 					}
 					catch (Exception e)
 					{
@@ -374,6 +389,31 @@ public class GUI
   }
 
 	/**
+	 * Schaut, ob fuer diese View eine Hilfe-Seite existiert und laedt diese.
+	 * Es wird versucht, eine Hilfe-Seite der konfigurierten Sprache zu laden.
+   * @param view die View, fuer die nach der Hilfe-Seite gesucht werden soll.
+   */
+  private static void loadHelp(AbstractView view)
+	{
+
+		String s = File.separator;
+		String path = s + "help" + s + 
+									Application.getConfig().getLocale().toString().toLowerCase() +
+									s + view.getClass().getName() + ".txt";
+		InputStream is = GUI.class.getResourceAsStream(path);
+		if (is == null)
+		{
+			path = s + "help" + s + Locale.getDefault().toString().toLowerCase() + 
+						 s + view.getClass().getName() + ".txt";
+			is = GUI.class.getResourceAsStream(path);
+		}
+		if (is == null)
+			return;
+
+		gui.help.setText(new InputStreamReader(is));
+	}
+
+	/**
 	 * Setzt den aktuellen Dialog-Titel.
    * @param text anzuzeigender Titel.
    */
@@ -399,6 +439,15 @@ public class GUI
   {
     gui.statusBar.setActionText(status);
   }
+
+	/**
+	 * Zeigt den uebergebenen Hilfetext an.
+   * @param helptext anzuzeigender Hilfe-Text.
+   */
+  public static void setHelpText(String helptext)
+	{
+		gui.help.setText(helptext == null ? "" : helptext);
+	}
 
 	/**
 	 * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
@@ -595,8 +644,6 @@ public class GUI
   private static void quit()
   {
 
-    Application.getLog().info("flush I18N");
-    I18N.flush();
     try {
       Application.getLog().info("shutting down GUI");
       gui.shell.dispose();
@@ -612,6 +659,10 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.27  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.26  2004/02/23 20:30:34  willuhn
  * @C refactoring in AbstractDialog
  *

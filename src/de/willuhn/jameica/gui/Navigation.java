@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.11 $
- * $Date: 2004/01/28 20:51:24 $
+ * $Revision: 1.12 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
@@ -200,8 +202,10 @@ public class Navigation {
 			item.setData("iconOpen",iconOpen);
 			item.setData("name",name);
 
-			item.setText(I18N.tr(name));
 			item.setData("action",action);
+
+			I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+			item.setText(i18n.tr(name));
 
 			// make this item the parent
 			this.parentItem = item;
@@ -254,6 +258,10 @@ public class Navigation {
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.12  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.11  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/LabelGroup.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/27 01:09:31 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
@@ -35,6 +37,7 @@ import de.willuhn.util.I18N;
 public class LabelGroup
 {
 
+	private I18N i18n;
   private Group group = null;
 
   /**
@@ -44,6 +47,7 @@ public class LabelGroup
    */
   public LabelGroup(Composite parent, String name)
   {
+		i18n = i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
     group = new Group(parent, SWT.NONE);
 		group.setBackground(Style.COLOR_BG);
     group.setText(name);
@@ -157,7 +161,7 @@ public class LabelGroup
     }
     catch (RemoteException e)
     {
-      GUI.setActionText(I18N.tr("Fehler beim Lesen der Tabelle"));
+      GUI.setActionText(i18n.tr("Fehler beim Lesen der Tabelle"));
     }
   }
 
@@ -226,6 +230,10 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.6  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.5  2004/02/27 01:09:31  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.4 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,8 +20,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import de.willuhn.util.I18N;
 
 /**
  * Dialog, der nur einen Text und einen Ja/Nein-Button enthaelt.
@@ -81,7 +79,7 @@ public class YesNoDialog extends AbstractDialog {
 		label.setLayoutData(gd);
 		
 		yes = new Button(comp, SWT.FLAT);
-		yes.setText("   " + I18N.tr("Ja") + "   ");
+		yes.setText("   " + i18n.tr("Ja") + "   ");
 		yes.setLayoutData(new GridData(GridData.BEGINNING));
 		yes.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
@@ -91,7 +89,7 @@ public class YesNoDialog extends AbstractDialog {
 		});
 
 		no = new Button(comp, SWT.FLAT);
-		no.setText("   " + I18N.tr("Nein") + "   ");
+		no.setText("   " + i18n.tr("Nein") + "   ");
 		no.setLayoutData(new GridData(GridData.BEGINNING));
 		no.addMouseListener(new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
@@ -112,6 +110,10 @@ public class YesNoDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: YesNoDialog.java,v $
+ * Revision 1.4  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.3  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

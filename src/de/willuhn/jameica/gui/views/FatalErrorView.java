@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/FatalErrorView.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/26 18:47:03 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,8 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.LabelGroup;
@@ -37,15 +39,16 @@ public class FatalErrorView extends AbstractView
    */
   public void bind() throws Exception
   {
+  	final I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
 
 		try {
-			GUI.setTitleText(I18N.tr("Fehler"));
+			GUI.setTitleText(i18n.tr("Fehler"));
 	    
 	    Exception e = (Exception) getCurrentObject();
 	
 	    LabelGroup stacktrace = new LabelGroup(getParent(),"Unerwarteter Fehler");
 	    
-	    stacktrace.addText(I18N.tr("Es ist ein unerwarteter Fehler aufgetreten.\n" +	      "Wenn Sie sich aktiv an der Verbesserung dieser Software beteiligen möchten,\n" +	      "dann klicken Sie einfach auf \"in Zwischenablage kopieren\", öffnen Ihr\n" +	      "Mailprogramm, fügen den Fehlertext via \"Bearbeiten/Einfügen\" in eine neue\n" +	      "Mail ein und senden ihn zusammen mit ihrer Beschreibung an den Autor dieses Programms.\n" +	      "Vielen Dank."),false);
+	    stacktrace.addText(i18n.tr("Es ist ein unerwarteter Fehler aufgetreten.\n" +	      "Wenn Sie sich aktiv an der Verbesserung dieser Software beteiligen möchten,\n" +	      "dann klicken Sie einfach auf \"in Zwischenablage kopieren\", öffnen Ihr\n" +	      "Mailprogramm, fügen den Fehlertext via \"Bearbeiten/Einfügen\" in eine neue\n" +	      "Mail ein und senden ihn zusammen mit ihrer Beschreibung an den Autor dieses Programms.\n" +	      "Vielen Dank."),false);
 	
 			String e1 = "";
 			String e2 = "";
@@ -72,7 +75,7 @@ public class FatalErrorView extends AbstractView
 		  }
 	    final String s = e1 + e2;
 	    ButtonArea buttons = new ButtonArea(getParent(),1);
-	    buttons.addCustomButton(I18N.tr("in Zwischenablage kopieren"),new MouseAdapter()
+	    buttons.addCustomButton(i18n.tr("in Zwischenablage kopieren"),new MouseAdapter()
 	    {
 	      public void mouseUp(MouseEvent e)
 	      {
@@ -84,7 +87,7 @@ public class FatalErrorView extends AbstractView
 	        {
 	          sb.append(logEntries[i]);
 	        }
-	        final String log = "\n" + I18N.tr("Auszug aus dem Systemprotokoll") + ":\n" + sb.toString();
+	        final String log = "\n" + i18n.tr("Auszug aus dem Systemprotokoll") + ":\n" + sb.toString();
 	        cb.setContents(new Object[]{(s + log)}, new Transfer[]{textTransfer});
 	      }
 	    });
@@ -116,6 +119,10 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.6  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.5  2004/02/26 18:47:03  willuhn
  * *** empty log message ***
  *

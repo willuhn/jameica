@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Start.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.15 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,13 +13,13 @@
 
 package de.willuhn.jameica.gui.views;
 
-import java.util.ArrayList;
+import java.util.Enumeration;
 
-import de.willuhn.jameica.Plugin;
+import de.willuhn.jameica.AbstractPlugin;
+import de.willuhn.jameica.Jameica;
 import de.willuhn.jameica.PluginLoader;
-import de.willuhn.jameica.WelcomeText;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.parts.Text;
+import de.willuhn.jameica.gui.parts.LabelGroup;
 import de.willuhn.util.I18N;
 
 
@@ -34,23 +34,23 @@ public class Start extends AbstractView
    */
   public void bind()
   {
-		GUI.setTitleText(I18N.tr("Start"));
+  	I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
+		GUI.setTitleText(i18n.tr("Start"));
     
-		Text t = new Text();
-    ArrayList installedPlugins = PluginLoader.getInstalledPlugins();
-    Plugin plugin = null;
+		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
+		
+    Enumeration installedPlugins = PluginLoader.getInstalledPlugins();
+		AbstractPlugin plugin = null;
     String pt = null;
-    for (int i=0;i<installedPlugins.size();++i)
+    while (installedPlugins.hasMoreElements())
     {
-      plugin = (Plugin) installedPlugins.get(i);
-      pt = plugin.getWelcomeText();
+      plugin = (AbstractPlugin) installedPlugins.nextElement();
+      pt = plugin.getName();
       if (pt == null || pt.length() == 0)
       	continue;
-      t.appendText(pt + "\n");
+      group.addText(pt,false);
     }
 
-		t.appendText(WelcomeText.getText());
-		t.paint(getParent());
   }        
 
   public void unbind()
@@ -61,6 +61,10 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.15  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.14  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/02/11 00:10:42 $
+ * $Revision: 1.21 $
+ * $Date: 2004/03/03 22:27:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -410,16 +411,18 @@ public class Config
   }
 
 	/**
-	 * Liefert das Dokumenten-Verzeichnis basierend auf dem aktuellen Locale.
-   * @return Dokumentenverzeichnis.
+	 * Liefert das Installations-Verzeichnis von Jameica.
+   * @return
    */
-  public String getDocDir()
+  public String getDir()
 	{
-		return dir.getAbsolutePath() + 
-					 File.separator +
-					 "doc" +
-					 File.separator +
-					 getLocale().toString();
+		try {
+			return dir.getCanonicalPath();
+		}
+		catch (IOException e)
+		{
+			return dir.getAbsolutePath();
+		}
 	}
 
   /**
@@ -515,6 +518,10 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.21  2004/03/03 22:27:11  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.20  2004/02/11 00:10:42  willuhn
  * *** empty log message ***
  *

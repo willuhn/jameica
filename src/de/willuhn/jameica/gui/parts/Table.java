@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/Table.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/02/26 18:47:03 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,12 +24,21 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.datasource.rmi.DBIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.gui.controller.*;
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
+import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.I18N;
 
@@ -101,6 +110,8 @@ public class Table
    */
   public void paint(Composite parent) throws RemoteException
   {
+
+		I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
 
     Composite comp = new Composite(parent,SWT.NONE);
     // final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
@@ -243,7 +254,7 @@ public class Table
     Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
     table.setMenu(menu);
     MenuItem editItem = new MenuItem(menu, SWT.PUSH);
-    editItem.setText(I18N.tr("Öffnen"));
+    editItem.setText(i18n.tr("Öffnen"));
     editItem.addListener (SWT.Selection, new Listener () {
       public void handleEvent (Event e) {
         int i = table.getSelectionIndex();
@@ -272,7 +283,7 @@ public class Table
 		{
 			Label summary = new Label(parent,SWT.NONE);
 			summary.setBackground(Style.COLOR_BG);
-			summary.setText(list.size() + " " + (list.size() == 1 ? I18N.tr("Datensatz") : I18N.tr("Datensätze")) + ".");
+			summary.setText(list.size() + " " + (list.size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
 		}
 
     // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
@@ -324,6 +335,10 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.7  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.6  2004/02/26 18:47:03  willuhn
  * *** empty log message ***
  *

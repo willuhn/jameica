@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.8 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class Style
     Image image = (Image) imagecache.get(filename);
     if (image == null)
     {
-      InputStream is = Style.class.getResourceAsStream("/img/" + filename);
+      InputStream is = Style.class.getResourceAsStream(File.separator + "img" + File.separator + filename);
       ImageData data = new ImageData(is);
       ImageData data2 = null;
       if (data.transparentPixel > 0) {
@@ -76,7 +77,7 @@ public class Style
         imagecache.put(filename, image);
       }
       else {
-        return new Image(GUI.getDisplay(), Style.class.getClassLoader().getResourceAsStream("img/empty.gif"));
+        return new Image(GUI.getDisplay(), Style.class.getClassLoader().getResourceAsStream("img" + File.separator + "empty.gif"));
       }
     }
     return image;
@@ -118,6 +119,10 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.8  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.7  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.9 $
+ * $Date: 2004/03/03 22:27:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,15 +15,17 @@ package de.willuhn.jameica.gui.controller;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Config;
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.views.AbstractView;
-import de.willuhn.jameica.gui.views.ServiceSettings;
-import de.willuhn.jameica.gui.views.Settings;
-import de.willuhn.jameica.gui.views.Start;
 import de.willuhn.jameica.gui.parts.FileInput;
 import de.willuhn.jameica.gui.parts.Input;
 import de.willuhn.jameica.gui.parts.SelectInput;
 import de.willuhn.jameica.gui.parts.Table;
+import de.willuhn.jameica.gui.views.AbstractView;
+import de.willuhn.jameica.gui.views.ServiceSettings;
+import de.willuhn.jameica.gui.views.Settings;
+import de.willuhn.jameica.gui.views.Start;
 import de.willuhn.util.I18N;
 import de.willuhn.util.Logger;
 
@@ -37,6 +39,7 @@ public class SettingsControl extends AbstractControl
 	
 	private Input logFile  = new FileInput(config.getLogFile());
 	private Input logLevel = new SelectInput(Logger.LEVEL_TEXT,config.getLogLevel());
+	private I18N i18n;
 
   /**
    * ct.
@@ -45,6 +48,7 @@ public class SettingsControl extends AbstractControl
   public SettingsControl(AbstractView view)
   {
     super(view);
+    i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
   }
 
 
@@ -73,7 +77,7 @@ public class SettingsControl extends AbstractControl
   public Table getLocalServices()
 	{
 		Table t = new Table(config.getLocalServiceData(),this);
-		t.addColumn(I18N.tr("Name"),null);
+		t.addColumn(i18n.tr("Name"),null);
 		return t;
 	}
 
@@ -84,7 +88,7 @@ public class SettingsControl extends AbstractControl
 	public Table getRemoteServices()
 	{
 		Table t = new Table(config.getRemoteServiceData(),this);
-		t.addColumn(I18N.tr("Name"),null);
+		t.addColumn(i18n.tr("Name"),null);
 		return t;
 	}
 
@@ -117,12 +121,12 @@ public class SettingsControl extends AbstractControl
   	try
     {
       config.store();
-      GUI.setActionText(I18N.tr("Konfiguaration gespeichert."));
+      GUI.setActionText(i18n.tr("Konfiguaration gespeichert."));
     }
     catch (Exception e)
     {
     	Application.getLog().error("error while writing config",e);
-    	GUI.setActionText(I18N.tr("Fehler beim Speichern der Konfiguration."));
+    	GUI.setActionText(i18n.tr("Fehler beim Speichern der Konfiguration."));
     }
   	
   }
@@ -150,12 +154,12 @@ public class SettingsControl extends AbstractControl
   	try {
 			Application.getConfig().restore();
 			GUI.startView(Settings.class.getName(),null);
-			GUI.setActionText(I18N.tr("letzte gespeicherte Konfiguaration wieder hergestellt."));
+			GUI.setActionText(i18n.tr("letzte gespeicherte Konfiguaration wieder hergestellt."));
   	}
   	catch (Exception e)
   	{
   		Application.getLog().error("error while restoreing config",e);
-  		GUI.setActionText(I18N.tr("Fehler beim Wiederherstellen der Konfiguration"));
+  		GUI.setActionText(i18n.tr("Fehler beim Wiederherstellen der Konfiguration"));
   	}
   	
   }
@@ -165,6 +169,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.9  2004/03/03 22:27:11  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.8  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

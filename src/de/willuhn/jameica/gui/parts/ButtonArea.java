@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/20 01:25:06 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.Application;
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.AbstractControl;
 import de.willuhn.jameica.gui.util.Style;
@@ -36,6 +38,7 @@ import de.willuhn.util.I18N;
  */
 public class ButtonArea
 {
+	private I18N i18n;
 
   private Composite buttonArea;
   private Button storeButton; // den Store-Button speichern wir extra damit wir ihn
@@ -48,7 +51,7 @@ public class ButtonArea
    */
   public ButtonArea(Composite parent, int numButtons)
   {
-
+		i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
     GridLayout layout = new GridLayout();
     layout.marginHeight=0;
     layout.marginWidth=0;
@@ -86,7 +89,7 @@ public class ButtonArea
   public void addStoreButton(final AbstractControl controller)
   {
     storeButton = new Button(buttonArea,SWT.FLAT);
-    storeButton.setText(I18N.tr("Speichern"));
+    storeButton.setText(i18n.tr("Speichern"));
     storeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     GUI.getShell().setDefaultButton(storeButton);
     storeButton.addListener(SWT.Traverse, new Listener()
@@ -119,7 +122,7 @@ public class ButtonArea
   public void addCancelButton(final AbstractControl controller)
   {
     final Button button = new Button(buttonArea,SWT.FLAT);
-    button.setText(I18N.tr("Zurück"));
+    button.setText(i18n.tr("Zurück"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
@@ -136,7 +139,7 @@ public class ButtonArea
   public void addDeleteButton(final AbstractControl controller)
   {
     final Button button = new Button(buttonArea,SWT.FLAT);
-    button.setText(I18N.tr("Löschen"));
+    button.setText(i18n.tr("Löschen"));
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     button.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
@@ -175,6 +178,10 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.6  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.5  2004/02/20 01:25:06  willuhn
  * @N nice dialog
  * @N busy indicator

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/ServiceSettings.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.7 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,8 @@
 
 package de.willuhn.jameica.gui.views;
 
+import de.willuhn.jameica.Jameica;
+import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.controller.ServiceSettingsControl;
 import de.willuhn.util.ApplicationException;
@@ -30,8 +32,10 @@ public class ServiceSettings extends AbstractView
   public void bind() throws Exception
   {
 		ServiceSettingsControl control = new ServiceSettingsControl(this);
+		
+		I18N i18n = PluginLoader.getPlugin(Jameica.class).getResources().getI18N();
 
-		GUI.setTitleText(I18N.tr("Eigenschaften des Services") + " " + control.getServiceData());
+		GUI.setTitleText(i18n.tr("Eigenschaften des Services") + " " + control.getServiceData());
 
   }
 
@@ -47,6 +51,10 @@ public class ServiceSettings extends AbstractView
 
 /**********************************************************************
  * $Log: ServiceSettings.java,v $
+ * Revision 1.7  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.6  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

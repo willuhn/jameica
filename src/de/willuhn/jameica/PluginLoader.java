@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.33 $
- * $Date: 2004/02/09 13:06:33 $
+ * $Revision: 1.34 $
+ * $Date: 2004/03/03 22:27:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,8 +17,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -34,13 +34,9 @@ public class PluginLoader extends ClassLoader
 {
 
   // Liste mit allen gefundenen Plugins.
-  private static ArrayList installedPlugins = new ArrayList();
+  private static Hashtable installedPlugins = new Hashtable();
 
-  // Interface aller Plugins. Es werden nur Plugins geladen, die dieses Interface
-  // implementieren
-  private static Class pluginInterface = Plugin.class;
-  
-  // Oder diese Basis-Klasse erweitern
+  // BasisPlugin-Basis-Klasse
   private static Class pluginClass = AbstractPlugin.class;
   
   // Den brauchen wir, damit wir Updates an Plugins triggern und deren
@@ -53,6 +49,8 @@ public class PluginLoader extends ClassLoader
 	 */
 	public static void init()
 	{
+		initSelf();
+
 		Application.getLog().info("init plugins");
 		String[] dirs = Application.getConfig().getPluginDirs();
 		for (int i=0;i<dirs.length;++i)
@@ -64,6 +62,19 @@ public class PluginLoader extends ClassLoader
 				continue; 
 			init(f);
 		}
+	}
+
+	/**
+   * Wir initialisieren unser eigenes Plugin.
+   */
+  private static void initSelf()
+	{
+		// entpackt in der IDE
+		File f = new File(Application.getConfig().getDir() + File.separator + "jameica.jar");
+		if (!f.exists()) // deployed als Jar
+			f = new File(Application.getConfig().getDir());
+		AbstractPlugin jameica = new Jameica(f);
+		installedPlugins.put(Jameica.class,jameica);
 	}
 
   /**
@@ -223,14 +234,6 @@ public class PluginLoader extends ClassLoader
   private static boolean checkPlugin(Class plugin)
   {
 
-    // Implementiert das Plugin direkt das Interface "Plugin"?
-    Class[] interfaces = plugin.getInterfaces();
-    for (int i=0;i<interfaces.length;++i)
-    {
-      if (interfaces[i].equals(pluginInterface))
-        return true;
-    }
-    // Oder ist es von AbstractPlugin abgeleitet?
     Class parent = plugin.getSuperclass();
     if (parent != null && parent.equals(pluginClass))
       return true;
@@ -276,12 +279,12 @@ public class PluginLoader extends ClassLoader
 		// Klasse instanziieren
     Application.getLog().debug("trying to initialize " + classname);
     Constructor ct = null;
-    Plugin plugin = null;
+    AbstractPlugin plugin = null;
     try
     {
 			ct = clazz.getConstructor(new Class[]{File.class});
 			ct.setAccessible(true);
-			plugin = (Plugin) ct.newInstance(new Object[]{file});
+			plugin = (AbstractPlugin) ct.newInstance(new Object[]{file});
     }
     catch (Exception e)
     {
@@ -295,14 +298,10 @@ public class PluginLoader extends ClassLoader
 		///////////////////////////////////////////////////////////////
 		// Pruefen, ob schon installiert
 		Application.getLog().debug("checking if allready loaded");
-    for (int i=0;i<installedPlugins.size();++i)
-    {
-      Plugin p = (Plugin) installedPlugins.get(i);
-      if (p != null && p.getClass().equals(plugin.getClass()))
-      {
-        Application.getLog().debug("yes, skipping");
-        return false;
-      }
+		if (installedPlugins.get(plugin.getClass()) != null)
+		{
+      Application.getLog().debug("yes, skipping");
+      return false;
     }
 		//
 		///////////////////////////////////////////////////////////////
@@ -365,14 +364,25 @@ public class PluginLoader extends ClassLoader
 
 		Application.splash("initializing plugin " + plugin.getName());
 		try {
+
+			// Das ist ist jetzt 'n bisschen bloed. Grund:
+			// In plugin.init() kann's durchaus sein, dass
+			// dort schon irgendwo PluginLoader.getPlugin(<foo>) aufgerufen wird.
+			// Daher muss das Plugin schon registriert sein, wenn es
+			// sich initialisiert. Falls es fehlschlaegt, muessmer
+			// es wieder rausnehmen.
+			installedPlugins.put(plugin.getClass(),plugin);
 			if (plugin.init())
       {
-        installedPlugins.add(plugin);
         return true;
+      }
+      else {
+				installedPlugins.remove(plugin.getClass());
       }
 		}
 		catch (Exception e)
 		{
+			installedPlugins.remove(plugin.getClass());
       Application.getLog().error("failed",e);
 		}
     Application.getLog().error("failed");
@@ -380,14 +390,23 @@ public class PluginLoader extends ClassLoader
   }
 
   /**
-   * Liefert eine Liste mit Objekten des Types AbstractPlugin.
-   * Das sind alle installierten Plugins.
-   * @return Liste aller installierten Plugins. Die Elemente sind vom Typ <code>Plugin</code>.
+   * Liefert eine Liste mit allen installierten Plugins.
+   * @return Liste aller installierten Plugins. Die Elemente sind vom Typ <code>AbstractPlugin</code>.
    */
-  public static ArrayList getInstalledPlugins()
+  public static Enumeration getInstalledPlugins()
   {
-    return installedPlugins;
+    return installedPlugins.elements();
   }
+
+	/**
+	 * Liefert die Instanz des Plugins mit der angegebenen Klasse.
+   * @param plugin Klasse des Plugins.
+   * @return Instanz des Plugins oder <code>null</code> wenn es nicht installiert ist.
+   */
+  public static AbstractPlugin getPlugin(Class plugin)
+	{
+		return (AbstractPlugin) installedPlugins.get(plugin);
+	}
 
   /**
    * Wird beim Beenden der Anwendung ausgefuehrt und beendet alle Plugins.
@@ -395,9 +414,10 @@ public class PluginLoader extends ClassLoader
   public static void shutDown()
   {
     Application.getLog().info("shutting down plugins");
-    for (int i=0;i<installedPlugins.size();++i)
+		Enumeration e = installedPlugins.elements();
+    while (e.hasMoreElements())
     {
-      Plugin plugin = (Plugin) installedPlugins.get(i);
+			AbstractPlugin plugin = (AbstractPlugin) e.nextElement();
       Application.getLog().info(plugin.getClass().getName());
       plugin.shutDown();
     }
@@ -407,6 +427,10 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.34  2004/03/03 22:27:11  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.33  2004/02/09 13:06:33  willuhn
  * @C added support for uncompressed plugins
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/25 23:11:57 $
+ * $Revision: 1.6 $
+ * $Date: 2004/03/03 22:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,6 @@ import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Style;
-import de.willuhn.util.I18N;
 
 /**
  * Ist zustaendig fuer Eingabefelder des Typs "Select" aka "Combo".
@@ -49,6 +48,7 @@ public class SelectInput extends Input
    */
   public SelectInput(DBObject object)
   {
+  	super();
     DBIterator list = null;
     try {
       this.preselected = (String) object.getField(object.getPrimaryField());
@@ -57,7 +57,7 @@ public class SelectInput extends Input
     catch (RemoteException e)
     {
     	Application.getLog().error("error while reading list",e);
-      GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
+      GUI.setActionText(i18n.tr("Fehler beim Lesen der Liste."));
     }
     init(list);
   }
@@ -127,7 +127,7 @@ public class SelectInput extends Input
     }
     catch (RemoteException e)
     {
-      GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
+      GUI.setActionText(i18n.tr("Fehler beim Lesen der Liste."));
     }
     
   }
@@ -214,6 +214,10 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.6  2004/03/03 22:27:10  willuhn
+ * @N help texts
+ * @C refactoring
+ *
  * Revision 1.5  2004/02/25 23:11:57  willuhn
  * *** empty log message ***
  *
