@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.1 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.2 $
+ * $Date: 2003/12/29 17:11:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,14 @@ public abstract class AbstractPlugin implements Plugin
     }
     catch (Exception e)
     {
-      Application.getLog().error("unable to read version number from plugin " + jar.getName());
+      String name = "unknown";
+      try {
+        name = jar.getName();
+      }
+      catch (NullPointerException ee)
+      {
+      }
+      Application.getLog().error("unable to read name from plugin " + name);
     }
     return jar.getName();
   }
@@ -76,7 +83,14 @@ public abstract class AbstractPlugin implements Plugin
     }
     catch (Exception e)
     {
-      Application.getLog().error("unable to read version number from plugin " + jar.getName());
+      String name = "unknown";
+      try {
+        name = jar.getName();
+      }
+      catch (NullPointerException ee)
+      {
+      }
+      Application.getLog().error("unable to read version number from plugin " + name);
     }
     return 1.0;
   }
@@ -90,6 +104,9 @@ public abstract class AbstractPlugin implements Plugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.2  2003/12/29 17:11:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

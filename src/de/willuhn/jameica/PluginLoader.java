@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.18 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.19 $
+ * $Date: 2003/12/29 17:11:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,7 +46,10 @@ public class PluginLoader extends ClassLoader
   
   // Interface aller Plugins. Es werden nur Plugins geladen, die dieses Interface
   // implementieren
-  private static Class pluginClass = Plugin.class;
+  private static Class pluginInterface = Plugin.class;
+  
+  // Oder diese Basis-Klasse erweitern
+  private static Class pluginClass = AbstractPlugin.class;
   
   /**
    * Wird beim Start der Anwendung ausgefuehrt, sucht im Classpath
@@ -58,7 +61,7 @@ public class PluginLoader extends ClassLoader
     
     if (Application.IDE)
     {
-      loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","../fibu/src");
+      // loadPluginFromIDE("de.willuhn.jameica.fibu.Fibu","../fibu/src");
       loadPluginFromIDE("de.willuhn.jameica.dynameica.Dynameica","../dynameica/src");
     }
 
@@ -246,12 +249,18 @@ public class PluginLoader extends ClassLoader
    */
   private static boolean checkPlugin(Class plugin)
   {
+
+    // Implementiert das Plugin direkt das Interface "Plugin"?
     Class[] interfaces = plugin.getInterfaces();
     for (int i=0;i<interfaces.length;++i)
     {
-      if (interfaces[i].equals(pluginClass))
+      if (interfaces[i].equals(pluginInterface))
         return true;
     }
+    // Oder ist es von AbstractPlugin abgeleitet?
+    Class parent = plugin.getSuperclass();
+    if (parent != null && parent.equals(pluginClass))
+      return true;
     return false;
   }
 
@@ -349,6 +358,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.19  2003/12/29 17:11:49  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.18  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *
