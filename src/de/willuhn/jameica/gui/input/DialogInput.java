@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/07/27 23:41:30 $
+ * $Revision: 1.11 $
+ * $Date: 2004/10/08 00:19:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,17 +95,29 @@ public class DialogInput extends ButtonInput
   	return value;
   }
 
+	/**
+	 * Speichert den anzuzeigenden Text.
+   * @param text anzuzeigender Text.
+   */
+  public void setText(String text)
+	{
+		if (text == null)
+			return;
+		if (this.text != null && !this.text.isDisposed())
+			this.text.setText(text);
+	}
 
   /**
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
+   * Speichert jedoch nicht den anzuzeigenden Text sondern das FachObjekt.
+   * Sprich: Das Objekt, welches auch geliefert wird, wenn der Dialog
+   * zur Auswahl des Objektes verwendet werden wuerde.
+   * Soll der anzuzeigende Text geaendert werden, dann bitte die
+   * Funktion <code>setText(String)</code> verwenden.
    */
   public void setValue(Object value)
   {
-    if (value == null)
-      return;
-    this.value = value.toString();
-    if (this.text != null && !this.text.isDisposed())
-	    this.text.setText(value.toString());
+  	this.choosen = value;
   }
 
   /**
@@ -122,6 +134,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.11  2004/10/08 00:19:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/07/27 23:41:30  willuhn
  * *** empty log message ***
  *

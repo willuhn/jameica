@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/08 00:19:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,8 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
-import java.util.jar.JarFile;
 
-import de.willuhn.jameica.system.Settings;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.JarInfo;
 
 /**
  * Abstrakte Basis-Klasse aller Plugins.
@@ -30,12 +27,7 @@ public abstract class AbstractPlugin
 
 	private File file = null;
 	private PluginResources res = null;
-	private Settings settings = null;
 	
-	private String name = null;
-	private double version = -1;
-	private int build = -1;
-
 	/**
 	 * ct.
    * @param file Das File, in dem sich das Plugin befindet.
@@ -45,7 +37,6 @@ public abstract class AbstractPlugin
 	{
 		this.file = file;
 		this.res = new PluginResources(this);
-		this.settings = new Settings(this.getClass());
 	}
 
 	/**
@@ -67,83 +58,6 @@ public abstract class AbstractPlugin
   public final PluginResources getResources()
 	{
 		return res;
-	}
-
-  /**
-   * Diese Funktion versucht den Namen aus der Datei META-INF/MANIFEST.MF zu extrahieren
-   * insofern es sich um ein Jar handelt.
-   * Sie versucht dabei, den Schluessel "Implementation-Title" zu lesen.
-   * Schlaegt das fehl, wird der Name der Datei/Verzeichnisses zurueckgeliefert.
-   * @return Name des Plugins.
-   */
-  public String getName()
-  {
-		if (name != null)
-			return name;
-
-    try {
-    	JarInfo info = new JarInfo(new JarFile(this.file));
-    	name = info.getAttribute(JarInfo.ATTRIBUTE_TITLE);
-    }
-    catch (Exception e)
-    {
-      name = this.file.getName();
-    }
-		return name;
-  }
-
-  /**
-   * Diese Funktion versucht die Versionsnummer aus der Datei META-INF/MANIFEST.MF zu extrahieren.
-   * Sie versucht dabei, den Schluessel "Implementation-Version" zu parsen.
-   * Wenn der String das Format "&lt;Major-Number&gt;.&lt;Minor-Number&gt; besitzt (also zb 1.3),
-   * wird die Versionsnummer als Double zurueckgeliefert. Andernfalls liefert die Funktion "1.0".
-   * @return Version des Plugins.
-   */
-  public double getVersion()
-  {
-		if (version != -1)
-			return version;
-
-		try {
-			JarInfo info = new JarInfo(new JarFile(this.file));
-			version = info.getVersion();
-		}
-		catch (Exception e)
-		{
-			version = 1.0;
-		}
-		return version;
-  }
-  
-	/**
-	 * Diese Funktion versucht die Build-Nummer aus der Datei META-INF/MANIFEST.MF zu extrahieren.
-	 * Sie versucht dabei, den Schluessel "Implementation-Buildnumber" zu parsen.
-	 * Andernfalls liefert die Funktion "1".
-	 * @return Version des Plugins.
-	 */
-	public int getBuildnumber()
-	{
-		if (build != -1)
-			return build;
-
-		try {
-			JarInfo info = new JarInfo(new JarFile(this.file));
-			build = info.getBuildnumber();
-		}
-		catch (Exception e)
-		{
-			build = 1;
-		}
-		return build;
-	}
-
-	/**
-	 * Liefert ein Objekt, ueber welches das Plugin Einstellungen speichern kann.
-   * @return Settings.
-   */
-  public Settings getSettings()
-	{
-		return settings;
 	}
 
   /**
@@ -224,6 +138,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.3  2004/10/08 00:19:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

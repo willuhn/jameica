@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/10/07 18:05:26 $
+ * $Revision: 1.6 $
+ * $Date: 2004/10/08 00:19:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
@@ -101,9 +102,7 @@ public final class PluginLoader
 			// dekomprimierte Plugins
 			FileFinder ff = new FileFinder(plugindir);
 			File[] child = ff.findRecursive();
-			File menu = null;
-			File navi = null;
-			File info = null;
+			File manifest = null;
 			String name = null;
 			ArrayList classes = new ArrayList();
 
@@ -111,15 +110,9 @@ public final class PluginLoader
 			for (int i=0;i<child.length;++i)
 			{
 				name = child[i].getPath();
-				if (name.endsWith("menu.xml"))
-					menu = child[i];
+				if (name.endsWith("plugin.xml"))
+					manifest = child[i];
 	
-				if (name.endsWith("navigation.xml"))
-					navi = child[i]; 
-	
-				if (name.endsWith("info.xml"))
-					info = child[i]; 
-
 				// Alle Klassen, die jetzt nicht mit ".class" aufhoeren, koennen wir ignorieren
 				if (!name.endsWith(".class"))
 					continue;
@@ -136,13 +129,20 @@ public final class PluginLoader
 			// Jetzt erzeugen wir einen PluginContainer fuer jedes gefundene Plugin.
 			for (int i=0;i<classes.size();++i)
 			{
-				DirPluginContainer dp = new DirPluginContainer();
-				dp.setFile(plugindir);
-				dp.setMenu(menu);
-				dp.setNavi(navi);
-				dp.setInfo(info);
-				dp.setPluginClass((Class)classes.get(i));
-				plugins.add(dp);
+				try
+				{
+					PluginContainer p = new PluginContainer();
+					p.setFile(plugindir);
+					if (manifest != null)
+						p.setManifest(new Manifest(new FileInputStream(manifest)));
+					p.setPluginClass((Class)classes.get(i));
+					plugins.add(p);
+				}
+				catch (Throwable t)
+				{
+					Logger.error("error while creating plugin container for plugin " + classes.get(i) + ", skipping",t);
+					Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Laden des Plugins " + classes.get(i)));
+				}
 			}
 		}
 		//
@@ -174,24 +174,16 @@ public final class PluginLoader
 	      Enumeration jarEntries = jar.entries();
 	      JarEntry entry = null;
 	
-				JarEntry menu = null;
-				JarEntry navi = null;
-				JarEntry info = null;
+				JarEntry manifest = null;
 				ArrayList classes = new ArrayList();
 	      while (jarEntries.hasMoreElements())
 	      {
 					entry = (JarEntry) jarEntries.nextElement();
 					String entryName = entry.getName();
 
-	        if ("menu.xml".equals(entryName))
-	          menu = entry; 
+	        if ("plugin.xml".equals(entryName))
+	          manifest = entry;
 	
-	        if ("navigation.xml".equals(entryName))
-	          navi = entry; 
-	
-					if ("info.xml".equals(entryName))
-						info = entry;
-
 					int idxClass = entryName.indexOf(".class");
 
 					// alles, was nicht mit ".class" aufhoert, koennen wir jetzt ignorieren
@@ -210,13 +202,20 @@ public final class PluginLoader
 				// Jetzt erzeugen wir einen PluginContainer fuer jedes gefundene Plugin.
 				for (int j=0;j<classes.size();++j)
 				{
-					JarPluginContainer jp = new JarPluginContainer();
-					jp.setFile(jar);
-					jp.setMenu(menu);
-					jp.setNavi(navi);
-					jp.setInfo(info);
-					jp.setPluginClass((Class)classes.get(j));
-					plugins.add(jp);
+					try
+					{
+						PluginContainer p = new PluginContainer();
+						p.setFile(new File(jar.getName()));
+						if (manifest != null)
+							p.setManifest(new Manifest(jar.getInputStream(manifest)));
+						p.setPluginClass((Class)classes.get(j));
+						plugins.add(p);
+					}
+					catch (Throwable t)
+					{
+						Logger.error("error while creating plugin container for plugin " + classes.get(i) + ", skipping",t);
+						Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Laden des Plugins " + classes.get(i)));
+					}
 				}
 	    }
 		}
@@ -279,6 +278,7 @@ public final class PluginLoader
   private void initPlugin(PluginContainer container)
   {
 		Class pluginClass = container.getPluginClass();
+		Manifest manifest = container.getManifest();
 
 		if (container.isInstalled())
 		{
@@ -314,7 +314,7 @@ public final class PluginLoader
     {
       // Plugin wurde zum ersten mal gestartet
       Logger.info("Plugin started for the first time. Starting install");
-			Application.splash("installing plugin " + plugin.getName());
+			Application.splash("installing plugin " + manifest.getName());
       try {
         plugin.install();
       }
@@ -323,20 +323,20 @@ public final class PluginLoader
 				String error = t.getMessage() == null ? "" : ": " + t.getMessage();
       	Application.addWelcomeMessage(
       		Application.getI18n().tr("Fehler beim Installieren des Plugins \"") +
-      		plugin.getName() + "\"" + error);
+      		manifest.getName() + "\"" + error);
         Logger.error("failed",t);
         return;
       }
     }
     else {
       // Huu - das Plugin war schon mal installiert. Mal schauen, in welcher Version
-      double newVersion = plugin.getVersion();
+      double newVersion = manifest.getVersion();
 
       if (oldVersion < newVersion)
       {
         Logger.info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
         // hui, sogar eine neuere Version. Also starten wir dessen Update
-				Application.splash("updating plugin " + plugin.getName());
+				Application.splash("updating plugin " + manifest.getName());
 				try {
           plugin.update(oldVersion);
 				}
@@ -345,30 +345,30 @@ public final class PluginLoader
 					String error = t.getMessage() == null ? "" : ": " + t.getMessage();
 					Application.addWelcomeMessage(
 						Application.getI18n().tr("Fehler beim Update des Plugins \"") +
-						plugin.getName() + "\"" + error);
+						manifest.getName() + "\"" + error);
 					Logger.error("failed",t);
 					return;
       	}
       }
     }
 
-		Application.splash("initializing plugin " + plugin.getName());
+		Application.splash("initializing plugin " + manifest.getName());
 
 		try {
 			plugin.init();
 
       // ok, wir haben alles durchlaufen, wir speichern die neue Version.
-			updateChecker.setAttribute(pluginClass.getName() + ".version",plugin.getVersion());
+			updateChecker.setAttribute(pluginClass.getName() + ".version",manifest.getVersion());
 			// und setzen es auf status "installed"
 			container.setInstalled(true);
-			Logger.info("plugin " + plugin.getName() + " initialized successfully");
+			Logger.info("plugin " + manifest.getName() + " initialized successfully");
 		}
 		catch (Throwable t)
 		{
 			String error = t.getMessage() == null ? "" : ": " + t.getMessage();
 			Application.addWelcomeMessage(
 				Application.getI18n().tr("Fehler beim Initialisieren des Plugins \"") +
-				plugin.getName() + "\"" + error);
+				manifest.getName() + "\"" + error);
       Logger.error("failed",t);
       return;
 		}
@@ -537,6 +537,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.6  2004/10/08 00:19:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/10/07 18:05:26  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/08/27 19:11:11 $
+ * $Revision: 1.23 $
+ * $Date: 2004/10/08 00:19:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -197,32 +197,24 @@ public class View
    */
   private void setStatusText(final String text, final Color color)
   {
+		final long currentClick = System.currentTimeMillis();
+
     GUI.getDisplay().asyncExec(new Runnable() {
       public void run() {
         messages.setText(text);
         messages.setForeground(color.getSWTColor());
-        messages.layout();
-        lastStatusText = System.currentTimeMillis();
+				lastClick = currentClick;
       }
     });
     SWTUtil.startGUITimeout(10000l,new Listener() {
       public void handleEvent(Event event) {
 
-				long showTime = System.currentTimeMillis() - lastStatusText;
-
-				// Wenn showTime kleiner als 10sek ist, muss zwischenzeitlich
-				// noch wer einen Text angezeigt haben. Das heisst, unser Text
-				// wird gar nicht mehr angezeigt sondern dessen. Folglich wuerden
-				// wir sonst den falschen Text loeschen 
-				if (showTime >= 1000l)
-				{
+				if (currentClick == lastClick) // nur entfernen, wenn wir der letzte Klick waren
 					messages.setText("");
-				}
       }
     });
   }
-
-  private long lastStatusText;
+	private long lastClick;
 
 	/**
 	 * Schreibt einen Erfolgstext oben in die View.
@@ -255,6 +247,9 @@ public class View
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.23  2004/10/08 00:19:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2004/08/27 19:11:11  willuhn
  * *** empty log message ***
  *

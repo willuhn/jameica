@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.31 $
- * $Date: 2004/08/30 15:03:28 $
+ * $Revision: 1.32 $
+ * $Date: 2004/10/08 00:19:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -251,19 +251,23 @@ public class StatusBar {
     if (!"".equals(message))
       lastActionMessages.push("[" + new Date().toString() + "] " + message);
 
+		final long currentClick = System.currentTimeMillis();
     GUI.getDisplay().asyncExec(new Runnable() {
       public void run() {
         if (actionText != null && !actionText.isDisposed())
         actionText.setForeground(color.getSWTColor());
         actionText.setText(message);
+				lastClick = currentClick;
       }
     });
     SWTUtil.startGUITimeout(10000l,new Listener() {
       public void handleEvent(Event event) {
-        actionText.setText("");
+				if (currentClick == lastClick) // nur entfernen, wenn wir der letzte Klick waren
+	        actionText.setText("");
       }
     });
   }
+	private long lastClick;
 
   /**
    * Zeigt die letzten Meldungen an.
@@ -347,6 +351,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.32  2004/10/08 00:19:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.31  2004/08/30 15:03:28  willuhn
  * @N neuer Security-Manager
  *

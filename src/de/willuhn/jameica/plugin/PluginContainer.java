@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Attic/PluginContainer.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/08 00:19:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,86 +13,117 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import de.willuhn.jameica.util.InfoReader;
 
 /**
  * Sammelbehaelter fuer die Eigenschaften eines Plugins.
- * Es existieren zwei Implementierungen. Eine fuer entpackte
- * Plugins in Verzeichnissen und eine fuer Plugins in Jars.
  */
-public interface PluginContainer {
+public class PluginContainer {
+
+	private Manifest manifest			= null;
+	private File file 						= null;
+	private AbstractPlugin plugin = null;
+	private Class pluginClass			= null;
+	private boolean installed			= false;
+
+	/**
+	 * Speichert die Manifest-Datei.
+	 * @param manifest
+	 */
+	void setManifest(Manifest manifest)
+	{
+		this.manifest = manifest;
+	}
+
+	/**
+	 * Speichert die Plugin-Klasse.
+	 * @param c
+	 */
+	void setPluginClass(Class c)
+	{
+		this.pluginClass = c;
+	}
+
+	/**
+	 * Speichert das File.
+	 * @param f
+	 */
+	void setFile(File f)
+	{
+		this.file = f;
+	}
 
 	/**
 	 * Speichert das Plugin.
    * @param p Plugin.
    */
-  public void setPlugin(AbstractPlugin p);
+  void setPlugin(AbstractPlugin p)
+  {
+  	this.plugin = p;
+  }
 
 	/**
 	 * Setzt den Installations-Status des Plugins.
    * @param b Status.
    */
-  public void setInstalled(boolean b);
+  void setInstalled(boolean b)
+  {
+  	this.installed = b;
+  }
 
-	/**
-	 * Liefert einen InputStream mit dem XML-Code fuer das Menu.
-	 * Hierzu muss sich im Jar-File oder im Basis-Verzeichnis
-	 * des Plugins eine Datei menu.xml befinden.
-   * @return InputStream mit XML-Code fuer das Menu.
+  /**
+   * Liefert das Manifest des Plugins.
+   * @return Manifest.
    * @throws IOException
    */
-  public InputStream getMenu() throws IOException;
-
-	/**
-	 * Liefert einen InputStream mit dem XML-Code fuer die Navigation.
-	 * Hierzu muss sich im Jar-File oder im Basis-Verzeichnis
-	 * des Plugins eine Datei navigation.xml befinden.
-   * @return InputStream mit XML-Code fuer die Navigation.
-   * @throws IOException
-   */
-  public InputStream getNavigation() throws IOException; 
-
-	/**
-	 * Liefert Lizenz-Informationen des Plugins.
-	 * Hierzu muss sich im Jar-File oder im Basis-Verzeichnis
-	 * des Plugins eine Datei info.xml befinden.
-   * @return einen Reader, der Lizenz-Informationen des Plugins ausgibt.
-   * @throws Exception
-   */
-  public InfoReader getInfo() throws Exception;
+  public Manifest getManifest()
+  {
+  	return manifest;
+  }
 
 	/**
 	 * Liefert true, wenn das Plugin erfolgreich installiert wurde.
    * @return true, wenn das Plugin erfolgreich installiert wurde.
    */
-  public boolean isInstalled();	
+  public boolean isInstalled()
+  {
+  	return installed;	
+  }
   
   /**
    * Liefert das File, in dem sich das Plugin befindet.
    * Kann ein Jar-File oder ein Verzeichnis sein.
    * @return File, in dem sich das Plugin befindet.
    */
-  public File getFile();
+  public File getFile()
+  {
+  	return file;
+  }
 
 	/**
 	 * Liefert die Klasse, die AbstractPlugin erweitert.
 	 * @return Klasse.
 	 */
-	public Class getPluginClass();
+	public Class getPluginClass()
+	{
+		return pluginClass;
+	}
 
 	/**
 	 * Liefert die Instanz des Plugins (Instanz o.g. Klasse).
    * @return das Plugin.
    */
-  public AbstractPlugin getPlugin();
+  public AbstractPlugin getPlugin()
+  {
+  	return plugin;
+  }
 }
 
 
 /**********************************************************************
  * $Log: PluginContainer.java,v $
+ * Revision 1.3  2004/10/08 00:19:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *
