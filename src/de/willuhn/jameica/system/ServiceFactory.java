@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/09/15 22:31:53 $
+ * $Revision: 1.13 $
+ * $Date: 2004/10/11 15:39:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.Logger;
 
@@ -64,13 +65,15 @@ public final class ServiceFactory
     Iterator plugins = Application.getPluginLoader().getInstalledPlugins();
 
 		AbstractPlugin plugin = null;
+		Manifest manifest = null;
 		Class service = null;
 
 		while (plugins.hasNext())
 		{
 			try {
 				plugin = (AbstractPlugin) plugins.next();
-				Logger.info("  init services for plugin " + plugin.getName() + " [version: " + plugin.getVersion() +"]");
+				manifest = plugin.getManifest();
+				Logger.info("  init services for plugin " + manifest.getName() + " [version: " + manifest.getVersion() +"]");
 				String[] serviceNames = plugin.getServiceNames();
 				if (serviceNames == null || serviceNames.length == 0)
 				{
@@ -276,6 +279,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.13  2004/10/11 15:39:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/09/15 22:31:53  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:20 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/11 15:39:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,11 +24,9 @@ import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.plugin.AbstractPlugin;
-import de.willuhn.jameica.plugin.PluginContainer;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.util.InfoReader;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Logger;
 
 
 /**
@@ -47,21 +45,16 @@ public class Start extends AbstractView
 		
 		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
 
-		Iterator it = Application.getPluginLoader().getPluginContainers();
+		Iterator it = Application.getPluginLoader().getInstalledPlugins();
+		AbstractPlugin plugin = null;
+		Manifest manifest 		= null;
 		while (it.hasNext())
 		{
-			PluginContainer pc = (PluginContainer) it.next();
-			AbstractPlugin plugin = pc.getPlugin();
-			InfoReader ir = pc.getInfo();
-			if (ir == null)
-			{
-				Logger.warn("info.xml for plugin " + plugin.getName() + " not found, skipping");
-				continue;
-			}
-			LabelInput l = new LabelInput(": " + ir.getDescription());
-			l.setComment(ir.getUrl());
-			group.addLabelPair(ir.getName(),l);
-			
+			plugin = (AbstractPlugin) it.next();
+			manifest = plugin.getManifest();
+			LabelInput l = new LabelInput(": " + manifest.getDescription());
+			l.setComment(manifest.getHomepage());
+			group.addLabelPair(manifest.getName(),l);
 		}
 
 		String[] messages = Application.getWelcomeMessages();
@@ -134,6 +127,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.2  2004/10/11 15:39:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/10/08 13:38:20  willuhn
  * *** empty log message ***
  *

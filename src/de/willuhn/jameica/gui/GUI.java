@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.58 $
- * $Date: 2004/10/08 13:38:19 $
+ * $Revision: 1.59 $
+ * $Date: 2004/10/11 15:39:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -186,9 +186,9 @@ public class GUI
 		while (i.hasNext())
 		{
 			PluginContainer pc = (PluginContainer) i.next();
-			menu.addPlugin(pc);
 			try
 			{
+				menu.addPlugin(pc);
 				navi.addPlugin(pc);
 			}
 			catch (Throwable t)
@@ -635,6 +635,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.59  2004/10/11 15:39:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.58  2004/10/08 13:38:19  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/08 00:19:19 $
+ * $Revision: 1.4 $
+ * $Date: 2004/10/11 15:39:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.plugin;
 
 import java.io.File;
 
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -27,6 +28,7 @@ public abstract class AbstractPlugin
 
 	private File file = null;
 	private PluginResources res = null;
+	private Manifest manifest = null;
 	
 	/**
 	 * ct.
@@ -37,6 +39,7 @@ public abstract class AbstractPlugin
 	{
 		this.file = file;
 		this.res = new PluginResources(this);
+		this.manifest = Application.getPluginLoader().getPluginContainer(this.getClass()).getManifest();
 	}
 
 	/**
@@ -58,6 +61,15 @@ public abstract class AbstractPlugin
   public final PluginResources getResources()
 	{
 		return res;
+	}
+
+	/**
+	 * Liefert das Manifest des Plugins.
+   * @return Manifest.
+   */
+  public final Manifest getManifest()
+	{
+		return manifest;
 	}
 
   /**
@@ -138,6 +150,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.4  2004/10/11 15:39:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/10/08 00:19:19  willuhn
  * *** empty log message ***
  *
