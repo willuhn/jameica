@@ -8,17 +8,17 @@
 	<license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
 
 	<menu>
-		<cascade name="Datei">
+		<item name="Datei">
 			<item name="&amp;Einstellungen" 			shortcut="CTRL+E" 	action="de.willuhn.jameica.gui.internal.action.Settings" />
 			<item name="-" />
 			<item name="Beenden"    			 							action="de.willuhn.jameica.gui.internal.action.FileClose" />
-		</cascade>
+		</item>
 
-		<cascade name="Hilfe">
+		<item name="Hilfe">
 			<item name="About"				 								action="de.willuhn.jameica.gui.internal.action.About" />
 			<item name="-" />
 		    <item name="Lizenzinformationen"	 							action="de.willuhn.jameica.gui.internal.action.License" />
-	  </cascade>
+	  </item>
 	</menu>
 
 	<navigation>

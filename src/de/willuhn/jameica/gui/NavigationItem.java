@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/NavigationItem.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/10/08 16:41:58 $
+ * $Revision: 1.5 $
+ * $Date: 2004/10/08 16:44:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui;
+
+import java.rmi.RemoteException;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -23,20 +25,25 @@ public interface NavigationItem extends Item
   /**
 	 * Liefert das Bild, welches angezeigt wird, wenn das Element geoeffnet wird.
    * @return das Bild.
+   * @throws RemoteException
    */
-  public Image getIconOpen();
+  public Image getIconOpen() throws RemoteException;
   
-	/**
+  /**
 	 * Liefert das Bild, welches angezeigt wird, wenn das Element geschlossen wird.
 	 * @return das Bild.
+   * @throws RemoteException
 	 */
-	public Image getIconClose();
+	public Image getIconClose() throws RemoteException;
 
 }
 
 
 /**********************************************************************
  * $Log: NavigationItem.java,v $
+ * Revision 1.5  2004/10/08 16:44:02  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *

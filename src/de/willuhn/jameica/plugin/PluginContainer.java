@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Attic/PluginContainer.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/08 00:19:18 $
+ * $Revision: 1.4 $
+ * $Date: 2004/10/08 16:41:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Sammelbehaelter fuer die Eigenschaften eines Plugins.
@@ -25,14 +26,10 @@ public class PluginContainer {
 	private Class pluginClass			= null;
 	private boolean installed			= false;
 
-	/**
-	 * Speichert die Manifest-Datei.
-	 * @param manifest
-	 */
-	void setManifest(Manifest manifest)
-	{
-		this.manifest = manifest;
-	}
+  PluginContainer(InputStream manifest) throws Exception
+  {
+    this.manifest = new Manifest(this,manifest);
+  }
 
 	/**
 	 * Speichert die Plugin-Klasse.
@@ -121,6 +118,9 @@ public class PluginContainer {
 
 /**********************************************************************
  * $Log: PluginContainer.java,v $
+ * Revision 1.4  2004/10/08 16:41:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/10/08 00:19:18  willuhn
  * *** empty log message ***
  *

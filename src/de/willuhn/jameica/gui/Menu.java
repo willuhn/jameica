@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.24 $
+ * $Date: 2004/10/08 16:41:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -232,15 +232,12 @@ public class Menu
 				return;
     	}
       try {
-      	if (target != null && "dialog".equalsIgnoreCase(target))
-      		GUI.startDialog(clazz,text,null);
-				else
-	        GUI.startView(clazz,null);
+        // TODO: hier Menu-Action ausloesen
       }
       catch (Exception e)
       {
-        Logger.error("unable to execute menu entry.",e);
-        throw new RuntimeException(e); // wir werfen eine RuntimeException, weil handleEvent nix werfen darf ;)
+        Logger.error("error while selecting menu item",e);
+        GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Ausführen"));
       }
     }
     
@@ -250,6 +247,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.24  2004/10/08 16:41:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *

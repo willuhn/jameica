@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.23 $
+ * $Date: 2004/10/08 16:41:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,14 +12,8 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
-import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Map;
-
-import net.n3.nanoxml.IXMLElement;
-import net.n3.nanoxml.IXMLParser;
-import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -32,9 +26,10 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.I18N;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.Logger;
 
 /**
@@ -65,10 +60,6 @@ public class Navigation {
    */
   protected Navigation(Composite parent) throws Exception
 	{
-		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(new StdXMLReader(getClass().getResourceAsStream("/navigation.xml")));
-		IXMLElement xml = (IXMLElement) parser.parse();
-
 		this.parent = parent;
 
 		// Tree erzeugen
@@ -96,7 +87,7 @@ public class Navigation {
 
 
 		// add elements
-		root = new NavigationItemXml(null,xml.getFirstChildNamed("item"),Application.getI18n());
+		root = new Manifest(null,getClass().getResourceAsStream("system.xml")).getNavigation();
 		load(root);
 	}
 
@@ -126,7 +117,7 @@ public class Navigation {
 		item.setImage(element.getIconClose());
 		item.setData("iconClose",element.getIconClose());
 		item.setData("iconOpen",element.getIconOpen());
-		item.setData("listener",element.getListener());
+		item.setData("action",element.getAction());
 		item.setText(element.getName());
 		mapping.put(element,item);
 
@@ -157,22 +148,7 @@ public class Navigation {
 			return;
 		}
 
-		InputStream naviStream = container.getNavigation();
-		if (naviStream == null)
-		{
-			Logger.warn("plugin contains no navigation, skipping");
-			return;
-		}
-
-		I18N i18n = container.getPlugin().getResources().getI18N();
-
-		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(new StdXMLReader(naviStream));
-		IXMLElement xml = (IXMLElement) parser.parse();
-
-		NavigationItem item = new NavigationItemXml(root,xml.getFirstChildNamed("item"),i18n);
-		pluginMap.put(container.getPluginClass(),item);
-		load(item);
+		load(container.getManifest().getNavigation());
 	}
 
 	/**
@@ -230,16 +206,27 @@ public class Navigation {
 			return;
 		TreeItem item = (TreeItem) widget;
 
-		Listener l = (Listener) item.getData("listener");
-		if (l == null)
+		Action a = (Action) item.getData("action");
+		if (a == null)
 			return;
-		l.handleEvent(event);
+    try
+    {
+      a.handleAction(event);
+    }
+    catch (ApplicationException e)
+    {
+      Logger.error("error while selecting navigation item",e);
+      GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Ausführen"));
+    }
 	}
 }
 
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.23  2004/10/08 16:41:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *

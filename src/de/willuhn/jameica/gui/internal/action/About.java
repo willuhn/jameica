@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/About.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/10/08 13:38:19 $
+ * $Revision: 1.2 $
+ * $Date: 2004/10/08 16:41:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,7 @@
 
 package de.willuhn.jameica.gui.internal.action;
 
-import de.willuhn.jameica.gui.AbstractAction;
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
@@ -22,13 +22,13 @@ import de.willuhn.util.Logger;
 /**
  * @author willuhn
  */
-public class About extends AbstractAction
+public class About implements Action
 {
 
   /**
-   * @see de.willuhn.jameica.gui.AbstractAction#handleAction()
+   * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
    */
-  public void handleAction() throws ApplicationException
+  public void handleAction(Object context) throws ApplicationException
   {
     ViewDialog d = new ViewDialog(new de.willuhn.jameica.gui.internal.views.About(),ViewDialog.POSITION_CENTER);
     d.setTitle(Application.getI18n().tr("About"));
@@ -48,6 +48,9 @@ public class About extends AbstractAction
 
 /*********************************************************************
  * $Log: About.java,v $
+ * Revision 1.2  2004/10/08 16:41:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/10/08 13:38:19  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/10/08 00:19:19 $
+ * $Revision: 1.7 $
+ * $Date: 2004/10/08 16:41:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -131,10 +131,8 @@ public final class PluginLoader
 			{
 				try
 				{
-					PluginContainer p = new PluginContainer();
+					PluginContainer p = new PluginContainer(new FileInputStream(manifest));
 					p.setFile(plugindir);
-					if (manifest != null)
-						p.setManifest(new Manifest(new FileInputStream(manifest)));
 					p.setPluginClass((Class)classes.get(i));
 					plugins.add(p);
 				}
@@ -204,10 +202,8 @@ public final class PluginLoader
 				{
 					try
 					{
-						PluginContainer p = new PluginContainer();
+						PluginContainer p = new PluginContainer(jar.getInputStream(manifest));
 						p.setFile(new File(jar.getName()));
-						if (manifest != null)
-							p.setManifest(new Manifest(jar.getInputStream(manifest)));
 						p.setPluginClass((Class)classes.get(j));
 						plugins.add(p);
 					}
@@ -537,6 +533,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.7  2004/10/08 16:41:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/10/08 00:19:19  willuhn
  * *** empty log message ***
  *

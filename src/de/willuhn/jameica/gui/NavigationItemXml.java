@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/NavigationItemXml.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/08/15 17:55:17 $
+ * $Revision: 1.3 $
+ * $Date: 2004/10/08 16:41:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,44 +12,29 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 
 import net.n3.nanoxml.IXMLElement;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.GenericObject;
-import de.willuhn.datasource.GenericObjectNode;
-import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
 
 /**
  */
-public class NavigationItemXml implements NavigationItem
+public class NavigationItemXml extends AbstractItemXml implements NavigationItem
 {
-
-	private NavigationItem parent;
-	private IXMLElement path;
-	private I18N i18n;
-	private ArrayList childs = new ArrayList();
 
   /**
    * ct.
    * @param parent das Eltern-Element.
-   * @param sPath Pfad in der XML-Datei.
+   * @param path Pfad in der XML-Datei.
    * @param i18n optionaler Uebersetzer, um die Navi-Eintraege in die ausgewaehlte Sprache uebersetzen zu koennen.
    */
-  public NavigationItemXml(NavigationItem parent, IXMLElement sPath, I18N i18n)
+  public NavigationItemXml(NavigationItem parent, IXMLElement path, I18N i18n)
   {
-  	this.parent = parent;
-  	this.path = sPath;
-  	this.i18n = i18n;
+    super(parent,path,i18n);
 
 		Enumeration e  = this.path.enumerateChildren();
 		while (e.hasMoreElements())
@@ -81,124 +66,14 @@ public class NavigationItemXml implements NavigationItem
   {
 		return SWTUtil.getImage(this.path.getAttribute("icon-close","empty.gif"));
   }
-
-  /**
-   * @see de.willuhn.jameica.gui.NavigationItem#getName()
-   */
-  public String getName()
-  {
-    String s = this.path.getAttribute("name",null);
-    if (s == null || s.length() == 0 || i18n == null)
-    	return "unknown";
-    return i18n.tr(s);
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.NavigationItem#getListener()
-   */
-  public Listener getListener()
-  {
-  	return new Listener()
-    {
-      public void handleEvent(Event event)
-      {
-				String action = path.getAttribute("action",null);
-				GUI.startView(action,null);
-				GUI.getStatusBar().setStatusText(getName());
-      }
-    };
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObjectNode#getChilds()
-   */
-  public GenericIterator getChilds() throws RemoteException
-  {
-		return PseudoIterator.fromArray((NavigationItem[])childs.toArray(new NavigationItemXml[childs.size()]));
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObjectNode#hasChild(de.willuhn.datasource.GenericObjectNode)
-   */
-  public boolean hasChild(GenericObjectNode object) throws RemoteException
-  {
-    throw new UnsupportedOperationException("not implemented");
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObjectNode#getParent()
-   */
-  public GenericObjectNode getParent() throws RemoteException
-  {
-    return this.parent;
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObjectNode#getPossibleParents()
-   */
-  public GenericIterator getPossibleParents() throws RemoteException
-  {
-		throw new UnsupportedOperationException("not implemented");
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObjectNode#getPath()
-   */
-  public GenericIterator getPath() throws RemoteException
-  {
-		throw new UnsupportedOperationException("not implemented");
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
-   */
-  public Object getAttribute(String name) throws RemoteException
-  {
-  	if ("name".equals(name))
-  		return getName();
-		return null;
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObject#getID()
-   */
-  public String getID() throws RemoteException
-  {
-    return this.path.getFullName() + ":" + this.path.getLineNr();
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-   */
-  public String getPrimaryAttribute() throws RemoteException
-  {
-  	return "name";
-  }
-
-  /**
-   * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-   */
-  public boolean equals(GenericObject other) throws RemoteException
-  {
-    if (other == null)
-    	return false;
-    return getID().equals(other.getID());
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.NavigationItem#addChild(de.willuhn.jameica.gui.NavigationItem)
-   */
-  public void addChild(NavigationItem item) throws RemoteException
-  {
-  	if (item == null)
-  		return;
-  	childs.add(item);
-  }
 }
 
 
 /**********************************************************************
  * $Log: NavigationItemXml.java,v $
+ * Revision 1.3  2004/10/08 16:41:58  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/08/15 17:55:17  willuhn
  * @C sync handling
  *
