@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.25 $
- * $Date: 2004/11/10 15:53:23 $
+ * $Revision: 1.26 $
+ * $Date: 2004/11/10 16:19:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -80,7 +80,7 @@ public class View implements Part
 		layout.verticalSpacing = 0;
 		view.setLayout(layout);
 	
-		snapin = new Composite(sash, SWT.BORDER);
+		snapin = new Composite(sash, SWT.NONE);
 		snapin.setLayoutData(new GridData(GridData.FILL_BOTH));
 		snapin.setLayout(new FillLayout());
 		sash.setMaximizedControl(view);
@@ -261,6 +261,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.26  2004/11/10 16:19:19  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.25  2004/11/10 15:53:23  willuhn
  * @N Panel
  *
