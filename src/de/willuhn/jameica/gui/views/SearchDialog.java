@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/SearchDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.4 $
+ * $Date: 2003/12/10 01:12:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,9 +38,9 @@ public abstract class SearchDialog
 
   private Table table;
   private String title;
-  Shell shell;
+  private Shell shell;
 
-  String id = null;
+  private String id = null;
 
   /**
    * Setzt die Liste, die fuer den Dialog verwendet werden soll.
@@ -174,10 +174,10 @@ public abstract class SearchDialog
     /**
      * @see de.willuhn.jameica.views.parts.Controller#handleLoad(java.lang.String)
      */
-    public void handleLoad(String id)
+    public void handleLoad(String s)
     {
-      SearchDialog.this.id = id;
-      SearchDialog.this.shell.dispose();
+      id = s;
+      shell.dispose();
     }
     
   }
@@ -186,6 +186,9 @@ public abstract class SearchDialog
 
 /*********************************************************************
  * $Log: SearchDialog.java,v $
+ * Revision 1.4  2003/12/10 01:12:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

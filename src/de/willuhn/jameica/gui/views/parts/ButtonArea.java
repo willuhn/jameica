@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/ButtonArea.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.6 $
+ * $Date: 2003/12/10 01:12:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,6 +34,8 @@ public class ButtonArea
 {
 
   private Composite buttonArea;
+  private Button storeButton; // den Store-Button speichern wir extra damit wir ihn
+                              // deaktivieren koennen, wenn Fehler auf dem Dialog sind.
 
   /**
    * Erzeugt einen neuen Standard-Button-Bereich.
@@ -51,6 +53,26 @@ public class ButtonArea
     buttonArea = new Composite(parent, SWT.NONE);
     buttonArea.setLayout(layout);
     buttonArea.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+  }
+
+  /**
+   * Deaktiviert den Speichern-Knopf (er wird ausgegraut).
+   */
+  public void disableStoreButton()
+  {
+    if (storeButton == null)
+      return;
+    storeButton.setEnabled(false);
+  }
+
+  /**
+   * Aktiviert den Speichern-Knopf.
+   */
+  public void enableStoreButton()
+  {
+    if (storeButton == null)
+      return;
+    storeButton.setEnabled(true);
   }
 
   /**
@@ -79,12 +101,12 @@ public class ButtonArea
    */
   public void addStoreButton(final Controller controller)
   {
-    final Button button = new Button(buttonArea,SWT.PUSH);
-    button.setText(I18N.tr("Speichern"));
-    button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-    GUI.shell.setDefaultButton(button);
+    storeButton = new Button(buttonArea,SWT.PUSH);
+    storeButton.setText(I18N.tr("Speichern"));
+    storeButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+    GUI.shell.setDefaultButton(storeButton);
     // TODO Submit bei <ENTER> geht scheinbar nur unter Windows
-    button.addListener(SWT.Traverse, new Listener()
+    storeButton.addListener(SWT.Traverse, new Listener()
     {
       public void handleEvent(Event event)
       {
@@ -92,7 +114,7 @@ public class ButtonArea
           controller.handleStore();
       }
     });
-    button.addMouseListener(new MouseAdapter() {
+    storeButton.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e) {
         controller.handleStore();
       }
@@ -165,6 +187,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.6  2003/12/10 01:12:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBIteratorImpl.java,v $
- * $Revision: 1.9 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.10 $
+ * $Date: 2003/12/10 01:12:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -147,7 +147,7 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
   public boolean hasNext() throws RemoteException
 	{
     if (!initialized) init();
-		return (index < list.size());
+		return (index < list.size() && list.size() > 0);
 	}
 
   /**
@@ -219,6 +219,9 @@ public class DBIteratorImpl extends UnicastRemoteObject implements DBIterator {
 
 /*********************************************************************
  * $Log: DBIteratorImpl.java,v $
+ * Revision 1.10  2003/12/10 01:12:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView
