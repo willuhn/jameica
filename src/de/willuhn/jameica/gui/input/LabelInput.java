@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/07/09 00:12:46 $
+ * $Revision: 1.9 $
+ * $Date: 2004/11/15 00:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,12 +51,12 @@ public class LabelInput extends AbstractInput
   }
 
   /**
-   * Liefert immer <code>null</code>.
+   * Liefert den angezeigten Text.
    * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
   {
-    return null;
+    return value;
   }
 
   /**
@@ -101,6 +101,9 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.9  2004/11/15 00:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *

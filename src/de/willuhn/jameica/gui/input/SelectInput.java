@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2004/11/12 18:23:59 $
+ * $Revision: 1.16 $
+ * $Date: 2004/11/15 00:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,7 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -188,7 +189,10 @@ public class SelectInput extends AbstractInput
   {
 		enabled = false;
 		if (combo != null && !combo.isDisposed())
+		{
 			combo.setEnabled(false);
+			combo.setForeground(Color.COMMENT.getSWTColor());
+		}
   }
 
   /**
@@ -197,6 +201,7 @@ public class SelectInput extends AbstractInput
   public void enable()
   {
     combo.setEnabled(true);
+		combo.setForeground(Color.WIDGET_FG.getSWTColor());
   }
 
   /**
@@ -263,6 +268,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.16  2004/11/15 00:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

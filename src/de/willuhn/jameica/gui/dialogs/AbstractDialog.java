@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.23 $
- * $Date: 2004/11/12 18:23:59 $
+ * $Revision: 1.24 $
+ * $Date: 2004/11/15 00:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -165,8 +165,8 @@ public abstract class AbstractDialog
 
 				parent = new Composite(shell,SWT.NONE);
 				GridLayout parentLayout = new GridLayout();
-				parentLayout.marginHeight = 0;
-				parentLayout.marginWidth = 0;
+				parentLayout.marginHeight = 2;
+				parentLayout.marginWidth = 2;
 				parent.setBackground(Color.BACKGROUND.getSWTColor());
 				parent.setLayout(parentLayout);
 				parent.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -375,6 +375,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.24  2004/11/15 00:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

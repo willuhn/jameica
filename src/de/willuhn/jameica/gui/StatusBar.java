@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.34 $
- * $Date: 2004/11/12 18:23:58 $
+ * $Revision: 1.35 $
+ * $Date: 2004/11/15 00:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -183,11 +183,13 @@ public class StatusBar {
 		Thread t = new Thread("progress")
 		{
 			public void run() {
+				if (progressComp.isDisposed())
+					return;
 				progressStack.topControl = progress;
 				progressComp.layout();
 			}
 		};
-		GUI.getDisplay().asyncExec(t);
+		GUI.getDisplay().syncExec(t);
 	}
 
 	/**
@@ -195,14 +197,16 @@ public class StatusBar {
 	 */
 	public synchronized void stopProgress()
 	{
-		GUI.getDisplay().syncExec(new Runnable() {
-      public void run() {
+		Thread t = new Thread("progress")
+		{
+			public void run() {
 				if (progressComp.isDisposed())
 					return;
 				progressStack.topControl = noProgress;
 				progressComp.layout();
-      }
-    });
+			}
+		};
+		GUI.getDisplay().syncExec(t);
 	}
 
 
@@ -354,6 +358,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.35  2004/11/15 00:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.34  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

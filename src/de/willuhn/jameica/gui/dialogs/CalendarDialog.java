@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/07/21 23:54:54 $
+ * $Revision: 1.4 $
+ * $Date: 2004/11/15 00:38:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.vafada.swtcalendar.SWTCalendar;
 import org.vafada.swtcalendar.SWTCalendarEvent;
 import org.vafada.swtcalendar.SWTCalendarListener;
@@ -33,6 +34,8 @@ public class CalendarDialog extends AbstractDialog {
   private Composite comp = null;
   private SWTCalendar cal = null;
   private Date date = null;
+
+	private String text = null;
 
   /**
    * ct.
@@ -53,6 +56,15 @@ public class CalendarDialog extends AbstractDialog {
     this.date = d;
   }
 
+	/**
+	 * Definiert einen zusaetzlichen Text, der angezeigt werden soll.
+   * @param text anzuzeigender Text.
+   */
+  public void setText(String text)
+	{
+		this.text = text;
+	}
+
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
@@ -62,6 +74,12 @@ public class CalendarDialog extends AbstractDialog {
     comp.setLayoutData(new GridData(GridData.FILL_BOTH));
     comp.setLayout(new GridLayout(1,false));
 
+		if (text != null && text.length() > 0)
+		{
+			Label l = new Label(comp,SWT.NONE);
+			l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			l.setText(text);
+		}
     cal = new SWTCalendar(comp);
     if (date != null)
     {
@@ -90,6 +108,9 @@ public class CalendarDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: CalendarDialog.java,v $
+ * Revision 1.4  2004/11/15 00:38:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/07/21 23:54:54  willuhn
  * @C massive Refactoring ;)
  *
