@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/08/30 13:30:58 $
+ * $Revision: 1.11 $
+ * $Date: 2004/08/30 15:03:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -211,6 +211,12 @@ public final class Application {
     // close splash screen
     if (!inServerMode())
       SplashScreen.shutDown();
+
+    // Jetzt checken wir noch, ob wir ueberhaupt Plugins haben
+    if (!Application.getPluginLoader().getPluginContainers().hasNext())
+    {
+      Application.addWelcomeMessage(i18n.tr("Derzeit sind keine Plugins installiert. Das macht wenig Sinn ;)"));
+    }
 
     // start loops
     if (inServerMode()) Server.init();
@@ -459,6 +465,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.11  2004/08/30 15:03:28  willuhn
+ * @N neuer Security-Manager
+ *
  * Revision 1.10  2004/08/30 13:30:58  willuhn
  * @N neuer Security-Manager
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/08/18 23:14:19 $
+ * $Revision: 1.13 $
+ * $Date: 2004/08/30 15:03:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,7 +65,14 @@ public class SelectInput extends AbstractInput
 			s[i] = new StringObject(list[i]);
 		}
 		this.preselected = preselected == null ? null : new StringObject(preselected);
-		this.list = PseudoIterator.fromArray(s);
+    try
+    {
+      this.list = PseudoIterator.fromArray(s);
+    }
+    catch (RemoteException e)
+    {
+      throw new RuntimeException("error while initializing iterator");
+    }
 	}
 
   /**
@@ -226,6 +233,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.13  2004/08/30 15:03:28  willuhn
+ * @N neuer Security-Manager
+ *
  * Revision 1.12  2004/08/18 23:14:19  willuhn
  * @D Javadoc
  *

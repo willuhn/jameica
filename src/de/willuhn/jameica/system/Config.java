@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/08/11 00:39:25 $
+ * $Revision: 1.5 $
+ * $Date: 2004/08/30 15:03:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,11 +66,12 @@ public final class Config
 	private final static String defaultConfig =
 		"<config>\n" +
 		"  <logfile>jameica.log</logfile>\n" +
+    "  <!-- loglevel can be: ERROR,WARN,INFO or DEBUG //-->\n" +
 		"  <loglevel>INFO</loglevel>\n" +
 		"  <defaultlanguage>de_de</defaultlanguage>\n" +
 		"  <rmiport>1099</rmiport>\n" +
 		"  <plugindirs>\n" +
-		"    <dir>plugins</dir>\n" +
+		"    <!-- <dir>path to additional plugins</dir> //-->\n" +
 		"	 </plugindirs>\n" +
 		"  <services/>\n" +
 		"</config>\n";
@@ -182,7 +183,10 @@ public final class Config
       rmiPort = 1099;
     }
 
-		// zu allererst tun wir das Plugin-Verzeichnis des Users hinzu.
+    // Das Verzeichnis "plugins" tun wir immer mit dazu.
+    this.pluginDirs.add("plugins");
+
+		// Im User-Verzeichnis kann es immer auch ein Plugin-Verzeichnis geben.
 		this.pluginDirs.add(this.pluginDir.getAbsolutePath());
 
 		// Read plugin dirs
@@ -370,6 +374,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.5  2004/08/30 15:03:28  willuhn
+ * @N neuer Security-Manager
+ *
  * Revision 1.4  2004/08/11 00:39:25  willuhn
  * *** empty log message ***
  *

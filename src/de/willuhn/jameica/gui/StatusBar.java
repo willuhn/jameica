@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.30 $
- * $Date: 2004/08/27 17:46:18 $
+ * $Revision: 1.31 $
+ * $Date: 2004/08/30 15:03:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -279,15 +279,17 @@ public class StatusBar {
 
 		Composite snapin = GUI.getView().getSnapin();
 
-		TablePart table = new TablePart(PseudoIterator.fromArray(logs),null);
-		table.disableSummary();
-		table.addColumn(Application.getI18n().tr("Meldungen"),"foo");
 		try
     {
+      TablePart table = new TablePart(PseudoIterator.fromArray(logs),null);
+      table.disableSummary();
+      table.addColumn(Application.getI18n().tr("Meldungen"),"foo");
       table.paint(snapin);
       GUI.getView().snapIn();
     }
-    catch (RemoteException re) {}
+    catch (RemoteException re) {
+      Logger.error("error while initializing log table");
+    }
 
 	}
 	
@@ -345,6 +347,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.31  2004/08/30 15:03:28  willuhn
+ * @N neuer Security-Manager
+ *
  * Revision 1.30  2004/08/27 17:46:18  willuhn
  * *** empty log message ***
  *
