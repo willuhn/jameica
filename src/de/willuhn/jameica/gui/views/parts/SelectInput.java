@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/SelectInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2003/12/29 16:29:47 $
+ * $Revision: 1.16 $
+ * $Date: 2004/01/06 20:11:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,6 +55,47 @@ public class SelectInput extends Input
     init(list);
   }
 
+	/**
+	 * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+	 * @param list Liste mit den anzuzeigenden Objekten.
+	 * @param preselected Wert des vorausgewaehlten Feldes.
+	 */
+	public SelectInput(DBIterator list, String preselected)
+	{
+
+		this.preselected = preselected;
+		init(list);
+	}
+
+	/**
+	 * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+	 * @param list Liste mit den anzuzeigenden Texten.
+	 * @param preselected Wert des vorausgewaehlten Feldes.
+	 */
+	public SelectInput(String[] list, String preselected)
+	{
+		this.preselected = preselected;
+		init(list);
+		
+	}
+
+	/**
+	 * Initialisiert die Select-Box.
+	 * @param list Liste mit den anzuzeigenden Texten.
+	 */
+	private void init(String[] list)
+	{
+		if (list == null)
+			list = new String[]{};
+
+		for (int i=0;i<list.length;++i)
+		{
+			if (list[i] == null || "".equals(list[i]))
+				continue; // skip empty values
+			values.put(""+list[i],list[i]);
+		}
+	}
+
   /**
    * Initialisiert die Select-Box.
    * @param list Liste mit den anzuzeigenden Objekten.
@@ -82,18 +123,6 @@ public class SelectInput extends Input
       GUI.setActionText(I18N.tr("Fehler beim Lesen der Liste."));
     }
     
-  }
-
-  /**
-   * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
-   * @param list Liste mit den anzuzeigenden Objekten.
-   * @param preselected Wert des vorausgewaehlten Feldes.
-   */
-  public SelectInput(DBIterator list, String preselected)
-  {
-
-    this.preselected = preselected;
-    init(list);
   }
 
   /**
@@ -165,6 +194,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.16  2004/01/06 20:11:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2003/12/29 16:29:47  willuhn
  * @N javadoc
  *

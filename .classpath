@@ -6,7 +6,9 @@
     <classpathentry exported="true" kind="lib" path="lib/mckoidb.jar" sourcepath="/jameica/lib.src/mckoidb.src.zip"/>
     <classpathentry exported="true" kind="lib"
         path="lib/nanoxml-2.2.3.jar" sourcepath="/jameica/lib.src/nanoxml-2.2.3.src.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/win32/swt.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/linux/swt.jar" sourcepath="/jameica/lib.src/linux/swtsrc.zip"/>
+    <classpathentry exported="true" kind="lib" path="lib/linux/swt-mozilla.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/linux/swt-pi.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/de_willuhn_util.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

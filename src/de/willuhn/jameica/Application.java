@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/01/06 01:27:30 $
+ * $Revision: 1.23 $
+ * $Date: 2004/01/06 20:11:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,6 @@ import de.willuhn.util.*;
  */
 public class Application {
 
-  public static boolean DEBUG = true;
   public static boolean IDE   = true;
   private static boolean serverMode = false;
 
@@ -80,10 +79,9 @@ public class Application {
       return;
     }
     
-    Application.DEBUG = app.config.debug();
     Application.IDE   = app.config.ide();
-		if (Application.DEBUG)
-			app.log.setLevel(Logger.LEVEL_DEBUG);
+
+		app.log.setLevel(app.config.getLogLevel());
 
     // switch logger to defined log file
     try {
@@ -197,6 +195,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.23  2004/01/06 20:11:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2004/01/06 01:27:30  willuhn
  * @N table order
  *

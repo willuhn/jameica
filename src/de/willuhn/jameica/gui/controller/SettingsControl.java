@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/01/06 01:27:30 $
+ * $Revision: 1.3 $
+ * $Date: 2004/01/06 20:11:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,6 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.views.ServiceSettings;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
-import de.willuhn.jameica.gui.views.parts.CheckboxInput;
 import de.willuhn.jameica.gui.views.parts.Controller;
 import de.willuhn.jameica.rmi.DBObject;
 
@@ -67,9 +66,10 @@ public class SettingsControl extends Controller
   {
   	Config config = Application.getConfig();
 
-  	config.setDebug(CheckboxInput.ENABLED.equals(getField("debug").getValue()));
-
+  	config.setLoglevel(getField("loglevel").getValue());
+  	Application.getLog().setLevel(config.getLogLevel()); // live umschaltung
   	config.setLogFile(getField("logfile").getValue());
+
   	try
     {
       config.store();
@@ -121,6 +121,9 @@ public class SettingsControl extends Controller
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.3  2004/01/06 20:11:22  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2004/01/06 01:27:30  willuhn
  * @N table order
  *

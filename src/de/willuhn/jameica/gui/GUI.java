@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/01/05 18:04:46 $
+ * $Revision: 1.15 $
+ * $Date: 2004/01/06 20:11:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.*;
-import de.willuhn.jameica.Application;
-import de.willuhn.jameica.I18N;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.util.Style;
@@ -115,7 +113,7 @@ public class GUI
 
     // init language pack
     I18N.init(Application.getConfig().getLocale());
-
+    
     gui = new GUI();
     gui.load();
     setActionText(I18N.tr("startup finished."));
@@ -390,6 +388,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.15  2004/01/06 20:11:22  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/01/05 18:04:46  willuhn
  * @N added MultipleClassLoader
  *

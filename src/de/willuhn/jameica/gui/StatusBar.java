@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/12 01:28:05 $
+ * $Revision: 1.6 $
+ * $Date: 2004/01/06 20:11:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,26 @@
 
 package de.willuhn.jameica.gui;
 
+import java.rmi.RemoteException;
+import java.util.Date;
+import java.util.Enumeration;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+
+import de.willuhn.jameica.Application;
+import de.willuhn.jameica.I18N;
+import de.willuhn.jameica.gui.views.parts.Table;
+import de.willuhn.util.ArrayEnumeration;
+import de.willuhn.util.Queue;
+import de.willuhn.util.Queue.QueueFullException;
 
 /**
  * Bildet die Statusleiste der Anwendung ab.
@@ -28,11 +43,16 @@ public class StatusBar {
 	private Label statusText;
   private Label actionText;
   private Composite status;
+  
+  private Queue lastActionMessages;
 
   /**
    * Erzeugt eine neue Statusleiste.
    */
   protected StatusBar() {
+
+		// init lastActionMessage queue
+		lastActionMessages = new Queue(20);
 
 		status = new Composite(GUI.getShell(), SWT.BORDER);
 
@@ -40,27 +60,43 @@ public class StatusBar {
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = 14;
+		data.heightHint = 17;
 		status.setLayoutData(data);
 
     GridLayout layout = new GridLayout();
     layout.makeColumnsEqualWidth = true;
-    layout.marginHeight = 0;
-    layout.marginWidth = 0;
+    layout.marginHeight = 1;
+    layout.marginWidth = 1;
     layout.numColumns = 2;
-    layout.horizontalSpacing = 0;
-    layout.verticalSpacing = 0;
+    layout.horizontalSpacing = 1;
+    layout.verticalSpacing = 1;
 		status.setLayout(layout);
 
-		this.statusText = new Label(status, SWT.BOLD);
-    this.statusText.setLayoutData(new GridData());
-		this.statusText.setText("");
+		statusText = new Label(status, SWT.NONE);
+    statusText.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		statusText.setText("");
+		statusText.setToolTipText(I18N.tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen."));
+		statusText.addMouseListener(new MouseAdapter()
+		{
+			public void mouseUp(MouseEvent e)
+			{
+				showLastMessages(new ArrayEnumeration(Application.getLog().getLastLines()),true);
+			}
+		});
 
-    this.actionText = new Label(status, SWT.RIGHT);
+    actionText = new Label(status, SWT.NONE);
     GridData right = new GridData(GridData.HORIZONTAL_ALIGN_END);
-    this.actionText.setLayoutData(right);
-    this.actionText.setText("");
-
+    actionText.setLayoutData(right);
+    actionText.setText("");
+		actionText.setToolTipText(I18N.tr("Klicken Sie hier, um die letzten Meldungen der Anwendung anzuzeigen."));
+    actionText.addMouseListener(new MouseAdapter()
+    {
+      public void mouseUp(MouseEvent e)
+      {
+      	showLastMessages(lastActionMessages.elements(),false);
+      }
+    });
+    
 	}
 	
   /**
@@ -79,15 +115,61 @@ public class StatusBar {
    */
   protected void setActionText(String message)
   {
-    actionText.setText(" " + (message == null ? "" : message));
+		if (message == null || "".equals(message))
+			return;
+
+		synchronized(lastActionMessages)
+		{
+			if (lastActionMessages.full())
+				lastActionMessages.pop();
+				try
+        {
+          lastActionMessages.push("[" + new Date().toString() + "] " + message);
+        } catch (QueueFullException e) {} // CannotHappenException ;)
+		}
+
+		// String lines[] = (String[]) lastActionMessages.toArray(new String[lastActionMessages.size()]);
+    actionText.setText(message);
     status.layout();
   }
 
+	/**
+   * Zeigt die letzten Meldungen an.
+   */
+  private void showLastMessages(Enumeration e, boolean alignRight)
+	{
+		Display display = GUI.getDisplay();
+		Shell shell = new Shell(GUI.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		shell.setText(I18N.tr("letzte Meldungen"));
+		shell.setLayout(new GridLayout(1,false));
+
+		Table table = new Table(e,null);
+		table.addColumn(I18N.tr("Meldungen"),null);
+		try
+    {
+      table.paint(shell);
+    }
+    catch (RemoteException re) {}
+
+		shell.pack();
+		shell.setSize(shell.getBounds().width,150);
+		if (alignRight)
+			shell.setLocation(display.getCursorLocation());
+		else 
+			shell.setLocation(display.getCursorLocation().x-shell.getBounds().width,display.getCursorLocation().y);
+		shell.open();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) display.sleep();
+		}
+	}
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.6  2004/01/06 20:11:22  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/12/12 01:28:05  willuhn
  * *** empty log message ***
  *

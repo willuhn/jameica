@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/I18N.java,v $
- * $Revision: 1.5 $
- * $Date: 2003/12/10 00:47:12 $
+ * $Revision: 1.6 $
+ * $Date: 2004/01/06 20:11:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,7 +66,7 @@ public class I18N
     if (translated != null)
       return translated;
     
-    if (Application.DEBUG) properties.put(key,key);
+    properties.put(key,key);
     return key;
   }
 
@@ -78,7 +78,6 @@ public class I18N
    */
   public static void flush()
   {
-    if (!Application.DEBUG) return;
 //    try
 //    {
 //      File file = File.createTempFile("messages_" + currentLocale.toString() + "_",".properties");
@@ -96,6 +95,9 @@ public class I18N
 
 /*********************************************************************
  * $Log: I18N.java,v $
+ * Revision 1.6  2004/01/06 20:11:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/12/10 00:47:12  willuhn
  * @N SearchDialog done
  * @N ErrorView

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Config.java,v $
- * $Revision: 1.12 $
- * $Date: 2004/01/06 01:27:30 $
+ * $Revision: 1.13 $
+ * $Date: 2004/01/06 20:11:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import net.n3.nanoxml.XMLParserFactory;
 import de.willuhn.jameica.rmi.LocalServiceData;
 import de.willuhn.jameica.rmi.RemoteServiceData;
 import de.willuhn.util.FileCopy;
+import de.willuhn.util.Logger;
 
 /**
  * Liest die System-Konfiguration aus config.xml. 
@@ -70,7 +71,7 @@ public class Config
 
   private String logfile = null;
   
-  private boolean debug = false;
+  private String logLevel = Logger.LEVEL_TEXT[Logger.LEVEL_DEBUG];
   
   private boolean ide = false;
   
@@ -164,8 +165,7 @@ public class Config
 
     logfile = xml.getFirstChildNamed("logfile").getContent();
 
-    String _debug = xml.getFirstChildNamed("debug").getContent();
-    debug = "true".equalsIgnoreCase(_debug) || "yes".equalsIgnoreCase(_debug);
+    logLevel = xml.getFirstChildNamed("loglevel").getContent();
     
     String _ide = xml.getFirstChildNamed("ide").getContent();
     ide = "true".equalsIgnoreCase(_ide) || "yes".equalsIgnoreCase(_ide);
@@ -326,21 +326,21 @@ public class Config
 	}
 
   /**
-   * Liefert true, wenn die Anwendung um Debug-Mode laeuft.
-   * @return true, wenn die Anwendung im Debug-Mode laeuft.
+   * Liefert den Namen des Loglevels.
+   * @return Name des Loglevels.
    */
-  public boolean debug()
+  public String getLogLevel()
   {
-    return debug;
+    return this.logLevel;
   }
 
 	/**
-	 * Legt fest, ob die Anwendung im Debug-Mode laufen soll.
-   * @param b true, wenn sie im Debug-Mode laufen soll.
+	 * Legt den Log-Level fest.
+   * @param String Name des Log-Levels.
    */
-  public void setDebug(boolean b)
+  public void setLoglevel(String name)
 	{
-		this.debug = b;
+		this.logLevel = name;
 	}
   /**
    * Liefert true, wenn die Anwendung um IDE-Mode laeuft.
@@ -376,7 +376,7 @@ public class Config
   public void store() throws Exception
 	{
 		xml.getFirstChildNamed("logfile").setContent(this.logfile);
-		xml.getFirstChildNamed("debug").setContent(this.debug ? "true" : "false");
+		xml.getFirstChildNamed("loglevel").setContent(this.logLevel);
 		xml.getFirstChildNamed("ide").setContent(this.ide ? "true" : "false");
 		xml.getFirstChildNamed("defaultlanguage").setContent(this.defaultLanguage.toString());
 		xml.getFirstChildNamed("rmiport").setContent(""+this.rmiPort);
@@ -449,6 +449,9 @@ public class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.13  2004/01/06 20:11:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2004/01/06 01:27:30  willuhn
  * @N table order
  *

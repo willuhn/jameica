@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/parts/Attic/Table.java,v $
- * $Revision: 1.16 $
- * $Date: 2004/01/06 01:27:30 $
+ * $Revision: 1.17 $
+ * $Date: 2004/01/06 20:11:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -208,6 +208,7 @@ public class Table
     table.addListener(SWT.MouseDoubleClick,
       new Listener(){
         public void handleEvent(Event e){
+        		if (controller == null) return;
           TableItem item = table.getItem( new Point(e.x,e.y));
             if (item == null) return;
             String id = (String) item.getData();
@@ -297,6 +298,9 @@ public class Table
 
 /*********************************************************************
  * $Log: Table.java,v $
+ * Revision 1.17  2004/01/06 20:11:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2004/01/06 01:27:30  willuhn
  * @N table order
  *
