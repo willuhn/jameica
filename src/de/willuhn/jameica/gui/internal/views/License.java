@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/License.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/11/05 20:00:43 $
- * $Author: willuhn $
+ * $Revision: 1.4 $
+ * $Date: 2005/03/01 22:58:24 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -42,7 +42,7 @@ public class License extends AbstractView {
 		libs.paint(getParent());
 
 		ButtonArea buttons = new ButtonArea(getParent(),1);
-		buttons.addButton(i18n.tr("Zuruück"),new Back());
+		buttons.addButton(i18n.tr("Zurück"),new Back());
   }
 
   /**
@@ -56,6 +56,9 @@ public class License extends AbstractView {
 
 /**********************************************************************
  * $Log: License.java,v $
+ * Revision 1.4  2005/03/01 22:58:24  web0
+ * @B typo
+ *
  * Revision 1.3  2004/11/05 20:00:43  willuhn
  * @D javadoc fixes
  *
