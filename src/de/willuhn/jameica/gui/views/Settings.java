@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/views/Attic/Settings.java,v $
- * $Revision: 1.22 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.23 $
+ * $Date: 2004/06/03 00:24:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class Settings extends AbstractView
 		// Farb-Einstellungen
 		LabelGroup colorGroup = new LabelGroup(getParent(),i18n.tr("Look and Feel"));
 
-		//colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
+		colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
 		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWidgetBG());
 		colorGroup.addLabelPair(i18n.tr("Textfarbe von Eingabefeldern"),control.getColorWidgetFG());
 		colorGroup.addLabelPair(i18n.tr("Hintergrundfarbe"),control.getColorBackground());
@@ -84,6 +84,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.23  2004/06/03 00:24:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.43 $
- * $Date: 2004/05/27 23:12:58 $
+ * $Revision: 1.44 $
+ * $Date: 2004/06/03 00:24:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,9 +37,10 @@ import de.willuhn.jameica.PluginContainer;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.Settings;
 import de.willuhn.jameica.gui.dialogs.ViewDialog;
+import de.willuhn.jameica.gui.style.StyleEngine;
+import de.willuhn.jameica.gui.style.StyleFactory;
+import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.gui.util.StyleFactory;
-import de.willuhn.jameica.gui.util.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.FatalErrorView;
@@ -200,6 +201,7 @@ public class GUI
     if (gui != null)
       return; // allready started.
 
+		StyleEngine.init();
     gui = new GUI();
     gui.load();
 
@@ -450,9 +452,29 @@ public class GUI
   {
   	if (gui.styleFactory != null)
   		return gui.styleFactory;
-  	gui.styleFactory = new StyleFactoryFlatImpl();
+		String className = settings.getString("stylefactory",StyleFactoryFlatImpl.class.getName());
+		try {
+			gui.styleFactory = (StyleFactory) Application.getClassLoader().load(className).newInstance();
+		}
+		catch (Exception e)
+		{
+			Application.getLog().error("unable to load configured stylefactory, using default",e);
+			gui.styleFactory = new StyleFactoryFlatImpl();
+		}
   	return gui.styleFactory;
   }
+
+	/**
+	 * Speichert die zu verwendende StyleFactory.
+   * @param factory die zu verwendende StyleFactory.
+   */
+  public static void setStyleFactory(StyleFactory factory)
+	{
+		if (factory == null)
+			return;
+		gui.styleFactory = factory;
+		settings.setAttribute("stylefactory",factory.getClass().getName());
+	}
 
 	/**
 	 * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
@@ -621,6 +643,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.44  2004/06/03 00:24:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.43  2004/05/27 23:12:58  willuhn
  * @B NoSuchFieldError in Settings
  * @C s/java/javaw.exe in build/*.bat

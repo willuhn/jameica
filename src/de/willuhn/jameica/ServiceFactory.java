@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/ServiceFactory.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/05/27 21:35:03 $
+ * $Revision: 1.7 $
+ * $Date: 2004/06/03 00:24:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.lang.reflect.Constructor;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.security.Permission;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -71,7 +70,7 @@ public class ServiceFactory
   {
     try {
       Application.getLog().info("trying to start new RMI registry");
-      System.setSecurityManager(new NoSecurity());
+//      System.setSecurityManager(new NoSecurity());
       LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
     }
     catch (RemoteException e)
@@ -212,23 +211,26 @@ public class ServiceFactory
     }
   }
 
-  /**
-   * Dummy-Security-Manager.
-   */
-  private static class NoSecurity extends SecurityManager
-  {
-    /**
-     * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
-     */
-    public void checkPermission(Permission p)
-    {
-      
-    }
-  }
+//  /**
+//   * Dummy-Security-Manager.
+//   */
+//  private static class NoSecurity extends SecurityManager
+//  {
+//    /**
+//     * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
+//     */
+//    public void checkPermission(Permission p)
+//    {
+//      
+//    }
+//  }
 
 }
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.7  2004/06/03 00:24:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/05/27 21:35:03  willuhn
  * @N PGP signing in ant script
  * @N MD5 checksum in ant script

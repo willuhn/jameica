@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/controller/Attic/SettingsControl.java,v $
- * $Revision: 1.20 $
- * $Date: 2004/06/02 21:15:15 $
+ * $Revision: 1.21 $
+ * $Date: 2004/06/03 00:24:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,8 @@ import de.willuhn.jameica.gui.input.AbstractInput;
 import de.willuhn.jameica.gui.input.ColorInput;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
+import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.StyleFactory;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.Settings;
 import de.willuhn.jameica.gui.views.Start;
@@ -215,6 +215,7 @@ public class SettingsControl extends AbstractControl
 			Color.LINK.setSWTColor((org.eclipse.swt.graphics.Color)getColorLink().getValue());
 			Color.LINK_ACTIVE.setSWTColor((org.eclipse.swt.graphics.Color)getColorLinkActive().getValue());
 
+			GUI.setStyleFactory((StyleFactory) getStyleFactory().getValue());
 			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen gespeichert."));
 			
 			SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
@@ -281,6 +282,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.21  2004/06/03 00:24:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.20  2004/06/02 21:15:15  willuhn
  * @B win32 fixes in flat style
  * @C made ButtonInput more abstract
