@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SelectInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.5 $
+ * $Date: 2004/02/25 23:11:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,7 +75,7 @@ public class SelectInput extends Input
 	}
 
 	/**
-	 * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+	 * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
 	 * @param list Liste mit den anzuzeigenden Texten.
 	 * @param preselected Wert des vorausgewaehlten Feldes.
 	 */
@@ -214,6 +214,9 @@ public class SelectInput extends Input
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.5  2004/02/25 23:11:57  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

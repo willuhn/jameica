@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/02/24 22:46:53 $
+ * $Revision: 1.6 $
+ * $Date: 2004/02/25 23:11:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,31 +23,33 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Style;
 
 /**
- * Das ist die Basisklasse fuer modalen Dialogfenster.
- * Modal heisst: Ist das Dialogfenster einmal geoeffnet, kann die
+ * <p>Das ist die Basisklasse fuer modalen Dialogfenster.</p>
+ * <p>Modal heisst: Ist das Dialogfenster einmal geoeffnet, kann die
  * restliche Anwendung solange nicht mehr bedient werden, bis dieses
- * Fenster geschlossen wurde.
- * Diese abstrakte Implementierung schreibt keinen Inhalt in den Dialog
+ * Fenster geschlossen wurde.</p>
+ * <p>Diese abstrakte Implementierung schreibt keinen Inhalt in den Dialog
  * sondern stellt lediglich das Fenster mit einem definierten Design
  * zu Verfuegung, behandelt die Dispatch-Vorgaenge mit dem Benutzer
- * und definiert einen Fenster-Titel.
- * Der Dialog kann mittels der beiden Konstanten <code>POSITION_MOUSE</code>
+ * und definiert einen Fenster-Titel.</p>
+ * <p>Der Dialog kann mittels der beiden Konstanten <code>POSITION_MOUSE</code>
  * und <code>POSITION_CENTER</code> im Konstruktor entweder mittig auf dem
- * Bildschirm oder an der momentanen Position der Mouse dargestellt werden.
- * Ableitende Klassen muessen die Methode <code>paint(Composite)</code>
- * implementieren und dort ihre darzustellenden Elemente reinmalen.
- * Der Dialog wird mittels <code>open()</code> geoeffnet. Beim Schliessen
+ * Bildschirm oder an der momentanen Position der Mouse dargestellt werden.</p>
+ * <p>Ableitende Klassen muessen die Methode <code>paint(Composite)</code>
+ * implementieren und dort ihre darzustellenden Elemente reinmalen.</p>
+ * <p>Der Dialog wird mittels <code>open()</code> geoeffnet. Beim Schliessen
  * des Dialogs wird die Methode <code>getData()</code> aufgerufen. Das ist
- * gleichzeitig der Rueckgabewert von <code>open()</code>.
- * Eine ableitende Klasse muss also z.Bsp. in <code>paint(Composite)</code>
+ * gleichzeitig der Rueckgabewert von <code>open()</code>.</p>
+ * <p>Eine ableitende Klasse muss also z.Bsp. in <code>paint(Composite)</code>
  * einen OK-Button erzeugen, einen Listener anhaengen, der auf Druecken
  * des Buttons reagiert, in der aufgerufenenen Methode des Listeners
  * den zu uebergebenden Wert als Member speichern und danach <code>close()</code>
- * aufrufen, um den Dialog zu schliessen. Bsp.:
- * <code>
+ * aufrufen, um den Dialog zu schliessen.</p>
+ * <p>Bsp.:
+ * <code><pre>
  * protected void paint(Composite parent) throws Exception
  * {
  *   // [...]
@@ -65,7 +67,9 @@ import de.willuhn.jameica.gui.util.Style;
  * {
  *   return this.enteredText;
  * }
+ * </pre>
  * </code>
+ * </p>
  * @author willuhn
  */
 public abstract class AbstractDialog
@@ -89,7 +93,7 @@ public abstract class AbstractDialog
 
 	private int pos = POSITION_CENTER;
 
-	private String titleText = "";
+	private String titleText;
 	private int height = SWT.DEFAULT;
 	private int width = SWT.DEFAULT;
 
@@ -137,7 +141,6 @@ public abstract class AbstractDialog
 		title.setBackground(Style.COLOR_WHITE);
 		title.setLayoutData(new GridData(GridData.FILL_BOTH));
 		title.setFont(Style.FONT_H2);
-		title.setText(this.titleText);
 
 		Label image = new Label(comp,SWT.NONE);
 		image.setImage(Style.getImage("gradient.gif"));
@@ -174,8 +177,6 @@ public abstract class AbstractDialog
   public final void setTitle(String text)
   {
 		this.titleText = "" + text;
-  	shell.setText(text == null ? "" : text);
-		title.setText(text);
   }
 
 	/**
@@ -221,24 +222,37 @@ public abstract class AbstractDialog
   public final Object open() throws Exception
   {
 		try {
-			// TODO: Bei init() auch Titel und alles neu malen
 			// TODO: Das in GUI.syncExec ausfuehren
-			if (parent.isDisposed()) 
-			{
-				init();
-				setTitle(titleText);
-			} 
-			paint(parent);
+			if (parent.isDisposed()) init(); // Dialog wurde nochmal geoeffnet
+			shell.setText(titleText == null ? "" : titleText);
+			title.setText(titleText == null ? "" : titleText);
+	
+			final Exception ex = new Exception();
+			GUI.startSync(new Runnable() {
+        public void run() {
+					try {
+						paint(parent);
+					}
+					catch(Exception e)
+					{
+						ex.initCause(e);
+					}
+        }
+      });
+
+			if (ex.getCause() != null) // TODO: Das muesste noch schoener werden ;)
+				throw (Exception) ex.getCause();
+
 			shell.pack();
-
-			this.height = (this.height == SWT.DEFAULT ? shell.getBounds().height : this.height);
-			this.width  = (this.width  == SWT.DEFAULT ? shell.getBounds().width  :  this.width);
-
-			if (this.height != SWT.DEFAULT || this.width != SWT.DEFAULT)
+	
+			height = (height == SWT.DEFAULT ? shell.getBounds().height : height);
+			width  = (width  == SWT.DEFAULT ? shell.getBounds().width  : width);
+	
+			if (height != SWT.DEFAULT || width != SWT.DEFAULT)
 			{
-				shell.setSize(this.width,this.height);
+				shell.setSize(width, height);
 			}
-
+	
 			if (pos == POSITION_MOUSE)
 			{
 				shell.setLocation(
@@ -254,7 +268,7 @@ public abstract class AbstractDialog
 				int y = (displayRect.height - splashRect.height) / 2;
 				shell.setLocation(x, y);
 			}
-
+	
 			shell.open();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) display.sleep();
@@ -281,6 +295,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.6  2004/02/25 23:11:57  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2004/02/24 22:46:53  willuhn
  * @N GUI refactoring
  *

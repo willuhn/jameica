@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Application.java,v $
- * $Revision: 1.26 $
- * $Date: 2004/02/22 20:05:21 $
+ * $Revision: 1.27 $
+ * $Date: 2004/02/25 23:11:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,6 +65,9 @@ public class Application {
 		app.log.setLevel(Logger.LEVEL_INFO);
 
     Application.getLog().info("starting jameica in " + (serverMode ? "Server" : "GUI") + " mode");
+
+		// register logger in ClassLoader
+		MultipleClassLoader.setLogger(app.log);
 
     // init config
     try {
@@ -194,6 +197,9 @@ public class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.27  2004/02/25 23:11:57  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.26  2004/02/22 20:05:21  willuhn
  * @N new Logo panel
  *

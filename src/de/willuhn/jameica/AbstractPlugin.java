@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/AbstractPlugin.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/02/09 13:06:33 $
+ * $Revision: 1.11 $
+ * $Date: 2004/02/25 23:11:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import de.willuhn.datasource.db.*;
+import de.willuhn.datasource.db.EmbeddedDatabase;
 
 /**
  * Abstrakte Basis-Klasse aller Plugins.
@@ -29,7 +29,8 @@ public abstract class AbstractPlugin implements Plugin
 
 	/**
 	 * ct.
-   * @param file Verzeichnis oder JarFile in dem sich das Plugin befindet.
+   * @param Das File, in dem sich das Plugin befindet.
+   * Ist i.d.R. das Jar des Plugins selbst.
    */
   public AbstractPlugin(File file)
 	{
@@ -102,27 +103,31 @@ public abstract class AbstractPlugin implements Plugin
     return 1.0;
   }
   
-  /**
-   * @see de.willuhn.jameica.Plugin#getPath()
-   */
-  public String getPath()
-  {
-  	if (file == null)
-  		return null;
+	/**
+	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
+	 * @return Verzeichnis, in dem sich das Plugin befindet.
+	 */
+	public String getPath()
+	{
+		if (file == null)
+			return null;
 
 		if (!file.getName().endsWith(".jar"))
 			return file.getPath();
 
-  	return file.getParent();
-  }
+		return file.getParent();
+	}
   
-  /**
-   * @see de.willuhn.jameica.Plugin#getDatabase()
-   */
-  public EmbeddedDatabase getDatabase()
-  {
-  	return new EmbeddedDatabase(getPath() + "/db",getUsername(),getPassword());
-  }
+	/**
+	 * Liefert die embedded Datenbank des Plugins. Damit ist keine JDBC-Verbindung
+	 * oder ein DB-Hub gemeint, sondern ein Objekt, mit dem man das Plugin
+	 * eine Datenbank fuer sich erstellen und mit Tabellen fuellen kann.
+	 * @return die Embedded Datenbank des Plugins.
+	 */
+	public EmbeddedDatabase getDatabase()
+	{
+		return new EmbeddedDatabase(getPath() + "/db",getUsername(),getPassword());
+	}
 
 	/**
 	 * Liefert den Usernamen fuer die Embedded-Datenbank.
@@ -149,6 +154,9 @@ public abstract class AbstractPlugin implements Plugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.11  2004/02/25 23:11:57  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.10  2004/02/09 13:06:33  willuhn
  * @C added support for uncompressed plugins
  *

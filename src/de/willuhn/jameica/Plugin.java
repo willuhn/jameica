@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/Plugin.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/01/29 00:07:23 $
+ * $Revision: 1.10 $
+ * $Date: 2004/02/25 23:11:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,11 +12,12 @@
  **********************************************************************/
 package de.willuhn.jameica;
 
-import de.willuhn.datasource.db.*;
 
 /**
  * Interface fuer alle Plugins.
- * Jedes Plugin muss diese Klasse implementieren, damit es beim Start erkannt wird. 
+ * Jedes Plugin muss diese Klasse implementieren, damit es beim Start erkannt wird.
+ * Der Einfachheit halber kann es aber auch einfach <code>AbstractPlugin</code>
+ * erweitern ;). 
  * @author willuhn
  */
 public interface Plugin
@@ -59,19 +60,14 @@ public interface Plugin
    */
   public double getVersion();
 
-	/**
-	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
-	 * @return Verzeichnis, in dem sich das Plugin befindet.
-	 */
-	public String getPath();
-  
-  /**
-	 * Liefert die embedded Datenbank des Plugins. Damit ist keine JDBC-Verbindung
-	 * oder ein DB-Hub gemeint, sondern ein Objekt, mit dem man das Plugin
-	 * eine Datenbank fuer sich erstellen und mit Tabellen fuellen kann.
-	 * @return die Embedded Datenbank des Plugins.
-	 */
-	public EmbeddedDatabase getDatabase();
+//	/**
+//	 * Liefert einen Container mit weiteren Informationen, die das
+//	 * Plugin sicher gut gebrauchen kann.
+//	 * Z.Bsp. den Namen des Pfades, in dem sich das Plugin befindet,
+//	 * eine fuer jedes Plugin exclusive embedded Datenbank u.ae.
+//   * @return PluginResources.
+//   */
+//  public PluginResources getPluginResources();
 
 	/**
 	 * Kann vom Plugin implementiert werden wenn es moechte, dass auf
@@ -89,6 +85,9 @@ public interface Plugin
 
 /*********************************************************************
  * $Log: Plugin.java,v $
+ * Revision 1.10  2004/02/25 23:11:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/01/29 00:07:23  willuhn
  * @N Text widget
  *
