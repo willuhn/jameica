@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/server/Attic/DBHubImpl.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.14 $
+ * $Date: 2004/01/05 18:04:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import de.willuhn.jameica.Application;
-import de.willuhn.jameica.PluginLoader;
+import de.willuhn.jameica.MultipleClassLoader;
 import de.willuhn.jameica.rmi.DBHub;
 import de.willuhn.jameica.rmi.DBIterator;
 import de.willuhn.jameica.rmi.DBObject;
@@ -145,15 +145,7 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
   static DBObject create(Connection conn, Class c) throws Exception
   {
     String className = findImplementationName(c);
-    Class clazz = null;
-    try {
-      clazz = Class.forName(className);
-    }
-    catch (ClassNotFoundException e)
-    {
-      // mhh, sicher eine Klasse aus einem Plugin
-      clazz = Class.forName(className,true,PluginLoader.getPluginClassLoader());
-    }
+    Class clazz = MultipleClassLoader.load(className);
 
     Constructor ct = clazz.getConstructor(new Class[]{});
     ct.setAccessible(true);
@@ -295,6 +287,9 @@ public class DBHubImpl extends UnicastRemoteObject implements DBHub
 
 /*********************************************************************
  * $Log: DBHubImpl.java,v $
+ * Revision 1.14  2004/01/05 18:04:46  willuhn
+ * @N added MultipleClassLoader
+ *
  * Revision 1.13  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

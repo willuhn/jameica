@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.13 $
- * $Date: 2004/01/03 18:08:05 $
+ * $Revision: 1.14 $
+ * $Date: 2004/01/05 18:04:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.*;
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.I18N;
-import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.views.AbstractView;
 import de.willuhn.jameica.gui.views.ErrorView;
 import de.willuhn.jameica.gui.views.util.Style;
@@ -232,19 +231,7 @@ public class GUI
 
     try
     {
-      Class clazz = null;
-      try {
-        clazz = Class.forName(className);
-      }
-      catch (ClassNotFoundException e)
-      {
-        // Mhh, scheint evtl. eine View aus einem Plugin zu sein. Wir versuchen es mal.
-        clazz = Class.forName(className,true,PluginLoader.getPluginClassLoader());
-      }
-      if (clazz == null)
-      {
-        throw new ClassNotFoundException(className);
-      }
+      Class clazz = MultipleClassLoader.load(className);
 
       gui.view.cleanContent();
 
@@ -403,6 +390,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.14  2004/01/05 18:04:46  willuhn
+ * @N added MultipleClassLoader
+ *
  * Revision 1.13  2004/01/03 18:08:05  willuhn
  * @N Exception logging
  * @C replaced bb.util xml parser with nanoxml

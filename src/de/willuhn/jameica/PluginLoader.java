@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Attic/PluginLoader.java,v $
- * $Revision: 1.26 $
- * $Date: 2004/01/04 18:48:36 $
+ * $Revision: 1.27 $
+ * $Date: 2004/01/05 18:04:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class PluginLoader extends ClassLoader
   private static File plugindir = null;
 
   // der ClassLoader
-  private static URLClassLoader loader = null;
+  // private static URLClassLoader loader = null;
   
   // Interface aller Plugins. Es werden nur Plugins geladen, die dieses Interface
   // implementieren
@@ -82,7 +82,7 @@ public class PluginLoader extends ClassLoader
 
     // Liste aller Jars aus dem plugin-Verzeichnis holen
     FileFinder finder = new FileFinder(plugindir);
-    finder.contains("\\.jar");
+    finder.contains(".+\\.jar");
     File[] jars = finder.findRecursive();
 
     if (jars == null || jars.length < 1)
@@ -105,7 +105,7 @@ public class PluginLoader extends ClassLoader
       }
     }
 
-    loader = new URLClassLoader(urls);
+    MultipleClassLoader.addClassloader(new URLClassLoader(urls));
 
     // und jetzt gehen wir nochmal ueber alle Jars und ueber alle darin befindlichen Klassen
     // und versuchen sie zu laden
@@ -236,18 +236,12 @@ public class PluginLoader extends ClassLoader
     Class clazz = null;
 		Application.getLog().debug("trying to load class " + classname);
     try {
-			clazz = Class.forName(classname,true,loader);
+			clazz = MultipleClassLoader.load(classname);
     }
     catch (ClassNotFoundException e)
     {
-			try {
-				clazz = Class.forName(classname);
-			}
-			catch (ClassNotFoundException e2)
-			{
-				Application.getLog().debug("failed");
-				return false;
-			}
+			Application.getLog().debug("failed");
+			return false;
     }
 		Application.getLog().debug("done");
 		//
@@ -404,16 +398,6 @@ public class PluginLoader extends ClassLoader
   }
 
   /**
-   * Liefert den Classloader ueber den die Plugins geladen wurden.
-   * Denn der ist noetig, wenn eine Klasse aus dem Plugin geladen werden soll.
-   * @return Liefert einen ClassLoader, der alle geladenen Plugins kennt.
-   */
-  public static URLClassLoader getPluginClassLoader()
-  {
-    return loader;
-  }
-  
-  /**
    * Liefert das Plugin mit der genannten Klasse.
    * @param pluginClass Klasse des Plugins.
    * @return das Plugin.
@@ -433,6 +417,9 @@ public class PluginLoader extends ClassLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.27  2004/01/05 18:04:46  willuhn
+ * @N added MultipleClassLoader
+ *
  * Revision 1.26  2004/01/04 18:48:36  willuhn
  * @N config store support
  *
