@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.15 $
+ * $Date: 2004/03/05 00:40:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import de.willuhn.jameica.Application;
 import de.willuhn.jameica.Jameica;
 import de.willuhn.jameica.PluginLoader;
 import de.willuhn.jameica.gui.parts.Table;
+import de.willuhn.jameica.gui.util.Style;
 import de.willuhn.util.ArrayEnumeration;
 import de.willuhn.util.History;
 import de.willuhn.util.I18N;
@@ -186,11 +187,34 @@ public class StatusBar {
 
 		GUI.getDisplay().asyncExec(new Runnable() {
       public void run() {
+				actionText.setForeground(Style.COLOR_SUCCESS);
 				actionText.setText(message);
 				status.layout();
       }
     });
   }
+
+	/**
+	 * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
+	 * Formatiert die Anzeige hierbei aber rot als Fehler.
+	 * @param message anzuzeigender Text.
+	 */
+	protected void setErrorText(final String message)
+	{
+		if (message == null)
+			return;
+
+		if (!"".equals(message))
+			lastActionMessages.push("[" + new Date().toString() + "] " + message);
+
+		GUI.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				actionText.setForeground(Style.COLOR_ERROR);
+				actionText.setText(message);
+				status.layout();
+			}
+		});
+	}
 
 	/**
    * Zeigt die letzten Meldungen an.
@@ -226,6 +250,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.15  2004/03/05 00:40:46  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

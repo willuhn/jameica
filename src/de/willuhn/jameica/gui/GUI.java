@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.27 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.28 $
+ * $Date: 2004/03/05 00:40:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -441,6 +441,15 @@ public class GUI
   }
 
 	/**
+	 * Setzt den uebergebenen String als aktuellen Fehlertext in der Anwendung (rechts unten).
+	 * @param status String mit dem anzuzeigenden Status-Text.
+	 */
+	public static void setErrorText(String status)
+	{
+		gui.statusBar.setErrorText(status);
+	}
+
+	/**
 	 * Zeigt den uebergebenen Hilfetext an.
    * @param helptext anzuzeigender Hilfe-Text.
    */
@@ -659,6 +668,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.28  2004/03/05 00:40:45  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring

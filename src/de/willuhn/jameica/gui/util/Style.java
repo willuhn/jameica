@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/03/03 22:27:10 $
+ * $Revision: 1.9 $
+ * $Date: 2004/03/05 00:40:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,9 @@ public class Style
 	public final static Color COLOR_COMMENT = new Color(GUI.getDisplay(), 140, 140, 140);
 	public final static Color COLOR_BG      = new Color(GUI.getDisplay(), 251, 251, 251);
   public final static Color COLOR_BORDER  = new Color(GUI.getDisplay(), 100, 100, 100);
-	public final static Color COLOR_ERROR   = new Color(GUI.getDisplay(), 250, 10,  10);
+
+	public final static Color COLOR_ERROR   = new Color(GUI.getDisplay(), 250,  10,  10);
+	public final static Color COLOR_SUCCESS = new Color(GUI.getDisplay(),   0,   0,   0);
 
 
   public final static Font FONT_H1 = new Font(GUI.getDisplay(),"Verdana", 10, SWT.BOLD);
@@ -119,6 +121,9 @@ public class Style
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.9  2004/03/05 00:40:45  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/03/03 22:27:10  willuhn
  * @N help texts
  * @C refactoring
