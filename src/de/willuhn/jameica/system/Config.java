@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/10/17 14:08:10 $
+ * $Revision: 1.9 $
+ * $Date: 2004/11/05 17:23:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,7 +73,6 @@ public final class Config
 		"  <plugindirs>\n" +
 		"    <!-- <dir>path to additional plugins</dir> //-->\n" +
 		"	 </plugindirs>\n" +
-		"  <services/>\n" +
 		"</config>\n";
 
   /**
@@ -396,6 +395,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.9  2004/11/05 17:23:52  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/10/17 14:08:10  willuhn
  * *** empty log message ***
  *
