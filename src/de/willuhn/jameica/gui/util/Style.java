@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/Style.java,v $
- * $Revision: 1.17 $
- * $Date: 2004/04/14 22:16:43 $
+ * $Revision: 1.18 $
+ * $Date: 2004/04/26 23:40:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import de.willuhn.jameica.Application;
 import de.willuhn.jameica.gui.GUI;
@@ -40,6 +41,7 @@ public class Style
 {
 
   private static Map imagecache = new HashMap();
+  private static FormToolkit toolkit = null;
 
   /**
    * Farbe WEISS.
@@ -164,11 +166,25 @@ public class Style
 		});
 		return canvas;
   }
-  
+
+	/**
+	 * Liefert eine Factory zum Erzeugen von Controls.
+   * @return Factory.
+   */
+  public static FormToolkit getToolkit()
+	{
+		if (toolkit != null)
+			return toolkit;
+		toolkit = new FormToolkit(GUI.getDisplay());
+		return toolkit;
+	}
 }
 
 /*********************************************************************
  * $Log: Style.java,v $
+ * Revision 1.18  2004/04/26 23:40:26  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2004/04/14 22:16:43  willuhn
  * *** empty log message ***
  *
