@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/11/15 00:38:20 $
+ * $Revision: 1.10 $
+ * $Date: 2005/02/03 18:57:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,8 @@
 package de.willuhn.jameica.gui.input;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.util.Color;
 
@@ -26,8 +26,9 @@ import de.willuhn.jameica.gui.util.Color;
  */
 public class LabelInput extends AbstractInput
 {
-  private CLabel label;
+  private Label label;
   private String value;
+  private Color color;
 
   /**
    * Erzeugt ein neues Label mit dem angegebenen Wert.
@@ -43,9 +44,11 @@ public class LabelInput extends AbstractInput
    */
   public Control getControl()
   {
-    label = new CLabel(getParent(),SWT.NONE);
+    label = new Label(getParent(),SWT.NONE);
     label.setBackground(Color.BACKGROUND.getSWTColor());
     label.setText(value == null ? "" : value);
+    if (this.color != null)
+      this.label.setForeground(this.color.getSWTColor());
     return label;
 
   }
@@ -83,6 +86,17 @@ public class LabelInput extends AbstractInput
   }
 
   /**
+   * Legt die Text-Farbe fest.
+   * @param color Text-Farbe.
+   */
+  public void setColor(Color color)
+  {
+    this.color = color;
+    if (this.label != null && !this.label.isDisposed())
+      this.label.setForeground(this.color.getSWTColor());
+  }
+
+  /**
    * @see de.willuhn.jameica.gui.input.Input#disable()
    */
   public void disable()
@@ -101,6 +115,9 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.10  2005/02/03 18:57:56  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2004/11/15 00:38:20  willuhn
  * *** empty log message ***
  *
