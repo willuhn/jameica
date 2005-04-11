@@ -19,7 +19,7 @@ JAVA=/usr/lib/java/bin/java
 BASEDIR=/opt/jameica
 WORKDIR=~/.jameica
 PASSWORD=CHANGE_THIS_BEFORE_YOU_START_JAMEICA
-PIDFILE=$BASEDIR/jameica.pid
+PIDFILE=$WORKDIR/jameica.pid
 
 ### Please do not edit anything below this line! ########################
 #                                                                       #
@@ -31,6 +31,7 @@ rc_reset
 return=$rc_done
 case "$1" in
     start)
+      mkdir -p $WORKDIR
       cd $BASEDIR
       echo -n "Starting Jameica "
       $JAVA -jar jameica-linux.jar -d -f $WORKDIR -p $PASSWORD > /dev/null 2>&1 & PID=$!
