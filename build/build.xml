@@ -39,6 +39,7 @@
 		<property name="define.jarfilename" value="jameica.jar" />
 		<property name="define.jarfilename.win32" value="jameica-win32.jar" />
 		<property name="define.jarfilename.linux" value="jameica-linux.jar" />
+		<property name="define.jarfilename.linux-amd64" value="jameica-linux-amd64.jar" />
 		<property name="define.srcfilename" value="jameica.src.zip" />
 		<property name="define.javadocfilename" value="jameica.javadoc.zip" />
 		<property name="define.package" value="de.willuhn.jameica" />
@@ -144,6 +145,19 @@
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
 
+		<jar destfile="${project.zipdir}/${define.jarfilename.linux-amd64}">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${DSTAMP}" />
+				<attribute name="Implementation-Title" value="${define.projectname}" />
+				<attribute name="Implementation-Version" value="${version}" />
+				<attribute name="Implementation-Buildnumber" value="${build.number}" />
+				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
+				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux-amd64/swt.jar lib/swt/linux-amd64/swt-pi.jar lib/swt/linux-amd64/swt-mozilla.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
+			</manifest>
+			<fileset dir="${class.dir}" includes="**/Main.class" />
+		</jar>
+
 		<jar destfile="${project.zipdir}/${define.jarfilename.win32}">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -164,6 +178,7 @@
 			<fileset dir="${lib.dir}" />
 		</copy>
 
+		<copy file="${build.dir}/jameica-amd64.sh" tofile="${project.zipdir}/jameica-amd64.sh" />
 		<copy file="${build.dir}/jameica.sh" tofile="${project.zipdir}/jameica.sh" />
 		<copy file="${build.dir}/jameicaserver.sh" tofile="${project.zipdir}/jameicaserver.sh" />
 		<copy file="${build.dir}/rcjameica" tofile="${project.zipdir}/rcjameica" />

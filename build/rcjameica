@@ -45,7 +45,7 @@ case "$1" in
        rm $PIDFILE
        rc_status -v
      else
-      echo "No $SERVERNAME running"
+      echo "Not running"
      fi
     ;;
     reload|restart)

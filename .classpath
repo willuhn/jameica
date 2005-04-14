@@ -11,11 +11,13 @@
     <classpathentry exported="true" kind="lib"
         path="lib/bouncycastle/bcprov-jdk14-124.jar" sourcepath="/jameica/lib.src/bouncycastle/bcprov-jdk14-124.zip"/>
     <classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-cli-1.0.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/swtcalendar/swtcalendar.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/swt/linux/swt.jar"/>
+    <classpathentry exported="true" kind="lib"
+        path="lib/swt/linux/swt.jar" sourcepath="/jameica/lib.src/swt/linux/swtsrc.zip"/>
     <classpathentry exported="true" kind="lib" path="lib/swt/linux/swt-mozilla.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/swt/linux/swt-pi.jar"/>
+    <classpathentry exported="true" kind="lib"
+        path="lib/de_willuhn_ds/de_willuhn_ds.jar" sourcepath="/datasource/src"/>
+    <classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
