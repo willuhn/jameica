@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.29 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.30 $
+ * $Date: 2005/04/19 21:11:53 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -40,8 +40,8 @@ import de.willuhn.util.ApplicationException;
 public final class ServiceFactory
 {
 
-  private boolean rmiStarted = false;
-  private boolean sslStarted = false;
+  private boolean rmiStarted    = false;
+  private boolean sslStarted    = false;
 
 	// Alle Bindings
 	private Hashtable bindings = new Hashtable();
@@ -70,7 +70,8 @@ public final class ServiceFactory
       sslStarted = true;
     }
 
-		startRegistry();
+    if (Application.getConfig().getShareServices())
+  		startRegistry();
 
     Iterator plugins = Application.getPluginLoader().getInstalledPlugins();
 
@@ -230,7 +231,7 @@ public final class ServiceFactory
 				Logger.info("service not startable");
 			}
 
-			if (Application.inServerMode())
+			if (Application.inServerMode() && Application.getConfig().getShareServices())
 			{
 				// Im Server-Mode binden wir den Service noch an die RMI-Registry
 				Logger.info("binding service " + name);
@@ -370,6 +371,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.30  2005/04/19 21:11:53  web0
+ * @N service sharing can now be disabled in server mode too
+ *
  * Revision 1.29  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *

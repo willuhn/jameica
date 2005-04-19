@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.17 $
- * $Date: 2005/02/26 18:14:59 $
+ * $Revision: 1.18 $
+ * $Date: 2005/04/19 21:11:53 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -115,6 +115,16 @@ public final class Config
 	{
 		return settings.getBoolean("jameica.system.rmi.enablessl",false);
 	}
+
+  /**
+   * Prueft, ob im Server-Mode die Dienste nach aussen freigegeben werden sollen.
+   * Der Parameter wird nur im Server-Mode interpretiert.
+   * @return true, wenn die Dienste freigegeben werden.
+   */
+  public boolean getShareServices()
+  {
+    return settings.getBoolean("jameica.system.rmi.shareservices",true);
+  }
 
 	/**
 	 * Aktiviert oder deaktiviert die Verwendung von SSL fuer die RMI-Verbindungen.
@@ -278,6 +288,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.18  2005/04/19 21:11:53  web0
+ * @N service sharing can now be disabled in server mode too
+ *
  * Revision 1.17  2005/02/26 18:14:59  web0
  * @N new nightly builds
  * @C readme file
