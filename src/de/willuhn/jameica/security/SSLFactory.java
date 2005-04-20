@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/03/17 22:52:34 $
+ * $Revision: 1.11 $
+ * $Date: 2005/04/20 07:02:07 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -149,7 +149,7 @@ public class SSLFactory
 
 		this.keystore.load(null,this.callback.getPassword().toCharArray());
 
-		Logger.info("  creating adding private key and x.509 certifcate");
+		Logger.info("  creating private key and x.509 certifcate");
 		this.keystore.setKeyEntry("jameica",this.privateKey,
 															this.callback.getPassword().toCharArray(),
 															new X509Certificate[]{this.certificate});
@@ -407,6 +407,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.11  2005/04/20 07:02:07  web0
+ * *** empty log message ***
+ *
  * Revision 1.10  2005/03/17 22:52:34  web0
  * @B linewraps
  * @B removed testcode
