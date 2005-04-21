@@ -1,4 +1,5 @@
 #!/bin/sh
+
 ### BEGIN INIT INFO
 # Provides:     jameica
 # Required-Start:   $local_fs $remote_fs $network

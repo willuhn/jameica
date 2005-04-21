@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.72 $
- * $Date: 2005/04/05 23:05:02 $
+ * $Revision: 1.73 $
+ * $Date: 2005/04/21 17:14:14 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -610,7 +610,6 @@ public class GUI
 				retry++;
 			}
 		}
-		// save window position and size
 		quit();
 	}
 
@@ -690,12 +689,27 @@ public class GUI
     {
       Logger.error("error while quitting display", e);
     }
-		Application.shutDown();
+    if (!gui.stop)
+    {
+      // Es gibt zwei Moeglichkeiten, wie Jameica mit laufender GUI beendet wird:
+      // 1) Ueber ShutdownHook, <Ctrl><C> in der Console oder via Kill wird
+      //    die GUI von aussen ueber shutDown() geschlossen. In diesem Fall
+      //    laeuft der globale Shutdown schon und "stop" ist auf "true"
+      //    gesetzt.
+      // 2) Der User klickt auf das Schliessen-Kreuz im Fenster. Dabei wird
+      //    der GUI-Loop beendet. In dem Fall sind wir der Ausloeser des
+      //    Shutdowns, "stop" ist false und wir muessen den Rest des Systems
+      //    hinterherziehen. 
+      System.exit(0);
+    }
 	}
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.73  2005/04/21 17:14:14  web0
+ * @B fixed shutdown behaviour
+ *
  * Revision 1.72  2005/04/05 23:05:02  web0
  * @B bug 4
  *

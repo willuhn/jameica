@@ -178,18 +178,19 @@
 			<fileset dir="${lib.dir}" />
 		</copy>
 
-		<copy file="${build.dir}/jameica-amd64.sh" tofile="${project.zipdir}/jameica-amd64.sh" />
-		<copy file="${build.dir}/jameica.sh" tofile="${project.zipdir}/jameica.sh" />
-		<copy file="${build.dir}/jameicaserver.sh" tofile="${project.zipdir}/jameicaserver.sh" />
-		<copy file="${build.dir}/rcjameica" tofile="${project.zipdir}/rcjameica" />
+		<copy file="${build.dir}/jameica-amd64.sh" 			tofile="${project.zipdir}/jameica-amd64.sh" />
+		<copy file="${build.dir}/jameica.sh" 			 	tofile="${project.zipdir}/jameica.sh" />
+		<copy file="${build.dir}/jameicaserver.sh" 		 	tofile="${project.zipdir}/jameicaserver.sh" />
+		<copy file="${build.dir}/jameicaserver-amd64.sh" 	tofile="${project.zipdir}/jameicaserver-amd64.sh" />
+		<copy file="${build.dir}/rcjameica" 				tofile="${project.zipdir}/rcjameica" />
 
-		<copy file="${build.dir}/jameica.bat" tofile="${project.zipdir}/jameica.bat" />
-		<copy file="${build.dir}/jameicaserver.bat" tofile="${project.zipdir}/jameicaserver.bat" />
+		<copy file="${build.dir}/jameica.bat" 				tofile="${project.zipdir}/jameica.bat" />
+		<copy file="${build.dir}/jameicaserver.bat" 		tofile="${project.zipdir}/jameicaserver.bat" />
 
-		<copy file="${build.dir}/jameica.png" tofile="${project.zipdir}/icon.png" />
+		<copy file="${build.dir}/jameica.png" 				tofile="${project.zipdir}/icon.png" />
 
-		<copy file="${build.dir}/COPYING" tofile="${project.zipdir}/COPYING" />
-		<copy file="${build.dir}/README" tofile="${project.zipdir}/README" />
+		<copy file="${build.dir}/COPYING" 					tofile="${project.zipdir}/COPYING" />
+		<copy file="${build.dir}/README" 					tofile="${project.zipdir}/README" />
 
 		<!-- Jetzt muessen wir noch das ZIP-File erzeugen und signieren -->
 		<zip destfile="${project.release}/${project.zipfilename}">

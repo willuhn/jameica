@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.36 $
- * $Date: 2005/04/05 23:05:02 $
+ * $Revision: 1.37 $
+ * $Date: 2005/04/21 17:14:14 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -212,15 +212,27 @@ public final class Application {
       addWelcomeMessage(i18n.tr("Derzeit sind keine Plugins installiert. Das macht wenig Sinn ;)"));
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
+    Runtime.getRuntime().addShutdownHook(new Thread()
+    {
+      /**
+       * Diese Methode wird beim Beenden der JVM aufgerufen und beendet vorher
+       * die Anwendung sauber.
+       * @see java.lang.Runnable#run()
+       */
+      public void run()
+      {
+        Logger.info("shutting down via shutdown hook");
+        Application.shutDown();
+      }
+    });
+    //
+    ////////////////////////////////////////////////////////////////////////////
+
     // start loops
     if (inServerMode()) Server.init();
     else                   GUI.init();
-
-    // Das hier koennen wir uns jetzt erlauben, weil wir ja 'nen ShutdownHook haben ;)
-    // Und da wir nicht wollen, dass Hinz und Kunz die Anwendung runterfahren lassen,
-    // verlassen wir uns drauf, dass der Hook zuschlaegt, wenn wir System.exit(0) aufrufen.
-    System.exit(0);
-
   }
 
 	/**
@@ -248,7 +260,7 @@ public final class Application {
    * Faehrt die gesamte Anwendung herunter.
    * Die Funktion ist synchronized, damit nicht mehrere gleichzeitig die Anwendung runterfahren ;).
    */
-  public static synchronized void shutDown()
+  private static synchronized void shutDown()
   {
 
     // Das Boolean wird nach dem erfolgreichen Shutdown auf True gesetzt.
@@ -513,6 +525,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.37  2005/04/21 17:14:14  web0
+ * @B fixed shutdown behaviour
+ *
  * Revision 1.36  2005/04/05 23:05:02  web0
  * @B bug 4
  *

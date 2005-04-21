@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/01/30 20:47:43 $
- * $Author: willuhn $
+ * $Revision: 1.8 $
+ * $Date: 2005/04/21 17:14:14 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -11,10 +11,6 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.system;
-
-import java.io.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 import de.willuhn.logging.Logger;
 
@@ -30,51 +26,28 @@ public final class Server
    */
   public static void init()
   {
-  	////////////////////////////////////////////////////////////////////////////
-  	// add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
-  	Runtime.getRuntime().addShutdownHook(new ShutdownHook());
-  	//
-  	////////////////////////////////////////////////////////////////////////////
-  	
     Logger.info(Application.getI18n().tr("jameica up and running..."));
 
 		String[] welcome = Application.getWelcomeMessages();
 		if (welcome != null && welcome.length > 0)
 		{
-			System.out.println("----------------------------------------------------------------------");
-			System.out.println(Application.getI18n().tr("Startup-Messages:"));
+      Logger.info("----------------------------------------------------------------------");
+      Logger.info(Application.getI18n().tr("Startup-Messages:"));
 			for (int i=0;i<welcome.length;++i)
 			{
-				System.out.println("  " + welcome[i]); 
+        Logger.info("  " + welcome[i]); 
 			}
-			System.out.println("----------------------------------------------------------------------");
 		}
-    System.out.println("\n");
-    System.out.println(Application.getI18n().tr("press \"q\" to shut down the server."));
-		System.out.println("\n");
-    InputStreamReader isr = new InputStreamReader(System.in);
-    BufferedReader keyboard = new BufferedReader(isr);
-    String input;
-    while (true) {
-      
-      try {
-        input = keyboard.readLine();
-        if ("q".equalsIgnoreCase(input))
-        {
-          return;
-        }
-      }
-      catch (IOException ioe)
-      {
-        return;
-      }
-    }
-
+    Logger.info("----------------------------------------------------------------------");
+    Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
   }
 }
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.8  2005/04/21 17:14:14  web0
+ * @B fixed shutdown behaviour
+ *
  * Revision 1.7  2005/01/30 20:47:43  willuhn
  * *** empty log message ***
  *
