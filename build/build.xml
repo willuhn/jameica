@@ -194,10 +194,10 @@
 
 		<!-- Jetzt muessen wir noch das ZIP-File erzeugen und signieren -->
 		<zip destfile="${project.release}/${project.zipfilename}">
-			<fileset dir="${project.release}">
+			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
 				<include name="${define.projectname}/**" />
-			</fileset>
+			</zipfileset>
 		</zip>
 
 	</target>
