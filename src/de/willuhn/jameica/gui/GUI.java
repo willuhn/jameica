@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.73 $
- * $Date: 2005/04/21 17:14:14 $
+ * $Revision: 1.74 $
+ * $Date: 2005/04/27 00:31:48 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -133,20 +133,35 @@ public class GUI
 		width = settings.getInt("window.width", width);
 		height = settings.getInt("window.height", height);
 
-		if (x >= getDisplay().getBounds().width || x < 0) x = 10;
-		if (y >= getDisplay().getBounds().height || y < 0) y = 10;
+    int dwidth  = getDisplay().getBounds().width;
+    int dheight = getDisplay().getBounds().height;
+    Logger.info("display size: " + dwidth + "x" + dheight);
+
+		if (x >= dwidth || x < 0)
+    {
+      Logger.info("last window x position outer range, resetting to 10");
+      x = 10;
+    }
+		if (y >= dheight || y < 0)
+    {
+      Logger.info("last window y position outer range, resetting to 10");
+       y = 10;
+    } 
 
 		getShell().setBounds(x, y, width, height);
 		getShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e)
 			{
-				// Deswegen muessen wir uns das selbst ausrechnen
+        Logger.info("saving window position/size");
 				Rectangle bounds = getShell().getBounds();
 				Rectangle area = getShell().getClientArea();
-				settings.setAttribute("window.width",
-						(bounds.width + (bounds.width - area.width)));
-				settings.setAttribute("window.height",
-						(bounds.height + (bounds.height - area.height)));
+
+        int width =  bounds.width + (bounds.width - area.width);
+        int height = bounds.height + (bounds.height - area.height);
+        
+        Logger.info("size: " + width + "x" + height + ", position: " + bounds.x + "x" + bounds.y);
+				settings.setAttribute("window.width", width);
+				settings.setAttribute("window.height",height);
 				settings.setAttribute("window.x", bounds.x);
 				settings.setAttribute("window.y", bounds.y);
 			}
@@ -707,6 +722,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.74  2005/04/27 00:31:48  web0
+ * *** empty log message ***
+ *
  * Revision 1.73  2005/04/21 17:14:14  web0
  * @B fixed shutdown behaviour
  *
