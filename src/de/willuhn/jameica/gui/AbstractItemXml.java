@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.8 $
+ * $Date: 2005/05/02 11:26:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -143,7 +143,8 @@ public abstract class AbstractItemXml implements Item
    */
   public String getID() throws RemoteException
   {
-    return this.path.getFullName() + ":" + this.path.getLineNr();
+    String id = this.path.getAttribute("id",null);
+    return id != null ? id : this.path.getFullName() + ":" + this.path.getLineNr();
   }
 
   /**
@@ -188,6 +189,9 @@ public abstract class AbstractItemXml implements Item
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.8  2005/05/02 11:26:03  web0
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *
