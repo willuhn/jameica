@@ -35,29 +35,38 @@
 		<echo message="CVS-Tag: ${tag}" />
 		<echo message="BUILD  : ${build.number}" />
 
-		<property name="define.projectname" value="jameica" />
-		<property name="define.jarfilename" value="jameica.jar" />
-		<property name="define.jarfilename.win32" value="jameica-win32.jar" />
-		<property name="define.jarfilename.linux" value="jameica-linux.jar" />
-		<property name="define.jarfilename.linux-amd64" value="jameica-linux-amd64.jar" />
-		<property name="define.srcfilename" value="jameica.src.zip" />
-		<property name="define.javadocfilename" value="jameica.javadoc.zip" />
-		<property name="define.package" value="de.willuhn.jameica" />
-		<property name="project.release" value="releases/${version}-${build.number}" />
-		<property name="project.nightly" value="releases/nightly" />
+		<property name="define.projectname" 				value="jameica" />
+		<property name="define.jarfilename" 				value="jameica.jar" />
+		<property name="define.jarfilename.win32" 			value="jameica-win32.jar" />
+		<property name="define.jarfilename.macos" 			value="jameica-macos.jar" />
+		<property name="define.jarfilename.linux" 			value="jameica-linux.jar" />
+		<property name="define.jarfilename.linux-amd64" 	value="jameica-linux-amd64.jar" />
+		<property name="define.srcfilename" 				value="jameica.src.zip" />
+		<property name="define.javadocfilename" 			value="jameica.javadoc.zip" />
+		<property name="define.commonlibs" 					value="lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
+		<property name="define.package" 					value="de.willuhn.jameica" />
 
-		<property name="project.src" value="${project.release}/src/classes" />
-		<property name="project.tmp" value="${project.release}/tmp" />
-		<property name="project.javadoc" value="${project.release}/javadoc" />
-		<property name="src.dir" value="src" />
-		<property name="icon.dir" value="${src.dir}/img" />
-		<property name="lang.dir" value="${src.dir}/lang" />
-		<property name="help.dir" value="${src.dir}/help" />
-		<property name="lib.dir" value="lib" />
-		<property name="class.dir" value="${project.tmp}/bin" />
+		<property name="project.nightly" 					value="releases/nightly" />
 
-		<property name="project.zipdir" value="${project.release}/${define.projectname}" />
-		<property name="project.zipfilename" value="${define.projectname}.zip" />
+		<property name="project.release" 					value="releases/${version}-${build.number}" />
+		<property name="project.src" 						value="${project.release}/src/classes" />
+		<property name="project.tmp" 						value="${project.release}/tmp" />
+		<property name="project.javadoc" 					value="${project.release}/javadoc" />
+		<property name="project.zipdir" 					value="${project.release}/${define.projectname}" />
+
+		<property name="project.zipfilename" 				value="${define.projectname}.zip" />
+		<property name="project.zipfilename.win32"			value="${define.projectname}-win32.zip" />
+		<property name="project.zipfilename.linux"			value="${define.projectname}-linux.zip" />
+		<property name="project.zipfilename.linux-amd64"	value="${define.projectname}-linux-amd64.zip" />
+		<property name="project.zipfilename.macos"			value="${define.projectname}-macos.zip" />
+
+		<property name="src.dir" 							value="src" />
+		<property name="icon.dir" 							value="${src.dir}/img" />
+		<property name="lang.dir" 							value="${src.dir}/lang" />
+		<property name="help.dir" 							value="${src.dir}/help" />
+		<property name="lib.dir" 							value="lib" />
+		<property name="class.dir" 							value="${project.tmp}/bin" />
+
 
 		<path id="compilepath">
 			<fileset dir="${lib.dir}">
@@ -113,7 +122,7 @@
 
 
 
-	<target depends="compile" name="jar" description="generates the jar file">
+	<target depends="compile" name="jar" description="generates the jar and zip file">
 
 		<mkdir dir="${project.release}" />
 		<mkdir dir="${project.zipdir}" />
@@ -140,7 +149,20 @@
 				<attribute name="Implementation-Version" value="${version}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar lib/swt/linux/swt-pi.jar lib/swt/linux/swt-mozilla.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
+				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar lib/swt/linux/swt-pi.jar lib/swt/linux/swt-mozilla.jar ${define.commonlibs}" />
+			</manifest>
+			<fileset dir="${class.dir}" includes="**/Main.class" />
+		</jar>
+
+		<jar destfile="${project.zipdir}/${define.jarfilename.macos}">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${DSTAMP}" />
+				<attribute name="Implementation-Title" value="${define.projectname}" />
+				<attribute name="Implementation-Version" value="${version}" />
+				<attribute name="Implementation-Buildnumber" value="${build.number}" />
+				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
+				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/macos/swt.jar lib/swt/macos/swt-pi.jar ${define.commonlibs}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -153,7 +175,7 @@
 				<attribute name="Implementation-Version" value="${version}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux-amd64/swt.jar lib/swt/linux-amd64/swt-pi.jar lib/swt/linux-amd64/swt-mozilla.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
+				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux-amd64/swt.jar lib/swt/linux-amd64/swt-pi.jar lib/swt/linux-amd64/swt-mozilla.jar ${define.commonlibs}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -166,7 +188,7 @@
 				<attribute name="Implementation-Version" value="${version}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/win32/swt.jar lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
+				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/win32/swt.jar ${define.commonlibs}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -178,25 +200,105 @@
 			<fileset dir="${lib.dir}" />
 		</copy>
 
-		<copy file="${build.dir}/jameica-amd64.sh" 			tofile="${project.zipdir}/jameica-amd64.sh" />
-		<copy file="${build.dir}/jameica.sh" 			 	tofile="${project.zipdir}/jameica.sh" />
-		<copy file="${build.dir}/jameicaserver.sh" 		 	tofile="${project.zipdir}/jameicaserver.sh" />
-		<copy file="${build.dir}/jameicaserver-amd64.sh" 	tofile="${project.zipdir}/jameicaserver-amd64.sh" />
-		<copy file="${build.dir}/rcjameica" 				tofile="${project.zipdir}/rcjameica" />
+		<copy todir="${project.zipdir}">
+			<fileset dir="${build.dir}">
+				<include name="*.sh"/>
+				<include name="*.bat"/>
+				<include name="rcjameica"/>
+				<include name="jameica.png"/>
+				<include name="COPYING"/>
+				<include name="README"/>
+			</fileset>
+		</copy>
 
-		<copy file="${build.dir}/jameica.bat" 				tofile="${project.zipdir}/jameica.bat" />
-		<copy file="${build.dir}/jameicaserver.bat" 		tofile="${project.zipdir}/jameicaserver.bat" />
-
-		<copy file="${build.dir}/jameica.png" 				tofile="${project.zipdir}/icon.png" />
-
-		<copy file="${build.dir}/COPYING" 					tofile="${project.zipdir}/COPYING" />
-		<copy file="${build.dir}/README" 					tofile="${project.zipdir}/README" />
-
-		<!-- Jetzt muessen wir noch das ZIP-File erzeugen und signieren -->
+		<!-- ZIP-File mit allen Betriebssystemen -->
 		<zip destfile="${project.release}/${project.zipfilename}">
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
 				<include name="${define.projectname}/**" />
+			</zipfileset>
+		</zip>
+
+		<!-- ZIP-File fuer Linux -->
+		<zip destfile="${project.release}/${project.zipfilename.linux}">
+			<zipfileset dir="${project.release}" filemode="755">
+				<include name="${define.projectname}" />
+				<include name="${define.projectname}/${define.jarfilename}"/>
+				<include name="${define.projectname}/${define.jarfilename.linux}"/>
+				<include name="${define.projectname}/COPYING"/>
+				<include name="${define.projectname}/README"/>
+				<include name="${define.projectname}/jameica.sh"/>
+				<include name="${define.projectname}/jameicaserver.sh"/>
+				<include name="${define.projectname}/rcjameica"/>
+				<include name="${define.projectname}/jameica.png"/>
+				<include name="${define.projectname}/plugins"/>
+				<include name="${define.projectname}/lib/**"/>
+
+				<exclude name="${define.projectname}/lib/swt/win32/**"/>
+				<exclude name="${define.projectname}/lib/swt/macos/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+			</zipfileset>
+		</zip>
+
+		<!-- ZIP-File fuer Linux AMD 64 -->
+		<zip destfile="${project.release}/${project.zipfilename.linux-amd64}">
+			<zipfileset dir="${project.release}" filemode="755">
+				<include name="${define.projectname}" />
+				<include name="${define.projectname}/${define.jarfilename}"/>
+				<include name="${define.projectname}/${define.jarfilename.linux-amd64}"/>
+				<include name="${define.projectname}/COPYING"/>
+				<include name="${define.projectname}/README"/>
+				<include name="${define.projectname}/jameica-amd64.sh"/>
+				<include name="${define.projectname}/jameicaserver-amd64.sh"/>
+				<include name="${define.projectname}/rcjameica"/>
+				<include name="${define.projectname}/jameica.png"/>
+				<include name="${define.projectname}/plugins"/>
+				<include name="${define.projectname}/lib/**"/>
+
+				<exclude name="${define.projectname}/lib/swt/win32/**"/>
+				<exclude name="${define.projectname}/lib/swt/macos/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux/**"/>
+			</zipfileset>
+		</zip>
+
+		<!-- ZIP-File fuer Win32 -->
+		<zip destfile="${project.release}/${project.zipfilename.win32}">
+			<zipfileset dir="${project.release}" filemode="755">
+				<include name="${define.projectname}" />
+				<include name="${define.projectname}/${define.jarfilename}"/>
+				<include name="${define.projectname}/${define.jarfilename.win32}"/>
+				<include name="${define.projectname}/COPYING"/>
+				<include name="${define.projectname}/README"/>
+				<include name="${define.projectname}/jameica.bat"/>
+				<include name="${define.projectname}/jameicaserver.bat"/>
+				<include name="${define.projectname}/jameica.png"/>
+				<include name="${define.projectname}/plugins"/>
+				<include name="${define.projectname}/lib/**"/>
+
+				<exclude name="${define.projectname}/lib/swt/macos/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+			</zipfileset>
+		</zip>
+
+		<!-- ZIP-File fuer MacOS -->
+		<zip destfile="${project.release}/${project.zipfilename.macos}">
+			<zipfileset dir="${project.release}" filemode="755">
+				<include name="${define.projectname}" />
+				<include name="${define.projectname}/${define.jarfilename}"/>
+				<include name="${define.projectname}/${define.jarfilename.macos}"/>
+				<include name="${define.projectname}/COPYING"/>
+				<include name="${define.projectname}/README"/>
+				<include name="${define.projectname}/jameica-macos.sh"/>
+				<include name="${define.projectname}/jameicaserver-macos.sh"/>
+				<include name="${define.projectname}/rcjameica"/>
+				<include name="${define.projectname}/jameica.png"/>
+				<include name="${define.projectname}/plugins"/>
+				<include name="${define.projectname}/lib/**"/>
+
+				<exclude name="${define.projectname}/lib/swt/win32/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
 			</zipfileset>
 		</zip>
 
@@ -241,36 +343,58 @@
 
 	<target name="clean" description="cleanup">
 		<delete dir="${project.tmp}" />
+		<delete dir="${project.zipdir}" />
+		<delete dir="${project.javadoc}" />
 	</target>
 
 
 	<target name="sign" description="signs the jar/zip file">
-		<checksum file="${project.release}/${project.zipfilename}" />
-		<echo message="Creating PGP signature" />
-		<exec executable="kgpg" failonerror="true" timeout="60000">
-			<arg line="-S ${project.release}/${project.zipfilename}" />
-		</exec>
-	</target>
-
-	<target name="signsrc" description="signs the source zip">
 		<checksum file="${project.release}/${define.srcfilename}" />
-		<echo message="Creating PGP signature" />
+		<checksum file="${project.release}/${project.zipfilename}" />
+		<checksum file="${project.release}/${project.zipfilename.win32}" />
+		<checksum file="${project.release}/${project.zipfilename.linux}" />
+		<checksum file="${project.release}/${project.zipfilename.linux-amd64}" />
+		<checksum file="${project.release}/${project.zipfilename.macos}" />
+		<echo message="Creating PGP signatures" />
+
 		<exec executable="kgpg" failonerror="true" timeout="60000">
 			<arg line="-S ${project.release}/${define.srcfilename}" />
 		</exec>
+
+		<exec executable="kgpg" failonerror="true" timeout="60000">
+			<arg line="-S ${project.release}/${project.zipfilename}" />
+		</exec>
+		<exec executable="kgpg" failonerror="true" timeout="60000">
+			<arg line="-S ${project.release}/${project.zipfilename.win32}" />
+		</exec>
+		<exec executable="kgpg" failonerror="true" timeout="60000">
+			<arg line="-S ${project.release}/${project.zipfilename.linux}" />
+		</exec>
+		<exec executable="kgpg" failonerror="true" timeout="60000">
+			<arg line="-S ${project.release}/${project.zipfilename.linux-amd64}" />
+		</exec>
+		<exec executable="kgpg" failonerror="true" timeout="60000">
+			<arg line="-S ${project.release}/${project.zipfilename.macos}" />
+		</exec>
 	</target>
 
 
-	<target depends="init,compile,cvstag,jar,sign,javadoc,src,signsrc,clean" description="build an official release" name="all" />
+	<target depends="init,compile,cvstag,jar,sign,javadoc,src,clean" description="build an official release" name="all" />
 
 	<target depends="init,compile,jar,src,clean" description="build inofficial release" name="fast" />
 
 	<target depends="init,cvs,compile,jar,javadoc,src" description="build nightly build" name="nightly">
 		<mkdir dir="${project.nightly}" />
 
-		<copy file="${project.release}/${project.zipfilename}" tofile="${project.nightly}/${define.projectname}-${version}-nightly.zip" />
-		<copy file="${project.release}/${define.srcfilename}" tofile="${project.nightly}/${define.projectname}-${version}-nightly.src.zip" />
-		<copy file="${project.release}/${define.javadocfilename}" tofile="${project.nightly}/${define.projectname}-${version}-nightly.javadoc.zip" />
+		<copy file="${project.release}/${project.zipfilename}" 				tofile="${project.nightly}/${define.projectname}-${version}-nightly.zip" />
+		<copy file="${project.release}/${project.zipfilename.linux}" 		tofile="${project.nightly}/${define.projectname}-${version}-nightly-linux.zip" />
+		<copy file="${project.release}/${project.zipfilename.linux-amd64}" 	tofile="${project.nightly}/${define.projectname}-${version}-nightly-linux-amd64.zip" />
+		<copy file="${project.release}/${project.zipfilename.macos}" 		tofile="${project.nightly}/${define.projectname}-${version}-nightly-macos.zip" />
+		<copy file="${project.release}/${project.zipfilename.win32}" 		tofile="${project.nightly}/${define.projectname}-${version}-nightly-win32.zip" />
+
+
+		<copy file="${project.release}/${define.srcfilename}" 		tofile="${project.nightly}/${define.projectname}-${version}-nightly.src.zip" />
+		<copy file="${project.release}/${define.javadocfilename}" 	tofile="${project.nightly}/${define.projectname}-${version}-nightly.javadoc.zip" />
 
 		<!-- Die Datei brauchen die anderen Plugins zum Kompilieren //-->
 		<copy file="${project.zipdir}/${define.jarfilename}" tofile="releases/jameica-lib.jar" />
