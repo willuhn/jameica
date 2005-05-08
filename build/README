@@ -37,12 +37,14 @@
 
 1) Kopieren Sie den Inhalt dieser ZIP-Datei in ein Verzeichnis Ihrer Wahl.
    z.Bsp.:
-   Windows:  "C:\Progamme\jameica"
-   Linux:    "/opt/jameica"
+   Windows:     "C:\Progamme\jameica"
+   Linux/MacOS: "/opt/jameica"
 
 2) Wechseln Sie in das Programm-Verzeichnis und geben Sie ein:
-   Windows:  "jameica.bat"
-   Linux:    "./jameica.sh"
+   Windows:    "jameica.bat"
+   Linux:      "./jameica.sh"
+   Linux-AMD64:"./jameica-amd64.sh"
+   MacOS:      "./jameica-macos.sh"
 
 Hinweis: Jameica schreibt keinerlei Dateien in das Programm-Verzeichnis.
          Alle Einstellungen, Log-Files und Daten werden in einem Verzeichnis
