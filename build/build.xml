@@ -211,14 +211,6 @@
 			</fileset>
 		</copy>
 
-		<!-- ZIP-File mit allen Betriebssystemen -->
-		<zip destfile="${project.release}/${project.zipfilename}">
-			<zipfileset dir="${project.release}" filemode="755">
-				<include name="${define.projectname}" />
-				<include name="${define.projectname}/**" />
-			</zipfileset>
-		</zip>
-
 		<!-- ZIP-File fuer Linux -->
 		<zip destfile="${project.release}/${project.zipfilename.linux}">
 			<zipfileset dir="${project.release}" filemode="755">
@@ -302,8 +294,37 @@
 			</zipfileset>
 		</zip>
 
+		<!-- ZIP-File mit allen Betriebssystemen -->
+		<zip destfile="${project.release}/${project.zipfilename}">
+			<zipfileset dir="${project.release}" filemode="755">
+				<include name="${define.projectname}" />
+				<include name="${define.projectname}/**" />
+			</zipfileset>
+		</zip>
+
+
 	</target>
 
+
+	<target depends="compile" name="src" description="build source package, depends compile target to make sure, the code has no errors">
+		<mkdir dir="${project.release}" />
+		<mkdir dir="${project.tmp}/${define.projectname}" />
+		<copy todir="${project.tmp}/${define.projectname}">
+			<fileset dir=".">
+				<include name=".project" />
+				<include name=".classpath" />
+				<include name="${lib.dir}/**" />
+				<include name="${src.dir}/**" />
+				<include name="${build.dir}/**" />
+				<exclude name="${build.dir}/BUILD" />
+			</fileset>
+		</copy>
+		<zip casesensitive="true" zipfile="${project.release}/${define.srcfilename}">
+			<fileset dir="${project.tmp}">
+				<include name="${define.projectname}/**" />
+			</fileset>
+		</zip>
+	</target>
 
 	<target depends="compile" name="javadoc" description="creates the api doc">
 
@@ -322,22 +343,6 @@
 			</fileset>
 		</zip>
 
-	</target>
-
-
-
-	<target depends="compile" name="src" description="build source package, depends compile target to make sure, the code has no errors">
-		<mkdir dir="${project.release}" />
-		<zip casesensitive="true" zipfile="${project.release}/${define.srcfilename}">
-			<fileset dir=".">
-				<include name=".project" />
-				<include name=".classpath" />
-				<include name="${lib.dir}/**" />
-				<include name="${src.dir}/**" />
-				<include name="${build.dir}/**" />
-				<exclude name="${build.dir}/BUILD" />
-			</fileset>
-		</zip>
 	</target>
 
 
