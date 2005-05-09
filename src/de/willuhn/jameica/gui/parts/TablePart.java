@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.31 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.32 $
+ * $Date: 2005/05/09 12:23:43 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.parts;
 
+import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +23,6 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -72,7 +72,8 @@ public class TablePart implements Part
 	private Hashtable sortTable					= new Hashtable();
 	private Hashtable textTable					= new Hashtable();
 	private int sortedBy 								= -1; // Index der sortierten Spalte
-	private boolean direction						= true; // Ausrichtung 
+	private boolean direction						= true; // Ausrichtung
+  private boolean multi               = false; // Multiple Markierung 
 	private Image up										= null;
 	private Image down									= null;
 
@@ -100,6 +101,16 @@ public class TablePart implements Part
 	{
 		this.tableFormatter = formatter;
 	}
+
+  /**
+   * Legt fest, ob mehrere Elemente gleichzeitig markiert werden koennen.
+   * Default: False.
+   * @param multi true, wenn mehrere Elemente gleichzeitig markiert werden koennen.
+   */
+  public void setMulti(boolean multi)
+  {
+    this.multi = multi;
+  }
 
   /**
 	 * Fuegt ein KontextMenu zur Tabelle hinzu.
@@ -342,7 +353,7 @@ public class TablePart implements Part
 		layout.marginWidth = 0;
 		comp.setLayout(layout);
 
-    int flags = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
+    int flags = (this.multi ? SWT.MULTI : SWT.SINGLE) | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
 
     table = GUI.getStyleFactory().createTable(comp, flags);
     table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -391,19 +402,20 @@ public class TablePart implements Part
     table.addListener(SWT.MouseDoubleClick,
       new Listener(){
         public void handleEvent(Event e){
-        		if (action == null) return;
-          TableItem item = table.getItem( new Point(e.x,e.y));
-            if (item == null) return;
-            Object o = item.getData();
-            if (o == null) return;
-            try
-            {
-							action.handleAction(o);
-            }
-            catch (ApplicationException ae)
-            {
-            	GUI.getStatusBar().setErrorText(ae.getMessage());
-            }
+
+          if (action == null) return;
+
+          Object o = getSelection();
+          if (o == null) return;
+
+          try
+          {
+  					action.handleAction(o);
+          }
+          catch (ApplicationException ae)
+          {
+          	GUI.getStatusBar().setErrorText(ae.getMessage());
+          }
         }
       }
     );
@@ -415,8 +427,8 @@ public class TablePart implements Part
       {
       	if (menu == null) return;
 
-				TableItem item = table.getItem( new Point(e.x,e.y));
-				menu.setCurrentObject(item != null ? item.getData() : null);
+        menu.setCurrentObject(getSelection());
+
       }
     });
     
@@ -438,6 +450,40 @@ public class TablePart implements Part
     // Damit kann das Control wiederverwendet werden ;) 
 	  this.list.begin();
 
+  }
+
+  /**
+   * Liefert die markierten Objekte.
+   */
+  private Object getSelection()
+  {
+    TableItem[] items = table.getSelection();
+
+    if (items == null || items.length == 0)
+      return null;
+      
+    Object o = null;
+
+    if (items.length == 1)
+      o = items[0].getData(); // genau ein Element markiert, also brauchen wir kein Array
+    else if (items != null && items.length > 1)
+    {
+      // mehrere Elemente markiert. Also Array
+      Object[] data = null;
+      for (int i=0;i<items.length;++i)
+      {
+        Object elem = items[i].getData();
+        if (elem == null)
+          continue;
+
+        if (data == null)
+          data = (Object[]) Array.newInstance(elem.getClass(),items.length); // wir erzeugen ein getyptes Array
+
+        data[i] = elem;
+      }
+      o = data;
+    }
+    return o;
   }
 
 	/**
@@ -552,6 +598,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.32  2005/05/09 12:23:43  web0
+ * @N Support fuer Mehrfachmarkierungen
+ *
  * Revision 1.31  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *
