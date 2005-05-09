@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/02/01 17:15:19 $
- * $Author: willuhn $
+ * $Revision: 1.9 $
+ * $Date: 2005/05/09 17:26:01 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -90,7 +90,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
     gd.heightHint = 130;
     myParent.setLayoutData(gd);
     FillLayout fl = new FillLayout();
-    fl.spacing = 0;
+    fl.spacing = 4;
     fl.marginHeight = 2;
     fl.marginWidth = 1;
     myParent.setLayout(fl);
@@ -259,6 +259,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.9  2005/05/09 17:26:01  web0
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *
