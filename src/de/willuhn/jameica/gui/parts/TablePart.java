@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.32 $
- * $Date: 2005/05/09 12:23:43 $
+ * $Revision: 1.33 $
+ * $Date: 2005/05/19 23:30:33 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -239,24 +239,30 @@ public class TablePart implements Part
 		// Tabelle werfen.
 		if (object instanceof DBObject)
 		{
-			((DBObject)object).addDeleteListener(new de.willuhn.datasource.rmi.Listener()
-			{
-				public void handleEvent(de.willuhn.datasource.rmi.Event e) throws RemoteException
-				{
-					try
-					{
-						removeItem(e.getObject());
-					}
-					catch (Exception e2)
-					{
-						// ignore
-						// Das funktioniert noch nicht uebers Netz, da der Listener
-						// uebers Netz muss, aber die Tabelle nicht kennen darf
-					}
-					
-				}
-			});
-			
+      try
+      {
+        ((DBObject)object).addDeleteListener(new de.willuhn.datasource.rmi.Listener()
+        {
+          public void handleEvent(de.willuhn.datasource.rmi.Event e) throws RemoteException
+          {
+            try
+            {
+              removeItem(e.getObject());
+            }
+            catch (Exception e2)
+            {
+              // ignore
+            }
+          
+          }
+        });
+      }
+      catch (Exception e)
+      {
+        // ignore
+        // Das funktioniert noch nicht uebers Netz, da der Listener
+        // uebers Netz muss, aber die Tabelle nicht kennen darf
+      }
 		}
 		
 		item.setData(object);
@@ -598,6 +604,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.33  2005/05/19 23:30:33  web0
+ * @B RMI over SSL support
+ *
  * Revision 1.32  2005/05/09 12:23:43  web0
  * @N Support fuer Mehrfachmarkierungen
  *

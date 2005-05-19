@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/02/02 16:16:38 $
- * $Author: willuhn $
+ * $Revision: 1.14 $
+ * $Date: 2005/05/19 23:30:33 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -73,7 +73,7 @@ public class Main {
    * <code>java de.willuhn.jameica.Main</code>
    * @throws Throwable
    */
-  public static void main(String[] args) throws Throwable
+  public static void main(final String[] args) throws Throwable
   {
     Application.newInstance(new StartupParams(args));
   }
@@ -82,6 +82,9 @@ public class Main {
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.14  2005/05/19 23:30:33  web0
+ * @B RMI over SSL support
+ *
  * Revision 1.13  2005/02/02 16:16:38  willuhn
  * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
  *

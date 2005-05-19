@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/03/17 22:44:10 $
+ * $Revision: 1.6 $
+ * $Date: 2005/05/19 23:30:33 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -136,12 +136,22 @@ public class ApplicationCallbackConsole implements ApplicationCallback
     	return monitor;
     monitor = new ProgressMonitor()
     {
-			public void setPercentComplete(int percent) {}
-			public void addPercentComplete(int percent) {}
+			public void setPercentComplete(int percent) {
+        Logger.debug("startup completed: " + percent + " %");
+      }
+			public void addPercentComplete(int percent) {
+        if (percent < 1)
+          return;
+        setPercentComplete(getPercentComplete() + percent);
+      }
 			public int getPercentComplete() {return 0;}
 			public void setStatus(int status) {}
-			public void setStatusText(String text) {}
-			public void log(String msg) {}
+			public void setStatusText(String text) {
+        Logger.info(text);
+      }
+			public void log(String msg) {
+        Logger.info(msg);
+      }
     };
     return monitor;
   }
@@ -170,6 +180,9 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.6  2005/05/19 23:30:33  web0
+ * @B RMI over SSL support
+ *
  * Revision 1.5  2005/03/17 22:44:10  web0
  * @N added fallback if system is not able to determine hostname
  *
