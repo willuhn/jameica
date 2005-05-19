@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.30 $
- * $Date: 2005/04/19 21:11:53 $
+ * $Revision: 1.31 $
+ * $Date: 2005/05/19 18:17:04 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -313,7 +313,10 @@ public final class ServiceFactory
 			int port    = ServiceSettings.getLookupPort(fullName);
 
 			if (host == null || host.length() == 0 || port == -1)
-				throw new ApplicationException(Application.getI18n().tr("Fï¿½r den Service \"{0}\" ist kein Server definiert",serviceName));
+      {
+        Logger.info("missing entry: " + serviceName + "=<hostname>:<port> in <workdir>/cfg/" + ServiceSettings.class.getName() + ".properties");
+        throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
+      }
 
 			Logger.info("searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
@@ -371,6 +374,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.31  2005/05/19 18:17:04  web0
+ * *** empty log message ***
+ *
  * Revision 1.30  2005/04/19 21:11:53  web0
  * @N service sharing can now be disabled in server mode too
  *
