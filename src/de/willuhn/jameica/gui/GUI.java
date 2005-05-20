@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.74 $
- * $Date: 2005/04/27 00:31:48 $
+ * $Revision: 1.75 $
+ * $Date: 2005/05/20 16:06:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -76,6 +76,7 @@ public class GUI
   static
   {
     gui = new GUI();
+    settings.setStoreWhenRead(false);
   }
 
 	private static class HistoryEntry
@@ -121,51 +122,6 @@ public class GUI
 		getShell().setText("Jameica " + Application.getManifest().getVersion());
 
 		StyleEngine.init();
-
-		////////////////////////////
-		// size and position restore
-		int x = 10;
-		int y = 10;
-		int width = 920;
-		int height = 720;
-		x = settings.getInt("window.x", x);
-		y = settings.getInt("window.y", y);
-		width = settings.getInt("window.width", width);
-		height = settings.getInt("window.height", height);
-
-    int dwidth  = getDisplay().getBounds().width;
-    int dheight = getDisplay().getBounds().height;
-    Logger.info("display size: " + dwidth + "x" + dheight);
-
-		if (x >= dwidth || x < 0)
-    {
-      Logger.info("last window x position outer range, resetting to 10");
-      x = 10;
-    }
-		if (y >= dheight || y < 0)
-    {
-      Logger.info("last window y position outer range, resetting to 10");
-       y = 10;
-    } 
-
-		getShell().setBounds(x, y, width, height);
-		getShell().addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e)
-			{
-        Logger.info("saving window position/size");
-				Rectangle bounds = getShell().getBounds();
-				Rectangle area = getShell().getClientArea();
-
-        int width =  bounds.width + (bounds.width - area.width);
-        int height = bounds.height + (bounds.height - area.height);
-        
-        Logger.info("size: " + width + "x" + height + ", position: " + bounds.x + "x" + bounds.y);
-				settings.setAttribute("window.width", width);
-				settings.setAttribute("window.height",height);
-				settings.setAttribute("window.x", bounds.x);
-				settings.setAttribute("window.y", bounds.y);
-			}
-		});
 
 		////////////////////////////
 
@@ -222,9 +178,6 @@ public class GUI
 		Logger.info("adding status panel");
 		addStatusBar(bottom);
 
-		Logger.info("open shell");
-		getShell().open();
-
 		// so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
 		// hinzu.
 		Iterator i = Application.getPluginLoader().getPluginContainers();
@@ -244,6 +197,11 @@ public class GUI
 
 		// History initialisieren
 		history = new Stack();
+
+    position();
+    Logger.info("open shell");
+    getShell().open();
+
 		getStatusBar().setStatusText(Application.getI18n().tr("startup finished"));
 	}
 
@@ -269,6 +227,78 @@ public class GUI
 		gui.loop();
 
 	}
+
+  private void position()
+  {
+    ////////////////////////////
+    // size and position restore
+    int x = -1;
+    int y = -1;
+    int width = 920;
+    int height = 720;
+    x = settings.getInt("window.x", x);
+    y = settings.getInt("window.y", y);
+    width = settings.getInt("window.width", width);
+    height = settings.getInt("window.height", height);
+
+    int dwidth  = getDisplay().getBounds().width;
+    int dheight = getDisplay().getBounds().height;
+    Logger.info("display size: " + dwidth + "x" + dheight);
+
+    if (x >= dwidth)
+    {
+      Logger.info("last window x position outer range, resetting");
+      x = -1;
+    }
+    if (y >= dheight)
+    {
+      Logger.info("last window y position outer range, resetting");
+       y = -1;
+    } 
+
+    if (y > 0 && x > 0)
+    {
+      Logger.info("window position: " + x + "x" + y);
+      getShell().setLocation(x,y);
+    }
+
+    // SWT3 behaviour
+    Logger.info("window size: " + width + "x" + height);
+    getShell().setSize(width,height);
+
+    getShell().addDisposeListener(new DisposeListener() {
+      public void widgetDisposed(DisposeEvent e)
+      {
+        try
+        {
+          Logger.info("saving window position/size");
+          Point location = getShell().getLocation();
+          Point size     = getShell().getSize();
+
+          Logger.info("size: " + size.x + "x" + size.y + ", position: " + location.x + "x" + location.y);
+
+          if (size.x != 0 && size.y != 0)
+          {
+            settings.setAttribute("window.width", size.x);
+            settings.setAttribute("window.height",size.y);
+          }
+
+          if (location.x != 0 && location.y != 0)
+          {
+            // Zumindest unter Linux liefert das immer 0.
+            // Dann brauchen wir es auch nicht speichern
+            settings.setAttribute("window.x", location.x);
+            settings.setAttribute("window.y", location.y);
+          }
+        }
+        catch (Throwable t)
+        {
+          Logger.error("error while saving window position/size",t);
+        }
+      }
+    });
+  }
+
 
 	/**
 	 * Erzeugt die untere Status-Leiste.
@@ -722,6 +752,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.75  2005/05/20 16:06:34  web0
+ * @B rendering bug in GUI.java
+ *
  * Revision 1.74  2005/04/27 00:31:48  web0
  * *** empty log message ***
  *
