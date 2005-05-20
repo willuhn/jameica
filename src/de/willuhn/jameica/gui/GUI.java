@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.75 $
- * $Date: 2005/05/20 16:06:34 $
+ * $Revision: 1.74.2.1 $
+ * $Date: 2005/05/20 16:17:28 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -752,7 +752,7 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.75  2005/05/20 16:06:34  web0
+ * Revision 1.74.2.1  2005/05/20 16:17:28  web0
  * @B rendering bug in GUI.java
  *
  * Revision 1.74  2005/04/27 00:31:48  web0
