@@ -1,0 +1,62 @@
+<html>
+
+  <head></head>
+
+  <body>
+    <h2>Extension-System von Jameica.</h2>
+
+    <p>
+      Jameica kann zwar beliebig mit Plugins erweitert werden.
+      Diese Plugins teilen auch einen ClassPath und können
+      über die ServiceFactory sowie das Messaging-System
+      miteinander kommunizieren. Sie können jedoch nicht
+      die GUI eines anderen Plugins ändern. So kann z.Bsp.
+      Plugin A nicht die Context-Menus von Plugin B ändern
+      oder die Navigation eines anderen Plugins erweitern.
+      Dies ist jedoch sinnvoll, wenn ein Plugin durch ein
+      weiteres möglichst nahtlos um Funktionalität erweitert
+      werden soll. Sprich: Das erweiternde Plugin soll
+      keine eigene Navigation oder eigene Menus mitbringen
+      sondern stattdessen die existierenden um Funktionen
+      erweitern.
+      <br/>
+      Genau für diesen Zweck existiert das Extension-System.
+	</p>
+	
+	<p>
+      Auf der einen Seite befinden sich Komponenten, die
+      sich erweitern lassen (werden durch das Interface
+      <code>Extandable</code> repräsentiert). Auf der anderen
+      Seite existieren Erweiterungen (müssen das Interface
+      <code>Extension</code> implementieren), welche die
+      Extendables um zusätzliche Funktionalität erweitern.
+	</p>
+      
+	<p>
+      <b>Schritt 1 (Registrierung der erweiterbaren Komponenten):</b>
+      <br/>
+      Jedes Extendable besitzt eine ID (Funktion <code>getID()</code>),
+      über die es in ganz Jameica eindeutig identifizierbar
+      ist. Sie werden alle in einer <code>ExtensionRegistry</code>
+      registriert. Dieser Vorgang findet entweder automatisch
+      (so werden z.Bsp. alle Menu- und Navigations-Einträge
+      aus den Manifest-Dateien (plugin.xml) registriert)
+      oder manuell (durch Aufruf der Funktion <code>ExtensionRegistry#register(Extendable)</code>)
+      statt.
+    </p>
+    
+    <p>
+      <b>Schritt 2 (die eigentliche Erweiterung der Komponenten):</b>
+	  <br/>
+	  Bevor eine erweiterbare Komponente (also ein Extendable) aktiviert
+	  wird, muss Jameica herausfinden, welche Erweiterungen existieren
+	  und denen die Komponente zur Erweiterung übergeben.
+	  <br/>
+	  Bsp.: Bevor der Navigations-Baum (linkes Frame in Jameica)
+	  gezeichnet wird, prüft Jameica für jedes Element, ob Erweiterungen
+	  vorliegen. Ist dies der Fall, wird jeweils deren Methode
+	  <code>extend(Extendable)</code> aufgerufen.
+    </p>
+    
+  </body>
+</html>
