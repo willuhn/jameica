@@ -1,5 +1,22 @@
 <html>
 
+  <style>
+    pre
+    {
+      border:1px solid 909090;
+      background:#f9f9f9;
+    }
+    
+    .unimportant
+    {
+      color: #808080;
+    }
+    .important
+    {
+      color: #f00000;
+    }
+  </style>
+
   <head></head>
 
   <body>
@@ -53,9 +70,42 @@
 	  und denen die Komponente zur Erweiterung übergeben.
 	  <br/>
 	  Bsp.: Bevor der Navigations-Baum (linkes Frame in Jameica)
-	  gezeichnet wird, prüft Jameica für jedes Element, ob Erweiterungen
+	  gezeichnet wird, prüft Jameica für jedes Element des Baumes, ob Erweiterungen
 	  vorliegen. Ist dies der Fall, wird jeweils deren Methode
 	  <code>extend(Extendable)</code> aufgerufen.
+	  <br/>
+	  Eine Extension muss im System registriert sein, um angesprochen
+	  werden zu können. Dies geschieht wiederrum automatisch (durch Definition
+	  der Erweiterungen in der Manifest-Datei (plugin.xml)) oder manuell
+	  durch Aufruf von <code>ExtensionRegistry#register(Extension e, String[] extendableIDs)</code>).
+	  
+	  <p>
+	  Format der Registrierung in plugin.xml:
+	  
+<pre>
+&lt;plugin&gt;
+  [...]
+  <span class="unimportant">
+  &lt;menu&gt;
+    &lt;item id="id.menu.erweiterbar" name=...../&gt;
+  &lt;/menu&gt;
+
+  &lt;navigation&gt;
+    &lt;item name=...../&gt;
+  &lt;/navigation&gt;
+
+  &lt;services&gt;
+    &lt;service name=...../&gt;
+  &lt;/services&gt;
+  </span>
+  <span class="important">
+  &lt;extensions&gt;
+    &lt;extension class="name.der.java.Klasse" extends="id.menu.erweiterbar,id.extendable2,..." /&gt;
+  &lt;/extensions&gt;
+  </span>
+&lt;/plugin&gt;
+</pre>
+	  </p>
     </p>
     
   </body>
