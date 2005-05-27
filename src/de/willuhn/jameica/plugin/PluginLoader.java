@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/03/21 21:46:47 $
+ * $Revision: 1.15 $
+ * $Date: 2005/05/27 17:31:46 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.willuhn.io.FileFinder;
+import de.willuhn.jameica.gui.extension.Extension;
+import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
@@ -377,9 +379,9 @@ public final class PluginLoader
       }
     }
 
-    Application.getCallback().getStartupMonitor().setStatusText("initializing plugin " + manifest.getName());
-
 		try {
+      Application.getCallback().getStartupMonitor().setStatusText("initializing plugin " + manifest.getName());
+
 			plugin.init();
 			Application.getCallback().getStartupMonitor().addPercentComplete(10);
 
@@ -387,6 +389,34 @@ public final class PluginLoader
 			updateChecker.setAttribute(pluginClass.getName() + ".version",manifest.getVersion());
 			// und setzen es auf status "installed"
 			container.setInstalled(true);
+
+      // Und jetzt muessen wir noch ggf. vorhandene Extensions registrieren
+      Logger.info("plugin " + manifest.getName() + " initialized successfully");
+
+      Application.getCallback().getStartupMonitor().setStatusText("register plugin extensions");
+      ExtensionDescriptor[] ext = manifest.getExtensions();
+      if (ext != null && ext.length > 0)
+      {
+        for (int i=0;i<ext.length;++i)
+        {
+          if (ext[i].getClassname() == null || ext[i].getClassname().length() == 0)
+            continue;
+
+          Logger.info("  trying to init " + ext[i].getClassname());
+          try
+          {
+            Class c = Application.getClassLoader().load(ext[i].getClassname());
+            ExtensionRegistry.register((Extension) c.newInstance(), ext[i].getExtendableIDs());
+            Logger.info("  extension registered");
+          }
+          catch (Exception e)
+          {
+            Logger.error("  failed, skipping extension",e);
+          }
+        }
+      }
+      Application.getCallback().getStartupMonitor().addPercentComplete(5);
+
 			Logger.info("plugin " + manifest.getName() + " initialized successfully");
 		}
 		catch (Throwable t)
@@ -563,6 +593,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.15  2005/05/27 17:31:46  web0
+ * @N extension system
+ *
  * Revision 1.14  2005/03/21 21:46:47  web0
  * @N added manifest tag "built-date"
  * @N version number, built-date and buildnumber are written to log now

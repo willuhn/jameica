@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/12/21 01:08:01 $
- * $Author: willuhn $
+ * $Revision: 1.6 $
+ * $Date: 2005/05/27 17:31:46 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -183,11 +183,36 @@ public class Manifest
 		}
 		return s;
 	}
+
+  /**
+   * Liefert eine Liste von Extension-Desktriptoren zu diesem Plugin.
+   * @return Liste aller Extension-Deskriptoren aus der plugin.xml oder
+   * <code>null</code> wenn keine definiert sind.
+   */
+  public ExtensionDescriptor[] getExtensions()
+  {
+    IXMLElement extensions = root.getFirstChildNamed("extensions");
+    if (extensions == null || !extensions.hasChildren())
+      return null;
+
+    Iterator it = extensions.getChildren().iterator();
+    ExtensionDescriptor[] s = new ExtensionDescriptor[extensions.getChildrenCount()];
+    int i = 0;
+    while (it.hasNext())
+    {
+      s[i++] = new ExtensionDescriptorXml((IXMLElement)it.next());
+    }
+    return s;
+  }
+
 }
 
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.6  2005/05/27 17:31:46  web0
+ * @N extension system
+ *
  * Revision 1.5  2004/12/21 01:08:01  willuhn
  * @N new service configuration system in plugin.xml with auostart and dependencies
  *
