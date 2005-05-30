@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/11/04 19:29:22 $
- * $Author: willuhn $
+ * $Revision: 1.11 $
+ * $Date: 2005/05/30 14:25:40 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -158,7 +158,7 @@ public class TextInput extends AbstractInput
    */
   public Object getValue()
   {
-    return text.getText();
+    return text == null ? null : text.getText();
   }
 
   /**
@@ -203,6 +203,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.11  2005/05/30 14:25:40  web0
+ * @B NPE
+ *
  * Revision 1.10  2004/11/04 19:29:22  willuhn
  * @N TextAreaInput
  *
