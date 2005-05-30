@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/ExtensionRegistry.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/05/27 17:31:46 $
+ * $Revision: 1.3 $
+ * $Date: 2005/05/30 12:01:33 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,7 @@ public class ExtensionRegistry
     if (extendable == null)
       return;
     
-    String id = extendable.getID();
+    String id = extendable.getExtendableID();
     if (id == null)
       return;
 
@@ -68,11 +68,19 @@ public class ExtensionRegistry
     }
   }
 
+  public static void register(Extension extension, String extendableID)
+  {
+    register(extension, new String[]{extendableID});
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: ExtensionRegistry.java,v $
+ * Revision 1.3  2005/05/30 12:01:33  web0
+ * @R removed gui packages from rmic.xml
+ *
  * Revision 1.2  2005/05/27 17:31:46  web0
  * @N extension system
  *

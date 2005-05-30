@@ -16,7 +16,8 @@
         path="lib/swt/linux/swt.jar" sourcepath="/jameica/lib.src/swt/linux/swtsrc.zip"/>
     <classpathentry exported="true" kind="lib" path="lib/swt/linux/swt-mozilla.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/swt/linux/swt-pi.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
+    <classpathentry exported="true" kind="lib"
+        path="lib/de_willuhn_ds/de_willuhn_ds.jar" sourcepath="/datasource/src"/>
     <classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

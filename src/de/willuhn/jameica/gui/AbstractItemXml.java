@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/05/02 11:26:03 $
+ * $Revision: 1.9 $
+ * $Date: 2005/05/30 12:01:33 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -141,10 +141,18 @@ public abstract class AbstractItemXml implements Item
   /**
    * @see de.willuhn.datasource.GenericObject#getID()
    */
-  public String getID() throws RemoteException
+  public String getID()
   {
     String id = this.path.getAttribute("id",null);
     return id != null ? id : this.path.getFullName() + ":" + this.path.getLineNr();
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.extension.Extendable#getExtendableID()
+   */
+  public String getExtendableID()
+  {
+    return getID();
   }
 
   /**
@@ -167,16 +175,6 @@ public abstract class AbstractItemXml implements Item
 
 
   /**
-   * Fuegt ein Kind hinzu.
-   * @param item
-   */
-  public void addChild(NavigationItem item)
-  {
-    if (item == null)
-      return;
-    childs.add(item);
-  }
-  /**
    * @see de.willuhn.datasource.GenericObject#getAttributeNames()
    */
   public String[] getAttributeNames() throws RemoteException
@@ -184,11 +182,24 @@ public abstract class AbstractItemXml implements Item
     return new String[] {"name"};
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.Item#addChild(de.willuhn.jameica.gui.Item)
+   */
+  public void addChild(Item i) throws RemoteException
+  {
+    if (i == null)
+      return;
+    childs.add(i);
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.9  2005/05/30 12:01:33  web0
+ * @R removed gui packages from rmic.xml
+ *
  * Revision 1.8  2005/05/02 11:26:03  web0
  * *** empty log message ***
  *

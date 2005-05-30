@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Item.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/08 16:43:10 $
- * $Author: willuhn $
+ * $Revision: 1.3 $
+ * $Date: 2005/05/30 12:01:33 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -16,12 +16,13 @@ package de.willuhn.jameica.gui;
 import java.rmi.RemoteException;
 
 import de.willuhn.datasource.GenericObjectNode;
+import de.willuhn.jameica.gui.extension.Extendable;
 
 /**
  * Generisches Element fuer die Navigation/Menu.
  * @author willuhn
  */
-public interface Item extends GenericObjectNode
+public interface Item extends GenericObjectNode, Extendable
 {
   /**
    * Anzuzeigender Name.
@@ -37,11 +38,20 @@ public interface Item extends GenericObjectNode
    */
   public Action getAction() throws RemoteException;
 
+  /**
+   * Fuegt ein Kind hinzu.
+   * @param i das Kind.
+   * @throws RemoteException
+   */
+  public void addChild(Item i) throws RemoteException;
 }
 
 
 /*********************************************************************
  * $Log: Item.java,v $
+ * Revision 1.3  2005/05/30 12:01:33  web0
+ * @R removed gui packages from rmic.xml
+ *
  * Revision 1.2  2004/10/08 16:43:10  willuhn
  * *** empty log message ***
  *

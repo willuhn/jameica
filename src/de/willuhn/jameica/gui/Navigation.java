@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.29 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.30 $
+ * $Date: 2005/05/30 12:01:33 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
+import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -125,7 +126,11 @@ public class Navigation implements Part
 		item.setText(name);
 		item.setExpanded(true);
 		
-		// wir laden unsere Kinder
+    // Bevor wir die Kinder laden, geben wir das Element noch der
+    // ExtensionRegistry fuer eventuell weitere Erweiterungen
+    ExtensionRegistry.extend(element);
+
+		// und laden nun unsere Kinder
 		loadChilds(element,item);
 		
 		// alles aufklappen
@@ -254,6 +259,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.30  2005/05/30 12:01:33  web0
+ * @R removed gui packages from rmic.xml
+ *
  * Revision 1.29  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *

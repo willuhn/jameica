@@ -11,6 +11,7 @@
 	<target name="rmic">
 		<rmic verify="true" base="bin">
 			<include name="**/*.class" />
+			<exclude name="**/gui/**/*.class"/>
 			<classpath refid="compilepath" />
 		</rmic>
 	</target>
