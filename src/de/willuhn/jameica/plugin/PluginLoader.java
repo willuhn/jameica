@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/05/27 17:31:46 $
+ * $Revision: 1.16 $
+ * $Date: 2005/06/02 22:57:42 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -391,7 +391,7 @@ public final class PluginLoader
 			container.setInstalled(true);
 
       // Und jetzt muessen wir noch ggf. vorhandene Extensions registrieren
-      Logger.info("plugin " + manifest.getName() + " initialized successfully");
+      Logger.info("register plugin extensions");
 
       Application.getCallback().getStartupMonitor().setStatusText("register plugin extensions");
       ExtensionDescriptor[] ext = manifest.getExtensions();
@@ -402,7 +402,7 @@ public final class PluginLoader
           if (ext[i].getClassname() == null || ext[i].getClassname().length() == 0)
             continue;
 
-          Logger.info("  trying to init " + ext[i].getClassname());
+          Logger.info("  trying to register " + ext[i].getClassname());
           try
           {
             Class c = Application.getClassLoader().load(ext[i].getClassname());
@@ -593,6 +593,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.16  2005/06/02 22:57:42  web0
+ * *** empty log message ***
+ *
  * Revision 1.15  2005/05/27 17:31:46  web0
  * @N extension system
  *
