@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/10/25 17:59:15 $
- * $Author: willuhn $
+ * $Revision: 1.6 $
+ * $Date: 2005/06/03 17:14:41 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -37,6 +37,8 @@ public class TextPart implements Part
 	private StringBuffer content = new StringBuffer();
 	private boolean wrap = true;
 	private StyledText stext = null;
+  
+  private Color background = Color.BACKGROUND;
 	
 	private boolean autoscroll = false; 
 
@@ -159,19 +161,34 @@ public class TextPart implements Part
 	{
 //		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		stext = new StyledText(parent,SWT.READ_ONLY | SWT.V_SCROLL);
- 		stext.setBackground(Color.BACKGROUND.getSWTColor());
+ 		stext.setBackground(background.getSWTColor());
 		stext.setEditable(false);
 		stext.setWordWrap(wrap);
 		stext.setLayoutData(new GridData(GridData.FILL_BOTH));
 		if (content != null)
 			stext.append(content.toString());
+    scroll();
 	}
 
+  /**
+   * Definiert die Hintergrundfarbe.
+   * @param color
+   */
+  public void setBackground(Color color)
+  {
+    if (color != null)
+      this.background = color;
+    if (stext != null && !stext.isDisposed())
+      stext.setBackground(color.getSWTColor());
+  }
 }
 
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.6  2005/06/03 17:14:41  web0
+ * @N Livelog
+ *
  * Revision 1.5  2004/10/25 17:59:15  willuhn
  * @N aenderbare Tabellen
  *

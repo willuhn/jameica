@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.38 $
- * $Date: 2004/12/31 19:33:50 $
- * $Author: willuhn $
+ * $Revision: 1.39 $
+ * $Date: 2005/06/03 17:14:41 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -33,6 +33,8 @@ import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.logging.Message;
+import de.willuhn.logging.targets.Target;
 import de.willuhn.util.History;
 
 /**
@@ -52,14 +54,19 @@ public class StatusBar {
   
   private History lastActionMessages;
 
-	private boolean statusIn = false;
-	private boolean actionIn = false;
+  private TablePart table    = null;
+  private Target liveTarget  = null;
+	private boolean statusIn   = false;
+	private boolean actionIn   = false;
 
   /**
    * Erzeugt eine neue Statusleiste.
    * @param parent Das Composite, in den die Statusbar gemalt werden soll.
    */
   protected StatusBar(Composite parent) {
+
+    liveTarget = new LiveTarget();
+    Logger.addTarget(liveTarget);
 
 		// init lastActionMessage queue
 		lastActionMessages = new History(20);
@@ -290,7 +297,7 @@ public class StatusBar {
 		try
     {
       GenericIterator elements = PseudoIterator.fromArray(logs);
-      TablePart table = new TablePart(elements,null);
+      table = new TablePart(elements,null);
       table.disableSummary();
       table.addColumn(Application.getI18n().tr("Meldungen"),"foo");
       table.paint(snapin);
@@ -360,11 +367,56 @@ public class StatusBar {
       return new String[] {"text"};
     }
 	}
+
+
+  /**
+   * Das eigene Target fuegen wir an, um die Live-Aktualisierung des Logs im Snapin zu ermoeglichen.
+   */
+  private class LiveTarget implements Target
+  {
+
+    /**
+     * @see de.willuhn.logging.targets.Target#write(de.willuhn.logging.Message)
+     */
+    public void write(final Message message) throws Exception
+    {
+      if (table == null)
+        return;
+      GUI.getDisplay().asyncExec(new Runnable()
+      {
+        public void run()
+        {
+          try
+          {
+            table.addItem(new LogObject(message.toString()));
+            table.setTopIndex(table.size()-1); //zum Ende scrollen
+          }
+          catch (Exception e)
+          {
+            // Logger.error("unable to append message to live log",e);
+            // Es macht keinen Sinn, das zu loggen ;)
+            e.printStackTrace();
+          }
+        }
+      });
+    }
+
+    /**
+     * @see de.willuhn.logging.targets.Target#close()
+     */
+    public void close() throws Exception
+    {
+    }
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.39  2005/06/03 17:14:41  web0
+ * @N Livelog
+ *
  * Revision 1.38  2004/12/31 19:33:50  willuhn
  * *** empty log message ***
  *
