@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.17 $
- * $Date: 2005/06/02 22:57:42 $
+ * $Revision: 1.18 $
+ * $Date: 2005/06/06 09:54:30 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -56,7 +56,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 	
 	private String enteredPassword = "";
   
-  private boolean stars = true;
+  private boolean showPassword = false;
 
 	/**
 	 * Erzeugt einen neuen Passwort-Dialog.
@@ -97,15 +97,12 @@ public abstract class PasswordDialog extends SimpleDialog {
 	}
 
   /**
-   * Aktiviert oder deaktiert die Anzeige von Sternen statt den
-   * angegebenen Zeichen. Per Default werden logischerweise nur
-   * Sternchen angezeigt, da es ja ein Passwort-Dialog ist.
-   * Es kann bei Bedarf aber auch deaktiviert werden.
-   * @param useStars
+   * Legt fest, ob das Passwort waehrend der Eingabe angezeigt werden soll.
+   * @param show
    */
-  protected void setUseStars(boolean useStars)
+  protected void setShowPassword(boolean show)
   {
-    this.stars = useStars;
+    this.showPassword = show;
   }
 
   /**
@@ -140,7 +137,7 @@ public abstract class PasswordDialog extends SimpleDialog {
 		pLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
 		password = GUI.getStyleFactory().createText(comp);
-    if (stars)
+    if (!showPassword)
   		password.setEchoChar('*');
 		GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
 		grid3.horizontalSpan = 2;
@@ -234,6 +231,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.18  2005/06/06 09:54:30  web0
+ * *** empty log message ***
+ *
  * Revision 1.17  2005/06/02 22:57:42  web0
  * *** empty log message ***
  *
