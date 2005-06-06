@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/Extendable.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/05/30 12:01:33 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/06 10:10:43 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,17 +14,25 @@
 package de.willuhn.jameica.gui.extension;
 
 
+
 /**
- * 
+ * Basis-Interface einer erweiterbaren Komponente-
  */
 public interface Extendable
 {
+  /**
+   * Liefert die ID, ueber die das Extandable von den Extensions identifiziert wird.
+   * @return
+   */
   public String getExtendableID();
 }
 
 
 /*********************************************************************
  * $Log: Extendable.java,v $
+ * Revision 1.3  2005/06/06 10:10:43  web0
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/05/30 12:01:33  web0
  * @R removed gui packages from rmic.xml
  *

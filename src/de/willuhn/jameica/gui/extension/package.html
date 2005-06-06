@@ -99,14 +99,28 @@
 	<p>
       <b>Schritt 2 (Durchführung der Erweiterung):</b>
       <br/>
-      Jedes Extendable besitzt eine ID (Funktion <code>getID()</code>),
-      über die es in ganz Jameica eindeutig identifizierbar
-      ist. Sie werden alle in einer <code>ExtensionRegistry</code>
-      registriert. Dieser Vorgang findet entweder automatisch
-      (so werden z.Bsp. alle Menu- und Navigations-Einträge
-      aus den Manifest-Dateien (plugin.xml) registriert)
-      oder manuell (durch Aufruf der Funktion <code>ExtensionRegistry#register(Extendable)</code>)
-      statt.
+      Jedes Extendable besitzt eine ID (Funktion <code>getExtendableID()</code>),
+      über die es in ganz Jameica eindeutig identifizierbar ist.
+      Bevor die erweiterbare Komponente nun aktiviert wird (bei Context-Menus
+      ist das z.Bsp. der Moment unmittelbar vor dem Zeichnen auf dem Bildschirm)
+      muss sie der ExtensionRegistry Bescheid geben, dass sie nun noch erweitert
+      werden kann. Bsp:
+      <pre>
+public class AddressList extends ContextMenu implements Extendable
+{
+  public AddressList()
+  {
+    addItem(new CheckedContextMenuItem(i18n.tr("Öffnen"),new AddressNew()));
+    addItem(ContextMenuItem.SEPARATOR);
+    addItem(new CheckedContextMenuItem(i18n.tr("Löschen..."), new AddressDelete()));
+    addItem(ContextMenuItem.SEPARATOR);
+    addItem(new ContextMenuItem(i18n.tr("Neue Adresse..."), new AddressNeu()));
+    
+    <span class="unimportant">// Uebergabe an Extension-Registry zur eventuellen Erweiterung um weitere Eintraege.</span>
+    <span class="important">ExtensionRegistry.extend(this);</span>
+  }
+}       
+      </pre>
     </p>
 
   </body>

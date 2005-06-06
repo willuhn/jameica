@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/ExtensionRegistry.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/05/30 12:01:33 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/06 10:10:43 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -19,13 +19,20 @@ import java.util.Vector;
 import de.willuhn.logging.Logger;
 
 /**
- * 
+ * In der ExtensionRegistry werden alle Erweiterungsmodule registriert.
+ * Sie ist ausserdem zustaendig, erweiterbare Module an die Erweiterungen
+ * zu uebergeben.
+ * Text bitte zweimal lesen ;) 
  */
 public class ExtensionRegistry
 {
 
   private static Hashtable extensions = new Hashtable();
   
+  /**
+   * Erweitert das Extendable insofern Extensions registriert sind.
+   * @param extendable
+   */
   public static void extend(Extendable extendable)
   {
     if (extendable == null)
@@ -52,10 +59,13 @@ public class ExtensionRegistry
     }
   }
 
+  /**
+   * Registriert das Erweiterungsmodul unter den genannten IDs.
+   * @param extension
+   * @param extendableIDs
+   */
   public static void register(Extension extension, String[] extendableIDs)
   {
-    if (extension == null || extendableIDs == null || extendableIDs.length == 0)
-      return;
       
     for (int i=0;i<extendableIDs.length;++i)
     {
@@ -68,6 +78,11 @@ public class ExtensionRegistry
     }
   }
 
+  /**
+   * Registriert das Erweiterungsmodul unter der genannten ID.
+   * @param extension
+   * @param extendableID
+   */
   public static void register(Extension extension, String extendableID)
   {
     register(extension, new String[]{extendableID});
@@ -78,6 +93,9 @@ public class ExtensionRegistry
 
 /*********************************************************************
  * $Log: ExtensionRegistry.java,v $
+ * Revision 1.4  2005/06/06 10:10:43  web0
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/05/30 12:01:33  web0
  * @R removed gui packages from rmic.xml
  *

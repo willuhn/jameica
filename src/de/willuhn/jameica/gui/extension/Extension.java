@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/Extension.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/05/27 17:31:46 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/06 10:10:43 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -22,12 +22,20 @@ package de.willuhn.jameica.gui.extension;
  */
 public interface Extension
 {
+  /**
+   * Diese Funktion wird von der ExtensionRegistry aufgerufen.
+   * Die Funktion erhaelt als Parameter die zu erweiternde Komponente.
+   * @param extendable
+   */
   public void extend(Extendable extendable);
 }
 
 
 /*********************************************************************
  * $Log: Extension.java,v $
+ * Revision 1.3  2005/06/06 10:10:43  web0
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/05/27 17:31:46  web0
  * @N extension system
  *
