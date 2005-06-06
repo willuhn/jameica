@@ -93,6 +93,7 @@
 
 		<rmic verify="true" base="${class.dir}">
 			<include name="**/*.class" />
+			<exclude name="**/gui/**/*.class"/>
 			<classpath refid="compilepath" />
 		</rmic>
 
