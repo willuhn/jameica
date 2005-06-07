@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.33 $
- * $Date: 2005/05/19 23:30:33 $
+ * $Revision: 1.34 $
+ * $Date: 2005/06/07 16:29:25 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -459,9 +459,74 @@ public class TablePart implements Part
   }
 
   /**
-   * Liefert die markierten Objekte.
+   * Markiert die Liste der uebergebenen Objekte.
+   * @param objects Liste der zu markierenden Objekte.
    */
-  private Object getSelection()
+  public void select(GenericObject[] objects)
+  {
+    if (objects == null || objects.length == 0)
+      return;
+    if (!this.multi && objects.length > 1)
+    {
+      Logger.warn("multi selection disabled but user wants to select more than one element, selecting only the first one");
+      select(objects[0]);
+      return;
+    }
+    for (int i=0;i<objects.length;++i)
+    {
+      if (objects[i] == null)
+        continue;
+
+      String id = null;
+      try
+      {
+        id = objects[i].getID();
+      }
+      catch (RemoteException e)
+      {
+        Logger.error("error while reading id from generic object",e);
+        continue;
+      }
+      
+      if (id == null)
+        continue;
+
+      TableItem[] items = table.getItems();
+      for (int j=0;j<items.length;++j)
+      {
+        if (items[j] == null)
+          continue;
+        Object o = items[j].getData();
+        if (o == null || !(o instanceof GenericObject))
+          continue;
+        
+        try
+        {
+          if (id.equals(((GenericObject) o).getID()))
+            table.select(j);
+        }
+        catch (RemoteException e)
+        {
+          Logger.error("error while selecting table item",e);
+        }
+      }
+    }
+  }
+
+  /**
+   * Markiert das uebergebene Element.
+   * @param o das zu markierende Element.
+   */
+  public void select(GenericObject o)
+  {
+    select(new GenericObject[]{o});
+  }
+
+  /**
+   * Liefert die markierten Objekte.
+   * Die Funktion liefert je nach Markierung <code>GenericObject</code> oder <code>GenericObject[]</code>.
+   */
+  public Object getSelection()
   {
     TableItem[] items = table.getSelection();
 
@@ -604,6 +669,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.34  2005/06/07 16:29:25  web0
+ * @N new tablepart features
+ *
  * Revision 1.33  2005/05/19 23:30:33  web0
  * @B RMI over SSL support
  *
