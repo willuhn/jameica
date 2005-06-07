@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/Extendable.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/06 10:10:43 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/07 21:57:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -30,6 +30,9 @@ public interface Extendable
 
 /*********************************************************************
  * $Log: Extendable.java,v $
+ * Revision 1.4  2005/06/07 21:57:32  web0
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/06/06 10:10:43  web0
  * *** empty log message ***
  *
