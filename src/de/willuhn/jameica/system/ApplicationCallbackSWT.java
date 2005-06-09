@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/03/17 22:44:10 $
+ * $Revision: 1.6 $
+ * $Date: 2005/06/09 23:07:47 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.system;
+
+import java.security.cert.X509Certificate;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -23,6 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.gui.SplashScreen;
+import de.willuhn.jameica.gui.dialogs.CertificateDialog;
 import de.willuhn.jameica.gui.dialogs.NewPasswordDialog;
 import de.willuhn.jameica.gui.dialogs.PasswordDialog;
 import de.willuhn.jameica.gui.dialogs.TextDialog;
@@ -289,11 +292,26 @@ public class ApplicationCallbackSWT implements ApplicationCallback
   	d.setLabelText(labeltext);
   	return (String) d.open();
   }
+
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#checkTrust(java.security.cert.X509Certificate)
+   */
+  public boolean checkTrust(X509Certificate cert) throws Exception
+  {
+    CertificateDialog d = new CertificateDialog(CertificateDialog.POSITION_CENTER,cert);
+
+    Boolean b = (Boolean) d.open();
+    return b.booleanValue();
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.6  2005/06/09 23:07:47  web0
+ * @N certificate checking activated
+ *
  * Revision 1.5  2005/03/17 22:44:10  web0
  * @N added fallback if system is not able to determine hostname
  *

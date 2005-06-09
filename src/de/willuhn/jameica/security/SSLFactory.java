@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/04/20 07:02:07 $
+ * $Revision: 1.12 $
+ * $Date: 2005/06/09 23:07:47 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -28,8 +28,10 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -82,12 +84,21 @@ public class SSLFactory
     Application.getCallback().getStartupMonitor().setStatusText("init ssl factory");
 
 //    if (Logger.getLevel().getValue() <= Level.DEBUG.getValue())
-//      System.setProperty("javax.net.debug","ssl hanshake");
+//      System.setProperty("javax.net.debug","ssl handshake");
 
 		File keyStoreFile = getKeyStoreFile();
+
 		if (keyStoreFile.exists() && keyStoreFile.canRead())
 		{
+      // Wir laden mal das Zertifikat. Dadurch wird der Keystore und alles mitgeladen ;)
 			getCertificate();
+      Enumeration e = getKeyStore().aliases();
+      Logger.info("certificates in keystore:");
+      while (e.hasMoreElements())
+      {
+        String name = (String) e.nextElement();
+        Logger.info("  " + name);
+      }
 			return;
 		}
 
@@ -254,7 +265,7 @@ public class SSLFactory
 	 * Liefert die Datei mit dem Keystore.
 	 * @return Keystore.
 	 */
-	private File getKeyStoreFile()
+	public File getKeyStoreFile()
 	{
 		return new File(Application.getConfig().getConfigDir() + "/jameica.keystore");
 	}
@@ -315,10 +326,6 @@ public class SSLFactory
 		InputStream is = null;
 		try
 		{
-			System.setProperty("javax.net.ssl.trustStore",      getKeyStoreFile().getAbsolutePath());
-			System.setProperty("javax.net.ssl.keyStore",        getKeyStoreFile().getAbsolutePath());
-			// System.setProperty("javax.net.ssl.keyStorePassword",getPassword());
-
 			File f = getKeyStoreFile();
 			Logger.info("reading keystore from file " + f.getAbsolutePath());
 			is = new FileInputStream(f);
@@ -328,6 +335,21 @@ public class SSLFactory
 
 			Logger.info("reading keys");
 			this.keystore.load(is,this.callback.getPassword().toCharArray());
+
+
+      Logger.info("keystore loaded successfully, applying system properties");
+
+      String s = getKeyStoreFile().getAbsolutePath();
+      Logger.debug("javax.net.ssl.trustStore: " + s);
+      Logger.debug("javax.net.ssl.keyStore  : " + s);
+      System.setProperty("javax.net.ssl.trustStore", s);
+      System.setProperty("javax.net.ssl.trustStorePassword",Application.getCallback().getPassword());
+      System.setProperty("javax.net.ssl.keyStore",   s);
+      System.setProperty("javax.net.ssl.keyStorePassword",Application.getCallback().getPassword());
+
+      Logger.info("applying jameica's ssl socket factory");
+      HttpsURLConnection.setDefaultSSLSocketFactory(getSSLContext().getSocketFactory());
+
 			return this.keystore;
 		}
 		finally
@@ -356,8 +378,10 @@ public class SSLFactory
 			Logger.info("adding certifcate " + alias + " to keystore");
 			CertificateFactory cf = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
 			X509Certificate cert = (X509Certificate)cf.generateCertificate(is);
-			getKeyStore().setCertificateEntry(alias,cert);
-			storeKeystore();
+			addTrustedCertificate(alias,cert);
+      
+      // keystore auf null setzen damit er neu geladen wird
+      this.keystore = null;
 		}
 		finally
 		{
@@ -365,6 +389,18 @@ public class SSLFactory
 		}
 	}	
 	
+  /**
+   * Fuegt dem Keystore ein Zertifikat hinzu.
+   * @param alias Alias-Name des Zertifikats.
+   * @param cert das Zertifikat.
+   * @throws Exception
+   */
+  public synchronized void addTrustedCertificate(String alias, X509Certificate cert) throws Exception
+  {
+    getKeyStore().setCertificateEntry(alias,cert);
+    storeKeystore();
+  } 
+
 	/**
 	 * Liefert einen fertig konfigurierten SSLContext mit den Jameica-Zertifikaten.
    * @return SSLContect.
@@ -407,6 +443,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.12  2005/06/09 23:07:47  web0
+ * @N certificate checking activated
+ *
  * Revision 1.11  2005/04/20 07:02:07  web0
  * *** empty log message ***
  *

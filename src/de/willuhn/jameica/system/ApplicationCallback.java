@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/03/17 22:44:10 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/09 23:07:47 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.system;
+
+import java.security.cert.X509Certificate;
 
 import de.willuhn.util.ProgressMonitor;
 
@@ -108,11 +110,25 @@ public interface ApplicationCallback
    * @throws Exception
    */
   public String askUser(String question, String labeltext) throws Exception;
+
+  /**
+   * Wird aufgerufen, wenn dem TrustManager von Jameica ein Zertifikat angeboten wird,
+   * dass er nicht in seinem Truststore hat. Der Benutzer soll dann entscheiden,
+   * ob er dem Zertifikat vertraut.
+   * @param certs das dem Benutzer anzuzeigende Zertifikat.
+   * @return true, wenn der TrustManager das Zertifikate akzeptieren und zum Truststore hinzufuegen soll.
+   * Andernfalls false.
+   * @throws Exception
+   */
+  public boolean checkTrust(X509Certificate cert) throws Exception;
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.4  2005/06/09 23:07:47  web0
+ * @N certificate checking activated
+ *
  * Revision 1.3  2005/03/17 22:44:10  web0
  * @N added fallback if system is not able to determine hostname
  *

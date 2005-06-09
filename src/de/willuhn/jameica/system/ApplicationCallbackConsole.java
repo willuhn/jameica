@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/05/19 23:30:33 $
+ * $Revision: 1.7 $
+ * $Date: 2005/06/09 23:07:47 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.system;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.cert.X509Certificate;
+import java.text.DateFormat;
 
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
@@ -175,11 +177,41 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 		BufferedReader keyboard = new BufferedReader(isr);
 		return keyboard.readLine();
   }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#checkTrust(java.security.cert.X509Certificate)
+   */
+  public boolean checkTrust(X509Certificate cert) throws Exception
+  {
+    DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
+
+    System.out.println(Application.getI18n().tr("Sie verbinden sich mit einem für Jameica unbekannten System." +
+      "Möchten Sie diesem Zertifikat vertrauen? [J/N]"));
+
+    System.out.println("----------------------------------------------------------------------");
+    System.out.println(Application.getI18n().tr("Eigenschaften des Zertifikats"));
+
+    System.out.println((Application.getI18n().tr("Ausgestellt von: ") + cert.getIssuerDN().getName()));
+    System.out.println((Application.getI18n().tr("Ausgestellt für: ") + cert.getSubjectDN().getName()));
+    System.out.println((Application.getI18n().tr("Gültig von:      ") + df.format(cert.getNotBefore())));
+    System.out.println((Application.getI18n().tr("Gültig bis:      ") + df.format(cert.getNotAfter())));
+    System.out.println((Application.getI18n().tr("Seriennummer:    ") + cert.getSerialNumber().toString()));
+    System.out.println((Application.getI18n().tr("Typ:             ") + cert.getSigAlgName() + "/" + cert.getType() + "v" + cert.getVersion()));
+
+    System.out.println("----------------------------------------------------------------------");
+    InputStreamReader isr = new InputStreamReader(System.in);
+    BufferedReader keyboard = new BufferedReader(isr);
+    String s = keyboard.readLine();
+    return s != null && ("j".equalsIgnoreCase(s) || "y".equalsIgnoreCase(s));
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.7  2005/06/09 23:07:47  web0
+ * @N certificate checking activated
+ *
  * Revision 1.6  2005/05/19 23:30:33  web0
  * @B RMI over SSL support
  *
