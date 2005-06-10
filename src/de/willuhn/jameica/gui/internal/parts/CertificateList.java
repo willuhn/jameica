@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/10 22:13:09 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/10 22:59:35 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,9 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.internal.action.CertificateDelete;
+import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
+import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
@@ -46,7 +49,7 @@ public class CertificateList extends TablePart
       {
         if (context == null || !(context instanceof CertObject))
           return;
-        // TODO hier weiter
+        // TODO hier Details des Zertifikates anzeigen
       }
     });
     addColumn(Application.getI18n().tr("Ausgestellt für"),"name");
@@ -56,13 +59,25 @@ public class CertificateList extends TablePart
     addColumn(Application.getI18n().tr("Seriennummer"),"serial");
     this.setMulti(true);
     this.disableSummary();
+    ContextMenu menu = new ContextMenu();
+    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Zertifikat löschen..."), new CertificateDelete()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        if (context == null || !(context instanceof CertObject))
+          throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das zu löschende Zertifikat aus"));
+        super.handleAction(((CertObject)context).cert);
+        // TODO Tabelle aktualisieren
+      }
+    }));
+    this.setContextMenu(menu);
   }
 
   private static GenericIterator init()
   {
     try
     {
-      X509Certificate[] list = Application.getSSLFactory().getInstalledCertificates();
+      X509Certificate[] list = Application.getSSLFactory().getTrustedCertificates();
       GenericObject[] objects = new GenericObject[list.length];
       for (int i=0;i<list.length;++i)
       {
@@ -178,6 +193,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.2  2005/06/10 22:59:35  web0
+ * @N Loeschen von Zertifikaten
+ *
  * Revision 1.1  2005/06/10 22:13:09  web0
  * @N new TabGroup
  * @N extended Settings

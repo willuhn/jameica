@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/06/10 22:13:09 $
+ * $Revision: 1.15 $
+ * $Date: 2005/06/10 22:59:35 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -95,15 +95,6 @@ public class SSLFactory
 		{
       // Wir laden mal das Zertifikat. Dadurch wird der Keystore und alles mitgeladen ;)
 			getSystemCertificate();
-      Enumeration e = getKeyStore().aliases();
-      Logger.info("certificates in keystore:");
-      while (e.hasMoreElements())
-      {
-        String name = (String) e.nextElement();
-        if (SYSTEM_ALIAS.equals(name))
-          continue;
-        Logger.info("  " + name);
-      }
 			return;
 		}
 
@@ -323,7 +314,7 @@ public class SSLFactory
    * @return Liste der installieren Zertifikate.
    * @throws Exception
    */
-  public synchronized X509Certificate[] getInstalledCertificates() throws Exception
+  public synchronized X509Certificate[] getTrustedCertificates() throws Exception
   {
     ArrayList list = new ArrayList();
     Enumeration e = getKeyStore().aliases();
@@ -389,6 +380,38 @@ public class SSLFactory
 		}
 	}
 	
+  /**
+   * Entfernt das Zertifikat mit dem genannten Namen aus dem Keystore.
+   * @param cert das zu entfernende Zertifikat.
+   * @throws Exception
+   */
+  public synchronized void removeTrustedCertificate(X509Certificate cert) throws Exception
+  {
+    if (cert == null)
+      throw new Exception("certificate cannot be null");
+
+    Logger.warn("removing certificate " + cert.getSubjectDN().getName() + " from keystore");
+
+    Logger.info("searching for alias name");
+    Enumeration e = getKeyStore().aliases();
+    while (e.hasMoreElements())
+    {
+      String alias = (String) e.nextElement();
+      X509Certificate c = (X509Certificate) getKeyStore().getCertificate(alias);
+      if (c == null)
+        continue;
+      if (cert.equals(c))
+      {
+        Logger.warn("deleting certificate for alias " + alias);
+        getKeyStore().deleteEntry(alias);
+        storeKeystore();
+        this.keystore = null;
+        return;
+      }
+    }
+    Logger.warn("given certificate not found in keystore");
+  }
+
 	/**
 	 * Fuegt dem Keystore ein Zertifikat aus dem genannten Inputstream hinzu.
    * @param alias Alias-Name des Zertifikats.
@@ -399,13 +422,9 @@ public class SSLFactory
 	{
 		try
 		{
-			Logger.info("adding certifcate " + alias + " to keystore");
 			CertificateFactory cf = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
 			X509Certificate cert = (X509Certificate)cf.generateCertificate(is);
 			addTrustedCertificate(alias,cert);
-      
-      // keystore auf null setzen damit er neu geladen wird
-      this.keystore = null;
 		}
 		finally
 		{
@@ -426,8 +445,12 @@ public class SSLFactory
     if (SYSTEM_ALIAS.equals(alias))
       throw new Exception("not allowed to overwrite system certificate");
 
+    Logger.warn("adding certificate " + alias + " to keystore");
     getKeyStore().setCertificateEntry(alias,cert);
     storeKeystore();
+
+    // keystore auf null setzen damit er neu geladen wird
+    this.keystore = null;
   } 
 
 	/**
@@ -475,6 +498,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.15  2005/06/10 22:59:35  web0
+ * @N Loeschen von Zertifikaten
+ *
  * Revision 1.14  2005/06/10 22:13:09  web0
  * @N new TabGroup
  * @N extended Settings
