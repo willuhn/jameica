@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.14 $
- * $Date: 2004/11/12 18:23:59 $
- * $Author: willuhn $
+ * $Revision: 1.15 $
+ * $Date: 2005/06/10 10:12:26 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -138,11 +138,24 @@ public class LabelGroup
    */
   public void addText(String text, boolean linewrap)
   {
+    addText(text,linewrap,null);
+  }
+
+  /**
+   * Fuegt Freitext zur Group hinzu.
+   * @param text der anzuzeigende Text.
+   * @param linewrap legt fest, ob der Text bei Erreichen der maximalen Breite umgebrochen werden darf.
+   * @param color Farbe des Textes.
+   */
+  public void addText(String text, boolean linewrap, Color color)
+  {
     final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
     labelGrid.horizontalSpan = 2;
 
     final Label label = new Label(group,linewrap ? SWT.WRAP : SWT.NONE);
-		label.setBackground(Color.BACKGROUND.getSWTColor());
+    label.setBackground(Color.BACKGROUND.getSWTColor());
+    if (color != null)
+      label.setForeground(color.getSWTColor());
     label.setText(text);
     label.setLayoutData(labelGrid);
   }
@@ -240,6 +253,10 @@ public class LabelGroup
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.15  2005/06/10 10:12:26  web0
+ * @N Zertifikats-Dialog ergonomischer gestaltet
+ * @C TrustManager prueft nun zuerst im Java-eigenen Keystore
+ *
  * Revision 1.14  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

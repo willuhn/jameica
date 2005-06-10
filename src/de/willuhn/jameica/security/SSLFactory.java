@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/06/09 23:07:47 $
+ * $Revision: 1.13 $
+ * $Date: 2005/06/10 10:12:26 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -415,7 +415,10 @@ public class SSLFactory
 		this.sslContext = SSLContext.getInstance("TLS");
 
 		Logger.info("init key manager [using algorithm: " + KeyManagerFactory.getDefaultAlgorithm() + "]");
-		KeyManagerFactory keyManagerFactory=KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+		KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+
+    // Der KeyManager soll ausschliesslich unsere Keys verwenden, wenn
+    // wir uns irgendwohin connecten.    
 		keyManagerFactory.init(this.getKeyStore(),this.callback.getPassword().toCharArray());
 
 		// Wir benutzen unseren eignen TrustManager
@@ -443,6 +446,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.13  2005/06/10 10:12:26  web0
+ * @N Zertifikats-Dialog ergonomischer gestaltet
+ * @C TrustManager prueft nun zuerst im Java-eigenen Keystore
+ *
  * Revision 1.12  2005/06/09 23:07:47  web0
  * @N certificate checking activated
  *

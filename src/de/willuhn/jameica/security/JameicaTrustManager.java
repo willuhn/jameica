@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/09 23:07:47 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/10 10:12:26 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -13,9 +13,11 @@
 
 package de.willuhn.jameica.security;
 
+import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.TrustManager;
@@ -43,15 +45,21 @@ public class JameicaTrustManager implements X509TrustManager
   public JameicaTrustManager() throws KeyStoreException, Exception
   {
     super();
+
 		// Wir ermitteln den System-TrustManager.
-		// Alles was wir nicht wollen, delegieren wir an ihn weiter.
+		// und lassen die Zertifikatspruefungen erstmal von dem machen
+    // Nur wenn er die Zertifikate als nicht vertrauenswuerdig
+    // einstuft, greifen wir ein und checken, ob wir das Zertifikat
+    // in unserem eigenen Keystore haben.
+
     TrustManagerFactory factory = TrustManagerFactory.getInstance("SunX509");
-    factory.init(Application.getSSLFactory().getKeyStore());
+    factory.init((KeyStore) null); // Wir initialisieren mit <code>null</code>, damit der System-Keystore genommen wird
+
     TrustManager[] trustmanagers = factory.getTrustManagers();
-    if (trustmanagers.length == 0)
-    {
-      throw new NoSuchAlgorithmException("SunX509 trust manager not supported");
-    }
+    if (trustmanagers == null || trustmanagers.length == 0)
+      Logger.warn("NO system trustmanager found, will use only jameicas trustmanager");
+
+    // uns interessiert nur der erste. Das ist der von Java selbst.
     this.standardTrustManager = (X509TrustManager) trustmanagers[0];
   }
 
@@ -67,14 +75,22 @@ public class JameicaTrustManager implements X509TrustManager
       return;
     }
 
-    Logger.info("checking client certificate");
-    try
+    if (this.standardTrustManager != null)
     {
-      this.standardTrustManager.checkClientTrusted(chain,authType);
+      Logger.info("checking client certificate via system trustmanager");
+      try
+      {
+        this.standardTrustManager.checkClientTrusted(chain,authType);
+      }
+      catch (CertificateException c)
+      {
+        Logger.warn("client certificate not found in system trustmanager, trying jameica trustmanager");
+        this.checkTrusted(chain,authType);
+      }
     }
-    catch (CertificateException c)
+    else
     {
-      Logger.warn("client certificate not trusted, asking user");
+      Logger.info("no system trustmanager defined, checking client certificate via jameica trustmanager");
       this.checkTrusted(chain,authType);
     }
   }
@@ -91,14 +107,22 @@ public class JameicaTrustManager implements X509TrustManager
       return;
     }
 
-    Logger.info("checking server certificate");
-    try
+    if (this.standardTrustManager != null)
     {
-      this.standardTrustManager.checkServerTrusted(certificates,authType);
+      Logger.info("checking server certificate via system trustmanager");
+      try
+      {
+        this.standardTrustManager.checkServerTrusted(certificates,authType);
+      }
+      catch (CertificateException c)
+      {
+        Logger.warn("server certificate not found in system trustmanager, trying jameica trustmanager");
+        this.checkTrusted(certificates,authType);
+      }
     }
-    catch (CertificateException c)
+    else
     {
-      Logger.warn("server certificate not trusted, asking user");
+      Logger.info("no system trustmanager defined, checking server certificate via jameica trustmanager");
       this.checkTrusted(certificates,authType);
     }
   }
@@ -122,7 +146,22 @@ public class JameicaTrustManager implements X509TrustManager
       for (int i=0;i<chain.length;++i)
       {
         // Wir checken erstmal, ob das Zertifikat an sich ueberhaupt gueltig ist
-        chain[i].checkValidity();
+        Logger.info("checking validity of certificate");
+        try
+        {
+          chain[i].checkValidity();
+        }
+        catch (CertificateExpiredException exp)
+        {
+          Logger.warn("WARNING! certificate EXPIRED: " + toString(chain[i])); 
+        }
+        catch (CertificateNotYetValidException not)
+        {
+          Logger.warn("WARNING! certificate NOT YET VALID: " + toString(chain[i])); 
+        }
+          
+
+        Logger.info("checking trust of certificate");
         if (callback.checkTrust(chain[i]))
         {
           Logger.info("certificate trusted, adding to truststore: " + toString(chain[i]));
@@ -184,6 +223,10 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.4  2005/06/10 10:12:26  web0
+ * @N Zertifikats-Dialog ergonomischer gestaltet
+ * @C TrustManager prueft nun zuerst im Java-eigenen Keystore
+ *
  * Revision 1.3  2005/06/09 23:07:47  web0
  * @N certificate checking activated
  *

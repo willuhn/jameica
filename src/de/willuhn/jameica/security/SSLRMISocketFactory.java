@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLRMISocketFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/10 10:12:26 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -37,7 +37,7 @@ public class SSLRMISocketFactory extends RMISocketFactory
 	private SSLServerSocketFactory serverSocketFactory;
   private SSLSocketFactory socketFactory;
 
-  private boolean clientAuth = false;
+  private final static boolean CLIENT_AUTH = true;
 
   /**
    * ct.
@@ -76,8 +76,8 @@ public class SSLRMISocketFactory extends RMISocketFactory
 		Logger.info("Creating server socket at port " + port + "/tcp");
     SSLServerSocket socket = (SSLServerSocket) serverSocketFactory.createServerSocket(port);
 		log(socket);
-    socket.setNeedClientAuth(clientAuth);
-    socket.setWantClientAuth(clientAuth);
+    socket.setWantClientAuth(CLIENT_AUTH);
+    socket.setNeedClientAuth(CLIENT_AUTH);
     return socket;
   }
 
@@ -129,6 +129,10 @@ public class SSLRMISocketFactory extends RMISocketFactory
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.3  2005/06/10 10:12:26  web0
+ * @N Zertifikats-Dialog ergonomischer gestaltet
+ * @C TrustManager prueft nun zuerst im Java-eigenen Keystore
+ *
  * Revision 1.2  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *
