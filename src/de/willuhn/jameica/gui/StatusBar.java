@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.39 $
- * $Date: 2005/06/03 17:14:41 $
+ * $Revision: 1.40 $
+ * $Date: 2005/06/10 22:13:09 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -393,9 +393,7 @@ public class StatusBar {
           }
           catch (Exception e)
           {
-            // Logger.error("unable to append message to live log",e);
-            // Es macht keinen Sinn, das zu loggen ;)
-            e.printStackTrace();
+            // ignore
           }
         }
       });
@@ -414,6 +412,10 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.40  2005/06/10 22:13:09  web0
+ * @N new TabGroup
+ * @N extended Settings
+ *
  * Revision 1.39  2005/06/03 17:14:41  web0
  * @N Livelog
  *

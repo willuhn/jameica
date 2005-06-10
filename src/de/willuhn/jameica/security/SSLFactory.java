@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/06/10 10:12:26 $
+ * $Revision: 1.14 $
+ * $Date: 2005/06/10 22:13:09 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -53,6 +54,8 @@ public class SSLFactory
 	{
 		java.security.Security.addProvider(new BouncyCastleProvider());
 	}
+
+  private final static String SYSTEM_ALIAS = "jameica";
 
 	private KeyStore keystore							= null;
 	private X509Certificate certificate 	= null;
@@ -91,12 +94,14 @@ public class SSLFactory
 		if (keyStoreFile.exists() && keyStoreFile.canRead())
 		{
       // Wir laden mal das Zertifikat. Dadurch wird der Keystore und alles mitgeladen ;)
-			getCertificate();
+			getSystemCertificate();
       Enumeration e = getKeyStore().aliases();
       Logger.info("certificates in keystore:");
       while (e.hasMoreElements())
       {
         String name = (String) e.nextElement();
+        if (SYSTEM_ALIAS.equals(name))
+          continue;
         Logger.info("  " + name);
       }
 			return;
@@ -141,7 +146,7 @@ public class SSLFactory
 
     generator.setIssuerDN(user);
 		generator.setSubjectDN(user);
-		generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*4)));
+		generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre sollten reichen ;)
 		generator.setNotBefore(new Date());
 
 		generator.setPublicKey(this.publicKey);
@@ -161,7 +166,7 @@ public class SSLFactory
 		this.keystore.load(null,this.callback.getPassword().toCharArray());
 
 		Logger.info("  creating private key and x.509 certifcate");
-		this.keystore.setKeyEntry("jameica",this.privateKey,
+		this.keystore.setKeyEntry(SYSTEM_ALIAS,this.privateKey,
 															this.callback.getPassword().toCharArray(),
 															new X509Certificate[]{this.certificate});
 
@@ -183,7 +188,7 @@ public class SSLFactory
 
 		Logger.warn("  reading private key");
 		PrivateKey k 					= this.getPrivateKey();
-		X509Certificate cert 	= this.getCertificate();
+		X509Certificate cert 	= this.getSystemCertificate();
 
 		this.certificate = null;
 		this.privateKey  = null;
@@ -194,7 +199,7 @@ public class SSLFactory
 
 		Logger.warn("  changing password of private key");
 
-		this.keystore.setKeyEntry("jameica",k,
+		this.keystore.setKeyEntry(SYSTEM_ALIAS,k,
 															this.callback.getPassword().toCharArray(),
 															new X509Certificate[]{cert});
 
@@ -281,7 +286,7 @@ public class SSLFactory
 		if (this.publicKey != null)
 			return this.publicKey;
 
-		return getCertificate().getPublicKey();
+		return getSystemCertificate().getPublicKey();
 	}
 
   /**
@@ -295,7 +300,7 @@ public class SSLFactory
 		if (this.privateKey != null)
 			return this.privateKey;
 
-		this.privateKey = (PrivateKey) getKeyStore().getKey("jameica",this.callback.getPassword().toCharArray());
+		this.privateKey = (PrivateKey) getKeyStore().getKey(SYSTEM_ALIAS,this.callback.getPassword().toCharArray());
 		return this.privateKey;
 	}
 
@@ -304,14 +309,33 @@ public class SSLFactory
    * @return X.509-Zertifikat.
    * @throws Exception
    */
-  public synchronized X509Certificate getCertificate() throws Exception
+  public synchronized X509Certificate getSystemCertificate() throws Exception
 	{
 		if (this.certificate != null)
 			return this.certificate;
 
-		this.certificate = (X509Certificate) getKeyStore().getCertificate("jameica");
+		this.certificate = (X509Certificate) getKeyStore().getCertificate(SYSTEM_ALIAS);
 		return this.certificate;
 	}
+  
+  /**
+   * Liefert eine Liste aller installierten Zertifikate <b>ausser</b> dem Jameica-eigenen System-Zertifikat.
+   * @return Liste der installieren Zertifikate.
+   * @throws Exception
+   */
+  public synchronized X509Certificate[] getInstalledCertificates() throws Exception
+  {
+    ArrayList list = new ArrayList();
+    Enumeration e = getKeyStore().aliases();
+    while (e.hasMoreElements())
+    {
+      String name = (String)e.nextElement();
+      if (SYSTEM_ALIAS.equals(name))
+        continue;
+      list.add(getKeyStore().getCertificate(name));
+    }
+    return (X509Certificate[]) list.toArray(new X509Certificate[list.size()]);
+  }
 
 	/**
 	 * Liefert den Keystore mit dem Zertifikat.
@@ -397,6 +421,11 @@ public class SSLFactory
    */
   public synchronized void addTrustedCertificate(String alias, X509Certificate cert) throws Exception
   {
+    if (alias == null)
+      throw new Exception("certificate alias name cannot be null");
+    if (SYSTEM_ALIAS.equals(alias))
+      throw new Exception("not allowed to overwrite system certificate");
+
     getKeyStore().setCertificateEntry(alias,cert);
     storeKeystore();
   } 
@@ -446,6 +475,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.14  2005/06/10 22:13:09  web0
+ * @N new TabGroup
+ * @N extended Settings
+ *
  * Revision 1.13  2005/06/10 10:12:26  web0
  * @N Zertifikats-Dialog ergonomischer gestaltet
  * @C TrustManager prueft nun zuerst im Java-eigenen Keystore

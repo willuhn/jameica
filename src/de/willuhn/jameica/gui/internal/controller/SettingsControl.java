@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/01/13 19:31:37 $
- * $Author: willuhn $
+ * $Revision: 1.9 $
+ * $Date: 2005/06/10 22:13:09 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -13,6 +13,8 @@
 
 package de.willuhn.jameica.gui.internal.controller;
 
+import java.net.BindException;
+import java.net.ServerSocket;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -23,16 +25,25 @@ import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
+import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.ColorInput;
+import de.willuhn.jameica.gui.input.FileInput;
 import de.willuhn.jameica.gui.input.Input;
+import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
+import de.willuhn.jameica.gui.internal.parts.CertificateList;
+import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Config;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
@@ -42,6 +53,15 @@ public class SettingsControl extends AbstractControl
 {
 
 	private I18N i18n;
+
+  // System
+  private Input logLevel;
+  private Input rmiPort;
+  private FileInput logFile;
+  private CheckboxInput rmiSSL;
+  private TablePart certs;
+
+  // Look & Feel
 	private Input colorWidgetBG;
 	private Input colorWidgetFG;
 	private Input colorBackground;
@@ -50,7 +70,6 @@ public class SettingsControl extends AbstractControl
 	private Input colorSuccess;
 	private Input colorLink;
 	private Input colorLinkActive;
-	
 	private Input styleFactory;
 	
 	private SelectInput locale;
@@ -63,6 +82,77 @@ public class SettingsControl extends AbstractControl
   {
     super(view);
     i18n = Application.getI18n();
+  }
+
+  /**
+   * Liefert ein Auswahl-Feld fuer den Log-Level.
+   * @return
+   */
+  public Input getLogLevel()
+  {
+    if (this.logLevel != null)
+      return this.logLevel;
+
+    String[] levels = new String[]
+    {
+      Level.DEBUG.getName(),
+      Level.INFO.getName(),
+      Level.WARN.getName(),
+      Level.ERROR.getName()
+    };
+    logLevel = new SelectInput(levels,Logger.getLevel().getName());
+    return logLevel;
+  }
+
+  /**
+   * Liefert ein Eingabe-Feld fuer die Log-Datei.
+   * @return
+   */
+  public Input getLogFile()
+  {
+    if (this.logFile != null)
+      return this.logFile;
+
+    this.logFile = new FileInput(Application.getConfig().getLogFile());
+    this.logFile.disableClientControl();
+    return this.logFile;
+  }
+
+  /**
+   * Liefert ein Eingabe-Feld fuer den zu verwendenden RMI-Port.
+   * @return
+   */
+  public Input getRmiPort()
+  {
+    if (this.rmiPort != null)
+      return this.rmiPort;
+
+    rmiPort = new IntegerInput(Application.getConfig().getRmiPort());
+    return rmiPort;
+  }
+
+  /**
+   * Liefert eine Checkbox zur Aktivierung von SSL bei der RMI-Uebertragung.
+   * @return
+   */
+  public CheckboxInput getRmiSSL()
+  {
+    if (this.rmiSSL != null)
+      return this.rmiSSL;
+    rmiSSL = new CheckboxInput(Application.getConfig().getRmiSSL());
+    return this.rmiSSL;
+  }
+
+  /**
+   * Liefert eine Tabelle mit den installierten Zertifikaten.
+   * @return
+   */
+  public Part getCertificates()
+  {
+    if (this.certs != null)
+      return this.certs;
+    this.certs = new CertificateList();
+    return this.certs;
   }
 
 	/**
@@ -226,21 +316,67 @@ public class SettingsControl extends AbstractControl
 
   	try
     {
+
+      // System
+      String level = (String)getLogLevel().getValue();
+      Application.getConfig().setLoglevel(level);
+      Logger.setLevel(Level.findByName(level));
+
+      Application.getConfig().setLogFile((String)getLogFile().getValue());
+      
+      Integer in = (Integer) getRmiPort().getValue();
+      if (in == null)
+        throw new ApplicationException(i18n.tr("Bitte geben Sie eine TCP-Portnummer ein"));
+        
+      int i = in.intValue();
+      if (i < 1024 || i > 65535)
+        throw new ApplicationException(i18n.tr("TCP-Portnummer ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1024,""+65535}));
+
+      if (i != Application.getConfig().getRmiPort())
+      {
+        ServerSocket s = null;
+        try
+        {
+          // Wir machen einen Test auf dem Port wenn es nicht der aktuelle ist
+          Logger.info("testing TCP port " + i);
+          s = new ServerSocket(i);
+        }
+        catch (BindException e)
+        {
+          throw new ApplicationException(i18n.tr("Die angegebene TCP-Portnummer {0} ist bereits belegt",""+i));
+        }
+        finally
+        {
+          if (s != null)
+          {
+            try
+            {
+              s.close();
+            }
+            catch (Exception e)
+            {
+              // ignore
+            }
+          }
+        }
+      }
+
+      Application.getConfig().setRmiPort(i);
+
+      Boolean b = (Boolean) getRmiSSL().getValue();
+      Application.getConfig().setRmiSSL(b.booleanValue());
+
+      // Look & Feel
     	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
 			Color.COMMENT.setSWTColor((org.eclipse.swt.graphics.Color)getColorComment().getValue());
 			Color.BACKGROUND.setSWTColor((org.eclipse.swt.graphics.Color)getColorBackground().getValue());
-
 			Color.WIDGET_FG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetFG().getValue());
-
 			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
 			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
-
 			Color.LINK.setSWTColor((org.eclipse.swt.graphics.Color)getColorLink().getValue());
 			Color.LINK_ACTIVE.setSWTColor((org.eclipse.swt.graphics.Color)getColorLinkActive().getValue());
-
 			StyleFactoryObject fo = (StyleFactoryObject) getStyleFactory().getValue();
 			GUI.setStyleFactory(fo.factory);
-
 			LocaleObject lo = (LocaleObject) getLocale().getValue();
 			Application.getConfig().setLocale(lo.locale);
 
@@ -250,6 +386,10 @@ public class SettingsControl extends AbstractControl
 			d.setTitle(i18n.tr("Neustart erforderlich"));
 			d.setText(i18n.tr("Bitte starten Sie Jameica neu, damit Ihre Änderungen wirksam werden."));
 			d.open();
+    }
+    catch (ApplicationException ae)
+    {
+      GUI.getStatusBar().setErrorText(ae.getMessage());
     }
     catch (Exception e)
     {
@@ -279,6 +419,10 @@ public class SettingsControl extends AbstractControl
 			Color.SUCCESS.reset();
 			Color.LINK.reset();
 			Color.LINK_ACTIVE.reset();
+      Application.getConfig().setRmiPort(Config.RMI_DEFAULT_PORT);
+      Application.getConfig().setLogFile(null);
+      Application.getConfig().setLoglevel(Level.INFO.getName());
+      Application.getConfig().setRmiSSL(true);
 
 			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen zurückgesetzt."));
 			new de.willuhn.jameica.gui.internal.action.Settings().handleAction(null);
@@ -417,6 +561,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.9  2005/06/10 22:13:09  web0
+ * @N new TabGroup
+ * @N extended Settings
+ *
  * Revision 1.8  2005/01/13 19:31:37  willuhn
  * @C SSLFactory geaendert
  * @N Settings auf property-Format umgestellt

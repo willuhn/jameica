@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.18 $
- * $Date: 2005/04/19 21:11:53 $
+ * $Revision: 1.19 $
+ * $Date: 2005/06/10 22:13:09 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import de.willuhn.logging.Logger;
  */
 public final class Config
 {
+  public final static int RMI_DEFAULT_PORT = 4840;
 
 	private File workDir   	   = null;
   private File configDir     = null;
@@ -95,7 +96,7 @@ public final class Config
    */
   public int getRmiPort()
   {
-    return settings.getInt("jameica.system.rmi.serverport",4840);
+    return settings.getInt("jameica.system.rmi.serverport",RMI_DEFAULT_PORT);
   }
 
 	/**
@@ -288,6 +289,10 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.19  2005/06/10 22:13:09  web0
+ * @N new TabGroup
+ * @N extended Settings
+ *
  * Revision 1.18  2005/04/19 21:11:53  web0
  * @N service sharing can now be disabled in server mode too
  *

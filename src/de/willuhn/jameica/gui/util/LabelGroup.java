@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/06/10 10:12:26 $
+ * $Revision: 1.16 $
+ * $Date: 2005/06/10 22:13:09 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -12,23 +12,11 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
 
-import java.rmi.RemoteException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-
-import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.Part;
-import de.willuhn.jameica.gui.input.CheckboxInput;
-import de.willuhn.jameica.gui.input.Input;
-import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
-import de.willuhn.util.I18N;
 
 /**
  * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
@@ -37,12 +25,10 @@ import de.willuhn.util.I18N;
  * Gruppen und tut dort seine Eingabefelder rein.
  * @author willuhn
  */
-public class LabelGroup
+public class LabelGroup extends Container
 {
 
-	private I18N i18n;
   private Group group = null;
-  private boolean fullSize = false;
 
   /**
    * ct.
@@ -66,11 +52,11 @@ public class LabelGroup
    */
   public LabelGroup(Composite parent, String name, boolean fullSize)
 	{
-		this.fullSize = fullSize;
-		i18n = Application.getI18n();
+    super(fullSize);
 		group = new Group(parent, SWT.NONE);
 		group.setBackground(Color.BACKGROUND.getSWTColor());
-		group.setText(name);
+    if (name != null)
+  		group.setText(name);
 		group.setFont(Font.H2.getSWTFont());
 		GridLayout layout = new GridLayout(2, false);
 		group.setLayout(layout);
@@ -78,181 +64,22 @@ public class LabelGroup
 		group.setLayoutData(grid);
 	}
 
-	/**
-	 * Liefert das allumfassende Control der Gruppe.
-   * @return das Control der Group.
-   */
-  public Control getControl()
-	{
-		return group;
-	}
 
   /**
-   * Fuegt ein weiteres Label-Paar hinzu.
-   * @param name Name des Feldes.
-   * @param input Das Eingabefeld.
+   * @see de.willuhn.jameica.gui.util.Container#getComposite()
    */
-  public void addLabelPair(String name, Input input)
+  public Composite getComposite()
   {
-    // Label
-    final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
-    labelGrid.verticalAlignment = GridData.CENTER;
-    final Label label = new Label(group, SWT.NONE);
-		label.setBackground(Color.BACKGROUND.getSWTColor());
-    label.setText(name);
-    label.setLayoutData(labelGrid);
-
-    // Inputfeld
-    input.paint(group);
-  }
-  
-  /**
-   * Fuegt eine Checkbox mit Kommentar hinzu.
-   * @param checkbox die Checkbox.
-   * @param text Text dahinter.
-   */
-  public void addCheckbox(CheckboxInput checkbox, String text)
-  {
-    final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-    labelGrid.horizontalSpan = 2;
-    final Composite comp = new Composite(group,SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
-    GridLayout gl = new GridLayout(2,false);
-    gl.marginHeight = 0;
-    gl.marginWidth = 0;
-    comp.setLayout(gl);
-    comp.setLayoutData(labelGrid);
-
-    checkbox.paint(comp,40);
-
-    final Label label = new Label(comp , SWT.NONE);
-		label.setBackground(Color.BACKGROUND.getSWTColor());
-    label.setText(text);
-    label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-  }
-
-  /**
-   * Fuegt Freitext zur Group hinzu.
-   * @param text der anzuzeigende Text.
-   * @param linewrap legt fest, ob der Text bei Erreichen der maximalen Breite umgebrochen werden darf.
-   */
-  public void addText(String text, boolean linewrap)
-  {
-    addText(text,linewrap,null);
-  }
-
-  /**
-   * Fuegt Freitext zur Group hinzu.
-   * @param text der anzuzeigende Text.
-   * @param linewrap legt fest, ob der Text bei Erreichen der maximalen Breite umgebrochen werden darf.
-   * @param color Farbe des Textes.
-   */
-  public void addText(String text, boolean linewrap, Color color)
-  {
-    final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
-    labelGrid.horizontalSpan = 2;
-
-    final Label label = new Label(group,linewrap ? SWT.WRAP : SWT.NONE);
-    label.setBackground(Color.BACKGROUND.getSWTColor());
-    if (color != null)
-      label.setForeground(color.getSWTColor());
-    label.setText(text);
-    label.setLayoutData(labelGrid);
-  }
-
-  /**
-   * Fuegt ein generisches GUI-Element hinzu.
-   * @param part anzuzeigender Part.
-   */
-  public void addPart(Part part)
-  {
-    try {
-      final GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
-      grid.horizontalSpan = 2;
-      final Composite comp = new Composite(group,SWT.NONE);
-      comp.setBackground(Color.BACKGROUND.getSWTColor());
-      comp.setLayoutData(grid);
-
-      GridLayout layout = new GridLayout(1,true);
-      layout.marginHeight = 0;
-      layout.marginWidth = 0;
-      comp.setLayout(layout);
-
-      part.paint(comp);
-    }
-    catch (RemoteException e)
-    {
-    	Logger.error("error while reading table",e);
-			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Lesen der Tabelle"));
-    }
-  }
-
-  /**
-   * Fuegt eine Zwischenueberschrift zur Group hinzu.
-   * @param text die anzuzeigende Ueberschrift.
-   */
-  public void addHeadline(String text)
-  {
-		final GridData grid = new GridData(GridData.FILL_HORIZONTAL);
-		grid.horizontalSpan = 2;
-		grid.horizontalIndent = 0;
-		Composite comp = new Composite(group,SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
-		comp.setLayoutData(grid);
-
-		GridLayout layout = new GridLayout(2,false);
-		layout.marginHeight = 3;
-		layout.marginWidth = 2;
-		comp.setLayout(layout);
-
-		final Label label = new Label(comp,SWT.NONE);
-		label.setFont(Font.H2.getSWTFont());
-		label.setBackground(Color.BACKGROUND.getSWTColor());
-		label.setText(text);
-		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		
-		final Label line = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
-		line.setBackground(Color.BACKGROUND.getSWTColor());
-		line.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-  }
-  
-  /**
-   * Fuegt eine Trennzeile ein.
-   */
-  public void addSeparator()
-  {
-    final GridData lineGrid = new GridData(GridData.FILL_HORIZONTAL);
-    lineGrid.horizontalSpan = 2;
-    final Label line = new Label(group,SWT.SEPARATOR | SWT.HORIZONTAL);
-		line.setBackground(Color.BACKGROUND.getSWTColor());
-    line.setLayoutData(lineGrid);
-  }
-  
-  /**
-   * Erstellt eine neue ButtonAres in der Gruppe.
-   * @param numButtons Anzahl der Buttons.
-   * @return die Button-Area.
-   */
-  public ButtonArea createButtonArea(int numButtons)
-  {
-  	addSeparator();
-		final GridData g = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
-		g.horizontalSpan = 2;
-		final Composite comp = new Composite(group,SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
-		comp.setLayoutData(g);
-
-		final GridLayout gl = new GridLayout();
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		comp.setLayout(gl);
-  	return new ButtonArea(comp,numButtons);
+    return this.group;
   }
 }
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.16  2005/06/10 22:13:09  web0
+ * @N new TabGroup
+ * @N extended Settings
+ *
  * Revision 1.15  2005/06/10 10:12:26  web0
  * @N Zertifikats-Dialog ergonomischer gestaltet
  * @C TrustManager prueft nun zuerst im Java-eigenen Keystore

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/11/12 18:23:59 $
- * $Author: willuhn $
+ * $Revision: 1.6 $
+ * $Date: 2005/06/10 22:13:09 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -15,13 +15,17 @@ package de.willuhn.jameica.gui.internal.views;
 
 import java.rmi.RemoteException;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.TabFolder;
+
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
-import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.gui.util.TabGroup;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -44,10 +48,31 @@ public class Settings extends AbstractView
 		GUI.getView().setTitle(i18n.tr("Einstellungen"));
 		final SettingsControl control = new SettingsControl(this);
 
+    TabFolder folder = new TabFolder(getParent(), SWT.NONE);
+    folder.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+    /////////////////////////////////////////////////////////////////
+    // System-Einstellungen
+    TabGroup system = new TabGroup(folder,i18n.tr("System"));
+    
+    system.addHeadline(i18n.tr("Logging-Optionen"));
+    system.addLabelPair(i18n.tr("Log-Level"), control.getLogLevel());
+    system.addLabelPair(i18n.tr("Log-Datei"), control.getLogFile());
+
+    system.addHeadline(i18n.tr("Netzwerk-Optionen"));
+    system.addCheckbox(control.getRmiSSL(),i18n.tr("Daten im Netzwerk-Betrieb (RMI) verschlüsselt übertragen"));
+    system.addLabelPair(i18n.tr("TCP-Portnummer für Netzwerk-Betrieb (RMI)"), control.getRmiPort());
+
+    system.addHeadline(i18n.tr("Installierte SSL-Zertifikate"));
+    system.addPart(control.getCertificates());
+    
+    //
+    /////////////////////////////////////////////////////////////////
+
 		/////////////////////////////////////////////////////////////////
 		// Farb-Einstellungen
-		LabelGroup colorGroup = new LabelGroup(getParent(),i18n.tr("Look and Feel"));
 
+    TabGroup colorGroup = new TabGroup(folder,i18n.tr("Look and Feel"));
 		try
 		{
 			colorGroup.addLabelPair(i18n.tr("installierte Sprache"), control.getLocale());
@@ -68,25 +93,25 @@ public class Settings extends AbstractView
 		colorGroup.addLabelPair(i18n.tr("Links"),control.getColorLink());
 		colorGroup.addLabelPair(i18n.tr("Aktive Links"),control.getColorLinkActive());
 
-		ButtonArea colorButtons = colorGroup.createButtonArea(3);
-		colorButtons.addButton(i18n.tr("Zurücksetzen"),new Action()
-    {
-      public void handleAction(Object context) throws ApplicationException
-      {
-				control.handleRestore();
-      }
-    });
-		colorButtons.addButton(i18n.tr("Zurück"), new Back());
-		colorButtons.addButton(i18n.tr("Speichern"), new Action()
-    {
-      public void handleAction(Object context) throws ApplicationException
-      {
-      	control.handleStore();
-      }
-    });
-
 		//
 		/////////////////////////////////////////////////////////////////
+
+    ButtonArea colorButtons = new ButtonArea(getParent(),3);
+    colorButtons.addButton(i18n.tr("Zurücksetzen"),new Action()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        control.handleRestore();
+      }
+    });
+    colorButtons.addButton(i18n.tr("Zurück"), new Back());
+    colorButtons.addButton(i18n.tr("Speichern"), new Action()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        control.handleStore();
+      }
+    });
 
   }
 
@@ -102,6 +127,10 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.6  2005/06/10 22:13:09  web0
+ * @N new TabGroup
+ * @N extended Settings
+ *
  * Revision 1.5  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *
