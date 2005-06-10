@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/02/04 00:34:21 $
- * $Author: willuhn $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/10 13:04:41 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -46,6 +46,7 @@ public class StartupParams
 	private String password = null;
 	private int mode 				= MODE_STANDALONE;
 
+  private boolean noninteractive = false;
 
   /**
 	 * ct.
@@ -71,6 +72,9 @@ public class StartupParams
 		options.addOption("f","file",true,"Optionale Angabe des Datenverzeichnisses (Workdir)");
 		options.addOption("p","password",true,"Optionale Angabe des Master-Passworts");
 
+    options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +      "Es findet keine Benutzer-Interaktion mehr statt. Die Option wird nur ausgewertet, wenn Jameica " +      "im Server-Mode läuft.");
+
+
 		PosixParser parser = new PosixParser();
 		try
 		{
@@ -93,6 +97,12 @@ public class StartupParams
 			{
 				Logger.info("starting in STANDALONE mode");
 			}
+
+      if (this.mode == MODE_SERVER && line.hasOption("n"))
+      {
+        Logger.info("activating noninteractive mode");
+        this.noninteractive = true;
+      }
 
 			if (line.hasOption("f")) this.workDir  = line.getOptionValue("f");
 			if (line.hasOption("p")) this.password = line.getOptionValue("p");
@@ -146,11 +156,26 @@ public class StartupParams
 	{
 		return workDir;
 	}
+  
+  /**
+   * Liefert true, wenn Jameica im nichtinteraktiven Server-Mode
+   * laeuft und damit keine direkte Interaktion mit dem Benutzer ueber
+   * die Konsole moeglich ist.
+   * @return
+   */
+  public boolean isNonInteractiveMode()
+  {
+    return this.noninteractive;
+  }
 }
 
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.3  2005/06/10 13:04:41  web0
+ * @N non-interactive Mode
+ * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode
+ *
  * Revision 1.2  2005/02/04 00:34:21  willuhn
  * *** empty log message ***
  *

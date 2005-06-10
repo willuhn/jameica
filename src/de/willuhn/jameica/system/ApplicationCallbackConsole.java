@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/06/09 23:07:47 $
+ * $Revision: 1.8 $
+ * $Date: 2005/06/10 13:04:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -12,14 +12,21 @@
  **********************************************************************/
 package de.willuhn.jameica.system;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 
+import de.willuhn.jameica.security.Certificate;
+import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
 
 /**
@@ -39,6 +46,14 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public boolean lockExists(String lockfile)
   {
+    if (Application.inNonInteractiveMode())
+    {
+      Logger.error(Application.getI18n().tr("Der Jameica-Server scheint bereits zu laufen, da das " +
+        "Lockfile {0} existiert.",lockfile));
+      Logger.error(Application.getI18n().tr("Bitte löschen Sie ggf. die Datei und versuchen es erneut."));
+      return false;
+    }
+
 		System.out.println("----------------------------------------------------------------------");
     System.out.println(Application.getI18n().tr("Der Jameica-Server scheint bereits zu laufen, da das " +    	"Lockfile {0} existiert.",lockfile));
     System.out.println(Application.getI18n().tr("Geben Sie <y> ein, um den Startvorgang fortzusetzen oder <n> zum Beenden."));
@@ -68,6 +83,13 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 		}
 		else
 		{
+      if (Application.inNonInteractiveMode())
+      {
+        Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und " +
+          "kein Passwort via Kommandozeile übergeben"));
+        throw new ApplicationException(Application.getI18n().tr("Passwort kann nicht abgefragt werden"));
+      }
+
 			System.out.print(Application.getI18n().tr("Sie starten Jameica zum ersten Mal.\n" +
 				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
 			InputStreamReader isr = new InputStreamReader(System.in);
@@ -101,6 +123,13 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 			Logger.info("checksum test failed, asking for password in interactive mode");
   	}
 
+    if (Application.inNonInteractiveMode())
+    {
+      Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und " +
+        "kein Passwort via Kommandozeile übergeben"));
+      throw new ApplicationException(Application.getI18n().tr("Passwort kann nicht abgefragt werden"));
+    }
+
 		System.out.println(Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein:"));
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader keyboard = new BufferedReader(isr);
@@ -119,6 +148,13 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 	 */
 	public void changePassword() throws Exception
 	{
+    if (Application.inNonInteractiveMode())
+    {
+      Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und " +
+        "kein Passwort via Kommandozeile übergeben"));
+      throw new ApplicationException(Application.getI18n().tr("Passwort kann nicht abgefragt werden"));
+    }
+
 		System.out.print(Application.getI18n().tr(
 			"Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\n" +
 			"Es wird anschließend bei jedem Start von Jameica benötigt:"));
@@ -171,6 +207,13 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public String askUser(String question, String labeltext) throws Exception
   {
+    if (Application.inNonInteractiveMode())
+    {
+      Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus. " +
+        "Beantwortung der Frage \"{0}\" nicht möglich",question));
+      throw new ApplicationException(Application.getI18n().tr("Benutzer-Interaktion nicht möglich. Jameica läuft im nicht-interaktiven Modus"));
+    }
+
 		System.out.println(question);
 		System.out.print(labeltext);
 		InputStreamReader isr = new InputStreamReader(System.in);
@@ -183,32 +226,105 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public boolean checkTrust(X509Certificate cert) throws Exception
   {
-    DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
 
-    System.out.println(Application.getI18n().tr("Sie verbinden sich mit einem für Jameica unbekannten System." +
-      "Möchten Sie diesem Zertifikat vertrauen? [J/N]"));
+    // Im Nicht-interaktiven Mode speichern wir das Zertifikat nur in
+    // einem Spool-Verzeichnis ab.
+    if (Application.inNonInteractiveMode())
+    {
+      // Im nicht-interaktiven Mode speichern wir das Zertifikat in einem Incoming-Verzeichnis
+      File f = new File(Application.getConfig().getConfigDir(),"incoming");
+      Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus. Vertrauensstellung des Zertifikats kann nicht abgefragt werden"));
+      Logger.warn(Application.getI18n().tr("Speichere Zertifikat im Verzeichnis {0}",f.getAbsolutePath()));
 
-    System.out.println("----------------------------------------------------------------------");
-    System.out.println(Application.getI18n().tr("Eigenschaften des Zertifikats"));
+      if (f.exists() && (!f.isDirectory() || !f.canWrite()))
+        throw new ApplicationException(Application.getI18n().tr("Kann in Incoming-Verzeichnis {0} nicht schreiben",f.getAbsolutePath()));
 
-    System.out.println((Application.getI18n().tr("Ausgestellt von: ") + cert.getIssuerDN().getName()));
-    System.out.println((Application.getI18n().tr("Ausgestellt für: ") + cert.getSubjectDN().getName()));
-    System.out.println((Application.getI18n().tr("Gültig von:      ") + df.format(cert.getNotBefore())));
-    System.out.println((Application.getI18n().tr("Gültig bis:      ") + df.format(cert.getNotAfter())));
-    System.out.println((Application.getI18n().tr("Seriennummer:    ") + cert.getSerialNumber().toString()));
-    System.out.println((Application.getI18n().tr("Typ:             ") + cert.getSigAlgName() + "/" + cert.getType() + "v" + cert.getVersion()));
+      if (!f.exists())
+      {
+        boolean b = f.mkdirs();
+        if (!b)
+          throw new ApplicationException(Application.getI18n().tr("Incoming-Verzeichnis {0} konnte nicht erstellt werden",f.getAbsolutePath()));
+      }
 
-    System.out.println("----------------------------------------------------------------------");
-    InputStreamReader isr = new InputStreamReader(System.in);
-    BufferedReader keyboard = new BufferedReader(isr);
-    String s = keyboard.readLine();
-    return s != null && ("j".equalsIgnoreCase(s) || "y".equalsIgnoreCase(s));
+      // Speichern des Zertifikats im Incoming-Verzeichnis
+      OutputStream os = null;
+      try
+      {
+        // Wir erzeugen einen Dateinamen aus dem Namen des Typen, fuer den es ausgestellt ist.
+        Certificate myCert = new Certificate(cert);
+        Principal p = myCert.getSubject();
+        String name = p.getAttribute(Principal.COMMON_NAME) + "__" + cert.getSerialNumber().toString();
+        // Wir nehmen alle Zeichen bis auf Buchstaben, Zahlen und Unterstrich raus 
+        name = name.replaceAll("[^A-Za-z0-9\\-_]","_");
+        // und kuerzen noch auf maximal 50 Zeichen
+        if (name.length() > 50)
+          name = name.substring(0,49);
+          
+        // und haengen noch ein ".cert" dran.
+        name += ".crt";
+
+        File target = new File(f,name);
+        Logger.info(Application.getI18n().tr("Speichere Zertifikat in {0}",target.getAbsolutePath()));
+        if (target.exists())
+        {
+          Logger.warn(Application.getI18n().tr("Zertifikat {0} existiert bereits",target.getAbsolutePath()));
+          return false;
+        }
+        os = new BufferedOutputStream(new FileOutputStream(target));
+        os.write(cert.getEncoded());
+      }
+      finally
+      {
+        if (os != null)
+        try
+        {
+          os.close();
+        }
+        catch (Exception e)
+        {
+          // useless
+        }
+      }
+      return false;
+    }
+    else
+    {
+      
+      // Ansonsten fragen wir an der Console nach der Vertrauensstellung
+      DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
+
+      Certificate myCert = new Certificate(cert);
+
+      System.out.println("----------------------------------------------------------------------");
+      System.out.println(Application.getI18n().tr("Eigenschaften des Zertifikats"));
+
+      System.out.println((Application.getI18n().tr("Ausgestellt von:  ") + cert.getIssuerDN().getName()));
+      System.out.println((Application.getI18n().tr("Ausgestellt für:  ") + cert.getSubjectDN().getName()));
+      System.out.println((Application.getI18n().tr("Gültig von:       ") + df.format(cert.getNotBefore())));
+      System.out.println((Application.getI18n().tr("Gültig bis:       ") + df.format(cert.getNotAfter())));
+      System.out.println((Application.getI18n().tr("Seriennummer:     ") + cert.getSerialNumber().toString()));
+      System.out.println((Application.getI18n().tr("Typ:              ") + cert.getType()));
+      System.out.println((Application.getI18n().tr("MD5-Fingerabdruck:") + myCert.getMD5Fingerprint()));
+
+      System.out.println("----------------------------------------------------------------------");
+      System.out.println(Application.getI18n().tr("Sie verbinden sich mit einem für Jameica unbekannten System." +
+        "Möchten Sie diesem Zertifikat vertrauen? [J/N]"));
+
+      InputStreamReader isr = new InputStreamReader(System.in);
+      BufferedReader keyboard = new BufferedReader(isr);
+      String s = keyboard.readLine();
+      return s != null && ("j".equalsIgnoreCase(s) || "y".equalsIgnoreCase(s));
+    }
   }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.8  2005/06/10 13:04:41  web0
+ * @N non-interactive Mode
+ * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode
+ *
  * Revision 1.7  2005/06/09 23:07:47  web0
  * @N certificate checking activated
  *

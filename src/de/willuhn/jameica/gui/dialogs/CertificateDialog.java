@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/Attic/CertificateDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/10 10:12:26 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/10 13:04:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,6 @@
 
 package de.willuhn.jameica.gui.dialogs;
 
-import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 
@@ -25,6 +24,7 @@ import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -79,7 +79,9 @@ public class CertificateDialog extends AbstractDialog
     // Aussteller
     group.addHeadline(Application.getI18n().tr("Ausgestellt von"));
 
-    Principal p = new Principal(cert.getIssuerDN());
+
+    Certificate myCert = new Certificate(cert);
+    Principal p = myCert.getIssuer();
 
     String cn = p.getAttribute(Principal.COMMON_NAME);
     String o  = p.getAttribute(Principal.ORGANIZATION);
@@ -95,7 +97,7 @@ public class CertificateDialog extends AbstractDialog
     // Subject
     group.addHeadline(Application.getI18n().tr("Ausgestellt für"));
 
-    p = new Principal(cert.getSubjectDN());
+    p = myCert.getSubject();
 
     cn = p.getAttribute(Principal.COMMON_NAME);
     o  = p.getAttribute(Principal.ORGANIZATION);
@@ -120,21 +122,7 @@ public class CertificateDialog extends AbstractDialog
 
     /////////////////////////////////////////////////////////////////////////////
     // Fingerprint
-    byte[] sig = cert.getEncoded();
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    byte[] digest = md.digest(sig);
-    StringBuffer sb = new StringBuffer(2 * digest.length);
-    for (int i = 0; i < digest.length; ++i) {
-      int k = digest[i] & 0xFF;
-      if (k < 0x10) {
-        sb.append('0');
-      }
-      sb.append(Integer.toHexString(k));
-      sb.append(":");
-    }
-    String s = sb.toString();
-    s = s.substring(0,s.length()-1);
-    group.addLabelPair(i18n.tr("MD5-Fingerabdruck"), new LabelInput(s));
+    group.addLabelPair(i18n.tr("MD5-Fingerabdruck"), new LabelInput(myCert.getMD5Fingerprint()));
     /////////////////////////////////////////////////////////////////////////////
 
     try
@@ -193,6 +181,10 @@ public class CertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: CertificateDialog.java,v $
+ * Revision 1.3  2005/06/10 13:04:41  web0
+ * @N non-interactive Mode
+ * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode
+ *
  * Revision 1.2  2005/06/10 10:12:26  web0
  * @N Zertifikats-Dialog ergonomischer gestaltet
  * @C TrustManager prueft nun zuerst im Java-eigenen Keystore

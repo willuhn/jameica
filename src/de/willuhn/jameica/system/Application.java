@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.37 $
- * $Date: 2005/04/21 17:14:14 $
+ * $Revision: 1.38 $
+ * $Date: 2005/06/10 13:04:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -426,6 +426,16 @@ public final class Application {
 		return app.params.getMode() == StartupParams.MODE_CLIENT;
   }
   
+  /**
+   * Prueft, ob Jameica im nichtinteraktiven Server-Mode laeuft
+   * und damit keinerlei Eingaben vom Benutzer verlangt werden koennen.
+   * @return
+   */
+  public static boolean inNonInteractiveMode()
+  {
+    return app.params.isNonInteractiveMode();
+  }
+
 	/**
 	 * Liefert das Language-Pack fuer Jameica selbst.
    * @return Language-Pack.
@@ -525,6 +535,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.38  2005/06/10 13:04:41  web0
+ * @N non-interactive Mode
+ * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode
+ *
  * Revision 1.37  2005/04/21 17:14:14  web0
  * @B fixed shutdown behaviour
  *
