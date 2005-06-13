@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.19 $
- * $Date: 2005/06/10 22:13:09 $
+ * $Revision: 1.20 $
+ * $Date: 2005/06/13 11:47:25 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -114,7 +114,7 @@ public final class Config
    */
   public boolean getRmiSSL()
 	{
-		return settings.getBoolean("jameica.system.rmi.enablessl",false);
+		return settings.getBoolean("jameica.system.rmi.enablessl",true);
 	}
 
   /**
@@ -289,6 +289,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.20  2005/06/13 11:47:25  web0
+ * *** empty log message ***
+ *
  * Revision 1.19  2005/06/10 22:13:09  web0
  * @N new TabGroup
  * @N extended Settings

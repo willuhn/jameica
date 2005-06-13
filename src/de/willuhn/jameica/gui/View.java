@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.29 $
- * $Date: 2005/06/13 11:47:25 $
+ * $Revision: 1.30 $
+ * $Date: 2005/06/13 11:48:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -106,7 +106,7 @@ public class View implements Part
       {
         GC gc = event.gc;
         gc.setFont(Font.H1.getSWTFont());
-        gc.drawText(title,8,1,true);
+        gc.drawText(title == null ? "" : title,8,1,true);
       }
     });
 
@@ -273,6 +273,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.30  2005/06/13 11:48:41  web0
+ * *** empty log message ***
+ *
  * Revision 1.29  2005/06/13 11:47:25  web0
  * *** empty log message ***
  *
