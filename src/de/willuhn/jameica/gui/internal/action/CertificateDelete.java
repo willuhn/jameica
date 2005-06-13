@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/Attic/CertificateDelete.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/10 22:59:35 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/13 12:13:37 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,7 @@ import java.security.cert.X509Certificate;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.dialogs.CertificateDialog;
+import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
@@ -38,9 +38,8 @@ public class CertificateDelete implements Action
     if (context == null || !(context instanceof X509Certificate))
       throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das zu löschende Zertifikat aus"));
     
-    CertificateDialog d = new CertificateDialog(CertificateDialog.POSITION_CENTER,(X509Certificate)context);
+    CertificateTrustDialog d = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,(X509Certificate)context);
     d.setText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Zertifikat aus dem Stammspeicher löschen wollen?"));
-    // TODO Die Labelgroup hat noch den falschen Titel
     try
     {
       Boolean b = (Boolean) d.open();
@@ -65,6 +64,9 @@ public class CertificateDelete implements Action
 
 /**********************************************************************
  * $Log: CertificateDelete.java,v $
+ * Revision 1.2  2005/06/13 12:13:37  web0
+ * @N Certificate-Code completed
+ *
  * Revision 1.1  2005/06/10 22:59:35  web0
  * @N Loeschen von Zertifikaten
  *

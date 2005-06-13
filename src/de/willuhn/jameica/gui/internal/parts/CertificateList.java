@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/10 22:59:35 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/13 12:13:37 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,7 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.dialogs.CertificateDetailDialog;
 import de.willuhn.jameica.gui.internal.action.CertificateDelete;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
@@ -49,7 +50,16 @@ public class CertificateList extends TablePart
       {
         if (context == null || !(context instanceof CertObject))
           return;
-        // TODO hier Details des Zertifikates anzeigen
+        try
+        {
+          CertObject c = (CertObject) context;
+          CertificateDetailDialog d = new CertificateDetailDialog(CertificateDetailDialog.POSITION_CENTER,c.cert);
+          d.open();
+        }
+        catch (Exception e)
+        {
+          Logger.error("error while displaying certificate",e);
+        }
       }
     });
     addColumn(Application.getI18n().tr("Ausgestellt für"),"name");
@@ -66,8 +76,11 @@ public class CertificateList extends TablePart
       {
         if (context == null || !(context instanceof CertObject))
           throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das zu löschende Zertifikat aus"));
-        super.handleAction(((CertObject)context).cert);
-        // TODO Tabelle aktualisieren
+        
+        CertObject c = (CertObject) context;
+        super.handleAction(c.cert);
+        // jetzt noch aus der Tabelle loeschen
+        removeItem(c);
       }
     }));
     this.setContextMenu(menu);
@@ -193,6 +206,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.3  2005/06/13 12:13:37  web0
+ * @N Certificate-Code completed
+ *
  * Revision 1.2  2005/06/10 22:59:35  web0
  * @N Loeschen von Zertifikaten
  *

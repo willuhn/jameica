@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/06/09 23:07:47 $
+ * $Revision: 1.7 $
+ * $Date: 2005/06/13 12:13:37 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.gui.SplashScreen;
-import de.willuhn.jameica.gui.dialogs.CertificateDialog;
+import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.dialogs.NewPasswordDialog;
 import de.willuhn.jameica.gui.dialogs.PasswordDialog;
 import de.willuhn.jameica.gui.dialogs.TextDialog;
@@ -299,7 +299,7 @@ public class ApplicationCallbackSWT implements ApplicationCallback
    */
   public boolean checkTrust(X509Certificate cert) throws Exception
   {
-    CertificateDialog d = new CertificateDialog(CertificateDialog.POSITION_CENTER,cert);
+    CertificateTrustDialog d = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,cert);
 
     Boolean b = (Boolean) d.open();
     return b.booleanValue();
@@ -309,6 +309,9 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.7  2005/06/13 12:13:37  web0
+ * @N Certificate-Code completed
+ *
  * Revision 1.6  2005/06/09 23:07:47  web0
  * @N certificate checking activated
  *
