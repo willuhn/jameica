@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.28 $
- * $Date: 2005/06/03 17:14:41 $
+ * $Revision: 1.29 $
+ * $Date: 2005/06/13 11:47:25 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -19,12 +19,15 @@ import java.rmi.RemoteException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
@@ -44,7 +47,7 @@ public class View implements Part
 	private boolean snappedIn = false;
 
 	private Composite parent;
-	private CLabel title;
+	private String title;
 	private CLabel messages;
 	private Canvas panelBg;
 	
@@ -83,22 +86,32 @@ public class View implements Part
 		snapin.setLayout(new FillLayout());
 		sash.setMaximizedControl(view);
 
-		panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel.bmp"), SWT.TOP | SWT.RIGHT);
-		GridLayout layout2 = new GridLayout();
-		layout2.marginHeight = 0;
-		layout2.marginWidth = 0;
-		layout2.horizontalSpacing = 0;
-		layout2.verticalSpacing = 0;
-		panelBg.setLayout(layout2);
-		panelBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+		Canvas c = SWTUtil.getCanvas(view,SWTUtil.getImage("panel.bmp"), SWT.TOP | SWT.RIGHT);
+		c.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 
-		title = new CLabel(panelBg,SWT.NONE);
-		title.setFont(Font.H1.getSWTFont());
-		title.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
-		title.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+    Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-		sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+    GridLayout layout2 = new GridLayout();
+    layout2.marginHeight = 0;
+    layout2.marginWidth = 0;
+    layout2.horizontalSpacing = 0;
+    layout2.verticalSpacing = 0;
+    panelBg.setLayout(layout2);
+
+    panelBg.addListener(SWT.Paint,new Listener()
+    {
+      public void handleEvent(Event event)
+      {
+        GC gc = event.gc;
+        gc.setFont(Font.H1.getSWTFont());
+        gc.drawText(title,8,1,true);
+      }
+    });
+
+		Label sep2 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+		sep2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		messages = new CLabel(view,SWT.NONE);
 		messages.setFont(Font.H2.getSWTFont());
@@ -189,8 +202,8 @@ public class View implements Part
    */
   public void setTitle(String text)
 	{
-		title.setText(text == null ? "" : " " + text);
-		panelBg.layout();
+    this.title = text == null ? "" : text;
+    panelBg.redraw();
 	}
 
 	/**
@@ -260,6 +273,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.29  2005/06/13 11:47:25  web0
+ * *** empty log message ***
+ *
  * Revision 1.28  2005/06/03 17:14:41  web0
  * @N Livelog
  *
