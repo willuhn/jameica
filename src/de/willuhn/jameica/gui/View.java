@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.30 $
- * $Date: 2005/06/13 11:48:41 $
+ * $Revision: 1.31 $
+ * $Date: 2005/06/13 22:05:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -49,7 +49,6 @@ public class View implements Part
 	private Composite parent;
 	private String title;
 	private CLabel messages;
-	private Canvas panelBg;
 	
 
   /**
@@ -92,7 +91,7 @@ public class View implements Part
     Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
     sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-    panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+    Canvas panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
     GridLayout layout2 = new GridLayout();
     layout2.marginHeight = 0;
     layout2.marginWidth = 0;
@@ -203,7 +202,6 @@ public class View implements Part
   public void setTitle(String text)
 	{
     this.title = text == null ? "" : text;
-    panelBg.redraw();
 	}
 
 	/**
@@ -273,6 +271,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.31  2005/06/13 22:05:32  web0
+ * *** empty log message ***
+ *
  * Revision 1.30  2005/06/13 11:48:41  web0
  * *** empty log message ***
  *
