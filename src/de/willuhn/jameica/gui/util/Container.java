@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/10 22:13:09 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/13 11:23:23 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.gui.util;
 import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -138,6 +140,15 @@ public abstract class Container
       label.setForeground(color.getSWTColor());
     label.setText(text);
     label.setLayoutData(labelGrid);
+    if (linewrap)
+    {
+    	// Workaround fuer Windows, weil dort mehrzeilige
+    	// Labels nicht korrekt umgebrochen werden.
+      label.addPaintListener(new PaintListener() {
+    	  public void paintControl(PaintEvent e) {
+   	  	  label.setSize(label.computeSize(label.getSize().x,SWT.DEFAULT));
+	    }});
+    }
   }
 
   /**
@@ -233,6 +244,9 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.2  2005/06/13 11:23:23  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/06/10 22:13:09  web0
  * @N new TabGroup
  * @N extended Settings
