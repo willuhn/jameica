@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/06/10 22:13:09 $
+ * $Revision: 1.7 $
+ * $Date: 2005/06/13 23:18:18 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.TabGroup;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -50,6 +51,7 @@ public class Settings extends AbstractView
 
     TabFolder folder = new TabFolder(getParent(), SWT.NONE);
     folder.setLayoutData(new GridData(GridData.FILL_BOTH));
+    folder.setBackground(Color.BACKGROUND.getSWTColor());
 
     /////////////////////////////////////////////////////////////////
     // System-Einstellungen
@@ -127,6 +129,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.7  2005/06/13 23:18:18  web0
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/06/10 22:13:09  web0
  * @N new TabGroup
  * @N extended Settings

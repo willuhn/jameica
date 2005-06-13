@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/06/13 22:05:32 $
+ * $Revision: 1.6 $
+ * $Date: 2005/06/13 23:18:18 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -43,6 +43,8 @@ public class Panel implements Part
   private Part child       = null;
   
   private Composite myParent;
+  
+  private Canvas title;
 
   /**
    * ct.
@@ -65,6 +67,8 @@ public class Panel implements Part
   public void setTitle(String title)
   {
     this.titleText = title == null ? "" : title;
+    if (this.title != null && !this.title.isDisposed())
+        this.title.redraw();
   }
 
   /**
@@ -104,7 +108,7 @@ public class Panel implements Part
 
       ///////////////////////////////
       // Der Titel selbst
-      Canvas title = SWTUtil.getCanvas(head,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+      title = SWTUtil.getCanvas(head,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
       GridLayout layout2 = new GridLayout();
       layout2.marginHeight = 0;
       layout2.marginWidth = 0;
@@ -139,6 +143,9 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.6  2005/06/13 23:18:18  web0
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/06/13 22:05:32  web0
  * *** empty log message ***
  *
