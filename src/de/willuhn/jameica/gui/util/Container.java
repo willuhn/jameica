@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/13 11:23:23 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/13 23:10:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.Input;
+import de.willuhn.jameica.gui.input.TextAreaInput;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
@@ -55,16 +56,16 @@ public abstract class Container
   /**
    * Liefert das Composite, in das die Label-Paare, Checkboxen und so weiter
    * gezeichnet werden.
-   * @return
+   * @return das Composite, in das die Daten gezeichnet werden sollen.
    */
   public abstract Composite getComposite();
 
   /**
    * Prueft, ob der Container die volle moegliche Hoehe einnehmen soll oder nur
    * die tatsaechlich benoetigte.
-   * @return
+   * @return true, wenn der Container die volle Groesse einnehmen soll.
    */
-  protected boolean isFullSize()
+  protected final boolean isFullSize()
   {
     return this.fullSize;
   }
@@ -78,7 +79,10 @@ public abstract class Container
   {
     // Label
     final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
-    labelGrid.verticalAlignment = GridData.CENTER;
+    if (input instanceof TextAreaInput)
+      labelGrid.verticalAlignment = GridData.BEGINNING;
+    else
+      labelGrid.verticalAlignment = GridData.CENTER;
     final Label label = new Label(getComposite(), SWT.NONE);
 		label.setBackground(Color.BACKGROUND.getSWTColor());
     label.setText(name);
@@ -244,6 +248,9 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.3  2005/06/13 23:10:51  web0
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/06/13 11:23:23  web0
  * *** empty log message ***
  *
