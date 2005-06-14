@@ -1,0 +1,178 @@
+/**********************************************************************
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2005/06/14 23:15:30 $
+ * $Author: web0 $
+ * $Locker:  $
+ * $State: Exp $
+ *
+ * Copyright (c) by willuhn.webdesign
+ * All rights reserved
+ *
+ **********************************************************************/
+
+package de.willuhn.jameica.gui.internal.parts;
+
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import de.willuhn.datasource.GenericIterator;
+import de.willuhn.datasource.GenericObject;
+import de.willuhn.datasource.pseudo.PseudoIterator;
+import de.willuhn.jameica.gui.internal.action.PluginDetails;
+import de.willuhn.jameica.gui.parts.ContextMenu;
+import de.willuhn.jameica.gui.parts.ContextMenuItem;
+import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
+
+/**
+ * Eine vorkonfektionierte Liste der installierten Plugins.
+ */
+public class PluginList extends TablePart
+{
+
+  /**
+   * ct.
+   */
+  public PluginList()
+  {
+    super(init(),new CustomAction());
+
+    I18N i18n = Application.getI18n();
+
+    ContextMenu menu = new ContextMenu();
+    menu.addItem(new ContextMenuItem(i18n.tr("Öffnen..."),new CustomAction()));
+    setContextMenu(menu);
+    addColumn(i18n.tr("Name"),"name");
+    addColumn(i18n.tr("Beschreibung"),"description");
+    addColumn(i18n.tr("Version"),"version");
+    addColumn(i18n.tr("Pfad"),"path");
+    disableSummary();
+  }
+
+  /**
+   * Ueberschrieben, damit wir nicht "PluginObject" rausgeben sondern nur AbstractPlugin.
+   */
+  private static class CustomAction extends PluginDetails
+  {
+    /**
+     * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
+     */
+    public void handleAction(Object context) throws ApplicationException
+    {
+      if (context == null || !(context instanceof PluginObject))
+        return;
+      PluginObject o = (PluginObject) context;
+      super.handleAction(o.plugin);
+    }
+  }
+
+  /**
+   * Initialisiert die Liste der Plugins.
+   * @return Liste der Plugins.
+   */
+  private static GenericIterator init()
+  {
+    Iterator i = Application.getPluginLoader().getInstalledPlugins();
+    ArrayList l = new ArrayList();
+    while (i.hasNext())
+    {
+      l.add(new PluginObject((AbstractPlugin) i.next()));
+    }
+    try
+    {
+      return PseudoIterator.fromArray((PluginObject[])l.toArray(new PluginObject[l.size()]));
+    }
+    catch (RemoteException e)
+    {
+      Logger.error("error while loading plugin list",e);
+      return null;
+    }
+  }
+
+  /**
+   * Ein Hilfs-Objekt, um die Eigenschaften eines Plugins generisch anzeigen zu koennen.
+   */
+  private static class PluginObject implements GenericObject
+  {
+    private AbstractPlugin plugin;
+
+    private PluginObject(AbstractPlugin plugin)
+    {
+      this.plugin = plugin;
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
+     */
+    public Object getAttribute(String name) throws RemoteException
+    {
+      if ("version".equals(name))
+        return ""+plugin.getManifest().getVersion();
+      if ("path".equals(name))
+        return plugin.getResources().getPath();
+      if ("workpath".equals(name))
+        return plugin.getResources().getWorkPath();
+      if ("description".equals(name))
+      {
+        return plugin.getManifest().getDescription();
+      }
+      return plugin.getManifest().getName();
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getID()
+     */
+    public String getID() throws RemoteException
+    {
+      return (String)getAttribute("path");
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
+     */
+    public String getPrimaryAttribute() throws RemoteException
+    {
+      return "name";
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
+     */
+    public boolean equals(GenericObject other) throws RemoteException
+    {
+      if (other == null)
+        return false;
+      return getID().equals(other.getID());
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
+     */
+    public String[] getAttributeNames() throws RemoteException
+    {
+      return new String[]
+      {
+        "version",
+        "path",
+        "workpath",
+        "description",
+        "name"
+      };
+    }
+  }
+
+}
+
+
+/*********************************************************************
+ * $Log: PluginList.java,v $
+ * Revision 1.1  2005/06/14 23:15:30  web0
+ * @N added settings for plugins/services
+ *
+ **********************************************************************/

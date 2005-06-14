@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/06/10 22:13:09 $
+ * $Revision: 1.10 $
+ * $Date: 2005/06/14 23:15:30 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -36,6 +36,7 @@ import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.internal.parts.CertificateList;
+import de.willuhn.jameica.gui.internal.parts.PluginList;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
@@ -56,10 +57,13 @@ public class SettingsControl extends AbstractControl
 
   // System
   private Input logLevel;
-  private Input rmiPort;
   private FileInput logFile;
   private CheckboxInput rmiSSL;
+  private Input rmiPort;
   private TablePart certs;
+
+  // Plugins
+  private TablePart plugins;
 
   // Look & Feel
 	private Input colorWidgetBG;
@@ -86,7 +90,7 @@ public class SettingsControl extends AbstractControl
 
   /**
    * Liefert ein Auswahl-Feld fuer den Log-Level.
-   * @return
+   * @return Auswahl-Feld fuer das Log-Level.
    */
   public Input getLogLevel()
   {
@@ -106,7 +110,7 @@ public class SettingsControl extends AbstractControl
 
   /**
    * Liefert ein Eingabe-Feld fuer die Log-Datei.
-   * @return
+   * @return Eingabe-Feld fuer das Log-File.
    */
   public Input getLogFile()
   {
@@ -120,7 +124,7 @@ public class SettingsControl extends AbstractControl
 
   /**
    * Liefert ein Eingabe-Feld fuer den zu verwendenden RMI-Port.
-   * @return
+   * @return Eingabe-Feld fuer den RMI-Port.
    */
   public Input getRmiPort()
   {
@@ -133,7 +137,7 @@ public class SettingsControl extends AbstractControl
 
   /**
    * Liefert eine Checkbox zur Aktivierung von SSL bei der RMI-Uebertragung.
-   * @return
+   * @return Checkbox zur Aktivierung von SSL bei der Datenuebertragung.
    */
   public CheckboxInput getRmiSSL()
   {
@@ -145,7 +149,7 @@ public class SettingsControl extends AbstractControl
 
   /**
    * Liefert eine Tabelle mit den installierten Zertifikaten.
-   * @return
+   * @return Tabelle mit einer Liste der installierten Zertifikate.
    */
   public Part getCertificates()
   {
@@ -155,7 +159,19 @@ public class SettingsControl extends AbstractControl
     return this.certs;
   }
 
-	/**
+  /**
+   * Liefert eine Tabelle mit den installierten Plugins.
+   * @return Liste der Plugins.
+   */
+  public Part getPlugins()
+  {
+    if (this.plugins != null)
+      return this.plugins;
+     this.plugins = new PluginList();
+    return this.plugins;
+  }
+  
+  /**
 	 * Liefert ein Auswahl-Feld fuer die Style-Factory.
    * @return Auswahl-Feld.
    */
@@ -561,6 +577,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.10  2005/06/14 23:15:30  web0
+ * @N added settings for plugins/services
+ *
  * Revision 1.9  2005/06/10 22:13:09  web0
  * @N new TabGroup
  * @N extended Settings

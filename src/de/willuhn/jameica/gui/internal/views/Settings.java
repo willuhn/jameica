@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/06/13 23:18:18 $
+ * $Revision: 1.8 $
+ * $Date: 2005/06/14 23:15:30 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -71,7 +71,16 @@ public class Settings extends AbstractView
     //
     /////////////////////////////////////////////////////////////////
 
-		/////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////
+    // Plugin-Einstellungen
+    TabGroup plugins = new TabGroup(folder,i18n.tr("Plugins"));
+
+    plugins.addPart(control.getPlugins());
+
+    //
+    /////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////
 		// Farb-Einstellungen
 
     TabGroup colorGroup = new TabGroup(folder,i18n.tr("Look and Feel"));
@@ -129,6 +138,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.8  2005/06/14 23:15:30  web0
+ * @N added settings for plugins/services
+ *
  * Revision 1.7  2005/06/13 23:18:18  web0
  * *** empty log message ***
  *

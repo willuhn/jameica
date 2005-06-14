@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.34 $
- * $Date: 2005/06/07 16:29:25 $
+ * $Revision: 1.35 $
+ * $Date: 2005/06/14 23:15:30 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -525,6 +525,7 @@ public class TablePart implements Part
   /**
    * Liefert die markierten Objekte.
    * Die Funktion liefert je nach Markierung <code>GenericObject</code> oder <code>GenericObject[]</code>.
+   * @return das/die markierten Objekte.
    */
   public Object getSelection()
   {
@@ -669,6 +670,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.35  2005/06/14 23:15:30  web0
+ * @N added settings for plugins/services
+ *
  * Revision 1.34  2005/06/07 16:29:25  web0
  * @N new tablepart features
  *
