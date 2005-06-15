@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.75 $
- * $Date: 2005/05/20 16:06:34 $
+ * $Revision: 1.76 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -611,7 +611,7 @@ public class GUI
 
 				getStatusBar().startProgress();
 
-				Thread t = new Thread("[Jameica Backgroundtask] " + job.getClass().getName()) {
+				Thread th = new Thread("[Jameica Backgroundtask] " + job.getClass().getName()) {
 
 					public void run()
 					{
@@ -631,7 +631,7 @@ public class GUI
 						}
 					}
 				};
-				t.start();
+				th.start();
       }
     });
 	}
@@ -752,6 +752,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.76  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.75  2005/05/20 16:06:34  web0
  * @B rendering bug in GUI.java
  *

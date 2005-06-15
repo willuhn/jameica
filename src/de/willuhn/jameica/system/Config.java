@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.20 $
- * $Date: 2005/06/13 11:47:25 $
+ * $Revision: 1.21 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,9 @@ import de.willuhn.logging.Logger;
  */
 public final class Config
 {
+  /**
+   * Definition des Default-Ports fuer die RMI-Kommunikation.
+   */
   public final static int RMI_DEFAULT_PORT = 4840;
 
 	private File workDir   	   = null;
@@ -289,6 +292,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.21  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.20  2005/06/13 11:47:25  web0
  * *** empty log message ***
  *

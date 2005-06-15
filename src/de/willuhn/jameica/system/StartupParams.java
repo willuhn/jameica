@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/10 13:04:41 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -161,7 +161,7 @@ public class StartupParams
    * Liefert true, wenn Jameica im nichtinteraktiven Server-Mode
    * laeuft und damit keine direkte Interaktion mit dem Benutzer ueber
    * die Konsole moeglich ist.
-   * @return
+   * @return liefert true, wenn sich die Anwendung im nicht-interaktiven Mode befindet.
    */
   public boolean isNonInteractiveMode()
   {
@@ -172,6 +172,9 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.4  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.3  2005/06/10 13:04:41  web0
  * @N non-interactive Mode
  * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode

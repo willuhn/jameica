@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Certificate.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/10 13:04:41 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,7 @@ public class Certificate
 
   /**
    * Liefert den MD5-Fingerabdruck des Zertifikats.
-   * @return
+   * @return der MD5-Fingerabdruck des Zertifikats.
    * @throws CertificateEncodingException
    * @throws NoSuchAlgorithmException
    */
@@ -59,7 +59,7 @@ public class Certificate
 
   /**
    * Liefert den Principal, fuer den das Zertifikat ausgestellt ist.
-   * @return
+   * @return liefert die Person, fuer die das Zertifikat ausgestellt ist.
    */
   public Principal getSubject()
   {
@@ -68,7 +68,7 @@ public class Certificate
   
   /**
    * Liefert den Aussteller des Zertifikats.
-   * @return
+   * @return liefert den Aussteller des Zertifikats.
    */
   public Principal getIssuer()
   {
@@ -79,6 +79,9 @@ public class Certificate
 
 /*********************************************************************
  * $Log: Certificate.java,v $
+ * Revision 1.2  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.1  2005/06/10 13:04:41  web0
  * @N non-interactive Mode
  * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/Extendable.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/06/07 21:57:32 $
+ * $Revision: 1.5 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,7 @@ public interface Extendable
 {
   /**
    * Liefert die ID, ueber die das Extandable von den Extensions identifiziert wird.
-   * @return
+   * @return Liefert die ID des Extendable.
    */
   public String getExtendableID();
 }
@@ -30,6 +30,9 @@ public interface Extendable
 
 /*********************************************************************
  * $Log: Extendable.java,v $
+ * Revision 1.5  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.4  2005/06/07 21:57:32  web0
  * *** empty log message ***
  *

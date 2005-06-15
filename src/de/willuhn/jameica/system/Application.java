@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.38 $
- * $Date: 2005/06/10 13:04:41 $
+ * $Revision: 1.39 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -429,7 +429,7 @@ public final class Application {
   /**
    * Prueft, ob Jameica im nichtinteraktiven Server-Mode laeuft
    * und damit keinerlei Eingaben vom Benutzer verlangt werden koennen.
-   * @return
+   * @return liefert true, wenn sich die Anwendung im nicht-interaktiven Mode befindet.
    */
   public static boolean inNonInteractiveMode()
   {
@@ -535,6 +535,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.39  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.38  2005/06/10 13:04:41  web0
  * @N non-interactive Mode
  * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode

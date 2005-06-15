@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/13 12:13:37 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -39,8 +39,7 @@ public class CertificateList extends TablePart
 {
 
   /**
-   * @param list
-   * @param action
+   * ct.
    */
   public CertificateList()
   {
@@ -206,6 +205,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.4  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.3  2005/06/13 12:13:37  web0
  * @N Certificate-Code completed
  *

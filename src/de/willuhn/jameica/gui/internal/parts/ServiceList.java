@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/14 23:15:30 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -21,7 +21,6 @@ import de.willuhn.datasource.Service;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.internal.action.PluginDetails;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
@@ -290,6 +289,9 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.2  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.1  2005/06/14 23:15:30  web0
  * @N added settings for plugins/services
  *

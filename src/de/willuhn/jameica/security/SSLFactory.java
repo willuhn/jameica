@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/06/10 22:59:35 $
+ * $Revision: 1.16 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -224,6 +224,7 @@ public class SSLFactory
 	 * Die Funktion wirft nur dann eine Exception, wenn alle Stricke
 	 * reissen - auch die manuelle Eingabe des Hostnamens durch den User.
    * @return Hostname.
+	 * @throws Exception
    */
   private String getHostname() throws Exception
 	{
@@ -498,6 +499,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.16  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.15  2005/06/10 22:59:35  web0
  * @N Loeschen von Zertifikaten
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Principal.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/10 10:12:26 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/15 16:10:57 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -24,12 +24,39 @@ import de.willuhn.logging.Logger;
 public class Principal
 {
 
+  /**
+   * Attribut DN.
+   */
   public final static String DISTINGUISHED_NAME  = "DN";
+  
+  /**
+   * Attribut CN.
+   */
   public final static String COMMON_NAME         = "CN";
+  
+  /**
+   * Attribut O.
+   */
   public final static String ORGANIZATION        = "O";
+
+  /**
+   * Attribut OU.
+   */
   public final static String ORGANIZATIONAL_UNIT = "OU";
+  
+  /**
+   * Attribut L.
+   */
   public final static String LOCALITY            = "L";
+  
+  /**
+   * Attribut ST.
+   */
   public final static String STATE               = "ST";
+  
+  /**
+   * Attribut C.
+   */
   public final static String COUNTRY             = "C";
 
   private java.security.Principal p = null;
@@ -80,6 +107,9 @@ public class Principal
 
 /*********************************************************************
  * $Log: Principal.java,v $
+ * Revision 1.2  2005/06/15 16:10:57  web0
+ * @B javadoc fixes
+ *
  * Revision 1.1  2005/06/10 10:12:26  web0
  * @N Zertifikats-Dialog ergonomischer gestaltet
  * @C TrustManager prueft nun zuerst im Java-eigenen Keystore
