@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/06/14 23:15:30 $
+ * $Revision: 1.9 $
+ * $Date: 2005/06/15 17:51:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -64,6 +64,9 @@ public class Settings extends AbstractView
     system.addHeadline(i18n.tr("Netzwerk-Optionen"));
     system.addCheckbox(control.getRmiSSL(),i18n.tr("Daten im Netzwerk-Betrieb (RMI) verschlüsselt übertragen"));
     system.addLabelPair(i18n.tr("TCP-Portnummer für Netzwerk-Betrieb (RMI)"), control.getRmiPort());
+
+    system.addLabelPair(i18n.tr("Hostname eines HTTP-Proxy"), control.getProxyHost());
+    system.addLabelPair(i18n.tr("TCP-Port eines HTTP-Proxy"), control.getProxyPort());
 
     system.addHeadline(i18n.tr("Installierte SSL-Zertifikate"));
     system.addPart(control.getCertificates());
@@ -138,6 +141,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.9  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.8  2005/06/14 23:15:30  web0
  * @N added settings for plugins/services
  *

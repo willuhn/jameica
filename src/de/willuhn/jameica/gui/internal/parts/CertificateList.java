@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.5 $
+ * $Date: 2005/06/15 17:51:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -133,9 +133,19 @@ public class CertificateList extends TablePart
     {
       
       if ("name".equals(arg0))
-        return myCert.getSubject().getAttribute(Principal.COMMON_NAME);
+      {
+        String s = myCert.getSubject().getAttribute(Principal.COMMON_NAME);
+        if (s == null || s.length() == 0)
+          return this.cert.getSubjectDN().getName();
+        return s;
+      }
       if ("issuer".equals(arg0))
-        return myCert.getIssuer().getAttribute(Principal.COMMON_NAME);
+      {
+        String s = myCert.getIssuer().getAttribute(Principal.COMMON_NAME);
+        if (s == null || s.length() == 0)
+          return this.cert.getIssuerDN().getName();
+        return s;
+      }
       if ("serial".equals(arg0))
         return cert.getSerialNumber().toString();
       if ("datefrom".equals(arg0))
@@ -205,6 +215,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.5  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.4  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

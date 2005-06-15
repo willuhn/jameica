@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/06/14 23:15:30 $
+ * $Revision: 1.11 $
+ * $Date: 2005/06/15 17:51:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -35,6 +35,7 @@ import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
+import de.willuhn.jameica.gui.input.TextInput;
 import de.willuhn.jameica.gui.internal.parts.CertificateList;
 import de.willuhn.jameica.gui.internal.parts.PluginList;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -60,6 +61,8 @@ public class SettingsControl extends AbstractControl
   private FileInput logFile;
   private CheckboxInput rmiSSL;
   private Input rmiPort;
+  private Input proxyHost;
+  private Input proxyPort;
   private TablePart certs;
 
   // Plugins
@@ -147,6 +150,31 @@ public class SettingsControl extends AbstractControl
     return this.rmiSSL;
   }
 
+  /**
+   * Liefert ein Eingabefeld fuer die Definition des Proxy-Hosts.
+   * @return Eingabefeld fuer Proxy.
+   */
+  public Input getProxyHost()
+  {
+    if (this.proxyHost != null)
+      return this.proxyHost;
+    this.proxyHost = new TextInput(Application.getConfig().getProxyHost());
+    this.proxyHost.setComment(Application.getI18n().tr("freilassen, wenn nicht gewünscht"));
+    return this.proxyHost;
+  }
+
+  /**
+   * Liefert ein Eingabefeld fuer die TCP-Portnummer des Proxys.
+   * @return Eingabefeld fuer die Proxy-Portnummer.
+   */
+  public Input getProxyPort()
+  {
+    if (this.proxyPort != null)
+      return this.proxyPort;
+    this.proxyPort = new IntegerInput(Application.getConfig().getProxyPort());
+    this.proxyPort.setComment(Application.getI18n().tr("freilassen, wenn nicht gewünscht"));
+    return this.proxyPort;
+  }
   /**
    * Liefert eine Tabelle mit den installierten Zertifikaten.
    * @return Tabelle mit einer Liste der installierten Zertifikate.
@@ -342,11 +370,11 @@ public class SettingsControl extends AbstractControl
       
       Integer in = (Integer) getRmiPort().getValue();
       if (in == null)
-        throw new ApplicationException(i18n.tr("Bitte geben Sie eine TCP-Portnummer ein"));
+        throw new ApplicationException(i18n.tr("Bitte geben Sie eine TCP-Portnummer für den Netzwerkbetrieb ein"));
         
       int i = in.intValue();
       if (i < 1024 || i > 65535)
-        throw new ApplicationException(i18n.tr("TCP-Portnummer ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1024,""+65535}));
+        throw new ApplicationException(i18n.tr("TCP-Portnummer für Netzwerkbetrieb ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1024,""+65535}));
 
       if (i != Application.getConfig().getRmiPort())
       {
@@ -381,6 +409,12 @@ public class SettingsControl extends AbstractControl
 
       Boolean b = (Boolean) getRmiSSL().getValue();
       Application.getConfig().setRmiSSL(b.booleanValue());
+
+      // TODO Hier noch mehr Checks einbauen (Siehe RMI-Port),
+      Integer proxyPort = (Integer) getProxyPort().getValue();
+      if (proxyPort != null && proxyPort.intValue() > 0)
+        Application.getConfig().setProxyPort(proxyPort.intValue());
+      Application.getConfig().setProxyHost((String)getProxyHost().getValue());
 
       // Look & Feel
     	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
@@ -439,6 +473,8 @@ public class SettingsControl extends AbstractControl
       Application.getConfig().setLogFile(null);
       Application.getConfig().setLoglevel(Level.INFO.getName());
       Application.getConfig().setRmiSSL(true);
+      Application.getConfig().setProxyHost(null);
+      Application.getConfig().setProxyPort(-1);
 
 			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen zurückgesetzt."));
 			new de.willuhn.jameica.gui.internal.action.Settings().handleAction(null);
@@ -577,6 +613,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.11  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.10  2005/06/14 23:15:30  web0
  * @N added settings for plugins/services
  *

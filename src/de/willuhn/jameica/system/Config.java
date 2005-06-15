@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.21 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.22 $
+ * $Date: 2005/06/15 17:51:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -108,6 +108,11 @@ public final class Config
    */
   public void setRmiPort(int port)
 	{
+    if (port < 0)
+    {
+      Logger.warn("invalid RMI tcp port: " + port);
+      return;
+    }
     settings.setAttribute("jameica.system.rmi.serverport",port);
 	}
 
@@ -119,6 +124,52 @@ public final class Config
 	{
 		return settings.getBoolean("jameica.system.rmi.enablessl",true);
 	}
+
+  // BUGZILLA 44 http://www.willuhn.de/bugzilla/show_bug.cgi?id=44
+
+  /**
+   * Liefert einen ggf definierten Proxy, ueber den Jameica mit der Aussenwelt
+   * kommunizieren soll.
+   * @return Hostname/IP des Proxy oder <code>null</code> wenn keiner definiert ist.
+   */
+  public String getProxyHost()
+  {
+    return settings.getString("jameica.system.proxy.host",null);
+  }
+
+  /**
+   * Liefert den TCP-Port des Proxys insofern einer definiert ist.
+   * @return TCP-Portnummer des Proxys oder -1,
+   */
+  public int getProxyPort()
+  {
+    return settings.getInt("jameica.system.proxy.port",-1);
+  }
+
+  /**
+   * Speichert den Proxy-Host,
+   * @param host Proxy-Host.
+   */
+  public void setProxyHost(String host)
+  {
+    if ("".equals(host))
+      host = null;
+    settings.setAttribute("jameica.system.proxy.host",host);
+  }
+  
+  /**
+   * Speichert die TCP-Portnummer des Proxys.
+   * @param port Port-Nummer.
+   */
+  public void setProxyPort(int port)
+  {
+    if (port < 0)
+    {
+      Logger.warn("invalid TCP port for proxy: " + port);
+      return;
+    }
+    settings.setAttribute("jameica.system.proxy.port",port);
+  }
 
   /**
    * Prueft, ob im Server-Mode die Dienste nach aussen freigegeben werden sollen.
@@ -292,6 +343,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.22  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.21  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

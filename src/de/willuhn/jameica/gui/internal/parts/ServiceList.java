@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/15 17:51:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -21,13 +21,16 @@ import de.willuhn.datasource.Service;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.dialogs.YesNoDialog;
+import de.willuhn.jameica.gui.internal.dialogs.ServiceBindingDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
-import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.system.ServiceSettings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -49,17 +52,74 @@ public class ServiceList extends TablePart
     final I18N i18n = Application.getI18n();
 
     ContextMenu menu = new ContextMenu();
-    menu.addItem(new ContextMenuItem(i18n.tr("Öffnen..."),new Action()
+    menu.addItem(new CheckedContextMenuItem(i18n.tr("mit Server verbinden..."),new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
-        // TODO
+        ServiceObject so = (ServiceObject) context;
+        if (so == null)
+          return;
+        
+        String fullName = so.plugin.getClass().getName() + "." + so.serviceName;
+        ServiceBindingDialog d = new ServiceBindingDialog(fullName, ServiceBindingDialog.POSITION_CENTER);
+        try
+        {
+          String s = (String) d.open();
+          if (s == null || s.length() == 0)
+            return;
+          String[] host = s.split(":");
+          ServiceSettings.setLookup(fullName,host[0],Integer.parseInt(host[1]));
+          GUI.startView(GUI.getCurrentView().getClass().getName(),plugin); // Tabelle aktualisieren
+          GUI.getStatusBar().setSuccessText(Application.getI18n().tr("Server-Einstellungen gespeichert"));
+        }
+        catch (OperationCanceledException oce)
+        {
+          Logger.info("operation cancelled");
+        }
+        catch (Exception e)
+        {
+          Logger.error("error while entering service bindings",e);
+          GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Übernehmen der Server-Einstellungen"));
+        }
+        
       }
-    }));
+    })
+    {
+      public boolean isEnabledFor(Object o)
+      {
+        try
+        {
+          // Die Option bieten wir nur im Client-Mode
+          // an weil in den beiden anderen Modi immer lokale Services verwendet werden
+          return o != null && Application.inClientMode();
+        }
+        catch (Exception e)
+        {
+          Logger.error("Error while checking service binding",e);
+        }
+        return false;
+      }
+    });
+
     menu.addItem(new CheckedContextMenuItem(i18n.tr("Service stoppen..."),new Action()
     {
       public void handleAction(final Object context) throws ApplicationException
       {
+        YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
+        d.setTitle(i18n.tr("Service stoppen"));
+        d.setText(i18n.tr("Sind Sie sicher, dass Sie den Service stoppen wollen?"));
+        boolean doIt = false;
+        try
+        {
+          doIt = ((Boolean) d.open()).booleanValue();
+        }
+        catch (Exception e)
+        {
+          Logger.error("error while stopping service",e);
+          GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Stoppen des Service"));
+        }
+        if (!doIt) return;
+
         GUI.startSync(new Runnable()
         {
           public void run()
@@ -92,7 +152,11 @@ public class ServiceList extends TablePart
         try
         {
           ServiceObject so = (ServiceObject) o;
-          return so.service.isStarted();
+          if (o == null)
+            return false;
+          // Die Option bieten wir nicht im Client-Mode
+          // an weil wir nicht wollen, dass der User Serverdienste stoppt
+          return (!Application.inClientMode()) && so.service.isStarted();
         }
         catch (Exception e)
         {
@@ -138,7 +202,11 @@ public class ServiceList extends TablePart
         try
         {
           ServiceObject so = (ServiceObject) o;
-          return !so.service.isStarted();
+          if (o == null)
+            return false;
+          // Die Option bieten wir nicht im Client-Mode
+          // an weil wir nicht wollen, dass der User Serverdienste startet
+          return (!Application.inClientMode()) && !so.service.isStarted();
         }
         catch (Exception e)
         {
@@ -152,6 +220,8 @@ public class ServiceList extends TablePart
     addColumn(i18n.tr("Name"),"name");
     addColumn(i18n.tr("Beschreibung"),"description");
     addColumn(i18n.tr("Status"),"status");
+    if (Application.inClientMode())
+      addColumn(i18n.tr("Verbunden mit Server"),"binding");
     
   }
 
@@ -199,7 +269,7 @@ public class ServiceList extends TablePart
     private AbstractPlugin plugin;
     private String serviceName;
     private Service service;
-  
+    
     /**
      * @param p
      * @param service
@@ -211,6 +281,10 @@ public class ServiceList extends TablePart
       try
       {
         this.service = Application.getServiceFactory().lookup(this.plugin.getClass(),this.serviceName);
+      }
+      catch (ApplicationException ae)
+      {
+        GUI.getStatusBar().setErrorText(Application.getI18n().tr(ae.getMessage()));
       }
       catch (Exception e)
       {
@@ -225,6 +299,9 @@ public class ServiceList extends TablePart
     {
       if ("status".equals(name))
       {
+        if (service == null)
+          return Application.getI18n().tr("unbekannt");
+
         try
         {
           return service.isStarted() ? Application.getI18n().tr("gestartet") : Application.getI18n().tr("nicht gestartet");
@@ -237,6 +314,8 @@ public class ServiceList extends TablePart
       }
       if ("description".equals(name))
       {
+        if (service == null)
+          return "";
         try
         {
           return service.getName();
@@ -246,6 +325,14 @@ public class ServiceList extends TablePart
           Logger.error("error while getting service name",e);
           return "";
         }
+      }
+      if ("binding".equals(name))
+      {
+        String fullname = this.plugin.getClass().getName() + "." + this.serviceName;
+        String host = ServiceSettings.getLookupHost(fullname);
+        if (host == null || host.length() == 0)
+          return Application.getI18n().tr("Warnung: Kein Server definiert");
+        return host + ":" + ServiceSettings.getLookupPort(fullname);
       }
       return serviceName;
     }
@@ -281,7 +368,7 @@ public class ServiceList extends TablePart
      */
     public String[] getAttributeNames() throws RemoteException
     {
-      return new String[] {"status","description","name"};
+      return new String[] {"status","description","name","binding"};
     }
   }
 }
@@ -289,6 +376,9 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.3  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.2  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

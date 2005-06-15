@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.39 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.40 $
+ * $Date: 2005/06/15 17:51:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -186,13 +186,24 @@ public final class Application {
 		// Der PluginLoader ist in das Package "plugin" verschoben worden. Damit
 		// seine Einstellungen bei einem Update erhalten bleiben, benennen wir
 		// die properties-Datei ggf.
+    // TODO Migrationszeug kann irgendwann mal entfernt werden
 		File oldFile = new File(getConfig().getConfigDir() + "/de.willuhn.jameica.PluginLoader.properties");
 		File newFile = new File(getConfig().getConfigDir() + "/de.willuhn.jameica.plugin.PluginLoader.properties");
 		if (oldFile.exists() && !newFile.exists())
 			oldFile.renameTo(newFile);
 		// End Migration
 
-
+		// Proxy-Einstellungen checken
+    String proxyHost = getConfig().getProxyHost();
+    int proxyPort    = getConfig().getProxyPort();
+   
+    if (proxyHost != null && proxyHost.length() > 0 && proxyPort > 0)
+    {
+      Logger.info("Applying proxy settings: " + proxyHost + ":" + proxyPort);
+      System.setProperty("http.proxyHost",proxyHost);
+      System.setProperty("http.proxyPort",""+proxyPort);
+    }
+    
 		getSSLFactory();
 		getPluginLoader();
 		getServiceFactory();
@@ -535,6 +546,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.40  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.39  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

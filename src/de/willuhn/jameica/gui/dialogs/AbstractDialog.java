@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.26 $
- * $Date: 2005/02/01 17:15:19 $
- * $Author: willuhn $
+ * $Revision: 1.27 $
+ * $Date: 2005/06/15 17:51:31 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -112,7 +112,7 @@ public abstract class AbstractDialog
 	private int height = SWT.DEFAULT;
 	private int width = SWT.DEFAULT;
 
-	I18N i18n;
+	protected I18N i18n;
 
   /**
    * Erzeugt einen neuen Dialog.
@@ -402,6 +402,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.27  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.26  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *

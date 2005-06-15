@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractCertificateDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/13 12:13:37 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/15 17:51:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -71,6 +71,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     String o  = p.getAttribute(Principal.ORGANIZATION);
     String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
 
+    if (cn == null && o == null && ou == null)
+      group.addLabelPair(i18n.tr("Name"), new LabelInput(cert.getIssuerDN().getName()));
+
     if (cn != null) group.addLabelPair(i18n.tr("Common Name (CN)"), new LabelInput(cn));
     if (o  != null) group.addLabelPair(i18n.tr("Organisation (O)"), new LabelInput(o));
     if (ou != null) group.addLabelPair(i18n.tr("Abteilung (OU)"), new LabelInput(ou));
@@ -86,6 +89,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     cn = p.getAttribute(Principal.COMMON_NAME);
     o  = p.getAttribute(Principal.ORGANIZATION);
     ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
+
+    if (cn == null && o == null && ou == null)
+      group.addLabelPair(i18n.tr("Name"), new LabelInput(cert.getSubjectDN().getName()));
 
     if (cn != null) group.addLabelPair(i18n.tr("Common Name (CN)"), new LabelInput(cn));
     if (o  != null) group.addLabelPair(i18n.tr("Organisation (O)"), new LabelInput(o));
@@ -154,6 +160,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: AbstractCertificateDialog.java,v $
+ * Revision 1.2  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.1  2005/06/13 12:13:37  web0
  * @N Certificate-Code completed
  *

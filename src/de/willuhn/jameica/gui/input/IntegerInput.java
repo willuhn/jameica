@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/11/12 18:23:59 $
- * $Author: willuhn $
+ * $Revision: 1.8 $
+ * $Date: 2005/06/15 17:51:31 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -32,7 +32,7 @@ public class IntegerInput extends TextInput
    */
   public IntegerInput(int value)
   {
-  	super(""+value);
+  	super(value < 0 ? "" : "" +value);
   }
 
   /**
@@ -92,6 +92,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.8  2005/06/15 17:51:31  web0
+ * @N Code zum Konfigurieren der Service-Bindings
+ *
  * Revision 1.7  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *
