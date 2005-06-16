@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.12 $
+ * $Date: 2005/06/16 13:02:55 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,6 @@
 
 package de.willuhn.jameica.gui.internal.controller;
 
-import java.net.BindException;
-import java.net.ServerSocket;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -372,48 +370,15 @@ public class SettingsControl extends AbstractControl
       if (in == null)
         throw new ApplicationException(i18n.tr("Bitte geben Sie eine TCP-Portnummer für den Netzwerkbetrieb ein"));
         
-      int i = in.intValue();
-      if (i < 1024 || i > 65535)
-        throw new ApplicationException(i18n.tr("TCP-Portnummer für Netzwerkbetrieb ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1024,""+65535}));
-
-      if (i != Application.getConfig().getRmiPort())
-      {
-        ServerSocket s = null;
-        try
-        {
-          // Wir machen einen Test auf dem Port wenn es nicht der aktuelle ist
-          Logger.info("testing TCP port " + i);
-          s = new ServerSocket(i);
-        }
-        catch (BindException e)
-        {
-          throw new ApplicationException(i18n.tr("Die angegebene TCP-Portnummer {0} ist bereits belegt",""+i));
-        }
-        finally
-        {
-          if (s != null)
-          {
-            try
-            {
-              s.close();
-            }
-            catch (Exception e)
-            {
-              // ignore
-            }
-          }
-        }
-      }
-
-      Application.getConfig().setRmiPort(i);
+      Application.getConfig().setRmiPort(in.intValue());
 
       Boolean b = (Boolean) getRmiSSL().getValue();
       Application.getConfig().setRmiSSL(b.booleanValue());
 
-      // TODO Hier noch mehr Checks einbauen (Siehe RMI-Port),
       Integer proxyPort = (Integer) getProxyPort().getValue();
-      if (proxyPort != null && proxyPort.intValue() > 0)
+      if (proxyPort != null)
         Application.getConfig().setProxyPort(proxyPort.intValue());
+
       Application.getConfig().setProxyHost((String)getProxyHost().getValue());
 
       // Look & Feel
@@ -613,6 +578,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.12  2005/06/16 13:02:55  web0
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *

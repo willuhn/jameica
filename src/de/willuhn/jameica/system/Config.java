@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.22 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.23 $
+ * $Date: 2005/06/16 13:02:55 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,12 +14,15 @@ package de.willuhn.jameica.system;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.BindException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Liest die System-Konfiguration aus config.xml. 
@@ -105,13 +108,43 @@ public final class Config
 	/**
 	 * Speichert den zu verwendenden TCP-Port fuer die lokale RMI-Registry.
    * @param port
+   * @throws ApplicationException Wird geworfen, wenn die Port-Angabe ungueltig (kleiner 1 oder groesser 65535) ist
+   * oder der Port bereits belegt.
    */
-  public void setRmiPort(int port)
+  public void setRmiPort(int port) throws ApplicationException
 	{
-    if (port < 0)
+    if (port < 1 || port > 65535)
+      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Netzwerkbetrieb ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+
+    ServerSocket s = null;
+    try
     {
-      Logger.warn("invalid RMI tcp port: " + port);
-      return;
+      // Wir machen einen Test auf dem Port wenn es nicht der aktuelle ist
+      Logger.info("testing TCP port " + port);
+      s = new ServerSocket(port);
+    }
+    catch (BindException e)
+    {
+      throw new ApplicationException(Application.getI18n().tr("Die angegebene TCP-Portnummer {0} ist bereits belegt",""+port));
+    }
+    catch (IOException ioe)
+    {
+      Logger.error("error while opening socket on port " + port);
+      throw new ApplicationException(Application.getI18n().tr("Fehler beim Testen der TCP-Portnummer {0}. Ist der Port bereits belegt?",""+port));
+    }
+    finally
+    {
+      if (s != null)
+      {
+        try
+        {
+          s.close();
+        }
+        catch (Exception e)
+        {
+          // ignore
+        }
+      }
     }
     settings.setAttribute("jameica.system.rmi.serverport",port);
 	}
@@ -160,14 +193,20 @@ public final class Config
   /**
    * Speichert die TCP-Portnummer des Proxys.
    * @param port Port-Nummer.
+   * @throws ApplicationException Bei Angabe eines ungueltigen Ports (kleiner 1 oder groesser 65535).
+   * Es sei denn, es wurde "-1" angegeben. Der Wert steht fuer "nicht verwenden".
    */
-  public void setProxyPort(int port)
+  public void setProxyPort(int port) throws ApplicationException
   {
-    if (port < 0)
+    if (port == -1)
     {
-      Logger.warn("invalid TCP port for proxy: " + port);
+      settings.setAttribute("jameica.system.proxy.port",-1);
       return;
     }
+
+    if (port < 1 || port > 65535)
+      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Proxy ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+
     settings.setAttribute("jameica.system.proxy.port",port);
   }
 
@@ -343,6 +382,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.23  2005/06/16 13:02:55  web0
+ * *** empty log message ***
+ *
  * Revision 1.22  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *
