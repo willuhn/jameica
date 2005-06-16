@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.6 $
+ * $Date: 2005/06/16 13:29:20 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -112,6 +112,13 @@ public interface ApplicationCallback
   public String askUser(String question, String labeltext) throws Exception;
 
   /**
+   * Kann benutzt werden, um z.Bsp. eine wichtig Fehlermeldung anzuzeigen.
+   * @param text der anzuzeigende Text.
+   * @throws Exception
+   */
+  public void notifyUser(String text) throws Exception;
+
+  /**
    * Wird aufgerufen, wenn dem TrustManager von Jameica ein Zertifikat angeboten wird,
    * dass er nicht in seinem Truststore hat. Der Benutzer soll dann entscheiden,
    * ob er dem Zertifikat vertraut.
@@ -126,6 +133,9 @@ public interface ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.6  2005/06/16 13:29:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

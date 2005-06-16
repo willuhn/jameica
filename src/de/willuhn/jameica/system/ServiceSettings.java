@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/ServiceSettings.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/09/15 22:31:53 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/16 13:29:20 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -23,35 +23,37 @@ public final class ServiceSettings
 
 	private static Settings settings = new Settings(ServiceSettings.class);
 
-	/**
-	 * Liefert eine Liste aller Service-Namen, fuer die bereits
-	 * Lookup-Adressen definiert wurden.
-   * @return Liste der vorhandenen Lookup-Addressen.
-   */
-  public static String[] getServiceNames()
-	{
-		return settings.getAttributes();
-	}
+//	/**
+//	 * Liefert eine Liste aller Service-Namen, fuer die bereits
+//	 * Lookup-Adressen definiert wurden.
+//   * @return Liste der vorhandenen Lookup-Addressen.
+//   */
+//  public static String[] getServiceNames()
+//	{
+//		return settings.getAttributes();
+//	}
 
 	/**
 	 * Speichert Host und Port fuer genannten Service.
+   * @param pluginclass Klasse des Plugins.
    * @param serviceName Name des Service.
    * @param host Host (IP oder Hostname).
    * @param port TCP-Port.
    */
-  public static void setLookup(String serviceName, String host, int port)
+  public static void setLookup(Class pluginclass, String serviceName, String host, int port)
 	{
-		settings.setAttribute(serviceName,host + ":" + port);
+		settings.setAttribute(pluginclass.getName() + "." + serviceName,host + ":" + port);
 	}
 
 	/**
 	 * Liefert den Host, auf dem nach diesem Service gesucht werden soll.
+	 * @param pluginclass Klasse des Plugins.
    * @param serviceName Name des gesuchten Service.
    * @return Hostname, auf dem sich der Service befindet oder <code>null</code> wenn nicht definiert.
    */
-  public static String getLookupHost(String serviceName)
+  public static String getLookupHost(Class pluginclass, String serviceName)
 	{
-		String value = settings.getString(serviceName,null);
+		String value = settings.getString(pluginclass.getName() + "." + serviceName,null);
 		if (value == null)
 			return null;
 		return value.substring(0,value.lastIndexOf(":"));
@@ -59,12 +61,13 @@ public final class ServiceSettings
 
 	/**
 	 * Liefert den TCP-Port, auf dem nach diesem Service gesucht werden soll.
+   * @param pluginclass Klasse des Plugins.
 	 * @param serviceName Name des gesuchten Service.
 	 * @return TCP-Port, auf dem sich der Service befindet oder <code>-1</code> wenn nicht definiert.
 	 */
-	public static int getLookupPort(String serviceName)
+	public static int getLookupPort(Class pluginclass, String serviceName)
 	{
-		String value = settings.getString(serviceName,null);
+		String value = settings.getString(pluginclass.getName() + "." + serviceName,null);
 		if (value == null)
 			return -1;
 		try {
@@ -80,6 +83,9 @@ public final class ServiceSettings
 
 /**********************************************************************
  * $Log: ServiceSettings.java,v $
+ * Revision 1.2  2005/06/16 13:29:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/09/15 22:31:53  willuhn
  * *** empty log message ***
  *

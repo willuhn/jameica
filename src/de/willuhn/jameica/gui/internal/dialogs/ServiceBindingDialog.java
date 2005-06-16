@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ServiceBindingDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/16 13:29:20 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -34,18 +34,22 @@ import de.willuhn.util.ApplicationException;
  */
 public class ServiceBindingDialog extends AbstractDialog
 {
-  private String serviceName = null;
+
+  private Class pluginclass     = null;
+  private String serviceName    = null;
   
-  private String value       = null;
+  private String value          = null;
 
   /**
    * ct.
-   * @param servicename Der vollstaendige Service-Name.
+   * @param pluginclass Klasse des Plugins.
+   * @param servicename Der Service-Name.
    * @param position
    */
-  public ServiceBindingDialog(String servicename, int position)
+  public ServiceBindingDialog(Class pluginclass, String servicename, int position)
   {
     super(position);
+    this.pluginclass = pluginclass;
     this.serviceName = servicename;
     this.setTitle(i18n.tr("Verbindung zu Jameica-Server"));
   }
@@ -56,8 +60,8 @@ public class ServiceBindingDialog extends AbstractDialog
   protected void paint(Composite parent) throws Exception
   {
     LabelGroup group = new LabelGroup(parent,i18n.tr("Eigenschaften"));
-    String h = ServiceSettings.getLookupHost(this.serviceName);
-    int p    = ServiceSettings.getLookupPort(this.serviceName);
+    String h = ServiceSettings.getLookupHost(this.pluginclass,this.serviceName);
+    int p    = ServiceSettings.getLookupPort(this.pluginclass,this.serviceName);
 
     if (p <= 0)
       p = Config.RMI_DEFAULT_PORT;
@@ -118,6 +122,9 @@ public class ServiceBindingDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ServiceBindingDialog.java,v $
+ * Revision 1.2  2005/06/16 13:29:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *

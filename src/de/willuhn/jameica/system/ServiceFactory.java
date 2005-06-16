@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.31 $
- * $Date: 2005/05/19 18:17:04 $
+ * $Revision: 1.32 $
+ * $Date: 2005/06/16 13:29:20 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -309,8 +309,8 @@ public final class ServiceFactory
 				throw new ApplicationException(Application.getI18n().tr("Zum Service \"{0}\" existiert kein lokales Binding",serviceName));
 
 			Logger.info("running in client mode, looking for remote service " + fullName);
-			String host = ServiceSettings.getLookupHost(fullName);
-			int port    = ServiceSettings.getLookupPort(fullName);
+			String host = ServiceSettings.getLookupHost(pluginClass,serviceName);
+			int port    = ServiceSettings.getLookupPort(pluginClass,serviceName);
 
 			if (host == null || host.length() == 0 || port == -1)
       {
@@ -374,6 +374,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.32  2005/06/16 13:29:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.31  2005/05/19 18:17:04  web0
  * *** empty log message ***
  *

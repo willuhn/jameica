@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/06/10 13:04:41 $
+ * $Revision: 1.9 $
+ * $Date: 2005/06/16 13:29:20 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -200,6 +200,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
   public void startupError(String errorMessage, Throwable t)
   {
   	System.out.println(errorMessage);
+    t.printStackTrace();
   }
 
   /**
@@ -316,11 +317,24 @@ public class ApplicationCallbackConsole implements ApplicationCallback
       return s != null && ("j".equalsIgnoreCase(s) || "y".equalsIgnoreCase(s));
     }
   }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#notifyUser(java.lang.String)
+   */
+  public void notifyUser(String text) throws Exception
+  {
+    System.out.println("----------------------------------------------------------------------");
+    System.out.println(text);
+    System.out.println("----------------------------------------------------------------------");
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.9  2005/06/16 13:29:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/06/10 13:04:41  web0
  * @N non-interactive Mode
  * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode

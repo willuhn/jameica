@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Principal.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/16 13:29:20 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@
 package de.willuhn.jameica.security;
 
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import de.willuhn.logging.Logger;
 
@@ -71,26 +72,28 @@ public class Principal
   public Principal(java.security.Principal p)
   {
     this.p = p;
-    String s = this.p.getName();
-    if (s != null && s.indexOf(',') != -1)
-    {
-      // parsefaehiger Content da
-      String[] list = s.split(",");
-      for (int i=0;i<list.length;++i)
-      {
-        if (list[i] == null || list[i].indexOf('=') == -1)
-        {
-          Logger.info("unable to parse attribute " + list[i]);
-          continue;
-        }
-        String[] pair = list[i].trim().split("=");
-        if (pair[1] == null || pair[1].length() == 0)
-          continue;
-        attributes.put(pair[0].toUpperCase(),pair[1]);
-      }
-    }
-    // und jetzt noch den DN
+
+    // Erstmal den DN.
     attributes.put(DISTINGUISHED_NAME,this.p.getName());
+
+    String s = this.p.getName();
+    if (s == null || s.length() == 0)
+      return;
+    
+    StringTokenizer st = new StringTokenizer(s,",");
+    while (st.hasMoreTokens())
+    {
+      String token = st.nextToken();
+      if (token == null || token.indexOf('=') == -1)
+      {
+        Logger.info("unable to parse attribute " + token + ", skipping");
+        continue;
+      }
+      String[] pair = token.trim().split("=");
+      if (pair[1] == null || pair[1].length() == 0)
+        continue;
+      attributes.put(pair[0].toUpperCase(),pair[1]);
+    }
   }
 
   /**
@@ -107,6 +110,9 @@ public class Principal
 
 /*********************************************************************
  * $Log: Principal.java,v $
+ * Revision 1.3  2005/06/16 13:29:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

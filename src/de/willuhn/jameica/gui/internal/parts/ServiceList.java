@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/16 13:29:20 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -60,15 +60,14 @@ public class ServiceList extends TablePart
         if (so == null)
           return;
         
-        String fullName = so.plugin.getClass().getName() + "." + so.serviceName;
-        ServiceBindingDialog d = new ServiceBindingDialog(fullName, ServiceBindingDialog.POSITION_CENTER);
+        ServiceBindingDialog d = new ServiceBindingDialog(so.plugin.getClass(),so.serviceName, ServiceBindingDialog.POSITION_CENTER);
         try
         {
           String s = (String) d.open();
           if (s == null || s.length() == 0)
             return;
           String[] host = s.split(":");
-          ServiceSettings.setLookup(fullName,host[0],Integer.parseInt(host[1]));
+          ServiceSettings.setLookup(so.plugin.getClass(),so.serviceName,host[0],Integer.parseInt(host[1]));
           GUI.startView(GUI.getCurrentView().getClass().getName(),plugin); // Tabelle aktualisieren
           GUI.getStatusBar().setSuccessText(Application.getI18n().tr("Server-Einstellungen gespeichert"));
         }
@@ -328,11 +327,10 @@ public class ServiceList extends TablePart
       }
       if ("binding".equals(name))
       {
-        String fullname = this.plugin.getClass().getName() + "." + this.serviceName;
-        String host = ServiceSettings.getLookupHost(fullname);
+        String host = ServiceSettings.getLookupHost(plugin.getClass(),serviceName);
         if (host == null || host.length() == 0)
           return Application.getI18n().tr("Warnung: Kein Server definiert");
-        return host + ":" + ServiceSettings.getLookupPort(fullname);
+        return host + ":" + ServiceSettings.getLookupPort(plugin.getClass(),serviceName);
       }
       return serviceName;
     }
@@ -376,6 +374,9 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.4  2005/06/16 13:29:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *

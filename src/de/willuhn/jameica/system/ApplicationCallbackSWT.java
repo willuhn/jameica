@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/06/13 12:13:37 $
+ * $Revision: 1.8 $
+ * $Date: 2005/06/16 13:29:20 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.dialogs.NewPasswordDialog;
 import de.willuhn.jameica.gui.dialogs.PasswordDialog;
+import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.TextDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.logging.Logger;
@@ -304,11 +305,26 @@ public class ApplicationCallbackSWT implements ApplicationCallback
     Boolean b = (Boolean) d.open();
     return b.booleanValue();
   }
+
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#notifyUser(java.lang.String)
+   */
+  public void notifyUser(String text) throws Exception
+  {
+    SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
+    d.setTitle(Application.getI18n().tr("Information"));
+    d.setText(text);
+    d.open();
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.8  2005/06/16 13:29:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/06/13 12:13:37  web0
  * @N Certificate-Code completed
  *
