@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/06/16 13:02:55 $
+ * $Revision: 1.13 $
+ * $Date: 2005/06/16 13:47:56 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -376,7 +376,9 @@ public class SettingsControl extends AbstractControl
       Application.getConfig().setRmiSSL(b.booleanValue());
 
       Integer proxyPort = (Integer) getProxyPort().getValue();
-      if (proxyPort != null)
+      if (proxyPort == null)
+        Application.getConfig().setProxyPort(-1);
+      else
         Application.getConfig().setProxyPort(proxyPort.intValue());
 
       Application.getConfig().setProxyHost((String)getProxyHost().getValue());
@@ -578,6 +580,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.13  2005/06/16 13:47:56  web0
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/06/16 13:02:55  web0
  * *** empty log message ***
  *
