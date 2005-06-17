@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/13 23:10:51 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/17 08:22:58 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,8 @@ package de.willuhn.jameica.gui.util;
 import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -148,10 +148,12 @@ public abstract class Container
     {
     	// Workaround fuer Windows, weil dort mehrzeilige
     	// Labels nicht korrekt umgebrochen werden.
-      label.addPaintListener(new PaintListener() {
-    	  public void paintControl(PaintEvent e) {
-   	  	  label.setSize(label.computeSize(label.getSize().x,SWT.DEFAULT));
-	    }});
+      label.addControlListener(new ControlAdapter() {
+        public void controlResized(ControlEvent e)
+        {
+          label.setSize(label.computeSize(label.getSize().x,SWT.DEFAULT));
+        }
+      });
     }
   }
 
@@ -248,6 +250,9 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.4  2005/06/17 08:22:58  web0
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/06/13 23:10:51  web0
  * *** empty log message ***
  *

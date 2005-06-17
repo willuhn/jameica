@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.10 $
+ * $Date: 2005/06/17 08:22:58 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -31,12 +31,32 @@ import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Session;
 
 /**
  * Dialog fuer die Programm-Einstellungen.
  */
 public class Settings extends AbstractView
 {
+
+  /**
+   * In der Session merken wir uns das letzte aktive Tab
+   */
+  private static Session session = null;
+  
+  /**
+   * Der Tabfolder.
+   */
+  private TabFolder folder = null;
+  
+  /**
+   * ct.
+   */
+  public Settings()
+  {
+    if (session == null)
+      session = new Session(30 * 60 * 1000l);
+  }
 
   /**
    * @see de.willuhn.jameica.gui.AbstractView#bind()
@@ -49,7 +69,7 @@ public class Settings extends AbstractView
 		GUI.getView().setTitle(i18n.tr("Einstellungen"));
 		final SettingsControl control = new SettingsControl(this);
 
-    TabFolder folder = new TabFolder(getParent(), SWT.NONE);
+    folder = new TabFolder(getParent(), SWT.NONE);
     folder.setLayoutData(new GridData(GridData.FILL_BOTH));
     folder.setBackground(Color.BACKGROUND.getSWTColor());
 
@@ -110,6 +130,11 @@ public class Settings extends AbstractView
 		//
 		/////////////////////////////////////////////////////////////////
 
+		// Mal checken, ob wir uns das zuletzt aktive Tab gemerkt haben.
+    Integer selection = (Integer) session.get("active");
+    if (selection != null)
+      folder.setSelection(selection.intValue());
+
     ButtonArea colorButtons = new ButtonArea(getParent(),3);
     colorButtons.addButton(i18n.tr("Zurücksetzen"),new Action()
     {
@@ -134,6 +159,9 @@ public class Settings extends AbstractView
    */
   public void unbind() throws ApplicationException
   {
+    // Wir merken uns das aktive Tab fuer eine Weile, damit wir das gleich
+    // wieder anzeigen koennen, wenn der User zurueckkommt.
+    session.put("active",new Integer(folder.getSelectionIndex()));
   }
 
 }
@@ -141,6 +169,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.10  2005/06/17 08:22:58  web0
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *

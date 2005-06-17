@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/11/12 18:23:59 $
- * $Author: willuhn $
+ * $Revision: 1.9 $
+ * $Date: 2005/06/17 08:22:58 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -29,8 +29,19 @@ import de.willuhn.logging.Logger;
  */
 public class DecimalInput extends TextInput
 {
-  private double value;
   private DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Application.getConfig().getLocale());
+
+  /**
+   * Erzeugt ein neues Eingabefeld ohne vorgegebenen Wert.
+   * @param format Formatter fuer die Anzeige.
+   */
+  public DecimalInput(DecimalFormat format)
+  {
+    super("");
+
+    if (format != null)
+      this.format = format;
+  }
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -40,7 +51,6 @@ public class DecimalInput extends TextInput
   public DecimalInput(double value, DecimalFormat format)
   {
   	super(""+value);
-    this.value = value;
 
     if (format != null)
 	    this.format = format;
@@ -52,8 +62,15 @@ public class DecimalInput extends TextInput
   public Control getControl()
   {
 		Control c = super.getControl();
-		text.setText(format.format(value));
-		
+    try
+    {
+      text.setText(format.format(super.getValue()));
+    }
+    catch (Exception e)
+    {
+      // ignore
+    }
+    
     text.addListener (SWT.Verify, new Listener() {
       public void handleEvent (Event e) {
 
@@ -91,10 +108,11 @@ public class DecimalInput extends TextInput
    */
   public Object getValue()
   {
-		if (text.getText() == null || text.getText().length() == 0)
+    String s = text.getText();
+    if (s == null || s.length() == 0)
 			return null;
     try {
-      return new Double(format.parse(text.getText()).doubleValue());
+      return new Double(format.parse(s).doubleValue());
     }
     catch (ParseException e)
     {
@@ -121,6 +139,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.9  2005/06/17 08:22:58  web0
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

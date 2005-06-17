@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/06/16 13:29:20 $
+ * $Revision: 1.10 $
+ * $Date: 2005/06/17 08:22:58 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -288,34 +288,30 @@ public class ApplicationCallbackConsole implements ApplicationCallback
       }
       return false;
     }
-    else
-    {
-      
-      // Ansonsten fragen wir an der Console nach der Vertrauensstellung
-      DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
+    // Ansonsten fragen wir an der Console nach der Vertrauensstellung
+    DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
 
-      Certificate myCert = new Certificate(cert);
+    Certificate myCert = new Certificate(cert);
 
-      System.out.println("----------------------------------------------------------------------");
-      System.out.println(Application.getI18n().tr("Eigenschaften des Zertifikats"));
+    System.out.println("----------------------------------------------------------------------");
+    System.out.println(Application.getI18n().tr("Eigenschaften des Zertifikats"));
 
-      System.out.println((Application.getI18n().tr("Ausgestellt von:  ") + cert.getIssuerDN().getName()));
-      System.out.println((Application.getI18n().tr("Ausgestellt für:  ") + cert.getSubjectDN().getName()));
-      System.out.println((Application.getI18n().tr("Gültig von:       ") + df.format(cert.getNotBefore())));
-      System.out.println((Application.getI18n().tr("Gültig bis:       ") + df.format(cert.getNotAfter())));
-      System.out.println((Application.getI18n().tr("Seriennummer:     ") + cert.getSerialNumber().toString()));
-      System.out.println((Application.getI18n().tr("Typ:              ") + cert.getType()));
-      System.out.println((Application.getI18n().tr("MD5-Fingerabdruck:") + myCert.getMD5Fingerprint()));
+    System.out.println((Application.getI18n().tr("Ausgestellt von:  ") + cert.getIssuerDN().getName()));
+    System.out.println((Application.getI18n().tr("Ausgestellt für:  ") + cert.getSubjectDN().getName()));
+    System.out.println((Application.getI18n().tr("Gültig von:       ") + df.format(cert.getNotBefore())));
+    System.out.println((Application.getI18n().tr("Gültig bis:       ") + df.format(cert.getNotAfter())));
+    System.out.println((Application.getI18n().tr("Seriennummer:     ") + cert.getSerialNumber().toString()));
+    System.out.println((Application.getI18n().tr("Typ:              ") + cert.getType()));
+    System.out.println((Application.getI18n().tr("MD5-Fingerabdruck:") + myCert.getMD5Fingerprint()));
 
-      System.out.println("----------------------------------------------------------------------");
-      System.out.println(Application.getI18n().tr("Sie verbinden sich mit einem für Jameica unbekannten System." +
-        "Möchten Sie diesem Zertifikat vertrauen? [J/N]"));
+    System.out.println("----------------------------------------------------------------------");
+    System.out.println(Application.getI18n().tr("Sie verbinden sich mit einem für Jameica unbekannten System." +
+      "Möchten Sie diesem Zertifikat vertrauen? [J/N]"));
 
-      InputStreamReader isr = new InputStreamReader(System.in);
-      BufferedReader keyboard = new BufferedReader(isr);
-      String s = keyboard.readLine();
-      return s != null && ("j".equalsIgnoreCase(s) || "y".equalsIgnoreCase(s));
-    }
+    InputStreamReader isr = new InputStreamReader(System.in);
+    BufferedReader keyboard = new BufferedReader(isr);
+    String s = keyboard.readLine();
+    return s != null && ("j".equalsIgnoreCase(s) || "y".equalsIgnoreCase(s));
   }
 
   /**
@@ -332,6 +328,9 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.10  2005/06/17 08:22:58  web0
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/06/16 13:29:20  web0
  * *** empty log message ***
  *
