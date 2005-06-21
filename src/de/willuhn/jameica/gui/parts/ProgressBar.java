@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/11/05 20:00:44 $
- * $Author: willuhn $
+ * $Revision: 1.8 $
+ * $Date: 2005/06/21 20:02:02 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -38,6 +38,7 @@ public class ProgressBar implements ProgressMonitor, Part
 	private Composite parent														= null;
 	private org.eclipse.swt.widgets.ProgressBar bar			= null;
 	private Label barLabel															= null;
+  private Label percentLabel                          = null;
 
   private int current = 0;
 
@@ -63,6 +64,16 @@ public class ProgressBar implements ProgressMonitor, Part
 				}
 			});
 		}
+    if (percentLabel != null && !percentLabel.isDisposed())
+    {
+      GUI.getDisplay().syncExec(new Runnable()
+      {
+        public void run()
+        {
+          percentLabel.setText(" [" + current + " %]");
+        }
+      });
+    }
 
   }
 
@@ -134,7 +145,7 @@ public class ProgressBar implements ProgressMonitor, Part
   {
   	this.parent = new Composite(parent,SWT.NONE);
 		this.parent.setBackground(Color.BACKGROUND.getSWTColor());
-  	this.parent.setLayout(new GridLayout(2,false));
+  	this.parent.setLayout(new GridLayout(3,false));
   	this.parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		bar = new org.eclipse.swt.widgets.ProgressBar(this.parent, SWT.SMOOTH);
@@ -144,9 +155,15 @@ public class ProgressBar implements ProgressMonitor, Part
 		bar.setMaximum(100);
 		bar.setSelection(0);
 
-		barLabel = new Label(this.parent,SWT.NONE);
+    percentLabel = new Label(this.parent,SWT.NONE);
+    percentLabel.setBackground(Color.BACKGROUND.getSWTColor());
+    percentLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+    percentLabel.setText("[0 %]");
+
+    barLabel = new Label(this.parent,SWT.NONE);
 		barLabel.setBackground(Color.BACKGROUND.getSWTColor());
 		barLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    barLabel.setText("");
 
 		Composite comp = new Composite(this.parent,SWT.BORDER);
 		comp.setBackground(Color.BACKGROUND.getSWTColor());
@@ -157,7 +174,7 @@ public class ProgressBar implements ProgressMonitor, Part
 		gl.verticalSpacing = 0;
 		comp.setLayout(gl);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		comp.setLayoutData(gd);
 		
 		log = new TextPart();
@@ -189,6 +206,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.8  2005/06/21 20:02:02  web0
+ * @C cvs merge
+ *
  * Revision 1.7  2004/11/05 20:00:44  willuhn
  * @D javadoc fixes
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.27 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.28 $
+ * $Date: 2005/06/21 20:02:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -15,12 +15,13 @@ package de.willuhn.jameica.gui.dialogs;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -101,8 +102,8 @@ public abstract class AbstractDialog
 	private Object choosen = null;
   
   private Composite parent;
-  private CLabel title;
   private Label imageLabel;
+  private Canvas title;
   
   private Image sideImage;
 
@@ -148,7 +149,7 @@ public abstract class AbstractDialog
 				shell.setLayout(shellLayout);
 
 				Composite comp = new Composite(shell,SWT.NONE);
-				GridLayout compLayout = new GridLayout(2,true);
+				GridLayout compLayout = new GridLayout();
 				compLayout.horizontalSpacing = 0;
 				compLayout.verticalSpacing = 0;
 				compLayout.marginHeight = 0;
@@ -157,15 +158,29 @@ public abstract class AbstractDialog
 				comp.setLayout(compLayout);
 				comp.setBackground(new org.eclipse.swt.graphics.Color(display,255,255,255));
 		
-				title = new CLabel(comp,SWT.NONE);
-				title.setBackground(new org.eclipse.swt.graphics.Color(display,255,255,255));
-				title.setLayoutData(new GridData(GridData.FILL_BOTH));
-				title.setFont(Font.H2.getSWTFont());
+        ///////////////////////////////
+        // Der Titel selbst
+        title = SWTUtil.getCanvas(comp,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+        GridLayout layout2 = new GridLayout();
+        layout2.marginHeight = 0;
+        layout2.marginWidth = 0;
+        layout2.horizontalSpacing = 0;
+        layout2.verticalSpacing = 0;
+        title.setLayout(layout2);
 
-				Label image = new Label(comp,SWT.NONE);
-				image.setImage(SWTUtil.getImage("gradient.gif"));
-				title.setBackground(new org.eclipse.swt.graphics.Color(display,255,255,255));
-				image.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+        title.addListener(SWT.Paint,new Listener()
+        {
+          public void handleEvent(Event event)
+          {
+            GC gc = event.gc;
+            gc.setFont(Font.H2.getSWTFont());
+            gc.drawText(titleText == null ? "" : titleText,8,1,true);
+          }
+        });
+        //
+        ///////////////////////////////
+        Label sep = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
+        sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 				Composite c = new Composite(shell,SWT.NONE);
 				GridLayout cl = new GridLayout(2,false);
@@ -244,12 +259,16 @@ public abstract class AbstractDialog
 	}
 
   /**
-   * Setzt den Titel des Dialogs.
-   * @param text Titel des Dialogs.
+   * Setzt den anzuzeigenden Titel.
+   * Dies kann auch nachtraeglich noch ausgefuehrt werden, wenn das
+   * Panel schon angezeigt wird.
+   * @param title
    */
-  public final void setTitle(String text)
+  public void setTitle(String title)
   {
-		this.titleText = "" + text;
+    this.titleText = title == null ? "" : title;
+    if (this.title != null && !this.title.isDisposed())
+        this.title.redraw();
   }
 
 	/**
@@ -313,7 +332,6 @@ public abstract class AbstractDialog
         public void run()
         {
 					shell.setText(titleText == null ? "" : titleText);
-					title.setText(titleText == null ? "" : titleText);
 					if (sideImage != null)
 						imageLabel.setImage(sideImage);
 	
@@ -402,6 +420,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.28  2005/06/21 20:02:02  web0
+ * @C cvs merge
+ *
  * Revision 1.27  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *

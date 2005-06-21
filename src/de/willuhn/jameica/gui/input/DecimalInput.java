@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/06/17 08:22:58 $
+ * $Revision: 1.10 $
+ * $Date: 2005/06/21 20:02:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -139,8 +139,8 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
- * Revision 1.9  2005/06/17 08:22:58  web0
- * *** empty log message ***
+ * Revision 1.10  2005/06/21 20:02:02  web0
+ * @C cvs merge
  *
  * Revision 1.8  2004/11/12 18:23:59  willuhn
  * *** empty log message ***

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.16 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.17 $
+ * $Date: 2005/06/21 20:02:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -406,7 +406,7 @@ public class SSLFactory
         Logger.warn("deleting certificate for alias " + alias);
         getKeyStore().deleteEntry(alias);
         storeKeystore();
-        this.keystore = null;
+        reset();
         return;
       }
     }
@@ -450,11 +450,21 @@ public class SSLFactory
     getKeyStore().setCertificateEntry(alias,cert);
     storeKeystore();
 
-    // keystore auf null setzen damit er neu geladen wird
-    this.keystore = null;
+    reset();
   } 
 
-	/**
+  /**
+   * Resettet Keystore und SSL-Context damit er beim naechsten Mal neu geladen wird.
+   */
+  private synchronized void reset()
+  {
+    // keystore auf null setzen damit er neu geladen wird
+    this.keystore   = null;
+    this.sslContext = null;
+    // TODO Die RMISocketFactory muss die Aenderung noch mitkriegen 
+  }
+
+  /**
 	 * Liefert einen fertig konfigurierten SSLContext mit den Jameica-Zertifikaten.
    * @return SSLContect.
    * @throws Exception
@@ -499,6 +509,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.17  2005/06/21 20:02:03  web0
+ * @C cvs merge
+ *
  * Revision 1.16  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

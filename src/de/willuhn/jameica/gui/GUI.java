@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.76 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.77 $
+ * $Date: 2005/06/21 20:02:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -574,8 +574,6 @@ public class GUI
 	/**
 	 * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
 	 * Waehrend der Ausfuehrung wird eine Sanduhr angezeigt und die GUI geblockt.
-	 * Das Runnable wird in einem extra Thread gestartet. Von daher muss kein
-	 * Thread uebergeben werden. Das Runnable hat Zugriff auf die GUI.
 	 * @param job
 	 */
 	public static void startSync(final Runnable job)
@@ -595,47 +593,31 @@ public class GUI
 	/**
 	 * Startet einen Job asynchron zur GUI, der typischerweise laenger dauert.
 	 * Waehrend der Ausfuehrung wird die nicht GUI geblockt. Informativ wird unten
-	 * rechts ein ProgressBar angezeigt. Das Runnable wird in einem extra Thread
-	 * gestartet. Von daher muss kein Thread uebergeben werden. Das Runnable hat
-	 * <b>keinen </b> direkten Zugriff auf die GUI.
+	 * rechts ein ProgressBar angezeigt. 
 	 * @param job
 	 */
 	public static void startAsync(final Runnable job)
 	{
 		if (getDisplay() == null || getDisplay().isDisposed()) return;
 
-		getDisplay().asyncExec(new Runnable()
+    getStatusBar().startProgress();
+    getDisplay().asyncExec(new Runnable()
     {
       public void run()
       {
-
-				getStatusBar().startProgress();
-
-				Thread th = new Thread("[Jameica Backgroundtask] " + job.getClass().getName()) {
-
-					public void run()
-					{
-						try
-						{
-							job.run();
-						}
-						catch (Throwable t)
-						{
-							// Wir wollen nicht, dass unbefugter Zugriff auf die GUI
-							// stattfindet
-							Logger.error("Error while running async thread", t);
-						}
-						finally
-						{
-							getStatusBar().stopProgress();
-						}
-					}
-				};
-				th.start();
-      }
+				try
+				{
+					job.run();
+				}
+				finally
+				{
+					getStatusBar().stopProgress();
+				}
+			}
     });
 	}
 
+  
 	/**
 	 * Startet den GUI-Loop.
 	 */
@@ -752,6 +734,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.77  2005/06/21 20:02:02  web0
+ * @C cvs merge
+ *
  * Revision 1.76  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.40 $
- * $Date: 2005/06/10 22:13:09 $
+ * $Revision: 1.41 $
+ * $Date: 2005/06/21 20:02:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -184,16 +184,15 @@ public class StatusBar {
    */
   public synchronized void startProgress()
 	{
-		Thread t = new Thread("progress")
-		{
-			public void run() {
-				if (progressComp.isDisposed())
-					return;
-				progressStack.topControl = progress;
-				progressComp.layout();
-			}
-		};
-		GUI.getDisplay().syncExec(t);
+		GUI.getDisplay().syncExec(new Runnable() {
+      public void run()
+      {
+        if (progressComp == null || progressComp.isDisposed())
+          return;
+        progressStack.topControl = progress;
+        progressComp.layout();
+      }
+    });
 	}
 
 	/**
@@ -201,16 +200,15 @@ public class StatusBar {
 	 */
 	public synchronized void stopProgress()
 	{
-		Thread t = new Thread("progress")
-		{
-			public void run() {
-				if (progressComp.isDisposed())
-					return;
-				progressStack.topControl = noProgress;
-				progressComp.layout();
-			}
-		};
-		GUI.getDisplay().syncExec(t);
+		GUI.getDisplay().syncExec(new Runnable() {
+      public void run()
+      {
+        if (progressComp == null || progressComp.isDisposed())
+          return;
+        progressStack.topControl = noProgress;
+        progressComp.layout();
+      }
+    });
 	}
 
 
@@ -412,6 +410,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.41  2005/06/21 20:02:02  web0
+ * @C cvs merge
+ *
  * Revision 1.40  2005/06/10 22:13:09  web0
  * @N new TabGroup
  * @N extended Settings

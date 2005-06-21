@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/06/17 08:22:58 $
+ * $Revision: 1.11 $
+ * $Date: 2005/06/21 20:02:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -169,8 +169,8 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.10  2005/06/17 08:22:58  web0
- * *** empty log message ***
+ * Revision 1.11  2005/06/21 20:02:02  web0
+ * @C cvs merge
  *
  * Revision 1.9  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings

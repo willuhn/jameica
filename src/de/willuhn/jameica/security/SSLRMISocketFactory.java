@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLRMISocketFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/10 10:12:26 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/21 20:02:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -51,8 +51,6 @@ public class SSLRMISocketFactory extends RMISocketFactory
     RMISocketFactory.setFailureHandler(new SSLRMIFailureHandler());
 
   	SSLContext context 	= Application.getSSLFactory().getSSLContext();
-//    serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-//    socketFactory 			= (SSLSocketFactory) SSLSocketFactory.getDefault();
 		serverSocketFactory = context.getServerSocketFactory();
 		socketFactory 			= context.getSocketFactory();
   }
@@ -129,6 +127,9 @@ public class SSLRMISocketFactory extends RMISocketFactory
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.4  2005/06/21 20:02:03  web0
+ * @C cvs merge
+ *
  * Revision 1.3  2005/06/10 10:12:26  web0
  * @N Zertifikats-Dialog ergonomischer gestaltet
  * @C TrustManager prueft nun zuerst im Java-eigenen Keystore

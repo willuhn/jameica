@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/06/17 08:22:58 $
+ * $Revision: 1.11 $
+ * $Date: 2005/06/21 20:02:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -328,8 +328,8 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
- * Revision 1.10  2005/06/17 08:22:58  web0
- * *** empty log message ***
+ * Revision 1.11  2005/06/21 20:02:02  web0
+ * @C cvs merge
  *
  * Revision 1.9  2005/06/16 13:29:20  web0
  * *** empty log message ***

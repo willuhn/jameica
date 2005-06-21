@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/06/17 08:22:58 $
+ * $Revision: 1.5 $
+ * $Date: 2005/06/21 20:02:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -250,8 +250,8 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.4  2005/06/17 08:22:58  web0
- * *** empty log message ***
+ * Revision 1.5  2005/06/21 20:02:03  web0
+ * @C cvs merge
  *
  * Revision 1.3  2005/06/13 23:10:51  web0
  * *** empty log message ***
