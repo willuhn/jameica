@@ -35,37 +35,39 @@
 		<echo message="CVS-Tag: ${tag}" />
 		<echo message="BUILD  : ${build.number}" />
 
-		<property name="define.projectname" 				value="jameica" />
-		<property name="define.jarfilename" 				value="jameica.jar" />
-		<property name="define.jarfilename.win32" 			value="jameica-win32.jar" />
-		<property name="define.jarfilename.macos" 			value="jameica-macos.jar" />
-		<property name="define.jarfilename.linux" 			value="jameica-linux.jar" />
-		<property name="define.jarfilename.linux-amd64" 	value="jameica-linux-amd64.jar" />
-		<property name="define.srcfilename" 				value="jameica.src.zip" />
-		<property name="define.javadocfilename" 			value="jameica.javadoc.zip" />
-		<property name="define.commonlibs" 					value="lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
-		<property name="define.package" 					value="de.willuhn.jameica" />
+		<property name="define.projectname" 				       value="jameica" />
+		<property name="define.jarfilename" 				       value="jameica.jar" />
+		<property name="define.jarfilename.win32" 			   value="jameica-win32.jar" />
+		<property name="define.jarfilename.macos" 		     value="jameica-macos.jar" />
+		<property name="define.jarfilename.linux" 			   value="jameica-linux.jar" />
+		<property name="define.jarfilename.linux-amd64" 	 value="jameica-linux-amd64.jar" />
+    <property name="define.jarfilename.openbsd"        value="jameica-openbsd.jar" />
+		<property name="define.srcfilename" 				       value="jameica.src.zip" />
+		<property name="define.javadocfilename" 			     value="jameica.javadoc.zip" />
+		<property name="define.commonlibs" 					       value="lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
+		<property name="define.package" 					         value="de.willuhn.jameica" />
 
-		<property name="project.nightly" 					value="releases/nightly" />
+		<property name="project.nightly" 					         value="releases/nightly" />
 
-		<property name="project.release" 					value="releases/${version}-${build.number}" />
-		<property name="project.src" 						value="${project.release}/src/classes" />
-		<property name="project.tmp" 						value="${project.release}/tmp" />
-		<property name="project.javadoc" 					value="${project.release}/javadoc" />
-		<property name="project.zipdir" 					value="${project.release}/${define.projectname}" />
+		<property name="project.release" 					         value="releases/${version}-${build.number}" />
+		<property name="project.src" 						           value="${project.release}/src/classes" />
+		<property name="project.tmp" 						           value="${project.release}/tmp" />
+		<property name="project.javadoc" 					         value="${project.release}/javadoc" />
+		<property name="project.zipdir" 					         value="${project.release}/${define.projectname}" />
 
-		<property name="project.zipfilename" 				value="${define.projectname}.zip" />
-		<property name="project.zipfilename.win32"			value="${define.projectname}-win32.zip" />
-		<property name="project.zipfilename.linux"			value="${define.projectname}-linux.zip" />
-		<property name="project.zipfilename.linux-amd64"	value="${define.projectname}-linux-amd64.zip" />
-		<property name="project.zipfilename.macos"			value="${define.projectname}-macos.zip" />
+		<property name="project.zipfilename" 				       value="${define.projectname}.zip" />
+		<property name="project.zipfilename.win32"			   value="${define.projectname}-win32.zip" />
+		<property name="project.zipfilename.linux"			   value="${define.projectname}-linux.zip" />
+		<property name="project.zipfilename.linux-amd64"	 value="${define.projectname}-linux-amd64.zip" />
+		<property name="project.zipfilename.macos"			   value="${define.projectname}-macos.zip" />
+    <property name="project.zipfilename.openbsd"       value="${define.projectname}-openbsd.zip" />
 
 		<property name="src.dir" 							value="src" />
-		<property name="icon.dir" 							value="${src.dir}/img" />
-		<property name="lang.dir" 							value="${src.dir}/lang" />
-		<property name="help.dir" 							value="${src.dir}/help" />
+		<property name="icon.dir" 						value="${src.dir}/img" />
+		<property name="lang.dir" 						value="${src.dir}/lang" />
+		<property name="help.dir" 						value="${src.dir}/help" />
 		<property name="lib.dir" 							value="lib" />
-		<property name="class.dir" 							value="${project.tmp}/bin" />
+		<property name="class.dir" 						value="${project.tmp}/bin" />
 
 
 		<path id="compilepath">
@@ -168,7 +170,20 @@
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
 
-		<jar destfile="${project.zipdir}/${define.jarfilename.linux-amd64}">
+    <jar destfile="${project.zipdir}/${define.jarfilename.openbsd}">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <attribute name="Built-Date" value="${DSTAMP}" />
+        <attribute name="Implementation-Title" value="${define.projectname}" />
+        <attribute name="Implementation-Version" value="${version}" />
+        <attribute name="Implementation-Buildnumber" value="${build.number}" />
+        <attribute name="Main-Class" value="de.willuhn.jameica.Main" />
+        <attribute name="Class-Path" value="${define.jarfilename} lib/swt/openbsd/swt.jar lib/swt/openbsd/swt-pi.jar lib/swt/openbsd/swt-mozilla.jar ${define.commonlibs}" />
+      </manifest>
+      <fileset dir="${class.dir}" includes="**/Main.class" />
+    </jar>
+
+    <jar destfile="${project.zipdir}/${define.jarfilename.linux-amd64}">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Built-Date" value="${DSTAMP}" />
@@ -227,6 +242,7 @@
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
+        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
@@ -248,6 +264,7 @@
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
+        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
@@ -268,6 +285,7 @@
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
+        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
@@ -289,13 +307,36 @@
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
+        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
 			</zipfileset>
 		</zip>
 
-		<!-- ZIP-File mit allen Betriebssystemen -->
+    <!-- ZIP-File fuer OpenBSD -->
+    <zip destfile="${project.release}/${project.zipfilename.openbsd}">
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}" />
+        <include name="${define.projectname}/${define.jarfilename}"/>
+        <include name="${define.projectname}/${define.jarfilename.openbsd}"/>
+        <include name="${define.projectname}/COPYING"/>
+        <include name="${define.projectname}/README"/>
+        <include name="${define.projectname}/jameica-openbsd.sh"/>
+        <include name="${define.projectname}/jameicaserver-openbsd.sh"/>
+        <include name="${define.projectname}/rcjameica"/>
+        <include name="${define.projectname}/jameica.png"/>
+        <include name="${define.projectname}/plugins"/>
+        <include name="${define.projectname}/lib/**"/>
+
+        <exclude name="${define.projectname}/lib/swt/macos/**"/>
+        <exclude name="${define.projectname}/lib/swt/win32/**"/>
+        <exclude name="${define.projectname}/lib/swt/linux/**"/>
+        <exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+      </zipfileset>
+    </zip>
+
+    <!-- ZIP-File mit allen Betriebssystemen -->
 		<zip destfile="${project.release}/${project.zipfilename}">
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
@@ -361,6 +402,7 @@
 		<checksum file="${project.release}/${project.zipfilename.linux}" />
 		<checksum file="${project.release}/${project.zipfilename.linux-amd64}" />
 		<checksum file="${project.release}/${project.zipfilename.macos}" />
+    <checksum file="${project.release}/${project.zipfilename.openbsd}" />
 		<echo message="Creating PGP signatures" />
 
 		<exec executable="kgpg" failonerror="true" timeout="60000">
@@ -382,6 +424,9 @@
 		<exec executable="kgpg" failonerror="true" timeout="60000">
 			<arg line="-S ${project.release}/${project.zipfilename.macos}" />
 		</exec>
+    <exec executable="kgpg" failonerror="true" timeout="60000">
+      <arg line="-S ${project.release}/${project.zipfilename.openbsd}" />
+    </exec>
 	</target>
 
 
@@ -392,15 +437,16 @@
 	<target depends="init,cvs,compile,jar,javadoc,src" description="build nightly build" name="nightly">
 		<mkdir dir="${project.nightly}" />
 
-		<copy file="${project.release}/${project.zipfilename}" 				tofile="${project.nightly}/${define.projectname}-${version}-nightly.zip" />
-		<copy file="${project.release}/${project.zipfilename.linux}" 		tofile="${project.nightly}/${define.projectname}-${version}-nightly-linux.zip" />
+		<copy file="${project.release}/${project.zipfilename}" 				      tofile="${project.nightly}/${define.projectname}-${version}-nightly.zip" />
+		<copy file="${project.release}/${project.zipfilename.linux}" 		    tofile="${project.nightly}/${define.projectname}-${version}-nightly-linux.zip" />
 		<copy file="${project.release}/${project.zipfilename.linux-amd64}" 	tofile="${project.nightly}/${define.projectname}-${version}-nightly-linux-amd64.zip" />
-		<copy file="${project.release}/${project.zipfilename.macos}" 		tofile="${project.nightly}/${define.projectname}-${version}-nightly-macos.zip" />
-		<copy file="${project.release}/${project.zipfilename.win32}" 		tofile="${project.nightly}/${define.projectname}-${version}-nightly-win32.zip" />
+		<copy file="${project.release}/${project.zipfilename.macos}" 		    tofile="${project.nightly}/${define.projectname}-${version}-nightly-macos.zip" />
+		<copy file="${project.release}/${project.zipfilename.win32}" 		    tofile="${project.nightly}/${define.projectname}-${version}-nightly-win32.zip" />
+    <copy file="${project.release}/${project.zipfilename.openbsd}"      tofile="${project.nightly}/${define.projectname}-${version}-nightly-openbsd.zip" />
 
 
-		<copy file="${project.release}/${define.srcfilename}" 		tofile="${project.nightly}/${define.projectname}-${version}-nightly.src.zip" />
-		<copy file="${project.release}/${define.javadocfilename}" 	tofile="${project.nightly}/${define.projectname}-${version}-nightly.javadoc.zip" />
+		<copy file="${project.release}/${define.srcfilename}" 		          tofile="${project.nightly}/${define.projectname}-${version}-nightly.src.zip" />
+		<copy file="${project.release}/${define.javadocfilename}" 	        tofile="${project.nightly}/${define.projectname}-${version}-nightly.javadoc.zip" />
 
 		<!-- Die Datei brauchen die anderen Plugins zum Kompilieren //-->
 		<copy file="${project.zipdir}/${define.jarfilename}" tofile="releases/jameica-lib.jar" />
