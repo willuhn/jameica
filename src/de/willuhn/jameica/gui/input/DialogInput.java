@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/03/09 01:06:37 $
+ * $Revision: 1.14 $
+ * $Date: 2005/06/23 23:03:25 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
 /**
@@ -65,6 +66,10 @@ public class DialogInput extends ButtonInput
 					text.redraw();
 					text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
 				}
+        catch (OperationCanceledException oce)
+        {
+          Logger.info("operation cancelled");
+        }
 				catch (Exception e1)
 				{
 					Logger.error("error while opening dialog",e1);
@@ -133,6 +138,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.14  2005/06/23 23:03:25  web0
+ * *** empty log message ***
+ *
  * Revision 1.13  2005/03/09 01:06:37  web0
  * @D javadoc fixes
  *
