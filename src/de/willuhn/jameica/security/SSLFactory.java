@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.17 $
- * $Date: 2005/06/21 20:02:03 $
+ * $Revision: 1.18 $
+ * $Date: 2005/06/24 14:55:56 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -32,9 +32,12 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 
 import org.bouncycastle.asn1.x509.X509Name;
@@ -43,6 +46,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
 /**
@@ -363,8 +367,75 @@ public class SSLFactory
       System.setProperty("javax.net.ssl.keyStore",   s);
       System.setProperty("javax.net.ssl.keyStorePassword",Application.getCallback().getPassword());
 
+      // Wir sagen der HttpsUrlConnection, dass sie unsere SocketFactory
+      // nutzen soll, damit es ueber unseren TrustManager geht
       Logger.info("applying jameica's ssl socket factory");
       HttpsURLConnection.setDefaultSSLSocketFactory(getSSLContext().getSocketFactory());
+
+      // Wir verwenden einen eigenen Hostname-Verifier und lassen
+      // dem User die Chance, bei nicht uebereinstimmenden Hosts
+      // selbst zu entscheiden.
+      final HostnameVerifier systemVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+      Logger.info("applying jameica's hostname verifier");
+      HostnameVerifier hostnameVerifier = new HostnameVerifier()
+      {
+        public boolean verify(String hostname, SSLSession session)
+        {
+          javax.security.cert.X509Certificate[] certs = new javax.security.cert.X509Certificate[0];
+          try
+          {
+            certs = session.getPeerCertificateChain();
+          }
+          catch (SSLPeerUnverifiedException e)
+          {
+            Logger.error("error while reading certificates from session",e);
+          }
+
+          boolean match = false;
+          String hostnames = "";
+          for (int i=0;i<certs.length;++i)
+          {
+            Certificate c = new Certificate(certs[i]);
+            String h = c.getSubject().getAttribute(Principal.COMMON_NAME);
+            if (h == null || h.length() == 0)
+              continue;
+            hostnames += "," + h;
+            Logger.info("comparing hostname " + hostname + " with CN " + h);
+            if (h.equalsIgnoreCase(hostname))
+            {
+              Logger.info("hostname matched");
+              match = true;
+              break;
+            }
+            
+          }
+          
+          if (!match)
+          {
+            hostnames = hostnames.replaceFirst(",","");
+            Logger.warn("expected hostname " + hostname + " does not match any of the certificates: " + hostnames);
+
+            String s =
+              Application.getI18n().tr("Der Hostname {0} stimmt mit keinem der Server-Zertifikate überein ({1}). " +
+                  "Wollen Sie den Vorgang dennoch fortsetzen?",new String[]{hostname,hostnames});
+
+            try
+            {
+              return Application.getCallback().askUser(s);
+            }
+            catch (OperationCanceledException oce)
+            {
+              throw oce;
+            }
+            catch (Exception e)
+            {
+              Logger.error("error while asking user something",e);
+            }
+          }
+          return systemVerifier.verify(hostname, session); 
+        }
+      };
+      HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier); 
 
 			return this.keystore;
 		}
@@ -509,6 +580,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.18  2005/06/24 14:55:56  web0
+ * *** empty log message ***
+ *
  * Revision 1.17  2005/06/21 20:02:03  web0
  * @C cvs merge
  *

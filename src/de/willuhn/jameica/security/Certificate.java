@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Certificate.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/15 16:10:57 $
+ * $Revision: 1.3 $
+ * $Date: 2005/06/24 14:55:56 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -18,12 +18,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
+import de.willuhn.logging.Logger;
+
 /**
  * Kleine Hilfs-Klasse mit der sich X509-Zertifikate einfach auslesen lassen.
  */
 public class Certificate
 {
   private X509Certificate cert = null;
+  private javax.security.cert.X509Certificate cert2 = null;
 
   /**
    * ct.
@@ -35,6 +38,15 @@ public class Certificate
   }
 
   /**
+   * ct.
+   * @param cert
+   */
+  public Certificate(javax.security.cert.X509Certificate cert)
+  {
+    this.cert2 = cert;
+  }
+
+  /**
    * Liefert den MD5-Fingerabdruck des Zertifikats.
    * @return der MD5-Fingerabdruck des Zertifikats.
    * @throws CertificateEncodingException
@@ -42,7 +54,22 @@ public class Certificate
    */
   public String getMD5Fingerprint() throws CertificateEncodingException, NoSuchAlgorithmException
   {
-    byte[] sig = cert.getEncoded();
+    byte[] sig = null;
+    if (this.cert != null)
+      sig = cert.getEncoded();
+    else
+    {
+      try
+      {
+        sig = cert2.getEncoded();
+      }
+      catch (javax.security.cert.CertificateEncodingException e)
+      {
+        Logger.error("error while encoding certificate",e);
+        throw new CertificateEncodingException(e.getMessage());
+      }
+    }
+    
     MessageDigest md = MessageDigest.getInstance("MD5");
     byte[] digest = md.digest(sig);
     StringBuffer sb = new StringBuffer(2 * digest.length);
@@ -63,7 +90,10 @@ public class Certificate
    */
   public Principal getSubject()
   {
-    return new Principal(cert.getSubjectDN());
+    if (this.cert != null)
+      return new Principal(cert.getSubjectDN());
+    else
+      return new Principal(cert2.getSubjectDN());
   }
   
   /**
@@ -72,13 +102,19 @@ public class Certificate
    */
   public Principal getIssuer()
   {
-    return new Principal(cert.getIssuerDN());
+    if (this.cert != null)
+      return new Principal(cert.getIssuerDN());
+    else
+      return new Principal(cert2.getIssuerDN());
   }
 }
 
 
 /*********************************************************************
  * $Log: Certificate.java,v $
+ * Revision 1.3  2005/06/24 14:55:56  web0
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/06/15 16:10:57  web0
  * @B javadoc fixes
  *

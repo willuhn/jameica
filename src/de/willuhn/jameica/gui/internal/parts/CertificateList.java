@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.6 $
+ * $Date: 2005/06/24 14:55:56 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -21,14 +21,16 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.CertificateDetailDialog;
-import de.willuhn.jameica.gui.internal.action.CertificateDelete;
+import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -69,17 +71,37 @@ public class CertificateList extends TablePart
     this.setMulti(true);
     this.disableSummary();
     ContextMenu menu = new ContextMenu();
-    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Zertifikat löschen..."), new CertificateDelete()
+    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Zertifikat löschen..."), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
         if (context == null || !(context instanceof CertObject))
           throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das zu löschende Zertifikat aus"));
         
-        CertObject c = (CertObject) context;
-        super.handleAction(c.cert);
-        // jetzt noch aus der Tabelle loeschen
-        removeItem(c);
+        final X509Certificate c = ((CertObject)context).cert;
+        CertificateTrustDialog d = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,c);
+        d.setText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Zertifikat aus dem Stammspeicher löschen wollen?"));
+        try
+        {
+          Boolean b = (Boolean) d.open();
+          if (b != null && b.booleanValue())
+          {
+            Application.getSSLFactory().removeTrustedCertificate(c);
+            
+            // jetzt noch aus der Tabelle loeschen
+            removeItem((CertObject)context);
+          }
+        }
+        catch (OperationCanceledException oce)
+        {
+          Logger.info(Application.getI18n().tr("Vorgang abgebrochen"));
+          // ignore
+        }
+        catch (Exception e)
+        {
+          Logger.error("error while deleting certificate",e);
+          GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Löschen des Zertifikats"));
+        }
       }
     }));
     this.setContextMenu(menu);
@@ -215,6 +237,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.6  2005/06/24 14:55:56  web0
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *

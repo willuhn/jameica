@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/06/16 13:29:20 $
+ * $Revision: 1.7 $
+ * $Date: 2005/06/24 14:55:56 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -112,6 +112,14 @@ public interface ApplicationCallback
   public String askUser(String question, String labeltext) throws Exception;
 
   /**
+   * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
+   * @param question Die anzuzeigende Frage.
+   * @return true fuer ja, false fuer nein.
+   * @throws Exception
+   */
+  public boolean askUser(String question) throws Exception;
+
+  /**
    * Kann benutzt werden, um z.Bsp. eine wichtig Fehlermeldung anzuzeigen.
    * @param text der anzuzeigende Text.
    * @throws Exception
@@ -133,6 +141,9 @@ public interface ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.7  2005/06/24 14:55:56  web0
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/06/16 13:29:20  web0
  * *** empty log message ***
  *

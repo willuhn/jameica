@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/06/16 13:29:20 $
+ * $Revision: 1.9 $
+ * $Date: 2005/06/24 14:55:56 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -45,25 +45,6 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 	private SplashScreen monitor = null;
 
 	private String password = null;
-
-	/**
-	 * @see de.willuhn.jameica.system.ApplicationCallback#lockExists(java.lang.String)
-	 */
-	public boolean lockExists(String lockfile)
-	{
-		YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
-		d.setTitle(Application.getI18n().tr("Jameica läuft bereits"));
-		d.setText(Application.getI18n().tr("Wollen Sie den Startvorgang wirklich fortsetzen?"));
-		try
-		{
-			return ((Boolean)d.open()).booleanValue();
-		}
-		catch (Exception e)
-		{
-			Logger.error("error while checking for lock file",e);
-		}
-		return false;
-	}
 
 
   /**
@@ -225,63 +206,6 @@ public class ApplicationCallbackSWT implements ApplicationCallback
   }
 
 
-
-
-
-	/**
-	 * Innere Klasse fuer die Passwort-Eingabe.
-	 */
-	private class PWD extends PasswordDialog
-	{
-
-		/**
-		 */
-		public PWD()
-		{
-			super(PWD.POSITION_CENTER);
-		}
-
-		/**
-		 * @see de.willuhn.jameica.gui.dialogs.PasswordDialog#checkPassword(java.lang.String)
-		 */
-		protected boolean checkPassword(String password)
-		{
-			if (password == null)
-			{
-				setErrorText(Application.getI18n().tr("Bitte geben Sie Ihr Master-Passwort ein.") + " " + getRetryString());
-				return false;
-			}
-			try
-			{
-				String pw       = Checksum.md5(password.getBytes());
-				String checksum = settings.getString("jameica.system.callback.checksum","");
-				boolean b = checksum.equals(pw);
-				if (!b)
-				{
-					setErrorText(Application.getI18n().tr("Passwort falsch.") + " " + getRetryString());
-				}
-				return b;
-			}
-			catch (Exception e)
-			{
-				Logger.error("error while checking password",e);
-			}
-			return false;
-		}
-
-		/**
-		 * Liefert einen locale String mit der Anzahl der Restversuche.
-		 * z.Bsp.: "Noch 2 Versuche.".
-		 * @return String mit den Restversuchen.
-		 */
-		private String getRetryString()
-		{
-			String retries = getRemainingRetries() > 1 ? Application.getI18n().tr("Versuche") : Application.getI18n().tr("Versuch");
-			return (Application.getI18n().tr("Noch") + " " + getRemainingRetries() + " " + retries + ".");
-		}
-
-	}
-
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String)
    */
@@ -294,6 +218,67 @@ public class ApplicationCallbackSWT implements ApplicationCallback
   	return (String) d.open();
   }
 
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String)
+   */
+  public boolean askUser(final String question)
+  {
+
+//    // TODO Hier weiter
+//    // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
+//    String s = settings.getString(question,null);
+//    if (s != null)
+//      return s.equalsIgnoreCase("true");
+//    
+//    AbstractDialog d = new AbstractDialog(AbstractDialog.POSITION_CENTER)
+//    {
+//      private Boolean choice = Boolean.FALSE;
+//      private CheckboxInput check = new CheckboxInput(false);
+//      protected Object getData() throws Exception
+//      {
+//        return choice;
+//      }
+//
+//      protected void paint(Composite parent) throws Exception
+//      {
+//        LabelGroup g = new LabelGroup(parent,"");
+//        g.addText(question,true);
+//        g.addCheckbox(check,Application.getI18n().tr("Diese Frage künftig nicht mehr anzeigen"));
+//      }
+//    };
+//    d.setTitle(Application.getI18n().tr("Jameica: Frage"));
+//    try
+//    {
+//      return ((Boolean)d.open()).booleanValue();
+//    }
+//    catch (Exception e)
+//    {
+//      Logger.error("error while asking user",e);
+//    }
+//    return false;
+
+    YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
+    d.setTitle(Application.getI18n().tr("Jameica: Frage"));
+    d.setText(question);
+    try
+    {
+      return ((Boolean)d.open()).booleanValue();
+    }
+    catch (Exception e)
+    {
+      Logger.error("error while asking user",e);
+    }
+    return false;  
+  }
+  
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#lockExists(java.lang.String)
+   */
+  public boolean lockExists(String lockfile)
+  {
+    return askUser(Application.getI18n().tr("Jameica scheint bereits zu laufen. Wollen Sie den Startvorgang wirklich fortsetzen?"));
+  }
 
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#checkTrust(java.security.cert.X509Certificate)
@@ -317,11 +302,71 @@ public class ApplicationCallbackSWT implements ApplicationCallback
     d.setText(text);
     d.open();
   }
+
+
+
+  /**
+   * Innere Klasse fuer die Passwort-Eingabe.
+   */
+  private class PWD extends PasswordDialog
+  {
+
+    /**
+     */
+    public PWD()
+    {
+      super(PWD.POSITION_CENTER);
+    }
+
+    /**
+     * @see de.willuhn.jameica.gui.dialogs.PasswordDialog#checkPassword(java.lang.String)
+     */
+    protected boolean checkPassword(String password)
+    {
+      if (password == null)
+      {
+        setErrorText(Application.getI18n().tr("Bitte geben Sie Ihr Master-Passwort ein.") + " " + getRetryString());
+        return false;
+      }
+      try
+      {
+        String pw       = Checksum.md5(password.getBytes());
+        String checksum = settings.getString("jameica.system.callback.checksum","");
+        boolean b = checksum.equals(pw);
+        if (!b)
+        {
+          setErrorText(Application.getI18n().tr("Passwort falsch.") + " " + getRetryString());
+        }
+        return b;
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while checking password",e);
+      }
+      return false;
+    }
+
+    /**
+     * Liefert einen locale String mit der Anzahl der Restversuche.
+     * z.Bsp.: "Noch 2 Versuche.".
+     * @return String mit den Restversuchen.
+     */
+    private String getRetryString()
+    {
+      String retries = getRemainingRetries() > 1 ? Application.getI18n().tr("Versuche") : Application.getI18n().tr("Versuch");
+      return (Application.getI18n().tr("Noch") + " " + getRemainingRetries() + " " + retries + ".");
+    }
+
+  }
+
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.9  2005/06/24 14:55:56  web0
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/06/16 13:29:20  web0
  * *** empty log message ***
  *

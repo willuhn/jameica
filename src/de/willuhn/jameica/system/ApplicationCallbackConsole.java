@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/06/21 20:02:02 $
+ * $Revision: 1.12 $
+ * $Date: 2005/06/24 14:55:56 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -323,11 +323,43 @@ public class ApplicationCallbackConsole implements ApplicationCallback
     System.out.println(text);
     System.out.println("----------------------------------------------------------------------");
   }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String)
+   */
+  public boolean askUser(String question) throws Exception
+  {
+    if (Application.inNonInteractiveMode())
+    {
+      Logger.warn(question);
+      Logger.warn("Jameica laeuft im Nicht-Interaktiven Modus. Frage kann daher nicht beantwortet werden");
+      return false;
+    }
+
+    System.out.println("----------------------------------------------------------------------");
+    System.out.println(question);
+    System.out.println("[Y/N]");
+    System.out.println("----------------------------------------------------------------------");
+    InputStreamReader isr = new InputStreamReader(System.in);
+    BufferedReader keyboard = new BufferedReader(isr);
+    try {
+      String input = keyboard.readLine();
+      if ("y".equalsIgnoreCase(input))
+        return true;
+    }
+    catch (IOException ioe)
+    {
+    }
+    return false;
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.12  2005/06/24 14:55:56  web0
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/06/21 20:02:02  web0
  * @C cvs merge
  *
