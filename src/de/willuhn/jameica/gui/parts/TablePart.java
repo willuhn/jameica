@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.36 $
- * $Date: 2005/06/27 15:35:51 $
+ * $Revision: 1.37 $
+ * $Date: 2005/06/27 15:58:07 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -202,12 +203,18 @@ public class TablePart implements Part
 		GenericObject o = null;
 		for (int i=0;i<items.length;++i)
 		{
-			
 			try
 			{
 				o = (GenericObject) items[i].getData();
 				if (item.equals(o))
 				{
+          // Muessen wir noch aus den Sortierungsspalten entfernen
+          Enumeration e = this.sortTable.elements();
+          while (e.hasMoreElements())
+          {
+            List l = (List) e.nextElement();
+            l.remove(new SortItem(null,item));
+          }
 					table.remove(i);
 					size--;
 					refreshSummary();
@@ -749,9 +756,9 @@ public class TablePart implements Part
   private class SortItem implements Comparable
 	{
 		private Comparable attribute;
-		private Object data;
+		private GenericObject data;
 
-		private SortItem(Object attribute, Object data)
+		private SortItem(Object attribute, GenericObject data)
 		{
 			try
 			{
@@ -763,6 +770,24 @@ public class TablePart implements Part
 			this.data = data;
 		}
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj)
+    {
+      if (obj == null || !(obj instanceof SortItem))
+        return false;
+      try
+      {
+        return this.data.getID().equals(((SortItem)obj).data.getID());
+      }
+      catch (RemoteException e)
+      {
+        Logger.error("error while comparing items",e);
+      }
+      return super.equals(obj);
+    }
+    
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
@@ -789,6 +814,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.37  2005/06/27 15:58:07  web0
+ * *** empty log message ***
+ *
  * Revision 1.36  2005/06/27 15:35:51  web0
  * @N ability to store last table order
  *
