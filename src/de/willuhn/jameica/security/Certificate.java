@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Certificate.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/24 14:55:56 $
+ * $Revision: 1.4 $
+ * $Date: 2005/06/27 11:45:11 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -92,8 +92,8 @@ public class Certificate
   {
     if (this.cert != null)
       return new Principal(cert.getSubjectDN());
-    else
-      return new Principal(cert2.getSubjectDN());
+
+    return new Principal(cert2.getSubjectDN());
   }
   
   /**
@@ -104,14 +104,17 @@ public class Certificate
   {
     if (this.cert != null)
       return new Principal(cert.getIssuerDN());
-    else
-      return new Principal(cert2.getIssuerDN());
+
+    return new Principal(cert2.getIssuerDN());
   }
 }
 
 
 /*********************************************************************
  * $Log: Certificate.java,v $
+ * Revision 1.4  2005/06/27 11:45:11  web0
+ * *** empty log message ***
+ *
  * Revision 1.3  2005/06/24 14:55:56  web0
  * *** empty log message ***
  *
