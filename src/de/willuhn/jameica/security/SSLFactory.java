@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.19 $
- * $Date: 2005/06/27 13:58:18 $
+ * $Revision: 1.20 $
+ * $Date: 2005/06/27 21:53:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -130,6 +130,7 @@ public class SSLFactory
 		String hostname = getHostname();
 		Logger.info("  using hostname: " + hostname);
 		attributes.put(X509Name.CN,hostname);
+    attributes.put(X509Name.O,"Jameica Certificate");
 		X509Name user   = new X509Name(attributes);
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 
@@ -484,36 +485,36 @@ public class SSLFactory
     Logger.warn("given certificate not found in keystore");
   }
 
-	/**
-	 * Fuegt dem Keystore ein Zertifikat aus dem genannten Inputstream hinzu.
-   * @param alias Alias-Name des Zertifikats.
-   * @param is Inputstream.
+  /**
+   * Laedt ein Zertifikat vom angegebenen InputStream und liefert es zurueck.
+   * Es wird hierbei weder zum Keystore hinzugefuegt, noch geloescht sondern lediglich
+   * geladen und zurueckgeliefert.
+   * @param is der InputStream.
+   * @return das geladene Zertifikat.
    * @throws Exception
    */
-  public synchronized void addTrustedCertificate(String alias, InputStream is) throws Exception
-	{
-		try
-		{
-			CertificateFactory cf = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
-			X509Certificate cert = (X509Certificate)cf.generateCertificate(is);
-			addTrustedCertificate(alias,cert);
-		}
-		finally
-		{
-			is.close();
-		}
-	}	
+  public synchronized X509Certificate loadCertificate(InputStream is) throws Exception
+  {
+    try
+    {
+      CertificateFactory cf = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
+      return (X509Certificate)cf.generateCertificate(is);
+    }
+    finally
+    {
+      is.close();
+    }
+  }
 	
   /**
    * Fuegt dem Keystore ein Zertifikat hinzu.
-   * @param alias Alias-Name des Zertifikats.
    * @param cert das Zertifikat.
    * @throws Exception
    */
-  public synchronized void addTrustedCertificate(String alias, X509Certificate cert) throws Exception
+  public synchronized void addTrustedCertificate(X509Certificate cert) throws Exception
   {
-    if (alias == null)
-      throw new Exception("certificate alias name cannot be null");
+    String alias = cert.getSubjectDN().getName();
+
     if (SYSTEM_ALIAS.equals(alias))
       throw new Exception("not allowed to overwrite system certificate");
 
@@ -580,6 +581,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.20  2005/06/27 21:53:51  web0
+ * @N ability to import own certifcates
+ *
  * Revision 1.19  2005/06/27 13:58:18  web0
  * @N auto answer in application callback
  *

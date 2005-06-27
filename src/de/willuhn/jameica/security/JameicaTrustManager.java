@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/06/10 10:12:26 $
+ * $Revision: 1.5 $
+ * $Date: 2005/06/27 21:53:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -165,7 +165,7 @@ public class JameicaTrustManager implements X509TrustManager
         if (callback.checkTrust(chain[i]))
         {
           Logger.info("certificate trusted, adding to truststore: " + toString(chain[i]));
-          factory.addTrustedCertificate(chain[i].getSubjectDN().getName(),chain[i]);
+          factory.addTrustedCertificate(chain[i]);
         }
         else
         {
@@ -223,6 +223,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.5  2005/06/27 21:53:51  web0
+ * @N ability to import own certifcates
+ *
  * Revision 1.4  2005/06/10 10:12:26  web0
  * @N Zertifikats-Dialog ergonomischer gestaltet
  * @C TrustManager prueft nun zuerst im Java-eigenen Keystore

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/06/27 15:35:51 $
+ * $Revision: 1.8 $
+ * $Date: 2005/06/27 21:53:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -13,9 +13,14 @@
 
 package de.willuhn.jameica.gui.internal.parts;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
@@ -26,6 +31,7 @@ import de.willuhn.jameica.gui.dialogs.CertificateDetailDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
+import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
@@ -102,6 +108,48 @@ public class CertificateList extends TablePart
           Logger.error("error while deleting certificate",e);
           GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Löschen des Zertifikats"));
         }
+      }
+    }));
+    menu.addItem(new ContextMenuItem(Application.getI18n().tr("Zertifikat importieren..."), new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        FileDialog d = new FileDialog(GUI.getShell(),SWT.OPEN);
+        d.setText(Application.getI18n().tr("Bitte wählen Sie das zu importierende Zertifikat aus"));
+        d.setFilterPath(Application.getConfig().getWorkDir());
+        d.setFilterExtensions(new String[]{"pem","crt","cer"});
+        String s = d.open();
+        if (s == null || s.length() == 0)
+          return;
+        File f = new File(s);
+        if (!f.exists() || !f.isFile() || !f.canRead())
+          throw new ApplicationException(Application.getI18n().tr("Zertifikat {0} nicht lesbar",s));
+        
+        try
+        {
+          final X509Certificate c = Application.getSSLFactory().loadCertificate(new FileInputStream(f));
+          CertificateTrustDialog d2 = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,c);
+          d2.setText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Zertifikat importieren wollen?"));
+
+          Boolean b = (Boolean) d2.open();
+          if (b != null && b.booleanValue())
+          {
+            Application.getSSLFactory().addTrustedCertificate(c);
+            
+            // jetzt noch zur Tabelle hinzufuegen
+            addItem(new CertObject(c));
+          }
+        }
+        catch (OperationCanceledException oce)
+        {
+          Logger.info(Application.getI18n().tr("Vorgang abgebrochen"));
+          // ignore
+        }
+        catch (Exception e)
+        {
+          Logger.error("error while adding certificate",e);
+          GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Importieren des Zertifikats"));
+        }
+      
       }
     }));
     this.setContextMenu(menu);
@@ -237,6 +285,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.8  2005/06/27 21:53:51  web0
+ * @N ability to import own certifcates
+ *
  * Revision 1.7  2005/06/27 15:35:51  web0
  * @N ability to store last table order
  *
