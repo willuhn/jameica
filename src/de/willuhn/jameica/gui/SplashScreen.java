@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/03/11 00:49:17 $
+ * $Revision: 1.16 $
+ * $Date: 2005/06/27 12:08:27 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,10 @@
  ****************************************************************************/
 
 package de.willuhn.jameica.gui;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -78,9 +82,34 @@ public class SplashScreen implements ProgressMonitor, Runnable
     l.verticalSpacing = 0;
 		shell.setLayout(l);
     
+		InputStream is = null;
+    
+    // Mal schauen, ob wir einen Custom-Splashscreen haben
+    String[] ext = new String[] {"jpg","jpeg","gif","bmp","png"};
+    for (int i=0;i<ext.length;++i)
+    {
+      File f = new File("splash." + ext[i]);
+      if (f.exists() && f.isFile() && f.canRead() && f.length() > 0)
+      {
+        try
+        {
+          is = new FileInputStream(f);
+          Logger.info("using custom splash screen " + f.getAbsolutePath());
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to load custom inputstream",e);
+        }
+        break;
+      }
+    }
+    
+    if (is == null)
+      is = shell.getClass().getResourceAsStream("/img/splash.jpg");
+
     // Label erzeugen und Image drauf pappen
     label = new Label(shell, SWT.NONE);
-    label.setImage(new Image(display, shell.getClass().getResourceAsStream("/img/splash.jpg")));
+    label.setImage(new Image(display, is));
     label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
     bar = new ProgressBar(shell, SWT.SMOOTH);
@@ -213,6 +242,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.16  2005/06/27 12:08:27  web0
+ * *** empty log message ***
+ *
  * Revision 1.15  2005/03/11 00:49:17  web0
  * *** empty log message ***
  *
