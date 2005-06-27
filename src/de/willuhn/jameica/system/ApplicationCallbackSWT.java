@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/06/24 14:55:56 $
+ * $Revision: 1.10 $
+ * $Date: 2005/06/27 13:58:18 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -20,19 +20,25 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.SplashScreen;
+import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.dialogs.NewPasswordDialog;
 import de.willuhn.jameica.gui.dialogs.PasswordDialog;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.TextDialog;
-import de.willuhn.jameica.gui.dialogs.YesNoDialog;
+import de.willuhn.jameica.gui.input.CheckboxInput;
+import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
 
 /**
@@ -224,42 +230,47 @@ public class ApplicationCallbackSWT implements ApplicationCallback
   public boolean askUser(final String question)
   {
 
-//    // TODO Hier weiter
-//    // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
-//    String s = settings.getString(question,null);
-//    if (s != null)
-//      return s.equalsIgnoreCase("true");
-//    
-//    AbstractDialog d = new AbstractDialog(AbstractDialog.POSITION_CENTER)
-//    {
-//      private Boolean choice = Boolean.FALSE;
-//      private CheckboxInput check = new CheckboxInput(false);
-//      protected Object getData() throws Exception
-//      {
-//        return choice;
-//      }
-//
-//      protected void paint(Composite parent) throws Exception
-//      {
-//        LabelGroup g = new LabelGroup(parent,"");
-//        g.addText(question,true);
-//        g.addCheckbox(check,Application.getI18n().tr("Diese Frage künftig nicht mehr anzeigen"));
-//      }
-//    };
-//    d.setTitle(Application.getI18n().tr("Jameica: Frage"));
-//    try
-//    {
-//      return ((Boolean)d.open()).booleanValue();
-//    }
-//    catch (Exception e)
-//    {
-//      Logger.error("error while asking user",e);
-//    }
-//    return false;
+    // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
+    String s = settings.getString(question,null);
+    if (s != null)
+      return s.equalsIgnoreCase("true");
+    
+    AbstractDialog d = new AbstractDialog(AbstractDialog.POSITION_CENTER)
+    {
+      private Boolean choice = Boolean.FALSE;
+      private CheckboxInput check = new CheckboxInput(false);
+      protected Object getData() throws Exception
+      {
+        return choice;
+      }
 
-    YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
+      protected void paint(Composite parent) throws Exception
+      {
+        LabelGroup g = new LabelGroup(parent,"");
+        g.addText(question,true);
+        g.addCheckbox(check,Application.getI18n().tr("Diese Frage künftig nicht mehr anzeigen"));
+        ButtonArea buttons = new ButtonArea(parent,2);
+        buttons.addButton("   " + i18n.tr("Ja") + "   ", new Action() {
+          public void handleAction(Object context) throws ApplicationException
+          {
+            if (((Boolean)check.getValue()).booleanValue())
+              settings.setAttribute(question,"true");
+            choice = Boolean.TRUE;
+            close();
+          }
+        },null,true);
+        buttons.addButton("   " + i18n.tr("Nein") + "   ", new Action() {
+          public void handleAction(Object context) throws ApplicationException
+          {
+            if (((Boolean)check.getValue()).booleanValue())
+              settings.setAttribute(question,"false");
+            choice = Boolean.FALSE;
+            close();
+          }
+        });
+      }
+    };
     d.setTitle(Application.getI18n().tr("Jameica: Frage"));
-    d.setText(question);
     try
     {
       return ((Boolean)d.open()).booleanValue();
@@ -268,7 +279,20 @@ public class ApplicationCallbackSWT implements ApplicationCallback
     {
       Logger.error("error while asking user",e);
     }
-    return false;  
+    return false;
+//
+//    YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
+//    d.setTitle(Application.getI18n().tr("Jameica: Frage"));
+//    d.setText(question);
+//    try
+//    {
+//      return ((Boolean)d.open()).booleanValue();
+//    }
+//    catch (Exception e)
+//    {
+//      Logger.error("error while asking user",e);
+//    }
+//    return false;  
   }
   
 
@@ -364,6 +388,9 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.10  2005/06/27 13:58:18  web0
+ * @N auto answer in application callback
+ *
  * Revision 1.9  2005/06/24 14:55:56  web0
  * *** empty log message ***
  *
