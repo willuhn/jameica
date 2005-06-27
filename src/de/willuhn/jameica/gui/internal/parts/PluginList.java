@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/14 23:15:30 $
+ * $Revision: 1.2 $
+ * $Date: 2005/06/27 15:35:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,7 @@ public class PluginList extends TablePart
     addColumn(i18n.tr("Beschreibung"),"description");
     addColumn(i18n.tr("Version"),"version");
     addColumn(i18n.tr("Pfad"),"path");
-    disableSummary();
+    setSummary(false);
   }
 
   /**
@@ -172,6 +172,9 @@ public class PluginList extends TablePart
 
 /*********************************************************************
  * $Log: PluginList.java,v $
+ * Revision 1.2  2005/06/27 15:35:51  web0
+ * @N ability to store last table order
+ *
  * Revision 1.1  2005/06/14 23:15:30  web0
  * @N added settings for plugins/services
  *

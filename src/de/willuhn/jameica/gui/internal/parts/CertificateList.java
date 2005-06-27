@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/06/24 14:55:56 $
+ * $Revision: 1.7 $
+ * $Date: 2005/06/27 15:35:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -69,7 +69,7 @@ public class CertificateList extends TablePart
     addColumn(Application.getI18n().tr("Gültig bis"),"dateto");
     addColumn(Application.getI18n().tr("Seriennummer"),"serial");
     this.setMulti(true);
-    this.disableSummary();
+    this.setSummary(false);
     ContextMenu menu = new ContextMenu();
     menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Zertifikat löschen..."), new Action()
     {
@@ -237,6 +237,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.7  2005/06/27 15:35:51  web0
+ * @N ability to store last table order
+ *
  * Revision 1.6  2005/06/24 14:55:56  web0
  * *** empty log message ***
  *

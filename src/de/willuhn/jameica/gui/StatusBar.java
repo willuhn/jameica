@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.41 $
- * $Date: 2005/06/21 20:02:02 $
+ * $Revision: 1.42 $
+ * $Date: 2005/06/27 15:35:52 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -296,7 +296,7 @@ public class StatusBar {
     {
       GenericIterator elements = PseudoIterator.fromArray(logs);
       table = new TablePart(elements,null);
-      table.disableSummary();
+      table.setSummary(false);
       table.addColumn(Application.getI18n().tr("Meldungen"),"foo");
       table.paint(snapin);
       table.setTopIndex(elements.size() - 1); //zum Ende scrollen
@@ -410,6 +410,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.42  2005/06/27 15:35:52  web0
+ * @N ability to store last table order
+ *
  * Revision 1.41  2005/06/21 20:02:02  web0
  * @C cvs merge
  *

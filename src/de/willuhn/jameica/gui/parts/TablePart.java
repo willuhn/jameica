@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.35 $
- * $Date: 2005/06/14 23:15:30 $
+ * $Revision: 1.36 $
+ * $Date: 2005/06/27 15:35:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -43,7 +45,9 @@ import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
+import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -76,8 +80,12 @@ public class TablePart implements Part
   private boolean multi               = false; // Multiple Markierung 
 	private Image up										= null;
 	private Image down									= null;
+  private boolean rememberOrder       = false;
 
 	private int size = 0;
+  
+  private Settings settings           = new Settings(TablePart.class);
+  private String id                   = null;
 
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
@@ -146,20 +154,23 @@ public class TablePart implements Part
   }
 
 	/**
-   * Schaltet die Anzeige einer Summenzeile am Ende der Tabelle an (Default).
+   * Legt fest, ob eine Summenzeile am Ende angezeigt werden soll.
+   * @param show true, wenn die Summenzeile angezeigt werden soll (Default) oder false
+   * wenn sie nicht angezeigt werden soll.
    */
-  public void enableSummary()
+  public void setSummary(boolean show)
 	{ 
-		this.showSummary = true;
+		this.showSummary = show;
 	}
-
-	/**
-	 * Schaltet die Anzeige einer Summenzeile am Ende der Tabelle aus.
-	 */
-	public void disableSummary()
-	{
-		this.showSummary = false;
-	}
+  
+  /**
+   * Legt fest, ob sich die Tabelle die Sortierreihenfolge merken soll.
+   * @param remember true, wenn sie sich die Reihenfolge merken soll.
+   */
+  public void setRememberOrder(boolean remember)
+  {
+    this.rememberOrder = remember;
+  }
 
   /**
    * Legt fest, bis zu welchem Element gescrollt werden soll.
@@ -366,6 +377,29 @@ public class TablePart implements Part
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
     
+    if (this.rememberOrder)
+    {
+      table.addDisposeListener(new DisposeListener() {
+        public void widgetDisposed(DisposeEvent e)
+        {
+          try
+          {
+            String s = getOrderedBy();
+            if (s == null)
+              return;
+            if (!direction)
+              s = "!" + s;
+            Logger.debug("saving table order: " + s);
+            settings.setAttribute("order." + getID(),s);
+          }
+          catch (Exception ex)
+          {
+            Logger.error("unable to store last order",ex);
+          }
+        }
+      });
+    }
+    
 
 		// Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
 		// Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
@@ -451,11 +485,56 @@ public class TablePart implements Part
     }
 
 		refreshSummary();
-		
+	
+		if (this.rememberOrder)
+    {
+      try
+      {
+        // Mal schauen, ob wir eine Sortierung haben
+        String s = settings.getString("order." + getID(),null);
+        if (s != null && s.length() > 0)
+        {
+          Logger.debug("restoring last table order: " + s);
+          orderBy(s);
+        }
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to restore last table order",e);
+      }
+    }
     // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
     // Damit kann das Control wiederverwendet werden ;) 
 	  this.list.begin();
 
+  }
+
+  /**
+   * Liefert eine fuer die Tabelle eindeutige ID.
+   * @return eindeutige ID.
+   * @throws Exception
+   */
+  private String getID() throws Exception
+  {
+    if (this.id != null)
+      return id;
+
+    this.list.begin();
+    StringBuffer sb = new StringBuffer();
+    if (this.list.hasNext())
+      sb.append(this.list.next().getClass().getName());
+
+    for (int i=0;i<this.fields.size();++i)
+    {
+      String[] s = (String[])this.fields.get(i);
+      sb.append(s[1]);
+    }
+
+    String s = sb.toString();
+    if (s == null || s.length() == 0)
+      s = "unknown";
+    this.id = Checksum.md5(s.getBytes());
+    return this.id;
   }
 
   /**
@@ -574,7 +653,29 @@ public class TablePart implements Part
 		summary.setText(size() + " " + (size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
 	}
 
-	/**
+  /**
+   * Gibt an, nach welcher Spalte sortiert werden soll.
+   * @param colName Name der Spalte
+   */
+  private void orderBy(String colName)
+  {
+    boolean reverse = colName.startsWith("!");
+    if (reverse) colName = colName.substring(1);
+
+    for (int i=0;i<this.fields.size();++i)
+    {
+      String[] s = (String[]) this.fields.get(i);
+      if (s[1].equals(colName))
+      {
+        if (reverse) this.sortedBy = i;
+        Logger.debug("table ordered by " + colName);
+        orderBy(i);
+        return;
+      }
+    }
+  }
+
+  /**
 	 * Sortiert die Tabelle nach der angegebenen Spaltennummer.
    * @param index Spaltennummer.
    */
@@ -623,6 +724,24 @@ public class TablePart implements Part
 				tableFormatter.format(item);
 		}
 	}
+  
+  /**
+   * Liefert den Namen der Spalte, nach der gerade sortiert ist
+   * oder null, wenn die Tabelle nicht sortiert ist.
+   * @return name der Spalte oder null.
+   */
+  private String getOrderedBy()
+  {
+    try
+    {
+      String[] s = (String[]) this.fields.get(this.sortedBy);
+      return s[1];
+    }
+    catch (Exception e)
+    {
+    }
+    return null;
+  }
 	
 	/**
 	 * Kleine Hilfs-Klasse fuer die Sortierung.
@@ -670,6 +789,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.36  2005/06/27 15:35:51  web0
+ * @N ability to store last table order
+ *
  * Revision 1.35  2005/06/14 23:15:30  web0
  * @N added settings for plugins/services
  *
@@ -821,66 +943,4 @@ public class TablePart implements Part
  * Revision 1.1  2004/01/28 20:51:24  willuhn
  * @C gui.views.parts moved to gui.parts
  * @C gui.views.util moved to gui.util
- *
- * Revision 1.19  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.18  2004/01/08 20:50:32  willuhn
- * @N database stuff separated from jameica
- *
- * Revision 1.17  2004/01/06 20:11:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.16  2004/01/06 01:27:30  willuhn
- * @N table order
- *
- * Revision 1.15  2004/01/04 19:51:01  willuhn
- * *** empty log message ***
- *
- * Revision 1.14  2004/01/03 18:08:06  willuhn
- * @N Exception logging
- * @C replaced bb.util xml parser with nanoxml
- *
- * Revision 1.13  2003/12/29 20:07:19  willuhn
- * @N Formatter
- *
- * Revision 1.12  2003/12/26 21:43:30  willuhn
- * @N customers changable
- *
- * Revision 1.11  2003/12/19 01:43:27  willuhn
- * @N added Tree
- *
- * Revision 1.10  2003/12/11 21:00:54  willuhn
- * @C refactoring
- *
- * Revision 1.9  2003/12/10 00:47:12  willuhn
- * @N SearchDialog done
- * @N FatalErrorView
- *
- * Revision 1.8  2003/12/08 15:41:09  willuhn
- * @N searchInput
- *
- * Revision 1.7  2003/12/05 17:12:23  willuhn
- * @C SelectInput
- *
- * Revision 1.6  2003/11/27 00:22:18  willuhn
- * @B paar Bugfixes aus Kombination RMI + Reflection
- * @N insertCheck(), deleteCheck(), updateCheck()
- * @R AbstractDBObject#toString() da in RemoteObject ueberschrieben (RMI-Konflikt)
- *
- * Revision 1.5  2003/11/24 23:01:58  willuhn
- * @N added settings
- *
- * Revision 1.4  2003/11/24 17:27:50  willuhn
- * @N Context menu in table
- *
- * Revision 1.3  2003/11/24 16:25:53  willuhn
- * @N AbstractDBObject is now able to resolve foreign keys
- *
- * Revision 1.2  2003/11/24 11:51:41  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2003/11/22 20:43:05  willuhn
- * *** empty log message ***
- *
  **********************************************************************/
