@@ -35,7 +35,7 @@ case "$1" in
       mkdir -p $WORKDIR
       cd $BASEDIR
       echo -n "Starting Jameica "
-      $JAVA -jar jameica-linux.jar -d -f $WORKDIR -p $PASSWORD > /dev/null 2>&1 & PID=$!
+      $JAVA -jar jameica-linux.jar -d -n -f $WORKDIR -p $PASSWORD > /dev/null 2>&1 & PID=$!
       rc_status -v
       echo $PID > $PIDFILE
     ;;

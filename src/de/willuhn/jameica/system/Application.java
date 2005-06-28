@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.40 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.41 $
+ * $Date: 2005/06/28 17:13:40 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -90,8 +90,16 @@ public final class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
-		Logger.addTarget(new OutputStreamTarget(System.out));
-		Logger.info(getI18n().tr("starting jameica..."));
+    if (Application.inServerMode())
+    {
+      System.out.println("Jameica is running in server mode. Check " + getConfig().getLogFile() + " for log details");
+    }
+    else
+    {
+      Logger.addTarget(new OutputStreamTarget(System.out));
+    }
+
+    Logger.info("starting jameica...");
 
     Level level = Level.findByName(getConfig().getLogLevel());
     if (level == null)
@@ -106,7 +114,7 @@ public final class Application {
 
     ////////////////////////////////////////////////////////////////////////////
     // set securityManager
-    Logger.info(getI18n().tr("setting security manager"));
+    Logger.info("setting security manager");
     System.setSecurityManager(new JameicaSecurityManager());
     //
     ////////////////////////////////////////////////////////////////////////////
@@ -132,12 +140,12 @@ public final class Application {
 		//
 		////////////////////////////////////////////////////////////////////////////
 
-    getCallback().getStartupMonitor().setStatusText(getI18n().tr("starting jameica"));
+    getCallback().getStartupMonitor().setStatusText("starting jameica");
 
 		////////////////////////////////////////////////////////////////////////////
     // switch logger to defined log file
     try {
-      Logger.info(getI18n().tr("adding defined log file " + getConfig().getLogFile()));
+      Logger.info("adding defined log file " + getConfig().getLogFile());
       // Wir kopieren das alte Log-Logfile vorher noch
       File logFile = new File(getConfig().getLogFile());
       if (logFile.exists())
@@ -156,7 +164,7 @@ public final class Application {
     }
     catch (FileNotFoundException e)
     {
-      Logger.error(getI18n().tr("failed"));
+      Logger.error("failed");
     }
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -316,7 +324,7 @@ public final class Application {
 			return app.sslFactory;
 
 		// init ssl factory
-		getCallback().getStartupMonitor().setStatusText(getI18n().tr("init ssl certificates"));
+		getCallback().getStartupMonitor().setStatusText("init ssl certificates");
 		try {
 			app.sslFactory = new SSLFactory(getCallback());
 			app.sslFactory.init();
@@ -337,7 +345,7 @@ public final class Application {
 		if (app.serviceFactory != null)
 			return app.serviceFactory;
 
-		getCallback().getStartupMonitor().setStatusText(getI18n().tr("init services"));
+		getCallback().getStartupMonitor().setStatusText("init services");
 		try {
 			app.serviceFactory = new ServiceFactory();
 			app.serviceFactory.init();
@@ -358,7 +366,7 @@ public final class Application {
 		if (app.pluginLoader != null)
 			return app.pluginLoader;
 
-		getCallback().getStartupMonitor().setStatusText(getI18n().tr("loading plugins"));
+		getCallback().getStartupMonitor().setStatusText("loading plugins");
 		try {
 			app.pluginLoader = new PluginLoader();
 			app.pluginLoader.init();
@@ -379,7 +387,7 @@ public final class Application {
     if (app.messagingFactory != null)
       return app.messagingFactory;
 
-    getCallback().getStartupMonitor().setStatusText(getI18n().tr("starting internal messaging system"));
+    getCallback().getStartupMonitor().setStatusText("starting internal messaging system");
     try {
       app.messagingFactory = new MessagingFactory();
       app.messagingFactory.init();
@@ -546,6 +554,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.41  2005/06/28 17:13:40  web0
+ * *** empty log message ***
+ *
  * Revision 1.40  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *

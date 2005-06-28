@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/06/24 14:55:56 $
+ * $Revision: 1.13 $
+ * $Date: 2005/06/28 17:13:40 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -333,7 +333,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
     {
       Logger.warn(question);
       Logger.warn("Jameica laeuft im Nicht-Interaktiven Modus. Frage kann daher nicht beantwortet werden");
-      return false;
+      throw new ApplicationException(Application.getI18n().tr("Benutzer-Interaktion nicht möglich. Jameica läuft im nicht-interaktiven Modus"));
     }
 
     System.out.println("----------------------------------------------------------------------");
@@ -357,6 +357,9 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.13  2005/06/28 17:13:40  web0
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/06/24 14:55:56  web0
  * *** empty log message ***
  *
