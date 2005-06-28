@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/04/21 17:14:14 $
+ * $Revision: 1.9 $
+ * $Date: 2005/06/28 21:13:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -39,12 +39,16 @@ public final class Server
 			}
 		}
     Logger.info("----------------------------------------------------------------------");
-    Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
+    if (!Application.inNonInteractiveMode())
+      Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
   }
 }
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.9  2005/06/28 21:13:41  web0
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/04/21 17:14:14  web0
  * @B fixed shutdown behaviour
  *
