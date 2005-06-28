@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.41 $
- * $Date: 2005/06/28 17:13:40 $
+ * $Revision: 1.42 $
+ * $Date: 2005/06/28 17:45:52 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -90,14 +90,7 @@ public final class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// init logger
-    if (Application.inServerMode())
-    {
-      System.out.println("Jameica is running in server mode. Check " + getConfig().getLogFile() + " for log details");
-    }
-    else
-    {
-      Logger.addTarget(new OutputStreamTarget(System.out));
-    }
+    Logger.addTarget(new OutputStreamTarget(System.out));
 
     Logger.info("starting jameica...");
 
@@ -554,6 +547,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.42  2005/06/28 17:45:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.41  2005/06/28 17:13:40  web0
  * *** empty log message ***
  *
