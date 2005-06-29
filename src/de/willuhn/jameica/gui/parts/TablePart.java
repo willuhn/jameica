@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.37 $
- * $Date: 2005/06/27 15:58:07 $
+ * $Revision: 1.38 $
+ * $Date: 2005/06/29 16:54:38 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,17 +23,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
@@ -88,6 +95,13 @@ public class TablePart implements Part
   private Settings settings           = new Settings(TablePart.class);
   private String id                   = null;
 
+  // Fuer den Aenderungs-Support
+  private HashMap changeables         = new HashMap();
+  private TableEditor editor          = null;
+  private ArrayList changeListeners   = new ArrayList();
+  private boolean changeable          = false;
+
+  
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
    * @param list Liste mit Objekten, die angezeigt werden soll.
@@ -131,13 +145,24 @@ public class TablePart implements Part
 	}
 
   /**
+   * fuegt der Tabelle einen Listener hinzu, der ausgeloest wird, wenn ein
+   * Feld aenderbar ist und vom Benutzer geaendert wurde.
+   * @param l der Listener.
+   */
+  public void addChangeListener(TableChangeListener l)
+  {
+    if (l != null)
+      this.changeListeners.add(l);
+  }
+
+  /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
    * @param title Name der Spaltenueberschrift.
    * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
    */
   public void addColumn(String title, String field)
   {
-    this.fields.add(new String[]{title,field});
+    addColumn(title,field,null);
   }
   
   /**
@@ -148,13 +173,32 @@ public class TablePart implements Part
    */
   public void addColumn(String title, String field, Formatter f)
   {
-    addColumn(title,field);
+    addColumn(title,field,null,false);
+  }
+
+  /**
+   * Fuegt der Tabelle eine neue Spalte hinzu und dazu noch einen Formatierer.
+   * @param title Name der Spaltenueberschrift.
+   * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
+   * @param f Formatter, der fuer die Anzeige des Wertes verwendet werden soll.
+   * @param changeable legt fest, ob die Werte in dieser Spalte direkt editierbar sein sollen.
+   * Wenn der Parameter true ist, dann sollte der Tabelle via <code>addChangeListener</code>
+   * ein Listener hinzugefuegt werden, der benachrichtigt wird, wenn der Benutzer einen
+   * Wert geaendert hat. Es ist anschliessend Aufgabe des Listeners, den geaenderten
+   * Wert im Fachobjekt zu uebernehmen.
+   */
+  public void addColumn(String title, String field, Formatter f, boolean changeable)
+  {
+    this.fields.add(new String[]{title,field});
     
     if (field != null && f != null)
       formatter.put(field,f);
+    if (changeable)
+      this.changeables.put(field,"foo"); // TODO
+    this.changeable |= changeable;
   }
 
-	/**
+  /**
    * Legt fest, ob eine Summenzeile am Ende angezeigt werden soll.
    * @param show true, wenn die Summenzeile angezeigt werden soll (Default) oder false
    * wenn sie nicht angezeigt werden soll.
@@ -478,6 +522,60 @@ public class TablePart implements Part
 
       }
     });
+    
+		// Noch ein Listener fuer die editierbaren Felder
+    if (this.changeable)
+    {
+      this.editor = new TableEditor(table);
+      this.editor.horizontalAlignment = SWT.LEFT;
+      this.editor.grabHorizontal = true;
+
+      table.addSelectionListener(new SelectionAdapter() {
+        public void widgetSelected(SelectionEvent e) {
+
+          // TODO Hier weiter fuer editierbare Tabelle
+          // Markierung ermitteln
+          final TableItem item = (TableItem) e.item;
+          if (item == null) return;
+          
+          // Das alte Text-Feld ggf. disposen
+          Control oldText = editor.getEditor();
+          if (oldText != null && !oldText.isDisposed())
+            oldText.dispose();
+
+          final int index = 2;
+          String oldValue = item.getText(index);
+
+          Text newText = new Text(table, SWT.NONE);
+          newText.setText(oldValue);
+          newText.selectAll();
+          newText.setFocus();
+          editor.setEditor(newText, item, index);
+
+          newText.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent e)
+            {
+              Text text = (Text) editor.getEditor();
+              String newValue = text.getText();
+              item.setText(index,newValue);
+              for (int i=0;i<changeListeners.size();++i)
+              {
+                TableChangeListener l = (TableChangeListener) changeListeners.get(i);
+                try
+                {
+                  l.itemChanged((GenericObject)item.getData(),null,newValue);
+                }
+                catch (ApplicationException ae)
+                {
+                  GUI.getStatusBar().setErrorText(ae.getMessage());
+                  break;
+                }
+              }
+            }
+          });
+        }
+      });
+    }
     
     // Und jetzt noch das ContextMenu malen
     if (menu != null)
@@ -814,6 +912,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.38  2005/06/29 16:54:38  web0
+ * @N editierbare Tabellen
+ *
  * Revision 1.37  2005/06/27 15:58:07  web0
  * *** empty log message ***
  *
