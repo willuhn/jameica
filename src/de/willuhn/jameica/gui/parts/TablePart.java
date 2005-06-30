@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.38 $
- * $Date: 2005/06/29 16:54:38 $
+ * $Revision: 1.39 $
+ * $Date: 2005/06/30 21:40:47 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -173,7 +173,7 @@ public class TablePart implements Part
    */
   public void addColumn(String title, String field, Formatter f)
   {
-    addColumn(title,field,null,false);
+    addColumn(title,field,f,false);
   }
 
   /**
@@ -912,6 +912,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.39  2005/06/30 21:40:47  web0
+ * *** empty log message ***
+ *
  * Revision 1.38  2005/06/29 16:54:38  web0
  * @N editierbare Tabellen
  *
