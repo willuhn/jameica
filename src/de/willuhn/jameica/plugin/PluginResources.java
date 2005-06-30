@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/01/13 19:31:37 $
- * $Author: willuhn $
+ * $Revision: 1.9 $
+ * $Date: 2005/06/30 23:51:32 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -79,9 +79,6 @@ public final class PluginResources {
 
 	/**
 	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
-	 * Bei entpackten Plugins wird das Verzeichnis direkt zurueck-
-	 * gegeben. Bei Plugins, die sich in Jars befinden, wird
-	 * das Verzeichnis geliefert, in dem das Jar liegt.
 	 * @return Verzeichnis, in dem sich das Plugin befindet.
 	 */
 	public String getPath()
@@ -131,6 +128,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.9  2005/06/30 23:51:32  web0
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/01/13 19:31:37  willuhn
  * @C SSLFactory geaendert
  * @N Settings auf property-Format umgestellt
