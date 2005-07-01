@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.40 $
- * $Date: 2005/07/01 16:45:28 $
+ * $Revision: 1.41 $
+ * $Date: 2005/07/01 17:06:12 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -558,6 +558,16 @@ public class TablePart implements Part
 
           final int index = row;
           final TableItem item = current;
+          
+          // Wir merken uns noch die letzte Farbe des Items.
+          // Denn falls der User Unfug eingibt, faerben wir
+          // sie rot. Allerdings wollen wir sie anschliessend
+          // wieder auf die richtige urspruengliche Farbe
+          // zuruecksetzen, wenn der User den Wert korrigiert
+          // hat.
+          if (item.getData("color") == null)
+            item.setData("color",item.getForeground()); // wir hatten den Wert noch nicht gespeichert
+          final org.eclipse.swt.graphics.Color color = (org.eclipse.swt.graphics.Color) item.getData("color");
 
           final String oldValue = item.getText(index);
 
@@ -581,6 +591,11 @@ public class TablePart implements Part
               {
                 Text text = (Text) editor.getEditor();
                 String newValue = text.getText();
+                if (oldValue == null && newValue == null)
+                  return; // nothing changed
+                if (oldValue.equals(newValue))
+                  return; // nothing changed
+
                 item.setText(index,newValue);
                 for (int i=0;i<changeListeners.size();++i)
                 {
@@ -588,7 +603,11 @@ public class TablePart implements Part
                   try
                   {
                     l.itemChanged((GenericObject)item.getData(),col.columnId,newValue);
-                    item.setForeground(index,Color.WIDGET_FG.getSWTColor());
+                    if (color == null)
+                      item.setForeground(index,Color.COMMENT.getSWTColor());
+                    else
+                      item.setForeground(index,color);
+
                     GUI.getStatusBar().setSuccessText("");
                   }
                   catch (ApplicationException ae)
@@ -969,6 +988,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.41  2005/07/01 17:06:12  web0
+ * *** empty log message ***
+ *
  * Revision 1.40  2005/07/01 16:45:28  web0
  * @N Ability to change values directly in tablePart
  *
