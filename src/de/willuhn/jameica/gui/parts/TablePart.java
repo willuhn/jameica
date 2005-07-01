@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.39 $
- * $Date: 2005/06/30 21:40:47 $
+ * $Revision: 1.40 $
+ * $Date: 2005/07/01 16:45:28 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -17,22 +17,23 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -65,20 +66,19 @@ import de.willuhn.util.I18N;
  */
 public class TablePart implements Part
 {
+  private I18N i18n                     = null;
+
   private GenericIterator list					= null;
 	private Action action									= null;
-  private ArrayList fields 							= new ArrayList();
-  private HashMap formatter 						= new HashMap();
-  private I18N i18n 										= null;
+  private Vector columns                = new Vector();
   private TableFormatter tableFormatter = null;
-	private ContextMenu menu 							= null;
+  private ContextMenu menu              = null;
 
 	private boolean showSummary						= true;
 
+  private org.eclipse.swt.widgets.Table table = null;
 	private Composite comp 								= null;
 	private Label summary									= null;
-	 
-  private org.eclipse.swt.widgets.Table table = null;
 
 	// Fuer die Sortierung
 	private Hashtable sortTable					= new Hashtable();
@@ -96,7 +96,6 @@ public class TablePart implements Part
   private String id                   = null;
 
   // Fuer den Aenderungs-Support
-  private HashMap changeables         = new HashMap();
   private TableEditor editor          = null;
   private ArrayList changeListeners   = new ArrayList();
   private boolean changeable          = false;
@@ -189,12 +188,7 @@ public class TablePart implements Part
    */
   public void addColumn(String title, String field, Formatter f, boolean changeable)
   {
-    this.fields.add(new String[]{title,field});
-    
-    if (field != null && f != null)
-      formatter.put(field,f);
-    if (changeable)
-      this.changeables.put(field,"foo"); // TODO
+    this.columns.add(new Column(field,title,f,changeable));
     this.changeable |= changeable;
   }
 
@@ -328,13 +322,12 @@ public class TablePart implements Part
 		}
 		
 		item.setData(object);
-		String[] text = new String[this.fields.size()];
+		String[] text = new String[this.columns.size()];
 
-		for (int i=0;i<this.fields.size();++i)
+		for (int i=0;i<this.columns.size();++i)
 		{
-			String[] fieldData = (String[]) fields.get(i);
-			String field = fieldData[1];
-			Object value = object.getAttribute(field);
+      Column col = (Column) this.columns.get(i);
+			Object value = object.getAttribute(col.columnId);
 			Object orig = value;
 
 			String display = "";
@@ -354,9 +347,8 @@ public class TablePart implements Part
 			}
 
 			// Formatter vorhanden?
-			Formatter f = (Formatter) formatter.get(field);
-			if (f != null)
-				display = f.format(orig);
+			if (col.formatter != null)
+				display = col.formatter.format(orig);
 
 			item.setText(i,display);
 			text[i] = display;
@@ -457,13 +449,11 @@ public class TablePart implements Part
 		list.begin();
 		GenericObject test = list.hasNext() ? list.next() : null;
 
-    for (int i=0;i<this.fields.size();++i)
+    for (int i=0;i<this.columns.size();++i)
     {
+      Column column = (Column) this.columns.get(i);
       final TableColumn col = new TableColumn(table, SWT.NONE);
-      String[] fieldData = (String[]) fields.get(i);
-      String title = fieldData[0];
-      String field = fieldData[1];
-			col.setText(title == null ? "" : title);
+			col.setText(column.name == null ? "" : column.name);
 
 			// Sortierung
 			final int p = i;
@@ -476,7 +466,7 @@ public class TablePart implements Part
 			// Evtl. rechts ausrichten
 			if (test != null)
 			{
-				Object value = test.getAttribute(field);
+				Object value = test.getAttribute(column.columnId);
 				if (value instanceof Double)  col.setAlignment(SWT.RIGHT);
 				if (value instanceof Integer) col.setAlignment(SWT.RIGHT);
 				if (value instanceof Number)  col.setAlignment(SWT.RIGHT);
@@ -530,21 +520,46 @@ public class TablePart implements Part
       this.editor.horizontalAlignment = SWT.LEFT;
       this.editor.grabHorizontal = true;
 
-      table.addSelectionListener(new SelectionAdapter() {
-        public void widgetSelected(SelectionEvent e) {
+      table.addListener(SWT.MouseDown, new Listener() {
+        public void handleEvent(Event e) {
 
-          // TODO Hier weiter fuer editierbare Tabelle
-          // Markierung ermitteln
-          final TableItem item = (TableItem) e.item;
-          if (item == null) return;
-          
           // Das alte Text-Feld ggf. disposen
           Control oldText = editor.getEditor();
           if (oldText != null && !oldText.isDisposed())
             oldText.dispose();
+          
+          TableItem current     = null;
+          int row               = -1;
+          int cols              = table.getColumnCount();
+          int items             = table.getItemCount();
+          int pos               = table.getTopIndex();
+          Point pt              = new Point(e.x,e.y);
 
-          final int index = 2;
-          String oldValue = item.getText(index);
+          while (pos < items) {
+            current = table.getItem(pos);
+            for (int i=0; i<cols; ++i) {
+              Rectangle rect = current.getBounds(i);
+              if (rect.contains(pt)) {
+                row = i;
+                pos = items; // Das ist nur, um aus der while-Schleife zu kommen
+                break;
+              }
+            }
+            ++pos;
+          }
+          
+          if (row == -1 || current == null || row > columns.size())
+            return;
+
+          // Jetzt checken wir noch, ob die Spalte aenderbar ist
+          final Column col = (Column) columns.get(row);
+          if (!col.canChange)
+            return;
+
+          final int index = row;
+          final TableItem item = current;
+
+          final String oldValue = item.getText(index);
 
           Text newText = new Text(table, SWT.NONE);
           newText.setText(oldValue);
@@ -552,24 +567,50 @@ public class TablePart implements Part
           newText.setFocus();
           editor.setEditor(newText, item, index);
 
-          newText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e)
+          // Wir deaktivieren den Default-Button fuer den Zeitraum der Bearbeitung
+          
+          Button b = GUI.getShell().getDefaultButton();
+          final boolean enabled = b != null && b.getEnabled();
+          if (b != null) b.setEnabled(false);
+
+          newText.addFocusListener(new FocusAdapter()
+          {
+            public void focusLost(FocusEvent e)
             {
-              Text text = (Text) editor.getEditor();
-              String newValue = text.getText();
-              item.setText(index,newValue);
-              for (int i=0;i<changeListeners.size();++i)
+              try
               {
-                TableChangeListener l = (TableChangeListener) changeListeners.get(i);
-                try
+                Text text = (Text) editor.getEditor();
+                String newValue = text.getText();
+                item.setText(index,newValue);
+                for (int i=0;i<changeListeners.size();++i)
                 {
-                  l.itemChanged((GenericObject)item.getData(),null,newValue);
+                  TableChangeListener l = (TableChangeListener) changeListeners.get(i);
+                  try
+                  {
+                    l.itemChanged((GenericObject)item.getData(),col.columnId,newValue);
+                    item.setForeground(index,Color.WIDGET_FG.getSWTColor());
+                    GUI.getStatusBar().setSuccessText("");
+                  }
+                  catch (ApplicationException ae)
+                  {
+                    item.setForeground(index,Color.ERROR.getSWTColor());
+                    String msg = ae.getMessage();
+                    if (msg == null || msg.length() == 0)
+                    {
+                      msg = i18n.tr("Fehler beim Ändern des Wertes");
+                      Logger.error("error while changing value",ae);
+                    }
+                    GUI.getStatusBar().setErrorText(msg);
+                    break;
+                  }
                 }
-                catch (ApplicationException ae)
-                {
-                  GUI.getStatusBar().setErrorText(ae.getMessage());
-                  break;
-                }
+                
+              }
+              finally
+              {
+                Button b = GUI.getShell().getDefaultButton();
+                if (b != null)
+                  b.setEnabled(enabled);
               }
             }
           });
@@ -629,10 +670,10 @@ public class TablePart implements Part
     if (this.list.hasNext())
       sb.append(this.list.next().getClass().getName());
 
-    for (int i=0;i<this.fields.size();++i)
+    for (int i=0;i<this.columns.size();++i)
     {
-      String[] s = (String[])this.fields.get(i);
-      sb.append(s[1]);
+      Column col = (Column) this.columns.get(i);
+      sb.append(col.columnId);
     }
 
     String s = sb.toString();
@@ -767,10 +808,10 @@ public class TablePart implements Part
     boolean reverse = colName.startsWith("!");
     if (reverse) colName = colName.substring(1);
 
-    for (int i=0;i<this.fields.size();++i)
+    for (int i=0;i<this.columns.size();++i)
     {
-      String[] s = (String[]) this.fields.get(i);
-      if (s[1].equals(colName))
+      Column col = (Column) this.columns.get(i);
+      if (col.columnId.equals(colName))
       {
         if (reverse) this.sortedBy = i;
         Logger.debug("table ordered by " + colName);
@@ -839,8 +880,8 @@ public class TablePart implements Part
   {
     try
     {
-      String[] s = (String[]) this.fields.get(this.sortedBy);
-      return s[1];
+      Column c = (Column) this.columns.get(this.sortedBy);
+      return c.columnId;
     }
     catch (Exception e)
     {
@@ -848,7 +889,23 @@ public class TablePart implements Part
     return null;
   }
 	
-	/**
+  private class Column
+  {
+    private String columnId     = null;
+    private String name         = null;
+    private Formatter formatter = null;
+    private boolean canChange   = false;
+    
+    private Column(String id, String name, Formatter f, boolean changeable)
+    {
+      this.columnId   = id;
+      this.name       = name;
+      this.formatter  = f;
+      this.canChange  = changeable;
+    }
+  }
+
+  /**
 	 * Kleine Hilfs-Klasse fuer die Sortierung.
    */
   private class SortItem implements Comparable
@@ -912,6 +969,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.40  2005/07/01 16:45:28  web0
+ * @N Ability to change values directly in tablePart
+ *
  * Revision 1.39  2005/06/30 21:40:47  web0
  * *** empty log message ***
  *
