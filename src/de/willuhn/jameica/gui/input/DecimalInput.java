@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/06/21 20:02:02 $
+ * $Revision: 1.11 $
+ * $Date: 2005/07/04 10:36:04 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -30,14 +30,15 @@ import de.willuhn.logging.Logger;
 public class DecimalInput extends TextInput
 {
   private DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Application.getConfig().getLocale());
-
+  private Double value = null;
+  
   /**
    * Erzeugt ein neues Eingabefeld ohne vorgegebenen Wert.
    * @param format Formatter fuer die Anzeige.
    */
   public DecimalInput(DecimalFormat format)
   {
-    super("");
+    super(null);
 
     if (format != null)
       this.format = format;
@@ -50,7 +51,8 @@ public class DecimalInput extends TextInput
    */
   public DecimalInput(double value, DecimalFormat format)
   {
-  	super(""+value);
+  	super(null);
+    this.value = new Double(value);
 
     if (format != null)
 	    this.format = format;
@@ -64,7 +66,10 @@ public class DecimalInput extends TextInput
 		Control c = super.getControl();
     try
     {
-      text.setText(format.format(super.getValue()));
+      if (this.value == null)
+        text.setText("");
+      else
+        text.setText(format.format(this.value));
     }
     catch (Exception e)
     {
@@ -127,18 +132,25 @@ public class DecimalInput extends TextInput
    */
   public void setValue(Object value)
   {
-    if (value == null)
-      return;
-    if (!(value instanceof Double))
-      return;
-
-		this.text.setText(format.format(((Double)value).doubleValue()));
-    this.text.redraw();
+    if (value == null || (value instanceof Double))
+      this.value = (Double) value;
+    
+    if (this.text != null && !this.text.isDisposed())
+    {
+      String s = "";
+      if (this.value != null)
+        s = format.format(this.value.doubleValue());
+      this.text.setText(s);
+      this.text.redraw();
+    }
   }
 }
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.11  2005/07/04 10:36:04  web0
+ * @B bug 91
+ *
  * Revision 1.10  2005/06/21 20:02:02  web0
  * @C cvs merge
  *
