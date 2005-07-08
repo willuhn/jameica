@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/03/05 19:11:03 $
+ * $Revision: 1.14 $
+ * $Date: 2005/07/08 17:41:45 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,6 @@
 package de.willuhn.jameica.gui.util;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -30,13 +28,14 @@ import org.eclipse.swt.widgets.Control;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.Session;
 
 /**
  * Diverse statische SWT-Hilfsfunktionen.
  */
 public class SWTUtil {
 
-	private static Map imagecache = new HashMap();
+	private static Session imagecache = new Session();
 
 	/**
 	 * Disposed alle Kinder des Composites rekursiv jedoch nicht das Composite selbst.
@@ -77,33 +76,57 @@ public class SWTUtil {
 			return image;
 
 		InputStream is = null;
-    
 		try
-		{
-			is = Application.getClassLoader().getResourceAsStream("img/" + filename);
-			ImageData data = new ImageData(is);
-			ImageData data2 = null;
-			if (data.transparentPixel > 0) {
-				data2 = data.getTransparencyMask();
-				image = new Image(GUI.getDisplay(), data, data2);
-			}
-			else {
-				image = new Image(GUI.getDisplay(), data);
-			}
-      
-			if (image != null) {
-				imagecache.put(filename, image);
-			}
-			return image;
+    {
+      is = Application.getClassLoader().getResourceAsStream("img/" + filename);
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to load image from " + filename,e);
+    }
+
+    image = getImage(is);
+
+    if (image != null)
+    {
+			imagecache.put(filename, image);
 		}
-		catch (Throwable t)
-		{
-			Logger.error("unable to load image " + filename,t);
-		}
-		return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img" + "/empty.gif"));
+		return image;
 	}
 
-	/**
+  /**
+   * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
+   * Wenn die Datei nicht existiert, wird stattdessen ein 1x1 Pixel grosses
+   * und transparentes Dummy-Bild zurueckgeliefert.
+   * @param is InputStream
+   * @return das erzeugte Bild.
+   */
+  public static Image getImage(InputStream is)
+  {
+    Image image = null;
+    
+    try
+    {
+      ImageData data = new ImageData(is);
+      ImageData data2 = null;
+      if (data.transparentPixel > 0) {
+        data2 = data.getTransparencyMask();
+        image = new Image(GUI.getDisplay(), data, data2);
+      }
+      else {
+        image = new Image(GUI.getDisplay(), data);
+      }
+      
+      return image;
+    }
+    catch (Throwable t)
+    {
+      Logger.error("unable to load image",t);
+    }
+    return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img" + "/empty.gif"));
+  }
+
+  /**
 	 * Erzeugt ein Canvas mit dem dem angegebenen Hintergrundbild.
 	 * @param parent Composite, in dem das Canvas gemalt werden soll.
 	 * Hinweis: Das Composite muss ein GridLayout haben.
@@ -139,6 +162,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.14  2005/07/08 17:41:45  web0
+ * *** empty log message ***
+ *
  * Revision 1.13  2005/03/05 19:11:03  web0
  * *** empty log message ***
  *
