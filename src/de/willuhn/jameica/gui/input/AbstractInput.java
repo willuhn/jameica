@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/07/21 23:54:53 $
- * $Author: willuhn $
+ * $Revision: 1.9 $
+ * $Date: 2005/07/11 18:12:39 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -90,10 +90,7 @@ public abstract class AbstractInput implements Input
   }
 
   /**
-   * Positioniert und malt das Eingabefeld im uebergebenen Composite.
-   * Es wird jedoch mit der angegebenen Breite gemalt.
-   * @param parent Das Composite, in dem das Eingabefeld gemalt werden soll.
-   * @param width Breite des Composites.
+   * @see de.willuhn.jameica.gui.input.Input#paint(org.eclipse.swt.widgets.Composite, int)
    */
   public final void paint(Composite parent,int width)
   {
@@ -156,6 +153,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.9  2005/07/11 18:12:39  web0
+ * *** empty log message ***
+ *
  * Revision 1.8  2004/07/21 23:54:53  willuhn
  * @C massive Refactoring ;)
  *

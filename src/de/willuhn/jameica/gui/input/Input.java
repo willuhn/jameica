@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Input.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/07/09 00:12:46 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2005/07/11 18:12:39 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -74,6 +74,13 @@ public interface Input extends Part
   public void paint(Composite parent);
 
   /**
+   * Positioniert und malt das Eingabefeld im uebergebenen Composite.
+   * @param parent Das Composite, in dem das Eingabefeld gemalt werden soll.
+   * @param width angegebene Breite.
+   */
+  public void paint(Composite parent,int width);
+
+  /**
    * Gibt diesem Eingabefeld den Focus.
    */
   public void focus();
@@ -91,6 +98,9 @@ public interface Input extends Part
 
 /**********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.2  2005/07/11 18:12:39  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *

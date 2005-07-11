@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/06/21 20:02:03 $
+ * $Revision: 1.6 $
+ * $Date: 2005/07/11 18:12:39 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -92,6 +92,17 @@ public abstract class Container
     input.paint(getComposite());
   }
   
+  /**
+   * Fuegt ein Label-Paar hinzu, bei dem beide Seiten ein Eingabe-Feld sind.
+   * @param left linkes Eingabe-Feld.
+   * @param right rechtes Eingabe-Feld.
+   */
+  public void addLabelPair(Input left, Input right)
+  {
+    left.paint(getComposite(),50);
+    right.paint(getComposite());
+  }
+
   /**
    * Fuegt eine Checkbox mit Kommentar hinzu.
    * @param checkbox die Checkbox.
@@ -250,6 +261,9 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.6  2005/07/11 18:12:39  web0
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/06/21 20:02:03  web0
  * @C cvs merge
  *
