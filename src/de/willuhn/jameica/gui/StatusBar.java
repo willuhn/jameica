@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.42 $
- * $Date: 2005/06/27 15:35:52 $
+ * $Revision: 1.43 $
+ * $Date: 2005/07/11 08:31:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@
 package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
+import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
@@ -58,6 +59,8 @@ public class StatusBar {
   private Target liveTarget  = null;
 	private boolean statusIn   = false;
 	private boolean actionIn   = false;
+  
+  private static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Application.getConfig().getLocale());
 
   /**
    * Erzeugt eine neue Statusleiste.
@@ -256,7 +259,7 @@ public class StatusBar {
       return;
 
     if (!"".equals(message))
-      lastActionMessages.push("[" + new Date().toString() + "] " + message);
+      lastActionMessages.push("[" + df.format(new Date()) + "] " + message);
 
 		final long currentClick = System.currentTimeMillis();
     GUI.getDisplay().asyncExec(new Runnable() {
@@ -267,12 +270,17 @@ public class StatusBar {
 				lastClick = currentClick;
       }
     });
-    GUI.getDisplay().timerExec(10000,new Runnable()
-    {
+    GUI.getDisplay().asyncExec(new Runnable() {
       public void run()
       {
-				if (currentClick == lastClick && !actionText.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
-					actionText.setText("");
+        GUI.getDisplay().timerExec(10000,new Runnable()
+            {
+              public void run()
+              {
+                if (currentClick == lastClick && !actionText.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
+                  actionText.setText("");
+              }
+            });
       }
     });
   }
@@ -410,6 +418,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.43  2005/07/11 08:31:24  web0
+ * *** empty log message ***
+ *
  * Revision 1.42  2005/06/27 15:35:52  web0
  * @N ability to store last table order
  *

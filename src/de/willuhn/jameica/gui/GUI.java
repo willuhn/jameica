@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.77 $
- * $Date: 2005/06/21 20:02:02 $
+ * $Revision: 1.78 $
+ * $Date: 2005/07/11 08:31:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -43,6 +43,7 @@ import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
+import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -594,26 +595,32 @@ public class GUI
 	 * Startet einen Job asynchron zur GUI, der typischerweise laenger dauert.
 	 * Waehrend der Ausfuehrung wird die nicht GUI geblockt. Informativ wird unten
 	 * rechts ein ProgressBar angezeigt. 
-	 * @param job
+	 * @param task
 	 */
-	public static void startAsync(final Runnable job)
+	public static void startAsync(final BackgroundTask task)
 	{
 		if (getDisplay() == null || getDisplay().isDisposed()) return;
 
     getStatusBar().startProgress();
-    getDisplay().asyncExec(new Runnable()
-    {
+    getDisplay().asyncExec(new Runnable() {
       public void run()
       {
-				try
-				{
-					job.run();
-				}
-				finally
-				{
-					getStatusBar().stopProgress();
-				}
-			}
+        Thread t = new Thread()
+        {
+          public void run()
+          {
+            try
+            {
+              task.run();
+            }
+            finally
+            {
+              getStatusBar().stopProgress();
+            }
+          }
+        };
+        t.start();
+      }
     });
 	}
 
@@ -734,6 +741,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.78  2005/07/11 08:31:24  web0
+ * *** empty log message ***
+ *
  * Revision 1.77  2005/06/21 20:02:02  web0
  * @C cvs merge
  *

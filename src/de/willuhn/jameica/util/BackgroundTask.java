@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/Attic/BackgroundTask.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/07 18:05:26 $
- * $Author: willuhn $
+ * $Revision: 1.4 $
+ * $Date: 2005/07/11 08:31:24 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -22,31 +22,6 @@ import de.willuhn.util.ProgressMonitor;
 public abstract class BackgroundTask implements Runnable
 {
 	private ProgressMonitor monitor;
-
-	/**
-	 * Konstante fuer Status "Task noch nicht gestartet oder noch kein Status gesetzt".
-	 */
-	public final static int STATUS_NONE 		= 1;
-
-  /**
-   * Konstante fuer Status "Task laeuft gerade".
-	 */
-	public final static int STATUS_RUNNING	= 2;
-
-  /**
-   * Konstante fuer Status "Task mit Fehlern beendet".
-	 */
-	public final static int STATUS_ERROR		= 3;
-
-  /**
-   * Konstante fuer Status "Task erfolgreich beendet".
-	 */
-	public final static int STATUS_DONE			= 4;
-
-  /**
-   * Konstante fuer Status "Task durch Benutzer abgebrochen".
-	 */
-	public final static int STATUS_CANCEL		= 5;
 
 	/**
 	 * Erzeugt einen neuen Background-Task.
@@ -70,6 +45,9 @@ public abstract class BackgroundTask implements Runnable
 
 /**********************************************************************
  * $Log: BackgroundTask.java,v $
+ * Revision 1.4  2005/07/11 08:31:24  web0
+ * *** empty log message ***
+ *
  * Revision 1.3  2004/10/07 18:05:26  willuhn
  * *** empty log message ***
  *

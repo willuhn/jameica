@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/06/21 20:02:02 $
+ * $Revision: 1.9 $
+ * $Date: 2005/07/11 08:31:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Label;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.util.ProgressMonitor;
 
 /**
@@ -32,7 +31,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class ProgressBar implements ProgressMonitor, Part
 {
-	private int status	= BackgroundTask.STATUS_NONE;
+	private int status	= STATUS_NONE;
 
 	private TextPart log																= null;
 	private Composite parent														= null;
@@ -100,9 +99,9 @@ public class ProgressBar implements ProgressMonitor, Part
 				public void run()
 				{
 					barLabel.setText(text);
-					if (status == BackgroundTask.STATUS_DONE)
+					if (status == STATUS_DONE)
 						barLabel.setForeground(Color.SUCCESS.getSWTColor());
-					else if (status == BackgroundTask.STATUS_ERROR || status == BackgroundTask.STATUS_CANCEL)
+					else if (status == STATUS_ERROR || status == STATUS_CANCEL)
 						barLabel.setForeground(Color.ERROR.getSWTColor());
 					else
 						barLabel.setForeground(Color.WIDGET_FG.getSWTColor());
@@ -206,6 +205,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.9  2005/07/11 08:31:24  web0
+ * *** empty log message ***
+ *
  * Revision 1.8  2005/06/21 20:02:02  web0
  * @C cvs merge
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Attic/PluginContainer.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.6 $
+ * $Date: 2005/07/11 08:31:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -62,7 +62,7 @@ public class PluginContainer {
 	 * Setzt den Installations-Status des Plugins.
    * @param b Status.
    */
-  void setInstalled(boolean b)
+  public void setInstalled(boolean b)
   {
   	this.installed = b;
   }
@@ -117,6 +117,9 @@ public class PluginContainer {
 
 /**********************************************************************
  * $Log: PluginContainer.java,v $
+ * Revision 1.6  2005/07/11 08:31:24  web0
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *

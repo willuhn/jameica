@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.32 $
- * $Date: 2005/06/16 13:29:20 $
+ * $Revision: 1.33 $
+ * $Date: 2005/07/11 08:31:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import java.util.Iterator;
 import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
 import de.willuhn.jameica.security.*;
 import de.willuhn.logging.Logger;
@@ -115,7 +116,13 @@ public final class ServiceFactory
 					}
 					catch (Throwable t)
 					{
-						Logger.error("error while initializing service, skipped",t);
+						Logger.error("error while initializing service, disabling plugin",t);
+            PluginContainer container = Application.getPluginLoader().getPluginContainer(plugin.getClass());
+            container.setInstalled(false);
+            String s = t.getMessage();
+            if (s == null || s.length() == 0)
+              s = t.getClass().getName();
+            Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" wurde aufgrund eines Fehlers bei der Initialisierung deaktiviert.\nFehlermeldung: " + s,manifest.getName()));
 					}
 				}
 			}
@@ -244,7 +251,7 @@ public final class ServiceFactory
 		}
 		catch (Exception e)
 		{
-			throw new RemoteException("error while installing service",e);
+			throw new RemoteException("error while installing service " + name,e);
 		}
 	}
 
@@ -374,6 +381,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.33  2005/07/11 08:31:24  web0
+ * *** empty log message ***
+ *
  * Revision 1.32  2005/06/16 13:29:20  web0
  * *** empty log message ***
  *

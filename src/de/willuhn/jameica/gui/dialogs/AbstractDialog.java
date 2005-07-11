@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.28 $
- * $Date: 2005/06/21 20:02:02 $
+ * $Revision: 1.29 $
+ * $Date: 2005/07/11 08:31:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -268,7 +268,14 @@ public abstract class AbstractDialog
   {
     this.titleText = title == null ? "" : title;
     if (this.title != null && !this.title.isDisposed())
-        this.title.redraw();
+    {
+      GUI.getDisplay().syncExec(new Runnable() {
+        public void run()
+        {
+          AbstractDialog.this.title.redraw();
+        }
+      });
+    }
   }
 
 	/**
@@ -378,12 +385,11 @@ public abstract class AbstractDialog
 					shell.setLocation(x, y);
 	
 					shell.open();
-					while (!shell.isDisposed()) {
+					while (shell != null && !shell.isDisposed()) {
 						if (!display.readAndDispatch()) display.sleep();
 					}
         }
       });
-
 			choosen = getData();
 			return choosen;
 		}
@@ -398,13 +404,26 @@ public abstract class AbstractDialog
    */
   public final void close()
 	{
+    if (shell == null || shell.isDisposed())
+      return;
+
+    Logger.debug("closing dialog");
+    GUI.getDisplay().syncExec(new Runnable() {
+      public void run()
+      {
+        try {
+          shell.dispose();
+          shell = null;
+          Logger.debug("dialog closed");
+        }
+        catch (Exception e) {
+          Logger.error("error while closing dialog",e);
+        }
+      }
+    });
 
 		try {
-			shell.dispose();
-		}
-		catch (Exception e) {/*useless*/}
-
-		try {
+      Logger.debug("notifying listeners");
 			Listener l = null;
 			Event e = new Event();
 			e.data = choosen;
@@ -414,12 +433,17 @@ public abstract class AbstractDialog
 				l.handleEvent(e);
 			}
 		}
-		catch (Exception e) {/*useless*/}
+		catch (Exception e) {
+      Logger.error("error while notifying listeners",e);
+    }
 	}
 }
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.29  2005/07/11 08:31:24  web0
+ * *** empty log message ***
+ *
  * Revision 1.28  2005/06/21 20:02:02  web0
  * @C cvs merge
  *
