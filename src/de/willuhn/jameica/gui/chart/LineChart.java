@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/chart/Attic/LineChart.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/07/11 13:50:11 $
+ * $Revision: 1.2 $
+ * $Date: 2005/07/11 14:30:06 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.logging.Logger;
 
 /**
  * Implementierung eines Line-Charts.
@@ -106,11 +107,12 @@ public class LineChart implements Chart
     for (int j=0;j<data.size();++j)
     {
       Data line = (Data) data.get(j);
-      for (int i=0;i<line.values.length;++i)
+      int[] values = line.getValues();
+      for (int i=0;i<values.length;++i)
       {
-        if (line.values.length > num) num = line.values.length;
-        if (line.values[i] > max) max = line.values[i];
-        if (line.values[i] < min) min = line.values[i];
+        if (values.length > num) num = values.length;
+        if (values[i] > max) max = values[i];
+        if (values[i] < min) min = values[i];
       }
     }
     
@@ -146,35 +148,43 @@ public class LineChart implements Chart
         for (int j=0;j<data.size();++j)
         {
           Data line = (Data) data.get(j);
-          gc.setForeground(line.lineColor);
-          
-          int[] poly = new int[2 * (line.values.length + 2)];
-
-          int count=0;
-          poly[count++] = border;
-          poly[count++] = height + border;
-          int lastX = 0;
-          for (int i=0;i<line.values.length-1;++i)
+          try
           {
-            int x1 = (int) (i * xfactor) + border + 1;
-            int x2 = (int) ((i+1) * xfactor) + border + 1;
-            int y1 = height + border - ((int) (line.values[i] * yfactor)) - (int) yShift;
-            int y2 = height + border - ((int) (line.values[i+1] * yfactor)) - (int) yShift;
-            lastX = x2;
-            gc.drawLine(x1,y1,x2,y2);
-            poly[count++] = x1;
-            poly[count++] = y1;
-            if (i == line.values.length-2)
-            {
-              poly[count++] = x2;
-              poly[count++] = y2;
-            }
-          }
+            int[] values = line.getValues();
+            gc.setForeground(line.lineColor);
+            
+            int[] poly = new int[2 * (values.length + 2)];
 
-          poly[count++] = lastX;
-          poly[count++] = height + border;
-          gc.setBackground(line.fillColor);
-          gc.fillPolygon(poly);
+            int count=0;
+            poly[count++] = border;
+            poly[count++] = height + border;
+            int lastX = 0;
+            for (int i=0;i<values.length-1;++i)
+            {
+              int x1 = (int) (i * xfactor) + border + 1;
+              int x2 = (int) ((i+1) * xfactor) + border + 1;
+              int y1 = height + border - ((int) (values[i] * yfactor)) - (int) yShift;
+              int y2 = height + border - ((int) (values[i+1] * yfactor)) - (int) yShift;
+              lastX = x2;
+              gc.drawLine(x1,y1,x2,y2);
+              poly[count++] = x1;
+              poly[count++] = y1;
+              if (i == values.length-2)
+              {
+                poly[count++] = x2;
+                poly[count++] = y2;
+              }
+            }
+            poly[count++] = lastX;
+            poly[count++] = height + border;
+            gc.setBackground(line.fillColor);
+            gc.fillPolygon(poly);
+          }
+          catch (RemoteException e)
+          {
+            Logger.error("unable to draw line",e);
+            continue;
+          }
         }
 
         if (shift != 0)
@@ -200,26 +210,38 @@ public class LineChart implements Chart
 
   private class Data
   {
-    private int[] values;
-    private Color lineColor;
-    private Color fillColor;
+    private int[] values         = null;
+    private GenericIterator list = null;
+    private String attribute     = null;
+    private Color lineColor      = null;
+    private Color fillColor      = null;
     
-    private Data(GenericIterator values, String attribute, Color lineColor, Color fillColor) throws RemoteException
+    private Data(GenericIterator values, String attribute, Color lineColor, Color fillColor)
     {
       this.lineColor = lineColor;
       this.fillColor = fillColor;
-      this.values = new int[values.size()];
-      int count = 0;
-
-      GenericObject object = null;
-      while (values.hasNext())
+      this.list = values;
+      this.attribute = attribute;
+    }
+    
+    private int[] getValues() throws RemoteException
+    {
+      if (this.values == null)
       {
-        object = values.next();
-        Object o = object.getAttribute(attribute);
-        if (o == null || !(o instanceof Number))
-          continue;
-        this.values[count++] = ((Number)o).intValue();
+        int count = 0;
+        this.values = new int[list.size()];
+        GenericObject object = null;
+        while (list.hasNext())
+        {
+          object = list.next();
+          Object o = object.getAttribute(attribute);
+          if (o == null || !(o instanceof Number))
+            continue;
+          this.values[count++] = ((Number)o).intValue();
+        }
+        
       }
+      return this.values;
     }
   }
 }
@@ -227,6 +249,9 @@ public class LineChart implements Chart
 
 /*********************************************************************
  * $Log: LineChart.java,v $
+ * Revision 1.2  2005/07/11 14:30:06  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/07/11 13:50:11  web0
  * @N Linecharts
  *
