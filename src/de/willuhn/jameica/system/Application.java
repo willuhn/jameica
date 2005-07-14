@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.42 $
- * $Date: 2005/06/28 17:45:52 $
+ * $Revision: 1.43 $
+ * $Date: 2005/07/14 20:24:05 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.logging.targets.OutputStreamTarget;
 import de.willuhn.util.I18N;
+import de.willuhn.util.JarInfo;
 import de.willuhn.util.MultipleClassLoader;
 
 /**
@@ -542,11 +543,55 @@ public final class Application {
 	{
 		return new Manifest(null,app.getClass().getResourceAsStream("/system.xml"));
 	}
+
+  /**
+   * Liefert die Build-Nummer, insofern sie ermittelbar ist.
+   * Da die Nummer nur im Manifest des Jars steht, kann sie nur dann
+   * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
+   * und der entsprechende Parameter im Manifest des JARs existiert.
+   * @return Build-Number.
+   */
+  public static int getBuildnumber()
+  {
+    try
+    {
+      return new JarInfo(new JarFile("jameica.jar")).getBuildnumber();
+    }
+    catch (Throwable t)
+    {
+      Logger.warn("unable to determine build number. Running in debugger?");
+    }
+    return 1;
+  }
+
+  /**
+   * Liefert das Build-Datum, insofern es ermittelbar ist.
+   * Da das Datum nur im Manifest des Jars steht, kann es nur dann
+   * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
+   * und der entsprechende Parameter im Manifest des JARs existiert.
+   * @return Build-Datum.
+   */
+  public static String getBuildDate()
+  {
+    try
+    {
+      return new JarInfo(new JarFile("jameica.jar")).getBuildDate();
+    }
+    catch (Throwable t)
+    {
+      Logger.warn("unable to determine build date. Running in debugger?");
+    }
+    return "";
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.43  2005/07/14 20:24:05  web0
+ * *** empty log message ***
+ *
  * Revision 1.42  2005/06/28 17:45:52  web0
  * *** empty log message ***
  *

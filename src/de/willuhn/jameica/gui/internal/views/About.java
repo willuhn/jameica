@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Attic/About.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/03/31 22:35:37 $
+ * $Revision: 1.6 $
+ * $Date: 2005/07/14 20:24:05 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -50,6 +50,7 @@ public class About extends AbstractView {
  	
   	group.addLabelPair(i18n.tr("Version"), 					new LabelInput(""+Application.getManifest().getVersion()));
 		group.addLabelPair(i18n.tr("Datenverzeichnis"), new LabelInput(""+Application.getConfig().getWorkDir()));
+    group.addLabelPair(i18n.tr("Build-Nummer"),     new LabelInput(""+ Application.getBuildnumber() + " [Datum " + Application.getBuildDate() + "]"));
 
   }
 
@@ -64,6 +65,9 @@ public class About extends AbstractView {
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.6  2005/07/14 20:24:05  web0
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/03/31 22:35:37  web0
  * @N flexible Actions fuer FormTexte
  *
