@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/06/16 13:29:20 $
+ * $Revision: 1.5 $
+ * $Date: 2005/07/14 22:58:36 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@
 package de.willuhn.jameica.gui.internal.parts;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
@@ -242,14 +243,16 @@ public class ServiceList extends TablePart
   private static GenericIterator init(AbstractPlugin plugin)
   {
     ServiceDescriptor[] descriptors = plugin.getManifest().getServices();
-    ServiceObject[] so = new ServiceObject[descriptors.length];
+    ArrayList li = new ArrayList();
     for (int i=0;i<descriptors.length;++i)
     {
-      so[i] = new ServiceObject(plugin,descriptors[i].getName());
+      if (Application.inClientMode() && !descriptors[i].share())
+        continue;
+      li.add(new ServiceObject(plugin,descriptors[i].getName()));
     }
     try
     {
-      return PseudoIterator.fromArray(so);
+      return PseudoIterator.fromArray((ServiceObject[]) li.toArray(new ServiceObject[li.size()]));
     }
     catch (RemoteException e)
     {
@@ -374,6 +377,9 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.5  2005/07/14 22:58:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.4  2005/06/16 13:29:20  web0
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.33 $
- * $Date: 2005/07/11 08:31:24 $
+ * $Revision: 1.34 $
+ * $Date: 2005/07/14 22:58:36 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -238,7 +238,7 @@ public final class ServiceFactory
 				Logger.info("service not startable");
 			}
 
-			if (Application.inServerMode() && Application.getConfig().getShareServices())
+			if (Application.inServerMode() && descriptor.share() && Application.getConfig().getShareServices())
 			{
 				// Im Server-Mode binden wir den Service noch an die RMI-Registry
 				Logger.info("binding service " + name);
@@ -381,6 +381,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.34  2005/07/14 22:58:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.33  2005/07/11 08:31:24  web0
  * *** empty log message ***
  *

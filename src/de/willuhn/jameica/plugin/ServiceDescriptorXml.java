@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ServiceDescriptorXml.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/12/21 01:08:01 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2005/07/14 22:58:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -88,11 +88,23 @@ public class ServiceDescriptorXml implements ServiceDescriptor
 		return depends;
   }
 
+  /**
+   * @see de.willuhn.jameica.plugin.ServiceDescriptor#share()
+   */
+  public boolean share()
+  {
+    String s = root.getAttribute("share","true");
+    return "true".equalsIgnoreCase(s);
+  }
+
 }
 
 
 /**********************************************************************
  * $Log: ServiceDescriptorXml.java,v $
+ * Revision 1.2  2005/07/14 22:58:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/12/21 01:08:01  willuhn
  * @N new service configuration system in plugin.xml with auostart and dependencies
  *

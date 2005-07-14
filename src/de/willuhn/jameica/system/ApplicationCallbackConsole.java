@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/06/28 17:13:40 $
+ * $Revision: 1.14 $
+ * $Date: 2005/07/14 22:58:36 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
 
 /**
@@ -46,17 +47,19 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public boolean lockExists(String lockfile)
   {
+    I18N i18n = Application.getI18n();
     if (Application.inNonInteractiveMode())
     {
-      Logger.error(Application.getI18n().tr("Der Jameica-Server scheint bereits zu laufen, da das " +
+      Logger.error(i18n.tr("Der Jameica-Server scheint bereits zu laufen, da das " +
         "Lockfile {0} existiert.",lockfile));
-      Logger.error(Application.getI18n().tr("Bitte löschen Sie ggf. die Datei und versuchen es erneut."));
+      Logger.error(i18n.tr("Bitte löschen Sie ggf. die Datei und versuchen es erneut."));
       return false;
     }
 
-		System.out.println("----------------------------------------------------------------------");
-    System.out.println(Application.getI18n().tr("Der Jameica-Server scheint bereits zu laufen, da das " +    	"Lockfile {0} existiert.",lockfile));
-    System.out.println(Application.getI18n().tr("Geben Sie <y> ein, um den Startvorgang fortzusetzen oder <n> zum Beenden."));
+    flush();
+    System.out.println("----------------------------------------------------------------------");
+    System.out.println(i18n.tr("Der Jameica-Server scheint bereits zu laufen, da das " +    	"Lockfile {0} existiert.",lockfile));
+    System.out.println(i18n.tr("Geben Sie <y> ein, um den Startvorgang fortzusetzen oder <n> zum Beenden."));
 		System.out.println("----------------------------------------------------------------------");
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader keyboard = new BufferedReader(isr);
@@ -90,7 +93,8 @@ public class ApplicationCallbackConsole implements ApplicationCallback
         throw new ApplicationException(Application.getI18n().tr("Passwort kann nicht abgefragt werden"));
       }
 
-			System.out.print(Application.getI18n().tr("Sie starten Jameica zum ersten Mal.\n" +
+      flush();
+      System.out.print(Application.getI18n().tr("Sie starten Jameica zum ersten Mal.\n" +
 				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
 			InputStreamReader isr = new InputStreamReader(System.in);
 			BufferedReader keyboard = new BufferedReader(isr);
@@ -130,6 +134,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
       throw new ApplicationException(Application.getI18n().tr("Passwort kann nicht abgefragt werden"));
     }
 
+    flush();
 		System.out.println(Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein:"));
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader keyboard = new BufferedReader(isr);
@@ -155,6 +160,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
       throw new ApplicationException(Application.getI18n().tr("Passwort kann nicht abgefragt werden"));
     }
 
+    flush();
 		System.out.print(Application.getI18n().tr(
 			"Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\n" +
 			"Es wird anschließend bei jedem Start von Jameica benötigt:"));
@@ -215,6 +221,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
       throw new ApplicationException(Application.getI18n().tr("Benutzer-Interaktion nicht möglich. Jameica läuft im nicht-interaktiven Modus"));
     }
 
+    flush();
 		System.out.println(question);
 		System.out.print(labeltext);
 		InputStreamReader isr = new InputStreamReader(System.in);
@@ -293,6 +300,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
     Certificate myCert = new Certificate(cert);
 
+    flush();
     System.out.println("----------------------------------------------------------------------");
     System.out.println(Application.getI18n().tr("Eigenschaften des Zertifikats"));
 
@@ -319,6 +327,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public void notifyUser(String text) throws Exception
   {
+    flush();
     System.out.println("----------------------------------------------------------------------");
     System.out.println(text);
     System.out.println("----------------------------------------------------------------------");
@@ -336,6 +345,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
       throw new ApplicationException(Application.getI18n().tr("Benutzer-Interaktion nicht möglich. Jameica läuft im nicht-interaktiven Modus"));
     }
 
+    flush();
     System.out.println("----------------------------------------------------------------------");
     System.out.println(question);
     System.out.println("[Y/N]");
@@ -352,11 +362,31 @@ public class ApplicationCallbackConsole implements ApplicationCallback
     }
     return false;
   }
+
+  /**
+   * Flusht das Log.
+   */
+  private void flush()
+  {
+    try
+    {
+      Logger.flush();
+    }
+    catch (Exception e)
+    {
+      // ignore
+    }
+  }
+
+
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.14  2005/07/14 22:58:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.13  2005/06/28 17:13:40  web0
  * *** empty log message ***
  *

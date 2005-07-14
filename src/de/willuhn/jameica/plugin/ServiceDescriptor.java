@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ServiceDescriptor.java,v $
- * $Revision: 1.1 $
- * $Date: 2004/12/21 01:08:01 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2005/07/14 22:58:36 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -57,11 +57,21 @@ public interface ServiceDescriptor
    * anderen Services abhaengig ist.
    */
   public String[] depends();
+  
+  /**
+   * Legt fest, ob der Service im Netzwerk freigegeben werden soll.
+   * @return true, wenn er freigegeben werden soll.
+   */
+  public boolean share();
+  
 }
 
 
 /**********************************************************************
  * $Log: ServiceDescriptor.java,v $
+ * Revision 1.2  2005/07/14 22:58:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2004/12/21 01:08:01  willuhn
  * @N new service configuration system in plugin.xml with auostart and dependencies
  *

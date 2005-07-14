@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/06/28 21:13:41 $
+ * $Revision: 1.10 $
+ * $Date: 2005/07/14 22:58:36 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -39,13 +39,45 @@ public final class Server
 			}
 		}
     Logger.info("----------------------------------------------------------------------");
-    if (!Application.inNonInteractiveMode())
-      Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
+//    if (!Application.inNonInteractiveMode())
+//    {
+//      try
+//      {
+//        Logger.flush();
+//      }
+//      catch (Exception e)
+//      {
+//        // ignore
+//      }
+//      System.out.print("\n");
+//      System.out.println(Application.getI18n().tr("Press \"q\" to shut down the server.\n"));
+//      DateFormat df = new SimpleDateFormat("hh:mm:ss");
+//      InputStreamReader isr = new InputStreamReader(System.in);
+//      BufferedReader keyboard = new BufferedReader(isr);
+//      String input;
+//      while (true) {
+//        
+//        System.out.print("[" + df.format(new Date()) + "] Jameica> ");
+//        try {
+//          input = keyboard.readLine();
+//          if ("q".equalsIgnoreCase(input))
+//            System.exit(0);
+//        }
+//        catch (IOException ioe)
+//        {
+//          System.exit(0);
+//        }
+//      }
+//    }
+    Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
   }
 }
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.10  2005/07/14 22:58:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/06/28 21:13:41  web0
  * *** empty log message ***
  *

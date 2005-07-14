@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/06/27 21:53:51 $
+ * $Revision: 1.6 $
+ * $Date: 2005/07/14 22:58:36 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import javax.net.ssl.X509TrustManager;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 
@@ -74,17 +75,25 @@ public class JameicaTrustManager implements X509TrustManager
       Logger.warn("checkTrusted called, but no certificates given, strange!");
       return;
     }
+    
+    if (Logger.getLevel().getValue() == Level.DEBUG.getValue())
+    {
+      for (int i=0;i<chain.length;++i)
+      {
+        Logger.debug("checking client cert " + toString(chain[i]));
+      }
+    }
 
     if (this.standardTrustManager != null)
     {
-      Logger.info("checking client certificate via system trustmanager");
       try
       {
+        Logger.debug("checking client certificate via system trustmanager");
         this.standardTrustManager.checkClientTrusted(chain,authType);
       }
       catch (CertificateException c)
       {
-        Logger.warn("client certificate not found in system trustmanager, trying jameica trustmanager");
+        Logger.info("client certificate not found in system trustmanager, trying jameica trustmanager");
         this.checkTrusted(chain,authType);
       }
     }
@@ -107,9 +116,16 @@ public class JameicaTrustManager implements X509TrustManager
       return;
     }
 
+    if (Logger.getLevel().getValue() == Level.DEBUG.getValue())
+    {
+      for (int i=0;i<certificates.length;++i)
+      {
+        Logger.debug("checking client cert " + toString(certificates[i]));
+      }
+    }
+
     if (this.standardTrustManager != null)
     {
-      Logger.info("checking server certificate via system trustmanager");
       try
       {
         this.standardTrustManager.checkServerTrusted(certificates,authType);
@@ -196,7 +212,7 @@ public class JameicaTrustManager implements X509TrustManager
    */
   public X509Certificate[] getAcceptedIssuers()
   {
-		Logger.info("checking accecpted issuers");
+		Logger.debug("checking accecpted issuers");
     return this.standardTrustManager.getAcceptedIssuers();
   }
 
@@ -223,6 +239,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.6  2005/07/14 22:58:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/06/27 21:53:51  web0
  * @N ability to import own certifcates
  *

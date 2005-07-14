@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.43 $
- * $Date: 2005/07/14 20:24:05 $
+ * $Revision: 1.44 $
+ * $Date: 2005/07/14 22:58:36 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -101,7 +101,7 @@ public final class Application {
       Logger.warn("unable to detect defined log level, fallback to default level");
       level = Level.DEFAULT;
     }
-    Logger.info("using log level " + level.getName() + "[" + level.getValue() + "]");
+    Logger.info("using log level " + level.getName() + " [" + level.getValue() + "]");
     Logger.setLevel(level);
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -222,7 +222,7 @@ public final class Application {
     // Jetzt checken wir noch, ob wir ueberhaupt Plugins haben
     if (!getPluginLoader().getPluginContainers().hasNext())
     {
-      addWelcomeMessage(i18n.tr("Derzeit sind keine Plugins installiert. Das macht wenig Sinn ;)"));
+      addWelcomeMessage(getI18n().tr("Derzeit sind keine Plugins installiert. Das macht wenig Sinn ;)"));
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -589,6 +589,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.44  2005/07/14 22:58:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.43  2005/07/14 20:24:05  web0
  * *** empty log message ***
  *
