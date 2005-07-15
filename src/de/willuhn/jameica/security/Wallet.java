@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/03/21 23:02:16 $
+ * $Revision: 1.8 $
+ * $Date: 2005/07/15 09:20:49 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -26,8 +26,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.security.KeyPair;
+import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import javax.crypto.Cipher;
 
@@ -100,13 +100,30 @@ public final class Wallet
 	}
 	
   /**
+   * Loescht den genanten Alias.
+   * @param alias Name des zu loeschenden Alias.
+   * @throws Exception
+   */
+  public void delete(String alias) throws Exception
+  {
+    if (alias == null)
+    {
+      Logger.warn("alias cannot be null");
+      return;
+    }
+    Logger.debug("removing key " + alias);
+    this.serialized.remove(alias);
+    write();
+  }
+
+  /**
 	 * Loescht alle Nutzdaten, deren Alias-Name mit dem angegebenen beginnt.
 	 * Wird als Prefix null oder ein Leerstring angegeben, wird das komplette
 	 * Wallet geleert.
    * @param aliasPrefix Alias-Prefix.
    * @throws Exception
    */
-  public void delete(String aliasPrefix) throws Exception
+  public void deleteAll(String aliasPrefix) throws Exception
 	{
 		if (aliasPrefix == null || aliasPrefix.length() == 0)
 		{
@@ -114,12 +131,12 @@ public final class Wallet
 			return;
 		}
 
-		Iterator i = this.serialized.keySet().iterator();
+		Enumeration e = this.serialized.keys();
 		String s = null;
 		int count = 0;
-		while (i.hasNext())
+		while (e.hasMoreElements())
 		{
-			s = (String) i.next();
+			s = (String) e.nextElement();
 			if (s != null && s.startsWith(aliasPrefix))
 			{
 				Logger.debug("removing key " + s);
@@ -129,6 +146,15 @@ public final class Wallet
 		}
 		write();
 	}
+  
+  /**
+   * Liefert eine Liste aller Aliases in diesem Wallet.
+   * @return Liste der Aliases.
+   */
+  public Enumeration getKeys()
+  {
+    return this.serialized.keys();
+  }
 
 	/**
 	 * Liefert den Wert des genannten Alias-Namen entschluesselt.
@@ -181,10 +207,14 @@ public final class Wallet
 
 			Logger.info("decrypting wallet");
 			byte[] buf = new byte[size];
-			while (is.read(buf) > 0)
-			{
-				bos.write(cipher.doFinal(buf));
-			}
+      int read = 0;
+      do
+      {
+        read = is.read(buf);
+        if (read > 0)
+          bos.write(cipher.doFinal(buf,0,read));
+      }
+      while (read != -1);
 
 			Logger.info("deserializing wallet");
 			ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
@@ -248,10 +278,14 @@ public final class Wallet
 		int size = cipher.getBlockSize();
 		Logger.info("using block size (in bytes): " + size);
 		byte[] buf = new byte[size];
-		while (bis.read(buf) > 0)
-		{
-			os.write(cipher.doFinal(buf));
-		}
+    int read = 0;
+    do
+    {
+      read = bis.read(buf);
+      if (read > 0)
+        os.write(cipher.doFinal(buf,0,read));
+    }
+    while (read != -1);
 
     // Wir koennen das Flushen und Schliessen nicht im finally() machen,
     // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
@@ -270,6 +304,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.8  2005/07/15 09:20:49  web0
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/03/21 23:02:16  web0
  * @B removed debug code
  *
