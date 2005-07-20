@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Principal.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/06/16 13:29:20 $
+ * $Revision: 1.4 $
+ * $Date: 2005/07/20 16:23:10 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,6 @@
 package de.willuhn.jameica.security;
 
 import java.util.HashMap;
-import java.util.StringTokenizer;
 
 import de.willuhn.logging.Logger;
 
@@ -80,10 +79,15 @@ public class Principal
     if (s == null || s.length() == 0)
       return;
     
-    StringTokenizer st = new StringTokenizer(s,",");
-    while (st.hasMoreTokens())
+    String[] items = s.split(",(?=([^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+    if (items == null || items.length < 1)
     {
-      String token = st.nextToken();
+      Logger.warn("this seems not to be a valid X.500 name: " + s);
+      return;
+    }
+    for (int i=0;i<items.length;++i)
+    {
+      String token = items[i];
       if (token == null || token.indexOf('=') == -1)
       {
         Logger.info("unable to parse attribute " + token + ", skipping");
@@ -110,6 +114,9 @@ public class Principal
 
 /*********************************************************************
  * $Log: Principal.java,v $
+ * Revision 1.4  2005/07/20 16:23:10  web0
+ * @B splitting x.500 name
+ *
  * Revision 1.3  2005/06/16 13:29:20  web0
  * *** empty log message ***
  *

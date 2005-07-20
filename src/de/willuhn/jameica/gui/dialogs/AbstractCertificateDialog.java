@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractCertificateDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/15 17:51:31 $
+ * $Revision: 1.3 $
+ * $Date: 2005/07/20 16:23:10 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -72,11 +72,14 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
 
     if (cn == null && o == null && ou == null)
-      group.addLabelPair(i18n.tr("Name"), new LabelInput(cert.getIssuerDN().getName()));
+    {
+      String s = cert.getIssuerDN().getName();
+      group.addLabelPair(i18n.tr("Name"), new LabelInput(format(s)));
+    }
 
-    if (cn != null) group.addLabelPair(i18n.tr("Common Name (CN)"), new LabelInput(cn));
-    if (o  != null) group.addLabelPair(i18n.tr("Organisation (O)"), new LabelInput(o));
-    if (ou != null) group.addLabelPair(i18n.tr("Abteilung (OU)"), new LabelInput(ou));
+    if (cn != null) group.addLabelPair(i18n.tr("Common Name (CN)"), new LabelInput(format(cn)));
+    if (o  != null) group.addLabelPair(i18n.tr("Organisation (O)"), new LabelInput(format(o)));
+    if (ou != null) group.addLabelPair(i18n.tr("Abteilung (OU)"), new LabelInput(format(ou)));
     /////////////////////////////////////////////////////////////////////////////
     
 
@@ -91,11 +94,14 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
 
     if (cn == null && o == null && ou == null)
-      group.addLabelPair(i18n.tr("Name"), new LabelInput(cert.getSubjectDN().getName()));
+    {
+      String s = cert.getSubjectDN().getName();
+      group.addLabelPair(i18n.tr("Name"), new LabelInput(format(s)));
+    }
 
-    if (cn != null) group.addLabelPair(i18n.tr("Common Name (CN)"), new LabelInput(cn));
-    if (o  != null) group.addLabelPair(i18n.tr("Organisation (O)"), new LabelInput(o));
-    if (ou != null) group.addLabelPair(i18n.tr("Abteilung (OU)"), new LabelInput(ou));
+    if (cn != null) group.addLabelPair(i18n.tr("Common Name (CN)"), new LabelInput(format(cn)));
+    if (o  != null) group.addLabelPair(i18n.tr("Organisation (O)"), new LabelInput(format(o)));
+    if (ou != null) group.addLabelPair(i18n.tr("Abteilung (OU)"), new LabelInput(format(ou)));
     /////////////////////////////////////////////////////////////////////////////
 
 
@@ -129,6 +135,13 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
   }
 
+  private String format(String s)
+  {
+    if (s == null || s.length() < 40)
+      return s;
+    return s.replaceAll(",","\n");
+  }
+
   /**
    * Muss von der ableitenden Klasse implementiert werden,
    * um die Buttons am Ende des Dialogs zu zeichnen.
@@ -160,6 +173,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: AbstractCertificateDialog.java,v $
+ * Revision 1.3  2005/07/20 16:23:10  web0
+ * @B splitting x.500 name
+ *
  * Revision 1.2  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/06/27 21:53:51 $
+ * $Revision: 1.9 $
+ * $Date: 2005/07/20 16:23:10 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -206,14 +206,24 @@ public class CertificateList extends TablePart
       {
         String s = myCert.getSubject().getAttribute(Principal.COMMON_NAME);
         if (s == null || s.length() == 0)
-          return this.cert.getSubjectDN().getName();
+        {
+          s = this.cert.getSubjectDN().getName();
+          if (s != null && s.length() > 40)
+            s = s.substring(0,39) + "...";
+          return s;
+        }
         return s;
       }
       if ("issuer".equals(arg0))
       {
         String s = myCert.getIssuer().getAttribute(Principal.COMMON_NAME);
         if (s == null || s.length() == 0)
-          return this.cert.getIssuerDN().getName();
+        {
+          s = this.cert.getIssuerDN().getName();
+          if (s != null && s.length() > 40)
+            s = s.substring(0,39) + "...";
+          
+        }
         return s;
       }
       if ("serial".equals(arg0))
@@ -285,6 +295,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.9  2005/07/20 16:23:10  web0
+ * @B splitting x.500 name
+ *
  * Revision 1.8  2005/06/27 21:53:51  web0
  * @N ability to import own certifcates
  *
