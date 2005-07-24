@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/07/04 10:36:04 $
+ * $Revision: 1.12 $
+ * $Date: 2005/07/24 22:26:52 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -80,14 +80,17 @@ public class DecimalInput extends TextInput
       public void handleEvent (Event e) {
 
 				char komma = format.getDecimalFormatSymbols().getDecimalSeparator();
+        // BUGZILLA 101 http://www.willuhn.de/bugzilla/show_bug.cgi?id=101
+        char group = format.getDecimalFormatSymbols().getGroupingSeparator();
+        boolean groupingUsed = format.isGroupingUsed();
 				char[] chars = e.text.toCharArray();
 
 				// Wir lassen nur 0-9, Komma und Minus zu
         for (int i=0; i<chars.length; i++) {
-          if (!('0' <= chars[i] &&
-                chars[i] <= '9') &&
-                !(chars[i] == komma) &&
-								!(chars[i] == '-')
+          if (!('0' <= chars[i] && chars[i] <= '9') &&
+              chars[i] != komma &&
+              (!groupingUsed && chars[i] == group) &&
+							chars[i] != '-'
              )
           {
             e.doit = false;
@@ -148,6 +151,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.12  2005/07/24 22:26:52  web0
+ * @B bug 101
+ *
  * Revision 1.11  2005/07/04 10:36:04  web0
  * @B bug 91
  *
