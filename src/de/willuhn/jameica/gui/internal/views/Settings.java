@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/06/21 20:02:02 $
+ * $Revision: 1.12 $
+ * $Date: 2005/07/24 17:00:21 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.Back;
+import de.willuhn.jameica.gui.internal.action.CertificateImport;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
@@ -90,6 +91,14 @@ public class Settings extends AbstractView
 
     system.addHeadline(i18n.tr("Installierte SSL-Zertifikate"));
     system.addPart(control.getCertificates());
+    ButtonArea buttons = system.createButtonArea(1);
+    buttons.addButton(i18n.tr("Zertifikat importieren"),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        new CertificateImport().handleAction(context);
+        GUI.startView(GUI.getCurrentView().getClass(),GUI.getCurrentView().getCurrentObject());
+      }
+    });
     
     //
     /////////////////////////////////////////////////////////////////
@@ -169,6 +178,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.12  2005/07/24 17:00:21  web0
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/06/21 20:02:02  web0
  * @C cvs merge
  *
