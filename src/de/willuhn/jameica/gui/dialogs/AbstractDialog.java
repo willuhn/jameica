@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.30 $
- * $Date: 2005/07/26 22:58:34 $
+ * $Revision: 1.31 $
+ * $Date: 2005/07/26 23:57:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -99,7 +99,6 @@ public abstract class AbstractDialog
   private Shell shell;
   private Display display;
 	private ArrayList listeners = new ArrayList();
-	private Object choosen = null;
   
   private Composite parent;
   private Label imageLabel;
@@ -390,8 +389,7 @@ public abstract class AbstractDialog
 					}
         }
       });
-			choosen = getData();
-			return choosen;
+			return getData();
 		}
 		finally
 		{
@@ -427,7 +425,7 @@ public abstract class AbstractDialog
       Logger.debug("notifying listeners");
 			Listener l = null;
 			Event e = new Event();
-			e.data = choosen;
+			e.data = getData();
 			for (int i=0;i<listeners.size();++i)
 			{
 				l = (Listener) listeners.get(i);
@@ -442,6 +440,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.31  2005/07/26 23:57:31  web0
+ * *** empty log message ***
+ *
  * Revision 1.30  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *
