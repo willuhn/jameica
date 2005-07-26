@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.43 $
- * $Date: 2005/07/11 08:31:24 $
+ * $Revision: 1.44 $
+ * $Date: 2005/07/26 22:58:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -126,18 +126,19 @@ public class StatusBar {
 					setStatusText("");
 					return;
 				}
+        
+        if (GUI.getView().snappedIn())
+          GUI.getView().snapOut();
 
 				if (actionIn)
 				{
 					// huh, die andere Seite ist schon offen, machen wir erstmal zu
 					actionIn = false;
-					GUI.getView().snapOut();
 				}
 				if (statusIn)
 				{
 					// wir werden schon angezeigt, dann zoomen wir uns wieder raus
 					statusIn = false;
-					GUI.getView().snapOut();
 					return;					
 				}
 				showLastMessages(Logger.getLastLines());
@@ -162,17 +163,18 @@ public class StatusBar {
 					return;
 				}
 
-				if (statusIn)
+        if (GUI.getView().snappedIn())
+          GUI.getView().snapOut();
+
+        if (statusIn)
 				{
 					// huh, die andere Seite ist schon offen, machen wir erstmal zu
 					statusIn = false;
-					GUI.getView().snapOut();
 				}
 				if (actionIn)
 				{
 					// wir werden schon angezeigt, dann zoomen wir uns wieder raus
 					actionIn = false;
-					GUI.getView().snapOut();
 					return;					
 				}
 				showLastMessages(lastActionMessages.toArray(new String[lastActionMessages.size()]));
@@ -418,6 +420,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.44  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.43  2005/07/11 08:31:24  web0
  * *** empty log message ***
  *

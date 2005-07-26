@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.44 $
- * $Date: 2005/07/14 22:58:36 $
+ * $Revision: 1.45 $
+ * $Date: 2005/07/26 22:58:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,6 @@ import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.security.JameicaSecurityManager;
 import de.willuhn.jameica.security.SSLFactory;
-import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.logging.targets.OutputStreamTarget;
@@ -589,6 +588,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.45  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.44  2005/07/14 22:58:36  web0
  * *** empty log message ***
  *

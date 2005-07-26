@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/06/03 17:14:41 $
+ * $Revision: 1.7 $
+ * $Date: 2005/07/26 22:58:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 
@@ -123,6 +124,8 @@ public class TextPart implements Part
 		if (text == null || text.length() == 0)
 			return;
 
+    if (!text.endsWith("\n"))
+      text += "\n";
 		if (stext == null || stext.isDisposed())
 		{
 			content.append(text);
@@ -140,9 +143,14 @@ public class TextPart implements Part
 	{
 		content = new StringBuffer();
 
-		if (stext == null || stext.isDisposed())
-			return;
-		stext.setText("");
+    GUI.getDisplay().syncExec(new Runnable() {
+      public void run()
+      {
+        if (stext == null || stext.isDisposed())
+          return;
+        stext.setText("");
+      }
+    });
 	}
 
   private void scroll()
@@ -186,6 +194,9 @@ public class TextPart implements Part
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.7  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.6  2005/06/03 17:14:41  web0
  * @N Livelog
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/06/13 23:18:18 $
+ * $Revision: 1.7 $
+ * $Date: 2005/07/26 22:58:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -43,6 +43,7 @@ public class Panel implements Part
   private Part child       = null;
   
   private Composite myParent;
+  private boolean border = true;
   
   private Canvas title;
 
@@ -53,9 +54,21 @@ public class Panel implements Part
    */
   public Panel(String title, Part child)
   {
+    this(title,child,true);
+  }
+
+  /**
+   * ct.
+   * @param title anzuzeigender Titel.
+   * @param child Kind-Part welches angezeigt werden soll.
+   * @param border legt fest, ob ein Rahmen um das Panel gezeichnet werden soll.
+   */
+  public Panel(String title, Part child, boolean border)
+  {
     if (title != null)
       this.titleText = title;
     this.child = child;
+    this.border = border;
   }
 
   /**
@@ -79,7 +92,7 @@ public class Panel implements Part
 
     ///////////////////////////////
     // Eigenes Parent, damit wir ein GridLayout verwenden koennen
-    myParent = new Composite(parent,SWT.BORDER);
+    myParent = new Composite(parent,this.border ? SWT.BORDER : SWT.NONE);
     //myParent.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
     GridLayout myLayout = new GridLayout();
     myLayout.horizontalSpacing = 0;
@@ -143,6 +156,9 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.7  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.6  2005/06/13 23:18:18  web0
  * *** empty log message ***
  *

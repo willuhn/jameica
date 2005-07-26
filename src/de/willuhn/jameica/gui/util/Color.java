@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/11/05 20:00:44 $
- * $Author: willuhn $
+ * $Revision: 1.7 $
+ * $Date: 2005/07/26 22:58:34 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -58,7 +58,7 @@ public class Color {
   /**
    * Farbe von Erfolgsmeldungen.
    */
-  public final static Color SUCCESS			= new Color("color.success",			new RGB(0,0,0));
+  public final static Color SUCCESS			= new Color("color.success",			new RGB(0,130,32));
 
   /**
    * Farbe von Links.
@@ -125,6 +125,9 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.7  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.6  2004/11/05 20:00:44  willuhn
  * @D javadoc fixes
  *

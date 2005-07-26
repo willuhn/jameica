@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.29 $
- * $Date: 2005/07/11 08:31:24 $
+ * $Revision: 1.30 $
+ * $Date: 2005/07/26 22:58:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -412,12 +412,13 @@ public abstract class AbstractDialog
       public void run()
       {
         try {
+          if (shell != null && !shell.isDisposed());
           shell.dispose();
           shell = null;
           Logger.debug("dialog closed");
         }
-        catch (Exception e) {
-          Logger.error("error while closing dialog",e);
+        catch (Throwable t) {
+          Logger.error("error while closing dialog",t);
         }
       }
     });
@@ -441,6 +442,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.30  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.29  2005/07/11 08:31:24  web0
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/Attic/BackgroundTask.java,v $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/BackgroundTask.java,v $
  * $Revision: 1.4 $
- * $Date: 2005/07/11 08:31:24 $
+ * $Date: 2005/07/26 22:58:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -10,41 +10,30 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.util;
+package de.willuhn.jameica.system;
 
 import de.willuhn.util.ProgressMonitor;
 
 /**
- * Klassen, die von dieser ableiten, koennen in
+ * Klassen, die dieses Interface implementieren, koennen in
  * Jameica als Hintergrund-Task in einem separaten Thread ausgefuehrt werden.
  * Sie werden ueber die Funktion <code>Application.start(BackgroundTask)</code> gestartet. 
  */
-public abstract class BackgroundTask implements Runnable
+public interface BackgroundTask extends Runnable
 {
-	private ProgressMonitor monitor;
-
-	/**
-	 * Erzeugt einen neuen Background-Task.
-   * @param monitor dieser Monitor wird ueber alle Aktivitaeten des Tasks benachrichtigt.
-   */
-  public BackgroundTask(ProgressMonitor monitor)
-	{
-		this.monitor = monitor;
-	}
-
 	/**
 	 * Liefert den Progress-Monitor.
    * @return Progress-Monitor.
    */
-  public ProgressMonitor getMonitor()
-	{
-		return monitor;
-	}
+  public ProgressMonitor getMonitor();
 }
 
 
 /**********************************************************************
  * $Log: BackgroundTask.java,v $
+ * Revision 1.4  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.4  2005/07/11 08:31:24  web0
  * *** empty log message ***
  *

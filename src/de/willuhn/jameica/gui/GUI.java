@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.78 $
- * $Date: 2005/07/11 08:31:24 $
+ * $Revision: 1.79 $
+ * $Date: 2005/07/26 22:58:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -42,10 +42,12 @@ import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.BackgroundTask;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.system.Settings;
-import de.willuhn.jameica.util.BackgroundTask;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.ProgressMonitor;
 
 /**
  * Startet und beendet die GUI der Anwendung.
@@ -595,13 +597,14 @@ public class GUI
 	 * Startet einen Job asynchron zur GUI, der typischerweise laenger dauert.
 	 * Waehrend der Ausfuehrung wird die nicht GUI geblockt. Informativ wird unten
 	 * rechts ein ProgressBar angezeigt. 
-	 * @param task
+	 * @param task der auszufuehrende Task.
 	 */
 	public static void startAsync(final BackgroundTask task)
 	{
 		if (getDisplay() == null || getDisplay().isDisposed()) return;
 
     getStatusBar().startProgress();
+    // Das Konstrukt sieht merkwuerdig aus - ich weiss. Muss aber so ;)
     getDisplay().asyncExec(new Runnable() {
       public void run()
       {
@@ -613,8 +616,18 @@ public class GUI
             {
               task.run();
             }
+            catch (OperationCanceledException oce)
+            {
+              task.getMonitor().setStatus(ProgressMonitor.STATUS_CANCEL);
+            }
+            catch (Throwable t)
+            {
+              Logger.error("error while executing background task",t);
+              task.getMonitor().setStatus(ProgressMonitor.STATUS_ERROR);
+            }
             finally
             {
+              task.getMonitor().setStatus(ProgressMonitor.STATUS_DONE);
               getStatusBar().stopProgress();
             }
           }
@@ -638,6 +651,10 @@ public class GUI
 			{
 				if (!display.readAndDispatch()) display.sleep();
 			}
+      catch (OperationCanceledException oce)
+      {
+        // ignore
+      }
 			catch (Throwable t)
 			{
 				Logger.error("main loop crashed, retry", t);
@@ -741,6 +758,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.79  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.78  2005/07/11 08:31:24  web0
  * *** empty log message ***
  *

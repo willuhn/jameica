@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/07/11 08:31:24 $
+ * $Revision: 1.10 $
+ * $Date: 2005/07/26 22:58:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -156,7 +156,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
     percentLabel = new Label(this.parent,SWT.NONE);
     percentLabel.setBackground(Color.BACKGROUND.getSWTColor());
-    percentLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+    GridData gd1 = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+    gd1.widthHint = 80;
+    percentLabel.setLayoutData(gd1);
     percentLabel.setText("[0 %]");
 
     barLabel = new Label(this.parent,SWT.NONE);
@@ -205,6 +207,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.10  2005/07/26 22:58:34  web0
+ * @N background task refactoring
+ *
  * Revision 1.9  2005/07/11 08:31:24  web0
  * *** empty log message ***
  *
