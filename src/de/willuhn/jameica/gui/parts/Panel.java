@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/07/26 22:58:34 $
+ * $Revision: 1.8 $
+ * $Date: 2005/07/29 15:10:16 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,10 +14,15 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
+import java.util.Vector;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -45,6 +50,9 @@ public class Panel implements Part
   private Composite myParent;
   private boolean border = true;
   
+  private Vector minimizeListeners = new Vector();
+  private int offset = 20;
+  
   private Canvas title;
 
   /**
@@ -69,6 +77,19 @@ public class Panel implements Part
       this.titleText = title;
     this.child = child;
     this.border = border;
+  }
+
+  /**
+   * Fuegt dem Panel einen Listener zum Minimieren hinzu.
+   * Wird ein solcher angegeben, wird automatisch ein Knopf zum
+   * Minimieren angezeigt, der sonst ausgeblendet ist.
+   * @param l der auszuloesende Listener.
+   */
+  public void addMinimizeListener(Listener l)
+  {
+    if (l == null)
+      return;
+    this.minimizeListeners.add(l);
   }
 
   /**
@@ -129,6 +150,31 @@ public class Panel implements Part
       layout2.verticalSpacing = 0;
       title.setLayout(layout2);
 
+      final boolean mExists = minimizeListeners.size() > 0;
+
+      
+      if (mExists)
+      {
+        title.addMouseListener(new MouseAdapter()
+        {
+          public void mouseUp(MouseEvent e)
+          {
+            Rectangle size = title.getBounds();
+            size.x += (size.width - offset);
+            size.width = offset;
+            if (size.contains(new Point(e.x,e.y)))
+            {
+              Event e1 = new Event();
+              e1.data = e;
+              for (int i=0;i<minimizeListeners.size();++i)
+              {
+                ((Listener)minimizeListeners.get(i)).handleEvent(e1);
+              }
+            }
+          }
+        });
+      }
+      
       title.addListener(SWT.Paint,new Listener()
       {
         public void handleEvent(Event event)
@@ -136,6 +182,11 @@ public class Panel implements Part
           GC gc = event.gc;
           gc.setFont(Font.H2.getSWTFont());
           gc.drawText(titleText == null ? "" : titleText,8,1,true);
+          if (mExists)
+          {
+            Rectangle size = title.getBounds();
+            gc.drawImage(SWTUtil.getImage("minimize.png"),size.width - 20,0);
+          }
         }
       });
       //
@@ -150,12 +201,14 @@ public class Panel implements Part
 
       child.paint(myParent);
   }
-
 }
 
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.8  2005/07/29 15:10:16  web0
+ * @N minimize/maximize icons
+ *
  * Revision 1.7  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *
