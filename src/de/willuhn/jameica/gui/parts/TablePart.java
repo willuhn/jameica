@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.41 $
- * $Date: 2005/07/01 17:06:12 $
+ * $Revision: 1.42 $
+ * $Date: 2005/07/31 22:52:54 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -858,21 +858,21 @@ public class TablePart implements Part
 		}
 		TableColumn col = table.getColumn(index);
 
-		if (index != this.sortedBy)
-		{
-			// Wir sortieren regulaer
-			Collections.sort(l);
-			col.setImage(down);
-			direction = true;
-		}
-		else
+    Collections.sort(l);
+
+    if (index == this.sortedBy && direction)
 		{
 			// Nach dieser Spalte haben wir schon sortiert. Also sortieren wir andersrum
 			Collections.reverse(l);
-			col.setImage(direction ? up : down);
-			direction = !direction;
+			this.direction = false;
 		}
-		this.sortedBy = index; // merken
+    else
+    {
+      direction = true;
+    }
+    col.setImage(direction ? down : up);
+
+    this.sortedBy = index; // merken
 
 		// Machen die Tabelle leer
 		table.removeAll();
@@ -988,6 +988,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.42  2005/07/31 22:52:54  web0
+ * @B ordering bug
+ *
  * Revision 1.41  2005/07/01 17:06:12  web0
  * *** empty log message ***
  *
