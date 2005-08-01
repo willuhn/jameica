@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.79 $
- * $Date: 2005/07/26 22:58:34 $
+ * $Revision: 1.80 $
+ * $Date: 2005/08/01 23:27:52 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -608,6 +608,7 @@ public class GUI
     getDisplay().asyncExec(new Runnable() {
       public void run()
       {
+        final ProgressMonitor m = task.getMonitor();
         Thread t = new Thread()
         {
           public void run()
@@ -618,16 +619,16 @@ public class GUI
             }
             catch (OperationCanceledException oce)
             {
-              task.getMonitor().setStatus(ProgressMonitor.STATUS_CANCEL);
+              if (m != null) m.setStatus(ProgressMonitor.STATUS_CANCEL);
             }
             catch (Throwable t)
             {
               Logger.error("error while executing background task",t);
-              task.getMonitor().setStatus(ProgressMonitor.STATUS_ERROR);
+              if (m != null) m.setStatus(ProgressMonitor.STATUS_ERROR);
             }
             finally
             {
-              task.getMonitor().setStatus(ProgressMonitor.STATUS_DONE);
+              if (m != null) m.setStatus(ProgressMonitor.STATUS_DONE);
               getStatusBar().stopProgress();
             }
           }
@@ -758,6 +759,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.80  2005/08/01 23:27:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.79  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *

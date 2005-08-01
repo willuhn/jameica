@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/07/26 22:58:34 $
+ * $Revision: 1.11 $
+ * $Date: 2005/08/01 23:27:52 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -53,27 +53,23 @@ public class ProgressBar implements ProgressMonitor, Part
     
     current = percent;
     
-		if (bar != null && !bar.isDisposed())
+		GUI.getDisplay().syncExec(new Runnable()
 		{
-			GUI.getDisplay().syncExec(new Runnable()
+			public void run()
 			{
-				public void run()
-				{
-  				bar.setSelection(current);
-				}
-			});
-		}
-    if (percentLabel != null && !percentLabel.isDisposed())
-    {
-      GUI.getDisplay().syncExec(new Runnable()
-      {
-        public void run()
-        {
-          percentLabel.setText(" [" + current + " %]");
-        }
-      });
-    }
+        if (bar != null && !bar.isDisposed())
+          bar.setSelection(current);
+			}
+		});
 
+    GUI.getDisplay().syncExec(new Runnable()
+    {
+      public void run()
+      {
+        if (percentLabel != null && !percentLabel.isDisposed())
+          percentLabel.setText(" [" + current + " %]");
+      }
+    });
   }
 
   /**
@@ -92,12 +88,12 @@ public class ProgressBar implements ProgressMonitor, Part
   	if (text == null)
   		return;
 
-		if (barLabel != null && !barLabel.isDisposed())
+		GUI.getDisplay().syncExec(new Runnable()
 		{
-			GUI.getDisplay().syncExec(new Runnable()
+			public void run()
 			{
-				public void run()
-				{
+        if (barLabel != null && !barLabel.isDisposed())
+        {
 					barLabel.setText(text);
 					if (status == STATUS_DONE)
 						barLabel.setForeground(Color.SUCCESS.getSWTColor());
@@ -105,9 +101,9 @@ public class ProgressBar implements ProgressMonitor, Part
 						barLabel.setForeground(Color.ERROR.getSWTColor());
 					else
 						barLabel.setForeground(Color.WIDGET_FG.getSWTColor());
-				}
-			});
-		}
+        }
+			}
+		});
   }
 
   /**
@@ -207,6 +203,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.11  2005/08/01 23:27:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.10  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *
