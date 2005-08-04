@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.80 $
- * $Date: 2005/08/01 23:27:52 $
+ * $Revision: 1.81 $
+ * $Date: 2005/08/04 22:17:26 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -139,10 +139,10 @@ public class GUI
 		}
 
 		SashForm sash = new SashForm(getShell(), SWT.HORIZONTAL);
-		sash.setLayout(createGrid(1, false));
 		GridData sgd = new GridData(GridData.FILL_BOTH);
 		sgd.horizontalSpan = 2;
 		sash.setLayoutData(sgd);
+    sash.setLayout(new FillLayout());
 
 		SashForm left = new SashForm(sash, SWT.VERTICAL);
 		left.setLayout(new FillLayout());
@@ -759,6 +759,10 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.81  2005/08/04 22:17:26  web0
+ * @N migration to new wallet format (xml)
+ * @B SWT layout bug on macos (GridLayout vs. FillLayout)
+ *
  * Revision 1.80  2005/08/01 23:27:52  web0
  * *** empty log message ***
  *

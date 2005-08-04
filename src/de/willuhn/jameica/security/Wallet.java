@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/07/15 09:20:49 $
+ * $Revision: 1.9 $
+ * $Date: 2005/08/04 22:17:26 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -12,17 +12,18 @@
  **********************************************************************/
 package de.willuhn.jameica.security;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.security.KeyPair;
@@ -57,7 +58,7 @@ public final class Wallet
 	private KeyPair pair 	= null;
 
 	private Hashtable	serialized = new Hashtable();
-
+  
   /**
 	 * ct.
 	 * @param clazz Klasse, fuer die das Wallet gilt.
@@ -172,67 +173,101 @@ public final class Wallet
 		return (Serializable) this.serialized.get(alias);
 	}
 
-	/**
+  /**
    * Liest die ggf gespeicherten Daten.
    * @throws Exception
    */
   private synchronized void read() throws Exception
+  {
+    synchronized(serialized)
+    {
+      read(getFilename(),false);
+    }
+  }
+
+  /**
+   * Liest die ggf gespeicherten Daten.
+	 * @param file einzulesende Datei.
+   * @param forceNew legt fest, ob auf jeden Fall das neue Format verwendet werden soll.
+   * @throws Exception
+   */
+  private synchronized void read(String file, boolean forceNew) throws Exception
 	{
-		Logger.info("reading wallet file " + getFilename());
-		
-    InputStream is        = null;
+    File fold = new File(file);
+    File fnew = new File(file + (forceNew ? "" : "2"));
+    
+    if (!fold.exists() && !fnew.exists())
+    {
+      // Wallet existiert noch nicht. Dann erstellen wir ein neues
+      this.serialized = new Hashtable();
+      return;
+    }
 
-		try
-		{
-			try
-			{
-				is = new BufferedInputStream(new FileInputStream(getFilename()));
-			}
-			catch (FileNotFoundException e)
-			{
-				// Wallet existiert noch nicht. Dann erstellen wir ein neues
-				this.serialized = new Hashtable();
-				return;
-			}
+    InputStream is = null;
 
-			// Cipher erzeugen
-			Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-			cipher.init(Cipher.DECRYPT_MODE,this.pair.getPrivate());
-
-			// Einlesen und entschluesseln
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-			int size = cipher.getBlockSize();
-			Logger.info("using block size (in bytes): " + size);
-
-			Logger.info("decrypting wallet");
-			byte[] buf = new byte[size];
-      int read = 0;
-      do
+    if (forceNew || fnew.exists())
+    {
+      // hu, es existiert schon das neue Format. Dann nehmen wir das
+      Logger.info("reading xml-wallet file " + fnew.getAbsolutePath());
+      try
       {
-        read = is.read(buf);
-        if (read > 0)
-          bos.write(cipher.doFinal(buf,0,read));
-      }
-      while (read != -1);
+        is = new BufferedInputStream(new FileInputStream(fnew));
 
-			Logger.info("deserializing wallet");
-			ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-			ObjectInputStream ois = new ObjectInputStream(bis);
-			this.serialized = (Hashtable) ois.readObject();
-			Logger.info("reading wallet done");
-		}
-		finally
-		{
-			try
-			{
-				is.close();
-			}
-			catch (Exception e)
-			{
-				// ignore
-			}
-		}
+        // Einlesen und entschluesseln
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        decrypt(is,bos);
+
+        Logger.info("deserializing xml-wallet");
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        XMLDecoder xml = new XMLDecoder(bis);
+        this.serialized = (Hashtable) xml.readObject();
+        xml.close();
+        Logger.info("reading xml-wallet done");
+        return;
+      }
+      finally
+      {
+        try
+        {
+          is.close();
+        }
+        catch (Exception e)
+        {
+          // ignore
+        }
+      }
+    }
+
+
+    // Wir lesen das alte Format
+    Logger.info("reading wallet file " + fold.getAbsolutePath());
+    try
+    {
+      is = new BufferedInputStream(new FileInputStream(fold));
+
+      // Einlesen und entschluesseln
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+      decrypt(is,bos);
+
+      Logger.info("deserializing wallet");
+      ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+      ObjectInputStream ois = new ObjectInputStream(bis);
+      this.serialized = (Hashtable) ois.readObject();
+      Logger.info("reading wallet done");
+    }
+    finally
+    {
+      try
+      {
+        is.close();
+      }
+      catch (Exception e)
+      {
+        // ignore
+      }
+    }
 	}
 
 	/**
@@ -250,60 +285,118 @@ public final class Wallet
    */
   private synchronized void write() throws Exception
 	{
-		Logger.info("writing wallet file " + getFilename());
+    synchronized(serialized)
+    {
+      Logger.info("writing wallet file " + getFilename() + "2");
 
-		// Wir schreiben die Daten erstmal in eine Temp-Datei
-    // und kopieren sie danach.
-    // BUGZILLA 25 http://www.willuhn.de/bugzilla/show_bug.cgi?id=25
-    File file       = new File(getFilename());
-    File directory  = file.getAbsoluteFile().getParentFile();
-    String prefix   = file.getName() + "_";
-    File tempfile   = File.createTempFile(prefix,"",directory);
+      // Wir schreiben die Daten erstmal in eine Temp-Datei
+      // und kopieren sie danach.
+      // BUGZILLA 25 http://www.willuhn.de/bugzilla/show_bug.cgi?id=25
+      File file       = new File(getFilename() + "2");
+      File directory  = file.getAbsoluteFile().getParentFile();
+      String prefix   = file.getName() + "_";
+      File tempfile   = File.createTempFile(prefix,"",directory);
 
-		// Cipher erzeugen
-		Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-		cipher.init(Cipher.ENCRYPT_MODE,this.pair.getPublic());
+      // Objekt serialisieren
+      ByteArrayOutputStream bos   = new ByteArrayOutputStream();
 
-		// Objekt serialisieren
-    OutputStream os        			= new BufferedOutputStream(new FileOutputStream(tempfile));
+      Logger.info("serializing xml-wallet");
+      
+      // BUGZILLA 109 http://www.willuhn.de/bugzilla/show_bug.cgi?id=109
+      // Wir speichern nur noch im neuen XML-Format
+      XMLEncoder xml = new XMLEncoder(bos);
+      xml.writeObject(this.serialized);
+      xml.close();
+      
+      ByteArrayInputStream bis    = new ByteArrayInputStream(bos.toByteArray());
+      OutputStream os             = new BufferedOutputStream(new FileOutputStream(tempfile));
 
-		Logger.info("serializing wallet");
-		ByteArrayOutputStream bos 	= new ByteArrayOutputStream();
-		ObjectOutputStream oos 			= new ObjectOutputStream(bos);
-		oos.writeObject(this.serialized);
-		
-		ByteArrayInputStream bis 		= new ByteArrayInputStream(bos.toByteArray());
+      encrypt(bis,os);
 
-		Logger.info("encrypting wallet");
-		int size = cipher.getBlockSize();
-		Logger.info("using block size (in bytes): " + size);
-		byte[] buf = new byte[size];
+      // Wir koennen das Flushen und Schliessen nicht im finally() machen,
+      // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
+      // Das Umbenennen wuerde sonst _vorher_ passieren.
+      os.flush();
+      os.close();
+
+      Logger.info("test if readable");
+      if (!tempfile.exists())
+        throw new IOException("unable to save wallet file");
+      read(tempfile.getAbsolutePath(),true);
+      
+      // Nur wenn das Einlesen klappt, benennen wir die Datei um.
+      Logger.info("renaming temp file");
+      
+      // OK, Schreiben war erfolgreich. Jetzt kopieren wir die Temp-Datei rueber.
+      file.delete();
+      tempfile.renameTo(file);
+      Logger.info("writing xml-wallet done");
+    }
+	}
+  
+  /**
+   * Verschluesselt die Daten aus is und schreibt sie in os.
+   * @param is InputStream mit den unverschluesselten Daten.
+   * @param os OutputStream fuer die verschluesselten Daten.
+   * @throws Exception
+   */
+  private void encrypt(InputStream is, OutputStream os) throws Exception
+  {
+    Logger.debug("creating cipher");
+    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+    cipher.init(Cipher.ENCRYPT_MODE,this.pair.getPublic());
+
+    Logger.debug("encrypting wallet");
+    int size = cipher.getBlockSize();
+    Logger.debug("using block size (in bytes): " + size);
+    byte[] buf = new byte[size];
     int read = 0;
     do
     {
-      read = bis.read(buf);
+      read = is.read(buf);
       if (read > 0)
         os.write(cipher.doFinal(buf,0,read));
     }
     while (read != -1);
+  }
+  
+  /**
+   * Entschluesselt die Daten aus is und schreibt sie in os.
+   * @param is InputStream mit verschluesselten Daten.
+   * @param os OutputStream mit unverschluesselten Daten.
+   * @throws Exception
+   */
+  private void decrypt(InputStream is, OutputStream os) throws Exception
+  {
+    Logger.debug("creating cipher");
+    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+    cipher.init(Cipher.DECRYPT_MODE,this.pair.getPrivate());
 
-    // Wir koennen das Flushen und Schliessen nicht im finally() machen,
-    // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
-    // Das Umbenennen wuerde sonst _vorher_ passieren.
-    os.flush();
-    os.close();
-		Logger.info("renaming temp file");
-    
-    // OK, Schreiben war erfolgreich. Jetzt kopieren wir die Temp-Datei rueber.
-    file.delete();
-    tempfile.renameTo(file);
-		Logger.info("writing wallet done");
-	}
+    int size = cipher.getBlockSize();
+    Logger.debug("using block size (in bytes): " + size);
+
+    Logger.debug("decrypting wallet");
+    byte[] buf = new byte[size];
+    int read = 0;
+    do
+    {
+      read = is.read(buf);
+      if (read > 0)
+      {
+        os.write(cipher.doFinal(buf,0,read));
+      }
+    }
+    while (read != -1);
+  }
 }
 
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.9  2005/08/04 22:17:26  web0
+ * @N migration to new wallet format (xml)
+ * @B SWT layout bug on macos (GridLayout vs. FillLayout)
+ *
  * Revision 1.8  2005/07/15 09:20:49  web0
  * *** empty log message ***
  *
