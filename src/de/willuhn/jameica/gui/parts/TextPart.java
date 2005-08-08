@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/07/26 22:58:34 $
+ * $Revision: 1.8 $
+ * $Date: 2005/08/08 17:07:38 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -115,25 +115,41 @@ public class TextPart implements Part
 		this.wrap = wrap;
 	}
 
-	/**
+  /**
+   * Fuegt weiteren Text hinzu.
+   * @param text anzuzeigender Text.
+   * @param color definierte Text-Farbe. Gilt nur fuer diese Zeile und
+   * wird danach automatisch wieder zurueckgesetzt.
+   */
+  public void appendText(String text, Color color)
+  {
+    if (text == null || text.length() == 0)
+      return;
+
+    if (!text.endsWith("\n"))
+      text += "\n";
+    if (stext == null || stext.isDisposed())
+    {
+      content.append(text);
+      return;
+    }
+
+    if (color != null)
+      stext.setForeground(color.getSWTColor());
+    stext.append(text);
+    scroll();
+    // Farbe wieder zuruecksetzen
+    if (color != null)
+      stext.setForeground(Color.WIDGET_FG.getSWTColor());
+  }
+
+  /**
 	 * Fuegt weiteren Text hinzu.
    * @param text anzuzeigender Text.
    */
   public void appendText(String text)
 	{
-		if (text == null || text.length() == 0)
-			return;
-
-    if (!text.endsWith("\n"))
-      text += "\n";
-		if (stext == null || stext.isDisposed())
-		{
-			content.append(text);
-			return;
-		}
-
-		stext.append(text);
-		scroll();
+    appendText(text,null);
 	}
 
 	/**
@@ -194,6 +210,9 @@ public class TextPart implements Part
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.8  2005/08/08 17:07:38  web0
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *

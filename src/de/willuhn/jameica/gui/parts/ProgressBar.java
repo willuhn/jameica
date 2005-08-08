@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/08/01 23:27:52 $
+ * $Revision: 1.12 $
+ * $Date: 2005/08/08 17:07:38 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -118,7 +118,10 @@ public class ProgressBar implements ProgressMonitor, Part
 		{
 			public void run()
 			{
-				log.appendText(msg);
+        if (status == STATUS_ERROR)
+          log.appendText(msg, Color.ERROR);
+        else
+          log.appendText(msg);
 			}
 		});
   }
@@ -203,6 +206,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.12  2005/08/08 17:07:38  web0
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/08/01 23:27:52  web0
  * *** empty log message ***
  *
