@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.45 $
- * $Date: 2005/07/26 22:58:34 $
+ * $Revision: 1.46 $
+ * $Date: 2005/08/09 14:29:37 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import de.willuhn.jameica.security.JameicaSecurityManager;
 import de.willuhn.jameica.security.SSLFactory;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
+import de.willuhn.logging.targets.LogrotateTarget;
 import de.willuhn.logging.targets.OutputStreamTarget;
 import de.willuhn.util.I18N;
 import de.willuhn.util.JarInfo;
@@ -153,7 +154,16 @@ public final class Application {
           Logger.error("unable to move old log file",e);
         }
       }
-      Logger.addTarget(new OutputStreamTarget(new FileOutputStream(logFile)));
+      try
+      {
+        LogrotateTarget t = new LogrotateTarget(logFile);
+        Logger.addTarget(t);
+      }
+      catch (IOException e)
+      {
+        Logger.error("unable to use rotating log target, fallback to outputstream target",e);
+        Logger.addTarget(new OutputStreamTarget(new FileOutputStream(logFile)));
+      }
     }
     catch (FileNotFoundException e)
     {
@@ -588,6 +598,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.46  2005/08/09 14:29:37  web0
+ * @N logrotate support
+ *
  * Revision 1.45  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *
