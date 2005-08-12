@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.81 $
- * $Date: 2005/08/04 22:17:26 $
+ * $Revision: 1.82 $
+ * $Date: 2005/08/12 15:58:54 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -118,7 +118,7 @@ public class GUI
 		Logger.info("startup GUI");
 
 		// init shell
-		getShell().setLayout(createGrid(2, false));
+		getShell().setLayout(createGrid(1, false));
 		getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
 		getShell().setImage(SWTUtil.getImage("globe.gif"));
 
@@ -138,10 +138,11 @@ public class GUI
 			Logger.error("error while loading menu, skipping",e);
 		}
 
-		SashForm sash = new SashForm(getShell(), SWT.HORIZONTAL);
-		GridData sgd = new GridData(GridData.FILL_BOTH);
-		sgd.horizontalSpan = 2;
-		sash.setLayoutData(sgd);
+		Composite comp = new Composite(getShell(),SWT.NONE);
+    comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+    comp.setLayout(new FillLayout());
+
+    SashForm sash = new SashForm(comp, SWT.HORIZONTAL);
     sash.setLayout(new FillLayout());
 
 		SashForm left = new SashForm(sash, SWT.VERTICAL);
@@ -759,6 +760,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.82  2005/08/12 15:58:54  web0
+ * @B Layout-Fix for MacOS. Untested!
+ *
  * Revision 1.81  2005/08/04 22:17:26  web0
  * @N migration to new wallet format (xml)
  * @B SWT layout bug on macos (GridLayout vs. FillLayout)
