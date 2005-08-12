@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/07/24 22:26:52 $
+ * $Revision: 1.13 $
+ * $Date: 2005/08/12 00:10:40 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -135,8 +135,19 @@ public class DecimalInput extends TextInput
    */
   public void setValue(Object value)
   {
-    if (value == null || (value instanceof Double))
+    if (value instanceof Double)
       this.value = (Double) value;
+    else if ((value instanceof String) && this.format != null && value != null)
+    {
+      try
+      {
+        this.value = new Double(this.format.parse((String)value).doubleValue());
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to parse " + value);
+      }
+    }
     
     if (this.text != null && !this.text.isDisposed())
     {
@@ -151,6 +162,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.13  2005/08/12 00:10:40  web0
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/07/24 22:26:52  web0
  * @B bug 101
  *
