@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/08/12 00:10:40 $
+ * $Revision: 1.14 $
+ * $Date: 2005/08/12 16:43:05 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -154,6 +154,7 @@ public class DecimalInput extends TextInput
       String s = "";
       if (this.value != null)
         s = format.format(this.value.doubleValue());
+      this.text.setText(""); // Strange. Mache ich das nicht, meckert oben der Komma-Checker
       this.text.setText(s);
       this.text.redraw();
     }
@@ -162,6 +163,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.14  2005/08/12 16:43:05  web0
+ * @B DecimalInput
+ *
  * Revision 1.13  2005/08/12 00:10:40  web0
  * *** empty log message ***
  *
