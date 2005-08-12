@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.32 $
- * $Date: 2005/06/13 23:18:18 $
+ * $Revision: 1.33 $
+ * $Date: 2005/08/12 16:24:19 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -87,8 +89,26 @@ public class View implements Part
 		snapin.setLayout(new FillLayout());
 		sash.setMaximizedControl(view);
 
-		Canvas c = SWTUtil.getCanvas(view,SWTUtil.getImage("panel.bmp"), SWT.TOP | SWT.RIGHT);
+    final Image logo = SWTUtil.getImage("panel.bmp");
+    final Rectangle imageSize = logo.getBounds();
+		final Canvas c = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
 		c.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+
+    // Das ist ein Workaround fuer die GTK-QT-Engine.
+    // Das einfache c.setBackground in der Zeile oben
+    // reicht da nicht aus. Also malen wir es manuell aus.
+    // TODO Mit anderem GTK-Theme und unter Windows testen!
+    c.addListener(SWT.Paint, new Listener()
+    {
+      public void handleEvent(Event event)
+      {
+        GC gc = event.gc;
+        Rectangle size = c.getBounds();
+        gc.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+        gc.fillRectangle(size);
+        gc.drawImage(logo,size.width - imageSize.width,0);
+      }
+    });
 
     Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
     sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -275,6 +295,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.33  2005/08/12 16:24:19  web0
+ * @B paint bug when using gtk-qt-engine. Untested!
+ *
  * Revision 1.32  2005/06/13 23:18:18  web0
  * *** empty log message ***
  *
