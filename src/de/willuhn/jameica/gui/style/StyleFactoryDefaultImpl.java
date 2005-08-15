@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/02/01 17:15:19 $
- * $Author: willuhn $
+ * $Revision: 1.7 $
+ * $Date: 2005/08/15 13:15:32 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -14,8 +14,8 @@ package de.willuhn.jameica.gui.style;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -62,14 +62,17 @@ public class StyleFactoryDefaultImpl implements StyleFactory
     gd.horizontalSpan = 2;
     gd.heightHint = 130;
     myParent.setLayoutData(gd);
-    FillLayout fl = new FillLayout();
-    fl.spacing = 0;
-    fl.marginHeight = 2;
-    fl.marginWidth = 1;
-    myParent.setLayout(fl);
+
+    GridLayout gl = new GridLayout();
+    gl.marginHeight = 2;
+    gl.marginWidth = 1;
+    myParent.setLayout(gl);
     
     Text text = new Text(myParent,SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-    text.setSize(SWT.DEFAULT,130);
+    GridData gd2 = new GridData(GridData.FILL_BOTH);
+    gd2.heightHint = 126;
+    text.setLayoutData(gd2);
+    text.setSize(SWT.DEFAULT,126);
     text.setForeground(Color.WIDGET_FG.getSWTColor());
     text.setBackground(Color.WIDGET_BG.getSWTColor());
     return text;
@@ -115,6 +118,9 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
+ * Revision 1.7  2005/08/15 13:15:32  web0
+ * @C fillLayout removed
+ *
  * Revision 1.6  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *

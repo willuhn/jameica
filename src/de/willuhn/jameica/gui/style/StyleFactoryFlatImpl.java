@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/05/09 17:26:24 $
+ * $Revision: 1.11 $
+ * $Date: 2005/08/15 13:15:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,8 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -85,17 +85,23 @@ public class StyleFactoryFlatImpl implements StyleFactory
   public Text createTextArea(Composite parent)
   {
     Composite myParent = new Composite(parent,SWT.NONE);
+
     GridData gd = new GridData(GridData.FILL_BOTH);
     gd.horizontalSpan = 2;
     gd.heightHint = 130;
     myParent.setLayoutData(gd);
-    FillLayout fl = new FillLayout();
-    fl.spacing = 0;
-    fl.marginHeight = 2;
-    fl.marginWidth = 1;
-    myParent.setLayout(fl);
+
+    GridLayout gl = new GridLayout();
+    gl.marginHeight = 2;
+    gl.marginWidth = 1;
+    myParent.setLayout(gl);
     
+    // TODO Day Textfeld wird nicht auf die volle Hoehe gezogen
     Text text = new Text(myParent, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+    GridData gd2 = new GridData(GridData.FILL_BOTH);
+    gd2.heightHint = 126;
+    text.setLayoutData(gd2);
+    text.setSize(SWT.DEFAULT,126);
     text.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
     text.setForeground(Color.WIDGET_FG.getSWTColor());
     text.setBackground(Color.WIDGET_BG.getSWTColor());
@@ -259,6 +265,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.11  2005/08/15 13:15:32  web0
+ * @C fillLayout removed
+ *
  * Revision 1.10  2005/05/09 17:26:24  web0
  * *** empty log message ***
  *

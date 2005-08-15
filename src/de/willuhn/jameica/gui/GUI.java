@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.82 $
- * $Date: 2005/08/12 15:58:54 $
+ * $Revision: 1.83 $
+ * $Date: 2005/08/15 13:15:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -24,9 +24,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -99,16 +97,6 @@ public class GUI
 	{
 	}
 
-	private static GridLayout createGrid(int numColumns, boolean makeEqualsWidth)
-	{
-		final GridLayout l = new GridLayout(numColumns, makeEqualsWidth);
-		l.marginWidth = 0;
-		l.marginHeight = 0;
-		l.horizontalSpacing = 0;
-		l.verticalSpacing = 0;
-		return l;
-	}
-
 	/**
 	 * Laedt die GUI.
 	 * @throws Exception
@@ -118,7 +106,7 @@ public class GUI
 		Logger.info("startup GUI");
 
 		// init shell
-		getShell().setLayout(createGrid(1, false));
+		getShell().setLayout(SWTUtil.createGrid(1, false));
 		getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
 		getShell().setImage(SWTUtil.getImage("globe.gif"));
 
@@ -138,15 +126,13 @@ public class GUI
 			Logger.error("error while loading menu, skipping",e);
 		}
 
-		Composite comp = new Composite(getShell(),SWT.NONE);
-    comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-    comp.setLayout(new FillLayout());
-
-    SashForm sash = new SashForm(comp, SWT.HORIZONTAL);
-    sash.setLayout(new FillLayout());
+    SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
+    sash.setLayout(SWTUtil.createGrid(1,true));
+    sash.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		SashForm left = new SashForm(sash, SWT.VERTICAL);
-		left.setLayout(new FillLayout());
+    left.setLayout(SWTUtil.createGrid(1,true));
+    left.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Logger.info("adding navigation");
     navi = new Navigation();
@@ -165,7 +151,8 @@ public class GUI
     p.paint(left);
 
 		Composite right = new Composite(sash, SWT.NONE);
-		right.setLayout(new FillLayout());
+    right.setLayout(SWTUtil.createGrid(1,true));
+    right.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Logger.info("adding content view");
 
     view = new View();
@@ -175,7 +162,7 @@ public class GUI
 		sash.setWeights(new int[] { 1, 3 });
 
 		Composite bottom = new Composite(shell, SWT.NONE);
-		bottom.setLayout(createGrid(1, true));
+		bottom.setLayout(SWTUtil.createGrid(1, true));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		bottom.setLayoutData(gd);
@@ -760,6 +747,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.83  2005/08/15 13:15:32  web0
+ * @C fillLayout removed
+ *
  * Revision 1.82  2005/08/12 15:58:54  web0
  * @B Layout-Fix for MacOS. Untested!
  *

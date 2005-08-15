@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.33 $
- * $Date: 2005/08/12 16:24:19 $
+ * $Revision: 1.34 $
+ * $Date: 2005/08/15 13:15:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -72,7 +71,7 @@ public class View implements Part
 	{
 		sash = new SashForm(parent,SWT.VERTICAL);
     sash.setLayoutData(new GridData(GridData.FILL_BOTH));
-		sash.setLayout(new FillLayout());
+		sash.setLayout(SWTUtil.createGrid(1,true));
 		
 		view = new Composite(sash, SWT.BORDER);
 		view.setBackground(Color.BACKGROUND.getSWTColor());
@@ -86,7 +85,7 @@ public class View implements Part
 	
 		snapin = new Composite(sash, SWT.BORDER);
 		snapin.setLayoutData(new GridData(GridData.FILL_BOTH));
-		snapin.setLayout(new FillLayout());
+		snapin.setLayout(SWTUtil.createGrid(1,true));
 		sash.setMaximizedControl(view);
 
     final Image logo = SWTUtil.getImage("panel.bmp");
@@ -97,7 +96,6 @@ public class View implements Part
     // Das ist ein Workaround fuer die GTK-QT-Engine.
     // Das einfache c.setBackground in der Zeile oben
     // reicht da nicht aus. Also malen wir es manuell aus.
-    // TODO Mit anderem GTK-Theme und unter Windows testen!
     c.addListener(SWT.Paint, new Listener()
     {
       public void handleEvent(Event event)
@@ -208,7 +206,7 @@ public class View implements Part
 	 * Liefert das SnapIn-Composite.
 	 * Die Funktion liefert immer ein leeres Snapin. Wenn sich also vorher
 	 * was drin befunden hat, wird es vorm erneuten Herausgeben geleert.
-	 * Hinweis: Das Composite enthaelt ein FillLayout.
+	 * Hinweis: Das Composite enthaelt ein GridLayout.
    * @return Snapin-Composite.
    */
   public Composite getSnapin()
@@ -295,6 +293,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.34  2005/08/15 13:15:32  web0
+ * @C fillLayout removed
+ *
  * Revision 1.33  2005/08/12 16:24:19  web0
  * @B paint bug when using gtk-qt-engine. Untested!
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/03/31 22:35:37 $
+ * $Revision: 1.10 $
+ * $Date: 2005/08/15 13:15:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,6 @@ import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -34,6 +33,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -158,7 +158,7 @@ public class FormTextPart implements Part {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalIndent = 4;
 		container.setLayoutData(gd);
-		container.setLayout(new FillLayout());
+		container.setLayout(SWTUtil.createGrid(1,true));
 		container.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
 				resize();
@@ -223,6 +223,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.10  2005/08/15 13:15:32  web0
+ * @C fillLayout removed
+ *
  * Revision 1.9  2005/03/31 22:35:37  web0
  * @N flexible Actions fuer FormTexte
  *

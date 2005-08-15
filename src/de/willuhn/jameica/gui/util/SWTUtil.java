@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/07/08 17:41:45 $
+ * $Revision: 1.15 $
+ * $Date: 2005/08/15 13:15:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -156,12 +157,32 @@ public class SWTUtil {
 		});
 		return canvas;
 	}
+  
+  /**
+   * Erzeugt ein rahmenloses GridLayout mit der angegebenen Anzahl von Spalten.
+   * @param numColumns Anzahl der Spalten.
+   * @param makeEqualsWidth legt fest, ob die Spalten gleich gross ein sollen, falls es mehrere sind.
+   * @return das GridLayout.
+   */
+  public static GridLayout createGrid(int numColumns, boolean makeEqualsWidth)
+  {
+    final GridLayout l = new GridLayout(numColumns, makeEqualsWidth);
+    l.marginWidth = 0;
+    l.marginHeight = 0;
+    l.horizontalSpacing = 0;
+    l.verticalSpacing = 0;
+    return l;
+  }
+
 
 }
 
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.15  2005/08/15 13:15:32  web0
+ * @C fillLayout removed
+ *
  * Revision 1.14  2005/07/08 17:41:45  web0
  * *** empty log message ***
  *
