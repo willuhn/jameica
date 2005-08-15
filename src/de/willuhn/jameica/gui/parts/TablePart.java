@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.42 $
- * $Date: 2005/07/31 22:52:54 $
+ * $Revision: 1.43 $
+ * $Date: 2005/08/15 13:50:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -95,6 +95,8 @@ public class TablePart implements Part
   private Settings settings           = new Settings(TablePart.class);
   private String id                   = null;
 
+  private ArrayList selectionListeners = new ArrayList();
+  
   // Fuer den Aenderungs-Support
   private TableEditor editor          = null;
   private ArrayList changeListeners   = new ArrayList();
@@ -152,6 +154,17 @@ public class TablePart implements Part
   {
     if (l != null)
       this.changeListeners.add(l);
+  }
+  
+  /**
+   * Fuegt der Tabelle einen Listener hinzu, der ausgeloest wird, wenn
+   * ein oder mehrere Elemente markiert wurden.
+   * @param l der Listener.
+   */
+  public void addSelectionListener(Listener l)
+  {
+    if (l != null)
+      this.selectionListeners.add(l);
   }
 
   /**
@@ -510,6 +523,29 @@ public class TablePart implements Part
 
         menu.setCurrentObject(getSelection());
 
+      }
+    });
+    
+    table.addListener(SWT.MouseDown, new Listener() {
+      public void handleEvent(Event event)
+      {
+        if (selectionListeners.size() == 0)
+          return;
+        
+        event.data = getSelection();
+        // Noch die Selection-Listeners
+        for (int i=0;i<selectionListeners.size();++i)
+        {
+          try
+          {
+            Listener l = (Listener) selectionListeners.get(i);
+            l.handleEvent(event);
+          }
+          catch (Throwable t)
+          {
+            Logger.error("error while executing listener, skipping",t);
+          }
+        }
       }
     });
     
@@ -988,6 +1024,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.43  2005/08/15 13:50:34  web0
+ * @N selectionListener in TablePart
+ *
  * Revision 1.42  2005/07/31 22:52:54  web0
  * @B ordering bug
  *
