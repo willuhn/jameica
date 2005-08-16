@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.46 $
- * $Date: 2005/08/09 14:29:37 $
+ * $Revision: 1.47 $
+ * $Date: 2005/08/16 23:15:19 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
 
-import de.willuhn.io.FileCopy;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.MessagingFactory;
 import de.willuhn.jameica.plugin.Manifest;
@@ -142,27 +141,15 @@ public final class Application {
       Logger.info("adding defined log file " + getConfig().getLogFile());
       // Wir kopieren das alte Log-Logfile vorher noch
       File logFile = new File(getConfig().getLogFile());
-      if (logFile.exists())
-      {
-        try
-        {
-          Logger.info("moving old log file to " + getConfig().getLogFile() + ".old");
-          FileCopy.copy(logFile,new File(getConfig().getLogFile() + ".old"),true);
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to move old log file",e);
-        }
-      }
       try
       {
-        LogrotateTarget t = new LogrotateTarget(logFile);
+        LogrotateTarget t = new LogrotateTarget(logFile,true);
         Logger.addTarget(t);
       }
       catch (IOException e)
       {
         Logger.error("unable to use rotating log target, fallback to outputstream target",e);
-        Logger.addTarget(new OutputStreamTarget(new FileOutputStream(logFile)));
+        Logger.addTarget(new OutputStreamTarget(new FileOutputStream(logFile,true)));
       }
     }
     catch (FileNotFoundException e)
@@ -299,7 +286,7 @@ public final class Application {
     getPluginLoader().shutDown();
 
 		Logger.info("shutdown complete");
-		Logger.info("----------------------------------------------");
+		Logger.info("--------------------------------------------------\n");
 		Logger.close();
 
     app.cleanShutdown = true;
@@ -598,6 +585,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.47  2005/08/16 23:15:19  web0
+ * @N support for appending to log files
+ *
  * Revision 1.46  2005/08/09 14:29:37  web0
  * @N logrotate support
  *
