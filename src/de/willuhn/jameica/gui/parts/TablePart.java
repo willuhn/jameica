@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.43 $
- * $Date: 2005/08/15 13:50:34 $
+ * $Revision: 1.44 $
+ * $Date: 2005/08/16 21:33:43 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -363,7 +363,7 @@ public class TablePart implements Part
 			if (col.formatter != null)
 				display = col.formatter.format(orig);
 
-			item.setText(i,display);
+			item.setText(i,display == null ? "" : display);
 			text[i] = display;
 
 			////////////////////////////////////
@@ -1024,6 +1024,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.44  2005/08/16 21:33:43  web0
+ * *** empty log message ***
+ *
  * Revision 1.43  2005/08/15 13:50:34  web0
  * @N selectionListener in TablePart
  *
