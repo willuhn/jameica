@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/07/29 15:10:16 $
+ * $Revision: 1.9 $
+ * $Date: 2005/08/18 21:40:53 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -121,6 +121,7 @@ public class Panel implements Part
     myLayout.marginHeight = 0;
     myLayout.marginWidth = 0;
     myParent.setLayout(myLayout);
+    myParent.setLayoutData(new GridData(GridData.FILL_BOTH));
     //
     ///////////////////////////////
     
@@ -206,6 +207,9 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.9  2005/08/18 21:40:53  web0
+ * @B layout bug wegen MacOS-Umstellung
+ *
  * Revision 1.8  2005/07/29 15:10:16  web0
  * @N minimize/maximize icons
  *
