@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ServiceDescriptorXml.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/07/14 22:58:36 $
+ * $Revision: 1.3 $
+ * $Date: 2005/08/18 23:57:20 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.plugin;
 
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import net.n3.nanoxml.IXMLElement;
@@ -79,12 +80,17 @@ public class ServiceDescriptorXml implements ServiceDescriptor
 		if (s == null || s.length() == 0)
 			return null;
 
+    s = s.replaceAll("\n|\r","");
 		StringTokenizer st = new StringTokenizer(s,",");
-		depends = new String[st.countTokens()];
-		for (int i=0;i<depends.length;++i)
+    ArrayList l = new ArrayList();
+		while (st.hasMoreTokens())
 		{
-			depends[i] = st.nextToken();
+		  s = st.nextToken();
+      if (s == null || s.length() == 0)
+        continue;
+			l.add(s.trim());
 		}
+    this.depends = (String[]) l.toArray(new String[l.size()]);
 		return depends;
   }
 
@@ -102,6 +108,9 @@ public class ServiceDescriptorXml implements ServiceDescriptor
 
 /**********************************************************************
  * $Log: ServiceDescriptorXml.java,v $
+ * Revision 1.3  2005/08/18 23:57:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/07/14 22:58:36  web0
  * *** empty log message ***
  *
