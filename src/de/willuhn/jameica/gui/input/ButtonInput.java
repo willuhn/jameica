@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2004/09/15 22:31:53 $
- * $Author: willuhn $
+ * $Revision: 1.8 $
+ * $Date: 2005/08/22 13:31:52 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -208,10 +208,22 @@ public abstract class ButtonInput extends AbstractInput
 		if (button != null && !button.isDisposed())
 			button.setEnabled(false);
 	}
+  
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
+   */
+  public boolean isEnabled()
+  {
+    return buttonEnabled && clientControlEnabled;
+  }
+
 }
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.8  2005/08/22 13:31:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/09/15 22:31:53  willuhn
  * *** empty log message ***
  *

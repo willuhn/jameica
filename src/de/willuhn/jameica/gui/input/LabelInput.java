@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/02/03 18:57:56 $
- * $Author: willuhn $
+ * $Revision: 1.11 $
+ * $Date: 2005/08/22 13:31:52 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -110,11 +110,22 @@ public class LabelInput extends AbstractInput
   {
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
+   */
+  public boolean isEnabled()
+  {
+    return false;
+  }
+
 
 }
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.11  2005/08/22 13:31:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.10  2005/02/03 18:57:56  willuhn
  * *** empty log message ***
  *

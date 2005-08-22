@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/07/20 22:52:49 $
- * $Author: willuhn $
+ * $Revision: 1.7 $
+ * $Date: 2005/08/22 13:31:52 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -107,12 +107,23 @@ public class CheckboxInput extends AbstractInput
     button.setEnabled(true);
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
+   */
+  public boolean isEnabled()
+  {
+    return enabled;
+  }
+
 
 
 }
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.7  2005/08/22 13:31:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.6  2004/07/20 22:52:49  willuhn
  * @C Refactoring
  *

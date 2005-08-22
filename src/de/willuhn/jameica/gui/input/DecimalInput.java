@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/08/12 16:43:05 $
+ * $Revision: 1.15 $
+ * $Date: 2005/08/22 13:31:52 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -87,21 +87,25 @@ public class DecimalInput extends TextInput
 
 				// Wir lassen nur 0-9, Komma und Minus zu
         for (int i=0; i<chars.length; i++) {
-          if (!('0' <= chars[i] && chars[i] <= '9') &&
-              chars[i] != komma &&
-              (!groupingUsed && chars[i] == group) &&
-							chars[i] != '-'
-             )
+          if ((chars[i] < '0' || chars[i] > '9') && chars[i] != '-' && chars[i] != komma && chars[i] != group)
           {
             e.doit = false;
             return;
           }
           
           // Jetzt checken wir noch, ob schon ein Komma eingegeben wurde
-          if ((text.getText()+"").indexOf(komma) != -1 && e.text.indexOf(komma) != -1)
+          if (chars[i] == komma && (text.getText()+"").indexOf(komma) != -1 && e.text.indexOf(komma) != -1)
           {
-          	// Jepp, da ist schon ein Komma
-						e.doit = false;
+            // Jepp, da ist schon ein Komma
+            e.doit = false;
+            return;
+          }
+
+          // Tausender-Zeichen sind keine aktiviert, es wurde aber eins eingegeben
+          if (!groupingUsed && chars[i] == group)
+          {
+            e.doit = false;
+            return;
           }
         }
       }
@@ -116,6 +120,8 @@ public class DecimalInput extends TextInput
    */
   public Object getValue()
   {
+    if (text == null || text.isDisposed())
+      return value;
     String s = text.getText();
     if (s == null || s.length() == 0)
 			return null;
@@ -163,6 +169,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.15  2005/08/22 13:31:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/08/12 16:43:05  web0
  * @B DecimalInput
  *

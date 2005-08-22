@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2004/12/13 22:48:31 $
- * $Author: willuhn $
+ * $Revision: 1.19 $
+ * $Date: 2005/08/22 13:31:52 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -280,6 +280,14 @@ public class SelectInput extends AbstractInput
   {
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
+   */
+  public boolean isEnabled()
+  {
+    return enabled;
+  }
+
 	/**
 	 * Kleine Hilfsklasse, um String-Werte ueber GenericObject abzubilden.
    */
@@ -344,6 +352,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.19  2005/08/22 13:31:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.18  2004/12/13 22:48:31  willuhn
  * *** empty log message ***
  *

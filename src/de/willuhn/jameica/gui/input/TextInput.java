@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/05/30 14:25:40 $
+ * $Revision: 1.12 $
+ * $Date: 2005/08/22 13:31:52 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -199,10 +199,21 @@ public class TextInput extends AbstractInput
   	if (text != null && !text.isDisposed())
 	    text.setEnabled(true);
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
+   */
+  public boolean isEnabled()
+  {
+    return enabled;
+  }
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.12  2005/08/22 13:31:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/05/30 14:25:40  web0
  * @B NPE
  *
