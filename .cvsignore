@@ -5,3 +5,5 @@ plugins
 dynameica.log
 run
 jameica.policy
+.fbprefs
+.fbwarnings
