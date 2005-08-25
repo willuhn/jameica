@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/chart/Attic/LineChart.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/07/11 14:30:06 $
+ * $Revision: 1.3 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -208,7 +208,7 @@ public class LineChart implements Chart
     });
   }
 
-  private class Data
+  private static class Data
   {
     private int[] values         = null;
     private GenericIterator list = null;
@@ -249,6 +249,9 @@ public class LineChart implements Chart
 
 /*********************************************************************
  * $Log: LineChart.java,v $
+ * Revision 1.3  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.2  2005/07/11 14:30:06  web0
  * *** empty log message ***
  *

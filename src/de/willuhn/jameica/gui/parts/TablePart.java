@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.44 $
- * $Date: 2005/08/16 21:33:43 $
+ * $Revision: 1.45 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -944,7 +944,7 @@ public class TablePart implements Part
     return null;
   }
 	
-  private class Column
+  private static class Column
   {
     private String columnId     = null;
     private String name         = null;
@@ -963,7 +963,7 @@ public class TablePart implements Part
   /**
 	 * Kleine Hilfs-Klasse fuer die Sortierung.
    */
-  private class SortItem implements Comparable
+  private static class SortItem implements Comparable
 	{
 		private Comparable attribute;
 		private GenericObject data;
@@ -1024,6 +1024,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.45  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.44  2005/08/16 21:33:43  web0
  * *** empty log message ***
  *

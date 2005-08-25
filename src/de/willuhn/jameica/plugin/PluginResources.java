@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/06/30 23:51:32 $
+ * $Revision: 1.10 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -41,6 +41,7 @@ public final class PluginResources {
 
   	File f = plugin.getFile();
 
+    String locale = Application.getConfig().getLocale().toString();
     try
     {
       if (f.isFile() && f.exists())
@@ -48,14 +49,14 @@ public final class PluginResources {
         // es handelt sich um ein Jar-File.
         // Wir holen uns das passende language-File raus
         JarFile jar = new JarFile(f);
-        JarEntry entry = jar.getJarEntry("lang/messages_" + Application.getConfig().getLocale().toString() + ".properties");
+        JarEntry entry = jar.getJarEntry("lang/messages_" + locale + ".properties");
         this.i18n = new I18N(jar.getInputStream(entry));
       }
       else if (f.isDirectory() && f.exists())
       {
         // es handelt sich um ein entpacktes Plugin.
         // Wir laden die Datei via Pfad.
-        String path = "/lang/messages_" + Application.getConfig().getLocale().toString() + ".properties";
+        String path = "/lang/messages_" + locale + ".properties";
         File f2 = new File(f.getAbsolutePath() + path);
         if (!f2.exists())
           f2 = new File(f.getAbsolutePath() + "/bin" + path); // vielleicht im bin-Verzeichnis?
@@ -64,6 +65,7 @@ public final class PluginResources {
     }
     catch (Exception e)
     {
+      Logger.warn("plugin " + this.plugin.getClass().getName() + " does not support jameicas locale " + locale);
       this.i18n = new I18N(Application.getConfig().getLocale());
     }
   }
@@ -128,6 +130,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.10  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.9  2005/06/30 23:51:32  web0
  * *** empty log message ***
  *

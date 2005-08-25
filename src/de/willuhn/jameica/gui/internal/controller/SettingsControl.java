@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/06/16 13:47:56 $
+ * $Revision: 1.14 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -458,7 +458,7 @@ public class SettingsControl extends AbstractControl
    * Hilfs-Klasse, die StyleFactories in GenericObjects wrappt, um sie einfacher
    * in den GUI-Bibliotheken von Jameica anzeigen zu koennen.
    */
-  private class StyleFactoryObject implements GenericObject
+  private static class StyleFactoryObject implements GenericObject
   {
 
 		private StyleFactory factory;
@@ -580,6 +580,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.14  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.13  2005/06/16 13:47:56  web0
  * *** empty log message ***
  *

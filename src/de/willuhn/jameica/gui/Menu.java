@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.29 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.30 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -104,7 +104,7 @@ public class Menu
 		// Ist ein Separator. Dann gibts auch keine Kinder.
 		if ("-".equals(name))
 		{
-			item = new org.eclipse.swt.widgets.MenuItem(menu,SWT.SEPARATOR);
+			new org.eclipse.swt.widgets.MenuItem(menu,SWT.SEPARATOR);
 			return;
 		}
 
@@ -176,6 +176,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.30  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.29  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *

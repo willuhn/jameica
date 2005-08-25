@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.19 $
- * $Date: 2005/08/22 13:31:52 $
+ * $Revision: 1.20 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -291,7 +291,7 @@ public class SelectInput extends AbstractInput
 	/**
 	 * Kleine Hilfsklasse, um String-Werte ueber GenericObject abzubilden.
    */
-  private class StringObject implements GenericObject
+  private static class StringObject implements GenericObject
 	{
 
 		private String value;
@@ -352,6 +352,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.20  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.19  2005/08/22 13:31:52  web0
  * *** empty log message ***
  *

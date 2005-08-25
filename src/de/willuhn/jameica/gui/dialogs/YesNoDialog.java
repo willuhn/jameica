@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/02/01 17:15:19 $
- * $Author: willuhn $
+ * $Revision: 1.10 $
+ * $Date: 2005/08/25 21:18:24 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -111,13 +111,16 @@ public class YesNoDialog extends AbstractDialog {
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
   protected Object getData() throws Exception {
-    return new Boolean(choice);
+    return Boolean.valueOf(choice);
   }
 }
 
 
 /**********************************************************************
  * $Log: YesNoDialog.java,v $
+ * Revision 1.10  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.9  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *

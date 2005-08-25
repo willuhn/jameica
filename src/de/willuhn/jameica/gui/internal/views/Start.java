@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/03/19 18:17:37 $
+ * $Revision: 1.7 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -90,7 +90,7 @@ public class Start extends AbstractView
   }
 
 
-	private class MessageObject implements GenericObject
+	private static class MessageObject implements GenericObject
 	{
 
 		private String text = "";
@@ -143,6 +143,9 @@ public class Start extends AbstractView
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.7  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.6  2005/03/19 18:17:37  web0
  * @B bloeder CipherInputStream
  *

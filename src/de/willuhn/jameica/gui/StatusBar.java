@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.44 $
- * $Date: 2005/07/26 22:58:34 $
+ * $Revision: 1.45 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -321,7 +321,7 @@ public class StatusBar {
 	/**
 	 * Kleines Hilfsobjekt zum Anzeigen der Log-Meldungen in einer Tabelle.
    */
-  private class LogObject implements GenericObject
+  private static class LogObject implements GenericObject
 	{
 
 		private String message;
@@ -420,6 +420,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.45  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.44  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *

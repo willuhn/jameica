@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/08/15 13:15:32 $
+ * $Revision: 1.11 $
+ * $Date: 2005/08/25 21:18:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -132,9 +132,8 @@ public class FormTextPart implements Part {
 		if (text == null || content == null)
 			return;
 		String s = content.toString();
-		s = (s == null ? "" : s);
-		boolean b = s.startsWith("<form>");
-		text.setText(s,b,b);
+		boolean b = s != null && s.startsWith("<form>");
+		text.setText(s == null ? "" : s,b,b);
 		resize();
 	}
 
@@ -223,6 +222,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.11  2005/08/25 21:18:24  web0
+ * @C changes accoring to findbugs eclipse plugin
+ *
  * Revision 1.10  2005/08/15 13:15:32  web0
  * @C fillLayout removed
  *
