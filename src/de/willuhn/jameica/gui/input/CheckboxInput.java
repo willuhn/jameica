@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/08/25 21:18:24 $
+ * $Revision: 1.9 $
+ * $Date: 2005/08/29 15:25:25 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -96,7 +96,7 @@ public class CheckboxInput extends AbstractInput
   {
 		enabled = false;
 		if (button != null && !button.isDisposed())
-		button.setEnabled(false);
+		  button.setEnabled(false);
   }
 
   /**
@@ -104,7 +104,9 @@ public class CheckboxInput extends AbstractInput
    */
   public void enable()
   {
-    button.setEnabled(true);
+    enabled = true;
+    if (button != null && !button.isDisposed())
+      button.setEnabled(true);
   }
 
   /**
@@ -112,15 +114,17 @@ public class CheckboxInput extends AbstractInput
    */
   public boolean isEnabled()
   {
-    return enabled;
+    if (button == null || button.isDisposed())
+      return enabled;
+    return button.getSelection();
   }
-
-
-
 }
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.9  2005/08/29 15:25:25  web0
+ * @B bugfixing
+ *
  * Revision 1.8  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *

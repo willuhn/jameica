@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.45 $
- * $Date: 2005/08/25 21:18:24 $
+ * $Revision: 1.46 $
+ * $Date: 2005/08/29 15:25:25 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -233,6 +233,20 @@ public class TablePart implements Part
     if (table == null)
       return;
     table.setTopIndex(i);
+  }
+  
+  /**
+   * Entfernt alle Elemente aus der Tabelle.
+   */
+  public void removeAll()
+  {
+    if (table == null || table.isDisposed())
+      return;
+    TableItem[] items = table.getItems();
+    for (int i=0;i<items.length;++i)
+    {
+      removeItem((GenericObject) items[i].getData());
+    }
   }
 
 	/**
@@ -1024,6 +1038,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.46  2005/08/29 15:25:25  web0
+ * @B bugfixing
+ *
  * Revision 1.45  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *
