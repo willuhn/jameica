@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.23 $
- * $Date: 2005/06/16 13:02:55 $
+ * $Revision: 1.24 $
+ * $Date: 2005/08/29 16:51:52 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -259,6 +259,7 @@ public final class Config
       ResourceBundle.getBundle("lang/messages",l);
       this.locale = l;
       Logger.info("active language: " + this.locale.getDisplayName());
+      Locale.setDefault(this.locale);
       return this.locale;
     }
     catch (Exception ex)
@@ -382,6 +383,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.24  2005/08/29 16:51:52  web0
+ * *** empty log message ***
+ *
  * Revision 1.23  2005/06/16 13:02:55  web0
  * *** empty log message ***
  *
