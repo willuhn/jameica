@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/03/09 01:06:37 $
+ * $Revision: 1.12 $
+ * $Date: 2005/08/30 22:38:10 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -12,17 +12,16 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
 
+import java.rmi.RemoteException;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.GUI;
-import de.willuhn.util.ApplicationException;
+import de.willuhn.jameica.gui.parts.Button;
+import de.willuhn.logging.Logger;
 
 /**
  * Diese Klasse erzeugt standardisierte Bereiche fuer die Dialog-Buttons.
@@ -51,6 +50,16 @@ public class ButtonArea
   }
 
   /**
+   * fuegt der Area einen Button hinzu.
+   * @param button der Button.
+   * @throws RemoteException
+   */
+  public void addButton(Button button) throws RemoteException
+  {
+    button.paint(buttonArea);
+  }
+  
+  /**
    * Fuegt der Area einen Button hinzu.
    * Beim Klick wird die Action ausgeloest.
    * @param name Bezeichnung des Buttons.
@@ -58,7 +67,7 @@ public class ButtonArea
    */
   public void addButton(String name, final Action action)
   {
-		addButton(name,action,null,false);
+    addButton(name,action,null);
   }
 
 
@@ -84,37 +93,23 @@ public class ButtonArea
    */
   public void addButton(String name, final Action action, final Object context, boolean isDefault)
 	{
-		final Button button = GUI.getStyleFactory().createButton(buttonArea);
-		button.setText(name);
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-		if (isDefault)
-			GUI.getShell().setDefaultButton(button);
-
-		button.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e) {
-				GUI.startSync(new Runnable()
-				{
-					public void run()
-					{
-						try
-						{
-							action.handleAction(context);
-						}
-						catch (ApplicationException e)
-						{
-							GUI.getStatusBar().setErrorText(e.getMessage());
-						}
-					}
-				});
-			}
-		});
+    Button button = new Button(name,action);
+    try
+    {
+      button.paint(buttonArea);
+    }
+    catch (RemoteException e)
+    {
+      Logger.error("error while painting button \"" + name + "\"",e);
+    }
 	}
 }
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.12  2005/08/30 22:38:10  web0
+ * @N new button
+ *
  * Revision 1.11  2005/03/09 01:06:37  web0
  * @D javadoc fixes
  *
