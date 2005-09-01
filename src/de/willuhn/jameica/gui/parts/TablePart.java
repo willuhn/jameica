@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.46 $
- * $Date: 2005/08/29 15:25:25 $
+ * $Revision: 1.47 $
+ * $Date: 2005/09/01 21:14:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -406,6 +406,7 @@ public class TablePart implements Part
 
 		// Tabellengroesse anpassen
 		size++;
+    refreshSummary();
 	}
 
 	/**
@@ -1038,6 +1039,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.47  2005/09/01 21:14:02  web0
+ * *** empty log message ***
+ *
  * Revision 1.46  2005/08/29 15:25:25  web0
  * @B bugfixing
  *
