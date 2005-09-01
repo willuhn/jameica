@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/08/30 22:38:10 $
+ * $Revision: 1.13 $
+ * $Date: 2005/09/01 14:02:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -93,7 +93,7 @@ public class ButtonArea
    */
   public void addButton(String name, final Action action, final Object context, boolean isDefault)
 	{
-    Button button = new Button(name,action);
+    Button button = new Button(name,action,context,isDefault);
     try
     {
       button.paint(buttonArea);
@@ -107,6 +107,9 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.13  2005/09/01 14:02:34  web0
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/08/30 22:38:10  web0
  * @N new button
  *
