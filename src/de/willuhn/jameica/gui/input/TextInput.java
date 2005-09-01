@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/08/22 13:31:52 $
+ * $Revision: 1.13 $
+ * $Date: 2005/09/01 16:40:04 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -98,7 +98,9 @@ public class TextInput extends AbstractInput
    */
   Text getTextWidget()
   {
-    return GUI.getStyleFactory().createText(getParent());
+    if (text == null)
+      text = GUI.getStyleFactory().createText(getParent());
+    return text;
   }
 
   /**
@@ -106,6 +108,9 @@ public class TextInput extends AbstractInput
    */
   public Control getControl()
   {
+    if (text != null)
+      return text;
+
     text = getTextWidget();
 
     if (maxLength > 0)
@@ -211,6 +216,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.13  2005/09/01 16:40:04  web0
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/08/22 13:31:52  web0
  * *** empty log message ***
  *
