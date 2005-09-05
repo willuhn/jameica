@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/07/14 22:58:36 $
+ * $Revision: 1.15 $
+ * $Date: 2005/09/05 11:14:31 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -116,7 +116,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
   	if (this.password != null)
   	{
   		Logger.info("master password given via commandline");
-  		if (checksum == null)
+  		if (checksum == null || checksum.length() == 0)
 				return this.password;
 
 			Logger.info("checksum found, testing");
@@ -384,6 +384,9 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.15  2005/09/05 11:14:31  web0
+ * *** empty log message ***
+ *
  * Revision 1.14  2005/07/14 22:58:36  web0
  * *** empty log message ***
  *
