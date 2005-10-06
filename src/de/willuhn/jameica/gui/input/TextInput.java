@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/09/01 16:40:04 $
+ * $Revision: 1.14 $
+ * $Date: 2005/10/06 14:10:11 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -163,7 +163,9 @@ public class TextInput extends AbstractInput
    */
   public Object getValue()
   {
-    return text == null ? null : text.getText();
+    if (text == null || text.isDisposed())
+      return value;
+    return text.getText();
   }
 
   /**
@@ -171,10 +173,14 @@ public class TextInput extends AbstractInput
    */
   public void setValue(Object value)
   {
-    if (value == null)
-      return;
-    this.text.setText(value.toString());
-    this.text.redraw();
+    String s = value == null ? null : value.toString();
+    this.value = s;
+
+    if (this.text != null && !this.text.isDisposed())
+    {
+      this.text.setText(s == null ? "" : s);
+      this.text.redraw();
+    }
   }
 
   /**
@@ -216,6 +222,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.14  2005/10/06 14:10:11  web0
+ * @B NPE
+ *
  * Revision 1.13  2005/09/01 16:40:04  web0
  * *** empty log message ***
  *
