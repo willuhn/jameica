@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.84 $
- * $Date: 2005/10/17 14:01:15 $
+ * $Revision: 1.85 $
+ * $Date: 2005/10/17 14:34:53 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -501,7 +501,7 @@ public class GUI
 	 * wird versucht, eine Hilfe-Seite der konfigurierten Sprache zu laden.
 	 * @param view die View, fuer die nach der Hilfe-Seite gesucht werden soll.
 	 */
-	private static void loadHelp(AbstractView view)
+	public static void loadHelp(AbstractView view)
 	{
 
 		String path = "help/"
@@ -762,6 +762,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.85  2005/10/17 14:34:53  web0
+ * *** empty log message ***
+ *
  * Revision 1.84  2005/10/17 14:01:15  web0
  * *** empty log message ***
  *
