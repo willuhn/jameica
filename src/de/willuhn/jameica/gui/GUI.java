@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.83 $
- * $Date: 2005/08/15 13:15:32 $
+ * $Revision: 1.84 $
+ * $Date: 2005/10/17 14:01:15 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
+import de.willuhn.jameica.gui.extension.Extendable;
+import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.views.ErrorView;
 import de.willuhn.jameica.gui.internal.views.FatalErrorView;
 import de.willuhn.jameica.gui.parts.FormTextPart;
@@ -426,7 +428,20 @@ public class GUI
 					gui.currentView.setParent(gui.view.getContent());
 					gui.currentView.setCurrentObject(o);
 
-					try
+					if (gui.currentView instanceof Extendable)
+          {
+            try
+            {
+              
+              ExtensionRegistry.extend((Extendable)gui.currentView);
+            }
+            catch (Exception e)
+            {
+              Logger.error("error while extending view " + gui.currentView.getClass().getName());
+            }
+          }
+          
+          try
 					{
 						gui.currentView.bind();
 
@@ -747,6 +762,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.84  2005/10/17 14:01:15  web0
+ * *** empty log message ***
+ *
  * Revision 1.83  2005/08/15 13:15:32  web0
  * @C fillLayout removed
  *

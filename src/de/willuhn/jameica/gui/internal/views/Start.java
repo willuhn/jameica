@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/08/25 21:18:24 $
+ * $Revision: 1.8 $
+ * $Date: 2005/10/17 14:01:15 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -13,26 +13,14 @@
 
 package de.willuhn.jameica.gui.internal.views;
 
-import java.rmi.RemoteException;
-import java.util.Iterator;
-
-import de.willuhn.datasource.GenericObject;
-import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.AbstractView;
-import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.input.LabelInput;
-import de.willuhn.jameica.gui.parts.TablePart;
-import de.willuhn.jameica.gui.util.LabelGroup;
-import de.willuhn.jameica.plugin.AbstractPlugin;
-import de.willuhn.jameica.plugin.Manifest;
-import de.willuhn.jameica.system.Application;
-import de.willuhn.util.I18N;
+import de.willuhn.jameica.gui.extension.Extendable;
 
 
 /**
  * Startseite von Jameica.
  */
-public class Start extends AbstractView
+public class Start extends AbstractView implements Extendable
 {
 
   /**
@@ -40,46 +28,6 @@ public class Start extends AbstractView
    */
   public void bind() throws Exception
   {
-  	I18N i18n = Application.getI18n();
-		GUI.getView().setTitle(i18n.tr("Start"));
-		
-		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Installierte Plugins"));
-
-		Iterator it = Application.getPluginLoader().getInstalledPlugins();
-
-		AbstractPlugin plugin = null;
-		Manifest manifest 		= null;
-
-    if (!it.hasNext())
-    {
-      group.addText(i18n.tr("Keine Plugins aktiv"),false);
-    }
-    else
-    {
-      do
-      {
-        plugin = (AbstractPlugin) it.next();
-        manifest = plugin.getManifest();
-        LabelInput l = new LabelInput(": " + manifest.getDescription());
-        l.setComment(manifest.getHomepage());
-        group.addLabelPair(manifest.getName(),l);
-      }
-      while (it.hasNext());
-    }
-
-		String[] messages = Application.getWelcomeMessages();
-		if (messages != null && messages.length > 0)
-		{
-			GenericObject[] go = new GenericObject[messages.length];
-			for (int i=0;i<messages.length;++i)
-			{
-				go[i] = new MessageObject(messages[i]);
-			}
-		
-			TablePart messageTable = new TablePart(PseudoIterator.fromArray(go),null);
-			messageTable.addColumn(i18n.tr("System-Meldungen"),"foo");
-			messageTable.paint(getParent());
-		}
   }        
 
   /**
@@ -90,59 +38,21 @@ public class Start extends AbstractView
   }
 
 
-	private static class MessageObject implements GenericObject
-	{
+  /**
+   * @see de.willuhn.jameica.gui.extension.Extendable#getExtendableID()
+   */
+  public String getExtendableID()
+  {
+    return this.getClass().getName();
+  }
 
-		private String text = "";
-
-		private MessageObject(String text)
-		{
-			this.text = text;
-		}
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
-     */
-    public Object getAttribute(String name) throws RemoteException
-    {
-      return text;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getID()
-     */
-    public String getID() throws RemoteException
-    {
-      return text;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-     */
-    public String getPrimaryAttribute() throws RemoteException
-    {
-      return "foo";
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-     */
-    public boolean equals(GenericObject other) throws RemoteException
-    {
-      return false;
-    }
-		/**
-		 * @see de.willuhn.datasource.GenericObject#getAttributeNames()
-		 */
-		public String[] getAttributeNames() throws RemoteException
-		{
-			return new String[] {"foo"};
-		}
-	}
 }
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.8  2005/10/17 14:01:15  web0
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *
