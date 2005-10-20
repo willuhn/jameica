@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLRMISocketFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/06/21 20:02:03 $
+ * $Revision: 1.5 $
+ * $Date: 2005/10/20 23:21:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -50,9 +50,31 @@ public class SSLRMISocketFactory extends RMISocketFactory
 
     RMISocketFactory.setFailureHandler(new SSLRMIFailureHandler());
 
-  	SSLContext context 	= Application.getSSLFactory().getSSLContext();
-		serverSocketFactory = context.getServerSocketFactory();
-		socketFactory 			= context.getSocketFactory();
+    Application.getSSLFactory().addSSLFactoryListener(new SSLFactoryListener() {
+      public void sslContextChanged()
+      {
+        try
+        {
+          init();
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to re-init RMI socket factory");
+        }
+      }
+    });
+    init();
+  }
+  
+  /**
+   * Initialisiert die SocketFactories.
+   * @throws Exception
+   */
+  private synchronized void init() throws Exception
+  {
+    SSLContext context  = Application.getSSLFactory().getSSLContext();
+    serverSocketFactory = context.getServerSocketFactory();
+    socketFactory       = context.getSocketFactory();
   }
 
   /**
@@ -127,6 +149,9 @@ public class SSLRMISocketFactory extends RMISocketFactory
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.5  2005/10/20 23:21:24  web0
+ * @C Network support
+ *
  * Revision 1.4  2005/06/21 20:02:03  web0
  * @C cvs merge
  *
