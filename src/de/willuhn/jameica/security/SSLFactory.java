@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.22 $
- * $Date: 2005/10/21 16:17:03 $
+ * $Revision: 1.23 $
+ * $Date: 2005/10/21 17:05:05 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -173,17 +173,6 @@ public class SSLFactory
 		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 		//
 		////////////////////////////////////////////////////////////////////////////
-    Logger.info("  creating SSL Context");
-    
-    // TODO: Fehlen die folgenden zwei Zeilen, kommt es zu einer
-    // "javax.net.ssl.SSLHandshakeException: Received fatal alert: bad_certificate"
-    // wenn Jameica beim ersten Start mit Zertifikats-Initialisierung im Server-Mode laeuft..
-    // Stehen Sie aber da, kommt zwar der Fehler beim ersten Start nicht mehr, dafuer
-    // funktioniert der Netzwerk-Betrieb mit aktiviertem SSL gar nicht mehr.
-    // Loesung finden! ;)
-
-    // reset(); 
-    // getSSLContext();
 	}
 	
 	/**
@@ -382,6 +371,76 @@ public class SSLFactory
       System.setProperty("javax.net.ssl.keyStore",   s);
       System.setProperty("javax.net.ssl.keyStorePassword",Application.getCallback().getPassword());
 
+      // Wir sagen der HttpsUrlConnection, dass sie unsere SocketFactory
+      // nutzen soll, damit es ueber unseren TrustManager geht
+      Logger.info("applying jameica's ssl socket factory");
+      HttpsURLConnection.setDefaultSSLSocketFactory(getSSLContext().getSocketFactory());
+
+      // Wir verwenden einen eigenen Hostname-Verifier und lassen
+      // dem User die Chance, bei nicht uebereinstimmenden Hosts
+      // selbst zu entscheiden.
+      final HostnameVerifier systemVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
+      Logger.info("applying jameica's hostname verifier");
+      HostnameVerifier hostnameVerifier = new HostnameVerifier()
+      {
+        public boolean verify(String hostname, SSLSession session)
+        {
+          javax.security.cert.X509Certificate[] certs = new javax.security.cert.X509Certificate[0];
+          try
+          {
+            certs = session.getPeerCertificateChain();
+          }
+          catch (SSLPeerUnverifiedException e)
+          {
+            Logger.error("error while reading certificates from session",e);
+          }
+
+          boolean match = false;
+          String hostnames = "";
+          for (int i=0;i<certs.length;++i)
+          {
+            Certificate c = new Certificate(certs[i]);
+            String h = c.getSubject().getAttribute(Principal.COMMON_NAME);
+            if (h == null || h.length() == 0)
+              continue;
+            hostnames += "," + h;
+            Logger.info("comparing hostname " + hostname + " with CN " + h);
+            if (h.equalsIgnoreCase(hostname))
+            {
+              Logger.info("hostname matched");
+              match = true;
+              break;
+            }
+            
+          }
+          
+          if (!match)
+          {
+            hostnames = hostnames.replaceFirst(",","");
+            Logger.warn("expected hostname " + hostname + " does not match any of the certificates: " + hostnames);
+
+            String s =
+              Application.getI18n().tr("Der Hostname \"{0}\" stimmt mit keinem der Server-Zertifikate überein ({1}). " +
+                  "Wollen Sie den Vorgang dennoch fortsetzen?",new String[]{hostname,hostnames});
+
+            try
+            {
+              return Application.getCallback().askUser(s);
+            }
+            catch (OperationCanceledException oce)
+            {
+              throw oce;
+            }
+            catch (Exception e)
+            {
+              Logger.error("error while asking user something",e);
+            }
+          }
+          return systemVerifier.verify(hostname, session); 
+        }
+      };
+      HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier); 
+
 			return this.keystore;
 		}
 		finally
@@ -521,77 +580,6 @@ public class SSLFactory
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
 												 new TrustManager[]{trustManager},null);
 				
-
-    // Wir sagen der HttpsUrlConnection, dass sie unsere SocketFactory
-    // nutzen soll, damit es ueber unseren TrustManager geht
-    Logger.info("applying jameica's ssl socket factory");
-    HttpsURLConnection.setDefaultSSLSocketFactory(this.sslContext.getSocketFactory());
-
-    // Wir verwenden einen eigenen Hostname-Verifier und lassen
-    // dem User die Chance, bei nicht uebereinstimmenden Hosts
-    // selbst zu entscheiden.
-    final HostnameVerifier systemVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-    Logger.info("applying jameica's hostname verifier");
-    HostnameVerifier hostnameVerifier = new HostnameVerifier()
-    {
-      public boolean verify(String hostname, SSLSession session)
-      {
-        javax.security.cert.X509Certificate[] certs = new javax.security.cert.X509Certificate[0];
-        try
-        {
-          certs = session.getPeerCertificateChain();
-        }
-        catch (SSLPeerUnverifiedException e)
-        {
-          Logger.error("error while reading certificates from session",e);
-        }
-
-        boolean match = false;
-        String hostnames = "";
-        for (int i=0;i<certs.length;++i)
-        {
-          Certificate c = new Certificate(certs[i]);
-          String h = c.getSubject().getAttribute(Principal.COMMON_NAME);
-          if (h == null || h.length() == 0)
-            continue;
-          hostnames += "," + h;
-          Logger.info("comparing hostname " + hostname + " with CN " + h);
-          if (h.equalsIgnoreCase(hostname))
-          {
-            Logger.info("hostname matched");
-            match = true;
-            break;
-          }
-          
-        }
-        
-        if (!match)
-        {
-          hostnames = hostnames.replaceFirst(",","");
-          Logger.warn("expected hostname " + hostname + " does not match any of the certificates: " + hostnames);
-
-          String s =
-            Application.getI18n().tr("Der Hostname \"{0}\" stimmt mit keinem der Server-Zertifikate überein ({1}). " +
-                "Wollen Sie den Vorgang dennoch fortsetzen?",new String[]{hostname,hostnames});
-
-          try
-          {
-            return Application.getCallback().askUser(s);
-          }
-          catch (OperationCanceledException oce)
-          {
-            throw oce;
-          }
-          catch (Exception e)
-          {
-            Logger.error("error while asking user something",e);
-          }
-        }
-        return systemVerifier.verify(hostname, session); 
-      }
-    };
-    HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier); 
-
     return this.sslContext;
 	}
 	
@@ -611,6 +599,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.23  2005/10/21 17:05:05  web0
+ * @C rollback to 1.20 (except listeners)
+ *
  * Revision 1.22  2005/10/21 16:17:03  web0
  * @C bugfixing in network code (ssl)
  *
