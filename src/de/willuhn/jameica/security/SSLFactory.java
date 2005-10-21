@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.21 $
- * $Date: 2005/10/20 23:21:24 $
+ * $Revision: 1.22 $
+ * $Date: 2005/10/21 16:17:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -174,8 +174,16 @@ public class SSLFactory
 		//
 		////////////////////////////////////////////////////////////////////////////
     Logger.info("  creating SSL Context");
-    reset();
-    getSSLContext();
+    
+    // TODO: Fehlen die folgenden zwei Zeilen, kommt es zu einer
+    // "javax.net.ssl.SSLHandshakeException: Received fatal alert: bad_certificate"
+    // wenn Jameica beim ersten Start mit Zertifikats-Initialisierung im Server-Mode laeuft..
+    // Stehen Sie aber da, kommt zwar der Fehler beim ersten Start nicht mehr, dafuer
+    // funktioniert der Netzwerk-Betrieb mit aktiviertem SSL gar nicht mehr.
+    // Loesung finden! ;)
+
+    // reset(); 
+    // getSSLContext();
 	}
 	
 	/**
@@ -603,6 +611,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.22  2005/10/21 16:17:03  web0
+ * @C bugfixing in network code (ssl)
+ *
  * Revision 1.21  2005/10/20 23:21:24  web0
  * @C Network support
  *

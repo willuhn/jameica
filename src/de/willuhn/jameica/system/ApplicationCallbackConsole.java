@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/09/05 11:14:31 $
+ * $Revision: 1.16 $
+ * $Date: 2005/10/21 16:17:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -59,13 +59,13 @@ public class ApplicationCallbackConsole implements ApplicationCallback
     flush();
     System.out.println("----------------------------------------------------------------------");
     System.out.println(i18n.tr("Der Jameica-Server scheint bereits zu laufen, da das " +    	"Lockfile {0} existiert.",lockfile));
-    System.out.println(i18n.tr("Geben Sie <y> ein, um den Startvorgang fortzusetzen oder <n> zum Beenden."));
+    System.out.println(i18n.tr("Geben Sie <J> ein, um den Startvorgang fortzusetzen oder <N> zum Beenden."));
 		System.out.println("----------------------------------------------------------------------");
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader keyboard = new BufferedReader(isr);
 		try {
 		  String input = keyboard.readLine();
-			if ("y".equalsIgnoreCase(input))
+			if ("j".equalsIgnoreCase(input) || "y".equalsIgnoreCase(input))
 				return true;
 		}
 		catch (IOException ioe)
@@ -82,7 +82,7 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 		this.password = Application.getStartupParams().getPassword();
 		if (this.password != null)
 		{
-			Logger.info("master password given via commandline");
+			Logger.debug("master password given via commandline");
 		}
 		else
 		{
@@ -110,16 +110,20 @@ public class ApplicationCallbackConsole implements ApplicationCallback
    */
   public String getPassword() throws Exception
   {
+    if (this.password != null)
+      return this.password;
+    
 		String checksum = settings.getString("jameica.system.callback.checksum","");
-  	this.password		= Application.getStartupParams().getPassword();
+  	String pw		= Application.getStartupParams().getPassword();
 
-  	if (this.password != null)
+  	if (pw != null)
   	{
-  		Logger.info("master password given via commandline");
+      this.password = pw;
+  		Logger.debug("master password given via commandline");
   		if (checksum == null || checksum.length() == 0)
 				return this.password;
 
-			Logger.info("checksum found, testing");
+			Logger.debug("checksum found, testing");
 			if (checksum.equals(Checksum.md5(this.password.getBytes())))
 			{
 				return this.password;
@@ -191,10 +195,10 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 			public int getPercentComplete() {return 0;}
 			public void setStatus(int status) {}
 			public void setStatusText(String text) {
-        Logger.info(text);
+        Logger.debug(text);
       }
 			public void log(String msg) {
-        Logger.info(msg);
+        Logger.debug(msg);
       }
     };
     return monitor;
@@ -384,6 +388,9 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.16  2005/10/21 16:17:03  web0
+ * @C bugfixing in network code (ssl)
+ *
  * Revision 1.15  2005/09/05 11:14:31  web0
  * *** empty log message ***
  *
