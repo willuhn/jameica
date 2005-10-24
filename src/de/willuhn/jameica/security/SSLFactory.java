@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.23 $
- * $Date: 2005/10/21 17:05:05 $
+ * $Revision: 1.24 $
+ * $Date: 2005/10/24 20:40:48 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -70,8 +69,6 @@ public class SSLFactory
 	private SSLContext sslContext					= null;
 
 	private ApplicationCallback callback 	= null;
-  
-  private Vector listeners              = new Vector();
 
   /**
    * ct.
@@ -536,22 +533,7 @@ public class SSLFactory
     // keystore auf null setzen damit er neu geladen wird
     this.keystore   = null;
     this.sslContext = null;
-    for (int i=0;i<this.listeners.size();++i)
-    {
-      ((SSLFactoryListener)this.listeners.get(i)).sslContextChanged();
-    }
-  }
-  
-  /**
-   * Fuegt der Factory einen Listener hinzu, der aufgerufen wird, wenn sich an der Factory etwas aendert.
-   * @param listener der Listener.
-   */
-  public void addSSLFactoryListener(SSLFactoryListener listener)
-  {
-    if (listener == null)
-      return;
-    this.listeners.add(listener);
-    Logger.info("SSL factory listener registered");
+    // TODO Die RMISocketFactory muss die Aenderung noch mitkriegen 
   }
 
   /**
@@ -580,7 +562,7 @@ public class SSLFactory
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
 												 new TrustManager[]{trustManager},null);
 				
-    return this.sslContext;
+		return this.sslContext;
 	}
 	
 	/**
@@ -599,14 +581,8 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.23  2005/10/21 17:05:05  web0
- * @C rollback to 1.20 (except listeners)
- *
- * Revision 1.22  2005/10/21 16:17:03  web0
- * @C bugfixing in network code (ssl)
- *
- * Revision 1.21  2005/10/20 23:21:24  web0
- * @C Network support
+ * Revision 1.24  2005/10/24 20:40:48  web0
+ * @C rollback to 2004/06
  *
  * Revision 1.20  2005/06/27 21:53:51  web0
  * @N ability to import own certifcates
