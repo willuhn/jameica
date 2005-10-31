@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/08/25 21:18:24 $
+ * $Revision: 1.11 $
+ * $Date: 2005/10/31 15:44:18 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -109,9 +109,9 @@ public final class PluginResources {
 		File f = plugin.getFile();
 		
 		if (f.isFile())
-			workPath += "/" + f.getName().substring(0,f.getName().lastIndexOf('.')); // Datei-Endung abschneiden
+			workPath += File.separator + f.getName().substring(0,f.getName().lastIndexOf('.')); // Datei-Endung abschneiden
 		else
-			workPath += "/" + f.getName();
+			workPath += File.separator + f.getName();
 
 		f = new File(workPath);
 		if (!f.exists())
@@ -130,6 +130,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.11  2005/10/31 15:44:18  web0
+ * *** empty log message ***
+ *
  * Revision 1.10  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *
