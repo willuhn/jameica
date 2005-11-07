@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/About.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/11/12 18:23:59 $
- * $Author: willuhn $
+ * $Revision: 1.6 $
+ * $Date: 2005/11/07 19:07:59 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -14,7 +14,6 @@
 package de.willuhn.jameica.gui.internal.action;
 
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.dialogs.ViewDialog;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -30,11 +29,10 @@ public class About implements Action
    */
   public void handleAction(Object context) throws ApplicationException
   {
-    ViewDialog d = new ViewDialog(new de.willuhn.jameica.gui.internal.views.About(),ViewDialog.POSITION_CENTER);
-    d.setTitle(Application.getI18n().tr("About"));
+    de.willuhn.jameica.gui.internal.dialogs.About a = new de.willuhn.jameica.gui.internal.dialogs.About(de.willuhn.jameica.gui.internal.dialogs.About.POSITION_CENTER);
     try
     {
-      d.open();
+      a.open();
     }
     catch (Exception e)
     {
@@ -48,6 +46,9 @@ public class About implements Action
 
 /*********************************************************************
  * $Log: About.java,v $
+ * Revision 1.6  2005/11/07 19:07:59  web0
+ * @N Update auf SWT 3.1
+ *
  * Revision 1.5  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/08/15 13:15:32 $
+ * $Revision: 1.12 $
+ * $Date: 2005/11/07 19:07:59 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.forms.internal.widgets.FormUtil;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 import de.willuhn.jameica.gui.util.Color;
 
@@ -265,6 +265,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.12  2005/11/07 19:07:59  web0
+ * @N Update auf SWT 3.1
+ *
  * Revision 1.11  2005/08/15 13:15:32  web0
  * @C fillLayout removed
  *

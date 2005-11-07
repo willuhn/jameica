@@ -4,15 +4,15 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" sourcepath="lib.src/mckoi/mckoidb.src.zip" kind="lib" path="lib/mckoi/mckoidb.jar"/>
 	<classpathentry exported="true" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar"/>
-	<classpathentry exported="true" sourcepath="lib.src/swt/forms.src.zip" kind="lib" path="lib/swt/forms.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/jface.jar"/>
 	<classpathentry exported="true" sourcepath="lib.src/bouncycastle/bcprov-jdk14-124.zip" kind="lib" path="lib/bouncycastle/bcprov-jdk14-124.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-cli-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swtcalendar/swtcalendar.jar"/>
 	<classpathentry exported="true" sourcepath="lib.src/swt/linux/swtsrc.zip" kind="lib" path="lib/swt/linux/swt.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/linux/swt-mozilla.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/linux/swt-pi.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.core.runtime_3.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.osgi_3.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.jface_3.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.ui.forms_3.1.0.jar"/>
+	<classpathentry exported="true" kind="src" path="/swtcalendar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

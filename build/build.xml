@@ -45,9 +45,8 @@
     <property name="define.jarfilename.openbsd"        value="jameica-openbsd.jar" />
 		<property name="define.srcfilename" 				       value="jameica.src.zip" />
 		<property name="define.javadocfilename" 			     value="jameica.javadoc.zip" />
-		<property name="define.commonlibs" 					       value="lib/swt/forms.jar lib/swt/jface.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
+		<property name="define.commonlibs" 					       value="lib/swt/org.eclipse.core.runtime_3.1.1.jar lib/swt/org.eclipse.jface_3.1.1.jar lib/swt/org.eclipse.osgi_3.1.1.jar lib/swt/org.eclipse.ui.forms_3.1.0.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
 		<property name="define.package" 					         value="de.willuhn.jameica" />
-
 		<property name="project.nightly" 					         value="releases/nightly" />
 
 		<property name="project.release" 					         value="releases/${appversion}-${build.number}" />
@@ -153,7 +152,7 @@
 				<attribute name="Implementation-Version" value="${appversion}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar lib/swt/linux/swt-pi.jar lib/swt/linux/swt-mozilla.jar ${define.commonlibs}" />
+				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar ${define.commonlibs}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -166,7 +165,7 @@
 				<attribute name="Implementation-Version" value="${appversion}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/macos/swt.jar lib/swt/macos/swt-pi.jar ${define.commonlibs}" />
+				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/macos/swt.jar ${define.commonlibs}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -192,7 +191,7 @@
 				<attribute name="Implementation-Version" value="${appversion}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux-amd64/swt.jar lib/swt/linux-amd64/swt-pi.jar lib/swt/linux-amd64/swt-mozilla.jar ${define.commonlibs}" />
+				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux-amd64/swt.jar ${define.commonlibs}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
