@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/02/01 17:15:19 $
- * $Author: willuhn $
+ * $Revision: 1.6 $
+ * $Date: 2005/11/07 22:47:30 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -16,6 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -92,9 +94,11 @@ public class CalendarDialog extends AbstractDialog {
     }
 
     cal.setLayoutData(new GridData(GridData.FILL_BOTH));
-    cal.addSWTCalendarListener(new SWTCalendarListener() {
-      public void dateChanged(SWTCalendarEvent e) {
-        date = e.getCalendar().getTime();
+    cal.addMouseListener(new MouseAdapter() {
+      public void mouseDoubleClick(MouseEvent e)
+      {
+        date = cal.getCalendar().getTime();
+        // date = e.getCalendar().getTime();
         close();
       }
     });
@@ -111,6 +115,9 @@ public class CalendarDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: CalendarDialog.java,v $
+ * Revision 1.6  2005/11/07 22:47:30  web0
+ * @N Update auf neuen SWTCalendar
+ *
  * Revision 1.5  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *

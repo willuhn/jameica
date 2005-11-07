@@ -13,6 +13,6 @@
 	<classpathentry kind="lib" path="lib/swt/org.eclipse.osgi_3.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/swt/org.eclipse.jface_3.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/swt/org.eclipse.ui.forms_3.1.0.jar"/>
-	<classpathentry exported="true" kind="src" path="/swtcalendar"/>
+	<classpathentry kind="lib" path="lib/swtcalendar/swtcalendar.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
