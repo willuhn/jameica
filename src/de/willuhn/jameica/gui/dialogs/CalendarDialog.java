@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/11/07 22:47:30 $
+ * $Revision: 1.7 $
+ * $Date: 2005/11/07 23:03:47 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.vafada.swtcalendar.SWTCalendar;
-import org.vafada.swtcalendar.SWTCalendarEvent;
-import org.vafada.swtcalendar.SWTCalendarListener;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
@@ -115,6 +113,9 @@ public class CalendarDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: CalendarDialog.java,v $
+ * Revision 1.7  2005/11/07 23:03:47  web0
+ * *** empty log message ***
+ *
  * Revision 1.6  2005/11/07 22:47:30  web0
  * @N Update auf neuen SWTCalendar
  *

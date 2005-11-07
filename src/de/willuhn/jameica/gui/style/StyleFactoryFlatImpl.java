@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/11/07 19:07:59 $
+ * $Revision: 1.13 $
+ * $Date: 2005/11/07 23:03:47 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,6 @@ package de.willuhn.jameica.gui.style;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -251,7 +250,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
 						gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1, b.height + 3);
 
 				}
-				else if (inactiveBorder || c instanceof Table	|| c instanceof Tree || c instanceof TableTree)
+				else if (inactiveBorder || c instanceof Table	|| c instanceof Tree)
 				{
 
 					gc.setForeground(Color.BORDER.getSWTColor());
@@ -265,6 +264,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.13  2005/11/07 23:03:47  web0
+ * *** empty log message ***
+ *
  * Revision 1.12  2005/11/07 19:07:59  web0
  * @N Update auf SWT 3.1
  *
