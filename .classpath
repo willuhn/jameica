@@ -6,7 +6,7 @@
 	<classpathentry exported="true" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar"/>
 	<classpathentry exported="true" sourcepath="lib.src/bouncycastle/bcprov-jdk14-124.zip" kind="lib" path="lib/bouncycastle/bcprov-jdk14-124.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-cli-1.0.jar"/>
-	<classpathentry exported="true" sourcepath="lib.src/swt/linux/swtsrc.zip" kind="lib" path="lib/swt/linux/swt.jar"/>
+	<classpathentry exported="true" sourcepath="lib.src/swt/linux/swt.src.zip" kind="lib" path="lib/swt/linux/swt.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
 	<classpathentry kind="lib" path="lib/swt/org.eclipse.core.runtime_3.1.1.jar"/>
