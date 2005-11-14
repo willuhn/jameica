@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/03/09 01:06:36 $
+ * $Revision: 1.12 $
+ * $Date: 2005/11/14 11:36:23 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
 /**
@@ -39,20 +40,30 @@ public class FileInput extends ButtonInput
    */
   public FileInput(final String value)
   {
-  	this.value = value;
-		addButtonListener(new Listener()
+    this(value,false);
+  }
+
+  /**
+   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+   * @param value der initial einzufuegende Wert fuer das Eingabefeld.
+   * @param save, legt fest, ob es ein Speichern-Dialog sein soll.
+   */
+  public FileInput(final String value, final boolean save)
+  {
+    this.value = value;
+    addButtonListener(new Listener()
     {
       public void handleEvent(Event event)
       {
-				Logger.debug("starting file dialog");
-				FileDialog dialog = new FileDialog(GUI.getShell(),SWT.OPEN);
-				dialog.setFileName(value);
-				setValue(dialog.open());
-				text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
+        Logger.debug("starting file dialog");
+        FileDialog dialog = new FileDialog(GUI.getShell(), save ? SWT.SAVE : SWT.OPEN);
+        dialog.setText(Application.getI18n().tr("Bitte wählen Sie die Datei aus"));
+        dialog.setFileName(value);
+        setValue(dialog.open());
+        text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
       }
     });
   }
-
 
   /**
    * Liefert ein Objekt des Typs java.lang.String.
@@ -92,6 +103,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.12  2005/11/14 11:36:23  web0
+ * *** empty log message ***
+ *
  * Revision 1.11  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *
