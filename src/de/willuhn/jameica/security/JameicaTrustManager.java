@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/09/05 11:09:03 $
+ * $Revision: 1.9 $
+ * $Date: 2005/11/17 22:54:40 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -53,7 +53,16 @@ public class JameicaTrustManager implements X509TrustManager
     // einstuft, greifen wir ein und checken, ob wir das Zertifikat
     // in unserem eigenen Keystore haben.
 
-    TrustManagerFactory factory = TrustManagerFactory.getInstance("SunX509");
+    String name = "SunX509";
+    String vendor = System.getProperty("java.vendor");
+    if (vendor != null && vendor.toLowerCase().indexOf("ibm") != -1)
+    {
+      Logger.info("seems to be an ibm java");
+      name = "IbmX509";
+    }
+
+    Logger.info("using trustmanager " + name);
+    TrustManagerFactory factory = TrustManagerFactory.getInstance(name);
     factory.init((KeyStore) null); // Wir initialisieren mit <code>null</code>, damit der System-Keystore genommen wird
 
     TrustManager[] trustmanagers = factory.getTrustManagers();
@@ -248,6 +257,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.9  2005/11/17 22:54:40  web0
+ * @N Jameica uses IBMs TrustManager if java.vendor contains "ibm"
+ *
  * Revision 1.8  2005/09/05 11:09:03  web0
  * *** empty log message ***
  *
