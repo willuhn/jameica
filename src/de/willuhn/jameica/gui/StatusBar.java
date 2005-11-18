@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.45 $
- * $Date: 2005/08/25 21:18:24 $
+ * $Revision: 1.46 $
+ * $Date: 2005/11/18 12:14:12 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -225,7 +225,9 @@ public class StatusBar {
 	{
 		GUI.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				statusText.setText(" " + (message == null ? "" : message));
+        if (statusText != null && !statusText.isDisposed())
+          statusText.setText(" " + (message == null ? "" : message));
+        if (status != null && !status.isDisposed())
 		    status.layout();
 			}
 		});
@@ -420,6 +422,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.46  2005/11/18 12:14:12  web0
+ * @B dispose check
+ *
  * Revision 1.45  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *
