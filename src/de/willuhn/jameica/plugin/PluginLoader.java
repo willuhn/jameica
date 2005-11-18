@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.16 $
- * $Date: 2005/06/02 22:57:42 $
+ * $Revision: 1.17 $
+ * $Date: 2005/11/18 13:58:37 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -56,7 +56,9 @@ public final class PluginLoader
   public synchronized void init()
 	{
 		updateChecker = new Settings(PluginLoader.class);
-		Logger.info("init plugins");
+
+    Application.getCallback().getStartupMonitor().setStatusText("init plugins");
+
 		String[] dirs = Application.getConfig().getPluginDirs();
 		for (int i=0;i<dirs.length;++i)
 		{
@@ -82,7 +84,7 @@ public final class PluginLoader
     if (plugindir == null)
     	return;
 
-		Logger.debug("checking directory " + plugindir.getAbsolutePath());
+    Application.getCallback().getStartupMonitor().setStatusText("checking directory " + plugindir.getAbsolutePath());
 
     File[] jars = null;
     try {
@@ -97,7 +99,7 @@ public final class PluginLoader
     	// Und jetzt noch alle darin befindlichen Jars
     	jars = Application.getClassLoader().addJars(plugindir);
 
-      Application.getCallback().getStartupMonitor().addPercentComplete(2);
+      Application.getCallback().getStartupMonitor().addPercentComplete(1);
     }
     catch (MalformedURLException mue)
     {
@@ -106,10 +108,12 @@ public final class PluginLoader
     }
 
 
-		{
+    {
 			///////////////////////////////////////////////////////////////////////////
 			// dekomprimierte Plugins
-			FileFinder ff = new FileFinder(plugindir);
+      long count = 0;
+
+      FileFinder ff = new FileFinder(plugindir);
 			File[] child = ff.findRecursive();
 			File manifest = null;
 			String name = null;
@@ -118,7 +122,10 @@ public final class PluginLoader
 			// Wir iterieren ueber alle Dateien in dem Verzeichnis.
 			for (int i=0;i<child.length;++i)
 			{
-				name = child[i].getPath();
+        if (++count % 50 == 0)
+          Application.getCallback().getStartupMonitor().addPercentComplete(1);
+
+        name = child[i].getPath();
 				if (name.endsWith("plugin.xml"))
 					manifest = child[i];
 	
@@ -132,7 +139,6 @@ public final class PluginLoader
 				if (name.startsWith("."))
 					name = name.substring(1); // ggf. fuehrenden Punkt abschneiden
 				
-	
 				// Checken, ob es ein gueltiges Plugin ist
 				Class c = load(name);
 				if (c != null) classes.add(c);
@@ -141,6 +147,7 @@ public final class PluginLoader
 			// Jetzt erzeugen wir einen PluginContainer fuer jedes gefundene Plugin.
 			for (int i=0;i<classes.size();++i)
 			{
+        Application.getCallback().getStartupMonitor().addPercentComplete(1);
 				try
 				{
 					PluginContainer p = new PluginContainer(new FileInputStream(manifest));
@@ -167,6 +174,8 @@ public final class PluginLoader
 			return;
 
 		{
+      long count = 0;
+      
 	    for(int i=0;i<jars.length;++i)
 	    {
 	      JarFile jar = null;
@@ -188,7 +197,11 @@ public final class PluginLoader
 				ArrayList classes = new ArrayList();
 	      while (jarEntries.hasMoreElements())
 	      {
-					entry = (JarEntry) jarEntries.nextElement();
+
+          if (++count % 50 == 0)
+            Application.getCallback().getStartupMonitor().addPercentComplete(1);
+          
+          entry = (JarEntry) jarEntries.nextElement();
 					String entryName = entry.getName();
 
 	        if ("plugin.xml".equals(entryName))
@@ -207,11 +220,13 @@ public final class PluginLoader
 					// Checken, ob es ein gueltiges Plugin ist
 					Class c = load(entryName);
 					if (c != null) classes.add(c);
-				}
+        
+        }
 
 				// Jetzt erzeugen wir einen PluginContainer fuer jedes gefundene Plugin.
 				for (int j=0;j<classes.size();++j)
 				{
+          Application.getCallback().getStartupMonitor().addPercentComplete(1);
 					try
 					{
 						PluginContainer p = new PluginContainer(jar.getInputStream(manifest));
@@ -288,7 +303,7 @@ public final class PluginLoader
 		Class pluginClass = container.getPluginClass();
 		Manifest manifest = container.getManifest();
 
-		Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
+		Application.getCallback().getStartupMonitor().setStatusText("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
 
 		try
 		{
@@ -593,6 +608,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.17  2005/11/18 13:58:37  web0
+ * @N Splashscreen in separate thread (again ;)
+ *
  * Revision 1.16  2005/06/02 22:57:42  web0
  * *** empty log message ***
  *
