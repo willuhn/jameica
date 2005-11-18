@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.17 $
- * $Date: 2005/11/18 13:58:37 $
+ * $Revision: 1.18 $
+ * $Date: 2005/11/18 16:30:00 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -58,16 +58,21 @@ public class SplashScreen implements ProgressMonitor
 	{
     worker = new Worker();
     worker.start();
+    int limit = 0;
     while (!started)
     {
       try
       {
+        if (limit > 10)
+          throw new InterruptedException("maximum timeout reached");
         Logger.debug("waiting for splashscreen to come up");
         Thread.sleep(200l);
+        limit++;
       }
       catch (InterruptedException e)
       {
         Logger.error("error while waiting for splash screen",e);
+        break;
       }
     }
 	}
@@ -111,16 +116,22 @@ public class SplashScreen implements ProgressMonitor
 
       // Display aufwecken falls der User seine Maus nicht bewegt
       worker.display.wake();
+      int limit = 0;
       while (worker.shell != null)
       {
         Logger.info("waiting for splashscreen to come down");
         try
         {
+          if (limit > 10)
+            throw new InterruptedException("maximum timeout reached");
+
           Thread.sleep(100l);
+          limit++;
         }
         catch (InterruptedException e)
         {
           Logger.error("error while waiting for splash screen",e);
+          break;
         }
       }
     }
@@ -292,6 +303,9 @@ public class SplashScreen implements ProgressMonitor
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.18  2005/11/18 16:30:00  web0
+ * @N Splashscreen in separate thread (again ;)
+ *
  * Revision 1.17  2005/11/18 13:58:37  web0
  * @N Splashscreen in separate thread (again ;)
  *
