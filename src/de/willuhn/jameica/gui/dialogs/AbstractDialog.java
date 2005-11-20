@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.31 $
- * $Date: 2005/07/26 23:57:31 $
+ * $Revision: 1.32 $
+ * $Date: 2005/11/20 22:22:35 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -338,7 +338,7 @@ public abstract class AbstractDialog
         public void run()
         {
 					shell.setText(titleText == null ? "" : titleText);
-					if (sideImage != null)
+					if (sideImage != null && !sideImage.isDisposed() && imageLabel != null && !imageLabel.isDisposed())
 						imageLabel.setImage(sideImage);
 	
 					try
@@ -440,6 +440,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.32  2005/11/20 22:22:35  web0
+ * @B SWTException
+ *
  * Revision 1.31  2005/07/26 23:57:31  web0
  * *** empty log message ***
  *
