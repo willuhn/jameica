@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.33 $
- * $Date: 2005/11/22 00:55:21 $
+ * $Revision: 1.34 $
+ * $Date: 2005/11/22 01:12:04 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -344,10 +344,10 @@ public abstract class AbstractDialog
             if (sideImage != null && !sideImage.isDisposed() && imageLabel != null && !imageLabel.isDisposed())
               imageLabel.setImage(sideImage);
           }
-          catch (SWTError e)
+          catch (Throwable t)
           {
             // Keine Ahnung, warum das passiert. Im Fehlerfall zeigen wir das Bild halt nicht an
-            Logger.error("error while displaying side image",e);
+            Logger.error("error while displaying side image",t);
           }
 	
 					try
@@ -449,6 +449,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.34  2005/11/22 01:12:04  web0
+ * @B SWTError "Device is disposed"
+ *
  * Revision 1.33  2005/11/22 00:55:21  web0
  * @B SWTError "Device is disposed"
  *
