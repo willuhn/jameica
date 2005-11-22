@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractCertificateDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/07/20 16:23:10 $
+ * $Revision: 1.4 $
+ * $Date: 2005/11/22 00:47:23 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   {
     super(position);
     this.cert = cert;
-    setSize(400,SWT.DEFAULT); // Breite legen wir fest, damit der Fingerprint hinpasst
+    setSize(400,500); // Breite legen wir fest, damit der Fingerprint hinpasst
   }
 
   /**
@@ -173,6 +173,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: AbstractCertificateDialog.java,v $
+ * Revision 1.4  2005/11/22 00:47:23  web0
+ * @B buttons not visible
+ *
  * Revision 1.3  2005/07/20 16:23:10  web0
  * @B splitting x.500 name
  *
