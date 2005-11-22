@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractCertificateDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/11/22 00:47:23 $
+ * $Revision: 1.5 $
+ * $Date: 2005/11/22 07:38:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ package de.willuhn.jameica.gui.dialogs;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.input.LabelInput;
@@ -173,6 +172,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: AbstractCertificateDialog.java,v $
+ * Revision 1.5  2005/11/22 07:38:32  web0
+ * *** empty log message ***
+ *
  * Revision 1.4  2005/11/22 00:47:23  web0
  * @B buttons not visible
  *
