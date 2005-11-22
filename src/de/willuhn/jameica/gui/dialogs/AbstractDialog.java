@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.32 $
- * $Date: 2005/11/20 22:22:35 $
+ * $Revision: 1.33 $
+ * $Date: 2005/11/22 00:55:21 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.dialogs;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -338,8 +339,16 @@ public abstract class AbstractDialog
         public void run()
         {
 					shell.setText(titleText == null ? "" : titleText);
-					if (sideImage != null && !sideImage.isDisposed() && imageLabel != null && !imageLabel.isDisposed())
-						imageLabel.setImage(sideImage);
+          try
+          {
+            if (sideImage != null && !sideImage.isDisposed() && imageLabel != null && !imageLabel.isDisposed())
+              imageLabel.setImage(sideImage);
+          }
+          catch (SWTError e)
+          {
+            // Keine Ahnung, warum das passiert. Im Fehlerfall zeigen wir das Bild halt nicht an
+            Logger.error("error while displaying side image",e);
+          }
 	
 					try
 					{
@@ -440,6 +449,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.33  2005/11/22 00:55:21  web0
+ * @B SWTError "Device is disposed"
+ *
  * Revision 1.32  2005/11/20 22:22:35  web0
  * @B SWTException
  *
