@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.47 $
- * $Date: 2005/08/16 23:15:19 $
+ * $Revision: 1.48 $
+ * $Date: 2005/12/12 22:35:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -114,7 +114,8 @@ public final class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// LockFile erzeugen
-    File lock = new File(app.config.getWorkDir() + "/jameica.lock");
+    File lock = new File(app.config.getWorkDir(),"jameica.lock");
+    Logger.info("creating lockfile " + lock.getAbsolutePath());
 		try {
 			if (lock.exists())
 				throw new IOException("Lockfile allready exists");
@@ -585,6 +586,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.48  2005/12/12 22:35:34  web0
+ * @N debug output
+ *
  * Revision 1.47  2005/08/16 23:15:19  web0
  * @N support for appending to log files
  *

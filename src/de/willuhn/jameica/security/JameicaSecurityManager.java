@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/02/22 00:04:59 $
+ * $Revision: 1.3 $
+ * $Date: 2005/12/12 22:35:34 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ public class JameicaSecurityManager extends SecurityManager
     }
     catch (IOException e)
     {
-      throw new RuntimeException("unable to determine absolut directory from " + new File(".").getAbsolutePath());
+      throw new RuntimeException("unable to determine absolute path for " + new File(".").getAbsolutePath());
     }
   }
 
@@ -101,6 +101,9 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.3  2005/12/12 22:35:34  web0
+ * @N debug output
+ *
  * Revision 1.2  2005/02/22 00:04:59  web0
  * *** empty log message ***
  *
