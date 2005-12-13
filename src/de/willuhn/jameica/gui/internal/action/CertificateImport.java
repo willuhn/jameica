@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/CertificateImport.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/07/24 17:00:21 $
+ * $Revision: 1.2 $
+ * $Date: 2005/12/13 19:49:24 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class CertificateImport implements Action
     FileDialog d = new FileDialog(GUI.getShell(),SWT.OPEN);
     d.setText(Application.getI18n().tr("Bitte wählen Sie das zu importierende Zertifikat aus"));
     d.setFilterPath(Application.getConfig().getWorkDir());
-    d.setFilterExtensions(new String[]{"pem","crt","cer"});
+    d.setFilterExtensions(new String[]{"*.pem","*.crt","*.cer"});
     String s = d.open();
     if (s == null || s.length() == 0)
       return;
@@ -80,6 +80,9 @@ public class CertificateImport implements Action
 
 /*********************************************************************
  * $Log: CertificateImport.java,v $
+ * Revision 1.2  2005/12/13 19:49:24  web0
+ * @B wrong filename extension in file dialog
+ *
  * Revision 1.1  2005/07/24 17:00:21  web0
  * *** empty log message ***
  *
