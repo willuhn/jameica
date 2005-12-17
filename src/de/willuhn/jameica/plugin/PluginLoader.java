@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.17 $
- * $Date: 2005/11/18 13:58:37 $
+ * $Revision: 1.18 $
+ * $Date: 2005/12/17 18:38:13 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -122,7 +122,7 @@ public final class PluginLoader
 			// Wir iterieren ueber alle Dateien in dem Verzeichnis.
 			for (int i=0;i<child.length;++i)
 			{
-        if (++count % 50 == 0)
+        if (++count % 75 == 0)
           Application.getCallback().getStartupMonitor().addPercentComplete(1);
 
         name = child[i].getPath();
@@ -198,7 +198,7 @@ public final class PluginLoader
 	      while (jarEntries.hasMoreElements())
 	      {
 
-          if (++count % 50 == 0)
+          if (++count % 75 == 0)
             Application.getCallback().getStartupMonitor().addPercentComplete(1);
           
           entry = (JarEntry) jarEntries.nextElement();
@@ -608,6 +608,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.18  2005/12/17 18:38:13  web0
+ * *** empty log message ***
+ *
  * Revision 1.17  2005/11/18 13:58:37  web0
  * @N Splashscreen in separate thread (again ;)
  *
