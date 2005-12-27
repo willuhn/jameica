@@ -238,7 +238,8 @@
 				<include name="${define.projectname}/jameica.sh"/>
 				<include name="${define.projectname}/jameicaserver.sh"/>
 				<include name="${define.projectname}/rcjameica"/>
-				<include name="${define.projectname}/jameica.png"/>
+				<include name="${define.projectname}/jameica-icon-01.png"/>
+        <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
@@ -260,7 +261,8 @@
 				<include name="${define.projectname}/jameica-amd64.sh"/>
 				<include name="${define.projectname}/jameicaserver-amd64.sh"/>
 				<include name="${define.projectname}/rcjameica"/>
-				<include name="${define.projectname}/jameica.png"/>
+        <include name="${define.projectname}/jameica-icon-01.png"/>
+        <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
@@ -281,7 +283,8 @@
 				<include name="${define.projectname}/README"/>
 				<include name="${define.projectname}/jameica.bat"/>
 				<include name="${define.projectname}/jameicaserver.bat"/>
-				<include name="${define.projectname}/jameica.png"/>
+        <include name="${define.projectname}/jameica-icon-01.png"/>
+        <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
@@ -303,7 +306,8 @@
 				<include name="${define.projectname}/jameica-macos.sh"/>
 				<include name="${define.projectname}/jameicaserver-macos.sh"/>
 				<include name="${define.projectname}/rcjameica"/>
-				<include name="${define.projectname}/jameica.png"/>
+        <include name="${define.projectname}/jameica-icon-01.png"/>
+        <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
@@ -325,7 +329,8 @@
         <include name="${define.projectname}/jameica-openbsd.sh"/>
         <include name="${define.projectname}/jameicaserver-openbsd.sh"/>
         <include name="${define.projectname}/rcjameica"/>
-        <include name="${define.projectname}/jameica.png"/>
+        <include name="${define.projectname}/jameica-icon-01.png"/>
+        <include name="${define.projectname}/jameica-icon-02.png"/>
         <include name="${define.projectname}/plugins"/>
         <include name="${define.projectname}/lib/**"/>
 
