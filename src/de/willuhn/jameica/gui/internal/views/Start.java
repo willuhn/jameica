@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/10/17 14:01:15 $
+ * $Revision: 1.9 $
+ * $Date: 2005/12/29 00:25:59 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.gui.internal.views;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.extension.Extendable;
+import de.willuhn.jameica.gui.parts.FormTextPart;
+import de.willuhn.jameica.system.Application;
 
 
 /**
@@ -28,6 +30,20 @@ public class Start extends AbstractView implements Extendable
    */
   public void bind() throws Exception
   {
+    String[] messages = Application.getWelcomeMessages();
+    if (messages == null || messages.length == 0)
+      return;
+    StringBuffer sb = new StringBuffer();
+    sb.append("<form><p><span color=\"header\" font=\"header\">System-Meldungen</span></p>");
+    for (int i=0;i<messages.length;++i)
+    {
+      sb.append("<li>");
+      sb.append(messages[i]);
+      sb.append("</li>");
+    }
+    sb.append("</form>");
+    FormTextPart part = new FormTextPart(sb.toString());
+    part.paint(getParent());
   }        
 
   /**
@@ -50,6 +66,9 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.9  2005/12/29 00:25:59  web0
+ * @N Anzeige der System-Meldungen auf der Start-Seite
+ *
  * Revision 1.8  2005/10/17 14:01:15  web0
  * *** empty log message ***
  *
