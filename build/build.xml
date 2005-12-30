@@ -221,7 +221,8 @@
 				<include name="*.sh"/>
 				<include name="*.bat"/>
 				<include name="rcjameica"/>
-				<include name="jameica.png"/>
+				<include name="jameica-icon-01.png"/>
+        <include name="jameica-icon-02.png"/>
 				<include name="COPYING"/>
 				<include name="README"/>
 			</fileset>
