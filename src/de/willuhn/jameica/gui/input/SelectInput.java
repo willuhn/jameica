@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.20 $
- * $Date: 2005/08/25 21:18:24 $
+ * $Revision: 1.21 $
+ * $Date: 2006/01/02 17:37:49 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,7 @@ public class SelectInput extends AbstractInput
 	private Hashtable values = new Hashtable();
 
   private boolean enabled = true;
+  private String pleaseChoose = null;
 
 	private String attribute = null;
 
@@ -127,7 +128,17 @@ public class SelectInput extends AbstractInput
 		}
 	}
 	
-	/**
+  /**
+   * Optionale Angabe eines Textes, der an Position 1 angezeigt werden soll.
+   * Bei Auswahl dieses Elements, wird null zurueckgeliefert.
+   * @param choose Anzuzeigender "Bitte wählen..."-Text.
+   */
+  public void setPleaseChoose(String choose)
+  {
+    this.pleaseChoose = choose;
+  }
+  
+  /**
 	 * Ueberschreibt den Namen des anzuzeigenden Attributes.
 	 * Normalerweise wird einfach das Primaer-Attribut angezeigt, mit dieser
 	 * Funktion kann auch ein anderes gewaehlt werden.
@@ -148,6 +159,9 @@ public class SelectInput extends AbstractInput
 
 		combo = GUI.getStyleFactory().createCombo(getParent());
 
+    if (this.pleaseChoose != null && this.pleaseChoose.length() > 0)
+      combo.add(this.pleaseChoose);
+    
     int selected = 0;
 		int i = 0;
     try
@@ -352,6 +366,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.21  2006/01/02 17:37:49  web0
+ * @N moved Velocity to Jameica
+ *
  * Revision 1.20  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *

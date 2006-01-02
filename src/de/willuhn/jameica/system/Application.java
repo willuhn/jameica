@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.48 $
- * $Date: 2005/12/12 22:35:34 $
+ * $Revision: 1.49 $
+ * $Date: 2006/01/02 17:37:48 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.security.JameicaSecurityManager;
 import de.willuhn.jameica.security.SSLFactory;
+import de.willuhn.jameica.util.VelocityLoader;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.logging.targets.LogrotateTarget;
@@ -239,6 +240,9 @@ public final class Application {
     });
     //
     ////////////////////////////////////////////////////////////////////////////
+
+    // Init Velocity
+    VelocityLoader.init();
 
     // start loops
     if (inServerMode()) Server.init();
@@ -586,6 +590,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.49  2006/01/02 17:37:48  web0
+ * @N moved Velocity to Jameica
+ *
  * Revision 1.48  2005/12/12 22:35:34  web0
  * @N debug output
  *

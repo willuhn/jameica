@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenu.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/11/12 18:23:58 $
- * $Author: willuhn $
+ * $Revision: 1.5 $
+ * $Date: 2006/01/02 17:37:48 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
-import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -100,7 +99,6 @@ public class ContextMenu implements Part
 					}
 					catch (ApplicationException e)
 					{
-						Logger.error("error while executing action",e);
 						GUI.getStatusBar().setErrorText(e.getMessage());
 					}
         }
@@ -137,6 +135,9 @@ public class ContextMenu implements Part
 
 /**********************************************************************
  * $Log: ContextMenu.java,v $
+ * Revision 1.5  2006/01/02 17:37:48  web0
+ * @N moved Velocity to Jameica
+ *
  * Revision 1.4  2004/11/12 18:23:58  willuhn
  * *** empty log message ***
  *

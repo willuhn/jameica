@@ -45,7 +45,7 @@
     <property name="define.jarfilename.openbsd"        value="jameica-openbsd.jar" />
 		<property name="define.srcfilename" 				       value="jameica.src.zip" />
 		<property name="define.javadocfilename" 			     value="jameica.javadoc.zip" />
-		<property name="define.commonlibs" 					       value="lib/swt/org.eclipse.core.runtime_3.1.1.jar lib/swt/org.eclipse.jface_3.1.1.jar lib/swt/org.eclipse.osgi_3.1.1.jar lib/swt/org.eclipse.ui.forms_3.1.0.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar img lang help" />
+		<property name="define.commonlibs" 					       value="lib/swt/org.eclipse.core.runtime_3.1.1.jar lib/swt/org.eclipse.jface_3.1.1.jar lib/swt/org.eclipse.osgi_3.1.1.jar lib/swt/org.eclipse.ui.forms_3.1.0.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar lib/jakarta_commons/commons-collections.jar lib/velocity/logkit-1.0.1.jar lib/velocity/oro.jar lib/velocity/velocity-1.4.jar img lang help" />
 		<property name="define.package" 					         value="de.willuhn.jameica" />
 		<property name="project.nightly" 					         value="releases/nightly" />
 
