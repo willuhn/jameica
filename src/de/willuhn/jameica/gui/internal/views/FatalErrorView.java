@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/FatalErrorView.java,v $
- * $Revision: 1.6 $
- * $Date: 2004/12/31 19:33:50 $
- * $Author: willuhn $
+ * $Revision: 1.7 $
+ * $Date: 2006/01/05 16:10:46 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -23,6 +23,7 @@ import org.eclipse.swt.dnd.Transfer;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.parts.TextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
@@ -82,7 +83,8 @@ public class FatalErrorView extends AbstractView
 		    stacktrace.addPart(text);
 		  }
 	    final String s = e1 + e2;
-	    ButtonArea buttons = new ButtonArea(getParent(),1);
+	    ButtonArea buttons = new ButtonArea(getParent(),2);
+      buttons.addButton(i18n.tr("Zurück"),new Back());
 	    buttons.addButton(i18n.tr("in Zwischenablage kopieren"),new Action()
       {
         public void handleAction(Object context) throws ApplicationException
@@ -97,8 +99,9 @@ public class FatalErrorView extends AbstractView
 					}
 					final String log = "\n" + i18n.tr("Auszug aus dem Systemprotokoll") + ":\n" + sb.toString();
 					cb.setContents(new Object[]{(s + log)}, new Transfer[]{textTransfer});
+          GUI.getStatusBar().setSuccessText(i18n.tr("Stacktrace in Zwischenablage kopiert"));
         }
-      });
+      },null,true);
 		}
 		catch (Exception e)
 		{
@@ -126,6 +129,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.7  2006/01/05 16:10:46  web0
+ * @C error handling
+ *
  * Revision 1.6  2004/12/31 19:33:50  willuhn
  * *** empty log message ***
  *

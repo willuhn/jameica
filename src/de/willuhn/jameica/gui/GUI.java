@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.85 $
- * $Date: 2005/10/17 14:34:53 $
+ * $Revision: 1.86 $
+ * $Date: 2006/01/05 16:10:46 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
-import de.willuhn.jameica.gui.internal.views.ErrorView;
 import de.willuhn.jameica.gui.internal.views.FatalErrorView;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.parts.Panel;
@@ -450,16 +449,26 @@ public class GUI
 						loadHelp(gui.currentView);
 
 					}
-					catch (Exception e)
-					{
-						getStatusBar().setErrorText("Fehler beim Anzeigen des Dialogs.");
-						Logger.error("error while loading view " + className,e);
-						GUI.startView(ErrorView.class, e);
-					}
+          catch (ApplicationException ae)
+          {
+            SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
+            d.setTitle(Application.getI18n().tr("Fehler"));
+            d.setText(ae.getMessage());
+            try {
+              d.open();
+            }
+            catch (Exception e2)
+            {
+              Logger.error("error while showing error dialog",e2);
+            }
+          }
 					catch (Throwable t)
 					{
-						getStatusBar().setErrorText("Fataler Fehler beim Anzeigen des Dialogs.");
+            getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Öffnen des Dialogs"));
 						Logger.error("error while loading view " + className,t);
+						// Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
+            // in der History landet
+            gui.skipHistory = true;
 						GUI.startView(FatalErrorView.class, t);
 					}
 
@@ -762,6 +771,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.86  2006/01/05 16:10:46  web0
+ * @C error handling
+ *
  * Revision 1.85  2005/10/17 14:34:53  web0
  * *** empty log message ***
  *
