@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.86 $
- * $Date: 2006/01/05 16:10:46 $
+ * $Revision: 1.87 $
+ * $Date: 2006/01/08 23:23:27 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -670,8 +670,12 @@ public class GUI
       }
 			catch (Throwable t)
 			{
-				Logger.error("main loop crashed, retry", t);
-				retry++;
+        Throwable cause = t.getCause();
+        if (cause == null || !(cause instanceof OperationCanceledException))
+        {
+          Logger.error("main loop crashed, retry", t);
+          retry++;
+        }
 			}
 		}
 		quit();
@@ -771,6 +775,9 @@ public class GUI
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.87  2006/01/08 23:23:27  web0
+ * *** empty log message ***
+ *
  * Revision 1.86  2006/01/05 16:10:46  web0
  * @C error handling
  *
