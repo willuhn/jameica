@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/Attic/VelocityLoader.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/01/02 17:37:48 $
+ * $Revision: 1.2 $
+ * $Date: 2006/01/09 23:55:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.app.Velocity;
@@ -25,8 +24,6 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 
-import de.willuhn.jameica.plugin.AbstractPlugin;
-import de.willuhn.jameica.plugin.PluginResources;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -53,24 +50,9 @@ public class VelocityLoader extends ResourceLoader
 
       Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new VelocityLogger());
 
-      Iterator i = Application.getPluginLoader().getInstalledPlugins();
-      while (i.hasNext())
-      {
-        AbstractPlugin p = (AbstractPlugin) i.next();
-        PluginResources r = p.getResources();
-        File f = new File(r.getPath() + File.separator + "lib","velocity");
-        if (f.exists() && f.isDirectory())
-        {
-          Logger.info("adding velocity template dir: " + f.getAbsolutePath());
-          // Application.getClassLoader().add(f);
-          templateDirs.add(f);
-        }
-      }
       File f = new File("lib" + File.separator,"velocity");
       Logger.info("adding system velocity template dir: " + f.getAbsolutePath());
-      //Application.getClassLoader().add(f);
       templateDirs.add(f);
-
       Velocity.init();
     }
     catch (Throwable t)
@@ -85,6 +67,24 @@ public class VelocityLoader extends ResourceLoader
   public VelocityLoader()
   {
     super();
+  }
+  
+  /**
+   * Fuegt dem Lookup-Path einen weiteren Pfad hinzu.
+   * @param dir hinzufuegender Pfad.
+   */
+  public static void addTemplateDir(File dir)
+  {
+    if (dir == null)
+    {
+      Logger.warn("directory cannot be null, skipping");
+      return;
+    }
+    if (dir.exists() && dir.isDirectory())
+    {
+      Logger.info("adding velocity template dir: " + dir.getAbsolutePath());
+      templateDirs.add(dir);
+    }
   }
 
   /**
@@ -145,6 +145,9 @@ public class VelocityLoader extends ResourceLoader
 
 /**********************************************************************
  * $Log: VelocityLoader.java,v $
+ * Revision 1.2  2006/01/09 23:55:41  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2006/01/02 17:37:48  web0
  * @N moved Velocity to Jameica
  *

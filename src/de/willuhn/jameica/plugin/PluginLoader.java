@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.18 $
- * $Date: 2005/12/17 18:38:13 $
+ * $Revision: 1.19 $
+ * $Date: 2006/01/09 23:55:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -30,6 +30,7 @@ import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
+import de.willuhn.jameica.util.VelocityLoader;
 import de.willuhn.logging.Logger;
 
 /**
@@ -345,6 +346,14 @@ public final class PluginLoader
 		container.setPlugin(plugin);
 		//
 		///////////////////////////////////////////////////////////////
+    
+    ///////////////////////////////////////////////////////////////
+    // Velocity-Template-Verzeichnisse
+
+    PluginResources r = plugin.getResources();
+    VelocityLoader.addTemplateDir(new File(r.getPath() + File.separator + "lib","velocity"));
+    //
+    ///////////////////////////////////////////////////////////////
 
     // Bevor wir das Plugin initialisieren, pruefen, ob vorher eine aeltere
     // Version des Plugins installiert war. Ist das der Fall rufen wir dessen
@@ -608,6 +617,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.19  2006/01/09 23:55:41  web0
+ * *** empty log message ***
+ *
  * Revision 1.18  2005/12/17 18:38:13  web0
  * *** empty log message ***
  *

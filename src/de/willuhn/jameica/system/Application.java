@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.49 $
- * $Date: 2006/01/02 17:37:48 $
+ * $Revision: 1.50 $
+ * $Date: 2006/01/09 23:55:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -204,7 +204,10 @@ public final class Application {
       System.setProperty("http.proxyPort",""+proxyPort);
     }
     
-		getSSLFactory();
+    // Init Velocity
+    VelocityLoader.init();
+
+    getSSLFactory();
 		getPluginLoader();
 		getServiceFactory();
     getMessagingFactory();
@@ -240,9 +243,6 @@ public final class Application {
     });
     //
     ////////////////////////////////////////////////////////////////////////////
-
-    // Init Velocity
-    VelocityLoader.init();
 
     // start loops
     if (inServerMode()) Server.init();
@@ -590,6 +590,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.50  2006/01/09 23:55:41  web0
+ * *** empty log message ***
+ *
  * Revision 1.49  2006/01/02 17:37:48  web0
  * @N moved Velocity to Jameica
  *
