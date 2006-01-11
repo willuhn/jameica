@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/10/31 15:44:18 $
+ * $Revision: 1.12 $
+ * $Date: 2006/01/11 00:46:29 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
@@ -30,6 +31,8 @@ public final class PluginResources {
 	private I18N i18n = null;
 	private String workPath = null;
 	private String path = null;
+  
+  private Settings settings = null;
 
   /**
    * ct.
@@ -39,6 +42,9 @@ public final class PluginResources {
   {
   	this.plugin = plugin;
 
+    this.settings = new Settings(plugin.getClass());
+    this.settings.setStoreWhenRead(false);
+    
   	File f = plugin.getFile();
 
     String locale = Application.getConfig().getLocale().toString();
@@ -125,11 +131,24 @@ public final class PluginResources {
 		
 		return workPath;
 	}
+  
+  /**
+   * Liefert eine Art "Prefence-Store", ueber das das Plugin Konfigurations-Parameter
+   * speichern kann, ohne sich Gedanken ueber den Speicher-Ort machen zu muessen.
+   * @return Settings.
+   */
+  public Settings getSettings()
+  {
+    return this.settings;
+  }
 }
 
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.12  2006/01/11 00:46:29  web0
+ * @N settings in AbstractPlugin
+ *
  * Revision 1.11  2005/10/31 15:44:18  web0
  * *** empty log message ***
  *
