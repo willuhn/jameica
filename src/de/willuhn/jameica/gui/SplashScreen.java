@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.19 $
- * $Date: 2005/11/22 07:38:00 $
+ * $Revision: 1.20 $
+ * $Date: 2006/01/16 00:53:00 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -58,6 +58,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
     Logger.debug("init splash screen");
 		display = GUI.getDisplay();
 		shell = new Shell(SWT.NONE);
+    shell.setText("Jameica");
   }
   
 	/**
@@ -242,6 +243,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.20  2006/01/16 00:53:00  web0
+ * @N title in splashscreen
+ *
  * Revision 1.19  2005/11/22 07:38:00  web0
  * @C splash screen in extra Thread ist Mist ;)
  *
