@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.87 $
- * $Date: 2006/01/08 23:23:27 $
+ * $Revision: 1.88 $
+ * $Date: 2006/01/18 18:40:21 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.gui.internal.parts.BackgroundTaskMonitor;
 import de.willuhn.jameica.gui.internal.views.FatalErrorView;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.parts.Panel;
@@ -41,6 +42,9 @@ import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.ApplicationCallback;
+import de.willuhn.jameica.system.ApplicationCallbackSWT;
+import de.willuhn.jameica.system.ApplicationController;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.system.Settings;
@@ -52,34 +56,33 @@ import de.willuhn.util.ProgressMonitor;
  * Startet und beendet die GUI der Anwendung.
  * @author willuhn
  */
-public class GUI
+public class GUI implements ApplicationController
 {
 	private static Settings settings = new Settings(GUI.class);
 
-	// singleton
-	private static GUI gui;
-		private Display display;
-		private Shell shell;
-	
-		private Navigation navi;
-		private View view;
-		private StatusBar statusBar;
-		private Menu menu;
-		private FormTextPart help;
-		private AbstractView currentView;
-		
-		private Stack history;
-		private boolean skipHistory = false;
-		private StyleFactory styleFactory;
-
-	  private boolean stop = false;
-    private boolean running = false;
-
   static
   {
-    gui = new GUI();
     settings.setStoreWhenRead(false);
   }
+
+  private static GUI gui = null;
+    private ApplicationCallback callback = null;
+    private Display display;
+  	private Shell shell;
+  
+  	private Navigation navi;
+  	private View view;
+  	private StatusBar statusBar;
+  	private Menu menu;
+  	private FormTextPart help;
+  	private AbstractView currentView;
+  	
+  	private Stack history;
+  	private boolean skipHistory = false;
+  	private StyleFactory styleFactory;
+  
+    private boolean stop = false;
+
 
 	private static class HistoryEntry
 	{
@@ -94,130 +97,123 @@ public class GUI
 	/**
 	 * Erzeugt die GUI-Instanz.
 	 */
-	private GUI()
+	public GUI()
 	{
+    if (gui != null)
+      throw new RuntimeException("unable to start second gui");
+    gui = this;
 	}
 
 	/**
-	 * Laedt die GUI.
-	 * @throws Exception
+	 * @see de.willuhn.jameica.system.ApplicationController#init()
 	 */
-	private void load() throws Exception
+	public void init() throws ApplicationException
 	{
-		Logger.info("startup GUI");
+    try
+    {
+      Logger.info("startup GUI");
 
-		// init shell
-		getShell().setLayout(SWTUtil.createGrid(1, false));
-		getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
-		getShell().setImage(SWTUtil.getImage("globe.gif"));
+      // init shell
+      getShell().setLayout(SWTUtil.createGrid(1, false));
+      getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
+      getShell().setImage(SWTUtil.getImage("globe.gif"));
 
-		getShell().setText("Jameica " + Application.getManifest().getVersion());
+      getShell().setText("Jameica " + Application.getManifest().getVersion());
 
-		StyleEngine.init();
+      StyleEngine.init();
 
-		////////////////////////////
+      ////////////////////////////
 
-		Logger.info("adding menu");
-		try
-		{
-			menu = new Menu(getShell());
-		}
-		catch (Exception e)
-		{
-			Logger.error("error while loading menu, skipping",e);
-		}
+      Logger.info("adding menu");
+      try
+      {
+        menu = new Menu(getShell());
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while loading menu, skipping",e);
+      }
 
-    SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
-    sash.setLayout(SWTUtil.createGrid(1,true));
-    sash.setLayoutData(new GridData(GridData.FILL_BOTH));
+      SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
+      sash.setLayout(SWTUtil.createGrid(1,true));
+      sash.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		SashForm left = new SashForm(sash, SWT.VERTICAL);
-    left.setLayout(SWTUtil.createGrid(1,true));
-    left.setLayoutData(new GridData(GridData.FILL_BOTH));
+      SashForm left = new SashForm(sash, SWT.VERTICAL);
+      left.setLayout(SWTUtil.createGrid(1,true));
+      left.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Logger.info("adding navigation");
-    navi = new Navigation();
-    Panel np = new Panel(Application.getI18n().tr("Navigation"),navi);
-		try
-		{
-      np.paint(left);
-		}
-		catch (Exception e)
-		{
-			Logger.error("error while loading navigation, skipping",e);
-		}
+      Logger.info("adding navigation");
+      navi = new Navigation();
+      Panel np = new Panel(Application.getI18n().tr("Navigation"),navi);
+      try
+      {
+        np.paint(left);
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while loading navigation, skipping",e);
+      }
 
-		help = new FormTextPart();
-    Panel p = new Panel(Application.getI18n().tr("Hilfe"),help);
-    p.paint(left);
+      help = new FormTextPart();
+      Panel p = new Panel(Application.getI18n().tr("Hilfe"),help);
+      p.paint(left);
 
-		Composite right = new Composite(sash, SWT.NONE);
-    right.setLayout(SWTUtil.createGrid(1,true));
-    right.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Logger.info("adding content view");
+      Composite right = new Composite(sash, SWT.NONE);
+      right.setLayout(SWTUtil.createGrid(1,true));
+      right.setLayoutData(new GridData(GridData.FILL_BOTH));
+      Logger.info("adding content view");
 
-    view = new View();
-    view.paint(right);
+      view = new View();
+      view.paint(right);
 
-		left.setWeights(new int[] { 1, 1 });
-		sash.setWeights(new int[] { 1, 3 });
+      left.setWeights(new int[] { 1, 1 });
+      sash.setWeights(new int[] { 1, 3 });
 
-		Composite bottom = new Composite(shell, SWT.NONE);
-		bottom.setLayout(SWTUtil.createGrid(1, true));
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		bottom.setLayoutData(gd);
-		Logger.info("adding status panel");
-		addStatusBar(bottom);
+      Composite bottom = new Composite(shell, SWT.NONE);
+      bottom.setLayout(SWTUtil.createGrid(1, true));
+      GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+      gd.horizontalSpan = 2;
+      bottom.setLayoutData(gd);
+      Logger.info("adding status panel");
+      addStatusBar(bottom);
 
-		// so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
-		// hinzu.
-		Iterator i = Application.getPluginLoader().getPluginContainers();
-		while (i.hasNext())
-		{
-			PluginContainer pc = (PluginContainer) i.next();
-			try
-			{
-				menu.addPlugin(pc);
-				navi.addPlugin(pc);
-			}
-			catch (Throwable t)
-			{
-				Logger.error("error while loading navigation for plugin",t);
-			}
-		}
+      // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
+      // hinzu.
+      Iterator i = Application.getPluginLoader().getPluginContainers();
+      while (i.hasNext())
+      {
+        PluginContainer pc = (PluginContainer) i.next();
+        try
+        {
+          menu.addPlugin(pc);
+          navi.addPlugin(pc);
+        }
+        catch (Throwable t)
+        {
+          Logger.error("error while loading navigation for plugin",t);
+        }
+      }
 
-		// History initialisieren
-		history = new Stack();
+      // History initialisieren
+      history = new Stack();
 
-    position();
-    Logger.info("open shell");
-    getShell().open();
+      position();
+      Logger.info("open shell");
+      getShell().open();
 
-		getStatusBar().setStatusText(Application.getI18n().tr("startup finished"));
-	}
-
-	/**
-	 * Initialisiert die GUI und startet den GUI-Loop.
-	 */
-	public static void init()
-	{
-
-		if (gui.running) return; // allready running.
-
-		try
-		{
-			gui.load();
-		}
-		catch (Exception e)
-		{
-			Logger.error("error while loading GUI",e);
-			return;
-		}
-
-		// GUI Loop starten
-		gui.loop();
-
+      getStatusBar().setStatusText(Application.getI18n().tr("startup finished"));
+      
+      loop();
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to load GUI",e);
+      throw new ApplicationException(Application.getI18n().tr("Fehler beim Starten der Benutzeroberfläche"));
+    }
 	}
 
   private void position()
@@ -606,57 +602,10 @@ public class GUI
 	}
 
 	/**
-	 * Startet einen Job asynchron zur GUI, der typischerweise laenger dauert.
-	 * Waehrend der Ausfuehrung wird die nicht GUI geblockt. Informativ wird unten
-	 * rechts ein ProgressBar angezeigt. 
-	 * @param task der auszufuehrende Task.
-	 */
-	public static void startAsync(final BackgroundTask task)
-	{
-		if (getDisplay() == null || getDisplay().isDisposed()) return;
-
-    getStatusBar().startProgress();
-    // Das Konstrukt sieht merkwuerdig aus - ich weiss. Muss aber so ;)
-    getDisplay().asyncExec(new Runnable() {
-      public void run()
-      {
-        final ProgressMonitor m = task.getMonitor();
-        Thread t = new Thread()
-        {
-          public void run()
-          {
-            try
-            {
-              task.run();
-            }
-            catch (OperationCanceledException oce)
-            {
-              if (m != null) m.setStatus(ProgressMonitor.STATUS_CANCEL);
-            }
-            catch (Throwable t)
-            {
-              Logger.error("error while executing background task",t);
-              if (m != null) m.setStatus(ProgressMonitor.STATUS_ERROR);
-            }
-            finally
-            {
-              if (m != null) m.setStatus(ProgressMonitor.STATUS_DONE);
-              getStatusBar().stopProgress();
-            }
-          }
-        };
-        t.start();
-      }
-    });
-	}
-
-  
-	/**
-	 * Startet den GUI-Loop.
+	 * Main-Loop
 	 */
 	private void loop()
 	{
-    running = true;
 		int retry = 0;
 		while (!shell.isDisposed() && !stop && retry < 4)
 		{
@@ -722,14 +671,10 @@ public class GUI
 	}
 
 	/**
-	 * Beendet die GUI. Wenn die Anwendung nicht im Servermode laeuft, wird nichts
-	 * gemacht.
+	 * @see de.willuhn.jameica.system.ApplicationController#shutDown()
 	 */
-	public static void shutDown()
+	public void shutDown()
 	{
-		if (Application.inServerMode()) return;
-
-		// exit running gui loop
 		gui.stop = true;
 	}
 
@@ -771,10 +716,65 @@ public class GUI
       System.exit(0);
     }
 	}
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationController#getApplicationCallback()
+   */
+  public ApplicationCallback getApplicationCallback()
+  {
+    if (gui.callback == null)
+      gui.callback = new ApplicationCallbackSWT();
+    return gui.callback;
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationController#start(de.willuhn.jameica.system.BackgroundTask)
+   */
+  public void start(final BackgroundTask task)
+  {
+    if (getDisplay() == null || getDisplay().isDisposed()) return;
+
+    getStatusBar().startProgress();
+    // Das Konstrukt sieht merkwuerdig aus - ich weiss. Muss aber so ;)
+    getDisplay().asyncExec(new Runnable() {
+      public void run()
+      {
+        Thread t = new Thread()
+        {
+          public void run()
+          {
+            ProgressMonitor monitor = new BackgroundTaskMonitor();
+            try
+            {
+              task.run(monitor);
+            }
+            catch (OperationCanceledException oce)
+            {
+              if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
+            }
+            catch (Throwable t)
+            {
+              Logger.error("error while executing background task",t);
+              if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+            }
+            finally
+            {
+              if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_DONE);
+              getStatusBar().stopProgress();
+            }
+          }
+        };
+        t.start();
+      }
+    });
+  }
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.88  2006/01/18 18:40:21  web0
+ * @N Redesign des Background-Task-Handlings
+ *
  * Revision 1.87  2006/01/08 23:23:27  web0
  * *** empty log message ***
  *

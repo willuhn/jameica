@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.50 $
- * $Date: 2006/01/09 23:55:41 $
+ * $Revision: 1.51 $
+ * $Date: 2006/01/18 18:40:21 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,7 @@ import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.logging.targets.LogrotateTarget;
 import de.willuhn.logging.targets.OutputStreamTarget;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 import de.willuhn.util.JarInfo;
 import de.willuhn.util.MultipleClassLoader;
@@ -60,7 +61,7 @@ public final class Application {
     private I18N 								i18n;
 		private ArrayList 					welcomeMessages = new ArrayList();
 
-    private ApplicationCallback callback;
+    private ApplicationController controller;
     
   /**
    * Erzeugt eine neue Instanz der Anwendung.
@@ -244,9 +245,15 @@ public final class Application {
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    // start loops
-    if (inServerMode()) Server.init();
-    else                   GUI.init();
+    try
+    {
+      // Init Controller
+      getController().init();
+    }
+    catch (ApplicationException e1)
+    {
+      Logger.error("unable to init application controller",e1);
+    }
   }
 
 	/**
@@ -286,7 +293,7 @@ public final class Application {
 
 		getCallback().getStartupMonitor().setStatus(0);
 
-    GUI.shutDown();     
+    getController().shutDown();     
 		getServiceFactory().shutDown();
     getPluginLoader().shutDown();
 
@@ -476,19 +483,29 @@ public final class Application {
    * Dieser ist zur Benutzer-Interaktion waehrend des System-Starts zustaendig.
    * @return Callback.
    */
-  public static ApplicationCallback getCallback()
+  public static ApplicationController getController()
   {
-  	if (app.callback != null)
-  		return app.callback;
-
-		if (inServerMode())
-			app.callback = new ApplicationCallbackConsole();
-		else
-			app.callback = new ApplicationCallbackSWT();
-		return app.callback;
+    if (app.controller == null)
+    {
+      if (inServerMode())
+        app.controller = new Server();
+      else
+        app.controller = new GUI();
+    }
+		return app.controller;
   }
 
-	/**
+  /**
+   * Liefert den Callback-Handler von Jameica.
+   * Dieser ist zur Benutzer-Interaktion waehrend des System-Starts zustaendig.
+   * @return Callback.
+   */
+  public static ApplicationCallback getCallback()
+  {
+    return getController().getApplicationCallback();
+  }
+
+  /**
 	 * Speichert waehrend des Bootens einen Text.
 	 * Dieser wird dem Benutzer angezeigt, sowie die Anwendung mit dem Startvorgang fertig ist.
 	 * @param message der anzuzeigende Text.
@@ -509,30 +526,6 @@ public final class Application {
 		if (app == null)
 			return new String[] {};
 		return (String[]) app.welcomeMessages.toArray(new String[app.welcomeMessages.size()]);
-	}
-
-	/**
-	 * Startet einen Hintergrund-Task in Jameica.
-   * @param task der auszufuehrende Task.
-   */
-  public static void start(final BackgroundTask task)
-	{
-		Logger.info("starting background task");
-		if (task == null)
-		{
-			Logger.warn("background task is null, skipping");
-			return;
-		}
-		if (inServerMode())
-		{
-			Thread t = new Thread(task);
-			t.setName("[Jameica Backgroundtask] " + task.getClass().getName());
-			t.start();
-		}
-		else
-		{
-			GUI.startAsync(task);
-		}
 	}
 
   /**
@@ -590,6 +583,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.51  2006/01/18 18:40:21  web0
+ * @N Redesign des Background-Task-Handlings
+ *
  * Revision 1.50  2006/01/09 23:55:41  web0
  * *** empty log message ***
  *

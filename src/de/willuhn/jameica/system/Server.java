@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/07/14 22:58:36 $
+ * $Revision: 1.11 $
+ * $Date: 2006/01/18 18:40:21 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -13,24 +13,35 @@
 package de.willuhn.jameica.system;
 
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
+import de.willuhn.util.ProgressMonitor;
 
 /**
  * Diese Klasse bildet den Serverloop der Anwendung ab.
  * @author willuhn
  */
-public final class Server
+public class Server implements ApplicationController
 {
+  private ApplicationCallback callback = null;
   
   /**
-   * Startet den Serverloop.
+   * @see de.willuhn.jameica.system.ApplicationController#init()
    */
-  public static void init()
+  public void init() throws ApplicationException
   {
     Logger.info(Application.getI18n().tr("jameica up and running..."));
 
 		String[] welcome = Application.getWelcomeMessages();
 		if (welcome != null && welcome.length > 0)
 		{
+      try
+      {
+        Logger.flush();
+      }
+      catch (InterruptedException e)
+      {
+        // ignore
+      }
       Logger.info("----------------------------------------------------------------------");
       Logger.info(Application.getI18n().tr("Startup-Messages:"));
 			for (int i=0;i<welcome.length;++i)
@@ -39,42 +50,113 @@ public final class Server
 			}
 		}
     Logger.info("----------------------------------------------------------------------");
-//    if (!Application.inNonInteractiveMode())
-//    {
-//      try
-//      {
-//        Logger.flush();
-//      }
-//      catch (Exception e)
-//      {
-//        // ignore
-//      }
-//      System.out.print("\n");
-//      System.out.println(Application.getI18n().tr("Press \"q\" to shut down the server.\n"));
-//      DateFormat df = new SimpleDateFormat("hh:mm:ss");
-//      InputStreamReader isr = new InputStreamReader(System.in);
-//      BufferedReader keyboard = new BufferedReader(isr);
-//      String input;
-//      while (true) {
-//        
-//        System.out.print("[" + df.format(new Date()) + "] Jameica> ");
-//        try {
-//          input = keyboard.readLine();
-//          if ("q".equalsIgnoreCase(input))
-//            System.exit(0);
-//        }
-//        catch (IOException ioe)
-//        {
-//          System.exit(0);
-//        }
-//      }
-//    }
     Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
   }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationController#shutDown()
+   */
+  public void shutDown()
+  {
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationController#getApplicationCallback()
+   */
+  public ApplicationCallback getApplicationCallback()
+  {
+    if (callback == null)
+      callback = new ApplicationCallbackConsole();
+    return callback;
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationController#start(de.willuhn.jameica.system.BackgroundTask)
+   */
+  public void start(final BackgroundTask task)
+  {
+    Thread t = new Thread("[Jameica Backgroundtask] " + task.getClass().getName())
+    {
+      public void run()
+      {
+        ProgressMonitor monitor = new ConsoleMonitor();
+        try
+        {
+          task.run(monitor);
+        }
+        catch (OperationCanceledException oce)
+        {
+          if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
+        }
+        catch (Throwable t)
+        {
+          Logger.error("error while executing background task",t);
+          if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+        }
+        finally
+        {
+          if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_DONE);
+        }
+      }
+    };
+    t.start();
+  }
+
+  /**
+   * @author willuhn
+   */
+  private class ConsoleMonitor implements ProgressMonitor
+  {
+    /**
+     * @see de.willuhn.util.ProgressMonitor#setPercentComplete(int)
+     */
+    public void setPercentComplete(int percent)
+    {
+      Logger.debug("startup completed: " + percent + " %");
+    }
+    
+    /**
+     * @see de.willuhn.util.ProgressMonitor#addPercentComplete(int)
+     */
+    public void addPercentComplete(int percent)
+    {
+      if (percent < 1)
+        return;
+      setPercentComplete(getPercentComplete() + percent);
+    }
+
+    /**
+     * @see de.willuhn.util.ProgressMonitor#getPercentComplete()
+     */
+    public int getPercentComplete() {return 0;}
+
+    /**
+     * @see de.willuhn.util.ProgressMonitor#setStatus(int)
+     */
+    public void setStatus(int status) {}
+    
+    /**
+     * @see de.willuhn.util.ProgressMonitor#setStatusText(java.lang.String)
+     */
+    public void setStatusText(String text) {
+      Logger.info(text);
+    }
+    
+    /**
+     * @see de.willuhn.util.ProgressMonitor#log(java.lang.String)
+     */
+    public void log(String msg) {
+      Logger.info(msg);
+    }
+  };
+  
 }
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.11  2006/01/18 18:40:21  web0
+ * @N Redesign des Background-Task-Handlings
+ *
  * Revision 1.10  2005/07/14 22:58:36  web0
  * *** empty log message ***
  *

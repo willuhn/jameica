@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/BackgroundTask.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/07/26 22:58:34 $
+ * $Revision: 1.5 $
+ * $Date: 2006/01/18 18:40:21 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.system;
 
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
 
 /**
@@ -19,18 +20,36 @@ import de.willuhn.util.ProgressMonitor;
  * Jameica als Hintergrund-Task in einem separaten Thread ausgefuehrt werden.
  * Sie werden ueber die Funktion <code>Application.start(BackgroundTask)</code> gestartet. 
  */
-public interface BackgroundTask extends Runnable
+public interface BackgroundTask
 {
-	/**
-	 * Liefert den Progress-Monitor.
-   * @return Progress-Monitor.
+  /**
+   * Diese Methode wird von Jameica in einem separaten Thread
+   * ausgefuehrt. Der Funktion wird ein Monitor uebergeben, ueber
+   * den der Task Rueckmeldungen ueber seinen Verarbeitungszustand
+   * ausgeben soll.
+   * @param monitor
+   * @throws ApplicationException
    */
-  public ProgressMonitor getMonitor();
+  public void run(ProgressMonitor monitor) throws ApplicationException;
+  
+  /**
+   * Bricht den Task ab.
+   */
+  public void interrupt();
+  
+  /**
+   * Prueft, ob der Task abgebrochen wurde.
+   * @return true, wenn er abgebrochen wurde.
+   */
+  public boolean isInterrupted();
 }
 
 
 /**********************************************************************
  * $Log: BackgroundTask.java,v $
+ * Revision 1.5  2006/01/18 18:40:21  web0
+ * @N Redesign des Background-Task-Handlings
+ *
  * Revision 1.4  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *
