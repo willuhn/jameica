@@ -1,8 +1,8 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractView.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/29 16:16:24 $
- * $Author: willuhn $
+ * $Revision: 1.3 $
+ * $Date: 2006/01/18 00:35:57 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -37,12 +37,23 @@ public abstract class AbstractView
 
   /**
    * Wird aufgerufen, wenn der Dialog verlassen wird.
-   * Diese Methode muss von abgeleiteten Klassen ueberschrieben werden, um dort Aufraeumarbeiten vorzunehmen.
+   * Diese Methode kann von abgeleiteten Klassen ueberschrieben werden, um dort Aufraeumarbeiten vorzunehmen.
    * @throws ApplicationException darf vom Dialog geworfen werden, wenn der neue Dialog
    * nicht gestartet werden soll. Z.Bsp. weil Daten noch nicht gespeichert worden oder
    * ein Vorgang noch in Bearbeitung ist.
    */
-  public abstract void unbind() throws ApplicationException;
+  public void unbind() throws ApplicationException
+  {
+  }
+  
+  /**
+   * Kann von ableitenden Klassen ueberschrieben werden, um den Dialog neu zu laden.
+   * @throws ApplicationException
+   */
+  public void reload() throws ApplicationException
+  {
+    
+  }
 
 	/**
    * Liefert das dieser View uebergebene Daten-Objekt zurueck. 
@@ -87,6 +98,9 @@ public abstract class AbstractView
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.3  2006/01/18 00:35:57  web0
+ * @N AbstractView#reload
+ *
  * Revision 1.2  2004/10/29 16:16:24  willuhn
  * *** empty log message ***
  *
