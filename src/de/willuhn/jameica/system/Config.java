@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.24 $
- * $Date: 2005/08/29 16:51:52 $
+ * $Revision: 1.25 $
+ * $Date: 2006/01/27 11:21:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -68,32 +68,48 @@ public final class Config
 		this.workDir = new File(dataDir);
 		
 		if (this.workDir.exists() && !this.workDir.isDirectory())
-			throw new Exception("File " + dataDir + " allready exists.");
+			throw new Exception("File " + dataDir + " is in the way. please remove it");
 		
-		if (!this.workDir.exists())
-		{
-			Logger.info("creating " + dataDir);
-			if (!this.workDir.mkdir())
-				throw new Exception("creating of " + dataDir + " failed");		
-		}
-
-		this.configDir  = new File(dataDir + "/cfg");
-		if (!this.configDir.exists())
-		{
-			Logger.info("creating " + this.configDir.getAbsolutePath());
-			this.configDir.mkdir();
-		}
-
-		// Wir erstellen noch ein userspezifisches Plugin-Verzeichnis
-		this.pluginDir = new File(dataDir + "/plugins");
-		if (!pluginDir.exists())
-		{
-			Logger.info("creating " + pluginDir.getAbsolutePath());
-			pluginDir.mkdir();
-		}
-
-    this.settings = new Settings(this.getClass());
+    this.configDir  = new File(dataDir + "/cfg");
+    this.pluginDir  = new File(dataDir + "/plugins");
+    this.settings   = new Settings(this.getClass());
     this.settings.setStoreWhenRead(true);
+
+    boolean create = false;
+    if (!this.workDir.exists())
+		{
+      if (Application.getStartupParams().ask())
+      {
+        // TODO Hier kommen noch IOExceptions, weil durch dden getCallback()-
+        // Aufruf die GUI initialisiert wird, die wiederrum auf Config-Dateien
+        // zugreifen will, die noch nicht initialisiert sind, weil die Frage
+        // zum Work-Verzeichnis noch offen ist
+        Logger.info("asking user for workdir");
+        create = Application.getCallback().askUser(Application.getI18n().tr("Das Daten-Verzeichnis {0} " +
+            "existiert nicht. Soll es neu angelegt werden?\n" +
+            "Falls es sich zum Beispiel auf einem USB-Stick befindet, dann schliessen " +
+            "Sie diesen jetzt bitte an und wählen \"Nein\". Andernfalls wählen Sie bitte \"Ja\", um ein " +
+            "neues Daten-Verzeichnis anzulegen.",this.workDir.getAbsolutePath()));
+      }
+      else
+      {
+        create = true;
+      }
+		}
+
+    if (create)
+    {
+      if (!this.configDir.exists())
+      {
+        Logger.info("creating " + this.configDir.getAbsolutePath());
+        this.configDir.mkdirs();
+      }
+      if (!pluginDir.exists())
+      {
+        Logger.info("creating " + pluginDir.getAbsolutePath());
+        pluginDir.mkdir();
+      }
+    }
   }
 
   /**
@@ -383,6 +399,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.25  2006/01/27 11:21:51  web0
+ * @N new startup parameter "ask"
+ *
  * Revision 1.24  2005/08/29 16:51:52  web0
  * *** empty log message ***
  *

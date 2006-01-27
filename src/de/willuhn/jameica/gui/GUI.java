@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.88 $
- * $Date: 2006/01/18 18:40:21 $
+ * $Revision: 1.89 $
+ * $Date: 2006/01/27 11:21:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -58,12 +58,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class GUI implements ApplicationController
 {
-	private static Settings settings = new Settings(GUI.class);
-
-  static
-  {
-    settings.setStoreWhenRead(false);
-  }
+	private Settings settings = new Settings(GUI.class);
 
   private static GUI gui = null;
     private ApplicationCallback callback = null;
@@ -102,6 +97,7 @@ public class GUI implements ApplicationController
     if (gui != null)
       throw new RuntimeException("unable to start second gui");
     gui = this;
+    gui.settings.setStoreWhenRead(false);
 	}
 
 	/**
@@ -555,7 +551,7 @@ public class GUI implements ApplicationController
 	public static StyleFactory getStyleFactory()
 	{
 		if (gui.styleFactory != null) return gui.styleFactory;
-		String className = settings.getString("stylefactory",
+		String className = gui.settings.getString("stylefactory",
 				StyleFactoryFlatImpl.class.getName());
 		try
 		{
@@ -579,7 +575,7 @@ public class GUI implements ApplicationController
 	{
 		if (factory == null) return;
 		gui.styleFactory = factory;
-		settings.setAttribute("stylefactory", factory.getClass().getName());
+		gui.settings.setAttribute("stylefactory", factory.getClass().getName());
 	}
 
 	/**
@@ -772,6 +768,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.89  2006/01/27 11:21:51  web0
+ * @N new startup parameter "ask"
+ *
  * Revision 1.88  2006/01/18 18:40:21  web0
  * @N Redesign des Background-Task-Handlings
  *
