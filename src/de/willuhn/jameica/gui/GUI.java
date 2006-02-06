@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.90 $
- * $Date: 2006/02/06 15:23:21 $
+ * $Revision: 1.91 $
+ * $Date: 2006/02/06 17:15:49 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -749,11 +749,11 @@ public class GUI implements ApplicationController
   {
     if (getDisplay() == null || getDisplay().isDisposed()) return;
 
-    getStatusBar().startProgress();
     // Das Konstrukt sieht merkwuerdig aus - ich weiss. Muss aber so ;)
     getDisplay().asyncExec(new Runnable() {
       public void run()
       {
+        getStatusBar().startProgress();
         Thread t = new Thread()
         {
           public void run()
@@ -787,6 +787,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.91  2006/02/06 17:15:49  web0
+ * @B bug 179
+ *
  * Revision 1.90  2006/02/06 15:23:21  web0
  * @B bug 194
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/01/18 18:40:21 $
+ * $Revision: 1.2 $
+ * $Date: 2006/02/06 17:15:49 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -40,11 +40,16 @@ public class BackgroundTaskMonitor extends ProgressBar
    */
   private final static DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-
+  private final static int TIMEOUT = 15 * 1000;
+  private static boolean CANCEL_TIMEOUT = false;
+  
   private boolean started = false;
   
   private void check()
   {
+    // Wenn die Check-Funktion aufgerufen wird, brechen wir einen ggf. laufenden
+    // Auto-Schliesser immer ab
+    CANCEL_TIMEOUT = true;
     if (started)
       return;
 
@@ -117,26 +122,33 @@ public class BackgroundTaskMonitor extends ProgressBar
     check();
     super.setStatus(status);
     // BUGZILLA 179
-//    if (started && status == STATUS_CANCEL || status == STATUS_DONE || status == STATUS_ERROR)
-//    {
-//      // Wir sind fertig. Dann starten wir einen Timeout und schliessen das
-//      // Fenster selbst nach ein paar Sekunden.
-//      GUI.getDisplay().asyncExec(new Runnable() {
-//        public void run()
-//        {
-//          GUI.getDisplay().timerExec(30000,new Runnable() {
-//            public void run()
-//            {
-//              if (!started)
-//                return;
-//              Logger.info("auto closing hbci logger snapin");
-//              GUI.getView().snapOut();
-//              started = false;
-//            }
-//          });
-//        }
-//      });
-//    }
+    if (started && status == STATUS_CANCEL || status == STATUS_DONE || status == STATUS_ERROR)
+    {
+      // Wir sind fertig. Dann starten wir einen Timeout und schliessen das
+      // Fenster selbst nach ein paar Sekunden.
+      GUI.getDisplay().asyncExec(new Runnable() {
+        public void run()
+        {
+          CANCEL_TIMEOUT = false;
+          GUI.getDisplay().timerExec(TIMEOUT,new Runnable() {
+            public void run()
+            {
+              if (!started || CANCEL_TIMEOUT)
+                return;
+              try
+              {
+                Logger.info("auto closing monitor snapin");
+                GUI.getView().snapOut();
+              }
+              finally
+              {
+                started = false;
+              }
+            }
+          });
+        }
+      });
+    }
   }
 
   /**
@@ -179,6 +191,9 @@ public class BackgroundTaskMonitor extends ProgressBar
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
+ * Revision 1.2  2006/02/06 17:15:49  web0
+ * @B bug 179
+ *
  * Revision 1.1  2006/01/18 18:40:21  web0
  * @N Redesign des Background-Task-Handlings
  *
