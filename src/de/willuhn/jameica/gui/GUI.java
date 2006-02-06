@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.89 $
- * $Date: 2006/01/27 11:21:51 $
+ * $Revision: 1.90 $
+ * $Date: 2006/02/06 15:23:21 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -225,6 +225,9 @@ public class GUI implements ApplicationController
     width = settings.getInt("window.width", width);
     height = settings.getInt("window.height", height);
 
+    // BUGZILLA 194
+    boolean maximized = settings.getBoolean("window.maximized", false);
+    
     int dwidth  = getDisplay().getBounds().width;
     int dheight = getDisplay().getBounds().height;
     Logger.info("display size: " + dwidth + "x" + dheight);
@@ -240,15 +243,27 @@ public class GUI implements ApplicationController
        y = -1;
     } 
 
-    if (y > 0 && x > 0)
+    if (maximized)
+    {
+      getShell().setLocation(0,0);
+    }
+    else if (y > 0 && x > 0)
     {
       Logger.info("window position: " + x + "x" + y);
       getShell().setLocation(x,y);
     }
 
     // SWT3 behaviour
-    Logger.info("window size: " + width + "x" + height);
-    getShell().setSize(width,height);
+    if (maximized)
+    {
+      Logger.info("window size: maximized");
+      getShell().setMaximized(true);
+    }
+    else
+    {
+      Logger.info("window size: " + width + "x" + height);
+      getShell().setSize(width,height);
+    }
 
     getShell().addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e)
@@ -256,10 +271,14 @@ public class GUI implements ApplicationController
         try
         {
           Logger.info("saving window position/size");
-          Point location = getShell().getLocation();
-          Point size     = getShell().getSize();
+          // BUGZILLA 194
+          boolean maximized = getShell().getMaximized();
+          Point location    = getShell().getLocation();
+          Point size        = getShell().getSize();
 
-          Logger.info("size: " + size.x + "x" + size.y + ", position: " + location.x + "x" + location.y);
+          settings.setAttribute("window.maximized", maximized);
+
+          Logger.info("size: " + size.x + "x" + size.y + ", position: " + location.x + "x" + location.y + ", maximized: " + maximized);
 
           if (size.x != 0 && size.y != 0)
           {
@@ -768,6 +787,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.90  2006/02/06 15:23:21  web0
+ * @B bug 194
+ *
  * Revision 1.89  2006/01/27 11:21:51  web0
  * @N new startup parameter "ask"
  *
