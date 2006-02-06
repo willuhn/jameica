@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/01/27 11:21:51 $
+ * $Revision: 1.6 $
+ * $Date: 2006/02/06 14:20:13 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -45,8 +45,6 @@ public class StartupParams
 	private String workDir  = null;
 	private String password = null;
 	private int mode 				= MODE_STANDALONE;
-  
-  private boolean ask     = false;
 
   private boolean noninteractive = false;
 
@@ -76,8 +74,6 @@ public class StartupParams
 
     options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +      "Es findet keine Benutzer-Interaktion mehr statt. Die Option wird nur ausgewertet, wenn Jameica " +      "im Server-Mode läuft.");
 
-    options.addOption("a","ask",false,"Fragt den Benutzer, falls das Work-Verzeichnis noch nicht existiert." +
-      "Sinnvoll, wenn sich das Verzeichnis auf einem USB-Stick befindet, dieser aber nicht angeschlossen ist");
 
 		PosixParser parser = new PosixParser();
 		try
@@ -101,12 +97,6 @@ public class StartupParams
 			{
 				Logger.info("starting in STANDALONE mode");
 			}
-
-      if (line.hasOption("a"))
-      {
-        Logger.info("asking user, if workdir does not exist");
-        this.ask = true;
-      }
 
       if (this.mode == MODE_SERVER && line.hasOption("n"))
       {
@@ -177,25 +167,13 @@ public class StartupParams
   {
     return this.noninteractive;
   }
-  
-  /**
-   * Liefert true, wenn der User gefragt werden soll, ob das Work-Verzeichnis
-   * angelegt werden soll, wenn es nicht existiert. Diese Abfrage ist sinnvoll,
-   * wenn sich das Work-Verzeichnis auf einem USB-Stick befindet, dieser aber
-   * nicht angeschlossen ist. Der User hat dann Gelegenheit, das nachzuholen.
-   * @return true, wenn der User gefragt werden soll.
-   */
-  public boolean ask()
-  {
-    return this.ask;
-  }
 }
 
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
- * Revision 1.5  2006/01/27 11:21:51  web0
- * @N new startup parameter "ask"
+ * Revision 1.6  2006/02/06 14:20:13  web0
+ * @R removed parameter "ask"
  *
  * Revision 1.4  2005/06/15 16:10:57  web0
  * @B javadoc fixes
