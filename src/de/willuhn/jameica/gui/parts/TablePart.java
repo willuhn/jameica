@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.47 $
- * $Date: 2005/09/01 21:14:02 $
+ * $Revision: 1.48 $
+ * $Date: 2006/02/20 14:46:35 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -629,10 +629,15 @@ public class TablePart implements Part
           editor.setEditor(newText, item, index);
 
           // Wir deaktivieren den Default-Button fuer den Zeitraum der Bearbeitung
-          
           Button b = GUI.getShell().getDefaultButton();
-          final boolean enabled = b != null && b.getEnabled();
-          if (b != null) b.setEnabled(false);
+          final boolean enabled;
+          if (b != null && !b.isDisposed() && b.isEnabled())
+          {
+            enabled = b.getEnabled();
+            b.setEnabled(false);
+          }
+          else
+            enabled = false;
 
           newText.addFocusListener(new FocusAdapter()
           {
@@ -679,7 +684,7 @@ public class TablePart implements Part
               finally
               {
                 Button b = GUI.getShell().getDefaultButton();
-                if (b != null)
+                if (b != null && !b.isDisposed())
                   b.setEnabled(enabled);
               }
             }
@@ -1039,6 +1044,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.48  2006/02/20 14:46:35  web0
+ * @B dispose check
+ *
  * Revision 1.47  2005/09/01 21:14:02  web0
  * *** empty log message ***
  *
