@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/02/06 17:15:49 $
+ * $Revision: 1.3 $
+ * $Date: 2006/02/20 22:29:07 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -40,7 +40,7 @@ public class BackgroundTaskMonitor extends ProgressBar
    */
   private final static DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-  private final static int TIMEOUT = 15 * 1000;
+  private final static int TIMEOUT = 30 * 1000;
   private static boolean CANCEL_TIMEOUT = false;
   
   private boolean started = false;
@@ -191,6 +191,9 @@ public class BackgroundTaskMonitor extends ProgressBar
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
+ * Revision 1.3  2006/02/20 22:29:07  web0
+ * @N longer timeout
+ *
  * Revision 1.2  2006/02/06 17:15:49  web0
  * @B bug 179
  *
