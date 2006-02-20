@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/02/20 22:29:07 $
+ * $Revision: 1.4 $
+ * $Date: 2006/02/20 23:30:29 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -133,7 +133,7 @@ public class BackgroundTaskMonitor extends ProgressBar
           GUI.getDisplay().timerExec(TIMEOUT,new Runnable() {
             public void run()
             {
-              if (!started || CANCEL_TIMEOUT)
+              if (!started || CANCEL_TIMEOUT || !GUI.getView().snappedIn())
                 return;
               try
               {
@@ -191,6 +191,9 @@ public class BackgroundTaskMonitor extends ProgressBar
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
+ * Revision 1.4  2006/02/20 23:30:29  web0
+ * *** empty log message ***
+ *
  * Revision 1.3  2006/02/20 22:29:07  web0
  * @N longer timeout
  *
