@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/11/07 23:03:47 $
+ * $Revision: 1.8 $
+ * $Date: 2006/02/20 17:58:35 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -24,9 +24,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.vafada.swtcalendar.SWTCalendar;
 
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog, der einen Kalender enthaelt.
@@ -75,7 +78,7 @@ public class CalendarDialog extends AbstractDialog {
     comp = new Composite(parent,SWT.NONE);
     comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setBackground(Color.BACKGROUND.getSWTColor());
-    comp.setLayout(new GridLayout(1,false));
+    comp.setLayout(new GridLayout());
 
 		if (text != null && text.length() > 0)
 		{
@@ -96,7 +99,22 @@ public class CalendarDialog extends AbstractDialog {
       public void mouseDoubleClick(MouseEvent e)
       {
         date = cal.getCalendar().getTime();
-        // date = e.getCalendar().getTime();
+        close();
+      }
+    });
+    
+    // BUGZILLA 201
+    ButtonArea buttons = new ButtonArea(comp,2);
+    buttons.addButton(Application.getI18n().tr("Übernehmen"),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        date = cal.getCalendar().getTime();
+        close();
+      }
+    },null,false);
+    buttons.addButton(Application.getI18n().tr("Abbrechen"), new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
         close();
       }
     });
@@ -113,6 +131,9 @@ public class CalendarDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: CalendarDialog.java,v $
+ * Revision 1.8  2006/02/20 17:58:35  web0
+ * @B bug 201
+ *
  * Revision 1.7  2005/11/07 23:03:47  web0
  * *** empty log message ***
  *
