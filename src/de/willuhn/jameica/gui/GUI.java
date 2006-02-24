@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.91 $
- * $Date: 2006/02/06 17:15:49 $
+ * $Revision: 1.92 $
+ * $Date: 2006/02/24 00:42:27 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -774,7 +774,6 @@ public class GUI implements ApplicationController
             }
             finally
             {
-              if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_DONE);
               getStatusBar().stopProgress();
             }
           }
@@ -787,6 +786,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.92  2006/02/24 00:42:27  web0
+ * *** empty log message ***
+ *
  * Revision 1.91  2006/02/06 17:15:49  web0
  * @B bug 179
  *
