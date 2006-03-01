@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.19 $
- * $Date: 2006/01/09 23:55:41 $
+ * $Revision: 1.20 $
+ * $Date: 2006/03/01 15:20:13 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -305,6 +305,7 @@ public final class PluginLoader
 		Manifest manifest = container.getManifest();
 
 		Application.getCallback().getStartupMonitor().setStatusText("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
+    Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
 
 		try
 		{
@@ -617,6 +618,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.20  2006/03/01 15:20:13  web0
+ * @N more debug output while booting
+ *
  * Revision 1.19  2006/01/09 23:55:41  web0
  * *** empty log message ***
  *

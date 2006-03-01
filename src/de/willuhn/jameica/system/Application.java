@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.51 $
- * $Date: 2006/01/18 18:40:21 $
+ * $Revision: 1.52 $
+ * $Date: 2006/03/01 15:20:13 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Properties;
 import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
@@ -171,7 +173,29 @@ public final class Application {
 			Logger.warn("unable to detect Jameica Version number");
 		}
 
-		try
+    if (Logger.getLevel().getValue() == Level.DEBUG.getValue())
+    {
+      Properties p = System.getProperties();
+      Enumeration e = p.keys();
+      while (e.hasMoreElements())
+      {
+        String key = (String) e.nextElement();
+        Logger.debug(key + ": " + System.getProperty(key));
+      }
+    }
+    else
+    {
+      Logger.info("os.arch       : " + System.getProperty("os.arch"));
+      Logger.info("os.name       : " + System.getProperty("os.name"));
+      Logger.info("os.version    : " + System.getProperty("os.version"));
+      Logger.info("java.version  : " + System.getProperty("java.version"));
+      Logger.info("java.vendor   : " + System.getProperty("java.vendor"));
+      Logger.info("user.name     : " + System.getProperty("user.name"));
+      Logger.info("user.home     : " + System.getProperty("user.home"));
+      Logger.info("file.encoding : " + System.getProperty("file.encoding"));
+    }
+
+    try
 		{
 			JarFile jar = new JarFile("jameica.jar");
 			java.util.jar.Manifest mf = jar.getManifest();
@@ -583,6 +607,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.52  2006/03/01 15:20:13  web0
+ * @N more debug output while booting
+ *
  * Revision 1.51  2006/01/18 18:40:21  web0
  * @N Redesign des Background-Task-Handlings
  *
