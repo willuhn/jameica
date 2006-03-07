@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.46 $
- * $Date: 2005/11/18 12:14:12 $
+ * $Revision: 1.47 $
+ * $Date: 2006/03/07 18:24:04 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,6 @@
 package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
-import java.text.DateFormat;
-import java.util.Date;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -27,16 +25,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ProgressBar;
 
-import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.GenericObject;
-import de.willuhn.datasource.pseudo.PseudoIterator;
-import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.internal.parts.LogList;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
-import de.willuhn.logging.Message;
-import de.willuhn.logging.targets.Target;
-import de.willuhn.util.History;
 
 /**
  * Bildet die Statusleiste der Anwendung ab.
@@ -53,26 +45,14 @@ public class StatusBar {
 		private ProgressBar progress;
 		private ProgressBar noProgress;
   
-  private History lastActionMessages;
-
-  private TablePart table    = null;
-  private Target liveTarget  = null;
-	private boolean statusIn   = false;
-	private boolean actionIn   = false;
+	private boolean snapIn     = false;
   
-  private static DateFormat df = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Application.getConfig().getLocale());
-
   /**
    * Erzeugt eine neue Statusleiste.
    * @param parent Das Composite, in den die Statusbar gemalt werden soll.
    */
-  protected StatusBar(Composite parent) {
-
-    liveTarget = new LiveTarget();
-    Logger.addTarget(liveTarget);
-
-		// init lastActionMessage queue
-		lastActionMessages = new History(20);
+  protected StatusBar(Composite parent)
+  {
 
 		status = new Composite(parent, SWT.BORDER);
 		GridData data = new GridData();
@@ -115,73 +95,54 @@ public class StatusBar {
 		statusText = new CLabel(tComp, SWT.SHADOW_IN);
 		statusText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		statusText.setText("");
-		statusText.setToolTipText(Application.getI18n().tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen."));
-		statusText.addMouseListener(new MouseAdapter()
-		{
-			public void mouseUp(MouseEvent e)
-			{
-				if (e.button != 1)
-				{
-					// Bei rechter oder mittlerer Maustaste machen wir nur den Text leer
-					setStatusText("");
-					return;
-				}
-        
-        if (GUI.getView().snappedIn())
-          GUI.getView().snapOut();
-
-				if (actionIn)
-				{
-					// huh, die andere Seite ist schon offen, machen wir erstmal zu
-					actionIn = false;
-				}
-				if (statusIn)
-				{
-					// wir werden schon angezeigt, dann zoomen wir uns wieder raus
-					statusIn = false;
-					return;					
-				}
-				showLastMessages(Logger.getLastLines());
-				statusIn = true;
-			}
-		});
 
     actionText = new CLabel(tComp, SWT.SHADOW_IN);
     GridData at = new GridData(GridData.FILL_HORIZONTAL);
 		actionText.setAlignment(SWT.RIGHT);
     actionText.setLayoutData(at);
     actionText.setText("");
-		actionText.setToolTipText(Application.getI18n().tr("Klicken Sie hier, um die letzten Meldungen der Anwendung anzuzeigen."));
-    actionText.addMouseListener(new MouseAdapter()
+
+
+    MouseAdapter ma = new MouseAdapter()
     {
       public void mouseUp(MouseEvent e)
       {
-				if (e.button != 1)
-				{
-					// Bei rechter oder mittlerer Maustaste machen wir nur den Text leer
-					setSuccessText("");
-					return;
-				}
-
+        if (e.button != 1)
+        {
+          // Bei rechter oder mittlerer Maustaste machen wir nur den Text leer
+          setStatusText("");
+          return;
+        }
+        
         if (GUI.getView().snappedIn())
           GUI.getView().snapOut();
 
-        if (statusIn)
-				{
-					// huh, die andere Seite ist schon offen, machen wir erstmal zu
-					statusIn = false;
-				}
-				if (actionIn)
-				{
-					// wir werden schon angezeigt, dann zoomen wir uns wieder raus
-					actionIn = false;
-					return;					
-				}
-				showLastMessages(lastActionMessages.toArray(new String[lastActionMessages.size()]));
-				actionIn = true;
+        if (snapIn)
+        {
+          // wir werden schon angezeigt, dann zoomen wir uns wieder raus
+          snapIn = false;
+          return;         
+        }
+        try
+        {
+          LogList list = new LogList();
+          list.paint(GUI.getView().getSnapin());
+          GUI.getView().snapIn();
+          snapIn = true;
+        }
+        catch (RemoteException re)
+        {
+          Logger.error("unable to display log list",re);
+          setErrorText(Application.getI18n().tr("Fehler beim Anzeigen der System-Meldungen"));
+        }
       }
-    });
-    
+    };
+
+    String s = Application.getI18n().tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen.");
+    statusText.setToolTipText(s);
+    statusText.addMouseListener(ma);
+    actionText.setToolTipText(s);
+    actionText.addMouseListener(ma);
 	}
 	
 	/**
@@ -262,9 +223,6 @@ public class StatusBar {
     if (message == null)
       return;
 
-    if (!"".equals(message))
-      lastActionMessages.push("[" + df.format(new Date()) + "] " + message);
-
 		final long currentClick = System.currentTimeMillis();
     GUI.getDisplay().asyncExec(new Runnable() {
       public void run() {
@@ -289,139 +247,14 @@ public class StatusBar {
     });
   }
 	private long lastClick;
-
-  /**
-   * Zeigt die letzten Meldungen an.
-   * @param list Liste mit den letzten Meldungen.
-   */
-  private void showLastMessages(Object[] list)
-	{
-		LogObject[] logs = new LogObject[list.length];
-		for (int i=0;i<list.length;++i)
-		{
-			logs[i] = new LogObject(list[i].toString());
-		}
-
-		Composite snapin = GUI.getView().getSnapin();
-
-		try
-    {
-      GenericIterator elements = PseudoIterator.fromArray(logs);
-      table = new TablePart(elements,null);
-      table.setSummary(false);
-      table.addColumn(Application.getI18n().tr("Meldungen"),"foo");
-      table.paint(snapin);
-      table.setTopIndex(elements.size() - 1); //zum Ende scrollen
-      GUI.getView().snapIn();
-    }
-    catch (RemoteException re) {
-      Logger.error("error while initializing log table");
-    }
-
-	}
-	
-	/**
-	 * Kleines Hilfsobjekt zum Anzeigen der Log-Meldungen in einer Tabelle.
-   */
-  private static class LogObject implements GenericObject
-	{
-
-		private String message;
-
-		/**
-		 * ct.
-     * @param message
-     */
-    private LogObject(String message)
-		{
-			this.message = message;
-		}
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
-     */
-    public Object getAttribute(String name) throws RemoteException
-    {
-      return message;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getID()
-     */
-    public String getID() throws RemoteException
-    {
-      return message;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-     */
-    public String getPrimaryAttribute() throws RemoteException
-    {
-      return "text";
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-     */
-    public boolean equals(GenericObject other) throws RemoteException
-    {
-      return false;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
-     */
-    public String[] getAttributeNames() throws RemoteException
-    {
-      return new String[] {"text"};
-    }
-	}
-
-
-  /**
-   * Das eigene Target fuegen wir an, um die Live-Aktualisierung des Logs im Snapin zu ermoeglichen.
-   */
-  private class LiveTarget implements Target
-  {
-
-    /**
-     * @see de.willuhn.logging.targets.Target#write(de.willuhn.logging.Message)
-     */
-    public void write(final Message message) throws Exception
-    {
-      if (table == null)
-        return;
-      GUI.getDisplay().asyncExec(new Runnable()
-      {
-        public void run()
-        {
-          try
-          {
-            table.addItem(new LogObject(message.toString()));
-            table.setTopIndex(table.size()-1); //zum Ende scrollen
-          }
-          catch (Exception e)
-          {
-            // ignore
-          }
-        }
-      });
-    }
-
-    /**
-     * @see de.willuhn.logging.targets.Target#close()
-     */
-    public void close() throws Exception
-    {
-    }
-  }
-
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.47  2006/03/07 18:24:04  web0
+ * @N Statusbar and logview redesign
+ *
  * Revision 1.46  2005/11/18 12:14:12  web0
  * @B dispose check
  *
