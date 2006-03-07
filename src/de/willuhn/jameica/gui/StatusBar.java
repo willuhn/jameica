@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.47 $
- * $Date: 2006/03/07 18:24:04 $
+ * $Revision: 1.48 $
+ * $Date: 2006/03/07 22:43:14 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,9 +23,12 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 
 import de.willuhn.jameica.gui.internal.parts.LogList;
+import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -125,8 +128,16 @@ public class StatusBar {
         }
         try
         {
-          LogList list = new LogList();
-          list.paint(GUI.getView().getSnapin());
+          Panel panel = new Panel(Application.getI18n().tr("System-Meldungen"),new LogList());
+          panel.addMinimizeListener(new Listener() {
+            public void handleEvent(Event event)
+            {
+              if (GUI.getView().snappedIn())
+                GUI.getView().snapOut();
+              snapIn = false;
+            }
+          });
+          panel.paint(GUI.getView().getSnapin());
           GUI.getView().snapIn();
           snapIn = true;
         }
@@ -252,6 +263,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.48  2006/03/07 22:43:14  web0
+ * *** empty log message ***
+ *
  * Revision 1.47  2006/03/07 18:24:04  web0
  * @N Statusbar and logview redesign
  *

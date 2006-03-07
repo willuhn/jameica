@@ -8,8 +8,7 @@
 		nützliche Informationen über die gerade ausgeführten Anweisungen angezeigt.
 	</li>
 	<li>
-		Klicken Sie in den rechten Bereich der Statusleiste um eine Liste
-		der letzten Meldungen oder in den linken Bereich um einen Auszug
-		des System-Protokolls zu öffnen.
+		Klicken Sie in die Statusleiste, um eine Liste der letzen System-Meldungen
+		zu öffnen.
 	</li>
 </form>
