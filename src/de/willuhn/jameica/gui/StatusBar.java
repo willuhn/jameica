@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.48 $
- * $Date: 2006/03/07 22:43:14 $
+ * $Revision: 1.49 $
+ * $Date: 2006/03/07 23:00:55 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -128,7 +128,7 @@ public class StatusBar {
         }
         try
         {
-          Panel panel = new Panel(Application.getI18n().tr("System-Meldungen"),new LogList());
+          Panel panel = new Panel(Application.getI18n().tr("System-Meldungen"),new LogList(),false);
           panel.addMinimizeListener(new Listener() {
             public void handleEvent(Event event)
             {
@@ -263,6 +263,9 @@ public class StatusBar {
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.49  2006/03/07 23:00:55  web0
+ * @C no border around log panel
+ *
  * Revision 1.48  2006/03/07 22:43:14  web0
  * *** empty log message ***
  *
