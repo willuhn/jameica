@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/LogList.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/03/07 18:24:04 $
+ * $Revision: 1.2 $
+ * $Date: 2006/03/07 22:38:02 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -20,8 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.TableItem;
@@ -35,6 +33,8 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
+import de.willuhn.jameica.gui.internal.dialogs.LogDetailDialog;
+import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -68,9 +68,11 @@ public class LogList extends TablePart
   public LogList() throws RemoteException
   {
     super(init(), new DetailAction());
-    this.target = new LiveTarget();
 
-    this.addColumn(Application.getI18n().tr("Level"),"level");
+    this.target = new LiveTarget();
+    Logger.addTarget(this.target);
+
+    this.addColumn(Application.getI18n().tr("Priorität"),"level");
     this.addColumn(Application.getI18n().tr("Datum"),"date", new DateFormatter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")));
     this.addColumn(Application.getI18n().tr("Text"),"text");
     this.setMulti(false);
@@ -99,7 +101,7 @@ public class LogList extends TablePart
     });
 
     ContextMenu menu = new ContextMenu();
-    // menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Öffnen"),new DetailAction()));
+    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Öffnen"),new DetailAction()));
     menu.addItem(new ContextMenuItem(Application.getI18n().tr("Speichern unter..."), new ExportAction()));
     this.setContextMenu(menu);
   }
@@ -127,37 +129,9 @@ public class LogList extends TablePart
    */
   public synchronized void paint(Composite parent) throws RemoteException
   {
-    Logger.addTarget(this.target);
-    parent.addDisposeListener(new DisposeListener()
-    {
-      public void widgetDisposed(DisposeEvent e)
-      {
-        // TODO Wird noch nicht ausgeloest.
-        try
-        {
-          if (target != null)
-          {
-            Logger.debug("removing live target from logger");
-            Logger.removeTarget(target);
-          }
-          
-        }
-        catch (Throwable t)
-        {
-          Logger.error("unable to remove live target from logger",t);
-        }
-        finally
-        {
-          target = null;
-        }
-      }
-    });
     super.paint(parent);
     LogList.this.setTopIndex(LogList.this.size()-1); //zum Ende scrollen
   }
-  
-  
-  
   
   /**
    * Aktion, die beim Doppelklick auf ein Ereignis aufgerufen wird.
@@ -171,7 +145,26 @@ public class LogList extends TablePart
      */
     public void handleAction(Object context) throws ApplicationException
     {
-      // TODO Detail-Dialog fehlt noch
+      if (context == null || !(context instanceof LogObject))
+        return;
+      Message m = ((LogObject)context).message;
+      LogDetailDialog d = new LogDetailDialog(m,LogDetailDialog.POSITION_MOUSE);
+      try
+      {
+        d.open();
+      }
+      catch (ApplicationException ae)
+      {
+        throw ae;
+      }
+      catch (OperationCanceledException oce)
+      {
+        return;
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to display message details",e);
+      }
     }
     
   }
@@ -319,9 +312,12 @@ public class LogList extends TablePart
             LogList.this.addItem(new LogObject(message));
             LogList.this.setTopIndex(LogList.this.size()-1); //zum Ende scrollen
           }
-          catch (Exception e)
+          catch (Throwable t)
           {
-            // ignore
+            // Wenn ein Fehler kommt, entfernen wir uns vom Logger.
+            // Das passiert z.Bsp. ganz bewusst, wenn die Tabelle disposed wird
+            Logger.debug("removing live target from logger");
+            Logger.removeTarget(LiveTarget.this);
           }
         }
       });
@@ -341,6 +337,9 @@ public class LogList extends TablePart
 
 /*********************************************************************
  * $Log: LogList.java,v $
+ * Revision 1.2  2006/03/07 22:38:02  web0
+ * @N LogDetailView
+ *
  * Revision 1.1  2006/03/07 18:24:04  web0
  * @N Statusbar and logview redesign
  *
