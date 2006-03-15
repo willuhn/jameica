@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.50 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.51 $
+ * $Date: 2006/03/15 16:36:18 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -66,11 +66,11 @@ public class StatusBar implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
-		this.status = new Composite(parent, SWT.BORDER);
+		this.status = new Composite(parent, SWT.NONE);
 		GridData data = new GridData();
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = 18;
+		data.heightHint = 20;
 		status.setLayoutData(data);
 
     GridLayout layout = new GridLayout(2,false);
@@ -83,7 +83,7 @@ public class StatusBar implements Part
 		progressComp = new Composite(status, SWT.NONE);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.widthHint = 60;
-		gd.heightHint = 16;
+		gd.heightHint = 18;
 		progressComp.setLayoutData(gd);
 		progressStack = new StackLayout();
 		progressComp.setLayout(progressStack);
@@ -96,7 +96,7 @@ public class StatusBar implements Part
 
     int size = this.items.size();
 
-		Composite tComp = new Composite(status,SWT.NONE);
+		Composite tComp = new Composite(status,SWT.BORDER);
 		tComp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout tgd = new GridLayout((2 * size) - 1,false);
 		tgd.marginHeight = 0;
@@ -177,6 +177,9 @@ public class StatusBar implements Part
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.51  2006/03/15 16:36:18  web0
+ * @C changed border style
+ *
  * Revision 1.50  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
