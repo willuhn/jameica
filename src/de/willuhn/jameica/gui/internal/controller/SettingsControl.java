@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/08/25 21:18:24 $
+ * $Revision: 1.15 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,7 @@ import de.willuhn.jameica.gui.internal.parts.PluginList;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Config;
 import de.willuhn.logging.Level;
@@ -397,7 +398,7 @@ public class SettingsControl extends AbstractControl
 			LocaleObject lo = (LocaleObject) getLocale().getValue();
 			Application.getConfig().setLocale(lo.locale);
 
-			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen gespeichert."));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
 			
 			SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
 			d.setTitle(i18n.tr("Neustart erforderlich"));
@@ -406,12 +407,12 @@ public class SettingsControl extends AbstractControl
     }
     catch (ApplicationException ae)
     {
-      GUI.getStatusBar().setErrorText(ae.getMessage());
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
     }
     catch (Exception e)
     {
     	Logger.error("error while writing config",e);
-			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Speichern der Einstellungen."));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Speichern der Einstellungen."),StatusBarMessage.TYPE_ERROR));
     }
   	
   }
@@ -443,13 +444,13 @@ public class SettingsControl extends AbstractControl
       Application.getConfig().setProxyHost(null);
       Application.getConfig().setProxyPort(-1);
 
-			GUI.getStatusBar().setSuccessText(i18n.tr("Einstellungen zurückgesetzt."));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen zurückgesetzt."),StatusBarMessage.TYPE_SUCCESS));
 			new de.willuhn.jameica.gui.internal.action.Settings().handleAction(null);
   	}
   	catch (Exception e)
   	{
   		Logger.error("error while restoring settings",e);
-			GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Zurücksetzen"));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Zurücksetzen der Einstellungen."),StatusBarMessage.TYPE_ERROR));
   	}
   	
   }
@@ -580,6 +581,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.15  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.14  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *

@@ -1,12 +1,15 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/02/11 09:33:48 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2006/03/15 16:25:32 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
-****************************************************************************/
+ * Copyright (c) by willuhn.webdesign
+ * All rights reserved
+ *
+ ****************************************************************************/
 package de.willuhn.jameica.messaging;
 
 import java.lang.reflect.Constructor;
@@ -51,7 +54,7 @@ public final class MessagingFactory
       return;
     }
 
-    Logger.info("starting worker thread");
+    Logger.info("starting messaging worker thread");
     worker = new Worker();
     worker.start();
 
@@ -81,12 +84,25 @@ public final class MessagingFactory
       }
     }
   }
+  
+  /**
+   * Registriert einen Nachrichten-Consumer manuell.
+   * @param consumer zu registrierender Consumer.
+   */
+  public void registerMessageConsumer(MessageConsumer consumer)
+  {
+    if (consumer == null)
+      return;
+    Logger.info("registering message consumer " + consumer.getClass().getName());
+    consumers.add(consumer);
+  }
 
   /**
    * Beendet die Messaging-Factory.
    */
   public void shutDown()
   {
+    Logger.info("shutting down messaging factory");
     worker.shutDown();
 
     try {
@@ -100,17 +116,26 @@ public final class MessagingFactory
       Logger.error("error while waiting for worker shutdown");
       worker.interrupt();
     }
+    Logger.info("messaging factory shut down");
     this.consumers = null;
   }
 
   /**
    * Sendet eine Nachricht an alle Nachrichtenverbraucher.
    * @param message die zu versendende Nachricht.
-   * @throws QueueFullException wenn die maximale Kapazitaet der Nachrichtenwarteschlange erreicht ist.
    */
-  public synchronized void sendMessage(Message message) throws QueueFullException
+  public synchronized void sendMessage(Message message)
   {
-    worker.queueMessage(message);
+    if (message == null)
+      return;
+    try
+    {
+      worker.queueMessage(message);
+    }
+    catch (Queue.QueueFullException e)
+    {
+      Logger.error("unable to send message " + message.toString() + " - queue full");
+    }
   }
 
   /**
@@ -199,16 +224,33 @@ public final class MessagingFactory
 
         msg = (Message) queue.pop();
 
-        Logger.info("sending message " + msg.toString());
+        Logger.debug("sending message " + msg.toString());
         MessageConsumer consumer = null;
         synchronized (consumers)
         {
+
+          Class current = msg.getClass();
+
           for (int i=0;i<consumers.size();++i)
           {
             consumer = (MessageConsumer) consumers.get(i);
+            Class[] expected = consumer.getExpectedMessageTypes();
+            boolean send = expected == null;
+            if (expected != null)
+            {
+              for (int j=0;j<expected.length;++j)
+              {
+                if (current == expected[j])
+                {
+                  send = true;
+                  break;
+                }
+              }
+            }
             try
             {
-              consumer.handleMessage(msg);
+              if (send)
+                consumer.handleMessage(msg);
             }
             catch (Throwable t)
             {
@@ -231,6 +273,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.2  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.1  2005/02/11 09:33:48  willuhn
  * @N messaging system
  *

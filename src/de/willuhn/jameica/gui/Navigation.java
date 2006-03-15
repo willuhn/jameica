@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.30 $
- * $Date: 2005/05/30 12:01:33 $
+ * $Revision: 1.31 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -250,8 +251,7 @@ public class Navigation implements Part
     }
     catch (ApplicationException e)
     {
-      Logger.error("error while selecting navigation item",e);
-      GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Ausführen"));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
     }
 	}
 }
@@ -259,6 +259,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.31  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.30  2005/05/30 12:01:33  web0
  * @R removed gui packages from rmic.xml
  *

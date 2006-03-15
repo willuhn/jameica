@@ -1,12 +1,12 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Certificate.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/06/27 11:45:11 $
+ * $Revision: 1.5 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
- * Copyright (c) by  bbv AG
+ * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
  **********************************************************************/
@@ -112,6 +112,9 @@ public class Certificate
 
 /*********************************************************************
  * $Log: Certificate.java,v $
+ * Revision 1.5  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.4  2005/06/27 11:45:11  web0
  * *** empty log message ***
  *

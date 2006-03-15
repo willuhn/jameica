@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/08/30 22:38:10 $
+ * $Revision: 1.2 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -109,7 +111,7 @@ public class Button implements Part
             }
             catch (ApplicationException e)
             {
-              GUI.getStatusBar().setErrorText(e.getMessage());
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getMessage(),StatusBarMessage.TYPE_ERROR));
             }
           }
         });
@@ -122,6 +124,9 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
+ * Revision 1.2  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.1  2005/08/30 22:38:10  web0
  * @N new button
  *

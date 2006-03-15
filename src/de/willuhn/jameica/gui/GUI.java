@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.92 $
- * $Date: 2006/02/24 00:42:27 $
+ * $Revision: 1.93 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,7 @@ import de.willuhn.jameica.gui.style.StyleEngine;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
@@ -170,8 +171,12 @@ public class GUI implements ApplicationController
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.horizontalSpan = 2;
       bottom.setLayoutData(gd);
+      
       Logger.info("adding status panel");
-      addStatusBar(bottom);
+      this.statusBar = new StatusBar();
+      this.statusBar.addItem(new StatusBarCalendarItem());
+      this.statusBar.addItem(new StatusBarTextItem());
+      this.statusBar.paint(bottom);
 
       // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
       // hinzu.
@@ -196,9 +201,8 @@ public class GUI implements ApplicationController
       position();
       Logger.info("open shell");
       getShell().open();
-
-      getStatusBar().setStatusText(Application.getI18n().tr("startup finished"));
       
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Jameica erfolgreich gestartet"),StatusBarMessage.TYPE_SUCCESS));
       loop();
     }
     catch (ApplicationException ae)
@@ -304,15 +308,6 @@ public class GUI implements ApplicationController
 
 
 	/**
-	 * Erzeugt die untere Status-Leiste.
-	 * @param parent
-	 */
-	private void addStatusBar(Composite parent)
-	{
-		statusBar = new StatusBar(parent);
-	}
-
-	/**
 	 * Startet die vorherige View. Existiert keine solche, kehrt die Funktion
 	 * tatenlos zurueck.
 	 */
@@ -393,7 +388,7 @@ public class GUI implements ApplicationController
 					catch (Throwable t)
 					{
 						Logger.error("error while unbind current view", t);
-            getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Beenden des aktuellen Dialogs"));
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Beenden des aktuellen Dialogs"),StatusBarMessage.TYPE_ERROR));
 					}
 
           // Die alte View ist entfernt, wir koennen sie jetzt
@@ -475,8 +470,8 @@ public class GUI implements ApplicationController
           }
 					catch (Throwable t)
 					{
-            getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Öffnen des Dialogs"));
-						Logger.error("error while loading view " + className,t);
+            Logger.error("error while loading view " + className,t);
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Öffnen des Dialogs"),StatusBarMessage.TYPE_ERROR));
 						// Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
             // in der History landet
             gui.skipHistory = true;
@@ -786,6 +781,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.93  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.92  2006/02/24 00:42:27  web0
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/07/24 17:00:21 $
+ * $Revision: 1.13 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.TabGroup;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -123,7 +124,7 @@ public class Settings extends AbstractView
 		catch (RemoteException e)
 		{
 			Logger.error("error while reading locale settings",e);
-			GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Laden der Sprach-Einstellungen"));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Speichern der Sprach-Einstellungen."),StatusBarMessage.TYPE_ERROR));
 		}
 		colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
 		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWidgetBG());
@@ -178,6 +179,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.13  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.12  2005/07/24 17:00:21  web0
  * *** empty log message ***
  *

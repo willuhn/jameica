@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.49 $
- * $Date: 2006/03/07 23:00:55 $
+ * $Revision: 1.50 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -14,33 +14,28 @@
 package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 
-import de.willuhn.jameica.gui.internal.parts.LogList;
-import de.willuhn.jameica.gui.parts.Panel;
-import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
 
 /**
  * Bildet die Statusleiste der Anwendung ab.
  * @author willuhn
  */
-public class StatusBar {
+public class StatusBar implements Part
+{
 
-	private CLabel statusText;
-  private CLabel actionText;
+  private ArrayList items = new ArrayList();
+  
   private Composite status;
 
 	private StackLayout progressStack;
@@ -48,20 +43,34 @@ public class StatusBar {
 		private ProgressBar progress;
 		private ProgressBar noProgress;
   
-	private boolean snapIn     = false;
+	/**
+	 * ct.
+	 */
+	public StatusBar()
+  {
+    
+  }
   
   /**
-   * Erzeugt eine neue Statusleiste.
-   * @param parent Das Composite, in den die Statusbar gemalt werden soll.
+   * Fuegt der Statusbar ein neues Element hinzu.
+   * @param item das hinzufuegende Element.
    */
-  protected StatusBar(Composite parent)
+  public void addItem(StatusBarItem item)
   {
-
-		status = new Composite(parent, SWT.BORDER);
+    this.items.add(item);
+  }
+  
+  
+  /**
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
+   */
+  public void paint(Composite parent) throws RemoteException
+  {
+		this.status = new Composite(parent, SWT.BORDER);
 		GridData data = new GridData();
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = 20;
+		data.heightHint = 18;
 		status.setLayoutData(data);
 
     GridLayout layout = new GridLayout(2,false);
@@ -74,7 +83,7 @@ public class StatusBar {
 		progressComp = new Composite(status, SWT.NONE);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.widthHint = 60;
-		gd.heightHint = 18;
+		gd.heightHint = 16;
 		progressComp.setLayoutData(gd);
 		progressStack = new StackLayout();
 		progressComp.setLayout(progressStack);
@@ -85,75 +94,28 @@ public class StatusBar {
 		progressStack.topControl = noProgress;
 
 
+    int size = this.items.size();
 
 		Composite tComp = new Composite(status,SWT.NONE);
 		tComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout tgd = new GridLayout(2,true);
+		GridLayout tgd = new GridLayout((2 * size) - 1,false);
 		tgd.marginHeight = 0;
 		tgd.marginWidth = 0;
 		tgd.horizontalSpacing = 0;
 		tgd.verticalSpacing = 0;
 		tComp.setLayout(tgd);
-
-		statusText = new CLabel(tComp, SWT.SHADOW_IN);
-		statusText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		statusText.setText("");
-
-    actionText = new CLabel(tComp, SWT.SHADOW_IN);
-    GridData at = new GridData(GridData.FILL_HORIZONTAL);
-		actionText.setAlignment(SWT.RIGHT);
-    actionText.setLayoutData(at);
-    actionText.setText("");
-
-
-    MouseAdapter ma = new MouseAdapter()
+    
+    for (int i=0;i<size;++i)
     {
-      public void mouseUp(MouseEvent e)
+      StatusBarItem item = (StatusBarItem) this.items.get(i);
+      item.paint(tComp);
+      if (i < (size - 1))
       {
-        if (e.button != 1)
-        {
-          // Bei rechter oder mittlerer Maustaste machen wir nur den Text leer
-          setStatusText("");
-          return;
-        }
-        
-        if (GUI.getView().snappedIn())
-          GUI.getView().snapOut();
-
-        if (snapIn)
-        {
-          // wir werden schon angezeigt, dann zoomen wir uns wieder raus
-          snapIn = false;
-          return;         
-        }
-        try
-        {
-          Panel panel = new Panel(Application.getI18n().tr("System-Meldungen"),new LogList(),false);
-          panel.addMinimizeListener(new Listener() {
-            public void handleEvent(Event event)
-            {
-              if (GUI.getView().snappedIn())
-                GUI.getView().snapOut();
-              snapIn = false;
-            }
-          });
-          panel.paint(GUI.getView().getSnapin());
-          GUI.getView().snapIn();
-          snapIn = true;
-        }
-        catch (RemoteException re)
-        {
-          Logger.error("unable to display log list",re);
-          setErrorText(Application.getI18n().tr("Fehler beim Anzeigen der System-Meldungen"));
-        }
+        final Label sep = new Label(tComp, SWT.SEPARATOR | SWT.VERTICAL);
+        sep.setLayoutData(new GridData(GridData.FILL_BOTH));
       }
-    };
+    }
 
-    String s = Application.getI18n().tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen.");
-    statusText.setToolTipText(s);
-    statusText.addMouseListener(ma);
-    actionText.setToolTipText(s);
-    actionText.addMouseListener(ma);
 	}
 	
 	/**
@@ -188,81 +150,36 @@ public class StatusBar {
     });
 	}
 
-
-  /**
-   * Ersetzt den aktuellen Statustext links unten gegen den uebergebenen.
-   * @param message anzuzeigender Text.
-   */
-  public void setStatusText(final String message)
-	{
-		GUI.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-        if (statusText != null && !statusText.isDisposed())
-          statusText.setText(" " + (message == null ? "" : message));
-        if (status != null && !status.isDisposed())
-		    status.layout();
-			}
-		});
-	}
-
   /**
    * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
    * @param message anzuzeigender Text.
+   * Nachrichten sollten direkt ueber die MessagingFactory mit
+   * dem Nachrichtentyp StatusBarMessage gesendet werden.
    */
   public void setSuccessText(final String message)
   {
-    setActionText(message,Color.SUCCESS);
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(message,StatusBarMessage.TYPE_SUCCESS));
   }
 
   /**
    * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
    * Formatiert die Anzeige hierbei aber rot als Fehler.
    * @param message anzuzeigender Text.
+   * Nachrichten sollten direkt ueber die MessagingFactory mit
+   * dem Nachrichtentyp StatusBarMessage gesendet werden.
    */
   public void setErrorText(final String message)
   {
-    setActionText(message,Color.ERROR);
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(message,StatusBarMessage.TYPE_ERROR));
   }
-
-  /**
-   * Private Hilfs-Funktion, die den Action-Text setzt.
-   * @param message anzuzeigender Text.
-   * @param color Farbe.
-   */
-  private void setActionText(final String message, final Color color)
-  {
-    if (message == null)
-      return;
-
-		final long currentClick = System.currentTimeMillis();
-    GUI.getDisplay().asyncExec(new Runnable() {
-      public void run() {
-        if (actionText != null && !actionText.isDisposed())
-        actionText.setForeground(color.getSWTColor());
-        actionText.setText(message);
-				lastClick = currentClick;
-      }
-    });
-    GUI.getDisplay().asyncExec(new Runnable() {
-      public void run()
-      {
-        GUI.getDisplay().timerExec(10000,new Runnable()
-            {
-              public void run()
-              {
-                if (currentClick == lastClick && !actionText.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
-                  actionText.setText("");
-              }
-            });
-      }
-    });
-  }
-	private long lastClick;
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.50  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.49  2006/03/07 23:00:55  web0
  * @C no border around log panel
  *

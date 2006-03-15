@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.52 $
- * $Date: 2006/03/01 15:20:13 $
+ * $Revision: 1.53 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.jar.JarFile;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.messaging.LogMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
@@ -206,17 +207,6 @@ public final class Application {
 		{
 			Logger.warn("unable to read jar manifest, running uncompressed within debugger?");
 		}
-
-		// Migration
-		// Der PluginLoader ist in das Package "plugin" verschoben worden. Damit
-		// seine Einstellungen bei einem Update erhalten bleiben, benennen wir
-		// die properties-Datei ggf.
-    // TODO Migrationszeug kann irgendwann mal entfernt werden
-		File oldFile = new File(getConfig().getConfigDir() + "/de.willuhn.jameica.PluginLoader.properties");
-		File newFile = new File(getConfig().getConfigDir() + "/de.willuhn.jameica.plugin.PluginLoader.properties");
-		if (oldFile.exists() && !newFile.exists())
-			oldFile.renameTo(newFile);
-		// End Migration
 
 		// Proxy-Einstellungen checken
     String proxyHost = getConfig().getProxyHost();
@@ -417,6 +407,7 @@ public final class Application {
     try {
       app.messagingFactory = new MessagingFactory();
       app.messagingFactory.init();
+      app.messagingFactory.registerMessageConsumer(new LogMessageConsumer());
     }
     catch (Throwable t)
     {
@@ -607,6 +598,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.53  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.52  2006/03/01 15:20:13  web0
  * @N more debug output while booting
  *

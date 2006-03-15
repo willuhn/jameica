@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/LogList.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/03/07 22:38:02 $
+ * $Revision: 1.3 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,7 @@ import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Level;
@@ -211,7 +212,7 @@ public class LogList extends TablePart
         }
         
         FileCopy.copy(new File(Application.getConfig().getLogFile()),f,true);
-        GUI.getStatusBar().setSuccessText(Application.getI18n().tr("Log-Datei gespeichert"));
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Log-Datei gespeichert."),StatusBarMessage.TYPE_SUCCESS));
       }
       catch (ApplicationException ae)
       {
@@ -337,6 +338,9 @@ public class LogList extends TablePart
 
 /*********************************************************************
  * $Log: LogList.java,v $
+ * Revision 1.3  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.2  2006/03/07 22:38:02  web0
  * @N LogDetailView
  *

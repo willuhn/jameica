@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.9 $
- * $Date: 2004/11/05 20:00:44 $
- * $Author: willuhn $
+ * $Revision: 1.10 $
+ * $Date: 2006/03/15 16:25:32 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -28,9 +28,10 @@ import org.eclipse.swt.widgets.Widget;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -145,7 +146,7 @@ public class TreePart implements Part
     }
     catch (ApplicationException e)
     {
-    	GUI.getStatusBar().setErrorText(e.getMessage());
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getMessage(),StatusBarMessage.TYPE_ERROR));
     }
 	}
 
@@ -286,6 +287,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.10  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.9  2004/11/05 20:00:44  willuhn
  * @D javadoc fixes
  *

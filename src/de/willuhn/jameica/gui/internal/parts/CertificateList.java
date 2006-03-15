@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/07/24 17:00:20 $
+ * $Revision: 1.11 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.jameica.system.Application;
@@ -102,7 +103,7 @@ public class CertificateList extends TablePart
         catch (Exception e)
         {
           Logger.error("error while deleting certificate",e);
-          GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Löschen des Zertifikats"));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Löschen des Zertifikats."),StatusBarMessage.TYPE_ERROR));
         }
       }
     }));
@@ -256,6 +257,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.11  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.10  2005/07/24 17:00:20  web0
  * *** empty log message ***
  *

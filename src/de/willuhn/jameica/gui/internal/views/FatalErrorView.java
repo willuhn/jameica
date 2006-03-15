@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/FatalErrorView.java,v $
- * $Revision: 1.7 $
- * $Date: 2006/01/05 16:10:46 $
+ * $Revision: 1.8 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.parts.TextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.logging.Message;
@@ -99,7 +100,7 @@ public class FatalErrorView extends AbstractView
 					}
 					final String log = "\n" + i18n.tr("Auszug aus dem Systemprotokoll") + ":\n" + sb.toString();
 					cb.setContents(new Object[]{(s + log)}, new Transfer[]{textTransfer});
-          GUI.getStatusBar().setSuccessText(i18n.tr("Stacktrace in Zwischenablage kopiert"));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Stacktrace in Zwischenablage kopiert."),StatusBarMessage.TYPE_SUCCESS));
         }
       },null,true);
 		}
@@ -129,6 +130,9 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
+ * Revision 1.8  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.7  2006/01/05 16:10:46  web0
  * @C error handling
  *

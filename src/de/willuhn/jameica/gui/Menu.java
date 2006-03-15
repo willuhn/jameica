@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.30 $
- * $Date: 2005/08/25 21:18:24 $
+ * $Revision: 1.31 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.GenericIterator;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -148,8 +149,7 @@ public class Menu
 				}
 				catch (Exception e)
 				{
-					Logger.error("error while executing menu entry",e);
-					GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Ausführen"));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
 				}
 			}
 		});
@@ -176,6 +176,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.31  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.30  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *

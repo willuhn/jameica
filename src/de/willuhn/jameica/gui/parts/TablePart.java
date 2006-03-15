@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.48 $
- * $Date: 2006/02/20 14:46:35 $
+ * $Revision: 1.49 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -53,6 +53,7 @@ import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
@@ -523,7 +524,7 @@ public class TablePart implements Part
           }
           catch (ApplicationException ae)
           {
-          	GUI.getStatusBar().setErrorText(ae.getMessage());
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
           }
         }
       }
@@ -664,7 +665,6 @@ public class TablePart implements Part
                     else
                       item.setForeground(index,color);
 
-                    GUI.getStatusBar().setSuccessText("");
                   }
                   catch (ApplicationException ae)
                   {
@@ -675,7 +675,7 @@ public class TablePart implements Part
                       msg = i18n.tr("Fehler beim Ändern des Wertes");
                       Logger.error("error while changing value",ae);
                     }
-                    GUI.getStatusBar().setErrorText(msg);
+                    Application.getMessagingFactory().sendMessage(new StatusBarMessage(msg,StatusBarMessage.TYPE_ERROR));
                     break;
                   }
                 }
@@ -1044,6 +1044,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.49  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.48  2006/02/20 14:46:35  web0
  * @B dispose check
  *

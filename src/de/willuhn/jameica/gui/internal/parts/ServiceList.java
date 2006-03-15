@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/07/14 22:58:36 $
+ * $Revision: 1.6 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import de.willuhn.jameica.gui.internal.dialogs.ServiceBindingDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
 import de.willuhn.jameica.system.Application;
@@ -70,7 +71,7 @@ public class ServiceList extends TablePart
           String[] host = s.split(":");
           ServiceSettings.setLookup(so.plugin.getClass(),so.serviceName,host[0],Integer.parseInt(host[1]));
           GUI.startView(GUI.getCurrentView().getClass().getName(),plugin); // Tabelle aktualisieren
-          GUI.getStatusBar().setSuccessText(Application.getI18n().tr("Server-Einstellungen gespeichert"));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Server-Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
         }
         catch (OperationCanceledException oce)
         {
@@ -79,7 +80,7 @@ public class ServiceList extends TablePart
         catch (Exception e)
         {
           Logger.error("error while entering service bindings",e);
-          GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Übernehmen der Server-Einstellungen"));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Übernehmen der Server-Einstellungen."),StatusBarMessage.TYPE_ERROR));
         }
         
       }
@@ -116,7 +117,7 @@ public class ServiceList extends TablePart
         catch (Exception e)
         {
           Logger.error("error while stopping service",e);
-          GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Stoppen des Service"));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Stoppen des Service."),StatusBarMessage.TYPE_ERROR));
         }
         if (!doIt) return;
 
@@ -126,17 +127,17 @@ public class ServiceList extends TablePart
           {
             try
             {
-              GUI.getStatusBar().setSuccessText(i18n.tr("Service wird gestoppt"));
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service wird gestoppt."),StatusBarMessage.TYPE_SUCCESS));
               GUI.getStatusBar().startProgress();
               ServiceObject so = (ServiceObject) context;
               so.service.stop(true);
               GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
-              GUI.getStatusBar().setSuccessText(i18n.tr("Service gestoppt"));
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestoppt."),StatusBarMessage.TYPE_SUCCESS));
             }
             catch (Exception e)
             {
-              GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Stoppen des Service"));
               Logger.error("Error while stopping service",e);
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Stoppen des Service."),StatusBarMessage.TYPE_ERROR));
             }
             finally
             {
@@ -176,17 +177,17 @@ public class ServiceList extends TablePart
           {
             try
             {
-              GUI.getStatusBar().setSuccessText(i18n.tr("Service wird gestartet"));
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service wird gestartet."),StatusBarMessage.TYPE_SUCCESS));
               GUI.getStatusBar().startProgress();
               ServiceObject so = (ServiceObject) context;
               so.service.start();
               GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
-              GUI.getStatusBar().setSuccessText(i18n.tr("Service gestartet"));
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestartet."),StatusBarMessage.TYPE_SUCCESS));
             }
             catch (Exception e)
             {
-              GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Starten des Service"));
               Logger.error("Error while starting service",e);
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Starten des Service."),StatusBarMessage.TYPE_ERROR));
             }
             finally
             {
@@ -286,7 +287,7 @@ public class ServiceList extends TablePart
       }
       catch (ApplicationException ae)
       {
-        GUI.getStatusBar().setErrorText(Application.getI18n().tr(ae.getMessage()));
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
       }
       catch (Exception e)
       {
@@ -377,6 +378,9 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.6  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.5  2005/07/14 22:58:36  web0
  * *** empty log message ***
  *

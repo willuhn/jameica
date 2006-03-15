@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/CertificateImport.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/12/13 19:49:24 $
+ * $Revision: 1.3 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
@@ -69,8 +70,8 @@ public class CertificateImport implements Action
     }
     catch (Exception e)
     {
-      Logger.error("error while adding certificate",e);
-      GUI.getStatusBar().setErrorText(Application.getI18n().tr("Fehler beim Importieren des Zertifikats"));
+      Logger.error("error while importing certificate",e);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Importieren des Zertifikats"),StatusBarMessage.TYPE_ERROR));
     }
   
   }
@@ -80,6 +81,9 @@ public class CertificateImport implements Action
 
 /*********************************************************************
  * $Log: CertificateImport.java,v $
+ * Revision 1.3  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.2  2005/12/13 19:49:24  web0
  * @B wrong filename extension in file dialog
  *

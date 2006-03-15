@@ -1,8 +1,8 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessageConsumer.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/02/11 09:33:48 $
- * $Author: willuhn $
+ * $Revision: 1.2 $
+ * $Date: 2006/03/15 16:25:32 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -19,6 +19,15 @@ package de.willuhn.jameica.messaging;
 public interface MessageConsumer
 {
   /**
+   * Wenn der Message-Consumer nur ganz bestimmte Nachrichten
+   * empfangen will, dann kann er hier die Liste der gewuenschten
+   * Arten angeben. Liefert die Funktion <code>null</code>,
+   * werden alle Nachrichten an den Consumer zugestellt.
+   * @return Liste der gewuenschten Nachrichtenarten.
+   */
+  public Class[] getExpectedMessageTypes();
+  
+  /**
    * Ueber diese Methode wird die Nachricht an den Verbraucher
    * zugestellt.
    * @param message die eigentliche Nachricht.
@@ -29,6 +38,9 @@ public interface MessageConsumer
 
 /*****************************************************************************
  * $Log: MessageConsumer.java,v $
+ * Revision 1.2  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.1  2005/02/11 09:33:48  willuhn
  * @N messaging system
  *

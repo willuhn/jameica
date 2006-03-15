@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/07/11 18:12:39 $
+ * $Revision: 1.7 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -22,14 +22,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.TextAreaInput;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
-import de.willuhn.util.I18N;
 
 /**
  * Abstrakte Klasse, die die Basis-Funktionalitaet zur Erstellung eines komplexen Dialogs
@@ -40,7 +39,6 @@ import de.willuhn.util.I18N;
 public abstract class Container
 {
 
-  private I18N i18n = null;
   private boolean fullSize = false;
   /**
    * ct.
@@ -50,7 +48,6 @@ public abstract class Container
   public Container(boolean fullSize)
   {
     this.fullSize = fullSize;
-    this.i18n = Application.getI18n();
   }
 
   /**
@@ -191,7 +188,7 @@ public abstract class Container
     catch (RemoteException e)
     {
     	Logger.error("error while adding part",e);
-      GUI.getStatusBar().setErrorText(i18n.tr("Fehler beim Anzeigen des Dialogs"));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen des Dialogs."),StatusBarMessage.TYPE_ERROR));
     }
   }
 
@@ -261,6 +258,9 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.7  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.6  2005/07/11 18:12:39  web0
  * *** empty log message ***
  *

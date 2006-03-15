@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenu.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/01/02 17:37:48 $
+ * $Revision: 1.6 $
+ * $Date: 2006/03/15 16:25:32 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -99,7 +100,7 @@ public class ContextMenu implements Part
 					}
 					catch (ApplicationException e)
 					{
-						GUI.getStatusBar().setErrorText(e.getMessage());
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getMessage(),StatusBarMessage.TYPE_ERROR));
 					}
         }
       });
@@ -135,6 +136,9 @@ public class ContextMenu implements Part
 
 /**********************************************************************
  * $Log: ContextMenu.java,v $
+ * Revision 1.6  2006/03/15 16:25:32  web0
+ * @N Statusbar refactoring
+ *
  * Revision 1.5  2006/01/02 17:37:48  web0
  * @N moved Velocity to Jameica
  *

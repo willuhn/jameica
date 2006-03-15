@@ -8,7 +8,8 @@
 		nützliche Informationen über die gerade ausgeführten Anweisungen angezeigt.
 	</li>
 	<li>
-		Klicken Sie in die Statusleiste, um eine Liste der letzen System-Meldungen
-		zu öffnen.
+		Klicken Sie in den rechten Bereich der Statusleiste, um eine Liste der letzen
+		System-Meldungen zu öffnen oder auf das Datum, um einen kleinen Kalender
+		anzuzeigen.
 	</li>
 </form>
