@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/08/29 15:25:25 $
+ * $Revision: 1.10 $
+ * $Date: 2006/03/20 23:37:04 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -58,7 +58,9 @@ public class CheckboxInput extends AbstractInput
    */
   public Object getValue()
   {
-  	return Boolean.valueOf(button.getSelection());
+    if (this.button != null && !this.button.isDisposed())
+      this.value = button.getSelection();
+  	return Boolean.valueOf(this.value);
   }
 
   /**
@@ -122,6 +124,9 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.10  2006/03/20 23:37:04  web0
+ * @B misc widget updates
+ *
  * Revision 1.9  2005/08/29 15:25:25  web0
  * @B bugfixing
  *

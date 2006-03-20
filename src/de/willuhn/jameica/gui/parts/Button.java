@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.3 $
+ * $Date: 2006/03/20 23:37:04 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -38,6 +38,8 @@ public class Button implements Part
   private Object context    = null;
   private boolean isDefault = false;
   private boolean enabled   = true;
+  
+  private org.eclipse.swt.widgets.Button button = null;
   
   /**
    * ct.
@@ -82,6 +84,8 @@ public class Button implements Part
   public void setEnabled(boolean enabled)
   {
     this.enabled = enabled;
+    if (this.button != null && !this.button.isDisposed())
+      this.button.setEnabled(this.enabled);
   }
   
   /**
@@ -89,7 +93,7 @@ public class Button implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
-    final org.eclipse.swt.widgets.Button button = GUI.getStyleFactory().createButton(parent);
+    button = GUI.getStyleFactory().createButton(parent);
     button.setText(this.title);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
@@ -124,6 +128,9 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
+ * Revision 1.3  2006/03/20 23:37:04  web0
+ * @B misc widget updates
+ *
  * Revision 1.2  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
