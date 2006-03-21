@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/StatusBarMessage.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.2 $
+ * $Date: 2006/03/21 22:52:53 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -66,11 +66,21 @@ public class StatusBarMessage implements Message
     return this.type;
   }
 
+  /**
+   * @see java.lang.Object#toString()
+   */
+  public String toString()
+  {
+    return "type " + getType() + ": " + getText();
+  }
 }
 
 
 /*********************************************************************
  * $Log: StatusBarMessage.java,v $
+ * Revision 1.2  2006/03/21 22:52:53  web0
+ * *** empty log message ***
+ *
  * Revision 1.1  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
