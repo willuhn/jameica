@@ -411,27 +411,27 @@
     <checksum file="${project.release}/${project.zipfilename.openbsd}" />
 		<echo message="Creating PGP signatures" />
 
-		<exec executable="kgpg" failonerror="true" timeout="60000">
-			<arg line="-S ${project.release}/${define.srcfilename}" />
+		<exec executable="gpg" failonerror="true" timeout="60000">
+			<arg line="-asb --use-agent ${project.release}/${define.srcfilename}" />
 		</exec>
 
-		<exec executable="kgpg" failonerror="true" timeout="60000">
-			<arg line="-S ${project.release}/${project.zipfilename}" />
+		<exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename}" />
 		</exec>
-		<exec executable="kgpg" failonerror="true" timeout="60000">
-			<arg line="-S ${project.release}/${project.zipfilename.win32}" />
+		<exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.win32}" />
 		</exec>
-		<exec executable="kgpg" failonerror="true" timeout="60000">
-			<arg line="-S ${project.release}/${project.zipfilename.linux}" />
+		<exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux}" />
 		</exec>
-		<exec executable="kgpg" failonerror="true" timeout="60000">
-			<arg line="-S ${project.release}/${project.zipfilename.linux-amd64}" />
+		<exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux-amd64}" />
 		</exec>
-		<exec executable="kgpg" failonerror="true" timeout="60000">
-			<arg line="-S ${project.release}/${project.zipfilename.macos}" />
+		<exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos}" />
 		</exec>
-    <exec executable="kgpg" failonerror="true" timeout="60000">
-      <arg line="-S ${project.release}/${project.zipfilename.openbsd}" />
+    <exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.openbsd}" />
     </exec>
 	</target>
 
