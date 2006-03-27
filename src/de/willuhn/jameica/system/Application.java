@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.53 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.54 $
+ * $Date: 2006/03/27 23:14:36 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -119,6 +119,19 @@ public final class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// LockFile erzeugen
+    // TODO: Mal das Locking via NIO checken
+    //    FileOutputStream fos = new FileOutputStream("test.txt");
+    //    FileLock lock = fos.getChannel().tryLock();
+    //    if (lock != null)
+    //    {
+    //      System.out.println("OK");
+    //      Thread.sleep(100 * 1000l);
+    //    }
+    //    else
+    //    {
+    //      System.err.println("Anwendung laeuft");
+    //    }
+
     File lock = new File(app.config.getWorkDir(),"jameica.lock");
     Logger.info("creating lockfile " + lock.getAbsolutePath());
 		try {
@@ -598,6 +611,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.54  2006/03/27 23:14:36  web0
+ * *** empty log message ***
+ *
  * Revision 1.53  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
