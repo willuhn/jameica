@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/08/04 22:17:26 $
+ * $Revision: 1.10 $
+ * $Date: 2006/03/28 23:04:06 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -193,6 +193,7 @@ public final class Wallet
    */
   private synchronized void read(String file, boolean forceNew) throws Exception
 	{
+    // TODO: Das alte Wallet-Format kann mal entfernt werden
     File fold = new File(file);
     File fnew = new File(file + (forceNew ? "" : "2"));
     
@@ -393,6 +394,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.10  2006/03/28 23:04:06  web0
+ * *** empty log message ***
+ *
  * Revision 1.9  2005/08/04 22:17:26  web0
  * @N migration to new wallet format (xml)
  * @B SWT layout bug on macos (GridLayout vs. FillLayout)
