@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.49 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.50 $
+ * $Date: 2006/03/30 22:22:51 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -895,6 +895,15 @@ public class TablePart implements Part
       }
     }
   }
+  
+  /**
+   * Sortiert die Datensaetze in der Tabelle anhand der aktuellen Spalte neu.
+   */
+  public void sort()
+  {
+    this.direction = !this.direction;
+    orderBy(this.sortedBy);
+  }
 
   /**
 	 * Sortiert die Tabelle nach der angegebenen Spaltennummer.
@@ -1044,6 +1053,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.50  2006/03/30 22:22:51  web0
+ * @B bug 217
+ *
  * Revision 1.49  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
