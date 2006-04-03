@@ -225,6 +225,8 @@
         <include name="jameica-icon-02.png"/>
 				<include name="COPYING"/>
 				<include name="README"/>
+        <include name="Jameica.icns"/>
+        <include name="Info.plist"/>
 			</fileset>
 		</copy>
 
@@ -248,6 +250,8 @@
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+        <exclude name="${define.projectname}/Jameica.icns"/>
+        <exclude name="${define.projectname}/Info.plist"/>
 			</zipfileset>
 		</zip>
 
@@ -271,6 +275,8 @@
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
+        <exclude name="${define.projectname}/Jameica.icns"/>
+        <exclude name="${define.projectname}/Info.plist"/>
 			</zipfileset>
 		</zip>
 
@@ -293,30 +299,38 @@
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+        <exclude name="${define.projectname}/Jameica.icns"/>
+        <exclude name="${define.projectname}/Info.plist"/>
 			</zipfileset>
 		</zip>
 
 		<!-- ZIP-File fuer MacOS -->
+    <mkdir dir="${project.tmp}/${define.projectname}.app" />
+    <copy todir="${project.tmp}/${define.projectname}.app">
+      <fileset dir="${project.release}/${define.projectname}">
+        <include name="${define.jarfilename}"/>
+        <include name="${define.jarfilename.macos}"/>
+        <include name="COPYING"/>
+        <include name="README"/>
+        <include name="Jameica.icns"/>
+        <include name="Info.plist"/>
+        <include name="jameica-macos.sh"/>
+        <include name="jameicaserver-macos.sh"/>
+        <include name="rcjameica"/>
+        <include name="jameica-icon-01.png"/>
+        <include name="jameica-icon-02.png"/>
+        <include name="plugins"/>
+        <include name="lib/**"/>
+        <exclude name="lib/swt/openbsd/**"/>
+        <exclude name="lib/swt/win32/**"/>
+        <exclude name="lib/swt/linux/**"/>
+        <exclude name="lib/swt/linux-amd64/**"/>
+      </fileset>
+    </copy>
 		<zip destfile="${project.release}/${project.zipfilename.macos}">
-			<zipfileset dir="${project.release}" filemode="755">
-				<include name="${define.projectname}" />
-				<include name="${define.projectname}/${define.jarfilename}"/>
-				<include name="${define.projectname}/${define.jarfilename.macos}"/>
-				<include name="${define.projectname}/COPYING"/>
-				<include name="${define.projectname}/README"/>
-				<include name="${define.projectname}/jameica-macos.sh"/>
-				<include name="${define.projectname}/jameicaserver-macos.sh"/>
-				<include name="${define.projectname}/rcjameica"/>
-        <include name="${define.projectname}/jameica-icon-01.png"/>
-        <include name="${define.projectname}/jameica-icon-02.png"/>
-				<include name="${define.projectname}/plugins"/>
-				<include name="${define.projectname}/lib/**"/>
-
-        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
-				<exclude name="${define.projectname}/lib/swt/win32/**"/>
-				<exclude name="${define.projectname}/lib/swt/linux/**"/>
-				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
-			</zipfileset>
+      <zipfileset dir="${project.tmp}" filemode="755">
+        <include name="${define.projectname}.app/**"/>
+      </zipfileset>
 		</zip>
 
     <!-- ZIP-File fuer OpenBSD -->
@@ -339,6 +353,8 @@
         <exclude name="${define.projectname}/lib/swt/win32/**"/>
         <exclude name="${define.projectname}/lib/swt/linux/**"/>
         <exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+        <exclude name="${define.projectname}/Jameica.icns"/>
+        <exclude name="${define.projectname}/Info.plist"/>
       </zipfileset>
     </zip>
 

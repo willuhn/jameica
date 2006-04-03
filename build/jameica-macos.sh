@@ -3,4 +3,6 @@
 # MacOS Start-Script fuer regulaeren Standalone-Betrieb.
 # Jameica wird hierbei mit GUI gestartet.
 
-java -XstartOnFirstThread -Djava.library.path=lib/swt/macos -jar jameica-macos.jar $@
+BASEDIR=`dirname $0`
+
+exec java -XstartOnFirstThread -Djava.library.path=$BASEDIR/lib/swt/macos -jar $BASEDIR/jameica-macos.jar $@
