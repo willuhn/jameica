@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/10/20 12:08:16 $
- * $Author: willuhn $
+ * $Revision: 1.11 $
+ * $Date: 2006/04/05 15:37:53 $
+ * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
  *
@@ -22,6 +22,8 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -85,7 +87,7 @@ public class ListDialog extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception {
 
-    TablePart table = new TablePart(list,new Action()
+    final TablePart table = new TablePart(list,new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -104,6 +106,23 @@ public class ListDialog extends AbstractDialog
       table.addColumn(title,field,f);
     }
     table.paint(parent);
+    
+    ButtonArea b = new ButtonArea(parent,2);
+    b.addButton(i18n.tr("Übernehmen"), new Action()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        object = table.getSelection();
+        close();
+      }
+    });
+    b.addButton(i18n.tr("Abbrechen"), new Action()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        throw new OperationCanceledException();
+      }
+    });
   }
 
   /**
@@ -116,6 +135,9 @@ public class ListDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
+ * Revision 1.11  2006/04/05 15:37:53  web0
+ * @N better list dialog
+ *
  * Revision 1.10  2004/10/20 12:08:16  willuhn
  * @C MVC-Refactoring (new Controllers)
  *
