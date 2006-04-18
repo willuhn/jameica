@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.34 $
- * $Date: 2005/07/14 22:58:36 $
+ * $Revision: 1.35 $
+ * $Date: 2006/04/18 16:57:05 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -298,12 +298,12 @@ public final class ServiceFactory
 
 		String fullName	= pluginClass.getName() + "." + serviceName;
 
-		Logger.info("searching for service " + serviceName + " for plugin " + pluginClass.getName());
+		Logger.debug("searching for service " + serviceName + " for plugin " + pluginClass.getName());
 
 		Service s = (Service) serviceCache.get(fullName);
 		if (s != null)
 		{
-			Logger.info("found in cache");
+			Logger.debug("found in cache");
 			return s;
 		}
 		
@@ -315,17 +315,17 @@ public final class ServiceFactory
 			if (local == null)
 				throw new ApplicationException(Application.getI18n().tr("Zum Service \"{0}\" existiert kein lokales Binding",serviceName));
 
-			Logger.info("running in client mode, looking for remote service " + fullName);
+			Logger.debug("running in client mode, looking for remote service " + fullName);
 			String host = ServiceSettings.getLookupHost(pluginClass,serviceName);
 			int port    = ServiceSettings.getLookupPort(pluginClass,serviceName);
 
 			if (host == null || host.length() == 0 || port == -1)
       {
-        Logger.info("missing entry: " + serviceName + "=<hostname>:<port> in <workdir>/cfg/" + ServiceSettings.class.getName() + ".properties");
+        Logger.error("missing entry: " + serviceName + "=<hostname>:<port> in <workdir>/cfg/" + ServiceSettings.class.getName() + ".properties");
         throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
       }
 
-			Logger.info("searching for service at " + host + ":" + port);
+			Logger.debug("searching for service at " + host + ":" + port);
 			String url = "rmi://" + host + ":" + port + "/" + fullName;
 
 			Logger.debug("rmi lookup url: " + url);
@@ -336,14 +336,14 @@ public final class ServiceFactory
 		}
 
 		// Wir schauen lokal
-		Logger.info("running in standalone/server mode, looking for local service");
+		Logger.debug("running in standalone/server mode, looking for local service");
 		if (local == null)
 			throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht gefunden",serviceName));
 
 		s = (Service) allServices.get(fullName);
 		if (startedServices.get(fullName) == null)
 		{
-			Logger.warn("service " + serviceName + " was not started, you have to do this manually");
+			Logger.warn("service " + serviceName + " was not started, you have to do this by hand");
 		}
 		serviceCache.put(fullName,s);
 		return s;
@@ -381,6 +381,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.35  2006/04/18 16:57:05  web0
+ * @C loglevel
+ *
  * Revision 1.34  2005/07/14 22:58:36  web0
  * *** empty log message ***
  *
