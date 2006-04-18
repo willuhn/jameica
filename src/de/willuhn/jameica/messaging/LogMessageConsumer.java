@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/LogMessageConsumer.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.2 $
+ * $Date: 2006/04/18 16:49:46 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -45,11 +45,22 @@ public class LogMessageConsumer implements MessageConsumer
       Logger.info(m.getText());
   }
 
+  /**
+   * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+   */
+  public boolean autoRegister()
+  {
+    return false;
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: LogMessageConsumer.java,v $
+ * Revision 1.2  2006/04/18 16:49:46  web0
+ * @C redesign in MessagingFactory
+ *
  * Revision 1.1  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *

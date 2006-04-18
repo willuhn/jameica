@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.3 $
+ * $Date: 2006/04/18 16:49:46 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -76,7 +76,9 @@ public final class MessagingFactory
       {
         Constructor ct = c[i].getConstructor(null);
         ct.setAccessible(true);
-        consumers.add(ct.newInstance(null));
+        MessageConsumer mc = (MessageConsumer)(ct.newInstance(null));
+        if (mc.autoRegister())
+          registerMessageConsumer(mc);
       }
       catch (Throwable t)
       {
@@ -95,6 +97,18 @@ public final class MessagingFactory
       return;
     Logger.info("registering message consumer " + consumer.getClass().getName());
     consumers.add(consumer);
+  }
+
+  /**
+   * Entfernt einen Nachrichten-Consumer aus der Registry.
+   * @param consumer zu entfernender Consumer.
+   */
+  public void unRegisterMessageConsumer(MessageConsumer consumer)
+  {
+    if (consumer == null)
+      return;
+    Logger.info("unregistering message consumer " + consumer.getClass().getName());
+    consumers.remove(consumer);
   }
 
   /**
@@ -273,6 +287,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.3  2006/04/18 16:49:46  web0
+ * @C redesign in MessagingFactory
+ *
  * Revision 1.2  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *

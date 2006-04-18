@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessageConsumer.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.3 $
+ * $Date: 2006/04/18 16:49:46 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -34,10 +34,19 @@ public interface MessageConsumer
    * @throws Exception
    */
   public void handleMessage(final Message message) throws Exception;
+  
+  /**
+   * Legt fest, ob der Messaging-Consumer automatisch registriert werden soll.
+   * @return true, wenn er automatisch registriert werden soll.
+   */
+  public boolean autoRegister();
 }
 
 /*****************************************************************************
  * $Log: MessageConsumer.java,v $
+ * Revision 1.3  2006/04/18 16:49:46  web0
+ * @C redesign in MessagingFactory
+ *
  * Revision 1.2  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *

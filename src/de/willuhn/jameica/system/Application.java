@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.54 $
- * $Date: 2006/03/27 23:14:36 $
+ * $Revision: 1.55 $
+ * $Date: 2006/04/18 16:49:46 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -323,6 +323,7 @@ public final class Application {
     getController().shutDown();     
 		getServiceFactory().shutDown();
     getPluginLoader().shutDown();
+    getMessagingFactory().shutDown();
 
 		Logger.info("shutdown complete");
 		Logger.info("--------------------------------------------------\n");
@@ -611,6 +612,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.55  2006/04/18 16:49:46  web0
+ * @C redesign in MessagingFactory
+ *
  * Revision 1.54  2006/03/27 23:14:36  web0
  * *** empty log message ***
  *
