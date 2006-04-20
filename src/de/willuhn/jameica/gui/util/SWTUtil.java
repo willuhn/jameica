@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.16 $
- * $Date: 2006/04/20 08:44:03 $
+ * $Revision: 1.17 $
+ * $Date: 2006/04/20 08:49:41 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -45,16 +45,18 @@ public class SWTUtil {
 	public static void disposeChildren(Composite c)
 	{
 		try {
-			Control[] childs = c.getChildren();
-			if (childs == null)
+			Control[] children = c.getChildren();
+			if (children == null)
 				return;
-			for (int i=0;i<childs.length;++i)
+			for (int i=0;i<children.length;++i)
 			{
 				// schauen, ob es ein Composite ist
-				if (childs[i] instanceof Composite)
-					disposeChildren((Composite)childs[i]);
-				if (childs[i] != null && !childs[i].isDisposed())
-					childs[i].dispose();
+				if (children[i] instanceof Composite)
+					disposeChildren((Composite)children[i]);
+				if (children[i] != null && !children[i].isDisposed())
+        {
+          children[i].dispose();
+        }
 			}
 		}
 		catch (Throwable t)
@@ -180,6 +182,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.17  2006/04/20 08:49:41  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.16  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *
