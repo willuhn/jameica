@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.35 $
- * $Date: 2005/11/22 07:38:32 $
+ * $Revision: 1.36 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -411,6 +411,7 @@ public abstract class AbstractDialog
       {
         try {
           if (shell != null && !shell.isDisposed());
+          SWTUtil.disposeChildren(shell);
           shell.dispose();
           shell = null;
           Logger.debug("dialog closed");
@@ -440,6 +441,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.36  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.35  2005/11/22 07:38:32  web0
  * *** empty log message ***
  *

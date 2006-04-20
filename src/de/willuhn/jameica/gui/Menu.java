@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.31 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.32 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -98,7 +98,7 @@ public class Menu
 		// Wenns keinen Namen hat, gibts nichts anzuzeigen und wir laden nur die Kinder,
 		if (name == null)
 		{
-			loadChilds(element,menu);
+			loadChildren(element,menu);
 			return;
 		}
 
@@ -116,7 +116,7 @@ public class Menu
 			item.setText(element.getName());
 			menu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
 			item.setMenu(menu);
-			loadChilds(element,menu);
+			loadChildren(element,menu);
 			return;
 		}
 
@@ -161,10 +161,10 @@ public class Menu
    * @param menu Menu.
    * @throws Exception
    */
-  private void loadChilds(final MenuItem element, org.eclipse.swt.widgets.Menu menu) throws Exception
+  private void loadChildren(final MenuItem element, org.eclipse.swt.widgets.Menu menu) throws Exception
 	{
 		// add elements
-		GenericIterator childs = element.getChilds();
+		GenericIterator childs = element.getChildren();
 		if (childs == null || childs.size() == 0)
 			return;
 		while (childs.hasNext())
@@ -176,6 +176,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.32  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.31  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *

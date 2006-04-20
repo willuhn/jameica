@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/05/30 12:01:33 $
+ * $Revision: 1.10 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -89,9 +89,9 @@ public abstract class AbstractItemXml implements Item
   }
 
   /**
-   * @see de.willuhn.datasource.GenericObjectNode#getChilds()
+   * @see de.willuhn.datasource.GenericObjectNode#getChildren()
    */
-  public GenericIterator getChilds() throws RemoteException
+  public GenericIterator getChildren() throws RemoteException
   {
     return PseudoIterator.fromArray((Item[])childs.toArray(new Item[childs.size()]));
   }
@@ -197,6 +197,9 @@ public abstract class AbstractItemXml implements Item
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.10  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.9  2005/05/30 12:01:33  web0
  * @R removed gui packages from rmic.xml
  *

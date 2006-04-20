@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.34 $
- * $Date: 2005/08/15 13:15:32 $
+ * $Revision: 1.35 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -211,7 +211,7 @@ public class View implements Part
    */
   public Composite getSnapin()
 	{
-		SWTUtil.disposeChilds(snapin);
+		SWTUtil.disposeChildren(snapin);
 		return snapin;
 	}
 
@@ -293,6 +293,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.35  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.34  2005/08/15 13:15:32  web0
  * @C fillLayout removed
  *

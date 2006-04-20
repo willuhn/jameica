@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.31 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.32 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -102,7 +102,7 @@ public class Navigation implements Part
 		
 		if (name == null)
 		{
-			loadChilds(element,parentTree);
+			loadChildren(element,parentTree);
 			return;
 		}
 
@@ -132,7 +132,7 @@ public class Navigation implements Part
     ExtensionRegistry.extend(element);
 
 		// und laden nun unsere Kinder
-		loadChilds(element,item);
+		loadChildren(element,item);
 		
 		// alles aufklappen
 		expand(null);
@@ -167,9 +167,9 @@ public class Navigation implements Part
    * @param parentTree Parent.
 	 * @throws RemoteException
    */
-  private void loadChilds(NavigationItem element, TreeItem parentTree) throws RemoteException
+  private void loadChildren(NavigationItem element, TreeItem parentTree) throws RemoteException
 	{
-		GenericIterator childs = element.getChilds();
+		GenericIterator childs = element.getChildren();
 		if (childs == null || childs.size() == 0)
 			return;
 		while (childs.hasNext())
@@ -259,6 +259,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.32  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.31  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *

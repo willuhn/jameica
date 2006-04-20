@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.93 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.94 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -366,7 +366,7 @@ public class GUI implements ApplicationController
 
 						// dispose all childs
 						Logger.debug("disposing previous view");
-						SWTUtil.disposeChilds(gui.view.getContent());
+						SWTUtil.disposeChildren(gui.view.getContent());
 						Logger.debug("dispose finished");
 
 					}
@@ -781,6 +781,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.94  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.93  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *

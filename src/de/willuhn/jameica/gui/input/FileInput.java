@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/11/14 11:36:23 $
+ * $Revision: 1.13 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -46,7 +46,7 @@ public class FileInput extends ButtonInput
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param value der initial einzufuegende Wert fuer das Eingabefeld.
-   * @param save, legt fest, ob es ein Speichern-Dialog sein soll.
+   * @param save legt fest, ob es ein Speichern-Dialog sein soll.
    */
   public FileInput(final String value, final boolean save)
   {
@@ -103,6 +103,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.13  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.12  2005/11/14 11:36:23  web0
  * *** empty log message ***
  *

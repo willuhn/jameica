@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/08/15 13:15:32 $
+ * $Revision: 1.16 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class SWTUtil {
 	 * Disposed alle Kinder des Composites rekursiv jedoch nicht das Composite selbst.
    * @param c Composite, dessen Kinder disposed werden sollen.
 	 */
-	public static void disposeChilds(Composite c)
+	public static void disposeChildren(Composite c)
 	{
 		try {
 			Control[] childs = c.getChildren();
@@ -52,7 +52,7 @@ public class SWTUtil {
 			{
 				// schauen, ob es ein Composite ist
 				if (childs[i] instanceof Composite)
-					disposeChilds((Composite)childs[i]);
+					disposeChildren((Composite)childs[i]);
 				if (childs[i] != null && !childs[i].isDisposed())
 					childs[i].dispose();
 			}
@@ -180,6 +180,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.16  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.15  2005/08/15 13:15:32  web0
  * @C fillLayout removed
  *

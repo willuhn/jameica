@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.10 $
- * $Date: 2006/03/15 16:25:32 $
+ * $Revision: 1.11 $
+ * $Date: 2006/04/20 08:44:03 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -88,14 +88,14 @@ public class TreePart implements Part
     if (this.object != null)
     {
       final Item root = new Item(null,object);
-      root.expandChilds();
+      root.expandChildren();
     }
     else
     {
       while (list.hasNext())
       {
         final Item root = new Item(null,(GenericObjectNode) list.next());
-        root.expandChilds();
+        root.expandChildren();
       }
     }
   }
@@ -241,7 +241,7 @@ public class TreePart implements Part
 			this.parentItem = item;
 
 			// load the childs
-  		loadChilds();
+  		loadChildren();
 
 		}
 
@@ -250,11 +250,11 @@ public class TreePart implements Part
      * Laedt alle Kinder dieses Elements.
      * @throws RemoteException
      */
-    void loadChilds() throws RemoteException
+    void loadChildren() throws RemoteException
     {
 
 			// iterate over childs
-			GenericIterator list = element.getChilds();
+			GenericIterator list = element.getChildren();
       while(list.hasNext())
 			{
 				new Item(this.parentItem,(GenericObjectNode)list.next());
@@ -264,7 +264,7 @@ public class TreePart implements Part
     /**
      * Klappt alle Kind-Elemente auf.
      */
-    void expandChilds()
+    void expandChildren()
     {
       enumAndExpand(this.parentItem);
     }
@@ -287,6 +287,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.11  2006/04/20 08:44:03  web0
+ * @C s/Childs/Children/
+ *
  * Revision 1.10  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
