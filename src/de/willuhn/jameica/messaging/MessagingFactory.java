@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/04/18 16:49:46 $
+ * $Revision: 1.4 $
+ * $Date: 2006/05/02 22:34:05 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -243,8 +243,6 @@ public final class MessagingFactory
         synchronized (consumers)
         {
 
-          Class current = msg.getClass();
-
           for (int i=0;i<consumers.size();++i)
           {
             consumer = (MessageConsumer) consumers.get(i);
@@ -254,7 +252,7 @@ public final class MessagingFactory
             {
               for (int j=0;j<expected.length;++j)
               {
-                if (current == expected[j])
+                if (expected[j].isInstance(msg))
                 {
                   send = true;
                   break;
@@ -287,6 +285,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.4  2006/05/02 22:34:05  web0
+ * @B fehler im class-Vergleich
+ *
  * Revision 1.3  2006/04/18 16:49:46  web0
  * @C redesign in MessagingFactory
  *
