@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.50 $
- * $Date: 2006/03/30 22:22:51 $
+ * $Revision: 1.51 $
+ * $Date: 2006/05/11 16:51:30 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -90,6 +90,7 @@ public class TablePart implements Part
 	private Image up										= null;
 	private Image down									= null;
   private boolean rememberOrder       = false;
+  private boolean rememberColWidth    = false;
 
 	private int size = 0;
   
@@ -223,6 +224,15 @@ public class TablePart implements Part
   public void setRememberOrder(boolean remember)
   {
     this.rememberOrder = remember;
+  }
+
+  /**
+   * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
+   * @param remember true, wenn sie sich die Spaltenbreiten merken soll.
+   */
+  public void setRememberColWidths(boolean remember)
+  {
+    this.rememberColWidth = remember;
   }
 
   /**
@@ -449,7 +459,7 @@ public class TablePart implements Part
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
     
-    if (this.rememberOrder)
+    if (rememberOrder)
     {
       table.addDisposeListener(new DisposeListener() {
         public void widgetDisposed(DisposeEvent e)
@@ -472,7 +482,6 @@ public class TablePart implements Part
       });
     }
     
-
 		// Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
 		// Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
 		list.begin();
@@ -484,6 +493,33 @@ public class TablePart implements Part
       final TableColumn col = new TableColumn(table, SWT.NONE);
 			col.setText(column.name == null ? "" : column.name);
 
+      // Wenn wir uns die Spalten merken wollen, duerfen
+      // wir den DisposeListener nicht an die Tabelle haengen
+      // sondern an die TableColumns. Denn wenn das Dispose-
+      // Event fuer die Tabelle kommt, hat sie ihre TableColumns
+      // bereits disposed. Mit dem Effekt, dass ein table.getColumn(i)
+      // eine NPE werfen wuerde.
+      if (rememberColWidth)
+      {
+        final int index = i;
+        col.addDisposeListener(new DisposeListener() {
+          public void widgetDisposed(DisposeEvent e)
+          {
+            try
+            {
+              if (col == null || col.isDisposed())
+                return;
+              settings.setAttribute("width." + getID() + "." + index,col.getWidth());
+            }
+            catch (Exception ex)
+            {
+              Logger.error("unable to store width for column " + index,ex);
+            }
+          }
+        });
+      }
+      
+      
 			// Sortierung
 			final int p = i;
 			col.addListener(SWT.Selection, new Listener() {
@@ -702,7 +738,26 @@ public class TablePart implements Part
     for (int i=0;i<cols;++i)
     {
       TableColumn col = table.getColumn(i);
-      col.pack();
+      if (rememberColWidth)
+      {
+        int size = 0;
+        try
+        {
+          size = settings.getInt("width." + getID() + "." + i,0);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to restore column width",e);
+        }
+        if (size <= 0)
+          col.pack();
+        else
+          col.setWidth(size);
+      }
+      else
+      {
+        col.pack();
+      }
     }
 
 		refreshSummary();
@@ -1053,6 +1108,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.51  2006/05/11 16:51:30  web0
+ * @B bug 233
+ *
  * Revision 1.50  2006/03/30 22:22:51  web0
  * @B bug 217
  *
