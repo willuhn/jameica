@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.36 $
- * $Date: 2006/04/20 08:44:03 $
+ * $Revision: 1.37 $
+ * $Date: 2006/05/11 17:18:04 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -111,23 +111,39 @@ public abstract class AbstractDialog
 	private String titleText;
 	private int height = SWT.DEFAULT;
 	private int width = SWT.DEFAULT;
-
+  
+  private boolean resizable = false;
+  
 	protected I18N i18n;
 
   /**
    * Erzeugt einen neuen Dialog.
+   * Er ist nicht groessenaenderbar.
    * @param position Position des Dialogs.
 	 * @see AbstractDialog#POSITION_MOUSE
 	 * @see AbstractDialog#POSITION_CENTER
    */
   public AbstractDialog(int position)
 	{
-		this.pos = position;
-		i18n = Application.getI18n();
-		init();
+    this(position,false);
 	}
 	
-	/**
+  /**
+   * Erzeugt einen neuen Dialog.
+   * @param position Position des Dialogs.
+   * @param resizable true, wenn der Dialog groessenaenderbar sein soll.
+   * @see AbstractDialog#POSITION_MOUSE
+   * @see AbstractDialog#POSITION_CENTER
+   */
+  public AbstractDialog(int position, boolean resizable)
+  {
+    this.pos       = position;
+    this.i18n      = Application.getI18n();
+    this.resizable = resizable;
+    init();
+  }
+
+  /**
    * Initialisiert alle Elemente.
    */
   private void init()
@@ -138,7 +154,10 @@ public abstract class AbstractDialog
     {
       public void run()
       {
-				shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+        if (resizable)
+          shell = new Shell(display, SWT.RESIZE | SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+        else
+          shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 				shell.setLocation(display.getCursorLocation());
 				GridLayout shellLayout = new GridLayout();
 				shellLayout.horizontalSpacing = 0;
@@ -351,12 +370,17 @@ public abstract class AbstractDialog
 						throw new RuntimeException(t);
 					}
 
-					shell.pack();
-	
-					height = (height == SWT.DEFAULT ? shell.getBounds().height : height);
-					width  = (width  == SWT.DEFAULT ? shell.getBounds().width  : width);
-	
-					shell.setSize(width, height);
+          if (height != SWT.DEFAULT || width != SWT.DEFAULT)
+          {
+            // Die Breite oder Hoehe wurde geaendert. Also uebernehmen
+            // wir diese Werte.
+            Logger.debug("using custom dialog size: " + width + "x" + height);
+            shell.setSize(width, height);
+          }
+          else
+          {
+            shell.pack();
+          }
 	
 					Rectangle shellRect = shell.getBounds();
 					Rectangle displayRect = display.getBounds();
@@ -441,6 +465,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.37  2006/05/11 17:18:04  web0
+ * @B bug 234
+ *
  * Revision 1.36  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *
