@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/LogDetailDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/03/07 22:38:02 $
+ * $Revision: 1.2 $
+ * $Date: 2006/05/11 20:40:06 $
  * $Author: web0 $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.parts.TextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Headline;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Level;
@@ -66,11 +67,9 @@ public class LogDetailDialog extends AbstractDialog
     else if (level.getValue() == Level.ERROR.getValue()) l.setColor(Color.ERROR);
 
     group.addLabelPair(Application.getI18n().tr("Priorität"), l);
-
-    group.addLabelPair(Application.getI18n().tr("Name der Java-Klasse"), new LabelInput(message.getLoggingClass()));
-    group.addLabelPair(Application.getI18n().tr("Name der Funktion"), new LabelInput(message.getLoggingMethod()));
+    group.addLabelPair(Application.getI18n().tr("Quelle"), new LabelInput(message.getLoggingClass() + "." + message.getLoggingMethod()));
     
-    group.addHeadline(Application.getI18n().tr("Nachricht"));
+    new Headline(parent,Application.getI18n().tr("Nachricht"));
     final String text = message.getText();
     TextPart tp = new TextPart();
     tp.setAutoscroll(false);
@@ -102,6 +101,9 @@ public class LogDetailDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: LogDetailDialog.java,v $
+ * Revision 1.2  2006/05/11 20:40:06  web0
+ * @N schoenere Formatierung des LogDetail-Dialogs
+ *
  * Revision 1.1  2006/03/07 22:38:02  web0
  * @N LogDetailView
  *
