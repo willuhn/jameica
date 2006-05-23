@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/Attic/VelocityLoader.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/01/09 23:55:41 $
- * $Author: web0 $
+ * $Revision: 1.3 $
+ * $Date: 2006/05/23 23:23:37 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -110,7 +110,7 @@ public class VelocityLoader extends ResourceLoader
         InputStream is = new FileInputStream(s);
         if (is == null)
           continue;
-        Logger.info("successfully loaded template " + s);
+        Logger.debug("successfully loaded template " + s);
         return is;
       }
       catch (FileNotFoundException e)
@@ -145,6 +145,9 @@ public class VelocityLoader extends ResourceLoader
 
 /**********************************************************************
  * $Log: VelocityLoader.java,v $
+ * Revision 1.3  2006/05/23 23:23:37  willuhn
+ * @C geaendertes Log-Level in VelocityLoader
+ *
  * Revision 1.2  2006/01/09 23:55:41  web0
  * *** empty log message ***
  *
