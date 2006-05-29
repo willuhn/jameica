@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.37 $
- * $Date: 2006/05/11 17:18:04 $
- * $Author: web0 $
+ * $Revision: 1.38 $
+ * $Date: 2006/05/29 14:01:18 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -125,7 +125,7 @@ public abstract class AbstractDialog
    */
   public AbstractDialog(int position)
 	{
-    this(position,false);
+    this(position,true);
 	}
 	
   /**
@@ -375,7 +375,14 @@ public abstract class AbstractDialog
             // Die Breite oder Hoehe wurde geaendert. Also uebernehmen
             // wir diese Werte.
             Logger.debug("using custom dialog size: " + width + "x" + height);
+
+            shell.pack();
+            
+            height = (height == SWT.DEFAULT ? shell.getBounds().height : height);
+            width  = (width  == SWT.DEFAULT ? shell.getBounds().width  : width);
+            
             shell.setSize(width, height);
+            
           }
           else
           {
@@ -465,6 +472,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.38  2006/05/29 14:01:18  willuhn
+ * @B Dialog-Groesse
+ *
  * Revision 1.37  2006/05/11 17:18:04  web0
  * @B bug 234
  *
