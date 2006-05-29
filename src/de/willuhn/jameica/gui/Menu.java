@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.32 $
- * $Date: 2006/04/20 08:44:03 $
- * $Author: web0 $
+ * $Revision: 1.33 $
+ * $Date: 2006/05/29 22:38:11 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -125,18 +125,20 @@ public class Menu
 
 		String shortCut = element.getShortcut();
 		if (shortCut != null)
-		try {
-			String modifier = shortCut.substring(0,shortCut.indexOf("+"));
-			String key = shortCut.substring(shortCut.indexOf("+")+1);
-			int modi = SWT.ALT;
-			if ("CTRL".equalsIgnoreCase(modifier)) modi = SWT.CTRL;
-			item.setAccelerator(modi + key.getBytes()[0]);
-			name += "\t" + shortCut;
-		}
-		catch (Exception e)
-		{
-			Logger.error("error while creating menu element",e);
-		}
+    {
+      try {
+        String modifier = shortCut.substring(0,shortCut.indexOf("+"));
+        String key = shortCut.substring(shortCut.indexOf("+")+1);
+        int modi = SWT.ALT;
+        if ("CTRL".equalsIgnoreCase(modifier)) modi = SWT.CTRL;
+        item.setAccelerator(modi + key.getBytes()[0]);
+        name += "\t" + shortCut;
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while creating menu element",e);
+      }
+    }
 		item.setText(name);
 
 		item.addListener(SWT.Selection, new Listener()
@@ -176,6 +178,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.33  2006/05/29 22:38:11  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.32  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *
