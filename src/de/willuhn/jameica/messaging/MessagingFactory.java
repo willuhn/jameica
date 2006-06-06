@@ -1,8 +1,8 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.4 $
- * $Date: 2006/05/02 22:34:05 $
- * $Author: web0 $
+ * $Revision: 1.5 $
+ * $Date: 2006/06/06 22:10:32 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -71,6 +71,11 @@ public final class MessagingFactory
     }
     for (int i=0;i<c.length;++i)
     {
+      if (c[i].getName().indexOf('$') != -1)
+      {
+        Logger.info(c[i].getName() + " is an inner class, skipping");
+        continue;
+      }
       Logger.info("found " + c[i].getName() + ", creating instance");
       try
       {
@@ -285,6 +290,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.5  2006/06/06 22:10:32  willuhn
+ * @N loader skips inner classes
+ *
  * Revision 1.4  2006/05/02 22:34:05  web0
  * @B fehler im class-Vergleich
  *
