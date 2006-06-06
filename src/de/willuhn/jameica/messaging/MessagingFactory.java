@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/06/06 22:10:32 $
+ * $Revision: 1.6 $
+ * $Date: 2006/06/06 22:42:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -271,7 +271,7 @@ public final class MessagingFactory
             }
             catch (Throwable t)
             {
-              Logger.error("consumer " + consumer.getClass().getName() + " produced an error while consuming message " + msg.toString());
+              Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getMessage() + ") while consuming message " + msg.toString());
             }
           }
         }
@@ -290,6 +290,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.6  2006/06/06 22:42:04  willuhn
+ * @N Logging des Textes von geworfenen Exceptions beim Zustellen von Nachrichten
+ *
  * Revision 1.5  2006/06/06 22:10:32  willuhn
  * @N loader skips inner classes
  *
