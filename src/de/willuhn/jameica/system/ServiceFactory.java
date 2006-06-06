@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.35 $
- * $Date: 2006/04/18 16:57:05 $
- * $Author: web0 $
+ * $Revision: 1.35.2.1 $
+ * $Date: 2006/06/06 21:27:08 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -25,9 +25,8 @@ import java.util.Iterator;
 import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
-import de.willuhn.jameica.plugin.PluginContainer;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
-import de.willuhn.jameica.security.*;
+import de.willuhn.jameica.security.SSLRMISocketFactory;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -117,8 +116,8 @@ public final class ServiceFactory
 					catch (Throwable t)
 					{
 						Logger.error("error while initializing service, disabling plugin",t);
-            PluginContainer container = Application.getPluginLoader().getPluginContainer(plugin.getClass());
-            container.setInstalled(false);
+            Manifest mf = Application.getPluginLoader().getManifest(plugin.getClass());
+            mf.setInstalled(false);
             String s = t.getMessage();
             if (s == null || s.length() == 0)
               s = t.getClass().getName();
@@ -381,6 +380,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.35.2.1  2006/06/06 21:27:08  willuhn
+ * @N New Pluginloader (in separatem Branch)
+ *
  * Revision 1.35  2006/04/18 16:57:05  web0
  * @C loglevel
  *

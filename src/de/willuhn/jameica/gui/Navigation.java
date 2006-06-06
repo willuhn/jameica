@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.32 $
- * $Date: 2006/04/20 08:44:03 $
- * $Author: web0 $
+ * $Revision: 1.32.2.1 $
+ * $Date: 2006/06/06 21:27:08 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Widget;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.PluginContainer;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -180,23 +180,23 @@ public class Navigation implements Part
 
   /**
 	 * Fuegt zur Navigation den Tree eines Plugins hinzu.
-   * @param container der PluginContainer.
+   * @param manifest das Manifest.
    * @throws Exception
    */
-  protected void addPlugin(PluginContainer container) throws Exception
+  protected void addPlugin(Manifest manifest) throws Exception
 	{
-		if (container == null)
+		if (manifest == null)
 		{
-			Logger.warn("unable to add navigation, plugin container was null");
+			Logger.warn("unable to add navigation, manifest was null");
 			return;
 		}
-		if (!container.isInstalled())
+		if (!manifest.isInstalled())
 		{
 			Logger.warn("plugin is not installed, skipping navigation");
 			return;
 		}
 
-		load(container.getManifest().getNavigation(),this.pluginTree);
+		load(manifest.getNavigation(),this.pluginTree);
 	}
 
 	/**
@@ -259,6 +259,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.32.2.1  2006/06/06 21:27:08  willuhn
+ * @N New Pluginloader (in separatem Branch)
+ *
  * Revision 1.32  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *

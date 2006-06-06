@@ -7,7 +7,6 @@
 	<classpathentry exported="true" sourcepath="lib.src/bouncycastle/bcprov-jdk14-124.zip" kind="lib" path="lib/bouncycastle/bcprov-jdk14-124.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-cli-1.0.jar"/>
 	<classpathentry exported="true" sourcepath="lib.src/swt/linux/swt.src.zip" kind="lib" path="lib/swt/linux/swt.jar"/>
-	<classpathentry exported="true" sourcepath="/util" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.1.1.jar"/>
@@ -18,5 +17,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/velocity/velocity-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-collections.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

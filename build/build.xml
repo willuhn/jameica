@@ -108,9 +108,6 @@
 		<copy todir="${class.dir}/help">
 			<fileset dir="${help.dir}" />
 		</copy>
-
-		<copy file="${src.dir}/system.xml" tofile="${class.dir}/system.xml" />
-
 	</target>
 
 
@@ -229,11 +226,13 @@
         <include name="Info.plist"/>
 			</fileset>
 		</copy>
+    <copy file="system.xml" tofile="${project.zipdir}/system.xml" />
 
 		<!-- ZIP-File fuer Linux -->
 		<zip destfile="${project.release}/${project.zipfilename.linux}">
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
+        <include name="${define.projectname}/system.xml"/>
 				<include name="${define.projectname}/${define.jarfilename}"/>
 				<include name="${define.projectname}/${define.jarfilename.linux}"/>
 				<include name="${define.projectname}/COPYING"/>
@@ -259,6 +258,7 @@
 		<zip destfile="${project.release}/${project.zipfilename.linux-amd64}">
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
+        <include name="${define.projectname}/system.xml"/>
 				<include name="${define.projectname}/${define.jarfilename}"/>
 				<include name="${define.projectname}/${define.jarfilename.linux-amd64}"/>
 				<include name="${define.projectname}/COPYING"/>
@@ -284,6 +284,7 @@
 		<zip destfile="${project.release}/${project.zipfilename.win32}">
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
+        <include name="${define.projectname}/system.xml"/>
 				<include name="${define.projectname}/${define.jarfilename}"/>
 				<include name="${define.projectname}/${define.jarfilename.win32}"/>
 				<include name="${define.projectname}/COPYING"/>
@@ -308,6 +309,7 @@
     <mkdir dir="${project.tmp}/${define.projectname}.app" />
     <copy todir="${project.tmp}/${define.projectname}.app">
       <fileset dir="${project.release}/${define.projectname}">
+        <include name="system.xml"/>
         <include name="${define.jarfilename}"/>
         <include name="${define.jarfilename.macos}"/>
         <include name="COPYING"/>
@@ -337,6 +339,7 @@
     <zip destfile="${project.release}/${project.zipfilename.openbsd}">
       <zipfileset dir="${project.release}" filemode="755">
         <include name="${define.projectname}" />
+        <include name="${define.projectname}/system.xml"/>
         <include name="${define.projectname}/${define.jarfilename}"/>
         <include name="${define.projectname}/${define.jarfilename.openbsd}"/>
         <include name="${define.projectname}/COPYING"/>
@@ -377,6 +380,7 @@
 			<fileset dir=".">
 				<include name=".project" />
 				<include name=".classpath" />
+        <include name="system.xml" />
 				<include name="${lib.dir}/**" />
 				<include name="${src.dir}/**" />
 				<include name="${build.dir}/**" />

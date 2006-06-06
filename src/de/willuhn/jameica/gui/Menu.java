@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.33 $
- * $Date: 2006/05/29 22:38:11 $
+ * $Revision: 1.33.2.1 $
+ * $Date: 2006/06/06 21:27:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.PluginContainer;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -59,23 +59,23 @@ public class Menu
 
   /**
    * Fuegt zum Menu die Items eines Plugins hinzu.
-   * @param container der PluginContainer.
+   * @param manifest das Manifest.
    * @throws Exception
    */
-	protected void addPlugin(PluginContainer container) throws Exception
+	protected void addPlugin(Manifest manifest) throws Exception
 	{
-    if (container == null)
+    if (manifest == null)
     {
-      Logger.warn("unable to add menu, plugin container was null");
+      Logger.warn("unable to add menu, manifest was null");
       return;
     }
-    if (!container.isInstalled())
+    if (!manifest.isInstalled())
     {
       Logger.warn("plugin is not installed, skipping menu");
       return;
     }
 
-    load(container.getManifest().getMenu(),pluginMenu);
+    load(manifest.getMenu(),pluginMenu);
 	}
 
   /**
@@ -178,6 +178,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.33.2.1  2006/06/06 21:27:08  willuhn
+ * @N New Pluginloader (in separatem Branch)
+ *
  * Revision 1.33  2006/05/29 22:38:11  willuhn
  * *** empty log message ***
  *

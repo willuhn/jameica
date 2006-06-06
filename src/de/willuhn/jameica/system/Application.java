@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.55 $
- * $Date: 2006/04/18 16:49:46 $
- * $Author: web0 $
+ * $Revision: 1.55.2.1 $
+ * $Date: 2006/06/06 21:27:08 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -48,8 +48,10 @@ import de.willuhn.util.MultipleClassLoader;
 public final class Application {
 
   
+  private static Manifest manifest = null;
+
   // singleton
-  private static Application app;
+  private static Application app   = null;
 		private boolean cleanShutdown = false;
 		
 		private StartupParams 			params;
@@ -249,7 +251,7 @@ public final class Application {
     getCallback().getStartupMonitor().setStatus(0);
 
     // Jetzt checken wir noch, ob wir ueberhaupt Plugins haben
-    if (!getPluginLoader().getPluginContainers().hasNext())
+    if (!getPluginLoader().getInstalledPlugins().hasNext())
     {
       addWelcomeMessage(getI18n().tr("Derzeit sind keine Plugins installiert. Das macht wenig Sinn ;)"));
     }
@@ -564,7 +566,9 @@ public final class Application {
    */
   public static Manifest getManifest() throws Exception
 	{
-		return new Manifest(null,app.getClass().getResourceAsStream("/system.xml"));
+    if (manifest == null)
+  		manifest = new Manifest(new File("system.xml"));
+    return manifest;
 	}
 
   /**
@@ -612,6 +616,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.55.2.1  2006/06/06 21:27:08  willuhn
+ * @N New Pluginloader (in separatem Branch)
+ *
  * Revision 1.55  2006/04/18 16:49:46  web0
  * @C redesign in MessagingFactory
  *

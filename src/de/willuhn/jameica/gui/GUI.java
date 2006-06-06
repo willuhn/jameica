@@ -1,8 +1,8 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.94 $
- * $Date: 2006/04/20 08:44:03 $
- * $Author: web0 $
+ * $Revision: 1.94.2.1 $
+ * $Date: 2006/06/06 21:27:08 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  * 
@@ -41,7 +41,7 @@ import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.PluginContainer;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.ApplicationCallbackSWT;
@@ -180,14 +180,14 @@ public class GUI implements ApplicationController
 
       // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
       // hinzu.
-      Iterator i = Application.getPluginLoader().getPluginContainers();
+      Iterator i = Application.getPluginLoader().getInstalledManifests();
       while (i.hasNext())
       {
-        PluginContainer pc = (PluginContainer) i.next();
+        Manifest mf = (Manifest) i.next();
         try
         {
-          menu.addPlugin(pc);
-          navi.addPlugin(pc);
+          menu.addPlugin(mf);
+          navi.addPlugin(mf);
         }
         catch (Throwable t)
         {
@@ -781,6 +781,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.94.2.1  2006/06/06 21:27:08  willuhn
+ * @N New Pluginloader (in separatem Branch)
+ *
  * Revision 1.94  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *
