@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.4 $
- * $Date: 2006/02/20 23:30:29 $
- * $Author: web0 $
+ * $Revision: 1.5 $
+ * $Date: 2006/06/08 17:40:17 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -40,7 +40,7 @@ public class BackgroundTaskMonitor extends ProgressBar
    */
   private final static DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-  private final static int TIMEOUT = 30 * 1000;
+  private final static int TIMEOUT = 60 * 1000;
   private static boolean CANCEL_TIMEOUT = false;
   
   private boolean started = false;
@@ -191,6 +191,9 @@ public class BackgroundTaskMonitor extends ProgressBar
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
+ * Revision 1.5  2006/06/08 17:40:17  willuhn
+ * @C Ausblende-Timeout verlaengert
+ *
  * Revision 1.4  2006/02/20 23:30:29  web0
  * *** empty log message ***
  *
