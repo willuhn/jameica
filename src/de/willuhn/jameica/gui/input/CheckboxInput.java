@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2006/03/20 23:37:04 $
- * $Author: web0 $
+ * $Revision: 1.11 $
+ * $Date: 2006/06/19 10:54:24 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -96,9 +96,7 @@ public class CheckboxInput extends AbstractInput
    */
   public void disable()
   {
-		enabled = false;
-		if (button != null && !button.isDisposed())
-		  button.setEnabled(false);
+    setEnabled(false);
   }
 
   /**
@@ -106,9 +104,7 @@ public class CheckboxInput extends AbstractInput
    */
   public void enable()
   {
-    enabled = true;
-    if (button != null && !button.isDisposed())
-      button.setEnabled(true);
+    setEnabled(true);
   }
 
   /**
@@ -120,10 +116,24 @@ public class CheckboxInput extends AbstractInput
       return enabled;
     return button.getSelection();
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
+   */
+  public void setEnabled(boolean enabled)
+  {
+    this.enabled = enabled;
+    if (button != null && !button.isDisposed())
+      button.setEnabled(enabled);
+  }
 }
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.11  2006/06/19 10:54:24  willuhn
+ * @N neue Methode setEnabled(boolean) in Input
+ * @N neue de_willuhn_util lib
+ *
  * Revision 1.10  2006/03/20 23:37:04  web0
  * @B misc widget updates
  *

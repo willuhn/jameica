@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/08/22 13:31:52 $
- * $Author: web0 $
+ * $Revision: 1.9 $
+ * $Date: 2006/06/19 10:54:24 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -156,8 +156,7 @@ public abstract class ButtonInput extends AbstractInput
    */
   public final void disable()
   {
-  	disableButton();
-  	disableClientControl();
+    setEnabled(false);
   }
 
   /**
@@ -165,11 +164,27 @@ public abstract class ButtonInput extends AbstractInput
    */
   public final void enable()
   {
-  	enableButton();
-  	enableClientControl();
+    setEnabled(true);
   }
 
-	/**
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
+   */
+  public void setEnabled(boolean enabled)
+  {
+    if (enabled)
+    {
+      enableButton();
+      enableClientControl();
+    }
+    else
+    {
+      disableButton();
+      disableClientControl();
+    }
+  }
+
+  /**
    * Aktiviert nur das ClientControl.
    */
   public final void enableClientControl()
@@ -221,6 +236,10 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.9  2006/06/19 10:54:24  willuhn
+ * @N neue Methode setEnabled(boolean) in Input
+ * @N neue de_willuhn_util lib
+ *
  * Revision 1.8  2005/08/22 13:31:52  web0
  * *** empty log message ***
  *

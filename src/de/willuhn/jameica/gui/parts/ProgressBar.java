@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.12 $
- * $Date: 2005/08/08 17:07:38 $
- * $Author: web0 $
+ * $Revision: 1.13 $
+ * $Date: 2006/06/19 10:54:24 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -32,6 +32,8 @@ import de.willuhn.util.ProgressMonitor;
 public class ProgressBar implements ProgressMonitor, Part
 {
 	private int status	= STATUS_NONE;
+
+  private boolean showLogs = true;
 
 	private TextPart log																= null;
 	private Composite parent														= null;
@@ -94,6 +96,7 @@ public class ProgressBar implements ProgressMonitor, Part
 			{
         if (barLabel != null && !barLabel.isDisposed())
         {
+          log(text);
 					barLabel.setText(text);
 					if (status == STATUS_DONE)
 						barLabel.setForeground(Color.SUCCESS.getSWTColor());
@@ -111,7 +114,7 @@ public class ProgressBar implements ProgressMonitor, Part
    */
   public void log(final String msg)
   {
-  	if (msg == null)
+  	if (!showLogs || msg == null)
   		return;
 
 		GUI.getDisplay().syncExec(new Runnable()
@@ -131,7 +134,7 @@ public class ProgressBar implements ProgressMonitor, Part
    */
   public void clearLog()
 	{
-		if (this.log == null)
+		if (!showLogs || this.log == null)
 			return;
 		this.log.clear();
 	}
@@ -148,7 +151,7 @@ public class ProgressBar implements ProgressMonitor, Part
 
 		bar = new org.eclipse.swt.widgets.ProgressBar(this.parent, SWT.SMOOTH);
 		GridData g = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		g.widthHint = 100;
+		g.widthHint = showLogs ? 100 : 300;
 		bar.setLayoutData(g);
 		bar.setMaximum(100);
 		bar.setSelection(0);
@@ -165,6 +168,9 @@ public class ProgressBar implements ProgressMonitor, Part
 		barLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     barLabel.setText("");
 
+    if (!showLogs)
+      return;
+    
 		Composite comp = new Composite(this.parent,SWT.BORDER);
 		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		GridLayout gl = new GridLayout(2,false);
@@ -200,12 +206,25 @@ public class ProgressBar implements ProgressMonitor, Part
   {
     return current;
   }
+  
+  /**
+   * Legt fest, ob die Log-Ausgaben angezeigt werden sollen.
+   * @param show true, wenn sie angezeigt werden sollen (Default).
+   */
+  public void showLogs(boolean show)
+  {
+    this.showLogs = show;
+  }
 
 }
 
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.13  2006/06/19 10:54:24  willuhn
+ * @N neue Methode setEnabled(boolean) in Input
+ * @N neue de_willuhn_util lib
+ *
  * Revision 1.12  2005/08/08 17:07:38  web0
  * *** empty log message ***
  *

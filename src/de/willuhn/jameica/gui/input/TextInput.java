@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/10/06 14:10:11 $
- * $Author: web0 $
+ * $Revision: 1.15 $
+ * $Date: 2006/06/19 10:54:24 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -196,9 +196,7 @@ public class TextInput extends AbstractInput
    */
   public void disable()
   {
-  	enabled = false;
-  	if (text != null && !text.isDisposed())
-	    text.setEnabled(false);
+    setEnabled(false);
   }
 
   /**
@@ -206,9 +204,7 @@ public class TextInput extends AbstractInput
    */
   public void enable()
   {
-  	enabled = true;
-  	if (text != null && !text.isDisposed())
-	    text.setEnabled(true);
+    setEnabled(true);
   }
 
   /**
@@ -218,10 +214,24 @@ public class TextInput extends AbstractInput
   {
     return enabled;
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
+   */
+  public void setEnabled(boolean enabled)
+  {
+    this.enabled = enabled;
+    if (text != null && !text.isDisposed())
+      text.setEnabled(enabled);
+  }
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.15  2006/06/19 10:54:24  willuhn
+ * @N neue Methode setEnabled(boolean) in Input
+ * @N neue de_willuhn_util lib
+ *
  * Revision 1.14  2005/10/06 14:10:11  web0
  * @B NPE
  *

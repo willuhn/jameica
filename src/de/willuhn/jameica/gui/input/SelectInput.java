@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.21 $
- * $Date: 2006/01/02 17:37:49 $
- * $Author: web0 $
+ * $Revision: 1.22 $
+ * $Date: 2006/06/19 10:54:24 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -228,6 +228,8 @@ public class SelectInput extends AbstractInput
    */
   public Object getValue()
   {
+    if (combo == null || combo.isDisposed())
+      return this.preselected;
     Object o = values.get(combo.getText());
     if (o instanceof StringObject)
     {
@@ -265,12 +267,7 @@ public class SelectInput extends AbstractInput
    */
   public void disable()
   {
-		enabled = false;
-		if (combo != null && !combo.isDisposed())
-		{
-			combo.setEnabled(false);
-			combo.setForeground(Color.COMMENT.getSWTColor());
-		}
+    setEnabled(false);
   }
 
   /**
@@ -278,12 +275,23 @@ public class SelectInput extends AbstractInput
    */
   public void enable()
   {
-  	enabled = true;
-		if (combo != null && !combo.isDisposed())
-		{
-	    combo.setEnabled(true);
-			combo.setForeground(Color.WIDGET_FG.getSWTColor());
-		}
+    setEnabled(true);
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
+   */
+  public void setEnabled(boolean enabled)
+  {
+    this.enabled = enabled;
+    if (combo != null && !combo.isDisposed())
+    {
+      combo.setEnabled(enabled);
+      if (enabled)
+        combo.setForeground(Color.WIDGET_FG.getSWTColor());
+      else
+        combo.setForeground(Color.COMMENT.getSWTColor());
+    }
   }
 
   /**
@@ -361,11 +369,14 @@ public class SelectInput extends AbstractInput
       return new String[] {"name"};
     }
 	}
-
 }
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.22  2006/06/19 10:54:24  willuhn
+ * @N neue Methode setEnabled(boolean) in Input
+ * @N neue de_willuhn_util lib
+ *
  * Revision 1.21  2006/01/02 17:37:49  web0
  * @N moved Velocity to Jameica
  *

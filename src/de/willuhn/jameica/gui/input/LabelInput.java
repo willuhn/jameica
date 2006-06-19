@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/08/22 13:31:52 $
- * $Author: web0 $
+ * $Revision: 1.12 $
+ * $Date: 2006/06/19 10:54:24 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -118,11 +118,22 @@ public class LabelInput extends AbstractInput
     return false;
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
+   */
+  public void setEnabled(boolean enabled)
+  {
+  }
+
 
 }
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.12  2006/06/19 10:54:24  willuhn
+ * @N neue Methode setEnabled(boolean) in Input
+ * @N neue de_willuhn_util lib
+ *
  * Revision 1.11  2005/08/22 13:31:52  web0
  * *** empty log message ***
  *

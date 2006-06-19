@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Input.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/08/22 13:31:52 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2006/06/19 10:54:24 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -95,6 +95,13 @@ public interface Input extends Part
    */
   public void enable();
   
+
+  /**
+   * Aktiviert oder deaktiviert das Eingabe-Feld.
+   * @param enabled true, wenn es aktiv sein soll.
+   */
+  public void setEnabled(boolean enabled);
+  
   /**
    * Prueft, ob das Eingabe-Feld aktiv ist.
    * @return true, wenn es aktiv ist.
@@ -104,6 +111,10 @@ public interface Input extends Part
 
 /**********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.4  2006/06/19 10:54:24  willuhn
+ * @N neue Methode setEnabled(boolean) in Input
+ * @N neue de_willuhn_util lib
+ *
  * Revision 1.3  2005/08/22 13:31:52  web0
  * *** empty log message ***
  *
