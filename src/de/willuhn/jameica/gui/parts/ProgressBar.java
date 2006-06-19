@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.14 $
- * $Date: 2006/06/19 11:50:39 $
+ * $Revision: 1.15 $
+ * $Date: 2006/06/19 22:23:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,17 +61,10 @@ public class ProgressBar implements ProgressMonitor, Part
 			{
         if (bar != null && !bar.isDisposed())
           bar.setSelection(current);
-			}
-		});
-
-    GUI.getDisplay().syncExec(new Runnable()
-    {
-      public void run()
-      {
         if (percentLabel != null && !percentLabel.isDisposed())
           percentLabel.setText(" [" + current + " %]");
-      }
-    });
+			}
+		});
   }
 
   /**
@@ -221,6 +214,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.15  2006/06/19 22:23:33  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.14  2006/06/19 11:50:39  willuhn
  * *** empty log message ***
  *

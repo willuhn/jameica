@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractControl.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/10/29 16:16:24 $
+ * $Revision: 1.5 $
+ * $Date: 2006/06/19 22:23:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,12 +45,17 @@ public abstract class AbstractControl
    */
   public Object getCurrentObject()
 	{
-		return this.view.getCurrentObject();
+    if (this.view != null)
+      return this.view.getCurrentObject();
+    return null;
 	}
 }
 
 /*********************************************************************
  * $Log: AbstractControl.java,v $
+ * Revision 1.5  2006/06/19 22:23:33  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2004/10/29 16:16:24  willuhn
  * *** empty log message ***
  *
