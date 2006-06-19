@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/06/08 17:40:17 $
+ * $Revision: 1.6 $
+ * $Date: 2006/06/19 11:50:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -158,7 +158,6 @@ public class BackgroundTaskMonitor extends ProgressBar
   {
     check();
     super.setStatusText(arg0);
-    log(arg0);
   }
 
   /**
@@ -191,6 +190,9 @@ public class BackgroundTaskMonitor extends ProgressBar
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
+ * Revision 1.6  2006/06/19 11:50:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2006/06/08 17:40:17  willuhn
  * @C Ausblende-Timeout verlaengert
  *

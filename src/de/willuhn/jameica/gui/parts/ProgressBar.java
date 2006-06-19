@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.13 $
- * $Date: 2006/06/19 10:54:24 $
+ * $Revision: 1.14 $
+ * $Date: 2006/06/19 11:50:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -96,8 +96,8 @@ public class ProgressBar implements ProgressMonitor, Part
 			{
         if (barLabel != null && !barLabel.isDisposed())
         {
-          log(text);
 					barLabel.setText(text);
+          log(text);
 					if (status == STATUS_DONE)
 						barLabel.setForeground(Color.SUCCESS.getSWTColor());
 					else if (status == STATUS_ERROR || status == STATUS_CANCEL)
@@ -221,6 +221,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.14  2006/06/19 11:50:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2006/06/19 10:54:24  willuhn
  * @N neue Methode setEnabled(boolean) in Input
  * @N neue de_willuhn_util lib
