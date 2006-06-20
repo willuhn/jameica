@@ -1,8 +1,8 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.35 $
- * $Date: 2006/04/20 08:44:03 $
- * $Author: web0 $
+ * $Revision: 1.36 $
+ * $Date: 2006/06/20 23:26:51 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -48,11 +48,14 @@ public class View implements Part
 	private boolean snappedIn = false;
 
 	private Composite parent;
-	private String title;
 	private CLabel messages;
   
+  private Canvas logoBg;
   private Canvas panelBg;
 	
+
+  private String title;
+  private String logotext;
 
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -88,29 +91,41 @@ public class View implements Part
 		snapin.setLayout(SWTUtil.createGrid(1,true));
 		sash.setMaximizedControl(view);
 
+    ////////////////////////////////////////////////////////////////////////////
+    //
     final Image logo = SWTUtil.getImage("panel.bmp");
     final Rectangle imageSize = logo.getBounds();
-		final Canvas c = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
-		c.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+		logoBg = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
+    logoBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+    GridLayout layout1 = new GridLayout();
+    layout1.marginHeight = 0;
+    layout1.marginWidth = 0;
+    layout1.horizontalSpacing = 0;
+    layout1.verticalSpacing = 0;
+    logoBg.setLayout(layout1);
 
-    // Das ist ein Workaround fuer die GTK-QT-Engine.
-    // Das einfache c.setBackground in der Zeile oben
-    // reicht da nicht aus. Also malen wir es manuell aus.
-    c.addListener(SWT.Paint, new Listener()
+    logoBg.addListener(SWT.Paint, new Listener()
     {
       public void handleEvent(Event event)
       {
         GC gc = event.gc;
-        Rectangle size = c.getBounds();
+        Rectangle size = logoBg.getBounds();
         gc.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
         gc.fillRectangle(size);
         gc.drawImage(logo,size.width - imageSize.width,0);
+        gc.setFont(Font.SMALL.getSWTFont());
+        gc.setForeground(Color.COMMENT.getSWTColor());
+        gc.drawText(logotext == null ? "" : logotext,8,14,true);
       }
     });
+    ////////////////////////////////////////////////////////////////////////////
+
 
     Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
     sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+    ////////////////////////////////////////////////////////////////////////////
+    //
     panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
     GridLayout layout2 = new GridLayout();
     layout2.marginHeight = 0;
@@ -124,10 +139,11 @@ public class View implements Part
       public void handleEvent(Event event)
       {
         GC gc = event.gc;
-        gc.setFont(Font.H1.getSWTFont());
+        gc.setFont(Font.H2.getSWTFont());
         gc.drawText(title == null ? "" : title,8,1,true);
       }
     });
+    ////////////////////////////////////////////////////////////////////////////
 
 		Label sep2 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -223,10 +239,37 @@ public class View implements Part
 	{
     this.title = text == null ? "" : text;
     if (this.panelBg != null && !this.panelBg.isDisposed())
-      panelBg.redraw();
+    {
+      GUI.getDisplay().syncExec(new Runnable() {
+        public void run()
+        {
+          panelBg.redraw();
+        }
+      });
+    }
 	}
 
-	/**
+  /**
+   * Aktualisiert den Text neben dem Logo.
+   * Normalerweise steht da nichts. Man kann
+   * aber was hinschreiben.
+   * @param text der text links neben dem Logo.
+   */
+  public void setLogoText(String text)
+  {
+    this.logotext = text == null ? "" : text;
+    if (this.logoBg != null && !this.logoBg.isDisposed())
+    {
+      GUI.getDisplay().syncExec(new Runnable() {
+        public void run()
+        {
+          logoBg.redraw();
+        }
+      });
+    }
+  }
+
+  /**
 	 * Schreibt einen Fehlertext oben in die View.
    * @param text anzuzeigender Text. 
    */
@@ -246,7 +289,7 @@ public class View implements Part
 
     GUI.getDisplay().asyncExec(new Runnable() {
       public void run() {
-        messages.setText(text);
+        messages.setText(text == null ? "" : " " + text);
         messages.setForeground(color.getSWTColor());
 				lastClick = currentClick;
       }
@@ -293,6 +336,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.36  2006/06/20 23:26:51  willuhn
+ * @N View#setLogoText
+ *
  * Revision 1.35  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *

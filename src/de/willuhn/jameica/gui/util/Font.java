@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.8 $
- * $Date: 2004/11/12 18:23:59 $
+ * $Revision: 1.9 $
+ * $Date: 2006/06/20 23:26:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,6 +50,16 @@ public class Font {
    */
   public final static Font H2 			= new Font("font.h2",						new FontData(systemFont, 9, SWT.BOLD));
 	
+  /**
+   * Schrift fuer Ueberschriften dritter Ordnung.
+   */
+  public final static Font H3       = new Font("font.h3",           new FontData(systemFont, 9, SWT.ITALIC));
+
+  /**
+   * Kleiner Text.
+   */
+  public final static Font SMALL       = new Font("font.small",           new FontData(systemFont, 8, SWT.NORMAL));
+
   /**
    * Standard-Schrift.
    */
@@ -102,6 +112,9 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.9  2006/06/20 23:26:52  willuhn
+ * @N View#setLogoText
+ *
  * Revision 1.8  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *
