@@ -1,8 +1,8 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.94 $
- * $Date: 2006/04/20 08:44:03 $
- * $Author: web0 $
+ * $Revision: 1.95 $
+ * $Date: 2006/06/23 16:18:21 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  * 
@@ -184,10 +184,15 @@ public class GUI implements ApplicationController
       while (i.hasNext())
       {
         PluginContainer pc = (PluginContainer) i.next();
+        if (!pc.isInstalled())
+        {
+          Logger.info("plugin " + pc.getFile() + " is not installed, skipping");
+          continue;
+        }
         try
         {
-          menu.addPlugin(pc);
-          navi.addPlugin(pc);
+          menu.add(pc.getManifest().getMenu());
+          navi.add(pc.getManifest().getNavigation());
         }
         catch (Throwable t)
         {
@@ -336,6 +341,15 @@ public class GUI implements ApplicationController
 	{
 		return gui.navi;
 	}
+
+  /**
+   * Liefert das Menu (oben) von Jameica.
+   * @return Menu.
+   */
+  public static Menu getMenu()
+  {
+    return gui.menu;
+  }
 
 	/**
 	 * Zeigt die View im angegebenen Composite an.
@@ -781,6 +795,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.95  2006/06/23 16:18:21  willuhn
+ * @C small internal api renamings
+ *
  * Revision 1.94  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *
