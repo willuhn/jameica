@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/05/27 17:31:46 $
- * $Author: web0 $
+ * $Revision: 1.7 $
+ * $Date: 2006/06/27 23:14:11 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -32,8 +32,10 @@ import de.willuhn.util.I18N;
 public class Manifest
 {
 
-  private PluginContainer pc = null;
-  private IXMLElement root = null;
+  private MenuItem menu       = null;
+  private NavigationItem navi = null;
+  private PluginContainer pc  = null;
+  private IXMLElement root    = null;
 
   /**
    * @param pc Plugin-Container, zu dem das Manifest gehoert.
@@ -121,6 +123,9 @@ public class Manifest
    */
   public MenuItem getMenu()
   {
+    if (this.menu != null)
+      return this.menu;
+    
     I18N i18n = Application.getI18n();
     
     // Mal schauen, ob das Plugin ein eigenes i18n hat.
@@ -135,8 +140,11 @@ public class Manifest
         // ignore
       }
     }
-    IXMLElement menu = root.getFirstChildNamed("menu");
-    return menu == null ? null : new MenuItemXml(null,menu,i18n);
+    IXMLElement xml = root.getFirstChildNamed("menu");
+    if (xml != null)
+      this.menu = new MenuItemXml(null,xml,i18n);
+    
+    return this.menu;
   }
 
   /**
@@ -145,6 +153,9 @@ public class Manifest
    */
   public NavigationItem getNavigation()
   {
+    if (this.navi != null)
+      return this.navi;
+    
     I18N i18n = Application.getI18n();
     
     // Mal schauen, ob das Plugin ein eigenes i18n hat.
@@ -159,8 +170,11 @@ public class Manifest
         // ignore
       }
     }
-    IXMLElement navi = root.getFirstChildNamed("navigation");
-    return navi == null ? null : new NavigationItemXml(null,navi,i18n);
+    IXMLElement xml = root.getFirstChildNamed("navigation");
+    if (xml != null)
+      this.navi = new NavigationItemXml(null,xml,i18n);
+    
+    return this.navi;
   }
 
 	/**
@@ -210,6 +224,9 @@ public class Manifest
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.7  2006/06/27 23:14:11  willuhn
+ * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
+ *
  * Revision 1.6  2005/05/27 17:31:46  web0
  * @N extension system
  *

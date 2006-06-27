@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.10 $
- * $Date: 2006/04/20 08:44:03 $
- * $Author: web0 $
+ * $Revision: 1.11 $
+ * $Date: 2006/06/27 23:14:11 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -37,6 +37,7 @@ public abstract class AbstractItemXml implements Item
   protected ArrayList childs = new ArrayList();
 
 	private Action action = null;
+  private boolean enabled = true;
 
   /**
    * ct.
@@ -51,6 +52,9 @@ public abstract class AbstractItemXml implements Item
     this.path = path;
     if (i18n != null)
       this.i18n = i18n;
+
+    String s = path.getAttribute("enabled",null);
+    this.enabled = s == null || s.equalsIgnoreCase("true");
   }
 
   /**
@@ -60,6 +64,22 @@ public abstract class AbstractItemXml implements Item
   {
   	String name = path.getAttribute("name",null);
     return name == null ? null : i18n.tr(name);
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.Item#isEnabled()
+   */
+  public boolean isEnabled() throws RemoteException
+  {
+    return this.enabled;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.Item#setEnabled(boolean, boolean)
+   */
+  public void setEnabled(boolean enabled, boolean recursive) throws RemoteException
+  {
+    this.enabled = enabled;
   }
 
   /**
@@ -191,12 +211,14 @@ public abstract class AbstractItemXml implements Item
       return;
     childs.add(i);
   }
-
 }
 
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.11  2006/06/27 23:14:11  willuhn
+ * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
+ *
  * Revision 1.10  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *

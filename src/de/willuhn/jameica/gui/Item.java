@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Item.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/05/30 12:01:33 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2006/06/27 23:14:11 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -44,11 +44,30 @@ public interface Item extends GenericObjectNode, Extendable
    * @throws RemoteException
    */
   public void addChild(Item i) throws RemoteException;
+  
+  /**
+   * Liefert true, wenn das Element aktiv ist.
+   * @return true, wenn es aktiv ist.
+   * @throws RemoteException
+   */
+  public boolean isEnabled() throws RemoteException;
+  
+  /**
+   * Aktiviert oder deaktiviert das Element.
+   * @param enabled
+   * @param recursive true, wenn auch die Kinder deaktiviert werden sollen.
+   * @throws RemoteException
+   */
+  public void setEnabled(boolean enabled, boolean recursive) throws RemoteException;
+  
 }
 
 
 /*********************************************************************
  * $Log: Item.java,v $
+ * Revision 1.4  2006/06/27 23:14:11  willuhn
+ * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
+ *
  * Revision 1.3  2005/05/30 12:01:33  web0
  * @R removed gui packages from rmic.xml
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/NavigationItem.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/10/08 16:44:02 $
+ * $Revision: 1.6 $
+ * $Date: 2006/06/27 23:14:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,12 +35,22 @@ public interface NavigationItem extends Item
    * @throws RemoteException
 	 */
 	public Image getIconClose() throws RemoteException;
+  
+  /**
+   * Liefert true, wenn das Element aufgeklappt sein soll.
+   * @return true, wenn es aufgeklappt sein soll.
+   * @throws RemoteException
+   */
+  public boolean isExpanded() throws RemoteException;
 
 }
 
 
 /**********************************************************************
  * $Log: NavigationItem.java,v $
+ * Revision 1.6  2006/06/27 23:14:11  willuhn
+ * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
+ *
  * Revision 1.5  2004/10/08 16:44:02  willuhn
  * *** empty log message ***
  *

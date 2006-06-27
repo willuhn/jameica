@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/NavigationItemXml.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/08 16:41:58 $
+ * $Revision: 1.4 $
+ * $Date: 2006/06/27 23:14:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
+import java.rmi.RemoteException;
 import java.util.Enumeration;
 
 import net.n3.nanoxml.IXMLElement;
@@ -22,6 +23,7 @@ import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
 
 /**
+ * XML-Implementierung eines Navigations-Elements.
  */
 public class NavigationItemXml extends AbstractItemXml implements NavigationItem
 {
@@ -66,11 +68,43 @@ public class NavigationItemXml extends AbstractItemXml implements NavigationItem
   {
 		return SWTUtil.getImage(this.path.getAttribute("icon-close","empty.gif"));
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.NavigationItem#isExpanded()
+   */
+  public boolean isExpanded() throws RemoteException
+  {
+    String expanded = path.getAttribute("expanded",null);
+    return expanded == null || expanded.equalsIgnoreCase("true");
+  }
+  
+  /**
+   * Ueberschrieben, um dabei auch links die Navigation anzupassen.
+   * @see de.willuhn.jameica.gui.Item#setEnabled(boolean, boolean)
+   */
+  public void setEnabled(boolean enabled, boolean recursive)
+      throws RemoteException
+  {
+    super.setEnabled(enabled, recursive);
+    GUI.getNavigation().update(this);
+    
+    if (recursive)
+    {
+      for (int i=0;i<this.childs.size();++i)
+      {
+        NavigationItem child = (NavigationItem) this.childs.get(i);
+        child.setEnabled(enabled,recursive);
+      }
+    }
+  }
 }
 
 
 /**********************************************************************
  * $Log: NavigationItemXml.java,v $
+ * Revision 1.4  2006/06/27 23:14:11  willuhn
+ * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
+ *
  * Revision 1.3  2004/10/08 16:41:58  willuhn
  * *** empty log message ***
  *

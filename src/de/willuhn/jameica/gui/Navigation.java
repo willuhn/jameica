@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.33 $
- * $Date: 2006/06/23 16:18:21 $
+ * $Revision: 1.34 $
+ * $Date: 2006/06/27 23:14:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
+import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -35,7 +37,7 @@ import de.willuhn.util.ApplicationException;
  * Bildet den Navigations-Baum im linken Frame ab.
  * @author willuhn
  */
-public class Navigation implements Part
+public class Navigation implements Part, Listener
 {
 
   private Composite parent			= null;
@@ -43,6 +45,8 @@ public class Navigation implements Part
   
 	// TreeItem, unterhalb dessen die Plugins eingehaengt werden. 
   private TreeItem pluginTree		= null;
+  
+  private Hashtable itemLookup  = new Hashtable();
   
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -54,27 +58,11 @@ public class Navigation implements Part
     // Tree erzeugen
     this.mainTree = new Tree(this.parent, SWT.NONE);
     this.mainTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-    // Listener fuer "Folder auf machen"
-    this.mainTree.addListener(SWT.Expand, new Listener() {
-      public void handleEvent(Event event) {
-        handleFolderOpen(event);
-      }
-    });
-    // Listener fuer "Folder auf machen"
-    this.mainTree.addListener(SWT.Collapse, new Listener() {
-      public void handleEvent(Event event) {
-        handleFolderClose(event);
-      }
-    });
+    // Listener fuer "Folder auf/zu machen"
+    this.mainTree.addListener(SWT.Expand, this);
+    this.mainTree.addListener(SWT.Collapse, this);
+    this.mainTree.addListener(SWT.Selection, this);
 
-    // Listener fuer die Aktionen
-    this.mainTree.addListener(SWT.Selection, new Listener() {
-      public void handleEvent(Event event) {
-        handleSelect(event);
-      }
-    });
-
-    
     try
     {
       // System-Navigation laden
@@ -119,22 +107,32 @@ public class Navigation implements Part
 			item = new TreeItem(parentTree,SWT.NONE);
 		}
 
-		item.setImage(element.getIconClose());
-		item.setData("iconClose",element.getIconClose());
-		item.setData("iconOpen",element.getIconOpen());
-		item.setData("action",element.getAction());
+    item.setData("item",element);
 		item.setText(name);
-		item.setExpanded(true);
-		
+    if (!element.isEnabled())
+    {
+      item.setGrayed(true);
+      item.setForeground(Color.COMMENT.getSWTColor());
+    }
+    if (element.isExpanded())
+    {
+      item.setImage(element.getIconOpen());
+      item.setExpanded(true);
+    }
+    else
+    {
+      item.setImage(element.getIconClose());
+      item.setExpanded(false);
+    }
+    
+    this.itemLookup.put(element,item);
+
     // Bevor wir die Kinder laden, geben wir das Element noch der
     // ExtensionRegistry fuer eventuell weitere Erweiterungen
     ExtensionRegistry.extend(element);
 
 		// und laden nun unsere Kinder
 		loadChildren(element,item);
-		
-		// alles aufklappen
-		expand(null);
 	}
 
   /**
@@ -144,17 +142,25 @@ public class Navigation implements Part
   private void expand(TreeItem item)
 	{
 		// erstmal uns selbst aufklappen.
-		TreeItem[] childs = null; 
-		if (item != null)
+    if (item != null)
 		{
-			item.setExpanded(true);
-			childs = item.getItems();
+      try
+      {
+        NavigationItem ni = (NavigationItem) item.getData("item");
+        item.setExpanded(ni.isExpanded());
+      }
+      catch (RemoteException re)
+      {
+        Logger.error("unable to expand item " + item.getText(),re);
+      }
 		}
-		else
-		{
-			childs = mainTree.getItems();
-		}
-		for (int i=0;i<childs.length;++i)
+
+    // Und jetzt kuemmern wir uns um die Kinder
+    TreeItem[] childs = null;
+    if (item != null) childs = item.getItems();
+    else              childs = mainTree.getItems();
+
+    for (int i=0;i<childs.length;++i)
 		{
 			expand(childs[i]);
 		}
@@ -190,68 +196,76 @@ public class Navigation implements Part
 			return;
 		}
 		load(navi,this.pluginTree);
+    expand(null);
 	}
 
-	/**
-   * Behandelt das Event "Ordner auf".
-   * @param event das ausgeloeste Event.
+  /**
+   * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
    */
-  private void handleFolderOpen(Event event)
-	{
-		Widget widget = event.item;
-		if (!(widget instanceof TreeItem))
-			return;
-		TreeItem item = (TreeItem) widget;
-		Image icon = (Image) item.getData("iconOpen");
-		if (icon != null) {
-			item.setImage(icon);
-		}
-	}
+  public void handleEvent(Event event)
+  {
+    Widget widget = event.item;
+    if (widget == null || !(widget instanceof TreeItem) || widget.isDisposed())
+      return;
 
-	/**
-	 * Behandelt das Event "Ordner zu".
-	 * @param event das ausgeloeste Event.
-	 */
-	private void handleFolderClose(Event event)
-	{
-		Widget widget = event.item;
-		if (!(widget instanceof TreeItem))
-			return;
-		TreeItem item = (TreeItem) widget;
-		Image icon = (Image) item.getData("iconClose");
-		if (icon != null) {
-			item.setImage(icon);
-		}
-	}
+    TreeItem item = (TreeItem) widget;
+    NavigationItem ni = (NavigationItem) item.getData("item");
 
-	/**
-	 * Behandelt das Event "listener". 
-	 * @param event das ausgeloeste Event.
-	 */
-	private void handleSelect(Event event)
-	{
-		Widget widget = event.item;
-		if (!(widget instanceof TreeItem))
-			return;
-		TreeItem item = (TreeItem) widget;
-
-		Action a = (Action) item.getData("action");
-		if (a == null)
-			return;
+    if (ni == null)
+      return;
+    
     try
     {
-      a.handleAction(event);
+      if (event.type == SWT.Selection)
+      {
+        Action a = (Action) ni.getAction();
+        if (a == null || !ni.isEnabled())
+          return;
+        try
+        {
+          a.handleAction(event);
+        }
+        catch (ApplicationException e)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
+        }
+        return;
+      }
+      
+      Image icon = event.type == SWT.Expand ? ni.getIconOpen() : ni.getIconClose();
+      if (icon != null)
+        item.setImage(icon);
     }
-    catch (ApplicationException e)
+    catch (RemoteException re)
     {
+      Logger.error("unable to handle navigation action",re);
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
     }
-	}
+  }
+  
+  /**
+   * Aktualisiert einen Teil des Navigationsbaumes.
+   * @param item das zu aktualisierende Element.
+   * @throws RemoteException
+   */
+  protected void update(NavigationItem item) throws RemoteException
+  {
+    TreeItem ti = (TreeItem) itemLookup.get(item);
+    if (ti != null)
+    {
+      ti.setGrayed(!item.isEnabled());
+      ti.setForeground(item.isEnabled() ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
+      ti.setText(item.getName());
+    }
+  }
 }
 
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.34  2006/06/27 23:14:11  willuhn
+ * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
+ *
  * Revision 1.33  2006/06/23 16:18:21  willuhn
  * @C small internal api renamings
  *
