@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.35 $
- * $Date: 2006/06/29 14:56:48 $
+ * $Revision: 1.36 $
+ * $Date: 2006/06/29 16:20:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -109,7 +109,6 @@ public class Menu
 
     this.itemLookup.put(element,item);
 
-    item.setText(name);
     item.setData("item",element);
     item.setEnabled(element.isEnabled());
     
@@ -132,6 +131,7 @@ public class Menu
       }
     }
     ////////////////////////////////////////////////////////////////////////////
+    item.setText(name);
 
 
     GenericIterator i = element.getChildren();
@@ -238,6 +238,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.36  2006/06/29 16:20:51  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.35  2006/06/29 14:56:48  willuhn
  * @N Menu ist nun auch deaktivierbar
  *
