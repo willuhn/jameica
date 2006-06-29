@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.34 $
- * $Date: 2006/06/27 23:14:11 $
+ * $Revision: 1.35 $
+ * $Date: 2006/06/29 14:56:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -223,11 +223,12 @@ public class Navigation implements Part, Listener
           return;
         try
         {
+          Logger.debug("executing navigation entry " + ni.getID() + " [" + ni.getName() + "]");
           a.handleAction(event);
         }
         catch (ApplicationException e)
         {
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getLocalizedMessage(),StatusBarMessage.TYPE_ERROR));
         }
         return;
       }
@@ -263,6 +264,9 @@ public class Navigation implements Part, Listener
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.35  2006/06/29 14:56:48  willuhn
+ * @N Menu ist nun auch deaktivierbar
+ *
  * Revision 1.34  2006/06/27 23:14:11  willuhn
  * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/MenuItemXml.java,v $
- * $Revision: 1.5 $
- * $Date: 2004/12/13 22:48:30 $
+ * $Revision: 1.6 $
+ * $Date: 2006/06/29 14:56:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,11 +50,34 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
     return (String) getAttribute("shortcut");
   }
 
+  /**
+   * Ueberschrieben, um dabei auch das Menu anzupassen.
+   * @see de.willuhn.jameica.gui.Item#setEnabled(boolean, boolean)
+   */
+  public void setEnabled(boolean enabled, boolean recursive)
+      throws RemoteException
+  {
+    super.setEnabled(enabled, recursive);
+    GUI.getMenu().update(this);
+    
+    if (recursive)
+    {
+      for (int i=0;i<this.childs.size();++i)
+      {
+        MenuItem child = (MenuItem) this.childs.get(i);
+        child.setEnabled(enabled,recursive);
+      }
+    }
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: MenuItemXml.java,v $
+ * Revision 1.6  2006/06/29 14:56:48  willuhn
+ * @N Menu ist nun auch deaktivierbar
+ *
  * Revision 1.5  2004/12/13 22:48:30  willuhn
  * *** empty log message ***
  *

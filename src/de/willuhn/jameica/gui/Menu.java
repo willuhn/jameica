@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.34 $
- * $Date: 2006/06/23 16:18:21 $
+ * $Revision: 1.35 $
+ * $Date: 2006/06/29 14:56:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,15 +12,20 @@
  **********************************************************************/
 package de.willuhn.jameica.gui;
 
+import java.rmi.RemoteException;
+import java.util.Hashtable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Bildet das Dropdown-Menu ab.
@@ -34,6 +39,8 @@ public class Menu
 
 	private Decorations parent;
 
+  private Hashtable itemLookup = new Hashtable();
+  
   /**
    * Erzeugt eine neue Instanz des Dropdown-Menus.
    * @param parent Das Eltern-Element.
@@ -82,42 +89,34 @@ public class Menu
     if (element == null)
       return;
 
-		org.eclipse.swt.widgets.MenuItem item = null;
-		org.eclipse.swt.widgets.Menu     menu = parentMenu;
-		
-		String name         = element.getName();
-		final Action action = element.getAction();
+		String name = element.getName();
 
 		// Wenns keinen Namen hat, gibts nichts anzuzeigen und wir laden nur die Kinder,
 		if (name == null)
 		{
-			loadChildren(element,menu);
+			loadChildren(element,parentMenu);
 			return;
 		}
 
-		// Ist ein Separator. Dann gibts auch keine Kinder.
+    // Ist ein Separator. Dann gibts auch keine Kinder.
 		if ("-".equals(name))
 		{
-			new org.eclipse.swt.widgets.MenuItem(menu,SWT.SEPARATOR);
+			new org.eclipse.swt.widgets.MenuItem(parentMenu,SWT.SEPARATOR);
 			return;
 		}
 
-		// Wenn's keine Action hat, dann nur anzeigen und Kinder bearbeiten
-		if (action == null)
-		{
-			item = new org.eclipse.swt.widgets.MenuItem(menu,SWT.CASCADE);
-			item.setText(element.getName());
-			menu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
-			item.setMenu(menu);
-			loadChildren(element,menu);
-			return;
-		}
+    org.eclipse.swt.widgets.MenuItem item = new org.eclipse.swt.widgets.MenuItem(parentMenu,SWT.CASCADE);
 
-		// Ist ein tatsaechliches Item zum Klicken.
-		item = new org.eclipse.swt.widgets.MenuItem(menu,SWT.CASCADE);
+    this.itemLookup.put(element,item);
 
-		String shortCut = element.getShortcut();
-		if (shortCut != null)
+    item.setText(name);
+    item.setData("item",element);
+    item.setEnabled(element.isEnabled());
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Shortcut vorhanden?
+    String shortCut = element.getShortcut();
+    if (shortCut != null)
     {
       try {
         String modifier = shortCut.substring(0,shortCut.indexOf("+"));
@@ -132,25 +131,80 @@ public class Menu
         Logger.error("error while creating menu element",e);
       }
     }
-		item.setText(name);
+    ////////////////////////////////////////////////////////////////////////////
 
-		item.addListener(SWT.Selection, new Listener()
+
+    GenericIterator i = element.getChildren();
+    int numChilds = i != null ? i.size() : 0;
+
+    if (element.getAction() != null)
 		{
-			public void handleEvent(Event event)
-			{
-				try
-				{
-					action.handleAction(event);
-				}
-				catch (Exception e)
-				{
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
-				}
-			}
-		});
+      ////////////////////////////////////////////////////////////////////////////
+      // Action vorhanden?
+
+      // Actions tolerieren wir nur, wenn das Element keine Kinder mehr hat
+      if (numChilds > 0)
+      {
+        Logger.warn("menu element " + element.getID() + " [" + element.getName() + "] containes action AND children. Skipping action");
+      }
+      else
+      {
+        item.addListener(SWT.Selection, new Listener()
+        {
+          public void handleEvent(Event event)
+          {
+            Widget widget = event.widget;
+            if (widget == null || !(widget instanceof org.eclipse.swt.widgets.MenuItem) || widget.isDisposed())
+              return;
+
+            org.eclipse.swt.widgets.MenuItem item = (org.eclipse.swt.widgets.MenuItem) widget;
+            MenuItem mi = (MenuItem) item.getData("item");
+
+            if (mi == null)
+              return;
+
+            try
+            {
+              Action a = (Action) mi.getAction();
+              if (a == null || !mi.isEnabled())
+                return;
+
+              Logger.debug("executing menu entry " + mi.getID() + " [" + mi.getName() + "]");
+              a.handleAction(event);
+            }
+            catch (ApplicationException ae)
+            {
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getLocalizedMessage(),StatusBarMessage.TYPE_ERROR));
+            }
+            catch (Exception e)
+            {
+              Logger.error("unable to handle menu action",e);
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
+            }
+          }
+        });
+      }
+      ////////////////////////////////////////////////////////////////////////////
+		}
+    else if (numChilds > 0)
+    {
+      ////////////////////////////////////////////////////////////////////////////
+      // Hat das Element Kinder?
+      
+      // Wir laden die Kinder
+      parentMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
+      item.setMenu(parentMenu);
+      loadChildren(element,parentMenu);
+      ////////////////////////////////////////////////////////////////////////////
+    }
+    else
+    {
+      Logger.warn("menu element " + element.getID() + " [" + element.getName() + "] containes neither action nor children. Skipping element");
+    }
   }
 
-	/**
+
+  /**
 	 * Laedt nur die Kinder.
    * @param element Element.
    * @param menu Menu.
@@ -167,10 +221,26 @@ public class Menu
 			load((MenuItem) childs.next(),menu);
 		}
   }
+
+  /**
+   * Aktualisiert einen Teil des Menus.
+   * @param item das zu aktualisierende Element.
+   * @throws RemoteException
+   */
+  protected void update(MenuItem item) throws RemoteException
+  {
+    org.eclipse.swt.widgets.MenuItem mi = (org.eclipse.swt.widgets.MenuItem) itemLookup.get(item);
+    if (mi != null)
+      mi.setEnabled(item.isEnabled());
+  }
+
 }
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.35  2006/06/29 14:56:48  willuhn
+ * @N Menu ist nun auch deaktivierbar
+ *
  * Revision 1.34  2006/06/23 16:18:21  willuhn
  * @C small internal api renamings
  *
