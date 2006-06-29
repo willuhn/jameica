@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/12/29 00:25:59 $
- * $Author: web0 $
+ * $Revision: 1.10 $
+ * $Date: 2006/06/29 23:10:01 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -13,10 +13,20 @@
 
 package de.willuhn.jameica.gui.internal.views;
 
+import java.util.Collections;
+import java.util.Vector;
+
 import de.willuhn.jameica.gui.AbstractView;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.boxes.Box;
 import de.willuhn.jameica.gui.extension.Extendable;
-import de.willuhn.jameica.gui.parts.FormTextPart;
+import de.willuhn.jameica.gui.internal.dialogs.ChooseBoxesDialog;
+import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
+import de.willuhn.util.ClassFinder;
 
 
 /**
@@ -30,20 +40,40 @@ public class Start extends AbstractView implements Extendable
    */
   public void bind() throws Exception
   {
-    String[] messages = Application.getWelcomeMessages();
-    if (messages == null || messages.length == 0)
-      return;
-    StringBuffer sb = new StringBuffer();
-    sb.append("<form><p><span color=\"header\" font=\"header\">System-Meldungen</span></p>");
-    for (int i=0;i<messages.length;++i)
+    GUI.getView().setTitle(Application.getI18n().tr("Jameica"));
+
+    ClassFinder finder = Application.getClassLoader().getClassFinder();
+    Class[] boxes = finder.findImplementors(Box.class);
+    Vector v = new Vector();
+    for (int i=0;i<boxes.length;++i)
     {
-      sb.append("<li>");
-      sb.append(messages[i]);
-      sb.append("</li>");
+      Box b = (Box) boxes[i].newInstance();
+      if (!b.isEnabled() || !b.isActive())
+        continue;
+      v.add(b);
     }
-    sb.append("</form>");
-    FormTextPart part = new FormTextPart(sb.toString());
-    part.paint(getParent());
+    Collections.sort(v);
+    for (int i=0;i<v.size();++i)
+    {
+      Box b = (Box) v.get(i);
+      b.paint(getParent());
+    }
+    
+    ButtonArea buttons = new ButtonArea(getParent(),1);
+    buttons.addButton(Application.getI18n().tr("Startseite anpassen"),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        ChooseBoxesDialog d = new ChooseBoxesDialog(ChooseBoxesDialog.POSITION_CENTER);
+        try
+        {
+          d.open();
+        }
+        catch (Exception e)
+        {
+          Logger.error("error while loading box config dialog",e);
+        }
+      }
+    },null,true);
   }        
 
   /**
@@ -66,6 +96,9 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.10  2006/06/29 23:10:01  willuhn
+ * @N Box-System aus Hibiscus in Jameica-Source verschoben
+ *
  * Revision 1.9  2005/12/29 00:25:59  web0
  * @N Anzeige der System-Meldungen auf der Start-Seite
  *
