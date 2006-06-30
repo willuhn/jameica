@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.95 $
- * $Date: 2006/06/23 16:18:21 $
+ * $Revision: 1.96 $
+ * $Date: 2006/06/30 13:51:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.PluginContainer;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.ApplicationCallbackSWT;
@@ -180,19 +180,19 @@ public class GUI implements ApplicationController
 
       // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
       // hinzu.
-      Iterator i = Application.getPluginLoader().getPluginContainers();
+      Iterator i = Application.getPluginLoader().getInstalledManifests();
       while (i.hasNext())
       {
-        PluginContainer pc = (PluginContainer) i.next();
-        if (!pc.isInstalled())
+        Manifest mf = (Manifest) i.next();
+        if (!mf.isInstalled())
         {
-          Logger.info("plugin " + pc.getFile() + " is not installed, skipping");
+          Logger.info("plugin " + mf.getName() + " is not installed, skipping");
           continue;
         }
         try
         {
-          menu.add(pc.getManifest().getMenu());
-          navi.add(pc.getManifest().getNavigation());
+          menu.add(mf.getMenu());
+          navi.add(mf.getNavigation());
         }
         catch (Throwable t)
         {
@@ -209,10 +209,6 @@ public class GUI implements ApplicationController
       
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Jameica erfolgreich gestartet"),StatusBarMessage.TYPE_SUCCESS));
       loop();
-    }
-    catch (ApplicationException ae)
-    {
-      throw ae;
     }
     catch (Exception e)
     {
@@ -795,6 +791,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.96  2006/06/30 13:51:34  willuhn
+ * @N Pluginloader Redesign in HEAD uebernommen
+ *
  * Revision 1.95  2006/06/23 16:18:21  willuhn
  * @C small internal api renamings
  *

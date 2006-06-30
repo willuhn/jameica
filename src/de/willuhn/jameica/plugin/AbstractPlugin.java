@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/07/14 18:03:35 $
- * $Author: web0 $
+ * $Revision: 1.8 $
+ * $Date: 2006/06/30 13:51:34 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -42,7 +42,7 @@ public abstract class AbstractPlugin
 	{
 		this.file = file;
 		this.res = new PluginResources(this);
-		this.manifest = Application.getPluginLoader().getPluginContainer(this.getClass()).getManifest();
+		this.manifest = Application.getPluginLoader().getManifest(this.getClass());
 	}
 
 	/**
@@ -167,6 +167,12 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.8  2006/06/30 13:51:34  willuhn
+ * @N Pluginloader Redesign in HEAD uebernommen
+ *
+ * Revision 1.7.6.1  2006/06/06 21:27:08  willuhn
+ * @N New Pluginloader (in separatem Branch)
+ *
  * Revision 1.7  2005/07/14 18:03:35  web0
  * @N buildnumber/date in AbstractPlugin
  *

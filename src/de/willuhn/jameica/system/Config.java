@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.26 $
- * $Date: 2006/02/06 14:20:13 $
- * $Author: web0 $
+ * $Revision: 1.27 $
+ * $Date: 2006/06/30 13:51:34 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -35,15 +35,16 @@ public final class Config
    */
   public final static int RMI_DEFAULT_PORT = 4840;
 
-	private File workDir   	   = null;
-  private File configDir     = null;
-  private File pluginDir     = null;
+	private File workDir   	     = null;
+  private File configDir       = null;
 
-  private Locale locale      = null;
+  private Locale locale        = null;
 
-  private Settings settings  = null;
+  private Settings settings    = null;
 
-  private String[] plugins   = null;
+  private File systemPluginDir = null;
+  private File userPluginDir   = null;
+  private File[] pluginDirs    = null;
 
   /**
    * ct.
@@ -82,14 +83,6 @@ public final class Config
 		{
 			Logger.info("creating " + this.configDir.getAbsolutePath());
 			this.configDir.mkdir();
-		}
-
-		// Wir erstellen noch ein userspezifisches Plugin-Verzeichnis
-		this.pluginDir = new File(dataDir + "/plugins");
-		if (!pluginDir.exists())
-		{
-			Logger.info("creating " + pluginDir.getAbsolutePath());
-			pluginDir.mkdir();
 		}
 
     this.settings = new Settings(this.getClass());
@@ -283,41 +276,128 @@ public final class Config
 	}
 
   /**
-   * Liefert die Namen aller Verzeichnisse mit Plugins.
-   * @return Liste aller Plugin-Verzeichnisse.
+   * Liefert die in ~/.jameica/cfg/de.willuhn.jameica.system.Config.properties definierten
+   * Pluginverzeichnisse.
+   * @return Liste Plugin-Verzeichnisse.
    */
-  public String[] getPluginDirs()
+  public File[] getPluginDirs()
   {
-    if (this.plugins != null)
-      return this.plugins;
+    if (this.pluginDirs != null)
+      return this.pluginDirs;
 
+    // Abwaertskompatibilitaet
+    // Diese beiden Plugin-Verzeichnisse standen frueher mit in der Config
+    // drin. Da die jetzt separat abgefragt werden, schmeissen wir sie
+    // hier raus, falls sie auftauchen
+    File sysPluginDir = getSystemPluginDir();
+    File usrPluginDir = getUserPluginDir();
+    
+    boolean found = false;
+    
     ArrayList l = new ArrayList();
-    l.add("plugins"); // Das System-Plugindir tun wir per Default rein
-    l.add(this.pluginDir.getAbsolutePath()); // Das Default-Dir des Users auch
 
-    String[] s = settings.getList("jameica.plugin.dir",new String[]{"plugins"});
+    String[] s = settings.getList("jameica.plugin.dir",null);
     if (s != null && s.length > 0)
     {
       for (int i=0;i<s.length;++i)
       {
-        if (s[i].equals("plugins") || s[i].equals(this.pluginDir.getAbsolutePath()))
-          continue; // die haben wir schon oben reingetan
-        l.add(s[i]);
+        File f = new File(s[i]);
+
+        try
+        {
+          // Mal schauen, ob wir das in einen kanonischen Pfad wandeln koennen
+          f = f.getCanonicalFile();
+        }
+        catch (IOException e)
+        {
+          Logger.warn("unable to convert " + f.getAbsolutePath() + " into canonical path");
+        }
+        
+        if (f.equals(sysPluginDir) || f.equals(usrPluginDir))
+        {
+          Logger.info("skipping system/user plugin dir in jameica.plugin.dir[" + i + "]");
+          found = true;
+          continue;
+        }
+        
+        if (!f.canRead() || !f.isDirectory())
+        {
+          Logger.warn(f.getAbsolutePath() + " is no valid plugin dir, skipping");
+          continue;
+        }
+        
+        Logger.info("adding plugin dir " + f.getAbsolutePath());
+        l.add(f);
       }
     }
-    this.plugins = (String[]) l.toArray(new String[l.size()]);
-    return this.plugins;
+    
+    // Migration: Wir schreiben die Liste der Plugin-Verzeichnisse neu,
+    // damit System- und User-Verzeichnis rausfliegen.
+    if (found)
+    {
+      String[] newList = new String[l.size()];
+      for (int i=0;i<l.size();++i)
+      {
+        newList[i] = ((File)l.get(i)).getAbsolutePath();
+      }
+      settings.setAttribute("jameica.plugin.dir",newList);
+    }
+    
+    this.pluginDirs = (File[]) l.toArray(new File[l.size()]);
+    return this.pluginDirs;
+  }
+  
+  /**
+   * Liefert das System-Plugin-Verzeichnis.
+   * Das ist jenes, welches sich im Jameica-Verzeichnis befindet.
+   * @return das System-Plugin-Verzeichnis.
+   */
+  public File getSystemPluginDir()
+  {
+    if (this.systemPluginDir == null)
+    {
+      this.systemPluginDir = new File("./plugins");
+      try
+      {
+        this.systemPluginDir = this.systemPluginDir.getCanonicalFile();
+      }
+      catch (IOException e)
+      {
+        Logger.warn("unable to convert " + this.systemPluginDir.getAbsolutePath() + " into canonical path");
+      }
+    }
+
+    return this.systemPluginDir;
   }
 
-	/**
-	 * Speichert die Verzeichnisse mit den Plugins.
-   * @param pluginDirs die Plugin-Verzeichnisse.
+  /**
+   * Liefert das User-Plugin-Verzeichnis.
+   * Das ist jenes, welches sich im Work-Verzeichnis des Users befindet.
+   * In der Regel ist das ~/.jameica/plugins.
+   * @return das user-Plugin-Verzeichnis.
    */
-  public void setPluginDirs(String[] pluginDirs)
-	{
-    this.plugins = pluginDirs;
-    settings.setAttribute("jameica.plugin.dir",pluginDirs);
-	}
+  public File getUserPluginDir()
+  {
+    if (this.userPluginDir == null)
+    {
+      // Wir erstellen noch ein userspezifisches Plugin-Verzeichnis
+      this.userPluginDir = new File(this.workDir,"plugins");
+      if (!userPluginDir.exists())
+      {
+        Logger.info("creating " + userPluginDir.getAbsolutePath());
+        userPluginDir.mkdirs();
+      }
+      try
+      {
+        this.userPluginDir = this.userPluginDir.getCanonicalFile();
+      }
+      catch (IOException e)
+      {
+        Logger.warn("unable to convert " + this.userPluginDir.getAbsolutePath() + " into canonical path");
+      }
+    }
+    return this.userPluginDir;
+  }
 
   /**
    * Liefert Pfad und Dateiname des Log-Files.
@@ -383,6 +463,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.27  2006/06/30 13:51:34  willuhn
+ * @N Pluginloader Redesign in HEAD uebernommen
+ *
  * Revision 1.26  2006/02/06 14:20:13  web0
  * @R removed parameter "ask"
  *

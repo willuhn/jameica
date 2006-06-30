@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/BoxRegistry.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/06/29 23:10:01 $
+ * $Revision: 1.2 $
+ * $Date: 2006/06/30 13:51:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,6 +57,7 @@ public class BoxRegistry
       try
       {
         current = (Box) boxes[i].newInstance();
+        Logger.debug("found box " + current.getName());
         v.add(current);
       }
       catch (Exception e)
@@ -117,6 +118,9 @@ public class BoxRegistry
 
 /*********************************************************************
  * $Log: BoxRegistry.java,v $
+ * Revision 1.2  2006/06/30 13:51:34  willuhn
+ * @N Pluginloader Redesign in HEAD uebernommen
+ *
  * Revision 1.1  2006/06/29 23:10:01  willuhn
  * @N Box-System aus Hibiscus in Jameica-Source verschoben
  *

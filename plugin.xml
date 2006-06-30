@@ -7,6 +7,11 @@
 	<homepage>http://www.willuhn.de/projects/jameica</homepage>
 	<license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
 
+  <classfinder>
+    <include>jameica\.jar</include>
+    <include>.*\.class</include>
+  </classfinder>
+
 	<menu>
 		<item name="Datei">
 			<item name="&amp;Einstellungen" 			shortcut="CTRL+E" 	action="de.willuhn.jameica.gui.internal.action.Settings" />

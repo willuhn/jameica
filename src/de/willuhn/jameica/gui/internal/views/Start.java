@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.10 $
- * $Date: 2006/06/29 23:10:01 $
+ * $Revision: 1.11 $
+ * $Date: 2006/06/30 13:51:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,20 +13,17 @@
 
 package de.willuhn.jameica.gui.internal.views;
 
-import java.util.Collections;
-import java.util.Vector;
-
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.boxes.Box;
+import de.willuhn.jameica.gui.boxes.BoxRegistry;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.dialogs.ChooseBoxesDialog;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.ClassFinder;
 
 
 /**
@@ -42,20 +39,13 @@ public class Start extends AbstractView implements Extendable
   {
     GUI.getView().setTitle(Application.getI18n().tr("Jameica"));
 
-    ClassFinder finder = Application.getClassLoader().getClassFinder();
-    Class[] boxes = finder.findImplementors(Box.class);
-    Vector v = new Vector();
+    Box[] boxes = BoxRegistry.getBoxes();
+
     for (int i=0;i<boxes.length;++i)
     {
-      Box b = (Box) boxes[i].newInstance();
+      Box b = (Box) boxes[i];
       if (!b.isEnabled() || !b.isActive())
         continue;
-      v.add(b);
-    }
-    Collections.sort(v);
-    for (int i=0;i<v.size();++i)
-    {
-      Box b = (Box) v.get(i);
       b.paint(getParent());
     }
     
@@ -96,6 +86,9 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.11  2006/06/30 13:51:34  willuhn
+ * @N Pluginloader Redesign in HEAD uebernommen
+ *
  * Revision 1.10  2006/06/29 23:10:01  willuhn
  * @N Box-System aus Hibiscus in Jameica-Source verschoben
  *

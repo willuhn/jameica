@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/SystemMessages.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/06/29 23:10:01 $
+ * $Revision: 1.2 $
+ * $Date: 2006/06/30 13:51:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,29 @@ public class SystemMessages extends AbstractBox
   public String getName()
   {
     return "Jameica: " + Application.getI18n().tr("System-Meldungen");
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.boxes.AbstractBox#isActive()
+   */
+  public boolean isActive()
+  {
+    String[] messages = Application.getWelcomeMessages();
+    return super.isActive() && messages != null && messages.length > 0;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.boxes.AbstractBox#isEnabled()
+   */
+  public boolean isEnabled()
+  {
+    String[] messages = Application.getWelcomeMessages();
+    return messages != null && messages.length > 0;
+  }
+
+  public void setEnabled(boolean enabled)
+  {
+    // Das darf der User nicht.
   }
 
   /**
@@ -76,6 +99,9 @@ public class SystemMessages extends AbstractBox
 
 /*********************************************************************
  * $Log: SystemMessages.java,v $
+ * Revision 1.2  2006/06/30 13:51:34  willuhn
+ * @N Pluginloader Redesign in HEAD uebernommen
+ *
  * Revision 1.1  2006/06/29 23:10:01  willuhn
  * @N Box-System aus Hibiscus in Jameica-Source verschoben
  *

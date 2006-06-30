@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.55 $
- * $Date: 2006/04/18 16:49:46 $
- * $Author: web0 $
+ * $Revision: 1.56 $
+ * $Date: 2006/06/30 13:51:34 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.LogMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
@@ -49,11 +51,12 @@ public final class Application {
 
   
   // singleton
-  private static Application app;
+  private static Application app   = null;
 		private boolean cleanShutdown = false;
 		
 		private StartupParams 			params;
 
+    private Manifest            manifest;
     private Config 							config;
     private MultipleClassLoader classLoader;
 		private SSLFactory 					sslFactory;  
@@ -186,6 +189,8 @@ public final class Application {
 		{
 			Logger.warn("unable to detect Jameica Version number");
 		}
+    Logger.info("  Built-Date : " + getBuildDate());
+    Logger.info("  Buildnumber: " + getBuildnumber());
 
     if (Logger.getLevel().getValue() == Level.DEBUG.getValue())
     {
@@ -209,18 +214,6 @@ public final class Application {
       Logger.info("file.encoding : " + System.getProperty("file.encoding"));
     }
 
-    try
-		{
-			JarFile jar = new JarFile("jameica.jar");
-			java.util.jar.Manifest mf = jar.getManifest();
-			Logger.info("Built-Date : " + mf.getMainAttributes().getValue("Built-Date"));
-			Logger.info("Buildnumber: " + mf.getMainAttributes().getValue("Implementation-Buildnumber"));
-		}
-		catch (Exception e)
-		{
-			Logger.warn("unable to read jar manifest, running uncompressed within debugger?");
-		}
-
 		// Proxy-Einstellungen checken
     String proxyHost = getConfig().getProxyHost();
     int proxyPort    = getConfig().getProxyPort();
@@ -231,7 +224,8 @@ public final class Application {
       System.setProperty("http.proxyHost",proxyHost);
       System.setProperty("http.proxyPort",""+proxyPort);
     }
-    
+
+    getManifest();
     // Init Velocity
     VelocityLoader.init();
 
@@ -247,12 +241,6 @@ public final class Application {
 
     // close splash screen
     getCallback().getStartupMonitor().setStatus(0);
-
-    // Jetzt checken wir noch, ob wir ueberhaupt Plugins haben
-    if (!getPluginLoader().getPluginContainers().hasNext())
-    {
-      addWelcomeMessage(getI18n().tr("Derzeit sind keine Plugins installiert. Das macht wenig Sinn ;)"));
-    }
 
     ////////////////////////////////////////////////////////////////////////////
     // add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
@@ -560,11 +548,21 @@ public final class Application {
   /**
 	 * Liefert das Manifest von Jameica selbst.
    * @return Manifest von Jameica selbst.
-   * @throws Exception
    */
-  public static Manifest getManifest() throws Exception
+  public static Manifest getManifest()
 	{
-		return new Manifest(null,app.getClass().getResourceAsStream("/system.xml"));
+    if (app.manifest == null)
+    {
+      try
+      {
+        app.manifest = prepareClasses(new File("./"));
+      }
+      catch (Exception e)
+      {
+        app.startupError(e);
+      }
+    }
+    return app.manifest;
 	}
 
   /**
@@ -607,11 +605,158 @@ public final class Application {
     return "";
   }
 
+  
+  /**
+   * Oeffnet das in diesem Verzeichnis befindliche Manifest (plugin.xml),
+   * durchsucht das Verzeichnis nach Klassen und Jars, laedt diese
+   * in de Classpath und registriert alle Klassen im Classfinder,
+   * deren Name zu den Suchfiltern in der Sektion &lt;classfinder&gt; passen. 
+   * @param dir
+   * @return das zugehoerige Manifest.
+   * @throws Exception
+   */
+  public static synchronized Manifest prepareClasses(File dir) throws Exception
+  {
+    if (dir == null)
+      throw new Exception("no dir given");
+
+    Logger.info("checking directory " + dir.getAbsolutePath());
+    getCallback().getStartupMonitor().setStatusText("checking directory " + dir.getAbsolutePath());
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Check Manifest
+    File f = new File(dir,"plugin.xml");
+    
+    if (!f.canRead() || !f.isFile())
+      throw new Exception("manifest " + f.getAbsolutePath() + " not found");
+
+    Manifest manifest = new Manifest(f);
+    
+    ////////////////////////////////////////////////////////////////////////////
+      
+    ////////////////////////////////////////////////////////////////////////////
+    // Classpath befuellen
+
+    getCallback().getStartupMonitor().addPercentComplete(2);
+
+    // Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
+    getClassLoader().add(new File(dir.getPath()));
+    getClassLoader().add(new File(dir.getPath() + "/bin"));
+    getCallback().getStartupMonitor().addPercentComplete(2);
+
+    // Und jetzt noch alle darin befindlichen Jars
+    getClassLoader().addJars(dir);
+
+    getCallback().getStartupMonitor().addPercentComplete(1);
+    ////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Classfinder befuellen
+    
+    long count = 0;
+
+    FileFinder ff = new FileFinder(dir);
+    
+    // Include-Verzeichnisse aus Manifest uebernehmen
+    String[] cfIncludes = manifest.getClassFinderIncludes();
+    for (int i=0;i<cfIncludes.length;++i)
+    {
+      Logger.info("classfinder include: " + cfIncludes[i]);
+      ff.matches(cfIncludes[i]);
+    }
+
+    File[] child = ff.findRecursive();
+    
+    String path = dir.getCanonicalPath();
+    
+    // Wir iterieren ueber alle Dateien in dem Verzeichnis.
+    for (int i=0;i<child.length;++i)
+    {
+      if (++count % 75 == 0)
+        getCallback().getStartupMonitor().addPercentComplete(1);
+
+      String name = child[i].getCanonicalPath();
+      
+      // Class-File?
+      if (name.endsWith(".class"))
+      {
+        // Jetzt muessen wir vorn noch den Verzeichnisnamen abschneiden
+        name = name.substring(path.length() + 5); // fuehrenden Pfad abschneiden ("/bin" beachten)
+        name = name.substring(0, name.indexOf(".class")).replace('/', '.').replace('\\', '.'); // .class weg Trenner ersetzen
+        if (name.startsWith("."))
+          name = name.substring(1); // ggf. fuehrenden Punkt abschneiden
+    
+        // In ClassFinder uebernehmen
+        load(name);
+      }
+        
+      if (name.endsWith(".jar") || name.endsWith(".zip"))
+      {
+        Logger.info("inspecting " + name);
+
+        JarFile jar = null;
+        try {
+          jar = new JarFile(child[i]);
+        }
+        catch (IOException ioe) {
+          Logger.error("unable to load " + name + ", skipping",ioe);
+          continue; // skip
+        }
+
+        // So, jetzt iterieren wir ueber alle Files in dem Jar
+        Enumeration jarEntries = jar.entries();
+        JarEntry entry = null;
+  
+        while (jarEntries.hasMoreElements())
+        {
+          if (++count % 75 == 0)
+            getCallback().getStartupMonitor().addPercentComplete(1);
+          
+          entry = (JarEntry) jarEntries.nextElement();
+          String entryName = entry.getName();
+
+          int idxClass = entryName.indexOf(".class");
+
+          // alles, was nicht mit ".class" aufhoert, koennen wir jetzt ignorieren
+          if (idxClass == -1)
+            continue;
+  
+          // wir machen einen Klassen-Namen draus
+          entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
+
+          // In ClassFinder uebernehmen
+          load(entryName);
+        }
+      }
+    }
+    return manifest;
+  }
+  
+  /**
+   * Laedt die Klasse und fuegt sie in den Classfinder.
+   * @param classname zu ladende Klasse.
+   */
+  private static void load(String classname)
+  {
+    try {
+      getClassLoader().load(classname);
+    }
+    catch (Throwable t)
+    {
+      Logger.error("error while loading class " + classname,t);
+    }
+  }
 }
 
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.56  2006/06/30 13:51:34  willuhn
+ * @N Pluginloader Redesign in HEAD uebernommen
+ *
+ * Revision 1.55.2.1  2006/06/06 21:27:08  willuhn
+ * @N New Pluginloader (in separatem Branch)
+ *
  * Revision 1.55  2006/04/18 16:49:46  web0
  * @C redesign in MessagingFactory
  *
