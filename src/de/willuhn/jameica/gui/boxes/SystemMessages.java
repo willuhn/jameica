@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/SystemMessages.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.3 $
+ * $Date: 2006/07/03 23:10:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,6 +52,9 @@ public class SystemMessages extends AbstractBox
     return messages != null && messages.length > 0;
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.boxes.Box#setEnabled(boolean)
+   */
   public void setEnabled(boolean enabled)
   {
     // Das darf der User nicht.
@@ -99,6 +102,9 @@ public class SystemMessages extends AbstractBox
 
 /*********************************************************************
  * $Log: SystemMessages.java,v $
+ * Revision 1.3  2006/07/03 23:10:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *
