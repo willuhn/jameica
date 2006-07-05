@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.18 $
- * $Date: 2005/06/06 09:54:30 $
- * $Author: web0 $
+ * $Revision: 1.19 $
+ * $Date: 2006/07/05 23:29:15 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -12,22 +12,20 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.input.PasswordInput;
+import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog zu Passwort-Eingabe.
@@ -39,24 +37,19 @@ import de.willuhn.jameica.system.OperationCanceledException;
  * zaehlt. Nach 3 Versuchen wird die Funktion <code>cancel()</code>
  * aufgerufen und der Dialog geschlossen.
  */
-public abstract class PasswordDialog extends SimpleDialog {
+public abstract class PasswordDialog extends AbstractDialog {
 
 	private final static int MAX_RETRIES = 3;
-	private int retries = 0;
 
-	private Composite comp = null;
-	private Label label = null;
-	private Label pLabel = null;
-	private Label error = null;
-	private Text password = null;
-	private Button button = null;
-	private Button cancel = null;
-	
-	private String labelText 					= "";
-	
-	private String enteredPassword = "";
+  private int retries                 = 0;
+  private String text                 = "";
+	private String labelText 					  = "";
+  private String errorText            = "";
+	private String enteredPassword      = "";
+  private boolean showPassword        = false;
   
-  private boolean showPassword = false;
+  private LabelInput errorTextInput   = null;
+  private PasswordInput passwordInput = null;
 
 	/**
 	 * Erzeugt einen neuen Passwort-Dialog.
@@ -66,8 +59,8 @@ public abstract class PasswordDialog extends SimpleDialog {
 	 */
   public PasswordDialog(int position) {
     super(position);
-    labelText = i18n.tr("Passwort");
-		setSideImage(SWTUtil.getImage("password.gif"));
+    this.labelText = i18n.tr("Passwort");
+    this.setSideImage(SWTUtil.getImage("password.gif"));
   }
 
 	/**
@@ -79,11 +72,11 @@ public abstract class PasswordDialog extends SimpleDialog {
 	{
 		if (text == null || text.length() == 0)
 			return;
-		labelText = text;
+		this.labelText = text;
 	}
 
 	/**
-	 * Zeigt den uebergebenen Text rot markiert links neben dem OK-Button an.
+	 * Zeigt den uebergebenen Text rot markiert an.
 	 * Diese Funktion sollte aus <code>checkPassword(String)</code> heraus
 	 * aufgerufen werden, um dem benutzer zu zeigen, <b>warum</b> seine
 	 * Passwort-Eingabe falsch war. 
@@ -93,8 +86,21 @@ public abstract class PasswordDialog extends SimpleDialog {
 	{
 		if (text == null || text.length() == 0)
 			return;
-		error.setText(text);
+		this.errorText = text;
+    if (this.errorTextInput != null)
+      this.errorTextInput.setValue(this.errorText);
 	}
+
+  /**
+   * Speichert den anzuzeigenden Text.
+   * @param text anzuzeigender Text.
+   */
+  public void setText(String text)
+  {
+    if (text == null || text.length() == 0)
+      return;
+    this.text = text;
+  }
 
   /**
    * Legt fest, ob das Passwort waehrend der Eingabe angezeigt werden soll.
@@ -110,79 +116,52 @@ public abstract class PasswordDialog extends SimpleDialog {
    */
   protected void paint(Composite parent) throws Exception
 	{
-		// Composite um alles drumrum.
-		comp = new Composite(parent,SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		comp.setLayout(new GridLayout(3,false));
-		
+    Container container = new SimpleContainer(parent);
+
 		// Text
-		label = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
-		label.setText(getText());
-		GridData grid = new GridData(GridData.FILL_HORIZONTAL);
-		grid.horizontalSpan = 3;
-		label.setLayoutData(grid);
+    if (this.text != null && this.text.length() > 0)
+      container.addText(this.text,true);
 		
-		// Fehlertext 
-		error = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
-		error.setForeground(Color.ERROR.getSWTColor());
-		GridData grid2 = new GridData(GridData.FILL_HORIZONTAL);
-		grid2.horizontalSpan = 3;
-		grid2.horizontalIndent = 0;
-		error.setLayoutData(grid2);
+    // das Passwort
+    this.passwordInput = new PasswordInput(this.enteredPassword);
+    this.passwordInput.setShowPassword(this.showPassword);
+    container.addLabelPair(labelText,this.passwordInput);
+    // Fehlertext
+    this.errorTextInput = new LabelInput(this.errorText);
+    this.errorTextInput.setColor(Color.ERROR);
+    container.addLabelPair("",this.errorTextInput);
 
-		// Label vor Eingabefeld
-		pLabel = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-		pLabel.setText(labelText);
-		pLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+    // Der Freiraum fuer Erweiterungen
+    extend(container);
 
-		password = GUI.getStyleFactory().createText(comp);
-    if (!showPassword)
-  		password.setEchoChar('*');
-		GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
-		grid3.horizontalSpan = 2;
-		password.setLayoutData(grid3);
 
-		// Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
-		Label dummy = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-		dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    ButtonArea buttons = container.createButtonArea(2);
+    
+    buttons.addButton("    " + i18n.tr("OK") + "    ",new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        String p = (String) passwordInput.getValue();
+        retries++;
 
-		// OK-Button
-		button = GUI.getStyleFactory().createButton(comp);
-		button.setText("    " + i18n.tr("OK") + "    ");
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		getShell().setDefaultButton(button);
-		button.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				String p = password.getText();
-				retries++;
+        if (!checkPassword(p))
+        {
+          passwordInput.setValue("");
+          if (retries >= MAX_RETRIES)
+          {
+            // maximale Anzahl der Fehlversuche erreicht.
+            throw new OperationCanceledException(MAX_RETRIES + " falsche Passwort-Eingaben");
+          }
+          return;
+        }
+        enteredPassword = p;
+        close();
+      }
+    },null,true);
 
-				if (!checkPassword(p))
-				{
-					password.setText("");
-					if (retries >= MAX_RETRIES)
-					{
-						// maximale Anzahl der Fehlversuche erreicht.
-						throw new OperationCanceledException(MAX_RETRIES + " falsche Passwort-Eingaben");
-					}
-					return;
-				}
-				enteredPassword = p;
-				close();
-			}
-		});
-
-		// Abbrechen-Button
-		cancel = GUI.getStyleFactory().createButton(comp);
-		cancel.setText(i18n.tr("Abbrechen"));
-		cancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		cancel.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				throw new OperationCanceledException("Dialog abgebrochen");
+    buttons.addButton(i18n.tr("Abbrechen"), new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        throw new OperationCanceledException("Dialog abgebrochen");
       }
     });
 
@@ -208,6 +187,19 @@ public abstract class PasswordDialog extends SimpleDialog {
    * @return true, wenn die Eingabe OK ist, andernfalls false.
    */
   protected abstract boolean checkPassword(String password);
+  
+  /**
+   * Kann von abgeleiteten Dialogen ueberschrieben werden, um
+   * den Password-Dialog noch zu erweitern. Sie erhalten ein
+   * Composite mit einem einspaltigen Grid-Layout.
+   * Angezeigt wird die Erweiterung dann direkt ueber den beiden
+   * Buttons.
+   * @param container der Container.
+   * @throws Exception
+   */
+  protected void extend(Container container) throws Exception
+  {
+  }
 	
 	/**
 	 * Liefert die Anzahl der moeglichen Rest-Versuche zur
@@ -231,6 +223,9 @@ public abstract class PasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.19  2006/07/05 23:29:15  willuhn
+ * @B Bug 174
+ *
  * Revision 1.18  2005/06/06 09:54:30  web0
  * *** empty log message ***
  *

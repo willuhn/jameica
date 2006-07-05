@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/PasswordInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/07/09 00:12:46 $
+ * $Revision: 1.4 $
+ * $Date: 2006/07/05 23:29:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
  */
 public class PasswordInput extends TextInput
 {
+  private boolean showPassword = false;
 
   /**
    * Erzeugt ein neues Eingabe-Feld und schreibt den uebergebenen Wert rein.
@@ -35,13 +36,27 @@ public class PasswordInput extends TextInput
   public Control getControl()
   {
 		Control c = super.getControl();
-		text.setEchoChar('*');
+    if (!this.showPassword)
+      text.setEchoChar('*');
     return c;
+  }
+  
+  /**
+   * Legt fest, ob das Passwort bei der Eingabe angezeigt werden soll.
+   * Default: false.
+   * @param showPassword
+   */
+  public void setShowPassword(boolean showPassword)
+  {
+    this.showPassword = showPassword;
   }
 }
 
 /*********************************************************************
  * $Log: PasswordInput.java,v $
+ * Revision 1.4  2006/07/05 23:29:15  willuhn
+ * @B Bug 174
+ *
  * Revision 1.3  2004/07/09 00:12:46  willuhn
  * @C Redesign
  *
