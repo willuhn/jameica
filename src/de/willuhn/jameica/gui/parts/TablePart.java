@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.51 $
- * $Date: 2006/05/11 16:51:30 $
- * $Author: web0 $
+ * $Revision: 1.52 $
+ * $Date: 2006/07/05 22:17:39 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
+import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
@@ -91,6 +92,7 @@ public class TablePart implements Part
 	private Image down									= null;
   private boolean rememberOrder       = false;
   private boolean rememberColWidth    = false;
+  private boolean check               = false;
 
 	private int size = 0;
   
@@ -225,6 +227,43 @@ public class TablePart implements Part
   {
     this.rememberOrder = remember;
   }
+  
+  /**
+   * Legt fest, ob jede Zeile der Tabelle mit einer Checkbox versehen werden soll.
+   * Ist dies der Fall, liefert <code>getItems</code> nur noch die aktiven
+   * Elemente zurueck.
+   * Default: false
+   * @param checkable
+   */
+  public void setCheckable(boolean checkable)
+  {
+    this.check = checkable;
+  }
+  
+  /**
+   * Liefert die Fach-Objekte der Tabelle. Die sind vom Typ <code>GenericObject</code>.
+   * Ist <code>setCheckable(true)</code> gesetzt, werden nur die Elemente zurueckgeliefert,
+   * bei denen das Haekchen gesetzt ist.
+   * @return Liste der Fachobjekte.
+   * @throws RemoteException
+   */
+  public GenericIterator getItems() throws RemoteException
+  {
+    if (this.table == null || this.table.isDisposed())
+      return this.list;
+    
+    ArrayList list = new ArrayList();
+    TableItem[] items = this.table.getItems();
+    for (int i=0;i<items.length;++i)
+    {
+      if (items[i] == null || items[i].isDisposed())
+        continue;
+      if (this.check && !items[i].getChecked())
+        continue;
+      list.add(items[i].getData());
+    }
+    return PseudoIterator.fromArray((GenericObject[])list.toArray(new GenericObject[list.size()]));
+  }
 
   /**
    * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
@@ -326,6 +365,7 @@ public class TablePart implements Part
   public void addItem(final GenericObject object, int index) throws RemoteException
 	{
 		final TableItem item = new TableItem(table, SWT.NONE,index);
+    if (check) item.setChecked(true);
 
 		// hihi, wenn es sich um ein DBObject handelt, haengen wir einen
 		// Listener dran, der uns ueber das Loeschen des Objektes
@@ -453,6 +493,8 @@ public class TablePart implements Part
 		comp.setLayout(layout);
 
     int flags = (this.multi ? SWT.MULTI : SWT.SINGLE) | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
+    if (this.check)
+      flags |= SWT.CHECK;
 
     table = GUI.getStyleFactory().createTable(comp, flags);
     table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -1108,6 +1150,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.52  2006/07/05 22:17:39  willuhn
+ * @N Neue Funktionen setCheckable() und getItems() in TablePart
+ *
  * Revision 1.51  2006/05/11 16:51:30  web0
  * @B bug 233
  *
