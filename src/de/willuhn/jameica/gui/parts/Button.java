@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/03/20 23:37:04 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2006/07/10 10:33:18 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -98,7 +98,7 @@ public class Button implements Part
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
     if (this.isDefault)
-      GUI.getShell().setDefaultButton(button);
+      parent.getShell().setDefaultButton(button);
     
     button.setEnabled(this.enabled);
 
@@ -128,6 +128,9 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
+ * Revision 1.4  2006/07/10 10:33:18  willuhn
+ * @B OK-button was not set as default button
+ *
  * Revision 1.3  2006/03/20 23:37:04  web0
  * @B misc widget updates
  *
