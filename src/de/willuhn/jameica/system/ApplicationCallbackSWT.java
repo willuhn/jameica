@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/06/27 13:58:18 $
- * $Author: web0 $
+ * $Revision: 1.11 $
+ * $Date: 2006/07/13 21:43:31 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -340,6 +340,7 @@ public class ApplicationCallbackSWT implements ApplicationCallback
     public PWD()
     {
       super(PWD.POSITION_CENTER);
+      setSize(400,SWT.DEFAULT);
     }
 
     /**
@@ -388,6 +389,9 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.11  2006/07/13 21:43:31  willuhn
+ * @N Passwort-Dialog etwas kleiner gemacht
+ *
  * Revision 1.10  2005/06/27 13:58:18  web0
  * @N auto answer in application callback
  *
