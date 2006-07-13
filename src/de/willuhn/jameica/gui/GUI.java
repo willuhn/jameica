@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.96 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.97 $
+ * $Date: 2006/07/13 22:15:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -314,6 +314,12 @@ public class GUI implements ApplicationController
 	 */
 	public static void startPreviousView()
 	{
+    // BUGZILLA 247
+    if (gui == null || gui.history == null || gui.history.size() == 0)
+    {
+      Logger.warn("unable to start previous view. you are allready at the first page in this session ;)");
+      return;
+    }
 		HistoryEntry entry = (HistoryEntry) gui.history.pop();
 		if (entry == null) return;
 		gui.skipHistory = true;
@@ -791,6 +797,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.97  2006/07/13 22:15:12  willuhn
+ * @B bug 247
+ *
  * Revision 1.96  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *
