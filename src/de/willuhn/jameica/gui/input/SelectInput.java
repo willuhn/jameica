@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.22 $
- * $Date: 2006/06/19 10:54:24 $
+ * $Revision: 1.23 $
+ * $Date: 2006/07/13 22:33:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -159,11 +159,16 @@ public class SelectInput extends AbstractInput
 
 		combo = GUI.getStyleFactory().createCombo(getParent());
 
-    if (this.pleaseChoose != null && this.pleaseChoose.length() > 0)
-      combo.add(this.pleaseChoose);
-    
     int selected = 0;
-		int i = 0;
+    int i = 0;
+
+    if (this.pleaseChoose != null && this.pleaseChoose.length() > 0)
+    {
+      i = 1; // Wenn der Text da ist, muessen wir bei 1 mit Zaehlen anfangen
+      combo.add(this.pleaseChoose);
+    }
+    
+
     try
     {
       while (list.hasNext())
@@ -179,7 +184,7 @@ public class SelectInput extends AbstractInput
       	values.put(name,current);
       	combo.add(name);
       	if (preselected != null && current.equals(preselected))
-      		selected = i;
+          selected = i;
       	++i;
       }
     }
@@ -373,6 +378,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.23  2006/07/13 22:33:52  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2006/06/19 10:54:24  willuhn
  * @N neue Methode setEnabled(boolean) in Input
  * @N neue de_willuhn_util lib
