@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.4 $
- * $Date: 2006/07/10 10:33:18 $
+ * $Revision: 1.5 $
+ * $Date: 2006/07/17 21:57:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -94,7 +94,7 @@ public class Button implements Part
   public void paint(Composite parent) throws RemoteException
   {
     button = GUI.getStyleFactory().createButton(parent);
-    button.setText(this.title);
+    button.setText(this.title == null ? "" : this.title);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
     if (this.isDefault)
@@ -128,6 +128,9 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
+ * Revision 1.5  2006/07/17 21:57:23  willuhn
+ * @C NPE check
+ *
  * Revision 1.4  2006/07/10 10:33:18  willuhn
  * @B OK-button was not set as default button
  *
