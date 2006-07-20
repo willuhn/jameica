@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.97 $
- * $Date: 2006/07/13 22:15:12 $
+ * $Revision: 1.98 $
+ * $Date: 2006/07/20 22:38:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -163,7 +163,7 @@ public class GUI implements ApplicationController
       view = new View();
       view.paint(right);
 
-      left.setWeights(new int[] { 1, 1 });
+      left.setWeights(new int[] { 2, 1 });
       sash.setWeights(new int[] { 1, 3 });
 
       Composite bottom = new Composite(shell, SWT.NONE);
@@ -797,6 +797,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.98  2006/07/20 22:38:30  willuhn
+ * @C Navigations-Part hoeher gemacht, damit alle Items auch bei kleinen Aufloesungen sichtbar sind
+ *
  * Revision 1.97  2006/07/13 22:15:12  willuhn
  * @B bug 247
  *
