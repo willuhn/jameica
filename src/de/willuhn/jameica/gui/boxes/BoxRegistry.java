@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/BoxRegistry.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/08/02 09:12:02 $
+ * $Revision: 1.4 $
+ * $Date: 2006/08/02 09:24:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,6 +67,13 @@ public class BoxRegistry
     }
     Collections.sort(v);
     list = (Box[]) v.toArray(new Box[v.size()]);
+    
+    // Indizes nochmal neu schreiben
+    for (int i=0;i<list.length;++i)
+    {
+      Box b = list[i];
+      b.setIndex(i);
+    }
     return list;
   }
   
@@ -128,6 +135,9 @@ public class BoxRegistry
 
 /*********************************************************************
  * $Log: BoxRegistry.java,v $
+ * Revision 1.4  2006/08/02 09:24:58  willuhn
+ * @B Neusetzen der Indizes beim Laden der Boxen
+ *
  * Revision 1.3  2006/08/02 09:12:02  willuhn
  * @B Sortierung der Boxen auf der Startseite
  *
