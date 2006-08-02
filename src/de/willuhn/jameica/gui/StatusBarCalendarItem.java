@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarCalendarItem.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2006/08/02 09:12:02 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -23,6 +23,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.dialogs.CalendarDialog;
@@ -105,7 +106,10 @@ public class StatusBarCalendarItem implements StatusBarItem
     {
       while (true)
       {
-        GUI.getDisplay().syncExec(new Runnable()
+        Display display = GUI.getDisplay();
+        if (display == null || display.isDisposed())
+          return;
+        display.syncExec(new Runnable()
         {
           public void run()
           {
@@ -130,6 +134,9 @@ public class StatusBarCalendarItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarCalendarItem.java,v $
+ * Revision 1.2  2006/08/02 09:12:02  willuhn
+ * @B Sortierung der Boxen auf der Startseite
+ *
  * Revision 1.1  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *

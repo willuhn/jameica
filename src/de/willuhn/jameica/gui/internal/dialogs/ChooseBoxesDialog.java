@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/06/29 23:10:01 $
+ * $Revision: 1.2 $
+ * $Date: 2006/08/02 09:12:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.Start;
+import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -44,8 +45,10 @@ import de.willuhn.util.I18N;
  */
 public class ChooseBoxesDialog extends AbstractDialog
 {
-  private I18N i18n = null;
+  private I18N i18n       = null;
   private TablePart table = null;
+  private Button down     = null;
+  private Button up       = null;
 
   /**
    * @param position
@@ -70,8 +73,8 @@ public class ChooseBoxesDialog extends AbstractDialog
     for (int i=0;i<list.length;++i)
     {
       Box box = (Box)list[i];
-      if (!box.isActive())
-        continue;
+//      if (!box.isActive())
+//        continue;
       v.add(new BoxObject(box));
     }
     
@@ -96,6 +99,10 @@ public class ChooseBoxesDialog extends AbstractDialog
         BoxObject o = (BoxObject) item.getData();
         if (o.box.isEnabled())
           item.setForeground(Color.SUCCESS.getSWTColor());
+        else if (!o.box.isActive())
+          item.setForeground(Color.COMMENT.getSWTColor());
+        else
+          item.setForeground(Color.WIDGET_FG.getSWTColor());
       }
     });
     
@@ -107,44 +114,52 @@ public class ChooseBoxesDialog extends AbstractDialog
     table.paint(parent);
 
     ButtonArea buttons = new ButtonArea(parent,4);
-    buttons.addButton(i18n.tr("Nach oben"), new Action() {
+    
+    up = new Button(i18n.tr("Nach oben"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         BoxObject o = (BoxObject) table.getSelection();
         if (o == null)
           return;
-        BoxRegistry.up(o.box);
-        table.removeItem(o);
-        try
+        if (BoxRegistry.up(o.box))
         {
-          table.addItem(o,o.box.getIndex());
-          table.select(o);
-        }
-        catch (Exception e)
-        {
-          Logger.error("Fehler beim Verschieben des Elementes",e);
+          table.removeItem(o);
+          try
+          {
+            table.addItem(o,o.box.getIndex());
+            table.select(o);
+          }
+          catch (Exception e)
+          {
+            Logger.error("Fehler beim Verschieben des Elementes",e);
+          }
         }
       }
     });
-    buttons.addButton(i18n.tr("Nach unten"), new Action() {
+    down = new Button(i18n.tr("Nach unten"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         BoxObject o = (BoxObject) table.getSelection();
         if (o == null)
           return;
-        BoxRegistry.down(o.box);
-        table.removeItem(o);
-        try
+        if (BoxRegistry.down(o.box))
         {
-          table.addItem(o,o.box.getIndex());
-          table.select(o);
-        }
-        catch (Exception e)
-        {
-          Logger.error("Fehler beim Verschieben des Elementes",e);
+          table.removeItem(o);
+          try
+          {
+            table.addItem(o,o.box.getIndex());
+            table.select(o);
+          }
+          catch (Exception e)
+          {
+            Logger.error("Fehler beim Verschieben des Elementes",e);
+          }
         }
       }
     });
+    
+    buttons.addButton(up);
+    buttons.addButton(down);
     buttons.addButton(i18n.tr("Übernehmen"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -152,12 +167,6 @@ public class ChooseBoxesDialog extends AbstractDialog
         new Start().handleAction(context);
       }
     },null,true);
-    buttons.addButton(i18n.tr("Abbrechen"), new Action() {
-      public void handleAction(Object context) throws ApplicationException
-      {
-        close();
-      }
-    });
   }
 
   /**
@@ -256,6 +265,8 @@ public class ChooseBoxesDialog extends AbstractDialog
       if (o == null || !(o instanceof BoxObject))
         return false;
       BoxObject bo = (BoxObject) o;
+      if (!bo.box.isActive())
+        return false;
       return state ^ bo.box.isEnabled();
     }
   }
@@ -304,6 +315,9 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
+ * Revision 1.2  2006/08/02 09:12:02  willuhn
+ * @B Sortierung der Boxen auf der Startseite
+ *
  * Revision 1.1  2006/06/29 23:10:01  willuhn
  * @N Box-System aus Hibiscus in Jameica-Source verschoben
  *

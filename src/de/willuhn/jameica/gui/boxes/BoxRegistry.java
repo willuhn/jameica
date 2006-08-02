@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/BoxRegistry.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.3 $
+ * $Date: 2006/08/02 09:12:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,51 +73,64 @@ public class BoxRegistry
   /**
    * Schiebt die Box einen Index nach unten.
    * @param box die zu verschiebende Box.
+   * @return true, wenn die Box verschoben wurde.
    */
-  public static void up(Box box)
+  public static synchronized boolean up(Box box)
   {
-    int index = box.getIndex();
+    synchronized (list)
+    {
+      int index = box.getIndex();
       
-    if (index <= 0)
-      return; // Die Box ist schon ganz oben.
-    
-    // Wir nehmen die Box oben drueber und tauschen die Positionen
-    int newIndex = index - 1;
-    Box other = list[newIndex];
-    
-    other.setIndex(index);
-    box.setIndex(newIndex);
-    
-    list[index]    = other;
-    list[newIndex] = box;
+      if (index <= 0)
+        return false; // Die Box ist schon ganz oben.
+      
+      // Wir nehmen die Box oben drueber und tauschen die Positionen
+      int newIndex = index - 1;
+      Box other = list[newIndex];
+      
+      other.setIndex(index);
+      box.setIndex(newIndex);
+      
+      list[index]    = other;
+      list[newIndex] = box;
+      return true;
+    }
   }
   
   /**
    * Schiebt die Box einen Index nach oben.
    * @param box die zu verschiebende Box.
+   * @return true, wenn die Box verschoben wurde.
    */
-  public static void down(Box box)
+  public static synchronized boolean down(Box box)
   {
-    int index = box.getIndex();
-    
-    if (index >= (list.length - 1))
-      return; // Die Box ist schon ganz unten
+    synchronized (list)
+    {
+      int index = box.getIndex();
+      
+      if (index >= (list.length - 1))
+        return false; // Die Box ist schon ganz unten
 
-    // Wir nehmen die Box unten drunter und tauschen die Positionen
-    int newIndex = index + 1;
-    Box other = list[newIndex];
-    
-    other.setIndex(index);
-    box.setIndex(newIndex);
-    
-    list[index]    = other;
-    list[newIndex] = box;
+      // Wir nehmen die Box unten drunter und tauschen die Positionen
+      int newIndex = index + 1;
+      Box other = list[newIndex];
+      
+      other.setIndex(index);
+      box.setIndex(newIndex);
+      
+      list[index]    = other;
+      list[newIndex] = box;
+      return true;
+    }
   }
 }
 
 
 /*********************************************************************
  * $Log: BoxRegistry.java,v $
+ * Revision 1.3  2006/08/02 09:12:02  willuhn
+ * @B Sortierung der Boxen auf der Startseite
+ *
  * Revision 1.2  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *
