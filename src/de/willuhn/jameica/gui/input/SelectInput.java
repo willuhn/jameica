@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.23 $
- * $Date: 2006/07/13 22:33:52 $
+ * $Revision: 1.24 $
+ * $Date: 2006/08/03 22:43:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,13 +64,13 @@ public class SelectInput extends AbstractInput
    * @param preselected der String, welcher vorselektiert sein soll. Optional.
    */
   public SelectInput(String[] list, String preselected)
-	{
-		GenericObject[] s = new GenericObject[list.length];
-		for (int i=0;i<list.length;++i)
-		{
-			s[i] = new StringObject(list[i]);
-		}
-		this.preselected = preselected == null ? null : new StringObject(preselected);
+  {
+  	GenericObject[] s = new GenericObject[list.length];
+  	for (int i=0;i<list.length;++i)
+  	{
+  		s[i] = new StringObject(list[i]);
+  	}
+  	this.preselected = preselected == null ? null : new StringObject(preselected);
     try
     {
       this.list = PseudoIterator.fromArray(s);
@@ -79,54 +79,55 @@ public class SelectInput extends AbstractInput
     {
       throw new RuntimeException("error while initializing iterator");
     }
-	}
+  }
 	
 	/**
 	 * Aendert nachtraeglich das vorausgewaehlte Element.
    * @param preselected neues vorausgewaehltes Element.
    */
   public void setPreselected(String preselected)
-	{
-		if (preselected == null)
-			return;
-		setPreselected(new StringObject(preselected));
-	}
+  {
+    if (preselected == null)
+      return;
+    setPreselected(new StringObject(preselected));
+  }
 
-	/**
-	 * Aendert nachtraeglich das vorausgewaehlte Element.
+  /**
+   * Aendert nachtraeglich das vorausgewaehlte Element.
    * @param preselected neues vorausgewaehltes Element.
    */
   public void setPreselected(GenericObject preselected)
-	{
-		if (preselected == null)
-			return;
-		this.preselected = preselected;
+  {
+    if (preselected == null)
+      return;
 
-		if (combo != null && !combo.isDisposed())
-		{
-			try
-			{
-				String value = getAttributeValue(preselected);
-				if (value == null)
-					return;
-	
-				String[] items = combo.getItems();
-				for (int i=0;i<items.length;++i)
-				{
-					if (items[i].equals(value))
-					{
-						combo.select(i);
-						return;
-					}
-				}
-			}
-			catch (RemoteException e)
-			{
-				// skipping
-				Logger.error("error while reading attribute",e);
-			}
-		}
-	}
+    this.preselected = preselected;
+    
+    if (combo != null && !combo.isDisposed())
+    {
+      try
+      {
+        String value = getAttributeValue(preselected);
+        if (value == null)
+        	return;
+        
+        String[] items = combo.getItems();
+        for (int i=0;i<items.length;++i)
+        {
+          if (items[i].equals(value))
+          {
+            combo.select(i);
+            return;
+          }
+        }
+      }
+      catch (RemoteException e)
+      {
+        // skipping
+        Logger.error("error while reading attribute",e);
+      }
+    }
+  }
 	
   /**
    * Optionale Angabe eines Textes, der an Position 1 angezeigt werden soll.
@@ -378,6 +379,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.24  2006/08/03 22:43:48  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.23  2006/07/13 22:33:52  willuhn
  * *** empty log message ***
  *
