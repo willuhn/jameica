@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.10 $
- * $Date: 2006/03/28 23:04:06 $
- * $Author: web0 $
+ * $Revision: 1.11 $
+ * $Date: 2006/08/03 15:33:08 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -27,6 +27,7 @@ import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.security.KeyPair;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -124,7 +125,7 @@ public final class Wallet
    * @param aliasPrefix Alias-Prefix.
    * @throws Exception
    */
-  public void deleteAll(String aliasPrefix) throws Exception
+  public synchronized void deleteAll(String aliasPrefix) throws Exception
 	{
 		if (aliasPrefix == null || aliasPrefix.length() == 0)
 		{
@@ -134,7 +135,6 @@ public final class Wallet
 
 		Enumeration e = this.serialized.keys();
 		String s = null;
-		int count = 0;
 		while (e.hasMoreElements())
 		{
 			s = (String) e.nextElement();
@@ -142,12 +142,39 @@ public final class Wallet
 			{
 				Logger.debug("removing key " + s);
 				this.serialized.remove(s);
-				count++;
 			}
 		}
 		write();
 	}
   
+  /**
+   * Liefert alle Keys, deren Name mit dem Prefix beginnt.
+   * Wird null uebergeben, werden alle Keys zurueckgeliefert.
+   * Die Funktion liefert nie null sondern hoechstens ein leeres Array.
+   * @param aliasPrefix Alias-Prefix.
+   * @return Liste der gefundenen Keys.
+   * @throws Exception
+   */
+  public synchronized String[] getAll(String aliasPrefix) throws Exception
+  {
+    ArrayList keys = new ArrayList();
+
+    Enumeration e = this.serialized.keys();
+    String s = null;
+    while (e.hasMoreElements())
+    {
+      s = (String) e.nextElement();
+      if (s == null)
+        continue;
+      if (aliasPrefix == null || s.startsWith(aliasPrefix))
+      {
+        Logger.debug("retrieving key " + s);
+        keys.add(s);
+      }
+    }
+    return (String[]) keys.toArray(new String[keys.size()]);
+  }
+
   /**
    * Liefert eine Liste aller Aliases in diesem Wallet.
    * @return Liste der Aliases.
@@ -394,6 +421,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.11  2006/08/03 15:33:08  willuhn
+ * @N Bug 62
+ *
  * Revision 1.10  2006/03/28 23:04:06  web0
  * *** empty log message ***
  *
