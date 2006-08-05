@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/07/11 18:12:39 $
- * $Author: web0 $
+ * $Revision: 1.10 $
+ * $Date: 2006/08/05 20:44:59 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -59,6 +59,16 @@ public abstract class AbstractInput implements Input
   {
     return this.parent;
   }
+  
+  /**
+   * Liefert die Stylebits (GridData-Settings), welche zum Erstellen des Widgets
+   * verwendet werden.
+   * @return die Style.Bits.
+   */
+  protected int getStyleBits()
+  {
+    return GridData.FILL_HORIZONTAL;
+  }
 
   /**
    * @see de.willuhn.jameica.gui.input.Input#addListener(org.eclipse.swt.widgets.Listener)
@@ -105,11 +115,11 @@ public abstract class AbstractInput implements Input
     layout.horizontalSpacing = 5;
     layout.verticalSpacing = 0;
     this.parent.setLayout(layout);
-    final GridData g = new GridData(GridData.FILL_HORIZONTAL);
+    final GridData g = new GridData(getStyleBits());
     this.parent.setLayoutData(g);
 
     control = getControl();
-    final GridData inputGrid = new GridData(GridData.FILL_HORIZONTAL); // HORIZONTAL_ALIGN_BEGINNING
+    final GridData inputGrid = new GridData(getStyleBits());
     inputGrid.widthHint = hasComment ? width / 2 : width;
     inputGrid.horizontalSpan = hasComment ? 1 : 2;
     control.setLayoutData(inputGrid);
@@ -153,6 +163,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.10  2006/08/05 20:44:59  willuhn
+ * @B Bug 256
+ *
  * Revision 1.9  2005/07/11 18:12:39  web0
  * *** empty log message ***
  *

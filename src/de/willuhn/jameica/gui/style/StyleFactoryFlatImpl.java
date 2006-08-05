@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/11/07 23:03:47 $
- * $Author: web0 $
+ * $Revision: 1.14 $
+ * $Date: 2006/08/05 20:44:59 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -22,8 +22,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -83,29 +81,12 @@ public class StyleFactoryFlatImpl implements StyleFactory
    */
   public Text createTextArea(Composite parent)
   {
-    Composite myParent = new Composite(parent,SWT.NONE);
-
-    GridData gd = new GridData(GridData.FILL_BOTH);
-    gd.horizontalSpan = 2;
-    gd.heightHint = 130;
-    myParent.setLayoutData(gd);
-
-    GridLayout gl = new GridLayout();
-    gl.marginHeight = 2;
-    gl.marginWidth = 1;
-    myParent.setLayout(gl);
-    
-    // TODO Day Textfeld wird nicht auf die volle Hoehe gezogen
-    Text text = new Text(myParent, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
-    GridData gd2 = new GridData(GridData.FILL_BOTH);
-    gd2.heightHint = 126;
-    text.setLayoutData(gd2);
-    text.setSize(SWT.DEFAULT,126);
+    final Text text = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
     text.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
     text.setForeground(Color.WIDGET_FG.getSWTColor());
     text.setBackground(Color.WIDGET_BG.getSWTColor());
     adapt(text, true, false);
-    myParent.addPaintListener(borderPainter);
+    parent.addPaintListener(borderPainter);
     return text;
   }
 
@@ -264,6 +245,9 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.14  2006/08/05 20:44:59  willuhn
+ * @B Bug 256
+ *
  * Revision 1.13  2005/11/07 23:03:47  web0
  * *** empty log message ***
  *

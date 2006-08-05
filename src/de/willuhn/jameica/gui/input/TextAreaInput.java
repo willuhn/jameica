@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextAreaInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/11/04 23:59:04 $
+ * $Revision: 1.3 $
+ * $Date: 2006/08/05 20:44:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 
 package de.willuhn.jameica.gui.input;
 
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
@@ -51,11 +52,22 @@ public class TextAreaInput extends TextInput
     return GUI.getStyleFactory().createTextArea(getParent());
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#getStyleBits()
+   */
+  protected int getStyleBits()
+  {
+    return GridData.FILL_BOTH;
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: TextAreaInput.java,v $
+ * Revision 1.3  2006/08/05 20:44:59  willuhn
+ * @B Bug 256
+ *
  * Revision 1.2  2004/11/04 23:59:04  willuhn
  * *** empty log message ***
  *
