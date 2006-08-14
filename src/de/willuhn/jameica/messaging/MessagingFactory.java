@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/06/06 22:42:04 $
+ * $Revision: 1.7 $
+ * $Date: 2006/08/14 22:34:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -100,7 +100,7 @@ public final class MessagingFactory
   {
     if (consumer == null)
       return;
-    Logger.info("registering message consumer " + consumer.getClass().getName());
+    Logger.debug("registering message consumer " + consumer.getClass().getName());
     consumers.add(consumer);
   }
 
@@ -112,7 +112,7 @@ public final class MessagingFactory
   {
     if (consumer == null)
       return;
-    Logger.info("unregistering message consumer " + consumer.getClass().getName());
+    Logger.debug("unregistering message consumer " + consumer.getClass().getName());
     consumers.remove(consumer);
   }
 
@@ -290,6 +290,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.7  2006/08/14 22:34:16  willuhn
+ * @C changed register/unregister log level
+ *
  * Revision 1.6  2006/06/06 22:42:04  willuhn
  * @N Logging des Textes von geworfenen Exceptions beim Zustellen von Nachrichten
  *
