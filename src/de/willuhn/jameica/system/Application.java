@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.57 $
- * $Date: 2006/08/17 08:36:28 $
+ * $Revision: 1.58 $
+ * $Date: 2006/08/17 09:20:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -646,7 +646,15 @@ public final class Application {
     getCallback().getStartupMonitor().addPercentComplete(2);
 
     // Und jetzt noch alle darin befindlichen Jars
-    getClassLoader().addJars(dir);
+    File[] jars = getClassLoader().addJars(dir);
+    if (jars != null)
+    {
+      for (int i=0;i<jars.length;++i)
+      {
+        Logger.info("loaded jar " + jars[i].getAbsolutePath());
+      }
+      
+    }
 
     getCallback().getStartupMonitor().addPercentComplete(1);
     ////////////////////////////////////////////////////////////////////////////
@@ -752,6 +760,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.58  2006/08/17 09:20:17  willuhn
+ * @N Debug-Output
+ *
  * Revision 1.57  2006/08/17 08:36:28  willuhn
  * @B bug 265
  *
