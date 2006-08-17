@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.56 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.57 $
+ * $Date: 2006/08/17 08:36:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -555,7 +555,8 @@ public final class Application {
     {
       try
       {
-        app.manifest = prepareClasses(new File("./"));
+        // BUGZILLA 265
+        app.manifest = prepareClasses(new File("."));
       }
       catch (Exception e)
       {
@@ -751,6 +752,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.57  2006/08/17 08:36:28  willuhn
+ * @B bug 265
+ *
  * Revision 1.56  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *

@@ -16,8 +16,8 @@
 base=${0##*/}
 link=${base#*[SK][0-9][0-9]}
 
-JAVA=/usr/lib/java/bin/java
-BASEDIR=/opt/jameica
+JAVA=`which java`
+BASEDIR=`dirname $0`
 WORKDIR=~/.jameica
 PASSWORD=CHANGE_THIS_BEFORE_YOU_START_JAMEICA
 PIDFILE=$WORKDIR/jameica.pid

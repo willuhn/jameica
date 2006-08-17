@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.27 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.28 $
+ * $Date: 2006/08/17 08:36:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -356,7 +356,7 @@ public final class Config
   {
     if (this.systemPluginDir == null)
     {
-      this.systemPluginDir = new File("./plugins");
+      this.systemPluginDir = new File("plugins");
       try
       {
         this.systemPluginDir = this.systemPluginDir.getCanonicalFile();
@@ -463,6 +463,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.28  2006/08/17 08:36:28  willuhn
+ * @B bug 265
+ *
  * Revision 1.27  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *
