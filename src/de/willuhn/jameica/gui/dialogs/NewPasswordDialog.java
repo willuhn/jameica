@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/02/01 17:15:19 $
+ * $Revision: 1.3 $
+ * $Date: 2006/08/22 14:57:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -214,12 +214,21 @@ public class NewPasswordDialog extends SimpleDialog {
    */
   protected boolean checkPassword(String password, String password2)
   {
-  	boolean b = (password != null && password.length() > 0 &&
-  							 password2 != null && password2.length() > 0 &&
-  					     password.equals(password2));
-    if (!b)
-    	setErrorText(i18n.tr("Die eingegebenen Passworte stimmen nicht überein."));
-    return b;
+    boolean set = (password != null && password.length() > 0 &&
+                   password2 != null && password2.length() > 0);
+    
+    if (!set)
+    {
+      setErrorText(i18n.tr("Bitte geben Sie ein Passwort an."));
+      return false;
+    }
+
+    if (!password.equals(password2))
+    {
+      setErrorText(i18n.tr("Die eingegebenen Passworte stimmen nicht überein."));
+      return false;
+    }
+    return true;
   }
 	
   /**
@@ -234,6 +243,9 @@ public class NewPasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: NewPasswordDialog.java,v $
+ * Revision 1.3  2006/08/22 14:57:51  willuhn
+ * @B Bug 275
+ *
  * Revision 1.2  2005/02/01 17:15:19  willuhn
  * *** empty log message ***
  *
