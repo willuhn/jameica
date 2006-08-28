@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/11/12 18:23:59 $
+ * $Revision: 1.11 $
+ * $Date: 2006/08/28 23:41:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
 /**
@@ -34,20 +35,25 @@ public class ColorInput extends ButtonInput
 
   private Label label;
 	private Color color;
+  private boolean forground = false;
 
   /**
    * Erzeugt ein neues ColorInput mit der angegebenen Farbe.
    * @param color initial anzuzeigende Farbe.
+   * @param foreground true, wenn es sich um eine Vordergrundfarbe handelt.
    */
-  public ColorInput(Color color)
+  public ColorInput(Color color, boolean foreground)
   {
     this.color = color;
+    this.forground = foreground;
     addButtonListener(new Listener()
     {
       public void handleEvent(Event event)
       {
 				Logger.debug("starting color choose dialog");
 				ColorDialog cd = new ColorDialog(GUI.getShell());
+        cd.setRGB(ColorInput.this.color.getRGB());
+        cd.setText(Application.getI18n().tr("Bitte wählen Sie die Farbe aus"));
 				RGB rgb = cd.open();
 				if (rgb == null)
 					return;
@@ -62,8 +68,12 @@ public class ColorInput extends ButtonInput
    */
   public Control getClientControl(Composite parent)
   {
-    label = new Label(parent,SWT.BORDER);
-		label.setBackground(color);
+    label = GUI.getStyleFactory().createLabel(parent,SWT.BORDER);
+    if (forground)
+      label.setForeground(color);
+    else
+      label.setBackground(color);
+    label.setText("the quick brown fox jumps over the lazy dog");
     return label;
   }
 
@@ -88,13 +98,22 @@ public class ColorInput extends ButtonInput
 		if (value instanceof Color)
 		{
 			this.color = (Color) value;
-			label.setBackground(color);
+      
+      if (this.label == null || this.label.isDisposed())
+        return;
+      if (this.forground)
+        label.setForeground(color);
+      else
+        label.setBackground(color);
 		}
   }
 }
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.11  2006/08/28 23:41:48  willuhn
+ * @N ColorInput verbessert
+ *
  * Revision 1.10  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *

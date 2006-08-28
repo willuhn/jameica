@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.15 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.16 $
+ * $Date: 2006/08/28 23:41:48 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -263,7 +263,7 @@ public class SettingsControl extends AbstractControl
 	{
 		if (colorWidgetBG != null)
 			return colorWidgetBG;
-		colorWidgetBG = new ColorInput(Color.WIDGET_BG.getSWTColor());
+		colorWidgetBG = new ColorInput(Color.WIDGET_BG.getSWTColor(),false);
 		return colorWidgetBG;
 	}
 
@@ -275,7 +275,7 @@ public class SettingsControl extends AbstractControl
   {
   	if (colorWidgetFG != null)
   		return colorWidgetFG;
-  	colorWidgetFG = new ColorInput(Color.WIDGET_FG.getSWTColor());
+  	colorWidgetFG = new ColorInput(Color.WIDGET_FG.getSWTColor(),true);
   	return colorWidgetFG;
   }
 
@@ -287,7 +287,7 @@ public class SettingsControl extends AbstractControl
 	{
 		if (colorComment != null)
 			return colorComment;
-		colorComment = new ColorInput(Color.COMMENT.getSWTColor());
+		colorComment = new ColorInput(Color.COMMENT.getSWTColor(),true);
 		return colorComment;
 	}
 
@@ -299,7 +299,7 @@ public class SettingsControl extends AbstractControl
 	{
 		if (colorBackground != null)
 			return colorBackground;
-		colorBackground = new ColorInput(Color.BACKGROUND.getSWTColor());
+		colorBackground = new ColorInput(Color.BACKGROUND.getSWTColor(),false);
 		return colorBackground;
 	}
 
@@ -311,7 +311,7 @@ public class SettingsControl extends AbstractControl
 	{
 		if (colorError != null)
 			return colorError;
-		colorError = new ColorInput(Color.ERROR.getSWTColor());
+		colorError = new ColorInput(Color.ERROR.getSWTColor(),true);
 		return colorError;
 	}
 
@@ -323,7 +323,7 @@ public class SettingsControl extends AbstractControl
 	{
 		if (colorSuccess != null)
 			return colorSuccess;
-		colorSuccess = new ColorInput(Color.SUCCESS.getSWTColor());
+		colorSuccess = new ColorInput(Color.SUCCESS.getSWTColor(),true);
 		return colorSuccess;
 	}
 
@@ -335,7 +335,7 @@ public class SettingsControl extends AbstractControl
 	{
 		if (colorLink != null)
 			return colorLink;
-		colorLink = new ColorInput(Color.LINK.getSWTColor());
+		colorLink = new ColorInput(Color.LINK.getSWTColor(),true);
 		return colorLink;
 	}
 
@@ -347,7 +347,7 @@ public class SettingsControl extends AbstractControl
 	{
 		if (colorLinkActive != null)
 			return colorLinkActive;
-		colorLinkActive = new ColorInput(Color.LINK_ACTIVE.getSWTColor());
+		colorLinkActive = new ColorInput(Color.LINK_ACTIVE.getSWTColor(),true);
 		return colorLinkActive;
 	}
 
@@ -581,6 +581,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.16  2006/08/28 23:41:48  willuhn
+ * @N ColorInput verbessert
+ *
  * Revision 1.15  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
