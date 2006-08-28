@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.98 $
- * $Date: 2006/07/20 22:38:30 $
+ * $Revision: 1.99 $
+ * $Date: 2006/08/28 23:01:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,7 @@ import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.style.StyleEngine;
 import de.willuhn.jameica.gui.style.StyleFactory;
-import de.willuhn.jameica.gui.style.StyleFactoryFlatImpl;
+import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.Manifest;
@@ -582,7 +582,7 @@ public class GUI implements ApplicationController
 	{
 		if (gui.styleFactory != null) return gui.styleFactory;
 		String className = gui.settings.getString("stylefactory",
-				StyleFactoryFlatImpl.class.getName());
+				StyleFactoryDefaultImpl.class.getName());
 		try
 		{
 			gui.styleFactory = (StyleFactory) Application.getClassLoader().load(
@@ -592,7 +592,7 @@ public class GUI implements ApplicationController
 		{
 			Logger.error(
 					"unable to load configured stylefactory, using default", e);
-			gui.styleFactory = new StyleFactoryFlatImpl();
+			gui.styleFactory = new StyleFactoryDefaultImpl();
 		}
 		return gui.styleFactory;
 	}
@@ -797,6 +797,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.99  2006/08/28 23:01:18  willuhn
+ * @N Update auf SWT 3.2
+ *
  * Revision 1.98  2006/07/20 22:38:30  willuhn
  * @C Navigations-Part hoeher gemacht, damit alle Items auch bei kleinen Aufloesungen sichtbar sind
  *

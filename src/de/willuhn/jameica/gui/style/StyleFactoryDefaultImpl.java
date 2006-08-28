@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.8 $
- * $Date: 2006/08/05 20:44:59 $
+ * $Revision: 1.9 $
+ * $Date: 2006/08/28 23:01:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Button createButton(Composite parent)
   {
-  	Button button = new Button(parent,SWT.BORDER);
+  	Button button = new Button(parent,SWT.PUSH | SWT.FLAT);
 		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		return button;
   }
@@ -101,6 +101,9 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
+ * Revision 1.9  2006/08/28 23:01:18  willuhn
+ * @N Update auf SWT 3.2
+ *
  * Revision 1.8  2006/08/05 20:44:59  willuhn
  * @B Bug 256
  *
