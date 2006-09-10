@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.52 $
- * $Date: 2006/07/05 22:17:39 $
+ * $Revision: 1.53 $
+ * $Date: 2006/09/10 11:14:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -76,6 +76,7 @@ public class TablePart implements Part
   private TableFormatter tableFormatter = null;
   private ContextMenu menu              = null;
 
+  private boolean enabled               = true;
 	private boolean showSummary						= true;
 
   private org.eclipse.swt.widgets.Table table = null;
@@ -500,6 +501,7 @@ public class TablePart implements Part
     table.setLayoutData(new GridData(GridData.FILL_BOTH));
     table.setLinesVisible(true);
     table.setHeaderVisible(true);
+    table.setEnabled(this.enabled);
     
     if (rememberOrder)
     {
@@ -1003,6 +1005,26 @@ public class TablePart implements Part
   }
 
   /**
+   * Aktiviert oder deaktiviert die Tabelle.
+   * @param enabled true, wenn sie aktiv sein soll.
+   */
+  public void setEnabled(boolean enabled)
+  {
+    this.enabled = enabled;
+    if (this.table != null && !this.table.isDisposed())
+      this.table.setEnabled(this.enabled);
+  }
+  
+  /**
+   * Prueft, ob die Tabelle aktiv ist.
+   * @return true, wenn sie aktiv ist.
+   */
+  public boolean isEnabled()
+  {
+    return this.enabled;
+  }
+
+  /**
 	 * Sortiert die Tabelle nach der angegebenen Spaltennummer.
    * @param index Spaltennummer.
    */
@@ -1150,6 +1172,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.53  2006/09/10 11:14:00  willuhn
+ * @N Tabelle deaktivierbar
+ *
  * Revision 1.52  2006/07/05 22:17:39  willuhn
  * @N Neue Funktionen setCheckable() und getItems() in TablePart
  *
