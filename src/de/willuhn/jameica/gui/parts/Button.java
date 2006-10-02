@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/07/17 21:57:23 $
+ * $Revision: 1.6 $
+ * $Date: 2006/10/02 16:15:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -97,8 +98,27 @@ public class Button implements Part
     button.setText(this.title == null ? "" : this.title);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-    if (this.isDefault)
-      parent.getShell().setDefaultButton(button);
+    try
+    {
+      if (this.isDefault)
+        parent.getShell().setDefaultButton(button);
+    }
+    catch (IllegalArgumentException ae)
+    {
+      // Kann unter MacOS wohl passieren. Siehe Mail von
+      // Jan Lolling vom 22.09.2006. Mal schauen, ob wir
+      // Fehlertext: "Widget has the wrong parent"
+      // Wir versuchen es mal mit der Shell der GUI.
+      try
+      {
+        GUI.getShell().setDefaultButton(button);
+      }
+      catch (IllegalArgumentException ae2)
+      {
+        // Geht auch nicht? Na gut, dann lassen wir es halt bleiben
+        Logger.warn("unable to set default button: " + ae2.getLocalizedMessage());
+      }
+    }
     
     button.setEnabled(this.enabled);
 
@@ -128,6 +148,9 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
+ * Revision 1.6  2006/10/02 16:15:13  willuhn
+ * @B IllegalArgumentException unter MacOS
+ *
  * Revision 1.5  2006/07/17 21:57:23  willuhn
  * @C NPE check
  *
