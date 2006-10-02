@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.24 $
- * $Date: 2006/08/03 22:43:48 $
+ * $Revision: 1.25 $
+ * $Date: 2006/10/02 16:25:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.gui.input;
 
 import java.rmi.RemoteException;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
@@ -80,7 +81,18 @@ public class SelectInput extends AbstractInput
       throw new RuntimeException("error while initializing iterator");
     }
   }
-	
+
+  /**
+   * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
+   * Die Liste muss Objekte des Typs <code>String</code> enthalten.
+   * @param list Liste der Elemente.
+   * @param preselected
+   */
+  public SelectInput(List list, String preselected)
+  {
+    this((String[])list.toArray(new String[list.size()]), preselected);
+  }
+  
 	/**
 	 * Aendert nachtraeglich das vorausgewaehlte Element.
    * @param preselected neues vorausgewaehltes Element.
@@ -91,7 +103,7 @@ public class SelectInput extends AbstractInput
       return;
     setPreselected(new StringObject(preselected));
   }
-
+  
   /**
    * Aendert nachtraeglich das vorausgewaehlte Element.
    * @param preselected neues vorausgewaehltes Element.
@@ -379,6 +391,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.25  2006/10/02 16:25:17  willuhn
+ * @N Heiners zusaetzlicher Konstruktor
+ *
  * Revision 1.24  2006/08/03 22:43:48  willuhn
  * *** empty log message ***
  *
