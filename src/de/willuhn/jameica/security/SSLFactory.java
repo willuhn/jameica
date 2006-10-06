@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.24 $
- * $Date: 2005/10/24 20:40:48 $
- * $Author: web0 $
+ * $Revision: 1.25 $
+ * $Date: 2006/10/06 13:07:46 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.crypto.Cipher;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
@@ -565,22 +566,68 @@ public class SSLFactory
 		return this.sslContext;
 	}
 	
-	/**
-	 * Liefert ein Wallet zum Speichern von Nutzdaten in verschluesselter Form.
-	 * Existiert das Wallet noch nicht, wird es automatisch angelegt.
-   * @param clazz Klasse, fuer die das Wallet erstellt werden soll.
-   * @return Wallet.
+  /**
+   * Verschluesselt die Daten aus is und schreibt sie in os.
+   * @param is InputStream mit den unverschluesselten Daten.
+   * @param os OutputStream fuer die verschluesselten Daten.
    * @throws Exception
    */
-  public Wallet getWallet(Class clazz) throws Exception
-	{
-		return new Wallet(clazz,new KeyPair(this.getPublicKey(),this.getPrivateKey()));
-	}
+  public void encrypt(InputStream is, OutputStream os) throws Exception
+  {
+    Logger.debug("creating cipher");
+    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+    cipher.init(Cipher.ENCRYPT_MODE,getPublicKey());
+
+    Logger.debug("encrypting data");
+    int size = cipher.getBlockSize();
+    Logger.debug("using block size (in bytes): " + size);
+    byte[] buf = new byte[size];
+    int read = 0;
+    do
+    {
+      read = is.read(buf);
+      if (read > 0)
+        os.write(cipher.doFinal(buf,0,read));
+    }
+    while (read != -1);
+  }
+  
+  /**
+   * Entschluesselt die Daten aus is und schreibt sie in os.
+   * @param is InputStream mit verschluesselten Daten.
+   * @param os OutputStream mit unverschluesselten Daten.
+   * @throws Exception
+   */
+  public void decrypt(InputStream is, OutputStream os) throws Exception
+  {
+    Logger.debug("creating cipher");
+    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+    cipher.init(Cipher.DECRYPT_MODE,getPrivateKey());
+
+    int size = cipher.getBlockSize();
+    Logger.debug("using block size (in bytes): " + size);
+
+    Logger.debug("decrypting data");
+    byte[] buf = new byte[size];
+    int read = 0;
+    do
+    {
+      read = is.read(buf);
+      if (read > 0)
+      {
+        os.write(cipher.doFinal(buf,0,read));
+      }
+    }
+    while (read != -1);
+  }
 }
 
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.25  2006/10/06 13:07:46  willuhn
+ * @B Bug 185, 211
+ *
  * Revision 1.24  2005/10/24 20:40:48  web0
  * @C rollback to 2004/06
  *

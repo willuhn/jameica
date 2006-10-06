@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/08/03 15:33:08 $
+ * $Revision: 1.12 $
+ * $Date: 2006/10/06 13:07:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,14 +26,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import javax.crypto.Cipher;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -56,21 +51,18 @@ public final class Wallet
 {
 
 	private Class clazz 	= null;
-	private KeyPair pair 	= null;
 
 	private Hashtable	serialized = new Hashtable();
   
   /**
 	 * ct.
 	 * @param clazz Klasse, fuer die das Wallet gilt.
-   * @param pair Schluesselpaar.
    * @throws Exception
    */
-  protected Wallet(Class clazz, KeyPair pair) throws Exception
+  public Wallet(Class clazz) throws Exception
 	{
 		Logger.info("creating wallet for class " + clazz.getName());
 		this.clazz = clazz;
-		this.pair = pair;
 		read();
 	}
 
@@ -244,7 +236,7 @@ public final class Wallet
         // Einlesen und entschluesseln
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        decrypt(is,bos);
+        Application.getSSLFactory().decrypt(is,bos);
 
         Logger.info("deserializing xml-wallet");
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
@@ -277,7 +269,7 @@ public final class Wallet
       // Einlesen und entschluesseln
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-      decrypt(is,bos);
+      Application.getSSLFactory().decrypt(is,bos);
 
       Logger.info("deserializing wallet");
       ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
@@ -339,7 +331,7 @@ public final class Wallet
       ByteArrayInputStream bis    = new ByteArrayInputStream(bos.toByteArray());
       OutputStream os             = new BufferedOutputStream(new FileOutputStream(tempfile));
 
-      encrypt(bis,os);
+      Application.getSSLFactory().encrypt(bis,os);
 
       // Wir koennen das Flushen und Schliessen nicht im finally() machen,
       // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
@@ -362,65 +354,14 @@ public final class Wallet
     }
 	}
   
-  /**
-   * Verschluesselt die Daten aus is und schreibt sie in os.
-   * @param is InputStream mit den unverschluesselten Daten.
-   * @param os OutputStream fuer die verschluesselten Daten.
-   * @throws Exception
-   */
-  private void encrypt(InputStream is, OutputStream os) throws Exception
-  {
-    Logger.debug("creating cipher");
-    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-    cipher.init(Cipher.ENCRYPT_MODE,this.pair.getPublic());
-
-    Logger.debug("encrypting wallet");
-    int size = cipher.getBlockSize();
-    Logger.debug("using block size (in bytes): " + size);
-    byte[] buf = new byte[size];
-    int read = 0;
-    do
-    {
-      read = is.read(buf);
-      if (read > 0)
-        os.write(cipher.doFinal(buf,0,read));
-    }
-    while (read != -1);
-  }
-  
-  /**
-   * Entschluesselt die Daten aus is und schreibt sie in os.
-   * @param is InputStream mit verschluesselten Daten.
-   * @param os OutputStream mit unverschluesselten Daten.
-   * @throws Exception
-   */
-  private void decrypt(InputStream is, OutputStream os) throws Exception
-  {
-    Logger.debug("creating cipher");
-    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-    cipher.init(Cipher.DECRYPT_MODE,this.pair.getPrivate());
-
-    int size = cipher.getBlockSize();
-    Logger.debug("using block size (in bytes): " + size);
-
-    Logger.debug("decrypting wallet");
-    byte[] buf = new byte[size];
-    int read = 0;
-    do
-    {
-      read = is.read(buf);
-      if (read > 0)
-      {
-        os.write(cipher.doFinal(buf,0,read));
-      }
-    }
-    while (read != -1);
-  }
 }
 
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.12  2006/10/06 13:07:46  willuhn
+ * @B Bug 185, 211
+ *
  * Revision 1.11  2006/08/03 15:33:08  willuhn
  * @N Bug 62
  *
