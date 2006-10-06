@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2006/08/05 20:44:59 $
+ * $Revision: 1.11 $
+ * $Date: 2006/10/06 16:00:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,8 +19,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
@@ -42,6 +44,9 @@ public abstract class AbstractInput implements Input
 
   private Control control = null;
 	private ArrayList listeners = new ArrayList();
+
+  private String validChars = null;
+  private String invalidChars = null;
 
 	/**
    * Erzeugt ein neues Eingabe-Feld.
@@ -119,6 +124,8 @@ public abstract class AbstractInput implements Input
     this.parent.setLayoutData(g);
 
     control = getControl();
+    applyVerifier(control);
+    
     final GridData inputGrid = new GridData(getStyleBits());
     inputGrid.widthHint = hasComment ? width / 2 : width;
     inputGrid.horizontalSpan = hasComment ? 1 : 2;
@@ -142,27 +149,107 @@ public abstract class AbstractInput implements Input
 			control.addListener(SWT.Selection,l);
 			control.addListener(SWT.FocusIn,l);
 			control.addListener(SWT.FocusOut,l);
-      
-			// Es kann sein, dass das Control ein Composite ist (z.Bsp. bei DialogInput)
-			// Wenn es also aus mehren Elementen besteht, dann muessen wir
-			// den Listener an alle haengen.
-			if (control instanceof Composite)
-			{
-				Composite c = (Composite) control;
-				Control[] children = c.getChildren();
-				for (int j=0;j<children.length;++j)
-				{
-					children[i].addListener(SWT.Selection,l);
-					children[i].addListener(SWT.FocusIn,l);
-					children[i].addListener(SWT.FocusOut,l);
-				}
-			}
     }
+    
+    // Es kann sein, dass das Control ein Composite ist (z.Bsp. bei DialogInput)
+    // Wenn es also aus mehren Elementen besteht, dann muessen wir
+		// den Listener an alle haengen.
+		if (control instanceof Composite)
+		{
+			Composite c = (Composite) control;
+			Control[] children = c.getChildren();
+			for (int j=0;j<children.length;++j)
+			{
+        for (int i=0;i<listeners.size();++i)
+        {
+          l = (Listener) listeners.get(i);
+          children[j].addListener(SWT.Selection,l);
+          children[j].addListener(SWT.FocusIn,l);
+          children[j].addListener(SWT.FocusOut,l);
+        }
+        applyVerifier(children[j]);
+			}
+		}
+  }
+  
+  /**
+   * Fuegt die Verifier dem Control hinzu.
+   * @param control
+   */
+  private void applyVerifier(Control control)
+  {
+    if (control == null || !(control instanceof Text))
+      return;
+    
+    if ((validChars != null && validChars.length() > 0))
+    {
+      control.addListener(SWT.Verify, new Listener()
+      {
+        public void handleEvent(Event e)
+        {
+          char[] chars = e.text.toCharArray();
+          for (int i=0; i<chars.length; i++) {
+            if (validChars.indexOf(chars[i]) == -1) // eingegebenes Zeichen nicht enthalten
+            {
+              e.doit = false;
+              return;
+            }
+          }
+        }
+      });
+    }
+
+    if ((invalidChars != null && invalidChars.length() > 0))
+    {
+      control.addListener(SWT.Verify, new Listener()
+      {
+        public void handleEvent(Event e)
+        {
+          char[] chars = e.text.toCharArray();
+          for (int i=0; i<chars.length; i++) {
+            if (invalidChars.indexOf(chars[i]) != -1) // eingegebenes Zeichen enthalten
+            {
+              e.doit = false;
+              return;
+            }
+          }
+        }
+      });
+    }
+  }
+
+  /**
+   * Definiert eine Liste von Zeichen, die eingegeben werden koennen.
+   * Wird diese Funktion verwendet, dann duerfen nur noch die hier
+   * angegebenen Zeichen eingegeben werden.
+   * Werden beide Funktionen <code>setValidChars</code> <b>und</b>
+   * <code>setInvalidChars</code> benutzt, kann nur noch die verbleibende
+   * Restmenge eingegeben werden. Das sind die Zeichen, die in validChars
+   * angegeben und in invalidChars nicht enthalten sind. 
+   * @param chars
+   */
+  public void setValidChars(String chars)
+  {
+    this.validChars = chars;
+  }
+
+  /**
+   * Definiert eine Liste von Zeichen, die nicht eingegeben werden koennen.
+   * Wird diese Funktion verwendet, dann duerfen die angegebenen Zeichen nicht
+   * mehr verwendet werden.
+   * @param chars
+   */
+  public void setInvalidChars(String chars)
+  {
+    this.invalidChars = chars;
   }
 }
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.11  2006/10/06 16:00:48  willuhn
+ * @B Bug 280
+ *
  * Revision 1.10  2006/08/05 20:44:59  willuhn
  * @B Bug 256
  *

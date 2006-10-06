@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2006/06/19 10:54:24 $
+ * $Revision: 1.16 $
+ * $Date: 2006/10/06 16:00:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,10 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
@@ -30,8 +27,6 @@ public class TextInput extends AbstractInput
   protected Text text;
   private String value;
   private boolean enabled = true;
-  private String validChars = null;
-	private String invalidChars = null;
 
 	private int maxLength = 0;
 
@@ -64,32 +59,6 @@ public class TextInput extends AbstractInput
 		this.maxLength = maxLength;
 	}
 
-	/**
-	 * Definiert eine Liste von Zeichen, die eingegeben werden koennen.
-	 * Wird diese Funktion verwendet, dann duerfen nur noch die hier
-	 * angegebenen Zeichen eingegeben werden.
-	 * Werden beide Funktionen <code>setValidChars</code> <b>und</b>
-	 * <code>setInvalidChars</code> benutzt, kann nur noch die verbleibende
-	 * Restmenge eingegeben werden. Das sind die Zeichen, die in validChars
-	 * angegeben und in invalidChars nicht enthalten sind. 
-   * @param chars
-   */
-  public void setValidChars(String chars)
-	{
-		this.validChars = chars;
-	}
-
-	/**
-	 * Definiert eine Liste von Zeichen, die nicht eingegeben werden koennen.
-	 * Wird diese Funktion verwendet, dann duerfen die angegebenen Zeichen nicht
-	 * mehr verwendet werden.
-   * @param chars
-   */
-  public void setInvalidChars(String chars)
-	{
-		this.invalidChars = chars;
-	}
-
   /**
    * Erzeugt das Text-Widget.
    * Ist eine extra Funktion damit es zum Beispiel von TextAreaInput
@@ -118,42 +87,6 @@ public class TextInput extends AbstractInput
 
 		text.setEnabled(enabled);
     text.setText((value == null ? "" : value));
-
-		if ((validChars != null && validChars.length() > 0))
-		{
-			text.addListener(SWT.Verify, new Listener()
-			{
-				public void handleEvent(Event e)
-				{
-					char[] chars = e.text.toCharArray();
-					for (int i=0; i<chars.length; i++) {
-						if (validChars.indexOf(chars[i]) == -1) // eingegebenes Zeichen nicht enthalten
-						{
-							e.doit = false;
-							return;
-						}
-					}
-				}
-			});
-		}
-
-		if ((invalidChars != null && invalidChars.length() > 0))
-		{
-			text.addListener(SWT.Verify, new Listener()
-			{
-				public void handleEvent(Event e)
-				{
-					char[] chars = e.text.toCharArray();
-					for (int i=0; i<chars.length; i++) {
-						if (invalidChars.indexOf(chars[i]) != -1) // eingegebenes Zeichen enthalten
-						{
-							e.doit = false;
-							return;
-						}
-					}
-				}
-			});
-		}
     return text;
   }
 
@@ -228,6 +161,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.16  2006/10/06 16:00:48  willuhn
+ * @B Bug 280
+ *
  * Revision 1.15  2006/06/19 10:54:24  willuhn
  * @N neue Methode setEnabled(boolean) in Input
  * @N neue de_willuhn_util lib
