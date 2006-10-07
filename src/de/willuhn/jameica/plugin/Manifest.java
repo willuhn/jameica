@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.8 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.9 $
+ * $Date: 2006/10/07 19:35:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,6 +45,9 @@ public class Manifest
   private AbstractPlugin pluginInstance = null;
   
   private boolean isInstalled           = false;
+  
+  private String buildnumber            = "";
+  private String builtdate              = "";
 
   /**
    * ct.
@@ -70,8 +73,11 @@ public class Manifest
       // Das ist nur geraten und eher fuer Debugging-Zwecke ;)
       JarFile jar = new JarFile(getPluginDir() + File.separator + getName() + ".jar");
       java.util.jar.Manifest mf = jar.getManifest();
-      Logger.info("Built-Date : " + mf.getMainAttributes().getValue("Built-Date"));
-      Logger.info("Buildnumber: " + mf.getMainAttributes().getValue("Implementation-Buildnumber"));
+
+      this.buildnumber = mf.getMainAttributes().getValue("Implementation-Buildnumber");
+      this.builtdate   = mf.getMainAttributes().getValue("Built-Date");
+      Logger.info("Buildnumber: " + buildnumber);
+      Logger.info("Built-Date : " + builtdate);
     }
     catch (Exception e)
     {
@@ -103,6 +109,31 @@ public class Manifest
       return 1.0;
     }
 	}
+  
+  /**
+   * Liefert die Build-Nummer, insofern sie ermittelbar ist.
+   * Da die Nummer nur im Manifest des Jars steht, kann sie nur dann
+   * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
+   * und der entsprechende Parameter im Manifest des JARs existiert.
+   * @return Build-Number.
+   */
+  public final String getBuildnumber()
+  {
+    return this.buildnumber;
+  }
+
+  /**
+   * Liefert das Build-Datum, insofern es ermittelbar ist.
+   * Da das Datum nur im Manifest des Jars steht, kann es nur dann
+   * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
+   * und der entsprechende Parameter im Manifest des JARs existiert.
+   * @return Build-Datum.
+   */
+  public final String getBuildDate()
+  {
+    return this.builtdate;
+  }
+
 
 	/**
    * Liefert den Namen der Komponente.
@@ -322,6 +353,9 @@ public class Manifest
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.9  2006/10/07 19:35:11  willuhn
+ * @B Zugriff auf buildnumber hatte sich mit neuem Pluginloader geaendert
+ *
  * Revision 1.8  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *

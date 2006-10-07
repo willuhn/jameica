@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.8 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.9 $
+ * $Date: 2006/10/07 19:35:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,12 +13,9 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
-import java.util.jar.JarFile;
 
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.JarInfo;
 
 /**
  * Abstrakte Basis-Klasse aller Plugins.
@@ -76,46 +73,6 @@ public abstract class AbstractPlugin
 	}
   
   /**
-   * Liefert die Build-Nummer, insofern sie ermittelbar ist.
-   * Da die Nummer nur im Manifest des Jars steht, kann sie nur dann
-   * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
-   * und der entsprechende Parameter im Manifest des JARs existiert.
-   * @return Build-Number.
-   */
-  public final int getBuildnumber()
-  {
-    try
-    {
-      return new JarInfo(new JarFile(this.file)).getBuildnumber();
-    }
-    catch (Throwable t)
-    {
-      Logger.warn("unable to determine build number. Running in debugger?");
-    }
-    return 1;
-  }
-
-  /**
-   * Liefert das Build-Datum, insofern es ermittelbar ist.
-   * Da das Datum nur im Manifest des Jars steht, kann es nur dann
-   * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
-   * und der entsprechende Parameter im Manifest des JARs existiert.
-   * @return Build-Datum.
-   */
-  public final String getBuildDate()
-  {
-    try
-    {
-      return new JarInfo(new JarFile(this.file)).getBuildDate();
-    }
-    catch (Throwable t)
-    {
-      Logger.warn("unable to determine build date. Running in debugger?");
-    }
-    return "";
-  }
-
-  /**
 	 * Diese Funktion wird beim Start der Anwendung ausgefuehrt. Hier kann die Plugin-
 	 * Implementierung also diverse Dinge durchfuehren, die es beim Start gern
 	 * automatisch durchgefuehrt haben moechte.
@@ -167,6 +124,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.9  2006/10/07 19:35:11  willuhn
+ * @B Zugriff auf buildnumber hatte sich mit neuem Pluginloader geaendert
+ *
  * Revision 1.8  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *
