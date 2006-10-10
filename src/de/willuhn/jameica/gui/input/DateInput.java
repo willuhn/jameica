@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/09/10 12:12:26 $
+ * $Revision: 1.2 $
+ * $Date: 2006/10/10 22:30:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -135,7 +135,12 @@ public class DateInput implements Input
       return null;
     try
     {
-      return this.format.parse(text);
+      Date d = this.format.parse(text);
+      
+      // Bei der Gelegenheit schreiben wir auch gleich nochmal
+      // das Datum schoen formatiert rein
+      this.input.setText(this.format.format(d));
+      return d;
     }
     catch (ParseException e)
     {
@@ -270,6 +275,9 @@ public class DateInput implements Input
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.2  2006/10/10 22:30:07  willuhn
+ * @C besseres Text-handling in DateInput
+ *
  * Revision 1.1  2006/09/10 12:12:26  willuhn
  * @N Neues kombiniertes Eingabefeld "DateInput"
  *
