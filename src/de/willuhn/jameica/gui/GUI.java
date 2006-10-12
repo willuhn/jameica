@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.99 $
- * $Date: 2006/08/28 23:01:18 $
+ * $Revision: 1.100 $
+ * $Date: 2006/10/12 13:13:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -486,6 +486,22 @@ public class GUI implements ApplicationController
           }
 					catch (Throwable t)
 					{
+            // Falls es zu einer OperationCancelledException gekommen
+            // ist, oeffnen wir die vorherige Seite
+            Throwable current = t;
+            for (int i=0;i<10;++i)
+            {
+              if (current == null)
+                break;
+              if (current instanceof OperationCanceledException)
+              {
+                GUI.startPreviousView();
+                return;
+              }
+              current = current.getCause();
+            }
+            
+            // Ansonsten zeigen wir die Fehlerseite
             Logger.error("error while loading view " + className,t);
             Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Öffnen des Dialogs"),StatusBarMessage.TYPE_ERROR));
 						// Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
@@ -797,6 +813,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.100  2006/10/12 13:13:24  willuhn
+ * @N Ermitteln von OperationCancelledExceptions beim Laden einer View
+ *
  * Revision 1.99  2006/08/28 23:01:18  willuhn
  * @N Update auf SWT 3.2
  *
