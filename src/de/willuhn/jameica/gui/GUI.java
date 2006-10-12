@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.100 $
- * $Date: 2006/10/12 13:13:24 $
+ * $Revision: 1.99.2.1 $
+ * $Date: 2006/10/12 20:56:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -813,6 +813,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.99.2.1  2006/10/12 20:56:23  willuhn
+ * @C merged bugfixes (made directly after 1.4 tag) into 1.4 branch
+ *
  * Revision 1.100  2006/10/12 13:13:24  willuhn
  * @N Ermitteln von OperationCancelledExceptions beim Laden einer View
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/10/10 22:30:07 $
+ * $Revision: 1.1.2.1 $
+ * $Date: 2006/10/12 20:56:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -275,6 +275,9 @@ public class DateInput implements Input
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.1.2.1  2006/10/12 20:56:23  willuhn
+ * @C merged bugfixes (made directly after 1.4 tag) into 1.4 branch
+ *
  * Revision 1.2  2006/10/10 22:30:07  willuhn
  * @C besseres Text-handling in DateInput
  *
