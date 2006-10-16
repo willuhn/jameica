@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.25 $
- * $Date: 2006/10/02 16:25:17 $
+ * $Revision: 1.26 $
+ * $Date: 2006/10/16 23:04:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -206,6 +206,18 @@ public class SelectInput extends AbstractInput
     	combo.add(Application.getI18n().tr("Fehler beim Laden der Daten"));
     	Logger.error("uanble to create combo box",e);
     }
+    finally
+    {
+      try
+      {
+        // BUGZILLA 298
+        list.begin();
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to roll back list",e);
+      }
+    }
     combo.select(selected);
    	combo.setEnabled(enabled);
    	if (!enabled)
@@ -391,6 +403,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.26  2006/10/16 23:04:24  willuhn
+ * @B Bug 298
+ *
  * Revision 1.25  2006/10/02 16:25:17  willuhn
  * @N Heiners zusaetzlicher Konstruktor
  *
