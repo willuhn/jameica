@@ -16,7 +16,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/velocity/oro.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity/velocity-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-collections.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/datasource"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

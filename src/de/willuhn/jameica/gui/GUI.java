@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.100 $
- * $Date: 2006/10/12 13:13:24 $
+ * $Revision: 1.101 $
+ * $Date: 2006/10/18 16:11:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,6 @@ import de.willuhn.jameica.gui.internal.parts.BackgroundTaskMonitor;
 import de.willuhn.jameica.gui.internal.views.FatalErrorView;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.parts.Panel;
-import de.willuhn.jameica.gui.style.StyleEngine;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
@@ -116,8 +115,6 @@ public class GUI implements ApplicationController
       getShell().setImage(SWTUtil.getImage("globe.gif"));
 
       getShell().setText("Jameica " + Application.getManifest().getVersion());
-
-      StyleEngine.init();
 
       ////////////////////////////
 
@@ -813,6 +810,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.101  2006/10/18 16:11:39  willuhn
+ * @R removed styleengine (no longer needed because of new pluginloader)
+ *
  * Revision 1.100  2006/10/12 13:13:24  willuhn
  * @N Ermitteln von OperationCancelledExceptions beim Laden einer View
  *
