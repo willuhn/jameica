@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.53 $
- * $Date: 2006/09/10 11:14:00 $
+ * $Revision: 1.54 $
+ * $Date: 2006/10/18 17:28:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -101,7 +101,9 @@ public class TablePart implements Part
   private String id                   = null;
 
   private ArrayList selectionListeners = new ArrayList();
-  
+
+  private Hashtable deleteListeners   = new Hashtable();
+
   // Fuer den Aenderungs-Support
   private TableEditor editor          = null;
   private ArrayList changeListeners   = new ArrayList();
@@ -313,15 +315,18 @@ public class TablePart implements Part
    */
   public void removeItem(GenericObject item)
 	{
-		if (table == null || item == null || table.isDisposed())
+    if (table == null || item == null || table.isDisposed())
 			return;
 		TableItem[] items = table.getItems();
 		GenericObject o = null;
-		for (int i=0;i<items.length;++i)
+    
+    for (int i=0;i<items.length;++i)
 		{
 			try
 			{
 				o = (GenericObject) items[i].getData();
+        System.out.println(o.getClass().getName() + ": " + o.getID());
+        System.out.println(item.getClass().getName() + ": " + item.getID());
 				if (item.equals(o))
 				{
           // Muessen wir noch aus den Sortierungsspalten entfernen
@@ -331,6 +336,7 @@ public class TablePart implements Part
             List l = (List) e.nextElement();
             l.remove(new SortItem(null,item));
           }
+          System.out.println("removing " + item.getID() + ": " + i);
 					table.remove(i);
 					size--;
 					refreshSummary();
@@ -372,13 +378,21 @@ public class TablePart implements Part
 		// Listener dran, der uns ueber das Loeschen des Objektes
 		// benachrichtigt. Dann koennen wir es automatisch aus der
 		// Tabelle werfen.
-		if (object instanceof DBObject)
+
+    // BUGZILLA 299
+    // Wenn das Objekt schonmal in der Tabelle war,
+    // duerfen wir den Listener nicht nochmal anhaengen
+    if ((object instanceof DBObject) && deleteListeners.get(object) == null)
 		{
       try
       {
-        ((DBObject)object).addDeleteListener(new de.willuhn.datasource.rmi.Listener()
+        de.willuhn.datasource.rmi.Listener l = new de.willuhn.datasource.rmi.Listener()
         {
-          public void handleEvent(de.willuhn.datasource.rmi.Event e) throws RemoteException
+          /**
+           * @see de.willuhn.datasource.rmi.Listener#handleEvent(de.willuhn.datasource.rmi.Event)
+           */
+          public void handleEvent(de.willuhn.datasource.rmi.Event e)
+              throws RemoteException
           {
             try
             {
@@ -388,9 +402,10 @@ public class TablePart implements Part
             {
               // ignore
             }
-          
           }
-        });
+        };
+        ((DBObject)object).addDeleteListener(l);
+        deleteListeners.put(object,l);
       }
       catch (Exception e)
       {
@@ -1172,6 +1187,10 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.54  2006/10/18 17:28:20  willuhn
+ * @N new de_willuhn_ds.jar
+ * @B Bug 299
+ *
  * Revision 1.53  2006/09/10 11:14:00  willuhn
  * @N Tabelle deaktivierbar
  *
