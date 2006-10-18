@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.54 $
- * $Date: 2006/10/18 17:28:20 $
+ * $Revision: 1.55 $
+ * $Date: 2006/10/18 19:01:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -325,8 +325,6 @@ public class TablePart implements Part
 			try
 			{
 				o = (GenericObject) items[i].getData();
-        System.out.println(o.getClass().getName() + ": " + o.getID());
-        System.out.println(item.getClass().getName() + ": " + item.getID());
 				if (item.equals(o))
 				{
           // Muessen wir noch aus den Sortierungsspalten entfernen
@@ -336,7 +334,6 @@ public class TablePart implements Part
             List l = (List) e.nextElement();
             l.remove(new SortItem(null,item));
           }
-          System.out.println("removing " + item.getID() + ": " + i);
 					table.remove(i);
 					size--;
 					refreshSummary();
@@ -1187,6 +1184,10 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.55  2006/10/18 19:01:03  willuhn
+ * @B Korrektur des Offsets
+ * @R Removed Debug output
+ *
  * Revision 1.54  2006/10/18 17:28:20  willuhn
  * @N new de_willuhn_ds.jar
  * @B Bug 299
