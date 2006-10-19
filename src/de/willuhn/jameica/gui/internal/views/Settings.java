@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.14 $
- * $Date: 2006/10/19 15:28:03 $
+ * $Revision: 1.15 $
+ * $Date: 2006/10/19 15:35:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,6 @@ import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.extension.Extendable;
-import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.action.CertificateImport;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
@@ -159,8 +158,6 @@ public class Settings extends AbstractView implements Extendable
         control.handleStore();
       }
     });
-    
-    ExtensionRegistry.extend(this);
   }
   
   /**
@@ -202,6 +199,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.15  2006/10/19 15:35:58  willuhn
+ * @B ExtensionRegistry.extend allready done in GUI
+ *
  * Revision 1.14  2006/10/19 15:28:03  willuhn
  * @N made settings view extendable
  *
