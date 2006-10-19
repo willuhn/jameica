@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.13 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.14 $
+ * $Date: 2006/10/19 15:28:03 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.extension.Extendable;
+import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.action.CertificateImport;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
@@ -38,7 +40,7 @@ import de.willuhn.util.Session;
 /**
  * Dialog fuer die Programm-Einstellungen.
  */
-public class Settings extends AbstractView
+public class Settings extends AbstractView implements Extendable
 {
 
   /**
@@ -71,13 +73,9 @@ public class Settings extends AbstractView
 		GUI.getView().setTitle(i18n.tr("Einstellungen"));
 		final SettingsControl control = new SettingsControl(this);
 
-    folder = new TabFolder(getParent(), SWT.NONE);
-    folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-    folder.setBackground(Color.BACKGROUND.getSWTColor());
-
     /////////////////////////////////////////////////////////////////
     // System-Einstellungen
-    TabGroup system = new TabGroup(folder,i18n.tr("System"));
+    TabGroup system = new TabGroup(getTabFolder(),i18n.tr("System"));
     
     system.addHeadline(i18n.tr("Logging-Optionen"));
     system.addLabelPair(i18n.tr("Log-Level"), control.getLogLevel());
@@ -106,7 +104,7 @@ public class Settings extends AbstractView
 
     /////////////////////////////////////////////////////////////////
     // Plugin-Einstellungen
-    TabGroup plugins = new TabGroup(folder,i18n.tr("Plugins"));
+    TabGroup plugins = new TabGroup(getTabFolder(),i18n.tr("Plugins"));
 
     plugins.addPart(control.getPlugins());
 
@@ -116,7 +114,7 @@ public class Settings extends AbstractView
     /////////////////////////////////////////////////////////////////
 		// Farb-Einstellungen
 
-    TabGroup colorGroup = new TabGroup(folder,i18n.tr("Look and Feel"));
+    TabGroup colorGroup = new TabGroup(getTabFolder(),i18n.tr("Look and Feel"));
 		try
 		{
 			colorGroup.addLabelPair(i18n.tr("installierte Sprache"), control.getLocale());
@@ -143,7 +141,7 @@ public class Settings extends AbstractView
 		// Mal checken, ob wir uns das zuletzt aktive Tab gemerkt haben.
     Integer selection = (Integer) session.get("active");
     if (selection != null)
-      folder.setSelection(selection.intValue());
+      getTabFolder().setSelection(selection.intValue());
 
     ButtonArea colorButtons = new ButtonArea(getParent(),3);
     colorButtons.addButton(i18n.tr("Zurücksetzen"),new Action()
@@ -161,7 +159,24 @@ public class Settings extends AbstractView
         control.handleStore();
       }
     });
-
+    
+    ExtensionRegistry.extend(this);
+  }
+  
+  /**
+   * Liefert den Tab-Folder, in dem die einzelnen Module der Einstellungen
+   * untergebracht sind.
+   * @return der Tab-Folder.
+   */
+  public TabFolder getTabFolder()
+  {
+    if (this.folder != null)
+      return this.folder;
+    
+    this.folder = new TabFolder(getParent(), SWT.NONE);
+    this.folder.setLayoutData(new GridData(GridData.FILL_BOTH));
+    this.folder.setBackground(Color.BACKGROUND.getSWTColor());
+    return this.folder;
   }
 
   /**
@@ -171,7 +186,15 @@ public class Settings extends AbstractView
   {
     // Wir merken uns das aktive Tab fuer eine Weile, damit wir das gleich
     // wieder anzeigen koennen, wenn der User zurueckkommt.
-    session.put("active",new Integer(folder.getSelectionIndex()));
+    session.put("active",new Integer(getTabFolder().getSelectionIndex()));
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.extension.Extendable#getExtendableID()
+   */
+  public String getExtendableID()
+  {
+    return this.getClass().getName();
   }
 
 }
@@ -179,6 +202,9 @@ public class Settings extends AbstractView
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.14  2006/10/19 15:28:03  willuhn
+ * @N made settings view extendable
+ *
  * Revision 1.13  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
