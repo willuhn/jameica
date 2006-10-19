@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.101 $
- * $Date: 2006/10/18 16:11:39 $
+ * $Revision: 1.102 $
+ * $Date: 2006/10/19 15:38:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -446,24 +446,24 @@ public class GUI implements ApplicationController
 					gui.currentView.setParent(gui.view.getContent());
 					gui.currentView.setCurrentObject(o);
 
-					if (gui.currentView instanceof Extendable)
-          {
-            try
-            {
-              
-              ExtensionRegistry.extend((Extendable)gui.currentView);
-            }
-            catch (Exception e)
-            {
-              Logger.error("error while extending view " + gui.currentView.getClass().getName());
-            }
-          }
-          
           try
 					{
 						gui.currentView.bind();
 
-						// Bis hierher hat alles geklappt, dann koennen wir mal
+            if (gui.currentView instanceof Extendable)
+            {
+              try
+              {
+                
+                ExtensionRegistry.extend((Extendable)gui.currentView);
+              }
+              catch (Exception e)
+              {
+                Logger.error("error while extending view " + gui.currentView.getClass().getName());
+              }
+            }
+
+            // Bis hierher hat alles geklappt, dann koennen wir mal
 						// schauen, ob's fuer die View eine Hilfe-Seite gibt.
 						loadHelp(gui.currentView);
 
@@ -810,6 +810,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.102  2006/10/19 15:38:35  willuhn
+ * @C view should be extended _after_ bind()
+ *
  * Revision 1.101  2006/10/18 16:11:39  willuhn
  * @R removed styleengine (no longer needed because of new pluginloader)
  *
