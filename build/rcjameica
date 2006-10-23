@@ -21,6 +21,7 @@ BASEDIR=`dirname $0`
 WORKDIR=~/.jameica
 PASSWORD=CHANGE_THIS_BEFORE_YOU_START_JAMEICA
 PIDFILE=$WORKDIR/jameica.pid
+LOCKFILE=$WORKDIR/jameica.lock
 
 ### Please do not edit anything below this line! ########################
 #                                                                       #
@@ -44,6 +45,9 @@ case "$1" in
        echo -n "Shutting down Jameica "
        kill `cat $PIDFILE`
        rm $PIDFILE
+       if [ -f $LOCKFILE ]; then
+         rm $LOCKFILE
+       fi
        rc_status -v
      else
       echo "Not running"
