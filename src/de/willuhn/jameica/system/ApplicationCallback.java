@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/06/24 14:55:56 $
- * $Author: web0 $
+ * $Revision: 1.8 $
+ * $Date: 2006/10/28 01:05:21 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -136,11 +136,25 @@ public interface ApplicationCallback
    * @throws Exception
    */
   public boolean checkTrust(X509Certificate cert) throws Exception;
+  
+  /**
+   * Liefert den Hostnamen des Systems.
+   * Dieser wird fuer die Erstellung des X.509-Zertifikats benoetigt.
+   * Die Funktion wirft nur dann eine Exception, wenn alle Stricke
+   * reissen - auch die manuelle Eingabe des Hostnamens durch den User.
+   * @return Hostname.
+   * @throws Exception
+   */
+  public String getHostname() throws Exception;
+
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.8  2006/10/28 01:05:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2005/06/24 14:55:56  web0
  * *** empty log message ***
  *

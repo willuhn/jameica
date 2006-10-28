@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/07/13 21:43:31 $
+ * $Revision: 1.12 $
+ * $Date: 2006/10/28 01:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,13 +44,11 @@ import de.willuhn.util.ProgressMonitor;
 /**
  * SWT-Implementierung des SSLCallbacks.
  */
-public class ApplicationCallbackSWT implements ApplicationCallback
+public class ApplicationCallbackSWT extends AbstractApplicationCallback
 {
 
-	private Settings settings = new Settings(ApplicationCallback.class);
 	private SplashScreen monitor = null;
-
-	private String password = null;
+	private String password      = null;
 
 
   /**
@@ -389,6 +387,9 @@ public class ApplicationCallbackSWT implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.12  2006/10/28 01:05:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2006/07/13 21:43:31  willuhn
  * @N Passwort-Dialog etwas kleiner gemacht
  *

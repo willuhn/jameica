@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.16 $
- * $Date: 2005/10/21 16:17:03 $
- * $Author: web0 $
+ * $Revision: 1.17 $
+ * $Date: 2006/10/28 01:05:21 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -34,10 +34,8 @@ import de.willuhn.util.ProgressMonitor;
  * Implementierung des ApplicationCallback fuer den Server-Mode.
  * Dieser Callback kommuniziert mit dem Benutzer ueber die Console.
  */
-public class ApplicationCallbackConsole implements ApplicationCallback
+public class ApplicationCallbackConsole extends AbstractApplicationCallback
 {
-
-	private Settings settings 				= new Settings(ApplicationCallback.class);
 
 	private ProgressMonitor monitor		= null;
 	private String password 					= null;
@@ -388,6 +386,9 @@ public class ApplicationCallbackConsole implements ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.17  2006/10/28 01:05:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2005/10/21 16:17:03  web0
  * @C bugfixing in network code (ssl)
  *

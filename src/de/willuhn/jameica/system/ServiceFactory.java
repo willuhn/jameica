@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.36 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.37 $
+ * $Date: 2006/10/28 01:05:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -181,7 +181,7 @@ public final class ServiceFactory
 		Class serviceClass = null;
 		try {
 
-			Logger.info("loading service " + name);
+			Logger.info("service: " + name);
 			serviceClass = Application.getClassLoader().load(descriptor.getClassname());
 			bindings.put(fullName,serviceClass);
 
@@ -191,7 +191,7 @@ public final class ServiceFactory
 				return;
 			}
 
-			Logger.info("checking dependencies for service " + name);
+			Logger.info("  checking dependencies");
 			String[] depends = descriptor.depends();
 			ServiceDescriptor[] deps = plugin.getManifest().getServices();
 			if (name != null && name.length() > 0 &&
@@ -208,43 +208,43 @@ public final class ServiceFactory
 						}
 						if (depends[j].equals(deps[i].getName()))
 						{
-							Logger.info("dependency found");
+							Logger.info("  dependency found..");
 							install(plugin,deps[i]);
 						}
 					}
 				}
 			}
 
- 			Logger.info("instantiating service " + name);
+ 			Logger.info("  creating instance");
 			Service s = newInstance(serviceClass);
 			allServices.put(fullName,s);
 
 			if (!descriptor.autostart())
 			{
-				Logger.info("autostart for service " + name + " disabled, skipping service start");
+				Logger.info("  autostart disabled, skipping service start");
 				return;
 			}
 
 			if (s.isStartable())
 			{
-				Logger.info("starting service " + name);
+				Logger.info("  starting service");
 				Application.getCallback().getStartupMonitor().setStatusText("starting service " + name);
 				s.start();
 				startedServices.put(fullName,s);
 			}
 			else
 			{
-				Logger.info("service not startable");
+				Logger.info("  service not startable");
 			}
 
 			if (Application.inServerMode() && descriptor.share() && Application.getConfig().getShareServices())
 			{
 				// Im Server-Mode binden wir den Service noch an die RMI-Registry
-				Logger.info("binding service " + name);
+				Logger.info("  binding service");
 				Application.getCallback().getStartupMonitor().setStatusText("binding service " + name);
 
 				String rmiUrl = "rmi://127.0.0.1:" + Application.getConfig().getRmiPort() + "/" + fullName;
-				Logger.debug("rmi url: " + rmiUrl);
+				Logger.debug("  rmi url: " + rmiUrl);
 				Naming.rebind(rmiUrl,s);
 			}
 		}
@@ -380,6 +380,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.37  2006/10/28 01:05:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.36  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *
