@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.7 $
- * $Date: 2006/08/14 22:34:16 $
+ * $Revision: 1.8 $
+ * $Date: 2006/10/31 23:57:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -140,7 +140,7 @@ public final class MessagingFactory
   }
 
   /**
-   * Sendet eine Nachricht an alle Nachrichtenverbraucher.
+   * Sendet eine Nachricht asynchron an alle Nachrichtenverbraucher.
    * @param message die zu versendende Nachricht.
    */
   public synchronized void sendMessage(Message message)
@@ -156,7 +156,58 @@ public final class MessagingFactory
       Logger.error("unable to send message " + message.toString() + " - queue full");
     }
   }
+  
+  /**
+   * Sendet eine Nachricht <b>synchron</b> an alle Nachrichtenverbraucher.
+   * @param message die zu versendende Nachricht.
+   */
+  public synchronized void sendSyncMessage(Message message)
+  {
+    if (message == null)
+      return;
+    send(message);
+  }
 
+  /**
+   * Sendet die Nachricht an alle Consumer.
+   * @param msg
+   */
+  private synchronized void send(Message msg)
+  {
+    Logger.debug("sending message " + msg.toString());
+    MessageConsumer consumer = null;
+    synchronized (consumers)
+    {
+
+      for (int i=0;i<consumers.size();++i)
+      {
+        consumer = (MessageConsumer) consumers.get(i);
+        Class[] expected = consumer.getExpectedMessageTypes();
+        boolean send = expected == null;
+        if (expected != null)
+        {
+          for (int j=0;j<expected.length;++j)
+          {
+            if (expected[j].isInstance(msg))
+            {
+              send = true;
+              break;
+            }
+          }
+        }
+        try
+        {
+          if (send)
+            consumer.handleMessage(msg);
+        }
+        catch (Throwable t)
+        {
+          Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getMessage() + ") while consuming message " + msg.toString());
+        }
+      }
+    }
+  }
+  
   /**
    * Der Worker-Thread.
    * @author willuhn
@@ -218,7 +269,6 @@ public final class MessagingFactory
      */
     public void run()
     {
-      Message msg = null;
       while(true)
       {
         if (queue.size() == 0 && quit)
@@ -241,40 +291,7 @@ public final class MessagingFactory
           continue;
         }
 
-        msg = (Message) queue.pop();
-
-        Logger.debug("sending message " + msg.toString());
-        MessageConsumer consumer = null;
-        synchronized (consumers)
-        {
-
-          for (int i=0;i<consumers.size();++i)
-          {
-            consumer = (MessageConsumer) consumers.get(i);
-            Class[] expected = consumer.getExpectedMessageTypes();
-            boolean send = expected == null;
-            if (expected != null)
-            {
-              for (int j=0;j<expected.length;++j)
-              {
-                if (expected[j].isInstance(msg))
-                {
-                  send = true;
-                  break;
-                }
-              }
-            }
-            try
-            {
-              if (send)
-                consumer.handleMessage(msg);
-            }
-            catch (Throwable t)
-            {
-              Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getMessage() + ") while consuming message " + msg.toString());
-            }
-          }
-        }
+        send((Message) queue.pop());
       }
     }
 
@@ -290,6 +307,10 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.8  2006/10/31 23:57:26  willuhn
+ * @N MessagingFactory.sendSyncMessage()
+ * @N Senden einer SettingsChangedMessage beim Aendern von System-Einstellungen
+ *
  * Revision 1.7  2006/08/14 22:34:16  willuhn
  * @C changed register/unregister log level
  *

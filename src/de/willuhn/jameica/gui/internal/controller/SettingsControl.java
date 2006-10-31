@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.16 $
- * $Date: 2006/08/28 23:41:48 $
+ * $Revision: 1.17 $
+ * $Date: 2006/10/31 23:57:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,7 @@ import de.willuhn.jameica.gui.internal.parts.PluginList;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.messaging.SettingsChangedMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Config;
@@ -398,11 +399,12 @@ public class SettingsControl extends AbstractControl
 			LocaleObject lo = (LocaleObject) getLocale().getValue();
 			Application.getConfig().setLocale(lo.locale);
 
+      Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
 			
 			SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
 			d.setTitle(i18n.tr("Neustart erforderlich"));
-			d.setText(i18n.tr("Bitte starten Sie Jameica neu, damit Ihre Änderungen wirksam werden."));
+			d.setText(i18n.tr("Bitte starten Sie Jameica neu, damit alle Änderungen wirksam werden."));
 			d.open();
     }
     catch (ApplicationException ae)
@@ -581,6 +583,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.17  2006/10/31 23:57:26  willuhn
+ * @N MessagingFactory.sendSyncMessage()
+ * @N Senden einer SettingsChangedMessage beim Aendern von System-Einstellungen
+ *
  * Revision 1.16  2006/08/28 23:41:48  willuhn
  * @N ColorInput verbessert
  *
