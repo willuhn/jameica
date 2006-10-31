@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.26 $
- * $Date: 2006/10/28 01:05:21 $
+ * $Revision: 1.27 $
+ * $Date: 2006/10/31 23:35:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,6 +44,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import de.willuhn.jameica.messaging.KeystoreChangedMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -493,7 +494,9 @@ public class SSLFactory
     // keystore auf null setzen damit er neu geladen wird
     this.keystore   = null;
     this.sslContext = null;
-    // TODO Die RMISocketFactory muss die Aenderung noch mitkriegen 
+    // Wir benachrichtigen das System ueber die Aendeung.
+    // Somit kriegt es auch die SSLRMISocketFactory mit
+    Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
   }
 
   /**
@@ -584,6 +587,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.27  2006/10/31 23:35:12  willuhn
+ * @N Benachrichtigen der SSLRMISocketFactory wenn sich Keystore geaendert hat
+ *
  * Revision 1.26  2006/10/28 01:05:21  willuhn
  * *** empty log message ***
  *

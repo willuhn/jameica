@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLRMISocketFactory.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/10/24 20:40:48 $
- * $Author: web0 $
+ * $Revision: 1.7 $
+ * $Date: 2006/10/31 23:35:12 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -24,6 +24,9 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
+import de.willuhn.jameica.messaging.KeystoreChangedMessage;
+import de.willuhn.jameica.messaging.Message;
+import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
@@ -46,13 +49,47 @@ public class SSLRMISocketFactory extends RMISocketFactory
   public SSLRMISocketFactory() throws Exception
   {
   	super();
-  	Logger.info("init \"rmi over ssl\" socket factory");
-
     RMISocketFactory.setFailureHandler(new SSLRMIFailureHandler());
-
-  	SSLContext context 	= Application.getSSLFactory().getSSLContext();
-		serverSocketFactory = context.getServerSocketFactory();
-		socketFactory 			= context.getSocketFactory();
+    init();
+    Application.getMessagingFactory().registerMessageConsumer(new MessageConsumer() {
+    
+      /**
+       * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+       */
+      public void handleMessage(Message message) throws Exception
+      {
+        init();
+      }
+    
+      /**
+       * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+       */
+      public Class[] getExpectedMessageTypes()
+      {
+        return new Class[]{KeystoreChangedMessage.class};
+      }
+    
+      /**
+       * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+       */
+      public boolean autoRegister()
+      {
+        return false;
+      }
+    
+    });
+  }
+  
+  /**
+   * Initialisiert die Sockets.
+   * @throws Exception
+   */
+  private synchronized void init() throws Exception
+  {
+    Logger.info("init \"rmi over ssl\" socket factory");
+    SSLContext context  = Application.getSSLFactory().getSSLContext();
+    serverSocketFactory = context.getServerSocketFactory();
+    socketFactory       = context.getSocketFactory();
   }
 
   /**
@@ -127,6 +164,9 @@ public class SSLRMISocketFactory extends RMISocketFactory
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.7  2006/10/31 23:35:12  willuhn
+ * @N Benachrichtigen der SSLRMISocketFactory wenn sich Keystore geaendert hat
+ *
  * Revision 1.6  2005/10/24 20:40:48  web0
  * @C rollback to 2004/06
  *
