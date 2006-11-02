@@ -4,5 +4,5 @@
 # Jameica wird hierbei mit GUI gestartet.
 
 BASEDIR=`dirname $0`
-cd $BASEDIR
-exec java -XstartOnFirstThread -Djava.library.path=$BASEDIR/lib/swt/macos -jar $BASEDIR/jameica-macos.jar $@
+cd "$BASEDIR"
+exec java -XstartOnFirstThread -Djava.library.path="$BASEDIR/lib/swt/macos" -jar $BASEDIR/jameica-macos.jar $@
