@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.55 $
- * $Date: 2006/10/18 19:01:03 $
+ * $Revision: 1.56 $
+ * $Date: 2006/11/06 22:37:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -327,6 +327,7 @@ public class TablePart implements Part
 				o = (GenericObject) items[i].getData();
 				if (item.equals(o))
 				{
+          deleteListeners.remove(item);
           // Muessen wir noch aus den Sortierungsspalten entfernen
           Enumeration e = this.sortTable.elements();
           while (e.hasMoreElements())
@@ -1184,6 +1185,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.56  2006/11/06 22:37:09  willuhn
+ * @C entfernen aus deletelisteners beim
+ *
  * Revision 1.55  2006/10/18 19:01:03  willuhn
  * @B Korrektur des Offsets
  * @R Removed Debug output
