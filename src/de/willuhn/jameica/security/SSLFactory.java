@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.27 $
- * $Date: 2006/10/31 23:35:12 $
+ * $Revision: 1.28 $
+ * $Date: 2006/11/10 00:38:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -217,10 +217,12 @@ public class SSLFactory
 			Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
 			os = new FileOutputStream(getKeyStoreFile());
 			this.keystore.store(os,this.callback.getPassword().toCharArray());
+      Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
 		}
 		finally
 		{
-			os.close();
+      if (os != null)
+        os.close();
 		}
 	}
 
@@ -439,7 +441,6 @@ public class SSLFactory
         Logger.warn("deleting certificate for alias " + alias);
         getKeyStore().deleteEntry(alias);
         storeKeystore();
-        reset();
         return;
       }
     }
@@ -482,22 +483,7 @@ public class SSLFactory
     Logger.warn("adding certificate " + alias + " to keystore");
     getKeyStore().setCertificateEntry(alias,cert);
     storeKeystore();
-
-    reset();
   } 
-
-  /**
-   * Resettet Keystore und SSL-Context damit er beim naechsten Mal neu geladen wird.
-   */
-  private synchronized void reset()
-  {
-    // keystore auf null setzen damit er neu geladen wird
-    this.keystore   = null;
-    this.sslContext = null;
-    // Wir benachrichtigen das System ueber die Aendeung.
-    // Somit kriegt es auch die SSLRMISocketFactory mit
-    Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
-  }
 
   /**
 	 * Liefert einen fertig konfigurierten SSLContext mit den Jameica-Zertifikaten.
@@ -587,6 +573,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.28  2006/11/10 00:38:50  willuhn
+ * @N notify when keystore changed
+ *
  * Revision 1.27  2006/10/31 23:35:12  willuhn
  * @N Benachrichtigen der SSLRMISocketFactory wenn sich Keystore geaendert hat
  *

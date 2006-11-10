@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLRMISocketFactory.java,v $
- * $Revision: 1.8 $
- * $Date: 2006/11/08 01:04:01 $
+ * $Revision: 1.9 $
+ * $Date: 2006/11/10 00:38:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,7 +58,6 @@ public class SSLRMISocketFactory extends RMISocketFactory
        */
       public void handleMessage(Message message) throws Exception
       {
-        // TODO: Nochmal ueberarbeiten. Das loest eine Exception mit dem Text "SSLContextImpl is not initialized" aus
         init();
       }
     
@@ -87,7 +86,7 @@ public class SSLRMISocketFactory extends RMISocketFactory
    */
   private synchronized void init() throws Exception
   {
-    Logger.info("init \"rmi over ssl\" socket factory");
+    Logger.info("(re)init \"rmi over ssl\" socket factory");
     SSLContext context  = Application.getSSLFactory().getSSLContext();
     serverSocketFactory = context.getServerSocketFactory();
     socketFactory       = context.getSocketFactory();
@@ -165,6 +164,9 @@ public class SSLRMISocketFactory extends RMISocketFactory
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.9  2006/11/10 00:38:50  willuhn
+ * @N notify when keystore changed
+ *
  * Revision 1.8  2006/11/08 01:04:01  willuhn
  * *** empty log message ***
  *
