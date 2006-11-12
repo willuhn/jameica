@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.26 $
- * $Date: 2006/10/16 23:04:24 $
+ * $Revision: 1.27 $
+ * $Date: 2006/11/12 23:29:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -235,10 +235,10 @@ public class SelectInput extends AbstractInput
    */
   private String getAttributeValue(GenericObject current) throws RemoteException
 	{
-		String s = current.getPrimaryAttribute();
-		if (this.attribute != null)
-			s = this.attribute;
-
+		String s = this.attribute;
+    if (s == null) // kein Prmaer-Attribut definiert
+      s = current.getPrimaryAttribute();
+    
 		Object o = current.getAttribute(s);
 
 		if (o == null)
@@ -403,6 +403,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.27  2006/11/12 23:29:19  willuhn
+ * @B small Bug (thanks to Reinhold)
+ *
  * Revision 1.26  2006/10/16 23:04:24  willuhn
  * @B Bug 298
  *
