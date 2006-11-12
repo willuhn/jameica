@@ -5,6 +5,6 @@
 
 TERM=xterm
 
-BASEDIR=`dirname $0`
+BASEDIR=`dirname "$0"`
 cd "$BASEDIR"
-exec java -XstartOnFirstThread -Djava.library.path="$BASEDIR/lib/swt/macos" -jar $BASEDIR/jameica-macos.jar $@
+exec java -XstartOnFirstThread -Djava.library.path="$BASEDIR/lib/swt/macos" -jar "$BASEDIR/jameica-macos.jar" $@
