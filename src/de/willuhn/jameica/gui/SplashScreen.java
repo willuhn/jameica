@@ -1,8 +1,8 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.20 $
- * $Date: 2006/01/16 00:53:00 $
- * $Author: web0 $
+ * $Revision: 1.21 $
+ * $Date: 2006/11/12 23:34:28 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -130,7 +130,8 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
     // Splashscreen mittig positionieren
     Rectangle splashRect = shell.getBounds();
-    Rectangle displayRect = display.getBounds();
+    // BUGZILLA 183
+    Rectangle displayRect = display.getPrimaryMonitor().getBounds();
     int x = (displayRect.width - splashRect.width) / 2;
     int y = (displayRect.height - splashRect.height) / 2;
     shell.setLocation(x, y);
@@ -243,6 +244,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.21  2006/11/12 23:34:28  willuhn
+ * @B Bug 183 (thanks to Juergen)
+ *
  * Revision 1.20  2006/01/16 00:53:00  web0
  * @N title in splashscreen
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.38 $
- * $Date: 2006/05/29 14:01:18 $
+ * $Revision: 1.39 $
+ * $Date: 2006/11/12 23:34:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -390,7 +390,8 @@ public abstract class AbstractDialog
           }
 	
 					Rectangle shellRect = shell.getBounds();
-					Rectangle displayRect = display.getBounds();
+          // BUGZILLA 183
+					Rectangle displayRect = display.getPrimaryMonitor().getBounds();
 
 					// Per Default POSITION_CENTER
 					int x = (displayRect.width - shellRect.width) / 2;
@@ -472,6 +473,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.39  2006/11/12 23:34:28  willuhn
+ * @B Bug 183 (thanks to Juergen)
+ *
  * Revision 1.38  2006/05/29 14:01:18  willuhn
  * @B Dialog-Groesse
  *
