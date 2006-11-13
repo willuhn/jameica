@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.12 $
+ * $Date: 2006/11/13 00:40:24 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -13,9 +13,17 @@
 
 package de.willuhn.jameica.gui.internal.parts;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+import java.util.ArrayList;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
@@ -24,16 +32,20 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.CertificateDetailDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
+import de.willuhn.jameica.gui.dialogs.YesNoDialog;
+import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.CertificateImport;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -42,6 +54,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class CertificateList extends TablePart
 {
+  private final static Settings settings = new Settings(CertificateList.class);
 
   /**
    * ct.
@@ -67,6 +80,7 @@ public class CertificateList extends TablePart
       }
     });
     addColumn(Application.getI18n().tr("Ausgestellt für"),"name");
+    addColumn(Application.getI18n().tr("Organisation"),"organization");
     addColumn(Application.getI18n().tr("Aussteller"),"issuer");
     addColumn(Application.getI18n().tr("Gültig von"),"datefrom");
     addColumn(Application.getI18n().tr("Gültig bis"),"dateto");
@@ -106,7 +120,25 @@ public class CertificateList extends TablePart
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Löschen des Zertifikats."),StatusBarMessage.TYPE_ERROR));
         }
       }
-    }));
+    })
+    {
+      /**
+       * @see de.willuhn.jameica.gui.parts.ContextMenuItem#isEnabledFor(java.lang.Object)
+       */
+      public boolean isEnabledFor(Object o)
+      {
+        try
+        {
+          if (Application.getSSLFactory().getSystemCertificate().equals(((CertObject)o).cert))
+            return false;
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to check for system certificate",e);
+        }
+        return super.isEnabledFor(o);
+      }
+    });
     menu.addItem(new ContextMenuItem(Application.getI18n().tr("Zertifikat importieren..."),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -114,6 +146,74 @@ public class CertificateList extends TablePart
         GUI.startView(GUI.getCurrentView().getClass(),GUI.getCurrentView().getCurrentObject());
       }
     }));
+    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Zertifikat exportieren..."),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        try
+        {
+          X509Certificate cert = ((CertObject) context).cert;
+
+          Certificate myCert = new Certificate(cert);
+          String s = myCert.getSubject().getAttribute(Principal.COMMON_NAME);
+
+          FileDialog fd = new FileDialog(GUI.getShell(),SWT.SAVE);
+          fd.setText(Application.getI18n().tr("Bitte geben Sie das Verzeichnis an, in dem Sie das Zertifikat speichern möchten"));
+          fd.setFileName(s + ".crt");
+          fd.setFilterPath(settings.getString("lastdir",System.getProperty("user.home")));
+          String target = fd.open();
+          File f = new File(target);
+          if (f.exists())
+          {
+            YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
+            d.setTitle(Application.getI18n().tr("Überschreiben?"));
+            d.setText(Application.getI18n().tr("Datei existiert bereits. Überschreiben?"));
+            Boolean b = (Boolean) d.open();
+            if (!b.booleanValue())
+              return;
+          }
+          OutputStream os = null;
+          try
+          {
+            os = new FileOutputStream(f);
+            os.write(cert.getEncoded());
+            os.flush();
+            settings.setAttribute("lastdir",f.getParent());
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Zertifikate exportiert"), StatusBarMessage.TYPE_SUCCESS));
+          }
+          finally
+          {
+            if (os != null)
+              os.close();
+          }
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to export certificate",e);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Export des Zertifikates"), StatusBarMessage.TYPE_ERROR));
+        }
+      }
+    }));
+    setFormatter(new TableFormatter() {
+    
+      public void format(TableItem item)
+      {
+        if (item == null || item.getData() == null)
+          return;
+        try
+        {
+          CertObject o = (CertObject) item.getData();
+          if (Application.getSSLFactory().getSystemCertificate().equals(o.cert))
+            item.setForeground(Color.COMMENT.getSWTColor());
+          else
+            item.setForeground(Color.WIDGET_FG.getSWTColor());
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to check for system certificate",e);
+        }
+      }
+    
+    });
     this.setContextMenu(menu);
   }
 
@@ -122,12 +222,15 @@ public class CertificateList extends TablePart
     try
     {
       X509Certificate[] list = Application.getSSLFactory().getTrustedCertificates();
-      GenericObject[] objects = new GenericObject[list.length];
+      ArrayList al = new ArrayList();
       for (int i=0;i<list.length;++i)
       {
-        objects[i] = new CertObject(list[i]);
+        al.add(new CertObject(list[i]));
       }
-      return PseudoIterator.fromArray(objects);
+      
+      // System-Zertifikat noch hinzufuegen
+      al.add(new CertObject(Application.getSSLFactory().getSystemCertificate()));
+      return PseudoIterator.fromArray((CertObject[])al.toArray(new CertObject[al.size()]));
     }
     catch (Exception e)
     {
@@ -190,6 +293,8 @@ public class CertificateList extends TablePart
       }
       if ("serial".equals(arg0))
         return cert.getSerialNumber().toString();
+      if ("organization".equals(arg0))
+        return myCert.getSubject().getAttribute(Principal.ORGANIZATION);
       if ("datefrom".equals(arg0))
         return df.format(cert.getNotBefore());
       if ("dateto".equals(arg0))
@@ -222,7 +327,8 @@ public class CertificateList extends TablePart
         "serial",
         "datefrom",
         "dateto",
-        "fingerprint"
+        "fingerprint",
+        "organization"
       };
     }
 
@@ -257,6 +363,10 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.12  2006/11/13 00:40:24  willuhn
+ * @N Anzeige des System-Zertifikates
+ * @N Export von Zertifikaten
+ *
  * Revision 1.11  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
