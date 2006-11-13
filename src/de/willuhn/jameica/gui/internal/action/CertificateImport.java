@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/CertificateImport.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2006/11/13 00:56:54 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -23,9 +23,11 @@ import org.eclipse.swt.widgets.FileDialog;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
+import de.willuhn.jameica.gui.internal.parts.CertificateList;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -34,6 +36,8 @@ import de.willuhn.util.ApplicationException;
  */
 public class CertificateImport implements Action
 {
+  private final static Settings settings = new Settings(CertificateList.class);
+  
 
   /**
    * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
@@ -42,7 +46,7 @@ public class CertificateImport implements Action
   {
     FileDialog d = new FileDialog(GUI.getShell(),SWT.OPEN);
     d.setText(Application.getI18n().tr("Bitte wählen Sie das zu importierende Zertifikat aus"));
-    d.setFilterPath(Application.getConfig().getWorkDir());
+    d.setFilterPath(settings.getString("lastdir", System.getProperty("user.home")));
     d.setFilterExtensions(new String[]{"*.pem","*.crt","*.cer"});
     String s = d.open();
     if (s == null || s.length() == 0)
@@ -50,7 +54,8 @@ public class CertificateImport implements Action
     File f = new File(s);
     if (!f.exists() || !f.isFile() || !f.canRead())
       throw new ApplicationException(Application.getI18n().tr("Zertifikat {0} nicht lesbar",s));
-    
+
+    settings.setAttribute("lastdir",f.getParent());
     try
     {
       final X509Certificate c = Application.getSSLFactory().loadCertificate(new FileInputStream(f));
@@ -81,6 +86,9 @@ public class CertificateImport implements Action
 
 /*********************************************************************
  * $Log: CertificateImport.java,v $
+ * Revision 1.4  2006/11/13 00:56:54  willuhn
+ * @C store last import dir
+ *
  * Revision 1.3  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
