@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.28 $
- * $Date: 2006/11/10 00:38:50 $
+ * $Revision: 1.29 $
+ * $Date: 2006/11/15 00:30:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,6 +45,7 @@ import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -132,6 +133,14 @@ public class SSLFactory
 		Logger.info("  using hostname: " + hostname);
 		attributes.put(X509Name.CN,hostname);
     attributes.put(X509Name.O,"Jameica Certificate");
+    
+    // BUGZILLA 326
+    String username = System.getProperty("user.name");
+    if (username != null && username.length() > 0)
+    {
+      attributes.put(X509Name.GIVENNAME,username);
+      attributes.put(X509Name.OU,username);
+    }
 		X509Name user   = new X509Name(attributes);
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 
@@ -475,13 +484,18 @@ public class SSLFactory
    */
   public synchronized void addTrustedCertificate(X509Certificate cert) throws Exception
   {
-    String alias = cert.getSubjectDN().getName();
+    String dn = cert.getSubjectDN().getName();
+    
+    String systemDN = getSystemCertificate().getSubjectDN().getName();
 
-    if (SYSTEM_ALIAS.equals(alias))
-      throw new Exception("not allowed to overwrite system certificate");
+    if (systemDN.equals(dn))
+    {
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Das System-Zertifikat darf nicht überschrieben werden"), StatusBarMessage.TYPE_ERROR));
+      return;
+    }
 
-    Logger.warn("adding certificate " + alias + " to keystore");
-    getKeyStore().setCertificateEntry(alias,cert);
+    Logger.warn("adding certificate DN: " + dn + " to keystore");
+    getKeyStore().setCertificateEntry(dn,cert);
     storeKeystore();
   } 
 
@@ -573,6 +587,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.29  2006/11/15 00:30:44  willuhn
+ * @C Bug 326
+ *
  * Revision 1.28  2006/11/10 00:38:50  willuhn
  * @N notify when keystore changed
  *

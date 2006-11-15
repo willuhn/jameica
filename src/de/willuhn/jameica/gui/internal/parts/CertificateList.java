@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.12 $
- * $Date: 2006/11/13 00:40:24 $
+ * $Revision: 1.13 $
+ * $Date: 2006/11/15 00:30:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -155,12 +155,18 @@ public class CertificateList extends TablePart
 
           Certificate myCert = new Certificate(cert);
           String s = myCert.getSubject().getAttribute(Principal.COMMON_NAME);
+          String s2 = myCert.getSubject().getAttribute(Principal.ORGANIZATIONAL_UNIT);
 
           FileDialog fd = new FileDialog(GUI.getShell(),SWT.SAVE);
           fd.setText(Application.getI18n().tr("Bitte geben Sie das Verzeichnis an, in dem Sie das Zertifikat speichern möchten"));
-          fd.setFileName(s + ".crt");
+          if (s2 != null && s2.length() > 0)
+            fd.setFileName(s + "-" + s2 + ".crt");
+          else
+            fd.setFileName(s + ".crt");
           fd.setFilterPath(settings.getString("lastdir",System.getProperty("user.home")));
           String target = fd.open();
+          if (target == null)
+            return;
           File f = new File(target);
           if (f.exists())
           {
@@ -363,6 +369,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.13  2006/11/15 00:30:44  willuhn
+ * @C Bug 326
+ *
  * Revision 1.12  2006/11/13 00:40:24  willuhn
  * @N Anzeige des System-Zertifikates
  * @N Export von Zertifikaten
