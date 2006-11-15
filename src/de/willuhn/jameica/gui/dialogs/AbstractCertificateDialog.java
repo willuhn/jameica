@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractCertificateDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/11/22 07:38:32 $
- * $Author: web0 $
+ * $Revision: 1.6 $
+ * $Date: 2006/11/15 00:12:35 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -19,6 +19,7 @@ import java.text.DateFormat;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.parts.TextPart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.security.Certificate;
@@ -44,7 +45,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   {
     super(position);
     this.cert = cert;
-    setSize(400,500); // Breite legen wir fest, damit der Fingerprint hinpasst
+    setSize(405,500); // Breite legen wir fest, damit der Fingerprint hinpasst
   }
 
   /**
@@ -109,15 +110,17 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     // Details
     group.addHeadline(Application.getI18n().tr("Eigenschaften des Zertifikats"));
 
-    group.addLabelPair(i18n.tr("Gültig von"), new LabelInput(df.format(cert.getNotBefore())));
-    group.addLabelPair(i18n.tr("Gültig bis"), new LabelInput(df.format(cert.getNotAfter())));
+    group.addLabelPair(i18n.tr("Gültigkeit"), new LabelInput(df.format(cert.getNotBefore()) + " - " + df.format(cert.getNotAfter())));
     group.addLabelPair(i18n.tr("Seriennummer"), new LabelInput(cert.getSerialNumber().toString()));
-    group.addLabelPair(i18n.tr("Typ"), new LabelInput(cert.getType()));
     /////////////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////////
     // Fingerprint
-    group.addLabelPair(i18n.tr("MD5-Fingerabdruck"), new LabelInput(myCert.getMD5Fingerprint()));
+    TextPart fingerprints = new TextPart();
+    fingerprints.appendText(i18n.tr("MD5-Fingerabdruck:\n{0}",myCert.getMD5Fingerprint()));
+    fingerprints.appendText("\n");
+    fingerprints.appendText(i18n.tr("SHA1-Fingerabdruck:\n{0}",myCert.getSHA1Fingerprint()));
+    group.addPart(fingerprints);
     /////////////////////////////////////////////////////////////////////////////
 
     try
@@ -172,6 +175,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: AbstractCertificateDialog.java,v $
+ * Revision 1.6  2006/11/15 00:12:35  willuhn
+ * @B Bug 329
+ *
  * Revision 1.5  2005/11/22 07:38:32  web0
  * *** empty log message ***
  *

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Certificate.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.6 $
+ * $Date: 2006/11/15 00:12:35 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -54,6 +54,29 @@ public class Certificate
    */
   public String getMD5Fingerprint() throws CertificateEncodingException, NoSuchAlgorithmException
   {
+    return getFingerprint("MD5");
+  }
+
+  /**
+   * Liefert den SHA1-Fingerabdruck des Zertifikats.
+   * @return der SHA1-Fingerabdruck des Zertifikats.
+   * @throws CertificateEncodingException
+   * @throws NoSuchAlgorithmException
+   */
+  public String getSHA1Fingerprint() throws CertificateEncodingException, NoSuchAlgorithmException
+  {
+    return getFingerprint("SHA1");
+  }
+
+  /**
+   * Liefert den Fingerabdruck des Zertifikats im gewuenschten Format.
+   * @return der Fingerabdruck des Zertifikats.
+   * @param Zu verwendender Algorithmus fuer den Fingerprint. Z.Bsp. MD5 oder SHA1. 
+   * @throws CertificateEncodingException
+   * @throws NoSuchAlgorithmException
+   */
+  private String getFingerprint(String algorithm) throws CertificateEncodingException, NoSuchAlgorithmException
+  {
     byte[] sig = null;
     if (this.cert != null)
       sig = cert.getEncoded();
@@ -70,7 +93,7 @@ public class Certificate
       }
     }
     
-    MessageDigest md = MessageDigest.getInstance("MD5");
+    MessageDigest md = MessageDigest.getInstance(algorithm);
     byte[] digest = md.digest(sig);
     StringBuffer sb = new StringBuffer(2 * digest.length);
     for (int i = 0; i < digest.length; ++i) {
@@ -112,6 +135,9 @@ public class Certificate
 
 /*********************************************************************
  * $Log: Certificate.java,v $
+ * Revision 1.6  2006/11/15 00:12:35  willuhn
+ * @B Bug 329
+ *
  * Revision 1.5  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
