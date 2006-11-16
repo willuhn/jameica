@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.29 $
- * $Date: 2006/11/15 00:30:44 $
+ * $Revision: 1.30 $
+ * $Date: 2006/11/16 23:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -138,8 +138,14 @@ public class SSLFactory
     String username = System.getProperty("user.name");
     if (username != null && username.length() > 0)
     {
-      attributes.put(X509Name.GIVENNAME,username);
-      attributes.put(X509Name.OU,username);
+      // Mit dem Prefix kann man auch dann die Zertifikate austauschen, wenn
+      // Client und Server mit dem selben Account auf dem selben Rechner
+      // laufen.
+      String prefix = "";
+      if (Application.inClientMode()) prefix = "client.";
+      else if (Application.inServerMode()) prefix = "server.";
+      attributes.put(X509Name.GIVENNAME,prefix + username);
+      attributes.put(X509Name.OU,prefix + username);
     }
 		X509Name user   = new X509Name(attributes);
 		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
@@ -587,6 +593,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.30  2006/11/16 23:46:03  willuhn
+ * @N launch type in cert creation
+ * @N new row in cert list
+ *
  * Revision 1.29  2006/11/15 00:30:44  willuhn
  * @C Bug 326
  *

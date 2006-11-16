@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.13 $
- * $Date: 2006/11/15 00:30:44 $
+ * $Revision: 1.14 $
+ * $Date: 2006/11/16 23:46:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -81,6 +81,7 @@ public class CertificateList extends TablePart
     });
     addColumn(Application.getI18n().tr("Ausgestellt für"),"name");
     addColumn(Application.getI18n().tr("Organisation"),"organization");
+    addColumn(Application.getI18n().tr("OU/User"),"ou");
     addColumn(Application.getI18n().tr("Aussteller"),"issuer");
     addColumn(Application.getI18n().tr("Gültig von"),"datefrom");
     addColumn(Application.getI18n().tr("Gültig bis"),"dateto");
@@ -301,6 +302,8 @@ public class CertificateList extends TablePart
         return cert.getSerialNumber().toString();
       if ("organization".equals(arg0))
         return myCert.getSubject().getAttribute(Principal.ORGANIZATION);
+      if ("ou".equals(arg0))
+        return myCert.getSubject().getAttribute(Principal.ORGANIZATIONAL_UNIT);
       if ("datefrom".equals(arg0))
         return df.format(cert.getNotBefore());
       if ("dateto".equals(arg0))
@@ -334,7 +337,8 @@ public class CertificateList extends TablePart
         "datefrom",
         "dateto",
         "fingerprint",
-        "organization"
+        "organization",
+        "ou"
       };
     }
 
@@ -369,6 +373,10 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.14  2006/11/16 23:46:03  willuhn
+ * @N launch type in cert creation
+ * @N new row in cert list
+ *
  * Revision 1.13  2006/11/15 00:30:44  willuhn
  * @C Bug 326
  *
