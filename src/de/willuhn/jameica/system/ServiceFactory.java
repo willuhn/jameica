@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.37 $
- * $Date: 2006/10/28 01:05:21 $
+ * $Revision: 1.38 $
+ * $Date: 2006/11/20 22:01:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -375,11 +375,32 @@ public final class ServiceFactory
         Logger.error("error while closing service " + fullName,t);
       }
     }
+
+    Logger.info("notify remote services");
+    e = serviceCache.keys();
+
+    while (e.hasMoreElements())
+    {
+      try
+      {
+        fullName = (String) e.nextElement();
+        service = (Service) serviceCache.get(fullName);
+        Logger.info("notifying service " + fullName);
+        service.stop(false);
+      }
+      catch (Throwable t)
+      {
+        Logger.error("error while notifying service " + fullName,t);
+      }
+    }
   }
 }
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.38  2006/11/20 22:01:46  willuhn
+ * @N send stop to remote services on shutdown (server should dispose resources on this event)
+ *
  * Revision 1.37  2006/10/28 01:05:21  willuhn
  * *** empty log message ***
  *
