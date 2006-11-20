@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/11/17 22:54:40 $
- * $Author: web0 $
+ * $Revision: 1.10 $
+ * $Date: 2006/11/20 22:00:50 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -208,10 +208,6 @@ public class JameicaTrustManager implements X509TrustManager
         }
       }
     }
-    catch (CertificateException ce)
-    {
-      throw ce;
-    }
     catch (OperationCanceledException oe)
     {
       Logger.warn("operation cancelled");
@@ -257,6 +253,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.10  2006/11/20 22:00:50  willuhn
+ * @B useless catch/throw removed
+ *
  * Revision 1.9  2005/11/17 22:54:40  web0
  * @N Jameica uses IBMs TrustManager if java.vendor contains "ibm"
  *
