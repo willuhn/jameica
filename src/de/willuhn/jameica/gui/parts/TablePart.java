@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.58 $
- * $Date: 2006/11/20 23:32:01 $
+ * $Revision: 1.59 $
+ * $Date: 2006/11/20 23:41:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -328,8 +328,19 @@ public class TablePart implements Part
 				{
           // BUGZILLA 299
           if (o instanceof DBObject)
-            ((DBObject)o).removeDeleteListener(this.deleteListener);
+          {
+            try
+            {
+              ((DBObject)o).removeDeleteListener(this.deleteListener);
+            }
+            catch (Exception e)
+            {
+              // Im Netzwerkbetrieb kann das schiefgehen, da der Listener
+              // nicht serialisierbar ist
+            }
 
+          }
+            
           // Muessen wir noch aus den Sortierungsspalten entfernen
           Enumeration e = this.sortTable.elements();
           while (e.hasMoreElements())
@@ -382,10 +393,17 @@ public class TablePart implements Part
     // BUGZILLA 299
     if (object instanceof DBObject)
     {
-      // Das sieht doof aus, ich weiss. Aber es stellt sicher, dass
-      // der Listener danach nicht doppelt vorhanden ist.
-      ((DBObject)object).removeDeleteListener(this.deleteListener);
-      ((DBObject)object).addDeleteListener(this.deleteListener);
+      try
+      {
+        // Das sieht doof aus, ich weiss. Aber es stellt sicher, dass
+        // der Listener danach nicht doppelt vorhanden ist.
+        ((DBObject)object).removeDeleteListener(this.deleteListener);
+        ((DBObject)object).addDeleteListener(this.deleteListener);
+      }
+      catch (Exception e)
+      {
+        // Im Netzwerkbetrieb kann das schiefgehen, da der Listener nicht serialisierbar ist
+      }
     }
 		
 		item.setData(object);
@@ -1181,6 +1199,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.59  2006/11/20 23:41:00  willuhn
+ * @N added try/catch for network mode
+ *
  * Revision 1.58  2006/11/20 23:32:01  willuhn
  * @N handle delete via single deletelistener
  *
