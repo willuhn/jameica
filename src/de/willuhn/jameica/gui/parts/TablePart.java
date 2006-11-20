@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.57 $
- * $Date: 2006/11/20 12:08:22 $
+ * $Revision: 1.58 $
+ * $Date: 2006/11/20 23:32:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -102,7 +102,7 @@ public class TablePart implements Part
 
   private ArrayList selectionListeners = new ArrayList();
 
-  private Hashtable deleteListeners   = new Hashtable();
+  private de.willuhn.datasource.rmi.Listener deleteListener = new DeleteListener();
 
   // Fuer den Aenderungs-Support
   private TableEditor editor          = null;
@@ -295,7 +295,6 @@ public class TablePart implements Part
   {
     if (table == null || table.isDisposed())
       return;
-    this.deleteListeners.clear();
     this.sortTable.clear();
     size = 0;
     this.table.removeAll();
@@ -327,7 +326,10 @@ public class TablePart implements Part
 				o = (GenericObject) items[i].getData();
 				if (item.equals(o))
 				{
-          deleteListeners.remove(item);
+          // BUGZILLA 299
+          if (o instanceof DBObject)
+            ((DBObject)o).removeDeleteListener(this.deleteListener);
+
           // Muessen wir noch aus den Sortierungsspalten entfernen
           Enumeration e = this.sortTable.elements();
           while (e.hasMoreElements())
@@ -378,41 +380,13 @@ public class TablePart implements Part
 		// Tabelle werfen.
 
     // BUGZILLA 299
-    // Wenn das Objekt schonmal in der Tabelle war,
-    // duerfen wir den Listener nicht nochmal anhaengen
-    // Machen wir nur im Standalone-Mode
-    if (Application.inStandaloneMode() && (object instanceof DBObject) && deleteListeners.get(object) == null)
-		{
-      try
-      {
-        de.willuhn.datasource.rmi.Listener l = new de.willuhn.datasource.rmi.Listener()
-        {
-          /**
-           * @see de.willuhn.datasource.rmi.Listener#handleEvent(de.willuhn.datasource.rmi.Event)
-           */
-          public void handleEvent(de.willuhn.datasource.rmi.Event e)
-              throws RemoteException
-          {
-            try
-            {
-              removeItem(e.getObject());
-            }
-            catch (Exception e2)
-            {
-              // ignore
-            }
-          }
-        };
-        ((DBObject)object).addDeleteListener(l);
-        deleteListeners.put(object,l);
-      }
-      catch (Exception e)
-      {
-        // ignore
-        // Das funktioniert noch nicht uebers Netz, da der Listener
-        // uebers Netz muss, aber die Tabelle nicht kennen darf
-      }
-		}
+    if (object instanceof DBObject)
+    {
+      // Das sieht doof aus, ich weiss. Aber es stellt sicher, dass
+      // der Listener danach nicht doppelt vorhanden ist.
+      ((DBObject)object).removeDeleteListener(this.deleteListener);
+      ((DBObject)object).addDeleteListener(this.deleteListener);
+    }
 		
 		item.setData(object);
 		String[] text = new String[this.columns.size()];
@@ -1182,10 +1156,34 @@ public class TablePart implements Part
     	}
     }
 	}
+
+  /**
+   * Der Listener ueberwacht das Loeschen von Objekten und entfernt die Objekte dann aus der Tabelle.
+   */
+  private class DeleteListener implements de.willuhn.datasource.rmi.Listener
+  {
+    /**
+     * @see de.willuhn.datasource.rmi.Listener#handleEvent(de.willuhn.datasource.rmi.Event)
+     */
+    public void handleEvent(de.willuhn.datasource.rmi.Event e) throws RemoteException
+    {
+      try
+      {
+        removeItem(e.getObject());
+      }
+      catch (Exception e2)
+      {
+        // ignore
+      }
+    }
+  }
 }
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.58  2006/11/20 23:32:01  willuhn
+ * @N handle delete via single deletelistener
+ *
  * Revision 1.57  2006/11/20 12:08:22  willuhn
  * @N DeleteListener nur noch im Standalone-Mode registrieren
  * @N removeAll ueberarbeitet
