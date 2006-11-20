@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.56 $
- * $Date: 2006/11/06 22:37:09 $
+ * $Revision: 1.57 $
+ * $Date: 2006/11/20 12:08:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -295,11 +295,11 @@ public class TablePart implements Part
   {
     if (table == null || table.isDisposed())
       return;
-    TableItem[] items = table.getItems();
-    for (int i=0;i<items.length;++i)
-    {
-      removeItem((GenericObject) items[i].getData());
-    }
+    this.deleteListeners.clear();
+    this.sortTable.clear();
+    size = 0;
+    this.table.removeAll();
+    refreshSummary();
   }
 
 	/**
@@ -380,7 +380,8 @@ public class TablePart implements Part
     // BUGZILLA 299
     // Wenn das Objekt schonmal in der Tabelle war,
     // duerfen wir den Listener nicht nochmal anhaengen
-    if ((object instanceof DBObject) && deleteListeners.get(object) == null)
+    // Machen wir nur im Standalone-Mode
+    if (Application.inStandaloneMode() && (object instanceof DBObject) && deleteListeners.get(object) == null)
 		{
       try
       {
@@ -1185,6 +1186,10 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.57  2006/11/20 12:08:22  willuhn
+ * @N DeleteListener nur noch im Standalone-Mode registrieren
+ * @N removeAll ueberarbeitet
+ *
  * Revision 1.56  2006/11/06 22:37:09  willuhn
  * @C entfernen aus deletelisteners beim
  *
