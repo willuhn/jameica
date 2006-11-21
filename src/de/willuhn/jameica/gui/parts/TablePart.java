@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.59 $
- * $Date: 2006/11/20 23:41:00 $
+ * $Revision: 1.60 $
+ * $Date: 2006/11/21 00:08:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -327,7 +327,7 @@ public class TablePart implements Part
 				if (item.equals(o))
 				{
           // BUGZILLA 299
-          if (o instanceof DBObject)
+          if (Application.inStandaloneMode() && (o instanceof DBObject))
           {
             try
             {
@@ -391,7 +391,8 @@ public class TablePart implements Part
 		// Tabelle werfen.
 
     // BUGZILLA 299
-    if (object instanceof DBObject)
+    // Funktioniert eh nicht remote
+    if (Application.inStandaloneMode() && (object instanceof DBObject))
     {
       try
       {
@@ -1199,6 +1200,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.60  2006/11/21 00:08:23  willuhn
+ * @N skip deletelistener in network mode
+ *
  * Revision 1.59  2006/11/20 23:41:00  willuhn
  * @N added try/catch for network mode
  *
