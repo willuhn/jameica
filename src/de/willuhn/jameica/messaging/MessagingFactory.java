@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.8 $
- * $Date: 2006/10/31 23:57:26 $
+ * $Revision: 1.9 $
+ * $Date: 2006/11/27 18:46:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -143,7 +143,7 @@ public final class MessagingFactory
    * Sendet eine Nachricht asynchron an alle Nachrichtenverbraucher.
    * @param message die zu versendende Nachricht.
    */
-  public synchronized void sendMessage(Message message)
+  public void sendMessage(Message message)
   {
     if (message == null)
       return;
@@ -161,7 +161,7 @@ public final class MessagingFactory
    * Sendet eine Nachricht <b>synchron</b> an alle Nachrichtenverbraucher.
    * @param message die zu versendende Nachricht.
    */
-  public synchronized void sendSyncMessage(Message message)
+  public void sendSyncMessage(Message message)
   {
     if (message == null)
       return;
@@ -172,7 +172,7 @@ public final class MessagingFactory
    * Sendet die Nachricht an alle Consumer.
    * @param msg
    */
-  private synchronized void send(Message msg)
+  private void send(Message msg)
   {
     Logger.debug("sending message " + msg.toString());
     MessageConsumer consumer = null;
@@ -307,6 +307,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.9  2006/11/27 18:46:45  willuhn
+ * @C removed synchronized stuff
+ *
  * Revision 1.8  2006/10/31 23:57:26  willuhn
  * @N MessagingFactory.sendSyncMessage()
  * @N Senden einer SettingsChangedMessage beim Aendern von System-Einstellungen
