@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/10/06 16:00:48 $
+ * $Revision: 1.12 $
+ * $Date: 2006/11/30 23:48:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -88,8 +88,8 @@ public abstract class AbstractInput implements Input
    */
   public final void setComment(String comment)
   {
-    this.comment = ""+comment; // wegen NullPointer
-		if (commentLabel != null && ! commentLabel.isDisposed())
+    this.comment = comment;
+		if (commentLabel != null && ! commentLabel.isDisposed() && this.comment != null)
 		{
 			commentLabel.setText(this.comment);
 			commentLabel.redraw();
@@ -247,6 +247,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.12  2006/11/30 23:48:20  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2006/10/06 16:00:48  willuhn
  * @B Bug 280
  *
