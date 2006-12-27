@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>jameica</name>
+	<name>jameica_1_4</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -16,7 +16,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/New_Builder (2).launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/New_Builder (3).launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
