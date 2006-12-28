@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.9 $
- * $Date: 2006/08/28 23:01:18 $
+ * $Revision: 1.10 $
+ * $Date: 2006/12/28 15:57:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Button createButton(Composite parent)
   {
-  	Button button = new Button(parent,SWT.PUSH | SWT.FLAT);
+  	Button button = new Button(parent,SWT.PUSH);
 		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		return button;
   }
@@ -101,6 +101,9 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
+ * Revision 1.10  2006/12/28 15:57:56  willuhn
+ * @C keine flachen Buttons in Default-Style
+ *
  * Revision 1.9  2006/08/28 23:01:18  willuhn
  * @N Update auf SWT 3.2
  *
