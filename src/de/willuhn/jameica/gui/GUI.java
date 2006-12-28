@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.102 $
- * $Date: 2006/10/19 15:38:35 $
+ * $Revision: 1.103 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,6 +38,7 @@ import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.Manifest;
@@ -155,6 +156,7 @@ public class GUI implements ApplicationController
       Composite right = new Composite(sash, SWT.NONE);
       right.setLayout(SWTUtil.createGrid(1,true));
       right.setLayoutData(new GridData(GridData.FILL_BOTH));
+      right.setBackground(Color.BACKGROUND.getSWTColor());
       Logger.info("adding content view");
 
       view = new View();
@@ -810,6 +812,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.103  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.102  2006/10/19 15:38:35  willuhn
  * @C view should be extended _after_ bind()
  *

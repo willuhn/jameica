@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.17 $
- * $Date: 2006/10/31 23:57:26 $
+ * $Revision: 1.18 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,6 +77,7 @@ public class SettingsControl extends AbstractControl
 	private Input colorSuccess;
 	private Input colorLink;
 	private Input colorLinkActive;
+  private Input colorMandatoryBG;
 	private Input styleFactory;
 	
 	private SelectInput locale;
@@ -281,6 +282,18 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
+   * Auswahlfeld.
+   * @return Auswahl-Feld.
+   */
+  public Input getColorMandatoryBG()
+  {
+    if (colorMandatoryBG != null)
+      return colorMandatoryBG;
+    colorMandatoryBG = new ColorInput(Color.MANDATORY_BG.getSWTColor(),false);
+    return colorMandatoryBG;
+  }
+
+  /**
 	 * Auswahlfeld.
    * @return Auswahl-Feld.
 	 */
@@ -394,6 +407,7 @@ public class SettingsControl extends AbstractControl
 			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
 			Color.LINK.setSWTColor((org.eclipse.swt.graphics.Color)getColorLink().getValue());
 			Color.LINK_ACTIVE.setSWTColor((org.eclipse.swt.graphics.Color)getColorLinkActive().getValue());
+      Color.MANDATORY_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorMandatoryBG().getValue());
 			StyleFactoryObject fo = (StyleFactoryObject) getStyleFactory().getValue();
 			GUI.setStyleFactory(fo.factory);
 			LocaleObject lo = (LocaleObject) getLocale().getValue();
@@ -583,6 +597,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.18  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.17  2006/10/31 23:57:26  willuhn
  * @N MessagingFactory.sendSyncMessage()
  * @N Senden einer SettingsChangedMessage beim Aendern von System-Einstellungen

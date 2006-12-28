@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/08/28 23:41:48 $
+ * $Revision: 1.12 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,10 +54,7 @@ public class ColorInput extends ButtonInput
 				ColorDialog cd = new ColorDialog(GUI.getShell());
         cd.setRGB(ColorInput.this.color.getRGB());
         cd.setText(Application.getI18n().tr("Bitte wählen Sie die Farbe aus"));
-				RGB rgb = cd.open();
-				if (rgb == null)
-					return;
-				setValue(new Color(GUI.getDisplay(),rgb));
+				setValue(cd.open());
 				label.forceFocus(); // das muessen wir machen, damit der CommentListener ausgeloest wird
       }
     });
@@ -68,11 +65,17 @@ public class ColorInput extends ButtonInput
    */
   public Control getClientControl(Composite parent)
   {
-    label = GUI.getStyleFactory().createLabel(parent,SWT.BORDER);
+    label = GUI.getStyleFactory().createLabel(parent,SWT.NONE);
     if (forground)
+    {
       label.setForeground(color);
+      label.setBackground(de.willuhn.jameica.gui.util.Color.WIDGET_BG.getSWTColor());
+    }
     else
+    {
       label.setBackground(color);
+      parent.setBackground(color);
+    }
     label.setText("the quick brown fox jumps over the lazy dog");
     return label;
   }
@@ -95,22 +98,34 @@ public class ColorInput extends ButtonInput
   {
     if (value == null)
       return;
-		if (value instanceof Color)
-		{
+
+    if (value instanceof RGB)
+      this.color = new Color(GUI.getDisplay(),(RGB)value); 
+    else if (value instanceof Color)
 			this.color = (Color) value;
       
-      if (this.label == null || this.label.isDisposed())
-        return;
-      if (this.forground)
-        label.setForeground(color);
-      else
-        label.setBackground(color);
-		}
+    if (this.label == null || this.label.isDisposed())
+      return;
+
+    if (forground)
+    {
+      label.setForeground(color);
+      label.setBackground(de.willuhn.jameica.gui.util.Color.WIDGET_BG.getSWTColor());
+    }
+    else
+    {
+      label.setBackground(color);
+      label.getParent().setBackground(color);
+    }
+    label.redraw();
   }
 }
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.12  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.11  2006/08/28 23:41:48  willuhn
  * @N ColorInput verbessert
  *

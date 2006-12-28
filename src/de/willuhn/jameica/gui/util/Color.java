@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/07/26 22:58:34 $
- * $Author: web0 $
+ * $Revision: 1.8 $
+ * $Date: 2006/12/28 15:35:52 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -70,7 +70,12 @@ public class Color {
    */
   public final static Color LINK_ACTIVE	= new Color("color.link.active",	new RGB(0,0,200));
 
-	private String name;
+  /**
+   * Hintergrundfarbe von Pflichtfeldern.
+   */
+  public final static Color MANDATORY_BG = new Color("color.mandatory.bg",  new RGB(255,212,141));
+
+  private String name;
 	private RGB value;
 	private RGB defaultValue;
 	private static Settings settings = new Settings(Color.class);
@@ -125,6 +130,9 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.8  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.7  2005/07/26 22:58:34  web0
  * @N background task refactoring
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2006/11/30 23:48:20 $
+ * $Revision: 1.13 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,6 +47,8 @@ public abstract class AbstractInput implements Input
 
   private String validChars = null;
   private String invalidChars = null;
+  
+  private boolean mandatory = false;
 
 	/**
    * Erzeugt ein neues Eingabe-Feld.
@@ -181,6 +183,9 @@ public abstract class AbstractInput implements Input
     if (control == null || !(control instanceof Text))
       return;
     
+    if (mandatory && isEnabled())
+      control.addListener(SWT.Paint,new MandatoryListener(control));
+
     if ((validChars != null && validChars.length() > 0))
     {
       control.addListener(SWT.Verify, new Listener()
@@ -243,10 +248,60 @@ public abstract class AbstractInput implements Input
   {
     this.invalidChars = chars;
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#isMandatory()
+   */
+  public boolean isMandatory()
+  {
+    return this.mandatory;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setMandatory(boolean)
+   */
+  public void setMandatory(boolean mandatory)
+  {
+    this.mandatory = mandatory;
+  }
+  
+  private class MandatoryListener implements Listener
+  {
+    private Control myControl = null;
+    
+    /**
+     * @param c
+     */
+    private MandatoryListener(Control c)
+    {
+      this.myControl = c;
+    }
+    
+    /**
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void handleEvent(Event event)
+    {
+      if (!isEnabled() || myControl == null || myControl.isDisposed())
+        return;
+      
+      Object value = getValue();
+      if (mandatory && (value == null || "".equals(value.toString())))
+        myControl.setBackground(Color.MANDATORY_BG.getSWTColor());
+      else
+        myControl.setBackground(Color.WIDGET_BG.getSWTColor());
+    }
+    
+  }
+
+
 }
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.13  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.12  2006/11/30 23:48:20  willuhn
  * *** empty log message ***
  *

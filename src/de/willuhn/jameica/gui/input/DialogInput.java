@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/06/23 23:03:25 $
- * $Author: web0 $
+ * $Revision: 1.15 $
+ * $Date: 2006/12/28 15:35:52 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -12,14 +12,15 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
@@ -128,7 +129,15 @@ public class DialogInput extends ButtonInput
    * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
    */
   public Control getClientControl(Composite parent) {
-  	text = GUI.getStyleFactory().createText(parent);
+//  	text = GUI.getStyleFactory().createText(parent);
+    text = new Text(parent,SWT.NONE | SWT.SINGLE);
+    text.setForeground(Color.WIDGET_FG.getSWTColor());
+    if (!isEnabled())
+      text.setBackground(Color.BACKGROUND.getSWTColor());
+    else if (isMandatory())
+      text.setBackground(Color.MANDATORY_BG.getSWTColor());
+    else
+      text.setBackground(Color.WIDGET_BG.getSWTColor());
   	if (value != null)
   		text.setText(value);
   	return text;
@@ -138,6 +147,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.15  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.14  2005/06/23 23:03:25  web0
  * *** empty log message ***
  *

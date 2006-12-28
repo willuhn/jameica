@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2006/04/20 08:44:03 $
- * $Author: web0 $
+ * $Revision: 1.14 $
+ * $Date: 2006/12/28 15:35:52 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -94,7 +95,10 @@ public class FileInput extends ButtonInput
 	 * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
 	 */
   public Control getClientControl(Composite parent) {
-  	text = GUI.getStyleFactory().createText(parent);
+//  	text = GUI.getStyleFactory().createText(parent);
+    text = new Text(parent,SWT.NONE | SWT.SINGLE);
+    text.setForeground(Color.WIDGET_FG.getSWTColor());
+    text.setBackground(Color.WIDGET_BG.getSWTColor());
   	text.setText(value == null ? "" : value);
   	return text;
   }
@@ -103,6 +107,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.14  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.13  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *

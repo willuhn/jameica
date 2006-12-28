@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/08/18 21:40:53 $
- * $Author: web0 $
+ * $Revision: 1.10 $
+ * $Date: 2006/12/28 15:35:52 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -114,7 +114,7 @@ public class Panel implements Part
     ///////////////////////////////
     // Eigenes Parent, damit wir ein GridLayout verwenden koennen
     myParent = new Composite(parent,this.border ? SWT.BORDER : SWT.NONE);
-    //myParent.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
+    myParent.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
     GridLayout myLayout = new GridLayout();
     myLayout.horizontalSpacing = 0;
     myLayout.verticalSpacing = 0;
@@ -207,6 +207,9 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.10  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.9  2005/08/18 21:40:53  web0
  * @B layout bug wegen MacOS-Umstellung
  *

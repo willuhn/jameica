@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2006/06/19 10:54:24 $
+ * $Revision: 1.10 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,21 +61,30 @@ public abstract class ButtonInput extends AbstractInput
   public final Control getControl()
   {
 
-		comp = new Composite(getParent(),SWT.NONE);
+		comp = new Composite(getParent(),SWT.BORDER);
+    if (!isEnabled())
+      comp.setBackground(Color.BACKGROUND.getSWTColor());
+    else if (isMandatory())
+    {
+      comp.setBackground(Color.MANDATORY_BG.getSWTColor());
+      comp.addListener(SWT.Paint,new MandatoryListener());
+    }
+    else
+    {
+      comp.setBackground(Color.WIDGET_BG.getSWTColor());
+    }
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight=0;
 		layout.marginWidth=0;
 		layout.horizontalSpacing = 5;
 		layout.verticalSpacing = 0;
 		comp.setLayout(layout);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
   
 		clientControl = getClientControl(comp);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 1;
 		clientControl.setLayoutData(gd);
 		clientControl.setEnabled(clientControlEnabled);
-  
     button = GUI.getStyleFactory().createButton(comp);
 		if (this.buttonImage == null && this.buttonText == null)
 	    button.setText("...");
@@ -232,10 +241,32 @@ public abstract class ButtonInput extends AbstractInput
     return buttonEnabled && clientControlEnabled;
   }
 
+  private class MandatoryListener implements Listener
+  {
+    /**
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void handleEvent(Event event)
+    {
+      if (!isEnabled() || comp == null || comp.isDisposed())
+        return;
+      
+      Object value = getValue();
+      if (isMandatory() && (value == null || "".equals(value.toString())))
+        comp.setBackground(Color.MANDATORY_BG.getSWTColor());
+      else
+        comp.setBackground(Color.WIDGET_BG.getSWTColor());
+    }
+    
+  }
+
 }
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.10  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.9  2006/06/19 10:54:24  willuhn
  * @N neue Methode setEnabled(boolean) in Input
  * @N neue de_willuhn_util lib

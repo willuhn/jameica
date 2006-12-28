@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.15 $
- * $Date: 2006/10/19 15:35:58 $
+ * $Revision: 1.16 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -125,6 +125,7 @@ public class Settings extends AbstractView implements Extendable
 		}
 		colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
 		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWidgetBG());
+    colorGroup.addLabelPair(i18n.tr("Hintergrund von Pflichtfeldern"),control.getColorMandatoryBG());
 		colorGroup.addLabelPair(i18n.tr("Textfarbe von Eingabefeldern"),control.getColorWidgetFG());
 		colorGroup.addLabelPair(i18n.tr("Hintergrundfarbe"),control.getColorBackground());
 
@@ -133,7 +134,6 @@ public class Settings extends AbstractView implements Extendable
 		colorGroup.addLabelPair(i18n.tr("Erfolgsmeldungen"),control.getColorSuccess());
 		colorGroup.addLabelPair(i18n.tr("Links"),control.getColorLink());
 		colorGroup.addLabelPair(i18n.tr("Aktive Links"),control.getColorLinkActive());
-
 		//
 		/////////////////////////////////////////////////////////////////
 
@@ -199,6 +199,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.16  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.15  2006/10/19 15:35:58  willuhn
  * @B ExtensionRegistry.extend allready done in GUI
  *

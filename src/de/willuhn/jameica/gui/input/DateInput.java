@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/10/10 22:30:07 $
+ * $Revision: 1.3 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,8 @@ public class DateInput implements Input
   
   private DialogInput input     = null;
   private CalendarDialog dialog = null;
+  
+  private boolean mandatory = false;
   
   /**
    * Konstruktor ohne Datumsangabe aber mit Default-Format.
@@ -252,6 +254,7 @@ public class DateInput implements Input
    */
   public final void paint(Composite parent)
   {
+    this.input.setMandatory(this.isMandatory());
     this.input.paint(parent);
   }
 
@@ -260,6 +263,7 @@ public class DateInput implements Input
    */
   public final void paint(Composite parent, int width)
   {
+    this.input.setMandatory(this.isMandatory());
     this.input.paint(parent,width);
   }
 
@@ -270,11 +274,30 @@ public class DateInput implements Input
   {
     this.input.setComment(comment);
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#isMandatory()
+   */
+  public boolean isMandatory()
+  {
+    return this.mandatory;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setMandatory(boolean)
+   */
+  public void setMandatory(boolean mandatory)
+  {
+    this.mandatory = mandatory;
+  }
 }
 
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.3  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.2  2006/10/10 22:30:07  willuhn
  * @C besseres Text-handling in DateInput
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Input.java,v $
- * $Revision: 1.4 $
- * $Date: 2006/06/19 10:54:24 $
+ * $Revision: 1.5 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -107,10 +107,25 @@ public interface Input extends Part
    * @return true, wenn es aktiv ist.
    */
   public boolean isEnabled();
+  
+  /**
+   * Legt fest, ob es sich um ein Pflichtfeld handelt.
+   * @param mandatory true, wenn es ein Pflichtfeld ist.
+   */
+  public void setMandatory(boolean mandatory);
+  
+  /**
+   * Prueft, ob es sich um ein Pflichtfeld handelt.
+   * @return true, wenn es sich um ein Pflichfeld handelt.
+   */
+  public boolean isMandatory();
 }
 
 /**********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.5  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.4  2006/06/19 10:54:24  willuhn
  * @N neue Methode setEnabled(boolean) in Input
  * @N neue de_willuhn_util lib

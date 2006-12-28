@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.36 $
- * $Date: 2006/06/20 23:26:51 $
+ * $Revision: 1.37 $
+ * $Date: 2006/12/28 15:35:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -133,6 +133,7 @@ public class View implements Part
     layout2.horizontalSpacing = 0;
     layout2.verticalSpacing = 0;
     panelBg.setLayout(layout2);
+    panelBg.setBackground(Color.BACKGROUND.getSWTColor());
 
     panelBg.addListener(SWT.Paint,new Listener()
     {
@@ -336,6 +337,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.37  2006/12/28 15:35:52  willuhn
+ * @N Farbige Pflichtfelder
+ *
  * Revision 1.36  2006/06/20 23:26:51  willuhn
  * @N View#setLogoText
  *
