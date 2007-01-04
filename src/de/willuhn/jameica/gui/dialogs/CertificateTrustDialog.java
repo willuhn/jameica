@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CertificateTrustDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/13 12:13:37 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2007/01/04 15:34:26 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -43,8 +43,8 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
     // Wir speichern vorab schonmal einen eigenen Text. Falls
     // der Benutzer "setText(String)" nicht aufruft, wird dann
     // dieser hier angezeigt.
-    setText(i18n.tr("Sie verbinden sich mit einem für Jameica unbekannten System. " +
-    "Bitte prüfen Sie die Eigenschaften des Zertifikats und entscheiden Sie, ob Sie ihm " +
+    setText(i18n.tr("Sie verbinden sich mit einem für Jameica unbekannten System.\n" +
+    "Bitte prüfen Sie die Eigenschaften des Zertifikats und entscheiden Sie,\nob Sie ihm " +
     "vertrauen möchten."));
   }
 
@@ -92,6 +92,9 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
 
 /**********************************************************************
  * $Log: CertificateTrustDialog.java,v $
+ * Revision 1.2  2007/01/04 15:34:26  willuhn
+ * @N linebreak
+ *
  * Revision 1.1  2005/06/13 12:13:37  web0
  * @N Certificate-Code completed
  *
