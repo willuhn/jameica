@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.10 $
- * $Date: 2006/11/20 22:00:50 $
+ * $Revision: 1.11 $
+ * $Date: 2007/01/04 15:24:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,8 +16,6 @@ package de.willuhn.jameica.security;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.TrustManager;
@@ -25,7 +23,6 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
@@ -166,28 +163,12 @@ public class JameicaTrustManager implements X509TrustManager
     throws CertificateException
   {
 
-    ApplicationCallback callback  = Application.getCallback();
-    SSLFactory factory            = Application.getSSLFactory();
+    SSLFactory factory = Application.getSSLFactory();
 
     try
     {
       for (int i=0;i<chain.length;++i)
       {
-        // Wir checken erstmal, ob das Zertifikat an sich ueberhaupt gueltig ist
-        Logger.info("checking validity of certificate");
-        try
-        {
-          chain[i].checkValidity();
-        }
-        catch (CertificateExpiredException exp)
-        {
-          Logger.warn("WARNING! certificate EXPIRED: " + toString(chain[i])); 
-        }
-        catch (CertificateNotYetValidException not)
-        {
-          Logger.warn("WARNING! certificate NOT YET VALID: " + toString(chain[i])); 
-        }
-          
         X509Certificate own = factory.getSystemCertificate();
         if (chain[i].equals(own))
         {
@@ -195,17 +176,8 @@ public class JameicaTrustManager implements X509TrustManager
           continue;
         }
 
-        Logger.info("checking trust of certificate");
-        if (callback.checkTrust(chain[i]))
-        {
-          Logger.info("certificate trusted, adding to truststore: " + toString(chain[i]));
-          factory.addTrustedCertificate(chain[i]);
-        }
-        else
-        {
-          Logger.warn("certificate NOT trusted: " + toString(chain[i]));
-          throw new CertificateException(Application.getI18n().tr("Zertifikat nicht vertrauenswürdig"));
-        }
+        Logger.info("import certificate: " + toString(chain[i]));
+        factory.addTrustedCertificate(chain[i]);
       }
     }
     catch (OperationCanceledException oe)
@@ -253,6 +225,10 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.11  2007/01/04 15:24:21  willuhn
+ * @C certificate import handling
+ * @B Bug 330
+ *
  * Revision 1.10  2006/11/20 22:00:50  willuhn
  * @B useless catch/throw removed
  *

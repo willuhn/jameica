@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.30 $
- * $Date: 2006/11/16 23:46:03 $
+ * $Revision: 1.31 $
+ * $Date: 2007/01/04 15:24:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,11 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -484,7 +487,7 @@ public class SSLFactory
   }
 	
   /**
-   * Fuegt dem Keystore ein Zertifikat hinzu.
+   * Fuegt dem Keystore ein Zertifikat hinzu und uebernimmt dabei auch alle noetigen Sicherheitsabfragen.
    * @param cert das Zertifikat.
    * @throws Exception
    */
@@ -494,10 +497,59 @@ public class SSLFactory
     
     String systemDN = getSystemCertificate().getSubjectDN().getName();
 
-    if (systemDN.equals(dn))
+    // Pruefen, dass nicht das System-Zertifikat ueberschrieben wird.
+    if (systemDN.equals(dn) || SYSTEM_ALIAS.equals(dn))
     {
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Das System-Zertifikat darf nicht überschrieben werden"), StatusBarMessage.TYPE_ERROR));
       return;
+    }
+    
+    // Pruefen, ob nicht ein anderes Zertifikat ueberschrieben wird
+    // BUGZILLA 330
+    X509Certificate[] certs = getTrustedCertificates();
+    if (certs != null && certs.length > 0)
+    {
+      for (int i=0;i<certs.length;++i)
+      {
+        String cdn = certs[i].getSubjectDN().getName();
+        if (cdn.equals(dn) && !Application.getCallback().askUser(Application.getI18n().tr("Zertifikat ist bereits installiert. Überschreiben?")))
+        {
+          Logger.info("import of certificate " + dn + " cancelled by user, allready installed");
+          throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
+        }
+      }
+    }
+    
+    // Wir checken erstmal, ob das Zertifikat an sich ueberhaupt gueltig ist
+    Logger.info("checking validity of certificate");
+    DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
+    String validFrom = df.format(cert.getNotBefore());
+    String validTo   = df.format(cert.getNotAfter());
+
+    try
+    {
+      cert.checkValidity();
+    }
+    catch (CertificateExpiredException exp)
+    {
+      String s = Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo});
+      if (!Application.getCallback().askUser(s))
+        throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
+    }
+    catch (CertificateNotYetValidException not)
+    {
+      String s = Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo});
+      if (!Application.getCallback().askUser(s))
+        throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
+    }
+      
+
+    // Jetzt checken wir noch, ob der User dem Zertifikat wirklich trauen will
+    Logger.info("checking trust of certificate");
+    if (!Application.getCallback().checkTrust(cert))
+    {
+      Logger.warn("import of certificate " + dn + " cancelled by user, NOT trusted");
+      throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
     }
 
     Logger.warn("adding certificate DN: " + dn + " to keystore");
@@ -593,6 +645,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.31  2007/01/04 15:24:21  willuhn
+ * @C certificate import handling
+ * @B Bug 330
+ *
  * Revision 1.30  2006/11/16 23:46:03  willuhn
  * @N launch type in cert creation
  * @N new row in cert list

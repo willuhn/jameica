@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractCertificateDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/11/15 00:12:35 $
+ * $Revision: 1.7 $
+ * $Date: 2007/01/04 15:24:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   {
     super(position);
     this.cert = cert;
-    setSize(405,500); // Breite legen wir fest, damit der Fingerprint hinpasst
+    //setSize(405,550); // Breite legen wir fest, damit der Fingerprint hinpasst
   }
 
   /**
@@ -117,6 +117,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     /////////////////////////////////////////////////////////////////////////////
     // Fingerprint
     TextPart fingerprints = new TextPart();
+    fingerprints.setBackground(Color.WIDGET_BG);
     fingerprints.appendText(i18n.tr("MD5-Fingerabdruck:\n{0}",myCert.getMD5Fingerprint()));
     fingerprints.appendText("\n");
     fingerprints.appendText(i18n.tr("SHA1-Fingerabdruck:\n{0}",myCert.getSHA1Fingerprint()));
@@ -175,6 +176,10 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: AbstractCertificateDialog.java,v $
+ * Revision 1.7  2007/01/04 15:24:21  willuhn
+ * @C certificate import handling
+ * @B Bug 330
+ *
  * Revision 1.6  2006/11/15 00:12:35  willuhn
  * @B Bug 329
  *

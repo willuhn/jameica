@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/CertificateImport.java,v $
- * $Revision: 1.4 $
- * $Date: 2006/11/13 00:56:54 $
+ * $Revision: 1.5 $
+ * $Date: 2007/01/04 15:24:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.internal.parts.CertificateList;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -59,24 +58,23 @@ public class CertificateImport implements Action
     try
     {
       final X509Certificate c = Application.getSSLFactory().loadCertificate(new FileInputStream(f));
-      CertificateTrustDialog d2 = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,c);
-      d2.setText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Zertifikat importieren wollen?"));
+      if (c == null)
+        throw new ApplicationException(Application.getI18n().tr("Zertifikat nicht lesbar"));
 
-      Boolean b = (Boolean) d2.open();
-      if (b != null && b.booleanValue())
-      {
-        Application.getSSLFactory().addTrustedCertificate(c);
-      }
+      Application.getSSLFactory().addTrustedCertificate(c);
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
     }
     catch (OperationCanceledException oce)
     {
-      Logger.info(Application.getI18n().tr("Vorgang abgebrochen"));
-      // ignore
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Import abgebrochen"),StatusBarMessage.TYPE_ERROR));
     }
     catch (Exception e)
     {
       Logger.error("error while importing certificate",e);
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Importieren des Zertifikats"),StatusBarMessage.TYPE_ERROR));
+      throw new ApplicationException(Application.getI18n().tr("Fehler beim Importieren des Zertifikats"));
     }
   
   }
@@ -86,6 +84,10 @@ public class CertificateImport implements Action
 
 /*********************************************************************
  * $Log: CertificateImport.java,v $
+ * Revision 1.5  2007/01/04 15:24:21  willuhn
+ * @C certificate import handling
+ * @B Bug 330
+ *
  * Revision 1.4  2006/11/13 00:56:54  willuhn
  * @C store last import dir
  *
