@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2007/01/05 09:31:40 $
+ * $Revision: 1.17 $
+ * $Date: 2007/01/05 09:41:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -148,11 +148,11 @@ public class DialogInput extends ButtonInput
       if (!isEnabled() || text == null || text.isDisposed())
         return;
       
-      Object value = getValue();
+      String s = text.getText();
 
       if (!isEnabled())
         text.setBackground(Color.BACKGROUND.getSWTColor());
-      else if (isMandatory() && (value == null || "".equals(value.toString())))
+      else if (isMandatory() && (s == null || s.length() == 0))
         text.setBackground(Color.MANDATORY_BG.getSWTColor());
       else
         text.setBackground(Color.WIDGET_BG.getSWTColor());
@@ -164,6 +164,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.17  2007/01/05 09:41:53  willuhn
+ * @C change color in DialogInput too
+ *
  * Revision 1.16  2007/01/05 09:31:40  willuhn
  * @C change color in DialogInput too
  *
