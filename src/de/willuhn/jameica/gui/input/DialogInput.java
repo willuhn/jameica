@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.16 $
+ * $Date: 2007/01/05 09:31:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -131,22 +131,42 @@ public class DialogInput extends ButtonInput
   public Control getClientControl(Composite parent) {
 //  	text = GUI.getStyleFactory().createText(parent);
     text = new Text(parent,SWT.NONE | SWT.SINGLE);
+    text.addListener(SWT.Paint,new MandatoryListener());
     text.setForeground(Color.WIDGET_FG.getSWTColor());
-    if (!isEnabled())
-      text.setBackground(Color.BACKGROUND.getSWTColor());
-    else if (isMandatory())
-      text.setBackground(Color.MANDATORY_BG.getSWTColor());
-    else
-      text.setBackground(Color.WIDGET_BG.getSWTColor());
   	if (value != null)
   		text.setText(value);
   	return text;
   }
-  
+
+  private class MandatoryListener implements Listener
+  {
+    /**
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void handleEvent(Event event)
+    {
+      if (!isEnabled() || text == null || text.isDisposed())
+        return;
+      
+      Object value = getValue();
+
+      if (!isEnabled())
+        text.setBackground(Color.BACKGROUND.getSWTColor());
+      else if (isMandatory() && (value == null || "".equals(value.toString())))
+        text.setBackground(Color.MANDATORY_BG.getSWTColor());
+      else
+        text.setBackground(Color.WIDGET_BG.getSWTColor());
+    }
+    
+  }
+
 }
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.16  2007/01/05 09:31:40  willuhn
+ * @C change color in DialogInput too
+ *
  * Revision 1.15  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *
