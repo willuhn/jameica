@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2006/06/19 10:54:24 $
+ * $Revision: 1.13 $
+ * $Date: 2007/01/05 10:36:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -125,11 +125,22 @@ public class LabelInput extends AbstractInput
   {
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+   */
+  void update()
+  {
+    // Wir machen hier nichts
+  }
+
 
 }
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.13  2007/01/05 10:36:49  willuhn
+ * @C Farbhandling - Jetzt aber!
+ *
  * Revision 1.12  2006/06/19 10:54:24  willuhn
  * @N neue Methode setEnabled(boolean) in Input
  * @N neue de_willuhn_util lib

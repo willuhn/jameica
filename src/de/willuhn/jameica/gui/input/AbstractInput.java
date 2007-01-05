@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.14 $
+ * $Date: 2007/01/05 10:36:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -178,13 +178,18 @@ public abstract class AbstractInput implements Input
    * Fuegt die Verifier dem Control hinzu.
    * @param control
    */
-  private void applyVerifier(Control control)
+  private void applyVerifier(final Control control)
   {
     if (control == null || !(control instanceof Text))
       return;
     
-    if (mandatory && isEnabled())
-      control.addListener(SWT.Paint,new MandatoryListener(control));
+    control.addListener(SWT.Paint,new Listener() {
+    
+      public void handleEvent(Event event)
+      {
+        update();
+      }
+    });
 
     if ((validChars != null && validChars.length() > 0))
     {
@@ -258,47 +263,46 @@ public abstract class AbstractInput implements Input
   }
 
   /**
+   * Wird immer dann aufgerufen, wenn eines der Controls des
+   * Eingabe-Feldes neu gezeichnet wird. Hier kann dann z.Bsp.
+   * geprueft werden, ob der Inhalt des Feldes korrekt ist
+   * und ggf. die Hintergrund-Farbe angepasst werden.
+   */
+  void update()
+  {
+    if (this.control == null || this.control.isDisposed())
+      return;
+
+    if (!isEnabled())
+    {
+      this.control.setBackground(Color.BACKGROUND.getSWTColor());
+      return;
+    }
+    
+    Object value = getValue();
+
+    if (isMandatory() && (value == null || "".equals(value.toString())))
+    {
+      this.control.setBackground(Color.MANDATORY_BG.getSWTColor());
+      return;
+    }
+    this.control.setBackground(Color.WIDGET_BG.getSWTColor());
+  }
+  
+  /**
    * @see de.willuhn.jameica.gui.input.Input#setMandatory(boolean)
    */
   public void setMandatory(boolean mandatory)
   {
     this.mandatory = mandatory;
   }
-  
-  private class MandatoryListener implements Listener
-  {
-    private Control myControl = null;
-    
-    /**
-     * @param c
-     */
-    private MandatoryListener(Control c)
-    {
-      this.myControl = c;
-    }
-    
-    /**
-     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-     */
-    public void handleEvent(Event event)
-    {
-      if (!isEnabled() || myControl == null || myControl.isDisposed())
-        return;
-      
-      Object value = getValue();
-      if (mandatory && (value == null || "".equals(value.toString())))
-        myControl.setBackground(Color.MANDATORY_BG.getSWTColor());
-      else
-        myControl.setBackground(Color.WIDGET_BG.getSWTColor());
-    }
-    
-  }
-
-
 }
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.14  2007/01/05 10:36:49  willuhn
+ * @C Farbhandling - Jetzt aber!
+ *
  * Revision 1.13  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

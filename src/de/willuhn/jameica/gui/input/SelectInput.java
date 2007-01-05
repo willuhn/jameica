@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.27 $
- * $Date: 2006/11/12 23:29:19 $
+ * $Revision: 1.28 $
+ * $Date: 2007/01/05 10:36:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -341,6 +341,14 @@ public class SelectInput extends AbstractInput
   }
 
 	/**
+	 * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+	 */
+	void update()
+  {
+    // Wir machen hier nichts. 
+  }
+
+  /**
 	 * Kleine Hilfsklasse, um String-Werte ueber GenericObject abzubilden.
    */
   private static class StringObject implements GenericObject
@@ -403,6 +411,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.28  2007/01/05 10:36:49  willuhn
+ * @C Farbhandling - Jetzt aber!
+ *
  * Revision 1.27  2006/11/12 23:29:19  willuhn
  * @B small Bug (thanks to Reinhold)
  *

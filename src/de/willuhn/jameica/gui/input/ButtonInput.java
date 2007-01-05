@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.11 $
+ * $Date: 2007/01/05 10:36:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Eingabefeld, welches jedoch noch einen Button hinten dran
@@ -62,17 +61,6 @@ public abstract class ButtonInput extends AbstractInput
   {
 
 		comp = new Composite(getParent(),SWT.BORDER);
-    if (!isEnabled())
-      comp.setBackground(Color.BACKGROUND.getSWTColor());
-    else if (isMandatory())
-    {
-      comp.setBackground(Color.MANDATORY_BG.getSWTColor());
-      comp.addListener(SWT.Paint,new MandatoryListener());
-    }
-    else
-    {
-      comp.setBackground(Color.WIDGET_BG.getSWTColor());
-    }
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight=0;
 		layout.marginWidth=0;
@@ -240,30 +228,13 @@ public abstract class ButtonInput extends AbstractInput
   {
     return buttonEnabled && clientControlEnabled;
   }
-
-  private class MandatoryListener implements Listener
-  {
-    /**
-     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-     */
-    public void handleEvent(Event event)
-    {
-      if (!isEnabled() || comp == null || comp.isDisposed())
-        return;
-      
-      Object value = getValue();
-      if (isMandatory() && (value == null || "".equals(value.toString())))
-        comp.setBackground(Color.MANDATORY_BG.getSWTColor());
-      else
-        comp.setBackground(Color.WIDGET_BG.getSWTColor());
-    }
-    
-  }
-
 }
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.11  2007/01/05 10:36:49  willuhn
+ * @C Farbhandling - Jetzt aber!
+ *
  * Revision 1.10  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

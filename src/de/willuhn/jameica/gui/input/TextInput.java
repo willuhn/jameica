@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.18 $
+ * $Date: 2007/01/05 10:36:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Ist zustaendig fuer Standard-Eingabefelder.
@@ -88,8 +87,6 @@ public class TextInput extends AbstractInput
 
 		text.setEnabled(enabled);
     text.setText((value == null ? "" : value));
-    if (isMandatory() && isEnabled())
-      text.setBackground(Color.MANDATORY_BG.getSWTColor());
     return text;
   }
 
@@ -164,6 +161,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.18  2007/01/05 10:36:49  willuhn
+ * @C Farbhandling - Jetzt aber!
+ *
  * Revision 1.17  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

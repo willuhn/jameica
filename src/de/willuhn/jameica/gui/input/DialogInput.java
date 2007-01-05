@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/01/05 09:41:53 $
+ * $Revision: 1.18 $
+ * $Date: 2007/01/05 10:36:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -131,39 +131,49 @@ public class DialogInput extends ButtonInput
   public Control getClientControl(Composite parent) {
 //  	text = GUI.getStyleFactory().createText(parent);
     text = new Text(parent,SWT.NONE | SWT.SINGLE);
-    text.addListener(SWT.Paint,new MandatoryListener());
     text.setForeground(Color.WIDGET_FG.getSWTColor());
   	if (value != null)
   		text.setText(value);
   	return text;
   }
 
-  private class MandatoryListener implements Listener
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+   */
+  void update()
   {
-    /**
-     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-     */
-    public void handleEvent(Event event)
-    {
-      if (!isEnabled() || text == null || text.isDisposed())
-        return;
-      
-      String s = text.getText();
+    super.update();
 
-      if (!isEnabled())
-        text.setBackground(Color.BACKGROUND.getSWTColor());
-      else if (isMandatory() && (s == null || s.length() == 0))
-        text.setBackground(Color.MANDATORY_BG.getSWTColor());
-      else
-        text.setBackground(Color.WIDGET_BG.getSWTColor());
-    }
+    // ueberschrieben, weil getValue() das Objekt zurueckliefert.
+    // Wir pruefen hier aber auch, ob lediglich ein Text drin steht.
+    if (text == null || text.isDisposed())
+      return;
     
-  }
+    String s = text.getText();
 
+    org.eclipse.swt.graphics.Color color = null;
+    
+    if (!isEnabled())
+      color = Color.BACKGROUND.getSWTColor();
+    else if (isMandatory() && (s == null || s.length() == 0))
+      color = Color.MANDATORY_BG.getSWTColor();
+    else
+      color = Color.WIDGET_BG.getSWTColor();
+
+    text.setBackground(color);
+
+    // Das ist der Rahmen vom ButtonInput, den muessen wir auch noch anpassen
+    Composite comp = text.getParent();
+    if (comp != null && !comp.isDisposed())
+      comp.setBackground(color);
+  }
 }
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.18  2007/01/05 10:36:49  willuhn
+ * @C Farbhandling - Jetzt aber!
+ *
  * Revision 1.17  2007/01/05 09:41:53  willuhn
  * @C change color in DialogInput too
  *
