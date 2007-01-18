@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/04/20 08:44:03 $
- * $Author: web0 $
+ * $Revision: 1.12 $
+ * $Date: 2007/01/18 09:49:29 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -62,7 +62,7 @@ public class TreePart implements Part
 
   /**
    * Erzeugt einen neuen Tree basierend auf der uebergebenen Liste
-   * von Objekten des Typs DBObjectNode. Enthaelt der
+   * von Objekten des Typs GenericObjectNode. Enthaelt der
    * Iterator Objekte, die <b>nicht</b> von GenericObjectNode
    * abgeleitet sind, wird er eine ClassCastException werfen.
    * @param list Liste mit Objekten, fuer die der Baum erzeugt werden soll.
@@ -287,6 +287,9 @@ public class TreePart implements Part
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.12  2007/01/18 09:49:29  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.11  2006/04/20 08:44:03  web0
  * @C s/Childs/Children/
  *
