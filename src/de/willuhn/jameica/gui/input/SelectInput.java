@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.28 $
- * $Date: 2007/01/05 10:36:49 $
+ * $Revision: 1.29 $
+ * $Date: 2007/01/23 15:52:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
 /**
@@ -343,7 +344,7 @@ public class SelectInput extends AbstractInput
 	/**
 	 * @see de.willuhn.jameica.gui.input.AbstractInput#update()
 	 */
-	void update()
+  void update() throws OperationCanceledException
   {
     // Wir machen hier nichts. 
   }
@@ -411,6 +412,10 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.29  2007/01/23 15:52:10  willuhn
+ * @C update() check for recursion
+ * @N mandatoryCheck configurable
+ *
  * Revision 1.28  2007/01/05 10:36:49  willuhn
  * @C Farbhandling - Jetzt aber!
  *

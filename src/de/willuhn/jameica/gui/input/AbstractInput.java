@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2007/01/05 10:36:49 $
+ * $Revision: 1.15 $
+ * $Date: 2007/01/23 15:52:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.util.I18N;
 
 /**
@@ -187,7 +188,14 @@ public abstract class AbstractInput implements Input
     
       public void handleEvent(Event event)
       {
-        update();
+        try
+        {
+          update();
+        }
+        catch (OperationCanceledException oce)
+        {
+          // ignore
+        }
       }
     });
 
@@ -259,34 +267,48 @@ public abstract class AbstractInput implements Input
    */
   public boolean isMandatory()
   {
-    return this.mandatory;
+    return this.mandatory && Application.getConfig().getMandatoryCheck();
   }
 
+  private boolean inUpdate = false;
+  
   /**
    * Wird immer dann aufgerufen, wenn eines der Controls des
    * Eingabe-Feldes neu gezeichnet wird. Hier kann dann z.Bsp.
    * geprueft werden, ob der Inhalt des Feldes korrekt ist
    * und ggf. die Hintergrund-Farbe angepasst werden.
    */
-  void update()
+  void update() throws OperationCanceledException
   {
-    if (this.control == null || this.control.isDisposed())
-      return;
+    if (inUpdate)
+      throw new OperationCanceledException();
 
-    if (!isEnabled())
+    try
     {
-      this.control.setBackground(Color.BACKGROUND.getSWTColor());
-      return;
-    }
-    
-    Object value = getValue();
+      inUpdate = true;
 
-    if (isMandatory() && (value == null || "".equals(value.toString())))
-    {
-      this.control.setBackground(Color.MANDATORY_BG.getSWTColor());
-      return;
+      if (this.control == null || this.control.isDisposed())
+        return;
+
+      if (!isEnabled())
+      {
+        this.control.setBackground(Color.BACKGROUND.getSWTColor());
+        return;
+      }
+      
+      Object value = getValue();
+
+      if (isMandatory() && (value == null || "".equals(value.toString())))
+      {
+        this.control.setBackground(Color.MANDATORY_BG.getSWTColor());
+        return;
+      }
+      this.control.setBackground(Color.WIDGET_BG.getSWTColor());
     }
-    this.control.setBackground(Color.WIDGET_BG.getSWTColor());
+    finally
+    {
+      inUpdate = false;
+    }
   }
   
   /**
@@ -300,6 +322,10 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.15  2007/01/23 15:52:10  willuhn
+ * @C update() check for recursion
+ * @N mandatoryCheck configurable
+ *
  * Revision 1.14  2007/01/05 10:36:49  willuhn
  * @C Farbhandling - Jetzt aber!
  *

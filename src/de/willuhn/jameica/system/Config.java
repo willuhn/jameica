@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.28 $
- * $Date: 2006/08/17 08:36:28 $
+ * $Revision: 1.29 $
+ * $Date: 2007/01/23 15:52:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -418,6 +418,24 @@ public final class Config
 	}
 
   /**
+   * Legt fest, ob Eingabe-Felder auf Pflichteingaben geprueft werden.
+   * @return Pruefen von Pflichteingaben.
+   */
+  public boolean getMandatoryCheck()
+  {
+    return settings.getBoolean("jameica.system.checkmandatory",true);
+  }
+
+  /**
+   * Legt fest, ob Eingabe-Felder auf Pflichteingaben geprueft werden.
+   * @param check Pruefen von Pflichteingaben.
+   */
+  public void setMandatoryCheck(boolean check)
+  {
+    settings.setAttribute("jameica.system.checkmandatory",check);
+  }
+
+  /**
    * Liefert den Namen des Loglevels.
    * @return Name des Loglevels.
    */
@@ -463,6 +481,10 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.29  2007/01/23 15:52:10  willuhn
+ * @C update() check for recursion
+ * @N mandatoryCheck configurable
+ *
  * Revision 1.28  2006/08/17 08:36:28  willuhn
  * @B bug 265
  *

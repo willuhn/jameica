@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2007/01/05 10:36:49 $
+ * $Revision: 1.19 $
+ * $Date: 2007/01/23 15:52:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -140,7 +140,7 @@ public class DialogInput extends ButtonInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update()
+  void update() throws OperationCanceledException
   {
     super.update();
 
@@ -171,6 +171,10 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.19  2007/01/23 15:52:10  willuhn
+ * @C update() check for recursion
+ * @N mandatoryCheck configurable
+ *
  * Revision 1.18  2007/01/05 10:36:49  willuhn
  * @C Farbhandling - Jetzt aber!
  *

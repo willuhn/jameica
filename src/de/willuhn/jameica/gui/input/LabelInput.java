@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/01/05 10:36:49 $
+ * $Revision: 1.14 $
+ * $Date: 2007/01/23 15:52:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
  * Das ist ein Dummy-InputFeld.
@@ -128,7 +129,7 @@ public class LabelInput extends AbstractInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update()
+  void update() throws OperationCanceledException
   {
     // Wir machen hier nichts
   }
@@ -138,6 +139,10 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.14  2007/01/23 15:52:10  willuhn
+ * @C update() check for recursion
+ * @N mandatoryCheck configurable
+ *
  * Revision 1.13  2007/01/05 10:36:49  willuhn
  * @C Farbhandling - Jetzt aber!
  *
