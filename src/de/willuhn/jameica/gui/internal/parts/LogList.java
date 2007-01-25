@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/LogList.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2007/01/25 11:59:36 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -18,8 +18,11 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.TableItem;
@@ -55,11 +58,12 @@ import de.willuhn.util.ApplicationException;
  */
 public class LogList extends TablePart
 {
+  private final static int L_INF0  = Level.INFO.getValue();
   private final static int L_DEBUG = Level.DEBUG.getValue();
   private final static int L_WARN  = Level.WARN.getValue();
   private final static int L_ERR   = Level.ERROR.getValue();
 
-  
+  private static LinkedList last = new LinkedList();
   private LiveTarget target = null;
 
   /**
@@ -94,19 +98,19 @@ public class LogList extends TablePart
         
         int level = o.message.getLevel().getValue();
 
-        if (level == L_DEBUG)     item.setForeground(Color.COMMENT.getSWTColor());
-        else if (level == L_WARN) item.setForeground(Color.LINK_ACTIVE.getSWTColor());
-        else if (level == L_ERR)  item.setForeground(Color.ERROR.getSWTColor());
-        else item.setForeground(Color.WIDGET_FG.getSWTColor());
+        if (level == L_INF0)           return;
+        else if (level == L_DEBUG)     item.setForeground(Color.COMMENT.getSWTColor());
+        else if (level == L_WARN)      item.setForeground(Color.LINK_ACTIVE.getSWTColor());
+        else if (level == L_ERR)       item.setForeground(Color.ERROR.getSWTColor());
       }
     });
-
+    
     ContextMenu menu = new ContextMenu();
     menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Öffnen"),new DetailAction()));
     menu.addItem(new ContextMenuItem(Application.getI18n().tr("Speichern unter..."), new ExportAction()));
     this.setContextMenu(menu);
   }
-  
+
   /**
    * Liefert die Liste der letzten Log-Meldungen
    * @return die letzten 20 Meldungen.
@@ -119,17 +123,24 @@ public class LogList extends TablePart
     for (int i=0;i<messages.length;++i)
     {
       objects[i] = new LogObject(messages[i]);
+      last.add(objects[i]);
     }
     return PseudoIterator.fromArray(objects);
   }
-
-  
   
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public synchronized void paint(Composite parent) throws RemoteException
   {
+    parent.addDisposeListener(new DisposeListener() {
+      public void widgetDisposed(DisposeEvent e)
+      {
+        System.out.println("ddd");
+        Logger.removeTarget(LogList.this.target);
+        LogList.this.target = null;
+      }
+    });
     super.paint(parent);
     LogList.this.setTopIndex(LogList.this.size()-1); //zum Ende scrollen
   }
@@ -298,7 +309,6 @@ public class LogList extends TablePart
    */
   private class LiveTarget implements Target
   {
-
     /**
      * @see de.willuhn.logging.targets.Target#write(de.willuhn.logging.Message)
      */
@@ -310,15 +320,22 @@ public class LogList extends TablePart
         {
           try
           {
-            LogList.this.addItem(new LogObject(message));
+            LogObject lo = new LogObject(message);
+            last.add(lo);
+            LogList.this.addItem(lo);
+            // Wir zeigen nur maximal die letzten 100 Elemente an.
+            // Aeltere entfernen wir
+            if (last.size() > 100)
+              LogList.this.removeItem((LogObject)last.removeFirst());
             LogList.this.setTopIndex(LogList.this.size()-1); //zum Ende scrollen
           }
           catch (Throwable t)
           {
-            // Wenn ein Fehler kommt, entfernen wir uns vom Logger.
-            // Das passiert z.Bsp. ganz bewusst, wenn die Tabelle disposed wird
-            Logger.debug("removing live target from logger");
-            Logger.removeTarget(LiveTarget.this);
+            if (LogList.this.target != null)
+            {
+              // Wenn ein Fehler kommt, entfernen wir uns vom Logger.
+              Logger.removeTarget(LogList.this.target);
+            }
           }
         }
       });
@@ -338,6 +355,9 @@ public class LogList extends TablePart
 
 /*********************************************************************
  * $Log: LogList.java,v $
+ * Revision 1.4  2007/01/25 11:59:36  willuhn
+ * @N Entfernen alter Elemente
+ *
  * Revision 1.3  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
