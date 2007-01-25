@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.31 $
- * $Date: 2007/01/04 15:24:21 $
+ * $Revision: 1.32 $
+ * $Date: 2007/01/25 10:45:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -395,7 +395,6 @@ public class SSLFactory
           if (!match)
           {
             hostnames = hostnames.replaceFirst(",","");
-            Logger.warn("expected hostname " + hostname + " does not match any of the certificates: " + hostnames);
 
             String s =
               Application.getI18n().tr("Der Hostname \"{0}\" stimmt mit keinem der Server-Zertifikate überein ({1}). " +
@@ -645,6 +644,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.32  2007/01/25 10:45:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.31  2007/01/04 15:24:21  willuhn
  * @C certificate import handling
  * @B Bug 330
