@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.37 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.38 $
+ * $Date: 2007/01/25 12:07:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -204,8 +204,15 @@ public class View implements Part
     {
       public void run()
       {
-				sash.setMaximizedControl(view);
-				snappedIn = false;
+        try
+        {
+          SWTUtil.disposeChildren(snapin);
+          sash.setMaximizedControl(view);
+        }
+        finally
+        {
+          snappedIn = false;
+        }
       }
     });
 	}
@@ -228,7 +235,6 @@ public class View implements Part
    */
   public Composite getSnapin()
 	{
-		SWTUtil.disposeChildren(snapin);
 		return snapin;
 	}
 
@@ -337,6 +343,10 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.38  2007/01/25 12:07:58  willuhn
+ * @R removed debug output
+ * @C dispose snapin content on snapout()
+ *
  * Revision 1.37  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/LogList.java,v $
- * $Revision: 1.4 $
- * $Date: 2007/01/25 11:59:36 $
+ * $Revision: 1.5 $
+ * $Date: 2007/01/25 12:07:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -136,7 +136,6 @@ public class LogList extends TablePart
     parent.addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e)
       {
-        System.out.println("ddd");
         Logger.removeTarget(LogList.this.target);
         LogList.this.target = null;
       }
@@ -355,6 +354,10 @@ public class LogList extends TablePart
 
 /*********************************************************************
  * $Log: LogList.java,v $
+ * Revision 1.5  2007/01/25 12:07:58  willuhn
+ * @R removed debug output
+ * @C dispose snapin content on snapout()
+ *
  * Revision 1.4  2007/01/25 11:59:36  willuhn
  * @N Entfernen alter Elemente
  *
