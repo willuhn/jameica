@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.17 $
- * $Date: 2006/10/28 01:05:21 $
+ * $Revision: 1.18 $
+ * $Date: 2007/01/25 10:44:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -340,6 +340,11 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public boolean askUser(String question) throws Exception
   {
+    // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
+    String s = settings.getString(question,null);
+    if (s != null)
+      return s.equalsIgnoreCase("true");
+
     if (Application.inNonInteractiveMode())
     {
       Logger.warn(question);
@@ -354,15 +359,22 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     System.out.println("----------------------------------------------------------------------");
     InputStreamReader isr = new InputStreamReader(System.in);
     BufferedReader keyboard = new BufferedReader(isr);
+    boolean answer = false;
     try {
       String input = keyboard.readLine();
       if ("y".equalsIgnoreCase(input))
-        return true;
+        answer = true;
     }
     catch (IOException ioe)
     {
+      // ignore
     }
-    return false;
+    finally
+    {
+      // Wir speichern die Antwort auf diese Frage, damit sie nicht immer wieder gestellt wird
+      settings.setAttribute(question,answer);
+    }
+    return answer;
   }
 
   /**
@@ -386,6 +398,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.18  2007/01/25 10:44:10  willuhn
+ * @N autoanswer in ApplicationCallbackConsole
+ *
  * Revision 1.17  2006/10/28 01:05:21  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.12 $
- * $Date: 2006/10/28 01:05:21 $
+ * $Revision: 1.13 $
+ * $Date: 2007/01/25 10:44:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -252,7 +252,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
           public void handleAction(Object context) throws ApplicationException
           {
             if (((Boolean)check.getValue()).booleanValue())
-              settings.setAttribute(question,"true");
+              settings.setAttribute(question,true);
             choice = Boolean.TRUE;
             close();
           }
@@ -261,7 +261,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
           public void handleAction(Object context) throws ApplicationException
           {
             if (((Boolean)check.getValue()).booleanValue())
-              settings.setAttribute(question,"false");
+              settings.setAttribute(question,false);
             choice = Boolean.FALSE;
             close();
           }
@@ -278,19 +278,6 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
       Logger.error("error while asking user",e);
     }
     return false;
-//
-//    YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
-//    d.setTitle(Application.getI18n().tr("Jameica: Frage"));
-//    d.setText(question);
-//    try
-//    {
-//      return ((Boolean)d.open()).booleanValue();
-//    }
-//    catch (Exception e)
-//    {
-//      Logger.error("error while asking user",e);
-//    }
-//    return false;  
   }
   
 
@@ -387,6 +374,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.13  2007/01/25 10:44:10  willuhn
+ * @N autoanswer in ApplicationCallbackConsole
+ *
  * Revision 1.12  2006/10/28 01:05:21  willuhn
  * *** empty log message ***
  *
