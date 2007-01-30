@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.29 $
- * $Date: 2007/01/23 15:52:10 $
+ * $Revision: 1.29.2.1 $
+ * $Date: 2007/01/30 01:06:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import de.willuhn.boot.BootLoader;
+import de.willuhn.boot.Bootable;
+import de.willuhn.boot.SkipServiceException;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -28,7 +31,7 @@ import de.willuhn.util.ApplicationException;
  * Liest die System-Konfiguration aus config.xml. 
  * @author willuhn
  */
-public final class Config
+public final class Config implements Bootable
 {
   /**
    * Definition des Default-Ports fuer die RMI-Kommunikation.
@@ -47,35 +50,25 @@ public final class Config
   private File[] pluginDirs    = null;
 
   /**
-   * ct.
+   * @see de.willuhn.boot.Bootable#init(de.willuhn.boot.BootLoader, de.willuhn.boot.Bootable)
    */
-  protected Config()
+  public void init(BootLoader arg0, Bootable arg1) throws SkipServiceException
   {
-  }
-
-  /**
-   * Initialisiert die Konfiguration.
-   * @param dataDir Verzeichnis zu den variablen Daten. Kann null sein.
-   * @throws Exception
-   */
-  protected synchronized void init(String dataDir) throws Exception
-  {
+    String dataDir = Application.getStartupParams().getWorkDir();
     if (dataDir == null)
-    {
-			dataDir = System.getProperty("user.home") + "/.jameica";
-    }
+			dataDir = System.getProperty("user.home") + File.separator + ".jameica";
 
 		Logger.info("using workdir: " + dataDir);
 		this.workDir = new File(dataDir);
 		
 		if (this.workDir.exists() && !this.workDir.isDirectory())
-			throw new Exception("File " + dataDir + " allready exists.");
+			throw new RuntimeException("File " + dataDir + " allready exists.");
 		
 		if (!this.workDir.exists())
 		{
 			Logger.info("creating " + dataDir);
 			if (!this.workDir.mkdir())
-				throw new Exception("creating of " + dataDir + " failed");		
+				throw new RuntimeException("creating of " + dataDir + " failed");		
 		}
 
 		this.configDir  = new File(dataDir + "/cfg");
@@ -84,18 +77,36 @@ public final class Config
 			Logger.info("creating " + this.configDir.getAbsolutePath());
 			this.configDir.mkdir();
 		}
-
-    this.settings = new Settings(this.getClass());
-    this.settings.setStoreWhenRead(true);
   }
 
+  /**
+   * @see de.willuhn.boot.Bootable#shutdown()
+   */
+  public void shutdown()
+  {
+  }
+  
+  /**
+   * Liefert die Settings.
+   * @return
+   */
+  private Settings getSettings()
+  {
+    if (this.settings == null)
+    {
+      this.settings = new Settings(this.getClass());
+      this.settings.setStoreWhenRead(true);
+    }
+    return this.settings;
+  }
+  
   /**
    * Liefert den fuer die lokale RMI-Registry zu verwendenden TCP-Port.
    * @return Nummer des TCP-Ports.
    */
   public int getRmiPort()
   {
-    return settings.getInt("jameica.system.rmi.serverport",RMI_DEFAULT_PORT);
+    return getSettings().getInt("jameica.system.rmi.serverport",RMI_DEFAULT_PORT);
   }
 
 	/**
@@ -139,7 +150,7 @@ public final class Config
         }
       }
     }
-    settings.setAttribute("jameica.system.rmi.serverport",port);
+    getSettings().setAttribute("jameica.system.rmi.serverport",port);
 	}
 
 	/**
@@ -148,7 +159,7 @@ public final class Config
    */
   public boolean getRmiSSL()
 	{
-		return settings.getBoolean("jameica.system.rmi.enablessl",true);
+		return getSettings().getBoolean("jameica.system.rmi.enablessl",true);
 	}
 
   // BUGZILLA 44 http://www.willuhn.de/bugzilla/show_bug.cgi?id=44
@@ -160,7 +171,7 @@ public final class Config
    */
   public String getProxyHost()
   {
-    return settings.getString("jameica.system.proxy.host",null);
+    return getSettings().getString("jameica.system.proxy.host",null);
   }
 
   /**
@@ -169,7 +180,7 @@ public final class Config
    */
   public int getProxyPort()
   {
-    return settings.getInt("jameica.system.proxy.port",-1);
+    return getSettings().getInt("jameica.system.proxy.port",-1);
   }
 
   /**
@@ -180,7 +191,7 @@ public final class Config
   {
     if ("".equals(host))
       host = null;
-    settings.setAttribute("jameica.system.proxy.host",host);
+    getSettings().setAttribute("jameica.system.proxy.host",host);
   }
   
   /**
@@ -193,14 +204,14 @@ public final class Config
   {
     if (port == -1)
     {
-      settings.setAttribute("jameica.system.proxy.port",-1);
+      getSettings().setAttribute("jameica.system.proxy.port",-1);
       return;
     }
 
     if (port < 1 || port > 65535)
       throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Proxy ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
 
-    settings.setAttribute("jameica.system.proxy.port",port);
+    getSettings().setAttribute("jameica.system.proxy.port",port);
   }
 
   /**
@@ -210,7 +221,7 @@ public final class Config
    */
   public boolean getShareServices()
   {
-    return settings.getBoolean("jameica.system.rmi.shareservices",true);
+    return getSettings().getBoolean("jameica.system.rmi.shareservices",true);
   }
 
 	/**
@@ -219,7 +230,7 @@ public final class Config
    */
   public void setRmiSSL(boolean b)
 	{
-		settings.setAttribute("jameica.system.rmi.enablessl",b);
+    getSettings().setAttribute("jameica.system.rmi.enablessl",b);
 	}
 
   /**
@@ -232,7 +243,7 @@ public final class Config
       return locale;
 
     Locale l = Locale.GERMANY;
-    String lang = settings.getString("jameica.system.locale",l.getLanguage() + "_" + l.getCountry());
+    String lang = getSettings().getString("jameica.system.locale",l.getLanguage() + "_" + l.getCountry());
     String country = "";
     if (lang.indexOf("_") != -1)
     {
@@ -272,7 +283,7 @@ public final class Config
 		if (l == null)
 			return;
     this.locale = l;
-    settings.setAttribute("jameica.system.locale",this.locale.getLanguage() + "_" + this.locale.getCountry());
+    getSettings().setAttribute("jameica.system.locale",this.locale.getLanguage() + "_" + this.locale.getCountry());
 	}
 
   /**
@@ -296,7 +307,7 @@ public final class Config
     
     ArrayList l = new ArrayList();
 
-    String[] s = settings.getList("jameica.plugin.dir",null);
+    String[] s = getSettings().getList("jameica.plugin.dir",null);
     if (s != null && s.length > 0)
     {
       for (int i=0;i<s.length;++i)
@@ -340,7 +351,7 @@ public final class Config
       {
         newList[i] = ((File)l.get(i)).getAbsolutePath();
       }
-      settings.setAttribute("jameica.plugin.dir",newList);
+      getSettings().setAttribute("jameica.plugin.dir",newList);
     }
     
     this.pluginDirs = (File[]) l.toArray(new File[l.size()]);
@@ -405,7 +416,7 @@ public final class Config
    */
   public String getLogFile()
   {
-    return settings.getString("jameica.system.log.file",getWorkDir() + "/jameica.log");
+    return getSettings().getString("jameica.system.log.file",getWorkDir() + "/jameica.log");
   }
 
 	/**
@@ -414,7 +425,7 @@ public final class Config
    */
   public void setLogFile(String logFile)
 	{
-    settings.setAttribute("jameica.system.log.file",logFile);
+    getSettings().setAttribute("jameica.system.log.file",logFile);
 	}
 
   /**
@@ -423,7 +434,7 @@ public final class Config
    */
   public boolean getMandatoryCheck()
   {
-    return settings.getBoolean("jameica.system.checkmandatory",true);
+    return getSettings().getBoolean("jameica.system.checkmandatory",true);
   }
 
   /**
@@ -432,7 +443,7 @@ public final class Config
    */
   public void setMandatoryCheck(boolean check)
   {
-    settings.setAttribute("jameica.system.checkmandatory",check);
+    getSettings().setAttribute("jameica.system.checkmandatory",check);
   }
 
   /**
@@ -441,7 +452,7 @@ public final class Config
    */
   public String getLogLevel()
   {
-    return settings.getString("jameica.system.log.level",Level.DEFAULT.getName());
+    return getSettings().getString("jameica.system.log.level",Level.DEFAULT.getName());
   }
 
 	/**
@@ -450,7 +461,7 @@ public final class Config
    */
   public void setLoglevel(String name)
 	{
-    settings.setAttribute("jameica.system.log.level",name);
+    getSettings().setAttribute("jameica.system.log.level",name);
 	}
 
   /**
@@ -476,11 +487,22 @@ public final class Config
 			return workDir.getAbsolutePath();
 		}
 	}
+
+  /**
+   * @see de.willuhn.boot.Bootable#depends()
+   */
+  public Class[] depends()
+  {
+    return null;
+  }
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.29.2.1  2007/01/30 01:06:40  willuhn
+ * @N Test eines neuen Bootloader-Mechanismus (vorerst in Test-Branch)
+ *
  * Revision 1.29  2007/01/23 15:52:10  willuhn
  * @C update() check for recursion
  * @N mandatoryCheck configurable

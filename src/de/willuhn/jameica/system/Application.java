@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.58 $
- * $Date: 2006/08/17 09:20:17 $
+ * $Revision: 1.58.4.1 $
+ * $Date: 2007/01/30 01:06:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,28 +14,22 @@
 package de.willuhn.jameica.system;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import de.willuhn.boot.BootLoader;
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.LogMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
-import de.willuhn.jameica.security.JameicaSecurityManager;
 import de.willuhn.jameica.security.SSLFactory;
 import de.willuhn.jameica.util.VelocityLoader;
-import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
-import de.willuhn.logging.targets.LogrotateTarget;
-import de.willuhn.logging.targets.OutputStreamTarget;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 import de.willuhn.util.JarInfo;
@@ -55,10 +49,9 @@ public final class Application {
 		private boolean cleanShutdown = false;
 		
 		private StartupParams 			params;
+    
+    private BootLoader          loader;
 
-    private Manifest            manifest;
-    private Config 							config;
-    private MultipleClassLoader classLoader;
 		private SSLFactory 					sslFactory;  
     private ServiceFactory 			serviceFactory;
     private PluginLoader 				pluginLoader;
@@ -75,18 +68,9 @@ public final class Application {
    */
   public static void newInstance(StartupParams params) {
 
-
-		// Wir nehmen grundsaetzlich unseren eingenen Classloader.
-		MultipleClassLoader cl = new MultipleClassLoader();
-		cl.addClassloader(Application.class.getClassLoader());
-
-		// Wir machen unseren Classloader zum Context-Classloader fuer diesen Thread
-		Thread.currentThread().setContextClassLoader(cl);
-
 		// Instanz erstellen.
 		app = new Application();
 		app.params = params;
-		app.classLoader = cl;
 		app.init();
   }
 
@@ -95,137 +79,9 @@ public final class Application {
    */
   private void init()
 	{
+    loader = new BootLoader(null);
+    loader.getBootable(Init5.class);
 
-		////////////////////////////////////////////////////////////////////////////
-		// init logger
-    Logger.addTarget(new OutputStreamTarget(System.out));
-
-    Logger.info("starting jameica...");
-
-    Level level = Level.findByName(getConfig().getLogLevel());
-    if (level == null)
-    {
-      Logger.warn("unable to detect defined log level, fallback to default level");
-      level = Level.DEFAULT;
-    }
-    Logger.info("using log level " + level.getName() + " [" + level.getValue() + "]");
-    Logger.setLevel(level);
-		//
-		////////////////////////////////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////////////////////////////////
-    // set securityManager
-    Logger.info("setting security manager");
-    System.setSecurityManager(new JameicaSecurityManager());
-    //
-    ////////////////////////////////////////////////////////////////////////////
-
-		////////////////////////////////////////////////////////////////////////////
-		// LockFile erzeugen
-    // TODO: Mal das Locking via NIO checken
-    //    FileOutputStream fos = new FileOutputStream("test.txt");
-    //    FileLock lock = fos.getChannel().tryLock();
-    //    if (lock != null)
-    //    {
-    //      System.out.println("OK");
-    //      Thread.sleep(100 * 1000l);
-    //    }
-    //    else
-    //    {
-    //      System.err.println("Anwendung laeuft");
-    //    }
-
-    File lock = new File(app.config.getWorkDir(),"jameica.lock");
-    Logger.info("creating lockfile " + lock.getAbsolutePath());
-		try {
-			if (lock.exists())
-				throw new IOException("Lockfile allready exists");
-			lock.createNewFile();
-			lock.deleteOnExit();
-		}
-		catch (IOException ioe)
-		{
-			if (!getCallback().lockExists(lock.getAbsolutePath()))
-				System.exit(1);
-			else
-			{
-				lock.deleteOnExit();
-			}
-		}
-		//
-		////////////////////////////////////////////////////////////////////////////
-
-    getCallback().getStartupMonitor().setStatusText("starting jameica");
-
-		////////////////////////////////////////////////////////////////////////////
-    // switch logger to defined log file
-    try {
-      Logger.info("adding defined log file " + getConfig().getLogFile());
-      // Wir kopieren das alte Log-Logfile vorher noch
-      File logFile = new File(getConfig().getLogFile());
-      try
-      {
-        LogrotateTarget t = new LogrotateTarget(logFile,true);
-        Logger.addTarget(t);
-      }
-      catch (IOException e)
-      {
-        Logger.error("unable to use rotating log target, fallback to outputstream target",e);
-        Logger.addTarget(new OutputStreamTarget(new FileOutputStream(logFile,true)));
-      }
-    }
-    catch (FileNotFoundException e)
-    {
-      Logger.error("failed");
-    }
-		//
-		////////////////////////////////////////////////////////////////////////////
-
-		try
-		{
-			Logger.info("starting Jameica Version " + getManifest().getVersion());
-		}
-		catch (Exception e)
-		{
-			Logger.warn("unable to detect Jameica Version number");
-		}
-    Logger.info("  Built-Date : " + getBuildDate());
-    Logger.info("  Buildnumber: " + getBuildnumber());
-
-    if (Logger.getLevel().getValue() == Level.DEBUG.getValue())
-    {
-      Properties p = System.getProperties();
-      Enumeration e = p.keys();
-      while (e.hasMoreElements())
-      {
-        String key = (String) e.nextElement();
-        Logger.debug(key + ": " + System.getProperty(key));
-      }
-    }
-    else
-    {
-      Logger.info("os.arch       : " + System.getProperty("os.arch"));
-      Logger.info("os.name       : " + System.getProperty("os.name"));
-      Logger.info("os.version    : " + System.getProperty("os.version"));
-      Logger.info("java.version  : " + System.getProperty("java.version"));
-      Logger.info("java.vendor   : " + System.getProperty("java.vendor"));
-      Logger.info("user.name     : " + System.getProperty("user.name"));
-      Logger.info("user.home     : " + System.getProperty("user.home"));
-      Logger.info("file.encoding : " + System.getProperty("file.encoding"));
-    }
-
-		// Proxy-Einstellungen checken
-    String proxyHost = getConfig().getProxyHost();
-    int proxyPort    = getConfig().getProxyPort();
-   
-    if (proxyHost != null && proxyHost.length() > 0 && proxyPort > 0)
-    {
-      Logger.info("Applying proxy settings: " + proxyHost + ":" + proxyPort);
-      System.setProperty("http.proxyHost",proxyHost);
-      System.setProperty("http.proxyPort",""+proxyPort);
-    }
-
-    getManifest();
     // Init Velocity
     VelocityLoader.init();
 
@@ -305,6 +161,7 @@ public final class Application {
       return;
 
     Logger.info("shutting down jameica");
+    app.loader.shutdown();
 
 		getCallback().getStartupMonitor().setStatus(0);
 
@@ -328,7 +185,7 @@ public final class Application {
    */
   public static MultipleClassLoader getClassLoader()
 	{
-		return app.classLoader;
+		return ((JameicaClassLoader) app.loader.getBootable(JameicaClassLoader.class)).getClassLoader();
 	}
 
 	/**
@@ -424,17 +281,7 @@ public final class Application {
    */
   public static Config getConfig()
   {
-  	if (app.config != null)
-  		return app.config;
-		try {
-			app.config = new Config();
-			app.config.init(app.params.getWorkDir());
-		}
-		catch (Throwable t)
-		{
-			app.startupError(t);
-		}
-    return app.config;
+    return (Config) app.loader.getBootable(Config.class);
   }
 
   /**
@@ -551,19 +398,7 @@ public final class Application {
    */
   public static Manifest getManifest()
 	{
-    if (app.manifest == null)
-    {
-      try
-      {
-        // BUGZILLA 265
-        app.manifest = prepareClasses(new File("."));
-      }
-      catch (Exception e)
-      {
-        app.startupError(e);
-      }
-    }
-    return app.manifest;
+    return ((ManifestService) app.loader.getBootable(ManifestService.class)).getManifest();
 	}
 
   /**
@@ -760,6 +595,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.58.4.1  2007/01/30 01:06:40  willuhn
+ * @N Test eines neuen Bootloader-Mechanismus (vorerst in Test-Branch)
+ *
  * Revision 1.58  2006/08/17 09:20:17  willuhn
  * @N Debug-Output
  *
