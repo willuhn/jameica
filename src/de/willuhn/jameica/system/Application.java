@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.58.4.1 $
- * $Date: 2007/01/30 01:06:40 $
+ * $Revision: 1.58.4.2 $
+ * $Date: 2007/01/30 23:26:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -79,7 +79,7 @@ public final class Application {
    */
   private void init()
 	{
-    loader = new BootLoader(null);
+    loader = new BootLoader(getCallback().getStartupMonitor());
     loader.getBootable(Init5.class);
 
     // Init Velocity
@@ -595,6 +595,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.58.4.2  2007/01/30 23:26:53  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.58.4.1  2007/01/30 01:06:40  willuhn
  * @N Test eines neuen Bootloader-Mechanismus (vorerst in Test-Branch)
  *
