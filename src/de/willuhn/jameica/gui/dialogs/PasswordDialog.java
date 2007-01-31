@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.19 $
- * $Date: 2006/07/05 23:29:15 $
+ * $Revision: 1.20 $
+ * $Date: 2007/01/31 13:07:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,10 @@ import de.willuhn.util.ApplicationException;
  */
 public abstract class PasswordDialog extends AbstractDialog {
 
-	private final static int MAX_RETRIES = 3;
+	/**
+	 * Maximale Anzahl von Fehlversuchen.
+	 */
+	public final static int MAX_RETRIES = 3;
 
   private int retries                 = 0;
   private String text                 = "";
@@ -223,6 +226,10 @@ public abstract class PasswordDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.20  2007/01/31 13:07:52  willuhn
+ * @N Login-Dialog
+ * @N SystemMessage
+ *
  * Revision 1.19  2006/07/05 23:29:15  willuhn
  * @B Bug 174
  *

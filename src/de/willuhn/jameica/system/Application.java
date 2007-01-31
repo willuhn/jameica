@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.58 $
- * $Date: 2006/08/17 09:20:17 $
+ * $Revision: 1.59 $
+ * $Date: 2007/01/31 13:07:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.LogMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
+import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.security.JameicaSecurityManager;
@@ -304,7 +305,7 @@ public final class Application {
     if (app.cleanShutdown) 
       return;
 
-    Logger.info("shutting down jameica");
+    Application.getMessagingFactory().sendMessage(new SystemMessage(SystemMessage.SYSTEM_SHUTDOWN,"shutting down jameica"));
 
 		getCallback().getStartupMonitor().setStatus(0);
 
@@ -760,6 +761,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.59  2007/01/31 13:07:52  willuhn
+ * @N Login-Dialog
+ * @N SystemMessage
+ *
  * Revision 1.58  2006/08/17 09:20:17  willuhn
  * @N Debug-Output
  *

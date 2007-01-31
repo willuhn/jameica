@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.103 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.104 $
+ * $Date: 2007/01/31 13:07:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,6 +41,7 @@ import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
@@ -206,7 +207,7 @@ public class GUI implements ApplicationController
       Logger.info("open shell");
       getShell().open();
       
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Jameica erfolgreich gestartet"),StatusBarMessage.TYPE_SUCCESS));
+      Application.getMessagingFactory().sendMessage(new SystemMessage(SystemMessage.SYSTEM_STARTED,Application.getI18n().tr("Jameica erfolgreich gestartet")));
       loop();
     }
     catch (Exception e)
@@ -812,6 +813,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.104  2007/01/31 13:07:52  willuhn
+ * @N Login-Dialog
+ * @N SystemMessage
+ *
  * Revision 1.103  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

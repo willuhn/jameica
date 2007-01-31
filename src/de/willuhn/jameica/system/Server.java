@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/01/18 18:40:21 $
- * $Author: web0 $
+ * $Revision: 1.12 $
+ * $Date: 2007/01/31 13:07:52 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.system;
 
+import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -29,7 +30,7 @@ public class Server implements ApplicationController
    */
   public void init() throws ApplicationException
   {
-    Logger.info(Application.getI18n().tr("jameica up and running..."));
+    Application.getMessagingFactory().sendMessage(new SystemMessage(SystemMessage.SYSTEM_STARTED,"jameica up and running..."));
 
 		String[] welcome = Application.getWelcomeMessages();
 		if (welcome != null && welcome.length > 0)
@@ -154,6 +155,10 @@ public class Server implements ApplicationController
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.12  2007/01/31 13:07:52  willuhn
+ * @N Login-Dialog
+ * @N SystemMessage
+ *
  * Revision 1.11  2006/01/18 18:40:21  web0
  * @N Redesign des Background-Task-Handlings
  *
