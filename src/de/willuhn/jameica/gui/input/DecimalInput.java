@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2005/08/22 13:31:52 $
- * $Author: web0 $
+ * $Revision: 1.16 $
+ * $Date: 2007/01/31 17:52:58 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -52,7 +52,8 @@ public class DecimalInput extends TextInput
   public DecimalInput(double value, DecimalFormat format)
   {
   	super(null);
-    this.value = new Double(value);
+    if (value != Double.NaN)
+      this.value = new Double(value);
 
     if (format != null)
 	    this.format = format;
@@ -169,6 +170,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.16  2007/01/31 17:52:58  willuhn
+ * @N Support for Double.NaN
+ *
  * Revision 1.15  2005/08/22 13:31:52  web0
  * *** empty log message ***
  *
