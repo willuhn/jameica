@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/LoginDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/01/31 13:07:52 $
+ * $Revision: 1.2 $
+ * $Date: 2007/01/31 16:11:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -137,8 +137,6 @@ public class LoginDialog extends SimpleDialog
     userLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
     user = GUI.getStyleFactory().createText(comp);
-    if (login != null && login.getUsername() != null)
-      user.setText(login.getUsername());
     GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
     grid3.horizontalSpan = 2;
     user.setLayoutData(grid3);
@@ -153,6 +151,12 @@ public class LoginDialog extends SimpleDialog
     GridData grid4 = new GridData(GridData.FILL_HORIZONTAL);
     grid4.horizontalSpan = 2;
     password.setLayoutData(grid4);
+
+    if (login != null && login.getUsername() != null)
+    {
+      user.setText(login.getUsername());
+      password.setFocus();
+    }
 
     // Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
     Label dummy = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
@@ -240,6 +244,9 @@ public class LoginDialog extends SimpleDialog
 
 /*********************************************************************
  * $Log: LoginDialog.java,v $
+ * Revision 1.2  2007/01/31 16:11:47  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2007/01/31 13:07:52  willuhn
  * @N Login-Dialog
  * @N SystemMessage
