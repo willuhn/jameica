@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2007/01/31 17:52:58 $
+ * $Revision: 1.17 $
+ * $Date: 2007/01/31 17:56:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,14 +46,14 @@ public class DecimalInput extends TextInput
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
-   * @param value anzuzeigender Wert.
+   * @param d anzuzeigender Wert.
    * @param format Formatter fuer die Anzeige.
    */
-  public DecimalInput(double value, DecimalFormat format)
+  public DecimalInput(double d, DecimalFormat format)
   {
   	super(null);
-    if (value != Double.NaN)
-      this.value = new Double(value);
+    if (!Double.isNaN(d))
+      this.value = new Double(d);
 
     if (format != null)
 	    this.format = format;
@@ -170,6 +170,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.17  2007/01/31 17:56:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2007/01/31 17:52:58  willuhn
  * @N Support for Double.NaN
  *
