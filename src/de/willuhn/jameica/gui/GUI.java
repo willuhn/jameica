@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.104 $
- * $Date: 2007/01/31 13:07:52 $
+ * $Revision: 1.105 $
+ * $Date: 2007/02/01 13:31:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -207,7 +207,7 @@ public class GUI implements ApplicationController
       Logger.info("open shell");
       getShell().open();
       
-      Application.getMessagingFactory().sendMessage(new SystemMessage(SystemMessage.SYSTEM_STARTED,Application.getI18n().tr("Jameica erfolgreich gestartet")));
+      Application.getMessagingFactory().sendSyncMessage(new SystemMessage(SystemMessage.SYSTEM_STARTED,Application.getI18n().tr("Jameica erfolgreich gestartet")));
       loop();
     }
     catch (Exception e)
@@ -813,6 +813,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.105  2007/02/01 13:31:13  willuhn
+ * @N Nachricht synchron senden, damit sichergestellt ist, dass alle sie erhalten haben, bevor die Startseite gemalt wurde
+ *
  * Revision 1.104  2007/01/31 13:07:52  willuhn
  * @N Login-Dialog
  * @N SystemMessage
