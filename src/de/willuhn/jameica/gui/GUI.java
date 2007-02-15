@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.105 $
- * $Date: 2007/02/01 13:31:13 $
+ * $Revision: 1.106 $
+ * $Date: 2007/02/15 16:58:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -114,7 +114,7 @@ public class GUI implements ApplicationController
       // init shell
       getShell().setLayout(SWTUtil.createGrid(1, false));
       getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
-      getShell().setImage(SWTUtil.getImage("globe.gif"));
+      getShell().setImage(SWTUtil.getImage("hibiscus-icon-64x64.png"));
 
       getShell().setText("Jameica " + Application.getManifest().getVersion());
 
@@ -813,6 +813,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.106  2007/02/15 16:58:54  willuhn
+ * @N Jameica uses now the hibiscus icon
+ *
  * Revision 1.105  2007/02/01 13:31:13  willuhn
  * @N Nachricht synchron senden, damit sichergestellt ist, dass alle sie erhalten haben, bevor die Startseite gemalt wurde
  *
