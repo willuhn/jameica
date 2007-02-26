@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.32 $
- * $Date: 2007/01/25 10:45:13 $
+ * $Revision: 1.33 $
+ * $Date: 2007/02/26 10:20:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -100,7 +100,7 @@ public class SSLFactory
 
 		File keyStoreFile = getKeyStoreFile();
 
-		if (keyStoreFile.exists() && keyStoreFile.canRead())
+		if (keyStoreFile.exists() && keyStoreFile.canRead() && keyStoreFile.length() > 0)
 		{
       // Wir laden mal das Zertifikat. Dadurch wird der Keystore und alles mitgeladen ;)
 			getSystemCertificate();
@@ -644,6 +644,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.33  2007/02/26 10:20:33  willuhn
+ * @N Pruefen, ob Keystore-File > 0
+ *
  * Revision 1.32  2007/01/25 10:45:13  willuhn
  * *** empty log message ***
  *
