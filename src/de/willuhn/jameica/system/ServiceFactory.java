@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.38 $
- * $Date: 2006/11/20 22:01:46 $
+ * $Revision: 1.39 $
+ * $Date: 2007/03/08 16:00:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -175,7 +175,7 @@ public final class ServiceFactory
 
 		if (allServices.get(fullName) != null)
 		{
-			Logger.info("service " + name + " allready installed, skipping");
+			Logger.debug("service " + name + " allready installed, skipping");
 			return;
 		}
 		Class serviceClass = null;
@@ -191,13 +191,13 @@ public final class ServiceFactory
 				return;
 			}
 
-			Logger.info("  checking dependencies");
 			String[] depends = descriptor.depends();
 			ServiceDescriptor[] deps = plugin.getManifest().getServices();
 			if (name != null && name.length() > 0 &&
 					depends != null && depends.length > 0 &&
 					deps != null && deps.length > 0)
 			{
+        Logger.info("  dependencies found...");
 				for (int i=0;i<deps.length;++i)
 				{
 					for (int j=0;j<depends.length;++j)
@@ -208,14 +208,12 @@ public final class ServiceFactory
 						}
 						if (depends[j].equals(deps[i].getName()))
 						{
-							Logger.info("  dependency found..");
 							install(plugin,deps[i]);
 						}
 					}
 				}
 			}
 
- 			Logger.info("  creating instance");
 			Service s = newInstance(serviceClass);
 			allServices.put(fullName,s);
 
@@ -398,6 +396,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.39  2007/03/08 16:00:58  willuhn
+ * @R removed some boring log messages
+ *
  * Revision 1.38  2006/11/20 22:01:46  willuhn
  * @N send stop to remote services on shutdown (server should dispose resources on this event)
  *

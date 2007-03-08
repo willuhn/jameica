@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.9 $
- * $Date: 2006/11/27 18:46:45 $
+ * $Revision: 1.10 $
+ * $Date: 2007/03/08 16:00:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,27 +67,29 @@ public final class MessagingFactory
     }
     catch (ClassNotFoundException e)
     {
-      Logger.info("no messaging consumers found");
+      Logger.info("  no messaging consumers found");
     }
     for (int i=0;i<c.length;++i)
     {
       if (c[i].getName().indexOf('$') != -1)
       {
-        Logger.info(c[i].getName() + " is an inner class, skipping");
+        Logger.debug(c[i].getName() + " is an inner class, skipping");
         continue;
       }
-      Logger.info("found " + c[i].getName() + ", creating instance");
       try
       {
         Constructor ct = c[i].getConstructor(null);
         ct.setAccessible(true);
         MessageConsumer mc = (MessageConsumer)(ct.newInstance(null));
         if (mc.autoRegister())
+        {
+          Logger.info("  register " + c[i].getName());
           registerMessageConsumer(mc);
+        }
       }
       catch (Throwable t)
       {
-        Logger.error("error while creating instance, skipping message consumer",t);
+        Logger.error("unable to register message consumer " + c[i].getName(),t);
       }
     }
   }
@@ -307,6 +309,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.10  2007/03/08 16:00:58  willuhn
+ * @R removed some boring log messages
+ *
  * Revision 1.9  2006/11/27 18:46:45  willuhn
  * @C removed synchronized stuff
  *
