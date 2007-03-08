@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.60 $
- * $Date: 2006/11/21 00:08:23 $
+ * $Revision: 1.61 $
+ * $Date: 2007/03/08 18:55:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,7 +49,6 @@ import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
@@ -66,7 +65,7 @@ import de.willuhn.util.I18N;
  * Erzeugt eine Standard-Tabelle.
  * @author willuhn
  */
-public class TablePart implements Part
+public class TablePart extends AbstractTablePart
 {
   private I18N i18n                     = null;
 
@@ -175,20 +174,7 @@ public class TablePart implements Part
   }
 
   /**
-   * Fuegt der Tabelle eine neue Spalte hinzu.
-   * @param title Name der Spaltenueberschrift.
-   * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
-   */
-  public void addColumn(String title, String field)
-  {
-    addColumn(title,field,null);
-  }
-  
-  /**
-   * Fuegt der Tabelle eine neue Spalte hinzu und dazu noch einen Formatierer.
-   * @param title Name der Spaltenueberschrift.
-   * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
-   * @param f Formatter, der fuer die Anzeige des Wertes verwendet werden soll.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#addColumn(java.lang.String, java.lang.String, de.willuhn.jameica.gui.formatter.Formatter)
    */
   public void addColumn(String title, String field, Formatter f)
   {
@@ -583,14 +569,14 @@ public class TablePart implements Part
 			if (test != null)
 			{
 				Object value = test.getAttribute(column.columnId);
-				if (value instanceof Double)  col.setAlignment(SWT.RIGHT);
-				if (value instanceof Integer) col.setAlignment(SWT.RIGHT);
 				if (value instanceof Number)  col.setAlignment(SWT.RIGHT);
 			}
     }
 
-		list.begin(); // zurueckblaettern nicht vergessen
-		while (list.hasNext())
+    if (test != null)
+      list.begin(); // zurueckblaettern nicht vergessen
+
+    while (list.hasNext())
 		{
 			addItem(list.next());
 		}
@@ -1200,6 +1186,9 @@ public class TablePart implements Part
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.61  2007/03/08 18:55:49  willuhn
+ * @N Tree mit Unterstuetzung fuer Spalten
+ *
  * Revision 1.60  2006/11/21 00:08:23  willuhn
  * @N skip deletelistener in network mode
  *

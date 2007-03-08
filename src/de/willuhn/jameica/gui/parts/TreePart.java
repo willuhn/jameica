@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/01/18 09:49:29 $
+ * $Revision: 1.13 $
+ * $Date: 2007/03/08 18:55:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -22,16 +23,21 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
+import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
+import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -39,14 +45,14 @@ import de.willuhn.util.ApplicationException;
  * Dabei werden alle Kind-Objekte rekursiv dargestellt.
  * @author willuhn
  */
-public class TreePart implements Part
+public class TreePart extends AbstractTablePart
 {
 
-  private Action action;
-  private Composite composite;
-  private GenericObjectNode object = null;
-  private GenericIterator list = null;
-  private org.eclipse.swt.widgets.Tree tree = null;
+  private Action action             = null;
+  private GenericIterator list      = null;
+  private Tree tree                 = null;
+  private ArrayList columns         = new ArrayList();
+  
     
 	/**
    * Erzeugt einen neuen Tree basierend auf dem uebergebenen Objekt.
@@ -57,7 +63,14 @@ public class TreePart implements Part
   public TreePart(GenericObjectNode object, Action action)
 	{
     this.action = action;
-    this.object = object;
+    try
+    {
+      this.list = PseudoIterator.fromArray(new GenericObject[]{object});
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to add item to table",re);
+    }
 	}
 
   /**
@@ -80,26 +93,102 @@ public class TreePart implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
-    if (this.object == null && this.list == null)
+    if (this.list == null)
       throw new RemoteException("Keine darstellbaren Objekte übergeben.");
 
-    this.composite = parent;
-    
-    if (this.object != null)
-    {
-      final Item root = new Item(null,object);
-      root.expandChildren();
-    }
-    else
-    {
-      while (list.hasNext())
-      {
-        final Item root = new Item(null,(GenericObjectNode) list.next());
-        root.expandChildren();
+    /////////////////////////////////////////////////////////////////
+    // Tree erzeugen
+    this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER);
+    final GridData gridData = new GridData(GridData.FILL_BOTH);
+    this.tree.setLayoutData(gridData);
+    // Listener fuer "Folder auf machen"
+    tree.addListener(SWT.Expand, new Listener() {
+      public void handleEvent(Event event) {
+        handleFolderOpen(event);
       }
+    });
+    // Listener fuer "Folder auf machen"
+    tree.addListener(SWT.Collapse, new Listener() {
+      public void handleEvent(Event event) {
+        handleFolderClose(event);
+      }
+    });
+
+    // Listener fuer die Aktionen
+    tree.addMouseListener(new MouseAdapter()
+    {
+      public void mouseDoubleClick(MouseEvent e)
+      {
+        handleSelect(e);
+      }
+    });
+
+    // Spalten hinzufuegen
+    if (this.columns.size() > 0)
+    {
+      this.tree.setHeaderVisible(true);
+      this.tree.setLinesVisible(true);
+
+      GenericObject test = list.hasNext() ? list.next() : null;
+
+      for (int i=0;i<this.columns.size();++i)
+      {
+        Column col = (Column) this.columns.get(i);
+        final TreeColumn tc = new TreeColumn(this.tree,SWT.LEFT);
+        tc.setText(col.name == null ? "" : col.name);
+
+        // Testobjekt laden fuer Ausrichtung von Spalten
+        if (test != null)
+        {
+          Object value = test.getAttribute(col.columnId);
+          if (value instanceof Number)  tc.setAlignment(SWT.RIGHT);
+        }
+      }
+
+      // Liste zuruecksetzen
+      if (test != null)
+        list.begin();
+    }
+    
+    /////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////
+    // Nutzdaten einfuegen
+    while (list.hasNext())
+      new Item(null,(GenericObject) list.next());
+    /////////////////////////////////////////////////////////////////
+    
+    /////////////////////////////////////////////////////////////////
+    // Alles aufklappen
+    TreeItem[] items = this.tree.getItems();
+    for (int i=0;i<items.length;++i)
+      expand(items[i]);
+    /////////////////////////////////////////////////////////////////
+    
+    TreeColumn[] cols = this.tree.getColumns();
+    for (int i=0;i<cols.length;++i)
+    {
+      cols[i].pack();
     }
   }
+  
+  /**
+   * Klappt das Element und alle Kinder dessen auf.
+   * @param item
+   */
+  private void expand(TreeItem item)
+  {
+    if (item == null || item.isDisposed())
+      return;
 
+    TreeItem[] children = item.getItems();
+    for (int i=0;i<children.length; ++i)
+      expand(children[i]);
+
+    // Zum Schluss klappen wir uns selbst auf
+    item.setExpanded(true);
+  }
+  
 	/**
    * Behandelt das Event "Ordner auf".
    * @param event das ausgeloeste Event.
@@ -150,36 +239,6 @@ public class TreePart implements Part
     }
 	}
 
-	/**
-	 * Fuegt die Listener zum Tree hinzu.
-	 * @param tree
-	 */
-	private void addListener(org.eclipse.swt.widgets.Tree tree) {
-
-		// Listener fuer "Folder auf machen"
-		tree.addListener(SWT.Expand, new Listener() {
-			public void handleEvent(Event event) {
-				handleFolderOpen(event);
-			}
-		});
-		// Listener fuer "Folder auf machen"
-		tree.addListener(SWT.Collapse, new Listener() {
-			public void handleEvent(Event event) {
-				handleFolderClose(event);
-			}
-		});
-
-		// Listener fuer die Aktionen
-    tree.addMouseListener(new MouseAdapter()
-    {
-      public void mouseDoubleClick(MouseEvent e)
-      {
-        handleSelect(e);
-      }
-    });
-	}
-
-
 
 	/**
    * Bildet ein einzelnes Element des Baumes ab.
@@ -187,106 +246,135 @@ public class TreePart implements Part
    */
   class Item {
 
-		private TreeItem parentItem;
-    
-    private GenericObjectNode element;
+		private final TreeItem item;
 
 		/**
 		 * ct. Laed ein neues Element des Baumes.
      * @param parent das Eltern-Element.
-     * @param element das aktuelle Element.
+     * @param data das Fachobjekt.
      * @throws RemoteException
      */
-    Item(TreeItem parent, GenericObjectNode element) throws RemoteException
+    Item(TreeItem parent, GenericObject data) throws RemoteException
 		{
+      if (parent == null)
+        this.item = new TreeItem(tree,SWT.NONE); // Root-Element
+      else
+        this.item = new TreeItem(parent,SWT.NONE); // Kind-Element
 
-			// store parent
-			this.parentItem = parent;
-      
-      // store element
-      this.element = element;
+			item.setData(data);
 
-			TreeItem item;
-
-			// this is only needed for the first element
-      if (tree == null)
+      if (columns.size() == 0)
       {
-        // Tree erzeugen
-        tree = new org.eclipse.swt.widgets.Tree(composite, SWT.BORDER);
-
-        // Griddata erzeugen
-        // final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-				final GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
-        tree.setLayoutData(gridData);
-        
-        addListener(tree);
+        item.setText(getValue(data,null));
+      }
+      else
+      {
+        for (int i=0;i<columns.size();++i)
+        {
+          item.setText(i,getValue(data,(Column) columns.get(i)));
+        }
       }
 
-			if (this.parentItem == null) {
-        // Root-Element
-				item = new TreeItem(tree,SWT.BORDER);
-			}
-			else {
-        // Kind-Element
-				item = new TreeItem(this.parentItem,SWT.BORDER);
-			}
+      // Kinder laden
+      if (data instanceof GenericObjectNode)
+      {
+        final GenericObjectNode node = (GenericObjectNode) data;
+        final GenericIterator children = node.getChildren();
+        
+        // Nur als Ordner darstellen, wenn es Kinder hat
+        item.setImage(SWTUtil.getImage(children != null && children.size() > 0 ? "folder.gif" : "page.gif"));
 
-			// create tree item
-			item.setImage(SWTUtil.getImage("folder.gif"));
-			item.setData(element);
-
-			item.setText(""+(String) element.getAttribute(element.getPrimaryAttribute()));
-
-			// make this item the parent
-			this.parentItem = item;
-
-			// load the childs
-  		loadChildren();
-
+        // load the childs
+        if (children != null)
+        {
+          while(children.hasNext())
+          {
+            try
+            {
+              new Item(this.item,children.next());
+            }
+            catch (Exception e)
+            {
+              e.printStackTrace();
+              break;
+            }
+          }
+        }
+      }
+      else
+      {
+        item.setImage(SWTUtil.getImage("page.gif"));
+      }
 		}
 
-
     /**
-     * Laedt alle Kinder dieses Elements.
+     * Liefert den Wert eines Attributes des Objektes.
+     * @param object das Objekt.
+     * @param die Spalte.
+     * @return Wert des Attributs.
      * @throws RemoteException
      */
-    void loadChildren() throws RemoteException
+    private String getValue(GenericObject object, Column col) throws RemoteException
     {
+      if (object == null)
+        return "";
 
-			// iterate over childs
-			GenericIterator list = element.getChildren();
-      while(list.hasNext())
-			{
-				new Item(this.parentItem,(GenericObjectNode)list.next());
-			}
-		}
-    
-    /**
-     * Klappt alle Kind-Elemente auf.
-     */
-    void expandChildren()
-    {
-      enumAndExpand(this.parentItem);
-    }
-    
-    private void enumAndExpand(TreeItem treeItem)
-    {
-      TreeItem[] childItems = treeItem.getItems();
-      int count = childItems.length;
-      for (int i = 0; i < count; ++i)
+      String attribute = null;
+
+      if (col == null || col.columnId == null)
+        attribute = object.getPrimaryAttribute();
+      else
+        attribute = col.columnId;
+
+      Object value = object.getAttribute(attribute);
+      if (value instanceof GenericObject)
       {
-        childItems[i].setExpanded(true);
-        enumAndExpand(childItems[i]);
+        GenericObject foreign = (GenericObject) value;
+        value = foreign.getAttribute(foreign.getPrimaryAttribute());
       }
-      treeItem.setExpanded(true);
+
+      if (value == null)
+        return "";
+      
+      if (col == null || col.formatter == null)
+        return value.toString();
+
+      return col.formatter.format(value);
     }
+  }
+
+
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#addColumn(java.lang.String, java.lang.String, de.willuhn.jameica.gui.formatter.Formatter)
+   */
+  public void addColumn(String title, String field, Formatter f)
+  {
+    this.columns.add(new Column(field,title,f));
+  }
+  
+  
+  private static class Column
+  {
+    private String columnId     = null;
+    private String name         = null;
+    private Formatter formatter = null;
     
-	}
+    private Column(String id, String name, Formatter f)
+    {
+      this.columnId   = id;
+      this.name       = name;
+      this.formatter  = f;
+    }
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.13  2007/03/08 18:55:49  willuhn
+ * @N Tree mit Unterstuetzung fuer Spalten
+ *
  * Revision 1.12  2007/01/18 09:49:29  willuhn
  * *** empty log message ***
  *
