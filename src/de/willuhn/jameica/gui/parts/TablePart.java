@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.61 $
- * $Date: 2007/03/08 18:55:49 $
+ * $Revision: 1.62 $
+ * $Date: 2007/03/12 18:10:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -297,11 +297,12 @@ public class TablePart extends AbstractTablePart
 	 * Hinweis: Der im Konstruktor verwendete GenericIterator zum initialen Befuellen
 	 * der Tabelle wird hierbei nicht angefasst. 
    * @param item zu entfernendes Element.
+   * @return die Position des entfernten Objektes oder -1 wenn es nicht gefunden wurde.
    */
-  public void removeItem(GenericObject item)
+  public int removeItem(GenericObject item)
 	{
     if (table == null || item == null || table.isDisposed())
-			return;
+			return -1;
 		TableItem[] items = table.getItems();
 		GenericObject o = null;
     
@@ -337,7 +338,7 @@ public class TablePart extends AbstractTablePart
 					table.remove(i);
 					size--;
 					refreshSummary();
-					return;
+					return i;
 				}
 				
 			}
@@ -346,6 +347,7 @@ public class TablePart extends AbstractTablePart
 				Logger.error("error while removing item",t);
 			}
 		}
+    return -1;
 	}
 
 	/**
@@ -1186,6 +1188,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.62  2007/03/12 18:10:29  willuhn
+ * @C removeItem returns index of removed object
+ *
  * Revision 1.61  2007/03/08 18:55:49  willuhn
  * @N Tree mit Unterstuetzung fuer Spalten
  *
