@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.35 $
- * $Date: 2006/06/29 14:56:48 $
+ * $Revision: 1.36 $
+ * $Date: 2007/03/12 16:19:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -191,10 +191,7 @@ public class Navigation implements Part, Listener
   protected void add(NavigationItem navi) throws Exception
 	{
 		if (navi == null)
-		{
-			Logger.warn("unable to add navigation, was null");
 			return;
-		}
 		load(navi,this.pluginTree);
     expand(null);
 	}
@@ -264,6 +261,9 @@ public class Navigation implements Part, Listener
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.36  2007/03/12 16:19:09  willuhn
+ * @C disabled warnings if menu/navigation is empty
+ *
  * Revision 1.35  2006/06/29 14:56:48  willuhn
  * @N Menu ist nun auch deaktivierbar
  *

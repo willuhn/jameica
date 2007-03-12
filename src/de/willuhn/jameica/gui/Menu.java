@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.36 $
- * $Date: 2006/06/29 16:20:51 $
+ * $Revision: 1.37 $
+ * $Date: 2007/03/12 16:19:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,10 +71,7 @@ public class Menu
 	protected void add(MenuItem menu) throws Exception
 	{
     if (menu == null)
-    {
-      Logger.warn("unable to add menu, was null");
       return;
-    }
     load(menu,pluginMenu);
 	}
 
@@ -238,6 +235,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.37  2007/03/12 16:19:09  willuhn
+ * @C disabled warnings if menu/navigation is empty
+ *
  * Revision 1.36  2006/06/29 16:20:51  willuhn
  * *** empty log message ***
  *
