@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/FileChangedMessageConsumer.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/03/09 18:03:08 $
+ * $Revision: 1.2 $
+ * $Date: 2007/03/13 11:15:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,6 @@ import java.util.Observer;
 
 import de.willuhn.io.FileWatch;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
 
 /**
  * Ueberwacht alle Programm-Dateien auf Aenderungen und informiert ggf das System.
@@ -73,7 +72,6 @@ public class FileChangedMessageConsumer implements MessageConsumer, Observer
   {
     if (arg == null || !(arg instanceof File))
       return;
-    Logger.info("file " + arg + " has changed");
     Application.getMessagingFactory().sendMessage(new FileChangedMessage((File)arg));
   }
 
@@ -82,6 +80,9 @@ public class FileChangedMessageConsumer implements MessageConsumer, Observer
 
 /*********************************************************************
  * $Log: FileChangedMessageConsumer.java,v $
+ * Revision 1.2  2007/03/13 11:15:57  willuhn
+ * @C removed log message
+ *
  * Revision 1.1  2007/03/09 18:03:08  willuhn
  * @N classloader updates
  * @N FileWatch in de.willuhn.util
