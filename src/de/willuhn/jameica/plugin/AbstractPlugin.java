@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.9 $
- * $Date: 2006/10/07 19:35:11 $
+ * $Revision: 1.10 $
+ * $Date: 2007/03/14 10:37:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,8 @@ public abstract class AbstractPlugin
 	
 	/**
 	 * ct.
+   * TODO: Das muss mal dringend geaendert werden, da hier nicht mehr das JAR sondern das Plugin-Verzeichnis uebergeben
+   * wird. Der Konstruktor koennte daher ohne Parameter oder stattdessen mit dem Manifest aufgerufen werden.
    * @param file Das File, in dem sich das Plugin befindet.
    * Ist i.d.R. das Jar des Plugins selbst.
    */
@@ -43,11 +45,8 @@ public abstract class AbstractPlugin
 	}
 
 	/**
-	 * Liefert ein File-Objekt, welches das Plugin enthaelt.
-	 * Befindet sich das Plugin in einem Jar, wird dieses
-	 * zurueckgegeben, sonst das Verzeichnis, in dem sich das
-	 * Plugin befindet.
-   * @return File, in dem sich das Plugin befindet.
+	 * Liefert das Verzeichnis, in dem sich das Plugin befindet.
+   * @return Verzeichnis, in dem sich das Plugin befindet.
    */
   protected final File getFile()
 	{
@@ -124,6 +123,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.10  2007/03/14 10:37:49  willuhn
+ * @N T O D O Tags
+ *
  * Revision 1.9  2006/10/07 19:35:11  willuhn
  * @B Zugriff auf buildnumber hatte sich mit neuem Pluginloader geaendert
  *

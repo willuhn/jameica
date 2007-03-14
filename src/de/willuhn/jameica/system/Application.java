@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.59 $
- * $Date: 2007/01/31 13:07:52 $
+ * $Revision: 1.60 $
+ * $Date: 2007/03/14 10:37:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -557,6 +557,9 @@ public final class Application {
       try
       {
         // BUGZILLA 265
+        // TODO: Hierbei werden rekursiv auch die Jars der Plugins im Verzeichnis
+        // "plugins" geladen. Genau die werden anschliessend aber nochmal
+        // vom PluginLoader registriert. Das ist redundant.
         app.manifest = prepareClasses(new File("."));
       }
       catch (Exception e)
@@ -761,6 +764,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.60  2007/03/14 10:37:49  willuhn
+ * @N T O D O Tags
+ *
  * Revision 1.59  2007/01/31 13:07:52  willuhn
  * @N Login-Dialog
  * @N SystemMessage
