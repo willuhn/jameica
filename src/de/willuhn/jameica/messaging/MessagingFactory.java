@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.10 $
- * $Date: 2007/03/08 16:00:58 $
+ * $Revision: 1.11 $
+ * $Date: 2007/03/16 14:38:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.Queue;
 import de.willuhn.util.Queue.QueueFullException;
@@ -205,6 +206,7 @@ public final class MessagingFactory
         catch (Throwable t)
         {
           Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getMessage() + ") while consuming message " + msg.toString());
+          Logger.write(Level.DEBUG,"error while processing message",t);
         }
       }
     }
@@ -309,6 +311,10 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.11  2007/03/16 14:38:43  willuhn
+ * @C Redesign ImportMessage
+ * @N Aktualisierung der Umsatztabelle nach Kategorie-Zuordnung
+ *
  * Revision 1.10  2007/03/08 16:00:58  willuhn
  * @R removed some boring log messages
  *
