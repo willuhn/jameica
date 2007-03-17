@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.33 $
- * $Date: 2007/02/26 10:20:33 $
+ * $Revision: 1.34 $
+ * $Date: 2007/03/17 16:41:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -382,10 +382,10 @@ public class SSLFactory
             if (h == null || h.length() == 0)
               continue;
             hostnames += "," + h;
-            Logger.info("comparing hostname " + hostname + " with CN " + h);
+            Logger.debug("comparing hostname " + hostname + " with CN " + h);
             if (h.equalsIgnoreCase(hostname))
             {
-              Logger.info("hostname matched");
+              Logger.debug("hostname matched");
               match = true;
               break;
             }
@@ -644,6 +644,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.34  2007/03/17 16:41:22  willuhn
+ * @C changed loglevel
+ *
  * Revision 1.33  2007/02/26 10:20:33  willuhn
  * @N Pruefen, ob Keystore-File > 0
  *
