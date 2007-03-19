@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.8 $
- * $Date: 2006/08/05 20:44:59 $
+ * $Revision: 1.9 $
+ * $Date: 2007/03/19 12:30:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -87,6 +87,16 @@ public abstract class Container
 
     // Inputfeld
     input.paint(getComposite());
+  }
+  
+  /**
+   * Fuegt ein Eingabe-Feld hinzu, welches ein eigenes Label mitbringt.
+   * @param name Name des Feldes.
+   * @param input Das Eingabefeld.
+   */
+  public void addInput(Input input)
+  {
+    addLabelPair(input.getName(),input);
   }
   
   /**
@@ -258,6 +268,9 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.9  2007/03/19 12:30:06  willuhn
+ * @N Input can now have it's own label
+ *
  * Revision 1.8  2006/08/05 20:44:59  willuhn
  * @B Bug 256
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Input.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.6 $
+ * $Date: 2007/03/19 12:30:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -119,10 +119,25 @@ public interface Input extends Part
    * @return true, wenn es sich um ein Pflichfeld handelt.
    */
   public boolean isMandatory();
+  
+  /**
+   * Speichert die Label-Bezeichnung des Eingabe-Feldes.
+   * @param name Label-Bezeichnung.
+   */
+  public void setName(String name);
+  
+  /**
+   * Liefert die Label-Bezeichnung des Eingabe-Feldes.
+   * @return Label-Bezeichnung.
+   */
+  public String getName();
 }
 
 /**********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.6  2007/03/19 12:30:06  willuhn
+ * @N Input can now have it's own label
+ *
  * Revision 1.5  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

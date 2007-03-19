@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2007/01/23 15:52:10 $
+ * $Revision: 1.16 $
+ * $Date: 2007/03/19 12:30:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,7 +40,8 @@ public abstract class AbstractInput implements Input
 
   private Composite parent = null;
 
-  private String comment = null;
+  private String name        = null;
+  private String comment     = null;
   private Label commentLabel = null;
 
   private Control control = null;
@@ -318,10 +319,31 @@ public abstract class AbstractInput implements Input
   {
     this.mandatory = mandatory;
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#getName()
+   */
+  public String getName()
+  {
+    return this.name;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setName(java.lang.String)
+   */
+  public void setName(String name)
+  {
+    this.name = name;
+  }
+  
+  
 }
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.16  2007/03/19 12:30:06  willuhn
+ * @N Input can now have it's own label
+ *
  * Revision 1.15  2007/01/23 15:52:10  willuhn
  * @C update() check for recursion
  * @N mandatoryCheck configurable

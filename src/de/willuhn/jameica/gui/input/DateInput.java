@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.4 $
+ * $Date: 2007/03/19 12:30:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,7 @@ public class DateInput implements Input
   
   private DialogInput input     = null;
   private CalendarDialog dialog = null;
+  private String name           = null;
   
   private boolean mandatory = false;
   
@@ -290,11 +291,30 @@ public class DateInput implements Input
   {
     this.mandatory = mandatory;
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#getName()
+   */
+  public String getName()
+  {
+    return this.name;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setName(java.lang.String)
+   */
+  public void setName(String name)
+  {
+    this.name = name;
+  }
 }
 
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.4  2007/03/19 12:30:06  willuhn
+ * @N Input can now have it's own label
+ *
  * Revision 1.3  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *
