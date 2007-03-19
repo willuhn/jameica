@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.29 $
- * $Date: 2007/01/23 15:52:10 $
+ * $Revision: 1.30 $
+ * $Date: 2007/03/19 12:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -182,6 +182,8 @@ public class SelectInput extends AbstractInput
       combo.add(this.pleaseChoose);
     }
     
+    // Patch von Heiner
+    combo.setVisibleItemCount(15);
 
     try
     {
@@ -412,6 +414,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.30  2007/03/19 12:15:15  willuhn
+ * @N Patch von Heiner
+ *
  * Revision 1.29  2007/01/23 15:52:10  willuhn
  * @C update() check for recursion
  * @N mandatoryCheck configurable
