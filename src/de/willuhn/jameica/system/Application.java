@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.60 $
- * $Date: 2007/03/14 10:37:49 $
+ * $Revision: 1.61 $
+ * $Date: 2007/03/20 15:12:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -305,7 +305,7 @@ public final class Application {
     if (app.cleanShutdown) 
       return;
 
-    Application.getMessagingFactory().sendMessage(new SystemMessage(SystemMessage.SYSTEM_SHUTDOWN,"shutting down jameica"));
+    Application.getMessagingFactory().sendSyncMessage(new SystemMessage(SystemMessage.SYSTEM_SHUTDOWN,"shutting down jameica"));
 
 		getCallback().getStartupMonitor().setStatus(0);
 
@@ -764,6 +764,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.61  2007/03/20 15:12:24  willuhn
+ * @N send synchronous shutdown message
+ *
  * Revision 1.60  2007/03/14 10:37:49  willuhn
  * @N T O D O Tags
  *
