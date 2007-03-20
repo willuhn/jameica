@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/FileChangedMessageConsumer.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/03/13 11:15:57 $
+ * $Revision: 1.3 $
+ * $Date: 2007/03/20 16:07:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,6 +60,8 @@ public class FileChangedMessageConsumer implements MessageConsumer, Observer
     File[] files = Application.getClassLoader().getFiles();
     for (int i=0;i<files.length;++i)
     {
+      if (!files[i].exists())
+        continue;
       FileWatch.addFile(files[i],this);
     }
 
@@ -80,6 +82,9 @@ public class FileChangedMessageConsumer implements MessageConsumer, Observer
 
 /*********************************************************************
  * $Log: FileChangedMessageConsumer.java,v $
+ * Revision 1.3  2007/03/20 16:07:22  willuhn
+ * @N ignore deleted files
+ *
  * Revision 1.2  2007/03/13 11:15:57  willuhn
  * @C removed log message
  *
