@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/03/08 18:55:49 $
+ * $Revision: 1.14 $
+ * $Date: 2007/03/21 18:42:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,9 +13,10 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
@@ -33,11 +34,12 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.jameica.gui.formatter.TreeFormatter;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -48,11 +50,13 @@ import de.willuhn.util.ApplicationException;
 public class TreePart extends AbstractTablePart
 {
 
+  private TreeFormatter formatter   = null;
   private Action action             = null;
   private GenericIterator list      = null;
   private Tree tree                 = null;
-  private ArrayList columns         = new ArrayList();
-  
+
+  private String id                 = null;
+
     
 	/**
    * Erzeugt einen neuen Tree basierend auf dem uebergebenen Objekt.
@@ -86,6 +90,43 @@ public class TreePart extends AbstractTablePart
   {
 		this.action = action;
     this.list = list;
+  }
+
+  /**
+   * Definiert einen optionalen Formatierer, mit dem man SWT-maessig ganze Zeilen formatieren kann.
+   * @param formatter Formatter.
+   */
+  public void setFormatter(TreeFormatter formatter)
+  {
+    this.formatter = formatter;
+  }
+
+  /**
+   * Liefert eine fuer die Tabelle eindeutige ID.
+   * @return eindeutige ID.
+   * @throws Exception
+   */
+  private String getID() throws Exception
+  {
+    if (this.id != null)
+      return id;
+
+    this.list.begin();
+    StringBuffer sb = new StringBuffer();
+    if (this.list.hasNext())
+      sb.append(this.list.next().getClass().getName());
+
+    for (int i=0;i<this.columns.size();++i)
+    {
+      Column col = (Column) this.columns.get(i);
+      sb.append(col.columnId);
+    }
+
+    String s = sb.toString();
+    if (s == null || s.length() == 0)
+      s = "unknown";
+    this.id = Checksum.md5(s.getBytes());
+    return this.id;
   }
 
   /**
@@ -143,6 +184,33 @@ public class TreePart extends AbstractTablePart
           Object value = test.getAttribute(col.columnId);
           if (value instanceof Number)  tc.setAlignment(SWT.RIGHT);
         }
+
+        // Wenn wir uns die Spalten merken wollen, duerfen
+        // wir den DisposeListener nicht an die Tabelle haengen
+        // sondern an die TreeColumns. Denn wenn das Dispose-
+        // Event fuer die Tabelle kommt, hat sie ihre TableColumns
+        // bereits disposed. Mit dem Effekt, dass ein table.getColumn(i)
+        // eine NPE werfen wuerde.
+        if (rememberColWidth)
+        {
+          final int index = i;
+          tc.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+              try
+              {
+                if (tc == null || tc.isDisposed())
+                  return;
+                settings.setAttribute("width." + getID() + "." + index,tc.getWidth());
+              }
+              catch (Exception ex)
+              {
+                Logger.error("unable to store width for column " + index,ex);
+              }
+            }
+          });
+        }
+      
       }
 
       // Liste zuruecksetzen
@@ -165,10 +233,31 @@ public class TreePart extends AbstractTablePart
       expand(items[i]);
     /////////////////////////////////////////////////////////////////
     
-    TreeColumn[] cols = this.tree.getColumns();
-    for (int i=0;i<cols.length;++i)
+    // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
+    int cols = this.tree.getColumnCount();
+    for (int i=0;i<cols;++i)
     {
-      cols[i].pack();
+      TreeColumn col = this.tree.getColumn(i);
+      if (rememberColWidth)
+      {
+        int size = 0;
+        try
+        {
+          size = settings.getInt("width." + getID() + "." + i,0);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to restore column width",e);
+        }
+        if (size <= 0)
+          col.pack();
+        else
+          col.setWidth(size);
+      }
+      else
+      {
+        col.pack();
+      }
     }
   }
   
@@ -274,6 +363,12 @@ public class TreePart extends AbstractTablePart
           item.setText(i,getValue(data,(Column) columns.get(i)));
         }
       }
+      
+      // Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
+      // TableFormatter drueber
+      if (formatter != null)
+        formatter.format(item);
+
 
       // Kinder laden
       if (data instanceof GenericObjectNode)
@@ -343,35 +438,16 @@ public class TreePart extends AbstractTablePart
     }
   }
 
-
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#addColumn(java.lang.String, java.lang.String, de.willuhn.jameica.gui.formatter.Formatter)
-   */
-  public void addColumn(String title, String field, Formatter f)
-  {
-    this.columns.add(new Column(field,title,f));
-  }
   
-  
-  private static class Column
-  {
-    private String columnId     = null;
-    private String name         = null;
-    private Formatter formatter = null;
-    
-    private Column(String id, String name, Formatter f)
-    {
-      this.columnId   = id;
-      this.name       = name;
-      this.formatter  = f;
-    }
-  }
-
 }
 
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.14  2007/03/21 18:42:16  willuhn
+ * @N Formatter fuer TreePart
+ * @C mehr gemeinsamer Code in AbstractTablePart
+ *
  * Revision 1.13  2007/03/08 18:55:49  willuhn
  * @N Tree mit Unterstuetzung fuer Spalten
  *

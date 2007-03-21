@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.62 $
- * $Date: 2007/03/12 18:10:29 $
+ * $Revision: 1.63 $
+ * $Date: 2007/03/21 18:42:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -49,13 +48,11 @@ import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
@@ -71,14 +68,13 @@ public class TablePart extends AbstractTablePart
 
   private GenericIterator list					= null;
 	private Action action									= null;
-  private Vector columns                = new Vector();
-  private TableFormatter tableFormatter = null;
   private ContextMenu menu              = null;
 
   private boolean enabled               = true;
 	private boolean showSummary						= true;
 
   private org.eclipse.swt.widgets.Table table = null;
+  protected TableFormatter tableFormatter = null;
 	private Composite comp 								= null;
 	private Label summary									= null;
 
@@ -91,12 +87,10 @@ public class TablePart extends AbstractTablePart
 	private Image up										= null;
 	private Image down									= null;
   private boolean rememberOrder       = false;
-  private boolean rememberColWidth    = false;
   private boolean check               = false;
 
 	private int size = 0;
   
-  private Settings settings           = new Settings(TablePart.class);
   private String id                   = null;
 
   private ArrayList selectionListeners = new ArrayList();
@@ -106,7 +100,6 @@ public class TablePart extends AbstractTablePart
   // Fuer den Aenderungs-Support
   private TableEditor editor          = null;
   private ArrayList changeListeners   = new ArrayList();
-  private boolean changeable          = false;
 
   
   /**
@@ -123,15 +116,6 @@ public class TablePart extends AbstractTablePart
 		down = SWTUtil.getImage("down.gif");
   }
   
-	/**
-	 * Definiert einen optionalen Formatierer, mit dem man SWT-maessig ganze Zeilen formatieren kann.
-   * @param formatter Formatter.
-   */
-  public void setFormatter(TableFormatter formatter)
-	{
-		this.tableFormatter = formatter;
-	}
-
   /**
    * Legt fest, ob mehrere Elemente gleichzeitig markiert werden koennen.
    * Default: False.
@@ -150,6 +134,15 @@ public class TablePart extends AbstractTablePart
 	{
 		this.menu = menu;
 	}
+  
+  /**
+   * Definiert einen optionalen Formatierer, mit dem man SWT-maessig ganze Zeilen formatieren kann.
+   * @param formatter Formatter.
+   */
+  public void setFormatter(TableFormatter formatter)
+  {
+    this.tableFormatter = formatter;
+  }
 
   /**
    * fuegt der Tabelle einen Listener hinzu, der ausgeloest wird, wenn ein
@@ -171,31 +164,6 @@ public class TablePart extends AbstractTablePart
   {
     if (l != null)
       this.selectionListeners.add(l);
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#addColumn(java.lang.String, java.lang.String, de.willuhn.jameica.gui.formatter.Formatter)
-   */
-  public void addColumn(String title, String field, Formatter f)
-  {
-    addColumn(title,field,f,false);
-  }
-
-  /**
-   * Fuegt der Tabelle eine neue Spalte hinzu und dazu noch einen Formatierer.
-   * @param title Name der Spaltenueberschrift.
-   * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
-   * @param f Formatter, der fuer die Anzeige des Wertes verwendet werden soll.
-   * @param changeable legt fest, ob die Werte in dieser Spalte direkt editierbar sein sollen.
-   * Wenn der Parameter true ist, dann sollte der Tabelle via <code>addChangeListener</code>
-   * ein Listener hinzugefuegt werden, der benachrichtigt wird, wenn der Benutzer einen
-   * Wert geaendert hat. Es ist anschliessend Aufgabe des Listeners, den geaenderten
-   * Wert im Fachobjekt zu uebernehmen.
-   */
-  public void addColumn(String title, String field, Formatter f, boolean changeable)
-  {
-    this.columns.add(new Column(field,title,f,changeable));
-    this.changeable |= changeable;
   }
 
   /**
@@ -252,15 +220,6 @@ public class TablePart extends AbstractTablePart
       list.add(items[i].getData());
     }
     return PseudoIterator.fromArray((GenericObject[])list.toArray(new GenericObject[list.size()]));
-  }
-
-  /**
-   * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
-   * @param remember true, wenn sie sich die Spaltenbreiten merken soll.
-   */
-  public void setRememberColWidths(boolean remember)
-  {
-    this.rememberColWidth = remember;
   }
 
   /**
@@ -1087,22 +1046,6 @@ public class TablePart extends AbstractTablePart
     return null;
   }
 	
-  private static class Column
-  {
-    private String columnId     = null;
-    private String name         = null;
-    private Formatter formatter = null;
-    private boolean canChange   = false;
-    
-    private Column(String id, String name, Formatter f, boolean changeable)
-    {
-      this.columnId   = id;
-      this.name       = name;
-      this.formatter  = f;
-      this.canChange  = changeable;
-    }
-  }
-
   /**
 	 * Kleine Hilfs-Klasse fuer die Sortierung.
    */
@@ -1188,6 +1131,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.63  2007/03/21 18:42:16  willuhn
+ * @N Formatter fuer TreePart
+ * @C mehr gemeinsamer Code in AbstractTablePart
+ *
  * Revision 1.62  2007/03/12 18:10:29  willuhn
  * @C removeItem returns index of removed object
  *
