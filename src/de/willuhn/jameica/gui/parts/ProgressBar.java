@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.15 $
- * $Date: 2006/06/19 22:23:33 $
+ * $Revision: 1.16 $
+ * $Date: 2007/03/21 13:48:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -97,6 +97,11 @@ public class ProgressBar implements ProgressMonitor, Part
 						barLabel.setForeground(Color.ERROR.getSWTColor());
 					else
 						barLabel.setForeground(Color.WIDGET_FG.getSWTColor());
+          
+          // Einige User berichteten, dass der Text nicht rechtzeitig
+          // aktualisiert wird.
+          barLabel.redraw();
+          barLabel.update();
         }
 			}
 		});
@@ -214,6 +219,10 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.16  2007/03/21 13:48:52  willuhn
+ * @N new abstract "WaitDialog"
+ * @N force redraw in backgroundtask monitor/statusbar
+ *
  * Revision 1.15  2006/06/19 22:23:33  willuhn
  * *** empty log message ***
  *

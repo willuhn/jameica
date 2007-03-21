@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarTextItem.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/04/18 16:49:46 $
- * $Author: web0 $
+ * $Revision: 1.3 $
+ * $Date: 2007/03/21 13:48:52 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -149,6 +149,8 @@ public class StatusBarTextItem implements StatusBarItem
             }
             text.setForeground(color.getSWTColor());
             text.setText(m.getText() + " ");
+            text.redraw();
+            text.update();
             lastClick = currentClick;
           }
         }
@@ -160,8 +162,13 @@ public class StatusBarTextItem implements StatusBarItem
           {
             public void run()
             {
-              if (currentClick == lastClick && !text.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
+              if (currentClick == lastClick && !text.isDisposed())
+              {
+                // nur entfernen, wenn wir der letzte Klick waren
                 text.setText("");
+                text.redraw();
+                text.update();
+              }
             }
           });
         }
@@ -182,6 +189,10 @@ public class StatusBarTextItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarTextItem.java,v $
+ * Revision 1.3  2007/03/21 13:48:52  willuhn
+ * @N new abstract "WaitDialog"
+ * @N force redraw in backgroundtask monitor/statusbar
+ *
  * Revision 1.2  2006/04/18 16:49:46  web0
  * @C redesign in MessagingFactory
  *
