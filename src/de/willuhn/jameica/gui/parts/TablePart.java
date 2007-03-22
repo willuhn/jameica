@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.63 $
- * $Date: 2007/03/21 18:42:16 $
+ * $Revision: 1.64 $
+ * $Date: 2007/03/22 22:36:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,7 +68,6 @@ public class TablePart extends AbstractTablePart
 
   private GenericIterator list					= null;
 	private Action action									= null;
-  private ContextMenu menu              = null;
 
   private boolean enabled               = true;
 	private boolean showSummary						= true;
@@ -126,15 +125,6 @@ public class TablePart extends AbstractTablePart
     this.multi = multi;
   }
 
-  /**
-	 * Fuegt ein KontextMenu zur Tabelle hinzu.
-   * @param menu das anzuzeigende Menu.
-   */
-  public void setContextMenu(ContextMenu menu)
-	{
-		this.menu = menu;
-	}
-  
   /**
    * Definiert einen optionalen Formatierer, mit dem man SWT-maessig ganze Zeilen formatieren kann.
    * @param formatter Formatter.
@@ -1131,6 +1121,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.64  2007/03/22 22:36:47  willuhn
+ * @N Contextmenu in Trees
+ * @C Kategorie-Baum in separates TreePart ausgelagert
+ *
  * Revision 1.63  2007/03/21 18:42:16  willuhn
  * @N Formatter fuer TreePart
  * @C mehr gemeinsamer Code in AbstractTablePart

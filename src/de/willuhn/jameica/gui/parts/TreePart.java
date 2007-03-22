@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.14 $
- * $Date: 2007/03/21 18:42:16 $
+ * $Revision: 1.15 $
+ * $Date: 2007/03/22 22:36:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -142,25 +142,30 @@ public class TreePart extends AbstractTablePart
     this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER);
     final GridData gridData = new GridData(GridData.FILL_BOTH);
     this.tree.setLayoutData(gridData);
+    
     // Listener fuer "Folder auf machen"
-    tree.addListener(SWT.Expand, new Listener() {
+    this.tree.addListener(SWT.Expand, new Listener() {
       public void handleEvent(Event event) {
         handleFolderOpen(event);
       }
     });
     // Listener fuer "Folder auf machen"
-    tree.addListener(SWT.Collapse, new Listener() {
+    this.tree.addListener(SWT.Collapse, new Listener() {
       public void handleEvent(Event event) {
         handleFolderClose(event);
       }
     });
 
-    // Listener fuer die Aktionen
-    tree.addMouseListener(new MouseAdapter()
+    // Listener fuer die Doppelklick und Menu.
+    this.tree.addMouseListener(new MouseAdapter()
     {
       public void mouseDoubleClick(MouseEvent e)
       {
         handleSelect(e);
+      }
+      public void mouseDown(MouseEvent e)
+      {
+        handleMenu(e);
       }
     });
 
@@ -259,6 +264,10 @@ public class TreePart extends AbstractTablePart
         col.pack();
       }
     }
+    
+    // Und jetzt noch das ContextMenu malen
+    if (menu != null)
+      menu.paint(this.tree);
   }
   
   /**
@@ -304,7 +313,23 @@ public class TreePart extends AbstractTablePart
   	item.setImage(SWTUtil.getImage("folder.gif"));
 	}
 
-	/**
+  /**
+   * Oeffnet das Menu. 
+   * @param event das ausgeloeste Event.
+   */
+  private void handleMenu(MouseEvent event)
+  {
+    if (menu == null) return;
+
+    Widget widget = tree.getItem(new Point(event.x,event.y));
+    if (!(widget instanceof TreeItem))
+      return;
+    TreeItem item = (TreeItem) widget;
+
+    menu.setCurrentObject(item.getData());
+  }
+
+  /**
 	 * Behandelt das Event "action". 
 	 * @param event das ausgeloeste Event.
 	 */
@@ -368,7 +393,6 @@ public class TreePart extends AbstractTablePart
       // TableFormatter drueber
       if (formatter != null)
         formatter.format(item);
-
 
       // Kinder laden
       if (data instanceof GenericObjectNode)
@@ -444,6 +468,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.15  2007/03/22 22:36:47  willuhn
+ * @N Contextmenu in Trees
+ * @C Kategorie-Baum in separates TreePart ausgelagert
+ *
  * Revision 1.14  2007/03/21 18:42:16  willuhn
  * @N Formatter fuer TreePart
  * @C mehr gemeinsamer Code in AbstractTablePart

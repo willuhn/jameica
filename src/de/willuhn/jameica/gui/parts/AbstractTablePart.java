@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/03/21 18:42:16 $
+ * $Revision: 1.3 $
+ * $Date: 2007/03/22 22:36:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import de.willuhn.jameica.system.Settings;
  */
 public abstract class AbstractTablePart implements Part
 {
+  protected ContextMenu menu              = null;
   protected boolean changeable            = false;
   protected boolean rememberColWidth      = false;
   protected Vector columns                = new Vector();
@@ -68,6 +69,15 @@ public abstract class AbstractTablePart implements Part
   }
 
   /**
+   * Fuegt ein KontextMenu hinzu.
+   * @param menu das anzuzeigende Menu.
+   */
+  public void setContextMenu(ContextMenu menu)
+  {
+    this.menu = menu;
+  }
+
+  /**
    * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
    * @param remember true, wenn sie sich die Spaltenbreiten merken soll.
    */
@@ -96,6 +106,10 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.3  2007/03/22 22:36:47  willuhn
+ * @N Contextmenu in Trees
+ * @C Kategorie-Baum in separates TreePart ausgelagert
+ *
  * Revision 1.2  2007/03/21 18:42:16  willuhn
  * @N Formatter fuer TreePart
  * @C mehr gemeinsamer Code in AbstractTablePart
