@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/03/22 22:36:47 $
+ * $Revision: 1.4 $
+ * $Date: 2007/03/28 16:59:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,11 +24,11 @@ import de.willuhn.jameica.system.Settings;
  */
 public abstract class AbstractTablePart implements Part
 {
-  protected ContextMenu menu              = null;
-  protected boolean changeable            = false;
-  protected boolean rememberColWidth      = false;
-  protected Vector columns                = new Vector();
-  protected Settings settings             = new Settings(getClass());
+  protected ContextMenu menu               = null;
+  protected boolean changeable             = false;
+  protected boolean rememberColWidth       = false;
+  protected Vector columns                 = new Vector();
+  protected final static Settings settings = new Settings(AbstractTablePart.class);
 
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
@@ -106,6 +106,9 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.4  2007/03/28 16:59:04  willuhn
+ * @C Eine Settings-Instanz fuer alle TableParts/TreeParts
+ *
  * Revision 1.3  2007/03/22 22:36:47  willuhn
  * @N Contextmenu in Trees
  * @C Kategorie-Baum in separates TreePart ausgelagert
