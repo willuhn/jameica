@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.21 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.22 $
+ * $Date: 2007/03/29 15:29:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -139,7 +139,7 @@ public final class PluginLoader
       {
         String name = mf.getName();
         Logger.error("unable to init plugin  " + name,t);
-        Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Initialisieren des Plugins {0}",new String[]{name}));
+        Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",new String[]{name,t.getMessage()}));
       }
     }
 	}
@@ -408,6 +408,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.22  2007/03/29 15:29:48  willuhn
+ * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
+ *
  * Revision 1.21  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *

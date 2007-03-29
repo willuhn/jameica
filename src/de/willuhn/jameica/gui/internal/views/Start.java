@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/06/30 13:51:34 $
+ * $Revision: 1.12 $
+ * $Date: 2007/03/29 15:29:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,7 +37,7 @@ public class Start extends AbstractView implements Extendable
    */
   public void bind() throws Exception
   {
-    GUI.getView().setTitle(Application.getI18n().tr("Jameica"));
+    GUI.getView().setTitle(Application.getI18n().tr("Willkommen"));
 
     Box[] boxes = BoxRegistry.getBoxes();
 
@@ -86,6 +86,9 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.12  2007/03/29 15:29:48  willuhn
+ * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
+ *
  * Revision 1.11  2006/06/30 13:51:34  willuhn
  * @N Pluginloader Redesign in HEAD uebernommen
  *

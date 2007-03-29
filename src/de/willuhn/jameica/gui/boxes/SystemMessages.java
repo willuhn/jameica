@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/SystemMessages.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/07/03 23:10:24 $
+ * $Revision: 1.4 $
+ * $Date: 2007/03/29 15:29:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -86,12 +86,22 @@ public class SystemMessages extends AbstractBox
       return;
     StringBuffer sb = new StringBuffer();
     sb.append("<form>");
+    sb.append("<p><span color=\"header\" font=\"header\">" + Application.getI18n().tr("System-Meldungen") + "</span></p>");
     for (int i=0;i<messages.length;++i)
     {
+      if (messages[i] == null || messages[i].length() == 0)
+        continue;
+      
       sb.append("<li>");
-      sb.append(messages[i]);
+      
+      // Wenn in dem Text die Begriffe "Error", "Fehler" oder "Exception" auftreten, markieren wir es gleich rot
+      if (messages[i].toLowerCase().matches(".*(error|fehler|exception).*"))
+        sb.append("<span color=\"error\">" + messages[i] + "</span>");
+      else
+        sb.append(messages[i]);
       sb.append("</li>");
     }
+    sb.append("<br/><br/><p>Klicken Sie ggf. unten rechts auf die Jameica-Statusleiste, um die letzten Meldungen des System-Logs anzuzeigen.</p>");
     sb.append("</form>");
     FormTextPart part = new FormTextPart(sb.toString());
     part.paint(parent);
@@ -102,6 +112,9 @@ public class SystemMessages extends AbstractBox
 
 /*********************************************************************
  * $Log: SystemMessages.java,v $
+ * Revision 1.4  2007/03/29 15:29:48  willuhn
+ * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
+ *
  * Revision 1.3  2006/07/03 23:10:24  willuhn
  * *** empty log message ***
  *

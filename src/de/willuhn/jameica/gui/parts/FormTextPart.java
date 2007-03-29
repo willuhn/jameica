@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.11 $
- * $Date: 2005/08/25 21:18:24 $
- * $Author: web0 $
+ * $Revision: 1.12 $
+ * $Date: 2007/03/29 15:29:48 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -169,6 +169,8 @@ public class FormTextPart implements Part {
 		text.setBackground(Color.BACKGROUND.getSWTColor());
 
 		text.setColor("header",Color.COMMENT.getSWTColor());
+    text.setColor("error",Color.ERROR.getSWTColor());
+    text.setColor("success",Color.SUCCESS.getSWTColor());
 		text.setFont("header", Font.H1.getSWTFont());
 
 		container.setContent(text);
@@ -222,6 +224,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.12  2007/03/29 15:29:48  willuhn
+ * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
+ *
  * Revision 1.11  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *
