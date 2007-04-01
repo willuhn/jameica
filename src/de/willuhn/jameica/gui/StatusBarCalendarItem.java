@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarCalendarItem.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/08/02 09:12:02 $
+ * $Revision: 1.3 $
+ * $Date: 2007/04/01 22:15:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,6 +58,7 @@ public class StatusBarCalendarItem implements StatusBarItem
     text = new Label(parent, SWT.NONE);
     GridData at = new GridData(GridData.FILL_HORIZONTAL);
     at.verticalAlignment = GridData.CENTER;
+    at.widthHint = 200;
     at.horizontalIndent = 5;
     at.verticalIndent = 1;
     text.setAlignment(SWT.LEFT);
@@ -134,6 +135,10 @@ public class StatusBarCalendarItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarCalendarItem.java,v $
+ * Revision 1.3  2007/04/01 22:15:22  willuhn
+ * @B Breite des Statusbarlabels
+ * @B Redraw der Statusleiste
+ *
  * Revision 1.2  2006/08/02 09:12:02  willuhn
  * @B Sortierung der Boxen auf der Startseite
  *

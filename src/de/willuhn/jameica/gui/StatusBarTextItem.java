@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarTextItem.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/03/21 13:48:52 $
+ * $Revision: 1.4 $
+ * $Date: 2007/04/01 22:15:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,9 +57,10 @@ public class StatusBarTextItem implements StatusBarItem
   public void paint(Composite parent) throws RemoteException
   {
     text = new Label(parent, SWT.NONE);
-    GridData at = new GridData(GridData.FILL_HORIZONTAL);
+    GridData at = new GridData(GridData.FILL_BOTH);
     at.verticalAlignment = GridData.CENTER;
     at.verticalIndent = 1;
+    at.widthHint = 600;
     text.setAlignment(SWT.RIGHT);
     text.setLayoutData(at);
     text.setText("");
@@ -149,8 +150,8 @@ public class StatusBarTextItem implements StatusBarItem
             }
             text.setForeground(color.getSWTColor());
             text.setText(m.getText() + " ");
-            text.redraw();
             text.update();
+            text.redraw();
             lastClick = currentClick;
           }
         }
@@ -166,8 +167,8 @@ public class StatusBarTextItem implements StatusBarItem
               {
                 // nur entfernen, wenn wir der letzte Klick waren
                 text.setText("");
-                text.redraw();
                 text.update();
+                text.redraw();
               }
             }
           });
@@ -189,9 +190,9 @@ public class StatusBarTextItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarTextItem.java,v $
- * Revision 1.3  2007/03/21 13:48:52  willuhn
- * @N new abstract "WaitDialog"
- * @N force redraw in backgroundtask monitor/statusbar
+ * Revision 1.4  2007/04/01 22:15:22  willuhn
+ * @B Breite des Statusbarlabels
+ * @B Redraw der Statusleiste
  *
  * Revision 1.2  2006/04/18 16:49:46  web0
  * @C redesign in MessagingFactory

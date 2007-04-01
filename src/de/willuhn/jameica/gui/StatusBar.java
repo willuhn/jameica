@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.51 $
- * $Date: 2006/03/15 16:36:18 $
- * $Author: web0 $
+ * $Revision: 1.52 $
+ * $Date: 2007/04/01 22:15:22 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -112,7 +112,9 @@ public class StatusBar implements Part
       if (i < (size - 1))
       {
         final Label sep = new Label(tComp, SWT.SEPARATOR | SWT.VERTICAL);
-        sep.setLayoutData(new GridData(GridData.FILL_BOTH));
+        final GridData sepgd = new GridData(GridData.FILL_VERTICAL);
+        sepgd.widthHint = 5;
+        sep.setLayoutData(sepgd);
       }
     }
 
@@ -177,6 +179,10 @@ public class StatusBar implements Part
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.52  2007/04/01 22:15:22  willuhn
+ * @B Breite des Statusbarlabels
+ * @B Redraw der Statusleiste
+ *
  * Revision 1.51  2006/03/15 16:36:18  web0
  * @C changed border style
  *
