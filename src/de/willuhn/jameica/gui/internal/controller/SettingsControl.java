@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.18 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.19 $
+ * $Date: 2007/04/02 23:01:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,9 +14,8 @@
 package de.willuhn.jameica.gui.internal.controller;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
@@ -237,23 +236,8 @@ public class SettingsControl extends AbstractControl
 		if (locale != null)
 			return locale;
 
-		Locale[] available = Locale.getAvailableLocales();
-		ArrayList al = new ArrayList();
-		for (int i=0;i<available.length;++i)
-		{
-			try
-			{
-				// Wir ueberspringen nicht vorhandene Sprachen
-				ResourceBundle.getBundle("lang/messages",available[i]);
-				al.add(new LocaleObject(available[i]));
-			}
-			catch (Exception e)
-			{
-			}
-		}
-		
-		LocaleObject[] lo = (LocaleObject[]) al.toArray(new LocaleObject[al.size()]);
-		locale = new SelectInput(PseudoIterator.fromArray(lo),new LocaleObject(Application.getConfig().getLocale()));
+		locale = new SelectInput(Arrays.asList(Locale.getAvailableLocales()),Application.getConfig().getLocale());
+    locale.setAttribute("displayName");
 		return locale;
 	}
 
@@ -410,8 +394,8 @@ public class SettingsControl extends AbstractControl
       Color.MANDATORY_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorMandatoryBG().getValue());
 			StyleFactoryObject fo = (StyleFactoryObject) getStyleFactory().getValue();
 			GUI.setStyleFactory(fo.factory);
-			LocaleObject lo = (LocaleObject) getLocale().getValue();
-			Application.getConfig().setLocale(lo.locale);
+			Locale lo = (Locale) getLocale().getValue();
+			Application.getConfig().setLocale(lo);
 
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
@@ -533,70 +517,14 @@ public class SettingsControl extends AbstractControl
       return new String[] {"name"};
     }
   }
-
-	/**
-	 * Hilfsklasse zum Behandeln der Locales.
-   */
-  private static class LocaleObject implements GenericObject
-	{
-		private Locale locale;
-
-		/**
-		 * ct.
-     * @param l
-     */
-    private LocaleObject(Locale l)
-		{
-			this.locale = l;
-		}
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
-     */
-    public Object getAttribute(String arg0) throws RemoteException
-    {
-      return locale.getDisplayName();
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getID()
-     */
-    public String getID() throws RemoteException
-    {
-      return locale.getLanguage() + "_" + locale.getCountry();
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-     */
-    public String getPrimaryAttribute() throws RemoteException
-    {
-      return "name";
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-     */
-    public boolean equals(GenericObject arg0) throws RemoteException
-    {
-    	if (arg0 == null)
-    		return false;
-      return arg0.getID().equals(this.getID());
-    }
-
-		/**
-		 * @see de.willuhn.datasource.GenericObject#getAttributeNames()
-		 */
-		public String[] getAttributeNames() throws RemoteException
-		{
-			return new String[] {"name"};
-		}
-	}
 }
 
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.19  2007/04/02 23:01:43  willuhn
+ * @N SelectInput auf BeanUtil umgestellt
+ *
  * Revision 1.18  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

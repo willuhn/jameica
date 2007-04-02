@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.30 $
- * $Date: 2007/03/19 12:15:15 $
+ * $Revision: 1.31 $
+ * $Date: 2007/04/02 23:01:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,12 +13,13 @@
 package de.willuhn.jameica.gui.input;
 
 import java.rmi.RemoteException;
-import java.util.Hashtable;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Control;
 
+import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
@@ -36,28 +37,42 @@ import de.willuhn.logging.Logger;
  */
 public class SelectInput extends AbstractInput
 {
-
-  private GenericIterator list;
-  private GenericObject preselected;
-  private CCombo combo;
-
-	private Hashtable values = new Hashtable();
-
-  private boolean enabled = true;
+  // Fachdaten
+  private List list           = null;
+  private Object preselected  = null;
+  private String attribute    = null;
+  
+  // SWT-Daten
+  private CCombo combo        = null;
+  private boolean enabled     = true;
   private String pleaseChoose = null;
 
-	private String attribute = null;
 
   /**
    * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
+   * Um Jameica von spezifischem Code aus de.willuhn.datasource zu befreien,
+   * sollte kuenftig besser der generische Konstruktor <code>List</code>,<code>Object</code>
+   * verwendet werden. Damit kann die Anwendung spaeter auch auf ein anderes Persistierungsframework
+   * umgestellt werden.
    * @param list Liste von Objekten.
    * @param preselected das Object, welches vorselektiert sein soll. Optional.
+   * @throws RemoteException
    */
-  public SelectInput(GenericIterator list, GenericObject preselected)
+  public SelectInput(GenericIterator list, GenericObject preselected) throws RemoteException
   {
-  	super();
-  	this.list = list;
-  	this.preselected = preselected;
+    this(PseudoIterator.asList(list),preselected);
+  }
+  
+  /**
+   * Erzeugt die Combox-Box mit Standard-Beans.
+   * @param list Liste der Objekte.
+   * @param preselected das vorausgewaehlte Objekt.
+   */
+  public SelectInput(List list, Object preselected)
+  {
+    super();
+    this.list        = list;
+    this.preselected = preselected;
   }
 
 	/**
@@ -67,77 +82,34 @@ public class SelectInput extends AbstractInput
    */
   public SelectInput(String[] list, String preselected)
   {
-  	GenericObject[] s = new GenericObject[list.length];
-  	for (int i=0;i<list.length;++i)
-  	{
-  		s[i] = new StringObject(list[i]);
-  	}
-  	this.preselected = preselected == null ? null : new StringObject(preselected);
-    try
-    {
-      this.list = PseudoIterator.fromArray(s);
-    }
-    catch (RemoteException e)
-    {
-      throw new RuntimeException("error while initializing iterator");
-    }
+    this(Arrays.asList(list),preselected);
   }
 
-  /**
-   * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
-   * Die Liste muss Objekte des Typs <code>String</code> enthalten.
-   * @param list Liste der Elemente.
-   * @param preselected
-   */
-  public SelectInput(List list, String preselected)
-  {
-    this((String[])list.toArray(new String[list.size()]), preselected);
-  }
-  
 	/**
 	 * Aendert nachtraeglich das vorausgewaehlte Element.
    * @param preselected neues vorausgewaehltes Element.
    */
-  public void setPreselected(String preselected)
+  public void setPreselected(Object preselected)
   {
     if (preselected == null)
       return;
-    setPreselected(new StringObject(preselected));
-  }
-  
-  /**
-   * Aendert nachtraeglich das vorausgewaehlte Element.
-   * @param preselected neues vorausgewaehltes Element.
-   */
-  public void setPreselected(GenericObject preselected)
-  {
-    if (preselected == null)
-      return;
-
+    System.out.println(preselected);
+    
     this.preselected = preselected;
     
-    if (combo != null && !combo.isDisposed())
+    if (this.combo == null || this.combo.isDisposed())
+      return;
+
+    int size = this.list.size();
+    for (int i=0;i<size;++i)
     {
-      try
+      Object value = this.combo.getData(Integer.toString(i));
+      if (value == null) // Fuer den Fall, dass die equals-Methode von preselected nicht mit null umgehen kann
+        continue;
+      if (preselected.equals(value))
       {
-        String value = getAttributeValue(preselected);
-        if (value == null)
-        	return;
-        
-        String[] items = combo.getItems();
-        for (int i=0;i<items.length;++i)
-        {
-          if (items[i].equals(value))
-          {
-            combo.select(i);
-            return;
-          }
-        }
-      }
-      catch (RemoteException e)
-      {
-        // skipping
-        Logger.error("error while reading attribute",e);
+        combo.select(i);
+        return;
       }
     }
   }
@@ -153,9 +125,10 @@ public class SelectInput extends AbstractInput
   }
   
   /**
-	 * Ueberschreibt den Namen des anzuzeigenden Attributes.
-	 * Normalerweise wird einfach das Primaer-Attribut angezeigt, mit dieser
-	 * Funktion kann auch ein anderes gewaehlt werden.
+   * Legt den Namen des Attributes fest, welches von den Objekten angezeigt werden
+   * soll. Bei herkoemmlichen Beans wird also ein Getter mit diesem Namen aufgerufen. 
+   * Wird kein Attribut angegeben, wird bei Objekten des Typs <code>GenericObject</code>
+   * der Wert des Primaer-Attributes angezeigt, andernfalls der Wert von <code>toString()</code>.
    * @param name Name des anzuzeigenden Attributes (muss im GenericObject
    * via getAttribute(String) abrufbar sein).
    */
@@ -171,88 +144,88 @@ public class SelectInput extends AbstractInput
   public Control getControl()
   {
 
-		combo = GUI.getStyleFactory().createCombo(getParent());
+    this.combo = GUI.getStyleFactory().createCombo(getParent());
 
-    int selected = 0;
-    int i = 0;
+    int selected             = -1;
+    boolean havePleaseChoose = false;
+    boolean haveAttribute    = this.attribute != null && this.attribute.length() > 0;
 
+    // Haben wir einen "bitte waehlen..."-Text?
     if (this.pleaseChoose != null && this.pleaseChoose.length() > 0)
     {
-      i = 1; // Wenn der Text da ist, muessen wir bei 1 mit Zaehlen anfangen
-      combo.add(this.pleaseChoose);
+      this.combo.add(this.pleaseChoose);
+      havePleaseChoose = true;
     }
-    
-    // Patch von Heiner
-    combo.setVisibleItemCount(15);
 
     try
     {
-      while (list.hasNext())
+      int size = this.list.size();
+      for (int i=0;i<size;++i)
       {
-      	final GenericObject current = list.next();
+        Object object = this.list.get(i);
 
-				String name = getAttributeValue(current);
-				if (name == null)
-					continue; // nichts zum Anzeigen da
+        if (object == null)
+          continue;
 
-      	// Da CCombo und Combo nicht fuer jeden Eintrag Daten speichern
-      	// koennen, muessen wir das selbst tun.
-      	values.put(name,current);
-      	combo.add(name);
-      	if (preselected != null && current.equals(preselected))
-          selected = i;
-      	++i;
+        // Anzuzeigenden Text ermitteln
+        if (haveAttribute)
+        {
+          Object value = BeanUtil.get(object,this.attribute);
+          if (value == null)
+            continue;
+          
+          String text = value.toString();
+          if (text == null)
+            continue;
+          this.combo.add(text);
+        }
+        else
+        {
+          this.combo.add(BeanUtil.toString(object));
+        }
+        this.combo.setData(Integer.toString(havePleaseChoose ? i+1 : i),object);
+        
+        // Wenn unser Objekt dem vorausgewaehlten entspricht, und wir noch
+        // keines ausgewaehlt haben merken wir uns dessen Index
+        if (selected == -1 && this.preselected != null)
+        {
+          boolean equals = false;
+          if ((object instanceof GenericObject) && (this.preselected instanceof GenericObject))
+          {
+            // Explizit casten fuer korrekte equals()-Methode
+            equals = ((GenericObject) this.preselected).equals((GenericObject) object);
+          }
+          else
+          {
+            equals = this.preselected.equals(object); 
+          }
+          if (equals)
+          {
+            selected = i;
+            if (havePleaseChoose)
+              selected++;
+          }
+        }
       }
     }
     catch (RemoteException e)
     {
-    	combo.add(Application.getI18n().tr("Fehler beim Laden der Daten"));
-    	Logger.error("uanble to create combo box",e);
+      this.combo.removeAll();
+      this.combo.add(Application.getI18n().tr("Fehler beim Laden der Daten..."));
+    	Logger.error("unable to create combo box",e);
     }
-    finally
-    {
-      try
-      {
-        // BUGZILLA 298
-        list.begin();
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to roll back list",e);
-      }
-    }
-    combo.select(selected);
-   	combo.setEnabled(enabled);
-   	if (!enabled)
-			combo.setForeground(Color.COMMENT.getSWTColor());
 
-    return combo;
-  }
-
-	/**
-	 * Kleine Hilfsfunktion, die den anzuzeigenden Wert des GenericObject
-	 * ermittelt.
-   * @param current Objekt.
-   * @return Anzuzeigender Wert oder <code>null</code> wenn er nicht ermittelbar ist.
-   * @throws RemoteException
-   */
-  private String getAttributeValue(GenericObject current) throws RemoteException
-	{
-		String s = this.attribute;
-    if (s == null) // kein Prmaer-Attribut definiert
-      s = current.getPrimaryAttribute();
+    this.combo.select(selected > -1 ? selected : 0);
     
-		Object o = current.getAttribute(s);
+    
+    // Patch von Heiner
+    this.combo.setVisibleItemCount(15);
+    this.combo.setEnabled(enabled);
+   	if (!enabled)
+     this.combo.setForeground(Color.COMMENT.getSWTColor());
 
-		if (o == null)
-			return null; // Primaer-Attribut leer, ignorieren
-
-		String attribute = o.toString(); // ToString kann ggf. ueberschrieben sein
-      
-		if (attribute == null || "".equals(attribute))
-			return null; // Primaer-Attribut leer, ignorieren
-		return attribute;
-	}
+    return this.combo;
+  }
 
   /**
    * Liefert das ausgewaehlte GenericObject.
@@ -261,28 +234,21 @@ public class SelectInput extends AbstractInput
    */
   public Object getValue()
   {
-    if (combo == null || combo.isDisposed())
+    if (this.combo == null || this.combo.isDisposed())
       return this.preselected;
-    Object o = values.get(combo.getText());
-    if (o instanceof StringObject)
-    {
-    	try {
-				return ((StringObject)o).getAttribute(null);
-    	}
-    	catch (RemoteException e)
-    	{
-    		Logger.error("unable to read from select box",e);
-    	}
-    }
-    return o;
+    
+    int selected = this.combo.getSelectionIndex();
+    return this.combo.getData(Integer.toString(selected));
   }
 
 	/**
-	 * Liefert den angezeigten Text zurueck.
+	 * Liefert den derzeit angezeigten Text zurueck.
    * @return Text.
    */
   public String getText()
 	{
+    if (this.combo == null || this.combo.isDisposed())
+      return null;
 		return combo.getText();
 	}
 
@@ -291,6 +257,9 @@ public class SelectInput extends AbstractInput
    */
   public void focus()
   {
+    if (this.combo == null || this.combo.isDisposed())
+      return;
+    
     combo.setFocus();
   }
 
@@ -350,70 +319,13 @@ public class SelectInput extends AbstractInput
   {
     // Wir machen hier nichts. 
   }
-
-  /**
-	 * Kleine Hilfsklasse, um String-Werte ueber GenericObject abzubilden.
-   */
-  private static class StringObject implements GenericObject
-	{
-
-		private String value;
-
-		/**
-		 * ct.
-     * @param value
-     */
-    private StringObject(String value)
-		{
-			this.value = value;
-		}
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
-     */
-    public Object getAttribute(String name) throws RemoteException
-    {
-      return value;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getID()
-     */
-    public String getID() throws RemoteException
-    {
-      return value;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-     */
-    public String getPrimaryAttribute() throws RemoteException
-    {
-      return "name";
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-     */
-    public boolean equals(GenericObject other) throws RemoteException
-    {
-    	if (other == null)
-    		return false;
-      return getID().equals(other.getID());
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
-     */
-    public String[] getAttributeNames() throws RemoteException
-    {
-      return new String[] {"name"};
-    }
-	}
 }
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.31  2007/04/02 23:01:43  willuhn
+ * @N SelectInput auf BeanUtil umgestellt
+ *
  * Revision 1.30  2007/03/19 12:15:15  willuhn
  * @N Patch von Heiner
  *

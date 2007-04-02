@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.16 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.17 $
+ * $Date: 2007/04/02 23:01:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -116,7 +116,7 @@ public class Settings extends AbstractView implements Extendable
     TabGroup colorGroup = new TabGroup(getTabFolder(),i18n.tr("Look and Feel"));
 		try
 		{
-			colorGroup.addLabelPair(i18n.tr("installierte Sprache"), control.getLocale());
+			colorGroup.addLabelPair(i18n.tr("Vorausgewählte Sprache"), control.getLocale());
 		}
 		catch (RemoteException e)
 		{
@@ -199,6 +199,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.17  2007/04/02 23:01:43  willuhn
+ * @N SelectInput auf BeanUtil umgestellt
+ *
  * Revision 1.16  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/03/16 14:38:43 $
+ * $Revision: 1.12 $
+ * $Date: 2007/04/02 23:01:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -79,9 +79,9 @@ public final class MessagingFactory
       }
       try
       {
-        Constructor ct = c[i].getConstructor(null);
+        Constructor ct = c[i].getConstructor((Class[])null);
         ct.setAccessible(true);
-        MessageConsumer mc = (MessageConsumer)(ct.newInstance(null));
+        MessageConsumer mc = (MessageConsumer)(ct.newInstance((Object[])null));
         if (mc.autoRegister())
         {
           Logger.info("  register " + c[i].getName());
@@ -311,6 +311,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.12  2007/04/02 23:01:43  willuhn
+ * @N SelectInput auf BeanUtil umgestellt
+ *
  * Revision 1.11  2007/03/16 14:38:43  willuhn
  * @C Redesign ImportMessage
  * @N Aktualisierung der Umsatztabelle nach Kategorie-Zuordnung
