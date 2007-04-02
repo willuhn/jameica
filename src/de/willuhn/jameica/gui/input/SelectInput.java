@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.31 $
- * $Date: 2007/04/02 23:01:43 $
+ * $Revision: 1.32 $
+ * $Date: 2007/04/02 23:23:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,7 +64,7 @@ public class SelectInput extends AbstractInput
   }
   
   /**
-   * Erzeugt die Combox-Box mit Standard-Beans.
+   * Erzeugt die Combox-Box mit Beans oder Strings.
    * @param list Liste der Objekte.
    * @param preselected das vorausgewaehlte Objekt.
    */
@@ -76,11 +76,11 @@ public class SelectInput extends AbstractInput
   }
 
 	/**
-   * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
-   * @param list Liste der Werte.
-   * @param preselected der String, welcher vorselektiert sein soll. Optional.
+   * Erzeugt die Combox-Box mit Beans oder Strings.
+   * @param list Liste der Objekte.
+   * @param preselected das vorausgewaehlte Objekt.
    */
-  public SelectInput(String[] list, String preselected)
+  public SelectInput(Object[] list, Object preselected)
   {
     this(Arrays.asList(list),preselected);
   }
@@ -323,6 +323,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.32  2007/04/02 23:23:17  willuhn
+ * @C 3. Konstruktor noch generischer
+ *
  * Revision 1.31  2007/04/02 23:01:43  willuhn
  * @N SelectInput auf BeanUtil umgestellt
  *
