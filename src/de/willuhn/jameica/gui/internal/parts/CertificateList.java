@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.14 $
- * $Date: 2006/11/16 23:46:03 $
+ * $Revision: 1.15 $
+ * $Date: 2007/04/02 12:43:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class CertificateList extends TablePart
 {
-  private final static Settings settings = new Settings(CertificateList.class);
+  private final static Settings mySettings = new Settings(CertificateList.class);
 
   /**
    * ct.
@@ -164,7 +164,7 @@ public class CertificateList extends TablePart
             fd.setFileName(s + "-" + s2 + ".crt");
           else
             fd.setFileName(s + ".crt");
-          fd.setFilterPath(settings.getString("lastdir",System.getProperty("user.home")));
+          fd.setFilterPath(mySettings.getString("lastdir",System.getProperty("user.home")));
           String target = fd.open();
           if (target == null)
             return;
@@ -184,7 +184,7 @@ public class CertificateList extends TablePart
             os = new FileOutputStream(f);
             os.write(cert.getEncoded());
             os.flush();
-            settings.setAttribute("lastdir",f.getParent());
+            mySettings.setAttribute("lastdir",f.getParent());
             Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Zertifikate exportiert"), StatusBarMessage.TYPE_SUCCESS));
           }
           finally
@@ -373,6 +373,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.15  2007/04/02 12:43:03  willuhn
+ * @B CertificateList.settings hides TablePart.settings
+ *
  * Revision 1.14  2006/11/16 23:46:03  willuhn
  * @N launch type in cert creation
  * @N new row in cert list
