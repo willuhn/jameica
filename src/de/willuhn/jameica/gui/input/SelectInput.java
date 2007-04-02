@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.32 $
- * $Date: 2007/04/02 23:23:17 $
+ * $Revision: 1.33 $
+ * $Date: 2007/04/02 23:29:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,12 +93,13 @@ public class SelectInput extends AbstractInput
   {
     if (preselected == null)
       return;
-    System.out.println(preselected);
     
     this.preselected = preselected;
     
     if (this.combo == null || this.combo.isDisposed())
       return;
+
+    boolean genericObject = (preselected instanceof GenericObject);
 
     int size = this.list.size();
     for (int i=0;i<size;++i)
@@ -106,7 +107,24 @@ public class SelectInput extends AbstractInput
       Object value = this.combo.getData(Integer.toString(i));
       if (value == null) // Fuer den Fall, dass die equals-Methode von preselected nicht mit null umgehen kann
         continue;
-      if (preselected.equals(value))
+      
+      if (genericObject && (value instanceof GenericObject))
+      {
+        try
+        {
+          if (((GenericObject)preselected).equals((GenericObject)value))
+          {
+            this.combo.select(i);
+            return;
+          }
+        }
+        catch (RemoteException re)
+        {
+          Logger.error("unable to compare objects",re);
+          return;
+        }
+      }
+      else if (preselected.equals(value))
       {
         combo.select(i);
         return;
@@ -323,6 +341,10 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.33  2007/04/02 23:29:59  willuhn
+ * @R removed debug output
+ * @B explicit cast
+ *
  * Revision 1.32  2007/04/02 23:23:17  willuhn
  * @C 3. Konstruktor noch generischer
  *
