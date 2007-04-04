@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.9 $
- * $Date: 2006/10/07 19:35:11 $
+ * $Revision: 1.10 $
+ * $Date: 2007/04/04 22:19:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.plugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.jar.JarFile;
 
@@ -314,6 +315,33 @@ public class Manifest
   }
   
   /**
+   * Liste der Plugins, von denen dieses hier abhaengig ist.
+   * @return  Liefert eine Liste von Plugin-Namen, die installiert und
+   * initialisiert sein muessen, damit dieses Plugin geladen
+   * werden kann. Die Namen sind genau die Bezeichnungen,
+   * die in den anderen Plugins in <plugin name="Foobar"... angegeben sind.
+   * Die Funktion liefert null, wenn keine Abhaengigkeiten existieren.
+   */
+  public String[] getDependencies()
+  {
+    IXMLElement deps = root.getFirstChildNamed("requires");
+    if (deps == null || !deps.hasChildren())
+      return null;
+
+    ArrayList found = new ArrayList();
+    Vector v = deps.getChildrenNamed("import");
+    for (int i=0;i<v.size();++i)
+    {
+      IXMLElement plugin = (IXMLElement) v.get(i);
+      String name = plugin.getAttribute("plugin",null);
+      if (name == null || name.length() == 0)
+        continue;
+      found.add(name);
+    }
+    return (String[]) found.toArray(new String[found.size()]);
+  }
+  
+  /**
    * Liefert die Instanz des Plugins.
    * @return die Instanz des Plugins
    */
@@ -353,6 +381,9 @@ public class Manifest
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.10  2007/04/04 22:19:39  willuhn
+ * @N Plugin-Dependencies im PluginLoader
+ *
  * Revision 1.9  2006/10/07 19:35:11  willuhn
  * @B Zugriff auf buildnumber hatte sich mit neuem Pluginloader geaendert
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.22 $
- * $Date: 2007/03/29 15:29:48 $
+ * $Revision: 1.23 $
+ * $Date: 2007/04/04 22:19:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -128,12 +128,13 @@ public final class PluginLoader
 
 		// Wir machen das Initialisieren der Plugins zum Schluss, um
 		// sicherzustellen, dass der ClassLoader alle Daten hat.
-		for (int i=0;i<plugins.size();++i)
+		for (int i=0;i<this.plugins.size();++i)
     {
-      Manifest mf = (Manifest)plugins.get(i);
+      Manifest mf = (Manifest)this.plugins.get(i);
+
       try
       {
-        initPlugin(mf);  
+        initPlugin(mf);
       }
       catch (Throwable t)
       {
@@ -150,21 +151,48 @@ public final class PluginLoader
    * @param manifest
    * @throws Exception wenn das Initialisieren des Plugins fehlschlug.
    */
-  private void initPlugin(Manifest manifest) throws Exception
+  private void initPlugin(final Manifest manifest) throws Exception
   {
+    if (manifest.isInstalled())
+    {
+      Logger.debug("plugin allready initialized, skipping");
+      return;
+    }
+
+    Application.getCallback().getStartupMonitor().setStatusText("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
+    Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
+
+    String[] deps = manifest.getDependencies();
+    
+    if (deps != null && deps.length > 0)
+    {
+      for (int i=0;i<deps.length;++i)
+      {
+        boolean found = false;
+        Logger.info("  resolving dependency " + deps[i]);
+        for (int k=0;k<this.plugins.size();++k)
+        {
+          Manifest dep = (Manifest) this.plugins.get(k);
+          if (manifest.getName().equals(dep.getName()))
+            continue; // Das sind wir selbst
+          if (!deps[i].equals(dep.getName()))
+            continue;
+
+          initPlugin(dep);
+          found = true;
+          break; // ok, gefunden
+        }
+        
+        if (!found)
+          throw new Exception(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist", new String[]{manifest.getName(),deps[i]}));
+          
+      }
+    }
+
     String pluginClass = manifest.getPluginClass();
     
     if (pluginClass == null || pluginClass.length() == 0)
       throw new Exception(Application.getI18n().tr("Plugin enthält keine gültige Plugin-Klasse (Attribut class in plugin.xml"));
-
-		Application.getCallback().getStartupMonitor().setStatusText("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
-    Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
-
-		if (manifest.isInstalled())
-		{
-			Logger.info("plugin allready initialized, skipping");
-			return;
-		}
 
 		Logger.info("trying to initialize " + pluginClass);
 
@@ -408,6 +436,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.23  2007/04/04 22:19:39  willuhn
+ * @N Plugin-Dependencies im PluginLoader
+ *
  * Revision 1.22  2007/03/29 15:29:48  willuhn
  * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
  *
