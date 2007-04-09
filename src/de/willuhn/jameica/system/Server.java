@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/01/31 13:07:52 $
+ * $Revision: 1.13 $
+ * $Date: 2007/04/09 23:26:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,7 +51,8 @@ public class Server implements ApplicationController
 			}
 		}
     Logger.info("----------------------------------------------------------------------");
-    Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
+    if (!Application.inNonInteractiveMode())
+      Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
   }
 
   /**
@@ -155,6 +156,9 @@ public class Server implements ApplicationController
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.13  2007/04/09 23:26:03  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2007/01/31 13:07:52  willuhn
  * @N Login-Dialog
  * @N SystemMessage
