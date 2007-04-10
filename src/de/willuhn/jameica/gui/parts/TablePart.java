@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.65 $
- * $Date: 2007/04/10 23:42:56 $
+ * $Revision: 1.66 $
+ * $Date: 2007/04/10 23:47:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,7 +66,7 @@ public class TablePart extends AbstractTablePart
 {
   private I18N i18n                     = null;
 
-  private List            list					= null;
+  private List list					            = null;
 	private Action action									= null;
 
   private boolean enabled               = true;
@@ -287,8 +287,8 @@ public class TablePart extends AbstractTablePart
 		{
 			try
 			{
-				o = (Object) items[i].getData();
-				if (item.equals(o))
+				o = items[i].getData();
+				if (BeanUtil.equals(o,item))
 				{
           // BUGZILLA 299
           if (Application.inStandaloneMode() && (o instanceof DBObject))
@@ -1116,6 +1116,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.66  2007/04/10 23:47:48  willuhn
+ * @B wrong object compare in removeItem
+ *
  * Revision 1.65  2007/04/10 23:42:56  willuhn
  * @N TablePart Redesign (removed dependencies from GenericIterator/GenericObject)
  *
