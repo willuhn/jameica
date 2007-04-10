@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.23 $
- * $Date: 2007/04/04 22:19:39 $
+ * $Revision: 1.24 $
+ * $Date: 2007/04/10 17:40:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.plugin;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -111,21 +112,32 @@ public final class PluginLoader
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    // Iteration ueber alle Plugin-Verzeichnisse und Laden der Dinger
+    // Liste der Manifeste laden
     for (int i=0;i<dirs.size();++i)
 		{
       File f = (File) dirs.get(i);
       try
       {
-        this.plugins.add(Application.prepareClasses(f));
+        File mf = new File(f,"plugin.xml");
+        
+        if (!mf.canRead() || !mf.isFile())
+        {
+          Logger.warn("no manifest found in " + f.getAbsolutePath() + ", skipping directory");
+          continue;
+        }
+        this.plugins.add(new Manifest(mf));
       }
       catch (Throwable t)
       {
-        Logger.error("unable to load plugin from " + f.getAbsolutePath(),t);
-        Application.addWelcomeMessage(Application.getI18n().tr("Plugin-Verzeichnis {0} ignoriert. Enthält kein gültiges Plugin",f.getAbsolutePath()));
+        Logger.error("unable to load manifest from " + f.getAbsolutePath(),t);
+        Application.addWelcomeMessage(Application.getI18n().tr("Plugin-Verzeichnis {0} ignoriert. Enthält kein gültiges Manifest",f.getAbsolutePath()));
       }
     }
-
+    
+    // Sortieren der Manifeste nach Abhaengigkeiten
+    Collections.sort(this.plugins);
+    ////////////////////////////////////////////////////////////////////////////
+    
 		// Wir machen das Initialisieren der Plugins zum Schluss, um
 		// sicherzustellen, dass der ClassLoader alle Daten hat.
 		for (int i=0;i<this.plugins.size();++i)
@@ -145,7 +157,6 @@ public final class PluginLoader
     }
 	}
 
-
   /**
    * Instanziiert das Plugin.
    * @param manifest
@@ -162,6 +173,7 @@ public final class PluginLoader
     Application.getCallback().getStartupMonitor().setStatusText("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
     Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
 
+    // Wir checken noch, ob ggf. eine Abhaengigkeit nicht erfuellt ist.
     String[] deps = manifest.getDependencies();
     
     if (deps != null && deps.length > 0)
@@ -178,16 +190,17 @@ public final class PluginLoader
           if (!deps[i].equals(dep.getName()))
             continue;
 
-          initPlugin(dep);
           found = true;
           break; // ok, gefunden
         }
         
         if (!found)
           throw new Exception(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist", new String[]{manifest.getName(),deps[i]}));
-          
       }
     }
+    
+    // OK, jetzt laden wir die Klassen des Plugins.
+    Application.prepareClasses(manifest);
 
     String pluginClass = manifest.getPluginClass();
     
@@ -436,6 +449,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.24  2007/04/10 17:40:15  willuhn
+ * @B Beruecksichtigung der Plugin-Abhaengigkeiten auch bei der Reihenfolge der zu ladenden Klassen (erzeugt sonst ggf. NoClassDefFoundErrors)
+ *
  * Revision 1.23  2007/04/04 22:19:39  willuhn
  * @N Plugin-Dependencies im PluginLoader
  *

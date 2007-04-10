@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.61 $
- * $Date: 2007/03/20 15:12:24 $
+ * $Revision: 1.62 $
+ * $Date: 2007/04/10 17:40:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -560,7 +560,8 @@ public final class Application {
         // TODO: Hierbei werden rekursiv auch die Jars der Plugins im Verzeichnis
         // "plugins" geladen. Genau die werden anschliessend aber nochmal
         // vom PluginLoader registriert. Das ist redundant.
-        app.manifest = prepareClasses(new File("."));
+        app.manifest = new Manifest(new File("plugin.xml"));
+        prepareClasses(app.manifest);
       }
       catch (Exception e)
       {
@@ -612,33 +613,21 @@ public final class Application {
 
   
   /**
-   * Oeffnet das in diesem Verzeichnis befindliche Manifest (plugin.xml),
-   * durchsucht das Verzeichnis nach Klassen und Jars, laedt diese
-   * in de Classpath und registriert alle Klassen im Classfinder,
+   * Durchsucht das verzeichnis, in dem sich das Manifest befindet nach Klassen und Jars,
+   * laedt diese in den Classpath und registriert alle Klassen im Classfinder,
    * deren Name zu den Suchfiltern in der Sektion &lt;classfinder&gt; passen. 
-   * @param dir
-   * @return das zugehoerige Manifest.
+   * @param manifest das Manifest.
    * @throws Exception
    */
-  public static synchronized Manifest prepareClasses(File dir) throws Exception
+  public static synchronized void prepareClasses(Manifest manifest) throws Exception
   {
-    if (dir == null)
-      throw new Exception("no dir given");
+    if (manifest == null)
+      throw new Exception("no manifest given");
 
+    File dir = new File(manifest.getPluginDir());
     Logger.info("checking directory " + dir.getAbsolutePath());
     getCallback().getStartupMonitor().setStatusText("checking directory " + dir.getAbsolutePath());
 
-    ////////////////////////////////////////////////////////////////////////////
-    // Check Manifest
-    File f = new File(dir,"plugin.xml");
-    
-    if (!f.canRead() || !f.isFile())
-      throw new Exception("manifest " + f.getAbsolutePath() + " not found");
-
-    Manifest manifest = new Manifest(f);
-    
-    ////////////////////////////////////////////////////////////////////////////
-      
     ////////////////////////////////////////////////////////////////////////////
     // Classpath befuellen
 
@@ -742,7 +731,6 @@ public final class Application {
         }
       }
     }
-    return manifest;
   }
   
   /**
@@ -764,6 +752,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.62  2007/04/10 17:40:15  willuhn
+ * @B Beruecksichtigung der Plugin-Abhaengigkeiten auch bei der Reihenfolge der zu ladenden Klassen (erzeugt sonst ggf. NoClassDefFoundErrors)
+ *
  * Revision 1.61  2007/03/20 15:12:24  willuhn
  * @N send synchronous shutdown message
  *

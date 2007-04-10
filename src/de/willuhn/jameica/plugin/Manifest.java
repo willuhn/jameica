@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.10 $
- * $Date: 2007/04/04 22:19:39 $
+ * $Revision: 1.11 $
+ * $Date: 2007/04/10 17:40:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ import de.willuhn.util.I18N;
 /**
  * Enthaelt die Manifest-Informationen des Plugins aus plugin.xml.
  */
-public class Manifest
+public class Manifest implements Comparable
 {
   private File manifest                 = null;
 
@@ -92,7 +92,22 @@ public class Manifest
    */
   public String getPluginDir()
   {
-    return this.manifest.getParent();
+    String s = this.manifest.getParent();
+    if (s != null)
+      return s;
+    
+    // Das File-Objekt wurde wahrscheinlich ohne Pfadangabe erzeugt.
+    // Also ermitteln wir den Pfad.
+    try
+    {
+      File canonical = this.manifest.getCanonicalFile();
+      return canonical.getParent();
+    }
+    catch (IOException ioe)
+    {
+      Logger.error("unable to determine parent directory of " + this.manifest.getAbsolutePath() + ", using \".\"",ioe);
+      return ".";
+    }
   }
   
 	/**
@@ -376,11 +391,70 @@ public class Manifest
   {
     this.isInstalled = b;
   }
+
+  /**
+   * Wir implementieren die Funktion, damit wir eine Liste von Manifesten nach Abhaengigkeit sortieren koennen.
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  public int compareTo(Object o)
+  {
+    if (o == null || !(o instanceof Manifest))
+      return -1; // Wir zuerst.
+    
+    /////////////////////////////////////////////////////////////////
+    // Schritt 1: Wir schauen, ob wir in der Abhaengigkeitsliste des anderen Plugins stehen
+    String name = this.getName();
+    if (name == null || name.length() == 0)
+      return -1; // wir haben keine Namen. Dann lassen wir uns sicherheitshalber zuerst laden
+
+    Manifest other = (Manifest) o;
+
+    String[] deps = other.getDependencies();
+    if (deps == null || deps.length == 0)
+      return 1; // Es hat keine Abhaengigkeiten, also koennen wir nach dem anderen Plugin geladen werden
+    
+    for (int i=0;i<deps.length;++i)
+    {
+      if (deps[i] == null)
+        continue; // ueberspringen
+      if (name.equals(deps[i]))
+        return -1; // Das andere Plugin haengt von uns ab. Also muessen wir zuerst geladen werden
+    }
+    //
+    /////////////////////////////////////////////////////////////////
+
+    
+    /////////////////////////////////////////////////////////////////
+    // Schritt 2: Wir schauen, ob wir von dem anderen Plugin abhaengig sind.
+
+    name = other.getName();
+    if (name == null || name.length() == 0)
+      return -1; // Das andere Plugin hat keinen Namen. Dann laden wir das sicherheitshalber zuerst
+
+    deps = this.getDependencies();
+    if (deps == null || deps.length == 0)
+      return 1; // Wir haben Abhaengigkeiten, also koennen wir nach dem anderen Plugin geladen werden
+    
+    for (int i=0;i<deps.length;++i)
+    {
+      if (deps[i] == null)
+        continue; // ueberspringen
+      if (name.equals(deps[i]))
+        return 1; // Wir haengen von dem anderen Plugin ab. Dann muss das andere zuerst geladen werden
+    }
+
+    
+    // Keine Schnittmenge vorhanden. Dann ist die Reihenfolge egal.
+    return 0;
+  }
 }
 
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.11  2007/04/10 17:40:15  willuhn
+ * @B Beruecksichtigung der Plugin-Abhaengigkeiten auch bei der Reihenfolge der zu ladenden Klassen (erzeugt sonst ggf. NoClassDefFoundErrors)
+ *
  * Revision 1.10  2007/04/04 22:19:39  willuhn
  * @N Plugin-Dependencies im PluginLoader
  *
