@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TableChangeListener.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/29 16:54:38 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2007/04/10 23:42:56 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -13,7 +13,6 @@
 
 package de.willuhn.jameica.gui.parts;
 
-import de.willuhn.datasource.GenericObject;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -35,13 +34,16 @@ public interface TableChangeListener
    * @param newValue der neue Wert des Attributes.
    * @throws ApplicationException
    */
-  public void itemChanged(GenericObject object, String attribute, String newValue) throws ApplicationException;
+  public void itemChanged(Object object, String attribute, String newValue) throws ApplicationException;
   
 }
 
 
 /*********************************************************************
  * $Log: TableChangeListener.java,v $
+ * Revision 1.2  2007/04/10 23:42:56  willuhn
+ * @N TablePart Redesign (removed dependencies from GenericIterator/GenericObject)
+ *
  * Revision 1.1  2005/06/29 16:54:38  web0
  * @N editierbare Tabellen
  *

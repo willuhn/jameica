@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.33 $
- * $Date: 2007/04/02 23:29:59 $
+ * $Revision: 1.34 $
+ * $Date: 2007/04/10 23:42:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -99,34 +99,25 @@ public class SelectInput extends AbstractInput
     if (this.combo == null || this.combo.isDisposed())
       return;
 
-    boolean genericObject = (preselected instanceof GenericObject);
-
     int size = this.list.size();
     for (int i=0;i<size;++i)
     {
       Object value = this.combo.getData(Integer.toString(i));
       if (value == null) // Fuer den Fall, dass die equals-Methode von preselected nicht mit null umgehen kann
         continue;
-      
-      if (genericObject && (value instanceof GenericObject))
+
+
+      try
       {
-        try
+        if (BeanUtil.equals(preselected,value))
         {
-          if (((GenericObject)preselected).equals((GenericObject)value))
-          {
-            this.combo.select(i);
-            return;
-          }
-        }
-        catch (RemoteException re)
-        {
-          Logger.error("unable to compare objects",re);
+          this.combo.select(i);
           return;
         }
       }
-      else if (preselected.equals(value))
+      catch (RemoteException re)
       {
-        combo.select(i);
+        Logger.error("unable to compare objects",re);
         return;
       }
     }
@@ -207,17 +198,7 @@ public class SelectInput extends AbstractInput
         // keines ausgewaehlt haben merken wir uns dessen Index
         if (selected == -1 && this.preselected != null)
         {
-          boolean equals = false;
-          if ((object instanceof GenericObject) && (this.preselected instanceof GenericObject))
-          {
-            // Explizit casten fuer korrekte equals()-Methode
-            equals = ((GenericObject) this.preselected).equals((GenericObject) object);
-          }
-          else
-          {
-            equals = this.preselected.equals(object); 
-          }
-          if (equals)
+          if (BeanUtil.equals(object,this.preselected))
           {
             selected = i;
             if (havePleaseChoose)
@@ -341,6 +322,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.34  2007/04/10 23:42:56  willuhn
+ * @N TablePart Redesign (removed dependencies from GenericIterator/GenericObject)
+ *
  * Revision 1.33  2007/04/02 23:29:59  willuhn
  * @R removed debug output
  * @B explicit cast

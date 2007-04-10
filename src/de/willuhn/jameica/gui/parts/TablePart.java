@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.64 $
- * $Date: 2007/03/22 22:36:47 $
+ * $Revision: 1.65 $
+ * $Date: 2007/04/10 23:42:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,8 +42,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
@@ -66,7 +66,7 @@ public class TablePart extends AbstractTablePart
 {
   private I18N i18n                     = null;
 
-  private GenericIterator list					= null;
+  private List            list					= null;
 	private Action action									= null;
 
   private boolean enabled               = true;
@@ -100,6 +100,23 @@ public class TablePart extends AbstractTablePart
   private TableEditor editor          = null;
   private ArrayList changeListeners   = new ArrayList();
 
+  /**
+   * Hilfsmethode, um die RemoteException im Konstruktor zu vermeiden.
+   * @param iterator zu konvertierender Iterator.
+   * @return Liste mit den Objekten.
+   */
+  private static List asList(GenericIterator iterator)
+  {
+    try
+    {
+      return PseudoIterator.asList(iterator);
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to init list",re);
+    }
+    return new ArrayList();
+  }
   
   /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
@@ -108,13 +125,23 @@ public class TablePart extends AbstractTablePart
    */
   public TablePart(GenericIterator list, Action action)
   {
-    this.list = list;
-    this.action = action;
-		i18n = Application.getI18n();
-		up = SWTUtil.getImage("up.gif");
-		down = SWTUtil.getImage("down.gif");
+    this(asList(list),action);
   }
   
+  /**
+   * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
+   * @param list Liste mit Objekten, die angezeigt werden soll.
+   * @param action die beim Doppelklick auf ein Element ausgefuehrt wird.
+   */
+  public TablePart(List list, Action action)
+  {
+    this.list = list;
+    this.action = action;
+    i18n = Application.getI18n();
+    up = SWTUtil.getImage("up.gif");
+    down = SWTUtil.getImage("down.gif");
+  }
+
   /**
    * Legt fest, ob mehrere Elemente gleichzeitig markiert werden koennen.
    * Default: False.
@@ -188,18 +215,18 @@ public class TablePart extends AbstractTablePart
   }
   
   /**
-   * Liefert die Fach-Objekte der Tabelle. Die sind vom Typ <code>GenericObject</code>.
+   * Liefert die Fach-Objekte der Tabelle.
    * Ist <code>setCheckable(true)</code> gesetzt, werden nur die Elemente zurueckgeliefert,
    * bei denen das Haekchen gesetzt ist.
    * @return Liste der Fachobjekte.
    * @throws RemoteException
    */
-  public GenericIterator getItems() throws RemoteException
+  public List getItems() throws RemoteException
   {
     if (this.table == null || this.table.isDisposed())
       return this.list;
     
-    ArrayList list = new ArrayList();
+    ArrayList l = new ArrayList();
     TableItem[] items = this.table.getItems();
     for (int i=0;i<items.length;++i)
     {
@@ -207,9 +234,9 @@ public class TablePart extends AbstractTablePart
         continue;
       if (this.check && !items[i].getChecked())
         continue;
-      list.add(items[i].getData());
+      l.add(items[i].getData());
     }
-    return PseudoIterator.fromArray((GenericObject[])list.toArray(new GenericObject[list.size()]));
+    return l;
   }
 
   /**
@@ -228,11 +255,12 @@ public class TablePart extends AbstractTablePart
    */
   public void removeAll()
   {
-    if (table == null || table.isDisposed())
-      return;
+    if (table != null && !table.isDisposed())
+      this.table.removeAll();
+
+    this.size = 0;
+    this.list.clear();
     this.sortTable.clear();
-    size = 0;
-    this.table.removeAll();
     refreshSummary();
   }
 
@@ -243,23 +271,23 @@ public class TablePart extends AbstractTablePart
 	 * fuegt in diesem Fall automatisch jedem Objekt einen Listener hinzu, der
 	 * beim Loeschen des Objektes benachrichtigt wird. Die Tabelle entfernt
 	 * das Element dann selbstaendig.
-	 * Hinweis: Der im Konstruktor verwendete GenericIterator zum initialen Befuellen
+	 * Hinweis: Die im Konstruktor uebergebene Liste zum initialen Befuellen
 	 * der Tabelle wird hierbei nicht angefasst. 
    * @param item zu entfernendes Element.
    * @return die Position des entfernten Objektes oder -1 wenn es nicht gefunden wurde.
    */
-  public int removeItem(GenericObject item)
+  public int removeItem(Object item)
 	{
     if (table == null || item == null || table.isDisposed())
 			return -1;
 		TableItem[] items = table.getItems();
-		GenericObject o = null;
+		Object o = null;
     
     for (int i=0;i<items.length;++i)
 		{
 			try
 			{
-				o = (GenericObject) items[i].getData();
+				o = (Object) items[i].getData();
 				if (item.equals(o))
 				{
           // BUGZILLA 299
@@ -284,7 +312,7 @@ public class TablePart extends AbstractTablePart
             List l = (List) e.nextElement();
             l.remove(new SortItem(null,item));
           }
-					table.remove(i);
+          table.remove(i);
 					size--;
 					refreshSummary();
 					return i;
@@ -306,7 +334,7 @@ public class TablePart extends AbstractTablePart
    * @param object hinzuzufuegendes Element.
    * @throws RemoteException
    */
-  public void addItem(GenericObject object) throws RemoteException
+  public void addItem(Object object) throws RemoteException
 	{
 		addItem(object,size());
 	}
@@ -317,7 +345,7 @@ public class TablePart extends AbstractTablePart
    * @param index Position, an der es eingefuegt werden soll.
    * @throws RemoteException
    */
-  public void addItem(final GenericObject object, int index) throws RemoteException
+  public void addItem(final Object object, int index) throws RemoteException
 	{
 		final TableItem item = new TableItem(table, SWT.NONE,index);
     if (check) item.setChecked(true);
@@ -349,31 +377,17 @@ public class TablePart extends AbstractTablePart
 
 		for (int i=0;i<this.columns.size();++i)
 		{
-      Column col = (Column) this.columns.get(i);
-			Object value = object.getAttribute(col.columnId);
-			Object orig = value;
+      Column col     = (Column) this.columns.get(i);
+			Object value   = BeanUtil.get(object,col.columnId);
 
-			String display = "";
-
-			if (value instanceof GenericObject)
-			{
-				// Wert ist ein Fremdschluessel. Also zeigen wir dessn Wert an
-				GenericObject go = (GenericObject) value;
-				value = go.getAttribute(go.getPrimaryAttribute());
-				if (value != null && value.toString() != null)
-					display = value.toString();
-			}
-			else
-			{
-				if (value != null)
-					display = value.toString();
-			}
+      String display = BeanUtil.toString(value);
 
 			// Formatter vorhanden?
 			if (col.formatter != null)
-				display = col.formatter.format(orig);
+				display = col.formatter.format(value);
 
-			item.setText(i,display == null ? "" : display);
+      if (display == null) display = "";
+			item.setText(i,display);
 			text[i] = display;
 
 			////////////////////////////////////
@@ -472,8 +486,7 @@ public class TablePart extends AbstractTablePart
     
 		// Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
 		// Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
-		list.begin();
-		GenericObject test = list.hasNext() ? list.next() : null;
+		Object test = list.size() > 0 ? list.get(0) : null;
 
     for (int i=0;i<this.columns.size();++i)
     {
@@ -519,18 +532,13 @@ public class TablePart extends AbstractTablePart
 			// Evtl. rechts ausrichten
 			if (test != null)
 			{
-				Object value = test.getAttribute(column.columnId);
+				Object value = BeanUtil.get(test,column.columnId);
 				if (value instanceof Number)  col.setAlignment(SWT.RIGHT);
 			}
     }
 
-    if (test != null)
-      list.begin(); // zurueckblaettern nicht vergessen
-
-    while (list.hasNext())
-		{
-			addItem(list.next());
-		}
+    for (int i=0;i<list.size();++i)
+      addItem(list.get(i));
 
     // noch der Listener fuer den Doppelklick drauf.
     table.addListener(SWT.MouseDoubleClick,
@@ -683,7 +691,7 @@ public class TablePart extends AbstractTablePart
                   TableChangeListener l = (TableChangeListener) changeListeners.get(i);
                   try
                   {
-                    l.itemChanged((GenericObject)item.getData(),col.columnId,newValue);
+                    l.itemChanged(item.getData(),col.columnId,newValue);
                     if (color == null)
                       item.setForeground(index,Color.COMMENT.getSWTColor());
                     else
@@ -767,10 +775,6 @@ public class TablePart extends AbstractTablePart
         Logger.error("unable to restore last table order",e);
       }
     }
-    // Und jetzt rollen wir noch den Pointer der Tabelle zurueck.
-    // Damit kann das Control wiederverwendet werden ;) 
-	  this.list.begin();
-
   }
 
   /**
@@ -783,10 +787,9 @@ public class TablePart extends AbstractTablePart
     if (this.id != null)
       return id;
 
-    this.list.begin();
     StringBuffer sb = new StringBuffer();
-    if (this.list.hasNext())
-      sb.append(this.list.next().getClass().getName());
+    if (this.list.size() > 0)
+      sb.append(this.list.get(0).getClass().getName());
 
     for (int i=0;i<this.columns.size();++i)
     {
@@ -805,33 +808,22 @@ public class TablePart extends AbstractTablePart
    * Markiert die Liste der uebergebenen Objekte.
    * @param objects Liste der zu markierenden Objekte.
    */
-  public void select(GenericObject[] objects)
+  public void select(Object[] objects)
   {
     if (objects == null || objects.length == 0)
       return;
+    
     if (!this.multi && objects.length > 1)
     {
       Logger.warn("multi selection disabled but user wants to select more than one element, selecting only the first one");
       select(objects[0]);
       return;
     }
+
+    
     for (int i=0;i<objects.length;++i)
     {
       if (objects[i] == null)
-        continue;
-
-      String id = null;
-      try
-      {
-        id = objects[i].getID();
-      }
-      catch (RemoteException e)
-      {
-        Logger.error("error while reading id from generic object",e);
-        continue;
-      }
-      
-      if (id == null)
         continue;
 
       TableItem[] items = table.getItems();
@@ -840,12 +832,13 @@ public class TablePart extends AbstractTablePart
         if (items[j] == null)
           continue;
         Object o = items[j].getData();
-        if (o == null || !(o instanceof GenericObject))
-          continue;
         
+        if (o == null)
+          continue;
+
         try
         {
-          if (id.equals(((GenericObject) o).getID()))
+          if (BeanUtil.equals(objects[i],o))
             table.select(j);
         }
         catch (RemoteException e)
@@ -860,9 +853,9 @@ public class TablePart extends AbstractTablePart
    * Markiert das uebergebene Element.
    * @param o das zu markierende Element.
    */
-  public void select(GenericObject o)
+  public void select(Object o)
   {
-    select(new GenericObject[]{o});
+    select(new Object[]{o});
   }
 
   /**
@@ -914,7 +907,8 @@ public class TablePart extends AbstractTablePart
 			summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			summary.setBackground(Color.BACKGROUND.getSWTColor());
 		}
-		summary.setText(size() + " " + (size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
+    if (!summary.isDisposed())
+      summary.setText(size() + " " + (size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
 	}
 
   /**
@@ -1042,9 +1036,9 @@ public class TablePart extends AbstractTablePart
   private static class SortItem implements Comparable
 	{
 		private Comparable attribute;
-		private GenericObject data;
+		private Object data;
 
-		private SortItem(Object attribute, GenericObject data)
+		private SortItem(Object attribute, Object data)
 		{
 			try
 			{
@@ -1063,15 +1057,16 @@ public class TablePart extends AbstractTablePart
     {
       if (obj == null || !(obj instanceof SortItem))
         return false;
+
       try
       {
-        return this.data.getID().equals(((SortItem)obj).data.getID());
+        return BeanUtil.equals(this.data,((SortItem) obj).data);
       }
       catch (RemoteException e)
       {
         Logger.error("error while comparing items",e);
+        return false;
       }
-      return super.equals(obj);
     }
     
     /**
@@ -1121,6 +1116,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.65  2007/04/10 23:42:56  willuhn
+ * @N TablePart Redesign (removed dependencies from GenericIterator/GenericObject)
+ *
  * Revision 1.64  2007/03/22 22:36:47  willuhn
  * @N Contextmenu in Trees
  * @C Kategorie-Baum in separates TreePart ausgelagert
