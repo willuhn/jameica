@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.36 $
- * $Date: 2007/03/12 16:19:09 $
+ * $Revision: 1.37 $
+ * $Date: 2007/04/11 09:59:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,8 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +32,7 @@ import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -37,9 +40,12 @@ import de.willuhn.util.ApplicationException;
  * Bildet den Navigations-Baum im linken Frame ab.
  * @author willuhn
  */
-public class Navigation implements Part, Listener
+public class Navigation implements Part
 {
 
+  private Listener action       = new MyActionListener();
+  private DisposeListener dsl   = new MyDisposeListener();
+  private Settings settings     = new Settings(Navigation.class);
   private Composite parent			= null;
   private Tree mainTree					= null;
   
@@ -59,9 +65,9 @@ public class Navigation implements Part, Listener
     this.mainTree = new Tree(this.parent, SWT.NONE);
     this.mainTree.setLayoutData(new GridData(GridData.FILL_BOTH));
     // Listener fuer "Folder auf/zu machen"
-    this.mainTree.addListener(SWT.Expand, this);
-    this.mainTree.addListener(SWT.Collapse, this);
-    this.mainTree.addListener(SWT.Selection, this);
+    this.mainTree.addListener(SWT.Expand,    action);
+    this.mainTree.addListener(SWT.Collapse,  action);
+    this.mainTree.addListener(SWT.Selection, action);
 
     try
     {
@@ -107,22 +113,15 @@ public class Navigation implements Part, Listener
 			item = new TreeItem(parentTree,SWT.NONE);
 		}
 
-    item.setData("item",element);
-		item.setText(name);
+    item.addDisposeListener(this.dsl);
+    item.setData(element);
+		item.setText(name == null ? "" : name);
+    expand(item);
+    
     if (!element.isEnabled())
     {
       item.setGrayed(true);
       item.setForeground(Color.COMMENT.getSWTColor());
-    }
-    if (element.isExpanded())
-    {
-      item.setImage(element.getIconOpen());
-      item.setExpanded(true);
-    }
-    else
-    {
-      item.setImage(element.getIconClose());
-      item.setExpanded(false);
     }
     
     this.itemLookup.put(element,item);
@@ -136,18 +135,32 @@ public class Navigation implements Part, Listener
 	}
 
   /**
+   * Klappt die Elemente entsprechend letztem Status/Vorkonfiguration alle auf bzw. zu.
+   */
+  protected void expand()
+  {
+    expand(null);
+  }
+  
+  /**
    * Klappt das Item und alle Kinder auf.
    * @param item aufzuklappendes Item.
    */
   private void expand(TreeItem item)
 	{
+    if (mainTree == null)
+      return;
+    
 		// erstmal uns selbst aufklappen.
     if (item != null)
 		{
       try
       {
-        NavigationItem ni = (NavigationItem) item.getData("item");
-        item.setExpanded(ni.isExpanded());
+        NavigationItem ni = (NavigationItem) item.getData();
+
+        boolean expanded = settings.getBoolean(ni.getID() + ".expanded",ni.isExpanded());
+        item.setExpanded(expanded);
+        item.setImage(expanded ? ni.getIconOpen() : ni.getIconClose());
       }
       catch (RemoteException re)
       {
@@ -193,54 +206,10 @@ public class Navigation implements Part, Listener
 		if (navi == null)
 			return;
 		load(navi,this.pluginTree);
-    expand(null);
 	}
 
-  /**
-   * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-   */
-  public void handleEvent(Event event)
-  {
-    Widget widget = event.item;
-    if (widget == null || !(widget instanceof TreeItem) || widget.isDisposed())
-      return;
-
-    TreeItem item = (TreeItem) widget;
-    NavigationItem ni = (NavigationItem) item.getData("item");
-
-    if (ni == null)
-      return;
-    
-    try
-    {
-      if (event.type == SWT.Selection)
-      {
-        Action a = (Action) ni.getAction();
-        if (a == null || !ni.isEnabled())
-          return;
-        try
-        {
-          Logger.debug("executing navigation entry " + ni.getID() + " [" + ni.getName() + "]");
-          a.handleAction(event);
-        }
-        catch (ApplicationException e)
-        {
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getLocalizedMessage(),StatusBarMessage.TYPE_ERROR));
-        }
-        return;
-      }
-      
-      Image icon = event.type == SWT.Expand ? ni.getIconOpen() : ni.getIconClose();
-      if (icon != null)
-        item.setImage(icon);
-    }
-    catch (RemoteException re)
-    {
-      Logger.error("unable to handle navigation action",re);
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
-    }
-  }
   
+
   /**
    * Aktualisiert einen Teil des Navigationsbaumes.
    * @param item das zu aktualisierende Element.
@@ -256,11 +225,94 @@ public class Navigation implements Part, Listener
       ti.setText(item.getName());
     }
   }
+
+  
+  /**
+   * Wird beim Klick auf ein Element ausgeloest.
+   */
+  private class MyActionListener implements Listener
+  {
+    /**
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void handleEvent(Event event)
+    {
+      Widget widget = event.item;
+      if (widget == null || !(widget instanceof TreeItem) || widget.isDisposed())
+        return;
+
+      TreeItem item = (TreeItem) widget;
+      NavigationItem ni = (NavigationItem) item.getData();
+
+      if (ni == null)
+        return;
+      
+      try
+      {
+        if (event.type == SWT.Selection)
+        {
+          Action a = (Action) ni.getAction();
+          if (a == null || !ni.isEnabled())
+            return;
+          try
+          {
+            Logger.debug("executing navigation entry " + ni.getID() + " [" + ni.getName() + "]");
+            a.handleAction(event);
+          }
+          catch (ApplicationException e)
+          {
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getLocalizedMessage(),StatusBarMessage.TYPE_ERROR));
+          }
+          return;
+        }
+        
+        Image icon = event.type == SWT.Expand ? ni.getIconOpen() : ni.getIconClose();
+        if (icon != null)
+          item.setImage(icon);
+      }
+      catch (RemoteException re)
+      {
+        Logger.error("unable to handle navigation action",re);
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
+      }
+    }
+  }
+  
+  /**
+   * Hilfsklasse, um den Aufklapp-Status vor dem Beenden von Jameica zu speichern.
+   */
+  private class MyDisposeListener implements DisposeListener
+  {
+    public void widgetDisposed(DisposeEvent e)
+    {
+      try
+      {
+        if (e == null || e.widget == null || e.widget.isDisposed() || !(e.widget instanceof TreeItem))
+          return;
+
+        TreeItem item       = (TreeItem) e.widget;
+        NavigationItem data = (NavigationItem) e.widget.getData();
+        if (data == null)
+          return;
+
+        settings.setAttribute(data.getID() + ".expanded",item.getExpanded());
+      }
+      catch (Exception e2)
+      {
+        Logger.error("unable to store expanded state",e2);
+      }
+    }
+    
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.37  2007/04/11 09:59:04  willuhn
+ * @N Automatisches Speichern und Wiederherstellen des Aufklapp-Status der Navigations-Elemente
+ *
  * Revision 1.36  2007/03/12 16:19:09  willuhn
  * @C disabled warnings if menu/navigation is empty
  *

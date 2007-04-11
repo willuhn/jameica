@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.106 $
- * $Date: 2007/02/15 16:58:54 $
+ * $Revision: 1.107 $
+ * $Date: 2007/04/11 09:59:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -204,6 +204,7 @@ public class GUI implements ApplicationController
       history = new Stack();
 
       position();
+      getNavigation().expand();
       Logger.info("open shell");
       getShell().open();
       
@@ -813,6 +814,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.107  2007/04/11 09:59:03  willuhn
+ * @N Automatisches Speichern und Wiederherstellen des Aufklapp-Status der Navigations-Elemente
+ *
  * Revision 1.106  2007/02/15 16:58:54  willuhn
  * @N Jameica uses now the hibiscus icon
  *
