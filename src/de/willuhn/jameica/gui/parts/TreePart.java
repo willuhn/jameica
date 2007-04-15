@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.15 $
- * $Date: 2007/03/22 22:36:47 $
+ * $Revision: 1.16 $
+ * $Date: 2007/04/15 21:31:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -462,12 +463,28 @@ public class TreePart extends AbstractTablePart
     }
   }
 
+
+  /**
+   * Liefert nur die Liste der Elemente der obersten Hirachie-Ebene.
+   * Wenn es sich um Objekte des Typs <code>GenericObjectNode</code>
+   * handelt, kann man sich die Kinder dann dort mit <code>getChildren</code>
+   * holen.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
+   */
+  public List getItems() throws RemoteException
+  {
+    return PseudoIterator.asList(this.list);
+  }
+
   
 }
 
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.16  2007/04/15 21:31:33  willuhn
+ * @N "getItems()" in TreePart
+ *
  * Revision 1.15  2007/03/22 22:36:47  willuhn
  * @N Contextmenu in Trees
  * @C Kategorie-Baum in separates TreePart ausgelagert

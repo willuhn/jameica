@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.66 $
- * $Date: 2007/04/10 23:47:48 $
+ * $Revision: 1.67 $
+ * $Date: 2007/04/15 21:31:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -215,11 +215,9 @@ public class TablePart extends AbstractTablePart
   }
   
   /**
-   * Liefert die Fach-Objekte der Tabelle.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
    * Ist <code>setCheckable(true)</code> gesetzt, werden nur die Elemente zurueckgeliefert,
    * bei denen das Haekchen gesetzt ist.
-   * @return Liste der Fachobjekte.
-   * @throws RemoteException
    */
   public List getItems() throws RemoteException
   {
@@ -1116,6 +1114,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.67  2007/04/15 21:31:33  willuhn
+ * @N "getItems()" in TreePart
+ *
  * Revision 1.66  2007/04/10 23:47:48  willuhn
  * @B wrong object compare in removeItem
  *

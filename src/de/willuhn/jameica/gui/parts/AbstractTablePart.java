@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.4 $
- * $Date: 2007/03/28 16:59:04 $
+ * $Revision: 1.5 $
+ * $Date: 2007/04/15 21:31:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,8 @@
 
 package de.willuhn.jameica.gui.parts;
 
+import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Vector;
 
 import de.willuhn.jameica.gui.Part;
@@ -78,6 +80,13 @@ public abstract class AbstractTablePart implements Part
   }
 
   /**
+   * Liefert die Fach-Objekte der Tabelle.
+   * @return Liste der Fachobjekte.
+   * @throws RemoteException
+   */
+  public abstract List getItems() throws RemoteException;
+
+  /**
    * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
    * @param remember true, wenn sie sich die Spaltenbreiten merken soll.
    */
@@ -106,6 +115,9 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.5  2007/04/15 21:31:33  willuhn
+ * @N "getItems()" in TreePart
+ *
  * Revision 1.4  2007/03/28 16:59:04  willuhn
  * @C Eine Settings-Instanz fuer alle TableParts/TreeParts
  *
