@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ServiceDescriptorXml.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/08/18 23:57:20 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2007/04/16 13:19:33 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -78,7 +78,7 @@ public class ServiceDescriptorXml implements ServiceDescriptor
 
 		String s = root.getAttribute("depends",null);
 		if (s == null || s.length() == 0)
-			return null;
+			return new String[0];
 
     s = s.replaceAll("\n|\r","");
 		StringTokenizer st = new StringTokenizer(s,",");
@@ -108,6 +108,9 @@ public class ServiceDescriptorXml implements ServiceDescriptor
 
 /**********************************************************************
  * $Log: ServiceDescriptorXml.java,v $
+ * Revision 1.4  2007/04/16 13:19:33  willuhn
+ * @C return empty list instead of null
+ *
  * Revision 1.3  2005/08/18 23:57:20  web0
  * *** empty log message ***
  *
