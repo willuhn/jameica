@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.24 $
- * $Date: 2007/04/10 17:40:15 $
+ * $Revision: 1.25 $
+ * $Date: 2007/04/16 12:36:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -299,7 +298,7 @@ public final class PluginLoader
    * Liefert eine Liste mit allen installierten Plugins.
    * @return Liste aller installierten Plugins. Die Elemente sind vom Typ <code>AbstractPlugin</code>.
    */
-  public Iterator getInstalledPlugins()
+  public List getInstalledPlugins()
   {
   	Vector v = new Vector();
   	int size = plugins.size();
@@ -309,14 +308,14 @@ public final class PluginLoader
   		if (p.isInstalled())
   			v.add(p.getPluginInstance());
   	}
-		return v.iterator();
+		return v;
   }
 
 	/**
 	 * Liefert eine Liste mit den Manifesten der installierten Plugins.
 	 * @return Liste der installierten Manifeste.
 	 */
-	public Iterator getInstalledManifests()
+	public List getInstalledManifests()
 	{
     Vector v = new Vector();
     int size = plugins.size();
@@ -326,7 +325,7 @@ public final class PluginLoader
       if (p.isInstalled())
         v.add(p);
     }
-    return v.iterator();
+    return v;
 	}
 
 	/**
@@ -449,6 +448,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.25  2007/04/16 12:36:44  willuhn
+ * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
+ *
  * Revision 1.24  2007/04/10 17:40:15  willuhn
  * @B Beruecksichtigung der Plugin-Abhaengigkeiten auch bei der Reihenfolge der zu ladenden Klassen (erzeugt sonst ggf. NoClassDefFoundErrors)
  *

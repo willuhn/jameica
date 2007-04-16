@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.39 $
- * $Date: 2007/03/08 16:00:58 $
+ * $Revision: 1.40 $
+ * $Date: 2007/04/16 12:36:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.RMISocketFactory;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.List;
 
 import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
@@ -73,17 +73,17 @@ public final class ServiceFactory
     if (Application.getConfig().getShareServices())
   		startRegistry();
 
-    Iterator plugins = Application.getPluginLoader().getInstalledPlugins();
+    List plugins = Application.getPluginLoader().getInstalledPlugins();
 
 		AbstractPlugin plugin 					= null;
 		Manifest manifest 							= null;
 		ServiceDescriptor[] descriptors = null;
 
-		while (plugins.hasNext())
+		for (int num=0;num<plugins.size();++num)
 		{
 			try {
 
-				plugin 			= (AbstractPlugin) plugins.next();
+				plugin 			= (AbstractPlugin) plugins.get(num);
 				manifest 		= plugin.getManifest();
 
 				Logger.info("init services for plugin " + manifest.getName() + " [version: " + manifest.getVersion() +"]");
@@ -396,6 +396,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.40  2007/04/16 12:36:44  willuhn
+ * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
+ *
  * Revision 1.39  2007/03/08 16:00:58  willuhn
  * @R removed some boring log messages
  *

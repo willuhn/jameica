@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/27 15:35:51 $
- * $Author: web0 $
+ * $Revision: 1.3 $
+ * $Date: 2007/04/16 12:36:44 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -15,7 +15,7 @@ package de.willuhn.jameica.gui.internal.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
@@ -78,11 +78,11 @@ public class PluginList extends TablePart
    */
   private static GenericIterator init()
   {
-    Iterator i = Application.getPluginLoader().getInstalledPlugins();
+    List list = Application.getPluginLoader().getInstalledPlugins();
     ArrayList l = new ArrayList();
-    while (i.hasNext())
+    for (int i=0;i<list.size();++i)
     {
-      l.add(new PluginObject((AbstractPlugin) i.next()));
+      l.add(new PluginObject((AbstractPlugin) list.get(i)));
     }
     try
     {
@@ -172,6 +172,9 @@ public class PluginList extends TablePart
 
 /*********************************************************************
  * $Log: PluginList.java,v $
+ * Revision 1.3  2007/04/16 12:36:44  willuhn
+ * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
+ *
  * Revision 1.2  2005/06/27 15:35:51  web0
  * @N ability to store last table order
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.107 $
- * $Date: 2007/04/11 09:59:03 $
+ * $Revision: 1.108 $
+ * $Date: 2007/04/16 12:36:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,7 @@ package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 
@@ -180,10 +180,10 @@ public class GUI implements ApplicationController
 
       // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
       // hinzu.
-      Iterator i = Application.getPluginLoader().getInstalledManifests();
-      while (i.hasNext())
+      List list = Application.getPluginLoader().getInstalledManifests();
+      for (int i=0;i<list.size();++i)
       {
-        Manifest mf = (Manifest) i.next();
+        Manifest mf = (Manifest) list.get(i);
         if (!mf.isInstalled())
         {
           Logger.info("plugin " + mf.getName() + " is not installed, skipping");
@@ -814,6 +814,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.108  2007/04/16 12:36:44  willuhn
+ * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
+ *
  * Revision 1.107  2007/04/11 09:59:03  willuhn
  * @N Automatisches Speichern und Wiederherstellen des Aufklapp-Status der Navigations-Elemente
  *
