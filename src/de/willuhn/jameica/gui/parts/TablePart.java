@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.67 $
- * $Date: 2007/04/15 21:31:33 $
+ * $Revision: 1.68 $
+ * $Date: 2007/04/17 11:17:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
+import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
@@ -1040,7 +1041,19 @@ public class TablePart extends AbstractTablePart
 		{
 			try
 			{
-				this.attribute = (Comparable) attribute;
+        if (attribute instanceof GenericObject)
+        {
+          GenericObject o = (GenericObject) attribute;
+          this.attribute = (Comparable) o.getAttribute(o.getPrimaryAttribute());
+        }
+        else
+        {
+          this.attribute = (Comparable) attribute;
+        }
+        
+        // wir ignorieren Gross-Kleinschreibung bei Strings
+        if (this.attribute instanceof String)
+          this.attribute = ((String)this.attribute).toLowerCase();
 			}
 			catch (Exception e)
 			{
@@ -1114,6 +1127,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.68  2007/04/17 11:17:57  willuhn
+ * @B Fehler in Sortierung wenn Attribute vom Typ "GenericObject"
+ * @N Gross-Kleinschreibung bei Sortierung von Strings ignorieren
+ *
  * Revision 1.67  2007/04/15 21:31:33  willuhn
  * @N "getItems()" in TreePart
  *
