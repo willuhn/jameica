@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.34 $
- * $Date: 2007/03/17 16:41:22 $
+ * $Revision: 1.35 $
+ * $Date: 2007/04/18 14:01:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,6 +47,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -315,7 +316,57 @@ public class SSLFactory
     return (X509Certificate[]) list.toArray(new X509Certificate[list.size()]);
   }
 
-	/**
+  /**
+   * Liefert eine Liste von Zertifikate, die noch zu bestaetigen sind.
+   * Das sind genau jene, welche vom Server im Nichtinteraktiven Modus entgegengenommen wurden und auf Freigabe warten.
+   * @return Liste der noch zu bestaetigenden Zertifikate.
+   * @throws Exception
+   */
+  public synchronized X509Certificate[] getUnTrustedCertificates() throws Exception
+  {
+    File dir = new File(Application.getConfig().getConfigDir(),"incoming");
+    if (!dir.exists())
+      return new X509Certificate[0];
+    
+    FileFinder finder = new FileFinder(dir);
+    finder.extension("crt");
+    File[] certs = finder.find();
+    
+    if (certs == null || certs.length == 0)
+      return new X509Certificate[0];
+
+    ArrayList list = new ArrayList();
+    for (int i=0;i<certs.length;++i)
+    {
+      InputStream is = null;
+      try
+      {
+        is = new FileInputStream(certs[i]);
+        list.add(loadCertificate(is));
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to load certificate " + certs[i].getAbsolutePath(),e);
+      }
+      finally
+      {
+        if (is != null)
+        {
+          try
+          {
+            is.close();
+          }
+          catch (Exception e)
+          {
+            Logger.error("unable to close certificate file " + certs[i].getAbsolutePath(),e);
+          }
+        }
+      }
+    }
+    return (X509Certificate[]) list.toArray(new X509Certificate[list.size()]);
+  }
+
+  /**
 	 * Liefert den Keystore mit dem Zertifikat.
    * @return Keystore
    * @throws Exception
@@ -644,6 +695,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.35  2007/04/18 14:01:45  willuhn
+ * @N method to list untrusted certs
+ *
  * Revision 1.34  2007/03/17 16:41:22  willuhn
  * @C changed loglevel
  *
