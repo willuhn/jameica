@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.18 $
- * $Date: 2007/01/25 10:44:10 $
+ * $Revision: 1.19 $
+ * $Date: 2007/04/18 14:37:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -242,7 +242,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     if (Application.inNonInteractiveMode())
     {
       // Im nicht-interaktiven Mode speichern wir das Zertifikat in einem Incoming-Verzeichnis
-      File f = new File(Application.getConfig().getConfigDir(),"incoming");
+      File f = new File(Application.getConfig().getWorkDir(),"untrusted");
       Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus. Vertrauensstellung des Zertifikats kann nicht abgefragt werden"));
       Logger.warn(Application.getI18n().tr("Speichere Zertifikat im Verzeichnis {0}",f.getAbsolutePath()));
 
@@ -398,6 +398,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.19  2007/04/18 14:37:29  willuhn
+ * @N changed untrusted dir from "incoming" to "untrusted"
+ *
  * Revision 1.18  2007/01/25 10:44:10  willuhn
  * @N autoanswer in ApplicationCallbackConsole
  *

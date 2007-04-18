@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.35 $
- * $Date: 2007/04/18 14:01:45 $
+ * $Revision: 1.36 $
+ * $Date: 2007/04/18 14:37:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -324,7 +324,7 @@ public class SSLFactory
    */
   public synchronized X509Certificate[] getUnTrustedCertificates() throws Exception
   {
-    File dir = new File(Application.getConfig().getConfigDir(),"incoming");
+    File dir = new File(Application.getConfig().getWorkDir(),"untrusted");
     if (!dir.exists())
       return new X509Certificate[0];
     
@@ -695,6 +695,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.36  2007/04/18 14:37:29  willuhn
+ * @N changed untrusted dir from "incoming" to "untrusted"
+ *
  * Revision 1.35  2007/04/18 14:01:45  willuhn
  * @N method to list untrusted certs
  *
