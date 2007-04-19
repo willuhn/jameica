@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/04/02 23:01:43 $
+ * $Revision: 1.13 $
+ * $Date: 2007/04/19 21:09:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -205,7 +205,7 @@ public final class MessagingFactory
         }
         catch (Throwable t)
         {
-          Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getMessage() + ") while consuming message " + msg.toString());
+          Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getClass().getName() + ": " + t + ") while consuming message " + msg);
           Logger.write(Level.DEBUG,"error while processing message",t);
         }
       }
@@ -311,6 +311,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.13  2007/04/19 21:09:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.12  2007/04/02 23:01:43  willuhn
  * @N SelectInput auf BeanUtil umgestellt
  *
