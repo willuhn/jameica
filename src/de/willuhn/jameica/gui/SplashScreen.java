@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.21 $
- * $Date: 2006/11/12 23:34:28 $
+ * $Revision: 1.22 $
+ * $Date: 2007/04/19 17:02:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -207,7 +207,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
     {
       public void run()
       {
-        textLabel.setText(" " + text + " ...");
+        String s = " " + text + " ...";
+        Logger.info(s);
+        textLabel.setText(s);
         textLabel.redraw();
 				display.readAndDispatch();
       }
@@ -244,6 +246,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.22  2007/04/19 17:02:35  willuhn
+ * @N log splashscreen messages
+ *
  * Revision 1.21  2006/11/12 23:34:28  willuhn
  * @B Bug 183 (thanks to Juergen)
  *
