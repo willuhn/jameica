@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/01/25 10:44:10 $
+ * $Revision: 1.14 $
+ * $Date: 2007/04/20 14:48:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.system;
 
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -225,14 +226,29 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String)
    */
-  public boolean askUser(final String question)
+  public boolean askUser(final String question) throws Exception
   {
+    return askUser(question,(String[])null); 
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String[])
+   */
+  public boolean askUser(final String question, String[] variables) throws Exception
+  {
+    if (question == null)
+    {
+      Logger.warn("<null> question!");
+      return false;
+    }
 
     // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
     String s = settings.getString(question,null);
     if (s != null)
       return s.equalsIgnoreCase("true");
     
+    final String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,variables);
+
     AbstractDialog d = new AbstractDialog(AbstractDialog.POSITION_CENTER)
     {
       private Boolean choice = Boolean.FALSE;
@@ -245,7 +261,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
       protected void paint(Composite parent) throws Exception
       {
         LabelGroup g = new LabelGroup(parent,"");
-        g.addText(question,true);
+        g.addText(text,true);
         g.addCheckbox(check,Application.getI18n().tr("Diese Frage künftig nicht mehr anzeigen"));
         ButtonArea buttons = new ButtonArea(parent,2);
         buttons.addButton("   " + i18n.tr("Ja") + "   ", new Action() {
@@ -286,7 +302,15 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public boolean lockExists(String lockfile)
   {
-    return askUser(Application.getI18n().tr("Jameica scheint bereits zu laufen. Wollen Sie den Startvorgang wirklich fortsetzen?"));
+    try
+    {
+      return askUser(Application.getI18n().tr("Jameica scheint bereits zu laufen. Wollen Sie den Startvorgang wirklich fortsetzen?"));
+    }
+    catch (Exception e)
+    {
+      Logger.error("error while asking user",e);
+      return false;
+    }
   }
 
   /**
@@ -368,12 +392,15 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     }
 
   }
-
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.14  2007/04/20 14:48:02  willuhn
+ * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
+ * @N Zusaetzliche parametrisierbare askUser-Funktion
+ *
  * Revision 1.13  2007/01/25 10:44:10  willuhn
  * @N autoanswer in ApplicationCallbackConsole
  *

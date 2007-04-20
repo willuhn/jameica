@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.8 $
- * $Date: 2006/10/28 01:05:21 $
+ * $Revision: 1.9 $
+ * $Date: 2007/04/20 14:48:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.system;
 
 import java.security.cert.X509Certificate;
 
+import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
 
 
@@ -120,6 +121,22 @@ public interface ApplicationCallback
   public boolean askUser(String question) throws Exception;
 
   /**
+   * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
+   * Hintergrund. Jameica speichert <code>question</code> als Key in einer Properties-Datei,
+   * falls der User die Option "Frage nicht mehr anzeigen" aktiviert hat. Enthaelt die
+   * Frage nun aber variablen Text, wuerde die selbe Frage immer wieder kommen - nur weil
+   * ein paar Variablen anders sind und somit der Key in der Properties-Datei nicht mehr
+   * uebereinstimmt. Daher kann man stattdessen diese Funktion hier verwenden. Im Text
+   * benutzt man (wie bei {@link I18N#tr(String, String[])}) die Platzhalter "{0}","{1}",...
+   * und uebergibt als String-Array die einzutragenden Variablen.
+   * @param question Die anzuzeigende Frage.
+   * @param variables mittels MessageFormat einzutragende Variablen.
+   * @return true fuer ja, false fuer nein.
+   * @throws Exception
+   */
+  public boolean askUser(String question, String[] variables) throws Exception;
+
+  /**
    * Kann benutzt werden, um z.Bsp. eine wichtig Fehlermeldung anzuzeigen.
    * @param text der anzuzeigende Text.
    * @throws Exception
@@ -152,6 +169,10 @@ public interface ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.9  2007/04/20 14:48:02  willuhn
+ * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
+ * @N Zusaetzliche parametrisierbare askUser-Funktion
+ *
  * Revision 1.8  2006/10/28 01:05:21  willuhn
  * *** empty log message ***
  *

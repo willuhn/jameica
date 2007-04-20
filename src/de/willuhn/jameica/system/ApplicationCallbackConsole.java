@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.19 $
- * $Date: 2007/04/18 14:37:29 $
+ * $Revision: 1.20 $
+ * $Date: 2007/04/20 14:48:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
@@ -340,21 +341,36 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public boolean askUser(String question) throws Exception
   {
+    return askUser(question,(String[])null);
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String[])
+   */
+  public boolean askUser(String question, String[] variables) throws Exception
+  {
+    if (question == null)
+    {
+      Logger.warn("<null> question!");
+      return false;
+    }
+    
     // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
     String s = settings.getString(question,null);
     if (s != null)
       return s.equalsIgnoreCase("true");
 
+    String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,variables);
     if (Application.inNonInteractiveMode())
     {
-      Logger.warn(question);
+      Logger.warn(text);
       Logger.warn("Jameica laeuft im Nicht-Interaktiven Modus. Frage kann daher nicht beantwortet werden");
       throw new ApplicationException(Application.getI18n().tr("Benutzer-Interaktion nicht möglich. Jameica läuft im nicht-interaktiven Modus"));
     }
 
     flush();
     System.out.println("----------------------------------------------------------------------");
-    System.out.println(question);
+    System.out.println(text);
     System.out.println("[Y/N]");
     System.out.println("----------------------------------------------------------------------");
     InputStreamReader isr = new InputStreamReader(System.in);
@@ -391,13 +407,15 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       // ignore
     }
   }
-
-
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.20  2007/04/20 14:48:02  willuhn
+ * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
+ * @N Zusaetzliche parametrisierbare askUser-Funktion
+ *
  * Revision 1.19  2007/04/18 14:37:29  willuhn
  * @N changed untrusted dir from "incoming" to "untrusted"
  *

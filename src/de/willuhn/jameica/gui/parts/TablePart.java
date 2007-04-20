@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.68 $
- * $Date: 2007/04/17 11:17:57 $
+ * $Revision: 1.69 $
+ * $Date: 2007/04/20 14:48:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -120,6 +120,15 @@ public class TablePart extends AbstractTablePart
   }
   
   /**
+   * Erzeugt eine neue leere Standard-Tabelle auf dem uebergebenen Composite.
+   * @param action die beim Doppelklick auf ein Element ausgefuehrt wird.
+   */
+  public TablePart(Action action)
+  {
+    this((List) null,action);
+  }
+
+  /**
    * Erzeugt eine neue Standard-Tabelle auf dem uebergebenen Composite.
    * @param list Liste mit Objekten, die angezeigt werden soll.
    * @param action die beim Doppelklick auf ein Element ausgefuehrt wird.
@@ -136,7 +145,11 @@ public class TablePart extends AbstractTablePart
    */
   public TablePart(List list, Action action)
   {
-    this.list = list;
+    // Wir nehmen eine Kopie der Liste, damit sie uns niemand manipulieren kann
+    this.list = new ArrayList();
+    if (list != null)
+      this.list.addAll(list);
+
     this.action = action;
     i18n = Application.getI18n();
     up = SWTUtil.getImage("up.gif");
@@ -222,10 +235,15 @@ public class TablePart extends AbstractTablePart
    */
   public List getItems() throws RemoteException
   {
-    if (this.table == null || this.table.isDisposed())
-      return this.list;
-    
     ArrayList l = new ArrayList();
+
+    if (this.table == null || this.table.isDisposed())
+    {
+      // Wir geben eine Kopie der Liste raus, damit sie niemand manipuliert
+      l.addAll(this.list);
+      return l;
+    }
+    
     TableItem[] items = this.table.getItems();
     for (int i=0;i<items.length;++i)
     {
@@ -328,8 +346,6 @@ public class TablePart extends AbstractTablePart
 
 	/**
 	 * Fuegt der Tabelle am Ende ein Element hinzu.
-	 * Hinweis: Der im Konstruktor verwendete GenericIterator zum initialen Befuellen
-	 * der Tabelle wird hierbei nicht angefasst. 
    * @param object hinzuzufuegendes Element.
    * @throws RemoteException
    */
@@ -346,6 +362,13 @@ public class TablePart extends AbstractTablePart
    */
   public void addItem(final Object object, int index) throws RemoteException
 	{
+    if (this.table == null)
+    {
+      // Wir wurden noch nicht gezeichnet. Also koennen wir
+      // das Element einfach zur Liste hinzufuegen.
+      this.list.add(index,object);
+      return;
+    }
 		final TableItem item = new TableItem(table, SWT.NONE,index);
     if (check) item.setChecked(true);
 
@@ -755,7 +778,14 @@ public class TablePart extends AbstractTablePart
       }
     }
 
-		refreshSummary();
+    
+    if (this.showSummary)
+    {
+      this.summary = new Label(comp,SWT.NONE);
+      this.summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      this.summary.setBackground(Color.BACKGROUND.getSWTColor());
+      refreshSummary();
+    }
 	
 		if (this.rememberOrder)
     {
@@ -900,13 +930,7 @@ public class TablePart extends AbstractTablePart
 	{
 		if (!showSummary)
 			return;
-		if (summary == null)
-		{
-			summary = new Label(comp,SWT.NONE);
-			summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			summary.setBackground(Color.BACKGROUND.getSWTColor());
-		}
-    if (!summary.isDisposed())
+    if (summary != null && !summary.isDisposed())
       summary.setText(size() + " " + (size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
 	}
 
@@ -1127,6 +1151,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.69  2007/04/20 14:48:02  willuhn
+ * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
+ * @N Zusaetzliche parametrisierbare askUser-Funktion
+ *
  * Revision 1.68  2007/04/17 11:17:57  willuhn
  * @B Fehler in Sortierung wenn Attribute vom Typ "GenericObject"
  * @N Gross-Kleinschreibung bei Sortierung von Strings ignorieren
