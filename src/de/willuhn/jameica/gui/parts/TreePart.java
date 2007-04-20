@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.16 $
- * $Date: 2007/04/15 21:31:33 $
+ * $Revision: 1.17 $
+ * $Date: 2007/04/20 09:49:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -127,6 +127,7 @@ public class TreePart extends AbstractTablePart
     if (s == null || s.length() == 0)
       s = "unknown";
     this.id = Checksum.md5(s.getBytes());
+    this.list.begin();
     return this.id;
   }
 
@@ -220,8 +221,7 @@ public class TreePart extends AbstractTablePart
       }
 
       // Liste zuruecksetzen
-      if (test != null)
-        list.begin();
+      list.begin();
     }
     
     /////////////////////////////////////////////////////////////////
@@ -473,6 +473,7 @@ public class TreePart extends AbstractTablePart
    */
   public List getItems() throws RemoteException
   {
+    this.list.begin();
     return PseudoIterator.asList(this.list);
   }
 
@@ -482,6 +483,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.17  2007/04/20 09:49:28  willuhn
+ * @B wrong index in iterator
+ *
  * Revision 1.16  2007/04/15 21:31:33  willuhn
  * @N "getItems()" in TreePart
  *
