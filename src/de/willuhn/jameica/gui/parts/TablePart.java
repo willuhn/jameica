@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.69 $
- * $Date: 2007/04/20 14:48:02 $
+ * $Revision: 1.70 $
+ * $Date: 2007/04/23 18:04:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -546,7 +546,11 @@ public class TablePart extends AbstractTablePart
 			// Sortierung
 			final int p = i;
 			col.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event e) {
+				public void handleEvent(Event e)
+        {
+          // Wenn wir vorher schonmal nach dieser Spalte
+          // sortiert haben, kehren wir die Sortierung um
+          direction = !(direction && p == sortedBy);
 					orderBy(p);
 				}
 			});
@@ -889,7 +893,7 @@ public class TablePart extends AbstractTablePart
 
   /**
    * Liefert die markierten Objekte.
-   * Die Funktion liefert je nach Markierung <code>GenericObject</code> oder <code>GenericObject[]</code>.
+   * Die Funktion liefert je nach Markierung <code>Object</code> oder <code>Object[]</code>.
    * @return das/die markierten Objekte.
    */
   public Object getSelection()
@@ -899,28 +903,38 @@ public class TablePart extends AbstractTablePart
     if (items == null || items.length == 0)
       return null;
       
-    Object o = null;
-
     if (items.length == 1)
-      o = items[0].getData(); // genau ein Element markiert, also brauchen wir kein Array
-    else if (items != null && items.length > 1)
+      return items[0].getData(); // genau ein Element markiert, also brauchen wir kein Array
+
+    // mehrere Elemente markiert. Also Array
+    Class type = null;
+    ArrayList data = new ArrayList();
+    for (int i=0;i<items.length;++i)
     {
-      // mehrere Elemente markiert. Also Array
-      Object[] data = null;
-      for (int i=0;i<items.length;++i)
-      {
-        Object elem = items[i].getData();
-        if (elem == null)
-          continue;
+      Object elem = items[i].getData();
+      if (elem == null)
+        continue;
+      
+      if (type == null)
+        type = elem.getClass();
 
-        if (data == null)
-          data = (Object[]) Array.newInstance(elem.getClass(),items.length); // wir erzeugen ein getyptes Array
-
-        data[i] = elem;
-      }
-      o = data;
+      data.add(elem);
     }
-    return o;
+    
+    // Wir versuchen es erstmal mit einem getypten Array.
+    // Denn damit kann man (object instanceof Foo[]) pruefen.
+    // Falls das fehlschlaegt, machen wir ein Fallback auf
+    // ein generisches Objekt-Array.
+    try
+    {
+      Object[] array = (Object[]) Array.newInstance(type,data.size());
+      return data.toArray(array);
+    }
+    catch (Exception e)
+    {
+      Logger.debug("unable to create type safe array, fallback to generic array");
+      return data.toArray();
+    }
   }
 
 	/**
@@ -940,15 +954,14 @@ public class TablePart extends AbstractTablePart
    */
   private void orderBy(String colName)
   {
-    boolean reverse = colName.startsWith("!");
-    if (reverse) colName = colName.substring(1);
+    this.direction = !colName.startsWith("!");
+    if (!this.direction) colName = colName.substring(1);
 
     for (int i=0;i<this.columns.size();++i)
     {
       Column col = (Column) this.columns.get(i);
       if (col.columnId.equals(colName))
       {
-        if (reverse) this.sortedBy = i;
         Logger.debug("table ordered by " + colName);
         orderBy(i);
         return;
@@ -961,7 +974,8 @@ public class TablePart extends AbstractTablePart
    */
   public void sort()
   {
-    this.direction = !this.direction;
+    // Falsch: Beim erneuten Aufruf von Sort darf nicht andersrum sortiert werden
+    // this.direction = !this.direction;
     orderBy(this.sortedBy);
   }
 
@@ -1003,18 +1017,14 @@ public class TablePart extends AbstractTablePart
 		}
 		TableColumn col = table.getColumn(index);
 
+    // Auch wenn wir die Auswahl anschliessend
+    // evtl. umkehren, muessen wir trotzdem erstmal
+    // nach dieser Spalte sortieren
     Collections.sort(l);
 
-    if (index == this.sortedBy && direction)
-		{
-			// Nach dieser Spalte haben wir schon sortiert. Also sortieren wir andersrum
-			Collections.reverse(l);
-			this.direction = false;
-		}
-    else
-    {
-      direction = true;
-    }
+    if (!direction)
+      Collections.reverse(l);
+
     col.setImage(direction ? down : up);
 
     this.sortedBy = index; // merken
@@ -1151,6 +1161,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.70  2007/04/23 18:04:55  willuhn
+ * @C fallback auf untypisierte Liste, wenn typisiertes Array fehlschlaegt
+ *
  * Revision 1.69  2007/04/20 14:48:02  willuhn
  * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
  * @N Zusaetzliche parametrisierbare askUser-Funktion
