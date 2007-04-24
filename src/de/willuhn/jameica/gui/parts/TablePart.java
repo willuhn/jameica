@@ -1,11 +1,10 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.70 $
- * $Date: 2007/04/23 18:04:55 $
+ * $Revision: 1.71 $
+ * $Date: 2007/04/24 17:15:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
- *
  * Copyright (c) by willuhn.webdesign
  * All rights reserved
  *
@@ -367,6 +366,7 @@ public class TablePart extends AbstractTablePart
       // Wir wurden noch nicht gezeichnet. Also koennen wir
       // das Element einfach zur Liste hinzufuegen.
       this.list.add(index,object);
+      size++;
       return;
     }
 		final TableItem item = new TableItem(table, SWT.NONE,index);
@@ -564,7 +564,9 @@ public class TablePart extends AbstractTablePart
     }
 
     for (int i=0;i<list.size();++i)
-      addItem(list.get(i));
+    {
+      addItem(list.get(i),i);
+    }
 
     // noch der Listener fuer den Doppelklick drauf.
     table.addListener(SWT.MouseDoubleClick,
@@ -1161,6 +1163,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.71  2007/04/24 17:15:00  willuhn
+ * @B Vergessen, "size" hochzuzaehlen, wenn Objekte vor paint() hinzugefuegt werden
+ *
  * Revision 1.70  2007/04/23 18:04:55  willuhn
  * @C fallback auf untypisierte Liste, wenn typisiertes Array fehlschlaegt
  *
