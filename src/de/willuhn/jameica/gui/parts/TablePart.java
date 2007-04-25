@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.71 $
- * $Date: 2007/04/24 17:15:00 $
+ * $Revision: 1.72 $
+ * $Date: 2007/04/25 14:06:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -66,39 +67,48 @@ public class TablePart extends AbstractTablePart
 {
   private I18N i18n                     = null;
 
-  private List list					            = null;
-	private Action action									= null;
+  // Die ID der Tabelle
+  private String id                     = null;
 
-  private boolean enabled               = true;
-	private boolean showSummary						= true;
+  // Temporaere Liste der Objekte, falls Datensaetze hinzugefuegt werden
+  // bevor die Tabelle gezeichnet wurde
+  private List temp					            = null;
 
+  //////////////////////////////////////////////////////////
+  // SWT
   private org.eclipse.swt.widgets.Table table = null;
   protected TableFormatter tableFormatter = null;
 	private Composite comp 								= null;
 	private Label summary									= null;
+  private Image up                      = null;
+  private Image down                    = null;
+  private TableEditor editor            = null;
+  //////////////////////////////////////////////////////////
 
-	// Fuer die Sortierung
-	private Hashtable sortTable					= new Hashtable();
-	private Hashtable textTable					= new Hashtable();
-	private int sortedBy 								= -1; // Index der sortierten Spalte
-	private boolean direction						= true; // Ausrichtung
-  private boolean multi               = false; // Multiple Markierung 
-	private Image up										= null;
-	private Image down									= null;
-  private boolean rememberOrder       = false;
-  private boolean check               = false;
-
-	private int size = 0;
-  
-  private String id                   = null;
-
+  //////////////////////////////////////////////////////////
+  // Listeners, Actions
   private ArrayList selectionListeners = new ArrayList();
-
   private de.willuhn.datasource.rmi.Listener deleteListener = new DeleteListener();
+  private ArrayList changeListeners     = new ArrayList();
+  private Action action                 = null;
+  //////////////////////////////////////////////////////////
 
-  // Fuer den Aenderungs-Support
-  private TableEditor editor          = null;
-  private ArrayList changeListeners   = new ArrayList();
+  //////////////////////////////////////////////////////////
+	// Sortierung
+	private Hashtable sortTable				  	= new Hashtable();
+	private Hashtable textTable				  	= new Hashtable();
+	private int sortedBy 							  	= -1; // Index der sortierten Spalte
+	private boolean direction						  = true; // Ausrichtung
+  //////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////
+	// Flags
+  private boolean enabled               = true;
+  private boolean showSummary           = true;
+  private boolean multi                 = false; // Multiple Markierung 
+  private boolean rememberOrder         = false;
+  private boolean check                 = false;
+  //////////////////////////////////////////////////////////
 
   /**
    * Hilfsmethode, um die RemoteException im Konstruktor zu vermeiden.
@@ -144,15 +154,16 @@ public class TablePart extends AbstractTablePart
    */
   public TablePart(List list, Action action)
   {
-    // Wir nehmen eine Kopie der Liste, damit sie uns niemand manipulieren kann
-    this.list = new ArrayList();
-    if (list != null)
-      this.list.addAll(list);
-
     this.action = action;
-    i18n = Application.getI18n();
-    up = SWTUtil.getImage("up.gif");
-    down = SWTUtil.getImage("down.gif");
+
+    // Wir nehmen eine Kopie der Liste, damit sie uns niemand manipulieren kann
+    this.temp = new ArrayList();
+    if (list != null)
+      this.temp.addAll(list);
+
+    this.i18n   = Application.getI18n();
+    this.up     = SWTUtil.getImage("up.gif");
+    this.down   = SWTUtil.getImage("down.gif");
   }
 
   /**
@@ -231,18 +242,23 @@ public class TablePart extends AbstractTablePart
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
    * Ist <code>setCheckable(true)</code> gesetzt, werden nur die Elemente zurueckgeliefert,
    * bei denen das Haekchen gesetzt ist.
+   * Die Objekte werden genau in der angezeigten Reihenfolge zurueckgeliefert.
    */
   public List getItems() throws RemoteException
   {
     ArrayList l = new ArrayList();
 
+    // Wenn die SWT-Tabelle noch nicht existiert oder disposed wurde,
+    // liefern wir alle Elemente aus der temporaeren Liste
     if (this.table == null || this.table.isDisposed())
     {
       // Wir geben eine Kopie der Liste raus, damit sie niemand manipuliert
-      l.addAll(this.list);
+      // TODO: Man koennte ggf. checken, ob die Liste Cloneable implementiert und die Kopie dann damit erstellen
+      l.addAll(this.temp);
       return l;
     }
-    
+
+    // Ansonsten nur die markierten
     TableItem[] items = this.table.getItems();
     for (int i=0;i<items.length;++i)
     {
@@ -274,8 +290,7 @@ public class TablePart extends AbstractTablePart
     if (table != null && !table.isDisposed())
       this.table.removeAll();
 
-    this.size = 0;
-    this.list.clear();
+    this.temp.clear();
     this.sortTable.clear();
     refreshSummary();
   }
@@ -287,25 +302,53 @@ public class TablePart extends AbstractTablePart
 	 * fuegt in diesem Fall automatisch jedem Objekt einen Listener hinzu, der
 	 * beim Loeschen des Objektes benachrichtigt wird. Die Tabelle entfernt
 	 * das Element dann selbstaendig.
-	 * Hinweis: Die im Konstruktor uebergebene Liste zum initialen Befuellen
-	 * der Tabelle wird hierbei nicht angefasst. 
    * @param item zu entfernendes Element.
    * @return die Position des entfernten Objektes oder -1 wenn es nicht gefunden wurde.
    */
   public int removeItem(Object item)
 	{
-    if (table == null || item == null || table.isDisposed())
-			return -1;
-		TableItem[] items = table.getItems();
-		Object o = null;
+    if (item == null)
+      return -1;
     
+    Object o = null;
+
+    // Wenn die Tabelle noch nie gezeichnet wurde, entfernen
+    // wir das Objekt nur aus der temporaeren Tabelle
+    if (table == null || table.isDisposed())
+    {
+      int size = this.temp.size();
+      for (int i=0;i<size;++i)
+      {
+        o = this.temp.get(i);
+        try
+        {
+          if (BeanUtil.equals(o,item))
+          {
+            this.temp.remove(i);
+            return i;
+          }
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to remove object",e);
+        }
+      }
+      
+      // Nicht gefunden
+      return -1;
+    }
+
+
+    // Andernfalls loeschen wir das Element direkt aus
+    // der Tabelle
+    TableItem[] items = table.getItems();
     for (int i=0;i<items.length;++i)
 		{
 			try
 			{
 				o = items[i].getData();
 				if (BeanUtil.equals(o,item))
-				{
+        {
           // BUGZILLA 299
           if (Application.inStandaloneMode() && (o instanceof DBObject))
           {
@@ -318,9 +361,8 @@ public class TablePart extends AbstractTablePart
               // Im Netzwerkbetrieb kann das schiefgehen, da der Listener
               // nicht serialisierbar ist
             }
-
           }
-            
+              
           // Muessen wir noch aus den Sortierungsspalten entfernen
           Enumeration e = this.sortTable.elements();
           while (e.hasMoreElements())
@@ -329,11 +371,9 @@ public class TablePart extends AbstractTablePart
             l.remove(new SortItem(null,item));
           }
           table.remove(i);
-					size--;
-					refreshSummary();
-					return i;
-				}
-				
+          refreshSummary();
+          return i;
+        }
 			}
 			catch (Throwable t)
 			{
@@ -360,15 +400,16 @@ public class TablePart extends AbstractTablePart
    * @throws RemoteException
    */
   public void addItem(final Object object, int index) throws RemoteException
-	{
-    if (this.table == null)
+  {
+    
+    // Wenn die Tabelle noch nie gezeichnet wurde, schreiben wir
+    // das Objekt in die temporaere Tabelle
+    if (this.table == null || this.table.isDisposed())
     {
-      // Wir wurden noch nicht gezeichnet. Also koennen wir
-      // das Element einfach zur Liste hinzufuegen.
-      this.list.add(index,object);
-      size++;
+      this.temp.add(index,object);
       return;
     }
+    
 		final TableItem item = new TableItem(table, SWT.NONE,index);
     if (check) item.setChecked(true);
 
@@ -437,7 +478,6 @@ public class TablePart extends AbstractTablePart
 			tableFormatter.format(item);
 
 		// Tabellengroesse anpassen
-		size++;
     refreshSummary();
 	}
 
@@ -447,7 +487,9 @@ public class TablePart extends AbstractTablePart
    */
   public int size()
 	{
-		return size;
+    if (this.table == null || this.table.isDisposed())
+      return temp.size();
+    return table.getItemCount();
 	}
 
   /**
@@ -457,9 +499,7 @@ public class TablePart extends AbstractTablePart
   {
 
 		if (comp != null && !comp.isDisposed())
-		{
 			comp.dispose();
-		}
 
 		comp = new Composite(parent,SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
@@ -508,7 +548,7 @@ public class TablePart extends AbstractTablePart
     
 		// Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
 		// Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
-		Object test = list.size() > 0 ? list.get(0) : null;
+		Object test = temp.size() > 0 ? temp.get(0) : null;
 
     for (int i=0;i<this.columns.size();++i)
     {
@@ -563,10 +603,13 @@ public class TablePart extends AbstractTablePart
 			}
     }
 
-    for (int i=0;i<list.size();++i)
+    /////////////////////////////////////////////////////////////////
+    // Das eigentliche Hinzufuegen der Objekte
+    for (int i=0;i<this.temp.size();++i)
     {
-      addItem(list.get(i),i);
+      addItem(temp.get(i),i);
     }
+    /////////////////////////////////////////////////////////////////
 
     // noch der Listener fuer den Doppelklick drauf.
     table.addListener(SWT.MouseDoubleClick,
@@ -810,6 +853,11 @@ public class TablePart extends AbstractTablePart
         Logger.error("unable to restore last table order",e);
       }
     }
+    
+    
+    // wir wurden gezeichnet. Die temporaere Tabelle brauchen wir
+    // nicht mehr
+    this.temp.clear();
   }
 
   /**
@@ -823,8 +871,24 @@ public class TablePart extends AbstractTablePart
       return id;
 
     StringBuffer sb = new StringBuffer();
-    if (this.list.size() > 0)
-      sb.append(this.list.get(0).getClass().getName());
+    if (this.size() > 0)
+    {
+      // Wenn wir Daten in der Tabelle haben,
+      // nehmen wir die Klasse des ersten
+      // Objektes in die Berechnung der Checksumme
+      // mit auf.
+      if (this.table == null || this.table.isDisposed())
+      {
+        // Wir wurden noch nicht gezeichnet. Also die
+        // temporaere Tabelle
+        sb.append(this.temp.get(0).getClass().getName());
+      }
+      else
+      {
+        sb.append(this.table.getItem(0).getData().getClass().getName());
+      }
+      
+    }
 
     for (int i=0;i<this.columns.size();++i)
     {
@@ -1144,18 +1208,34 @@ public class TablePart extends AbstractTablePart
    */
   private class DeleteListener implements de.willuhn.datasource.rmi.Listener
   {
+
     /**
      * @see de.willuhn.datasource.rmi.Listener#handleEvent(de.willuhn.datasource.rmi.Event)
      */
-    public void handleEvent(de.willuhn.datasource.rmi.Event e) throws RemoteException
+    public void handleEvent(final de.willuhn.datasource.rmi.Event e) throws RemoteException
     {
       try
       {
         removeItem(e.getObject());
       }
-      catch (Exception e2)
+      catch (SWTException ex)
       {
-        // ignore
+        // Fallback: Wir versuchens mal synchronisiert
+        GUI.getDisplay().syncExec(new Runnable() {
+        
+          public void run()
+          {
+            try
+            {
+              removeItem(e.getObject());
+            }
+            catch (Exception ex2)
+            {
+              // ignore
+            }
+          }
+        
+        });
       }
     }
   }
@@ -1163,6 +1243,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.72  2007/04/25 14:06:06  willuhn
+ * @C Parallel-Halten der Daten nur noch temporaer, wenn die Tabelle noch nicht gezeichnet wurde
+ *
  * Revision 1.71  2007/04/24 17:15:00  willuhn
  * @B Vergessen, "size" hochzuzaehlen, wenn Objekte vor paint() hinzugefuegt werden
  *
