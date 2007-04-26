@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Input.java,v $
- * $Revision: 1.7 $
- * $Date: 2007/04/26 11:19:48 $
+ * $Revision: 1.8 $
+ * $Date: 2007/04/26 11:56:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,6 +36,7 @@ public interface Input extends Part
   public void setValue(Object value);
   
   /**
+   * TODO: Koennte man kuenftig auch noch zusaetzlich via Listener machen
    * Prueft, ob sich der Wert von <code>getValue()</code> seit dem
    * letzten Aufruf von <code>hasChanged</code> geaendert hat.
    * @return true, wenn sich der Wert geaendert hat, sonstfalse.
@@ -142,6 +143,9 @@ public interface Input extends Part
 
 /**********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.8  2007/04/26 11:56:28  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2007/04/26 11:19:48  willuhn
  * @N Generische Funktion "hasChanged()" zum Pruefen auf Aenderungen in Eingabe-Feldern
  *
