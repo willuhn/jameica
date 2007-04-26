@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.38 $
- * $Date: 2007/01/25 12:07:58 $
+ * $Revision: 1.39 $
+ * $Date: 2007/04/26 17:33:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -267,7 +267,7 @@ public class View implements Part
     this.logotext = text == null ? "" : text;
     if (this.logoBg != null && !this.logoBg.isDisposed())
     {
-      GUI.getDisplay().syncExec(new Runnable() {
+      GUI.getDisplay().asyncExec(new Runnable() {
         public void run()
         {
           logoBg.redraw();
@@ -343,6 +343,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.39  2007/04/26 17:33:25  willuhn
+ * @C Logo-Text mit asyncExec setzen
+ *
  * Revision 1.38  2007/01/25 12:07:58  willuhn
  * @R removed debug output
  * @C dispose snapin content on snapout()
