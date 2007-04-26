@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/DelayedListener.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/04/26 18:20:22 $
+ * $Revision: 1.2 $
+ * $Date: 2007/04/26 18:21:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class DelayedListener implements Listener
   /**
    * Das Default-Timeout.
    */
-  public final static int TIMEOUT_DEFAULT = 800;
+  public final static int TIMEOUT_DEFAULT = 300;
 
   private long count         = 0;
   private int timeout        = TIMEOUT_DEFAULT;
@@ -97,6 +97,9 @@ public class DelayedListener implements Listener
 
 /*********************************************************************
  * $Log: DelayedListener.java,v $
+ * Revision 1.2  2007/04/26 18:21:43  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2007/04/26 18:20:22  willuhn
  * @N Ein verzoegernder Listener fuer Bulk-Updates
  *
