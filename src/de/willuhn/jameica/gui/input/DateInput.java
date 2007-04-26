@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2007/03/19 12:30:06 $
+ * $Revision: 1.5 $
+ * $Date: 2007/04/26 11:19:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,11 +35,15 @@ import de.willuhn.logging.Logger;
  */
 public class DateInput implements Input
 {
+  private final static Object PLACEHOLDER = new Object();
+  
   private DateFormat format = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,Application.getConfig().getLocale());
   
   private DialogInput input     = null;
   private CalendarDialog dialog = null;
   private String name           = null;
+  
+  private Object oldValue = PLACEHOLDER;
   
   private boolean mandatory = false;
   
@@ -307,11 +311,36 @@ public class DateInput implements Input
   {
     this.name = name;
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
+   */
+  public boolean hasChanged()
+  {
+    Object newValue = this.input.getText();
+
+    try
+    {
+      // Wir wurden noch nie aufgerufen
+      if (oldValue == PLACEHOLDER || oldValue == newValue)
+        return false;
+
+      return newValue == null || !newValue.equals(oldValue);
+    }
+    finally
+    {
+      oldValue = newValue;
+    }
+    
+  }
 }
 
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.5  2007/04/26 11:19:48  willuhn
+ * @N Generische Funktion "hasChanged()" zum Pruefen auf Aenderungen in Eingabe-Feldern
+ *
  * Revision 1.4  2007/03/19 12:30:06  willuhn
  * @N Input can now have it's own label
  *

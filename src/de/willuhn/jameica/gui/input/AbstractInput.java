@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2007/03/19 12:30:06 $
+ * $Revision: 1.17 $
+ * $Date: 2007/04/26 11:19:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,9 @@ import de.willuhn.util.I18N;
 public abstract class AbstractInput implements Input
 {
 
-	I18N i18n;
+  private final static Object PLACEHOLDER = new Object();
+
+  I18N i18n;
 
   private Composite parent = null;
 
@@ -51,6 +53,8 @@ public abstract class AbstractInput implements Input
   private String invalidChars = null;
   
   private boolean mandatory = false;
+  
+  private Object oldValue = PLACEHOLDER;
 
 	/**
    * Erzeugt ein neues Eingabe-Feld.
@@ -335,12 +339,35 @@ public abstract class AbstractInput implements Input
   {
     this.name = name;
   }
-  
-  
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
+   */
+  public boolean hasChanged()
+  {
+    Object newValue = getValue();
+
+    try
+    {
+      // Wir wurden noch nie aufgerufen
+      if (oldValue == PLACEHOLDER || oldValue == newValue)
+        return false;
+
+      return newValue == null || !newValue.equals(oldValue);
+    }
+    finally
+    {
+      oldValue = newValue;
+    }
+    
+  }
 }
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.17  2007/04/26 11:19:48  willuhn
+ * @N Generische Funktion "hasChanged()" zum Pruefen auf Aenderungen in Eingabe-Feldern
+ *
  * Revision 1.16  2007/03/19 12:30:06  willuhn
  * @N Input can now have it's own label
  *
