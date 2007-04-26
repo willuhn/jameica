@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/01/05 10:36:49 $
+ * $Revision: 1.12 $
+ * $Date: 2007/04/26 13:22:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -59,6 +59,8 @@ public abstract class ButtonInput extends AbstractInput
    */
   public final Control getControl()
   {
+    if (comp != null)
+      return comp;
 
 		comp = new Composite(getParent(),SWT.BORDER);
 		GridLayout layout = new GridLayout(2, false);
@@ -232,6 +234,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.12  2007/04/26 13:22:09  willuhn
+ * @B pruefen, ob Composite bereits existiert
+ *
  * Revision 1.11  2007/01/05 10:36:49  willuhn
  * @C Farbhandling - Jetzt aber!
  *
