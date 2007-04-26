@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2007/04/26 11:19:48 $
+ * $Revision: 1.6 $
+ * $Date: 2007/04/26 14:38:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -74,7 +74,7 @@ public class DateInput implements Input
     if (format != null)
       this.format = format;
     
-    this.dialog = new CalendarDialog(CalendarDialog.POSITION_MOUSE);
+    this.dialog = new MyCalendarDialog();
     
     if (date != null)
       this.dialog.setDate(date);
@@ -151,7 +151,6 @@ public class DateInput implements Input
     }
     catch (ParseException e)
     {
-      Logger.error("unable to parse date " + text,e);
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Ungültiges Datum: {0}",text),StatusBarMessage.TYPE_ERROR));
       return null;
     }
@@ -331,6 +330,39 @@ public class DateInput implements Input
     {
       oldValue = newValue;
     }
+  }
+  
+  
+  /**
+   * Ueberschrieben, um ggf. das aktuelle Datum einzutragen
+   */
+  private class MyCalendarDialog extends CalendarDialog
+  {
+
+    /**
+     * ct.
+     */
+    public MyCalendarDialog()
+    {
+      super(CalendarDialog.POSITION_MOUSE);
+    }
+
+    /**
+     * @see de.willuhn.jameica.gui.dialogs.CalendarDialog#paint(org.eclipse.swt.widgets.Composite)
+     */
+    protected void paint(Composite parent) throws Exception
+    {
+      try
+      {
+        setDate((Date) getValue());
+      }
+      catch (Exception e)
+      {
+        // ignore
+      }
+      super.paint(parent);
+    }
+    
     
   }
 }
@@ -338,6 +370,10 @@ public class DateInput implements Input
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.6  2007/04/26 14:38:11  willuhn
+ * @B Manuell eingegebenes Datum bei anschliessendem Oeffnen des Kalender-Dialogs uebernehmen
+ * @N hasChanged in DialogInput ueberschrieben
+ *
  * Revision 1.5  2007/04/26 11:19:48  willuhn
  * @N Generische Funktion "hasChanged()" zum Pruefen auf Aenderungen in Eingabe-Feldern
  *

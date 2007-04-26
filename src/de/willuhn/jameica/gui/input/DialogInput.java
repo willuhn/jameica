@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.19 $
- * $Date: 2007/01/23 15:52:10 $
+ * $Revision: 1.20 $
+ * $Date: 2007/04/26 14:38:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,10 +43,13 @@ import de.willuhn.logging.Logger;
  */
 public class DialogInput extends ButtonInput
 {
+  private final static Object PLACEHOLDER = new Object();
 
 	private Text text;
   private AbstractDialog dialog;
   private Object choosen;
+
+  private Object oldValue = PLACEHOLDER;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -167,10 +170,36 @@ public class DialogInput extends ButtonInput
     if (comp != null && !comp.isDisposed())
       comp.setBackground(color);
   }
+
+  /**
+   * Ueberschrieben, weil nur der angezeigte Text interessiert.
+   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
+   */
+  public boolean hasChanged()
+  {
+    Object newValue = getText();
+
+    try
+    {
+      // Wir wurden noch nie aufgerufen
+      if (oldValue == PLACEHOLDER || oldValue == newValue)
+        return false;
+
+      return newValue == null || !newValue.equals(oldValue);
+    }
+    finally
+    {
+      oldValue = newValue;
+    }
+  }
 }
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.20  2007/04/26 14:38:11  willuhn
+ * @B Manuell eingegebenes Datum bei anschliessendem Oeffnen des Kalender-Dialogs uebernehmen
+ * @N hasChanged in DialogInput ueberschrieben
+ *
  * Revision 1.19  2007/01/23 15:52:10  willuhn
  * @C update() check for recursion
  * @N mandatoryCheck configurable
