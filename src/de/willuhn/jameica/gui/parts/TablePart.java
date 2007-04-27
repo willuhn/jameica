@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.72 $
- * $Date: 2007/04/25 14:06:06 $
+ * $Revision: 1.73 $
+ * $Date: 2007/04/27 15:30:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -117,6 +117,8 @@ public class TablePart extends AbstractTablePart
    */
   private static List asList(GenericIterator iterator)
   {
+    if (iterator == null)
+      return null;
     try
     {
       return PseudoIterator.asList(iterator);
@@ -1243,6 +1245,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.73  2007/04/27 15:30:14  willuhn
+ * @C null check
+ *
  * Revision 1.72  2007/04/25 14:06:06  willuhn
  * @C Parallel-Halten der Daten nur noch temporaer, wenn die Tabelle noch nicht gezeichnet wurde
  *
