@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/01/31 17:56:36 $
+ * $Revision: 1.18 $
+ * $Date: 2007/05/02 13:00:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -131,7 +131,7 @@ public class DecimalInput extends TextInput
     }
     catch (ParseException e)
     {
-      Logger.error("error while parsing from decimal input",e);
+      // ignore
     }
     return null;
   }
@@ -170,6 +170,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.18  2007/05/02 13:00:46  willuhn
+ * @C ParseException nicht loggen
+ *
  * Revision 1.17  2007/01/31 17:56:36  willuhn
  * *** empty log message ***
  *
