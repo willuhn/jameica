@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/04/19 21:09:54 $
+ * $Revision: 1.14 $
+ * $Date: 2007/05/02 10:06:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -220,7 +220,7 @@ public final class MessagingFactory
   {
     
     // Maximal-Zahl gleichzeitiger Nachrichten.
-    private final static int MAX_MESSAGES = 100;
+    private final static int MAX_MESSAGES = 1000;
 
     private Queue queue  = null;
     
@@ -311,6 +311,9 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.14  2007/05/02 10:06:56  willuhn
+ * @N Nachrichten-Queue vergroessert
+ *
  * Revision 1.13  2007/04/19 21:09:54  willuhn
  * *** empty log message ***
  *
