@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/04/20 09:49:28 $
+ * $Revision: 1.18 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,6 +36,7 @@ import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.formatter.TreeFormatter;
+import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -142,6 +143,7 @@ public class TreePart extends AbstractTablePart
     /////////////////////////////////////////////////////////////////
     // Tree erzeugen
     this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER);
+    this.tree.setFont(Font.DEFAULT.getSWTFont());
     final GridData gridData = new GridData(GridData.FILL_BOTH);
     this.tree.setLayoutData(gridData);
     
@@ -376,6 +378,7 @@ public class TreePart extends AbstractTablePart
       else
         this.item = new TreeItem(parent,SWT.NONE); // Kind-Element
 
+      item.setFont(Font.DEFAULT.getSWTFont());
 			item.setData(data);
 
       if (columns.size() == 0)
@@ -483,6 +486,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.18  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.17  2007/04/20 09:49:28  willuhn
  * @B wrong index in iterator
  *

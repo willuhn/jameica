@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Headline.java,v $
- * $Revision: 1.4 $
- * $Date: 2004/06/10 20:56:54 $
+ * $Revision: 1.5 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import de.willuhn.jameica.gui.GUI;
+
 /**
  * Malt eine Standard-Ueberschrift in den Dialog.
  * @author willuhn
@@ -31,16 +33,19 @@ public class Headline
    */
   public Headline(Composite parent, String headline)
   {
-    Label title = new Label(parent, SWT.NONE);
+    Label title = GUI.getStyleFactory().createLabel(parent, SWT.NONE);
     title.setText(headline);
     title.setLayoutData(new GridData());
     title.setFont(Font.H2.getSWTFont());
-		title.setBackground(Color.BACKGROUND.getSWTColor());
   }
 }
 
 /*********************************************************************
  * $Log: Headline.java,v $
+ * Revision 1.5  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.4  2004/06/10 20:56:54  willuhn
  * @D javadoc comments fixed
  *

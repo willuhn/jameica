@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.9 $
- * $Date: 2006/06/20 23:26:52 $
+ * $Revision: 1.10 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,12 +27,16 @@ import de.willuhn.logging.Logger;
 public class Font {
 
 	private static String systemFont;
+  private static int systemHeight = 10;
 	static
 	{
 		// Determine System-Font
 		try {
 			org.eclipse.swt.graphics.Font sysFont = GUI.getDisplay().getSystemFont();
-			systemFont = sysFont.getFontData()[0].getName();
+      FontData fd = sysFont.getFontData()[0];
+      Logger.info("system font: " + fd.toString());
+			systemFont = fd.getName();
+      systemHeight = fd.getHeight();
 		}
 		catch (Exception e)
 		{
@@ -43,27 +47,27 @@ public class Font {
 	/**
    * Schrift fuer Ueberschriften erster Ordnung.
 	 */
-	public final static Font H1				= new Font("font.h1",						new FontData(systemFont, 10, SWT.BOLD));
+	public final static Font H1				= new Font("font.h1",						new FontData(systemFont,systemHeight+2, SWT.BOLD));
 
   /**
    * Schrift fuer Ueberschriften zweiter Ordnung.
    */
-  public final static Font H2 			= new Font("font.h2",						new FontData(systemFont, 9, SWT.BOLD));
+  public final static Font H2 			= new Font("font.h2",						new FontData(systemFont,systemHeight+1, SWT.BOLD));
 	
   /**
    * Schrift fuer Ueberschriften dritter Ordnung.
    */
-  public final static Font H3       = new Font("font.h3",           new FontData(systemFont, 9, SWT.ITALIC));
+  public final static Font H3       = new Font("font.h3",           new FontData(systemFont,systemHeight, SWT.ITALIC));
 
   /**
    * Kleiner Text.
    */
-  public final static Font SMALL       = new Font("font.small",           new FontData(systemFont, 8, SWT.NORMAL));
+  public final static Font SMALL       = new Font("font.small",           new FontData(systemFont,systemHeight-1, SWT.NORMAL));
 
   /**
    * Standard-Schrift.
    */
-  public final static Font DEFAULT  = new Font("font.default",			new FontData());
+  public final static Font DEFAULT  = new Font("font.default",			new FontData(systemFont,systemHeight,SWT.NORMAL));
 
 	private String name;
 	private FontData value;
@@ -112,6 +116,10 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.10  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.9  2006/06/20 23:26:52  willuhn
  * @N View#setLogoText
  *

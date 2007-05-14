@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.73 $
- * $Date: 2007/04/27 15:30:14 $
+ * $Revision: 1.74 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -832,9 +832,8 @@ public class TablePart extends AbstractTablePart
     
     if (this.showSummary)
     {
-      this.summary = new Label(comp,SWT.NONE);
+      this.summary = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
       this.summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      this.summary.setBackground(Color.BACKGROUND.getSWTColor());
       refreshSummary();
     }
 	
@@ -1245,6 +1244,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.74  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.73  2007/04/27 15:30:14  willuhn
  * @C null check
  *

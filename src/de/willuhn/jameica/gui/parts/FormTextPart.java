@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/03/29 15:29:48 $
+ * $Revision: 1.13 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -167,6 +167,7 @@ public class FormTextPart implements Part {
 		text = new FormText(container,SWT.WRAP);
 
 		text.setBackground(Color.BACKGROUND.getSWTColor());
+    text.setFont(Font.DEFAULT.getSWTFont());
 
 		text.setColor("header",Color.COMMENT.getSWTColor());
     text.setColor("error",Color.ERROR.getSWTColor());
@@ -224,6 +225,10 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.13  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.12  2007/03/29 15:29:48  willuhn
  * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2007/01/23 15:52:10 $
+ * $Revision: 1.15 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.OperationCanceledException;
 
@@ -45,8 +46,7 @@ public class LabelInput extends AbstractInput
    */
   public Control getControl()
   {
-    label = new Label(getParent(),SWT.NONE);
-    label.setBackground(Color.BACKGROUND.getSWTColor());
+    label = GUI.getStyleFactory().createLabel(getParent(),SWT.NONE);
     label.setText(value == null ? "" : value);
     if (this.color != null)
       this.label.setForeground(this.color.getSWTColor());
@@ -139,6 +139,10 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.15  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.14  2007/01/23 15:52:10  willuhn
  * @C update() check for recursion
  * @N mandatoryCheck configurable

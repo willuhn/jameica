@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/04/26 11:19:48 $
+ * $Revision: 1.18 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -141,10 +142,9 @@ public abstract class AbstractInput implements Input
 
     // den Kommentar hinten dran fuegen
     if (hasComment) {
-      commentLabel = new Label(this.parent,SWT.NONE);
+      commentLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
       commentLabel.setText(this.comment);
       commentLabel.setForeground(Color.COMMENT.getSWTColor());
-      commentLabel.setBackground(Color.BACKGROUND.getSWTColor());
       commentLabel.setAlignment(SWT.LEFT);
       commentLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
@@ -365,6 +365,10 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.18  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.17  2007/04/26 11:19:48  willuhn
  * @N Generische Funktion "hasChanged()" zum Pruefen auf Aenderungen in Eingabe-Feldern
  *

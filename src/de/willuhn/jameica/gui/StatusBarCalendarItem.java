@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarCalendarItem.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/04/01 22:15:22 $
+ * $Revision: 1.4 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,7 +55,7 @@ public class StatusBarCalendarItem implements StatusBarItem
   public void paint(Composite parent) throws RemoteException
   {
 
-    text = new Label(parent, SWT.NONE);
+    text = GUI.getStyleFactory().createLabel(parent, SWT.NONE);
     GridData at = new GridData(GridData.FILL_HORIZONTAL);
     at.verticalAlignment = GridData.CENTER;
     at.widthHint = 200;
@@ -135,6 +135,10 @@ public class StatusBarCalendarItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarCalendarItem.java,v $
+ * Revision 1.4  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.3  2007/04/01 22:15:22  willuhn
  * @B Breite des Statusbarlabels
  * @B Redraw der Statusleiste

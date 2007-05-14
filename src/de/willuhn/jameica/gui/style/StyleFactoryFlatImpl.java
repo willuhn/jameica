@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.14 $
- * $Date: 2006/08/05 20:44:59 $
+ * $Revision: 1.15 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,6 +34,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Font;
 
 /**
  * Implementierung der Style-Factory im Flat-Style.
@@ -58,6 +59,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
   public Button createButton(Composite parent)
   {
 		Button button = new Button(parent,SWT.PUSH | SWT.FLAT);
+    button.setFont(Font.DEFAULT.getSWTFont());
 		adapt(button, true, true);
 		return button;
   }
@@ -68,6 +70,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
   public Text createText(Composite parent)
   {
   	Text text = new Text(parent, SWT.SINGLE);
+    text.setFont(Font.DEFAULT.getSWTFont());
   	text.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
 		text.setForeground(Color.WIDGET_FG.getSWTColor());
 		text.setBackground(Color.WIDGET_BG.getSWTColor());
@@ -82,6 +85,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
   public Text createTextArea(Composite parent)
   {
     final Text text = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+    text.setFont(Font.DEFAULT.getSWTFont());
     text.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
     text.setForeground(Color.WIDGET_FG.getSWTColor());
     text.setBackground(Color.WIDGET_BG.getSWTColor());
@@ -96,6 +100,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
   public CCombo createCombo(Composite parent)
 	{
   	final CCombo combo = new CCombo(parent,SWT.READ_ONLY);
+    combo.setFont(Font.DEFAULT.getSWTFont());
 		combo.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
 		combo.setForeground(Color.WIDGET_FG.getSWTColor());
 		parent.addPaintListener(borderPainter);
@@ -108,6 +113,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
 	public Table createTable(Composite parent, int style)
 	{
 		Table table = new Table(parent, SWT.BORDER ^ style);
+    table.setFont(Font.DEFAULT.getSWTFont());
 		table.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
 		parent.addPaintListener(borderPainter);
 		return table;
@@ -119,6 +125,7 @@ public class StyleFactoryFlatImpl implements StyleFactory
 	public Label createLabel(Composite parent, int style)
 	{
 		Label label = new Label(parent,style);
+    label.setFont(Font.DEFAULT.getSWTFont());
 		label.setBackground(Color.BACKGROUND.getSWTColor());
 		return label;
 	}
@@ -245,6 +252,10 @@ public class StyleFactoryFlatImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
+ * Revision 1.15  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.14  2006/08/05 20:44:59  willuhn
  * @B Bug 256
  *

@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/08/08 17:07:38 $
- * $Author: web0 $
+ * $Revision: 1.9 $
+ * $Date: 2007/05/14 11:18:09 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Font;
 
 /**
  * Simpler Text, der automatisch nach unten
@@ -185,6 +186,7 @@ public class TextPart implements Part
 	{
 //		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		stext = new StyledText(parent,SWT.READ_ONLY | SWT.V_SCROLL);
+    stext.setFont(Font.DEFAULT.getSWTFont());
  		stext.setBackground(background.getSWTColor());
 		stext.setEditable(false);
 		stext.setWordWrap(wrap);
@@ -210,6 +212,10 @@ public class TextPart implements Part
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.9  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.8  2005/08/08 17:07:38  web0
  * *** empty log message ***
  *

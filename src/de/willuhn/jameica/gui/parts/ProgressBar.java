@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.16 $
- * $Date: 2007/03/21 13:48:52 $
+ * $Revision: 1.17 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -154,15 +154,13 @@ public class ProgressBar implements ProgressMonitor, Part
 		bar.setMaximum(100);
 		bar.setSelection(0);
 
-    percentLabel = new Label(this.parent,SWT.NONE);
-    percentLabel.setBackground(Color.BACKGROUND.getSWTColor());
+    percentLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
     GridData gd1 = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
     gd1.widthHint = 80;
     percentLabel.setLayoutData(gd1);
     percentLabel.setText("[0 %]");
 
-    barLabel = new Label(this.parent,SWT.NONE);
-		barLabel.setBackground(Color.BACKGROUND.getSWTColor());
+    barLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
 		barLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     barLabel.setText("");
 
@@ -219,6 +217,10 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.17  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.16  2007/03/21 13:48:52  willuhn
  * @N new abstract "WaitDialog"
  * @N force redraw in backgroundtask monitor/statusbar

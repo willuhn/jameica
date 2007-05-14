@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.17 $
- * $Date: 2006/04/20 08:49:41 $
- * $Author: web0 $
+ * $Revision: 1.18 $
+ * $Date: 2007/05/14 11:18:09 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -19,6 +19,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -175,6 +176,36 @@ public class SWTUtil {
     l.verticalSpacing = 0;
     return l;
   }
+  
+  /**
+   * Rechnet eine Angabe von pt (Point) entsprechend der DPI-Anzahl in Pixel um.
+   * @param pt Points.
+   * @return Anzahl der Pixel oder -1 wenn es zu einem Fehler kam.
+   */
+  public final static int pt2px(int pt)
+  {
+    try
+    {
+      Point dpi = GUI.getDisplay().getDPI();
+      if (dpi == null)
+        return -1;
+      
+      // Das sind die Pixel pro Inch.
+      int pixel = dpi.y;
+
+      // Ein Punkt ist 1/72 inch.
+      // Also rechnen wir aus, wieviele Pixel auf 1/72 inch passen.
+      // Und das sind genau die, die auf ein pt passen.
+      double i = (double) pixel / 72d;
+      
+      // Also multiplizieren wir noch mit den pt und haben die Pixel
+      return (int)((double) pt * i);
+    }
+    catch (Throwable t)
+    {
+      return -1;
+    }
+  }
 
 
 }
@@ -182,6 +213,10 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.18  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.17  2006/04/20 08:49:41  web0
  * @C s/Childs/Children/
  *

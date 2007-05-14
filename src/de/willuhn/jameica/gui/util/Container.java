@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.10 $
- * $Date: 2007/04/02 23:01:41 $
+ * $Revision: 1.11 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.Input;
@@ -80,8 +81,7 @@ public abstract class Container
       labelGrid.verticalAlignment = GridData.BEGINNING;
     else
       labelGrid.verticalAlignment = GridData.CENTER;
-    final Label label = new Label(getComposite(), SWT.NONE);
-		label.setBackground(Color.BACKGROUND.getSWTColor());
+    final Label label = GUI.getStyleFactory().createLabel(getComposite(),SWT.NONE);
     label.setText(name);
     label.setLayoutData(labelGrid);
 
@@ -128,8 +128,7 @@ public abstract class Container
 
     checkbox.paint(comp,40);
 
-    final Label label = new Label(comp , SWT.NONE);
-		label.setBackground(Color.BACKGROUND.getSWTColor());
+    final Label label = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
     label.setText(text);
     label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
   }
@@ -155,8 +154,7 @@ public abstract class Container
     final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
     labelGrid.horizontalSpan = 2;
 
-    final Label label = new Label(getComposite(),linewrap ? SWT.WRAP : SWT.NONE);
-    label.setBackground(Color.BACKGROUND.getSWTColor());
+    final Label label = GUI.getStyleFactory().createLabel(getComposite(),linewrap ? SWT.WRAP : SWT.NONE);
     if (color != null)
       label.setForeground(color.getSWTColor());
     label.setText(text);
@@ -219,14 +217,12 @@ public abstract class Container
 		layout.marginWidth = 2;
 		comp.setLayout(layout);
 
-		final Label label = new Label(comp,SWT.NONE);
+		final Label label = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
 		label.setFont(Font.H2.getSWTFont());
-		label.setBackground(Color.BACKGROUND.getSWTColor());
 		label.setText(text);
 		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		
-		final Label line = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
-		line.setBackground(Color.BACKGROUND.getSWTColor());
+		final Label line = GUI.getStyleFactory().createLabel(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
 		line.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
   }
@@ -238,8 +234,7 @@ public abstract class Container
   {
     final GridData lineGrid = new GridData(GridData.FILL_HORIZONTAL);
     lineGrid.horizontalSpan = 2;
-    final Label line = new Label(getComposite(),SWT.SEPARATOR | SWT.HORIZONTAL);
-		line.setBackground(Color.BACKGROUND.getSWTColor());
+    final Label line = GUI.getStyleFactory().createLabel(getComposite(),SWT.SEPARATOR | SWT.HORIZONTAL);
     line.setLayoutData(lineGrid);
   }
   
@@ -267,6 +262,10 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.11  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.10  2007/04/02 23:01:41  willuhn
  * @N SelectInput auf BeanUtil umgestellt
  *

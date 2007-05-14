@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.52 $
- * $Date: 2007/04/01 22:15:22 $
+ * $Revision: 1.53 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,12 +18,15 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 
+import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 
@@ -66,11 +69,24 @@ public class StatusBar implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
+    int height = 20;
+    try
+    {
+      FontData font = Font.DEFAULT.getSWTFont().getFontData()[0];
+      int h = SWTUtil.pt2px(font.getHeight());
+      if (h > 0)
+        height = h;
+    }
+    catch (Throwable t)
+    {
+      // ignore
+    }
+    
 		this.status = new Composite(parent, SWT.NONE);
 		GridData data = new GridData();
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = 20;
+		data.heightHint = height + 12; // 12 Pixel fuer den Rand
 		status.setLayoutData(data);
 
     GridLayout layout = new GridLayout(2,false);
@@ -83,7 +99,7 @@ public class StatusBar implements Part
 		progressComp = new Composite(status, SWT.NONE);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.widthHint = 60;
-		gd.heightHint = 18;
+		gd.heightHint = height + 10; // hier nochmal 10 Pixel
 		progressComp.setLayoutData(gd);
 		progressStack = new StackLayout();
 		progressComp.setLayout(progressStack);
@@ -111,7 +127,7 @@ public class StatusBar implements Part
       item.paint(tComp);
       if (i < (size - 1))
       {
-        final Label sep = new Label(tComp, SWT.SEPARATOR | SWT.VERTICAL);
+        final Label sep = GUI.getStyleFactory().createLabel(tComp, SWT.SEPARATOR | SWT.VERTICAL);
         final GridData sepgd = new GridData(GridData.FILL_VERTICAL);
         sepgd.widthHint = 5;
         sep.setLayoutData(sepgd);
@@ -179,6 +195,10 @@ public class StatusBar implements Part
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.53  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.52  2007/04/01 22:15:22  willuhn
  * @B Breite des Statusbarlabels
  * @B Redraw der Statusleiste

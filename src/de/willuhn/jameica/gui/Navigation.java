@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.37 $
- * $Date: 2007/04/11 09:59:04 $
+ * $Revision: 1.38 $
+ * $Date: 2007/05/14 11:18:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Widget;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
@@ -113,6 +114,7 @@ public class Navigation implements Part
 			item = new TreeItem(parentTree,SWT.NONE);
 		}
 
+    item.setFont(Font.DEFAULT.getSWTFont());
     item.addDisposeListener(this.dsl);
     item.setData(element);
 		item.setText(name == null ? "" : name);
@@ -310,6 +312,10 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.38  2007/05/14 11:18:09  willuhn
+ * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
+ * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
+ *
  * Revision 1.37  2007/04/11 09:59:04  willuhn
  * @N Automatisches Speichern und Wiederherstellen des Aufklapp-Status der Navigations-Elemente
  *
