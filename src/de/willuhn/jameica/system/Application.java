@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.62 $
- * $Date: 2007/04/10 17:40:15 $
+ * $Revision: 1.63 $
+ * $Date: 2007/05/15 14:47:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.jar.JarEntry;
@@ -67,6 +68,7 @@ public final class Application {
 
     private I18N 								i18n;
 		private ArrayList 					welcomeMessages = new ArrayList();
+    private Date                started = new Date();
 
     private ApplicationController controller;
     
@@ -495,6 +497,15 @@ public final class Application {
 	{
 		return app.params;
 	}
+  
+  /**
+   * Liefert das Startdatum der aktuellen Instanz.
+   * @return Startdatum.
+   */
+  public static Date getStartDate()
+  {
+    return app.started;
+  }
 
   /**
    * Liefert den Callback-Handler von Jameica.
@@ -752,6 +763,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.63  2007/05/15 14:47:02  willuhn
+ * @N Funktion zum Ermitteln des Startdatums der aktuellen Instanz
+ *
  * Revision 1.62  2007/04/10 17:40:15  willuhn
  * @B Beruecksichtigung der Plugin-Abhaengigkeiten auch bei der Reihenfolge der zu ladenden Klassen (erzeugt sonst ggf. NoClassDefFoundErrors)
  *
