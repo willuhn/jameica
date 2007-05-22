@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/StatusBarMessage.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/03/21 22:52:53 $
- * $Author: web0 $
+ * $Revision: 1.3 $
+ * $Date: 2007/05/22 15:51:04 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -12,6 +12,8 @@
  **********************************************************************/
 
 package de.willuhn.jameica.messaging;
+
+import java.util.Date;
 
 /**
  * Wenn man eine Nachricht in der Statuszeile von Jameica anzeigen
@@ -34,6 +36,7 @@ public class StatusBarMessage implements Message
 
   private String text = null;
   private int type    = TYPE_SUCCESS;
+  private Date date   = new Date();
 
   /**
    * ct.
@@ -65,6 +68,15 @@ public class StatusBarMessage implements Message
   {
     return this.type;
   }
+  
+  /**
+   * Liefert das Erstellungsdatum der Nachricht.
+   * @return Erstellungssdatum.
+   */
+  public Date getDate()
+  {
+    return this.date;
+  }
 
   /**
    * @see java.lang.Object#toString()
@@ -78,6 +90,10 @@ public class StatusBarMessage implements Message
 
 /*********************************************************************
  * $Log: StatusBarMessage.java,v $
+ * Revision 1.3  2007/05/22 15:51:04  willuhn
+ * @N getQueueSize in MessagingFactory
+ * @N getDate in StatusBarMessage
+ *
  * Revision 1.2  2006/03/21 22:52:53  web0
  * *** empty log message ***
  *

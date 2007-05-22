@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.14 $
- * $Date: 2007/05/02 10:06:56 $
+ * $Revision: 1.15 $
+ * $Date: 2007/05/22 15:51:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,6 +93,17 @@ public final class MessagingFactory
         Logger.error("unable to register message consumer " + c[i].getName(),t);
       }
     }
+  }
+  
+  /**
+   * Liefert die aktuelle Anzahl noch zuzustellender Nachrichten.
+   * @return aktuelle Queue-Groesse.
+   */
+  public int getQueueSize()
+  {
+    if (worker == null || worker.queue == null)
+      return 0;
+    return worker.queue.size();
   }
   
   /**
@@ -311,6 +322,10 @@ public final class MessagingFactory
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.15  2007/05/22 15:51:04  willuhn
+ * @N getQueueSize in MessagingFactory
+ * @N getDate in StatusBarMessage
+ *
  * Revision 1.14  2007/05/02 10:06:56  willuhn
  * @N Nachrichten-Queue vergroessert
  *
