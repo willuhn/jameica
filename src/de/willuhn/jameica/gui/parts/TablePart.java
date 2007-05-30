@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.74 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.75 $
+ * $Date: 2007/05/30 14:57:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -395,13 +395,36 @@ public class TablePart extends AbstractTablePart
 		addItem(object,size());
 	}
 
-	/**
-	 * Fuegt der Tabelle ein Element hinzu.
+  /**
+   * Fuegt der Tabelle am Ende ein Element hinzu.
+   * @param object hinzuzufuegendes Element.
+   * @param checked true, wenn die Tabelle checkable ist und das Objekt gecheckt sein soll.
+   * @throws RemoteException
+   */
+  public void addItem(Object object, boolean checked) throws RemoteException
+  {
+    addItem(object,size(),checked);
+  }
+
+  /**
+   * Fuegt der Tabelle ein Element hinzu.
    * @param object hinzuzufuegendes Element.
    * @param index Position, an der es eingefuegt werden soll.
    * @throws RemoteException
    */
   public void addItem(final Object object, int index) throws RemoteException
+  {
+    addItem(object,index,true);
+  }
+
+  /**
+	 * Fuegt der Tabelle ein Element hinzu.
+   * @param object hinzuzufuegendes Element.
+   * @param index Position, an der es eingefuegt werden soll.
+   * @param checked true, wenn die Tabelle checkable ist und das Objekt gecheckt sein soll.
+   * @throws RemoteException
+   */
+  public void addItem(final Object object, int index, boolean checked) throws RemoteException
   {
     
     // Wenn die Tabelle noch nie gezeichnet wurde, schreiben wir
@@ -413,7 +436,7 @@ public class TablePart extends AbstractTablePart
     }
     
 		final TableItem item = new TableItem(table, SWT.NONE,index);
-    if (check) item.setChecked(true);
+    if (check) item.setChecked(checked);
 
 		// hihi, wenn es sich um ein DBObject handelt, haengen wir einen
 		// Listener dran, der uns ueber das Loeschen des Objektes
@@ -910,7 +933,7 @@ public class TablePart extends AbstractTablePart
    */
   public void select(Object[] objects)
   {
-    if (objects == null || objects.length == 0)
+    if (objects == null || objects.length == 0 || table == null)
       return;
     
     if (!this.multi && objects.length > 1)
@@ -950,12 +973,60 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
+   * Wenn die Tabelle mit Checkboxen versehen ist, kann man damit bei einem Element das Haeckchen setzen oder entfernen.
+   * @param objects Liste der zu checkenden Objekte.
+   * @param checked true, wenn das Haekchen gesetzt werden soll.
+   */
+  public void setChecked(Object[] objects, boolean checked)
+  {
+    if (objects == null || objects.length == 0 || table == null)
+      return;
+    
+    for (int i=0;i<objects.length;++i)
+    {
+      if (objects[i] == null)
+        continue;
+
+      TableItem[] items = table.getItems();
+      for (int j=0;j<items.length;++j)
+      {
+        if (items[j] == null)
+          continue;
+        Object o = items[j].getData();
+        
+        if (o == null)
+          continue;
+
+        try
+        {
+          if (BeanUtil.equals(objects[i],o))
+            items[j].setChecked(checked);
+        }
+        catch (RemoteException e)
+        {
+          Logger.error("error while checking table item",e);
+        }
+      }
+    }
+  }
+
+  /**
    * Markiert das uebergebene Element.
    * @param o das zu markierende Element.
    */
   public void select(Object o)
   {
     select(new Object[]{o});
+  }
+
+  /**
+   * Wenn die Tabelle mit Checkboxen versehen ist, kann man damit bei einem Element das Haeckchen setzen oder entfernen.
+   * @param o das zu checkende Element.
+   * @param checked true, wenn das Haekchen gesetzt werden soll.
+   */
+  public void setChecked(Object o, boolean checked)
+  {
+    setChecked(new Object[]{o},checked);
   }
 
   /**
@@ -1244,6 +1315,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.75  2007/05/30 14:57:58  willuhn
+ * @N Items checkable
+ *
  * Revision 1.74  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
