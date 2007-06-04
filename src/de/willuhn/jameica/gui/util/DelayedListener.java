@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/DelayedListener.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/04/26 18:21:43 $
+ * $Revision: 1.3 $
+ * $Date: 2007/06/04 23:24:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 
 package de.willuhn.jameica.gui.util;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -74,20 +75,30 @@ public class DelayedListener implements Listener
   public final synchronized void handleEvent(final Event event)
   {
     count++;
-    GUI.getDisplay().timerExec(this.timeout,new Runnable()
-    {
-      private long myCount = count;
 
+    // Muss ich leider doppelt verpacken, da timerExec keinen Zugriff
+    // aus Fremdthreads erlaubt
+    Display display = GUI.getDisplay();
+    display.asyncExec(new Runnable()
+    {
       public void run()
       {
-        if (listener == null)
-          return;
+        GUI.getDisplay().timerExec(DelayedListener.this.timeout,new Runnable()
+        {
+          private long myCount = count;
 
-        // count steht immer noch dort, wo wir ihn
-        // hinterlassen haben, also kam nach uns
-        // keiner mehr.
-        if (count <= myCount)
-          listener.handleEvent(event);
+          public void run()
+          {
+            if (listener == null)
+              return;
+
+            // count steht immer noch dort, wo wir ihn
+            // hinterlassen haben, also kam nach uns
+            // keiner mehr.
+            if (count <= myCount)
+              listener.handleEvent(event);
+          }
+        });
       }
     });
   }
@@ -97,6 +108,9 @@ public class DelayedListener implements Listener
 
 /*********************************************************************
  * $Log: DelayedListener.java,v $
+ * Revision 1.3  2007/06/04 23:24:26  willuhn
+ * @B delayedListener occurs SWTException (invalid thread access) when not wrapped in syncExec/asyncExec
+ *
  * Revision 1.2  2007/04/26 18:21:43  willuhn
  * *** empty log message ***
  *
