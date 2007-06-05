@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.64 $
- * $Date: 2007/06/05 11:45:09 $
+ * $Revision: 1.65 $
+ * $Date: 2007/06/05 13:07:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -410,7 +410,8 @@ public final class Application {
 
     getCallback().getStartupMonitor().setStatusText("starting internal messaging system");
     try {
-      app.messagingFactory = MessagingFactory.getInstance();
+      app.messagingFactory = new MessagingFactory();
+      app.messagingFactory.init();
       app.messagingFactory.registerMessageConsumer(new LogMessageConsumer());
     }
     catch (Throwable t)
@@ -762,6 +763,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.65  2007/06/05 13:07:57  willuhn
+ * @C changed init process of messaging factory
+ *
  * Revision 1.64  2007/06/05 11:45:09  willuhn
  * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
  *

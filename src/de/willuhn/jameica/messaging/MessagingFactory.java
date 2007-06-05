@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.16 $
- * $Date: 2007/06/05 11:45:09 $
+ * $Revision: 1.17 $
+ * $Date: 2007/06/05 13:07:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,15 +28,28 @@ import de.willuhn.logging.Logger;
  */
 public final class MessagingFactory implements MessagingQueue
 {
-  private static MessagingFactory singleton = null;
-  private MessagingQueue defaultQueue       = new NamedQueue("[default]");
+  private MessagingQueue defaultQueue       = null;
   private HashMap queues                    = new HashMap();
   
   /**
    * ct.
    */
-  private MessagingFactory() throws Exception
+  public MessagingFactory()
   {
+  }
+
+  /**
+   * Initialisiert die MessagingFactory.
+   * @throws Exception
+   */
+  public final synchronized void init() throws Exception
+  {
+    if (defaultQueue != null)
+      return;
+    
+    Logger.info("init messaging factory");
+    this.defaultQueue = new NamedQueue("[default]");
+    
     Logger.info("searching for message consumers");
     Class[] c = new Class[0];
     try
@@ -70,21 +83,6 @@ public final class MessagingFactory implements MessagingQueue
         Logger.error("unable to register message consumer " + c[i].getName(),t);
       }
     }
-  }
-
-  /**
-   * Initialisiert die MessagingFactory.
-   * @return die Instanz der Factory.
-   * @throws Exception
-   */
-  public final static synchronized MessagingFactory getInstance() throws Exception
-  {
-    if (singleton == null)
-    {
-      Logger.info("init messaging factory");
-      singleton = new MessagingFactory();
-    }
-    return singleton;
   }
   
   /**
@@ -176,6 +174,9 @@ public final class MessagingFactory implements MessagingQueue
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.17  2007/06/05 13:07:56  willuhn
+ * @C changed init process of messaging factory
+ *
  * Revision 1.16  2007/06/05 11:45:09  willuhn
  * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
  *
