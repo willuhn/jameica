@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/06/05 11:45:09 $
+ * $Revision: 1.2 $
+ * $Date: 2007/06/05 11:47:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -166,7 +166,7 @@ public final class NamedQueue implements MessagingQueue
      * Registriert eine Queue.
      * @param queue
      */
-    private void register(MessagingQueue queue)
+    private void register(NamedQueue queue)
     {
       this.queues.add(queue);
     }
@@ -175,9 +175,10 @@ public final class NamedQueue implements MessagingQueue
      * De-registriert eine Queue.
      * @param queue
      */
-    private void unregister(MessagingQueue queue)
+    private void unregister(NamedQueue queue)
     {
       interrupt(); // Noch offene Nachrichten zustellen
+      Logger.info("closing queue: " + queue.getName());
       this.queues.remove(queue);
 
       if (queues.size() == 0)
@@ -275,6 +276,9 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.2  2007/06/05 11:47:16  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2007/06/05 11:45:09  willuhn
  * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
  *
