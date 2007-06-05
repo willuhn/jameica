@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.15 $
- * $Date: 2007/05/22 15:51:04 $
+ * $Revision: 1.16 $
+ * $Date: 2007/06/05 11:45:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,13 +13,11 @@
 package de.willuhn.jameica.messaging;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
-import de.willuhn.util.Queue;
-import de.willuhn.util.Queue.QueueFullException;
 
 /**
  * Die Nachrichtenzentrale von Jameica ;).
@@ -28,39 +26,18 @@ import de.willuhn.util.Queue.QueueFullException;
  * zu.
  * @author willuhn
  */
-public final class MessagingFactory
+public final class MessagingFactory implements MessagingQueue
 {
-
-  private ArrayList consumers = null;
-  private Worker worker       = null;
-
+  private static MessagingFactory singleton = null;
+  private MessagingQueue defaultQueue       = new NamedQueue("[default]");
+  private HashMap queues                    = new HashMap();
+  
   /**
    * ct.
    */
-  public MessagingFactory()
+  private MessagingFactory() throws Exception
   {
-  }
-
-  /**
-   * Initialisiert die MessagingFactory.
-   * @throws Exception
-   */
-  public synchronized void init() throws Exception
-  {
-    Logger.info("init messaging factory");
-
-    if (consumers != null)
-    {
-      Logger.warn("messaging factory allready initialized");
-      return;
-    }
-
-    Logger.info("starting messaging worker thread");
-    worker = new Worker();
-    worker.start();
-
     Logger.info("searching for message consumers");
-    consumers = new ArrayList();
     Class[] c = new Class[0];
     try
     {
@@ -94,234 +71,114 @@ public final class MessagingFactory
       }
     }
   }
+
+  /**
+   * Initialisiert die MessagingFactory.
+   * @return die Instanz der Factory.
+   * @throws Exception
+   */
+  public final static synchronized MessagingFactory getInstance() throws Exception
+  {
+    if (singleton == null)
+    {
+      Logger.info("init messaging factory");
+      singleton = new MessagingFactory();
+    }
+    return singleton;
+  }
   
   /**
-   * Liefert die aktuelle Anzahl noch zuzustellender Nachrichten.
-   * @return aktuelle Queue-Groesse.
+   * @see de.willuhn.jameica.messaging.MessagingQueue#getQueueSize()
    */
   public int getQueueSize()
   {
-    if (worker == null || worker.queue == null)
-      return 0;
-    return worker.queue.size();
+    return this.defaultQueue.getQueueSize();
   }
   
   /**
-   * Registriert einen Nachrichten-Consumer manuell.
-   * @param consumer zu registrierender Consumer.
+   * Liefert eine neue Message-Queue mit dem angegebenen Namen.
+   * Existiert sie noch nicht, wird sie automatisch erstellt.
+   * Nachrichten, die in diese Queue gesendet werden, empfangen
+   * nur noch die Message-Consumer, die eine gleichnamige Queue
+   * abonniert haben.
+   * @param name Name der Queue.
+   * @return die neue Queue.
+   */
+  public MessagingQueue getMessagingQueue(String name)
+  {
+    if (name == null)
+      return defaultQueue;
+    
+    MessagingQueue queue = (MessagingQueue) queues.get(name);
+    if (queue == null)
+    {
+      queue = new NamedQueue(name);
+      queues.put(name,queue);
+    }
+    return queue;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.messaging.MessagingQueue#registerMessageConsumer(de.willuhn.jameica.messaging.MessageConsumer)
    */
   public void registerMessageConsumer(MessageConsumer consumer)
   {
-    if (consumer == null)
-      return;
-    Logger.debug("registering message consumer " + consumer.getClass().getName());
-    consumers.add(consumer);
+    this.defaultQueue.registerMessageConsumer(consumer);
   }
 
   /**
-   * Entfernt einen Nachrichten-Consumer aus der Registry.
-   * @param consumer zu entfernender Consumer.
+   * @see de.willuhn.jameica.messaging.MessagingQueue#unRegisterMessageConsumer(de.willuhn.jameica.messaging.MessageConsumer)
    */
   public void unRegisterMessageConsumer(MessageConsumer consumer)
   {
-    if (consumer == null)
-      return;
-    Logger.debug("unregistering message consumer " + consumer.getClass().getName());
-    consumers.remove(consumer);
+    this.defaultQueue.unRegisterMessageConsumer(consumer);
   }
 
   /**
-   * Beendet die Messaging-Factory.
+   * @see de.willuhn.jameica.messaging.MessagingQueue#close()
    */
-  public void shutDown()
+  public synchronized void close()
   {
     Logger.info("shutting down messaging factory");
-    worker.shutDown();
-
-    try {
-      while (!worker.finished())
+    try
+    {
+      Iterator it = this.queues.keySet().iterator();
+      while (it.hasNext())
       {
-        Thread.sleep(50);
+        MessagingQueue q = (MessagingQueue) this.queues.get(it.next());
+        q.close();
       }
     }
-    catch (Exception e)
+    finally
     {
-      Logger.error("error while waiting for worker shutdown");
-      worker.interrupt();
+      defaultQueue.close();
+      this.queues.clear();
+      this.defaultQueue = null;
     }
-    Logger.info("messaging factory shut down");
-    this.consumers = null;
   }
 
   /**
-   * Sendet eine Nachricht asynchron an alle Nachrichtenverbraucher.
-   * @param message die zu versendende Nachricht.
+   * @see de.willuhn.jameica.messaging.MessagingQueue#sendMessage(de.willuhn.jameica.messaging.Message)
    */
   public void sendMessage(Message message)
   {
-    if (message == null)
-      return;
-    try
-    {
-      worker.queueMessage(message);
-    }
-    catch (Queue.QueueFullException e)
-    {
-      Logger.error("unable to send message " + message.toString() + " - queue full");
-    }
+    this.defaultQueue.sendMessage(message);
   }
   
   /**
-   * Sendet eine Nachricht <b>synchron</b> an alle Nachrichtenverbraucher.
-   * @param message die zu versendende Nachricht.
+   * @see de.willuhn.jameica.messaging.MessagingQueue#sendSyncMessage(de.willuhn.jameica.messaging.Message)
    */
   public void sendSyncMessage(Message message)
   {
-    if (message == null)
-      return;
-    send(message);
-  }
-
-  /**
-   * Sendet die Nachricht an alle Consumer.
-   * @param msg
-   */
-  private void send(Message msg)
-  {
-    Logger.debug("sending message " + msg.toString());
-    MessageConsumer consumer = null;
-    synchronized (consumers)
-    {
-
-      for (int i=0;i<consumers.size();++i)
-      {
-        consumer = (MessageConsumer) consumers.get(i);
-        Class[] expected = consumer.getExpectedMessageTypes();
-        boolean send = expected == null;
-        if (expected != null)
-        {
-          for (int j=0;j<expected.length;++j)
-          {
-            if (expected[j].isInstance(msg))
-            {
-              send = true;
-              break;
-            }
-          }
-        }
-        try
-        {
-          if (send)
-            consumer.handleMessage(msg);
-        }
-        catch (Throwable t)
-        {
-          Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getClass().getName() + ": " + t + ") while consuming message " + msg);
-          Logger.write(Level.DEBUG,"error while processing message",t);
-        }
-      }
-    }
-  }
-  
-  /**
-   * Der Worker-Thread.
-   * @author willuhn
-   */
-  private class Worker extends Thread
-  {
-    
-    // Maximal-Zahl gleichzeitiger Nachrichten.
-    private final static int MAX_MESSAGES = 1000;
-
-    private Queue queue  = null;
-    
-    private boolean quit = false;
-    private boolean finished = false;
-
-    /**
-     * ct.
-     */
-    private Worker()
-    {
-      super("Jameica Messaging Worker Thread");
-      Logger.info("init message queue. queue size: " + MAX_MESSAGES);
-      this.queue = new Queue(MAX_MESSAGES);
-    }
-
-    /**
-     * Liefert true, wenn der Worker die letzte Nachricht zugestellt hat.
-     * @return true, wenn alles gesendet wurde.
-     */
-    private boolean finished()
-    {
-      return finished;
-    }
-
-    /**
-     * Packt eine Message in die Queue.
-     * @param msg die zu versendende Message.
-     * @throws QueueFullException wenn die maximale Kapazitaet der Nachrichtenwarteschlange erreicht ist.
-     */
-    private void queueMessage(Message msg) throws QueueFullException
-    {
-      if (quit)
-      {
-        Logger.warn("shutdown in progress, no more messages accepted");
-        return; // wir nehmen keine Nachrichten mehr entgegen.
-      }
-
-      if (consumers.size() == 0)
-      {
-        // Das ist bewusst Debug-Level weil das durchaus vorkommen kann.
-        Logger.debug("no message consumers defined, ignoring message");
-        return;
-      }
-      queue.push(msg);
-    }
-
-    /**
-     * @see java.lang.Runnable#run()
-     */
-    public void run()
-    {
-      while(true)
-      {
-        if (queue.size() == 0 && quit)
-        {
-          Logger.info("all messages sent. ready for shut down");
-          finished = true;
-          return;
-        }
-
-        if (queue.size() == 0)
-        {
-          // nichts zum Schreiben da, dann warten wir etwas
-          try
-          {
-            sleep(100);
-          }
-          catch (InterruptedException e)
-          {
-          }
-          continue;
-        }
-
-        send((Message) queue.pop());
-      }
-    }
-
-    /**
-     * Beendet den Worker.
-     */
-    private void shutDown()
-    {
-      this.quit = true;
-    }
+    this.defaultQueue.sendSyncMessage(message);
   }
 }
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.16  2007/06/05 11:45:09  willuhn
+ * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
+ *
  * Revision 1.15  2007/05/22 15:51:04  willuhn
  * @N getQueueSize in MessagingFactory
  * @N getDate in StatusBarMessage

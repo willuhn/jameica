@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/SystemMessage.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/01/31 13:07:52 $
+ * $Revision: 1.2 $
+ * $Date: 2007/06/05 11:45:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,7 @@ import de.willuhn.jameica.system.Application;
  * etwas geaendert hat. Z.Bsp. wenn das System gebootet wurde oder wenn
  * es heruntergefahren wird.
  */
-public class SystemMessage implements Message
+public class SystemMessage extends TextMessage
 {
   /**
    * Dieser Code wird verwendet, wenn das System vollstaendig gestartet wurde.
@@ -32,8 +32,6 @@ public class SystemMessage implements Message
    */
   public final static int SYSTEM_SHUTDOWN = 2;
   
-  
-  private String text = null;
   private int code = -1;
 
   /**
@@ -52,10 +50,11 @@ public class SystemMessage implements Message
    */
   public SystemMessage(int code, String text)
   {
+    super(text);
     this.code = code;
-    this.text = text;
-    if (this.text != null)
-    Application.getMessagingFactory().sendMessage(new StatusBarMessage(text,StatusBarMessage.TYPE_SUCCESS));
+
+    if (text != null)
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(text,StatusBarMessage.TYPE_SUCCESS));
   }
   
   /**
@@ -68,20 +67,14 @@ public class SystemMessage implements Message
   {
     return this.code;
   }
-  
-  /**
-   * Liefert einen optionalen Statustext.
-   * @return optionaler Statustext.
-   */
-  public String getStatusText()
-  {
-    return this.text;
-  }
 }
 
 
 /*********************************************************************
  * $Log: SystemMessage.java,v $
+ * Revision 1.2  2007/06/05 11:45:09  willuhn
+ * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
+ *
  * Revision 1.1  2007/01/31 13:07:52  willuhn
  * @N Login-Dialog
  * @N SystemMessage

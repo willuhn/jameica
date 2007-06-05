@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.63 $
- * $Date: 2007/05/15 14:47:02 $
+ * $Revision: 1.64 $
+ * $Date: 2007/06/05 11:45:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -314,7 +314,7 @@ public final class Application {
     getController().shutDown();     
 		getServiceFactory().shutDown();
     getPluginLoader().shutDown();
-    getMessagingFactory().shutDown();
+    getMessagingFactory().close();
 
 		Logger.info("shutdown complete");
 		Logger.info("--------------------------------------------------\n");
@@ -410,8 +410,7 @@ public final class Application {
 
     getCallback().getStartupMonitor().setStatusText("starting internal messaging system");
     try {
-      app.messagingFactory = new MessagingFactory();
-      app.messagingFactory.init();
+      app.messagingFactory = MessagingFactory.getInstance();
       app.messagingFactory.registerMessageConsumer(new LogMessageConsumer());
     }
     catch (Throwable t)
@@ -763,6 +762,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.64  2007/06/05 11:45:09  willuhn
+ * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
+ *
  * Revision 1.63  2007/05/15 14:47:02  willuhn
  * @N Funktion zum Ermitteln des Startdatums der aktuellen Instanz
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/StatusBarMessage.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/05/22 15:51:04 $
+ * $Revision: 1.4 $
+ * $Date: 2007/06/05 11:45:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,15 +13,13 @@
 
 package de.willuhn.jameica.messaging;
 
-import java.util.Date;
-
 /**
  * Wenn man eine Nachricht in der Statuszeile von Jameica anzeigen
  * will, dann schickt man einfach eine Nachricht dieses Typs an
  * die MessagingFactory.
  * @author willuhn
  */
-public class StatusBarMessage implements Message
+public class StatusBarMessage extends TextMessage
 {
 
   /**
@@ -34,9 +32,7 @@ public class StatusBarMessage implements Message
    */
   public final static int TYPE_ERROR   = 1;
 
-  private String text = null;
   private int type    = TYPE_SUCCESS;
-  private Date date   = new Date();
 
   /**
    * ct.
@@ -47,17 +43,8 @@ public class StatusBarMessage implements Message
    */
   public StatusBarMessage(String text, int type)
   {
-    this.text = text;
+    super(text);
     this.type = type;
-  }
-  
-  /**
-   * Liefert den Text der Nachricht.
-   * @return Text der Nachricht.
-   */
-  public String getText()
-  {
-    return this.text;
   }
   
   /**
@@ -68,28 +55,14 @@ public class StatusBarMessage implements Message
   {
     return this.type;
   }
-  
-  /**
-   * Liefert das Erstellungsdatum der Nachricht.
-   * @return Erstellungssdatum.
-   */
-  public Date getDate()
-  {
-    return this.date;
-  }
-
-  /**
-   * @see java.lang.Object#toString()
-   */
-  public String toString()
-  {
-    return "type " + getType() + ": " + getText();
-  }
 }
 
 
 /*********************************************************************
  * $Log: StatusBarMessage.java,v $
+ * Revision 1.4  2007/06/05 11:45:09  willuhn
+ * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
+ *
  * Revision 1.3  2007/05/22 15:51:04  willuhn
  * @N getQueueSize in MessagingFactory
  * @N getDate in StatusBarMessage
