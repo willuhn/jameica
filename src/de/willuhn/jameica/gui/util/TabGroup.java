@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/TabGroup.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/12/16 16:34:58 $
- * $Author: web0 $
+ * $Revision: 1.3 $
+ * $Date: 2007/06/12 08:56:32 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -53,7 +53,7 @@ public class TabGroup extends Container
    */
   public TabGroup(TabFolder parent, String name, boolean fullSize)
   {
-    this(parent,name,false,2);
+    this(parent,name,fullSize,2);
   }
 
   /**
@@ -93,6 +93,9 @@ public class TabGroup extends Container
 
 /*********************************************************************
  * $Log: TabGroup.java,v $
+ * Revision 1.3  2007/06/12 08:56:32  willuhn
+ * @B Parameter nicht an Konstruktor weitergegeben
+ *
  * Revision 1.2  2005/12/16 16:34:58  web0
  * @N new Constructor in TabGroup
  *
