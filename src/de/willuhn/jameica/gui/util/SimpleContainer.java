@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SimpleContainer.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/07/05 23:29:15 $
+ * $Revision: 1.2 $
+ * $Date: 2007/06/13 09:43:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,7 +37,7 @@ public class SimpleContainer extends Container
   
   /**
    * ct.
-   * Erzeugt einen neuen Container, jedoch kann fastgelegt werden, ob
+   * Erzeugt einen neuen Container, jedoch kann festgelegt werden, ob
    * sie sich ueber die volle Hoehe der View erstreckt oder nur
    * auf ihre tatsaechliche Hoehe.
    * @param parent Das Composite, in dem die Group gemalt werden soll.
@@ -66,6 +66,9 @@ public class SimpleContainer extends Container
 
 /*********************************************************************
  * $Log: SimpleContainer.java,v $
+ * Revision 1.2  2007/06/13 09:43:02  willuhn
+ * @B Bug 412
+ *
  * Revision 1.1  2006/07/05 23:29:15  willuhn
  * @B Bug 174
  *
