@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.22 $
- * $Date: 2007/06/21 14:08:41 $
+ * $Revision: 1.23 $
+ * $Date: 2007/06/21 22:27:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,14 +12,19 @@
  **********************************************************************/
 package de.willuhn.jameica.system;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 
 import de.willuhn.jameica.security.Certificate;
+import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
@@ -235,12 +240,65 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
   public boolean checkTrust(X509Certificate cert) throws Exception
   {
 
-    // Im Nicht-interaktiven Mode muessen wir das Zertifikat so uebernehmen
-    // Wir haben sonst keine praktikable Handhabe auf dem Server, dieses zu importieren.
+    // Im Nicht-interaktiven Mode speichern wir das Zertifikat nur in
+    // einem Spool-Verzeichnis ab.
     if (Application.inNonInteractiveMode())
     {
-      Logger.warn("running in noninteractive mode, importing certificate");
-      return true;
+      // Im nicht-interaktiven Mode speichern wir das Zertifikat in einem Incoming-Verzeichnis
+      File f = new File(Application.getConfig().getWorkDir(),"untrusted");
+      Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus. Vertrauensstellung des Zertifikats kann nicht abgefragt werden"));
+      Logger.warn(Application.getI18n().tr("Speichere Zertifikat im Verzeichnis {0}",f.getAbsolutePath()));
+
+      if (f.exists() && (!f.isDirectory() || !f.canWrite()))
+        throw new ApplicationException(Application.getI18n().tr("Kann in Incoming-Verzeichnis {0} nicht schreiben",f.getAbsolutePath()));
+
+      if (!f.exists())
+      {
+        boolean b = f.mkdirs();
+        if (!b)
+          throw new ApplicationException(Application.getI18n().tr("Incoming-Verzeichnis {0} konnte nicht erstellt werden",f.getAbsolutePath()));
+      }
+
+      // Speichern des Zertifikats im Incoming-Verzeichnis
+      OutputStream os = null;
+      try
+      {
+        // Wir erzeugen einen Dateinamen aus dem Namen des Typen, fuer den es ausgestellt ist.
+        Certificate myCert = new Certificate(cert);
+        Principal p = myCert.getSubject();
+        String name = p.getAttribute(Principal.COMMON_NAME) + "__" + cert.getSerialNumber().toString();
+        // Wir nehmen alle Zeichen bis auf Buchstaben, Zahlen und Unterstrich raus 
+        name = name.replaceAll("[^A-Za-z0-9\\-_]","_");
+        // und kuerzen noch auf maximal 50 Zeichen
+        if (name.length() > 50)
+          name = name.substring(0,49);
+          
+        // und haengen noch ein ".cert" dran.
+        name += ".crt";
+
+        File target = new File(f,name);
+        Logger.info(Application.getI18n().tr("Speichere Zertifikat in {0}",target.getAbsolutePath()));
+        if (target.exists())
+        {
+          Logger.warn(Application.getI18n().tr("Zertifikat {0} existiert bereits",target.getAbsolutePath()));
+          return false;
+        }
+        os = new BufferedOutputStream(new FileOutputStream(target));
+        os.write(cert.getEncoded());
+      }
+      finally
+      {
+        if (os != null)
+        try
+        {
+          os.close();
+        }
+        catch (Exception e)
+        {
+          // useless
+        }
+      }
+      return false;
     }
 
     // Ansonsten fragen wir an der Console nach der Vertrauensstellung
@@ -357,6 +415,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.23  2007/06/21 22:27:54  willuhn
+ * @C Nacharbeiten zu SSL-Fixes
+ *
  * Revision 1.22  2007/06/21 14:08:41  willuhn
  * Korrekter Fortschrittsanzeige des Boot-Vorgangs auch im Server-Mode
  *

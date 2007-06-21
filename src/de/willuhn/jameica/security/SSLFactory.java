@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.39 $
- * $Date: 2007/06/21 18:34:24 $
+ * $Revision: 1.40 $
+ * $Date: 2007/06/21 22:27:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -518,6 +518,9 @@ public class SSLFactory
   {
     if (cert == null)
       throw new Exception("certificate cannot be null");
+    
+    if (getSystemCertificate().equals(cert))
+      throw new Exception("system certificate cannot be deleted");
 
     Logger.warn("removing certificate " + cert.getSubjectDN().getName() + " from keystore");
 
@@ -526,8 +529,10 @@ public class SSLFactory
     while (e.hasMoreElements())
     {
       String alias = (String) e.nextElement();
+      if (SYSTEM_ALIAS.equals(alias))
+        continue;
       X509Certificate c = (X509Certificate) getKeyStore().getCertificate(alias);
-      if (c == null)
+      if (c == null || c.equals(getSystemCertificate()))
         continue;
       if (cert.equals(c))
       {
@@ -625,7 +630,7 @@ public class SSLFactory
     }
 
     Logger.warn("adding certificate DN: " + dn + " to keystore");
-    getKeyStore().setCertificateEntry(dn + "." + System.currentTimeMillis(),cert);
+    getKeyStore().setCertificateEntry(dn + "-" + cert.getSerialNumber().toString(),cert);
     storeKeystore();
   } 
 
@@ -717,6 +722,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.40  2007/06/21 22:27:54  willuhn
+ * @C Nacharbeiten zu SSL-Fixes
+ *
  * Revision 1.39  2007/06/21 18:34:24  willuhn
  * @B das uebliche Problem: "bad_certificate" bei Client-Server-Setup (RMI over SSL)
  *
