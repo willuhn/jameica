@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.40 $
- * $Date: 2007/06/21 22:27:54 $
+ * $Revision: 1.41 $
+ * $Date: 2007/06/21 22:44:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -173,7 +173,7 @@ public class SSLFactory
     generator.setSubjectDN(subject);
     generator.setIssuerDN(subject);
     
-    generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*8))); // 10 Jahre
+    generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre
     generator.setNotBefore(new Date());
     generator.addExtension(X509Extensions.KeyUsage, false, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyAgreement | KeyUsage.keyEncipherment | KeyUsage.nonRepudiation));
     
@@ -722,6 +722,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.41  2007/06/21 22:44:48  willuhn
+ * @B Zert.-Laufzeit von 8 auf 10 Jahren zurueckgeaendert
+ *
  * Revision 1.40  2007/06/21 22:27:54  willuhn
  * @C Nacharbeiten zu SSL-Fixes
  *
