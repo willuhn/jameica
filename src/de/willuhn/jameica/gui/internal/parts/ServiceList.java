@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.7 $
- * $Date: 2007/06/21 09:56:30 $
+ * $Revision: 1.8 $
+ * $Date: 2007/06/21 09:59:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -329,7 +329,7 @@ public class ServiceList extends TablePart
       {
         String host = ServiceSettings.getLookupHost(plugin.getClass(),serviceName);
         if (host == null || host.length() == 0)
-          return Application.getI18n().tr("Warnung: Kein Server definiert");
+          return Application.inClientMode() ? Application.getI18n().tr("Warnung: Kein Server definiert") : null;
         return host + ":" + ServiceSettings.getLookupPort(plugin.getClass(),serviceName);
       }
       return serviceName;
@@ -374,6 +374,9 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.8  2007/06/21 09:59:22  willuhn
+ * @C Keine Warnung anzeigen, wenn in Standalone-Mode keine Binding existiert
+ *
  * Revision 1.7  2007/06/21 09:56:30  willuhn
  * @N Remote Service-Bindings nun auch in Standalone-Mode moeglich
  * @N Keine CertificateException mehr beim ersten Start im Server-Mode
