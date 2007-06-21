@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.38 $
- * $Date: 2007/06/21 11:03:01 $
+ * $Revision: 1.39 $
+ * $Date: 2007/06/21 18:34:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,6 +43,8 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -131,28 +133,11 @@ public class SSLFactory
 
 		////////////////////////////////////////////////////////////////////////////
 		// Zertifikat erstellen
-		Logger.info("  generating selfsigned x.509 certificate");
-		Hashtable attributes = new Hashtable();
-		String hostname = Application.getCallback().getHostname();
-		Logger.info("  using hostname: " + hostname);
-		attributes.put(X509Name.CN,hostname);
-    attributes.put(X509Name.O,"Jameica Certificate");
-    
-    // BUGZILLA 326
-    String username = System.getProperty("user.name");
-    if (username != null && username.length() > 0)
-    {
-      // Mit dem Prefix kann man auch dann die Zertifikate austauschen, wenn
-      // Client und Server mit dem selben Account auf dem selben Rechner
-      // laufen.
-      String prefix = "";
-      if (Application.inClientMode()) prefix = "client.";
-      else if (Application.inServerMode()) prefix = "server.";
-      attributes.put(X509Name.GIVENNAME,prefix + username);
-      attributes.put(X509Name.OU,prefix + username);
-    }
-		X509Name user   = new X509Name(attributes);
-		X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
+
+    X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
+
+
+    Logger.info("  generating selfsigned x.509 certificate");
 
     byte[] serno = new byte[8];
     SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
@@ -160,16 +145,44 @@ public class SSLFactory
     random.nextBytes(serno);
     generator.setSerialNumber((new BigInteger(serno)).abs());
 
-    generator.setIssuerDN(user);
-		generator.setSubjectDN(user);
-		generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre sollten reichen ;)
-		generator.setNotBefore(new Date());
+    // TODO: Das Erstellen der Zertifikate muss nochmal ueberarbeitet werden
+    // Die Client-Server-Kommunikation bei RMI over SSL funktioniert nur, wenn
+    // a) beide Zertifikate einen identischen DN haben. Das ist aber nicht schoen,
+    //    da man die Zertifikate dann nur noch anhand der Seriennummer unterscheiden kann
+    // b) wenn das System-Zertifikat nicht selbstsigniert ist sondern zusaetzlich
+    //    noch ein selfsigned CA-Zert erstellt wird, mit dem das System-Zertifikat
+    //    signiert wurde. Der DN der CA-Zerts muss dann aber bei beiden Systemen
+    //    idensichen sein. Dann unterscheiden sich zwar die Server-Zertifikate,
+    //    allerdings muss das CA-Zertifikat mit gespeichert, gelesen und beim
+    //    Masterpasswort-Aendern beruecksichtigt werden. Das ist zu umstaendlich.
+    //
+    // Ich lass erstmal die Version hier. Da Zertifikate nun auch
+    // identische Namen haben koennen, ohne ueberschrieben zu werden
+    // (der Vergleich beim Import findet nur noch via cert.equals(other)
+    // und nicht mehr durch Vergleich des DN statt), kann man erstmal
+    // damit leben.
+    
+//    String hostname = Application.getCallback().getHostname();
+//    Logger.info("  using hostname: " + hostname);
+//
+    Hashtable props = new Hashtable();
+    props.put(X509Name.CN,"Jameica System Certificate");
+    props.put(X509Name.O,"Jameica");
 
-		generator.setPublicKey(this.publicKey);
-		generator.setSignatureAlgorithm("MD5WITHRSA");
+    X509Name subject = new X509Name(props);
+    generator.setSubjectDN(subject);
+    generator.setIssuerDN(subject);
+    
+    generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*8))); // 10 Jahre
+    generator.setNotBefore(new Date());
+    generator.addExtension(X509Extensions.KeyUsage, false, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyAgreement | KeyUsage.keyEncipherment | KeyUsage.nonRepudiation));
+    
+    generator.setPublicKey(this.publicKey);
+    generator.setSignatureAlgorithm("SHA1withRSA");
 
-		this.certificate = generator.generateX509Certificate(this.privateKey);
-		//
+    this.certificate = generator.generateX509Certificate(this.privateKey);
+
+    //
 		////////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////////
@@ -181,23 +194,12 @@ public class SSLFactory
 
 		this.keystore.load(null,this.callback.getPassword().toCharArray());
 
-		Logger.info("  creating private key and x.509 certifcate");
+		Logger.info("  saving certificates");
 		this.keystore.setKeyEntry(SYSTEM_ALIAS,this.privateKey,
 															this.callback.getPassword().toCharArray(),
 															new X509Certificate[]{this.certificate});
 
 		storeKeystore();
-
-    // Wenn wir das nicht machen, erzeugen die Services beim
-    // allerersten Start einen Fehler wegen "bad_certificate".
-    // Warum auch immer.
-    this.keystore    = null;
-    this.certificate = null;
-    this.privateKey  = null;
-    this.publicKey   = null;
-    this.sslContext  = null;
-    getSystemCertificate();
-    
 		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -247,13 +249,20 @@ public class SSLFactory
 			Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
 			os = new FileOutputStream(getKeyStoreFile());
 			this.keystore.store(os,this.callback.getPassword().toCharArray());
-      this.sslContext = null; // force reload
-      Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
 		}
 		finally
 		{
       if (os != null)
         os.close();
+
+      // Force reload
+      this.keystore    = null;
+      this.certificate = null;
+      this.privateKey  = null;
+      this.publicKey   = null;
+      this.sslContext  = null;
+      getKeyStore();
+      Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
 		}
 	}
 
@@ -561,10 +570,8 @@ public class SSLFactory
   {
     String dn = cert.getSubjectDN().getName();
     
-    String systemDN = getSystemCertificate().getSubjectDN().getName();
-
     // Pruefen, dass nicht das System-Zertifikat ueberschrieben wird.
-    if (systemDN.equals(dn) || SYSTEM_ALIAS.equals(dn) || getSystemCertificate().equals(cert))
+    if (getSystemCertificate().equals(cert))
     {
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Das System-Zertifikat darf nicht überschrieben werden"), StatusBarMessage.TYPE_ERROR));
       return;
@@ -577,7 +584,7 @@ public class SSLFactory
     {
       for (int i=0;i<certs.length;++i)
       {
-        if (cert.equals(certs[i]) && !Application.getCallback().askUser(Application.getI18n().tr("Zertifikat ist bereits installiert. Überschreiben?")))
+        if (cert.equals(certs[i]) && !Application.inNonInteractiveMode() && !Application.getCallback().askUser(Application.getI18n().tr("Zertifikat ist bereits installiert. Überschreiben?")))
         {
           Logger.info("import of certificate " + dn + " cancelled by user, allready installed");
           throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
@@ -618,7 +625,7 @@ public class SSLFactory
     }
 
     Logger.warn("adding certificate DN: " + dn + " to keystore");
-    getKeyStore().setCertificateEntry(dn,cert);
+    getKeyStore().setCertificateEntry(dn + "." + System.currentTimeMillis(),cert);
     storeKeystore();
   } 
 
@@ -710,6 +717,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.39  2007/06/21 18:34:24  willuhn
+ * @B das uebliche Problem: "bad_certificate" bei Client-Server-Setup (RMI over SSL)
+ *
  * Revision 1.38  2007/06/21 11:03:01  willuhn
  * @C ServiceSettings in ServiceFactory verschoben
  * @N Aenderungen an Service-Bindings sofort uebernehmen
