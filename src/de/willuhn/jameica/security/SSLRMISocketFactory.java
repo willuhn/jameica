@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLRMISocketFactory.java,v $
- * $Revision: 1.9 $
- * $Date: 2006/11/10 00:38:50 $
+ * $Revision: 1.10 $
+ * $Date: 2007/06/21 14:08:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,8 +39,6 @@ public class SSLRMISocketFactory extends RMISocketFactory
 
 	private SSLServerSocketFactory serverSocketFactory;
   private SSLSocketFactory socketFactory;
-
-  private final static boolean CLIENT_AUTH = true;
 
   /**
    * ct.
@@ -111,8 +109,10 @@ public class SSLRMISocketFactory extends RMISocketFactory
 		Logger.info("Creating server socket at port " + port + "/tcp");
     SSLServerSocket socket = (SSLServerSocket) serverSocketFactory.createServerSocket(port);
 		log(socket);
-    socket.setWantClientAuth(CLIENT_AUTH);
-    socket.setNeedClientAuth(CLIENT_AUTH);
+    boolean clientAuth = Application.getConfig().getRmiUseClientAuth();
+    Logger.info("Client Auth: " + clientAuth);
+    socket.setWantClientAuth(clientAuth);
+    socket.setNeedClientAuth(clientAuth);
     return socket;
   }
 
@@ -164,6 +164,9 @@ public class SSLRMISocketFactory extends RMISocketFactory
 
 /*********************************************************************
  * $Log: SSLRMISocketFactory.java,v $
+ * Revision 1.10  2007/06/21 14:08:12  willuhn
+ * @N Client-Authentifizierung bei RMI over SSL konfigurierbar
+ *
  * Revision 1.9  2006/11/10 00:38:50  willuhn
  * @N notify when keystore changed
  *

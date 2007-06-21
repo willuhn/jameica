@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.29 $
- * $Date: 2007/01/23 15:52:10 $
+ * $Revision: 1.30 $
+ * $Date: 2007/06/21 14:08:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -150,6 +150,15 @@ public final class Config
 	{
 		return settings.getBoolean("jameica.system.rmi.enablessl",true);
 	}
+
+  /**
+   * Prueft, ob bei SSL-verschluesselten RMI-Verbindungen Client-Authentifizierung verwendet werden soll.
+   * @return true, wenn die Client-Authentifizierung verwendet wird.
+   */
+  public boolean getRmiUseClientAuth()
+  {
+    return settings.getBoolean("jameica.system.rmi.clientauth",true);
+  }
 
   // BUGZILLA 44 http://www.willuhn.de/bugzilla/show_bug.cgi?id=44
 
@@ -481,6 +490,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.30  2007/06/21 14:08:12  willuhn
+ * @N Client-Authentifizierung bei RMI over SSL konfigurierbar
+ *
  * Revision 1.29  2007/01/23 15:52:10  willuhn
  * @C update() check for recursion
  * @N mandatoryCheck configurable
