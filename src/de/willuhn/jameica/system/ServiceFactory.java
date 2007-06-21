@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.40 $
- * $Date: 2007/04/16 12:36:44 $
+ * $Revision: 1.41 $
+ * $Date: 2007/06/21 09:56:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -187,7 +187,7 @@ public final class ServiceFactory
 
 			if (Application.inClientMode())
 			{
-				Logger.info("jameica runs in client mode, skipping service instantiation");
+				Logger.info("jameica runs in client mode, skipping service deployments");
 				return;
 			}
 
@@ -242,7 +242,7 @@ public final class ServiceFactory
 				Application.getCallback().getStartupMonitor().setStatusText("binding service " + name);
 
 				String rmiUrl = "rmi://127.0.0.1:" + Application.getConfig().getRmiPort() + "/" + fullName;
-				Logger.debug("  rmi url: " + rmiUrl);
+				Logger.info("  *RMI-Service: rmi://" + Application.getCallback().getHostname() + ":" + Application.getConfig().getRmiPort() + "/" + fullName);
 				Naming.rebind(rmiUrl,s);
 			}
 		}
@@ -305,43 +305,39 @@ public final class ServiceFactory
 		}
 		
 		Class local = (Class) bindings.get(fullName);
+    if (local == null)
+      throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht gefunden",serviceName));
 
-		// Wir schauen remote
+    String host = ServiceSettings.getLookupHost(pluginClass,serviceName);
+    int port    = ServiceSettings.getLookupPort(pluginClass,serviceName);
+
+    // Mal schauen, ob wir ein Remote-Binding haben
+    if (host != null && host.length() > 0 && port != -1)
+    {
+      // Jepp, haben wir
+      Logger.debug("searching for service at " + host + ":" + port);
+      String url = "rmi://" + host + ":" + port + "/" + fullName;
+
+      Logger.debug("rmi lookup url: " + url);
+      s = (Service) Naming.lookup(url);
+      if (s != null)
+        serviceCache.put(fullName,s);
+      return s;
+    }
+
+    // Wenn wir immer noch da sind und im Client-Mode laufen, koennen wir
+    // jetzt einen Fehler werfen.
 		if (Application.inClientMode())
 		{
-			if (local == null)
-				throw new ApplicationException(Application.getI18n().tr("Zum Service \"{0}\" existiert kein lokales Binding",serviceName));
-
-			Logger.debug("running in client mode, looking for remote service " + fullName);
-			String host = ServiceSettings.getLookupHost(pluginClass,serviceName);
-			int port    = ServiceSettings.getLookupPort(pluginClass,serviceName);
-
-			if (host == null || host.length() == 0 || port == -1)
-      {
-        Logger.error("missing entry: " + serviceName + "=<hostname>:<port> in <workdir>/cfg/" + ServiceSettings.class.getName() + ".properties");
-        throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
-      }
-
-			Logger.debug("searching for service at " + host + ":" + port);
-			String url = "rmi://" + host + ":" + port + "/" + fullName;
-
-			Logger.debug("rmi lookup url: " + url);
-			s = (Service) Naming.lookup(url);
-			if (s != null)
-				serviceCache.put(fullName,s);
-			return s;
+      Logger.debug("running in client mode, local services not allowed");
+      Logger.error("missing entry: " + serviceName + "=<hostname>:<port> in <workdir>/cfg/" + ServiceSettings.class.getName() + ".properties");
+      throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
 		}
 
-		// Wir schauen lokal
+		// Ansonsten schauen wir lokal
 		Logger.debug("running in standalone/server mode, looking for local service");
-		if (local == null)
-			throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht gefunden",serviceName));
 
 		s = (Service) allServices.get(fullName);
-		if (startedServices.get(fullName) == null)
-		{
-			Logger.warn("service " + serviceName + " was not started, you have to do this by hand");
-		}
 		serviceCache.put(fullName,s);
 		return s;
 
@@ -396,6 +392,10 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.41  2007/06/21 09:56:30  willuhn
+ * @N Remote Service-Bindings nun auch in Standalone-Mode moeglich
+ * @N Keine CertificateException mehr beim ersten Start im Server-Mode
+ *
  * Revision 1.40  2007/04/16 12:36:44  willuhn
  * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
  *

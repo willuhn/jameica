@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.36 $
- * $Date: 2007/04/18 14:37:29 $
+ * $Revision: 1.37 $
+ * $Date: 2007/06/21 09:56:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -187,6 +187,17 @@ public class SSLFactory
 															new X509Certificate[]{this.certificate});
 
 		storeKeystore();
+
+    // Wenn wir das nicht machen, erzeugen die Services beim
+    // allerersten Start einen Fehler wegen "bad_certificate".
+    // Warum auch immer.
+    this.keystore    = null;
+    this.certificate = null;
+    this.privateKey  = null;
+    this.publicKey   = null;
+    this.sslContext  = null;
+    getSystemCertificate();
+    
 		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -695,6 +706,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.37  2007/06/21 09:56:30  willuhn
+ * @N Remote Service-Bindings nun auch in Standalone-Mode moeglich
+ * @N Keine CertificateException mehr beim ersten Start im Server-Mode
+ *
  * Revision 1.36  2007/04/18 14:37:29  willuhn
  * @N changed untrusted dir from "incoming" to "untrusted"
  *

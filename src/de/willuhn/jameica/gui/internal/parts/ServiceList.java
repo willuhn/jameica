@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.7 $
+ * $Date: 2007/06/21 09:56:30 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -90,9 +90,7 @@ public class ServiceList extends TablePart
       {
         try
         {
-          // Die Option bieten wir nur im Client-Mode
-          // an weil in den beiden anderen Modi immer lokale Services verwendet werden
-          return o != null && Application.inClientMode();
+          return o != null;
         }
         catch (Exception e)
         {
@@ -221,9 +219,7 @@ public class ServiceList extends TablePart
     addColumn(i18n.tr("Name"),"name");
     addColumn(i18n.tr("Beschreibung"),"description");
     addColumn(i18n.tr("Status"),"status");
-    if (Application.inClientMode())
-      addColumn(i18n.tr("Verbunden mit Server"),"binding");
-    
+    addColumn(i18n.tr("Verbunden mit Server"),"binding");
   }
 
   private static class CustomAction implements Action
@@ -378,6 +374,10 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.7  2007/06/21 09:56:30  willuhn
+ * @N Remote Service-Bindings nun auch in Standalone-Mode moeglich
+ * @N Keine CertificateException mehr beim ersten Start im Server-Mode
+ *
  * Revision 1.6  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
