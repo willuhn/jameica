@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Settings.java,v $
- * $Revision: 1.7 $
- * $Date: 2005/01/14 00:48:57 $
+ * $Revision: 1.8 $
+ * $Date: 2007/06/21 09:03:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,7 +32,7 @@ public final class Settings extends de.willuhn.util.Settings
    */
   public Settings(Class clazz)
   {
-		super(Application.getConfig().getConfigDir(),clazz);
+		super("cfg",Application.getConfig().getConfigDir(),clazz);
   }
 
 
@@ -103,6 +103,9 @@ public final class Settings extends de.willuhn.util.Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.8  2007/06/21 09:03:31  willuhn
+ * @N System-Presets
+ *
  * Revision 1.7  2005/01/14 00:48:57  willuhn
  * *** empty log message ***
  *
