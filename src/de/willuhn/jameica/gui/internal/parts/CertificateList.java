@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.15 $
- * $Date: 2007/04/02 12:43:03 $
+ * $Revision: 1.16 $
+ * $Date: 2007/06/21 18:32:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -81,12 +81,12 @@ public class CertificateList extends TablePart
     });
     addColumn(Application.getI18n().tr("Ausgestellt für"),"name");
     addColumn(Application.getI18n().tr("Organisation"),"organization");
-    addColumn(Application.getI18n().tr("OU/User"),"ou");
+    addColumn(Application.getI18n().tr("OU"),"ou");
     addColumn(Application.getI18n().tr("Aussteller"),"issuer");
     addColumn(Application.getI18n().tr("Gültig von"),"datefrom");
     addColumn(Application.getI18n().tr("Gültig bis"),"dateto");
     addColumn(Application.getI18n().tr("Seriennummer"),"serial");
-    this.setMulti(true);
+    this.setMulti(false);
     this.setSummary(false);
     ContextMenu menu = new ContextMenu();
     menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Zertifikat löschen..."), new Action()
@@ -373,6 +373,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.16  2007/06/21 18:32:54  willuhn
+ * @B ClassCastException
+ *
  * Revision 1.15  2007/04/02 12:43:03  willuhn
  * @B CertificateList.settings hides TablePart.settings
  *
