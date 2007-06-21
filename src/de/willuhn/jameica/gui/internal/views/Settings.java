@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/04/02 23:01:43 $
+ * $Revision: 1.18 $
+ * $Date: 2007/06/21 18:33:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -89,6 +89,7 @@ public class Settings extends AbstractView implements Extendable
 
     system.addHeadline(i18n.tr("Installierte SSL-Zertifikate"));
     system.addPart(control.getCertificates());
+    
     ButtonArea buttons = system.createButtonArea(1);
     buttons.addButton(i18n.tr("Zertifikat importieren"),new Action() {
       public void handleAction(Object context) throws ApplicationException
@@ -121,7 +122,7 @@ public class Settings extends AbstractView implements Extendable
 		catch (RemoteException e)
 		{
 			Logger.error("error while reading locale settings",e);
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Speichern der Sprach-Einstellungen."),StatusBarMessage.TYPE_ERROR));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ermitteln der Sprach-Einstellungen."),StatusBarMessage.TYPE_ERROR));
 		}
 		colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
 		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWidgetBG());
@@ -199,6 +200,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.18  2007/06/21 18:33:25  willuhn
+ * @B typo
+ *
  * Revision 1.17  2007/04/02 23:01:43  willuhn
  * @N SelectInput auf BeanUtil umgestellt
  *
