@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.41 $
- * $Date: 2007/06/21 22:44:48 $
+ * $Revision: 1.42 $
+ * $Date: 2007/06/21 23:12:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,8 +43,6 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -175,7 +173,6 @@ public class SSLFactory
     
     generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre
     generator.setNotBefore(new Date());
-    generator.addExtension(X509Extensions.KeyUsage, false, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyAgreement | KeyUsage.keyEncipherment | KeyUsage.nonRepudiation));
     
     generator.setPublicKey(this.publicKey);
     generator.setSignatureAlgorithm("SHA1withRSA");
@@ -722,6 +719,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.42  2007/06/21 23:12:01  willuhn
+ * @R Key usage entfernt
+ *
  * Revision 1.41  2007/06/21 22:44:48  willuhn
  * @B Zert.-Laufzeit von 8 auf 10 Jahren zurueckgeaendert
  *
