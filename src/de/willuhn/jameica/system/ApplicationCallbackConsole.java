@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.21 $
- * $Date: 2007/06/21 11:06:23 $
+ * $Revision: 1.22 $
+ * $Date: 2007/06/21 14:08:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -178,15 +178,17 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     	return monitor;
     monitor = new ProgressMonitor()
     {
+      private int complete = 0;
 			public void setPercentComplete(int percent) {
-        Logger.debug("startup completed: " + percent + " %");
+        this.complete = percent;
+        Logger.debug("startup completed: " + this.complete + " %");
       }
 			public void addPercentComplete(int percent) {
         if (percent < 1)
           return;
         setPercentComplete(getPercentComplete() + percent);
       }
-			public int getPercentComplete() {return 0;}
+			public int getPercentComplete() {return complete;}
 			public void setStatus(int status) {}
 			public void setStatusText(String text) {
         Logger.debug(text);
@@ -355,6 +357,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.22  2007/06/21 14:08:41  willuhn
+ * Korrekter Fortschrittsanzeige des Boot-Vorgangs auch im Server-Mode
+ *
  * Revision 1.21  2007/06/21 11:06:23  willuhn
  * @N Neue Zertifikate im Non-Interactive-Mode sofort uebernehmen
  *
