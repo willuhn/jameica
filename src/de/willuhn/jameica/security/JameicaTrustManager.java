@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/01/04 15:24:21 $
+ * $Revision: 1.12 $
+ * $Date: 2007/06/21 14:07:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -198,8 +198,9 @@ public class JameicaTrustManager implements X509TrustManager
    */
   public X509Certificate[] getAcceptedIssuers()
   {
-		Logger.debug("checking accecpted issuers");
-    return this.standardTrustManager.getAcceptedIssuers();
+    X509Certificate[] list = this.standardTrustManager.getAcceptedIssuers();
+    Logger.debug("checking accecpted issuers. list size: " + (list == null ? "0" : Integer.toString(list.length)));
+    return list;
   }
 
   /**
@@ -225,6 +226,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.12  2007/06/21 14:07:42  willuhn
+ * @N Anzeige der Anzahl der vertrauenswuerdigen Zertifikate im Debug-Mode
+ *
  * Revision 1.11  2007/01/04 15:24:21  willuhn
  * @C certificate import handling
  * @B Bug 330
