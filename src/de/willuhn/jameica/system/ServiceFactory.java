@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.42 $
- * $Date: 2007/06/21 11:03:01 $
+ * $Revision: 1.43 $
+ * $Date: 2007/06/21 18:33:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -364,6 +364,7 @@ public final class ServiceFactory
   			service = (Service) startedServices.get(fullName);
   			Logger.info("closing service " + fullName);
         service.stop(false);
+        serviceCache.remove(fullName);
       }
       catch (Throwable t)
       {
@@ -371,23 +372,26 @@ public final class ServiceFactory
       }
     }
 
-    Logger.info("notify remote services");
-    e = serviceCache.keys();
 
-    while (e.hasMoreElements())
-    {
-      try
-      {
-        fullName = (String) e.nextElement();
-        service = (Service) serviceCache.get(fullName);
-        Logger.info("notifying service " + fullName);
-        service.stop(false);
-      }
-      catch (Throwable t)
-      {
-        Logger.error("error while notifying service " + fullName,t);
-      }
-    }
+// TODO: Der Server-Dienst sollte ueber die Abmeldung des Clients benachrichtigt werden.
+// ein service.stop() ist jedoch nicht schoen.
+//    Logger.info("notify remote services");
+//    e = serviceCache.keys();
+//
+//    while (e.hasMoreElements())
+//    {
+//      try
+//      {
+//        fullName = (String) e.nextElement();
+//        service = (Service) serviceCache.get(fullName);
+//        Logger.info("notifying service " + fullName);
+//        service.stop(false);
+//      }
+//      catch (Throwable t)
+//      {
+//        Logger.error("error while notifying service " + fullName,t);
+//      }
+//    }
   }
   
   /**
@@ -445,6 +449,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.43  2007/06/21 18:33:54  willuhn
+ * @C remote services bei Shutdown nicht mehr benachrichten
+ *
  * Revision 1.42  2007/06/21 11:03:01  willuhn
  * @C ServiceSettings in ServiceFactory verschoben
  * @N Aenderungen an Service-Bindings sofort uebernehmen
