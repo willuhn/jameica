@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.8 $
- * $Date: 2007/06/21 09:59:22 $
+ * $Revision: 1.9 $
+ * $Date: 2007/06/21 11:03:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,7 +32,6 @@ import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.system.ServiceSettings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -69,7 +68,7 @@ public class ServiceList extends TablePart
           if (s == null || s.length() == 0)
             return;
           String[] host = s.split(":");
-          ServiceSettings.setLookup(so.plugin.getClass(),so.serviceName,host[0],Integer.parseInt(host[1]));
+          Application.getServiceFactory().setLookup(so.plugin.getClass(),so.serviceName,host[0],Integer.parseInt(host[1]));
           GUI.startView(GUI.getCurrentView().getClass().getName(),plugin); // Tabelle aktualisieren
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Server-Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
         }
@@ -100,6 +99,55 @@ public class ServiceList extends TablePart
       }
     });
 
+
+    
+    menu.addItem(new CheckedContextMenuItem(i18n.tr("Server-Verbindung trennen..."),new Action()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        ServiceObject so = (ServiceObject) context;
+        if (so == null)
+          return;
+
+        try
+        {
+          if (!Application.getCallback().askUser(Application.getI18n().tr("Sind Sie sicher, dass Sie die Server-Verbindung trennen wollen?")))
+            return;
+          
+          Application.getServiceFactory().setLookup(so.plugin.getClass(),so.serviceName,null,-1);
+          GUI.startView(GUI.getCurrentView().getClass().getName(),plugin); // Tabelle aktualisieren
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Server-Verbindung getrennt."),StatusBarMessage.TYPE_SUCCESS));
+        }
+        catch (Exception e)
+        {
+          Logger.error("error while removing service bindings",e);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Trennen der Server-Verbindung."),StatusBarMessage.TYPE_ERROR));
+        }
+        
+      }
+    })
+    {
+      public boolean isEnabledFor(Object o)
+      {
+        try
+        {
+          if (o == null)
+            return false;
+
+          ServiceObject so = (ServiceObject) o;
+          return (Application.getServiceFactory().getLookupHost(plugin.getClass(),so.serviceName) != null);
+        }
+        catch (Exception e)
+        {
+          Logger.error("Error while checking service binding",e);
+        }
+        return false;
+      }
+    });
+    
+    
+    
+    
     menu.addItem(new CheckedContextMenuItem(i18n.tr("Service stoppen..."),new Action()
     {
       public void handleAction(final Object context) throws ApplicationException
@@ -128,9 +176,13 @@ public class ServiceList extends TablePart
               Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service wird gestoppt."),StatusBarMessage.TYPE_SUCCESS));
               GUI.getStatusBar().startProgress();
               ServiceObject so = (ServiceObject) context;
-              so.service.stop(true);
-              GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestoppt."),StatusBarMessage.TYPE_SUCCESS));
+              Service service = so.getService();
+              if (service != null)
+              {
+                service.stop(true);
+                GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestoppt."),StatusBarMessage.TYPE_SUCCESS));
+              }
             }
             catch (Exception e)
             {
@@ -150,12 +202,18 @@ public class ServiceList extends TablePart
       {
         try
         {
-          ServiceObject so = (ServiceObject) o;
           if (o == null)
             return false;
-          // Die Option bieten wir nicht im Client-Mode
-          // an weil wir nicht wollen, dass der User Serverdienste stoppt
-          return (!Application.inClientMode()) && so.service.isStarted();
+
+          ServiceObject so = (ServiceObject) o;
+
+          // Die Option bieten wir nur an, wenn wir nicht im Client-Mode laufen und es kein Remote-Service ist.
+          if (Application.inClientMode())
+            return false;
+          if (Application.getServiceFactory().getLookupHost(plugin.getClass(),so.serviceName) != null)
+            return false;
+          Service service = so.getService();
+          return service != null && service.isStarted();
         }
         catch (Exception e)
         {
@@ -178,9 +236,13 @@ public class ServiceList extends TablePart
               Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service wird gestartet."),StatusBarMessage.TYPE_SUCCESS));
               GUI.getStatusBar().startProgress();
               ServiceObject so = (ServiceObject) context;
-              so.service.start();
-              GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestartet."),StatusBarMessage.TYPE_SUCCESS));
+              Service service = so.getService();
+              if (service != null)
+              {
+                service.start();
+                GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestartet."),StatusBarMessage.TYPE_SUCCESS));
+              }
             }
             catch (Exception e)
             {
@@ -200,12 +262,17 @@ public class ServiceList extends TablePart
       {
         try
         {
-          ServiceObject so = (ServiceObject) o;
           if (o == null)
             return false;
-          // Die Option bieten wir nicht im Client-Mode
-          // an weil wir nicht wollen, dass der User Serverdienste startet
-          return (!Application.inClientMode()) && !so.service.isStarted();
+
+          ServiceObject so = (ServiceObject) o;
+          // Die Option bieten wir nur an, wenn wir nicht im Client-Mode laufen und es kein Remote-Service ist.
+          if (Application.inClientMode())
+            return false;
+          if (Application.getServiceFactory().getLookupHost(plugin.getClass(),so.serviceName) != null)
+            return false;
+          Service service = so.getService();
+          return service != null && !service.isStarted();
         }
         catch (Exception e)
         {
@@ -267,7 +334,6 @@ public class ServiceList extends TablePart
   
     private AbstractPlugin plugin;
     private String serviceName;
-    private Service service;
     
     /**
      * @param p
@@ -277,9 +343,17 @@ public class ServiceList extends TablePart
     {
       this.plugin  = p;
       this.serviceName = service;
+    }
+    
+    /**
+     * @return Liefert den Service.
+     * @throws RemoteException
+     */
+    private Service getService()
+    {
       try
       {
-        this.service = Application.getServiceFactory().lookup(this.plugin.getClass(),this.serviceName);
+        return Application.getServiceFactory().lookup(this.plugin.getClass(),this.serviceName);
       }
       catch (ApplicationException ae)
       {
@@ -288,7 +362,9 @@ public class ServiceList extends TablePart
       catch (Exception e)
       {
         Logger.error("error while loading service " + serviceName,e);
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Laden des Services"),StatusBarMessage.TYPE_ERROR));
       }
+      return null;
     }
   
     /**
@@ -296,8 +372,11 @@ public class ServiceList extends TablePart
      */
     public Object getAttribute(String name) throws RemoteException
     {
+      Service service = getService();
+
       if ("status".equals(name))
       {
+        
         if (service == null)
           return Application.getI18n().tr("unbekannt");
 
@@ -327,10 +406,10 @@ public class ServiceList extends TablePart
       }
       if ("binding".equals(name))
       {
-        String host = ServiceSettings.getLookupHost(plugin.getClass(),serviceName);
+        String host = Application.getServiceFactory().getLookupHost(plugin.getClass(),serviceName);
         if (host == null || host.length() == 0)
           return Application.inClientMode() ? Application.getI18n().tr("Warnung: Kein Server definiert") : null;
-        return host + ":" + ServiceSettings.getLookupPort(plugin.getClass(),serviceName);
+        return host + ":" + Application.getServiceFactory().getLookupPort(plugin.getClass(),serviceName);
       }
       return serviceName;
     }
@@ -374,6 +453,11 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.9  2007/06/21 11:03:01  willuhn
+ * @C ServiceSettings in ServiceFactory verschoben
+ * @N Aenderungen an Service-Bindings sofort uebernehmen
+ * @C Moeglichkeit, Service-Bindings wieder entfernen zu koennen
+ *
  * Revision 1.8  2007/06/21 09:59:22  willuhn
  * @C Keine Warnung anzeigen, wenn in Standalone-Mode keine Binding existiert
  *

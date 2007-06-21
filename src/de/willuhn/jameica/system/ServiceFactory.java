@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.41 $
- * $Date: 2007/06/21 09:56:30 $
+ * $Revision: 1.42 $
+ * $Date: 2007/06/21 11:03:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,7 @@ import de.willuhn.util.ApplicationException;
  */
 public final class ServiceFactory
 {
+  private Settings settings = new Settings(ServiceFactory.class);
 
   private boolean rmiStarted    = false;
   private boolean sslStarted    = false;
@@ -69,7 +70,7 @@ public final class ServiceFactory
       RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
       sslStarted = true;
     }
-
+    
     if (Application.getConfig().getShareServices())
   		startRegistry();
 
@@ -308,8 +309,8 @@ public final class ServiceFactory
     if (local == null)
       throw new ApplicationException(Application.getI18n().tr("Der Service \"{0}\" wurde nicht gefunden",serviceName));
 
-    String host = ServiceSettings.getLookupHost(pluginClass,serviceName);
-    int port    = ServiceSettings.getLookupPort(pluginClass,serviceName);
+    String host = getLookupHost(pluginClass,serviceName);
+    int port    = getLookupPort(pluginClass,serviceName);
 
     // Mal schauen, ob wir ein Remote-Binding haben
     if (host != null && host.length() > 0 && port != -1)
@@ -330,7 +331,7 @@ public final class ServiceFactory
 		if (Application.inClientMode())
 		{
       Logger.debug("running in client mode, local services not allowed");
-      Logger.error("missing entry: " + serviceName + "=<hostname>:<port> in <workdir>/cfg/" + ServiceSettings.class.getName() + ".properties");
+      Logger.error("missing entry: " + serviceName + "=<hostname>:<port> in <workdir>/cfg/" + ServiceFactory.class.getName() + ".properties");
       throw new ApplicationException(Application.getI18n().tr("Für den Service \"{0}\" ist kein Server definiert",serviceName));
 		}
 
@@ -388,10 +389,67 @@ public final class ServiceFactory
       }
     }
   }
+  
+  /**
+   * Speichert Host und Port fuer genannten Service.
+   * @param pluginclass Klasse des Plugins.
+   * @param serviceName Name des Service.
+   * @param host Host (IP oder Hostname).
+   * @param port TCP-Port.
+   */
+  public void setLookup(Class pluginclass, String serviceName, String host, int port)
+  {
+    String longName = pluginclass.getName() + "." + serviceName;
+    if (host == null || host.length() == 0 || port == -1)
+      settings.setAttribute(longName,(String)null);
+    else
+      settings.setAttribute(longName,host + ":" + port);
+    // Service aus dem Cache werfen
+    serviceCache.remove(pluginclass.getName() + "." + serviceName);
+  }
+
+  /**
+   * Liefert den Host, auf dem nach diesem Service gesucht werden soll.
+   * @param pluginclass Klasse des Plugins.
+   * @param serviceName Name des gesuchten Service.
+   * @return Hostname, auf dem sich der Service befindet oder <code>null</code> wenn nicht definiert.
+   */
+  public String getLookupHost(Class pluginclass, String serviceName)
+  {
+    String value = settings.getString(pluginclass.getName() + "." + serviceName,null);
+    if (value == null)
+      return null;
+    return value.substring(0,value.lastIndexOf(":"));
+  }
+
+  /**
+   * Liefert den TCP-Port, auf dem nach diesem Service gesucht werden soll.
+   * @param pluginclass Klasse des Plugins.
+   * @param serviceName Name des gesuchten Service.
+   * @return TCP-Port, auf dem sich der Service befindet oder <code>-1</code> wenn nicht definiert.
+   */
+  public int getLookupPort(Class pluginclass, String serviceName)
+  {
+    String value = settings.getString(pluginclass.getName() + "." + serviceName,null);
+    if (value == null)
+      return -1;
+    try {
+      return Integer.parseInt(value.substring(value.lastIndexOf(":")+1));
+    }
+    catch (NumberFormatException e)
+    {
+      return -1;
+    }
+  }
 }
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.42  2007/06/21 11:03:01  willuhn
+ * @C ServiceSettings in ServiceFactory verschoben
+ * @N Aenderungen an Service-Bindings sofort uebernehmen
+ * @C Moeglichkeit, Service-Bindings wieder entfernen zu koennen
+ *
  * Revision 1.41  2007/06/21 09:56:30  willuhn
  * @N Remote Service-Bindings nun auch in Standalone-Mode moeglich
  * @N Keine CertificateException mehr beim ersten Start im Server-Mode

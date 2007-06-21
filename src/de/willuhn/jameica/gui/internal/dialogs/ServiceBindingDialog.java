@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ServiceBindingDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/06/16 13:29:20 $
- * $Author: web0 $
+ * $Revision: 1.3 $
+ * $Date: 2007/06/21 11:03:01 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -21,9 +21,9 @@ import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.TextInput;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Config;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.system.ServiceSettings;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -60,8 +60,8 @@ public class ServiceBindingDialog extends AbstractDialog
   protected void paint(Composite parent) throws Exception
   {
     LabelGroup group = new LabelGroup(parent,i18n.tr("Eigenschaften"));
-    String h = ServiceSettings.getLookupHost(this.pluginclass,this.serviceName);
-    int p    = ServiceSettings.getLookupPort(this.pluginclass,this.serviceName);
+    String h = Application.getServiceFactory().getLookupHost(this.pluginclass,this.serviceName);
+    int p    = Application.getServiceFactory().getLookupPort(this.pluginclass,this.serviceName);
 
     if (p <= 0)
       p = Config.RMI_DEFAULT_PORT;
@@ -122,6 +122,11 @@ public class ServiceBindingDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ServiceBindingDialog.java,v $
+ * Revision 1.3  2007/06/21 11:03:01  willuhn
+ * @C ServiceSettings in ServiceFactory verschoben
+ * @N Aenderungen an Service-Bindings sofort uebernehmen
+ * @C Moeglichkeit, Service-Bindings wieder entfernen zu koennen
+ *
  * Revision 1.2  2005/06/16 13:29:20  web0
  * *** empty log message ***
  *

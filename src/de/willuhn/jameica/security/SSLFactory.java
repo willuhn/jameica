@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.37 $
- * $Date: 2007/06/21 09:56:30 $
+ * $Revision: 1.38 $
+ * $Date: 2007/06/21 11:03:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -247,6 +247,7 @@ public class SSLFactory
 			Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
 			os = new FileOutputStream(getKeyStoreFile());
 			this.keystore.store(os,this.callback.getPassword().toCharArray());
+      this.sslContext = null; // force reload
       Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
 		}
 		finally
@@ -322,7 +323,11 @@ public class SSLFactory
       String name = (String)e.nextElement();
       if (SYSTEM_ALIAS.equals(name))
         continue;
-      list.add(getKeyStore().getCertificate(name));
+      java.security.cert.Certificate cert = getKeyStore().getCertificate(name);
+      if (cert.equals(getSystemCertificate()))
+        continue;
+      
+      list.add(cert);
     }
     return (X509Certificate[]) list.toArray(new X509Certificate[list.size()]);
   }
@@ -559,7 +564,7 @@ public class SSLFactory
     String systemDN = getSystemCertificate().getSubjectDN().getName();
 
     // Pruefen, dass nicht das System-Zertifikat ueberschrieben wird.
-    if (systemDN.equals(dn) || SYSTEM_ALIAS.equals(dn))
+    if (systemDN.equals(dn) || SYSTEM_ALIAS.equals(dn) || getSystemCertificate().equals(cert))
     {
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Das System-Zertifikat darf nicht überschrieben werden"), StatusBarMessage.TYPE_ERROR));
       return;
@@ -572,8 +577,7 @@ public class SSLFactory
     {
       for (int i=0;i<certs.length;++i)
       {
-        String cdn = certs[i].getSubjectDN().getName();
-        if (cdn.equals(dn) && !Application.getCallback().askUser(Application.getI18n().tr("Zertifikat ist bereits installiert. Überschreiben?")))
+        if (cert.equals(certs[i]) && !Application.getCallback().askUser(Application.getI18n().tr("Zertifikat ist bereits installiert. Überschreiben?")))
         {
           Logger.info("import of certificate " + dn + " cancelled by user, allready installed");
           throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
@@ -706,6 +710,11 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.38  2007/06/21 11:03:01  willuhn
+ * @C ServiceSettings in ServiceFactory verschoben
+ * @N Aenderungen an Service-Bindings sofort uebernehmen
+ * @C Moeglichkeit, Service-Bindings wieder entfernen zu koennen
+ *
  * Revision 1.37  2007/06/21 09:56:30  willuhn
  * @N Remote Service-Bindings nun auch in Standalone-Mode moeglich
  * @N Keine CertificateException mehr beim ersten Start im Server-Mode
