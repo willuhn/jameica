@@ -5,4 +5,4 @@
 
 cd `dirname $0`
 
-java -Djava.library.path=lib/swt/linux -jar jameica-linux.jar $@
+java -Xmx128m -Djava.library.path=lib/swt/linux -jar jameica-linux.jar $@

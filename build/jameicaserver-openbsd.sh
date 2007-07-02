@@ -5,4 +5,4 @@
 
 cd `dirname $0`
 
-java -jar jameica-openbsd.jar -d $@
+java -Xmx128m -jar jameica-openbsd.jar -d $@

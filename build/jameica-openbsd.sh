@@ -5,4 +5,4 @@
 
 cd `dirname $0`
 
-java -Djava.library.path=lib/swt/openbsd -jar jameica-openbsd.jar $@
+java -Xmx128m -Djava.library.path=lib/swt/openbsd -jar jameica-openbsd.jar $@

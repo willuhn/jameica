@@ -5,4 +5,4 @@
 
 cd `dirname $0`
 
-java -jar jameica-linux-amd64.jar -d $@
+java -Xmx128m -jar jameica-linux-amd64.jar -d $@
