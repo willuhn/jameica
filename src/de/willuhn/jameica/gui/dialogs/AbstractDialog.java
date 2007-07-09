@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.39 $
- * $Date: 2006/11/12 23:34:28 $
+ * $Revision: 1.40 $
+ * $Date: 2007/07/09 14:14:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -416,6 +416,7 @@ public abstract class AbstractDialog
 					shell.setLocation(x, y);
 	
 					shell.open();
+          shell.forceActive();
 					while (shell != null && !shell.isDisposed()) {
 						if (!display.readAndDispatch()) display.sleep();
 					}
@@ -473,6 +474,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.40  2007/07/09 14:14:14  willuhn
+ * @B Dialog-Patch fuer MacOS von Juergen Krass (https://lists.berlios.de/pipermail/hibiscus-devel/2007-July/000190.html)
+ *
  * Revision 1.39  2006/11/12 23:34:28  willuhn
  * @B Bug 183 (thanks to Juergen)
  *
