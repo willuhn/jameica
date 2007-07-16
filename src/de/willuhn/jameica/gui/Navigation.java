@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.38 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.39 $
+ * $Date: 2007/07/16 12:51:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -285,6 +285,9 @@ public class Navigation implements Part
    */
   private class MyDisposeListener implements DisposeListener
   {
+    /**
+     * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+     */
     public void widgetDisposed(DisposeEvent e)
     {
       try
@@ -312,6 +315,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.39  2007/07/16 12:51:28  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.38  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
