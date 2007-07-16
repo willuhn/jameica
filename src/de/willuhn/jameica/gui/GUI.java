@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.108 $
- * $Date: 2007/04/16 12:36:44 $
+ * $Revision: 1.109 $
+ * $Date: 2007/07/16 11:34:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -778,42 +778,61 @@ public class GUI implements ApplicationController
     if (getDisplay() == null || getDisplay().isDisposed()) return;
 
     // Das Konstrukt sieht merkwuerdig aus - ich weiss. Muss aber so ;)
-    getDisplay().asyncExec(new Runnable() {
+    final Thread t = new Thread()
+    {
       public void run()
       {
         getStatusBar().startProgress();
-        Thread t = new Thread()
+        ProgressMonitor monitor = new BackgroundTaskMonitor();
+        try
         {
-          public void run()
-          {
-            ProgressMonitor monitor = new BackgroundTaskMonitor();
-            try
-            {
-              task.run(monitor);
-            }
-            catch (OperationCanceledException oce)
-            {
-              if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
-            }
-            catch (Throwable t)
-            {
-              Logger.error("error while executing background task",t);
-              if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_ERROR);
-            }
-            finally
-            {
-              getStatusBar().stopProgress();
-            }
-          }
-        };
-        t.start();
+          task.run(monitor);
+        }
+        catch (OperationCanceledException oce)
+        {
+          if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
+        }
+        catch (Throwable t)
+        {
+          Logger.error("error while executing background task",t);
+          if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+        }
+        finally
+        {
+          getStatusBar().stopProgress();
+        }
       }
-    });
+    };
+
+    // BUGZILLA 359: Sonderbehandlung fuer MacOS
+    // Wird nur unter MacOS direkt als Thread uebergeben.
+    // Unter Linux wuerde das zu verspaetetem GUI-Refresh fuehren.
+    Runnable job = null;
+    String os = System.getProperty("os.name");
+    if (os.toLowerCase().indexOf("mac") != -1)
+    {
+      job = t;
+    }
+    else
+    {
+      job = new Runnable() {
+      
+        public void run()
+        {
+          t.start();
+        }
+      };
+    }
+
+    getDisplay().asyncExec(job);
   }
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.109  2007/07/16 11:34:44  willuhn
+ * @B Bug 359
+ *
  * Revision 1.108  2007/04/16 12:36:44  willuhn
  * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
  *
