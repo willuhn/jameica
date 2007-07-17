@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.19 $
- * $Date: 2007/07/17 14:22:50 $
+ * $Revision: 1.20 $
+ * $Date: 2007/07/17 16:00:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -209,6 +209,7 @@ public abstract class AbstractInput implements Input
     };
     control.addListener(SWT.Verify,updateCheck);
     control.addListener(SWT.FocusOut,updateCheck);
+    control.addListener(SWT.Modify,updateCheck);
 
     if ((validChars != null && validChars.length() > 0))
     {
@@ -371,6 +372,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.20  2007/07/17 16:00:30  willuhn
+ * @C Input-Validierung auch bei SWT.Modify
+ *
  * Revision 1.19  2007/07/17 14:22:50  willuhn
  * @B update nicht bei jedem Paint-Event sondern nur bei Textaenderungen aufrufen
  *
