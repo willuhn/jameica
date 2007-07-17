@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.16 $
- * $Date: 2005/06/10 22:13:09 $
- * $Author: web0 $
+ * $Revision: 1.17 $
+ * $Date: 2007/07/17 15:57:42 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -54,8 +54,13 @@ public class LabelGroup extends Container
 	{
     super(fullSize);
 		group = new Group(parent, SWT.NONE);
-		group.setBackground(Color.BACKGROUND.getSWTColor());
-    if (name != null)
+		
+		// BUGZILLA 435
+		String os = System.getProperty("os.name");
+		if (os != null && os.toLowerCase().indexOf("windows") == -1)
+		  group.setBackground(Color.BACKGROUND.getSWTColor());
+
+		if (name != null)
   		group.setText(name);
 		group.setFont(Font.H2.getSWTFont());
 		GridLayout layout = new GridLayout(2, false);
@@ -76,6 +81,9 @@ public class LabelGroup extends Container
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.17  2007/07/17 15:57:42  willuhn
+ * @B bug 435
+ *
  * Revision 1.16  2005/06/10 22:13:09  web0
  * @N new TabGroup
  * @N extended Settings
