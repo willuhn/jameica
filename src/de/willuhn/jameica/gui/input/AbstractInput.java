@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.19 $
+ * $Date: 2007/07/17 14:22:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -178,6 +178,10 @@ public abstract class AbstractInput implements Input
         applyVerifier(children[j]);
 			}
 		}
+    
+    // Einmal manuell starten, damit es vor dem ersten
+    // verify event ausgeloest wird
+    update();
   }
   
   /**
@@ -189,7 +193,7 @@ public abstract class AbstractInput implements Input
     if (control == null || !(control instanceof Text))
       return;
     
-    control.addListener(SWT.Paint,new Listener() {
+    Listener updateCheck = new Listener() {
     
       public void handleEvent(Event event)
       {
@@ -202,7 +206,9 @@ public abstract class AbstractInput implements Input
           // ignore
         }
       }
-    });
+    };
+    control.addListener(SWT.Verify,updateCheck);
+    control.addListener(SWT.FocusOut,updateCheck);
 
     if ((validChars != null && validChars.length() > 0))
     {
@@ -279,7 +285,7 @@ public abstract class AbstractInput implements Input
   
   /**
    * Wird immer dann aufgerufen, wenn eines der Controls des
-   * Eingabe-Feldes neu gezeichnet wird. Hier kann dann z.Bsp.
+   * Eingabe-Feldes aktualisiert wird. Hier kann dann z.Bsp.
    * geprueft werden, ob der Inhalt des Feldes korrekt ist
    * und ggf. die Hintergrund-Farbe angepasst werden.
    */
@@ -365,6 +371,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.19  2007/07/17 14:22:50  willuhn
+ * @B update nicht bei jedem Paint-Event sondern nur bei Textaenderungen aufrufen
+ *
  * Revision 1.18  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
