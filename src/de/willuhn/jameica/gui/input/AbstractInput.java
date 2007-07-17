@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.20 $
- * $Date: 2007/07/17 16:00:30 $
+ * $Revision: 1.21 $
+ * $Date: 2007/07/17 16:25:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.util.I18N;
@@ -207,9 +208,9 @@ public abstract class AbstractInput implements Input
         }
       }
     };
-    control.addListener(SWT.Verify,updateCheck);
-    control.addListener(SWT.FocusOut,updateCheck);
-    control.addListener(SWT.Modify,updateCheck);
+    DelayedListener dl = new DelayedListener(100,updateCheck);
+    control.addListener(SWT.FocusOut,dl);
+    control.addListener(SWT.Modify,dl);
 
     if ((validChars != null && validChars.length() > 0))
     {
@@ -302,6 +303,8 @@ public abstract class AbstractInput implements Input
       if (this.control == null || this.control.isDisposed())
         return;
 
+      System.out.println(System.currentTimeMillis());
+
       if (!isEnabled())
       {
         this.control.setBackground(Color.BACKGROUND.getSWTColor());
@@ -372,6 +375,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.21  2007/07/17 16:25:05  willuhn
+ * @N Schnelleres Updateverhalten
+ *
  * Revision 1.20  2007/07/17 16:00:30  willuhn
  * @C Input-Validierung auch bei SWT.Modify
  *
