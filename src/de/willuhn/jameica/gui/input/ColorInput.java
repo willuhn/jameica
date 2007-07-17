@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.13 $
+ * $Date: 2007/07/17 14:34:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
 /**
@@ -119,10 +120,22 @@ public class ColorInput extends ButtonInput
     }
     label.redraw();
   }
+  
+  /**
+   * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
+   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+   */
+  void update() throws OperationCanceledException
+  {
+  }
+
 }
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.13  2007/07/17 14:34:23  willuhn
+ * @B Updates nichts bei Buttons und Checkboxen durchfuehren
+ *
  * Revision 1.12  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

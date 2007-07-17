@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/06/19 10:54:24 $
+ * $Revision: 1.12 $
+ * $Date: 2007/07/17 14:34:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
  * @author willuhn
@@ -126,10 +127,23 @@ public class CheckboxInput extends AbstractInput
     if (button != null && !button.isDisposed())
       button.setEnabled(enabled);
   }
+
+  /**
+   * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
+   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+   */
+  void update() throws OperationCanceledException
+  {
+  }
+  
+  
 }
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.12  2007/07/17 14:34:23  willuhn
+ * @B Updates nichts bei Buttons und Checkboxen durchfuehren
+ *
  * Revision 1.11  2006/06/19 10:54:24  willuhn
  * @N neue Methode setEnabled(boolean) in Input
  * @N neue de_willuhn_util lib

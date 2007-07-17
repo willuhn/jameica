@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/04/26 13:27:24 $
+ * $Revision: 1.14 $
+ * $Date: 2007/07/17 14:34:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
  * Eingabefeld, welches jedoch noch einen Button hinten dran
@@ -228,10 +229,22 @@ public abstract class ButtonInput extends AbstractInput
   {
     return buttonEnabled && clientControlEnabled;
   }
+  
+  /**
+   * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
+   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+   */
+  void update() throws OperationCanceledException
+  {
+  }
+
 }
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.14  2007/07/17 14:34:23  willuhn
+ * @B Updates nichts bei Buttons und Checkboxen durchfuehren
+ *
  * Revision 1.13  2007/04/26 13:27:24  willuhn
  * @R undo
  *
