@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.21 $
- * $Date: 2007/07/17 16:25:05 $
+ * $Revision: 1.22 $
+ * $Date: 2007/07/19 09:53:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -303,8 +303,6 @@ public abstract class AbstractInput implements Input
       if (this.control == null || this.control.isDisposed())
         return;
 
-      System.out.println(System.currentTimeMillis());
-
       if (!isEnabled())
       {
         this.control.setBackground(Color.BACKGROUND.getSWTColor());
@@ -375,6 +373,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.22  2007/07/19 09:53:17  willuhn
+ * @B removed debug output
+ *
  * Revision 1.21  2007/07/17 16:25:05  willuhn
  * @N Schnelleres Updateverhalten
  *
