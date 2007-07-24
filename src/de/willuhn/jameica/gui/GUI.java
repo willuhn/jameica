@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.109 $
- * $Date: 2007/07/16 11:34:44 $
+ * $Revision: 1.110 $
+ * $Date: 2007/07/24 13:54:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -790,12 +790,20 @@ public class GUI implements ApplicationController
         }
         catch (OperationCanceledException oce)
         {
-          if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
+          if (monitor != null) 
+          {
+            monitor.setPercentComplete(100);
+            monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
+          }
         }
         catch (Throwable t)
         {
           Logger.error("error while executing background task",t);
-          if (monitor != null) monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+          if (monitor != null) 
+          {
+            monitor.setPercentComplete(100);
+            monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+          }
         }
         finally
         {
@@ -830,6 +838,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.110  2007/07/24 13:54:07  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.109  2007/07/16 11:34:44  willuhn
  * @B Bug 359
  *
