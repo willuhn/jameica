@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/07/31 14:32:48 $
+ * $Revision: 1.4 $
+ * $Date: 2007/07/31 14:36:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,6 +41,28 @@ import de.willuhn.logging.Logger;
  * Kann prima zur Erstellung eines Suchfeldes genutzt werden,
  * welches bei jeder Eingabe eines Zeichens eine Liste mit
  * Vorschlaegen anzeigen kann.
+ * 
+ * Beispiel fuer die Verwendung:
+ * 
+ * project = new SearchInput() {
+ *   public List startSearch(String text) {
+ *     try {
+ *       DBService service = (DBService) Application.getServiceFactory().lookup(Plugin.class,"database");
+ *       DBIterator result = service.createList(Project.class);
+ *       if (text != null) {
+ *         text = "%" + text + "%";
+ *         result.addFilter("(name like ? or description like ?)", new Object[]{text,text});
+ *       }
+ *       return PseudoIterator.asList(result);
+ *     }
+ *     catch (Exception e) {
+ *       Logger.error("unable to load project list",e);
+ *       return null;
+ *     }
+ *   }
+ * };
+ * project.setValue(getTask().getProject());
+ *
  * @author willuhn
  */
 public class SearchInput extends AbstractInput
@@ -379,6 +401,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.4  2007/07/31 14:36:13  willuhn
+ * @N Beispiel-Code
+ *
  * Revision 1.3  2007/07/31 14:32:48  willuhn
  * @N Neues Custom-Widget zum Suchen. Ist ein Textfeld, welches nach Eingabe einen Callback-Mechanismus fuer die Suche startet und die Ergebnisse dann in einer Dropdown-Box anbietet. Also ein Mix aus TextInput und dynamischem SelectInput
  *
