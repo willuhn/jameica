@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.30 $
- * $Date: 2007/06/21 14:08:12 $
+ * $Revision: 1.31 $
+ * $Date: 2007/08/20 12:27:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -414,7 +414,7 @@ public final class Config
    */
   public String getLogFile()
   {
-    return settings.getString("jameica.system.log.file",getWorkDir() + "/jameica.log");
+    return getWorkDir() + File.separator + "jameica.log";
   }
 
 	/**
@@ -485,11 +485,38 @@ public final class Config
 			return workDir.getAbsolutePath();
 		}
 	}
+  
+  /**
+   * Wandelt eine absolute Pfad-Angabe aus dem Benutzerverzeichnis
+   * in eine relative um.
+   * Die Funktion wirft keine Exception. Im Fehlerfall wird
+   * nur geloggt und der Pfad unveraendert zurueckgegeben.
+   * @param file der absolute Pfad.
+   * @return die relative Angabe.
+   */
+  public String makeRelative(File file)
+  {
+    if (file == null)
+      return null;
+    try
+    {
+      String abs = file.getCanonicalPath();
+      return abs.substring(getWorkDir().length());
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to make relative path from " + file);
+    }
+    return file.getAbsolutePath();
+  }
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.31  2007/08/20 12:27:08  willuhn
+ * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
+ *
  * Revision 1.30  2007/06/21 14:08:12  willuhn
  * @N Client-Authentifizierung bei RMI over SSL konfigurierbar
  *

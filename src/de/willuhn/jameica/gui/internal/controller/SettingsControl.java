@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.19 $
- * $Date: 2007/04/02 23:01:43 $
+ * $Revision: 1.20 $
+ * $Date: 2007/08/20 12:27:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,6 @@ import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.ColorInput;
-import de.willuhn.jameica.gui.input.FileInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.LabelInput;
@@ -57,7 +56,6 @@ public class SettingsControl extends AbstractControl
 
   // System
   private Input logLevel;
-  private FileInput logFile;
   private CheckboxInput rmiSSL;
   private Input rmiPort;
   private Input proxyHost;
@@ -109,20 +107,6 @@ public class SettingsControl extends AbstractControl
     };
     logLevel = new SelectInput(levels,Logger.getLevel().getName());
     return logLevel;
-  }
-
-  /**
-   * Liefert ein Eingabe-Feld fuer die Log-Datei.
-   * @return Eingabe-Feld fuer das Log-File.
-   */
-  public Input getLogFile()
-  {
-    if (this.logFile != null)
-      return this.logFile;
-
-    this.logFile = new FileInput(Application.getConfig().getLogFile());
-    this.logFile.disableClientControl();
-    return this.logFile;
   }
 
   /**
@@ -363,8 +347,6 @@ public class SettingsControl extends AbstractControl
       Application.getConfig().setLoglevel(level);
       Logger.setLevel(Level.findByName(level));
 
-      Application.getConfig().setLogFile((String)getLogFile().getValue());
-      
       Integer in = (Integer) getRmiPort().getValue();
       if (in == null)
         throw new ApplicationException(i18n.tr("Bitte geben Sie eine TCP-Portnummer für den Netzwerkbetrieb ein"));
@@ -522,6 +504,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.20  2007/08/20 12:27:08  willuhn
+ * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
+ *
  * Revision 1.19  2007/04/02 23:01:43  willuhn
  * @N SelectInput auf BeanUtil umgestellt
  *

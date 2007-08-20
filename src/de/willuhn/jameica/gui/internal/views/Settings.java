@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.18 $
- * $Date: 2007/06/21 18:33:25 $
+ * $Revision: 1.19 $
+ * $Date: 2007/08/20 12:27:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -76,9 +76,7 @@ public class Settings extends AbstractView implements Extendable
     // System-Einstellungen
     TabGroup system = new TabGroup(getTabFolder(),i18n.tr("System"));
     
-    system.addHeadline(i18n.tr("Logging-Optionen"));
     system.addLabelPair(i18n.tr("Log-Level"), control.getLogLevel());
-    system.addLabelPair(i18n.tr("Log-Datei"), control.getLogFile());
 
     system.addHeadline(i18n.tr("Netzwerk-Optionen"));
     system.addCheckbox(control.getRmiSSL(),i18n.tr("Daten im Netzwerk-Betrieb (RMI) verschlüsselt übertragen"));
@@ -200,6 +198,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.19  2007/08/20 12:27:08  willuhn
+ * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
+ *
  * Revision 1.18  2007/06/21 18:33:25  willuhn
  * @B typo
  *
