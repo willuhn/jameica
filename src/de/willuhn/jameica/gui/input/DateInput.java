@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2007/04/26 14:38:11 $
+ * $Revision: 1.7 $
+ * $Date: 2007/08/28 22:42:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -292,7 +292,23 @@ public class DateInput implements Input
    */
   public void setMandatory(boolean mandatory)
   {
-    this.mandatory = mandatory;
+    // Wenn das Control bereits gezeichnet wurde und
+    // sich der Wert von mandatory aendern wird, rufen
+    // wir gleich update() auf. Dann wird eine Aenderung
+    // im laufenden Betrieb sofort sichtbar
+    if (mandatory != this.mandatory &&
+        this.input != null)
+    {
+      this.mandatory = mandatory;
+      this.input.setMandatory(this.mandatory);
+      this.input.update();
+    }
+    else
+    {
+      // Ansonsten nur das Flag setzen
+      this.input.setMandatory(this.mandatory);
+      this.mandatory = mandatory;
+    }
   }
 
   /**
@@ -370,6 +386,9 @@ public class DateInput implements Input
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.7  2007/08/28 22:42:53  willuhn
+ * @N Bei Aufruf von setMandatory() ggf. Farb-Aenderungen sofort durchfuehren, wenn sich Wert von "mandatory" geaendert hat und das Control bereits gezeichnet wurde
+ *
  * Revision 1.6  2007/04/26 14:38:11  willuhn
  * @B Manuell eingegebenes Datum bei anschliessendem Oeffnen des Kalender-Dialogs uebernehmen
  * @N hasChanged in DialogInput ueberschrieben

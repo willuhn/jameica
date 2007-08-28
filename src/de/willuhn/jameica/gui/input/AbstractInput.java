@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.22 $
- * $Date: 2007/07/19 09:53:17 $
+ * $Revision: 1.23 $
+ * $Date: 2007/08/28 22:42:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -329,7 +329,22 @@ public abstract class AbstractInput implements Input
    */
   public void setMandatory(boolean mandatory)
   {
-    this.mandatory = mandatory;
+    // Wenn das Control bereits gezeichnet wurde und
+    // sich der Wert von mandatory aendern wird, rufen
+    // wir gleich update() auf. Dann wird eine Aenderung
+    // im laufenden Betrieb sofort sichtbar
+    if (mandatory != this.mandatory &&
+        this.control != null &&
+        !this.control.isDisposed())
+    {
+      this.mandatory = mandatory;
+      update();
+    }
+    else
+    {
+      // Ansonsten nur das Flag setzen
+      this.mandatory = mandatory;
+    }
   }
 
   /**
@@ -373,6 +388,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.23  2007/08/28 22:42:53  willuhn
+ * @N Bei Aufruf von setMandatory() ggf. Farb-Aenderungen sofort durchfuehren, wenn sich Wert von "mandatory" geaendert hat und das Control bereits gezeichnet wurde
+ *
  * Revision 1.22  2007/07/19 09:53:17  willuhn
  * @B removed debug output
  *
