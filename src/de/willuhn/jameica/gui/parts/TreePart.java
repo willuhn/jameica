@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.18 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.19 $
+ * $Date: 2007/08/28 09:47:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -56,8 +57,10 @@ public class TreePart extends AbstractTablePart
   private Action action             = null;
   private GenericIterator list      = null;
   private Tree tree                 = null;
-
+  
   private String id                 = null;
+  private boolean expanded          = true;
+  private HashMap itemLookup        = new HashMap();
 
     
 	/**
@@ -101,6 +104,16 @@ public class TreePart extends AbstractTablePart
   public void setFormatter(TreeFormatter formatter)
   {
     this.formatter = formatter;
+  }
+  
+  /**
+   * Legt fest, ob der Baum per Default komplett geoeffnet oder geschlossen sein soll.
+   * Standard: Alle geoeffnet.
+   * @param expanded
+   */
+  public void setExpanded(boolean expanded)
+  {
+    this.expanded = expanded;
   }
 
   /**
@@ -231,14 +244,12 @@ public class TreePart extends AbstractTablePart
     /////////////////////////////////////////////////////////////////
     // Nutzdaten einfuegen
     while (list.hasNext())
-      new Item(null,(GenericObject) list.next());
-    /////////////////////////////////////////////////////////////////
-    
-    /////////////////////////////////////////////////////////////////
-    // Alles aufklappen
-    TreeItem[] items = this.tree.getItems();
-    for (int i=0;i<items.length;++i)
-      expand(items[i]);
+    {
+      GenericObject data = list.next();
+      Item i = new Item(null,data);
+      itemLookup.put(data,i);
+      setExpanded(data,this.expanded); // BUGZILLA 395
+    }
     /////////////////////////////////////////////////////////////////
     
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
@@ -274,20 +285,20 @@ public class TreePart extends AbstractTablePart
   }
   
   /**
-   * Klappt das Element und alle Kinder dessen auf.
-   * @param item
+   * Klappt das Element auf.
+   * @param object das Objekt.
+   * @param expanded true, wenn es aufgeklappt sein soll, sonst false.
    */
-  private void expand(TreeItem item)
+  public void setExpanded(GenericObject object, boolean expanded)
   {
-    if (item == null || item.isDisposed())
+    Item i = (Item) itemLookup.get(object);
+    if (i == null)
       return;
-
-    TreeItem[] children = item.getItems();
-    for (int i=0;i<children.length; ++i)
-      expand(children[i]);
-
-    // Zum Schluss klappen wir uns selbst auf
-    item.setExpanded(true);
+    TreeItem ti = i.item;
+    if (ti == null || ti.isDisposed())
+      return;
+    
+    ti.setExpanded(expanded);
   }
   
 	/**
@@ -486,6 +497,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.19  2007/08/28 09:47:11  willuhn
+ * @N Bug 395
+ *
  * Revision 1.18  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
