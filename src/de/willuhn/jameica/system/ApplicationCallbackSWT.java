@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.14 $
- * $Date: 2007/04/20 14:48:02 $
+ * $Revision: 1.15 $
+ * $Date: 2007/08/31 10:00:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ import de.willuhn.jameica.gui.dialogs.TextDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
@@ -318,6 +319,15 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public boolean checkTrust(X509Certificate cert) throws Exception
   {
+    // Wir senden die Trust-Abrfrage vorher noch per Message
+    CheckTrustMessage msg = new CheckTrustMessage(cert);
+    Application.getMessagingFactory().sendSyncMessage(msg);
+    if (msg.isTrusted())
+    {
+      Logger.info("cert: " + cert.getSubjectDN().getName() + ", trusted by: " + msg.getTrustedBy());
+      return true;
+    }
+
     CertificateTrustDialog d = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,cert);
 
     Boolean b = (Boolean) d.open();
@@ -397,6 +407,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.15  2007/08/31 10:00:10  willuhn
+ * @N CheckTrustMessage synchron versenden, wenn Vertrauensstellung abgefragt wird
+ *
  * Revision 1.14  2007/04/20 14:48:02  willuhn
  * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
  * @N Zusaetzliche parametrisierbare askUser-Funktion

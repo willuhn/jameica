@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.23 $
- * $Date: 2007/06/21 22:27:54 $
+ * $Revision: 1.24 $
+ * $Date: 2007/08/31 10:00:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 
+import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
@@ -239,6 +240,14 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public boolean checkTrust(X509Certificate cert) throws Exception
   {
+    // Wir senden die Trust-Abrfrage vorher noch per Message
+    CheckTrustMessage msg = new CheckTrustMessage(cert);
+    Application.getMessagingFactory().sendSyncMessage(msg);
+    if (msg.isTrusted())
+    {
+      Logger.info("cert: " + cert.getSubjectDN().getName() + ", trusted by: " + msg.getTrustedBy());
+      return true;
+    }
 
     // Im Nicht-interaktiven Mode speichern wir das Zertifikat nur in
     // einem Spool-Verzeichnis ab.
@@ -415,6 +424,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.24  2007/08/31 10:00:11  willuhn
+ * @N CheckTrustMessage synchron versenden, wenn Vertrauensstellung abgefragt wird
+ *
  * Revision 1.23  2007/06/21 22:27:54  willuhn
  * @C Nacharbeiten zu SSL-Fixes
  *
