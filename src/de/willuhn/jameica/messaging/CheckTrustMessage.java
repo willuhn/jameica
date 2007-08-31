@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/CheckTrustMessage.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/08/31 10:00:11 $
+ * $Revision: 1.2 $
+ * $Date: 2007/08/31 13:34:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,6 +52,7 @@ public class CheckTrustMessage implements Message
   public void setTrusted(boolean b, String by)
   {
     this.isTrusted = b;
+    this.by = by;
   }
   
   /**
@@ -77,6 +78,9 @@ public class CheckTrustMessage implements Message
 
 /*********************************************************************
  * $Log: CheckTrustMessage.java,v $
+ * Revision 1.2  2007/08/31 13:34:12  willuhn
+ * @B parameter not set
+ *
  * Revision 1.1  2007/08/31 10:00:11  willuhn
  * @N CheckTrustMessage synchron versenden, wenn Vertrauensstellung abgefragt wird
  *
