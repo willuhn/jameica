@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.19 $
- * $Date: 2007/08/20 12:27:08 $
+ * $Revision: 1.20 $
+ * $Date: 2007/09/06 22:21:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -112,27 +112,26 @@ public class Settings extends AbstractView implements Extendable
     /////////////////////////////////////////////////////////////////
 		// Farb-Einstellungen
 
-    TabGroup colorGroup = new TabGroup(getTabFolder(),i18n.tr("Look and Feel"));
+    TabGroup lnfGroup = new TabGroup(getTabFolder(),i18n.tr("Look and Feel"));
 		try
 		{
-			colorGroup.addLabelPair(i18n.tr("Vorausgewählte Sprache"), control.getLocale());
+      lnfGroup.addLabelPair(i18n.tr("Vorausgewählte Sprache"), control.getLocale());
 		}
 		catch (RemoteException e)
 		{
 			Logger.error("error while reading locale settings",e);
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ermitteln der Sprach-Einstellungen."),StatusBarMessage.TYPE_ERROR));
 		}
-		colorGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
-		colorGroup.addLabelPair(i18n.tr("Hintergrund von Eingabefeldern"),control.getColorWidgetBG());
-    colorGroup.addLabelPair(i18n.tr("Hintergrund von Pflichtfeldern"),control.getColorMandatoryBG());
-		colorGroup.addLabelPair(i18n.tr("Textfarbe von Eingabefeldern"),control.getColorWidgetFG());
-		colorGroup.addLabelPair(i18n.tr("Hintergrundfarbe"),control.getColorBackground());
-
-		colorGroup.addLabelPair(i18n.tr("Farbe von Kommentaren"),control.getColorComment());
-		colorGroup.addLabelPair(i18n.tr("Fehlermeldungen"),control.getColorError());
-		colorGroup.addLabelPair(i18n.tr("Erfolgsmeldungen"),control.getColorSuccess());
-		colorGroup.addLabelPair(i18n.tr("Links"),control.getColorLink());
-		colorGroup.addLabelPair(i18n.tr("Aktive Links"),control.getColorLinkActive());
+    lnfGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
+    lnfGroup.addSeparator();
+    lnfGroup.addCheckbox(control.getCheckMandatory(),i18n.tr("Hintergrund von Pflichtfeldern farbig hervorheben"));
+    lnfGroup.addCheckbox(control.getLabelMandatory(),i18n.tr("Auch den Text vor diesen Pflichtfeldern (Label) hervorheben"));
+    lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Pflichtfeldern"),control.getColorMandatoryBG());
+    lnfGroup.addSeparator();
+    lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Eingabefeldern"),control.getColorWidgetBG());
+    lnfGroup.addLabelPair(i18n.tr("Allgemeine Hintergrundfarbe"),control.getColorBackground());
+    lnfGroup.addLabelPair(i18n.tr("Textfarbe von Fehler- und Warnmeldungen"),control.getColorError());
+    lnfGroup.addLabelPair(i18n.tr("Textfarbe von Erfolgsmeldungen"),control.getColorSuccess());
 		//
 		/////////////////////////////////////////////////////////////////
 
@@ -198,6 +197,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.20  2007/09/06 22:21:55  willuhn
+ * @N Hervorhebung von Pflichtfeldern konfigurierbar
+ * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
+ *
  * Revision 1.19  2007/08/20 12:27:08  willuhn
  * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
  *

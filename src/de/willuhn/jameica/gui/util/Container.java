@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/09/06 18:17:08 $
+ * $Revision: 1.13 $
+ * $Date: 2007/09/06 22:21:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -83,7 +83,7 @@ public abstract class Container
       labelGrid.verticalAlignment = GridData.CENTER;
     final Label label = GUI.getStyleFactory().createLabel(getComposite(),SWT.NONE);
     label.setText(name);
-    if (input.isMandatory())
+    if (input.isMandatory() && Application.getConfig().getMandatoryLabel())
       label.setForeground(Color.ERROR.getSWTColor());
     label.setLayoutData(labelGrid);
 
@@ -132,7 +132,7 @@ public abstract class Container
 
     final Label label = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
     label.setText(text);
-    if (checkbox.isMandatory())
+    if (checkbox.isMandatory() && Application.getConfig().getMandatoryLabel())
       label.setForeground(Color.ERROR.getSWTColor());
     label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
   }
@@ -266,6 +266,10 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.13  2007/09/06 22:21:55  willuhn
+ * @N Hervorhebung von Pflichtfeldern konfigurierbar
+ * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
+ *
  * Revision 1.12  2007/09/06 18:17:08  willuhn
  * @N colourize label when mandatory
  *

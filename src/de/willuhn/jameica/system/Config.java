@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.31 $
- * $Date: 2007/08/20 12:27:08 $
+ * $Revision: 1.32 $
+ * $Date: 2007/09/06 22:21:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -445,6 +445,24 @@ public final class Config
   }
 
   /**
+   * Legt fest, ob auch die Label vor Pflichtfeldern rot markiert werden sollen.
+   * @return true, wenn auch die Label rot markiert werden sollen.
+   */
+  public boolean getMandatoryLabel()
+  {
+    return settings.getBoolean("jameica.system.mandatorylabel",false);
+  }
+
+  /**
+   * Legt fest, ob auch die Label vor Pflichtfeldern rot markiert werden sollen.
+   * @param check true, wenn auch die Label rot markiert werden sollen.
+   */
+  public void setMandatoryLabel(boolean check)
+  {
+    settings.setAttribute("jameica.system.mandatorylabel",check);
+  }
+
+  /**
    * Liefert den Namen des Loglevels.
    * @return Name des Loglevels.
    */
@@ -460,6 +478,8 @@ public final class Config
   public void setLoglevel(String name)
 	{
     settings.setAttribute("jameica.system.log.level",name);
+    // Aenderungen sofort uebernehmen
+    Logger.setLevel(Level.findByName(name));
 	}
 
   /**
@@ -514,6 +534,10 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.32  2007/09/06 22:21:55  willuhn
+ * @N Hervorhebung von Pflichtfeldern konfigurierbar
+ * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
+ *
  * Revision 1.31  2007/08/20 12:27:08  willuhn
  * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.20 $
- * $Date: 2007/08/20 12:27:08 $
+ * $Revision: 1.21 $
+ * $Date: 2007/09/06 22:21:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,9 @@ package de.willuhn.jameica.gui.internal.controller;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Locale;
+
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
@@ -76,6 +79,8 @@ public class SettingsControl extends AbstractControl
 	private Input colorLinkActive;
   private Input colorMandatoryBG;
 	private Input styleFactory;
+  private CheckboxInput checkMandatory;
+  private CheckboxInput mandatoryLabel;
 	
 	private SelectInput locale;
 	
@@ -332,6 +337,51 @@ public class SettingsControl extends AbstractControl
 		colorLinkActive = new ColorInput(Color.LINK_ACTIVE.getSWTColor(),true);
 		return colorLinkActive;
 	}
+  
+  /**
+   * Liefert eine Checkbox, mit der konfiguriert werden kann, ob Pflichtfelder rot gefaerbt werden.
+   * @return Checkbox.
+   */
+  public CheckboxInput getCheckMandatory()
+  {
+    if (this.checkMandatory != null)
+      return this.checkMandatory;
+    this.checkMandatory = new CheckboxInput(Application.getConfig().getMandatoryCheck());
+    final Listener l = new Listener()
+    {
+    
+      public void handleEvent(Event event)
+      {
+        try
+        {
+          boolean b = ((Boolean)getCheckMandatory().getValue()).booleanValue();
+          getColorMandatoryBG().setEnabled(b);
+          getLabelMandatory().setEnabled(b);
+          if (!b)
+            getLabelMandatory().setValue(Boolean.FALSE);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to update mandatory widgets",e);
+        }
+      }
+    };
+    this.checkMandatory.addListener(l);
+    l.handleEvent(null); // einmal ausloesen
+    return this.checkMandatory;
+  }
+
+  /**
+   * Liefert eine Checkbox, mit der konfiguriert werden kann, ob auch die Labels vor Pflichtfeldern rot gefaerbt werden.
+   * @return Checkbox.
+   */
+  public CheckboxInput getLabelMandatory()
+  {
+    if (this.mandatoryLabel != null)
+      return this.mandatoryLabel;
+    this.mandatoryLabel = new CheckboxInput(Application.getConfig().getMandatoryLabel());
+    return this.mandatoryLabel;
+  }
 
   /**
    * Speichert die Einstellungen.
@@ -341,32 +391,35 @@ public class SettingsControl extends AbstractControl
 
   	try
     {
+      boolean restartNeeded = false;
 
       // System
-      String level = (String)getLogLevel().getValue();
-      Application.getConfig().setLoglevel(level);
-      Logger.setLevel(Level.findByName(level));
+      Application.getConfig().setLoglevel((String)getLogLevel().getValue());
 
+      restartNeeded |= getRmiPort().hasChanged();
       Integer in = (Integer) getRmiPort().getValue();
-      if (in == null)
-        throw new ApplicationException(i18n.tr("Bitte geben Sie eine TCP-Portnummer für den Netzwerkbetrieb ein"));
-        
-      Application.getConfig().setRmiPort(in.intValue());
+      if (in != null)
+        Application.getConfig().setRmiPort(in.intValue());
 
-      Boolean b = (Boolean) getRmiSSL().getValue();
-      Application.getConfig().setRmiSSL(b.booleanValue());
+      restartNeeded |= getRmiSSL().hasChanged();
+      Application.getConfig().setRmiSSL(((Boolean) getRmiSSL().getValue()).booleanValue());
 
+      restartNeeded |= getProxyPort().hasChanged();
       Integer proxyPort = (Integer) getProxyPort().getValue();
       if (proxyPort == null)
         Application.getConfig().setProxyPort(-1);
       else
         Application.getConfig().setProxyPort(proxyPort.intValue());
 
+      restartNeeded |= getProxyHost().hasChanged();
       Application.getConfig().setProxyHost((String)getProxyHost().getValue());
 
       // Look & Feel
+      Application.getConfig().setMandatoryCheck(((Boolean)getCheckMandatory().getValue()).booleanValue());
+      Application.getConfig().setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
     	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
 			Color.COMMENT.setSWTColor((org.eclipse.swt.graphics.Color)getColorComment().getValue());
+      restartNeeded |= getColorBackground().hasChanged();
 			Color.BACKGROUND.setSWTColor((org.eclipse.swt.graphics.Color)getColorBackground().getValue());
 			Color.WIDGET_FG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetFG().getValue());
 			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
@@ -374,15 +427,22 @@ public class SettingsControl extends AbstractControl
 			Color.LINK.setSWTColor((org.eclipse.swt.graphics.Color)getColorLink().getValue());
 			Color.LINK_ACTIVE.setSWTColor((org.eclipse.swt.graphics.Color)getColorLinkActive().getValue());
       Color.MANDATORY_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorMandatoryBG().getValue());
-			StyleFactoryObject fo = (StyleFactoryObject) getStyleFactory().getValue();
+
+      restartNeeded |= getStyleFactory().hasChanged();
+      StyleFactoryObject fo = (StyleFactoryObject) getStyleFactory().getValue();
 			GUI.setStyleFactory(fo.factory);
-			Locale lo = (Locale) getLocale().getValue();
+
+      restartNeeded |= getLocale().hasChanged();
+      Locale lo = (Locale) getLocale().getValue();
 			Application.getConfig().setLocale(lo);
 
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
-			
-			SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
+
+      if (!restartNeeded)
+        return;
+
+      SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
 			d.setTitle(i18n.tr("Neustart erforderlich"));
 			d.setText(i18n.tr("Bitte starten Sie Jameica neu, damit alle Änderungen wirksam werden."));
 			d.open();
@@ -504,6 +564,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.21  2007/09/06 22:21:55  willuhn
+ * @N Hervorhebung von Pflichtfeldern konfigurierbar
+ * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
+ *
  * Revision 1.20  2007/08/20 12:27:08  willuhn
  * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
  *
