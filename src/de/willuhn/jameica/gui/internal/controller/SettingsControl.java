@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.21 $
- * $Date: 2007/09/06 22:21:55 $
+ * $Revision: 1.22 $
+ * $Date: 2007/09/08 14:20:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,9 +16,6 @@ package de.willuhn.jameica.gui.internal.controller;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Locale;
-
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
@@ -79,7 +76,6 @@ public class SettingsControl extends AbstractControl
 	private Input colorLinkActive;
   private Input colorMandatoryBG;
 	private Input styleFactory;
-  private CheckboxInput checkMandatory;
   private CheckboxInput mandatoryLabel;
 	
 	private SelectInput locale;
@@ -339,39 +335,6 @@ public class SettingsControl extends AbstractControl
 	}
   
   /**
-   * Liefert eine Checkbox, mit der konfiguriert werden kann, ob Pflichtfelder rot gefaerbt werden.
-   * @return Checkbox.
-   */
-  public CheckboxInput getCheckMandatory()
-  {
-    if (this.checkMandatory != null)
-      return this.checkMandatory;
-    this.checkMandatory = new CheckboxInput(Application.getConfig().getMandatoryCheck());
-    final Listener l = new Listener()
-    {
-    
-      public void handleEvent(Event event)
-      {
-        try
-        {
-          boolean b = ((Boolean)getCheckMandatory().getValue()).booleanValue();
-          getColorMandatoryBG().setEnabled(b);
-          getLabelMandatory().setEnabled(b);
-          if (!b)
-            getLabelMandatory().setValue(Boolean.FALSE);
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to update mandatory widgets",e);
-        }
-      }
-    };
-    this.checkMandatory.addListener(l);
-    l.handleEvent(null); // einmal ausloesen
-    return this.checkMandatory;
-  }
-
-  /**
    * Liefert eine Checkbox, mit der konfiguriert werden kann, ob auch die Labels vor Pflichtfeldern rot gefaerbt werden.
    * @return Checkbox.
    */
@@ -415,7 +378,6 @@ public class SettingsControl extends AbstractControl
       Application.getConfig().setProxyHost((String)getProxyHost().getValue());
 
       // Look & Feel
-      Application.getConfig().setMandatoryCheck(((Boolean)getCheckMandatory().getValue()).booleanValue());
       Application.getConfig().setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
     	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
 			Color.COMMENT.setSWTColor((org.eclipse.swt.graphics.Color)getColorComment().getValue());
@@ -564,6 +526,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.22  2007/09/08 14:20:11  willuhn
+ * @C Pflichtfelder nicht mehr via GUI deaktivierbar
+ *
  * Revision 1.21  2007/09/06 22:21:55  willuhn
  * @N Hervorhebung von Pflichtfeldern konfigurierbar
  * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern

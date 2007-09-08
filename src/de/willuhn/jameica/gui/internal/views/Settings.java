@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.20 $
- * $Date: 2007/09/06 22:21:55 $
+ * $Revision: 1.21 $
+ * $Date: 2007/09/08 14:20:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -124,9 +124,8 @@ public class Settings extends AbstractView implements Extendable
 		}
     lnfGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
     lnfGroup.addSeparator();
-    lnfGroup.addCheckbox(control.getCheckMandatory(),i18n.tr("Hintergrund von Pflichtfeldern farbig hervorheben"));
-    lnfGroup.addCheckbox(control.getLabelMandatory(),i18n.tr("Auch den Text vor diesen Pflichtfeldern (Label) hervorheben"));
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Pflichtfeldern"),control.getColorMandatoryBG());
+    lnfGroup.addCheckbox(control.getLabelMandatory(),i18n.tr("Auch den Text vor diesen Pflichtfeldern (Label) hervorheben"));
     lnfGroup.addSeparator();
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Eingabefeldern"),control.getColorWidgetBG());
     lnfGroup.addLabelPair(i18n.tr("Allgemeine Hintergrundfarbe"),control.getColorBackground());
@@ -197,6 +196,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.21  2007/09/08 14:20:11  willuhn
+ * @C Pflichtfelder nicht mehr via GUI deaktivierbar
+ *
  * Revision 1.20  2007/09/06 22:21:55  willuhn
  * @N Hervorhebung von Pflichtfeldern konfigurierbar
  * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
