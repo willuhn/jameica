@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.43 $
- * $Date: 2007/06/21 18:33:54 $
+ * $Revision: 1.44 $
+ * $Date: 2007/10/05 15:17:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -261,18 +261,41 @@ public final class ServiceFactory
    */
   private Service newInstance(Class serviceClass) throws Exception
 	{
-		Class impl = serviceClass;
+		Class impl = null;
 		try
 		{
 			// Mal schauen, ob wir auch eine Implementierung dazu finden
-			Class[] impls = Application.getClassLoader().getClassFinder().findImplementors(impl);
+			Class[] impls = Application.getClassLoader().getClassFinder().findImplementors(serviceClass);
 			if (impls != null && impls.length > 0)
-				impl = impls[0];
+      {
+        // Wir nehmen die erste, die keine Inner-Class ist
+        boolean found = false;
+        for (int i=0;i<impls.length;++i)
+        {
+          if (impls[i].getName().indexOf("$") != -1)
+          {
+            // ist eine InnerClass - ignorieren wir vorerst
+            continue;
+          }
+          found = true;
+          impl = impls[i];
+        }
+        
+        if (!found)
+        {
+          Logger.info("only inner classes as implementor found for " + serviceClass.getName());
+          impl = impls[0];
+        }
+      }
 		}
 		catch (Throwable t)
 		{
-			// ignore
+      Logger.error("unable to find implementor for interface " + serviceClass.getName() + ", trying to load " + serviceClass.getName(),t);
 		}
+    
+    if (impl == null)
+      impl = serviceClass;
+    
 		Constructor ct = impl.getConstructor(new Class[]{});
 		ct.setAccessible(true);
 		Service s = (Service) ct.newInstance(new Object[] {});
@@ -449,6 +472,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.44  2007/10/05 15:17:22  willuhn
+ * @C Inner-Classes bei der Suche nach Implementors von Service-Interfaces nur dann beruecksichtigen, wenn nichts anderes gefunden wurde
+ *
  * Revision 1.43  2007/06/21 18:33:54  willuhn
  * @C remote services bei Shutdown nicht mehr benachrichten
  *
