@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.65 $
- * $Date: 2007/06/05 13:07:57 $
+ * $Revision: 1.66 $
+ * $Date: 2007/10/22 23:23:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -125,19 +125,6 @@ public final class Application {
 
 		////////////////////////////////////////////////////////////////////////////
 		// LockFile erzeugen
-    // TODO: Mal das Locking via NIO checken
-    //    FileOutputStream fos = new FileOutputStream("test.txt");
-    //    FileLock lock = fos.getChannel().tryLock();
-    //    if (lock != null)
-    //    {
-    //      System.out.println("OK");
-    //      Thread.sleep(100 * 1000l);
-    //    }
-    //    else
-    //    {
-    //      System.err.println("Anwendung laeuft");
-    //    }
-
     File lock = new File(app.config.getWorkDir(),"jameica.lock");
     Logger.info("creating lockfile " + lock.getAbsolutePath());
 		try {
@@ -763,6 +750,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.66  2007/10/22 23:23:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.65  2007/06/05 13:07:57  willuhn
  * @C changed init process of messaging factory
  *

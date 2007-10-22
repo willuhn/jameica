@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.22 $
- * $Date: 2007/09/08 14:20:11 $
+ * $Revision: 1.23 $
+ * $Date: 2007/10/22 23:23:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,6 @@
 package de.willuhn.jameica.gui.internal.controller;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Locale;
 
 import de.willuhn.datasource.GenericObject;
@@ -221,7 +220,7 @@ public class SettingsControl extends AbstractControl
 		if (locale != null)
 			return locale;
 
-		locale = new SelectInput(Arrays.asList(Locale.getAvailableLocales()),Application.getConfig().getLocale());
+		locale = new SelectInput(Locale.getAvailableLocales(),Application.getConfig().getLocale());
     locale.setAttribute("displayName");
 		return locale;
 	}
@@ -526,6 +525,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.23  2007/10/22 23:23:13  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.22  2007/09/08 14:20:11  willuhn
  * @C Pflichtfelder nicht mehr via GUI deaktivierbar
  *
