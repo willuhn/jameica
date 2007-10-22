@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.12 $
- * $Date: 2006/10/06 13:07:46 $
+ * $Revision: 1.13 $
+ * $Date: 2007/10/22 22:58:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -200,23 +199,20 @@ public final class Wallet
   {
     synchronized(serialized)
     {
-      read(getFilename(),false);
+      read(getFilename());
     }
   }
 
   /**
    * Liest die ggf gespeicherten Daten.
 	 * @param file einzulesende Datei.
-   * @param forceNew legt fest, ob auf jeden Fall das neue Format verwendet werden soll.
    * @throws Exception
    */
-  private synchronized void read(String file, boolean forceNew) throws Exception
+  private synchronized void read(String file) throws Exception
 	{
-    // TODO: Das alte Wallet-Format kann mal entfernt werden
-    File fold = new File(file);
-    File fnew = new File(file + (forceNew ? "" : "2"));
+    File f = new File(file);
     
-    if (!fold.exists() && !fnew.exists())
+    if (!f.exists())
     {
       // Wallet existiert noch nicht. Dann erstellen wir ein neues
       this.serialized = new Hashtable();
@@ -225,67 +221,34 @@ public final class Wallet
 
     InputStream is = null;
 
-    if (forceNew || fnew.exists())
-    {
-      // hu, es existiert schon das neue Format. Dann nehmen wir das
-      Logger.info("reading xml-wallet file " + fnew.getAbsolutePath());
-      try
-      {
-        is = new BufferedInputStream(new FileInputStream(fnew));
-
-        // Einlesen und entschluesseln
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        Application.getSSLFactory().decrypt(is,bos);
-
-        Logger.info("deserializing xml-wallet");
-        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        XMLDecoder xml = new XMLDecoder(bis);
-        this.serialized = (Hashtable) xml.readObject();
-        xml.close();
-        Logger.info("reading xml-wallet done");
-        return;
-      }
-      finally
-      {
-        try
-        {
-          is.close();
-        }
-        catch (Exception e)
-        {
-          // ignore
-        }
-      }
-    }
-
-
-    // Wir lesen das alte Format
-    Logger.info("reading wallet file " + fold.getAbsolutePath());
+    Logger.info("reading xml-wallet file " + f.getAbsolutePath());
     try
     {
-      is = new BufferedInputStream(new FileInputStream(fold));
+      is = new BufferedInputStream(new FileInputStream(f));
 
       // Einlesen und entschluesseln
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
       Application.getSSLFactory().decrypt(is,bos);
 
-      Logger.info("deserializing wallet");
+      Logger.debug("deserializing xml-wallet");
       ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-      ObjectInputStream ois = new ObjectInputStream(bis);
-      this.serialized = (Hashtable) ois.readObject();
-      Logger.info("reading wallet done");
+      XMLDecoder xml = new XMLDecoder(bis);
+      this.serialized = (Hashtable) xml.readObject();
+      xml.close();
+      Logger.debug("reading xml-wallet done");
+      return;
     }
     finally
     {
       try
       {
-        is.close();
+        if (is != null)
+          is.close();
       }
       catch (Exception e)
       {
-        // ignore
+        Logger.error("unable to close file",e);
       }
     }
 	}
@@ -296,7 +259,7 @@ public final class Wallet
    */
   private String getFilename()
 	{
-		return Application.getConfig().getConfigDir() + "/" + this.clazz.getName() + ".wallet";
+		return Application.getConfig().getConfigDir() + "/" + this.clazz.getName() + ".wallet2";
 	}
 
 	/**
@@ -307,12 +270,12 @@ public final class Wallet
 	{
     synchronized(serialized)
     {
-      Logger.info("writing wallet file " + getFilename() + "2");
+      Logger.info("writing wallet file " + getFilename());
 
       // Wir schreiben die Daten erstmal in eine Temp-Datei
       // und kopieren sie danach.
       // BUGZILLA 25 http://www.willuhn.de/bugzilla/show_bug.cgi?id=25
-      File file       = new File(getFilename() + "2");
+      File file       = new File(getFilename());
       File directory  = file.getAbsoluteFile().getParentFile();
       String prefix   = file.getName() + "_";
       File tempfile   = File.createTempFile(prefix,"",directory);
@@ -320,7 +283,7 @@ public final class Wallet
       // Objekt serialisieren
       ByteArrayOutputStream bos   = new ByteArrayOutputStream();
 
-      Logger.info("serializing xml-wallet");
+      Logger.debug("serializing xml-wallet");
       
       // BUGZILLA 109 http://www.willuhn.de/bugzilla/show_bug.cgi?id=109
       // Wir speichern nur noch im neuen XML-Format
@@ -339,18 +302,18 @@ public final class Wallet
       os.flush();
       os.close();
 
-      Logger.info("test if readable");
+      Logger.debug("test if readable");
       if (!tempfile.exists())
         throw new IOException("unable to save wallet file");
-      read(tempfile.getAbsolutePath(),true);
+      read(tempfile.getAbsolutePath());
       
       // Nur wenn das Einlesen klappt, benennen wir die Datei um.
-      Logger.info("renaming temp file");
+      Logger.debug("renaming temp file");
       
       // OK, Schreiben war erfolgreich. Jetzt kopieren wir die Temp-Datei rueber.
       file.delete();
       tempfile.renameTo(file);
-      Logger.info("writing xml-wallet done");
+      Logger.debug("writing xml-wallet done");
     }
 	}
   
@@ -359,6 +322,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.13  2007/10/22 22:58:24  willuhn
+ * @R Altes Wallet-Format (aus Jameica 1.2) entfernt
+ *
  * Revision 1.12  2006/10/06 13:07:46  willuhn
  * @B Bug 185, 211
  *
