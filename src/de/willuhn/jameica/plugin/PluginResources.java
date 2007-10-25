@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.12 $
- * $Date: 2006/01/11 00:46:29 $
- * $Author: web0 $
+ * $Revision: 1.13 $
+ * $Date: 2007/10/25 23:18:04 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -13,26 +13,25 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.Locale;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
+import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Container, der zusaetzliche Informationen fuer das Plugin bereitstellt.
  */
 public final class PluginResources {
 
-	private AbstractPlugin plugin = null;
-	private I18N i18n = null;
-	private String workPath = null;
-	private String path = null;
+	private AbstractPlugin plugin  = null;
+	private I18N i18n              = null;
+	private String workPath        = null;
+  private MultipleClassLoader cl = null;
   
-  private Settings settings = null;
+  private Settings settings      = null;
 
   /**
    * ct.
@@ -44,36 +43,6 @@ public final class PluginResources {
 
     this.settings = new Settings(plugin.getClass());
     this.settings.setStoreWhenRead(false);
-    
-  	File f = plugin.getFile();
-
-    String locale = Application.getConfig().getLocale().toString();
-    try
-    {
-      if (f.isFile() && f.exists())
-      {
-        // es handelt sich um ein Jar-File.
-        // Wir holen uns das passende language-File raus
-        JarFile jar = new JarFile(f);
-        JarEntry entry = jar.getJarEntry("lang/messages_" + locale + ".properties");
-        this.i18n = new I18N(jar.getInputStream(entry));
-      }
-      else if (f.isDirectory() && f.exists())
-      {
-        // es handelt sich um ein entpacktes Plugin.
-        // Wir laden die Datei via Pfad.
-        String path = "/lang/messages_" + locale + ".properties";
-        File f2 = new File(f.getAbsolutePath() + path);
-        if (!f2.exists())
-          f2 = new File(f.getAbsolutePath() + "/bin" + path); // vielleicht im bin-Verzeichnis?
-        this.i18n = new I18N(new FileInputStream(f2));
-      }
-    }
-    catch (Exception e)
-    {
-      Logger.warn("plugin " + this.plugin.getClass().getName() + " does not support jameicas locale " + locale);
-      this.i18n = new I18N(Application.getConfig().getLocale());
-    }
   }
 
 	/**
@@ -82,24 +51,32 @@ public final class PluginResources {
    */
   public I18N getI18N()
 	{
-		return i18n;
+    if (this.i18n != null)
+      return i18n;
+
+    // Wir laden i18n erst bei Bedarf
+    Locale locale = Application.getConfig().getLocale();
+    try
+    {
+      this.i18n = new I18N("lang/messages",locale,this.getClassLoader());
+    }
+    catch (Exception e)
+    {
+      Logger.info("plugin " + this.plugin.getClass().getName() + " does not support jameicas locale " + locale);
+      this.i18n = Application.getI18n();
+    }
+    
+    return this.i18n;
 	}
 
 	/**
 	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
+   * TODO Redundant
 	 * @return Verzeichnis, in dem sich das Plugin befindet.
 	 */
 	public String getPath()
 	{
-		if (path != null)
-			return path;	
-
-		// ist das Plugin ein File?
-		if (plugin.getFile().isFile())
-			path = plugin.getFile().getParentFile().getAbsolutePath();
-		else
-			path = plugin.getFile().getAbsolutePath();
-		return path;
+    return this.plugin.getManifest().getPluginDir();
 	}
 
 	/**
@@ -111,15 +88,15 @@ public final class PluginResources {
 		if (workPath != null)
 			return workPath;
 
+    // Basis-Verzeichnis
 		workPath = Application.getConfig().getWorkDir();
-		File f = plugin.getFile();
+    
+    // Name des Plugin-Verzeichnisses
+    File pluginPath = new File(this.plugin.getManifest().getPluginDir());
 		
-		if (f.isFile())
-			workPath += File.separator + f.getName().substring(0,f.getName().lastIndexOf('.')); // Datei-Endung abschneiden
-		else
-			workPath += File.separator + f.getName();
+		workPath += File.separator + pluginPath.getName();
 
-		f = new File(workPath);
+		File f = new File(workPath);
 		if (!f.exists())
 		{
 			if (!f.mkdirs())
@@ -141,11 +118,34 @@ public final class PluginResources {
   {
     return this.settings;
   }
+  
+  /**
+   * Liefert einen Classloader, der nur dieses Plugin kennt.
+   * @return der Classloader des Plugins.
+   */
+  public MultipleClassLoader getClassLoader()
+  {
+    return this.cl;
+  }
+  
+  /**
+   * Speichert den Classloader des Plguins.
+   * @param cl
+   */
+  void setClassLoader(MultipleClassLoader cl)
+  {
+    this.cl = cl;
+  }
 }
 
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.13  2007/10/25 23:18:04  willuhn
+ * @B Fix in i18n Initialisierung (verursachte Warnung "Plugin ... unterstuetzt Locale ... nicht")
+ * @C i18n erst bei Bedarf initialisieren
+ * @C AbstractPlugin vereinfacht (neuer parameterloser Konstruktor, install(), update(),... nicht mehr abstract)
+ *
  * Revision 1.12  2006/01/11 00:46:29  web0
  * @N settings in AbstractPlugin
  *

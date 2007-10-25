@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.10 $
- * $Date: 2007/03/14 10:37:49 $
+ * $Revision: 1.11 $
+ * $Date: 2007/10/25 23:18:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,31 +26,26 @@ import de.willuhn.util.ApplicationException;
 public abstract class AbstractPlugin
 {
 
-	private File file = null;
 	private PluginResources res = null;
-	private Manifest manifest = null;
+	private Manifest manifest   = null;
 	
-	/**
+  /**
+   * ct.
+   */
+  public AbstractPlugin()
+  {
+    this.manifest = Application.getPluginLoader().getManifest(this.getClass());
+    this.res = new PluginResources(this);
+  }
+
+  /**
 	 * ct.
-   * TODO: Das muss mal dringend geaendert werden, da hier nicht mehr das JAR sondern das Plugin-Verzeichnis uebergeben
-   * wird. Der Konstruktor koennte daher ohne Parameter oder stattdessen mit dem Manifest aufgerufen werden.
-   * @param file Das File, in dem sich das Plugin befindet.
-   * Ist i.d.R. das Jar des Plugins selbst.
+   * @deprecated Muss nicht mehr implementiert werden. Stattdessen genuegt der parameterlose Konstruktor.
+   * @param file Das Verzeichnis, in dem sich das Plugin befindet.
    */
   public AbstractPlugin(File file)
 	{
-		this.file = file;
-		this.res = new PluginResources(this);
-		this.manifest = Application.getPluginLoader().getManifest(this.getClass());
-	}
-
-	/**
-	 * Liefert das Verzeichnis, in dem sich das Plugin befindet.
-   * @return Verzeichnis, in dem sich das Plugin befindet.
-   */
-  protected final File getFile()
-	{
-		return file;
+    this();
 	}
 
 	/**
@@ -83,7 +78,10 @@ public abstract class AbstractPlugin
 	 * der Services aufgerufen.
    * @throws ApplicationException muss geworfen werden, wenn das Plugin nicht aktiviert werden soll.
 	 */
-	public abstract void init() throws ApplicationException;
+	public void init() throws ApplicationException
+  {
+    // Per Default nichts machen
+  }
 
 
 	/**
@@ -97,7 +95,10 @@ public abstract class AbstractPlugin
 	 * der Services aufgerufen.
    * @throws ApplicationException muss geworfen werden, wenn die Installation fehlschlug und das Plugin nicht aktiviert werden soll.
 	 */
-	public abstract void install() throws ApplicationException;
+	public void install() throws ApplicationException
+  {
+    // Per Default nichts machen
+  }
 
 	/**
 	 * Diese Funktion wird beim Start der Anwendung genau dann aufgerufen, wenn
@@ -112,17 +113,28 @@ public abstract class AbstractPlugin
 	 * @param oldVersion Version, die vorher installiert war.
    * @throws ApplicationException muss geworfen werden, wenn das Update fehlschlug und das Plugin nicht aktiviert werden soll.
 	 */
-	public abstract void update(double oldVersion) throws ApplicationException;
+	public void update(double oldVersion) throws ApplicationException
+  {
+    // Per Default nichts machen
+  }
 
 	/**
 	 * Diese Funktion wird beim Beenden der Anwendung ausgefuehrt.
 	 */
-	public abstract void shutDown();
+	public void shutDown()
+  {
+    // Per Default nichts machen
+  }
 	
 }
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.11  2007/10/25 23:18:04  willuhn
+ * @B Fix in i18n Initialisierung (verursachte Warnung "Plugin ... unterstuetzt Locale ... nicht")
+ * @C i18n erst bei Bedarf initialisieren
+ * @C AbstractPlugin vereinfacht (neuer parameterloser Konstruktor, install(), update(),... nicht mehr abstract)
+ *
  * Revision 1.10  2007/03/14 10:37:49  willuhn
  * @N T O D O Tags
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.25 $
- * $Date: 2007/04/16 12:36:44 $
+ * $Revision: 1.26 $
+ * $Date: 2007/10/25 23:18:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.jameica.util.VelocityLoader;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Kontrolliert alle installierten Plugins.
@@ -199,7 +200,7 @@ public final class PluginLoader
     }
     
     // OK, jetzt laden wir die Klassen des Plugins.
-    Application.prepareClasses(manifest);
+    MultipleClassLoader pluginCl = Application.prepareClasses(manifest);
 
     String pluginClass = manifest.getPluginClass();
     
@@ -211,10 +212,23 @@ public final class PluginLoader
 		///////////////////////////////////////////////////////////////
 		// Klasse instanziieren
     Class clazz = Application.getClassLoader().load(pluginClass);
-		Constructor ct = clazz.getConstructor(new Class[]{File.class});
-    ct.setAccessible(true);
-    File dir = new File(manifest.getPluginDir());
-		AbstractPlugin plugin = (AbstractPlugin) ct.newInstance(new Object[]{(dir)});
+    
+    // TODO: Migration. Wir versuchen erst den neuen Konstruktor testen
+    AbstractPlugin plugin = null;
+    try
+    {
+      plugin = (AbstractPlugin) clazz.newInstance();
+    }
+    catch (Exception e)
+    {
+      Logger.warn("plugin " + manifest.getName() + " uses a deprecated constructor - please inform the autor: " + manifest.getHomepage());
+      Constructor ct = clazz.getConstructor(new Class[]{File.class});
+      ct.setAccessible(true);
+      File dir = new File(manifest.getPluginDir());
+      plugin = (AbstractPlugin) ct.newInstance(new Object[]{(dir)});
+    }
+
+    plugin.getResources().setClassLoader(pluginCl);
 
     // und setzen es auf status "installed"
     manifest.setPluginInstance(plugin);
@@ -448,6 +462,11 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.26  2007/10/25 23:18:04  willuhn
+ * @B Fix in i18n Initialisierung (verursachte Warnung "Plugin ... unterstuetzt Locale ... nicht")
+ * @C i18n erst bei Bedarf initialisieren
+ * @C AbstractPlugin vereinfacht (neuer parameterloser Konstruktor, install(), update(),... nicht mehr abstract)
+ *
  * Revision 1.25  2007/04/16 12:36:44  willuhn
  * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
  *
