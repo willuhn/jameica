@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.66 $
- * $Date: 2007/10/22 23:23:13 $
+ * $Revision: 1.67 $
+ * $Date: 2007/10/25 23:16:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -215,7 +215,13 @@ public final class Application {
       System.setProperty("http.proxyPort",""+proxyPort);
     }
 
-    getManifest();
+    try {
+      prepareClasses(getManifest(),getClassLoader());
+    }
+    catch (Exception e) {
+      app.startupError(e);
+    }
+
     // Init Velocity
     VelocityLoader.init();
 
@@ -555,11 +561,7 @@ public final class Application {
       try
       {
         // BUGZILLA 265
-        // TODO: Hierbei werden rekursiv auch die Jars der Plugins im Verzeichnis
-        // "plugins" geladen. Genau die werden anschliessend aber nochmal
-        // vom PluginLoader registriert. Das ist redundant.
         app.manifest = new Manifest(new File("plugin.xml"));
-        prepareClasses(app.manifest);
       }
       catch (Exception e)
       {
@@ -612,12 +614,13 @@ public final class Application {
   
   /**
    * Durchsucht das verzeichnis, in dem sich das Manifest befindet nach Klassen und Jars,
-   * laedt diese in den Classpath und registriert alle Klassen im Classfinder,
+   * laedt diese in den Classpath und registriert die alle Klassen im Classfinder,
    * deren Name zu den Suchfiltern in der Sektion &lt;classfinder&gt; passen. 
    * @param manifest das Manifest.
+   * @return ein Classloader, der genau dieses Plugin enthaelt.
    * @throws Exception
    */
-  public static synchronized void prepareClasses(Manifest manifest) throws Exception
+  public static synchronized MultipleClassLoader prepareClasses(Manifest manifest) throws Exception
   {
     if (manifest == null)
       throw new Exception("no manifest given");
@@ -631,13 +634,19 @@ public final class Application {
 
     getCallback().getStartupMonitor().addPercentComplete(2);
 
+    // Eigenen Classloader fuer das Plugin erstellen
+    MultipleClassLoader mycl = new MultipleClassLoader();
+    
+    // und im System-Classloader von Jameica registrieren
+    Application.getClassLoader().addClassloader(mycl);
+
     // Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
-    getClassLoader().add(new File(dir.getPath()));
-    getClassLoader().add(new File(dir.getPath() + "/bin"));
+    mycl.add(dir);
+    mycl.add(new File(dir,"bin")); // Fuer den Start in Eclipse bzw. entpackte Classen
     getCallback().getStartupMonitor().addPercentComplete(2);
 
     // Und jetzt noch alle darin befindlichen Jars
-    File[] jars = getClassLoader().addJars(dir);
+    File[] jars = mycl.addJars(dir);
     if (jars != null)
     {
       for (int i=0;i<jars.length;++i)
@@ -649,12 +658,23 @@ public final class Application {
 
     getCallback().getStartupMonitor().addPercentComplete(1);
     ////////////////////////////////////////////////////////////////////////////
+    return prepareClasses(manifest, mycl);
+  }
 
+  /**
+   * @param manifest
+   * @param mycl
+   * @return
+   * @throws IOException
+   */
+  private static MultipleClassLoader prepareClasses(Manifest manifest, MultipleClassLoader mycl) throws IOException
+  {
     ////////////////////////////////////////////////////////////////////////////
     // Classfinder befuellen
     
     long count = 0;
 
+    File dir = new File(manifest.getPluginDir());
     FileFinder ff = new FileFinder(dir);
     
     // Include-Verzeichnisse aus Manifest uebernehmen
@@ -687,7 +707,7 @@ public final class Application {
           name = name.substring(1); // ggf. fuehrenden Punkt abschneiden
     
         // In ClassFinder uebernehmen
-        load(name);
+        load(mycl,name);
       }
         
       if (name.endsWith(".jar") || name.endsWith(".zip"))
@@ -725,20 +745,21 @@ public final class Application {
           entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
 
           // In ClassFinder uebernehmen
-          load(entryName);
+          load(mycl,entryName);
         }
       }
     }
+    return mycl;
   }
   
   /**
    * Laedt die Klasse und fuegt sie in den Classfinder.
    * @param classname zu ladende Klasse.
    */
-  private static void load(String classname)
+  private static void load(MultipleClassLoader cl, String classname)
   {
     try {
-      getClassLoader().load(classname);
+      cl.load(classname);
     }
     catch (Throwable t)
     {
@@ -750,6 +771,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.67  2007/10/25 23:16:13  willuhn
+ * @N Support fuer kaskadierende Classloader und -finder
+ * @C Classfinder ignoriert jetzt Inner-Classes
+ *
  * Revision 1.66  2007/10/22 23:23:13  willuhn
  * *** empty log message ***
  *
