@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
+<!--
+ $Revision: 1.57 $
+ $Date: 2007/10/28 23:23:21 $
+ $Author: willuhn $
+ 
+ All rights reserved
+-->
+
 <project basedir=".." default="all" name="All">
 
 
@@ -19,6 +27,8 @@
 			</filterchain>
 		</loadfile>
 
+		<loadproperties srcFile="${build.dir}/build.properties"/>
+
 		<!-- prepare cvs tag -->
 		<copy file="${build.dir}/RELEASE" tofile="${build.dir}/TAG" />
 		<replaceregexp flags="g" file="${build.dir}/TAG" match="\." replace="_" />
@@ -36,42 +46,8 @@
 		<echo message="BUILD  : ${build.number}" />
 		<echo message="JAVA   : ${java.version}" />
 
-		<property name="define.projectname" 				       value="jameica" />
-		<property name="define.jarfilename" 				       value="jameica.jar" />
-		<property name="define.jarfilename.win32" 			   value="jameica-win32.jar" />
-		<property name="define.jarfilename.macos" 		     value="jameica-macos.jar" />
-		<property name="define.jarfilename.linux" 			   value="jameica-linux.jar" />
-		<property name="define.jarfilename.linux-amd64" 	 value="jameica-linux-amd64.jar" />
-    <property name="define.jarfilename.openbsd"        value="jameica-openbsd.jar" />
-		<property name="define.srcfilename" 				       value="jameica.src.zip" />
-		<property name="define.javadocfilename" 			     value="jameica.javadoc.zip" />
-		<property name="define.commonlibs" 					       value="lib/swt/org.eclipse.core.runtime_3.1.1.jar lib/swt/org.eclipse.jface_3.1.1.jar lib/swt/org.eclipse.osgi_3.1.1.jar lib/swt/org.eclipse.ui.forms_3.1.0.jar lib/de_willuhn_ds/de_willuhn_ds.jar lib/de_willuhn_util/de_willuhn_util.jar lib/nanoxml/nanoxml-2.2.3.jar lib/swtcalendar/swtcalendar.jar lib/bouncycastle/bcprov-jdk14-124.jar lib/jakarta_commons/commons-cli-1.0.jar lib/jakarta_commons/commons-collections.jar lib/velocity/logkit-1.0.1.jar lib/velocity/oro.jar lib/velocity/velocity-1.4.jar img lang help" />
-		<property name="define.package" 					         value="de.willuhn.jameica" />
-		<property name="project.nightly" 					         value="releases/nightly" />
-
-		<property name="project.release" 					         value="releases/${appversion}-${build.number}" />
-		<property name="project.src" 						           value="${project.release}/src/classes" />
-		<property name="project.tmp" 						           value="${project.release}/tmp" />
-		<property name="project.javadoc" 					         value="${project.release}/javadoc" />
-		<property name="project.zipdir" 					         value="${project.release}/${define.projectname}" />
-
-		<property name="project.zipfilename" 				       value="${define.projectname}.zip" />
-		<property name="project.zipfilename.win32"			   value="${define.projectname}-win32.zip" />
-		<property name="project.zipfilename.linux"			   value="${define.projectname}-linux.zip" />
-		<property name="project.zipfilename.linux-amd64"	 value="${define.projectname}-linux-amd64.zip" />
-		<property name="project.zipfilename.macos"			   value="${define.projectname}-macos.zip" />
-    <property name="project.zipfilename.openbsd"       value="${define.projectname}-openbsd.zip" />
-
-		<property name="src.dir" 							value="src" />
-		<property name="icon.dir" 						value="${src.dir}/img" />
-		<property name="lang.dir" 						value="${src.dir}/lang" />
-		<property name="help.dir" 						value="${src.dir}/help" />
-		<property name="lib.dir" 							value="lib" />
-		<property name="class.dir" 						value="${project.tmp}/bin" />
-
-
 		<path id="compilepath">
-			<fileset dir="${lib.dir}">
+			<fileset dir="lib">
 				<include name="**/*.jar" />
 			</fileset>
 		</path>
@@ -121,7 +97,6 @@
 	</target>
 
 
-
 	<target depends="compile" name="jar" description="generates the jar and zip file">
 
 		<mkdir dir="${project.release}" />
@@ -149,7 +124,7 @@
 				<attribute name="Implementation-Version" value="${appversion}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux/swt.jar ${define.commonlibs}" />
+				<attribute name="Class-Path" value="${classpath.linux}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -162,7 +137,7 @@
 				<attribute name="Implementation-Version" value="${appversion}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/macos/swt.jar ${define.commonlibs}" />
+				<attribute name="Class-Path" value="${classpath.macos}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -175,7 +150,7 @@
         <attribute name="Implementation-Version" value="${appversion}" />
         <attribute name="Implementation-Buildnumber" value="${build.number}" />
         <attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-        <attribute name="Class-Path" value="${define.jarfilename} lib/swt/openbsd/swt.jar lib/swt/openbsd/swt-pi.jar lib/swt/openbsd/swt-mozilla.jar ${define.commonlibs}" />
+        <attribute name="Class-Path" value="${classpath.openbsd}" />
       </manifest>
       <fileset dir="${class.dir}" includes="**/Main.class" />
     </jar>
@@ -188,7 +163,7 @@
 				<attribute name="Implementation-Version" value="${appversion}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/linux-amd64/swt.jar ${define.commonlibs}" />
+				<attribute name="Class-Path" value="${classpath.linux-amd64}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -201,7 +176,7 @@
 				<attribute name="Implementation-Version" value="${appversion}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${define.jarfilename} lib/swt/win32/swt.jar ${define.commonlibs}" />
+				<attribute name="Class-Path" value="${classpath.win32}" />
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
@@ -210,7 +185,7 @@
 		<mkdir dir="${project.zipdir}/plugins" />
 
 		<copy todir="${project.zipdir}/lib">
-			<fileset dir="${lib.dir}" />
+			<fileset dir="lib" />
 		</copy>
 
 		<copy todir="${project.zipdir}">
@@ -381,7 +356,7 @@
 				<include name=".project" />
 				<include name=".classpath" />
         <include name="plugin.xml" />
-				<include name="${lib.dir}/**" />
+				<include name="lib/**" />
 				<include name="${src.dir}/**" />
 				<include name="${build.dir}/**" />
 				<exclude name="${build.dir}/BUILD" />
