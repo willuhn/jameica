@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.45 $
- * $Date: 2007/10/30 11:49:28 $
+ * $Revision: 1.46 $
+ * $Date: 2007/10/30 11:57:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,18 +69,20 @@ public final class ServiceFactory
   {
 		Logger.info("init plugin services");
 
-    if (!sslStarted && Application.getConfig().getRmiSSL())
+    if (Application.inServerMode() && Application.getConfig().getShareServices())
     {
-      Logger.info("rmi over ssl enabled");
-      ssf = new SSLRMISocketFactory();
-      csf = new SSLRMIClientSocketFactory();
-      // TODO Doku zum Thema http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html
-      RMISocketFactory.setSocketFactory(this.ssf);
-      sslStarted = true;
+      if (!sslStarted && Application.getConfig().getRmiSSL())
+      {
+        Logger.info("rmi over ssl enabled");
+        ssf = new SSLRMISocketFactory();
+        csf = new SSLRMIClientSocketFactory();
+        // TODO Doku zum Thema http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html
+        RMISocketFactory.setSocketFactory(this.ssf);
+        sslStarted = true;
+      }
+      
+      startRegistry();
     }
-    
-    if (Application.getConfig().getShareServices())
-  		startRegistry();
 
     List plugins = Application.getPluginLoader().getInstalledPlugins();
 
@@ -497,6 +499,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.46  2007/10/30 11:57:36  willuhn
+ * @N Registry und SocketFactory nur im Server-Mode starten
+ *
  * Revision 1.45  2007/10/30 11:49:28  willuhn
  * @C RMI-SSL Zeug nochmal gemaess http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html ueberarbeitet. Funktioniert aber trotzdem noch nicht
  *
