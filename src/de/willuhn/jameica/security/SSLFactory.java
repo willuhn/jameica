@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.42 $
- * $Date: 2007/06/21 23:12:01 $
+ * $Revision: 1.43 $
+ * $Date: 2007/10/30 11:49:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,6 +43,8 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -131,7 +133,27 @@ public class SSLFactory
 
 		////////////////////////////////////////////////////////////////////////////
 		// Zertifikat erstellen
+		Logger.info("  generating selfsigned x.509 certificate");
+		Hashtable attributes = new Hashtable();
+		String hostname = Application.getCallback().getHostname();
+		Logger.info("  using hostname: " + hostname);
+		attributes.put(X509Name.CN,hostname);
+    attributes.put(X509Name.O,"Jameica Certificate");
 
+    // BUGZILLA 326
+    String username = System.getProperty("user.name");
+    if (username != null && username.length() > 0)
+    {
+      // Mit dem Prefix kann man auch dann die Zertifikate austauschen, wenn
+      // Client und Server mit dem selben Account auf dem selben Rechner
+      // laufen.
+      String prefix = "";
+      if (Application.inClientMode()) prefix = "client.";
+      else if (Application.inServerMode()) prefix = "server.";
+      attributes.put(X509Name.GIVENNAME,prefix + username);
+      attributes.put(X509Name.OU,prefix + username);
+    }
+		X509Name user   = new X509Name(attributes);
     X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 
 
@@ -143,36 +165,11 @@ public class SSLFactory
     random.nextBytes(serno);
     generator.setSerialNumber((new BigInteger(serno)).abs());
 
-    // TODO: Das Erstellen der Zertifikate muss nochmal ueberarbeitet werden
-    // Die Client-Server-Kommunikation bei RMI over SSL funktioniert nur, wenn
-    // a) beide Zertifikate einen identischen DN haben. Das ist aber nicht schoen,
-    //    da man die Zertifikate dann nur noch anhand der Seriennummer unterscheiden kann
-    // b) wenn das System-Zertifikat nicht selbstsigniert ist sondern zusaetzlich
-    //    noch ein selfsigned CA-Zert erstellt wird, mit dem das System-Zertifikat
-    //    signiert wurde. Der DN der CA-Zerts muss dann aber bei beiden Systemen
-    //    idensichen sein. Dann unterscheiden sich zwar die Server-Zertifikate,
-    //    allerdings muss das CA-Zertifikat mit gespeichert, gelesen und beim
-    //    Masterpasswort-Aendern beruecksichtigt werden. Das ist zu umstaendlich.
-    //
-    // Ich lass erstmal die Version hier. Da Zertifikate nun auch
-    // identische Namen haben koennen, ohne ueberschrieben zu werden
-    // (der Vergleich beim Import findet nur noch via cert.equals(other)
-    // und nicht mehr durch Vergleich des DN statt), kann man erstmal
-    // damit leben.
-    
-//    String hostname = Application.getCallback().getHostname();
-//    Logger.info("  using hostname: " + hostname);
-//
-    Hashtable props = new Hashtable();
-    props.put(X509Name.CN,"Jameica System Certificate");
-    props.put(X509Name.O,"Jameica");
-
-    X509Name subject = new X509Name(props);
-    generator.setSubjectDN(subject);
-    generator.setIssuerDN(subject);
-    
-    generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre
+    generator.setIssuerDN(user);
+		generator.setSubjectDN(user);
+		generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre sollten reichen ;)
     generator.setNotBefore(new Date());
+    generator.addExtension(X509Extensions.KeyUsage, false, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyAgreement | KeyUsage.keyEncipherment | KeyUsage.nonRepudiation));
     
     generator.setPublicKey(this.publicKey);
     generator.setSignatureAlgorithm("SHA1withRSA");
@@ -719,6 +716,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.43  2007/10/30 11:49:28  willuhn
+ * @C RMI-SSL Zeug nochmal gemaess http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html ueberarbeitet. Funktioniert aber trotzdem noch nicht
+ *
  * Revision 1.42  2007/06/21 23:12:01  willuhn
  * @R Key usage entfernt
  *
