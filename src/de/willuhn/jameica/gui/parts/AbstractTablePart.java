@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.5 $
- * $Date: 2007/04/15 21:31:33 $
+ * $Revision: 1.6 $
+ * $Date: 2007/11/01 21:07:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import java.util.Vector;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.system.Settings;
+import de.willuhn.logging.Logger;
 
 /**
  * Abstrakte Basis-Klasse von Tabellen-aehnlichen Parts.
@@ -29,6 +30,7 @@ public abstract class AbstractTablePart implements Part
   protected ContextMenu menu               = null;
   protected boolean changeable             = false;
   protected boolean rememberColWidth       = false;
+  protected boolean rememberOrder          = false;
   protected Vector columns                 = new Vector();
   protected final static Settings settings = new Settings(AbstractTablePart.class);
 
@@ -69,6 +71,64 @@ public abstract class AbstractTablePart implements Part
     this.columns.add(new Column(field,title,f,changeable));
     this.changeable |= changeable;
   }
+  
+  /**
+   * Liefert die Sortierreihenfolge der Spalten.
+   * @return Int-Array mit der Reihenfolge oder <code>null</code>.
+   */
+  int[] getColumnOrder()
+  {
+    try
+    {
+      // Mal schauen, ob wir eine gespeicherte Sortierung haben
+      String order = settings.getString("column.order." + getID(),null);
+      if (order == null || order.length() == 0 || order.indexOf(",") == -1)
+        return null;
+      String[] s = order.split(",");
+      if (s.length != this.columns.size())
+      {
+        Logger.warn("column count missmatch. column order: " + order + ", columns: " + this.columns.size());
+        return null;
+      }
+      int[] cols = new int[s.length];
+      for (int i=0;i<s.length;++i)
+      {
+        cols[i] = Integer.parseInt(s[i]);
+      }
+      return cols;
+    }
+    catch (Exception e)
+    {
+      Logger.warn("unable to determine column order: " + e.toString());
+    }
+    return null;
+  }
+  
+  /**
+   * Speichert die Reihenfolge der Spalten.
+   * @param cols die Reihenfolge der Spalten.
+   */
+  void setColumnOrder(int[] cols)
+  {
+    try
+    {
+      String s = "";
+      if (cols != null && cols.length > 0)
+      {
+        for (int i=0;i<cols.length;++i)
+        {
+          s += Integer.toString(cols[i]);
+          if (i+1<cols.length)
+            s += ",";
+        }
+      }
+      settings.setAttribute("column.order." + getID(),s.length() == 0 ? null : s);
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to save column order",e);
+    }
+  }
 
   /**
    * Fuegt ein KontextMenu hinzu.
@@ -78,6 +138,13 @@ public abstract class AbstractTablePart implements Part
   {
     this.menu = menu;
   }
+  
+  /**
+   * Liefert eine eindeutige ID fuer genau diese Tabelle.
+   * @return die ID.
+   * @throws Exception
+   */
+  abstract String getID() throws Exception;
 
   /**
    * Liefert die Fach-Objekte der Tabelle.
@@ -93,6 +160,15 @@ public abstract class AbstractTablePart implements Part
   public void setRememberColWidths(boolean remember)
   {
     this.rememberColWidth = remember;
+  }
+  
+  /**
+   * Legt fest, ob sich die Tabelle die Sortierreihenfolge merken soll.
+   * @param remember true, wenn sie sich die Reihenfolge merken soll.
+   */
+  public void setRememberOrder(boolean remember)
+  {
+    this.rememberOrder = remember;
   }
   
   protected static class Column
@@ -115,6 +191,9 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.6  2007/11/01 21:07:35  willuhn
+ * @N Spalten von Tabellen und mehrspaltigen Trees koennen mit mit Drag&Drop umsortiert werden. Die Sortier-Reihenfolge wird automatisch gespeichert und wiederhergestellt
+ *
  * Revision 1.5  2007/04/15 21:31:33  willuhn
  * @N "getItems()" in TreePart
  *

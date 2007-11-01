@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.19 $
- * $Date: 2007/08/28 09:47:11 $
+ * $Revision: 1.20 $
+ * $Date: 2007/11/01 21:07:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -117,11 +117,9 @@ public class TreePart extends AbstractTablePart
   }
 
   /**
-   * Liefert eine fuer die Tabelle eindeutige ID.
-   * @return eindeutige ID.
-   * @throws Exception
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getID()
    */
-  private String getID() throws Exception
+  String getID() throws Exception
   {
     if (this.id != null)
       return id;
@@ -198,6 +196,7 @@ public class TreePart extends AbstractTablePart
       {
         Column col = (Column) this.columns.get(i);
         final TreeColumn tc = new TreeColumn(this.tree,SWT.LEFT);
+        tc.setMoveable(true);
         tc.setText(col.name == null ? "" : col.name);
 
         // Testobjekt laden fuer Ausrichtung von Spalten
@@ -233,6 +232,30 @@ public class TreePart extends AbstractTablePart
           });
         }
       
+      }
+
+      if (this.rememberOrder)
+      {
+        int[] colOrder = this.getColumnOrder();
+        if (colOrder != null)
+          this.tree.setColumnOrder(colOrder);
+      }
+      
+      if (rememberOrder)
+      {
+        this.tree.addDisposeListener(new DisposeListener() {
+          public void widgetDisposed(DisposeEvent e)
+          {
+            try
+            {
+              setColumnOrder(tree.getColumnOrder());
+            }
+            catch (Exception ex)
+            {
+              Logger.error("unable to store last order",ex);
+            }
+          }
+        });
       }
 
       // Liste zuruecksetzen
@@ -497,6 +520,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.20  2007/11/01 21:07:35  willuhn
+ * @N Spalten von Tabellen und mehrspaltigen Trees koennen mit mit Drag&Drop umsortiert werden. Die Sortier-Reihenfolge wird automatisch gespeichert und wiederhergestellt
+ *
  * Revision 1.19  2007/08/28 09:47:11  willuhn
  * @N Bug 395
  *

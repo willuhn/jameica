@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.75 $
- * $Date: 2007/05/30 14:57:58 $
+ * $Revision: 1.76 $
+ * $Date: 2007/11/01 21:07:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,7 +106,6 @@ public class TablePart extends AbstractTablePart
   private boolean enabled               = true;
   private boolean showSummary           = true;
   private boolean multi                 = false; // Multiple Markierung 
-  private boolean rememberOrder         = false;
   private boolean check                 = false;
   //////////////////////////////////////////////////////////
 
@@ -218,15 +217,6 @@ public class TablePart extends AbstractTablePart
 	{ 
 		this.showSummary = show;
 	}
-  
-  /**
-   * Legt fest, ob sich die Tabelle die Sortierreihenfolge merken soll.
-   * @param remember true, wenn sie sich die Reihenfolge merken soll.
-   */
-  public void setRememberOrder(boolean remember)
-  {
-    this.rememberOrder = remember;
-  }
   
   /**
    * Legt fest, ob jede Zeile der Tabelle mit einer Checkbox versehen werden soll.
@@ -555,6 +545,7 @@ public class TablePart extends AbstractTablePart
         {
           try
           {
+            setColumnOrder(table.getColumnOrder());
             String s = getOrderedBy();
             if (s == null)
               return;
@@ -579,6 +570,7 @@ public class TablePart extends AbstractTablePart
     {
       Column column = (Column) this.columns.get(i);
       final TableColumn col = new TableColumn(table, SWT.NONE);
+      col.setMoveable(true);
 			col.setText(column.name == null ? "" : column.name);
 
       // Wenn wir uns die Spalten merken wollen, duerfen
@@ -627,7 +619,14 @@ public class TablePart extends AbstractTablePart
 				if (value instanceof Number)  col.setAlignment(SWT.RIGHT);
 			}
     }
-
+    
+    if (this.rememberOrder)
+    {
+      int[] colOrder = this.getColumnOrder();
+      if (colOrder != null)
+        table.setColumnOrder(colOrder);
+    }
+    
     /////////////////////////////////////////////////////////////////
     // Das eigentliche Hinzufuegen der Objekte
     for (int i=0;i<this.temp.size();++i)
@@ -885,11 +884,9 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
-   * Liefert eine fuer die Tabelle eindeutige ID.
-   * @return eindeutige ID.
-   * @throws Exception
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getID()
    */
-  private String getID() throws Exception
+  String getID() throws Exception
   {
     if (this.id != null)
       return id;
@@ -1315,6 +1312,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.76  2007/11/01 21:07:35  willuhn
+ * @N Spalten von Tabellen und mehrspaltigen Trees koennen mit mit Drag&Drop umsortiert werden. Die Sortier-Reihenfolge wird automatisch gespeichert und wiederhergestellt
+ *
  * Revision 1.75  2007/05/30 14:57:58  willuhn
  * @N Items checkable
  *
