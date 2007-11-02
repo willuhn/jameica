@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarTextItem.java,v $
- * $Revision: 1.5 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.6 $
+ * $Date: 2007/11/02 01:19:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,11 @@ import java.rmi.RemoteException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -27,6 +31,7 @@ import org.eclipse.swt.widgets.Listener;
 import de.willuhn.jameica.gui.internal.parts.LogList;
 import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -54,9 +59,18 @@ public class StatusBarTextItem implements StatusBarItem
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint(Composite parent) throws RemoteException
+  public void paint(final Composite parent) throws RemoteException
   {
-    text = GUI.getStyleFactory().createLabel(parent, SWT.NONE);
+    Composite comp = new Composite(parent, SWT.NONE);
+    comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+    GridLayout gl = new GridLayout(2,false);
+    gl.horizontalSpacing = 0;
+    gl.verticalSpacing   = 0;
+    gl.marginHeight      = 0;
+    gl.marginWidth       = 0;
+    comp.setLayout(gl);
+    
+    text = GUI.getStyleFactory().createLabel(comp, SWT.NONE);
     GridData at = new GridData(GridData.FILL_BOTH);
     at.verticalAlignment = GridData.CENTER;
     at.verticalIndent = 1;
@@ -64,7 +78,21 @@ public class StatusBarTextItem implements StatusBarItem
     text.setAlignment(SWT.RIGHT);
     text.setLayoutData(at);
     text.setText("");
-
+    
+    final Canvas c = new Canvas(comp,SWT.NONE);
+    GridData gd = new GridData(GridData.FILL_BOTH);
+    at.verticalAlignment = GridData.END;
+    gd.widthHint = 20;
+    c.setLayoutData(gd);
+    c.addListener(SWT.Paint,new Listener()
+    {
+      public void handleEvent(Event event)
+      {
+        GC gc = event.gc;
+        Rectangle size = c.getBounds();
+        gc.drawImage(SWTUtil.getImage(snapIn ? "minimize.png" : "maximize.png"),size.width - 20,0);
+      }
+    });
 
     MouseAdapter ma = new MouseAdapter()
     {
@@ -77,7 +105,8 @@ public class StatusBarTextItem implements StatusBarItem
         {
           // wir werden schon angezeigt, dann zoomen wir uns wieder raus
           snapIn = false;
-          return;         
+          c.redraw();
+          return;
         }
         try
         {
@@ -88,11 +117,13 @@ public class StatusBarTextItem implements StatusBarItem
               if (GUI.getView().snappedIn())
                 GUI.getView().snapOut();
               snapIn = false;
+              c.redraw();
             }
           });
           panel.paint(GUI.getView().getSnapin());
           GUI.getView().snapIn();
           snapIn = true;
+          c.redraw();
         }
         catch (RemoteException re)
         {
@@ -102,8 +133,8 @@ public class StatusBarTextItem implements StatusBarItem
     };
 
     String s = Application.getI18n().tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen.");
-    text.setToolTipText(s);
-    text.addMouseListener(ma);
+    c.setToolTipText(s);
+    c.addMouseListener(ma);
   }
 
   /**
@@ -190,6 +221,10 @@ public class StatusBarTextItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarTextItem.java,v $
+ * Revision 1.6  2007/11/02 01:19:38  willuhn
+ * @N Vorbereitungen fuer Drag&Drop von Panels
+ * @N besserer Klick-Indikator in Statusleiste fuer Oeffnen des Logs
+ *
  * Revision 1.5  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
