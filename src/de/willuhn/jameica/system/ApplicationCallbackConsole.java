@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.24 $
- * $Date: 2007/08/31 10:00:11 $
+ * $Revision: 1.25 $
+ * $Date: 2007/11/05 13:01:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -372,7 +372,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     if (s != null)
       return s.equalsIgnoreCase("true");
 
-    String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,variables);
+    String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,(Object[])variables);
     if (Application.inNonInteractiveMode())
     {
       Logger.warn(text);
@@ -424,6 +424,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.25  2007/11/05 13:01:13  willuhn
+ * @C Compiler-Warnings
+ *
  * Revision 1.24  2007/08/31 10:00:11  willuhn
  * @N CheckTrustMessage synchron versenden, wenn Vertrauensstellung abgefragt wird
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.15 $
- * $Date: 2007/08/31 10:00:10 $
+ * $Revision: 1.16 $
+ * $Date: 2007/11/05 13:01:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -248,7 +248,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     if (s != null)
       return s.equalsIgnoreCase("true");
     
-    final String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,variables);
+    final String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,(Object[])variables);
 
     AbstractDialog d = new AbstractDialog(AbstractDialog.POSITION_CENTER)
     {
@@ -407,6 +407,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.16  2007/11/05 13:01:13  willuhn
+ * @C Compiler-Warnings
+ *
  * Revision 1.15  2007/08/31 10:00:10  willuhn
  * @N CheckTrustMessage synchron versenden, wenn Vertrauensstellung abgefragt wird
  *

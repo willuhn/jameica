@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.67 $
- * $Date: 2007/10/25 23:16:13 $
+ * $Revision: 1.68 $
+ * $Date: 2007/11/05 13:01:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -664,7 +664,7 @@ public final class Application {
   /**
    * @param manifest
    * @param mycl
-   * @return
+   * @return Instanz des Classloaders.
    * @throws IOException
    */
   private static MultipleClassLoader prepareClasses(Manifest manifest, MultipleClassLoader mycl) throws IOException
@@ -771,6 +771,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.68  2007/11/05 13:01:13  willuhn
+ * @C Compiler-Warnings
+ *
  * Revision 1.67  2007/10/25 23:16:13  willuhn
  * @N Support fuer kaskadierende Classloader und -finder
  * @C Classfinder ignoriert jetzt Inner-Classes
