@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.68 $
- * $Date: 2007/11/05 13:01:13 $
+ * $Revision: 1.69 $
+ * $Date: 2007/11/12 23:12:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -217,6 +217,15 @@ public final class Application {
 
     try {
       prepareClasses(getManifest(),getClassLoader());
+      File[] jars = getClassLoader().addJars(new File("lib"));
+      if (jars != null)
+      {
+        for (int i=0;i<jars.length;++i)
+        {
+          Logger.info("loaded system jar " + jars[i].getAbsolutePath());
+        }
+        
+      }
     }
     catch (Exception e) {
       app.startupError(e);
@@ -771,6 +780,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.69  2007/11/12 23:12:23  willuhn
+ * @N Update der H2.jar
+ * @N Jars in jameica/lib (System-Jars) EXPLIZIT in Classloader aufnehmen
+ *
  * Revision 1.68  2007/11/05 13:01:13  willuhn
  * @C Compiler-Warnings
  *
