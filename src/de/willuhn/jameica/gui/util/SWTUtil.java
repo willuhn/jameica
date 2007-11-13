@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.18 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.19 $
+ * $Date: 2007/11/13 00:45:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,14 +75,27 @@ public class SWTUtil {
 	 */
 	public static Image getImage(String filename)
 	{
-		Image image = (Image) imagecache.get(filename);
-		if (image != null)
-			return image;
+    return getImage(filename, Application.getClassLoader());
+	}
 
-		InputStream is = null;
-		try
+  /**
+   * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
+   * Wenn die Datei nicht existiert, wird stattdessen ein 1x1 Pixel grosses
+   * und transparentes Dummy-Bild zurueckgeliefert.
+   * @param filename Dateiname (muss sich im Verzeichnis "img" befinden.
+   * @param cl der Classloader, ueber den die Ressource geladen werden soll.
+   * @return das erzeugte Bild.
+   */
+  public static Image getImage(String filename, ClassLoader cl)
+  {
+    Image image = (Image) imagecache.get(filename);
+    if (image != null)
+      return image;
+
+    InputStream is = null;
+    try
     {
-      is = Application.getClassLoader().getResourceAsStream("img/" + filename);
+      is = cl.getResourceAsStream("img/" + filename);
     }
     catch (Exception e)
     {
@@ -93,10 +106,10 @@ public class SWTUtil {
 
     if (image != null)
     {
-			imagecache.put(filename, image);
-		}
-		return image;
-	}
+      imagecache.put(filename, image);
+    }
+    return image;
+  }
 
   /**
    * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
@@ -213,6 +226,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.19  2007/11/13 00:45:18  willuhn
+ * @N Classloader (privat/global) vom Plugin beeinflussbar (via "shared=true/false" in plugin.xml)
+ *
  * Revision 1.18  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.69 $
- * $Date: 2007/11/12 23:12:23 $
+ * $Revision: 1.70 $
+ * $Date: 2007/11/13 00:45:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -643,11 +643,22 @@ public final class Application {
 
     getCallback().getStartupMonitor().addPercentComplete(2);
 
-    // Eigenen Classloader fuer das Plugin erstellen
-    MultipleClassLoader mycl = new MultipleClassLoader();
+    MultipleClassLoader mycl = null;
     
-    // und im System-Classloader von Jameica registrieren
-    Application.getClassLoader().addClassloader(mycl);
+    if (manifest.isShared())
+    {
+      Logger.info("using global classloader for plugin " + manifest.getName());
+      mycl = Application.getClassLoader();
+    }
+    else
+    {
+      Logger.info("using private classloader for plugin " + manifest.getName());
+      // Eigenen Classloader fuer das Plugin erstellen
+      mycl = new MultipleClassLoader();
+      
+      // und im System-Classloader von Jameica registrieren
+      Application.getClassLoader().addClassloader(mycl);
+    }
 
     // Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
     mycl.add(dir);
@@ -780,6 +791,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.70  2007/11/13 00:45:18  willuhn
+ * @N Classloader (privat/global) vom Plugin beeinflussbar (via "shared=true/false" in plugin.xml)
+ *
  * Revision 1.69  2007/11/12 23:12:23  willuhn
  * @N Update der H2.jar
  * @N Jars in jameica/lib (System-Jars) EXPLIZIT in Classloader aufnehmen

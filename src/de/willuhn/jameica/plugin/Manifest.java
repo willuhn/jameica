@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/04/10 17:40:15 $
+ * $Revision: 1.12 $
+ * $Date: 2007/11/13 00:45:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -169,7 +169,18 @@ public class Manifest implements Comparable
     return this.root.getAttribute("class",null);
   }
   
+  /**
+   * Liefert true, wenn das Plugin ueber den globalen Classloader von Jameica geladen werden soll.
+   * @return true, wenn es ueber den globalen Classloader geladen werden soll.
+   * Andernfalls erhaelt es einen exlusiven Classloader.
+   * Default: True
+   */
+  public boolean isShared()
+  {
+    return Boolean.parseBoolean(this.root.getAttribute("shared","true"));
+  }
 
+  
   /**
    * Liefert die Beschreibung der Komponente.
    * @return Beschreibung.
@@ -452,6 +463,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.12  2007/11/13 00:45:18  willuhn
+ * @N Classloader (privat/global) vom Plugin beeinflussbar (via "shared=true/false" in plugin.xml)
+ *
  * Revision 1.11  2007/04/10 17:40:15  willuhn
  * @B Beruecksichtigung der Plugin-Abhaengigkeiten auch bei der Reihenfolge der zu ladenden Klassen (erzeugt sonst ggf. NoClassDefFoundErrors)
  *
