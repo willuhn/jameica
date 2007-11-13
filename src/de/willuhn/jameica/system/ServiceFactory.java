@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.46 $
- * $Date: 2007/10/30 11:57:36 $
+ * $Revision: 1.47 $
+ * $Date: 2007/11/13 14:14:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -193,7 +193,7 @@ public final class ServiceFactory
 		try {
 
 			Logger.info("service: " + name);
-			serviceClass = Application.getClassLoader().load(descriptor.getClassname());
+			serviceClass = plugin.getResources().getClassLoader().load(descriptor.getClassname());
 			bindings.put(fullName,serviceClass);
 
 			if (Application.inClientMode())
@@ -225,7 +225,7 @@ public final class ServiceFactory
 				}
 			}
 
-			Service s = newInstance(serviceClass);
+			Service s = newInstance(plugin,serviceClass);
 			allServices.put(fullName,s);
 
 			if (!descriptor.autostart())
@@ -282,28 +282,24 @@ public final class ServiceFactory
 
   /**
 	 * Erstellt eine Instanz der angegebenen Service-Klasse.
+   * @param plugin das zugehoerige Plugin.
    * @param serviceClass zu instanziierende Klasse.
    * @return die erzeugte Instanz.
    * @throws Exception
    */
-  private Service newInstance(Class serviceClass) throws Exception
+  private Service newInstance(AbstractPlugin plugin, Class serviceClass) throws Exception
 	{
 		Class impl = null;
 		try
 		{
 			// Mal schauen, ob wir auch eine Implementierung dazu finden
-			Class[] impls = Application.getClassLoader().getClassFinder().findImplementors(serviceClass);
+			Class[] impls = plugin.getResources().getClassLoader().getClassFinder().findImplementors(serviceClass);
 			if (impls != null && impls.length > 0)
       {
         // Wir nehmen die erste, die keine Inner-Class ist
         boolean found = false;
         for (int i=0;i<impls.length;++i)
         {
-          if (impls[i].getName().indexOf("$") != -1)
-          {
-            // ist eine InnerClass - ignorieren wir vorerst
-            continue;
-          }
           found = true;
           impl = impls[i];
         }
@@ -499,6 +495,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.47  2007/11/13 14:14:56  willuhn
+ * @N Bei exklusivem Classloader wird nun das gesamte Plugin (incl. Services) ueber dessen Classloader geladen
+ *
  * Revision 1.46  2007/10/30 11:57:36  willuhn
  * @N Registry und SocketFactory nur im Server-Mode starten
  *

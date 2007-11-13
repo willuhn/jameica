@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.26 $
- * $Date: 2007/10/25 23:18:04 $
+ * $Revision: 1.27 $
+ * $Date: 2007/11/13 14:14:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -210,8 +210,9 @@ public final class PluginLoader
 		Logger.info("trying to initialize " + pluginClass);
 
 		///////////////////////////////////////////////////////////////
-		// Klasse instanziieren
-    Class clazz = Application.getClassLoader().load(pluginClass);
+		// Klasse instanziieren. Wir laden die Klasse ueber den
+    // zugehoerigen Classloader
+    Class clazz = pluginCl.load(pluginClass);
     
     // TODO: Migration. Wir versuchen erst den neuen Konstruktor testen
     AbstractPlugin plugin = null;
@@ -292,7 +293,7 @@ public final class PluginLoader
         Logger.info("  trying to register " + ext[i].getClassname());
         try
         {
-          Class c = Application.getClassLoader().load(ext[i].getClassname());
+          Class c = pluginCl.load(ext[i].getClassname());
           ExtensionRegistry.register((Extension) c.newInstance(), ext[i].getExtendableIDs());
           Logger.info("  extension registered");
         }
@@ -363,7 +364,28 @@ public final class PluginLoader
 		return null;
 	}
 
-	/**
+  /**
+   * Liefert das Manifest der angegebenen Plugin-Klasse.
+   * @param pluginClass Klasse des Plugins.
+   * @return das Manifest.
+   */
+  public Manifest getManifest(String pluginClass)
+  {
+    if (pluginClass == null)
+      return null;
+
+    int size = plugins.size();
+    Manifest mf = null;
+    for (int i=0;i<size;++i)
+    {
+      mf = (Manifest) plugins.get(i);
+      if (mf.getPluginClass().equals(pluginClass))
+        return mf;
+    }
+    return null;
+  }
+
+  /**
 	 * Liefert die Instanz des Plugins mit der angegebenen Klasse.
 	 * @param plugin Klasse des Plugins.
 	 * @return Instanz des Plugins oder <code>null</code> wenn es nicht installiert ist.
@@ -386,13 +408,7 @@ public final class PluginLoader
 		if (pluginClass == null || pluginClass.length() == 0)
 			return null;
 
-		try {
-			return getPlugin(Application.getClassLoader().load(pluginClass));
-		}
-		catch (Throwable t)
-		{
-			return null;
-		}
+    return getManifest(pluginClass).getPluginInstance();
 	}
 
 	/**
@@ -413,12 +429,7 @@ public final class PluginLoader
 			return false;
 
 		try {
-			Class c = Application.getClassLoader().load(pluginClass);
-
-      if (c == null)
-        return false;
-
-      Manifest mf = getManifest(c);
+      Manifest mf = getManifest(pluginClass);
       if (mf == null) return false; // es existiert ueberhaupt nicht.
       
       // Es kann sein, dass es nocht nicht initialisiert ist.
@@ -462,6 +473,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.27  2007/11/13 14:14:56  willuhn
+ * @N Bei exklusivem Classloader wird nun das gesamte Plugin (incl. Services) ueber dessen Classloader geladen
+ *
  * Revision 1.26  2007/10/25 23:18:04  willuhn
  * @B Fix in i18n Initialisierung (verursachte Warnung "Plugin ... unterstuetzt Locale ... nicht")
  * @C i18n erst bei Bedarf initialisieren

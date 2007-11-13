@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.70 $
- * $Date: 2007/11/13 00:45:18 $
+ * $Revision: 1.71 $
+ * $Date: 2007/11/13 14:14:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -29,6 +30,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.LogMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
 import de.willuhn.jameica.messaging.SystemMessage;
+import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.security.JameicaSecurityManager;
@@ -655,9 +657,37 @@ public final class Application {
       Logger.info("using private classloader for plugin " + manifest.getName());
       // Eigenen Classloader fuer das Plugin erstellen
       mycl = new MultipleClassLoader();
+      Logger.info("  adding system classloader");
+      mycl.addClassloader(Application.getClassLoader());
       
-      // und im System-Classloader von Jameica registrieren
-      Application.getClassLoader().addClassloader(mycl);
+      // Jetzt muessen wir uns noch die Classloader der Dependency-Plugins holen
+      // und dem aktuellen Plugin hinzufuegen. Damit kennt das Plugin dann:
+      //   - sich selbst
+      //   - die Plugins, von denen es abhaengig ist
+      //   - Jameica
+      String[] deps = manifest.getDependencies();
+      if (deps != null && deps.length > 0)
+      {
+        Logger.info("  adding depending classloaders");
+        List plugins = Application.getPluginLoader().getInstalledManifests();
+        for (int i=0;i<plugins.size();++i)
+        {
+          Manifest mf = (Manifest) plugins.get(i);
+          if (mf == null || manifest.getName().equals(mf.getName()))
+            continue;
+          for (int k=0;k<deps.length;++i)
+          {
+            if (deps[k].equals(mf.getName()))
+            {
+              Logger.info("    " + mf.getName());
+              AbstractPlugin ap = Application.getPluginLoader().getPlugin(mf.getPluginClass());
+              mycl.addClassloader(ap.getResources().getClassLoader());
+              break;
+            }
+          }
+        }
+      }
+      
     }
 
     // Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
@@ -791,6 +821,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.71  2007/11/13 14:14:56  willuhn
+ * @N Bei exklusivem Classloader wird nun das gesamte Plugin (incl. Services) ueber dessen Classloader geladen
+ *
  * Revision 1.70  2007/11/13 00:45:18  willuhn
  * @N Classloader (privat/global) vom Plugin beeinflussbar (via "shared=true/false" in plugin.xml)
  *
