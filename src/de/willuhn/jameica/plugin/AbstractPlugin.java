@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/10/25 23:18:04 $
+ * $Revision: 1.12 $
+ * $Date: 2007/11/16 18:34:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,7 +40,7 @@ public abstract class AbstractPlugin
 
   /**
 	 * ct.
-   * @deprecated Muss nicht mehr implementiert werden. Stattdessen genuegt der parameterlose Konstruktor.
+   * @Deprecated Muss nicht mehr implementiert werden. Stattdessen genuegt der parameterlose Konstruktor.
    * @param file Das Verzeichnis, in dem sich das Plugin befindet.
    */
   public AbstractPlugin(File file)
@@ -130,6 +130,10 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.12  2007/11/16 18:34:04  willuhn
+ * @D javadoc fixed
+ * @R removed unused methods/deprecated methods
+ *
  * Revision 1.11  2007/10/25 23:18:04  willuhn
  * @B Fix in i18n Initialisierung (verursachte Warnung "Plugin ... unterstuetzt Locale ... nicht")
  * @C i18n erst bei Bedarf initialisieren
