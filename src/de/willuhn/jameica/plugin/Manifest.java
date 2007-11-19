@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/11/13 00:45:18 $
+ * $Revision: 1.13 $
+ * $Date: 2007/11/19 12:44:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -409,27 +409,47 @@ public class Manifest implements Comparable
    */
   public int compareTo(Object o)
   {
+    String name = this.getName();
+
+    if (name == null || name.length() == 0)
+    {
+      Logger.debug("1: " + name + ": <unknown>: -1");
+      return -1; // wir haben keine Namen. Dann lassen wir uns sicherheitshalber zuerst laden
+    }
+
     if (o == null || !(o instanceof Manifest))
+    {
+      Logger.debug("2: " + name + ": <unknown>: -1");
       return -1; // Wir zuerst.
+    }
     
+    Manifest other   = (Manifest) o;
+    String otherName = other.getName();
+
+    if (otherName == null || otherName.length() == 0)
+    {
+      Logger.debug("3: " + name + ": " + otherName + ": -1");
+      return -1; // Das andere Plugin hat keinen Namen. Dann laden wir das sicherheitshalber zuerst
+    }
+
     /////////////////////////////////////////////////////////////////
     // Schritt 1: Wir schauen, ob wir in der Abhaengigkeitsliste des anderen Plugins stehen
-    String name = this.getName();
-    if (name == null || name.length() == 0)
-      return -1; // wir haben keine Namen. Dann lassen wir uns sicherheitshalber zuerst laden
-
-    Manifest other = (Manifest) o;
-
     String[] deps = other.getDependencies();
     if (deps == null || deps.length == 0)
+    {
+      Logger.debug("4: " + name + ": " + otherName + ": +1");
       return 1; // Es hat keine Abhaengigkeiten, also koennen wir nach dem anderen Plugin geladen werden
+    }
     
     for (int i=0;i<deps.length;++i)
     {
       if (deps[i] == null)
         continue; // ueberspringen
       if (name.equals(deps[i]))
+      {
+        Logger.debug("5: " + name + ": " + otherName + ": -1");
         return -1; // Das andere Plugin haengt von uns ab. Also muessen wir zuerst geladen werden
+      }
     }
     //
     /////////////////////////////////////////////////////////////////
@@ -437,25 +457,27 @@ public class Manifest implements Comparable
     
     /////////////////////////////////////////////////////////////////
     // Schritt 2: Wir schauen, ob wir von dem anderen Plugin abhaengig sind.
-
-    name = other.getName();
-    if (name == null || name.length() == 0)
-      return -1; // Das andere Plugin hat keinen Namen. Dann laden wir das sicherheitshalber zuerst
-
     deps = this.getDependencies();
     if (deps == null || deps.length == 0)
-      return 1; // Wir haben Abhaengigkeiten, also koennen wir nach dem anderen Plugin geladen werden
+    {
+      Logger.debug("6: " + name + ": " + otherName + ": -1");
+      return -1; // Wir haben keine Abhaengigkeiten, also koennen wir vor dem anderen Plugin geladen werden
+    }
     
     for (int i=0;i<deps.length;++i)
     {
       if (deps[i] == null)
         continue; // ueberspringen
-      if (name.equals(deps[i]))
+      if (otherName.equals(deps[i]))
+      {
+        Logger.debug("7: " + name + ": " + otherName + ": +1");
         return 1; // Wir haengen von dem anderen Plugin ab. Dann muss das andere zuerst geladen werden
+      }
     }
 
     
     // Keine Schnittmenge vorhanden. Dann ist die Reihenfolge egal.
+    Logger.debug("8: " + name + ": " + otherName + ": 0");
     return 0;
   }
 }
@@ -463,6 +485,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.13  2007/11/19 12:44:17  willuhn
+ * @B Bug in Sortierung
+ *
  * Revision 1.12  2007/11/13 00:45:18  willuhn
  * @N Classloader (privat/global) vom Plugin beeinflussbar (via "shared=true/false" in plugin.xml)
  *
