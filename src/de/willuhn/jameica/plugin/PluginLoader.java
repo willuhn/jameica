@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.27 $
- * $Date: 2007/11/13 14:14:56 $
+ * $Revision: 1.28 $
+ * $Date: 2007/11/19 11:30:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -135,7 +135,13 @@ public final class PluginLoader
     }
     
     // Sortieren der Manifeste nach Abhaengigkeiten
+    Logger.info("sort plugins by dependency");
     Collections.sort(this.plugins);
+    for (int i=0;i<this.plugins.size();++i)
+    {
+      Manifest mf = (Manifest)this.plugins.get(i);
+      Logger.info("  " + mf.getName());
+    }
     ////////////////////////////////////////////////////////////////////////////
     
 		// Wir machen das Initialisieren der Plugins zum Schluss, um
@@ -473,6 +479,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.28  2007/11/19 11:30:39  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2007/11/13 14:14:56  willuhn
  * @N Bei exklusivem Classloader wird nun das gesamte Plugin (incl. Services) ueber dessen Classloader geladen
  *
