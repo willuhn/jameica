@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/11/19 12:44:17 $
+ * $Revision: 1.14 $
+ * $Date: 2007/11/19 13:13:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -429,7 +429,7 @@ public class Manifest implements Comparable
     if (otherName == null || otherName.length() == 0)
     {
       Logger.debug("3: " + name + ": " + otherName + ": -1");
-      return -1; // Das andere Plugin hat keinen Namen. Dann laden wir das sicherheitshalber zuerst
+      return 1; // Das andere Plugin hat keinen Namen. Dann laden wir das sicherheitshalber zuerst
     }
 
     /////////////////////////////////////////////////////////////////
@@ -485,6 +485,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.14  2007/11/19 13:13:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.13  2007/11/19 12:44:17  willuhn
  * @B Bug in Sortierung
  *
