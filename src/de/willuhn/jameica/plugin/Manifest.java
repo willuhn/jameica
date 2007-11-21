@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.14 $
- * $Date: 2007/11/19 13:13:40 $
+ * $Revision: 1.15 $
+ * $Date: 2007/11/21 11:34:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -177,9 +177,8 @@ public class Manifest implements Comparable
    */
   public boolean isShared()
   {
-    return Boolean.parseBoolean(this.root.getAttribute("shared","true"));
+    return "true".equalsIgnoreCase(this.root.getAttribute("shared","true"));
   }
-
   
   /**
    * Liefert die Beschreibung der Komponente.
@@ -485,6 +484,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.15  2007/11/21 11:34:41  willuhn
+ * @B "Boolean.parseBoolean" gibt es erst in Java 1.5
+ *
  * Revision 1.14  2007/11/19 13:13:40  willuhn
  * *** empty log message ***
  *
