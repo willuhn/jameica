@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/06/05 11:47:16 $
+ * $Revision: 1.3 $
+ * $Date: 2007/11/23 00:51:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -240,7 +240,7 @@ public final class NamedQueue implements MessagingQueue
           catch (Throwable t)
           {
             Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getClass().getName() + ": " + t + ") while consuming message " + msg);
-            Logger.write(Level.DEBUG,"error while processing message",t);
+            Logger.write(Level.INFO,"error while processing message",t);
           }
         }
       }
@@ -276,6 +276,9 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.3  2007/11/23 00:51:18  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2007/06/05 11:47:16  willuhn
  * *** empty log message ***
  *
