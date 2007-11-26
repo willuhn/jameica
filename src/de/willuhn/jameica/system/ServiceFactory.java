@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.47 $
- * $Date: 2007/11/13 14:14:56 $
+ * $Revision: 1.48 $
+ * $Date: 2007/11/26 18:13:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -268,7 +268,7 @@ public final class ServiceFactory
           }
           catch (Exception e)
           {
-            Logger.warn("unable to bind RMI stub, trying to bind object itself. message: " + e.getMessage());
+            Logger.debug("unable to bind RMI stub, trying to bind object itself. message: " + e.getMessage());
           }
         }
         Naming.rebind(rmiUrl,s);
@@ -495,6 +495,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.48  2007/11/26 18:13:21  willuhn
+ * @C changed loglevel
+ *
  * Revision 1.47  2007/11/13 14:14:56  willuhn
  * @N Bei exklusivem Classloader wird nun das gesamte Plugin (incl. Services) ueber dessen Classloader geladen
  *
