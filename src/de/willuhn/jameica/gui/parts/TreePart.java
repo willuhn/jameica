@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.20 $
- * $Date: 2007/11/01 21:07:35 $
+ * $Revision: 1.21 $
+ * $Date: 2007/12/04 23:41:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -359,11 +359,12 @@ public class TreePart extends AbstractTablePart
     if (menu == null) return;
 
     Widget widget = tree.getItem(new Point(event.x,event.y));
-    if (!(widget instanceof TreeItem))
-      return;
-    TreeItem item = (TreeItem) widget;
+    Object data = null;
+    
+    if (widget != null && (widget instanceof TreeItem))
+      data = widget.getData();
 
-    menu.setCurrentObject(item.getData());
+    menu.setCurrentObject(data);
   }
 
   /**
@@ -520,6 +521,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.21  2007/12/04 23:41:53  willuhn
+ * @B ContextMenu#setCurrentObject wurde nicht aufgerufen, wenn kein Element im Tree aktiv war - daher wurden faelschlicherweise alle Eintraege des Contextmenus aktiviert
+ *
  * Revision 1.20  2007/11/01 21:07:35  willuhn
  * @N Spalten von Tabellen und mehrspaltigen Trees koennen mit mit Drag&Drop umsortiert werden. Die Sortier-Reihenfolge wird automatisch gespeichert und wiederhergestellt
  *
