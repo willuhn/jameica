@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.3 $
- * $Date: 2005/12/12 22:35:34 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2007/12/05 13:35:30 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -16,6 +16,7 @@ package de.willuhn.jameica.security;
 import java.io.File;
 import java.io.IOException;
 import java.security.Permission;
+import java.security.PrivilegedAction;
 
 import de.willuhn.logging.Logger;
 
@@ -27,7 +28,7 @@ import de.willuhn.logging.Logger;
  */
 public class JameicaSecurityManager extends SecurityManager
 {
-  
+  private boolean priv = false;
   private String jameicaPath = null;
 
   /**
@@ -96,11 +97,43 @@ public class JameicaSecurityManager extends SecurityManager
   {
   }
 
+
+  /**
+   * @see java.lang.SecurityManager#checkPermission(java.security.Permission, java.lang.Object)
+   */
+  public void checkPermission(Permission perm, Object context)
+  {
+    if (!priv)
+      super.checkPermission(perm, context);
+  }
+
+  /**
+   * Fuehrt eine privilegierte Aktion aus.
+   * @param action die auszufuehrende Aktion.
+   * @return der Ruckgabe-Wert der Funktion.
+   */
+  public Object doPrivileged(PrivilegedAction action)
+  {
+    try
+    {
+      Logger.info("performing privileged action " + action);
+      priv = true;
+      return action.run();
+    }
+    finally
+    {
+      priv = false;
+    }
+    
+  }
 }
 
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.4  2007/12/05 13:35:30  willuhn
+ * @N Unterstuetzung fuer JMX
+ *
  * Revision 1.3  2005/12/12 22:35:34  web0
  * @N debug output
  *
