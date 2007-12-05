@@ -5,4 +5,6 @@
 
 cd `dirname $0`
 
-java -Xmx128m -Djava.library.path=lib/swt/linux -jar jameica-linux.jar $@
+#_JCONSOLE="-Dcom.sun.management.jmxremote"
+
+java -Xmx128m $_JCONSOLE -Djava.library.path=lib/swt/linux -jar jameica-linux.jar $@
