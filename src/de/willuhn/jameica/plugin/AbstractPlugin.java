@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/11/16 18:34:04 $
+ * $Revision: 1.13 $
+ * $Date: 2007/12/06 09:31:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,7 +40,7 @@ public abstract class AbstractPlugin
 
   /**
 	 * ct.
-   * @Deprecated Muss nicht mehr implementiert werden. Stattdessen genuegt der parameterlose Konstruktor.
+   * @deprecated Muss nicht mehr implementiert werden. Stattdessen genuegt der parameterlose Konstruktor.
    * @param file Das Verzeichnis, in dem sich das Plugin befindet.
    */
   public AbstractPlugin(File file)
@@ -130,6 +130,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.13  2007/12/06 09:31:19  willuhn
+ * @D javadoc warnings
+ *
  * Revision 1.12  2007/11/16 18:34:04  willuhn
  * @D javadoc fixed
  * @R removed unused methods/deprecated methods
