@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2006/09/10 11:19:19 $
+ * $Revision: 1.10 $
+ * $Date: 2007/12/07 14:58:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.vafada.swtcalendar.SWTCalendar;
+import org.vafada.swtcalendar.SWTCalendarEvent;
+import org.vafada.swtcalendar.SWTCalendarListener;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
@@ -90,7 +92,7 @@ public class CalendarDialog extends AbstractDialog
       l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       l.setText(text);
     }
-    cal = new SWTCalendar(comp);
+    cal = new SWTCalendar(comp, SWT.FLAT | SWTCalendar.RED_WEEKEND);
     if (date != null)
     {
       Calendar c = Calendar.getInstance(Application.getConfig().getLocale());
@@ -99,13 +101,15 @@ public class CalendarDialog extends AbstractDialog
     }
 
     cal.setLayoutData(new GridData(GridData.FILL_BOTH));
-    cal.addMouseListener(new MouseAdapter()
-    {
-      public void mouseDoubleClick(MouseEvent e)
+    cal.addSWTCalendarListener(new SWTCalendarListener() {
+    
+      public void dateChanged(SWTCalendarEvent event) {}
+      public void dateSelected(SWTCalendarEvent event)
       {
         date = getDateWithoutTime(cal);
         close();
       }
+    
     });
 
     // BUGZILLA 201
@@ -149,6 +153,9 @@ public class CalendarDialog extends AbstractDialog
 
 /*******************************************************************************
  * $Log: CalendarDialog.java,v $
+ * Revision 1.10  2007/12/07 14:58:31  willuhn
+ * @B bug 515
+ *
  * Revision 1.9  2006/09/10 11:19:19  willuhn
  * @B Heiners Uhrzeit-Patch
  * Revision 1.8 2006/02/20 17:58:35 web0
