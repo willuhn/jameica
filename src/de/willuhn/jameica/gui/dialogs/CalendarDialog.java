@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.10 $
- * $Date: 2007/12/07 14:58:31 $
+ * $Revision: 1.11 $
+ * $Date: 2007/12/11 00:12:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,8 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -153,6 +151,9 @@ public class CalendarDialog extends AbstractDialog
 
 /*******************************************************************************
  * $Log: CalendarDialog.java,v $
+ * Revision 1.11  2007/12/11 00:12:22  willuhn
+ * @R removed unused import
+ *
  * Revision 1.10  2007/12/07 14:58:31  willuhn
  * @B bug 515
  *
