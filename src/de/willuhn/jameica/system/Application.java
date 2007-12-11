@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.71 $
- * $Date: 2007/11/13 14:14:56 $
+ * $Revision: 1.72 $
+ * $Date: 2007/12/11 15:20:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -747,8 +747,8 @@ public final class Application {
 
       String name = child[i].getCanonicalPath();
       
-      // Class-File?
-      if (name.endsWith(".class"))
+      // Class-Files nur, wenn sie sich im bin-Verzeichnis befinden
+      if (name.matches(".*([\\\\|/])bin([\\\\|/]).*\\.class"))
       {
         // Jetzt muessen wir vorn noch den Verzeichnisnamen abschneiden
         name = name.substring(path.length() + 5); // fuehrenden Pfad abschneiden ("/bin" beachten)
@@ -821,6 +821,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.72  2007/12/11 15:20:36  willuhn
+ * @C .class-Files nur dann in Classfinder uebernehmen, wenn sie sich im "bin"-Verzeichnis befinden
+ *
  * Revision 1.71  2007/11/13 14:14:56  willuhn
  * @N Bei exklusivem Classloader wird nun das gesamte Plugin (incl. Services) ueber dessen Classloader geladen
  *
