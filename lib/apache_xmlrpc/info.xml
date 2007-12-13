@@ -1,0 +1,6 @@
+<info>
+  <name>Apache XML-RPC Client</name>
+  <description>Java implementation of XML-RPC protocol</description>
+  <url>http://ws.apache.org/xmlrpc/</url>
+  <license>Apache License - http://ws.apache.org/xmlrpc/license.html</license>
+</info>
