@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.48 $
- * $Date: 2007/11/26 18:13:21 $
+ * $Revision: 1.49 $
+ * $Date: 2007/12/14 13:29:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,18 +17,16 @@ import java.lang.reflect.Constructor;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMISocketFactory;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
 import de.willuhn.datasource.Service;
+import de.willuhn.jameica.messaging.LookupService;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
-import de.willuhn.jameica.security.SSLRMIClientSocketFactory;
 import de.willuhn.jameica.security.SSLRMISocketFactory;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -58,8 +56,6 @@ public final class ServiceFactory
 
 	// Service-Lookup-Cache.
 	private Hashtable serviceCache = new Hashtable();
-  private RMISocketFactory ssf = null;
-  private RMIClientSocketFactory csf = null;
 
   /**
    * Initialisiert die ServiceFactory.
@@ -74,10 +70,8 @@ public final class ServiceFactory
       if (!sslStarted && Application.getConfig().getRmiSSL())
       {
         Logger.info("rmi over ssl enabled");
-        ssf = new SSLRMISocketFactory();
-        csf = new SSLRMIClientSocketFactory();
         // TODO Doku zum Thema http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html
-        RMISocketFactory.setSocketFactory(this.ssf);
+        RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
         sslStarted = true;
       }
       
@@ -252,26 +246,10 @@ public final class ServiceFactory
 				Logger.info("  binding service");
 				Application.getCallback().getStartupMonitor().setStatusText("binding service " + name);
 
-				String rmiUrl = "rmi://127.0.0.1:" + Application.getConfig().getRmiPort() + "/" + fullName;
-				Logger.info("  *RMI-Service: rmi://" + Application.getCallback().getHostname() + ":" + Application.getConfig().getRmiPort() + "/" + fullName);
-        
-        // SSL aktiv?
-        if (this.sslStarted)
-        {
-          // Wir versuchen das Objekt manuell zu registrieren. Wenn das fehlschlaegt,
-          // lassen wir e sein und registrieren das Objekt direkt an der Registry
-          try
-          {
-            Service stub = (Service) UnicastRemoteObject.exportObject(s,0,this.csf,this.ssf);
-            Naming.rebind(rmiUrl,stub);
-            return;
-          }
-          catch (Exception e)
-          {
-            Logger.debug("unable to bind RMI stub, trying to bind object itself. message: " + e.getMessage());
-          }
-        }
-        Naming.rebind(rmiUrl,s);
+				String bindUrl = "rmi://127.0.0.1:" + Application.getConfig().getRmiPort() + "/" + fullName;
+        String rmiUrl  = "rmi://" + Application.getCallback().getHostname() + ":" + Application.getConfig().getRmiPort() + "/" + fullName;
+        Naming.rebind(bindUrl,s);
+        LookupService.register("rmi:" + fullName,rmiUrl);
 			}
 		}
 		catch (Exception e)
@@ -495,6 +473,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.49  2007/12/14 13:29:05  willuhn
+ * @N Multicast Lookup-Service
+ *
  * Revision 1.48  2007/11/26 18:13:21  willuhn
  * @C changed loglevel
  *

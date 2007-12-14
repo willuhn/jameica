@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.32 $
- * $Date: 2007/09/06 22:21:55 $
+ * $Revision: 1.33 $
+ * $Date: 2007/12/14 13:29:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -222,7 +222,17 @@ public final class Config
     return settings.getBoolean("jameica.system.rmi.shareservices",true);
   }
 
-	/**
+  /**
+   * Prueft, ob im Server-Mode die Dienste via Multicast-Lookup im LAN announced werden sollen.
+   * Der Parameter wird nur im Server-Mode interpretiert.
+   * @return true, wenn die Dienste via Multicast-Lookup announced werden sollen.
+   */
+  public boolean getMulticastLookup()
+  {
+    return settings.getBoolean("jameica.system.multicastlookup",true);
+  }
+
+  /**
 	 * Aktiviert oder deaktiviert die Verwendung von SSL fuer die RMI-Verbindungen.
    * @param b
    */
@@ -534,6 +544,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.33  2007/12/14 13:29:05  willuhn
+ * @N Multicast Lookup-Service
+ *
  * Revision 1.32  2007/09/06 22:21:55  willuhn
  * @N Hervorhebung von Pflichtfeldern konfigurierbar
  * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
