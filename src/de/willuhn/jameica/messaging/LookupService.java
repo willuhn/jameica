@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/LookupService.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/12/14 13:41:02 $
+ * $Revision: 1.3 $
+ * $Date: 2007/12/14 13:52:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -153,11 +153,118 @@ public class LookupService implements MessageConsumer
       send(url.getBytes());
     }
   }
+  
+  
+  
+  /**
+   * Sucht im lokalen Netz nach einem Dienst mit dem angegeben Namen.
+   * @param name Name des Dienstes.
+   * @return die URL des Dienstes oder <code>null</code>, wenn
+   * er nicht gefunden wurde.
+   */
+  public static synchronized String lookup(String name)
+  {
+    if (name == null || name.length() == 0)
+      return null;
+
+    Logger.info("performing multicast lookup for service name: " + name);
+    ServerLookup s = null;
+    try
+    {
+      s = new ServerLookup(name);
+      s.send();
+      long started = System.currentTimeMillis();
+      
+      // Wir warten maximal 5 Sekunden auf Antwort 
+      while (System.currentTimeMillis() - started < 5000l)
+      {
+        if (s.url != null)
+          break;
+        Thread.sleep(100l);
+      }
+      if (s.url != null)
+      {
+        Logger.info("found server for service name: " + name + " - url: "+ s.url);
+        return s.url;
+      }
+    }
+    catch (Exception e)
+    {
+      Logger.error("error while performing lookup",e);
+    }
+    finally
+    {
+      // Multicast-Client beenden
+      if (s != null)
+      {
+        try
+        {
+          s.stop();
+        } catch (Exception e) {} // useless
+      }
+    }
+    Logger.info("no server found for service name: " + name);
+    return null;
+  }
+  
+  /**
+   * Fuehrt ein Lookup nach Nummern-Servern im Netz durch.
+   */
+  private static class ServerLookup extends MulticastClient
+  {
+    private String name = null;
+    private String url = null;
+    
+    /**
+     * ct
+     * @param name Name des gesuchten Service.
+     * @throws IOException
+     */
+    public ServerLookup(String name) throws IOException
+    {
+      super();
+      this.name = name;
+    }
+    
+    /**
+     * Sendet die Anfrage.
+     * @throws IOException
+     */
+    public void send() throws IOException
+    {
+      super.send(name.getBytes());
+    }
+
+    /**
+     * @see de.willuhn.net.MulticastClient#received(java.net.DatagramPacket)
+     */
+    public void received(DatagramPacket packet) throws IOException
+    {
+      InetAddress sender = packet.getAddress();
+      InetAddress self   = InetAddress.getLocalHost();
+      if (sender.equals(self))
+        return; // sind wir selbst
+
+      String s = new String(packet.getData());
+      if (s == null)
+        return; // nix erhalten
+      s = s.trim();
+      
+      if (s.equals(this.name))
+        return; // ist unsere eigene Anfrage
+      this.url = s;
+      Logger.info("got answer from " + sender.getCanonicalHostName() + ", url: " + this.url);
+    }
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: LookupService.java,v $
+ * Revision 1.3  2007/12/14 13:52:54  willuhn
+ * @N Lookup-Client
+ *
  * Revision 1.2  2007/12/14 13:41:02  willuhn
  * *** empty log message ***
  *
