@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.22 $
- * $Date: 2007/04/19 17:02:35 $
+ * $Revision: 1.23 $
+ * $Date: 2007/12/18 14:12:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -59,6 +59,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
 		display = GUI.getDisplay();
 		shell = new Shell(SWT.NONE);
     shell.setText("Jameica");
+    shell.setBackground(new Color(display,0,0,0));
   }
   
 	/**
@@ -106,27 +107,31 @@ public class SplashScreen implements ProgressMonitor, Runnable
     }
     
     if (is == null)
-      is = shell.getClass().getResourceAsStream("/img/splash.jpg");
+      is = shell.getClass().getResourceAsStream("/img/splash.png");
 
     // Label erzeugen und Image drauf pappen
     label = new Label(shell, SWT.NONE);
     label.setImage(new Image(display, is));
     label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+    label.setBackground(new Color(display,0,0,0));
+
+    // Label erzeugen und Image drauf pappen
+    textLabel = new Label(shell, SWT.NONE);
+    textLabel.setForeground(new Color(display,255,255,255));
+    textLabel.setBackground(new Color(display,0,0,0));
+    textLabel.setText(" starting...");
+    textLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
     bar = new ProgressBar(shell, SWT.SMOOTH);
     bar.setMaximum(100);
 
     // Vorder- und Hintergrund des Balkens
-    bar.setBackground(new Color(display,243,244,238));
-    bar.setForeground(new Color(display,255,204,0));
-    bar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+    bar.setBackground(new Color(display,0,0,0));
+    GridData barGd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+    barGd.verticalIndent = 0;
+    bar.setLayoutData(barGd);
 
-    // Label erzeugen und Image drauf pappen
-    textLabel = new Label(shell, SWT.NONE);
-    textLabel.setText(" starting...");
-    textLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-
-    shell.setSize(377,206);
+    shell.setSize(380,237);
 
     // Splashscreen mittig positionieren
     Rectangle splashRect = shell.getBounds();
@@ -246,6 +251,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.23  2007/12/18 14:12:21  willuhn
+ * @N Neuer Splash-Screen - wurde ja auch mal Zeit ;)
+ *
  * Revision 1.22  2007/04/19 17:02:35  willuhn
  * @N log splashscreen messages
  *

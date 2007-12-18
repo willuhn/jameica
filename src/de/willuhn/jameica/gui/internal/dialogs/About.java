@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/08/29 11:16:58 $
+ * $Revision: 1.3 $
+ * $Date: 2007/12/18 14:12:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,7 @@ public class About extends AbstractDialog
     setTitle(i18n.tr("About"));
 
     Label l = GUI.getStyleFactory().createLabel(parent,SWT.BORDER);
-    l.setImage(SWTUtil.getImage("splash.jpg"));
+    l.setImage(SWTUtil.getImage("splash.png"));
 
     Container container = new LabelGroup(parent, i18n.tr("About"),true);
     
@@ -79,7 +79,7 @@ public class About extends AbstractDialog
         close();
       }
     },null,true);
-    setSize(SWT.DEFAULT,460);  // BUGZILLA 269
+    setSize(SWT.DEFAULT,490);  // BUGZILLA 269
   }
 
   /**
@@ -95,6 +95,9 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.3  2007/12/18 14:12:22  willuhn
+ * @N Neuer Splash-Screen - wurde ja auch mal Zeit ;)
+ *
  * Revision 1.2  2006/08/29 11:16:58  willuhn
  * @B Bug 269
  *
