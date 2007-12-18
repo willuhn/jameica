@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.23 $
- * $Date: 2007/12/18 14:12:21 $
+ * $Revision: 1.24 $
+ * $Date: 2007/12/18 17:10:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -131,7 +131,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
     barGd.verticalIndent = 0;
     bar.setLayoutData(barGd);
 
-    shell.setSize(380,237);
+    shell.setSize(381,237);
 
     // Splashscreen mittig positionieren
     Rectangle splashRect = shell.getBounds();
@@ -251,6 +251,10 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.24  2007/12/18 17:10:14  willuhn
+ * @N Neues ExpandPart
+ * @N Boxen auf der Startseite koennen jetzt zusammengeklappt werden
+ *
  * Revision 1.23  2007/12/18 14:12:21  willuhn
  * @N Neuer Splash-Screen - wurde ja auch mal Zeit ;)
  *

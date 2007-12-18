@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/SystemMessages.java,v $
- * $Revision: 1.4 $
- * $Date: 2007/03/29 15:29:48 $
+ * $Revision: 1.5 $
+ * $Date: 2007/12/18 17:10:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -86,7 +86,6 @@ public class SystemMessages extends AbstractBox
       return;
     StringBuffer sb = new StringBuffer();
     sb.append("<form>");
-    sb.append("<p><span color=\"header\" font=\"header\">" + Application.getI18n().tr("System-Meldungen") + "</span></p>");
     for (int i=0;i<messages.length;++i)
     {
       if (messages[i] == null || messages[i].length() == 0)
@@ -112,6 +111,10 @@ public class SystemMessages extends AbstractBox
 
 /*********************************************************************
  * $Log: SystemMessages.java,v $
+ * Revision 1.5  2007/12/18 17:10:14  willuhn
+ * @N Neues ExpandPart
+ * @N Boxen auf der Startseite koennen jetzt zusammengeklappt werden
+ *
  * Revision 1.4  2007/03/29 15:29:48  willuhn
  * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
  *

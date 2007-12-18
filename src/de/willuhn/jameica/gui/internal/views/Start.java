@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/03/29 15:29:48 $
+ * $Revision: 1.13 $
+ * $Date: 2007/12/18 17:10:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import de.willuhn.jameica.gui.boxes.Box;
 import de.willuhn.jameica.gui.boxes.BoxRegistry;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.dialogs.ChooseBoxesDialog;
+import de.willuhn.jameica.gui.parts.ExpandPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -41,13 +42,12 @@ public class Start extends AbstractView implements Extendable
 
     Box[] boxes = BoxRegistry.getBoxes();
 
+    ExpandPart expand = new ExpandPart();
     for (int i=0;i<boxes.length;++i)
     {
-      Box b = (Box) boxes[i];
-      if (!b.isEnabled() || !b.isActive())
-        continue;
-      b.paint(getParent());
+      expand.add((Box) boxes[i]);
     }
+    expand.paint(getParent());
     
     ButtonArea buttons = new ButtonArea(getParent(),1);
     buttons.addButton(Application.getI18n().tr("Startseite anpassen"),new Action() {
@@ -86,6 +86,10 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.13  2007/12/18 17:10:14  willuhn
+ * @N Neues ExpandPart
+ * @N Boxen auf der Startseite koennen jetzt zusammengeklappt werden
+ *
  * Revision 1.12  2007/03/29 15:29:48  willuhn
  * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
  *
