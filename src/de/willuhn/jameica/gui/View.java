@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.40 $
- * $Date: 2007/12/18 17:50:12 $
+ * $Revision: 1.41 $
+ * $Date: 2007/12/18 23:05:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,6 +77,7 @@ public class View implements Part
 		sash.setLayout(SWTUtil.createGrid(1,true));
 		
 		view = new Composite(sash, SWT.BORDER);
+		view.setBackground(Color.BACKGROUND.getSWTColor());
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -132,6 +133,7 @@ public class View implements Part
     layout2.horizontalSpacing = 0;
     layout2.verticalSpacing = 0;
     panelBg.setLayout(layout2);
+    panelBg.setBackground(Color.BACKGROUND.getSWTColor());
 
     panelBg.addListener(SWT.Paint,new Listener()
     {
@@ -170,10 +172,11 @@ public class View implements Part
 		// weil wir wollen, dass die gesamte View disposed und entfernt
 		// wird, bevor eine neue drauf kommt.
 		content = new Composite(view, SWT.NONE);
+		content.setBackground(Color.BACKGROUND.getSWTColor());
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout l = new GridLayout();
-		l.marginHeight = 0;
-		l.marginWidth = 0;
+		l.marginHeight = 6;
+		l.marginWidth = 6;
 		content.setLayout(l);
 		messages.setText("");
 		messages.layout();
@@ -343,6 +346,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.41  2007/12/18 23:05:42  willuhn
+ * @C Farben wieder explizit vorgegeben. Unter Windows XP sieht es so oder so (ob Expand-Bar mit oder ohne XP-Lookp) haesslich aus
+ *
  * Revision 1.40  2007/12/18 17:50:12  willuhn
  * @R Background-Color nicht mehr aenderbar
  * @C Layout der Startseite

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/12/18 17:50:12 $
+ * $Revision: 1.3 $
+ * $Date: 2007/12/18 23:05:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.ExpandItem;
 
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.boxes.Box;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 
@@ -84,11 +85,13 @@ public class ExpandPart implements Part
   public void paint(Composite parent) throws RemoteException
   {
     ExpandBar bar = new ExpandBar(parent, SWT.V_SCROLL);
+    bar.setBackground(Color.BACKGROUND.getSWTColor());
     bar.setLayoutData(new GridData(GridData.FILL_BOTH));
     
     for (int i=0;i<this.titles.size();++i)
     {
       final Composite composite = new Composite(bar, SWT.NONE);
+      composite.setBackground(Color.BACKGROUND.getSWTColor());
       GridLayout layout = new GridLayout();
       layout.marginLeft = layout.marginTop = layout.marginRight = layout.marginBottom = 10;
       layout.verticalSpacing = 10;
@@ -124,6 +127,9 @@ public class ExpandPart implements Part
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
+ * Revision 1.3  2007/12/18 23:05:42  willuhn
+ * @C Farben wieder explizit vorgegeben. Unter Windows XP sieht es so oder so (ob Expand-Bar mit oder ohne XP-Lookp) haesslich aus
+ *
  * Revision 1.2  2007/12/18 17:50:12  willuhn
  * @R Background-Color nicht mehr aenderbar
  * @C Layout der Startseite
