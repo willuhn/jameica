@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.21 $
- * $Date: 2007/09/08 14:20:11 $
+ * $Revision: 1.22 $
+ * $Date: 2007/12/18 17:50:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -128,7 +128,6 @@ public class Settings extends AbstractView implements Extendable
     lnfGroup.addCheckbox(control.getLabelMandatory(),i18n.tr("Auch den Text vor diesen Pflichtfeldern (Label) hervorheben"));
     lnfGroup.addSeparator();
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Eingabefeldern"),control.getColorWidgetBG());
-    lnfGroup.addLabelPair(i18n.tr("Allgemeine Hintergrundfarbe"),control.getColorBackground());
     lnfGroup.addLabelPair(i18n.tr("Textfarbe von Fehler- und Warnmeldungen"),control.getColorError());
     lnfGroup.addLabelPair(i18n.tr("Textfarbe von Erfolgsmeldungen"),control.getColorSuccess());
 		//
@@ -196,6 +195,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.22  2007/12/18 17:50:12  willuhn
+ * @R Background-Color nicht mehr aenderbar
+ * @C Layout der Startseite
+ *
  * Revision 1.21  2007/09/08 14:20:11  willuhn
  * @C Pflichtfelder nicht mehr via GUI deaktivierbar
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.8 $
- * $Date: 2006/12/28 15:35:52 $
+ * $Revision: 1.9 $
+ * $Date: 2007/12/18 17:50:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,8 +37,10 @@ public class Color {
 
   /**
    * Hintergrundfarbe der Views.
+   * Nicht mehr konfigurierbar, weil es eine Reihe
+   * von Widgets gibt, bei denen das ohnehin nicht funktioniert
    */
-  public final static Color BACKGROUND 	= new Color("color.background",		GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
+  public final static Color BACKGROUND 	= new Color(null,		              GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
 
   /**
    * Rahmenfarbe von Elementen (zB Tabellen).
@@ -87,8 +89,6 @@ public class Color {
    */
   private Color(String name,RGB defaultValue)
 	{
-		if (name == null)
-			throw new NullPointerException("name of color cannot be null");
 		this.name = name;
 		this.defaultValue = defaultValue;
 	}
@@ -101,7 +101,7 @@ public class Color {
 	{
 		if (value != null)
 			return new org.eclipse.swt.graphics.Color(GUI.getDisplay(),value);
-		value = settings.getRGB(name,defaultValue);
+		value = name != null ? settings.getRGB(name,defaultValue) : defaultValue;
 		return new org.eclipse.swt.graphics.Color(GUI.getDisplay(),value);
 	}
 	
@@ -114,7 +114,8 @@ public class Color {
 		if (newColor == null)
 			return;
 		value = newColor.getRGB();
-		settings.setAttribute(name,value);
+    if (name != null)
+      settings.setAttribute(name,value);
 	}
 
 	/**
@@ -123,13 +124,18 @@ public class Color {
   public final void reset()
 	{
 		value = defaultValue;
-		settings.setAttribute(name,value);
+    if (name != null)
+      settings.setAttribute(name,value);
 	}
 }
 
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.9  2007/12/18 17:50:12  willuhn
+ * @R Background-Color nicht mehr aenderbar
+ * @C Layout der Startseite
+ *
  * Revision 1.8  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.23 $
- * $Date: 2007/10/22 23:23:13 $
+ * $Revision: 1.24 $
+ * $Date: 2007/12/18 17:50:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,7 +67,6 @@ public class SettingsControl extends AbstractControl
   // Look & Feel
 	private Input colorWidgetBG;
 	private Input colorWidgetFG;
-	private Input colorBackground;
 	private Input colorComment;
 	private Input colorError;
 	private Input colorSuccess;
@@ -277,18 +276,6 @@ public class SettingsControl extends AbstractControl
 	 * Auswahlfeld.
    * @return Auswahl-Feld.
 	 */
-	public Input getColorBackground()
-	{
-		if (colorBackground != null)
-			return colorBackground;
-		colorBackground = new ColorInput(Color.BACKGROUND.getSWTColor(),false);
-		return colorBackground;
-	}
-
-	/**
-	 * Auswahlfeld.
-   * @return Auswahl-Feld.
-	 */
 	public Input getColorError()
 	{
 		if (colorError != null)
@@ -380,8 +367,6 @@ public class SettingsControl extends AbstractControl
       Application.getConfig().setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
     	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
 			Color.COMMENT.setSWTColor((org.eclipse.swt.graphics.Color)getColorComment().getValue());
-      restartNeeded |= getColorBackground().hasChanged();
-			Color.BACKGROUND.setSWTColor((org.eclipse.swt.graphics.Color)getColorBackground().getValue());
 			Color.WIDGET_FG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetFG().getValue());
 			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
 			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
@@ -525,6 +510,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.24  2007/12/18 17:50:12  willuhn
+ * @R Background-Color nicht mehr aenderbar
+ * @C Layout der Startseite
+ *
  * Revision 1.23  2007/10/22 23:23:13  willuhn
  * *** empty log message ***
  *

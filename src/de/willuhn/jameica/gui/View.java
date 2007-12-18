@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.39 $
- * $Date: 2007/04/26 17:33:25 $
+ * $Revision: 1.40 $
+ * $Date: 2007/12/18 17:50:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,7 +77,6 @@ public class View implements Part
 		sash.setLayout(SWTUtil.createGrid(1,true));
 		
 		view = new Composite(sash, SWT.BORDER);
-		view.setBackground(Color.BACKGROUND.getSWTColor());
 		view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -133,7 +132,6 @@ public class View implements Part
     layout2.horizontalSpacing = 0;
     layout2.verticalSpacing = 0;
     panelBg.setLayout(layout2);
-    panelBg.setBackground(Color.BACKGROUND.getSWTColor());
 
     panelBg.addListener(SWT.Paint,new Listener()
     {
@@ -151,8 +149,11 @@ public class View implements Part
 
 		messages = new CLabel(view,SWT.NONE);
 		messages.setFont(Font.H2.getSWTFont());
-		messages.setBackground(Color.BACKGROUND.getSWTColor());
+    messages.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 		messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+    Label sep3 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+    sep3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 	}
 	
@@ -169,11 +170,10 @@ public class View implements Part
 		// weil wir wollen, dass die gesamte View disposed und entfernt
 		// wird, bevor eine neue drauf kommt.
 		content = new Composite(view, SWT.NONE);
-		content.setBackground(Color.BACKGROUND.getSWTColor());
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout l = new GridLayout();
-		l.marginHeight = 6;
-		l.marginWidth = 6;
+		l.marginHeight = 0;
+		l.marginWidth = 0;
 		content.setLayout(l);
 		messages.setText("");
 		messages.layout();
@@ -343,6 +343,10 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.40  2007/12/18 17:50:12  willuhn
+ * @R Background-Color nicht mehr aenderbar
+ * @C Layout der Startseite
+ *
  * Revision 1.39  2007/04/26 17:33:25  willuhn
  * @C Logo-Text mit asyncExec setzen
  *
