@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.57 $
- $Date: 2007/10/28 23:23:21 $
+ $Revision: 1.58 $
+ $Date: 2007/12/18 11:30:02 $
  $Author: willuhn $
  
  All rights reserved
@@ -97,7 +97,7 @@
 	</target>
 
 
-	<target depends="compile" name="jar" description="generates the jar and zip file">
+	<target depends="compile" name="jar" description="generates the jar files">
 
 		<mkdir dir="${project.release}" />
 		<mkdir dir="${project.zipdir}" />
@@ -180,8 +180,21 @@
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
+  </target>
+  
+  <target depends="jar" name="signjar" description="signs the zip files">
+    <loadfile property="storepass" srcFile="${signjar.storepass}"/>
+    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename}"/>
+    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.linux}"/>
+    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.linux-amd64}"/>
+    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.macos}"/>
+    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.openbsd}"/>
+    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.win32}"/>
+  </target>
 
-		<mkdir dir="${project.zipdir}/lib" />
+  <target depends="jar" name="zip" description="generates the zip files">
+
+    <mkdir dir="${project.zipdir}/lib" />
 		<mkdir dir="${project.zipdir}/plugins" />
 
 		<copy todir="${project.zipdir}/lib">
@@ -431,11 +444,11 @@
 	</target>
 
 
-	<target depends="init,compile,cvstag,jar,javadoc,src,sign,clean" description="build an official release" name="all" />
+	<target depends="init,compile,cvstag,jar,signjar,zip,javadoc,src,sign,clean" description="build an official release" name="all" />
 
-	<target depends="init,compile,jar,src,clean" description="build inofficial release" name="fast" />
+	<target depends="init,compile,jar,zip,src,clean" description="build inofficial release" name="fast" />
 
-	<target depends="init,cvs,compile,jar,javadoc,src" description="build nightly build" name="nightly">
+	<target depends="init,cvs,compile,jar,zip,javadoc,src" description="build nightly build" name="nightly">
 		<mkdir dir="${project.nightly}" />
 
 		<copy file="${project.release}/${project.zipfilename}" 				      tofile="${project.nightly}/${define.projectname}-${appversion}-nightly.zip" />
