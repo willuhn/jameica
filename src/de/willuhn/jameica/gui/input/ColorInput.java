@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/07/17 14:34:23 $
+ * $Revision: 1.14 $
+ * $Date: 2007/12/18 23:24:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,6 +71,7 @@ public class ColorInput extends ButtonInput
     {
       label.setForeground(color);
       label.setBackground(de.willuhn.jameica.gui.util.Color.WIDGET_BG.getSWTColor());
+      parent.setBackground(de.willuhn.jameica.gui.util.Color.WIDGET_BG.getSWTColor());
     }
     else
     {
@@ -133,6 +134,9 @@ public class ColorInput extends ButtonInput
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
+ * Revision 1.14  2007/12/18 23:24:04  willuhn
+ * @B Hintergrund wurde nicht vollstaendig ausgemalt
+ *
  * Revision 1.13  2007/07/17 14:34:23  willuhn
  * @B Updates nichts bei Buttons und Checkboxen durchfuehren
  *
