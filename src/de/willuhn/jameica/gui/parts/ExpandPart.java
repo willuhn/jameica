@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/12/18 23:05:42 $
+ * $Revision: 1.4 $
+ * $Date: 2007/12/19 00:09:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -90,6 +90,9 @@ public class ExpandPart implements Part
     
     for (int i=0;i<this.titles.size();++i)
     {
+      final String title = (String) this.titles.get(i);
+      final Part child   = (Part) this.childs.get(i);
+
       final Composite composite = new Composite(bar, SWT.NONE);
       composite.setBackground(Color.BACKGROUND.getSWTColor());
       GridLayout layout = new GridLayout();
@@ -97,9 +100,8 @@ public class ExpandPart implements Part
       layout.verticalSpacing = 10;
       composite.setLayout(layout);
 
-      final String title = (String) this.titles.get(i);
-      final Part child   = (Part) this.childs.get(i);
       child.paint(composite);
+
       final ExpandItem item = new ExpandItem(bar, SWT.NONE);
       item.setText(title);
       item.setHeight(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
@@ -127,6 +129,9 @@ public class ExpandPart implements Part
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
+ * Revision 1.4  2007/12/19 00:09:29  willuhn
+ * @N Splashscreen nochmal ueberarbeitet
+ *
  * Revision 1.3  2007/12/18 23:05:42  willuhn
  * @C Farben wieder explizit vorgegeben. Unter Windows XP sieht es so oder so (ob Expand-Bar mit oder ohne XP-Lookp) haesslich aus
  *
