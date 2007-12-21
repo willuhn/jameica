@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.16 $
- * $Date: 2007/11/05 13:01:13 $
+ * $Revision: 1.17 $
+ * $Date: 2007/12/21 13:46:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,7 +35,9 @@ import de.willuhn.jameica.gui.dialogs.PasswordDialog;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.TextDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
+import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.logging.Logger;
@@ -261,10 +263,14 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
       protected void paint(Composite parent) throws Exception
       {
-        LabelGroup g = new LabelGroup(parent,"");
-        g.addText(text,true);
+        Container g = new LabelGroup(parent,"");
+        if (text.startsWith("<form>"))
+          g.addPart(new FormTextPart(text));
+        else
+          g.addText(text,true);
+        
         g.addCheckbox(check,Application.getI18n().tr("Diese Frage künftig nicht mehr anzeigen"));
-        ButtonArea buttons = new ButtonArea(parent,2);
+        ButtonArea buttons = g.createButtonArea(2);
         buttons.addButton("   " + i18n.tr("Ja") + "   ", new Action() {
           public void handleAction(Object context) throws ApplicationException
           {
@@ -407,6 +413,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.17  2007/12/21 13:46:27  willuhn
+ * @N H2-Migration scharf geschaltet
+ *
  * Revision 1.16  2007/11/05 13:01:13  willuhn
  * @C Compiler-Warnings
  *

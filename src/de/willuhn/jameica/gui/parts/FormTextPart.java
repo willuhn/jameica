@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.14 $
+ * $Date: 2007/12/21 13:46:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,11 +31,14 @@ import org.eclipse.ui.forms.widgets.FormText;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.internal.action.Program;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Freiformatierbarer Text.
@@ -199,21 +202,31 @@ public class FormTextPart implements Part {
           return;
         }
         String action = (String) ev.data;
-        if (action.indexOf(".") == -1)
-        {
-          Logger.info("given href \"" + action + "\" doesn't look like a java class, skipping");
-          return;
-        }
+        
+        // Wir versuchen die Action als Klasse zu laden. Wenn das fehlschlaegt,
+        // starten wir die Action einfach als Programm
+        Logger.info("executing action \"" + action);
         try
         {
           Logger.debug("trying to load class " + action);
           Class c = Application.getClassLoader().load(action);
           Action a = (Action) c.newInstance();
           a.handleAction(e);
+          return;
         }
         catch (Throwable t)
         {
-          Logger.error("error while executing action " + action,t);
+          // ignore
+        }
+        
+        // Fallback
+        try
+        {
+          new Program().handleAction(action);
+        }
+        catch (ApplicationException ae)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
         }
       }
     });
@@ -225,6 +238,9 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
+ * Revision 1.14  2007/12/21 13:46:27  willuhn
+ * @N H2-Migration scharf geschaltet
+ *
  * Revision 1.13  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
