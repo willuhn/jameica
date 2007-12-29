@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/AbstractBox.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/06/29 23:10:01 $
+ * $Revision: 1.2 $
+ * $Date: 2007/12/29 18:45:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,11 +85,25 @@ public abstract class AbstractBox implements Box
   {
     return true;
   }
+
+  /**
+   * Default-Implementierung mit Hoehe -1.
+   * @see de.willuhn.jameica.gui.boxes.Box#getHeight()
+   */
+  public int getHeight()
+  {
+    return -1;
+  }
+  
+  
 }
 
 
 /*********************************************************************
  * $Log: AbstractBox.java,v $
+ * Revision 1.2  2007/12/29 18:45:31  willuhn
+ * @N Hoehe von Boxen explizit konfigurierbar
+ *
  * Revision 1.1  2006/06/29 23:10:01  willuhn
  * @N Box-System aus Hibiscus in Jameica-Source verschoben
  *

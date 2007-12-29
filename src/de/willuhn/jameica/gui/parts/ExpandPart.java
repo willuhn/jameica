@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.4 $
- * $Date: 2007/12/19 00:09:29 $
+ * $Revision: 1.5 $
+ * $Date: 2007/12/29 18:45:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,8 +36,7 @@ import de.willuhn.logging.Logger;
  */
 public class ExpandPart implements Part
 {
-  private ArrayList titles = new ArrayList();
-  private ArrayList childs = new ArrayList();
+  private ArrayList items = new ArrayList();
   private Settings settings = new Settings(ExpandPart.class);
   
   /**
@@ -65,7 +64,7 @@ public class ExpandPart implements Part
   {
     if (!box.isEnabled() || !box.isActive())
       return;
-    add(box.getName(),box);
+    this.items.add(new Item(box.getName(),box,box.getHeight()));
   }
   
   /**
@@ -75,8 +74,7 @@ public class ExpandPart implements Part
    */
   public void add(String title, Part child)
   {
-    this.titles.add(title == null ? "" : title);
-    this.childs.add(child);
+    this.items.add(new Item(title,child));
   }
 
   /**
@@ -88,10 +86,9 @@ public class ExpandPart implements Part
     bar.setBackground(Color.BACKGROUND.getSWTColor());
     bar.setLayoutData(new GridData(GridData.FILL_BOTH));
     
-    for (int i=0;i<this.titles.size();++i)
+    for (int i=0;i<this.items.size();++i)
     {
-      final String title = (String) this.titles.get(i);
-      final Part child   = (Part) this.childs.get(i);
+      final Item ei = (Item) this.items.get(i);
 
       final Composite composite = new Composite(bar, SWT.NONE);
       composite.setBackground(Color.BACKGROUND.getSWTColor());
@@ -100,23 +97,23 @@ public class ExpandPart implements Part
       layout.verticalSpacing = 10;
       composite.setLayout(layout);
 
-      child.paint(composite);
+      ei.part.paint(composite);
 
       final ExpandItem item = new ExpandItem(bar, SWT.NONE);
-      item.setText(title);
-      item.setHeight(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+      item.setText(ei.title);
+      item.setHeight(ei.height > 0 ? ei.height : composite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
       item.setControl(composite);
-      item.setExpanded(settings.getBoolean(child.getClass().getName() + ".expanded",true));
+      item.setExpanded(settings.getBoolean(ei.part.getClass().getName() + ".expanded",true));
       item.addDisposeListener(new DisposeListener() {
         public void widgetDisposed(DisposeEvent e)
         {
           try
           {
-            settings.setAttribute(child.getClass().getName() + ".expanded",item.getExpanded());
+            settings.setAttribute(ei.part.getClass().getName() + ".expanded",item.getExpanded());
           }
           catch (Exception e2)
           {
-            Logger.error("unable to store expanded state for child " + child.getClass().getName(),e2);
+            Logger.error("unable to store expanded state for child " + ei.part.getClass().getName(),e2);
           }
         }
       
@@ -124,11 +121,46 @@ public class ExpandPart implements Part
     }
 
   }
+  
+  /**
+   * Hilfsklasse.
+   */
+  private class Item
+  {
+    private String title = null;
+    private Part part    = null;
+    private int height   = -1;
+    
+    /**
+     * @param title
+     * @param part
+     * @param height
+     */
+    private Item(String title, Part part)
+    {
+      this(title,part,-1);
+    }
+
+    /**
+     * @param title
+     * @param part
+     * @param height
+     */
+    private Item(String title, Part part, int height)
+    {
+      this.title  = title == null ? "" : title;
+      this.part   = part;
+      this.height = height;
+    }
+  }
 }
 
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
+ * Revision 1.5  2007/12/29 18:45:31  willuhn
+ * @N Hoehe von Boxen explizit konfigurierbar
+ *
  * Revision 1.4  2007/12/19 00:09:29  willuhn
  * @N Splashscreen nochmal ueberarbeitet
  *

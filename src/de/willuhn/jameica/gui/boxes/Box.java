@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/Box.java,v $
- * $Revision: 1.1 $
- * $Date: 2006/06/29 23:10:01 $
+ * $Revision: 1.2 $
+ * $Date: 2007/12/29 18:45:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,11 +72,20 @@ public interface Box extends Part, Comparable
    */
   public boolean isActive();
   
+  /**
+   * Liefert die Hoehe, die fuer die Box standardmaessig eingeplant werden soll.
+   * @return Hoehe der Box oder "-1", wenn keine Hoehe explizit angegeben werden soll.
+   */
+  public int getHeight();
+  
 }
 
 
 /*********************************************************************
  * $Log: Box.java,v $
+ * Revision 1.2  2007/12/29 18:45:31  willuhn
+ * @N Hoehe von Boxen explizit konfigurierbar
+ *
  * Revision 1.1  2006/06/29 23:10:01  willuhn
  * @N Box-System aus Hibiscus in Jameica-Source verschoben
  *
