@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/06/21 14:07:42 $
+ * $Revision: 1.13 $
+ * $Date: 2007/12/29 23:44:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -99,10 +99,12 @@ public class JameicaTrustManager implements X509TrustManager
       {
         Logger.debug("checking client certificate via system trustmanager");
         this.standardTrustManager.checkClientTrusted(chain,authType);
+        Logger.debug("certificate trusted");
       }
       catch (CertificateException c)
       {
-        Logger.info("client certificate not found in system trustmanager, trying jameica trustmanager");
+        Logger.warn("client certificate not found in system trustmanager, trying jameica trustmanager");
+        Logger.write(Level.DEBUG,"CertificateException for debugging",c);
         this.checkTrusted(chain,authType);
       }
     }
@@ -137,11 +139,14 @@ public class JameicaTrustManager implements X509TrustManager
     {
       try
       {
+        Logger.debug("checking server certificate via system trustmanager");
         this.standardTrustManager.checkServerTrusted(certificates,authType);
+        Logger.debug("certificate trusted");
       }
       catch (CertificateException c)
       {
         Logger.warn("server certificate not found in system trustmanager, trying jameica trustmanager");
+        Logger.write(Level.DEBUG,"CertificateException for debugging",c);
         this.checkTrusted(certificates,authType);
       }
     }
@@ -198,6 +203,8 @@ public class JameicaTrustManager implements X509TrustManager
    */
   public X509Certificate[] getAcceptedIssuers()
   {
+    if (this.standardTrustManager == null)
+      return new X509Certificate[0];
     X509Certificate[] list = this.standardTrustManager.getAcceptedIssuers();
     Logger.debug("checking accecpted issuers. list size: " + (list == null ? "0" : Integer.toString(list.length)));
     return list;
@@ -226,6 +233,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.13  2007/12/29 23:44:38  willuhn
+ * @N Debug-Ausgaben, um diesem Problem hier auf die Spur zu kommen: http://www.onlinebanking-forum.de/phpBB2/viewtopic.php?p=44034#44034
+ *
  * Revision 1.12  2007/06/21 14:07:42  willuhn
  * @N Anzeige der Anzahl der vertrauenswuerdigen Zertifikate im Debug-Mode
  *
