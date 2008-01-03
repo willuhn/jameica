@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/12/29 23:44:38 $
+ * $Revision: 1.14 $
+ * $Date: 2008/01/03 13:10:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -146,7 +146,31 @@ public class JameicaTrustManager implements X509TrustManager
       catch (CertificateException c)
       {
         Logger.warn("server certificate not found in system trustmanager, trying jameica trustmanager");
+        
+        ////////////////////////////////////////////////////////////////////////
         Logger.write(Level.DEBUG,"CertificateException for debugging",c);
+        
+        
+        Logger.debug("+++++++ server certificates:");
+        for (int i=0;i<certificates.length;++i)
+        {
+          Logger.debug(certificates[i].toString());
+        }
+
+        X509Certificate[] trusted = getAcceptedIssuers();
+        if (trusted != null)
+        {
+          Logger.debug("+++++++ keystore contains the following certificates:");
+          for (int i=0;i<trusted.length;++i)
+          {
+            Logger.debug(trusted[i].toString());
+          }
+        }
+        else
+        {
+          Logger.warn("keystore contains no certificates");
+        }
+        ////////////////////////////////////////////////////////////////////////
         this.checkTrusted(certificates,authType);
       }
     }
@@ -233,6 +257,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.14  2008/01/03 13:10:36  willuhn
+ * @N mehr Debug-Ausgaben
+ *
  * Revision 1.13  2007/12/29 23:44:38  willuhn
  * @N Debug-Ausgaben, um diesem Problem hier auf die Spur zu kommen: http://www.onlinebanking-forum.de/phpBB2/viewtopic.php?p=44034#44034
  *
