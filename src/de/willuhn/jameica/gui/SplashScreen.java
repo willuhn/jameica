@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.24 $
- * $Date: 2007/12/18 17:10:14 $
+ * $Revision: 1.25 $
+ * $Date: 2008/01/05 00:25:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -213,7 +213,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
       public void run()
       {
         String s = " " + text + " ...";
-        Logger.info(s);
+        Logger.debug(s);
         textLabel.setText(s);
         textLabel.redraw();
 				display.readAndDispatch();
@@ -251,6 +251,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.25  2008/01/05 00:25:56  willuhn
+ * @C changed loglevel
+ *
  * Revision 1.24  2007/12/18 17:10:14  willuhn
  * @N Neues ExpandPart
  * @N Boxen auf der Startseite koennen jetzt zusammengeklappt werden
