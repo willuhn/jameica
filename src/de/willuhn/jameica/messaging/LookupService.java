@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/LookupService.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/12/14 13:52:54 $
+ * $Revision: 1.4 $
+ * $Date: 2008/01/05 00:29:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -99,9 +99,11 @@ public class LookupService implements MessageConsumer
     }
     if (msg.getStatusCode() == SystemMessage.SYSTEM_SHUTDOWN)
     {
-      Logger.info("stop multicast lookup client");
       if (client != null)
+      {
+        Logger.info("stop multicast lookup client");
         client.stop();
+      }
     }
   }
 
@@ -262,6 +264,9 @@ public class LookupService implements MessageConsumer
 
 /*********************************************************************
  * $Log: LookupService.java,v $
+ * Revision 1.4  2008/01/05 00:29:48  willuhn
+ * @C changed logging
+ *
  * Revision 1.3  2007/12/14 13:52:54  willuhn
  * @N Lookup-Client
  *
