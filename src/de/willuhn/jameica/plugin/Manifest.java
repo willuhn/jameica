@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.15 $
- * $Date: 2007/11/21 11:34:41 $
+ * $Revision: 1.16 $
+ * $Date: 2008/01/06 21:51:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -286,7 +286,7 @@ public class Manifest implements Comparable
 	{
 		IXMLElement services = root.getFirstChildNamed("services");
 		if (services == null || !services.hasChildren())
-			return null;
+			return new ServiceDescriptor[0]; // BUGZILLA 531
 
 		Vector v = services.getChildrenNamed("service");
 		ServiceDescriptor[] s = new ServiceDescriptor[v.size()];
@@ -484,6 +484,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.16  2008/01/06 21:51:58  willuhn
+ * @B bug 531
+ *
  * Revision 1.15  2007/11/21 11:34:41  willuhn
  * @B "Boolean.parseBoolean" gibt es erst in Java 1.5
  *
