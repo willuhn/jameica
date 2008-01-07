@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/SystemMessages.java,v $
- * $Revision: 1.5 $
- * $Date: 2007/12/18 17:10:14 $
+ * $Revision: 1.6 $
+ * $Date: 2008/01/07 23:31:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -100,7 +100,7 @@ public class SystemMessages extends AbstractBox
         sb.append(messages[i]);
       sb.append("</li>");
     }
-    sb.append("<br/><br/><p>Klicken Sie ggf. unten rechts auf die Jameica-Statusleiste, um die letzten Meldungen des System-Logs anzuzeigen.</p>");
+    sb.append("<br/><br/><p>Klicken Sie ggf. auf das Pfeil-Symbol in der Jameica-Statusleiste, um die letzten Meldungen des System-Logs anzuzeigen.</p>");
     sb.append("</form>");
     FormTextPart part = new FormTextPart(sb.toString());
     part.paint(parent);
@@ -111,6 +111,9 @@ public class SystemMessages extends AbstractBox
 
 /*********************************************************************
  * $Log: SystemMessages.java,v $
+ * Revision 1.6  2008/01/07 23:31:44  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2007/12/18 17:10:14  willuhn
  * @N Neues ExpandPart
  * @N Boxen auf der Startseite koennen jetzt zusammengeklappt werden
