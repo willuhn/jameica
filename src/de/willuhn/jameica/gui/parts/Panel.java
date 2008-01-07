@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/11/02 01:19:38 $
+ * $Revision: 1.12 $
+ * $Date: 2008/01/07 22:19:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,12 +17,6 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -58,7 +52,6 @@ public class Panel implements Part
   
   private Vector minimizeListeners = new Vector();
   private int offset = 20;
-  private boolean highlight = false;
   
   private Canvas title;
 
@@ -115,7 +108,7 @@ public class Panel implements Part
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void paint(final Composite parent) throws RemoteException
+  public void paint(Composite parent) throws RemoteException
   {
 
     ///////////////////////////////
@@ -189,7 +182,6 @@ public class Panel implements Part
         {
           GC gc = event.gc;
           gc.setFont(Font.H2.getSWTFont());
-          gc.setForeground(highlight ? de.willuhn.jameica.gui.util.Color.COMMENT.getSWTColor() : de.willuhn.jameica.gui.util.Color.WIDGET_FG.getSWTColor());
           gc.drawText(titleText == null ? "" : titleText,8,1,true);
           if (mExists)
           {
@@ -209,38 +201,14 @@ public class Panel implements Part
       ///////////////////////////////
 
       child.paint(myParent);
-      
-      // TODO: Hier weiter machen mit Drag&Drop fuer Panels
-      int operations = DND.DROP_MOVE | DND.DROP_DEFAULT;
-      DragSource dragSource = new DragSource(title, operations);
-
-      Transfer[] transferTypes = new Transfer[] {TextTransfer.getInstance()};
-      dragSource.setTransfer(transferTypes);
-
-      dragSource.addDragListener(new DragSourceListener()
-      {
-        public void dragStart(DragSourceEvent dsEvent) {
-          highlight = true;
-          title.redraw();
-        }
-        public void dragSetData(DragSourceEvent dsEvent)
-        {
-        }
-        public void dragFinished(DragSourceEvent dsEvent) {
-          highlight = false;
-          title.redraw();
-        }
-      });    
-
   }
 }
 
 
 /*********************************************************************
  * $Log: Panel.java,v $
- * Revision 1.11  2007/11/02 01:19:38  willuhn
- * @N Vorbereitungen fuer Drag&Drop von Panels
- * @N besserer Klick-Indikator in Statusleiste fuer Oeffnen des Logs
+ * Revision 1.12  2008/01/07 22:19:55  willuhn
+ * @R DnD-Code wieder entfernt
  *
  * Revision 1.10  2006/12/28 15:35:52  willuhn
  * @N Farbige Pflichtfelder
