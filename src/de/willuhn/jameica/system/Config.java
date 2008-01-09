@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.33 $
- * $Date: 2007/12/14 13:29:05 $
+ * $Revision: 1.34 $
+ * $Date: 2008/01/09 22:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -268,7 +268,7 @@ public final class Config
       // Wir testen die Existenz der Bundles
       l = new Locale(lang,country);
       Logger.info("checking resource bundle for language");
-      ResourceBundle.getBundle("lang/messages",l);
+      ResourceBundle.getBundle("lang/system_messages",l);
       this.locale = l;
       Logger.info("active language: " + this.locale.getDisplayName());
       Locale.setDefault(this.locale);
@@ -544,6 +544,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.34  2008/01/09 22:25:06  willuhn
+ * @C Namensueberschneidung bei den Locales
+ *
  * Revision 1.33  2007/12/14 13:29:05  willuhn
  * @N Multicast Lookup-Service
  *

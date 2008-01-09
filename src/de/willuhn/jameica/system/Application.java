@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.72 $
- * $Date: 2007/12/11 15:20:36 $
+ * $Revision: 1.73 $
+ * $Date: 2008/01/09 22:25:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -489,7 +489,7 @@ public final class Application {
 	{
 		if (app.i18n != null)
 			return app.i18n;
-		app.i18n = new I18N("lang/messages",getConfig().getLocale(),getClassLoader());
+		app.i18n = new I18N("lang/system_messages",getConfig().getLocale(),getClassLoader());
 		return app.i18n;
 	}
 
@@ -821,6 +821,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.73  2008/01/09 22:25:06  willuhn
+ * @C Namensueberschneidung bei den Locales
+ *
  * Revision 1.72  2007/12/11 15:20:36  willuhn
  * @C .class-Files nur dann in Classfinder uebernehmen, wenn sie sich im "bin"-Verzeichnis befinden
  *
