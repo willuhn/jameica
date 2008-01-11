@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.16 $
- * $Date: 2008/01/06 21:51:58 $
+ * $Revision: 1.17 $
+ * $Date: 2008/01/11 10:22:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,8 +77,8 @@ public class Manifest implements Comparable
 
       this.buildnumber = mf.getMainAttributes().getValue("Implementation-Buildnumber");
       this.builtdate   = mf.getMainAttributes().getValue("Built-Date");
-      Logger.info("Buildnumber: " + buildnumber);
-      Logger.info("Built-Date : " + builtdate);
+      Logger.info(getName() + " - Buildnumber: " + buildnumber);
+      Logger.info(getName() + " - Built-Date : " + builtdate);
     }
     catch (Exception e)
     {
@@ -484,6 +484,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.17  2008/01/11 10:22:19  willuhn
+ * @N Name des Plugins vor Buildnummer und Builddate ausgeben
+ *
  * Revision 1.16  2008/01/06 21:51:58  willuhn
  * @B bug 531
  *
