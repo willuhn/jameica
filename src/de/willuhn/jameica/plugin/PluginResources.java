@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/10/25 23:18:04 $
+ * $Revision: 1.14 $
+ * $Date: 2008/01/14 23:31:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,7 +58,15 @@ public final class PluginResources {
     Locale locale = Application.getConfig().getLocale();
     try
     {
-      this.i18n = new I18N("lang/messages",locale,this.getClassLoader());
+      try
+      {
+        this.i18n = new I18N("lang/" + this.plugin.getManifest().getName() + "_messages",locale,this.getClassLoader());
+      }
+      catch (Exception e)
+      {
+        // Fallback
+        this.i18n = new I18N("lang/messages",locale,this.getClassLoader());
+      }
     }
     catch (Exception e)
     {
@@ -141,6 +149,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.14  2008/01/14 23:31:10  willuhn
+ * @C Resource-Bundles erst in lang/${pluginName}_messages.properties suchen. Wenn sie dort nicht gefunden werden, dann Fallback zu lang/messages.properties
+ *
  * Revision 1.13  2007/10/25 23:18:04  willuhn
  * @B Fix in i18n Initialisierung (verursachte Warnung "Plugin ... unterstuetzt Locale ... nicht")
  * @C i18n erst bei Bedarf initialisieren
