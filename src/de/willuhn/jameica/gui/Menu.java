@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.37 $
- * $Date: 2007/03/12 16:19:09 $
+ * $Revision: 1.38 $
+ * $Date: 2008/01/14 23:26:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
+import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -85,6 +86,10 @@ public class Menu
   {
     if (element == null)
       return;
+
+    // Bevor wir die Kinder laden, geben wir das Element noch der
+    // ExtensionRegistry fuer eventuell weitere Erweiterungen
+    ExtensionRegistry.extend(element);
 
 		String name = element.getName();
 
@@ -235,6 +240,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.38  2008/01/14 23:26:36  willuhn
+ * @B Vergessen, die Menu-Elemente der ExtensionRegistry bekannt zu machen
+ *
  * Revision 1.37  2007/03/12 16:19:09  willuhn
  * @C disabled warnings if menu/navigation is empty
  *
