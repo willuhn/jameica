@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.14 $
- * $Date: 2008/01/14 23:31:10 $
+ * $Revision: 1.15 $
+ * $Date: 2008/01/15 09:25:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,7 +60,7 @@ public final class PluginResources {
     {
       try
       {
-        this.i18n = new I18N("lang/" + this.plugin.getManifest().getName() + "_messages",locale,this.getClassLoader());
+        this.i18n = new I18N("lang/" + this.plugin.getManifest().getName().replaceAll("\\.","_") + "_messages",locale,this.getClassLoader());
       }
       catch (Exception e)
       {
@@ -149,6 +149,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.15  2008/01/15 09:25:46  willuhn
+ * @C Punkte gegen Unterstriche ersetzen
+ *
  * Revision 1.14  2008/01/14 23:31:10  willuhn
  * @C Resource-Bundles erst in lang/${pluginName}_messages.properties suchen. Wenn sie dort nicht gefunden werden, dann Fallback zu lang/messages.properties
  *
