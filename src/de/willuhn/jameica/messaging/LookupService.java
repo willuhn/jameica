@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/LookupService.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/01/05 00:29:48 $
+ * $Revision: 1.5 $
+ * $Date: 2008/01/16 22:08:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,7 @@ public class LookupService implements MessageConsumer
    */
   public static void register(String name, String url)
   {
-    if (Application.getConfig().getMulticastLookup())
+    if (enabled())
     {
       Logger.info("register multicast lookup. name: " + name + ", url: " + url);
       lookup.put(name,url);
@@ -52,11 +52,20 @@ public class LookupService implements MessageConsumer
    */
   public static void unRegister(String name)
   {
-    if (Application.getConfig().getMulticastLookup())
+    if (enabled())
     {
       Logger.info("un-register lookup name: " + name);
       lookup.remove(name);
     }
+  }
+  
+  /**
+   * Prueft, ob der Service genutzt werden soll.
+   * @return true, wenn er genutzt wird.
+   */
+  private static boolean enabled()
+  {
+    return Application.inServerMode() && Application.getConfig().getMulticastLookup();
   }
 
   /**
@@ -64,7 +73,7 @@ public class LookupService implements MessageConsumer
    */
   public boolean autoRegister()
   {
-    return Application.getConfig().getMulticastLookup();
+    return enabled();
   }
 
   /**
@@ -80,7 +89,7 @@ public class LookupService implements MessageConsumer
    */
   public void handleMessage(Message message) throws Exception
   {
-    if (!Application.getConfig().getMulticastLookup())
+    if (!enabled())
       return;
 
     if (message == null || !(message instanceof SystemMessage))
@@ -264,6 +273,9 @@ public class LookupService implements MessageConsumer
 
 /*********************************************************************
  * $Log: LookupService.java,v $
+ * Revision 1.5  2008/01/16 22:08:26  willuhn
+ * @C Multicast-Lookupservice nur im Server-Mode aktivieren
+ *
  * Revision 1.4  2008/01/05 00:29:48  willuhn
  * @C changed logging
  *
