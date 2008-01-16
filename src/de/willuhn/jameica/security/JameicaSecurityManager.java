@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.4 $
- * $Date: 2007/12/05 13:35:30 $
+ * $Revision: 1.5 $
+ * $Date: 2008/01/16 10:55:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ package de.willuhn.jameica.security;
 import java.io.File;
 import java.io.IOException;
 import java.security.Permission;
-import java.security.PrivilegedAction;
 
 import de.willuhn.logging.Logger;
 
@@ -28,8 +27,7 @@ import de.willuhn.logging.Logger;
  */
 public class JameicaSecurityManager extends SecurityManager
 {
-  private boolean priv = false;
-  private String jameicaPath = null;
+  private String jameicaPath       = null;
 
   /**
    * ct.
@@ -95,6 +93,7 @@ public class JameicaSecurityManager extends SecurityManager
    */
   public void checkPermission(Permission perm)
   {
+    checkPermission(perm,getSecurityContext());
   }
 
 
@@ -103,34 +102,24 @@ public class JameicaSecurityManager extends SecurityManager
    */
   public void checkPermission(Permission perm, Object context)
   {
-    if (!priv)
-      super.checkPermission(perm, context);
-  }
-
-  /**
-   * Fuehrt eine privilegierte Aktion aus.
-   * @param action die auszufuehrende Aktion.
-   * @return der Ruckgabe-Wert der Funktion.
-   */
-  public Object doPrivileged(PrivilegedAction action)
-  {
-    try
-    {
-      Logger.info("performing privileged action " + action);
-      priv = true;
-      return action.run();
-    }
-    finally
-    {
-      priv = false;
-    }
+    // TODO: Das koennte man noch erweiterbar machen.
+    // Zur Zeit laesst der Security-Manager alles bis auf Schreib-Zugriff
+    // im Jameica-Programmverzeichnis zu. Also identisch mit dem
+    // Default-Security-Manager fuer lokalen Code - nur halt mit der genannten
+    // Schreibbeschraenkung.
     
+    // Heisst: Man koennte hier noch prima Berechtigungspruefungen
+    // fuer Plugins durchfuehren. Allerdings sollten die auch Sinn
+    // ergeben und das System nicht ausbremsen.
   }
 }
 
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.5  2008/01/16 10:55:06  willuhn
+ * @C SecurityManager zwecks MBean-Registrierung angepasst
+ *
  * Revision 1.4  2007/12/05 13:35:30  willuhn
  * @N Unterstuetzung fuer JMX
  *
