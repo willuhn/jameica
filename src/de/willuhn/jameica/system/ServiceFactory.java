@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.49 $
- * $Date: 2007/12/14 13:29:05 $
+ * $Revision: 1.50 $
+ * $Date: 2008/01/16 23:48:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -70,7 +70,7 @@ public final class ServiceFactory
       if (!sslStarted && Application.getConfig().getRmiSSL())
       {
         Logger.info("rmi over ssl enabled");
-        // TODO Doku zum Thema http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html
+        // Doku zum Thema http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html
         RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
         sslStarted = true;
       }
@@ -473,6 +473,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.50  2008/01/16 23:48:17  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.49  2007/12/14 13:29:05  willuhn
  * @N Multicast Lookup-Service
  *
