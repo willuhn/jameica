@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.20 $
- * $Date: 2007/04/26 14:38:11 $
+ * $Revision: 1.21 $
+ * $Date: 2008/01/17 23:46:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -111,6 +111,7 @@ public class DialogInput extends ButtonInput
 	{
 		if (text == null)
 			return;
+    this.value = text; // BUGZILLA 541
 		if (this.text != null && !this.text.isDisposed())
 			this.text.setText(text);
 	}
@@ -196,6 +197,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.21  2008/01/17 23:46:05  willuhn
+ * @B Bug 541
+ *
  * Revision 1.20  2007/04/26 14:38:11  willuhn
  * @B Manuell eingegebenes Datum bei anschliessendem Oeffnen des Kalender-Dialogs uebernehmen
  * @N hasChanged in DialogInput ueberschrieben
