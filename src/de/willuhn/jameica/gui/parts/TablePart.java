@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.76 $
- * $Date: 2007/11/01 21:07:35 $
+ * $Revision: 1.77 $
+ * $Date: 2008/01/21 10:14:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1087,7 +1087,7 @@ public class TablePart extends AbstractTablePart
    * Gibt an, nach welcher Spalte sortiert werden soll.
    * @param colName Name der Spalte
    */
-  private void orderBy(String colName)
+  protected void orderBy(String colName)
   {
     this.direction = !colName.startsWith("!");
     if (!this.direction) colName = colName.substring(1);
@@ -1138,7 +1138,7 @@ public class TablePart extends AbstractTablePart
 	 * Sortiert die Tabelle nach der angegebenen Spaltennummer.
    * @param index Spaltennummer.
    */
-  private void orderBy(int index)
+  protected void orderBy(int index)
 	{
 
 		List l = (List) sortTable.get(new Integer(index));
@@ -1312,6 +1312,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.77  2008/01/21 10:14:18  willuhn
+ * @C orderBy von private in protected geaendert (auf Wunsch von Markus)
+ *
  * Revision 1.76  2007/11/01 21:07:35  willuhn
  * @N Spalten von Tabellen und mehrspaltigen Trees koennen mit mit Drag&Drop umsortiert werden. Die Sortier-Reihenfolge wird automatisch gespeichert und wiederhergestellt
  *
