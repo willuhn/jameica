@@ -98,7 +98,7 @@ software only, so we use the Lesser General Public License.
 programs enables a greater number of people to use a large body of
 free software.  For example, permission to use the GNU C Library in
 non-free programs enables many more people to use the whole GNU
-operating system, as well as its variant, the GNU/Linux operating
+operating system, as well as its variant, the GNU/OpenBSD operating
 system.
 
   Although the Lesser General Public License is Less protective of the
