@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.34 $
- * $Date: 2007/04/10 23:42:56 $
+ * $Revision: 1.35 $
+ * $Date: 2008/02/04 14:06:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,6 +45,7 @@ public class SelectInput extends AbstractInput
   // SWT-Daten
   private CCombo combo        = null;
   private boolean enabled     = true;
+  private boolean editable    = false;
   private String pleaseChoose = null;
 
 
@@ -235,6 +236,9 @@ public class SelectInput extends AbstractInput
   {
     if (this.combo == null || this.combo.isDisposed())
       return this.preselected;
+
+    if (this.editable)
+      return this.combo.getText();
     
     int selected = this.combo.getSelectionIndex();
     return this.combo.getData(Integer.toString(selected));
@@ -294,6 +298,25 @@ public class SelectInput extends AbstractInput
         combo.setForeground(Color.COMMENT.getSWTColor());
     }
   }
+  
+  /**
+   * Markiert die Combo-Box als editierbar. Wenn diese
+   * Option aktiviert ist, wird jedoch in <code>getValue()</code>
+   * generell der angezeigte Text zurueckgeliefert statt des
+   * Fachobjektes. Hintergrund: Normalerweise wird die Combo-Box
+   * ja mit einer Liste von Fachobjekten/Beans gefuellt.
+   * Abhaengig von der Auswahl wird dann das zugehoerige
+   * dahinterstehende Objekt zurueckgeliefert. Bei Freitext-Eingabe
+   * existiert jedoch kein solches. Daher wird in diesem Fall
+   * der eingebene Text zurueckgeliefert.
+   * @param editable
+   */
+  public void setEditable(boolean editable)
+  {
+    this.editable = editable;
+    if (this.combo != null && !this.combo.isDisposed())
+      combo.setEditable(this.editable);
+  }
 
   /**
    * Die Funktion macht nichts.
@@ -322,6 +345,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.35  2008/02/04 14:06:44  willuhn
+ * @N SelectInput#setEditable
+ *
  * Revision 1.34  2007/04/10 23:42:56  willuhn
  * @N TablePart Redesign (removed dependencies from GenericIterator/GenericObject)
  *
