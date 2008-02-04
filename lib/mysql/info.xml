@@ -1,0 +1,6 @@
+<info>
+  <name>mysql</name>
+  <description>MySQL JDBC-Driver</description>
+  <url>http://dev.mysql.com/downloads/connector/j/</url>
+  <license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
+</info>
