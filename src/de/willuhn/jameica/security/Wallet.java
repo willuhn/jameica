@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/10/22 22:58:24 $
+ * $Revision: 1.14 $
+ * $Date: 2008/02/05 19:14:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,12 +34,20 @@ import de.willuhn.logging.Logger;
 
 /**
  * Liefert eine Art Brieftasche, ueber die andere Klassen Daten
- * verschluesseln und entschluesseln koennen.
+ * verschluesselt abspeichern koennen.
+ * 
+ * HINWEIS: Das Wallet verwendet zum Verschluesseln den asymmetrischen
+ * RSA-Algorithmus. Es ist aufgrund des Rechenaufwandes also nicht fuer
+ * groessere Daten (Dateien, Streams, etc.) geeignet sondern typischerweise
+ * fuer Passwoerter.
+ * 
  * Will zum Beispiel ein Plugin irgendwelche Passwort-Informationen
  * sicher speichern, dann kann es mittels folgenden Codes ein
- * Wallet anfordern:
+ * Wallet erzeugen:
  * <code>
- *   Wallet wallet = Application.getSSLFactory().getWallet(Java-Klasse des Plugins);
+ *   // erzeugt eine neue Wallet-Datei in ~/.jameica/cfg mit dem
+ *   // Dateinamen "beliebige.Klasse.wallet2"
+ *   Wallet wallet = new Wallet(beliebige.Klasse.class);
  *   // Speichern des Passwortes "geheim" unter dem Alias "passwort".
  *   wallet.set("passwort","geheim");
  *   // Auslesen des Passwortes "geheim".
@@ -322,6 +330,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.14  2008/02/05 19:14:06  willuhn
+ * @B BUGZILLA 546
+ *
  * Revision 1.13  2007/10/22 22:58:24  willuhn
  * @R Altes Wallet-Format (aus Jameica 1.2) entfernt
  *
