@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/BackgroundTask.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/01/18 18:40:21 $
- * $Author: web0 $
+ * $Revision: 1.6 $
+ * $Date: 2008/02/05 22:48:23 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -18,7 +18,7 @@ import de.willuhn.util.ProgressMonitor;
 /**
  * Klassen, die dieses Interface implementieren, koennen in
  * Jameica als Hintergrund-Task in einem separaten Thread ausgefuehrt werden.
- * Sie werden ueber die Funktion <code>Application.start(BackgroundTask)</code> gestartet. 
+ * Sie werden ueber die Funktion <code>Application.getController().start(BackgroundTask)</code> gestartet. 
  */
 public interface BackgroundTask
 {
@@ -47,6 +47,9 @@ public interface BackgroundTask
 
 /**********************************************************************
  * $Log: BackgroundTask.java,v $
+ * Revision 1.6  2008/02/05 22:48:23  willuhn
+ * @B BUGZILLA 547
+ *
  * Revision 1.5  2006/01/18 18:40:21  web0
  * @N Redesign des Background-Task-Handlings
  *
