@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.25 $
- * $Date: 2008/01/05 00:25:56 $
+ * $Revision: 1.26 $
+ * $Date: 2008/02/06 12:13:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -126,7 +126,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
     bar.setMaximum(100);
 
     // Vorder- und Hintergrund des Balkens
-    bar.setBackground(new Color(display,0,0,0));
+    bar.setBackground(new Color(display,255,255,255));
     GridData barGd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
     barGd.verticalIndent = 0;
     bar.setLayoutData(barGd);
@@ -251,6 +251,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.26  2008/02/06 12:13:46  willuhn
+ * @C Weisse Hintergrundfarbe fuer Fortschrittsbalken - sieht unter Windows besser aus
+ *
  * Revision 1.25  2008/01/05 00:25:56  willuhn
  * @C changed loglevel
  *
