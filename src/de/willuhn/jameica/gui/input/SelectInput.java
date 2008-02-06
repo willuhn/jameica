@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.35 $
- * $Date: 2008/02/04 14:06:44 $
+ * $Revision: 1.36 $
+ * $Date: 2008/02/06 11:02:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -155,6 +155,7 @@ public class SelectInput extends AbstractInput
   {
 
     this.combo = GUI.getStyleFactory().createCombo(getParent());
+    this.combo.setEditable(this.editable); // BUGZILLA 549
 
     int selected             = -1;
     boolean havePleaseChoose = false;
@@ -345,6 +346,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.36  2008/02/06 11:02:04  willuhn
+ * @B Bug 549
+ *
  * Revision 1.35  2008/02/04 14:06:44  willuhn
  * @N SelectInput#setEditable
  *
