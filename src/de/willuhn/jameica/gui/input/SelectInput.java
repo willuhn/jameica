@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.36 $
- * $Date: 2008/02/06 11:02:04 $
+ * $Revision: 1.37 $
+ * $Date: 2008/02/07 09:57:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -156,7 +156,7 @@ public class SelectInput extends AbstractInput
 
     this.combo = GUI.getStyleFactory().createCombo(getParent());
     this.combo.setEditable(this.editable); // BUGZILLA 549
-
+    
     int selected             = -1;
     boolean havePleaseChoose = false;
     boolean haveAttribute    = this.attribute != null && this.attribute.length() > 0;
@@ -224,6 +224,10 @@ public class SelectInput extends AbstractInput
     this.combo.setEnabled(enabled);
    	if (!enabled)
      this.combo.setForeground(Color.COMMENT.getSWTColor());
+
+    // BUGZILLA 550
+    if (this.editable && this.preselected != null && !this.list.contains(this.preselected) && (this.preselected instanceof String))
+      this.combo.setText((String)this.preselected);
 
     return this.combo;
   }
@@ -346,6 +350,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.37  2008/02/07 09:57:31  willuhn
+ * @N Bug 550
+ *
  * Revision 1.36  2008/02/06 11:02:04  willuhn
  * @B Bug 549
  *
