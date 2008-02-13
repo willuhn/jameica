@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/Attic/VelocityLoader.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/05/23 23:23:37 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/VelocityService.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2008/02/13 01:04:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.util;
+package de.willuhn.jameica.services;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,24 +21,37 @@ import java.util.ArrayList;
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.RuntimeServices;
+import org.apache.velocity.runtime.log.LogSystem;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 
+import de.willuhn.boot.BootLoader;
+import de.willuhn.boot.Bootable;
+import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
 /**
  * Resource-Loader von Velocity.
  */
-public class VelocityLoader extends ResourceLoader
+public class VelocityService extends ResourceLoader implements Bootable
 {
 
   private static ArrayList templateDirs = new ArrayList();
   
   /**
-   * Initialisiert den Velocity-Loader.
+   * @see de.willuhn.boot.Bootable#depends()
    */
-  public final static void init()
+  public Class[] depends()
+  {
+    return null;
+  }
+
+  /**
+   * @see de.willuhn.boot.Bootable#init(de.willuhn.boot.BootLoader, de.willuhn.boot.Bootable)
+   */
+  public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
     try
     {
@@ -46,7 +59,7 @@ public class VelocityLoader extends ResourceLoader
       Application.getCallback().getStartupMonitor().setStatusText("init velocity template engine");
       Velocity.setProperty(Velocity.RESOURCE_LOADER,"jameica");
       Velocity.setProperty("jameica.resource.loader.description","Jameica Velocity Loader");
-      Velocity.setProperty("jameica.resource.loader.class",VelocityLoader.class.getName());
+      Velocity.setProperty("jameica.resource.loader.class",VelocityService.class.getName());
 
       Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new VelocityLogger());
 
@@ -62,18 +75,17 @@ public class VelocityLoader extends ResourceLoader
   }
 
   /**
-   * ct.
+   * @see de.willuhn.boot.Bootable#shutdown()
    */
-  public VelocityLoader()
+  public void shutdown()
   {
-    super();
   }
-  
+
   /**
    * Fuegt dem Lookup-Path einen weiteren Pfad hinzu.
    * @param dir hinzufuegender Pfad.
    */
-  public static void addTemplateDir(File dir)
+  public void addTemplateDir(File dir)
   {
     if (dir == null)
     {
@@ -139,12 +151,54 @@ public class VelocityLoader extends ResourceLoader
     // Laufzeit eh nicht aendern.
 		return 0;
   }
+  
+  /**
+   * Implementieren wir, um die Log-Ausgaben von Velocity zu uns umzuleiten.
+   */
+  static class VelocityLogger implements LogSystem
+  {
 
+    /**
+     * @see org.apache.velocity.runtime.log.LogSystem#init(org.apache.velocity.runtime.RuntimeServices)
+     */
+    public void init(RuntimeServices arg0) throws Exception
+    {
+    }
+
+    /**
+     * @see org.apache.velocity.runtime.log.LogSystem#logVelocityMessage(int, java.lang.String)
+     */
+    public void logVelocityMessage(int arg0, String arg1)
+    {
+      switch (arg0)
+      {
+        case LogSystem.INFO_ID:
+          Logger.debug(arg1);
+          break;
+        case LogSystem.WARN_ID:
+          Logger.warn(arg1);
+          break;
+        case LogSystem.ERROR_ID:
+          Logger.error(arg1);
+          break;
+        case LogSystem.DEBUG_ID:
+          Logger.debug(arg1);
+          break;
+        default:
+          Logger.debug(arg1);
+      }
+    }
+
+  }
 }
 
 
 /**********************************************************************
- * $Log: VelocityLoader.java,v $
+ * $Log: VelocityService.java,v $
+ * Revision 1.1  2008/02/13 01:04:34  willuhn
+ * @N Jameica auf neuen Bootloader umgestellt
+ * @C Markus' Aenderungen RMI-Registrierung uebernommen
+ *
  * Revision 1.3  2006/05/23 23:23:37  willuhn
  * @C geaendertes Log-Level in VelocityLoader
  *

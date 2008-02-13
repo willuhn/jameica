@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.50 $
- * $Date: 2008/01/16 23:48:17 $
+ * $Revision: 1.51 $
+ * $Date: 2008/02/13 01:04:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,20 +14,18 @@
 package de.willuhn.jameica.system;
 
 import java.lang.reflect.Constructor;
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.RMISocketFactory;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
 import de.willuhn.datasource.Service;
-import de.willuhn.jameica.messaging.LookupService;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
-import de.willuhn.jameica.security.SSLRMISocketFactory;
+import de.willuhn.jameica.security.SSLRMIClientSocketFactory;
+import de.willuhn.jameica.services.RegistryService;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -42,9 +40,6 @@ public final class ServiceFactory
 {
   private Settings settings = new Settings(ServiceFactory.class);
 
-  private boolean rmiStarted    = false;
-  private boolean sslStarted    = false;
-
 	// Alle Bindings
 	private Hashtable bindings = new Hashtable();
 
@@ -58,25 +53,13 @@ public final class ServiceFactory
 	private Hashtable serviceCache = new Hashtable();
 
   /**
-   * Initialisiert die ServiceFactory.
+   * Startet die ServiceFactory.
    * @throws Exception
    */
   public synchronized void init() throws Exception
   {
-		Logger.info("init plugin services");
-
-    if (Application.inServerMode() && Application.getConfig().getShareServices())
-    {
-      if (!sslStarted && Application.getConfig().getRmiSSL())
-      {
-        Logger.info("rmi over ssl enabled");
-        // Doku zum Thema http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html
-        RMISocketFactory.setSocketFactory(new SSLRMISocketFactory());
-        sslStarted = true;
-      }
-      
-      startRegistry();
-    }
+    Application.getCallback().getStartupMonitor().setStatusText("init services");
+    Logger.info("init plugin services");
 
     List plugins = Application.getPluginLoader().getInstalledPlugins();
 
@@ -137,29 +120,6 @@ public final class ServiceFactory
 		}
   }
 	
-  /**
-   * Startet die RMI-Registry.
-   * @throws RemoteException Wenn ein Fehler beim Starten der Registry auftrat.
-   */
-  private synchronized void startRegistry() throws RemoteException
-  {
-  	if (!Application.inServerMode() || rmiStarted) return;
-
-    Application.getCallback().getStartupMonitor().setStatusText("starting rmi registry");
-		Application.getCallback().getStartupMonitor().addPercentComplete(5);
-
-    try {
-      Logger.info("trying to start new RMI registry");
-      LocateRegistry.createRegistry(Application.getConfig().getRmiPort());
-    }
-    catch (Exception e)
-    {
-      Logger.error("failed to init RMI registry, trying to use an existing one." +      	"communication may be not encrypted",e);
-      LocateRegistry.getRegistry(Application.getConfig().getRmiPort());
-    }
-    rmiStarted = true;
-  }
-
   /**
    * Installiert einen Service in Jameica. Laeuft die Anwendung
    * im Server-Mode und ist das Flag autostart des Services aktiv,
@@ -240,16 +200,10 @@ public final class ServiceFactory
 				Logger.info("  service not startable");
 			}
 
-			if (Application.inServerMode() && descriptor.share() && Application.getConfig().getShareServices())
+			if (descriptor.share())
 			{
-				// Im Server-Mode binden wir den Service noch an die RMI-Registry
-				Logger.info("  binding service");
-				Application.getCallback().getStartupMonitor().setStatusText("binding service " + name);
-
-				String bindUrl = "rmi://127.0.0.1:" + Application.getConfig().getRmiPort() + "/" + fullName;
-        String rmiUrl  = "rmi://" + Application.getCallback().getHostname() + ":" + Application.getConfig().getRmiPort() + "/" + fullName;
-        Naming.rebind(bindUrl,s);
-        LookupService.register("rmi:" + fullName,rmiUrl);
+        RegistryService rs = (RegistryService) Application.getBootLoader().getBootable(RegistryService.class);
+        rs.rebind(fullName,s);
 			}
 		}
 		catch (Exception e)
@@ -344,9 +298,14 @@ public final class ServiceFactory
       String url = "rmi://" + host + ":" + port + "/" + fullName;
 
       Logger.debug("rmi lookup url: " + url);
-      s = (Service) Naming.lookup(url);
+      if (Application.getConfig().getRmiSSL())
+        s = (Service) LocateRegistry.getRegistry(host, port, new SSLRMIClientSocketFactory()).lookup(fullName);
+      else
+        s = (Service) LocateRegistry.getRegistry(host, port).lookup(fullName);
+
       if (s != null)
         serviceCache.put(fullName,s);
+
       return s;
     }
 
@@ -395,27 +354,6 @@ public final class ServiceFactory
         Logger.error("error while closing service " + fullName,t);
       }
     }
-
-
-// TODO: Der Server-Dienst sollte ueber die Abmeldung des Clients benachrichtigt werden.
-// ein service.stop() ist jedoch nicht schoen.
-//    Logger.info("notify remote services");
-//    e = serviceCache.keys();
-//
-//    while (e.hasMoreElements())
-//    {
-//      try
-//      {
-//        fullName = (String) e.nextElement();
-//        service = (Service) serviceCache.get(fullName);
-//        Logger.info("notifying service " + fullName);
-//        service.stop(false);
-//      }
-//      catch (Throwable t)
-//      {
-//        Logger.error("error while notifying service " + fullName,t);
-//      }
-//    }
   }
   
   /**
@@ -473,6 +411,10 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.51  2008/02/13 01:04:34  willuhn
+ * @N Jameica auf neuen Bootloader umgestellt
+ * @C Markus' Aenderungen RMI-Registrierung uebernommen
+ *
  * Revision 1.50  2008/01/16 23:48:17  willuhn
  * *** empty log message ***
  *

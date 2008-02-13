@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/06/05 13:07:56 $
+ * $Revision: 1.18 $
+ * $Date: 2008/02/13 01:04:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,21 +32,14 @@ public final class MessagingFactory implements MessagingQueue
   private HashMap queues                    = new HashMap();
   
   /**
-   * ct.
-   */
-  public MessagingFactory()
-  {
-  }
-
-  /**
    * Initialisiert die MessagingFactory.
-   * @throws Exception
    */
-  public final synchronized void init() throws Exception
+  public final synchronized void init()
   {
     if (defaultQueue != null)
       return;
     
+    Application.getCallback().getStartupMonitor().setStatusText("starting internal messaging system");
     Logger.info("init messaging factory");
     this.defaultQueue = new NamedQueue("[default]");
     
@@ -174,6 +167,10 @@ public final class MessagingFactory implements MessagingQueue
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.18  2008/02/13 01:04:34  willuhn
+ * @N Jameica auf neuen Bootloader umgestellt
+ * @C Markus' Aenderungen RMI-Registrierung uebernommen
+ *
  * Revision 1.17  2007/06/05 13:07:56  willuhn
  * @C changed init process of messaging factory
  *

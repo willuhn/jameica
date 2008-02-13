@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.43 $
- * $Date: 2007/10/30 11:49:28 $
+ * $Revision: 1.44 $
+ * $Date: 2008/02/13 01:04:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -80,12 +80,11 @@ public class SSLFactory
 
   /**
    * ct.
-   * @param callback Callback, der fuer Passwort-Abfragen benutzt werden soll.
    */
-  public SSLFactory(ApplicationCallback callback)
+  public SSLFactory()
   {
     super();
-    this.callback = callback;
+    this.callback = Application.getCallback();
   }
 
 	/**
@@ -716,6 +715,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.44  2008/02/13 01:04:34  willuhn
+ * @N Jameica auf neuen Bootloader umgestellt
+ * @C Markus' Aenderungen RMI-Registrierung uebernommen
+ *
  * Revision 1.43  2007/10/30 11:49:28  willuhn
  * @C RMI-SSL Zeug nochmal gemaess http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html ueberarbeitet. Funktioniert aber trotzdem noch nicht
  *

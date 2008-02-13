@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.28 $
- * $Date: 2007/11/19 11:30:39 $
+ * $Revision: 1.29 $
+ * $Date: 2008/02/13 01:04:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,9 +22,10 @@ import java.util.Vector;
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.services.ClassService;
+import de.willuhn.jameica.services.VelocityService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
-import de.willuhn.jameica.util.VelocityLoader;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.MultipleClassLoader;
 
@@ -206,7 +207,8 @@ public final class PluginLoader
     }
     
     // OK, jetzt laden wir die Klassen des Plugins.
-    MultipleClassLoader pluginCl = Application.prepareClasses(manifest);
+    ClassService cs = (ClassService) Application.getBootLoader().getBootable(ClassService.class);
+    MultipleClassLoader pluginCl = cs.prepareClasses(manifest);
 
     String pluginClass = manifest.getPluginClass();
     
@@ -246,7 +248,9 @@ public final class PluginLoader
     ///////////////////////////////////////////////////////////////
     // Velocity-Template-Verzeichnisse
     PluginResources r = plugin.getResources();
-    VelocityLoader.addTemplateDir(new File(r.getPath() + File.separator + "lib","velocity"));
+    
+    VelocityService vs = (VelocityService) Application.getBootLoader().getBootable(VelocityService.class);
+    vs.addTemplateDir(new File(r.getPath() + File.separator + "lib","velocity"));
     //
     ///////////////////////////////////////////////////////////////
 
@@ -473,12 +477,17 @@ public final class PluginLoader
 				Logger.error("failed",e2);
 			}
     }
+    this.plugins.clear();
   }
   
 }
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.29  2008/02/13 01:04:34  willuhn
+ * @N Jameica auf neuen Bootloader umgestellt
+ * @C Markus' Aenderungen RMI-Registrierung uebernommen
+ *
  * Revision 1.28  2007/11/19 11:30:39  willuhn
  * *** empty log message ***
  *
