@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/RegistryService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.2 $
+ * $Date: 2008/02/13 13:34:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,7 +51,7 @@ public class RegistryService implements Bootable
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
     if (!Application.inServerMode() || !Application.getConfig().getShareServices())
-      throw new SkipServiceException(this,"system neighter in server mode nor service sharing activated, skip rmi registry");
+      return;
 
     try
     {
@@ -150,6 +150,9 @@ public class RegistryService implements Bootable
 
 /**********************************************************************
  * $Log: RegistryService.java,v $
+ * Revision 1.2  2008/02/13 13:34:02  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen
