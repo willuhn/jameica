@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2007/07/31 14:36:13 $
+ * $Revision: 1.5 $
+ * $Date: 2008/02/14 12:06:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,6 +75,7 @@ public class SearchInput extends AbstractInput
   private Text text           = null;
   private boolean enabled     = true;
   private String search       = null;
+  private boolean focus       = false;
 
 
   /**
@@ -212,7 +213,7 @@ public class SearchInput extends AbstractInput
     
     this.text.setEnabled(enabled);
     this.text.setEditable(enabled);
-
+    
     this.text.addFocusListener(new FocusListener() {
     
       public void focusLost(FocusEvent e)
@@ -242,6 +243,9 @@ public class SearchInput extends AbstractInput
       }
     
     });
+
+    if (this.focus)
+      this.text.setFocus();
 
     // Loest die Suche aus
     Listener listener = new Listener() {
@@ -314,10 +318,10 @@ public class SearchInput extends AbstractInput
    */
   public void focus()
   {
-    if (this.text == null || this.text.isDisposed())
-      return;
+    this.focus = true;
     
-    text.setFocus();
+    if (text != null && !text.isDisposed())
+      text.setFocus();
   }
 
 
@@ -401,6 +405,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.5  2008/02/14 12:06:36  willuhn
+ * @N Korrektes Focus-Handling
+ *
  * Revision 1.4  2007/07/31 14:36:13  willuhn
  * @N Beispiel-Code
  *

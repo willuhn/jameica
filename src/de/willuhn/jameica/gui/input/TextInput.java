@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2007/01/05 10:36:49 $
+ * $Revision: 1.19 $
+ * $Date: 2008/02/14 12:06:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ public class TextInput extends AbstractInput
   protected Text text;
   private String value;
   private boolean enabled = true;
+  private boolean focus = false;
 
 	private int maxLength = 0;
 
@@ -87,6 +88,8 @@ public class TextInput extends AbstractInput
 
 		text.setEnabled(enabled);
     text.setText((value == null ? "" : value));
+    if (this.focus)
+      text.setFocus();
     return text;
   }
 
@@ -121,7 +124,9 @@ public class TextInput extends AbstractInput
    */
   public void focus()
   {
-    text.setFocus();
+    this.focus = true;
+    if (text != null && !text.isDisposed())
+      text.setFocus();
   }
 
   /**
@@ -161,6 +166,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.19  2008/02/14 12:06:36  willuhn
+ * @N Korrektes Focus-Handling
+ *
  * Revision 1.18  2007/01/05 10:36:49  willuhn
  * @C Farbhandling - Jetzt aber!
  *
