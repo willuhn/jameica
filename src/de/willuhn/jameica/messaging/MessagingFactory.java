@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.18 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.19 $
+ * $Date: 2008/02/15 08:47:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -122,7 +122,8 @@ public final class MessagingFactory implements MessagingQueue
    */
   public void unRegisterMessageConsumer(MessageConsumer consumer)
   {
-    this.defaultQueue.unRegisterMessageConsumer(consumer);
+    if (this.defaultQueue != null)
+      this.defaultQueue.unRegisterMessageConsumer(consumer);
   }
 
   /**
@@ -167,6 +168,9 @@ public final class MessagingFactory implements MessagingQueue
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.19  2008/02/15 08:47:17  willuhn
+ * @B ggf. NPE beim Shutdown
+ *
  * Revision 1.18  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen
