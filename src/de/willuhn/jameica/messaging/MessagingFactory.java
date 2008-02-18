@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.19 $
- * $Date: 2008/02/15 08:47:17 $
+ * $Revision: 1.20 $
+ * $Date: 2008/02/18 17:59:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,20 +28,44 @@ import de.willuhn.logging.Logger;
  */
 public final class MessagingFactory implements MessagingQueue
 {
-  private MessagingQueue defaultQueue       = null;
-  private HashMap queues                    = new HashMap();
+  private static MessagingFactory singleton   = null;
+    private MessagingQueue defaultQueue       = null;
+    private HashMap queues                    = null;
+    private boolean loaded                    = false;
+
+  /**
+   * Privater Konstruktor.
+   * ct
+   */
+  private MessagingFactory()
+  {
+    this.defaultQueue = new NamedQueue("[default]");
+    this.queues       = new HashMap();
+  }
+  
+  /**
+   * Liefert die Singleton-Instanz der Messaging-Factory.
+   * @return Singleton-Instanz.
+   */
+  public synchronized static MessagingFactory getInstance()
+  {
+    if (singleton == null)
+      singleton = new MessagingFactory();
+    return singleton;
+  }
   
   /**
    * Initialisiert die MessagingFactory.
    */
-  public final synchronized void init()
+  private synchronized void init()
   {
-    if (defaultQueue != null)
+    if (loaded)
       return;
     
+    loaded = true;
+
     Application.getCallback().getStartupMonitor().setStatusText("starting internal messaging system");
     Logger.info("init messaging factory");
-    this.defaultQueue = new NamedQueue("[default]");
     
     Logger.info("searching for message consumers");
     Class[] c = new Class[0];
@@ -97,9 +121,6 @@ public final class MessagingFactory implements MessagingQueue
    */
   public MessagingQueue getMessagingQueue(String name)
   {
-    if (name == null)
-      return defaultQueue;
-    
     MessagingQueue queue = (MessagingQueue) queues.get(name);
     if (queue == null)
     {
@@ -122,8 +143,7 @@ public final class MessagingFactory implements MessagingQueue
    */
   public void unRegisterMessageConsumer(MessageConsumer consumer)
   {
-    if (this.defaultQueue != null)
-      this.defaultQueue.unRegisterMessageConsumer(consumer);
+    this.defaultQueue.unRegisterMessageConsumer(consumer);
   }
 
   /**
@@ -143,9 +163,8 @@ public final class MessagingFactory implements MessagingQueue
     }
     finally
     {
-      defaultQueue.close();
+      this.defaultQueue.close();
       this.queues.clear();
-      this.defaultQueue = null;
     }
   }
 
@@ -154,6 +173,7 @@ public final class MessagingFactory implements MessagingQueue
    */
   public void sendMessage(Message message)
   {
+    init();
     this.defaultQueue.sendMessage(message);
   }
   
@@ -162,12 +182,16 @@ public final class MessagingFactory implements MessagingQueue
    */
   public void sendSyncMessage(Message message)
   {
+    init();
     this.defaultQueue.sendSyncMessage(message);
   }
 }
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.20  2008/02/18 17:59:12  willuhn
+ * @C Nach Autoregister-Messageconsumern erst beim Versand der ersten Nachricht suchen
+ *
  * Revision 1.19  2008/02/15 08:47:17  willuhn
  * @B ggf. NPE beim Shutdown
  *

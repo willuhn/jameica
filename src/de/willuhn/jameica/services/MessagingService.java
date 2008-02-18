@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/MessagingService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.2 $
+ * $Date: 2008/02/18 17:59:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,8 +41,7 @@ public class MessagingService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-    this.factory = new MessagingFactory();
-    this.factory.init();
+    this.factory = MessagingFactory.getInstance();
     this.factory.registerMessageConsumer(new LogMessageConsumer());
   }
 
@@ -68,6 +67,9 @@ public class MessagingService implements Bootable
 
 /**********************************************************************
  * $Log: MessagingService.java,v $
+ * Revision 1.2  2008/02/18 17:59:12  willuhn
+ * @C Nach Autoregister-Messageconsumern erst beim Versand der ersten Nachricht suchen
+ *
  * Revision 1.1  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen
