@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/LookupService.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/01/16 22:08:26 $
+ * $Revision: 1.6 $
+ * $Date: 2008/02/20 16:36:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -191,7 +191,14 @@ public class LookupService implements MessageConsumer
       {
         if (s.url != null)
           break;
-        Thread.sleep(100l);
+        try
+        {
+          Thread.sleep(100l);
+        }
+        catch (InterruptedException e)
+        {
+          // ignore
+        }
       }
       if (s.url != null)
       {
@@ -265,6 +272,7 @@ public class LookupService implements MessageConsumer
         return; // ist unsere eigene Anfrage
       this.url = s;
       Logger.info("got answer from " + sender.getCanonicalHostName() + ", url: " + this.url);
+      Thread.currentThread().interrupt();
     }
   }
 
@@ -273,6 +281,9 @@ public class LookupService implements MessageConsumer
 
 /*********************************************************************
  * $Log: LookupService.java,v $
+ * Revision 1.6  2008/02/20 16:36:38  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.5  2008/01/16 22:08:26  willuhn
  * @C Multicast-Lookupservice nur im Server-Mode aktivieren
  *
