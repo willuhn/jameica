@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SimpleContainer.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/06/13 09:43:02 $
+ * $Revision: 1.3 $
+ * $Date: 2008/02/22 16:20:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,7 +50,7 @@ public class SimpleContainer extends Container
     this.comp.setBackground(Color.BACKGROUND.getSWTColor());
     GridLayout layout = new GridLayout(2, false);
     this.comp.setLayout(layout);
-    GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
+    GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : (GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
     this.comp.setLayoutData(grid);
   }
 
@@ -66,6 +66,9 @@ public class SimpleContainer extends Container
 
 /*********************************************************************
  * $Log: SimpleContainer.java,v $
+ * Revision 1.3  2008/02/22 16:20:40  willuhn
+ * @N Mehrspalten-Layouts
+ *
  * Revision 1.2  2007/06/13 09:43:02  willuhn
  * @B Bug 412
  *

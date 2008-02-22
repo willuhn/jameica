@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/TabGroup.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/06/12 08:56:32 $
+ * $Revision: 1.4 $
+ * $Date: 2008/02/22 16:20:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -76,7 +76,8 @@ public class TabGroup extends Container
     this.composite.setFont(Font.H2.getSWTFont());
     GridLayout layout = new GridLayout(cols, false);
     this.composite.setLayout(layout);
-    GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
+
+    GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : (GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
     this.composite.setLayoutData(grid);
     item.setControl(this.composite);
 	}
@@ -93,6 +94,9 @@ public class TabGroup extends Container
 
 /*********************************************************************
  * $Log: TabGroup.java,v $
+ * Revision 1.4  2008/02/22 16:20:40  willuhn
+ * @N Mehrspalten-Layouts
+ *
  * Revision 1.3  2007/06/12 08:56:32  willuhn
  * @B Parameter nicht an Konstruktor weitergegeben
  *

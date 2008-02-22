@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/07/17 15:57:42 $
+ * $Revision: 1.18 $
+ * $Date: 2008/02/22 16:20:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,7 +65,8 @@ public class LabelGroup extends Container
 		group.setFont(Font.H2.getSWTFont());
 		GridLayout layout = new GridLayout(2, false);
 		group.setLayout(layout);
-		GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
+
+    GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : (GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		group.setLayoutData(grid);
 	}
 
@@ -81,6 +82,9 @@ public class LabelGroup extends Container
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
+ * Revision 1.18  2008/02/22 16:20:40  willuhn
+ * @N Mehrspalten-Layouts
+ *
  * Revision 1.17  2007/07/17 15:57:42  willuhn
  * @B bug 435
  *
