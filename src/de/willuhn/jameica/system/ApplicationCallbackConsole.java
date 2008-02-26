@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.25 $
- * $Date: 2007/11/05 13:01:13 $
+ * $Revision: 1.26 $
+ * $Date: 2008/02/26 17:45:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,6 +61,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     System.out.println(i18n.tr("Der Jameica-Server scheint bereits zu laufen, da das " +    	"Lockfile {0} existiert.",lockfile));
     System.out.println(i18n.tr("Geben Sie <J> ein, um den Startvorgang fortzusetzen oder <N> zum Beenden."));
 		System.out.println("----------------------------------------------------------------------");
+    System.out.print(i18n.tr("Ihre Eingabe [J/N]: "));
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader keyboard = new BufferedReader(isr);
 		try {
@@ -413,6 +414,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     try
     {
       Logger.flush();
+      System.out.flush();
     }
     catch (Exception e)
     {
@@ -424,6 +426,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.26  2008/02/26 17:45:21  willuhn
+ * @N flush console
+ *
  * Revision 1.25  2007/11/05 13:01:13  willuhn
  * @C Compiler-Warnings
  *
