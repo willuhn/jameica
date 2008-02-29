@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.34 $
- * $Date: 2008/01/09 22:25:06 $
+ * $Revision: 1.35 $
+ * $Date: 2008/02/29 01:12:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -427,15 +427,6 @@ public final class Config
     return getWorkDir() + File.separator + "jameica.log";
   }
 
-	/**
-	 * Speichert Pfad und Dateiname des LogFiles.
-   * @param logFile
-   */
-  public void setLogFile(String logFile)
-	{
-    settings.setAttribute("jameica.system.log.file",logFile);
-	}
-
   /**
    * Legt fest, ob Eingabe-Felder auf Pflichteingaben geprueft werden.
    * @return Pruefen von Pflichteingaben.
@@ -517,33 +508,112 @@ public final class Config
 	}
   
   /**
-   * Wandelt eine absolute Pfad-Angabe aus dem Benutzerverzeichnis
-   * in eine relative um.
-   * Die Funktion wirft keine Exception. Im Fehlerfall wird
-   * nur geloggt und der Pfad unveraendert zurueckgegeben.
-   * @param file der absolute Pfad.
-   * @return die relative Angabe.
+   * Liefert das Backup-Verzeichnis.
+   * @return Backup-Verzeichnis.
    */
-  public String makeRelative(File file)
+  public String getBackupDir()
   {
-    if (file == null)
-      return null;
-    try
-    {
-      String abs = file.getCanonicalPath();
-      return abs.substring(getWorkDir().length());
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to make relative path from " + file);
-    }
-    return file.getAbsolutePath();
+    // Wir setzen hier bewusst "NULL" als Default-Wert ein,
+    // weil wir nicht wollen, dass er (wegen absoluter Pfadangabe)
+    // in der Configdatei landet sondern erst, wenn es der User
+    // explizit angegeben hat.
+    String defaultDir = getWorkDir();
+    String dir = settings.getString("jameica.system.backup.dir",null);
+    if (dir == null)
+      return defaultDir;
+    
+    File f = new File(dir);
+    if (f.exists() && f.isDirectory() && f.canWrite())
+      return f.getAbsolutePath();
+    
+    Logger.warn("invalid backup dir " + dir +", resetting to default: " + defaultDir);
+    return defaultDir;
   }
+
+  /**
+   * Speichert das Backup-Verzeichnis.
+   * Der Pfad wird nur gespeichert, wenn er vom Default-Wert abweicht.
+   * Andernfalls wird der Wert in der Config resettet, damit wieder
+   * das Standardverzeichnis genutzt wird.
+   * @param dir das Backup-Verzeichnis.
+   * @throws ApplicationException wenn das Verzeichnis ungueltig ist.
+   */
+  public void setBackupDir(String dir) throws ApplicationException
+  {
+    // Resetten
+    if (dir == null || dir.length() == 0)
+    {
+      settings.setAttribute("jameica.system.backup.dir",(String)null);
+      return;
+    }
+    
+    // Angegebenes Verzeichnis ist das Work-Dir.
+    // Also resetten
+    File f = new File(dir);
+
+    if (f.equals(this.workDir))
+    {
+      settings.setAttribute("jameica.system.backup.dir",(String)null);
+      return;
+    }
+    
+    if (!f.isDirectory() || !f.exists())
+      throw new ApplicationException(Application.getI18n().tr("Bitte geben Sie ein gültiges Verzeichnis an"));
+    
+    if (!f.canWrite())
+      throw new ApplicationException(Application.getI18n().tr("Sie besitzen keine Schreibrechte in diesem Verzeichnis"));
+    
+    settings.setAttribute("jameica.system.backup.dir",f.getAbsolutePath());
+  }
+  
+  /**
+   * Liefert die Anzahl zu erstellender Backups.
+   * Default-Wert: 5.
+   * @return Anzahl der Backups.
+   */
+  public int getBackupCount()
+  {
+    return settings.getInt("jameica.system.backup.count",5);
+  }
+  
+  /**
+   * Speichert die Anzahl zu erstellender Backups.
+   * @param count Anzahl der Backups.
+   */
+  public void setBackupCount(int count)
+  {
+    settings.setAttribute("jameica.system.backup.count",count < 1 ? 5 : count);
+  }
+  
+  /**
+   * Prueft, ob ueberhaupt Backups erstellt werden sollen.
+   * Default: true.
+   * @return true, wenn Backups erstellt werden sollen.
+   */
+  public boolean getUseBackup()
+  {
+    return settings.getBoolean("jameica.system.backup.enabled",true);
+  }
+
+  /**
+   * Speichert, ob ueberhaupt Backups erstellt werden sollen.
+   * @param enabled true, wenn Backups erstellt werden sollen.
+   */
+  public void setUseBackup(boolean enabled)
+  {
+    settings.setAttribute("jameica.system.backup.enabled",enabled);
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.35  2008/02/29 01:12:30  willuhn
+ * @N Erster Code fuer neues Backup-System
+ * @N DirectoryInput
+ * @B Fixes an FileInput, TextInput
+ *
  * Revision 1.34  2008/01/09 22:25:06  willuhn
  * @C Namensueberschneidung bei den Locales
  *
@@ -556,185 +626,4 @@ public final class Config
  *
  * Revision 1.31  2007/08/20 12:27:08  willuhn
  * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
- *
- * Revision 1.30  2007/06/21 14:08:12  willuhn
- * @N Client-Authentifizierung bei RMI over SSL konfigurierbar
- *
- * Revision 1.29  2007/01/23 15:52:10  willuhn
- * @C update() check for recursion
- * @N mandatoryCheck configurable
- *
- * Revision 1.28  2006/08/17 08:36:28  willuhn
- * @B bug 265
- *
- * Revision 1.27  2006/06/30 13:51:34  willuhn
- * @N Pluginloader Redesign in HEAD uebernommen
- *
- * Revision 1.26  2006/02/06 14:20:13  web0
- * @R removed parameter "ask"
- *
- * Revision 1.24  2005/08/29 16:51:52  web0
- * *** empty log message ***
- *
- * Revision 1.23  2005/06/16 13:02:55  web0
- * *** empty log message ***
- *
- * Revision 1.22  2005/06/15 17:51:31  web0
- * @N Code zum Konfigurieren der Service-Bindings
- *
- * Revision 1.21  2005/06/15 16:10:57  web0
- * @B javadoc fixes
- *
- * Revision 1.20  2005/06/13 11:47:25  web0
- * *** empty log message ***
- *
- * Revision 1.19  2005/06/10 22:13:09  web0
- * @N new TabGroup
- * @N extended Settings
- *
- * Revision 1.18  2005/04/19 21:11:53  web0
- * @N service sharing can now be disabled in server mode too
- *
- * Revision 1.17  2005/02/26 18:14:59  web0
- * @N new nightly builds
- * @C readme file
- *
- * Revision 1.16  2005/02/02 16:16:38  willuhn
- * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
- *
- * Revision 1.15  2005/01/15 16:20:32  willuhn
- * *** empty log message ***
- *
- * Revision 1.14  2005/01/14 00:48:56  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2005/01/13 19:31:37  willuhn
- * @C SSLFactory geaendert
- * @N Settings auf property-Format umgestellt
- *
- * Revision 1.12  2005/01/12 00:17:17  willuhn
- * @N JameicaTrustManager
- *
- * Revision 1.11  2005/01/05 15:18:08  willuhn
- * *** empty log message ***
- *
- * Revision 1.10  2004/11/12 18:23:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.9  2004/11/05 17:23:52  willuhn
- * *** empty log message ***
- *
- * Revision 1.8  2004/10/17 14:08:10  willuhn
- * *** empty log message ***
- *
- * Revision 1.7  2004/10/14 23:15:05  willuhn
- * @N maded locale configurable via GUI
- * @B fixed locale handling
- * @B DecimalInput now honors locale
- *
- * Revision 1.6  2004/10/07 18:05:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2004/08/30 15:03:28  willuhn
- * @N neuer Security-Manager
- *
- * Revision 1.4  2004/08/11 00:39:25  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2004/07/27 23:41:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/07/21 23:54:53  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.1  2004/07/21 20:08:45  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.28  2004/06/30 20:58:39  willuhn
- * *** empty log message ***
- *
- * Revision 1.27  2004/05/09 17:40:06  willuhn
- * *** empty log message ***
- *
- * Revision 1.26  2004/04/27 00:04:44  willuhn
- * @D javadoc
- *
- * Revision 1.25  2004/04/25 17:07:21  willuhn
- * @B StdXMLReader did not read the xml file correctly under win32
- *
- * Revision 1.24  2004/04/14 22:16:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.23  2004/04/13 23:15:23  willuhn
- * *** empty log message ***
- *
- * Revision 1.22  2004/03/06 18:24:24  willuhn
- * @D javadoc
- *
- * Revision 1.21  2004/03/03 22:27:11  willuhn
- * @N help texts
- * @C refactoring
- *
- * Revision 1.20  2004/02/11 00:10:42  willuhn
- * *** empty log message ***
- *
- * Revision 1.19  2004/02/09 13:06:33  willuhn
- * @C added support for uncompressed plugins
- *
- * Revision 1.18  2004/01/29 00:07:23  willuhn
- * @N Text widget
- *
- * Revision 1.17  2004/01/28 20:51:25  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.16  2004/01/25 18:39:56  willuhn
- * *** empty log message ***
- *
- * Revision 1.15  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.14  2004/01/08 20:50:32  willuhn
- * @N database stuff separated from jameica
- *
- * Revision 1.13  2004/01/06 20:11:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.12  2004/01/06 01:27:30  willuhn
- * @N table order
- *
- * Revision 1.11  2004/01/04 18:48:36  willuhn
- * @N config store support
- *
- * Revision 1.10  2004/01/03 18:08:05  willuhn
- * @N Exception logging
- * @C replaced bb.util xml parser with nanoxml
- *
- * Revision 1.9  2003/12/29 16:29:47  willuhn
- * @N javadoc
- *
- * Revision 1.8  2003/12/27 21:23:33  willuhn
- * @N object serialization
- *
- * Revision 1.7  2003/12/22 21:00:34  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2003/12/15 19:08:01  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2003/11/14 00:49:46  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2003/11/13 00:37:35  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2003/11/12 00:58:55  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2003/10/29 00:41:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2003/10/23 21:49:46  willuhn
- * initial checkin
- *
  **********************************************************************/

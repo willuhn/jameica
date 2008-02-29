@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.19 $
- * $Date: 2008/02/14 12:06:36 $
+ * $Revision: 1.20 $
+ * $Date: 2008/02/29 01:12:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -159,13 +159,21 @@ public class TextInput extends AbstractInput
   public void setEnabled(boolean enabled)
   {
     this.enabled = enabled;
-    if (text != null && !text.isDisposed())
-      text.setEnabled(enabled);
+    if (this.text != null && !this.text.isDisposed())
+    {
+      this.text.setEnabled(enabled);
+      this.update();
+    }
   }
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.20  2008/02/29 01:12:30  willuhn
+ * @N Erster Code fuer neues Backup-System
+ * @N DirectoryInput
+ * @B Fixes an FileInput, TextInput
+ *
  * Revision 1.19  2008/02/14 12:06:36  willuhn
  * @N Korrektes Focus-Handling
  *

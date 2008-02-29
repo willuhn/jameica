@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.24 $
- * $Date: 2007/12/18 17:50:12 $
+ * $Revision: 1.25 $
+ * $Date: 2008/02/29 01:12:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -426,7 +426,6 @@ public class SettingsControl extends AbstractControl
 			Color.LINK.reset();
 			Color.LINK_ACTIVE.reset();
       Application.getConfig().setRmiPort(Config.RMI_DEFAULT_PORT);
-      Application.getConfig().setLogFile(null);
       Application.getConfig().setLoglevel(Level.INFO.getName());
       Application.getConfig().setRmiSSL(true);
       Application.getConfig().setProxyHost(null);
@@ -510,6 +509,11 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.25  2008/02/29 01:12:30  willuhn
+ * @N Erster Code fuer neues Backup-System
+ * @N DirectoryInput
+ * @B Fixes an FileInput, TextInput
+ *
  * Revision 1.24  2007/12/18 17:50:12  willuhn
  * @R Background-Color nicht mehr aenderbar
  * @C Layout der Startseite

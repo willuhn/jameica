@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2005/06/15 17:51:31 $
- * $Author: web0 $
+ * $Revision: 1.9 $
+ * $Date: 2008/02/29 01:12:30 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -85,13 +85,17 @@ public class IntegerInput extends TextInput
     if (!(value instanceof Integer))
       return;
 
-    this.text.setText(value.toString());
-    this.text.redraw();
+    super.setValue(value);
   }
 }
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.9  2008/02/29 01:12:30  willuhn
+ * @N Erster Code fuer neues Backup-System
+ * @N DirectoryInput
+ * @B Fixes an FileInput, TextInput
+ *
  * Revision 1.8  2005/06/15 17:51:31  web0
  * @N Code zum Konfigurieren der Service-Bindings
  *
