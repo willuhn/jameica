@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Revision: 1.2 $
+ * $Date: 2008/02/29 19:02:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,30 +13,30 @@
 
 package de.willuhn.jameica.gui.internal.controller;
 
-import java.io.File;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Date;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.datasource.BeanUtil;
-import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
+import de.willuhn.jameica.backup.BackupEngine;
+import de.willuhn.jameica.backup.BackupItem;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.dialogs.BackupRestoreDialog;
 import de.willuhn.jameica.gui.formatter.DateFormatter;
+import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.DirectoryInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
+import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.BackupEngine;
 import de.willuhn.jameica.system.Config;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -111,9 +111,13 @@ public class BackupControl extends AbstractControl
         {
           TablePart table = getBackups();
           table.removeAll();
-          GenericIterator list = initList();
-          while (list.hasNext())
-            table.addItem(list.next());
+          BackupItem[] items = BackupEngine.getBackups((String)getTarget().getValue());
+          for (int i=0;i<items.length;++i)
+            table.addItem(items[i]);
+        }
+        catch (ApplicationException ae)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(), StatusBarMessage.TYPE_ERROR));
         }
         catch (RemoteException re)
         {
@@ -144,19 +148,43 @@ public class BackupControl extends AbstractControl
    * Liefert eine Tabelle mit den bisher erstellten Backups.
    * @return Tabelle mit den Backups.
    * @throws RemoteException
+   * @throws ApplicationException
    */
-  public TablePart getBackups() throws RemoteException
+  public TablePart getBackups() throws RemoteException, ApplicationException
   {
     if (this.backups != null)
       return this.backups;
     
-    this.backups = new TablePart(this.initList(),null);
+    this.backups = new TablePart(PseudoIterator.fromArray(BackupEngine.getBackups((String)getTarget().getValue())),null);
     this.backups.addColumn(Application.getI18n().tr("Dateiname"),"name");
     this.backups.addColumn(Application.getI18n().tr("Erstellt am"),"created", new DateFormatter(null));
+    this.backups.addColumn(Application.getI18n().tr("Größe"),"size", new Formatter() {
+    
+      /**
+       * @see de.willuhn.jameica.gui.formatter.Formatter#format(java.lang.Object)
+       */
+      public String format(Object o)
+      {
+        if (o == null || !(o instanceof Number))
+          return "-";
+        long size = ((Number) o).longValue();
+        return size == 0 ? "-" : ((int)(size / 1024 / 1024)) + " MB";
+      }
+    
+    });
     this.backups.setMulti(false);
     this.backups.setRememberColWidths(false);
     this.backups.setRememberOrder(false);
     this.backups.setSummary(false);
+    
+    ContextMenu ctx = new ContextMenu();
+    ctx.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Backup wiederherstellen..."),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        handleRestore();
+      }
+    }));
+    this.backups.setContextMenu(ctx);
     return this.backups;
   }
   
@@ -168,9 +196,19 @@ public class BackupControl extends AbstractControl
   {
     if (this.current != null)
       return this.current;
-    
-    File file = BackupEngine.getCurrentBackup();
-    this.current = new LabelInput(file == null ? "-" : file.getName());
+
+    String s = null;
+    try
+    {
+      BackupItem bi = BackupEngine.getCurrentBackup();
+      if (bi != null)
+        s = bi.getFile().getName();
+    }
+    catch (ApplicationException ae)
+    {
+      s = ae.getMessage();
+    }
+    this.current = new LabelInput(s == null ? "-" : s);
     return this.current;
   }
   
@@ -206,22 +244,22 @@ public class BackupControl extends AbstractControl
   {
     try
     {
-      FileObject o = (FileObject) getBackups().getSelection();
+      BackupItem o = (BackupItem) getBackups().getSelection();
       if (o == null)
       {
         Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Bitte wählen Sie das wiederherzustellende Backup aus"), StatusBarMessage.TYPE_ERROR));
         return;
       }
+
+      BackupRestoreDialog d = new BackupRestoreDialog(BackupRestoreDialog.POSITION_CENTER,o);
+      Boolean b = (Boolean) d.open();
       
-      String s = Application.getI18n().tr("Sind Sie sicher? " +
-          "Das Backup wird beim nächsten Neustart von Jameica wiederhergestellt.");
-      
-      if (!Application.getCallback().askUser(s))
+      if (!b.booleanValue())
         return;
       
-      BackupEngine.restoreBackup(o.file);
-      File f = BackupEngine.getCurrentBackup();
-      getCurrent().setValue(f == null ? "-" : f.getName());
+      BackupEngine.restoreBackup(o);
+      o = BackupEngine.getCurrentBackup();
+      getCurrent().setValue(o == null ? "-" : o.getFile().getName());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Backup für Wiederherstellung vorgemerkt. Bitte starten Sie nun Jameica neu."), StatusBarMessage.TYPE_SUCCESS));
     }
     catch (ApplicationException ae)
@@ -244,90 +282,14 @@ public class BackupControl extends AbstractControl
     getCurrent().setValue("-");
     Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Auswahl rückgängig gemacht."), StatusBarMessage.TYPE_SUCCESS));
   }
-  
-  /**
-   * Initialisiert die Liste der bisherigen Backups.
-   * @return Liste der Backups.
-   * @throws RemoteException
-   */
-  private GenericIterator initList() throws RemoteException
-  {
-    File[] files = BackupEngine.getBackups((String)getTarget().getValue());
-    ArrayList objects = new ArrayList();
-    for (int i=0;i<files.length;++i)
-    {
-      objects.add(new FileObject(files[i]));
-    }
-    return PseudoIterator.fromArray((FileObject[])objects.toArray(new FileObject[objects.size()]));
-  }
-  
-  /**
-   * Helper-Klasse, um die Details der Dateien besser anzeigen zu koennen.
-   */
-  private class FileObject implements GenericObject
-  {
-    private File file = null;
-    
-    /**
-     * ct.
-     * @param file
-     */
-    private FileObject(File file)
-    {
-      this.file = file;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-     */
-    public boolean equals(GenericObject other) throws RemoteException
-    {
-      if (other == null || !(other instanceof FileObject))
-      return false;
-      return this.file.equals(((FileObject)other).file);
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
-     */
-    public Object getAttribute(String name) throws RemoteException
-    {
-      if ("created".equals(name))
-        return new Date(this.file.lastModified());
-      return BeanUtil.get(this.file,name);
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
-     */
-    public String[] getAttributeNames() throws RemoteException
-    {
-      return new String[]{"name","created"};
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getID()
-     */
-    public String getID() throws RemoteException
-    {
-      return this.file.getAbsolutePath();
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-     */
-    public String getPrimaryAttribute() throws RemoteException
-    {
-      return "name";
-    }
-    
-  }
-
 }
 
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
+ * Revision 1.2  2008/02/29 19:02:31  willuhn
+ * @N Weiterer Code fuer Backup-System
+ *
  * Revision 1.1  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput

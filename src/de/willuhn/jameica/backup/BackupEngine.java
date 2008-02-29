@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Attic/BackupEngine.java,v $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
  * $Revision: 1.1 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Date: 2008/02/29 19:02:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,7 +11,7 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.system;
+package de.willuhn.jameica.backup;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,9 +19,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.willuhn.io.FileFinder;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -38,9 +40,10 @@ public class BackupEngine
    * Liefert eine Liste der bisher erstellten Backups.
    * @param dir das Verzeichnis, in dem nach Backups gesucht werden soll.
    * Ist es nicht angegeben, wird das aktuelle Default-Verzeichnis verwendet.
-   * @return
+   * @return eine Liste der Backups in diesem Verzeichnis.
+   * @throws ApplicationException
    */
-  public static File[] getBackups(String dir)
+  public static BackupItem[] getBackups(String dir) throws ApplicationException
   {
     String s = dir == null ? Application.getConfig().getBackupDir() : dir;
     FileFinder finder = new FileFinder(new File(s));
@@ -48,11 +51,23 @@ public class BackupEngine
     finder.matches("^" + PREFIX + ".*");
     File[] found = finder.find();
     if (found == null)
-      return new File[0];
+      return new BackupItem[0];
 
     // Nach Name sortieren
     Arrays.sort(found);
-    return found;
+    ArrayList backups = new ArrayList();
+    for (int i=0;i<found.length;++i)
+    {
+      try
+      {
+        backups.add(new BackupItem(found[i]));
+      }
+      catch (ApplicationException e)
+      {
+        Logger.error("skipping invalid backup: " + found[i].getAbsolutePath() + ": " + e.getMessage());
+      }
+    }
+    return (BackupItem[])backups.toArray(new BackupItem[backups.size()]);
   }
   
   /**
@@ -62,21 +77,22 @@ public class BackupEngine
    * @param backup das zurueckzusichernde Backup.
    * @throws ApplicationException
    */
-  public static void restoreBackup(File backup) throws ApplicationException
+  public static void restoreBackup(BackupItem backup) throws ApplicationException
   {
     if (backup == null)
       throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das wiederherzustellende Backup aus"));
     
-    if (!backup.isFile() || !backup.canRead())
+    File file = backup.getFile();
+    if (!file.isFile() || !file.canRead())
       throw new ApplicationException(Application.getI18n().tr("Datei nicht lesbar. Stellen Sie bitte sicher, dass Sie Schreibrechte für sie besitzen."));
     
-    Logger.warn("activating backup for restore: " + backup.getAbsolutePath());
+    Logger.warn("activating backup for restore: " + file.getAbsolutePath());
     File marker = new File(Application.getConfig().getWorkDir(),MARKER);
     Writer writer = null;
     try
     {
       writer = new BufferedWriter(new FileWriter(marker));
-      writer.write(backup.getAbsolutePath());
+      writer.write(file.getAbsolutePath());
       writer.flush();
     }
     catch (Exception e)
@@ -104,8 +120,9 @@ public class BackupEngine
   /**
    * Liefert das ggf aktuell zur Wiederherstellung vorgemerkte Backup.
    * @return das aktuell vorgemerkte Backup oder null
+   * @throws ApplicationException
    */
-  public static File getCurrentBackup()
+  public static BackupItem getCurrentBackup() throws ApplicationException
   {
     File marker = new File(Application.getConfig().getWorkDir(),MARKER);
     if (!marker.exists() || !marker.canRead())
@@ -116,7 +133,13 @@ public class BackupEngine
     {
       reader = new BufferedReader(new FileReader(marker));
       File f = new File(reader.readLine());
-      return f.canRead() && f.isFile() ? f : null;
+      if (f.canRead() && f.isFile())
+        return new BackupItem(f);
+      return null;
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
     }
     catch (Exception e)
     {
@@ -154,6 +177,9 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.1  2008/02/29 19:02:31  willuhn
+ * @N Weiterer Code fuer Backup-System
+ *
  * Revision 1.1  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput
