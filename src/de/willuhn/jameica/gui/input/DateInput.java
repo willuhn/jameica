@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2007/08/28 22:42:53 $
+ * $Revision: 1.8 $
+ * $Date: 2008/03/03 09:43:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,6 @@ package de.willuhn.jameica.gui.input;
 
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.widgets.Composite;
@@ -24,6 +23,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.dialogs.CalendarDialog;
+import de.willuhn.jameica.gui.util.DateUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -37,7 +37,7 @@ public class DateInput implements Input
 {
   private final static Object PLACEHOLDER = new Object();
   
-  private DateFormat format = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,Application.getConfig().getLocale());
+  private DateFormat format = DateUtil.DEFAULT_FORMAT;
   
   private DialogInput input     = null;
   private CalendarDialog dialog = null;
@@ -140,6 +140,8 @@ public class DateInput implements Input
     String text = this.input.getText();
     if (text == null || text.length() == 0)
       return null;
+
+    text = DateUtil.convert2Date(text);
     try
     {
       Date d = this.format.parse(text);
@@ -386,6 +388,10 @@ public class DateInput implements Input
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.8  2008/03/03 09:43:54  willuhn
+ * @N DateUtil-Patch von Heiner
+ * @N Weiterer Code fuer das Backup-System
+ *
  * Revision 1.7  2007/08/28 22:42:53  willuhn
  * @N Bei Aufruf von setMandatory() ggf. Farb-Aenderungen sofort durchfuehren, wenn sich Wert von "mandatory" geaendert hat und das Control bereits gezeichnet wurde
  *

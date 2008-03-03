@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/Attic/BackupItem.java,v $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupFile.java,v $
  * $Revision: 1.1 $
- * $Date: 2008/02/29 19:02:31 $
+ * $Date: 2008/03/03 09:43:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,7 @@ import de.willuhn.util.ApplicationException;
 /**
  * Meta-Container fuer ein einzelnes Backup.
  */
-public class BackupItem implements GenericObject
+public class BackupFile implements GenericObject
 {
   private File file        = null;
   private Properties props = null;
@@ -41,7 +41,7 @@ public class BackupItem implements GenericObject
    * @param file die eigentliche ZIP-Datei.
    * @throws ApplicationException
    */
-  public BackupItem(File file) throws ApplicationException
+  public BackupFile(File file) throws ApplicationException
   {
     if (file == null)
       throw new ApplicationException(Application.getI18n().tr("Keine Backup-Datei angegeben"));
@@ -133,9 +133,9 @@ public class BackupItem implements GenericObject
    */
   public boolean equals(GenericObject other) throws RemoteException
   {
-    if (other == null || !(other instanceof BackupItem))
+    if (other == null || !(other instanceof BackupFile))
     return false;
-    return this.file.equals(((BackupItem)other).file);
+    return this.file.equals(((BackupFile)other).file);
   }
 
   /**
@@ -177,7 +177,11 @@ public class BackupItem implements GenericObject
 
 
 /*********************************************************************
- * $Log: BackupItem.java,v $
+ * $Log: BackupFile.java,v $
+ * Revision 1.1  2008/03/03 09:43:54  willuhn
+ * @N DateUtil-Patch von Heiner
+ * @N Weiterer Code fuer das Backup-System
+ *
  * Revision 1.1  2008/02/29 19:02:31  willuhn
  * @N Weiterer Code fuer Backup-System
  *

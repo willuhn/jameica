@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/Attic/BackupRestoreDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/29 19:02:31 $
+ * $Revision: 1.2 $
+ * $Date: 2008/03/03 09:43:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,7 @@ import java.util.Properties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.backup.BackupItem;
+import de.willuhn.jameica.backup.BackupFile;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.SimpleContainer;
@@ -32,7 +32,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class BackupRestoreDialog extends AbstractDialog
 {
-  private BackupItem backup = null;
+  private BackupFile backup = null;
   private Boolean choice    = Boolean.FALSE;
 
   /**
@@ -40,7 +40,7 @@ public class BackupRestoreDialog extends AbstractDialog
    * @param position
    * @param backup das Backup, dessen Daten angezeigt werden sollen.
    */
-  public BackupRestoreDialog(int position, BackupItem backup)
+  public BackupRestoreDialog(int position, BackupFile backup)
   {
     super(position);
     this.backup = backup;
@@ -102,6 +102,10 @@ public class BackupRestoreDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: BackupRestoreDialog.java,v $
+ * Revision 1.2  2008/03/03 09:43:54  willuhn
+ * @N DateUtil-Patch von Heiner
+ * @N Weiterer Code fuer das Backup-System
+ *
  * Revision 1.1  2008/02/29 19:02:31  willuhn
  * @N Weiterer Code fuer Backup-System
  *

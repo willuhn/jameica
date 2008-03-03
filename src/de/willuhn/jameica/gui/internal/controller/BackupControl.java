@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/02/29 19:02:31 $
+ * $Revision: 1.3 $
+ * $Date: 2008/03/03 09:43:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.backup.BackupEngine;
-import de.willuhn.jameica.backup.BackupItem;
+import de.willuhn.jameica.backup.BackupFile;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
@@ -111,7 +111,7 @@ public class BackupControl extends AbstractControl
         {
           TablePart table = getBackups();
           table.removeAll();
-          BackupItem[] items = BackupEngine.getBackups((String)getTarget().getValue());
+          BackupFile[] items = BackupEngine.getBackups((String)getTarget().getValue());
           for (int i=0;i<items.length;++i)
             table.addItem(items[i]);
         }
@@ -200,7 +200,7 @@ public class BackupControl extends AbstractControl
     String s = null;
     try
     {
-      BackupItem bi = BackupEngine.getCurrentBackup();
+      BackupFile bi = BackupEngine.getCurrentBackup();
       if (bi != null)
         s = bi.getFile().getName();
     }
@@ -244,7 +244,7 @@ public class BackupControl extends AbstractControl
   {
     try
     {
-      BackupItem o = (BackupItem) getBackups().getSelection();
+      BackupFile o = (BackupFile) getBackups().getSelection();
       if (o == null)
       {
         Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Bitte wählen Sie das wiederherzustellende Backup aus"), StatusBarMessage.TYPE_ERROR));
@@ -287,6 +287,10 @@ public class BackupControl extends AbstractControl
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
+ * Revision 1.3  2008/03/03 09:43:54  willuhn
+ * @N DateUtil-Patch von Heiner
+ * @N Weiterer Code fuer das Backup-System
+ *
  * Revision 1.2  2008/02/29 19:02:31  willuhn
  * @N Weiterer Code fuer Backup-System
  *

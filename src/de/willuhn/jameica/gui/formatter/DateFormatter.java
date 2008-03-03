@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/formatter/DateFormatter.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2008/03/03 09:43:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,9 @@ package de.willuhn.jameica.gui.formatter;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.willuhn.jameica.gui.util.DateUtil;
 
 /**
  * Formatierer fuer Datums-Angaben.
@@ -24,7 +25,7 @@ import java.util.Date;
 public class DateFormatter implements Formatter
 {
 
-  private DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+  private DateFormat formatter = DateUtil.DEFAULT_FORMAT;
 
 
   /**
@@ -67,6 +68,10 @@ public class DateFormatter implements Formatter
 
 /*********************************************************************
  * $Log: DateFormatter.java,v $
+ * Revision 1.3  2008/03/03 09:43:54  willuhn
+ * @N DateUtil-Patch von Heiner
+ * @N Weiterer Code fuer das Backup-System
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

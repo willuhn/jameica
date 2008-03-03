@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/29 19:02:31 $
+ * $Revision: 1.2 $
+ * $Date: 2008/03/03 09:43:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ public class BackupEngine
    * @return eine Liste der Backups in diesem Verzeichnis.
    * @throws ApplicationException
    */
-  public static BackupItem[] getBackups(String dir) throws ApplicationException
+  public static BackupFile[] getBackups(String dir) throws ApplicationException
   {
     String s = dir == null ? Application.getConfig().getBackupDir() : dir;
     FileFinder finder = new FileFinder(new File(s));
@@ -51,7 +51,7 @@ public class BackupEngine
     finder.matches("^" + PREFIX + ".*");
     File[] found = finder.find();
     if (found == null)
-      return new BackupItem[0];
+      return new BackupFile[0];
 
     // Nach Name sortieren
     Arrays.sort(found);
@@ -60,14 +60,14 @@ public class BackupEngine
     {
       try
       {
-        backups.add(new BackupItem(found[i]));
+        backups.add(new BackupFile(found[i]));
       }
       catch (ApplicationException e)
       {
         Logger.error("skipping invalid backup: " + found[i].getAbsolutePath() + ": " + e.getMessage());
       }
     }
-    return (BackupItem[])backups.toArray(new BackupItem[backups.size()]);
+    return (BackupFile[])backups.toArray(new BackupFile[backups.size()]);
   }
   
   /**
@@ -77,7 +77,7 @@ public class BackupEngine
    * @param backup das zurueckzusichernde Backup.
    * @throws ApplicationException
    */
-  public static void restoreBackup(BackupItem backup) throws ApplicationException
+  public static void restoreBackup(BackupFile backup) throws ApplicationException
   {
     if (backup == null)
       throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das wiederherzustellende Backup aus"));
@@ -122,7 +122,7 @@ public class BackupEngine
    * @return das aktuell vorgemerkte Backup oder null
    * @throws ApplicationException
    */
-  public static BackupItem getCurrentBackup() throws ApplicationException
+  public static BackupFile getCurrentBackup() throws ApplicationException
   {
     File marker = new File(Application.getConfig().getWorkDir(),MARKER);
     if (!marker.exists() || !marker.canRead())
@@ -134,7 +134,7 @@ public class BackupEngine
       reader = new BufferedReader(new FileReader(marker));
       File f = new File(reader.readLine());
       if (f.canRead() && f.isFile())
-        return new BackupItem(f);
+        return new BackupFile(f);
       return null;
     }
     catch (ApplicationException ae)
@@ -177,6 +177,10 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.2  2008/03/03 09:43:54  willuhn
+ * @N DateUtil-Patch von Heiner
+ * @N Weiterer Code fuer das Backup-System
+ *
  * Revision 1.1  2008/02/29 19:02:31  willuhn
  * @N Weiterer Code fuer Backup-System
  *
