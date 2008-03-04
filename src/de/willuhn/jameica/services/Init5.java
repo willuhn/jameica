@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/Init5.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.2 $
+ * $Date: 2008/03/04 00:49:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,6 +35,7 @@ public class Init5 implements Bootable
       LockService.class,
       LogService.class,
       SysinfoService.class,
+      BackupService.class,
       ProxyService.class,
       RegistryService.class,
       ClassService.class,
@@ -64,6 +65,9 @@ public class Init5 implements Bootable
 
 /**********************************************************************
  * $Log: Init5.java,v $
+ * Revision 1.2  2008/03/04 00:49:25  willuhn
+ * @N GUI fuer Backup fertig
+ *
  * Revision 1.1  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen

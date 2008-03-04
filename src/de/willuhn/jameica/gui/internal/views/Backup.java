@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Backup.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Revision: 1.2 $
+ * $Date: 2008/03/04 00:49:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,7 +57,7 @@ public class Backup extends AbstractView
     
     SimpleContainer bottom = new SimpleContainer(getParent());
     ButtonArea buttons = bottom.createButtonArea(4);
-    buttons.addButton(i18n.tr("Zurück"),new Back());
+    buttons.addButton(i18n.tr("Zurück"),new Back(),null,true);
     buttons.addButton(i18n.tr("Auswahl rückgängig machen"),new Action()
     {
       /**
@@ -68,7 +68,7 @@ public class Backup extends AbstractView
         control.handleUndo();
       }
     
-    },null,true);
+    });
     buttons.addButton(i18n.tr("Ausgewähltes Backup wiederherstellen..."),new Action()
     {
       /**
@@ -79,8 +79,8 @@ public class Backup extends AbstractView
         control.handleRestore();
       }
     
-    },null,true);
-    buttons.addButton(i18n.tr("Speichern"),new Action()
+    });
+    buttons.addButton(i18n.tr("Einstellungen speichern"),new Action()
     {
       /**
        * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
@@ -90,7 +90,7 @@ public class Backup extends AbstractView
         control.handleStore();
       }
     
-    },null,true);
+    });
   }
 
 }
@@ -98,6 +98,9 @@ public class Backup extends AbstractView
 
 /**********************************************************************
  * $Log: Backup.java,v $
+ * Revision 1.2  2008/03/04 00:49:25  willuhn
+ * @N GUI fuer Backup fertig
+ *
  * Revision 1.1  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput

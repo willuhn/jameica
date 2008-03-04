@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/formatter/CurrencyFormatter.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/04/27 00:04:44 $
+ * $Revision: 1.3 $
+ * $Date: 2008/03/04 00:49:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.formatter;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -29,7 +28,7 @@ public class CurrencyFormatter implements Formatter
   private DecimalFormat formatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
 
   /**
-   * Erzueugt einen neuen Formatierer mit dem angegeben Waehrungsstring.
+   * Erzeugt einen neuen Formatierer mit dem angegeben Waehrungsstring.
    * @param currencyName Bezeichnung der Waehrung.
    * @param formatter kann optional angegeben werden, um den Betrag zu formatieren.
    * Wird der Parameter weggelassen, werden die Werte auf 2 Stellen hinter dem
@@ -51,8 +50,7 @@ public class CurrencyFormatter implements Formatter
    * Es kann von folgenden Typen sein:
    * <ul>
    *  <li>String</li>
-   *  <li>Double</li>
-   *  <li>BigDecimal</li>
+   *  <li>Number (oder davon abgeleitete Typen)</li>
    * </ul>
    * @see de.willuhn.jameica.gui.formatter.Formatter#format(java.lang.Object)
    */
@@ -60,11 +58,8 @@ public class CurrencyFormatter implements Formatter
   {
     if (o == null)
       return "";
-    if (o instanceof Double)
-      return (formatter.format(((Double)o).doubleValue()) + " " + curr);
-    if (o instanceof BigDecimal)
-      return (formatter.format(((BigDecimal)o).doubleValue()) + " " + curr);
-
+    if (o instanceof Number)
+      return (formatter.format(((Number)o).doubleValue()) + " " + curr);
     return o.toString() + " " + curr;
   }
 
@@ -72,6 +67,9 @@ public class CurrencyFormatter implements Formatter
 
 /*********************************************************************
  * $Log: CurrencyFormatter.java,v $
+ * Revision 1.3  2008/03/04 00:49:25  willuhn
+ * @N GUI fuer Backup fertig
+ *
  * Revision 1.2  2004/04/27 00:04:44  willuhn
  * @D javadoc
  *

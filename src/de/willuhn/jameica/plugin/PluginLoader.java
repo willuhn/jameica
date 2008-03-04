@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.29 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.30 $
+ * $Date: 2008/03/04 00:49:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -363,15 +363,7 @@ public final class PluginLoader
 		if (plugin == null)
 			return null;
 
-		int size = plugins.size();
-		Manifest mf = null;
-		for (int i=0;i<size;++i)
-		{
-			mf = (Manifest) plugins.get(i);
-			if (mf.getPluginClass().equals(plugin.getName()))
-				return mf;
-		}
-		return null;
+    return getManifest(plugin.getName());
 	}
 
   /**
@@ -404,8 +396,8 @@ public final class PluginLoader
 	{
 		if (plugin == null)
 			return null;
-    
-    return getManifest(plugin).getPluginInstance();
+
+    return getPlugin(plugin.getName());
 	}
 
 	/**
@@ -418,7 +410,8 @@ public final class PluginLoader
 		if (pluginClass == null || pluginClass.length() == 0)
 			return null;
 
-    return getManifest(pluginClass).getPluginInstance();
+    Manifest mf = getManifest(pluginClass);
+    return mf == null ? null : mf.getPluginInstance();
 	}
 
 	/**
@@ -484,6 +477,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.30  2008/03/04 00:49:25  willuhn
+ * @N GUI fuer Backup fertig
+ *
  * Revision 1.29  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen

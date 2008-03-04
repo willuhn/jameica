@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/03/03 09:43:54 $
+ * $Revision: 1.4 $
+ * $Date: 2008/03/04 00:49:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,7 @@ import de.willuhn.jameica.backup.BackupFile;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.dialogs.BackupRestoreDialog;
+import de.willuhn.jameica.gui.formatter.CurrencyFormatter;
 import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.input.CheckboxInput;
@@ -32,6 +32,7 @@ import de.willuhn.jameica.gui.input.DirectoryInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.internal.dialogs.BackupRestoreDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -154,12 +155,13 @@ public class BackupControl extends AbstractControl
   {
     if (this.backups != null)
       return this.backups;
-    
+ 
+    final CurrencyFormatter format = new CurrencyFormatter("MB",null);
     this.backups = new TablePart(PseudoIterator.fromArray(BackupEngine.getBackups((String)getTarget().getValue())),null);
     this.backups.addColumn(Application.getI18n().tr("Dateiname"),"name");
     this.backups.addColumn(Application.getI18n().tr("Erstellt am"),"created", new DateFormatter(null));
     this.backups.addColumn(Application.getI18n().tr("Größe"),"size", new Formatter() {
-    
+
       /**
        * @see de.willuhn.jameica.gui.formatter.Formatter#format(java.lang.Object)
        */
@@ -168,7 +170,9 @@ public class BackupControl extends AbstractControl
         if (o == null || !(o instanceof Number))
           return "-";
         long size = ((Number) o).longValue();
-        return size == 0 ? "-" : ((int)(size / 1024 / 1024)) + " MB";
+        if (size == 0)
+          return "-";
+        return format.format(new Double(size / 1024d /1024d));
       }
     
     });
@@ -287,6 +291,9 @@ public class BackupControl extends AbstractControl
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
+ * Revision 1.4  2008/03/04 00:49:25  willuhn
+ * @N GUI fuer Backup fertig
+ *
  * Revision 1.3  2008/03/03 09:43:54  willuhn
  * @N DateUtil-Patch von Heiner
  * @N Weiterer Code fuer das Backup-System
