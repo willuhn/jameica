@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BackupService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/03/04 00:49:25 $
+ * $Revision: 1.2 $
+ * $Date: 2008/03/04 00:51:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,6 +75,9 @@ public class BackupService implements Bootable
    */
   public void shutdown()
   {
+    // Sollen ueberhaupt Backups erstellt werden?
+    if (!Application.getConfig().getUseBackup())
+      return;
     // Backup erzeugen
     Logger.info("creating backup");
     
@@ -88,6 +91,9 @@ public class BackupService implements Bootable
 
 /**********************************************************************
  * $Log: BackupService.java,v $
+ * Revision 1.2  2008/03/04 00:51:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2008/03/04 00:49:25  willuhn
  * @N GUI fuer Backup fertig
  *
