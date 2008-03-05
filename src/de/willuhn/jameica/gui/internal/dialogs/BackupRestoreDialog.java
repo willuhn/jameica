@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/BackupRestoreDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/03/04 00:49:25 $
+ * $Revision: 1.2 $
+ * $Date: 2008/03/05 23:58:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,9 +69,9 @@ public class BackupRestoreDialog extends AbstractDialog
     // Die Versionsnummern stimmen nicht exakt ueberein. Warnung anzeign.
     if (table.hasWarnings())
     {
-      container.addText(Application.getI18n().tr("Die Version mindestens eines Plugins des Backups stimmt nicht " +
-          "exakt mit dem derzeitigen Stand überein. Beim Wiederherstellen kann es " +
-          "zu Fehlern kommen."),true,Color.ERROR);
+      container.addText(Application.getI18n().tr("Bei mindestens einem Plugin stimmt entweder die Versionsnummer " +
+          "nicht mit dem aktuellen Stand überein oder es ist nicht im Backup enthalten. " +
+          "Beim Wiederherstellen kann es zu Fehlern oder Datenverlusten kommen."),true,Color.ERROR);
     }
 
     container.addText(Application.getI18n().tr("Möchten Sie dieses Backup wiederherstellen?\n" +
@@ -106,6 +106,9 @@ public class BackupRestoreDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: BackupRestoreDialog.java,v $
+ * Revision 1.2  2008/03/05 23:58:36  willuhn
+ * @N Backup: Warnhinweis, wenn ein Plugin zwar installiert, aber nicht im ausgewaehlten Backup enthalten ist
+ *
  * Revision 1.1  2008/03/04 00:49:25  willuhn
  * @N GUI fuer Backup fertig
  *

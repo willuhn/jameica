@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackupVersionsList.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/03/04 00:49:25 $
+ * $Revision: 1.2 $
+ * $Date: 2008/03/05 23:58:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ package de.willuhn.jameica.gui.internal.parts;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
@@ -53,7 +54,7 @@ public class BackupVersionsList extends TablePart
     this.setRememberOrder(true);
     this.setSummary(false);
     this.addColumn(Application.getI18n().tr("Plugin"),"name");
-    this.addColumn(Application.getI18n().tr("Version des Backups"),"version");
+    this.addColumn(Application.getI18n().tr("Version des Backups"),"backupversion");
     this.addColumn(Application.getI18n().tr("Installierte Version"),"currentversion");
     
     this.setFormatter(new TableFormatter()
@@ -67,8 +68,11 @@ public class BackupVersionsList extends TablePart
         if (data == null || !(data instanceof Plugin))
           return;
         Plugin p = (Plugin) data;
-        if (p.warning)
+        
+        if (p.versionMissmatch || p.noBackup)
           item.setForeground(Color.ERROR.getSWTColor());
+        else if (p.notInstalled)
+          item.setForeground(Color.COMMENT.getSWTColor());
         else
           item.setForeground(Color.WIDGET_FG.getSWTColor());
       }
@@ -78,7 +82,7 @@ public class BackupVersionsList extends TablePart
     for (int i=0;i<data.size();++i)
     {
       Plugin p = (Plugin) data.get(i);
-      this.warning |= p.warning;
+      this.warning |= (p.versionMissmatch || p.noBackup);
       this.addItem(p);
     }
   }
@@ -99,6 +103,17 @@ public class BackupVersionsList extends TablePart
    */
   private List init(BackupFile file)
   {
+    // Wir suchen auch noch den Plugins, die derzeit installiert
+    // aber nicht im Backup enthalten sind. Deren Daten wuerden
+    // nach dem Restore verloren gehen
+    List l = Application.getPluginLoader().getInstalledManifests();
+    Hashtable installed = new Hashtable();
+    for (int i=0;i<l.size();++i)
+    {
+      Manifest mf = (Manifest) l.get(i);
+      installed.put(mf.getPluginClass(),mf);
+    }
+    
     Properties props = file.getProperties();
     Enumeration keys = props.keys();
     ArrayList list = new ArrayList();
@@ -117,7 +132,21 @@ public class BackupVersionsList extends TablePart
         continue;
       }
       pc = pc.substring(0,pc.lastIndexOf(".version"));
-      list.add(new Plugin(pc,version));
+      
+      // Ist im Backup enthalten. Aus der "installed"-Liste streichen
+      installed.remove(pc);
+      list.add(new Plugin(pc,version,null));
+    }
+    
+    // Jetzt checken wir, ob in der "installed"-Liste noch
+    // was drin steht. Das sind die, zu denen kein Backup
+    // vorliegt
+    Enumeration missing = installed.keys();
+    while (missing.hasMoreElements())
+    {
+      String pc = (String) missing.nextElement();
+      Manifest mf = (Manifest) installed.get(pc);
+      list.add(new Plugin(pc,null,Double.toString(mf.getVersion())));
     }
     return list;
   }
@@ -128,36 +157,41 @@ public class BackupVersionsList extends TablePart
   private class Plugin implements GenericObject
   {
     private String pluginClass    = null;
-    private String version        = null;
-
     private String name           = null;
+
+    private String backupVersion  = null;
     private String currentVersion = null;
-    private boolean warning       = false;
+    
+    private boolean versionMissmatch = false;
+    private boolean noBackup         = false;
+    private boolean notInstalled     = false;
     
     /**
      * ct.
      * @param pluginClass
-     * @param version
+     * @param backupVersion Version aus dem Backup
+     * @param currentVersion aktuelle Version.
      */
-    private Plugin(String pluginClass, String version)
+    private Plugin(String pluginClass, String backupVersion, String currentVersion)
     {
-      this.pluginClass = pluginClass;
-      this.version     = version;
+      this.pluginClass   = pluginClass;
+      this.backupVersion = backupVersion;
 
+      this.name          = this.pluginClass;
+      this.noBackup      = this.backupVersion == null;
+
+      // Checken, ob das Plugin installiert ist
       AbstractPlugin plugin = Application.getPluginLoader().getPlugin(this.pluginClass);
+
+      this.notInstalled = plugin == null;
+
       if (plugin != null)
       {
         // Plugin ist installiert. Versionsnummer checken
         Manifest mf = plugin.getManifest();
-        this.name    = mf.getName();
-        this.currentVersion = Double.toString(mf.getVersion());
-        this.warning = !this.version.equals(this.currentVersion);
-      }
-      else
-      {
-        this.name = Application.getI18n().tr("{0} - nicht installiert",this.pluginClass);
-        this.warning = true;
-        this.currentVersion = "-";
+        this.name             = mf.getName();
+        this.currentVersion   = Double.toString(mf.getVersion());
+        this.versionMissmatch = this.backupVersion != null && !this.backupVersion.equals(this.currentVersion);
       }
     }
 
@@ -179,9 +213,9 @@ public class BackupVersionsList extends TablePart
       if ("name".equals(name))
         return this.name;
       if ("currentversion".equals(name))
-        return this.currentVersion;
-      if ("version".equals(name))
-        return this.version;
+        return this.currentVersion == null ? Application.getI18n().tr("nicht installiert") : this.currentVersion;
+      if ("backupversion".equals(name))
+        return this.backupVersion == null ? Application.getI18n().tr("nicht enthalten") : this.backupVersion;
       
       return null;
     }
@@ -191,7 +225,7 @@ public class BackupVersionsList extends TablePart
      */
     public String[] getAttributeNames() throws RemoteException
     {
-      return new String[]{"name","currentversion","version"};
+      return new String[]{"name","currentversion","backupversion"};
     }
 
     /**
@@ -217,6 +251,9 @@ public class BackupVersionsList extends TablePart
 
 /**********************************************************************
  * $Log: BackupVersionsList.java,v $
+ * Revision 1.2  2008/03/05 23:58:36  willuhn
+ * @N Backup: Warnhinweis, wenn ein Plugin zwar installiert, aber nicht im ausgewaehlten Backup enthalten ist
+ *
  * Revision 1.1  2008/03/04 00:49:25  willuhn
  * @N GUI fuer Backup fertig
  *
