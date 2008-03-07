@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.75 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.76 $
+ * $Date: 2008/03/07 17:14:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,8 @@ public final class Application {
   
   // singleton
   private static Application app   = null;
-    private Thread              shutdownHoook;
+    private boolean             inShutdown  = false;
+    private boolean             hookRunning = false;
 		
 		private StartupParams 			params;
 
@@ -117,7 +118,7 @@ public final class Application {
 
     ////////////////////////////////////////////////////////////////////////////
     // add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
-    app.shutdownHoook = new Thread()
+    Runtime.getRuntime().addShutdownHook(new Thread()
     {
       /**
        * Diese Methode wird beim Beenden der JVM aufgerufen und beendet vorher
@@ -126,13 +127,13 @@ public final class Application {
        */
       public void run()
       {
-        if (app.shutdownHoook == null)
+        if (app.hookRunning || app.inShutdown)
           return;
+        app.hookRunning = true;
         Logger.info("shutting down via shutdown hook");
         Application.getController().shutDown();
       }
-    };
-    Runtime.getRuntime().addShutdownHook(app.shutdownHoook);
+    });
     //
     ////////////////////////////////////////////////////////////////////////////
 
@@ -192,22 +193,10 @@ public final class Application {
    */
   public static void shutDown()
   {
-    if (app.shutdownHoook == null)
+    if (app.inShutdown)
       return;
 
-    // Das stellt sicher, dass der Hook niemals ein zweites mal ausgefuehrt wird
-    try
-    {
-      Runtime.getRuntime().removeShutdownHook(app.shutdownHoook);
-    }
-    catch (Exception e) {
-      // ignore
-    }
-    finally
-    {
-      app.shutdownHoook = null;
-    }
-
+    app.inShutdown = true;
     try
     {
 
@@ -223,10 +212,10 @@ public final class Application {
     }
     finally
     {
-      // Wenn das Shutdown via Shutdown-Hook ausgeloest wurde, wuerden wir
-      // ein Deadlock am Ende ausloesen. Da das beim Server-Mode der Fall
-      // ist, rufen wir dort nicht nochmal System.exit(0) auf
-      if (!Application.inServerMode())
+      // Duerfen wir nur machen, wenn wir nicht schon im Shutdownhook
+      // sind. Wuerde sonst ein Deadlock in der JVM unmittelbar vom
+      // Exit ausloesen
+      if (!app.hookRunning)
         System.exit(0);
     }
   }
@@ -502,6 +491,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.76  2008/03/07 17:14:09  willuhn
+ * @N Shutdown via Hook verbessert
+ *
  * Revision 1.75  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *
