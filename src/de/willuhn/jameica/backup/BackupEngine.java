@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/03/03 09:43:54 $
+ * $Revision: 1.3 $
+ * $Date: 2008/03/07 01:36:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,19 +13,28 @@
 
 package de.willuhn.jameica.backup;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import de.willuhn.io.FileFinder;
+import de.willuhn.io.ZipCreator;
+import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.ProgressMonitor;
 
 
 /**
@@ -33,6 +42,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class BackupEngine
 {
+  private final static DateFormat format = new SimpleDateFormat("yyyyMMdd__hh_mm_ss");
   private final static String PREFIX = "jameica-backup-";
   private final static String MARKER = ".restore";
   
@@ -71,13 +81,23 @@ public class BackupEngine
   }
   
   /**
+   * Macht eine ggf. vorhandene Auswahl der Backup-Wiederherstellung rueckgaengig.
+   */
+  public static void undoRestoreMark()
+  {
+    File marker = new File(Application.getConfig().getWorkDir(),MARKER);
+    if (marker.exists())
+      marker.delete();
+  }
+
+  /**
    * Markiert das uebergebene Backup fuer die Wiederherstellung.
    * Das eigentliche Wiederherstellen der Daten geschieht beim
    * naechsten Neustart der Anwendung.
    * @param backup das zurueckzusichernde Backup.
    * @throws ApplicationException
    */
-  public static void restoreBackup(BackupFile backup) throws ApplicationException
+  public static void markForRestore(BackupFile backup) throws ApplicationException
   {
     if (backup == null)
       throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das wiederherzustellende Backup aus"));
@@ -122,7 +142,7 @@ public class BackupEngine
    * @return das aktuell vorgemerkte Backup oder null
    * @throws ApplicationException
    */
-  public static BackupFile getCurrentBackup() throws ApplicationException
+  public static BackupFile getCurrentRestore() throws ApplicationException
   {
     File marker = new File(Application.getConfig().getWorkDir(),MARKER);
     if (!marker.exists() || !marker.canRead())
@@ -163,20 +183,117 @@ public class BackupEngine
   }
   
   /**
-   * Macht eine ggf. vorhandene Auswahl der Backup-Wiederherstellung rueckgaengig.
+   * Erstellt ein frisches Backup.
+   * @throws ApplicationException
    */
-  public static void undoRestore()
+  public static void doBackup() throws ApplicationException
   {
-    File marker = new File(Application.getConfig().getWorkDir(),MARKER);
-    if (marker.exists())
-      marker.delete();
-  }
+    // Sollen ueberhaupt Backups erstellt werden?
+    if (!Application.getConfig().getUseBackup())
+      return;
 
+    // Backup erzeugen
+    ZipCreator zip  = null;
+    Exception error = null;
+    
+    SplashScreen splash = null;
+    try
+    {
+      splash = new SplashScreen();
+      splash.init();
+      
+      File workdir    = new File(Application.getConfig().getWorkDir());
+
+      String filename = PREFIX + format.format(new Date()) + ".zip";
+      File dir        = new File(Application.getConfig().getBackupDir());
+      File backup     = new File(dir,filename);
+
+      if (backup.exists())
+        throw new ApplicationException(Application.getI18n().tr("Backup-Datei {0} existiert bereits",backup.getAbsolutePath()));
+
+      splash.setStatusText("creating backup " + backup.getAbsolutePath());
+      zip = new ZipCreator(new BufferedOutputStream(new FileOutputStream(backup)));
+      zip.setMonitor(splash);
+      File[] children = workdir.listFiles();
+      for (int i=0;i<children.length;++i)
+      {
+        if (!children[i].isDirectory())
+          continue; // Wir sichern nur Unterverzeichnisse. Also keine Backups (rekursiv) und Logs
+        if (children[i].equals(dir))
+          continue; // Das Backup-Verzeichnis selbst ist ein Unterverzeichnis. Nicht sichern wegen Rekursion
+        zip.add(children[i]);
+      }
+      // Muessen wir vorher schliessen, weil das anschliessende getBackups()
+      // sonst ein "java.util.zip.ZipException: error in opening zip file" wirft.
+      zip.close();
+      zip = null;
+      
+      int maxCount = Application.getConfig().getBackupCount();
+      BackupFile[] old = getBackups(Application.getConfig().getBackupDir());
+      File[] toDelete = new File[old.length];
+      for (int i=0;i<old.length;++i)
+        toDelete[i] = old[i].getFile();
+
+      // Sortieren
+      Arrays.sort(toDelete);
+      
+      // Von oben mit dem Loeschen anfangen
+      // Und solange loeschen wie:
+      // Urspruengliche Anzahl - geloeschte > maximale Anzahl
+      for (int pos=0;(toDelete.length - pos) > maxCount;++pos)
+      {
+        File current = toDelete[pos];
+        splash.setStatusText("delete old backup " + current.getAbsolutePath());
+        current.delete();
+        pos++;
+      }
+
+      splash.setStatusText("backup created");
+      splash.setPercentComplete(100);
+      splash.setStatus(ProgressMonitor.STATUS_DONE);
+    
+    }
+    catch (IOException e)
+    {
+      error = e;
+      Logger.error("unable to create backup",e);
+      
+      if (splash != null)
+        splash.setStatus(ProgressMonitor.STATUS_ERROR);
+      
+      throw new ApplicationException(Application.getI18n().tr("Fehler beim Erstellen des Backups: " + e.getMessage()));
+    }
+    finally
+    {
+      if (zip != null)
+      {
+        try
+        {
+          zip.close();
+        }
+        catch (Exception e)
+        {
+          // Nur werfen, wenn es kein Folgefehler ist
+          // Ansonsten interessiert es uns nicht mehr
+          // weil die ZIP-Datei eh im Eimer ist
+          if (error == null)
+          {
+            Logger.error("unable to close backup",e);
+            throw new ApplicationException(Application.getI18n().tr("Fehler beim Erstellen des Backups: " + e.getMessage()));
+          }
+        }
+      }
+    }
+  }
 }
 
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.3  2008/03/07 01:36:27  willuhn
+ * @N ZipCreator
+ * @N Erster Code fuer Erstellung des Backups
+ *
  * Revision 1.2  2008/03/03 09:43:54  willuhn
  * @N DateUtil-Patch von Heiner
  * @N Weiterer Code fuer das Backup-System

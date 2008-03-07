@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/03/04 00:49:25 $
+ * $Revision: 1.5 $
+ * $Date: 2008/03/07 01:36:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -204,7 +204,7 @@ public class BackupControl extends AbstractControl
     String s = null;
     try
     {
-      BackupFile bi = BackupEngine.getCurrentBackup();
+      BackupFile bi = BackupEngine.getCurrentRestore();
       if (bi != null)
         s = bi.getFile().getName();
     }
@@ -261,8 +261,8 @@ public class BackupControl extends AbstractControl
       if (!b.booleanValue())
         return;
       
-      BackupEngine.restoreBackup(o);
-      o = BackupEngine.getCurrentBackup();
+      BackupEngine.markForRestore(o);
+      o = BackupEngine.getCurrentRestore();
       getCurrent().setValue(o == null ? "-" : o.getFile().getName());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Backup für Wiederherstellung vorgemerkt. Bitte starten Sie nun Jameica neu."), StatusBarMessage.TYPE_SUCCESS));
     }
@@ -282,7 +282,7 @@ public class BackupControl extends AbstractControl
    */
   public void handleUndo()
   {
-    BackupEngine.undoRestore();
+    BackupEngine.undoRestoreMark();
     getCurrent().setValue("-");
     Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Auswahl rückgängig gemacht."), StatusBarMessage.TYPE_SUCCESS));
   }
@@ -291,6 +291,10 @@ public class BackupControl extends AbstractControl
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
+ * Revision 1.5  2008/03/07 01:36:27  willuhn
+ * @N ZipCreator
+ * @N Erster Code fuer Erstellung des Backups
+ *
  * Revision 1.4  2008/03/04 00:49:25  willuhn
  * @N GUI fuer Backup fertig
  *
