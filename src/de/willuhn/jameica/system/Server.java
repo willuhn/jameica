@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/04/09 23:26:03 $
+ * $Revision: 1.14 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,6 +60,7 @@ public class Server implements ApplicationController
    */
   public void shutDown()
   {
+    Application.shutDown();
   }
 
   /**
@@ -156,6 +157,9 @@ public class Server implements ApplicationController
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.14  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.13  2007/04/09 23:26:03  willuhn
  * *** empty log message ***
  *

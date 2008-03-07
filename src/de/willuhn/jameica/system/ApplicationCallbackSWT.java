@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/12/21 13:46:27 $
+ * $Revision: 1.18 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,8 +51,9 @@ import de.willuhn.util.ProgressMonitor;
 public class ApplicationCallbackSWT extends AbstractApplicationCallback
 {
 
-	private SplashScreen monitor = null;
-	private String password      = null;
+	private SplashScreen startupMonitor  = null;
+  private SplashScreen shutdownMonitor = null;
+	private String password              = null;
 
 
   /**
@@ -161,13 +162,26 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public ProgressMonitor getStartupMonitor()
   {
-  	if (monitor != null)
-  		return monitor;
-  	monitor = new SplashScreen();
-  	monitor.init();
-  	return monitor;
+  	if (startupMonitor != null)
+  		return startupMonitor;
+  	startupMonitor = new SplashScreen(null,false);
+    startupMonitor.setStatusText(" starting...");
+  	startupMonitor.init();
+  	return startupMonitor;
   }
 
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#getShutdownMonitor()
+   */
+  public ProgressMonitor getShutdownMonitor()
+  {
+    if (shutdownMonitor != null)
+      return shutdownMonitor;
+    
+    shutdownMonitor = new SplashScreen("/img/shutdown.png",true);
+    shutdownMonitor.init();
+    return shutdownMonitor;
+  }
 
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#startupError(java.lang.String, java.lang.Throwable)
@@ -413,6 +427,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.18  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.17  2007/12/21 13:46:27  willuhn
  * @N H2-Migration scharf geschaltet
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.110 $
- * $Date: 2007/07/24 13:54:07 $
+ * $Revision: 1.111 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -718,6 +718,8 @@ public class GUI implements ApplicationController
 	 */
 	public void shutDown()
 	{
+    // Wir benachrichtigen die GUI nur, aber fahren nicht 
+    // selbst runter.
 		gui.stop = true;
 	}
 
@@ -731,33 +733,19 @@ public class GUI implements ApplicationController
     Logger.info("shutting down GUI");
 		try
 		{
-			getShell().dispose();
+      if (gui.shell != null && !gui.shell.isDisposed())
+        gui.shell.dispose();
 		}
 		catch (Exception e)
 		{
-			Logger.error("error while quitting shell", e);
+			Logger.error("error while disposing shell", e);
 		}
-    try
+    finally
     {
-      getDisplay().dispose();
+      gui.shell = null;
     }
-    catch (Exception e)
-    {
-      Logger.error("error while quitting display", e);
-    }
-    if (!gui.stop)
-    {
-      // Es gibt zwei Moeglichkeiten, wie Jameica mit laufender GUI beendet wird:
-      // 1) Ueber ShutdownHook, <Ctrl><C> in der Console oder via Kill wird
-      //    die GUI von aussen ueber shutDown() geschlossen. In diesem Fall
-      //    laeuft der globale Shutdown schon und "stop" ist auf "true"
-      //    gesetzt.
-      // 2) Der User klickt auf das Schliessen-Kreuz im Fenster. Dabei wird
-      //    der GUI-Loop beendet. In dem Fall sind wir der Ausloeser des
-      //    Shutdowns, "stop" ist false und wir muessen den Rest des Systems
-      //    hinterherziehen. 
-      System.exit(0);
-    }
+    // Display muss nicht disposed werden - das macht der Shutdown-Splashscreen
+    Application.shutDown();
 	}
 
   /**
@@ -838,6 +826,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.111  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.110  2007/07/24 13:54:07  willuhn
  * *** empty log message ***
  *

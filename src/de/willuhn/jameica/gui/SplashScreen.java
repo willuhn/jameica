@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.26 $
- * $Date: 2008/02/06 12:13:46 $
+ * $Revision: 1.27 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,26 +38,37 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class SplashScreen implements ProgressMonitor, Runnable
 {
-
+  private String logo = null;
+  
 	private Display display;
 	private Shell shell;
 
 	private ProgressBar bar;
 	private Label label;
-	private Label textLabel; 
+	private Label textLabel;
+  private String text;
   
   private int percentComplete = 0;
   
 	private boolean closed = false;
+  private boolean disposeDisplay = false;
 
 	/**
    * ct.
+   * @param logo relativer Pfad zum Logo.
+   * Zuerst wird versucht, das Bild direkt als Datei
+   * zu laden. Wenn das fehlschlaegt, wird getResourceAsStream() versucht.
+   * @param disposeDisplay true, wenn auch das Display disposed werden soll.
    */
-  public SplashScreen()
+  public SplashScreen(String logo, boolean disposeDisplay)
 	{
     Logger.debug("init splash screen");
+
+    this.logo = logo;
+    this.disposeDisplay = disposeDisplay;
 		display = GUI.getDisplay();
-		shell = new Shell(SWT.NONE);
+    
+    shell = new Shell(display,SWT.NONE);
     shell.setText("Jameica");
     shell.setBackground(new Color(display,0,0,0));
   }
@@ -85,33 +96,40 @@ public class SplashScreen implements ProgressMonitor, Runnable
 		shell.setLayout(l);
     
 		InputStream is = null;
-    
+
     // Mal schauen, ob wir einen Custom-Splashscreen haben
-    String[] ext = new String[] {"jpg","jpeg","gif","bmp","png"};
-    for (int i=0;i<ext.length;++i)
+    // Den laden wir aber nur, wenn nicht explizit einer angegeben ist
+    if (this.logo == null)
     {
-      File f = new File("splash." + ext[i]);
-      if (f.exists() && f.isFile() && f.canRead() && f.length() > 0)
+      String[] ext = new String[] {"jpg","jpeg","gif","bmp","png"};
+      for (int i=0;i<ext.length;++i)
       {
-        try
+        File f = new File("splash." + ext[i]);
+        if (f.exists() && f.isFile() && f.canRead() && f.length() > 0)
         {
-          is = new FileInputStream(f);
-          Logger.info("using custom splash screen " + f.getAbsolutePath());
+          try
+          {
+            is = new FileInputStream(f);
+            Logger.info("using custom splash screen " + f.getAbsolutePath());
+          }
+          catch (Exception e)
+          {
+            Logger.error("unable to load custom splash screen",e);
+          }
+          break;
         }
-        catch (Exception e)
-        {
-          Logger.error("unable to load custom inputstream",e);
-        }
-        break;
       }
     }
-    
+
     if (is == null)
-      is = shell.getClass().getResourceAsStream("/img/splash.png");
+      is = shell.getClass().getResourceAsStream(logo == null ? "/img/splash.png" : logo);
+    
 
     // Label erzeugen und Image drauf pappen
     label = new Label(shell, SWT.NONE);
-    label.setImage(new Image(display, is));
+    
+    Image image = new Image(display, is);
+    label.setImage(image);
     label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
     label.setBackground(new Color(display,0,0,0));
 
@@ -119,7 +137,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
     textLabel = new Label(shell, SWT.NONE);
     textLabel.setForeground(new Color(display,255,255,255));
     textLabel.setBackground(new Color(display,0,0,0));
-    textLabel.setText(" starting...");
+    textLabel.setText(this.text == null ? "" : this.text);
     textLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
     bar = new ProgressBar(shell, SWT.SMOOTH);
@@ -131,7 +149,8 @@ public class SplashScreen implements ProgressMonitor, Runnable
     barGd.verticalIndent = 0;
     bar.setLayoutData(barGd);
 
-    shell.setSize(381,237);
+    Rectangle size = image.getBounds();
+    shell.setSize(size.width + 2,size.height + 36);
 
     // Splashscreen mittig positionieren
     Rectangle splashRect = shell.getBounds();
@@ -164,6 +183,8 @@ public class SplashScreen implements ProgressMonitor, Runnable
     {
       public void run()
       {
+        if (bar == null || bar.isDisposed())
+          return;
         Logger.debug("startup completed: " + percentComplete + " %");
         bar.setSelection(percentComplete);
 				display.readAndDispatch();
@@ -195,6 +216,17 @@ public class SplashScreen implements ProgressMonitor, Runnable
           {
           	// useless;
           }
+          if (disposeDisplay)
+          {
+            try
+            {
+              display.dispose();
+            }
+            catch (Exception e)
+            {
+              // useless;
+            }
+          }
         }
       });
     }
@@ -205,13 +237,20 @@ public class SplashScreen implements ProgressMonitor, Runnable
    */
   public void setStatusText(final String text)
   {
-    if (Application.inServerMode() || text == null || closed)
+    if (text == null)
+      return;
+    
+    this.text = text;
+    
+    if (Application.inServerMode() || closed)
       return;
 
     display.syncExec(new Runnable()
     {
       public void run()
       {
+        if (textLabel == null || textLabel.isDisposed())
+          return;
         String s = " " + text + " ...";
         Logger.debug(s);
         textLabel.setText(s);
@@ -251,6 +290,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.27  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.26  2008/02/06 12:13:46  willuhn
  * @C Weisse Hintergrundfarbe fuer Fortschrittsbalken - sieht unter Windows besser aus
  *

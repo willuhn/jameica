@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/03/07 01:36:27 $
+ * $Revision: 1.4 $
+ * $Date: 2008/03/07 16:31:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,6 @@ import java.util.Date;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.io.ZipCreator;
-import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -196,12 +195,9 @@ public class BackupEngine
     ZipCreator zip  = null;
     Exception error = null;
     
-    SplashScreen splash = null;
+    ProgressMonitor monitor = Application.getCallback().getShutdownMonitor();
     try
     {
-      splash = new SplashScreen();
-      splash.init();
-      
       File workdir    = new File(Application.getConfig().getWorkDir());
 
       String filename = PREFIX + format.format(new Date()) + ".zip";
@@ -211,9 +207,9 @@ public class BackupEngine
       if (backup.exists())
         throw new ApplicationException(Application.getI18n().tr("Backup-Datei {0} existiert bereits",backup.getAbsolutePath()));
 
-      splash.setStatusText("creating backup " + backup.getAbsolutePath());
+      monitor.setStatusText("creating backup " + backup.getAbsolutePath());
       zip = new ZipCreator(new BufferedOutputStream(new FileOutputStream(backup)));
-      zip.setMonitor(splash);
+      zip.setMonitor(monitor);
       File[] children = workdir.listFiles();
       for (int i=0;i<children.length;++i)
       {
@@ -243,28 +239,25 @@ public class BackupEngine
       for (int pos=0;(toDelete.length - pos) > maxCount;++pos)
       {
         File current = toDelete[pos];
-        splash.setStatusText("delete old backup " + current.getAbsolutePath());
+        monitor.setStatusText("delete old backup " + current.getAbsolutePath());
         current.delete();
         pos++;
       }
 
-      splash.setStatusText("backup created");
-      splash.setPercentComplete(100);
-      splash.setStatus(ProgressMonitor.STATUS_DONE);
-    
+      monitor.setStatusText("backup created");
+      monitor.setPercentComplete(100);
     }
     catch (IOException e)
     {
       error = e;
       Logger.error("unable to create backup",e);
-      
-      if (splash != null)
-        splash.setStatus(ProgressMonitor.STATUS_ERROR);
-      
       throw new ApplicationException(Application.getI18n().tr("Fehler beim Erstellen des Backups: " + e.getMessage()));
     }
     finally
     {
+      // Schliessen des Splashscreen forcieren
+      monitor.setStatus(0);
+
       if (zip != null)
       {
         try
@@ -290,6 +283,9 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.4  2008/03/07 16:31:49  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.3  2008/03/07 01:36:27  willuhn
  * @N ZipCreator
  * @N Erster Code fuer Erstellung des Backups

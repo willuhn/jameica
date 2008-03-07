@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackupVersionsList.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/03/05 23:58:36 $
+ * $Revision: 1.3 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -99,7 +99,7 @@ public class BackupVersionsList extends TablePart
   /**
    * Erzeugt die Liste der Datensaetze.
    * @param file
-   * @return
+   * @return Liste der Backup-Files.
    */
   private List init(BackupFile file)
   {
@@ -251,6 +251,9 @@ public class BackupVersionsList extends TablePart
 
 /**********************************************************************
  * $Log: BackupVersionsList.java,v $
+ * Revision 1.3  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.2  2008/03/05 23:58:36  willuhn
  * @N Backup: Warnhinweis, wenn ein Plugin zwar installiert, aber nicht im ausgewaehlten Backup enthalten ist
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.35 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Revision: 1.36 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -592,7 +592,7 @@ public final class Config
    */
   public boolean getUseBackup()
   {
-    return settings.getBoolean("jameica.system.backup.enabled",true);
+    return settings.getBoolean("jameica.system.backup.enabled",false);
   }
 
   /**
@@ -609,6 +609,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.36  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.35  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput

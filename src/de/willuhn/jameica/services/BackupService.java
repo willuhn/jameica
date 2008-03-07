@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BackupService.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/03/07 01:36:26 $
+ * $Revision: 1.4 $
+ * $Date: 2008/03/07 16:31:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,33 +41,33 @@ public class BackupService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-//    try
-//    {
-//      BackupFile file = BackupEngine.getCurrentRestore();
-//      if (file == null)
-//        return; // Nichts wiederherzustellen
-//      Logger.info("restoring backup " + file.getID());
-//
-//      // TODO Hier weiter
-//      
-//      Logger.info("backup restored");
-//    }
-//    catch (ApplicationException ae)
-//    {
-//      Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups: {0}",ae.getMessage()));
-//    }
-//    catch (Exception e)
-//    {
-//      Logger.error("unable to restore backup",e);
-//      Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups. Bitte prüfen Sie das System-Log"));
-//    }
-//    finally
-//    {
-//      // wir loeschen auf jeden Fall die Marker-Datei
-//      // damit nicht bei jedem fehlerhaften Restore
-//      // erneut versucht wird, das Backup wiederherzustellen
-//      BackupEngine.undoRestoreMark();
-//    }
+    try
+    {
+      BackupFile file = BackupEngine.getCurrentRestore();
+      if (file == null)
+        return; // Nichts wiederherzustellen
+      Logger.info("restoring backup " + file.getID());
+
+      // TODO Hier weiter
+      
+      Logger.info("backup restored");
+    }
+    catch (ApplicationException ae)
+    {
+      Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups: {0}",ae.getMessage()));
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to restore backup",e);
+      Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups. Bitte prüfen Sie das System-Log"));
+    }
+    finally
+    {
+      // wir loeschen auf jeden Fall die Marker-Datei
+      // damit nicht bei jedem fehlerhaften Restore
+      // erneut versucht wird, das Backup wiederherzustellen
+      BackupEngine.undoRestoreMark();
+    }
   }
 
   /**
@@ -75,15 +75,15 @@ public class BackupService implements Bootable
    */
   public void shutdown()
   {
-//    try
-//    {
-//      BackupEngine.doBackup();
-//    }
-//    catch (ApplicationException e)
-//    {
-//      // Mehr als loggen koennen wir hier leider nicht machen
-//      Logger.error(e.getMessage(),e);
-//    }
+    try
+    {
+      BackupEngine.doBackup();
+    }
+    catch (ApplicationException e)
+    {
+      // Mehr als loggen koennen wir hier leider nicht machen
+      Logger.error(e.getMessage(),e);
+    }
   }
 
 }
@@ -91,6 +91,9 @@ public class BackupService implements Bootable
 
 /**********************************************************************
  * $Log: BackupService.java,v $
+ * Revision 1.4  2008/03/07 16:31:49  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.3  2008/03/07 01:36:26  willuhn
  * @N ZipCreator
  * @N Erster Code fuer Erstellung des Backups

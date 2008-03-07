@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.9 $
- * $Date: 2007/04/20 14:48:02 $
+ * $Revision: 1.10 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,6 +93,14 @@ public interface ApplicationCallback
   public ProgressMonitor getStartupMonitor();
   
   /**
+   * Liefert einen Progress-Monitor ueber den der Fortschritt des
+   * System-Shutdown ausgegeben werden kann.
+   * Im GUI-Mode ist das ein Splash-Screen.
+   * @return ein Progress-Monitor.
+   */
+  public ProgressMonitor getShutdownMonitor();
+
+  /**
    * Diese Funktion wird von Jameica aufgerufen, wenn der Start
    * voellig fehlschlug. Die implementierende Klasse muss diese
    * Fehlermeldung dem Benutzer anzeigen. Anschliessend beendet
@@ -169,6 +177,9 @@ public interface ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.10  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.9  2007/04/20 14:48:02  willuhn
  * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
  * @N Zusaetzliche parametrisierbare askUser-Funktion

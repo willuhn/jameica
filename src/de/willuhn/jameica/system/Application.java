@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.74 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.75 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,7 @@ public final class Application {
   
   // singleton
   private static Application app   = null;
-		private boolean cleanShutdown = false;
+    private Thread              shutdownHoook;
 		
 		private StartupParams 			params;
 
@@ -98,7 +98,8 @@ public final class Application {
 
     try
     {
-      app.loader = new BootLoader(getCallback().getStartupMonitor());
+      app.loader = new BootLoader();
+      app.loader.setMonitor(getCallback().getStartupMonitor());
       app.loader.getBootable(Init5.class);
     }
     catch (Exception e)
@@ -116,7 +117,7 @@ public final class Application {
 
     ////////////////////////////////////////////////////////////////////////////
     // add shutdown hook for clean shutdown (also when pressing <CTRL><C>)
-    Runtime.getRuntime().addShutdownHook(new Thread()
+    app.shutdownHoook = new Thread()
     {
       /**
        * Diese Methode wird beim Beenden der JVM aufgerufen und beendet vorher
@@ -125,10 +126,13 @@ public final class Application {
        */
       public void run()
       {
+        if (app.shutdownHoook == null)
+          return;
         Logger.info("shutting down via shutdown hook");
-        Application.shutDown();
+        Application.getController().shutDown();
       }
-    });
+    };
+    Runtime.getRuntime().addShutdownHook(app.shutdownHoook);
     //
     ////////////////////////////////////////////////////////////////////////////
 
@@ -186,26 +190,45 @@ public final class Application {
    * Faehrt die gesamte Anwendung herunter.
    * Die Funktion ist synchronized, damit nicht mehrere gleichzeitig die Anwendung runterfahren ;).
    */
-  private static synchronized void shutDown()
+  public static void shutDown()
   {
-
-    // Das Boolean wird nach dem erfolgreichen Shutdown auf True gesetzt.
-    // Somit ist sichergestellt, dass er wirklich nur einmal ausgefuehrt wird.
-    if (app.cleanShutdown) 
+    if (app.shutdownHoook == null)
       return;
 
-    Application.getMessagingFactory().sendSyncMessage(new SystemMessage(SystemMessage.SYSTEM_SHUTDOWN,"shutting down jameica"));
+    // Das stellt sicher, dass der Hook niemals ein zweites mal ausgefuehrt wird
+    try
+    {
+      Runtime.getRuntime().removeShutdownHook(app.shutdownHoook);
+    }
+    catch (Exception e) {
+      // ignore
+    }
+    finally
+    {
+      app.shutdownHoook = null;
+    }
 
-		getCallback().getStartupMonitor().setStatus(0);
+    try
+    {
 
-    getController().shutDown();
-    app.loader.shutdown();
+      Application.getMessagingFactory().sendSyncMessage(new SystemMessage(SystemMessage.SYSTEM_SHUTDOWN,"shutting down jameica"));
 
-		Logger.info("shutdown complete");
-		Logger.info("--------------------------------------------------\n");
-		Logger.close();
+      app.loader.setMonitor(getCallback().getShutdownMonitor());
+      getController().shutDown();
+      app.loader.shutdown();
 
-    app.cleanShutdown = true;
+      Logger.info("shutdown complete");
+      Logger.info("--------------------------------------------------\n");
+      Logger.close();
+    }
+    finally
+    {
+      // Wenn das Shutdown via Shutdown-Hook ausgeloest wurde, wuerden wir
+      // ein Deadlock am Ende ausloesen. Da das beim Server-Mode der Fall
+      // ist, rufen wir dort nicht nochmal System.exit(0) auf
+      if (!Application.inServerMode())
+        System.exit(0);
+    }
   }
 
 
@@ -227,8 +250,8 @@ public final class Application {
   {
     return app.loader;
   }
-
-	/**
+  
+  /**
 	 * Liefert die SSL-Factory von Jameica. Ueber diese kann unter anderem der
 	 * Public- und Private-Key der Jameica-Instanz bezogen werden.
    * @return SSL-Factory.
@@ -479,6 +502,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.75  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.74  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen

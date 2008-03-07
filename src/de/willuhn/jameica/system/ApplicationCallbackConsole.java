@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.26 $
- * $Date: 2008/02/26 17:45:21 $
+ * $Revision: 1.27 $
+ * $Date: 2008/03/07 16:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,8 @@ import de.willuhn.util.ProgressMonitor;
 public class ApplicationCallbackConsole extends AbstractApplicationCallback
 {
 
-	private ProgressMonitor monitor		= null;
+	private ProgressMonitor startup		= null;
+  private ProgressMonitor shutdown  = null;
 	private String password 					= null;
 	
   /**
@@ -181,14 +182,14 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public ProgressMonitor getStartupMonitor()
   {
-    if (monitor != null)
-    	return monitor;
-    monitor = new ProgressMonitor()
+    if (startup != null)
+    	return startup;
+    startup = new ProgressMonitor()
     {
       private int complete = 0;
 			public void setPercentComplete(int percent) {
         this.complete = percent;
-        Logger.debug("startup completed: " + this.complete + " %");
+        Logger.debug("completed: " + this.complete + " %");
       }
 			public void addPercentComplete(int percent) {
         if (percent < 1)
@@ -204,7 +205,38 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
         Logger.debug(msg);
       }
     };
-    return monitor;
+    return startup;
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#getShutdownMonitor()
+   */
+  public ProgressMonitor getShutdownMonitor()
+  {
+    if (shutdown != null)
+      return shutdown;
+    shutdown = new ProgressMonitor()
+    {
+      private int complete = 0;
+      public void setPercentComplete(int percent) {
+        this.complete = percent;
+        Logger.debug("completed: " + this.complete + " %");
+      }
+      public void addPercentComplete(int percent) {
+        if (percent < 1)
+          return;
+        setPercentComplete(getPercentComplete() + percent);
+      }
+      public int getPercentComplete() {return complete;}
+      public void setStatus(int status) {}
+      public void setStatusText(String text) {
+        Logger.info(text);
+      }
+      public void log(String msg) {
+        Logger.debug(msg);
+      }
+    };
+    return shutdown;
   }
 
   /**
@@ -426,6 +458,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.27  2008/03/07 16:31:48  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.26  2008/02/26 17:45:21  willuhn
  * @N flush console
  *

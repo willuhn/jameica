@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/FileClose.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/11/04 23:59:04 $
+ * $Revision: 1.4 $
+ * $Date: 2008/03/07 16:31:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@
 package de.willuhn.jameica.gui.internal.action;
 
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -27,14 +28,16 @@ public class FileClose implements Action
    */
   public void handleAction(Object context) throws ApplicationException
   {
-    System.exit(0);
+    Application.getController().shutDown();
   }
-
 }
 
 
 /*********************************************************************
  * $Log: FileClose.java,v $
+ * Revision 1.4  2008/03/07 16:31:49  willuhn
+ * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
+ *
  * Revision 1.3  2004/11/04 23:59:04  willuhn
  * *** empty log message ***
  *
