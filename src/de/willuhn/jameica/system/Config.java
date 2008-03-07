@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.36 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.37 $
+ * $Date: 2008/03/07 17:36:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -551,10 +551,22 @@ public final class Config
     // Also resetten
     File f = new File(dir);
 
-    if (f.equals(this.workDir))
+    try
     {
-      settings.setAttribute("jameica.system.backup.dir",(String)null);
-      return;
+      if (f.getCanonicalPath().equals(this.workDir.getCanonicalPath()))
+      {
+        settings.setAttribute("jameica.system.backup.dir",(String)null);
+        return;
+      }
+    }
+    catch (IOException e)
+    {
+      // Gna, dann halt ohne Aufloesen von Links
+      if (f.equals(this.workDir))
+      {
+        settings.setAttribute("jameica.system.backup.dir",(String)null);
+        return;
+      }
     }
     
     if (!f.isDirectory() || !f.exists())
@@ -609,6 +621,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.37  2008/03/07 17:36:35  willuhn
+ * @B Absoluten Backup-Pfad aus Config-Datei entfernen, wenn er dem Default-Pfad entspricht
+ *
  * Revision 1.36  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *
