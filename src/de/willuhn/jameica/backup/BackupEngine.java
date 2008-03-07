@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/03/07 16:31:49 $
+ * $Revision: 1.5 $
+ * $Date: 2008/03/07 17:30:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class BackupEngine
 {
-  private final static DateFormat format = new SimpleDateFormat("yyyyMMdd__hh_mm_ss");
+  private final static DateFormat format = new SimpleDateFormat("yyyyMMdd__HH_mm_ss");
   private final static String PREFIX = "jameica-backup-";
   private final static String MARKER = ".restore";
   
@@ -283,6 +283,10 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.5  2008/03/07 17:30:15  willuhn
+ * @N Splash-Screen-Ausgaben auch ins Log schreiben
+ * @B Fehler im Dateformat des Backup (12- statt 24h-Uhr)
+ *
  * Revision 1.4  2008/03/07 16:31:49  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *

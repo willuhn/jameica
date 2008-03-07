@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.27 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.28 $
+ * $Date: 2008/03/07 17:30:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -252,7 +252,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
         if (textLabel == null || textLabel.isDisposed())
           return;
         String s = " " + text + " ...";
-        Logger.debug(s);
+        Logger.info(s);
         textLabel.setText(s);
         textLabel.redraw();
 				display.readAndDispatch();
@@ -290,6 +290,10 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.28  2008/03/07 17:30:14  willuhn
+ * @N Splash-Screen-Ausgaben auch ins Log schreiben
+ * @B Fehler im Dateformat des Backup (12- statt 24h-Uhr)
+ *
  * Revision 1.27  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *
