@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.38 $
- * $Date: 2008/03/11 00:13:08 $
+ * $Revision: 1.39 $
+ * $Date: 2008/03/11 10:36:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -612,7 +612,7 @@ public final class Config
    */
   public boolean getUseBackup()
   {
-    return settings.getBoolean("jameica.system.backup.enabled",false);
+    return settings.getBoolean("jameica.system.backup.enabled",true);
   }
 
   /**
@@ -629,6 +629,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.39  2008/03/11 10:36:08  willuhn
+ * @N Default-Wert auf true geaendert
+ *
  * Revision 1.38  2008/03/11 00:13:08  willuhn
  * @N Backup scharf geschaltet
  *
