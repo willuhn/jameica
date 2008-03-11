@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/03/11 00:13:08 $
+ * $Revision: 1.7 $
+ * $Date: 2008/03/11 01:02:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -305,8 +305,8 @@ public class BackupEngine
         
         // Von oben mit dem Loeschen anfangen
         // Und solange loeschen wie:
-        // Urspruengliche Anzahl - geloeschte > maximale Anzahl
-        for (int pos=0;(toDelete.length - pos) > maxCount;++pos)
+        // Urspruengliche Anzahl - geloeschte >= maximale Anzahl
+        for (int pos=0;(toDelete.length - pos) >= maxCount;++pos)
         {
           File current = toDelete[pos];
           monitor.setStatusText("delete old backup " + current.getAbsolutePath());
@@ -393,6 +393,10 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.7  2008/03/11 01:02:41  willuhn
+ * @N Hilfetext
+ * @B Verzaehler beim Loeschen alter Backups (es wurde eins zu wenig geloescht)
+ *
  * Revision 1.6  2008/03/11 00:13:08  willuhn
  * @N Backup scharf geschaltet
  *

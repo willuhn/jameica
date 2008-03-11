@@ -1,0 +1,20 @@
+<form>
+	<p>
+		<span color="header" font="header">Backups verwalten.</span>
+	</p>
+
+	<li>
+		Aktivieren Sie die Option <b>Backups automatisch beim Beenden von Jameica erstellen</b>
+		wenn Jameica jedes Mal beim Beenden der Anwendung ein Backup des aktuellen Benutzerverzeichnisses
+		erstellen soll.
+	</li>
+	<li>
+	  Wählen Sie zum Wiederherstellen das gewünschte Backup aus der Liste der
+	  verfügbaren Backups aus und klicken Sie auf <b>Ausgewähltes Backup wiederherstellen...</b>.
+	  Beim nächsten Start der Anwendung werden die Daten wiederhergestellt.
+	</li>
+	<li>
+	  Wenn Sie versehentlich ein Backup zur Wiederherstellung markiert haben und diese
+	  Auswahl wieder rückgängig machen wollen, dann wählen Sie <b>Auswahl rückgängig machen</b>.
+	</li>
+</form>
