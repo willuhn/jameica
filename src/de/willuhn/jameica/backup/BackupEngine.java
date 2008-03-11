@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.8 $
- * $Date: 2008/03/11 10:23:42 $
+ * $Revision: 1.9 $
+ * $Date: 2008/03/11 12:12:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,8 +58,7 @@ public class BackupEngine
   {
     String s = dir == null ? Application.getConfig().getBackupDir() : dir;
     FileFinder finder = new FileFinder(new File(s));
-    finder.extension("zip");
-    finder.matches("^" + PREFIX + ".*");
+    finder.matches("^" + PREFIX + ".*?\\.zip$");
     File[] found = finder.find();
     if (found == null)
       return new BackupFile[0];
@@ -394,6 +393,9 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.9  2008/03/11 12:12:56  willuhn
+ * @B getBackups() matchte auch auf Dateien, die nicht mit "jameica-backup*" begannen
+ *
  * Revision 1.8  2008/03/11 10:23:42  willuhn
  * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
  *
