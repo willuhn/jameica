@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.37 $
- * $Date: 2008/03/07 17:36:35 $
+ * $Revision: 1.38 $
+ * $Date: 2008/03/11 00:13:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -510,8 +510,9 @@ public final class Config
   /**
    * Liefert das Backup-Verzeichnis.
    * @return Backup-Verzeichnis.
+   * @throws ApplicationException wenn das Verzeichnis ungueltig ist.
    */
-  public String getBackupDir()
+  public String getBackupDir() throws ApplicationException
   {
     // Wir setzen hier bewusst "NULL" als Default-Wert ein,
     // weil wir nicht wollen, dass er (wegen absoluter Pfadangabe)
@@ -527,6 +528,7 @@ public final class Config
       return f.getAbsolutePath();
     
     Logger.warn("invalid backup dir " + dir +", resetting to default: " + defaultDir);
+    setBackupDir(null);
     return defaultDir;
   }
 
@@ -585,7 +587,13 @@ public final class Config
    */
   public int getBackupCount()
   {
-    return settings.getInt("jameica.system.backup.count",5);
+    int count = settings.getInt("jameica.system.backup.count",5);
+    if (count < 1)
+    {
+      Logger.warn("invalid backup count: " + count + ", resetting to default");
+      setBackupCount(-1);
+    }
+    return count;
   }
   
   /**
@@ -621,6 +629,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.38  2008/03/11 00:13:08  willuhn
+ * @N Backup scharf geschaltet
+ *
  * Revision 1.37  2008/03/07 17:36:35  willuhn
  * @B Absoluten Backup-Pfad aus Config-Datei entfernen, wenn er dem Default-Pfad entspricht
  *

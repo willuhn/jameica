@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/03/07 01:36:27 $
+ * $Revision: 1.6 $
+ * $Date: 2008/03/11 00:13:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -79,9 +79,16 @@ public class BackupControl extends AbstractControl
        */
       public void handleEvent(Event event)
       {
-        boolean b = ((Boolean)state.getValue()).booleanValue();
-        getTarget().setEnabled(b);
-        getCount().setEnabled(b);
+        try
+        {
+          boolean b = ((Boolean)state.getValue()).booleanValue();
+          getTarget().setEnabled(b);
+          getCount().setEnabled(b);
+        }
+        catch (ApplicationException ae)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+        }
       }
     
     });
@@ -91,8 +98,9 @@ public class BackupControl extends AbstractControl
   /**
    * Liefert ein Eingabefeld fuer das Zielverzeichnis des Backups.
    * @return Eingabefeld.
+   * @throws ApplicationException
    */
-  public Input getTarget()
+  public Input getTarget() throws ApplicationException
   {
     if (this.target != null)
       return this.target;
@@ -291,6 +299,9 @@ public class BackupControl extends AbstractControl
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
+ * Revision 1.6  2008/03/11 00:13:08  willuhn
+ * @N Backup scharf geschaltet
+ *
  * Revision 1.5  2008/03/07 01:36:27  willuhn
  * @N ZipCreator
  * @N Erster Code fuer Erstellung des Backups

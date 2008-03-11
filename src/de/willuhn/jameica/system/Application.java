@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.76 $
- * $Date: 2008/03/07 17:14:09 $
+ * $Revision: 1.77 $
+ * $Date: 2008/03/11 00:13:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -205,6 +205,9 @@ public final class Application {
       app.loader.setMonitor(getCallback().getShutdownMonitor());
       getController().shutDown();
       app.loader.shutdown();
+
+      // close splash screen
+      getCallback().getStartupMonitor().setStatus(0);
 
       Logger.info("shutdown complete");
       Logger.info("--------------------------------------------------\n");
@@ -491,6 +494,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.77  2008/03/11 00:13:08  willuhn
+ * @N Backup scharf geschaltet
+ *
  * Revision 1.76  2008/03/07 17:14:09  willuhn
  * @N Shutdown via Hook verbessert
  *

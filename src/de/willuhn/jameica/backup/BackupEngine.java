@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/03/07 17:30:15 $
+ * $Revision: 1.6 $
+ * $Date: 2008/03/11 00:13:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,9 +27,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.zip.ZipFile;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.io.ZipCreator;
+import de.willuhn.io.ZipExtractor;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -52,7 +54,7 @@ public class BackupEngine
    * @return eine Liste der Backups in diesem Verzeichnis.
    * @throws ApplicationException
    */
-  public static BackupFile[] getBackups(String dir) throws ApplicationException
+  public static synchronized BackupFile[] getBackups(String dir) throws ApplicationException
   {
     String s = dir == null ? Application.getConfig().getBackupDir() : dir;
     FileFinder finder = new FileFinder(new File(s));
@@ -82,7 +84,7 @@ public class BackupEngine
   /**
    * Macht eine ggf. vorhandene Auswahl der Backup-Wiederherstellung rueckgaengig.
    */
-  public static void undoRestoreMark()
+  public static synchronized void undoRestoreMark()
   {
     File marker = new File(Application.getConfig().getWorkDir(),MARKER);
     if (marker.exists())
@@ -96,7 +98,7 @@ public class BackupEngine
    * @param backup das zurueckzusichernde Backup.
    * @throws ApplicationException
    */
-  public static void markForRestore(BackupFile backup) throws ApplicationException
+  public static synchronized void markForRestore(BackupFile backup) throws ApplicationException
   {
     if (backup == null)
       throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das wiederherzustellende Backup aus"));
@@ -182,24 +184,88 @@ public class BackupEngine
   }
   
   /**
-   * Erstellt ein frisches Backup.
+   * Fuehrt das Backup-Restore durch.
+   * @param monitor
    * @throws ApplicationException
    */
-  public static void doBackup() throws ApplicationException
+  public static synchronized void doRestore(ProgressMonitor monitor) throws ApplicationException
+  {
+    monitor.setStatusText("check backup");
+    BackupFile backup = getCurrentRestore();
+    if (backup == null)
+    {
+      // Huh? Wie kann das sein?
+      Logger.error("SUSPEKT: no backup to restore found");
+      throw new ApplicationException(Application.getI18n().tr("Wiederherzustellendes Backup nicht gefunden"));
+    }
+    
+    try
+    {
+      // Restore-Marker loeschen. Muessen wir vor der Erstellung des Backups machen
+      BackupEngine.undoRestoreMark();
+
+      // Wir machen nochmal ein frisches Backup
+      // Aber ohne alte Backups zu rotieren, das wuerde ggf. das wiederherzustellende
+      // Backup loeschen
+      monitor.setStatusText("creating backup");
+      File[] content = BackupEngine.doBackup(monitor, false);
+
+      // Jetzt loeschen wir die gerade gesicherten Daten
+      if (content == null || content.length == 0)
+        throw new ApplicationException(Application.getI18n().tr("Aktuelles Backup enthielt keine Daten. Wiederherstellung abgebrochen"));
+
+      // So, jetzt loeschen wir aber wirklich
+      monitor.setStatusText("cleanup work dir");
+      for (int i=0;i<content.length;++i)
+      {
+        Logger.info("purge " + content[i]);
+        deleteRecursive(content[i]);
+      }
+
+      // Und sichern das Backup zurueck
+      monitor.setStatusText("restoring backup " + backup.getFile().getAbsolutePath());
+      File workdir = new File(Application.getConfig().getWorkDir());
+      ZipExtractor ext = new ZipExtractor(new ZipFile(backup.getFile()));
+      ext.setMonitor(monitor);
+      ext.extract(workdir);
+      monitor.setStatusText("restore completed");
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to restore backup",e);
+      throw new ApplicationException(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups: " + e.getMessage()));
+    }
+  }
+  
+  /**
+   * Erstellt ein frisches Backup.
+   * @return Liste der gesicherten Verzeichnisse
+   * @param true, wenn alte Backups rotiert werden sollen.
+   * @throws ApplicationException
+   */
+  public static synchronized File[] doBackup(ProgressMonitor monitor, boolean rotate) throws ApplicationException
   {
     // Sollen ueberhaupt Backups erstellt werden?
     if (!Application.getConfig().getUseBackup())
-      return;
-
+      return null;
+    
     // Backup erzeugen
     ZipCreator zip  = null;
     Exception error = null;
     
-    ProgressMonitor monitor = Application.getCallback().getShutdownMonitor();
     try
     {
-      File workdir    = new File(Application.getConfig().getWorkDir());
+      if (getCurrentRestore() != null)
+      {
+        monitor.setStatusText("restore marker found, skipping current backup");
+        return null;
+      }
 
+      File workdir    = new File(Application.getConfig().getWorkDir());
       String filename = PREFIX + format.format(new Date()) + ".zip";
       File dir        = new File(Application.getConfig().getBackupDir());
       File backup     = new File(dir,filename);
@@ -207,6 +273,7 @@ public class BackupEngine
       if (backup.exists())
         throw new ApplicationException(Application.getI18n().tr("Backup-Datei {0} existiert bereits",backup.getAbsolutePath()));
 
+      ArrayList content = new ArrayList();
       monitor.setStatusText("creating backup " + backup.getAbsolutePath());
       zip = new ZipCreator(new BufferedOutputStream(new FileOutputStream(backup)));
       zip.setMonitor(monitor);
@@ -215,39 +282,48 @@ public class BackupEngine
       {
         if (!children[i].isDirectory())
           continue; // Wir sichern nur Unterverzeichnisse. Also keine Backups (rekursiv) und Logs
-        if (children[i].equals(dir))
+        if (children[i].getCanonicalFile().equals(dir.getCanonicalFile()))
           continue; // Das Backup-Verzeichnis selbst ist ein Unterverzeichnis. Nicht sichern wegen Rekursion
         zip.add(children[i]);
+        content.add(children[i]);
       }
       // Muessen wir vorher schliessen, weil das anschliessende getBackups()
       // sonst ein "java.util.zip.ZipException: error in opening zip file" wirft.
       zip.close();
       zip = null;
-      
-      int maxCount = Application.getConfig().getBackupCount();
-      BackupFile[] old = getBackups(Application.getConfig().getBackupDir());
-      File[] toDelete = new File[old.length];
-      for (int i=0;i<old.length;++i)
-        toDelete[i] = old[i].getFile();
 
-      // Sortieren
-      Arrays.sort(toDelete);
-      
-      // Von oben mit dem Loeschen anfangen
-      // Und solange loeschen wie:
-      // Urspruengliche Anzahl - geloeschte > maximale Anzahl
-      for (int pos=0;(toDelete.length - pos) > maxCount;++pos)
+      if (rotate)
       {
-        File current = toDelete[pos];
-        monitor.setStatusText("delete old backup " + current.getAbsolutePath());
-        current.delete();
-        pos++;
+        int maxCount = Application.getConfig().getBackupCount();
+        BackupFile[] old = getBackups(Application.getConfig().getBackupDir());
+        File[] toDelete = new File[old.length];
+        for (int i=0;i<old.length;++i)
+          toDelete[i] = old[i].getFile();
+
+        // Sortieren
+        Arrays.sort(toDelete);
+        
+        // Von oben mit dem Loeschen anfangen
+        // Und solange loeschen wie:
+        // Urspruengliche Anzahl - geloeschte > maximale Anzahl
+        for (int pos=0;(toDelete.length - pos) > maxCount;++pos)
+        {
+          File current = toDelete[pos];
+          monitor.setStatusText("delete old backup " + current.getAbsolutePath());
+          current.delete();
+          pos++;
+        }
       }
 
       monitor.setStatusText("backup created");
-      monitor.setPercentComplete(100);
+      return (File[]) content.toArray(new File[content.size()]);
     }
-    catch (IOException e)
+    catch (ApplicationException ae)
+    {
+      error = ae;
+      throw ae;
+    }
+    catch (Exception e)
     {
       error = e;
       Logger.error("unable to create backup",e);
@@ -255,9 +331,6 @@ public class BackupEngine
     }
     finally
     {
-      // Schliessen des Splashscreen forcieren
-      monitor.setStatus(0);
-
       if (zip != null)
       {
         try
@@ -278,11 +351,51 @@ public class BackupEngine
       }
     }
   }
+  
+  /**
+   * Loescht ein Verzeichnis rekursiv.
+   * @param dir das rekursiv zu loeschende Verzeichnis.
+   * @throws IOException wenn beim Loeschen ein Fehler auftrat.
+   */
+  private static boolean deleteRecursive(File dir) throws IOException
+  {
+    File candir = dir.getCanonicalFile();
+
+    // Wen sich der kanonische Pfad vom absoluten unterscheidet,
+    // ist es ein Symlink. Es waere viel zu gefaehrlich, dem zu folgen
+    if (!candir.equals(dir.getAbsoluteFile()))
+      return false;
+
+    // Rekursion
+    File[] files = candir.listFiles();
+    if (files != null)
+    {
+      for (int i=0;i<files.length;++i)
+      {
+        // Wenn es sich so loeschen laesst, war es eine Datei,
+        // ein leeres Verzeichnis oder ein Symlink. Im letzteren
+        // Fall haben wir nur den Symlink geloescht, sind ihm
+        // jedoch nicht gefolgt
+        boolean deleted = files[i].delete();
+        if (!deleted)
+        {
+          if (files[i].isDirectory())
+            deleteRecursive(files[i]); // Scheint ein Verzeichnis zu sein?
+        }
+      }
+    }
+
+    // So, fertig. Verzeichnis selbst kann geloescht werden
+    return dir.delete();  
+  }
 }
 
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.6  2008/03/11 00:13:08  willuhn
+ * @N Backup scharf geschaltet
+ *
  * Revision 1.5  2008/03/07 17:30:15  willuhn
  * @N Splash-Screen-Ausgaben auch ins Log schreiben
  * @B Fehler im Dateformat des Backup (12- statt 24h-Uhr)

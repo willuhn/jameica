@@ -15,7 +15,7 @@
 	<menu>
 		<item name="Datei">
 			<item name="&amp;Einstellungen" shortcut="CTRL+E"     action="de.willuhn.jameica.gui.internal.action.Settings" />
-<!--  <item name="&amp;Backups verwalten" shortcut="CTRL+B" action="de.willuhn.jameica.gui.internal.action.Backup" /> //-->
+      <item name="&amp;Backups verwalten" shortcut="CTRL+B" action="de.willuhn.jameica.gui.internal.action.Backup" />
 			<item name="&amp;Master-Passwort ändern"	            action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
 			<item name="-" />
 			<item name="Beenden"    			 							          action="de.willuhn.jameica.gui.internal.action.FileClose" />

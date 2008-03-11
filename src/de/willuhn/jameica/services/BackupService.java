@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BackupService.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/03/07 16:31:49 $
+ * $Revision: 1.5 $
+ * $Date: 2008/03/11 00:13:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,11 +46,9 @@ public class BackupService implements Bootable
       BackupFile file = BackupEngine.getCurrentRestore();
       if (file == null)
         return; // Nichts wiederherzustellen
-      Logger.info("restoring backup " + file.getID());
 
-      // TODO Hier weiter
-      
-      Logger.info("backup restored");
+      // Und jetzt kommt das restore
+      BackupEngine.doRestore(loader.getMonitor());
     }
     catch (ApplicationException ae)
     {
@@ -61,13 +59,6 @@ public class BackupService implements Bootable
       Logger.error("unable to restore backup",e);
       Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups. Bitte prüfen Sie das System-Log"));
     }
-    finally
-    {
-      // wir loeschen auf jeden Fall die Marker-Datei
-      // damit nicht bei jedem fehlerhaften Restore
-      // erneut versucht wird, das Backup wiederherzustellen
-      BackupEngine.undoRestoreMark();
-    }
   }
 
   /**
@@ -77,7 +68,7 @@ public class BackupService implements Bootable
   {
     try
     {
-      BackupEngine.doBackup();
+      BackupEngine.doBackup(Application.getCallback().getShutdownMonitor(),true);
     }
     catch (ApplicationException e)
     {
@@ -91,6 +82,9 @@ public class BackupService implements Bootable
 
 /**********************************************************************
  * $Log: BackupService.java,v $
+ * Revision 1.5  2008/03/11 00:13:08  willuhn
+ * @N Backup scharf geschaltet
+ *
  * Revision 1.4  2008/03/07 16:31:49  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *
