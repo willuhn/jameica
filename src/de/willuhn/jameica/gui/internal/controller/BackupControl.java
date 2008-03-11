@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/03/11 00:13:08 $
+ * $Revision: 1.7 $
+ * $Date: 2008/03/11 10:23:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,7 @@ import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.DirectoryInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.IntegerInput;
-import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.internal.action.FileClose;
 import de.willuhn.jameica.gui.internal.dialogs.BackupRestoreDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
@@ -51,7 +51,6 @@ public class BackupControl extends AbstractControl
   private CheckboxInput state = null;
   private Input target        = null;
   private Input count         = null;
-  private Input current       = null;
   private TablePart backups   = null;
   
   /**
@@ -201,30 +200,6 @@ public class BackupControl extends AbstractControl
   }
   
   /**
-   * Liefert ein Label, welches anzeigt, ob derzeit ein Backup fuer die Wiederherstellung vorgemerkt ist.
-   * @return das Label.
-   */
-  public Input getCurrent()
-  {
-    if (this.current != null)
-      return this.current;
-
-    String s = null;
-    try
-    {
-      BackupFile bi = BackupEngine.getCurrentRestore();
-      if (bi != null)
-        s = bi.getFile().getName();
-    }
-    catch (ApplicationException ae)
-    {
-      s = ae.getMessage();
-    }
-    this.current = new LabelInput(s == null ? "-" : s);
-    return this.current;
-  }
-  
-  /**
    * Speichert die Einstellungen.
    */
   public void handleStore()
@@ -270,9 +245,7 @@ public class BackupControl extends AbstractControl
         return;
       
       BackupEngine.markForRestore(o);
-      o = BackupEngine.getCurrentRestore();
-      getCurrent().setValue(o == null ? "-" : o.getFile().getName());
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Backup für Wiederherstellung vorgemerkt. Bitte starten Sie nun Jameica neu."), StatusBarMessage.TYPE_SUCCESS));
+      new FileClose().handleAction(null);
     }
     catch (ApplicationException ae)
     {
@@ -284,21 +257,14 @@ public class BackupControl extends AbstractControl
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Aktivieren der Backup-Datei"), StatusBarMessage.TYPE_ERROR));
     }
   }
-  
-  /**
-   * Macht eine ggf. vorgenommene Auswahl des Backups rueckgaengig.
-   */
-  public void handleUndo()
-  {
-    BackupEngine.undoRestoreMark();
-    getCurrent().setValue("-");
-    Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Auswahl rückgängig gemacht."), StatusBarMessage.TYPE_SUCCESS));
-  }
 }
 
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
+ * Revision 1.7  2008/03/11 10:23:42  willuhn
+ * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
+ *
  * Revision 1.6  2008/03/11 00:13:08  willuhn
  * @N Backup scharf geschaltet
  *

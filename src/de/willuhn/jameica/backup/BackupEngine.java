@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.7 $
- * $Date: 2008/03/11 01:02:41 $
+ * $Revision: 1.8 $
+ * $Date: 2008/03/11 10:23:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -243,8 +243,9 @@ public class BackupEngine
   
   /**
    * Erstellt ein frisches Backup.
+   * @param monitor ein Progressmonitor fuer die Ausgabe des Fortschritts.
+   * @param rotate true, wenn alte Backups rotiert werden sollen.
    * @return Liste der gesicherten Verzeichnisse
-   * @param true, wenn alte Backups rotiert werden sollen.
    * @throws ApplicationException
    */
   public static synchronized File[] doBackup(ProgressMonitor monitor, boolean rotate) throws ApplicationException
@@ -393,6 +394,9 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.8  2008/03/11 10:23:42  willuhn
+ * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
+ *
  * Revision 1.7  2008/03/11 01:02:41  willuhn
  * @N Hilfetext
  * @B Verzaehler beim Loeschen alter Backups (es wurde eins zu wenig geloescht)

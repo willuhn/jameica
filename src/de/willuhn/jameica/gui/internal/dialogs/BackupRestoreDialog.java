@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/BackupRestoreDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/03/05 23:58:36 $
+ * $Revision: 1.3 $
+ * $Date: 2008/03/11 10:23:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ public class BackupRestoreDialog extends AbstractDialog
   {
     super(position);
     this.backup = backup;
-    this.setSize(500,300);
+    this.setSize(470,300);
     this.setTitle(Application.getI18n().tr("Backup wiederherstellen?"));
   }
 
@@ -74,8 +74,9 @@ public class BackupRestoreDialog extends AbstractDialog
           "Beim Wiederherstellen kann es zu Fehlern oder Datenverlusten kommen."),true,Color.ERROR);
     }
 
-    container.addText(Application.getI18n().tr("Möchten Sie dieses Backup wiederherstellen?\n" +
-    "Das Zurückkopieren der Sicherung erfolgt automatisch beim nächsten Start der Anwendung."),true);
+    container.addHeadline(Application.getI18n().tr("Warnung"));
+    container.addText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Backup wiederherstellen möchten?\n" +
+    "Die Anwendung wird daraufhin beendet, die Wiederherstellung erfolgt automatisch beim nächsten Start."),true);
 
     ButtonArea buttons = container.createButtonArea(2);
     buttons.addButton(Application.getI18n().tr("Ja, Backup wiederherstellen"),new Action() {
@@ -106,6 +107,9 @@ public class BackupRestoreDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: BackupRestoreDialog.java,v $
+ * Revision 1.3  2008/03/11 10:23:42  willuhn
+ * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
+ *
  * Revision 1.2  2008/03/05 23:58:36  willuhn
  * @N Backup: Warnhinweis, wenn ein Plugin zwar installiert, aber nicht im ausgewaehlten Backup enthalten ist
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Backup.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/03/04 00:49:25 $
+ * $Revision: 1.3 $
+ * $Date: 2008/03/11 10:23:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,22 +53,10 @@ public class Backup extends AbstractView
     SimpleContainer backups = new SimpleContainer(columns.getComposite());
     backups.addHeadline(i18n.tr("Verfügbare Backups"));
     backups.addPart(control.getBackups());
-    backups.addLabelPair(i18n.tr("Aktuell ausgewähltes Backup: "),control.getCurrent());
     
     SimpleContainer bottom = new SimpleContainer(getParent());
-    ButtonArea buttons = bottom.createButtonArea(4);
+    ButtonArea buttons = bottom.createButtonArea(3);
     buttons.addButton(i18n.tr("Zurück"),new Back(),null,true);
-    buttons.addButton(i18n.tr("Auswahl rückgängig machen"),new Action()
-    {
-      /**
-       * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
-       */
-      public void handleAction(Object context) throws ApplicationException
-      {
-        control.handleUndo();
-      }
-    
-    });
     buttons.addButton(i18n.tr("Ausgewähltes Backup wiederherstellen..."),new Action()
     {
       /**
@@ -98,6 +86,9 @@ public class Backup extends AbstractView
 
 /**********************************************************************
  * $Log: Backup.java,v $
+ * Revision 1.3  2008/03/11 10:23:42  willuhn
+ * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
+ *
  * Revision 1.2  2008/03/04 00:49:25  willuhn
  * @N GUI fuer Backup fertig
  *
