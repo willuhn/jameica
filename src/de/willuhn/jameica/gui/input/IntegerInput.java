@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Revision: 1.10 $
+ * $Date: 2008/03/18 09:27:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,10 +62,11 @@ public class IntegerInput extends TextInput
    */
   public Object getValue()
   {
-  	if (text.getText() == null || text.getText().length() == 0)
-  		return null;
+    Object value = super.getValue();
+    if (value == null)
+      return null;
     try {
-      return new Integer(text.getText());
+      return new Integer(value.toString());
     }
     catch (NumberFormatException e)
     {
@@ -91,6 +92,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.10  2008/03/18 09:27:59  willuhn
+ * @B BUGZILLA 565
+ *
  * Revision 1.9  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput
