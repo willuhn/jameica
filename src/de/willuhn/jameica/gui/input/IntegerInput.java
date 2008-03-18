@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/IntegerInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2008/03/18 09:27:59 $
+ * $Revision: 1.11 $
+ * $Date: 2008/03/18 09:30:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,7 +63,7 @@ public class IntegerInput extends TextInput
   public Object getValue()
   {
     Object value = super.getValue();
-    if (value == null)
+    if (value == null || value.toString().length() == 0)
       return null;
     try {
       return new Integer(value.toString());
@@ -92,6 +92,9 @@ public class IntegerInput extends TextInput
 
 /*********************************************************************
  * $Log: IntegerInput.java,v $
+ * Revision 1.11  2008/03/18 09:30:16  willuhn
+ * @B BUGZILLA 565
+ *
  * Revision 1.10  2008/03/18 09:27:59  willuhn
  * @B BUGZILLA 565
  *
