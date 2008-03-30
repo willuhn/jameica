@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.77 $
- * $Date: 2008/01/21 10:14:18 $
+ * $Revision: 1.78 $
+ * $Date: 2008/03/30 22:28:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -636,26 +636,27 @@ public class TablePart extends AbstractTablePart
     /////////////////////////////////////////////////////////////////
 
     // noch der Listener fuer den Doppelklick drauf.
-    table.addListener(SWT.MouseDoubleClick,
-      new Listener(){
-        public void handleEvent(Event e){
+    final Listener open = new Listener(){
+      public void handleEvent(Event e){
 
-          if (action == null) return;
+        if (action == null) return;
 
-          Object o = getSelection();
-          if (o == null) return;
+        Object o = getSelection();
+        if (o == null) return;
 
-          try
-          {
-  					action.handleAction(o);
-          }
-          catch (ApplicationException ae)
-          {
-            Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-          }
+        try
+        {
+          action.handleAction(o);
+        }
+        catch (ApplicationException ae)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
         }
       }
-    );
+    };
+
+    // table.addListener(SWT.DefaultSelection,open); // BUGZILLA 574 Deaktiviert - weil noch nicht hinreichend getestet
+    table.addListener(SWT.MouseDoubleClick,open);
 
 		// jetzt noch dem Menu Bescheid sagen, wenn ein Element markiert wurde
 		table.addListener(SWT.MouseDown,new Listener()
@@ -1312,6 +1313,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.78  2008/03/30 22:28:11  willuhn
+ * @N Bug 574
+ *
  * Revision 1.77  2008/01/21 10:14:18  willuhn
  * @C orderBy von private in protected geaendert (auf Wunsch von Markus)
  *
