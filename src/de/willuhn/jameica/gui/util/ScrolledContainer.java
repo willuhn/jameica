@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ScrolledContainer.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/06/13 09:43:02 $
+ * $Revision: 1.2 $
+ * $Date: 2008/04/01 10:38:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ public class ScrolledContainer extends Container
     super(true);
     
     // BUGZILLA 412
-    this.scrolled = new ScrolledComposite(parent,SWT.V_SCROLL | SWT.BORDER);
+    this.scrolled = new ScrolledComposite(parent,SWT.V_SCROLL | SWT.H_SCROLL);
     this.scrolled.setBackground(Color.BACKGROUND.getSWTColor());
     this.scrolled.setLayoutData(new GridData(GridData.FILL_BOTH));
     this.scrolled.setLayout(new FillLayout());
@@ -84,6 +84,9 @@ public class ScrolledContainer extends Container
 
 /*********************************************************************
  * $Log: ScrolledContainer.java,v $
+ * Revision 1.2  2008/04/01 10:38:25  willuhn
+ * @C Rahmen entfernt, Scrollen in beide Richtungen moeglich
+ *
  * Revision 1.1  2007/06/13 09:43:02  willuhn
  * @B Bug 412
  *
