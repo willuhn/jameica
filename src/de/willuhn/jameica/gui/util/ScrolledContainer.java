@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ScrolledContainer.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/04/01 10:38:25 $
+ * $Revision: 1.3 $
+ * $Date: 2008/04/02 10:12:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,10 +41,11 @@ public class ScrolledContainer extends Container
     super(true);
     
     // BUGZILLA 412
-    this.scrolled = new ScrolledComposite(parent,SWT.V_SCROLL | SWT.H_SCROLL);
+    this.scrolled = new ScrolledComposite(parent,SWT.V_SCROLL);
     this.scrolled.setBackground(Color.BACKGROUND.getSWTColor());
     this.scrolled.setLayoutData(new GridData(GridData.FILL_BOTH));
     this.scrolled.setLayout(new FillLayout());
+    this.scrolled.setExpandHorizontal(true);
 
     this.comp = new Composite(this.scrolled, SWT.NONE);
     this.comp.setBackground(Color.BACKGROUND.getSWTColor());
@@ -84,6 +85,9 @@ public class ScrolledContainer extends Container
 
 /*********************************************************************
  * $Log: ScrolledContainer.java,v $
+ * Revision 1.3  2008/04/02 10:12:18  willuhn
+ * @N Scrollverhalten und Auto-Resizing gefixt
+ *
  * Revision 1.2  2008/04/01 10:38:25  willuhn
  * @C Rahmen entfernt, Scrollen in beide Richtungen moeglich
  *
