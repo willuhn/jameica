@@ -2,25 +2,25 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" sourcepath="lib.src/mckoi/mckoidb.src.zip" kind="lib" path="lib/mckoi/mckoidb.jar"/>
-	<classpathentry exported="true" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar"/>
-	<classpathentry exported="true" sourcepath="lib.src/bouncycastle/bcprov-jdk14-124.zip" kind="lib" path="lib/bouncycastle/bcprov-jdk14-124.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/mckoi/mckoidb.jar" sourcepath="lib.src/mckoi/mckoidb.src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-jdk14-124.jar" sourcepath="lib.src/bouncycastle/bcprov-jdk14-124.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-cli-1.0.jar"/>
-	<classpathentry exported="true" sourcepath="lib.src/swt/linux/swt.src.zip" kind="lib" path="lib/swt/linux/swt.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/linux/swt.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.1.1.jar"/>
-	<classpathentry exported="true" sourcepath="lib.src/swt/linux/swt.src.zip" kind="lib" path="lib/swt/org.eclipse.ui.forms_3.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.ui.forms_3.1.0.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity/logkit-1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity/oro.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity/velocity-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-collections.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
-	<classpathentry exported="true" sourcepath="/util/src" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
-	<classpathentry sourcepath="lib.src/swtcalendar/swtcalendar.src.zip" kind="lib" path="lib/swtcalendar/swtcalendar.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/apache_xmlrpc/ws-commons-util-1.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/apache_xmlrpc/xmlrpc-client-3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/apache_xmlrpc/xmlrpc-common-3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar" sourcepath="/util/src"/>
+	<classpathentry kind="lib" path="lib/swtcalendar/swtcalendar.jar" sourcepath="lib.src/swtcalendar/swtcalendar.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-logging-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/apache_xmlrpc/ws-commons-util-1.0.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/apache_xmlrpc/xmlrpc-client-3.1.jar" sourcepath="lib.src/apache_xmlrpc/xmlrpc-client-3.1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/apache_xmlrpc/xmlrpc-common-3.1.jar" sourcepath="lib.src/apache_xmlrpc/xmlrpc-common-3.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
