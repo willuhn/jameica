@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.27 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.28 $
+ * $Date: 2008/04/09 15:14:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -189,6 +189,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       private int complete = 0;
 			public void setPercentComplete(int percent) {
         this.complete = percent;
+        if (this.complete > 100) this.complete = 100;
         Logger.debug("completed: " + this.complete + " %");
       }
 			public void addPercentComplete(int percent) {
@@ -458,6 +459,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.28  2008/04/09 15:14:24  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *
