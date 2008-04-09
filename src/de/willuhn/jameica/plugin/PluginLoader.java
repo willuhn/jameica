@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.30 $
- * $Date: 2008/03/04 00:49:25 $
+ * $Revision: 1.31 $
+ * $Date: 2008/04/09 16:55:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,9 +15,7 @@ package de.willuhn.jameica.plugin;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.extension.Extension;
@@ -137,7 +135,7 @@ public final class PluginLoader
     
     // Sortieren der Manifeste nach Abhaengigkeiten
     Logger.info("sort plugins by dependency");
-    Collections.sort(this.plugins);
+    QuickSort.quickSort(this.plugins);
     for (int i=0;i<this.plugins.size();++i)
     {
       Manifest mf = (Manifest)this.plugins.get(i);
@@ -325,15 +323,15 @@ public final class PluginLoader
    */
   public List getInstalledPlugins()
   {
-  	Vector v = new Vector();
+  	ArrayList l = new ArrayList();
   	int size = plugins.size();
   	for (int i=0;i<size;++i)
   	{
   		Manifest p = (Manifest) plugins.get(i);
   		if (p.isInstalled())
-  			v.add(p.getPluginInstance());
+  			l.add(p.getPluginInstance());
   	}
-		return v;
+		return l;
   }
 
 	/**
@@ -342,18 +340,27 @@ public final class PluginLoader
 	 */
 	public List getInstalledManifests()
 	{
-    Vector v = new Vector();
-    int size = plugins.size();
-    for (int i=0;i<size;++i)
+    List all = getManifests();
+    List installed = new ArrayList();
+    for (int i=0;i<all.size();++i)
     {
       Manifest p = (Manifest) plugins.get(i);
       if (p.isInstalled())
-        v.add(p);
+        installed.add(p);
     }
-    return v;
+    return installed;
 	}
 
-	/**
+  /**
+   * Liefert eine Liste mit allen gefundenen Manifesten.
+   * @return Liste aller Manifeste (unabhaengig ob erfolgreich installiert oder nicht).
+   */
+  List getManifests()
+  {
+    return this.plugins;
+  }
+
+  /**
 	 * Liefert das Manifest der angegebenen Plugin-Klasse.
    * @param plugin Klasse des Plugins.
    * @return das Manifest.
@@ -473,10 +480,55 @@ public final class PluginLoader
     this.plugins.clear();
   }
   
+  
+  /**
+   * Hilfsklasse fuer das Quicksort
+   */
+  private static class QuickSort
+  {
+    private static void swap(List list, int i, int j)
+    {
+      Object tmp = list.get(i);
+      list.set(i,list.get(j));
+      list.set(j,tmp);
+    }
+    
+    private static void quickSort(List list)
+    {
+      if (list == null || list.size() < 2)
+        return;
+      _quickSort(list, 0, list.size() - 1);
+    }
+    
+    private static void _quickSort(List list, int left, int right)
+    {
+      if(right > left)
+      {
+        int index = left + (int)((right - left) / 2);
+        Manifest pivot = (Manifest) list.get(index);
+        
+        swap(list, index, right);
+        index = left;
+        for(int i = index; i < right; ++i)
+        {
+          if(((Manifest)list.get(i)).compareTo(pivot) < 0)
+            swap(list, index++, i);
+        }
+        swap(list, index, right);
+        
+        _quickSort(list, left, index);
+        _quickSort(list, index + 1, right);
+      }
+    }
+  }
 }
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.31  2008/04/09 16:55:18  willuhn
+ * @N Manifest#getDependencies() liefert nun auch indirekte Abhaengigkeiten
+ * @C Sortierung der Plugins auf Quicksort umgestellt
+ *
  * Revision 1.30  2008/03/04 00:49:25  willuhn
  * @N GUI fuer Backup fertig
  *
