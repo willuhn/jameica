@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.31 $
- * $Date: 2008/04/09 16:55:18 $
+ * $Revision: 1.32 $
+ * $Date: 2008/04/10 13:36:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.plugin;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import de.willuhn.io.FileFinder;
@@ -25,6 +26,7 @@ import de.willuhn.jameica.services.VelocityService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.MultipleClassLoader;
 
 /**
@@ -142,16 +144,42 @@ public final class PluginLoader
       Logger.info("  " + mf.getName());
     }
     ////////////////////////////////////////////////////////////////////////////
-    
-		// Wir machen das Initialisieren der Plugins zum Schluss, um
-		// sicherzustellen, dass der ClassLoader alle Daten hat.
-		for (int i=0;i<this.plugins.size();++i)
+
+    Hashtable loaders = new Hashtable();
+    for (int i=0;i<this.plugins.size();++i)
     {
       Manifest mf = (Manifest)this.plugins.get(i);
 
       try
       {
-        initPlugin(mf);
+        loaders.put(mf,loadPlugin(mf));
+      }
+      catch (ApplicationException ae)
+      {
+        Application.addWelcomeMessage(ae.getMessage());
+      }
+      catch (Throwable t)
+      {
+        String name = mf.getName();
+        Logger.error("unable to init plugin  " + name,t);
+        Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht geladen werden. {1}",new String[]{name,t.getMessage()}));
+      }
+    }
+
+    for (int i=0;i<this.plugins.size();++i)
+    {
+      Manifest mf                = (Manifest)this.plugins.get(i);
+      MultipleClassLoader loader = (MultipleClassLoader) loaders.get(mf);
+      if (loader == null)
+        continue; // Bereits das Laden der Klassen ging schief
+
+      try
+      {
+        initPlugin(mf,loader);
+      }
+      catch (ApplicationException ae)
+      {
+        Application.addWelcomeMessage(ae.getMessage());
       }
       catch (Throwable t)
       {
@@ -163,20 +191,20 @@ public final class PluginLoader
 	}
 
   /**
-   * Instanziiert das Plugin.
+   * Laedt das Plugin.
    * @param manifest
-   * @throws Exception wenn das Initialisieren des Plugins fehlschlug.
+   * @return der Classloader des Plugins
+   * @throws Exception wenn das Laden des Plugins fehlschlug.
    */
-  private void initPlugin(final Manifest manifest) throws Exception
+  private MultipleClassLoader loadPlugin(final Manifest manifest) throws Exception
   {
     if (manifest.isInstalled())
     {
       Logger.debug("plugin allready initialized, skipping");
-      return;
+      return manifest.getPluginInstance().getResources().getClassLoader();
     }
 
-    Application.getCallback().getStartupMonitor().setStatusText("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
-    Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
+    Logger.info("loading plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
 
     // Wir checken noch, ob ggf. eine Abhaengigkeit nicht erfuellt ist.
     String[] deps = manifest.getDependencies();
@@ -200,25 +228,43 @@ public final class PluginLoader
         }
         
         if (!found)
-          throw new Exception(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist", new String[]{manifest.getName(),deps[i]}));
+          throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist", new String[]{manifest.getName(),deps[i]}));
       }
     }
     
     // OK, jetzt laden wir die Klassen des Plugins.
     ClassService cs = (ClassService) Application.getBootLoader().getBootable(ClassService.class);
-    MultipleClassLoader pluginCl = cs.prepareClasses(manifest);
+    return cs.prepareClasses(manifest);
+  }
+  
+  /**
+   * Instanziiert das Plugin.
+   * @param manifest
+   * @param loader der Classloader fuer das Plugin.
+   * @throws Exception wenn das Initialisieren des Plugins fehlschlug.
+   */
+  private void initPlugin(final Manifest manifest, final MultipleClassLoader loader) throws Exception
+  {
+    if (manifest.isInstalled())
+    {
+      Logger.debug("plugin allready initialized, skipping");
+      return;
+    }
+
+    Application.getCallback().getStartupMonitor().setStatusText("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
+    Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
 
     String pluginClass = manifest.getPluginClass();
     
     if (pluginClass == null || pluginClass.length() == 0)
-      throw new Exception(Application.getI18n().tr("Plugin enthält keine gültige Plugin-Klasse (Attribut class in plugin.xml"));
+      throw new ApplicationException(Application.getI18n().tr("Plugin {0} enthält keine gültige Plugin-Klasse (Attribut class in plugin.xml",manifest.getName()));
 
 		Logger.info("trying to initialize " + pluginClass);
 
 		///////////////////////////////////////////////////////////////
 		// Klasse instanziieren. Wir laden die Klasse ueber den
     // zugehoerigen Classloader
-    Class clazz = pluginCl.load(pluginClass);
+    Class clazz = loader.load(pluginClass);
     
     // TODO: Migration. Wir versuchen erst den neuen Konstruktor testen
     AbstractPlugin plugin = null;
@@ -235,9 +281,7 @@ public final class PluginLoader
       plugin = (AbstractPlugin) ct.newInstance(new Object[]{(dir)});
     }
 
-    plugin.getResources().setClassLoader(pluginCl);
-
-    // und setzen es auf status "installed"
+    plugin.getResources().setClassLoader(loader);
     manifest.setPluginInstance(plugin);
 
     //
@@ -281,6 +325,7 @@ public final class PluginLoader
     Application.getCallback().getStartupMonitor().setStatusText("initializing plugin " + manifest.getName());
 
     plugin.init();
+    Application.getServiceFactory().init(plugin);
 		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 
     // ok, wir haben alles durchlaufen, wir speichern die neue Version.
@@ -301,7 +346,7 @@ public final class PluginLoader
         Logger.info("  trying to register " + ext[i].getClassname());
         try
         {
-          Class c = pluginCl.load(ext[i].getClassname());
+          Class c = loader.load(ext[i].getClassname());
           ExtensionRegistry.register((Extension) c.newInstance(), ext[i].getExtendableIDs());
           Logger.info("  extension registered");
         }
@@ -438,19 +483,8 @@ public final class PluginLoader
 		if (pluginClass == null || pluginClass.length() == 0)
 			return false;
 
-		try {
-      Manifest mf = getManifest(pluginClass);
-      if (mf == null) return false; // es existiert ueberhaupt nicht.
-      
-      // Es kann sein, dass es nocht nicht initialisiert ist.
-      // Dann versuchen wir das mal.
-      initPlugin(mf);
-      return mf.isInstalled();
-		}
-		catch (Throwable t)
-		{
-			return false;
-		}
+    Manifest mf = getManifest(pluginClass);
+    return mf != null && mf.isInstalled();
 	}
 
   /**
@@ -525,6 +559,33 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.32  2008/04/10 13:36:14  willuhn
+ * @N Reihenfolge beim Laden/Initialisieren der Plugins geaendert.
+ *
+ * Vorher:
+ *
+ * 1) Plugin A: Klassen laden
+ * 2) Plugn A: init()
+ * 3) Plugin B: Klassen laden
+ * 4) Plugn B: init()
+ * 5) Plugin A: Services starten
+ * 6) Plugin B: Services starten
+ *
+ * Nun:
+ *
+ * 1) Plugin A: Klassen laden
+ * 2) Plugin B: Klassen laden
+ * 3) Plugn A: init()
+ * 4) Plugin A: Services starten
+ * 5) Plugn B: init()
+ * 6) Plugin B: Services starten
+ *
+ *
+ * Vorteile:
+ *
+ * 1) Wenn das erste Plugin initialisiert wird, sind bereits alle Klassen geladen und der Classfinder findet alles relevante
+ * 2) Wenn Plugin B auf Services von Plugin A angewiesen ist, sind diese nun bereits in PluginB.init() verfuegbar
+ *
  * Revision 1.31  2008/04/09 16:55:18  willuhn
  * @N Manifest#getDependencies() liefert nun auch indirekte Abhaengigkeiten
  * @C Sortierung der Plugins auf Quicksort umgestellt

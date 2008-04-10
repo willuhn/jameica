@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.51 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.52 $
+ * $Date: 2008/04/10 13:36:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 
 import de.willuhn.datasource.Service;
 import de.willuhn.jameica.plugin.AbstractPlugin;
@@ -53,69 +52,42 @@ public final class ServiceFactory
 	private Hashtable serviceCache = new Hashtable();
 
   /**
-   * Startet die ServiceFactory.
-   * @throws Exception
+   * Initialisiert die Services eines Plugins.
+   * @param plugin das Plugin.
+   * @throws ApplicationException
    */
-  public synchronized void init() throws Exception
+  public synchronized void init(AbstractPlugin plugin) throws ApplicationException
   {
-    Application.getCallback().getStartupMonitor().setStatusText("init services");
-    Logger.info("init plugin services");
+    Manifest mf = plugin.getManifest();
+    ServiceDescriptor[] descriptors = mf.getServices();
+    if (descriptors == null || descriptors.length == 0)
+      return;
+    
+    Application.getCallback().getStartupMonitor().setStatusText("init services for plugin " + mf.getName() + " [version: " + mf.getVersion() +"]");
 
-    List plugins = Application.getPluginLoader().getInstalledPlugins();
-
-		AbstractPlugin plugin 					= null;
-		Manifest manifest 							= null;
-		ServiceDescriptor[] descriptors = null;
-
-		for (int num=0;num<plugins.size();++num)
+		for (int i=0;i<descriptors.length;++i)
 		{
-			try {
+			String fullName = plugin.getClass().getName() + "." + descriptors[i].getName();
+			if (allServices.get(fullName) != null)
+			{
+				Logger.debug("service " + descriptors[i].getName() + " allready started, skipping");
+				// Den haben wir schon.
+				continue;
+			}
 
-				plugin 			= (AbstractPlugin) plugins.get(num);
-				manifest 		= plugin.getManifest();
-
-				Logger.info("init services for plugin " + manifest.getName() + " [version: " + manifest.getVersion() +"]");
-				
-				descriptors = manifest.getServices();
-				
-				if (descriptors == null || descriptors.length == 0)
-				{
-					Logger.info("no services found, skipping");
-					continue;
-				}
-				for (int i=0;i<descriptors.length;++i)
-				{
-					String fullName = plugin.getClass().getName() + "." + descriptors[i].getName();
-					if (allServices.get(fullName) != null)
-					{
-						Logger.debug("service " + descriptors[i].getName() + " allready started, skipping");
-						// Den haben wir schon.
-						continue;
-					}
-
-					try 
-					{
-            Application.getCallback().getStartupMonitor().setStatusText(manifest.getName() + ": init service " + descriptors[i].getName());
-						Application.getCallback().getStartupMonitor().addPercentComplete(10);
-
-
-						install(plugin,descriptors[i]);
-					}
-					catch (Throwable t)
-					{
-						Logger.error("error while initializing service, disabling plugin",t);
-            Manifest mf = Application.getPluginLoader().getManifest(plugin.getClass());
-            mf.setInstalled(false);
-            String s = t.getMessage();
-            if (s == null || s.length() == 0)
-              s = t.getClass().getName();
-            Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" wurde aufgrund eines Fehlers bei der Initialisierung deaktiviert.\nFehlermeldung: " + s,manifest.getName()));
-					}
-				}
+			try 
+			{
+        Application.getCallback().getStartupMonitor().setStatusText(mf.getName() + ": init service " + descriptors[i].getName());
+				Application.getCallback().getStartupMonitor().addPercentComplete(10);
+				install(plugin,descriptors[i]);
 			}
 			catch (Throwable t)
 			{
-				Logger.error("error while initializing services for this plugin, skipped",t);
+				Logger.error("error while initializing service, ",t);
+        String s = t.getMessage();
+        if (s == null || s.length() == 0)
+          s = t.getClass().getName();
+        throw new ApplicationException(Application.getI18n().tr("Plugin \"{0}\" wurde aufgrund eines Fehlers bei der Initialisierung deaktiviert.\nFehlermeldung: " + s,mf.getName()),t);
 			}
 		}
   }
@@ -411,6 +383,33 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.52  2008/04/10 13:36:14  willuhn
+ * @N Reihenfolge beim Laden/Initialisieren der Plugins geaendert.
+ *
+ * Vorher:
+ *
+ * 1) Plugin A: Klassen laden
+ * 2) Plugn A: init()
+ * 3) Plugin B: Klassen laden
+ * 4) Plugn B: init()
+ * 5) Plugin A: Services starten
+ * 6) Plugin B: Services starten
+ *
+ * Nun:
+ *
+ * 1) Plugin A: Klassen laden
+ * 2) Plugin B: Klassen laden
+ * 3) Plugn A: init()
+ * 4) Plugin A: Services starten
+ * 5) Plugn B: init()
+ * 6) Plugin B: Services starten
+ *
+ *
+ * Vorteile:
+ *
+ * 1) Wenn das erste Plugin initialisiert wird, sind bereits alle Klassen geladen und der Classfinder findet alles relevante
+ * 2) Wenn Plugin B auf Services von Plugin A angewiesen ist, sind diese nun bereits in PluginB.init() verfuegbar
+ *
  * Revision 1.51  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen

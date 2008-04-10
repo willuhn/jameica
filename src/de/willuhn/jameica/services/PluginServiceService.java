@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/PluginServiceService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.2 $
+ * $Date: 2008/04/10 13:36:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,6 @@ public class PluginServiceService implements Bootable
     try
     {
       this.factory = new ServiceFactory();
-      this.factory.init();
     }
     catch (RuntimeException re)
     {
@@ -77,6 +76,33 @@ public class PluginServiceService implements Bootable
 
 /**********************************************************************
  * $Log: PluginServiceService.java,v $
+ * Revision 1.2  2008/04/10 13:36:14  willuhn
+ * @N Reihenfolge beim Laden/Initialisieren der Plugins geaendert.
+ *
+ * Vorher:
+ *
+ * 1) Plugin A: Klassen laden
+ * 2) Plugn A: init()
+ * 3) Plugin B: Klassen laden
+ * 4) Plugn B: init()
+ * 5) Plugin A: Services starten
+ * 6) Plugin B: Services starten
+ *
+ * Nun:
+ *
+ * 1) Plugin A: Klassen laden
+ * 2) Plugin B: Klassen laden
+ * 3) Plugn A: init()
+ * 4) Plugin A: Services starten
+ * 5) Plugn B: init()
+ * 6) Plugin B: Services starten
+ *
+ *
+ * Vorteile:
+ *
+ * 1) Wenn das erste Plugin initialisiert wird, sind bereits alle Klassen geladen und der Classfinder findet alles relevante
+ * 2) Wenn Plugin B auf Services von Plugin A angewiesen ist, sind diese nun bereits in PluginB.init() verfuegbar
+ *
  * Revision 1.1  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen
