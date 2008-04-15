@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CertificateDetailDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/13 12:13:37 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2008/04/15 16:16:36 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -45,7 +45,7 @@ public class CertificateDetailDialog extends AbstractCertificateDialog
   protected void paintButtons(Composite parent)
   {
     ButtonArea buttons = new ButtonArea(parent,1);
-    buttons.addButton("   " + i18n.tr("Schliessen") + "   ", new Action()
+    buttons.addButton("   " + i18n.tr("Schlieﬂen") + "   ", new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -58,6 +58,9 @@ public class CertificateDetailDialog extends AbstractCertificateDialog
 
 /**********************************************************************
  * $Log: CertificateDetailDialog.java,v $
+ * Revision 1.2  2008/04/15 16:16:36  willuhn
+ * @B BUGZILLA 584
+ *
  * Revision 1.1  2005/06/13 12:13:37  web0
  * @N Certificate-Code completed
  *

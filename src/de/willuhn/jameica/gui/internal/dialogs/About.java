@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/12/18 14:12:22 $
+ * $Revision: 1.4 $
+ * $Date: 2008/04/15 16:16:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,7 +73,7 @@ public class About extends AbstractDialog
     container.addPart(text);
 
     ButtonArea buttons = container.createButtonArea(1);
-    buttons.addButton("   " + i18n.tr("Schliessen") + "   ",new Action() {
+    buttons.addButton("   " + i18n.tr("Schlieﬂen") + "   ",new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         close();
@@ -95,6 +95,9 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.4  2008/04/15 16:16:36  willuhn
+ * @B BUGZILLA 584
+ *
  * Revision 1.3  2007/12/18 14:12:22  willuhn
  * @N Neuer Splash-Screen - wurde ja auch mal Zeit ;)
  *

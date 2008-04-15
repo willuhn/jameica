@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/LogDetailDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/05/11 20:40:06 $
- * $Author: web0 $
+ * $Revision: 1.3 $
+ * $Date: 2008/04/15 16:16:36 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -79,7 +79,7 @@ public class LogDetailDialog extends AbstractDialog
 
     
     ButtonArea buttons = new ButtonArea(parent,1);
-    buttons.addButton(Application.getI18n().tr("Schliessen"),new Action() {
+    buttons.addButton(Application.getI18n().tr("Schlieﬂen"),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         close();
@@ -101,6 +101,9 @@ public class LogDetailDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: LogDetailDialog.java,v $
+ * Revision 1.3  2008/04/15 16:16:36  willuhn
+ * @B BUGZILLA 584
+ *
  * Revision 1.2  2006/05/11 20:40:06  web0
  * @N schoenere Formatierung des LogDetail-Dialogs
  *
