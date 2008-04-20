@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/Main.java,v $
- * $Revision: 1.14 $
- * $Date: 2005/05/19 23:30:33 $
- * $Author: web0 $
+ * $Revision: 1.15 $
+ * $Date: 2008/04/20 22:42:06 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -15,6 +15,7 @@ package de.willuhn.jameica;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.StartupParams;
+import de.willuhn.logging.Logger;
 
 /**
  * Mutter aller Klassen ;)
@@ -75,6 +76,13 @@ public class Main {
    */
   public static void main(final String[] args) throws Throwable
   {
+  	Logger.info("given command line params:");
+  	if (args != null)
+  	{
+  		for (int i=0;i<args.length;++i)
+  			Logger.info("  [" + args[i] + "]");
+  	}
+
     Application.newInstance(new StartupParams(args));
   }
 }
@@ -82,6 +90,9 @@ public class Main {
 
 /*********************************************************************
  * $Log: Main.java,v $
+ * Revision 1.15  2008/04/20 22:42:06  willuhn
+ * @N MACOS Kommandozeilen-Parameter ausgeben, um herauszufinden, warum Jameica unter MacOS bisweilen der Meinung ist, der Parameter "-p" sei vorhanden (obwohl das gar nicht der Fall ist.
+ *
  * Revision 1.14  2005/05/19 23:30:33  web0
  * @B RMI over SSL support
  *
