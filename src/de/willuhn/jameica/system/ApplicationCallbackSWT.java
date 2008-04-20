@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.18 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.19 $
+ * $Date: 2008/04/20 22:37:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -97,7 +97,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   	if (this.password != null)
   		return password;
 
-		String checksum = settings.getString("jameica.system.callback.checksum","");
+		String checksum = settings.getString("jameica.system.callback.checksum",null);
 		this.password  	= Application.getStartupParams().getPassword();
 
 		if (password != null)
@@ -427,6 +427,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.19  2008/04/20 22:37:32  willuhn
+ * @B MACOS Test auf NULL statt "" in Passwort-Checksumme
+ *
  * Revision 1.18  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *

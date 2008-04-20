@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.28 $
- * $Date: 2008/04/09 15:14:24 $
+ * $Revision: 1.29 $
+ * $Date: 2008/04/20 22:37:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -115,7 +115,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     if (this.password != null)
       return this.password;
     
-		String checksum = settings.getString("jameica.system.callback.checksum","");
+		String checksum = settings.getString("jameica.system.callback.checksum",null);
   	String pw		= Application.getStartupParams().getPassword();
 
   	if (pw != null)
@@ -459,6 +459,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.29  2008/04/20 22:37:32  willuhn
+ * @B MACOS Test auf NULL statt "" in Passwort-Checksumme
+ *
  * Revision 1.28  2008/04/09 15:14:24  willuhn
  * *** empty log message ***
  *
