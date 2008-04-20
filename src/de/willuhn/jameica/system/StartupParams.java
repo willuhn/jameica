@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.7 $
- * $Date: 2008/04/20 23:30:58 $
+ * $Revision: 1.8 $
+ * $Date: 2008/04/20 23:44:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -108,7 +108,22 @@ public class StartupParams
       }
 
 			if (line.hasOption("f")) this.workDir  = line.getOptionValue("f");
-			if (line.hasOption("p")) this.password = line.getOptionValue("p");
+			if (line.hasOption("p"))
+			{
+				this.password = line.getOptionValue("p");
+
+				// MACOS Ignorieren des Master-Passwortes, wenn es mit "sn_0_" beginnt
+				// http://www.willuhn.de/blog/index.php?/archives/385-Mac-Das-Problem-mit-dem-Master-Passwort.html
+				String os = System.getProperty("os.name");
+			  if (os != null && os.toLowerCase().startsWith("mac os"))
+			  {
+			  	if (this.password != null && this.password.startsWith("sn_0_"))
+			  	{
+			  		Logger.warn("MACOS behaviour: ignoring commandline parameter " + this.password);
+			  		this.password = null;
+			  	}
+			  }
+			}
 
 			Logger.info("workdir: " + this.workDir);
 			if (this.password != null)
@@ -184,6 +199,9 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.8  2008/04/20 23:44:34  willuhn
+ * @C MACOS Masterpasswort ignorieren, wenn es mit "sn_0_" beginnt
+ *
  * Revision 1.7  2008/04/20 23:30:58  willuhn
  * @N MACOS Kommandozeilen-Parameter ausgeben
  *
