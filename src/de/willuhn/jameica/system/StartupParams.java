@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/02/06 14:20:13 $
- * $Author: web0 $
+ * $Revision: 1.7 $
+ * $Date: 2008/04/20 23:30:58 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -47,6 +47,8 @@ public class StartupParams
 	private int mode 				= MODE_STANDALONE;
 
   private boolean noninteractive = false;
+  
+  private String[] params   = null;
 
   /**
 	 * ct.
@@ -54,6 +56,7 @@ public class StartupParams
    */
   public StartupParams(String[] args)
 	{
+  	this.params       = args;
 		Option server 		= new Option("d","server",false,"Startet die Anwendung im Server-Mode ohne Benutzeroberfläche.");
 		Option client 		= new Option("c","client",false,"Startet die Anwendung im Client-Mode mit Benutzeroberfläche");
 		Option standalone = new Option("s","standalone",false,"Startet die Anwendung im Standalone-Mode mit Benutzeroberfläche (Default)");
@@ -167,11 +170,23 @@ public class StartupParams
   {
     return this.noninteractive;
   }
+  
+  /**
+   * Liefert die Kommandozeilen-Parameter.
+   * @return Liste der ungeparsten Kommandozeilen-Parameter.
+   */
+  public String[] getParams()
+  {
+  	return this.params;
+  }
 }
 
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.7  2008/04/20 23:30:58  willuhn
+ * @N MACOS Kommandozeilen-Parameter ausgeben
+ *
  * Revision 1.6  2006/02/06 14:20:13  web0
  * @R removed parameter "ask"
  *

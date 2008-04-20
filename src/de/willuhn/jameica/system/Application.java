@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.77 $
- * $Date: 2008/03/11 00:13:08 $
+ * $Revision: 1.78 $
+ * $Date: 2008/04/20 23:30:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -365,7 +365,7 @@ public final class Application {
 	 * Liefert die Start-Parameter von Jameica.
    * @return Start-Parameter von Jameica.
    */
-  protected static StartupParams getStartupParams()
+  public static StartupParams getStartupParams()
 	{
 		return app.params;
 	}
@@ -494,6 +494,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.78  2008/04/20 23:30:58  willuhn
+ * @N MACOS Kommandozeilen-Parameter ausgeben
+ *
  * Revision 1.77  2008/03/11 00:13:08  willuhn
  * @N Backup scharf geschaltet
  *

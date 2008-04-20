@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SysinfoService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.2 $
+ * $Date: 2008/04/20 23:30:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,6 +54,18 @@ public class SysinfoService implements Bootable
     Logger.info("  Built-Date : " + Application.getBuildDate());
     Logger.info("  Buildnumber: " + Application.getBuildnumber());
 
+    Logger.info("command line parameters");
+    String[] args = Application.getStartupParams().getParams();
+    if (args != null)
+    {
+    	for (int i=0;i<args.length;++i)
+    	{
+    		Logger.info("  [" + args[i] + "]");
+    	}
+    }
+    else
+    	Logger.info("  none");
+    
     if (Logger.getLevel().getValue() == Level.DEBUG.getValue())
     {
       Properties p = System.getProperties();
@@ -89,6 +101,9 @@ public class SysinfoService implements Bootable
 
 /**********************************************************************
  * $Log: SysinfoService.java,v $
+ * Revision 1.2  2008/04/20 23:30:58  willuhn
+ * @N MACOS Kommandozeilen-Parameter ausgeben
+ *
  * Revision 1.1  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen
