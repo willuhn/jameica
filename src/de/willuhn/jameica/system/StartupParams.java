@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.8 $
- * $Date: 2008/04/20 23:44:34 $
+ * $Revision: 1.9 $
+ * $Date: 2008/04/21 10:15:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,9 +42,9 @@ public class StartupParams
 
 	private Options options = null;
 
-	private String workDir  = null;
-	private String password = null;
-	private int mode 				= MODE_STANDALONE;
+	private String workDir         = null;
+	private String password        = null;
+	private int mode 				       = MODE_STANDALONE;
 
   private boolean noninteractive = false;
   
@@ -73,6 +73,7 @@ public class StartupParams
 
 		options.addOption("h","help",false,"Gibt diesen Hilfe-Text aus");
 		options.addOption("f","file",true,"Optionale Angabe des Datenverzeichnisses (Workdir)");
+    options.addOption("o","force-password",false,"Angabe des Master-Passworts via Kommandozeile ignorieren (für MacOS nötig)");
 		options.addOption("p","password",true,"Optionale Angabe des Master-Passworts");
 
     options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +      "Es findet keine Benutzer-Interaktion mehr statt. Die Option wird nur ausgewertet, wenn Jameica " +      "im Server-Mode läuft.");
@@ -108,22 +109,7 @@ public class StartupParams
       }
 
 			if (line.hasOption("f")) this.workDir  = line.getOptionValue("f");
-			if (line.hasOption("p"))
-			{
-				this.password = line.getOptionValue("p");
-
-				// MACOS Ignorieren des Master-Passwortes, wenn es mit "sn_0_" beginnt
-				// http://www.willuhn.de/blog/index.php?/archives/385-Mac-Das-Problem-mit-dem-Master-Passwort.html
-				String os = System.getProperty("os.name");
-			  if (os != null && os.toLowerCase().startsWith("mac os"))
-			  {
-			  	if (this.password != null && this.password.startsWith("sn_0_"))
-			  	{
-			  		Logger.warn("MACOS behaviour: ignoring commandline parameter " + this.password);
-			  		this.password = null;
-			  	}
-			  }
-			}
+			if (line.hasOption("p") && !line.hasOption("o")) this.password = line.getOptionValue("p");
 
 			Logger.info("workdir: " + this.workDir);
 			if (this.password != null)
@@ -199,6 +185,9 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.9  2008/04/21 10:15:56  willuhn
+ * @N MACOS Neuer Kommandozeilen-Parameter "-o", der in jameica-macos.sh standardmaessig gesetzt ist und dazu fuehrt, dass Master-Passwoerter via Kommandozeile grundsaetzlich ignoriert werden
+ *
  * Revision 1.8  2008/04/20 23:44:34  willuhn
  * @C MACOS Masterpasswort ignorieren, wenn es mit "sn_0_" beginnt
  *
