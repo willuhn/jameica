@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.17 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.18 $
+ * $Date: 2008/04/23 11:43:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,6 +73,15 @@ public class ProgressBar implements ProgressMonitor, Part
   public void setStatus(int status)
   {
   	this.status = status;
+  }
+
+  /**
+   * Liefert den aktuellen Status-Code.
+   * @return Status-Code.
+   */
+  public int getStatus()
+  {
+    return this.status;
   }
 
   /**
@@ -217,6 +226,9 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.18  2008/04/23 11:43:40  willuhn
+ * @B 432+179 Snapin nach 30 Sekunden automatisch ausblenden (jetzt einfacher via DelayedListener geloest)
+ *
  * Revision 1.17  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen

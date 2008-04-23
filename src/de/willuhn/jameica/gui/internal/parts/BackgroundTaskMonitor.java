@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/06/19 11:50:39 $
+ * $Revision: 1.7 $
+ * $Date: 2008/04/23 11:43:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.View;
 import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.parts.ProgressBar;
+import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
@@ -40,16 +41,53 @@ public class BackgroundTaskMonitor extends ProgressBar
    */
   private final static DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-  private final static int TIMEOUT = 60 * 1000;
-  private static boolean CANCEL_TIMEOUT = false;
+  private static DelayedListener delay = null;
+  private boolean started              = false;
   
-  private boolean started = false;
-  
-  private void check()
+  /**
+   * Aktualisiert den Status.
+   * @param status Aktueller Status-Code.
+   */
+  private synchronized void check()
   {
-    // Wenn die Check-Funktion aufgerufen wird, brechen wir einen ggf. laufenden
-    // Auto-Schliesser immer ab
-    CANCEL_TIMEOUT = true;
+    if (delay == null)
+    {
+      delay = new DelayedListener(30 * 1000,new Listener() {
+        public void handleEvent(Event event)
+        {
+          // Wenn wir hier sind, muss das timeout abgelaufen und niemand
+          // sonst an dem Progress etwas aktualisiert haben
+          // BUGZILLA 179 + 432
+          int status = event.detail;
+          if (started && (status == STATUS_CANCEL || status == STATUS_DONE || status == STATUS_ERROR))
+          {
+            GUI.getDisplay().asyncExec(new Runnable() {
+              public void run()
+              {
+                if (!started || !GUI.getView().snappedIn())
+                  return;
+                try
+                {
+                  Logger.info("auto closing monitor snapin");
+                  GUI.getView().snapOut();
+                }
+                finally
+                {
+                  started = false;
+                }
+              }
+            });
+          }
+        }
+      });
+    }
+    
+    // Ping
+    Event e = new Event();
+    e.detail = getStatus();
+    delay.handleEvent(e);
+
+    // Wird schon angezeigt.
     if (started)
       return;
 
@@ -121,34 +159,6 @@ public class BackgroundTaskMonitor extends ProgressBar
   {
     check();
     super.setStatus(status);
-    // BUGZILLA 179
-    if (started && status == STATUS_CANCEL || status == STATUS_DONE || status == STATUS_ERROR)
-    {
-      // Wir sind fertig. Dann starten wir einen Timeout und schliessen das
-      // Fenster selbst nach ein paar Sekunden.
-      GUI.getDisplay().asyncExec(new Runnable() {
-        public void run()
-        {
-          CANCEL_TIMEOUT = false;
-          GUI.getDisplay().timerExec(TIMEOUT,new Runnable() {
-            public void run()
-            {
-              if (!started || CANCEL_TIMEOUT || !GUI.getView().snappedIn())
-                return;
-              try
-              {
-                Logger.info("auto closing monitor snapin");
-                GUI.getView().snapOut();
-              }
-              finally
-              {
-                started = false;
-              }
-            }
-          });
-        }
-      });
-    }
   }
 
   /**
@@ -190,6 +200,9 @@ public class BackgroundTaskMonitor extends ProgressBar
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
+ * Revision 1.7  2008/04/23 11:43:40  willuhn
+ * @B 432+179 Snapin nach 30 Sekunden automatisch ausblenden (jetzt einfacher via DelayedListener geloest)
+ *
  * Revision 1.6  2006/06/19 11:50:39  willuhn
  * *** empty log message ***
  *
