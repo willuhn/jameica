@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.111 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.112 $
+ * $Date: 2008/04/23 11:10:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,7 +60,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class GUI implements ApplicationController
 {
-	private Settings settings = new Settings(GUI.class);
+	final static Settings SETTINGS = new Settings(GUI.class);
 
   private static GUI gui = null;
     private ApplicationCallback callback = null;
@@ -99,7 +99,7 @@ public class GUI implements ApplicationController
     if (gui != null)
       throw new RuntimeException("unable to start second gui");
     gui = this;
-    gui.settings.setStoreWhenRead(false);
+    SETTINGS.setStoreWhenRead(false);
 	}
 
 	/**
@@ -226,13 +226,13 @@ public class GUI implements ApplicationController
     int y = -1;
     int width = 920;
     int height = 720;
-    x = settings.getInt("window.x", x);
-    y = settings.getInt("window.y", y);
-    width = settings.getInt("window.width", width);
-    height = settings.getInt("window.height", height);
+    x = SETTINGS.getInt("window.x", x);
+    y = SETTINGS.getInt("window.y", y);
+    width = SETTINGS.getInt("window.width", width);
+    height = SETTINGS.getInt("window.height", height);
 
     // BUGZILLA 194
-    boolean maximized = settings.getBoolean("window.maximized", false);
+    boolean maximized = SETTINGS.getBoolean("window.maximized", false);
     
     int dwidth  = getDisplay().getBounds().width;
     int dheight = getDisplay().getBounds().height;
@@ -282,22 +282,22 @@ public class GUI implements ApplicationController
           Point location    = getShell().getLocation();
           Point size        = getShell().getSize();
 
-          settings.setAttribute("window.maximized", maximized);
+          SETTINGS.setAttribute("window.maximized", maximized);
 
           Logger.info("size: " + size.x + "x" + size.y + ", position: " + location.x + "x" + location.y + ", maximized: " + maximized);
 
           if (size.x != 0 && size.y != 0)
           {
-            settings.setAttribute("window.width", size.x);
-            settings.setAttribute("window.height",size.y);
+            SETTINGS.setAttribute("window.width", size.x);
+            SETTINGS.setAttribute("window.height",size.y);
           }
 
           if (location.x != 0 && location.y != 0)
           {
             // Zumindest unter Linux liefert das immer 0.
             // Dann brauchen wir es auch nicht speichern
-            settings.setAttribute("window.x", location.x);
-            settings.setAttribute("window.y", location.y);
+            SETTINGS.setAttribute("window.x", location.x);
+            SETTINGS.setAttribute("window.y", location.y);
           }
         }
         catch (Throwable t)
@@ -598,7 +598,7 @@ public class GUI implements ApplicationController
 	public static StyleFactory getStyleFactory()
 	{
 		if (gui.styleFactory != null) return gui.styleFactory;
-		String className = gui.settings.getString("stylefactory",
+		String className = SETTINGS.getString("stylefactory",
 				StyleFactoryDefaultImpl.class.getName());
 		try
 		{
@@ -622,7 +622,7 @@ public class GUI implements ApplicationController
 	{
 		if (factory == null) return;
 		gui.styleFactory = factory;
-		gui.settings.setAttribute("stylefactory", factory.getClass().getName());
+    SETTINGS.setAttribute("stylefactory", factory.getClass().getName());
 	}
 
 	/**
@@ -826,6 +826,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.112  2008/04/23 11:10:24  willuhn
+ * @N Bug 432 Snapin merkt sich jetzt seine letzte Hoehe und stellt diese wieder her
+ *
  * Revision 1.111  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *

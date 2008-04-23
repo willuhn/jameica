@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.41 $
- * $Date: 2007/12/18 23:05:42 $
+ * $Revision: 1.42 $
+ * $Date: 2008/04/23 11:10:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -192,7 +192,19 @@ public class View implements Part
       public void run()
       {
 				sash.setMaximizedControl(null);
-				sash.setWeights(new int[] {3,1});
+        // BUGZILLA 432 - Restore der Hoehe des Snapins
+        int[] weights = new int[] {3,1};
+        int h1 = view.getSize().y;
+        int h2 = GUI.SETTINGS.getInt("snapin.height",0);
+        if (h2 > 0 && h1 > 0)
+        {
+          // Leider akzeptiert Sash keine absoluten Werte. Daher muessen
+          // wird das in Prozent-Angaben umrechnen
+          int p1 = h2 * 100 / (h1+h2);
+          weights = new int[]{100-p1,p1};
+        }
+
+        sash.setWeights(weights);
 				snappedIn = true;
       }
     });
@@ -209,6 +221,8 @@ public class View implements Part
       {
         try
         {
+          // BUGZILLA 432 - Speichern der letzten Hoehe des Snapins
+          GUI.SETTINGS.setAttribute("snapin.height",snapin.getSize().y);
           SWTUtil.disposeChildren(snapin);
           sash.setMaximizedControl(view);
         }
@@ -346,6 +360,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.42  2008/04/23 11:10:24  willuhn
+ * @N Bug 432 Snapin merkt sich jetzt seine letzte Hoehe und stellt diese wieder her
+ *
  * Revision 1.41  2007/12/18 23:05:42  willuhn
  * @C Farben wieder explizit vorgegeben. Unter Windows XP sieht es so oder so (ob Expand-Bar mit oder ohne XP-Lookp) haesslich aus
  *
