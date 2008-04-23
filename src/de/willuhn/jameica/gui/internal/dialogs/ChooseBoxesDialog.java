@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2006/08/02 09:12:02 $
+ * $Revision: 1.3 $
+ * $Date: 2008/04/23 09:53:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -113,7 +113,7 @@ public class ChooseBoxesDialog extends AbstractDialog
 
     table.paint(parent);
 
-    ButtonArea buttons = new ButtonArea(parent,4);
+    ButtonArea buttons = new ButtonArea(parent,5);
     
     up = new Button(i18n.tr("Nach oben"), new Action() {
       public void handleAction(Object context) throws ApplicationException
@@ -167,6 +167,12 @@ public class ChooseBoxesDialog extends AbstractDialog
         new Start().handleAction(context);
       }
     },null,true);
+    buttons.addButton(i18n.tr("Abbrechen"), new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        close();
+      }
+    });
   }
 
   /**
@@ -315,6 +321,9 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
+ * Revision 1.3  2008/04/23 09:53:02  willuhn
+ * @N Abbrechen-Button in Dialog
+ *
  * Revision 1.2  2006/08/02 09:12:02  willuhn
  * @B Sortierung der Boxen auf der Startseite
  *
