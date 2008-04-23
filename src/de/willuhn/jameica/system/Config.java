@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.39 $
- * $Date: 2008/03/11 10:36:08 $
+ * $Revision: 1.40 $
+ * $Date: 2008/04/23 23:10:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,41 +49,32 @@ public final class Config
   /**
    * ct.
    */
-  protected Config()
+  protected Config() throws Exception
   {
   }
 
   /**
    * Initialisiert die Konfiguration.
-   * @param dataDir Verzeichnis zu den variablen Daten. Kann null sein.
    * @throws Exception
    */
-  protected synchronized void init(String dataDir) throws Exception
+  protected void init() throws Exception
   {
-    if (dataDir == null)
+    // Das init() koennen wir nicht im Konstruktor
+    // machen, weil es sonst eine Rekursion gibt.
+    // denn unten erzeugen wir ein Settings-Objekt,
+    // welches wiederrum Application.getConfig()
+    // aufruft, um an das Work-Dir zu kommen ;)
+    if (this.workDir != null)
+      return;
+    
+    this.workDir = Application.getPlatform().getWorkdir();
+
+    this.configDir  = new File(this.workDir,"cfg");
+    if (!this.configDir.exists())
     {
-			dataDir = System.getProperty("user.home") + "/.jameica";
+      Logger.info("creating " + this.configDir.getAbsolutePath());
+      this.configDir.mkdir();
     }
-
-		Logger.info("using workdir: " + dataDir);
-		this.workDir = new File(dataDir);
-		
-		if (this.workDir.exists() && !this.workDir.isDirectory())
-			throw new Exception("File " + dataDir + " allready exists.");
-		
-		if (!this.workDir.exists())
-		{
-			Logger.info("creating " + dataDir);
-			if (!this.workDir.mkdir())
-				throw new Exception("creating of " + dataDir + " failed");		
-		}
-
-		this.configDir  = new File(dataDir + "/cfg");
-		if (!this.configDir.exists())
-		{
-			Logger.info("creating " + this.configDir.getAbsolutePath());
-			this.configDir.mkdir();
-		}
 
     this.settings = new Settings(this.getClass());
     this.settings.setStoreWhenRead(true);
@@ -629,6 +620,10 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.40  2008/04/23 23:10:14  willuhn
+ * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
+ * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica
+ *
  * Revision 1.39  2008/03/11 10:36:08  willuhn
  * @N Default-Wert auf true geaendert
  *

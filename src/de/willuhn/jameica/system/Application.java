@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.78 $
- * $Date: 2008/04/20 23:30:58 $
+ * $Revision: 1.79 $
+ * $Date: 2008/04/23 23:10:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,6 +54,7 @@ public final class Application {
 		private StartupParams 			params;
 
     private Manifest            manifest;
+    private Platform            platform;
     private Config 							config;
     private MultipleClassLoader classLoader;
     private BootLoader          loader;
@@ -301,15 +302,29 @@ public final class Application {
   {
   	if (app.config != null)
   		return app.config;
-		try {
+		try
+    {
 			app.config = new Config();
-			app.config.init(app.params.getWorkDir());
+      app.config.init();
 		}
 		catch (Throwable t)
 		{
 			app.startupError(t);
 		}
     return app.config;
+  }
+  
+  /**
+   * Liefert eine Hilfsklasse fuer Plattform-/OS-Spezifisches.
+   * @return Plattform.
+   */
+  public static Platform getPlatform()
+  {
+    if (app.platform != null)
+      return app.platform;
+    
+    app.platform = Platform.getInstance();
+    return app.platform;
   }
 
   /**
@@ -494,6 +509,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.79  2008/04/23 23:10:14  willuhn
+ * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
+ * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica
+ *
  * Revision 1.78  2008/04/20 23:30:58  willuhn
  * @N MACOS Kommandozeilen-Parameter ausgeben
  *
