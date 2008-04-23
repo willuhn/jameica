@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/BoxRegistry.java,v $
- * $Revision: 1.4 $
- * $Date: 2006/08/02 09:24:58 $
+ * $Revision: 1.5 $
+ * $Date: 2008/04/23 13:20:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,8 @@
 
 package de.willuhn.jameica.gui.boxes;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Vector;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -25,7 +25,7 @@ import de.willuhn.util.ClassFinder;
  */
 public class BoxRegistry
 {
-  private static Box[] list = null;
+  private static Class[] boxes = null;
   
   /**
    * Liefert eine Liste der verfuegbaren Boxen.
@@ -34,47 +34,41 @@ public class BoxRegistry
    */
   public static synchronized Box[] getBoxes()
   {
-    if (list != null)
-      return list;
-    
-    ClassFinder finder = Application.getClassLoader().getClassFinder();
-
-    Vector v = new Vector();
-    Class[] boxes = new Class[0];
-
-    try
+    if (boxes == null)
     {
-      boxes = finder.findImplementors(Box.class);
-    }
-    catch (ClassNotFoundException ce)
-    {
-      Logger.error("no boxes found",ce);
+      // Klassen wurden noch nicht geladen. Das tun wir jetzt
+      ClassFinder finder = Application.getClassLoader().getClassFinder();
+      try {
+        boxes = finder.findImplementors(Box.class);
+        if (boxes == null || boxes.length == 0)
+          throw new ClassNotFoundException();
+      }
+      catch (ClassNotFoundException ce)
+      {
+        Logger.warn("no boxes found, jameica welcome page will be empty");
+        boxes = new Class[0];
+        return new Box[0];
+      }
     }
 
-    Box current = null;
+    // Erzeugen der Instanzen.
+    ArrayList instances = new ArrayList();
     for (int i=0;i<boxes.length;++i)
     {
       try
       {
-        current = (Box) boxes[i].newInstance();
-        Logger.debug("found box " + current.getName());
-        v.add(current);
+        final Box current = (Box) boxes[i].newInstance();
+        instances.add(current);
       }
       catch (Exception e)
       {
-        Logger.error("unable to load box " + boxes[i].getName() + ", skipping");
+        Logger.error("unable to load box " + boxes[i].getName() + ", skipping", e);
       }
     }
-    Collections.sort(v);
-    list = (Box[]) v.toArray(new Box[v.size()]);
     
-    // Indizes nochmal neu schreiben
-    for (int i=0;i<list.length;++i)
-    {
-      Box b = list[i];
-      b.setIndex(i);
-    }
-    return list;
+    // Boxen sortieren
+    Collections.sort(instances);
+    return (Box[]) instances.toArray(new Box[instances.size()]);
   }
   
   /**
@@ -84,24 +78,23 @@ public class BoxRegistry
    */
   public static synchronized boolean up(Box box)
   {
-    synchronized (list)
+    Box[] boxes = getBoxes();
+
+    int index = box.getIndex();
+    if (index <= 0)
+      return false; // Die Box ist schon ganz oben.
+      
+    // Wir nehmen die Box oben drueber und tauschen die Positionen
+    boxes[index]     = boxes[index - 1];
+    boxes[index - 1] = box;
+  
+    // Indizes speichern
+    for (int i=0;i<boxes.length;++i)
     {
-      int index = box.getIndex();
-      
-      if (index <= 0)
-        return false; // Die Box ist schon ganz oben.
-      
-      // Wir nehmen die Box oben drueber und tauschen die Positionen
-      int newIndex = index - 1;
-      Box other = list[newIndex];
-      
-      other.setIndex(index);
-      box.setIndex(newIndex);
-      
-      list[index]    = other;
-      list[newIndex] = box;
-      return true;
+      Box b = boxes[i];
+      b.setIndex(i);
     }
+    return true;
   }
   
   /**
@@ -111,30 +104,33 @@ public class BoxRegistry
    */
   public static synchronized boolean down(Box box)
   {
-    synchronized (list)
-    {
-      int index = box.getIndex();
-      
-      if (index >= (list.length - 1))
-        return false; // Die Box ist schon ganz unten
+    Box[] boxes = getBoxes();
 
-      // Wir nehmen die Box unten drunter und tauschen die Positionen
-      int newIndex = index + 1;
-      Box other = list[newIndex];
+    int index = box.getIndex();
       
-      other.setIndex(index);
-      box.setIndex(newIndex);
-      
-      list[index]    = other;
-      list[newIndex] = box;
-      return true;
+    if (index >= (boxes.length - 1))
+      return false; // Die Box ist schon ganz unten
+
+    // Wir nehmen die Box unten drunter und tauschen die Positionen
+    boxes[index]     = boxes[index + 1];
+    boxes[index + 1] = box;
+
+    // Indizes speichern
+    for (int i=0;i<boxes.length;++i)
+    {
+      Box b = boxes[i];
+      b.setIndex(i);
     }
+    return true;
   }
 }
 
 
 /*********************************************************************
  * $Log: BoxRegistry.java,v $
+ * Revision 1.5  2008/04/23 13:20:56  willuhn
+ * @B Bug 588
+ *
  * Revision 1.4  2006/08/02 09:24:58  willuhn
  * @B Neusetzen der Indizes beim Laden der Boxen
  *

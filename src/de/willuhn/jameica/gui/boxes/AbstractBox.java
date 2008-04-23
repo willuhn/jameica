@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/AbstractBox.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/12/29 18:45:31 $
+ * $Revision: 1.3 $
+ * $Date: 2008/04/23 13:20:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,10 @@ import de.willuhn.jameica.system.Settings;
 public abstract class AbstractBox implements Box
 {
   private static Settings settings = new Settings(Box.class);
+  
+  // Wir cachen den Index. Das erspart unnoetige Zugriffe auf die properties-Dateien
+  private Integer index   = null;
+  private Boolean enabled = null;
 
   /**
    * ct.
@@ -34,7 +38,9 @@ public abstract class AbstractBox implements Box
    */
   public boolean isEnabled()
   {
-    return settings.getBoolean(this.getClass().getName() + ".enabled",getDefaultEnabled());
+    if (this.enabled == null)
+      this.enabled = Boolean.valueOf(settings.getBoolean(this.getClass().getName() + ".enabled",getDefaultEnabled()));
+    return this.enabled.booleanValue();
   }
 
   /**
@@ -42,6 +48,7 @@ public abstract class AbstractBox implements Box
    */
   public void setEnabled(boolean enabled)
   {
+    this.enabled = Boolean.valueOf(enabled);
     settings.setAttribute(this.getClass().getName() + ".enabled",enabled);
   }
 
@@ -50,7 +57,9 @@ public abstract class AbstractBox implements Box
    */
   public int getIndex()
   {
-    return settings.getInt(this.getClass().getName() + ".index",getDefaultIndex());
+    if (this.index == null)
+      this.index = Integer.valueOf(settings.getInt(this.getClass().getName() + ".index",getDefaultIndex()));
+    return this.index.intValue();
   }
 
   /**
@@ -58,6 +67,7 @@ public abstract class AbstractBox implements Box
    */
   public void setIndex(int index)
   {
+    this.index = Integer.valueOf(index);
     settings.setAttribute(this.getClass().getName() + ".index",index);
   }
 
@@ -101,6 +111,9 @@ public abstract class AbstractBox implements Box
 
 /*********************************************************************
  * $Log: AbstractBox.java,v $
+ * Revision 1.3  2008/04/23 13:20:56  willuhn
+ * @B Bug 588
+ *
  * Revision 1.2  2007/12/29 18:45:31  willuhn
  * @N Hoehe von Boxen explizit konfigurierbar
  *
