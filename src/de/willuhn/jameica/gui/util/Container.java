@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/09/06 22:21:55 $
+ * $Revision: 1.14 $
+ * $Date: 2008/04/23 15:28:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -97,7 +97,10 @@ public abstract class Container
    */
   public void addInput(Input input)
   {
-    addLabelPair(input.getName(),input);
+    if (input instanceof CheckboxInput)
+      addCheckbox((CheckboxInput)input,input.getName());
+    else
+      addLabelPair(input.getName(),input);
   }
   
   /**
@@ -266,6 +269,9 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
+ * Revision 1.14  2008/04/23 15:28:02  willuhn
+ * @N Checkboxen korrekt in "addInput" erkennen
+ *
  * Revision 1.13  2007/09/06 22:21:55  willuhn
  * @N Hervorhebung von Pflichtfeldern konfigurierbar
  * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
