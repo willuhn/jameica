@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.41 $
- * $Date: 2008/05/19 09:54:29 $
+ * $Revision: 1.42 $
+ * $Date: 2008/05/19 10:04:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -257,7 +257,11 @@ public final class Config
         Logger.info("configured country: " + country);
 
       // Wir testen die Existenz der Bundles
-      l = new Locale(lang,country);
+      if (country != null && country.length() > 0)
+        l = new Locale(lang,country);
+      else
+        l = new Locale(lang);
+
       Logger.info("checking resource bundle for language");
       ResourceBundle.getBundle("lang/system_messages",l);
       this.locale = l;
@@ -282,7 +286,12 @@ public final class Config
 		if (l == null)
 			return;
     this.locale = l;
-    settings.setAttribute("jameica.system.locale",this.locale.getLanguage() + "_" + this.locale.getCountry());
+    String lang    = this.locale.getLanguage();
+    String country = this.locale.getCountry();
+    if (country != null && country.length() > 0)
+      settings.setAttribute("jameica.system.locale",lang + "_" + country);
+    else
+      settings.setAttribute("jameica.system.locale",lang);
 	}
 
   /**
@@ -620,6 +629,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.42  2008/05/19 10:04:45  willuhn
+ * @B ungueltige Resource-Bundle tolerieren
+ *
  * Revision 1.41  2008/05/19 09:54:29  willuhn
  * @B Fallback auf Default-Locale, wenn ungueltiges Locale konfiguriert
  *
