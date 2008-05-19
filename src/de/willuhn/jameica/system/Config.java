@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.40 $
- * $Date: 2008/04/23 23:10:14 $
+ * $Revision: 1.41 $
+ * $Date: 2008/05/19 09:54:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -241,21 +241,21 @@ public final class Config
     if (locale != null)
       return locale;
 
-    Locale l = Locale.GERMANY;
-    String lang = settings.getString("jameica.system.locale",l.getLanguage() + "_" + l.getCountry());
-    String country = "";
-    if (lang.indexOf("_") != -1)
-    {
-      int minus = lang.indexOf("_");
-      country   = lang.substring(minus+1);
-      lang      = lang.substring(0,minus);
-    }
-    
-    Logger.info("configured language: " + lang);
-    if (country.length() > 0)
-      Logger.info("configured country: " + country);
-
     try {
+      Locale l = Locale.GERMANY;
+      String lang = settings.getString("jameica.system.locale",l.getLanguage() + "_" + l.getCountry());
+      String country = "";
+      if (lang.indexOf("_") != -1)
+      {
+        int minus = lang.indexOf("_");
+        country   = lang.substring(minus+1);
+        lang      = lang.substring(0,minus);
+      }
+      
+      Logger.info("configured language: " + lang);
+      if (country.length() > 0)
+        Logger.info("configured country: " + country);
+
       // Wir testen die Existenz der Bundles
       l = new Locale(lang,country);
       Logger.info("checking resource bundle for language");
@@ -265,7 +265,7 @@ public final class Config
       Locale.setDefault(this.locale);
       return this.locale;
     }
-    catch (Exception ex)
+    catch (Throwable t)
     {
       Logger.info("not found. fallback to system default");
     }
@@ -620,6 +620,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.41  2008/05/19 09:54:29  willuhn
+ * @B Fallback auf Default-Locale, wenn ungueltiges Locale konfiguriert
+ *
  * Revision 1.40  2008/04/23 23:10:14  willuhn
  * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
  * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica
