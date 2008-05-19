@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.21 $
- * $Date: 2008/01/17 23:46:05 $
+ * $Revision: 1.22 $
+ * $Date: 2008/05/19 22:35:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,6 +48,7 @@ public class DialogInput extends ButtonInput
 	private Text text;
   private AbstractDialog dialog;
   private Object choosen;
+  private int maxlength = 0;
 
   private Object oldValue = PLACEHOLDER;
 
@@ -115,6 +116,28 @@ public class DialogInput extends ButtonInput
 		if (this.text != null && !this.text.isDisposed())
 			this.text.setText(text);
 	}
+  
+  /**
+   * Legt die maximale Anzahl eingebbarer Zeichen fest.
+   * @param length Maximal-Anzahl.
+   * Zulaessig sind nur Werte, die groesser als "0" sind.
+   */
+  public void setMaxLength(int length)
+  {
+    if (length > 0)
+      this.maxlength = length;
+    if (this.text != null && !this.text.isDisposed())
+      this.text.setTextLimit(this.maxlength);
+  }
+  
+  /**
+   * Liefert die maximale Anzahl eingebbarer Zeichen.
+   * @return Anzahl der maximal eingebbaren Zeichen oder "0", wenn kein Limit definiert ist.
+   */
+  public int getMaxLength()
+  {
+    return this.maxlength;
+  }
 
   /**
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
@@ -138,6 +161,9 @@ public class DialogInput extends ButtonInput
     text.setForeground(Color.WIDGET_FG.getSWTColor());
   	if (value != null)
   		text.setText(value);
+    if (this.maxlength > 0)
+      text.setTextLimit(this.maxlength);
+
   	return text;
   }
 
@@ -197,6 +223,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.22  2008/05/19 22:35:06  willuhn
+ * @N setMaxLength(int) in DialogInput
+ *
  * Revision 1.21  2008/01/17 23:46:05  willuhn
  * @B Bug 541
  *
