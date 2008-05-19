@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.79 $
- * $Date: 2008/04/23 23:10:14 $
+ * $Revision: 1.80 $
+ * $Date: 2008/05/19 22:31:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -372,7 +372,16 @@ public final class Application {
 	{
 		if (app.i18n != null)
 			return app.i18n;
-		app.i18n = new I18N("lang/system_messages",getConfig().getLocale(),getClassLoader());
+    
+    try
+    {
+      app.i18n = new I18N("lang/system_messages",getConfig().getLocale(),getClassLoader());
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to load system resource bundle, fallback to dummy",e);
+      app.i18n = new I18N();
+    }
 		return app.i18n;
 	}
 
@@ -509,6 +518,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.80  2008/05/19 22:31:42  willuhn
+ * @N Tolerieren ungueltiger Locale-Angaben
+ *
  * Revision 1.79  2008/04/23 23:10:14  willuhn
  * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
  * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica
