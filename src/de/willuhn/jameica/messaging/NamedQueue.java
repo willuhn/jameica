@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/11/23 00:51:18 $
+ * $Revision: 1.4 $
+ * $Date: 2008/05/21 14:23:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,8 +85,15 @@ public final class NamedQueue implements MessagingQueue
    */
   public void unRegisterMessageConsumer(MessageConsumer consumer)
   {
+    if (consumers == null)
+    {
+      Logger.info("queue allready shut down, skip unregistering");
+      return;
+    }
+
     if (consumer == null)
       return;
+
     Logger.debug("unregistering message consumer " + consumer.getClass().getName());
     consumers.remove(consumer);
   }
@@ -276,6 +283,9 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.4  2008/05/21 14:23:00  willuhn
+ * @B NPE beim Shutdown
+ *
  * Revision 1.3  2007/11/23 00:51:18  willuhn
  * *** empty log message ***
  *
