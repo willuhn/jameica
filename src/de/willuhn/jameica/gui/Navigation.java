@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.40 $
- * $Date: 2008/05/22 22:39:16 $
+ * $Revision: 1.41 $
+ * $Date: 2008/05/22 23:12:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -126,7 +127,7 @@ public class Navigation implements Part
       item.setForeground(Color.COMMENT.getSWTColor());
     }
     
-    this.itemLookup.put(element,item);
+    this.itemLookup.put(element.getID(),item);
 
     // Bevor wir die Kinder laden, geben wir das Element noch der
     // ExtensionRegistry fuer eventuell weitere Erweiterungen
@@ -221,8 +222,18 @@ public class Navigation implements Part
   {
     if (item == null)
       return;
-    
-    TreeItem ti = (TreeItem) itemLookup.get(item);
+
+    TreeItem ti = null;
+    Iterator i = this.itemLookup.values().iterator();
+    while (i.hasNext())
+    {
+      TreeItem test = (TreeItem) i.next();
+      Object data = test.getData();
+      if (data == null || !data.equals(item))
+        continue;
+      ti = test;
+      break;
+    }
     if (ti == null)
       return;
     
@@ -235,11 +246,12 @@ public class Navigation implements Part
    * Selektiert das Navigationselement mit der angegebenen ID.
    * @param id zu selektierende ID.
    */
-  protected void select(NavigationItem item)
+  public void select(String id)
   {
-    if (item == null)
+    if (id == null)
       return;
-    TreeItem ti = (TreeItem) itemLookup.get(item);
+    
+    TreeItem ti = (TreeItem) itemLookup.get(id);
     if (ti == null)
       return;
 
@@ -255,7 +267,10 @@ public class Navigation implements Part
           return; // jupp
       }
     }
-    ti.notifyListeners(SWT.Selection,null);
+    Event event = new Event();
+    event.item = ti;
+    event.type = SWT.Selection;
+    this.mainTree.notifyListeners(SWT.Selection,event);
   }
   
   /**
@@ -277,7 +292,7 @@ public class Navigation implements Part
 
       if (ni == null)
         return;
-      
+
       try
       {
         if (event.type == SWT.Selection)
@@ -344,6 +359,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.41  2008/05/22 23:12:55  willuhn
+ * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
+ *
  * Revision 1.40  2008/05/22 22:39:16  willuhn
  * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
  *

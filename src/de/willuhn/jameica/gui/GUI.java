@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.113 $
- * $Date: 2008/05/22 22:39:16 $
+ * $Revision: 1.114 $
+ * $Date: 2008/05/22 23:12:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -651,8 +651,7 @@ public class GUI implements ApplicationController
 	{
 		int retry = 0;
     
-    navi.select(Application.getManifest().getNavigation());
-    
+    navi.select("jameica.start");
 		while (!shell.isDisposed() && !stop && retry < 4)
 		{
 			try
@@ -829,6 +828,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.114  2008/05/22 23:12:55  willuhn
+ * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
+ *
  * Revision 1.113  2008/05/22 22:39:16  willuhn
  * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
  *
