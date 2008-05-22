@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.39 $
- * $Date: 2007/07/16 12:51:28 $
+ * $Revision: 1.40 $
+ * $Date: 2008/05/22 22:39:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -219,15 +219,44 @@ public class Navigation implements Part
    */
   protected void update(NavigationItem item) throws RemoteException
   {
+    if (item == null)
+      return;
+    
     TreeItem ti = (TreeItem) itemLookup.get(item);
-    if (ti != null)
-    {
-      ti.setGrayed(!item.isEnabled());
-      ti.setForeground(item.isEnabled() ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
-      ti.setText(item.getName());
-    }
+    if (ti == null)
+      return;
+    
+    ti.setGrayed(!item.isEnabled());
+    ti.setForeground(item.isEnabled() ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
+    ti.setText(item.getName());
   }
 
+  /**
+   * Selektiert das Navigationselement mit der angegebenen ID.
+   * @param id zu selektierende ID.
+   */
+  protected void select(NavigationItem item)
+  {
+    if (item == null)
+      return;
+    TreeItem ti = (TreeItem) itemLookup.get(item);
+    if (ti == null)
+      return;
+
+    TreeItem[] selected = this.mainTree.getSelection();
+    if (selected != null && selected.length > 0)
+    {
+      // wir haben schon selektierte Elemente.
+      // Dann checken wir, ob das Element vielleicht
+      // schon selektiert ist
+      for (int i=0;i<selected.length;++i)
+      {
+        if (selected[i] == ti)
+          return; // jupp
+      }
+    }
+    ti.notifyListeners(SWT.Selection,null);
+  }
   
   /**
    * Wird beim Klick auf ein Element ausgeloest.
@@ -315,6 +344,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.40  2008/05/22 22:39:16  willuhn
+ * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
+ *
  * Revision 1.39  2007/07/16 12:51:28  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.112 $
- * $Date: 2008/04/23 11:10:24 $
+ * $Revision: 1.113 $
+ * $Date: 2008/05/22 22:39:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -650,6 +650,9 @@ public class GUI implements ApplicationController
 	private void loop()
 	{
 		int retry = 0;
+    
+    navi.select(Application.getManifest().getNavigation());
+    
 		while (!shell.isDisposed() && !stop && retry < 4)
 		{
 			try
@@ -826,6 +829,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.113  2008/05/22 22:39:16  willuhn
+ * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
+ *
  * Revision 1.112  2008/04/23 11:10:24  willuhn
  * @N Bug 432 Snapin merkt sich jetzt seine letzte Hoehe und stellt diese wieder her
  *
