@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.80 $
- * $Date: 2008/05/19 22:31:42 $
+ * $Revision: 1.81 $
+ * $Date: 2008/05/23 09:24:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -155,14 +155,9 @@ public final class Application {
    */
   private void startupError(Throwable t)
 	{
-		try
-		{
-			Logger.error("FATAL ERROR WHILE JAMEICA STARTUP",t);
-		}
-		catch (Throwable t2)
-		{
-			t.printStackTrace();
-		}
+    t.printStackTrace();
+    Logger.error("FATAL ERROR WHILE JAMEICA STARTUP",t);
+
     StringBuffer sb = new StringBuffer();
     Throwable cause = t;
     
@@ -518,6 +513,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.81  2008/05/23 09:24:52  willuhn
+ * @N fatale Stacktraces immer auch auf der Console direkt ausgeben
+ *
  * Revision 1.80  2008/05/19 22:31:42  willuhn
  * @N Tolerieren ungueltiger Locale-Angaben
  *
