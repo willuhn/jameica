@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.41 $
- * $Date: 2008/05/22 23:12:55 $
+ * $Revision: 1.42 $
+ * $Date: 2008/05/23 08:29:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -246,7 +246,7 @@ public class Navigation implements Part
    * Selektiert das Navigationselement mit der angegebenen ID.
    * @param id zu selektierende ID.
    */
-  public void select(String id)
+  protected void select(String id)
   {
     if (id == null)
       return;
@@ -359,6 +359,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.42  2008/05/23 08:29:25  willuhn
+ * @C modifier geaendert
+ *
  * Revision 1.41  2008/05/22 23:12:55  willuhn
  * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
  *
