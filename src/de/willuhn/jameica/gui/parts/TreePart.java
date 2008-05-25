@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.21 $
- * $Date: 2007/12/04 23:41:53 $
+ * $Revision: 1.22 $
+ * $Date: 2008/05/25 22:31:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
+import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
@@ -132,7 +133,7 @@ public class TreePart extends AbstractTablePart
     for (int i=0;i<this.columns.size();++i)
     {
       Column col = (Column) this.columns.get(i);
-      sb.append(col.columnId);
+      sb.append(col.getColumnId());
     }
 
     String s = sb.toString();
@@ -197,13 +198,17 @@ public class TreePart extends AbstractTablePart
         Column col = (Column) this.columns.get(i);
         final TreeColumn tc = new TreeColumn(this.tree,SWT.LEFT);
         tc.setMoveable(true);
-        tc.setText(col.name == null ? "" : col.name);
+        tc.setText(col.getName() == null ? "" : col.getName());
 
-        // Testobjekt laden fuer Ausrichtung von Spalten
-        if (test != null)
+        // Wenn Ausrichtung explizit angegeben, dann nehmen wir die
+        if (col.getAlign() != Column.ALIGN_AUTO)
+          tc.setAlignment(col.getAlign());
+        else if (test != null)
         {
-          Object value = test.getAttribute(col.columnId);
-          if (value instanceof Number)  tc.setAlignment(SWT.RIGHT);
+          // Ansonsten Testobjekt laden fuer automatische Ausrichtung von Spalten
+          Object value = BeanUtil.get(test,col.getColumnId());
+          if (value instanceof Number)
+            tc.setAlignment(SWT.RIGHT);
         }
 
         // Wenn wir uns die Spalten merken wollen, duerfen
@@ -479,10 +484,10 @@ public class TreePart extends AbstractTablePart
 
       String attribute = null;
 
-      if (col == null || col.columnId == null)
+      if (col == null || col.getColumnId() == null)
         attribute = object.getPrimaryAttribute();
       else
-        attribute = col.columnId;
+        attribute = col.getColumnId();
 
       Object value = object.getAttribute(attribute);
       if (value instanceof GenericObject)
@@ -494,10 +499,10 @@ public class TreePart extends AbstractTablePart
       if (value == null)
         return "";
       
-      if (col == null || col.formatter == null)
+      if (col == null || col.getFormatter() == null)
         return value.toString();
 
-      return col.formatter.format(value);
+      return col.getFormatter().format(value);
     }
   }
 
@@ -521,6 +526,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.22  2008/05/25 22:31:30  willuhn
+ * @N Explizite Angabe der Spaltenausrichtung moeglich
+ *
  * Revision 1.21  2007/12/04 23:41:53  willuhn
  * @B ContextMenu#setCurrentObject wurde nicht aufgerufen, wenn kein Element im Tree aktiv war - daher wurden faelschlicherweise alle Eintraege des Contextmenus aktiviert
  *

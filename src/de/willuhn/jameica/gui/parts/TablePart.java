@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.78 $
- * $Date: 2008/03/30 22:28:11 $
+ * $Revision: 1.79 $
+ * $Date: 2008/05/25 22:31:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -456,13 +456,13 @@ public class TablePart extends AbstractTablePart
 		for (int i=0;i<this.columns.size();++i)
 		{
       Column col     = (Column) this.columns.get(i);
-			Object value   = BeanUtil.get(object,col.columnId);
+			Object value   = BeanUtil.get(object,col.getColumnId());
 
       String display = BeanUtil.toString(value);
 
 			// Formatter vorhanden?
-			if (col.formatter != null)
-				display = col.formatter.format(value);
+			if (col.getFormatter() != null)
+				display = col.getFormatter().format(value);
 
       if (display == null) display = "";
 			item.setText(i,display);
@@ -571,7 +571,7 @@ public class TablePart extends AbstractTablePart
       Column column = (Column) this.columns.get(i);
       final TableColumn col = new TableColumn(table, SWT.NONE);
       col.setMoveable(true);
-			col.setText(column.name == null ? "" : column.name);
+			col.setText(column.getName() == null ? "" : column.getName());
 
       // Wenn wir uns die Spalten merken wollen, duerfen
       // wir den DisposeListener nicht an die Tabelle haengen
@@ -612,12 +612,19 @@ public class TablePart extends AbstractTablePart
 				}
 			});
 
-			// Evtl. rechts ausrichten
-			if (test != null)
-			{
-				Object value = BeanUtil.get(test,column.columnId);
-				if (value instanceof Number)  col.setAlignment(SWT.RIGHT);
-			}
+
+      // Wenn Ausrichtung explizit angegeben, dann nehmen wir die
+      if (column.getAlign() != Column.ALIGN_AUTO)
+      {
+        col.setAlignment(column.getAlign());
+      }
+      else if (test != null)
+      {
+        // Ansonsten Testobjekt laden fuer automatische Ausrichtung von Spalten
+        Object value = BeanUtil.get(test,column.getColumnId());
+        if (value instanceof Number)
+          col.setAlignment(SWT.RIGHT);
+      }
     }
     
     if (this.rememberOrder)
@@ -733,7 +740,7 @@ public class TablePart extends AbstractTablePart
 
           // Jetzt checken wir noch, ob die Spalte aenderbar ist
           final Column col = (Column) columns.get(row);
-          if (!col.canChange)
+          if (!col.canChange())
             return;
 
           final int index = row;
@@ -787,7 +794,7 @@ public class TablePart extends AbstractTablePart
                   TableChangeListener l = (TableChangeListener) changeListeners.get(i);
                   try
                   {
-                    l.itemChanged(item.getData(),col.columnId,newValue);
+                    l.itemChanged(item.getData(),col.getColumnId(),newValue);
                     if (color == null)
                       item.setForeground(index,Color.COMMENT.getSWTColor());
                     else
@@ -915,7 +922,7 @@ public class TablePart extends AbstractTablePart
     for (int i=0;i<this.columns.size();++i)
     {
       Column col = (Column) this.columns.get(i);
-      sb.append(col.columnId);
+      sb.append(col.getColumnId());
     }
 
     String s = sb.toString();
@@ -1096,7 +1103,7 @@ public class TablePart extends AbstractTablePart
     for (int i=0;i<this.columns.size();++i)
     {
       Column col = (Column) this.columns.get(i);
-      if (col.columnId.equals(colName))
+      if (col.getColumnId().equals(colName))
       {
         Logger.debug("table ordered by " + colName);
         orderBy(i);
@@ -1191,7 +1198,7 @@ public class TablePart extends AbstractTablePart
     try
     {
       Column c = (Column) this.columns.get(this.sortedBy);
-      return c.columnId;
+      return c.getColumnId();
     }
     catch (Exception e)
     {
@@ -1313,6 +1320,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.79  2008/05/25 22:31:30  willuhn
+ * @N Explizite Angabe der Spaltenausrichtung moeglich
+ *
  * Revision 1.78  2008/03/30 22:28:11  willuhn
  * @N Bug 574
  *

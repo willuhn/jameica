@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.6 $
- * $Date: 2007/11/01 21:07:35 $
+ * $Revision: 1.7 $
+ * $Date: 2008/05/25 22:31:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,6 +72,28 @@ public abstract class AbstractTablePart implements Part
     this.changeable |= changeable;
   }
   
+  /**
+   * Fuegt der Tabelle eine neue Spalte hinzu und dazu noch einen Formatierer.
+   * @param title Name der Spaltenueberschrift.
+   * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
+   * @param f Formatter, der fuer die Anzeige des Wertes verwendet werden soll.
+   * @param changeable legt fest, ob die Werte in dieser Spalte direkt editierbar sein sollen.
+   * Wenn der Parameter true ist, dann sollte der Tabelle via <code>addChangeListener</code>
+   * ein Listener hinzugefuegt werden, der benachrichtigt wird, wenn der Benutzer einen
+   * Wert geaendert hat. Es ist anschliessend Aufgabe des Listeners, den geaenderten
+   * Wert im Fachobjekt zu uebernehmen.
+   * @param align die Ausrichtung
+   * @see Column#ALIGN_AUTO
+   * @see Column#ALIGN_CENTER
+   * @see Column#ALIGN_LEFT
+   * @see Column#ALIGN_RIGHT
+   */
+  public void addColumn(String title, String field, Formatter f, boolean changeable, int align)
+  {
+    this.columns.add(new Column(field,title,f,changeable,align));
+    this.changeable |= changeable;
+  }
+
   /**
    * Liefert die Sortierreihenfolge der Spalten.
    * @return Int-Array mit der Reihenfolge oder <code>null</code>.
@@ -170,27 +192,14 @@ public abstract class AbstractTablePart implements Part
   {
     this.rememberOrder = remember;
   }
-  
-  protected static class Column
-  {
-    protected String columnId     = null;
-    protected String name         = null;
-    protected Formatter formatter = null;
-    protected boolean canChange   = false;
-    
-    protected Column(String id, String name, Formatter f, boolean changeable)
-    {
-      this.columnId   = id;
-      this.name       = name;
-      this.formatter  = f;
-      this.canChange  = changeable;
-    }
-  }
 }
 
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.7  2008/05/25 22:31:30  willuhn
+ * @N Explizite Angabe der Spaltenausrichtung moeglich
+ *
  * Revision 1.6  2007/11/01 21:07:35  willuhn
  * @N Spalten von Tabellen und mehrspaltigen Trees koennen mit mit Drag&Drop umsortiert werden. Die Sortier-Reihenfolge wird automatisch gespeichert und wiederhergestellt
  *
