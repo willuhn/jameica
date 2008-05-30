@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.22 $
- * $Date: 2008/05/19 22:35:06 $
+ * $Revision: 1.23 $
+ * $Date: 2008/05/30 12:00:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -183,7 +183,7 @@ public class DialogInput extends ButtonInput
 
     org.eclipse.swt.graphics.Color color = null;
     
-    if (!isEnabled())
+    if (!clientControlEnabled)
       color = Color.BACKGROUND.getSWTColor();
     else if (isMandatory() && (s == null || s.length() == 0))
       color = Color.MANDATORY_BG.getSWTColor();
@@ -223,6 +223,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.23  2008/05/30 12:00:24  willuhn
+ * @B Eingabefeld wurde auch dann grau gezeichnet, wenn nur der Button dahinter inaktiv ist
+ *
  * Revision 1.22  2008/05/19 22:35:06  willuhn
  * @N setMaxLength(int) in DialogInput
  *
