@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2007/07/17 14:34:23 $
+ * $Revision: 1.15 $
+ * $Date: 2008/05/30 10:16:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -119,6 +119,8 @@ public abstract class ButtonInput extends AbstractInput
   public final void setButtonText(String text)
 	{
 		this.buttonText = text;
+    if (this.button != null && !this.button.isDisposed() && this.buttonImage == null)
+      this.button.setText(this.buttonText);
 	}
 
 	/**
@@ -128,6 +130,8 @@ public abstract class ButtonInput extends AbstractInput
   public final void setButtonImage(Image image)
 	{
 		this.buttonImage = image;
+    if (this.button != null && !this.button.isDisposed() && this.buttonText == null)
+      this.button.setImage(this.buttonImage);
 	}
 
 	/**
@@ -242,6 +246,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.15  2008/05/30 10:16:25  willuhn
+ * @N Text/Image des Button on-the-fly aktualisierbar
+ *
  * Revision 1.14  2007/07/17 14:34:23  willuhn
  * @B Updates nichts bei Buttons und Checkboxen durchfuehren
  *
