@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.16 $
+ * $Date: 2008/06/27 11:16:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
@@ -47,7 +48,7 @@ public class LabelInput extends AbstractInput
   public Control getControl()
   {
     label = GUI.getStyleFactory().createLabel(getParent(),SWT.NONE);
-    label.setText(value == null ? "" : value);
+    label.setText(value == null ? "" : SWTUtil.escapeLabel(value));
     if (this.color != null)
       this.label.setForeground(this.color.getSWTColor());
     return label;
@@ -81,7 +82,7 @@ public class LabelInput extends AbstractInput
     this.value = (String) value;
     if (this.label != null && !this.label.isDisposed())
     {
-      this.label.setText(value.toString());
+      this.label.setText(SWTUtil.escapeLabel(value.toString()));
       this.label.redraw();
     }
   }
@@ -139,6 +140,9 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.16  2008/06/27 11:16:19  willuhn
+ * @B Bug 604
+ *
  * Revision 1.15  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen

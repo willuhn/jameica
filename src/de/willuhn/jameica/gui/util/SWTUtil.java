@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.19 $
- * $Date: 2007/11/13 00:45:18 $
+ * $Revision: 1.20 $
+ * $Date: 2008/06/27 11:16:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -219,6 +219,23 @@ public class SWTUtil {
       return -1;
     }
   }
+  
+  /**
+   * Ersetzt Zeichen aus einem Text, die SWT-intern als Steuerzeichen gelten.
+   * @param text Originaler Text.
+   * @return ersetzter Text.
+   * BNUGZILLA 604 https://www.willuhn.de/bugzilla/show_bug.cgi?id=604
+   */
+  public final static String escapeLabel(String text)
+  {
+    if (text == null || text.length() == 0)
+      return text;
+    
+    text = text.replaceAll("&","&&"); // "&" wird mit "&&" escaped.
+    
+    // Hier ggf. noch weitere Escapings vornehmen.
+    return text;
+  }
 
 
 }
@@ -226,6 +243,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.20  2008/06/27 11:16:19  willuhn
+ * @B Bug 604
+ *
  * Revision 1.19  2007/11/13 00:45:18  willuhn
  * @N Classloader (privat/global) vom Plugin beeinflussbar (via "shared=true/false" in plugin.xml)
  *
