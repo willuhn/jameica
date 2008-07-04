@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.9 $
- * $Date: 2007/12/18 17:50:12 $
+ * $Revision: 1.10 $
+ * $Date: 2008/07/04 16:02:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
+
+import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -81,6 +83,8 @@ public class Color {
 	private RGB value;
 	private RGB defaultValue;
 	private static Settings settings = new Settings(Color.class);
+  
+  private static HashMap colorCache = new HashMap();
 
   /**
 	 * ct.
@@ -99,10 +103,16 @@ public class Color {
    */
   public final org.eclipse.swt.graphics.Color getSWTColor()
 	{
-		if (value != null)
-			return new org.eclipse.swt.graphics.Color(GUI.getDisplay(),value);
-		value = name != null ? settings.getRGB(name,defaultValue) : defaultValue;
-		return new org.eclipse.swt.graphics.Color(GUI.getDisplay(),value);
+		if (value == null)
+  		value = name != null ? settings.getRGB(name,defaultValue) : defaultValue;
+      
+    org.eclipse.swt.graphics.Color c = (org.eclipse.swt.graphics.Color) colorCache.get(value.toString());
+    if (c != null && !c.isDisposed())
+      return c;
+    
+    c = new org.eclipse.swt.graphics.Color(GUI.getDisplay(),value);
+    colorCache.put(value.toString(),c);
+    return c;
 	}
 	
   /**
@@ -114,8 +124,13 @@ public class Color {
 		if (newColor == null)
 			return;
 		value = newColor.getRGB();
+    
     if (name != null)
       settings.setAttribute(name,value);
+    
+    org.eclipse.swt.graphics.Color c = (org.eclipse.swt.graphics.Color) colorCache.remove(value.toString());
+    if (c != null && !c.isDisposed())
+      c.dispose();
 	}
 
 	/**
@@ -126,12 +141,20 @@ public class Color {
 		value = defaultValue;
     if (name != null)
       settings.setAttribute(name,value);
-	}
+
+    org.eclipse.swt.graphics.Color c = (org.eclipse.swt.graphics.Color) colorCache.remove(value.toString());
+    if (c != null && !c.isDisposed())
+      c.dispose();
+  }
 }
 
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.10  2008/07/04 16:02:11  willuhn
+ * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
+ * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
+ *
  * Revision 1.9  2007/12/18 17:50:12  willuhn
  * @R Background-Color nicht mehr aenderbar
  * @C Layout der Startseite

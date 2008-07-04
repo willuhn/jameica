@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/08/09 12:04:41 $
+ * $Revision: 1.12 $
+ * $Date: 2008/07/04 16:02:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
+
+import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
@@ -43,6 +45,8 @@ public class Font {
 			Logger.error("unable to find systemn font",e);
 		}
 	}
+  
+  private static HashMap fontCache = new HashMap();
 
 	/**
    * Schrift fuer Ueberschriften erster Ordnung.
@@ -103,10 +107,16 @@ public class Font {
    */
   public final org.eclipse.swt.graphics.Font getSWTFont()
 	{
-		if (value != null)
-			return new org.eclipse.swt.graphics.Font(GUI.getDisplay(),value);
-		value = settings.getFontData(name,defaultValue);
-		return new org.eclipse.swt.graphics.Font(GUI.getDisplay(),value);
+		if (value == null)
+      value = settings.getFontData(name,defaultValue);
+
+    org.eclipse.swt.graphics.Font f = (org.eclipse.swt.graphics.Font) fontCache.get(value.toString());
+    if (f != null && !f.isDisposed())
+      return f;
+
+    f = new org.eclipse.swt.graphics.Font(GUI.getDisplay(),value);
+    fontCache.put(value.toString(),f);
+    return f;
 	}
 
 	/**
@@ -119,6 +129,10 @@ public class Font {
 			return;
 		value = newFont.getFontData()[0];
 		settings.setAttribute(name,value);
+    
+    org.eclipse.swt.graphics.Font f = (org.eclipse.swt.graphics.Font) fontCache.remove(value.toString());
+    if (f != null && !f.isDisposed())
+      f.dispose();
 	}
 
 }
@@ -126,6 +140,10 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.12  2008/07/04 16:02:11  willuhn
+ * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
+ * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
+ *
  * Revision 1.11  2007/08/09 12:04:41  willuhn
  * @N Bug 302
  *

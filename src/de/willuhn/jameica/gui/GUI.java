@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.114 $
- * $Date: 2008/05/22 23:12:55 $
+ * $Revision: 1.115 $
+ * $Date: 2008/07/04 16:02:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -701,16 +702,32 @@ public class GUI implements ApplicationController
 		// Hat der Thread schon eins
 		gui.display = Display.findDisplay(Thread.currentThread());
 
-		// Gibts ueberhaupt eins?
-		if (gui.display == null || gui.display.isDisposed())
-			gui.display = Display.getCurrent();
-		
-		// Also ein neues
-		if (gui.display == null || gui.display.isDisposed())
-			gui.display = Display.getDefault();
+    boolean sleak = Boolean.valueOf(System.getProperty("sleak","false")).booleanValue();
+    if (!sleak)
+    {
+      // Gibts ueberhaupt eins?
+      if (gui.display == null || gui.display.isDisposed())
+        gui.display = Display.getCurrent();
+      
+      // Also ein neues
+      if (gui.display == null || gui.display.isDisposed())
+        gui.display = Display.getDefault();
 
-		if (gui.display == null || gui.display.isDisposed())
-			gui.display = new Display();
+      if (gui.display == null || gui.display.isDisposed())
+        gui.display = new Display();
+    }
+    else
+    {
+      if (gui.display == null || gui.display.isDisposed())
+      {
+        Logger.info("ENABLE SLEAK SWT MONITOR");
+        DeviceData data = new DeviceData();
+        data.tracking = true;
+        gui.display = new Display(data);
+        Sleak sm = new Sleak();
+        sm.open();
+      }
+    }
 
 		return gui.display;
 	}
@@ -828,6 +845,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.115  2008/07/04 16:02:11  willuhn
+ * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
+ * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
+ *
  * Revision 1.114  2008/05/22 23:12:55  willuhn
  * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
  *

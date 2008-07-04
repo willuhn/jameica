@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.40 $
- * $Date: 2007/07/09 14:14:14 $
+ * $Revision: 1.41 $
+ * $Date: 2008/07/04 16:02:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -174,7 +174,7 @@ public abstract class AbstractDialog
 				compLayout.marginWidth = 0;
 				comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				comp.setLayout(compLayout);
-				comp.setBackground(new org.eclipse.swt.graphics.Color(display,255,255,255));
+				comp.setBackground(Color.WIDGET_BG.getSWTColor());
 		
         ///////////////////////////////
         // Der Titel selbst
@@ -474,6 +474,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.41  2008/07/04 16:02:11  willuhn
+ * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
+ * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
+ *
  * Revision 1.40  2007/07/09 14:14:14  willuhn
  * @B Dialog-Patch fuer MacOS von Juergen Krass (https://lists.berlios.de/pipermail/hibiscus-devel/2007-July/000190.html)
  *
