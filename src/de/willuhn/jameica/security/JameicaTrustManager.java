@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.15 $
- * $Date: 2008/07/04 17:43:21 $
+ * $Revision: 1.16 $
+ * $Date: 2008/07/04 17:50:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,9 +50,16 @@ public class JameicaTrustManager implements X509TrustManager
     // einstuft, greifen wir ein und checken, ob wir das Zertifikat
     // in unserem eigenen Keystore haben.
 
-    Logger.info("init trustmanager manager [using algorithm: " + TrustManagerFactory.getDefaultAlgorithm() + "]");
-    TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-    Logger.info("using provider: " + factory.getProvider().getName());
+    String name = "SunX509";
+    String vendor = System.getProperty("java.vendor");
+    if (vendor != null && vendor.toLowerCase().indexOf("ibm") != -1)
+    {
+      Logger.info("seems to be an ibm java");
+      name = "IbmX509";
+    }
+
+    Logger.info("using trustmanager " + name);
+    TrustManagerFactory factory = TrustManagerFactory.getInstance(name);
     factory.init((KeyStore) null); // Wir initialisieren mit <code>null</code>, damit der System-Keystore genommen wird
 
     TrustManager[] trustmanagers = factory.getTrustManagers();
@@ -61,7 +68,7 @@ public class JameicaTrustManager implements X509TrustManager
       Logger.warn("NO system trustmanager found, will use only jameicas trustmanager");
       return;
     }
-    
+
     // uns interessiert nur der erste. Das ist der von Java selbst.
     this.standardTrustManager = (X509TrustManager) trustmanagers[0];
   }
@@ -250,8 +257,8 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
- * Revision 1.15  2008/07/04 17:43:21  willuhn
- * @C TrustManager generisch (nicht mehr explizit "SunX509") laden - dann geht auch OpenJDK
+ * Revision 1.16  2008/07/04 17:50:39  willuhn
+ * @R UNDO - hat unter OpenJDK NICHT funktioniert
  *
  * Revision 1.14  2008/01/03 13:10:36  willuhn
  * @N mehr Debug-Ausgaben
