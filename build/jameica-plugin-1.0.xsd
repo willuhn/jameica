@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--
+ $Revision: 1.1 $
+ $Date: 2008/07/10 14:25:06 $
+ $Author: willuhn $
+ 
+ Copyright (c) by willuhn software & services
+ All rights reserved
+-->
+
+<xsd:schema xml:lang="DE" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+     <xsd:documentation>
+       XML-Spezifikation des XML-Formats fuer die "plugin.xml" von Jameica-Plugins.
+     </xsd:documentation>
+  </xsd:annotation>
+
+  <!-- Root-Element //-->
+  <xsd:element name="plugin" type="pluginType" />
+
+  <!-- Element "plugin" //-->
+  <xsd:complexType name="pluginType">
+    <xsd:annotation>
+      <xsd:documentation>Root-Element</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:all>
+      <xsd:element name="description" type="xsd:string"      minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="url"         type="xsd:string"      minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="homepage"    type="xsd:string"      minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="license"     type="xsd:string"      minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="requires"    type="requiresType"    minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="requires"    type="requiresType"    minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="classfinder" type="classfinderType" minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="menu"        type="menuType"        minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="navigation"  type="navigationType"  minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="services"    type="servicesType"    minOccurs="0" maxOccurs="1"/>
+      <xsd:element name="extensions"  type="extensionsType"  minOccurs="0" maxOccurs="1"/>
+    </xsd:all>
+
+    <xsd:attribute name="name"    type="xsd:string"  use="required" />
+    <xsd:attribute name="version" type="xsd:double"  use="required" />
+    <xsd:attribute name="class"   type="xsd:string"  use="required" />
+    <xsd:attribute name="shared"  type="xsd:boolean" use="optional" />
+  </xsd:complexType>
+  
+  
+
+  <!-- Element "requires" //-->
+  <xsd:complexType name="requiresType">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="import" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:attribute name="plugin" type="xsd:string" use="required"/>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- Element "classfinder" //-->
+  <xsd:complexType name="classfinderType">
+    <xsd:sequence>
+      <xsd:element name="include" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- Element "menu" //-->
+  <xsd:complexType name="menuType">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="item" type="itemType" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <!-- Element "navigation" //-->
+  <xsd:complexType name="navigationType">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="item" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="itemType">
+              <xsd:attribute name="icon-open"  type="xsd:string"  use="optional" />
+              <xsd:attribute name="icon-close" type="xsd:string"  use="optional" />
+              <xsd:attribute name="expanded"   type="xsd:boolean" use="optional" />
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <!-- Element "services" //-->
+  <xsd:complexType name="servicesType">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="service" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:attribute name="name"      type="xsd:string"  use="required" />
+          <xsd:attribute name="class"     type="xsd:string"  use="required" />
+          <xsd:attribute name="autostart" type="xsd:boolean" use="optional" />
+          <xsd:attribute name="share"     type="xsd:boolean" use="optional" />
+          <!-- Komma-separarierte Liste von Service-Namen innerhalb des selben
+               Plugins, von denen dieser Service abhaengt. -->
+          <xsd:attribute name="depends"   type="xsd:string"  use="optional" />
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <!-- Element "extensions" //-->
+  <xsd:complexType name="extensionsType">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="extension" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:attribute name="class"   type="xsd:string"  use="required" />
+          <xsd:attribute name="extends" type="xsd:string"  use="required" />
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+
+  <!-- Element "item" -->
+  <xsd:complexType name="itemType">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <!-- Rekursive Kind-Elemente -->
+      <xsd:element name="item" type="itemType" />
+    </xsd:sequence>
+    <xsd:attribute name="id"       type="xsd:string"  use="required" />
+    <xsd:attribute name="name"     type="xsd:string"  use="required" />
+    <xsd:attribute name="action"   type="xsd:string"  use="required" />
+    <xsd:attribute name="enabled"  type="xsd:boolean" use="optional" />
+    <xsd:attribute name="shortcut" type="xsd:string"  use="optional" />
+  </xsd:complexType>
+  
+</xsd:schema>
