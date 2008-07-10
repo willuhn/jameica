@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
- $Revision: 1.1 $
- $Date: 2008/07/10 14:25:06 $
+ $Revision: 1.2 $
+ $Date: 2008/07/10 14:40:31 $
  $Author: willuhn $
  
  Copyright (c) by willuhn software & services
@@ -126,9 +126,9 @@
       <!-- Rekursive Kind-Elemente -->
       <xsd:element name="item" type="itemType" />
     </xsd:sequence>
-    <xsd:attribute name="id"       type="xsd:string"  use="required" />
     <xsd:attribute name="name"     type="xsd:string"  use="required" />
-    <xsd:attribute name="action"   type="xsd:string"  use="required" />
+    <xsd:attribute name="id"       type="xsd:string"  use="optional" />
+    <xsd:attribute name="action"   type="xsd:string"  use="optional" />
     <xsd:attribute name="enabled"  type="xsd:boolean" use="optional" />
     <xsd:attribute name="shortcut" type="xsd:string"  use="optional" />
   </xsd:complexType>
