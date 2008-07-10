@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
- $Revision: 1.2 $
- $Date: 2008/07/10 14:40:31 $
+ $Revision: 1.3 $
+ $Date: 2008/07/10 14:47:55 $
  $Author: willuhn $
  
  Copyright (c) by willuhn software & services
@@ -69,24 +69,14 @@
   <!-- Element "menu" //-->
   <xsd:complexType name="menuType">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="item" type="itemType" minOccurs="0" maxOccurs="unbounded" />
+      <xsd:element name="item" type="menuItemType" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
   </xsd:complexType>
   
   <!-- Element "navigation" //-->
   <xsd:complexType name="navigationType">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-      <xsd:element name="item" minOccurs="0" maxOccurs="unbounded">
-        <xsd:complexType>
-          <xsd:complexContent>
-            <xsd:extension base="itemType">
-              <xsd:attribute name="icon-open"  type="xsd:string"  use="optional" />
-              <xsd:attribute name="icon-close" type="xsd:string"  use="optional" />
-              <xsd:attribute name="expanded"   type="xsd:boolean" use="optional" />
-            </xsd:extension>
-          </xsd:complexContent>
-        </xsd:complexType>
-      </xsd:element>
+      <xsd:element name="item" type="naviItemType" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>
   </xsd:complexType>
   
@@ -120,11 +110,11 @@
   </xsd:complexType>
 
 
-  <!-- Element "item" -->
-  <xsd:complexType name="itemType">
+  <!-- Element "item" in "menu"-->
+  <xsd:complexType name="menuItemType">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <!-- Rekursive Kind-Elemente -->
-      <xsd:element name="item" type="itemType" />
+      <xsd:element name="item" type="menuItemType" />
     </xsd:sequence>
     <xsd:attribute name="name"     type="xsd:string"  use="required" />
     <xsd:attribute name="id"       type="xsd:string"  use="optional" />
@@ -133,4 +123,22 @@
     <xsd:attribute name="shortcut" type="xsd:string"  use="optional" />
   </xsd:complexType>
   
+  <!-- Element "item" in "navigation"-->
+  <xsd:complexType name="naviItemType">
+    <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <!-- Rekursive Kind-Elemente -->
+      <xsd:element name="item" type="naviItemType" />
+    </xsd:sequence>
+    <xsd:attribute name="name"     type="xsd:string"  use="required" />
+    <xsd:attribute name="id"       type="xsd:string"  use="optional" />
+    <xsd:attribute name="action"   type="xsd:string"  use="optional" />
+    <xsd:attribute name="enabled"  type="xsd:boolean" use="optional" />
+    <xsd:attribute name="shortcut" type="xsd:string"  use="optional" />
+
+    <!-- Zusaetzliche Attribute in der Navigation -->
+    <xsd:attribute name="icon-open"  type="xsd:string"  use="optional" />
+    <xsd:attribute name="icon-close" type="xsd:string"  use="optional" />
+    <xsd:attribute name="expanded"   type="xsd:boolean" use="optional" />
+  </xsd:complexType>
+
 </xsd:schema>
