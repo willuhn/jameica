@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/QueryMessage.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/11/12 00:08:04 $
+ * $Revision: 1.2 $
+ * $Date: 2008/07/11 15:38:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,7 +26,17 @@ package de.willuhn.jameica.messaging;
  */
 public class QueryMessage implements Message
 {
+  private String name = null;
   private Object data = null;
+
+  /**
+   * ct.
+   */
+  public QueryMessage()
+  {
+    this(null);
+  }
+  
 
   /**
    * ct.
@@ -34,16 +44,20 @@ public class QueryMessage implements Message
    */
   public QueryMessage(Object data)
   {
-    this.data = data;
+    this(null,data);
   }
 
   /**
    * ct.
+   * @param name Name.
+   * @param data die Nutzdaten fuer die Abfrage.
    */
-  public QueryMessage()
+  public QueryMessage(String name, Object data)
   {
+    this.name = name;
+    this.data = data;
   }
-  
+
   /**
    * Liefert die (ggf geaenderten Nutzdaten).
    * @return die Nutzdaten.
@@ -62,14 +76,33 @@ public class QueryMessage implements Message
   {
     this.data = data;
   }
-  
-  
 
+
+  /**
+   * Liefert den Namen.
+   * @return Name.
+   */
+  public String getName()
+  {
+    return this.name;
+  }
+
+  /**
+   * Speichert den Namen.
+   * @param name Name.
+   */
+  public void setName(String name)
+  {
+    this.name = name;
+  }
 }
 
 
 /**********************************************************************
  * $Log: QueryMessage.java,v $
+ * Revision 1.2  2008/07/11 15:38:50  willuhn
+ * @N Service-Deployment
+ *
  * Revision 1.1  2007/11/12 00:08:04  willuhn
  * @N Query-Messages fuer Bankname-Lookup und CRC-Account-Check fuer JVerein
  *
