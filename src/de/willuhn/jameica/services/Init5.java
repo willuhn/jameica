@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/Init5.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/03/04 00:49:25 $
+ * $Revision: 1.3 $
+ * $Date: 2008/07/14 00:14:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,7 @@ public class Init5 implements Bootable
       RegistryService.class,
       ClassService.class,
       SSLService.class,
+      ReminderService.class,
       PluginService.class,
       PluginServiceService.class,
     };
@@ -65,6 +66,10 @@ public class Init5 implements Bootable
 
 /**********************************************************************
  * $Log: Init5.java,v $
+ * Revision 1.3  2008/07/14 00:14:35  willuhn
+ * @N JODB als Mini-objektorientiertes Storage-System "fuer zwischendurch" hinzugefuegt
+ * @N Erster Code fuer einen Reminder-Service (Wiedervorlage)
+ *
  * Revision 1.2  2008/03/04 00:49:25  willuhn
  * @N GUI fuer Backup fertig
  *
