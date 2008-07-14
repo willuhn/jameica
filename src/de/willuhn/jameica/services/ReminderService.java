@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/07/14 00:14:35 $
+ * $Revision: 1.2 $
+ * $Date: 2008/07/14 11:57:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,13 +13,8 @@
 
 package de.willuhn.jameica.services;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import com.mobixess.jodb.core.JODBSessionContainer;
-import com.mobixess.jodb.core.JodbMini;
 
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
@@ -42,7 +37,6 @@ import de.willuhn.logging.Logger;
  */
 public class ReminderService extends TimerTask implements Bootable, MessageConsumer
 {
-  private JODBSessionContainer container = null;
   private Timer timer = null;
 
   /**
@@ -61,11 +55,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     Application.getMessagingFactory().registerMessageConsumer(this);
     try
     {
-      this.container = (JODBSessionContainer) JodbMini.open(new File(Application.getConfig().getConfigDir(),"jameica.reminder.jodb"));
-      this.timer = new Timer("jameica.reminder",true);
-      this.timer.schedule(this,60 * 1000L,60 * 1000L); // alle 60 Sekunden, Start in 60 Sekunden
+//      this.timer = new Timer("jameica.reminder",true);
+//      this.timer.schedule(this,0,60 * 1000L); // alle 60 Sekunden, Start jetzt
     }
-    catch (IOException e)
+    catch (Exception e)
     {
       Logger.error("error while starting reminder service",e);
       Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Starten des Reminder-Services. Bitte prüfen Sie das System-Log"));
@@ -80,11 +73,6 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     try
     {
       Application.getMessagingFactory().unRegisterMessageConsumer(this);
-      if (this.container != null)
-      {
-        this.container.commit();
-        this.container.close();
-      }
       if (this.timer != null)
       {
         this.timer.cancel();
@@ -126,20 +114,8 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
       Logger.warn("no due date given for reminder message " + msg + ", skipping");
       return;
     }
-    
-    synchronized (this.container)
-    {
-      try
-      {
-        this.container.set(msg);
-        this.container.commit();
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to store reminder",e);
-        this.container.rollback();
-      }
-    }
+
+    // TODO
   }
 
   /**
@@ -148,38 +124,6 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
   public void run()
   {
     // TODO - Ausfuehren der Aktionen noch implementieren.
-//    Predicate p = new Predicate()
-//    {
-//      public boolean match(Object o) throws IOException
-//      {
-//        System.out.println("match? " + o);
-//        return false;
-//      }
-//    };
-//
-//    synchronized (this.container)
-//    {
-//      try
-//      {
-//        ObjectSet set = this.container.query(p);
-//        Iterator i = set.iterator();
-//        while (i.hasNext())
-//        {
-//          Object o = i.next();
-//          // Aktion ausfuehren
-//          System.out.println("Executing " + o);
-//          
-//          // Reminder loeschen
-//          this.container.delete(o);
-//        }
-//        this.container.commit();
-//      }
-//      catch (Exception e)
-//      {
-//        Logger.error("error while checking for reminders",e);
-//        this.container.rollback();
-//      }
-//    }
   }
 
 }
@@ -187,6 +131,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.2  2008/07/14 11:57:33  willuhn
+ * @R ODB-Kram entfernt. Das Zeug funktioniert ueberhaupt nicht. Nicht mal das simple Speichern einer Bean geht ohne Exception. Schrott.
+ *
  * Revision 1.1  2008/07/14 00:14:35  willuhn
  * @N JODB als Mini-objektorientiertes Storage-System "fuer zwischendurch" hinzugefuegt
  * @N Erster Code fuer einen Reminder-Service (Wiedervorlage)
