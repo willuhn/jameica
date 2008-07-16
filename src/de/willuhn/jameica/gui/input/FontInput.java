@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2008/07/16 10:22:24 $
+ * $Revision: 1.12 $
+ * $Date: 2008/07/16 14:27:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -84,7 +84,22 @@ public class FontInput extends ButtonInput
       if (data != null && data.length > 0)
       {
         if (data[0] != null && data[0].name != null && data[0].name.length() > 0)
-          return data[0].name;
+        {
+          String stil = Application.getI18n().tr("normal");
+          switch (data[0].getStyle())
+          {
+            case SWT.BOLD:
+              stil = Application.getI18n().tr("fett");
+              break;
+            case SWT.ITALIC:
+              stil = Application.getI18n().tr("kursiv");
+              break;
+            case (SWT.BOLD|SWT.ITALIC):
+              stil = Application.getI18n().tr("fett,kursiv");
+              break;
+          }
+          return Application.getI18n().tr("{0}, {1} Punkt, {2}", new String[]{data[0].name,Integer.toString(data[0].getHeight()),stil});
+        }
       }
     }
     return "ABCDEFabcdef";
@@ -120,6 +135,9 @@ public class FontInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.12  2008/07/16 14:27:29  willuhn
+ * @N Groesse und Schriftstil mit ausgeben
+ *
  * Revision 1.11  2008/07/16 10:22:24  willuhn
  * @N Name der Schriftart - wenn moeglich - anzeigen
  *
