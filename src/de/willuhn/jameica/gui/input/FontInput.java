@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2004/11/12 18:23:59 $
+ * $Revision: 1.11 $
+ * $Date: 2008/07/16 10:22:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
 /**
@@ -49,6 +50,7 @@ public class FontInput extends ButtonInput
       {
 				Logger.debug("starting font choose dialog");
 				FontDialog fd = new FontDialog(GUI.getShell());
+        fd.setText(Application.getI18n().tr("Schriftauswahl"));
 				FontData f = fd.open();
 				if (f == null)
 					return;
@@ -64,9 +66,28 @@ public class FontInput extends ButtonInput
   public Control getClientControl(Composite parent)
   {
     label = new CLabel(parent, SWT.NONE);
-		label.setText("ABCDEFabcdef");
+		label.setText(getDemoText());
 		label.setFont(font);
     return label;
+  }
+  
+  /**
+   * Versucht den Namen aktuell ausgewaehlte Schriftart zu ermitteln und als Demotext zurueckzuliefern.
+   * Schlaegt das fehl, wird "ABCDEFabcdef" zurueckgeliefert.
+   * @return Demot-Text.
+   */
+  private String getDemoText()
+  {
+    if (this.font != null)
+    {
+      FontData[] data = this.font.getFontData();
+      if (data != null && data.length > 0)
+      {
+        if (data[0] != null && data[0].name != null && data[0].name.length() > 0)
+          return data[0].name;
+      }
+    }
+    return "ABCDEFabcdef";
   }
 
   /**
@@ -91,6 +112,7 @@ public class FontInput extends ButtonInput
 		{
 			this.font = (Font) value;
 			label.setFont(font);
+      label.setText(getDemoText());
 			label.redraw();
 		}
   }
@@ -98,6 +120,9 @@ public class FontInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.11  2008/07/16 10:22:24  willuhn
+ * @N Name der Schriftart - wenn moeglich - anzeigen
+ *
  * Revision 1.10  2004/11/12 18:23:59  willuhn
  * *** empty log message ***
  *
