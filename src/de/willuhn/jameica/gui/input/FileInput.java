@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Revision: 1.16 $
+ * $Date: 2008/07/17 08:47:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,13 +42,25 @@ public class FileInput extends ButtonInput
   {
     this(file,false);
   }
+  
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param file der initial einzufuegende Wert fuer das Eingabefeld.
    * @param save legt fest, ob es ein Speichern-Dialog sein soll.
    */
-  public FileInput(String file, final boolean save)
+  public FileInput(String file, boolean save)
+  {
+    this(file, save, null);
+  }
+
+  /**
+   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+   * @param file der initial einzufuegende Wert fuer das Eingabefeld.
+   * @param save legt fest, ob es ein Speichern-Dialog sein soll.
+   * @param extensions legt die zulaessigen Datei-Endungen fest, die vom Dialog angezeigt werden sollen.
+   */
+  public FileInput(String file, final boolean save, final String[] extensions)
   {
     this.value = file;
     addButtonListener(new Listener()
@@ -57,6 +69,8 @@ public class FileInput extends ButtonInput
       {
         Logger.debug("starting file dialog");
         FileDialog dialog = new FileDialog(GUI.getShell(), save ? SWT.SAVE : SWT.OPEN);
+        if (extensions != null && extensions.length > 0)
+          dialog.setFilterExtensions(extensions);
         dialog.setText(Application.getI18n().tr("Bitte wählen Sie die Datei aus"));
         dialog.setFileName(value);
         setValue(dialog.open());
@@ -109,6 +123,9 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.16  2008/07/17 08:47:12  willuhn
+ * @N Heiners Patch zum expliziten Vorgeben von Dateiendungen im Dialog
+ *
  * Revision 1.15  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput
