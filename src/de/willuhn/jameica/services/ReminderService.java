@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/07/17 23:21:27 $
+ * $Revision: 1.4 $
+ * $Date: 2008/07/18 10:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,6 +29,7 @@ import java.util.TimerTask;
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
@@ -72,14 +74,38 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
       return;
 
     Date due = reminder.getDueDate();
-    if (due == null || due.before(new Date(System.currentTimeMillis())))
+    if (due == null)
     {
-      Logger.warn("no due date given or reminder allready expired: " + due);
+      Logger.warn("no due date given");
       return;
     }
     
     this.reminders.add(reminder);
     store();
+  }
+  
+  /**
+   * Liefert eine Liste von ueberfaelligen Remindern - sortiert nach Faelligkeit - aelteste zuerst.
+   * @return Liste der ueberfaelligen Reminder.
+   */
+  public Reminder[] getOverdueReminders()
+  {
+    synchronized(this.reminders)
+    {
+      Date now = new Date(System.currentTimeMillis());
+      
+      ArrayList overdue = new ArrayList();
+      for (int i=0;i<this.reminders.size();++i)
+      {
+        Reminder r = (Reminder) this.reminders.get(i);
+        if (r == null)
+          continue;
+        if (r.getDueDate().before(now))
+            overdue.add(r);
+      }
+      Collections.sort(overdue);
+      return (Reminder[]) overdue.toArray(new Reminder[overdue.size()]);
+    }
   }
 
   /**
@@ -163,7 +189,24 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
    */
   public void run()
   {
-    // TODO: Was koennte ich hier sinnvolles tun? ;)
+    Reminder[] overdue = this.getOverdueReminders();
+    for (int i=0;i<overdue.length;++i)
+    {
+      String action = overdue[i].getAction();
+      if (action == null || action.length() == 0)
+        continue; // Keine Action angegeben
+      try
+      {
+        delete(overdue[i]); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
+        Logger.info("executing action " + action + " for reminder " + overdue[i]);
+        Action a = (Action) Application.getClassLoader().load(action).newInstance();
+        a.handleAction(overdue[i]);
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to execute action " + action + " for reminder " + overdue[i],e);
+      }
+    }
   }
   
   /**
@@ -218,7 +261,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     if (this.reminders == null || this.reminders.size() == 0)
     {
       if (f.exists())
+      {
+        Logger.info("no reminders left, delete reminder file " + f.getAbsolutePath());
         f.delete();
+      }
       return;
     }
 
@@ -269,6 +315,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.4  2008/07/18 10:41:30  willuhn
+ * @N Zeitgesteuertes Ausfuehren von Reminder-Actions
+ *
  * Revision 1.3  2008/07/17 23:21:27  willuhn
  * @N Generische Darstellung von Remindern mittels "Renderer"-Interface geloest. Es fehlt noch eine Box fuer die Startseite, welche die faelligen Reminder anzeigt.
  * @N Laden und Speichern der Reminder mittels XMLEncoder/XMLDecoder

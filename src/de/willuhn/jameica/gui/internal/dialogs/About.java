@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/04/15 16:16:36 $
+ * $Revision: 1.5 $
+ * $Date: 2008/07/18 10:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,7 @@ public class About extends AbstractDialog
   public About(int position)
   {
     super(position);
+    this.setTitle(Application.getI18n().tr("About"));
   }
 
   /**
@@ -50,8 +51,6 @@ public class About extends AbstractDialog
   protected void paint(Composite parent) throws Exception
   {
     I18N i18n = Application.getI18n();
-
-    setTitle(i18n.tr("About"));
 
     Label l = GUI.getStyleFactory().createLabel(parent,SWT.BORDER);
     l.setImage(SWTUtil.getImage("splash.png"));
@@ -95,6 +94,9 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.5  2008/07/18 10:41:30  willuhn
+ * @N Zeitgesteuertes Ausfuehren von Reminder-Actions
+ *
  * Revision 1.4  2008/04/15 16:16:36  willuhn
  * @B BUGZILLA 584
  *
