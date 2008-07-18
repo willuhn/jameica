@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/07/18 10:41:30 $
+ * $Revision: 1.5 $
+ * $Date: 2008/07/18 17:12:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -198,7 +198,7 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
       try
       {
         delete(overdue[i]); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
-        Logger.info("executing action " + action + " for reminder " + overdue[i]);
+        Logger.info("executing action " + action + " for reminder");
         Action a = (Action) Application.getClassLoader().load(action).newInstance();
         a.handleAction(overdue[i]);
       }
@@ -315,6 +315,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.5  2008/07/18 17:12:22  willuhn
+ * @N ReminderPopupAction zum Anzeigen von Remindern als Popup
+ * @C TextMessage serialisierbar
+ *
  * Revision 1.4  2008/07/18 10:41:30  willuhn
  * @N Zeitgesteuertes Ausfuehren von Reminder-Actions
  *
