@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.53 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.54 $
+ * $Date: 2008/07/18 13:01:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -26,8 +28,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 
 import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.gui.util.Popup;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.Message;
+import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.messaging.TextMessage;
 import de.willuhn.jameica.system.Application;
 
 /**
@@ -51,7 +57,7 @@ public class StatusBar implements Part
 	 */
 	public StatusBar()
   {
-    
+    Application.getMessagingFactory().getMessagingQueue("jameica.popup").registerMessageConsumer(new PopupMessageConsumer());
   }
   
   /**
@@ -190,11 +196,63 @@ public class StatusBar implements Part
   {
     Application.getMessagingFactory().sendMessage(new StatusBarMessage(message,StatusBarMessage.TYPE_ERROR));
   }
+  
+  /**
+   * Zeigt Popup-Nachrichten an.
+   */
+  private class PopupMessageConsumer implements MessageConsumer
+  {
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+     */
+    public boolean autoRegister()
+    {
+      return false;
+    }
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+     */
+    public Class[] getExpectedMessageTypes()
+    {
+      return new Class[]{TextMessage.class};
+    }
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+     */
+    public void handleMessage(final Message message) throws Exception
+    {
+      GUI.getDisplay().asyncExec(new Runnable() {
+      
+        public void run()
+        {
+          TextMessage msg = (TextMessage) message;
+          Point pos = null;
+          if (status != null && !status.isDisposed()) {
+            // An Statusbar ausrichten
+            Rectangle rect = status.getBounds();
+            pos = status.toDisplay(rect.x,rect.y);
+            pos.x += rect.width;
+          }
+          
+          Popup popup = new Popup(msg.getTitle(),msg.getText(),pos,SWT.BOTTOM | SWT.RIGHT);
+          popup.open();
+        }
+      });
+    }
+    
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
+ * Revision 1.54  2008/07/18 13:01:08  willuhn
+ * @N Popup
+ *
  * Revision 1.53  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
