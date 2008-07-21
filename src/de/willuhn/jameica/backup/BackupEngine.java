@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.9 $
- * $Date: 2008/03/11 12:12:56 $
+ * $Revision: 1.10 $
+ * $Date: 2008/07/21 11:15:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -305,8 +305,8 @@ public class BackupEngine
         
         // Von oben mit dem Loeschen anfangen
         // Und solange loeschen wie:
-        // Urspruengliche Anzahl - geloeschte >= maximale Anzahl
-        for (int pos=0;(toDelete.length - pos) >= maxCount;++pos)
+        // Urspruengliche Anzahl - geloeschte > maximale Anzahl
+        for (int pos=0;(toDelete.length - pos) > maxCount;++pos)
         {
           File current = toDelete[pos];
           monitor.setStatusText("delete old backup " + current.getAbsolutePath());
@@ -393,6 +393,9 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.10  2008/07/21 11:15:06  willuhn
+ * @B Beim Rotieren der Backups blieb eins zuwenig uebrig
+ *
  * Revision 1.9  2008/03/11 12:12:56  willuhn
  * @B getBackups() matchte auch auf Dateien, die nicht mit "jameica-backup*" begannen
  *
