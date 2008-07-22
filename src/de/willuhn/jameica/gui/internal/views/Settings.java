@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.22 $
- * $Date: 2007/12/18 17:50:12 $
+ * $Revision: 1.23 $
+ * $Date: 2008/07/22 22:30:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,6 @@ import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
-import de.willuhn.util.Session;
 
 /**
  * Dialog fuer die Programm-Einstellungen.
@@ -43,24 +42,15 @@ public class Settings extends AbstractView implements Extendable
 {
 
   /**
-   * In der Session merken wir uns das letzte aktive Tab
+   * Wir merken uns das letzte aktive Tab
    */
-  private static Session session = null;
-  
+  private static Integer lastActiveTab = null;
+
   /**
    * Der Tabfolder.
    */
   private TabFolder folder = null;
   
-  /**
-   * ct.
-   */
-  public Settings()
-  {
-    if (session == null)
-      session = new Session(30 * 60 * 1000l);
-  }
-
   /**
    * @see de.willuhn.jameica.gui.AbstractView#bind()
    */
@@ -134,9 +124,8 @@ public class Settings extends AbstractView implements Extendable
 		/////////////////////////////////////////////////////////////////
 
 		// Mal checken, ob wir uns das zuletzt aktive Tab gemerkt haben.
-    Integer selection = (Integer) session.get("active");
-    if (selection != null)
-      getTabFolder().setSelection(selection.intValue());
+    if (lastActiveTab != null)
+      getTabFolder().setSelection(lastActiveTab.intValue());
 
     ButtonArea colorButtons = new ButtonArea(getParent(),3);
     colorButtons.addButton(i18n.tr("Zurücksetzen"),new Action()
@@ -177,9 +166,8 @@ public class Settings extends AbstractView implements Extendable
    */
   public void unbind() throws ApplicationException
   {
-    // Wir merken uns das aktive Tab fuer eine Weile, damit wir das gleich
-    // wieder anzeigen koennen, wenn der User zurueckkommt.
-    session.put("active",new Integer(getTabFolder().getSelectionIndex()));
+    // Wir merken uns das aktive Tab
+    lastActiveTab = Integer.valueOf(getTabFolder().getSelectionIndex());
   }
 
   /**
@@ -195,6 +183,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.23  2008/07/22 22:30:08  willuhn
+ * @C Zum Speichern des letzten aktiven Tabs braucht man gar keine Session sondern nur einen statischen Integer. Keine Ahnung, warum ich das mal so umstaendlich implementiert hatte ;)
+ *
  * Revision 1.22  2007/12/18 17:50:12  willuhn
  * @R Background-Color nicht mehr aenderbar
  * @C Layout der Startseite
@@ -214,136 +205,4 @@ public class Settings extends AbstractView implements Extendable
  *
  * Revision 1.17  2007/04/02 23:01:43  willuhn
  * @N SelectInput auf BeanUtil umgestellt
- *
- * Revision 1.16  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.15  2006/10/19 15:35:58  willuhn
- * @B ExtensionRegistry.extend allready done in GUI
- *
- * Revision 1.14  2006/10/19 15:28:03  willuhn
- * @N made settings view extendable
- *
- * Revision 1.13  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.12  2005/07/24 17:00:21  web0
- * *** empty log message ***
- *
- * Revision 1.11  2005/06/21 20:02:02  web0
- * @C cvs merge
- *
- * Revision 1.9  2005/06/15 17:51:31  web0
- * @N Code zum Konfigurieren der Service-Bindings
- *
- * Revision 1.8  2005/06/14 23:15:30  web0
- * @N added settings for plugins/services
- *
- * Revision 1.7  2005/06/13 23:18:18  web0
- * *** empty log message ***
- *
- * Revision 1.6  2005/06/10 22:13:09  web0
- * @N new TabGroup
- * @N extended Settings
- *
- * Revision 1.5  2004/11/12 18:23:59  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2004/11/05 20:00:43  willuhn
- * @D javadoc fixes
- *
- * Revision 1.3  2004/10/20 12:33:53  willuhn
- * @C MVC-Refactoring (new Controllers)
- *
- * Revision 1.2  2004/10/14 23:15:05  willuhn
- * @N maded locale configurable via GUI
- * @B fixed locale handling
- * @B DecimalInput now honors locale
- *
- * Revision 1.1  2004/10/08 13:38:20  willuhn
- * *** empty log message ***
- *
- * Revision 1.25  2004/07/21 23:54:54  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.24  2004/07/20 22:52:49  willuhn
- * @C Refactoring
- *
- * Revision 1.23  2004/06/03 00:24:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.22  2004/06/02 21:15:15  willuhn
- * @B win32 fixes in flat style
- * @C made ButtonInput more abstract
- *
- * Revision 1.21  2004/05/27 21:44:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.20  2004/05/23 18:15:32  willuhn
- * *** empty log message ***
- *
- * Revision 1.19  2004/05/23 16:34:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.18  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.17  2004/04/19 22:05:27  willuhn
- * *** empty log message ***
- *
- * Revision 1.16  2004/04/12 19:15:58  willuhn
- * @C refactoring
- * @N forms
- *
- * Revision 1.15  2004/04/01 00:23:24  willuhn
- * @N FontInput
- * @N ColorInput
- * @C improved ClassLoader
- * @N Tabs in Settings
- *
- * Revision 1.14  2004/03/30 22:08:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2004/03/24 00:46:02  willuhn
- * @C refactoring
- *
- * Revision 1.12  2004/03/03 22:27:10  willuhn
- * @N help texts
- * @C refactoring
- *
- * Revision 1.11  2004/02/22 20:05:21  willuhn
- * @N new Logo panel
- *
- * Revision 1.10  2004/02/20 20:45:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.9  2004/02/18 01:40:29  willuhn
- * @N new white style
- *
- * Revision 1.8  2004/02/11 00:10:42  willuhn
- * *** empty log message ***
- *
- * Revision 1.7  2004/01/29 00:45:42  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2004/01/28 20:51:25  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.5  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2004/01/08 20:50:32  willuhn
- * @N database stuff separated from jameica
- *
- * Revision 1.3  2004/01/06 20:11:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/01/06 01:27:30  willuhn
- * @N table order
- *
- * Revision 1.1  2004/01/04 19:51:01  willuhn
- * *** empty log message ***
- *
  **********************************************************************/
