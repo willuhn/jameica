@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/07/18 17:12:22 $
+ * $Revision: 1.6 $
+ * $Date: 2008/07/22 23:02:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,6 +77,14 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     if (due == null)
     {
       Logger.warn("no due date given");
+      return;
+    }
+    
+    String action   = reminder.getAction();
+    String renderer = reminder.getRenderer();
+    if (action == null && renderer == null)
+    {
+      Logger.warn("neither action nor renderer defined in reminder, skipping");
       return;
     }
     
@@ -315,6 +323,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.6  2008/07/22 23:02:59  willuhn
+ * @N Box zum Anzeigen faelliger Reminder (mit Renderer) auf der Startseite
+ * @C ReminderPopupAction in "reminder"-Package verschoben
+ *
  * Revision 1.5  2008/07/18 17:12:22  willuhn
  * @N ReminderPopupAction zum Anzeigen von Remindern als Popup
  * @C TextMessage serialisierbar

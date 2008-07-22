@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/Attic/ReminderPopupAction.java,v $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Attic/ReminderPopupAction.java,v $
  * $Revision: 1.1 $
- * $Date: 2008/07/18 17:12:22 $
+ * $Date: 2008/07/22 23:02:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,7 +11,7 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.gui.internal.action;
+package de.willuhn.jameica.reminder;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.messaging.TextMessage;
@@ -55,6 +55,10 @@ public class ReminderPopupAction implements Action
 
 /*********************************************************************
  * $Log: ReminderPopupAction.java,v $
+ * Revision 1.1  2008/07/22 23:02:59  willuhn
+ * @N Box zum Anzeigen faelliger Reminder (mit Renderer) auf der Startseite
+ * @C ReminderPopupAction in "reminder"-Package verschoben
+ *
  * Revision 1.1  2008/07/18 17:12:22  willuhn
  * @N ReminderPopupAction zum Anzeigen von Remindern als Popup
  * @C TextMessage serialisierbar
