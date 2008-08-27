@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ClassService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.2 $
+ * $Date: 2008/08/27 14:41:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.Dependency;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -121,7 +122,7 @@ public class ClassService implements Bootable
       //   - sich selbst
       //   - die Plugins, von denen es abhaengig ist
       //   - Jameica
-      String[] deps = manifest.getDependencies();
+      Dependency[] deps = manifest.getDependencies();
       if (deps != null && deps.length > 0)
       {
         Logger.info("  adding depending classloaders");
@@ -133,7 +134,7 @@ public class ClassService implements Bootable
             continue;
           for (int k=0;k<deps.length;++i)
           {
-            if (deps[k].equals(mf.getName()))
+            if (deps[k].getName().equals(mf.getName()))
             {
               Logger.info("    " + mf.getName());
               AbstractPlugin ap = Application.getPluginLoader().getPlugin(mf.getPluginClass());
@@ -278,6 +279,9 @@ public class ClassService implements Bootable
 
 /**********************************************************************
  * $Log: ClassService.java,v $
+ * Revision 1.2  2008/08/27 14:41:17  willuhn
+ * @N Angabe der Versionsnummer von abhaengigen Plugins oder der Jameica RT
+ *
  * Revision 1.1  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.32 $
- * $Date: 2008/04/10 13:36:14 $
+ * $Revision: 1.33 $
+ * $Date: 2008/08/27 14:41:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -206,29 +206,21 @@ public final class PluginLoader
 
     Logger.info("loading plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
 
+    // Checken, ob die Abhaengigkeit zu Jameica erfuellt ist
+    Dependency jameica = manifest.getJameicaDependency();
+    if (!jameica.check())
+      throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von {1}, welches jedoch nicht in dieser Version installiert ist", new String[]{manifest.getName(),jameica.toString()}));
+    
     // Wir checken noch, ob ggf. eine Abhaengigkeit nicht erfuellt ist.
-    String[] deps = manifest.getDependencies();
+    Dependency[] deps = manifest.getDependencies();
     
     if (deps != null && deps.length > 0)
     {
       for (int i=0;i<deps.length;++i)
       {
-        boolean found = false;
         Logger.info("  resolving dependency " + deps[i]);
-        for (int k=0;k<this.plugins.size();++k)
-        {
-          Manifest dep = (Manifest) this.plugins.get(k);
-          if (manifest.getName().equals(dep.getName()))
-            continue; // Das sind wir selbst
-          if (!deps[i].equals(dep.getName()))
-            continue;
-
-          found = true;
-          break; // ok, gefunden
-        }
-        
-        if (!found)
-          throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist", new String[]{manifest.getName(),deps[i]}));
+        if (!deps[i].check())
+          throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist", new String[]{manifest.getName(),deps[i].toString()}));
       }
     }
     
@@ -559,6 +551,9 @@ public final class PluginLoader
 
 /*********************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.33  2008/08/27 14:41:17  willuhn
+ * @N Angabe der Versionsnummer von abhaengigen Plugins oder der Jameica RT
+ *
  * Revision 1.32  2008/04/10 13:36:14  willuhn
  * @N Reihenfolge beim Laden/Initialisieren der Plugins geaendert.
  *

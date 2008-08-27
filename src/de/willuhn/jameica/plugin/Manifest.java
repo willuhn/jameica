@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.18 $
- * $Date: 2008/04/09 16:55:18 $
+ * $Revision: 1.19 $
+ * $Date: 2008/08/27 14:41:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -341,6 +341,16 @@ public class Manifest implements Comparable
   }
   
   /**
+   * Liefert die Versionsabhaengigkeit zu Jameica.
+   * @return Die Abhaengigkeit zu einer bestimmten Jameica-Version.
+   */
+  public Dependency getJameicaDependency()
+  {
+    IXMLElement req = root.getFirstChildNamed("requires");
+    return new Dependency("jameica", req == null ? null : req.getAttribute("jameica",null));
+  }
+
+  /**
    * Liste der Plugins, von denen dieses hier abhaengig ist.
    * @return  Liefert eine Liste von Plugin-Namen, die installiert und
    * initialisiert sein muessen, damit dieses Plugin geladen
@@ -348,7 +358,7 @@ public class Manifest implements Comparable
    * die in den anderen Plugins in <plugin name="Foobar"... angegeben sind.
    * Die Funktion liefert null, wenn keine Abhaengigkeiten existieren.
    */
-  public String[] getDependencies()
+  public Dependency[] getDependencies()
   {
     IXMLElement deps = root.getFirstChildNamed("requires");
     if (deps == null || !deps.hasChildren())
@@ -365,8 +375,9 @@ public class Manifest implements Comparable
       String name = plugin.getAttribute("plugin",null);
       if (name == null || name.length() == 0)
         continue;
-      
-      found.add(name);
+
+      Dependency dep = new Dependency(name,plugin.getAttribute("version",null));
+      found.add(dep);
       toCheck.add(name);
     }
     
@@ -384,7 +395,7 @@ public class Manifest implements Comparable
         
         // Jepp, das Plugin ist in unserer Pruef-Liste enthalten.
         // Also brauchen wir auch dessen Abhaengigkeiten
-        String[] secondDeps = mf.getDependencies();
+        Dependency[] secondDeps = mf.getDependencies();
         if (secondDeps == null || secondDeps.length == 0)
           continue; // Plugin hat keine Abhaengikeiten
 
@@ -399,7 +410,7 @@ public class Manifest implements Comparable
       }
     }
     
-    return (String[]) found.toArray(new String[found.size()]);
+    return (Dependency[]) found.toArray(new Dependency[found.size()]);
   }
   
   /**
@@ -469,7 +480,7 @@ public class Manifest implements Comparable
 
     /////////////////////////////////////////////////////////////////
     // Schritt 1: Wir schauen, ob wir in der Abhaengigkeitsliste des anderen Plugins stehen
-    String[] deps = other.getDependencies();
+    Dependency[] deps = other.getDependencies();
     if (deps == null || deps.length == 0)
     {
       Logger.debug("4: " + otherName + " > " + name);
@@ -480,7 +491,7 @@ public class Manifest implements Comparable
     {
       if (deps[i] == null)
         continue; // ueberspringen
-      if (name.equals(deps[i]))
+      if (name.equals(deps[i].getName()))
       {
         Logger.debug("5: " + name + " > " + otherName);
         return -1; // Das andere Plugin haengt von uns ab. Also muessen wir zuerst geladen werden
@@ -520,6 +531,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.19  2008/08/27 14:41:17  willuhn
+ * @N Angabe der Versionsnummer von abhaengigen Plugins oder der Jameica RT
+ *
  * Revision 1.18  2008/04/09 16:55:18  willuhn
  * @N Manifest#getDependencies() liefert nun auch indirekte Abhaengigkeiten
  * @C Sortierung der Plugins auf Quicksort umgestellt
