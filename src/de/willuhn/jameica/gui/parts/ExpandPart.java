@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.5 $
- * $Date: 2007/12/29 18:45:31 $
+ * $Revision: 1.6 $
+ * $Date: 2008/08/29 14:38:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.ExpandItem;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.boxes.Box;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 
@@ -90,34 +92,42 @@ public class ExpandPart implements Part
     {
       final Item ei = (Item) this.items.get(i);
 
-      final Composite composite = new Composite(bar, SWT.NONE);
-      composite.setBackground(Color.BACKGROUND.getSWTColor());
-      GridLayout layout = new GridLayout();
-      layout.marginLeft = layout.marginTop = layout.marginRight = layout.marginBottom = 10;
-      layout.verticalSpacing = 10;
-      composite.setLayout(layout);
+      try
+      {
+        final Composite composite = new Composite(bar, SWT.NONE);
+        composite.setBackground(Color.BACKGROUND.getSWTColor());
+        GridLayout layout = new GridLayout();
+        layout.marginLeft = layout.marginTop = layout.marginRight = layout.marginBottom = 10;
+        layout.verticalSpacing = 10;
+        composite.setLayout(layout);
 
-      ei.part.paint(composite);
+        ei.part.paint(composite);
 
-      final ExpandItem item = new ExpandItem(bar, SWT.NONE);
-      item.setText(ei.title);
-      item.setHeight(ei.height > 0 ? ei.height : composite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-      item.setControl(composite);
-      item.setExpanded(settings.getBoolean(ei.part.getClass().getName() + ".expanded",true));
-      item.addDisposeListener(new DisposeListener() {
-        public void widgetDisposed(DisposeEvent e)
-        {
-          try
+        final ExpandItem item = new ExpandItem(bar, SWT.NONE);
+        item.setText(ei.title);
+        item.setHeight(ei.height > 0 ? ei.height : composite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+        item.setControl(composite);
+        item.setExpanded(settings.getBoolean(ei.part.getClass().getName() + ".expanded",true));
+        item.addDisposeListener(new DisposeListener() {
+          public void widgetDisposed(DisposeEvent e)
           {
-            settings.setAttribute(ei.part.getClass().getName() + ".expanded",item.getExpanded());
+            try
+            {
+              settings.setAttribute(ei.part.getClass().getName() + ".expanded",item.getExpanded());
+            }
+            catch (Exception e2)
+            {
+              Logger.error("unable to store expanded state for child " + ei.part.getClass().getName(),e2);
+            }
           }
-          catch (Exception e2)
-          {
-            Logger.error("unable to store expanded state for child " + ei.part.getClass().getName(),e2);
-          }
-        }
-      
-      });
+        
+        });
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to paint box " + ei.title,e);
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen der Box \"{0}\"",ei.title),StatusBarMessage.TYPE_ERROR));
+      }
     }
 
   }
@@ -158,6 +168,9 @@ public class ExpandPart implements Part
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
+ * Revision 1.6  2008/08/29 14:38:43  willuhn
+ * @N wen ein einzelnes Part beim Zeichnen einen Fehler wirft, dann ueberspringen und Fehler melden - fuehrt sonst dazu, dass ggf. die Box mit den Jameica-Startmeldungen nicht angezeigt wird
+ *
  * Revision 1.5  2007/12/29 18:45:31  willuhn
  * @N Hoehe von Boxen explizit konfigurierbar
  *
