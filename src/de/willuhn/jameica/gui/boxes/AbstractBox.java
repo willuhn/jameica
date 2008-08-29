@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/AbstractBox.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/04/23 13:20:56 $
+ * $Revision: 1.4 $
+ * $Date: 2008/08/29 13:15:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,7 +58,7 @@ public abstract class AbstractBox implements Box
   public int getIndex()
   {
     if (this.index == null)
-      this.index = Integer.valueOf(settings.getInt(this.getClass().getName() + ".index",getDefaultIndex()));
+      this.index = new Integer(settings.getInt(this.getClass().getName() + ".index",getDefaultIndex()));
     return this.index.intValue();
   }
 
@@ -67,7 +67,7 @@ public abstract class AbstractBox implements Box
    */
   public void setIndex(int index)
   {
-    this.index = Integer.valueOf(index);
+    this.index = new Integer(index);
     settings.setAttribute(this.getClass().getName() + ".index",index);
   }
 
@@ -111,6 +111,9 @@ public abstract class AbstractBox implements Box
 
 /*********************************************************************
  * $Log: AbstractBox.java,v $
+ * Revision 1.4  2008/08/29 13:15:42  willuhn
+ * @C Java 1.4 Compatibility - wieso zur Hoelle sind die Fehler vorher nie aufgefallen? Ich compiliere immer gegen 1.4? Suspekt
+ *
  * Revision 1.3  2008/04/23 13:20:56  willuhn
  * @B Bug 588
  *

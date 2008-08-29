@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/07/22 23:02:59 $
+ * $Revision: 1.7 $
+ * $Date: 2008/08/29 13:15:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -133,7 +133,7 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     Application.getMessagingFactory().getMessagingQueue("jameica.reminder").registerMessageConsumer(this);
     try
     {
-      this.timer = new Timer("jameica.reminder",true);
+      this.timer = new Timer(true);
       this.timer.schedule(this,0,60 * 1000L); // alle 60 Sekunden, Start jetzt
     }
     catch (Exception e)
@@ -323,6 +323,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.7  2008/08/29 13:15:42  willuhn
+ * @C Java 1.4 Compatibility - wieso zur Hoelle sind die Fehler vorher nie aufgefallen? Ich compiliere immer gegen 1.4? Suspekt
+ *
  * Revision 1.6  2008/07/22 23:02:59  willuhn
  * @N Box zum Anzeigen faelliger Reminder (mit Renderer) auf der Startseite
  * @C ReminderPopupAction in "reminder"-Package verschoben
