@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ClassService.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/08/27 14:41:17 $
+ * $Revision: 1.3 $
+ * $Date: 2008/08/31 23:07:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -165,16 +165,16 @@ public class ClassService implements Bootable
 
     Application.getCallback().getStartupMonitor().addPercentComplete(1);
     ////////////////////////////////////////////////////////////////////////////
-    return prepareClasses(manifest, mycl);
+    prepareClasses(manifest, mycl);
+    return mycl;
   }
 
   /**
    * @param manifest
    * @param mycl
-   * @return Instanz des Classloaders.
    * @throws IOException
    */
-  private MultipleClassLoader prepareClasses(Manifest manifest, MultipleClassLoader mycl) throws IOException
+  private void prepareClasses(Manifest manifest, MultipleClassLoader mycl) throws IOException
   {
     ////////////////////////////////////////////////////////////////////////////
     // Classfinder befuellen
@@ -256,7 +256,6 @@ public class ClassService implements Bootable
         }
       }
     }
-    return mycl;
   }
   
   /**
@@ -279,6 +278,9 @@ public class ClassService implements Bootable
 
 /**********************************************************************
  * $Log: ClassService.java,v $
+ * Revision 1.3  2008/08/31 23:07:10  willuhn
+ * @N Erster GUI-Code fuer die Suche
+ *
  * Revision 1.2  2008/08/27 14:41:17  willuhn
  * @N Angabe der Versionsnummer von abhaengigen Plugins oder der Jameica RT
  *

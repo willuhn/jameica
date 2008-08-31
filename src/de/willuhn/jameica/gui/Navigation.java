@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.42 $
- * $Date: 2008/05/23 08:29:25 $
+ * $Revision: 1.43 $
+ * $Date: 2008/08/31 23:07:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,8 +21,10 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.gui.internal.parts.SearchPart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -48,8 +51,8 @@ public class Navigation implements Part
   private Listener action       = new MyActionListener();
   private DisposeListener dsl   = new MyDisposeListener();
   private Settings settings     = new Settings(Navigation.class);
-  private Composite parent			= null;
   private Tree mainTree					= null;
+  private SearchPart search     = null;
   
 	// TreeItem, unterhalb dessen die Plugins eingehaengt werden. 
   private TreeItem pluginTree		= null;
@@ -61,10 +64,22 @@ public class Navigation implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
-    this.parent = parent;
-
+    Composite comp = new Composite(parent,SWT.NONE);
+    comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+    
+    GridLayout layout = new GridLayout();
+    layout.horizontalSpacing = 0;
+    layout.verticalSpacing   = 0;
+    layout.marginHeight = 0;
+    layout.marginWidth  = 0;
+    layout.marginLeft   = 0;
+    layout.marginRight  = 0;
+    layout.marginTop    = 0;
+    layout.marginBottom = 0;
+    comp.setLayout(layout);
+    
     // Tree erzeugen
-    this.mainTree = new Tree(this.parent, SWT.NONE);
+    this.mainTree = new Tree(comp, SWT.NONE);
     this.mainTree.setLayoutData(new GridData(GridData.FILL_BOTH));
     // Listener fuer "Folder auf/zu machen"
     this.mainTree.addListener(SWT.Expand,    action);
@@ -80,6 +95,12 @@ public class Navigation implements Part
     {
       throw new RemoteException("error while loading navigation",e);
     }
+
+//    Label sep = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
+//    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+//
+//    this.search = new SearchPart();
+//    this.search.paint(comp);
   }
 
   /**
@@ -359,6 +380,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.43  2008/08/31 23:07:10  willuhn
+ * @N Erster GUI-Code fuer die Suche
+ *
  * Revision 1.42  2008/05/23 08:29:25  willuhn
  * @C modifier geaendert
  *
@@ -380,111 +404,4 @@ public class Navigation implements Part
  *
  * Revision 1.36  2007/03/12 16:19:09  willuhn
  * @C disabled warnings if menu/navigation is empty
- *
- * Revision 1.35  2006/06/29 14:56:48  willuhn
- * @N Menu ist nun auch deaktivierbar
- *
- * Revision 1.34  2006/06/27 23:14:11  willuhn
- * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
- *
- * Revision 1.33  2006/06/23 16:18:21  willuhn
- * @C small internal api renamings
- *
- * Revision 1.32  2006/04/20 08:44:03  web0
- * @C s/Childs/Children/
- *
- * Revision 1.31  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.30  2005/05/30 12:01:33  web0
- * @R removed gui packages from rmic.xml
- *
- * Revision 1.29  2005/03/09 01:06:36  web0
- * @D javadoc fixes
- *
- * Revision 1.28  2004/11/12 18:23:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.27  2004/11/10 15:53:23  willuhn
- * @N Panel
- *
- * Revision 1.26  2004/10/25 17:59:15  willuhn
- * @N aenderbare Tabellen
- *
- * Revision 1.25  2004/10/12 23:49:31  willuhn
- * *** empty log message ***
- *
- * Revision 1.24  2004/10/08 17:18:11  willuhn
- * *** empty log message ***
- *
- * Revision 1.23  2004/10/08 16:41:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.22  2004/08/18 23:14:19  willuhn
- * @D Javadoc
- *
- * Revision 1.21  2004/08/15 17:55:17  willuhn
- * @C sync handling
- *
- * Revision 1.20  2004/08/11 23:37:21  willuhn
- * @N Navigation ist jetzt modular erweiterbar
- *
- * Revision 1.19  2004/07/21 23:54:54  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.18  2004/06/30 20:58:39  willuhn
- * *** empty log message ***
- *
- * Revision 1.17  2004/06/10 20:56:53  willuhn
- * @D javadoc comments fixed
- *
- * Revision 1.16  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.15  2004/04/26 21:00:11  willuhn
- * @N made menu and navigation entries translatable
- *
- * Revision 1.14  2004/03/30 22:08:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2004/03/24 00:46:03  willuhn
- * @C refactoring
- *
- * Revision 1.12  2004/03/03 22:27:10  willuhn
- * @N help texts
- * @C refactoring
- *
- * Revision 1.11  2004/01/28 20:51:24  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.10  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.9  2004/01/08 20:50:32  willuhn
- * @N database stuff separated from jameica
- *
- * Revision 1.8  2004/01/03 18:08:05  willuhn
- * @N Exception logging
- * @C replaced bb.util xml parser with nanoxml
- *
- * Revision 1.7  2003/12/12 01:28:05  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2003/12/11 21:00:54  willuhn
- * @C refactoring
- *
- * Revision 1.5  2003/12/05 18:43:01  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2003/11/18 18:56:07  willuhn
- * @N added support for pluginmenus and plugin navigation
- *
- * Revision 1.3  2003/11/13 00:37:35  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2003/10/29 00:41:26  willuhn
- * *** empty log message ***
- *
  **********************************************************************/
