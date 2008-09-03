@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SearchService.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/09/03 00:11:43 $
+ * $Revision: 1.4 $
+ * $Date: 2008/09/03 08:41:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,19 +53,22 @@ public class SearchService implements Bootable
     {
       Logger.info("looking for search providers");
       Class[] providers = Application.getClassLoader().getClassFinder().findImplementors(SearchProvider.class);
+      int count = 0;
       for (int i=0;i<providers.length;++i)
       {
         try
         {
           SearchProvider p = (SearchProvider) providers[i].newInstance();
-          Logger.info("  " + p.getName());
+          Logger.debug("  " + p.getName());
           this.providers.add(p);
+          count++;
         }
         catch (Exception e)
         {
           Logger.error("unable to load search provider " + providers[i].getName(),e);
         }
       }
+      Logger.info("loaded " + count + " search providers");
     }
     catch (ClassNotFoundException ne)
     {
@@ -138,6 +141,9 @@ public class SearchService implements Bootable
 
 /**********************************************************************
  * $Log: SearchService.java,v $
+ * Revision 1.4  2008/09/03 08:41:17  willuhn
+ * @R Namen der Searchprovider in Level DEBUG  loggen
+ *
  * Revision 1.3  2008/09/03 00:11:43  willuhn
  * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
  *
