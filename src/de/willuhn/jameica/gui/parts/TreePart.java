@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.23 $
- * $Date: 2008/09/03 00:11:43 $
+ * $Revision: 1.24 $
+ * $Date: 2008/09/03 11:14:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -447,7 +447,7 @@ public class TreePart extends AbstractTablePart
         // Nur als Ordner darstellen, wenn es Kinder hat
         item.setImage(SWTUtil.getImage(children != null && children.size() > 0 ? "folder.gif" : "page.gif"));
 
-        // load the childs
+        // load the children
         if (children != null)
         {
           while(children.hasNext())
@@ -461,7 +461,7 @@ public class TreePart extends AbstractTablePart
             }
             catch (Exception e)
             {
-              e.printStackTrace();
+              Logger.error("error while expanding item",e);
               break;
             }
           }
@@ -529,6 +529,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.24  2008/09/03 11:14:20  willuhn
+ * @N Suchfeld anzeigen
+ * @N Such-Optionen
+ *
  * Revision 1.23  2008/09/03 00:11:43  willuhn
  * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
  *

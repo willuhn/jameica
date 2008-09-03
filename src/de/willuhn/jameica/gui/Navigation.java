@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.43 $
- * $Date: 2008/08/31 23:07:10 $
+ * $Revision: 1.44 $
+ * $Date: 2008/09/03 11:14:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -96,11 +96,11 @@ public class Navigation implements Part
       throw new RemoteException("error while loading navigation",e);
     }
 
-//    Label sep = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
-//    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//
-//    this.search = new SearchPart();
-//    this.search.paint(comp);
+    Label sep = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
+    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+    this.search = new SearchPart();
+    this.search.paint(comp);
   }
 
   /**
@@ -380,6 +380,10 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.44  2008/09/03 11:14:20  willuhn
+ * @N Suchfeld anzeigen
+ * @N Such-Optionen
+ *
  * Revision 1.43  2008/08/31 23:07:10  willuhn
  * @N Erster GUI-Code fuer die Suche
  *

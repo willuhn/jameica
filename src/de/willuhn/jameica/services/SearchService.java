@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SearchService.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/09/03 08:41:17 $
+ * $Revision: 1.5 $
+ * $Date: 2008/09/03 11:14:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,7 +106,7 @@ public class SearchService implements Bootable
       SearchProvider p = (SearchProvider) this.providers.get(i);
       
       // Checken, ob der SearchProvider von der Suche ausgeschlossen wurde
-      if (!settings.getBoolean(p.getClass().getName() + ".enabled",true))
+      if (!isEnabled(p))
         continue;
 
       result.add(new SearchResult(p,text));
@@ -137,10 +137,26 @@ public class SearchService implements Bootable
       return;
     settings.setAttribute(provider.getClass().getName() + ".enabled",enabled);
   }
+  
+  /**
+   * Prueft, ob der angegebene Search-Provider aktiviert ist.
+   * @param provider Search-Provider.
+   * @return true, wenn er aktiv ist, sonst false.
+   */
+  public boolean isEnabled(SearchProvider provider)
+  {
+    if (provider == null)
+      return false;
+    return settings.getBoolean(provider.getClass().getName() + ".enabled",true);
+  }
 }
 
 /**********************************************************************
  * $Log: SearchService.java,v $
+ * Revision 1.5  2008/09/03 11:14:20  willuhn
+ * @N Suchfeld anzeigen
+ * @N Such-Optionen
+ *
  * Revision 1.4  2008/09/03 08:41:17  willuhn
  * @R Namen der Searchprovider in Level DEBUG  loggen
  *
