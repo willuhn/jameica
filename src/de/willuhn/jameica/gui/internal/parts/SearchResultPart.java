@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchResultPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/09/03 00:21:07 $
+ * $Revision: 1.2 $
+ * $Date: 2008/09/03 23:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -82,6 +82,7 @@ public class SearchResultPart extends TreePart
    */
   private static GenericIterator init(List searchResult) throws RemoteException, ApplicationException
   {
+    boolean found = false;
     // Wir muessen das Suchergebnis hier als Baum aufbereiten
     HashMap plugins = new HashMap();
     for (int i=0;i<searchResult.size();++i)
@@ -107,10 +108,63 @@ public class SearchResultPart extends TreePart
     {
       Plugin p = (Plugin) result.next();
       if (p.providers.size() > 0)
+      {
         al.add(p);
+        found = true;
+      }
     }
-    
-    return PseudoIterator.fromArray((Plugin[])al.toArray(new Plugin[al.size()]));
+
+    if (found)
+      return PseudoIterator.fromArray((Plugin[])al.toArray(new Plugin[al.size()]));
+
+    return PseudoIterator.fromArray(new GenericObject[]{new NotFound()});
+  }
+  
+  /**
+   * Hilfsklasse zum Anzeigen von "Nichts gefunden".
+   */
+  private static class NotFound implements GenericObject
+  {
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
+     */
+    public boolean equals(GenericObject arg0) throws RemoteException
+    {
+      return false;
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
+     */
+    public Object getAttribute(String arg0) throws RemoteException
+    {
+      return Application.getI18n().tr("Keine Treffer gefunden");
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
+     */
+    public String[] getAttributeNames() throws RemoteException
+    {
+      return new String[]{"name"};
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getID()
+     */
+    public String getID() throws RemoteException
+    {
+      return "none";
+    }
+
+    /**
+     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
+     */
+    public String getPrimaryAttribute() throws RemoteException
+    {
+      return "name";
+    }
   }
   
   private static class Plugin implements GenericObjectNode
@@ -460,6 +514,9 @@ public class SearchResultPart extends TreePart
 
 /**********************************************************************
  * $Log: SearchResultPart.java,v $
+ * Revision 1.2  2008/09/03 23:41:30  willuhn
+ * @N Anzeige eines Hinweistextes, wenn keine Treffer gefunden wurden
+ *
  * Revision 1.1  2008/09/03 00:21:07  willuhn
  * @C SearchResultPart in "internal"-Package verschoben (wo auch schon das SearchPart ist)
  *
