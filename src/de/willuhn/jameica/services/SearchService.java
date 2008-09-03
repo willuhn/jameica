@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SearchService.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/08/31 23:07:10 $
+ * $Revision: 1.3 $
+ * $Date: 2008/09/03 00:11:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,9 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.search.SearchProvider;
+import de.willuhn.jameica.search.SearchResult;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 
 
@@ -30,6 +32,7 @@ import de.willuhn.logging.Logger;
 public class SearchService implements Bootable
 {
   private ArrayList providers = null;
+  private static Settings settings = new Settings(SearchService.class); 
 
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -80,8 +83,11 @@ public class SearchService implements Bootable
   
   /**
    * Fuehrt eine Suche ueber die Such-Provider durch.
+   * Aus Perfomanz-Gruenden beginnt die Suche nicht sofort
+   * sondern erst, wenn die SearchResults vom Aufrufer ausgewertet werden.
    * @param text der Suchbegriff.
-   * @return das Suchergebnis als Liste von Objekten des Typs "Result".
+   * @return das Suchergebnis als Liste von Objekten des Typs "SearchResult".
+   * Jedes SearchResult enthaelt die Suchergebnisse fuer einen Provider.
    */
   public List search(String text)
   {
@@ -95,25 +101,46 @@ public class SearchService implements Bootable
     for (int i=0;i<this.providers.size();++i)
     {
       SearchProvider p = (SearchProvider) this.providers.get(i);
-      try
-      {
-        final List l = p.search(text);
-        if (l == null || l.size() == 0)
-          continue;
-        result.addAll(l);
-      }
-      catch (Exception e)
-      {
-        Logger.error("error while searching in provider " + p.getName(),e);
-      }
+      
+      // Checken, ob der SearchProvider von der Suche ausgeschlossen wurde
+      if (!settings.getBoolean(p.getClass().getName() + ".enabled",true))
+        continue;
+
+      result.add(new SearchResult(p,text));
     }
     return result;
   }
-
+  
+  /**
+   * Liefert eine Liste der SerchProvider.
+   * @return Liste der SearchProvider. Nie <code>null</code> sondern
+   * hoechstens eine leere Liste.
+   */
+  public SearchProvider[] getSearchProviders()
+  {
+    if (this.providers == null)
+      return new SearchProvider[0];
+    return (SearchProvider[]) this.providers.toArray(new SearchProvider[this.providers.size()]);
+  }
+  
+  /**
+   * Aktiviert oder deaktiviert die Suche in einem einzelnen Searchprovider.
+   * @param provider der Provider.
+   * @param enabled false, wenn die Suche in dem Provider deaktiviert werden soll, sonst true.
+   */
+  public void setEnabled(SearchProvider provider,boolean enabled)
+  {
+    if (provider == null)
+      return;
+    settings.setAttribute(provider.getClass().getName() + ".enabled",enabled);
+  }
 }
 
 /**********************************************************************
  * $Log: SearchService.java,v $
+ * Revision 1.3  2008/09/03 00:11:43  willuhn
+ * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
+ *
  * Revision 1.2  2008/08/31 23:07:10  willuhn
  * @N Erster GUI-Code fuer die Suche
  *

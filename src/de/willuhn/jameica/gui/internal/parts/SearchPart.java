@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/08/31 23:07:10 $
+ * $Revision: 1.2 $
+ * $Date: 2008/09/03 00:11:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@
 package de.willuhn.jameica.gui.internal.parts;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -25,7 +26,9 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.internal.views.SearchResultView;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.services.SearchService;
 import de.willuhn.jameica.system.Application;
 
 
@@ -91,8 +94,10 @@ public class SearchPart implements Part
         if (text == null || text.length() < 3)
           return; // weniger als 3 Zeichen eingegeben
 
-        //SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
-        // List result = service.search(text);
+        SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
+        List result = service.search(text);
+        GUI.startView(SearchResultView.class,result);
+
         // bewirkt, dass Folge-Events nicht mehr ausgeloest werden.
         // Das kann z.Bsp. sein, wenn gerade ein Dialog mit
         // Default-Button angezeigt wird.
@@ -107,6 +112,9 @@ public class SearchPart implements Part
 
 /**********************************************************************
  * $Log: SearchPart.java,v $
+ * Revision 1.2  2008/09/03 00:11:43  willuhn
+ * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
+ *
  * Revision 1.1  2008/08/31 23:07:10  willuhn
  * @N Erster GUI-Code fuer die Suche
  *

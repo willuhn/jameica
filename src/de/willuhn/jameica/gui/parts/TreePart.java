@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.22 $
- * $Date: 2008/05/25 22:31:30 $
+ * $Revision: 1.23 $
+ * $Date: 2008/09/03 00:11:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -454,7 +454,10 @@ public class TreePart extends AbstractTablePart
           {
             try
             {
-              new Item(this.item,children.next());
+              GenericObject d = children.next();
+              Item i = new Item(this.item,d);
+              itemLookup.put(d,i);
+              setExpanded(d,expanded); // BUGZILLA 395
             }
             catch (Exception e)
             {
@@ -526,6 +529,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.23  2008/09/03 00:11:43  willuhn
+ * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
+ *
  * Revision 1.22  2008/05/25 22:31:30  willuhn
  * @N Explizite Angabe der Spaltenausrichtung moeglich
  *
