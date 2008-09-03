@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Attic/SearchResultPart.java,v $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchResultPart.java,v $
  * $Revision: 1.1 $
- * $Date: 2008/09/03 00:11:43 $
+ * $Date: 2008/09/03 00:21:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,7 +11,7 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.gui.parts;
+package de.willuhn.jameica.gui.internal.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.parts.TreePart;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.search.Result;
@@ -459,6 +460,9 @@ public class SearchResultPart extends TreePart
 
 /**********************************************************************
  * $Log: SearchResultPart.java,v $
+ * Revision 1.1  2008/09/03 00:21:07  willuhn
+ * @C SearchResultPart in "internal"-Package verschoben (wo auch schon das SearchPart ist)
+ *
  * Revision 1.1  2008/09/03 00:11:43  willuhn
  * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
  *

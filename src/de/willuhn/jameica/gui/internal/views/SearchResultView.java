@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/SearchResultView.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/09/03 00:11:43 $
+ * $Revision: 1.2 $
+ * $Date: 2008/09/03 00:21:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,7 @@ import java.util.List;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.Back;
-import de.willuhn.jameica.gui.parts.SearchResultPart;
+import de.willuhn.jameica.gui.internal.parts.SearchResultPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
@@ -48,6 +48,9 @@ public class SearchResultView extends AbstractView
 
 /**********************************************************************
  * $Log: SearchResultView.java,v $
+ * Revision 1.2  2008/09/03 00:21:07  willuhn
+ * @C SearchResultPart in "internal"-Package verschoben (wo auch schon das SearchPart ist)
+ *
  * Revision 1.1  2008/09/03 00:11:43  willuhn
  * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
  *
