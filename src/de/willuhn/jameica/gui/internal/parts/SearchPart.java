@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/09/03 11:14:20 $
+ * $Revision: 1.4 $
+ * $Date: 2008/09/03 23:32:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,13 +26,16 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.View;
 import de.willuhn.jameica.gui.internal.dialogs.SearchOptionsDialog;
-import de.willuhn.jameica.gui.internal.views.SearchResultView;
+import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.SearchService;
@@ -45,8 +48,9 @@ import de.willuhn.logging.Logger;
  */
 public class SearchPart implements Part
 {
-  private Composite comp = null;
-  private Text search = null;
+  private Composite comp  = null;
+  private Text search     = null;
+  private boolean started = false;
   
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -100,24 +104,56 @@ public class SearchPart implements Part
     });
     this.search.addTraverseListener(new TraverseListener()
     {
-    
       public void keyTraversed(TraverseEvent e)
       {
         if (search == null || search.isDisposed())
           return;
         
-        String text = search.getText();
+        final String text = search.getText();
         if (text == null || text.length() < 3)
           return; // weniger als 3 Zeichen eingegeben
 
-        SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
-        List result = service.search(text);
-        GUI.startView(SearchResultView.class,result);
+        try
+        {
+          final View view = GUI.getView();
 
-        // bewirkt, dass Folge-Events nicht mehr ausgeloest werden.
-        // Das kann z.Bsp. sein, wenn gerade ein Dialog mit
-        // Default-Button angezeigt wird.
-        e.doit = false;
+          // Wird schon angezeigt.
+          if (started)
+          {
+            view.snapOut();
+            started = false;
+          }
+
+          SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
+          List result = service.search(text);
+
+          // TODO Mittelfristig sollte die Suche in einem Hintergrund-Task laufen 
+          SearchResultPart part = new SearchResultPart(result);
+          Panel panel = new Panel(Application.getI18n().tr("Suchergebnis"), part, false);
+          panel.addMinimizeListener(new Listener()
+          {
+            public void handleEvent(Event event)
+            {
+              view.snapOut();
+              started = false;
+            }
+          });
+          panel.paint(view.getSnapin());
+          view.snapIn();
+          started = true;
+        }
+        catch (Exception ex)
+        {
+          Logger.error("error while opening search result",ex);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen des Suchergebnisses: {0}", ex.getMessage()), StatusBarMessage.TYPE_ERROR));
+        }
+        finally
+        {
+          // bewirkt, dass Folge-Events nicht mehr ausgeloest werden.
+          // Das kann z.Bsp. sein, wenn gerade ein Dialog mit
+          // Default-Button angezeigt wird.
+          e.doit = false;
+        }
       }
     });
     
@@ -146,6 +182,9 @@ public class SearchPart implements Part
 
 /**********************************************************************
  * $Log: SearchPart.java,v $
+ * Revision 1.4  2008/09/03 23:32:14  willuhn
+ * @C Suchergebnis nicht mehr als View sondern als Snapin am unteren Rand anzeigen. Dann kann man durch die Elemente klicken, ohne das Suchergebnis zu verlassen
+ *
  * Revision 1.3  2008/09/03 11:14:20  willuhn
  * @N Suchfeld anzeigen
  * @N Such-Optionen

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SearchService.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/09/03 11:14:20 $
+ * $Revision: 1.6 $
+ * $Date: 2008/09/03 23:32:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -100,7 +100,7 @@ public class SearchService implements Bootable
     if (text == null || text.length() == 0)
       return result;
     
-    Logger.info("searching for " + text);
+    Logger.debug("searching for " + text);
     for (int i=0;i<this.providers.size();++i)
     {
       SearchProvider p = (SearchProvider) this.providers.get(i);
@@ -111,6 +111,7 @@ public class SearchService implements Bootable
 
       result.add(new SearchResult(p,text));
     }
+    Logger.debug("search completed");
     return result;
   }
   
@@ -153,6 +154,9 @@ public class SearchService implements Bootable
 
 /**********************************************************************
  * $Log: SearchService.java,v $
+ * Revision 1.6  2008/09/03 23:32:14  willuhn
+ * @C Suchergebnis nicht mehr als View sondern als Snapin am unteren Rand anzeigen. Dann kann man durch die Elemente klicken, ohne das Suchergebnis zu verlassen
+ *
  * Revision 1.5  2008/09/03 11:14:20  willuhn
  * @N Suchfeld anzeigen
  * @N Such-Optionen
