@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.28 $
- * $Date: 2008/03/07 17:30:14 $
+ * $Revision: 1.29 $
+ * $Date: 2008/09/15 10:44:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -183,7 +183,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
     {
       public void run()
       {
-        if (bar == null || bar.isDisposed())
+        if (bar == null || bar.isDisposed() || display == null || display.isDisposed())
           return;
         Logger.debug("startup completed: " + percentComplete + " %");
         bar.setSelection(percentComplete);
@@ -200,14 +200,15 @@ public class SplashScreen implements ProgressMonitor, Runnable
     if (closed || Application.inServerMode())
       return;
 
-    if (status == 0)
+    closed = true;
+
+    Logger.debug("stopping splash screen");
+    if (status == 0 && display != null && !display.isDisposed())
     {
-      Logger.debug("stopping splash screen");
       display.syncExec(new Runnable()
       {
         public void run()
         {
-          closed = true;
           try
           {
           	shell.dispose();
@@ -249,7 +250,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
     {
       public void run()
       {
-        if (textLabel == null || textLabel.isDisposed())
+        if (textLabel == null || textLabel.isDisposed() || display == null || display.isDisposed())
           return;
         String s = " " + text + " ...";
         Logger.info(s);
@@ -290,6 +291,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.29  2008/09/15 10:44:00  willuhn
+ * @B Keinen Fehler werfen, wenn Display bereits disposed wurde
+ *
  * Revision 1.28  2008/03/07 17:30:14  willuhn
  * @N Splash-Screen-Ausgaben auch ins Log schreiben
  * @B Fehler im Dateformat des Backup (12- statt 24h-Uhr)
