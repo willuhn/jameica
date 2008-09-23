@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.10 $
- * $Date: 2008/07/04 16:02:11 $
+ * $Revision: 1.11 $
+ * $Date: 2008/09/23 13:58:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -121,7 +121,7 @@ public class Color {
    */
   public final void setSWTColor(org.eclipse.swt.graphics.Color newColor)
 	{
-		if (newColor == null)
+		if (newColor == null || newColor.isDisposed())
 			return;
 		value = newColor.getRGB();
     
@@ -151,6 +151,9 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.11  2008/09/23 13:58:12  willuhn
+ * @B dispose check
+ *
  * Revision 1.10  2008/07/04 16:02:11  willuhn
  * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
  * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
