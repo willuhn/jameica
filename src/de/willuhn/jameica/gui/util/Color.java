@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.11 $
- * $Date: 2008/09/23 13:58:12 $
+ * $Revision: 1.12 $
+ * $Date: 2008/09/23 14:02:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -128,9 +128,7 @@ public class Color {
     if (name != null)
       settings.setAttribute(name,value);
     
-    org.eclipse.swt.graphics.Color c = (org.eclipse.swt.graphics.Color) colorCache.remove(value.toString());
-    if (c != null && !c.isDisposed())
-      c.dispose();
+    colorCache.remove(value.toString());
 	}
 
 	/**
@@ -142,15 +140,16 @@ public class Color {
     if (name != null)
       settings.setAttribute(name,value);
 
-    org.eclipse.swt.graphics.Color c = (org.eclipse.swt.graphics.Color) colorCache.remove(value.toString());
-    if (c != null && !c.isDisposed())
-      c.dispose();
+    colorCache.remove(value.toString());
   }
 }
 
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.12  2008/09/23 14:02:10  willuhn
+ * @B Wenn wir Farben aus dem Cache loeschen, duerfen wir sie nicht disposen, weil sie ggf. noch irgendwo verwendet werden
+ *
  * Revision 1.11  2008/09/23 13:58:12  willuhn
  * @B dispose check
  *
