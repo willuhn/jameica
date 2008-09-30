@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.7 $
- * $Date: 2008/05/25 22:31:30 $
+ * $Revision: 1.8 $
+ * $Date: 2008/09/30 21:30:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,8 +68,7 @@ public abstract class AbstractTablePart implements Part
    */
   public void addColumn(String title, String field, Formatter f, boolean changeable)
   {
-    this.columns.add(new Column(field,title,f,changeable));
-    this.changeable |= changeable;
+    addColumn(title,field,f,changeable,Column.ALIGN_AUTO);
   }
   
   /**
@@ -90,8 +89,17 @@ public abstract class AbstractTablePart implements Part
    */
   public void addColumn(String title, String field, Formatter f, boolean changeable, int align)
   {
-    this.columns.add(new Column(field,title,f,changeable,align));
-    this.changeable |= changeable;
+    addColumn(new Column(field,title,f,changeable,align));
+  }
+
+  /**
+   * Fuegt der Tabelle eine neue Spalte hinzu.
+   * @param col das Spalten-Objekt.
+   */
+  public void addColumn(Column col)
+  {
+    this.columns.add(col);
+    this.changeable |= col.canChange();
   }
 
   /**
@@ -197,6 +205,10 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.8  2008/09/30 21:30:03  willuhn
+ * @N TablePart-internes "SortItem" umbenannt in "Item" - dient jetzt nicht mehr nur der Sortierung sondern auch zur Ausgabe/Formatierung des Attribut-Wertes (getFormattedValue())
+ * @N Objekt "Column" um ein neues Attribut "sort" erweitert, mit dem festgelegt werden kann, ob die Spalte nach dem tatsaechlichen Wert (SORT_BY_VALUE) des Attributs sortiert werden soll oder nach dem angezeigten Wert (SORT_BY_DISPLAY). SORT_BY_VALUE ist (wie bisher) Default. Damit kann man z.Bsp. eine Spalte mit Integer-Wert auch alphanumerisch sortieren (nach "1" kommt dann "10" und nicht "2")
+ *
  * Revision 1.7  2008/05/25 22:31:30  willuhn
  * @N Explizite Angabe der Spaltenausrichtung moeglich
  *

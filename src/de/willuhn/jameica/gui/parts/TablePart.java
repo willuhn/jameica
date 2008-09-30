@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.79 $
- * $Date: 2008/05/25 22:31:30 $
+ * $Revision: 1.80 $
+ * $Date: 2008/09/30 21:30:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -360,7 +360,7 @@ public class TablePart extends AbstractTablePart
           while (e.hasMoreElements())
           {
             List l = (List) e.nextElement();
-            l.remove(new SortItem(null,item));
+            l.remove(new Item(item,null));
           }
           table.remove(i);
           refreshSummary();
@@ -456,15 +456,10 @@ public class TablePart extends AbstractTablePart
 		for (int i=0;i<this.columns.size();++i)
 		{
       Column col     = (Column) this.columns.get(i);
-			Object value   = BeanUtil.get(object,col.getColumnId());
+			Item di        = new Item(object,col);
 
-      String display = BeanUtil.toString(value);
+      String display = di.getFormattedValue();
 
-			// Formatter vorhanden?
-			if (col.getFormatter() != null)
-				display = col.getFormatter().format(value);
-
-      if (display == null) display = "";
 			item.setText(i,display);
 			text[i] = display;
 
@@ -480,7 +475,7 @@ public class TablePart extends AbstractTablePart
 				sortTable.put(new Integer(i),l);
 			}
 
-			l.add(new SortItem(value,object));
+			l.add(di);
 			//
 			////////////////////////////////////
 		}
@@ -1176,10 +1171,10 @@ public class TablePart extends AbstractTablePart
 		table.removeAll();
 
 		// Und schreiben sie sortiert neu
-		SortItem sort = null;
+		Item sort = null;
 		for (int i=0;i<l.size();++i)
 		{
-			sort = (SortItem) l.get(i);
+			sort = (Item) l.get(i);
 			final TableItem item = new TableItem(table,SWT.NONE,i);
 			item.setData(sort.data);
 			item.setText((String[])textTable.get(sort.data));
@@ -1207,48 +1202,70 @@ public class TablePart extends AbstractTablePart
   }
 	
   /**
-	 * Kleine Hilfs-Klasse fuer die Sortierung.
+	 * Kleine Hilfs-Klasse fuer die Sortierung und Anzeige.
    */
-  private static class SortItem implements Comparable
+  private static class Item implements Comparable
 	{
-		private Comparable attribute;
 		private Object data;
+    private Object value;
+    private Column column;
+    private Comparable sortValue;
 
-		private SortItem(Object attribute, Object data)
+		private Item(Object data, Column col)
 		{
-			try
+      this.data = data;
+      
+      if (col == null)
+        return;
+
+      this.column = col;
+
+      try
 			{
-        if (attribute instanceof GenericObject)
+        this.value = BeanUtil.get(data,col.getColumnId());
+        if (this.value instanceof GenericObject)
         {
-          GenericObject o = (GenericObject) attribute;
-          this.attribute = (Comparable) o.getAttribute(o.getPrimaryAttribute());
+          GenericObject o = (GenericObject) this.value;
+          this.sortValue = (Comparable) o.getAttribute(o.getPrimaryAttribute());
         }
         else
         {
-          this.attribute = (Comparable) attribute;
+          this.sortValue = (Comparable) this.value;
         }
         
         // wir ignorieren Gross-Kleinschreibung bei Strings
-        if (this.attribute instanceof String)
-          this.attribute = ((String)this.attribute).toLowerCase();
+        if (this.sortValue instanceof String)
+          this.sortValue = ((String)this.sortValue).toLowerCase();
 			}
 			catch (Exception e)
 			{
 			}
-			this.data = data;
 		}
+    
+    private String getFormattedValue() throws RemoteException
+    {
+      String display = null;
+      
+      // Formatter vorhanden?
+      if (this.column.getFormatter() != null)
+        display = this.column.getFormatter().format(this.value);
+      else
+        display = BeanUtil.toString(this.value);
+
+      return display != null ? display : "";
+    }
 
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj)
     {
-      if (obj == null || !(obj instanceof SortItem))
+      if (obj == null || !(obj instanceof Item))
         return false;
 
       try
       {
-        return BeanUtil.equals(this.data,((SortItem) obj).data);
+        return BeanUtil.equals(this.data,((Item) obj).data);
       }
       catch (RemoteException e)
       {
@@ -1262,16 +1279,21 @@ public class TablePart extends AbstractTablePart
      */
     public int compareTo(Object o)
     {
-			if (attribute == null)
+      // wir immer vorn
+			if (this.sortValue == null || !(o instanceof Item))
 				return -1;
 
     	try
     	{
-    		Comparable other = ((SortItem)o).attribute;
-    		if (other == null)
-    			return 1;
-    		
-				return attribute.compareTo(other);
+        Item other = (Item) o;
+
+        if (other.sortValue == null)
+          return 1;
+        
+        if (this.column != null && this.column.getSortMode() == Column.SORT_BY_DISPLAY)
+          return this.getFormattedValue().compareTo(other.getFormattedValue());
+        
+				return this.sortValue.compareTo(other.sortValue);
     	}
     	catch (Exception e)
     	{
@@ -1320,6 +1342,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.80  2008/09/30 21:30:03  willuhn
+ * @N TablePart-internes "SortItem" umbenannt in "Item" - dient jetzt nicht mehr nur der Sortierung sondern auch zur Ausgabe/Formatierung des Attribut-Wertes (getFormattedValue())
+ * @N Objekt "Column" um ein neues Attribut "sort" erweitert, mit dem festgelegt werden kann, ob die Spalte nach dem tatsaechlichen Wert (SORT_BY_VALUE) des Attributs sortiert werden soll oder nach dem angezeigten Wert (SORT_BY_DISPLAY). SORT_BY_VALUE ist (wie bisher) Default. Damit kann man z.Bsp. eine Spalte mit Integer-Wert auch alphanumerisch sortieren (nach "1" kommt dann "10" und nicht "2")
+ *
  * Revision 1.79  2008/05/25 22:31:30  willuhn
  * @N Explizite Angabe der Spaltenausrichtung moeglich
  *
