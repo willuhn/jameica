@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.80 $
- * $Date: 2008/09/30 21:30:03 $
+ * $Revision: 1.81 $
+ * $Date: 2008/10/01 08:28:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
@@ -1223,15 +1222,10 @@ public class TablePart extends AbstractTablePart
       try
 			{
         this.value = BeanUtil.get(data,col.getColumnId());
-        if (this.value instanceof GenericObject)
-        {
-          GenericObject o = (GenericObject) this.value;
-          this.sortValue = (Comparable) o.getAttribute(o.getPrimaryAttribute());
-        }
-        else
-        {
+        if (this.value instanceof Comparable)
           this.sortValue = (Comparable) this.value;
-        }
+        else
+          this.sortValue = BeanUtil.toString(this.value);
         
         // wir ignorieren Gross-Kleinschreibung bei Strings
         if (this.sortValue instanceof String)
@@ -1342,6 +1336,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.81  2008/10/01 08:28:40  willuhn
+ * @C code cleanup
+ *
  * Revision 1.80  2008/09/30 21:30:03  willuhn
  * @N TablePart-internes "SortItem" umbenannt in "Item" - dient jetzt nicht mehr nur der Sortierung sondern auch zur Ausgabe/Formatierung des Attribut-Wertes (getFormattedValue())
  * @N Objekt "Column" um ein neues Attribut "sort" erweitert, mit dem festgelegt werden kann, ob die Spalte nach dem tatsaechlichen Wert (SORT_BY_VALUE) des Attributs sortiert werden soll oder nach dem angezeigten Wert (SORT_BY_DISPLAY). SORT_BY_VALUE ist (wie bisher) Default. Damit kann man z.Bsp. eine Spalte mit Integer-Wert auch alphanumerisch sortieren (nach "1" kommt dann "10" und nicht "2")
