@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/05/21 14:23:00 $
+ * $Revision: 1.5 $
+ * $Date: 2008/10/08 23:22:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -264,7 +264,7 @@ public final class NamedQueue implements MessagingQueue
         for (int i=0;i<this.queues.size();++i)
         {
           NamedQueue queue = (NamedQueue) this.queues.get(i);
-          while (queue.messages.size() > 0)
+          while (queue.messages != null && queue.messages.size() > 0)
             send(queue.consumers, (Message) queue.messages.pop());
         }
 
@@ -283,6 +283,9 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.5  2008/10/08 23:22:14  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2008/05/21 14:23:00  willuhn
  * @B NPE beim Shutdown
  *
