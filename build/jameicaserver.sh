@@ -3,7 +3,7 @@
 # Linux Start-Script fuer Server-Betrieb.
 # Jameica wird hierbei OHNE GUI gestartet.
 
-cd `dirname $0`
+cd `dirname $(readlink -f $0)`
 
 #_JCONSOLE="-Dcom.sun.management.jmxremote"
 

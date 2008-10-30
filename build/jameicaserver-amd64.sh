@@ -3,7 +3,7 @@
 # Linux Start-Script fuer Server-Betrieb, jedoch 64-Bit Version fuer Athlon64.
 # Jameica wird hierbei OHNE GUI gestartet.
 
-cd `dirname $0`
+cd `dirname $(readlink -f $0)`
 
 #_JCONSOLE="-Dcom.sun.management.jmxremote"
 
