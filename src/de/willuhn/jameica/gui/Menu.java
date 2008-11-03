@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.38 $
- * $Date: 2008/01/14 23:26:36 $
+ * $Revision: 1.39 $
+ * $Date: 2008/11/03 23:07:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -229,7 +229,7 @@ public class Menu
    * @param item das zu aktualisierende Element.
    * @throws RemoteException
    */
-  protected void update(MenuItem item) throws RemoteException
+  public void update(MenuItem item) throws RemoteException
   {
     org.eclipse.swt.widgets.MenuItem mi = (org.eclipse.swt.widgets.MenuItem) itemLookup.get(item);
     if (mi != null)
@@ -240,6 +240,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.39  2008/11/03 23:07:47  willuhn
+ * @C BUGZILLA 647
+ *
  * Revision 1.38  2008/01/14 23:26:36  willuhn
  * @B Vergessen, die Menu-Elemente der ExtensionRegistry bekannt zu machen
  *

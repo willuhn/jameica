@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.44 $
- * $Date: 2008/09/03 11:14:20 $
+ * $Revision: 1.45 $
+ * $Date: 2008/11/03 23:07:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -239,7 +239,7 @@ public class Navigation implements Part
    * @param item das zu aktualisierende Element.
    * @throws RemoteException
    */
-  protected void update(NavigationItem item) throws RemoteException
+  public void update(NavigationItem item) throws RemoteException
   {
     if (item == null)
       return;
@@ -380,6 +380,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.45  2008/11/03 23:07:47  willuhn
+ * @C BUGZILLA 647
+ *
  * Revision 1.44  2008/09/03 11:14:20  willuhn
  * @N Suchfeld anzeigen
  * @N Such-Optionen
