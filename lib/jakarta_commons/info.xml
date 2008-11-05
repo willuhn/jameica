@@ -1,6 +1,6 @@
 <info>
-  <name>Apache Commons CLI</name>
-  <description>command line parser</description>
-  <url>http://jakarta.apache.org/commons/cli/</url>
-  <license>Apache License - http://jakarta.apache.org/commons/license.html</license>
+  <name>Apache Commons</name>
+  <description>Common Apache Tools</description>
+  <url>http://commons.apache.org</url>
+  <license>Apache License - http://commons.apache.org/license.html</license>
 </info>

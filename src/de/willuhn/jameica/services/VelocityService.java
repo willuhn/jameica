@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/VelocityService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.2 $
+ * $Date: 2008/11/05 00:18:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,7 @@ import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.RuntimeServices;
-import org.apache.velocity.runtime.log.LogSystem;
+import org.apache.velocity.runtime.log.LogChute;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 
@@ -155,46 +155,64 @@ public class VelocityService extends ResourceLoader implements Bootable
   /**
    * Implementieren wir, um die Log-Ausgaben von Velocity zu uns umzuleiten.
    */
-  static class VelocityLogger implements LogSystem
+  static class VelocityLogger implements LogChute
   {
-
     /**
-     * @see org.apache.velocity.runtime.log.LogSystem#init(org.apache.velocity.runtime.RuntimeServices)
+     * @see org.apache.velocity.runtime.log.LogChute#init(org.apache.velocity.runtime.RuntimeServices)
      */
-    public void init(RuntimeServices arg0) throws Exception
+    public void init(RuntimeServices rs) throws Exception
     {
     }
 
     /**
-     * @see org.apache.velocity.runtime.log.LogSystem#logVelocityMessage(int, java.lang.String)
+     * @see org.apache.velocity.runtime.log.LogChute#isLevelEnabled(int)
      */
-    public void logVelocityMessage(int arg0, String arg1)
+    public boolean isLevelEnabled(int level)
     {
-      switch (arg0)
+      return false;
+    }
+
+    /**
+     * @see org.apache.velocity.runtime.log.LogChute#log(int, java.lang.String)
+     */
+    public void log(int level, String msg)
+    {
+      log(level,msg,null);
+    }
+
+    /**
+     * @see org.apache.velocity.runtime.log.LogChute#log(int, java.lang.String, java.lang.Throwable)
+     */
+    public void log(int level, String msg, Throwable t)
+    {
+      switch (level)
       {
-        case LogSystem.INFO_ID:
-          Logger.debug(arg1);
+        case LogChute.INFO_ID:
+          Logger.debug(msg);
           break;
-        case LogSystem.WARN_ID:
-          Logger.warn(arg1);
+        case LogChute.WARN_ID:
+          Logger.warn(msg);
           break;
-        case LogSystem.ERROR_ID:
-          Logger.error(arg1);
+        case LogChute.ERROR_ID:
+          Logger.error(msg,t);
           break;
-        case LogSystem.DEBUG_ID:
-          Logger.debug(arg1);
+        case LogChute.DEBUG_ID:
+          Logger.debug(msg);
           break;
         default:
-          Logger.debug(arg1);
+          Logger.debug(msg);
       }
     }
-
   }
 }
 
 
 /**********************************************************************
  * $Log: VelocityService.java,v $
+ * Revision 1.2  2008/11/05 00:18:59  willuhn
+ * @N Apache Velocity aktualisiert (1.4 -> 1.5)
+ * @N Apache Commons aktualisiert (noetig wegen Velocity-Update)
+ *
  * Revision 1.1  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen
