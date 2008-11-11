@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Dependency.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/08/27 14:41:17 $
+ * $Revision: 1.2 $
+ * $Date: 2008/11/11 01:09:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -123,6 +123,15 @@ public class Dependency implements Serializable
   {
     return this.name;
   }
+  
+  /**
+   * Liefert die benoetigte Versionsnummer oder NULL, wenn es egal ist.
+   * @return die benoetigte Versionsnummer oder NULL, wenn es egal ist.
+   */
+  public String getVersion()
+  {
+    return this.version;
+  }
 
   /**
    * Generiert von Eclipse.
@@ -169,6 +178,9 @@ public class Dependency implements Serializable
 
 /**********************************************************************
  * $Log: Dependency.java,v $
+ * Revision 1.2  2008/11/11 01:09:20  willuhn
+ * @N getVersion
+ *
  * Revision 1.1  2008/08/27 14:41:17  willuhn
  * @N Angabe der Versionsnummer von abhaengigen Plugins oder der Jameica RT
  *
