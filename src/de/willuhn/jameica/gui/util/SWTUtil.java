@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.20 $
- * $Date: 2008/06/27 11:16:19 $
+ * $Revision: 1.21 $
+ * $Date: 2008/11/13 18:43:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,6 +45,9 @@ public class SWTUtil {
 	 */
 	public static void disposeChildren(Composite c)
 	{
+	  if (c == null || c.isDisposed())
+	    return;
+	  
 		try {
 			Control[] children = c.getChildren();
 			if (children == null)
@@ -243,6 +246,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.21  2008/11/13 18:43:21  willuhn
+ * @B Children muessen nicht disposed werden, wenn das Parent schon disposed wurde
+ *
  * Revision 1.20  2008/06/27 11:16:19  willuhn
  * @B Bug 604
  *
