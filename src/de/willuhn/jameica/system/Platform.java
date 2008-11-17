@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/04/23 23:10:14 $
+ * $Revision: 1.2 $
+ * $Date: 2008/11/17 23:22:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,37 @@ import de.willuhn.logging.Logger;
  */
 public class Platform
 {
+  /**
+   * Konstante fuer: Betriebssystem unbekannt.
+   */
+  public final static int OS_UNKNOWN    = 0;
+  
+  /**
+   * Konstante fuer: Linux.
+   */
+  public final static int OS_LINUX      = 1;
+
+  /**
+   * Konstante fuer: Windows.
+   */
+  public final static int OS_WINDOWS    = 2;
+  
+  /**
+   * Konstante fuer: Mac OS.
+   */
+  public final static int OS_MAC        = 3;
+  
+  /**
+   * Konstante fuer: Linux 64Bit
+   */
+  public final static int OS_LINUX_64   = 4;
+
+  /**
+   * Konstante fuer: Windows 64Bit.
+   */
+  public final static int OS_WINDOWS_64 = 5;
+
+
   protected File workdir = null;
 
   /**
@@ -75,11 +106,58 @@ public class Platform
     
     return this.workdir;
   }
+  
+  /**
+   * Liefert das Betriebssystem.
+   * Siehe dazu die Konstanten <code>OS_*</code>.
+   * @return Betriebssystem.
+   */
+  public int getOS()
+  {
+    String os = System.getProperty("os.name");
+    String arch = System.getProperty("os.arch");
+    Logger.debug("os.name: " + os);
+    Logger.debug("os.arch: " + arch);
+
+    if (os.toLowerCase().indexOf("linux") != -1)
+    {
+      if (arch.toLowerCase().indexOf("64") != -1)
+      {
+        Logger.debug("linux 64bit");
+        return OS_LINUX_64;
+      }
+      Logger.debug("linux 32bit");
+      return OS_LINUX;
+    }
+    
+    if (os.toLowerCase().indexOf("windows") != -1)
+    {
+      if (arch.toLowerCase().indexOf("64") != -1)
+      {
+        Logger.debug("windows 64bit");
+        return OS_WINDOWS_64;
+      }
+      Logger.debug("windows 32bit");
+      return OS_WINDOWS;
+    }
+
+    if (os.toLowerCase().indexOf("mac") != -1)
+    {
+      Logger.debug("macos");
+      return OS_MAC;
+    }
+    Logger.debug("unknown os");
+    return OS_UNKNOWN;
+  }
+
 }
 
 
 /**********************************************************************
  * $Log: Platform.java,v $
+ * Revision 1.2  2008/11/17 23:22:19  willuhn
+ * @N "getOS" zur Ermittlung des Betriebssystems
+ *
  * Revision 1.1  2008/04/23 23:10:14  willuhn
  * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
  * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica
