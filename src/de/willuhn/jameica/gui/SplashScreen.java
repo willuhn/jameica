@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.29 $
- * $Date: 2008/09/15 10:44:00 $
+ * $Revision: 1.30 $
+ * $Date: 2008/11/25 00:50:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -200,15 +200,16 @@ public class SplashScreen implements ProgressMonitor, Runnable
     if (closed || Application.inServerMode())
       return;
 
-    closed = true;
-
-    Logger.debug("stopping splash screen");
+    if (status == 0)
+      closed = true;
+    
     if (status == 0 && display != null && !display.isDisposed())
     {
       display.syncExec(new Runnable()
       {
         public void run()
         {
+          Logger.info("stopping splash screen");
           try
           {
           	shell.dispose();
@@ -291,6 +292,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.30  2008/11/25 00:50:26  willuhn
+ * @B "closed" wurde immer gesetzt - auch dann, wenn der Splashscreen noch gar nicht geschlossen werden sollte
+ *
  * Revision 1.29  2008/09/15 10:44:00  willuhn
  * @B Keinen Fehler werfen, wenn Display bereits disposed wurde
  *
