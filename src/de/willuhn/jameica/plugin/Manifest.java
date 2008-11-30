@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.19 $
- * $Date: 2008/08/27 14:41:17 $
+ * $Revision: 1.20 $
+ * $Date: 2008/11/30 22:57:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -376,7 +376,8 @@ public class Manifest implements Comparable
       if (name == null || name.length() == 0)
         continue;
 
-      Dependency dep = new Dependency(name,plugin.getAttribute("version",null));
+      boolean required = Boolean.valueOf(plugin.getAttribute("required","true")).booleanValue();
+      Dependency dep = new Dependency(name,plugin.getAttribute("version",null),required);
       found.add(dep);
       toCheck.add(name);
     }
@@ -531,6 +532,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.20  2008/11/30 22:57:08  willuhn
+ * @N Neues optionales Attribute "required", um optionale Abhaengigkeiten abbilden zu koennen
+ *
  * Revision 1.19  2008/08/27 14:41:17  willuhn
  * @N Angabe der Versionsnummer von abhaengigen Plugins oder der Jameica RT
  *

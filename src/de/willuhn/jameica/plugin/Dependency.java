@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Dependency.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/11/11 01:09:20 $
+ * $Revision: 1.3 $
+ * $Date: 2008/11/30 22:57:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,8 +25,9 @@ import de.willuhn.logging.Logger;
  */
 public class Dependency implements Serializable
 {
-  private String name    = null;
-  private String version = null;
+  private String name      = null;
+  private String version   = null;
+  private boolean required = true;
 
   /**
    * ct.
@@ -38,13 +39,29 @@ public class Dependency implements Serializable
    */
   public Dependency(String name, String version)
   {
+    this(name,version,true);
+  }
+
+  /**
+   * ct.
+   * @param name Name des Plugins.
+   * @param version Versionsnummer.
+   * @param required true, wenn die Abhaengigkeit erfuellt sein MUSS (default).
+   * Kann mit einem "+" oder "-" vor der Zahl angegeben werden, wenn mindestens
+   * oder hoechstens die angegebene Version vorliegen muss.
+   * Der Parameter kann <code>null</code> sein, wenn die Versionsnummer egal ist.
+   */
+  public Dependency(String name, String version, boolean required)
+  {
     if (name == null)
       throw new NullPointerException("no plugin name given in dependency");
     
-    this.name    = name;
-    this.version = version;
+    this.name     = name;
+    this.version  = version;
+    this.required = required;
   }
 
+  
   /**
    * @see java.lang.Object#toString()
    */
@@ -62,6 +79,10 @@ public class Dependency implements Serializable
     // Version von Jameica selbst.
     if (this.name.equalsIgnoreCase("jameica"))
       return compareVersion(Application.getManifest().getVersion());
+
+    // true liefern, wenn es keine Pflichtaebhaengigkeit ist
+    if (!this.required)
+      return true;
     
     List all = Application.getPluginLoader().getManifests();
     for (int i=0;i<all.size();++i)
@@ -178,6 +199,9 @@ public class Dependency implements Serializable
 
 /**********************************************************************
  * $Log: Dependency.java,v $
+ * Revision 1.3  2008/11/30 22:57:08  willuhn
+ * @N Neues optionales Attribute "required", um optionale Abhaengigkeiten abbilden zu koennen
+ *
  * Revision 1.2  2008/11/11 01:09:20  willuhn
  * @N getVersion
  *
