@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2007/05/02 13:00:46 $
+ * $Revision: 1.19 $
+ * $Date: 2008/12/02 10:52:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ import de.willuhn.logging.Logger;
 public class DecimalInput extends TextInput
 {
   private DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Application.getConfig().getLocale());
-  private Double value = null;
+  private Number value = null;
   
   /**
    * Erzeugt ein neues Eingabefeld ohne vorgegebenen Wert.
@@ -38,10 +38,7 @@ public class DecimalInput extends TextInput
    */
   public DecimalInput(DecimalFormat format)
   {
-    super(null);
-
-    if (format != null)
-      this.format = format;
+    this((Number)null,null); // Explizites Cast damit aufgrund Autoboxing nicht der Double-Konstruktor aufgerufen wird
   }
 
   /**
@@ -51,12 +48,21 @@ public class DecimalInput extends TextInput
    */
   public DecimalInput(double d, DecimalFormat format)
   {
-  	super(null);
-    if (!Double.isNaN(d))
-      this.value = new Double(d);
+    this(Double.isNaN(d) ? null : new Double(d),format);
+  }
+
+  /**
+   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+   * @param d anzuzeigender Wert.
+   * @param format Formatter fuer die Anzeige.
+   */
+  public DecimalInput(Number n, DecimalFormat format)
+  {
+    super(null);
+    this.value = n;
 
     if (format != null)
-	    this.format = format;
+      this.format = format;
   }
 
   /**
@@ -121,13 +127,27 @@ public class DecimalInput extends TextInput
    */
   public Object getValue()
   {
+    Number n = this.getNumber();
+    return n == null ? null : new Double(n.doubleValue());
+  }
+  
+  /**
+   * Liefert den Wert des Eingabefeldes als Number.
+   * @return Wert des Eingabefeldes.
+   */
+  public Number getNumber()
+  {
+    // Text wurde noch nie angezeigt oder ist bereits disposed. Dann internen Wert zurueckliefern
     if (text == null || text.isDisposed())
       return value;
+
+    // Text ist noch da. Dann parsen und zurueckliefern
     String s = text.getText();
     if (s == null || s.length() == 0)
-			return null;
+      return null;
+    
     try {
-      return new Double(format.parse(s).doubleValue());
+      return format.parse(s);
     }
     catch (ParseException e)
     {
@@ -142,25 +162,28 @@ public class DecimalInput extends TextInput
    */
   public void setValue(Object value)
   {
-    if (value instanceof Double)
-      this.value = (Double) value;
+    if (value instanceof Number)
+    {
+      this.value = (Number) value;
+    }
     else if ((value instanceof String) && this.format != null && value != null)
     {
       try
       {
-        this.value = new Double(this.format.parse((String)value).doubleValue());
+        this.value = this.format.parse((String)value);
       }
       catch (Exception e)
       {
         Logger.error("unable to parse " + value);
       }
     }
-    
+
+    // In den Text uebernehmen
     if (this.text != null && !this.text.isDisposed())
     {
       String s = "";
       if (this.value != null)
-        s = format.format(this.value.doubleValue());
+        s = format.format(this.value);
       this.text.setText(""); // Strange. Mache ich das nicht, meckert oben der Komma-Checker
       this.text.setText(s);
       this.text.redraw();
@@ -170,6 +193,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.19  2008/12/02 10:52:42  willuhn
+ * @N BUGZILLA 662
+ *
  * Revision 1.18  2007/05/02 13:00:46  willuhn
  * @C ParseException nicht loggen
  *
