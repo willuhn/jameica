@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.81 $
- * $Date: 2008/10/01 08:28:40 $
+ * $Revision: 1.82 $
+ * $Date: 2008/12/04 22:03:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -104,7 +104,6 @@ public class TablePart extends AbstractTablePart
 	// Flags
   private boolean enabled               = true;
   private boolean showSummary           = true;
-  private boolean multi                 = false; // Multiple Markierung 
   private boolean check                 = false;
   //////////////////////////////////////////////////////////
 
@@ -164,16 +163,6 @@ public class TablePart extends AbstractTablePart
     this.i18n   = Application.getI18n();
     this.up     = SWTUtil.getImage("up.gif");
     this.down   = SWTUtil.getImage("down.gif");
-  }
-
-  /**
-   * Legt fest, ob mehrere Elemente gleichzeitig markiert werden koennen.
-   * Default: False.
-   * @param multi true, wenn mehrere Elemente gleichzeitig markiert werden koennen.
-   */
-  public void setMulti(boolean multi)
-  {
-    this.multi = multi;
   }
 
   /**
@@ -1029,9 +1018,7 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
-   * Liefert die markierten Objekte.
-   * Die Funktion liefert je nach Markierung <code>Object</code> oder <code>Object[]</code>.
-   * @return das/die markierten Objekte.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getSelection()
    */
   public Object getSelection()
   {
@@ -1336,6 +1323,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.82  2008/12/04 22:03:33  willuhn
+ * @N BUGZILLA 665
+ *
  * Revision 1.81  2008/10/01 08:28:40  willuhn
  * @C code cleanup
  *

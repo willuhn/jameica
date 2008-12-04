@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.8 $
- * $Date: 2008/09/30 21:30:03 $
+ * $Revision: 1.9 $
+ * $Date: 2008/12/04 22:03:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,8 @@ public abstract class AbstractTablePart implements Part
   protected boolean rememberOrder          = false;
   protected Vector columns                 = new Vector();
   protected final static Settings settings = new Settings(AbstractTablePart.class);
+
+  protected boolean multi                  = false; // Multiple Markierung 
 
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
@@ -184,6 +186,13 @@ public abstract class AbstractTablePart implements Part
   public abstract List getItems() throws RemoteException;
 
   /**
+   * Liefert die markierten Objekte.
+   * Die Funktion liefert je nach Markierung <code>Object</code> oder <code>Object[]</code>.
+   * @return das/die markierten Objekte.
+   */
+  public abstract Object getSelection();
+
+  /**
    * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
    * @param remember true, wenn sie sich die Spaltenbreiten merken soll.
    */
@@ -200,11 +209,24 @@ public abstract class AbstractTablePart implements Part
   {
     this.rememberOrder = remember;
   }
+  
+  /**
+   * Legt fest, ob mehrere Elemente gleichzeitig markiert werden koennen.
+   * Default: False.
+   * @param multi true, wenn mehrere Elemente gleichzeitig markiert werden koennen.
+   */
+  public void setMulti(boolean multi)
+  {
+    this.multi = multi;
+  }
 }
 
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.9  2008/12/04 22:03:33  willuhn
+ * @N BUGZILLA 665
+ *
  * Revision 1.8  2008/09/30 21:30:03  willuhn
  * @N TablePart-internes "SortItem" umbenannt in "Item" - dient jetzt nicht mehr nur der Sortierung sondern auch zur Ausgabe/Formatierung des Attribut-Wertes (getFormattedValue())
  * @N Objekt "Column" um ein neues Attribut "sort" erweitert, mit dem festgelegt werden kann, ob die Spalte nach dem tatsaechlichen Wert (SORT_BY_VALUE) des Attributs sortiert werden soll oder nach dem angezeigten Wert (SORT_BY_DISPLAY). SORT_BY_VALUE ist (wie bisher) Default. Damit kann man z.Bsp. eine Spalte mit Integer-Wert auch alphanumerisch sortieren (nach "1" kommt dann "10" und nicht "2")

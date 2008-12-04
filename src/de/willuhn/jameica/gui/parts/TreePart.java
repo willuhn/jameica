@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.24 $
- * $Date: 2008/09/03 11:14:20 $
+ * $Revision: 1.25 $
+ * $Date: 2008/12/04 22:03:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,9 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.parts;
 
+import java.lang.reflect.Array;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -154,7 +156,7 @@ public class TreePart extends AbstractTablePart
 
     /////////////////////////////////////////////////////////////////
     // Tree erzeugen
-    this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER);
+    this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER | (this.multi ? SWT.MULTI : SWT.SINGLE));
     this.tree.setFont(Font.DEFAULT.getSWTFont());
     final GridData gridData = new GridData(GridData.FILL_BOTH);
     this.tree.setLayoutData(gridData);
@@ -356,20 +358,57 @@ public class TreePart extends AbstractTablePart
 	}
 
   /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getSelection()
+   */
+  public Object getSelection()
+  {
+    TreeItem[] items = tree.getSelection();
+
+    if (items == null || items.length == 0)
+      return null;
+      
+    if (items.length == 1)
+      return items[0].getData(); // genau ein Element markiert, also brauchen wir kein Array
+
+    // mehrere Elemente markiert. Also Array
+    Class type = null;
+    ArrayList data = new ArrayList();
+    for (int i=0;i<items.length;++i)
+    {
+      Object elem = items[i].getData();
+      if (elem == null)
+        continue;
+      
+      if (type == null)
+        type = elem.getClass();
+
+      data.add(elem);
+    }
+    
+    // Wir versuchen es erstmal mit einem getypten Array.
+    // Denn damit kann man (object instanceof Foo[]) pruefen.
+    // Falls das fehlschlaegt, machen wir ein Fallback auf
+    // ein generisches Objekt-Array.
+    try
+    {
+      Object[] array = (Object[]) Array.newInstance(type,data.size());
+      return data.toArray(array);
+    }
+    catch (Exception e)
+    {
+      Logger.debug("unable to create type safe array, fallback to generic array");
+      return data.toArray();
+    }
+  }
+
+	/**
    * Oeffnet das Menu. 
    * @param event das ausgeloeste Event.
    */
   private void handleMenu(MouseEvent event)
   {
     if (menu == null) return;
-
-    Widget widget = tree.getItem(new Point(event.x,event.y));
-    Object data = null;
-    
-    if (widget != null && (widget instanceof TreeItem))
-      data = widget.getData();
-
-    menu.setCurrentObject(data);
+    menu.setCurrentObject(getSelection());
   }
 
   /**
@@ -378,14 +417,21 @@ public class TreePart extends AbstractTablePart
 	 */
 	private void handleSelect(MouseEvent event)
 	{
-		Widget widget = tree.getItem(new Point(event.x,event.y));
-		if (!(widget instanceof TreeItem))
-			return;
-		TreeItem item = (TreeItem) widget;
+	  Object o = getSelection();
 
-    Object o = item.getData();
+	  if (o == null)
+	  {
+	    Widget widget = tree.getItem(new Point(event.x,event.y));
+	    if (!(widget instanceof TreeItem))
+	      return;
+	    TreeItem item = (TreeItem) widget;
+
+	    o = item.getData();
+	  }
+    
     if (o == null)
       return;
+
     try
     {
 			this.action.handleAction(o);
@@ -529,6 +575,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.25  2008/12/04 22:03:33  willuhn
+ * @N BUGZILLA 665
+ *
  * Revision 1.24  2008/09/03 11:14:20  willuhn
  * @N Suchfeld anzeigen
  * @N Such-Optionen
