@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.20 $
- * $Date: 2008/12/07 22:14:05 $
+ * $Revision: 1.21 $
+ * $Date: 2008/12/07 22:16:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 
@@ -62,7 +63,11 @@ public class DecimalInput extends TextInput
     this.value = n;
 
     if (format != null)
+    {
       this.format = format;
+      if (n != null && (n instanceof BigDecimal))
+        this.format.setParseBigDecimal(true);
+    }
   }
 
   /**
@@ -193,6 +198,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.21  2008/12/07 22:16:00  willuhn
+ * @B BUGZILLA 662 https://www.willuhn.de/bugzilla/show_bug.cgi?id=662#c4
+ *
  * Revision 1.20  2008/12/07 22:14:05  willuhn
  * @B BUGZILLA 662: CT-Parameter wurde ignoriert
  *
