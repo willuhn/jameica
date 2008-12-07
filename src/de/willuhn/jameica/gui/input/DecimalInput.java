@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.19 $
- * $Date: 2008/12/02 10:52:42 $
+ * $Revision: 1.20 $
+ * $Date: 2008/12/07 22:14:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,7 @@ public class DecimalInput extends TextInput
    */
   public DecimalInput(DecimalFormat format)
   {
-    this((Number)null,null); // Explizites Cast damit aufgrund Autoboxing nicht der Double-Konstruktor aufgerufen wird
+    this((Number)null,format); // Explizites Cast damit aufgrund Autoboxing nicht der Double-Konstruktor aufgerufen wird
   }
 
   /**
@@ -193,6 +193,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.20  2008/12/07 22:14:05  willuhn
+ * @B BUGZILLA 662: CT-Parameter wurde ignoriert
+ *
  * Revision 1.19  2008/12/02 10:52:42  willuhn
  * @N BUGZILLA 662
  *
