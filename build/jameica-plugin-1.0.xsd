@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
-  $Revision: 1.7 $
-  $Date: 2008/12/01 00:35:09 $
+  $Revision: 1.8 $
+  $Date: 2008/12/07 22:10:24 $
   $Author: willuhn $
  
   Copyright (c) by willuhn software & services
@@ -24,8 +24,10 @@
 
 -->
 
-<xsd:schema xml:lang="DE" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://www.willuhn.de/schema/jameica-plugin">
+<xsd:schema xml:lang="DE" elementFormDefault="qualified"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://www.willuhn.de/schema/jameica-plugin"
+  xmlns:tns="http://www.willuhn.de/schema/jameica-plugin">
 
   <xsd:annotation>
      <xsd:documentation>
