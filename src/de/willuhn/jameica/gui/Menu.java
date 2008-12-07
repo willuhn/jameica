@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.39 $
- * $Date: 2008/11/03 23:07:47 $
+ * $Revision: 1.40 $
+ * $Date: 2008/12/07 22:18:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -232,7 +232,7 @@ public class Menu
   public void update(MenuItem item) throws RemoteException
   {
     org.eclipse.swt.widgets.MenuItem mi = (org.eclipse.swt.widgets.MenuItem) itemLookup.get(item);
-    if (mi != null)
+    if (mi != null && !mi.isDisposed())
       mi.setEnabled(item.isEnabled());
   }
 
@@ -240,6 +240,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.40  2008/12/07 22:18:03  willuhn
+ * @B BUGZILLA 667
+ *
  * Revision 1.39  2008/11/03 23:07:47  willuhn
  * @C BUGZILLA 647
  *
