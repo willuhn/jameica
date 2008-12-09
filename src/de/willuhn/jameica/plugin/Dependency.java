@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Dependency.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/11/30 22:57:08 $
+ * $Revision: 1.4 $
+ * $Date: 2008/12/09 16:43:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -81,7 +81,7 @@ public class Dependency implements Serializable
       return compareVersion(Application.getManifest().getVersion());
 
     // true liefern, wenn es keine Pflichtaebhaengigkeit ist
-    if (!this.required)
+    if (!this.isRequired())
       return true;
     
     List all = Application.getPluginLoader().getManifests();
@@ -153,6 +153,16 @@ public class Dependency implements Serializable
   {
     return this.version;
   }
+  
+  /**
+   * Liefert true, wenn es sich um eine obligatorische Abhaengigkeit handelt.
+   * Default: true
+   * @return true, wenn es sich um eine obligatorische Abhaengigkeit handelt.
+   */
+  public boolean isRequired()
+  {
+    return this.required;
+  }
 
   /**
    * Generiert von Eclipse.
@@ -199,6 +209,9 @@ public class Dependency implements Serializable
 
 /**********************************************************************
  * $Log: Dependency.java,v $
+ * Revision 1.4  2008/12/09 16:43:32  willuhn
+ * @N Getter fuer "required"
+ *
  * Revision 1.3  2008/11/30 22:57:08  willuhn
  * @N Neues optionales Attribute "required", um optionale Abhaengigkeiten abbilden zu koennen
  *
