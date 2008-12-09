@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.35 $
- * $Date: 2008/09/11 18:04:42 $
+ * $Revision: 1.36 $
+ * $Date: 2008/12/09 16:45:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -223,7 +223,7 @@ public final class PluginLoader
     {
       for (int i = 0; i < deps.length; ++i)
       {
-        Logger.info("  resolving dependency " + deps[i]);
+        Logger.info("  resolving " + (deps[i].isRequired() ? "required" : "optional") + " dependency " + deps[i]);
         if (!deps[i].check())
           throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist",new String[] { manifest.getName(), deps[i].toString() }));
       }
@@ -631,6 +631,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.36  2008/12/09 16:45:30  willuhn
+ * @N Im Log ausgeben, wenn eine Abhaengigkeit optional ist
+ *
  * Revision 1.35  2008/09/11 18:04:42  willuhn
  * @D reformat
  *
