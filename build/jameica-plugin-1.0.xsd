@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
-  $Revision: 1.10 $
-  $Date: 2008/12/09 00:32:43 $
+  $Revision: 1.11 $
+  $Date: 2008/12/09 00:53:33 $
   $Author: willuhn $
  
   Copyright (c) by willuhn software & services
@@ -278,11 +278,34 @@
 
   <!-- Element "extensions" //-->
   <xsd:complexType name="extensionsType">
+    <xsd:annotation>
+      <xsd:documentation>
+        Liste von Extensions für andere Plugins. Mit Hilfe von
+        Extensions kann ein Plugin ein anderes um Funktionen
+        erweitern. Hierzu muss die Komponente, welche erweitert
+        werden soll, das Interface de.willuhn.jameica.gui.extension.Extendable
+        implementieren. Die Extension selbst muss 
+        de.willuhn.jameica.gui.extension.Extension implementieren.
+        Für weitere Details siehe 
+        http://www.willuhn.de/projects/jameica/doc/javadoc/de/willuhn/jameica/gui/extension/package-summary.html
+      </xsd:documentation>
+    </xsd:annotation>
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="extension" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>Eine einzelne Extension</xsd:documentation>
+        </xsd:annotation>
         <xsd:complexType>
-          <xsd:attribute name="class"   type="xsd:string"  use="required" />
-          <xsd:attribute name="extends" type="xsd:string"  use="required" />
+          <xsd:attribute name="class" type="xsd:string" use="required">
+            <xsd:annotation>
+              <xsd:documentation>Name der Klasse, die Extension implementiert</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+          <xsd:attribute name="extends" type="xsd:string" use="required">
+            <xsd:annotation>
+              <xsd:documentation>Komma-separierte Liste von IDs der Extendables</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
         </xsd:complexType>
       </xsd:element>
     </xsd:sequence>
@@ -291,33 +314,148 @@
 
   <!-- Element "item" in "menu"-->
   <xsd:complexType name="menuItemType">
+    <xsd:annotation>
+      <xsd:documentation>Ein einzelnes Menu-Element</xsd:documentation>
+    </xsd:annotation>
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:documentation>Liste weiterer Kind-Elemente</xsd:documentation>
+      </xsd:annotation>
       <!-- Rekursive Kind-Elemente -->
       <xsd:element name="item" type="tns:menuItemType" />
     </xsd:sequence>
-    <xsd:attribute name="name"     type="xsd:string"  use="required" />
-    <xsd:attribute name="id"       type="xsd:string"  use="optional" />
-    <xsd:attribute name="action"   type="xsd:string"  use="optional" />
-    <xsd:attribute name="enabled"  type="xsd:boolean" use="optional" />
-    <xsd:attribute name="shortcut" type="xsd:string"  use="optional" />
+    <xsd:attribute name="name" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Bezeichnung des Menu-Eintrages.
+          Für Menu-Separatoren kann ein Bindestrich (-) verwendet werden.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="id" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Eindeutige ID innerhalb von Jameica. Für diese ID wird
+          automatisch ein Extendable erzeugt, damit der Menu-Eintrag
+          bei Bedarf von anderen Plugins erweitert oder aktiviert/deaktiviert
+          werden kann.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="action" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Name der Klasse, die beim Klick auf den Menu-Eintrag
+          ausgeführt werden soll. Die Klasse muss
+          de.willuhn.jameica.gui.Action implementieren.
+          Die Aktion wird nur ausgeführt, wenn das Menu-Element
+          keine weiteren Kind-Elemente besitzt.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="enabled"  type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Legt fest, ob der Menu-Eintrag aktiviert sein soll.
+          Default: true
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="shortcut" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Legt eine optionale Tastenkombination für den Menu-Eintrag
+          fest. Z.Bsp. CTRL+B oder ALT+Z
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
   </xsd:complexType>
   
   <!-- Element "item" in "navigation"-->
   <xsd:complexType name="naviItemType">
+    <xsd:annotation>
+      <xsd:documentation>Ein einzelnes Navigations-Element</xsd:documentation>
+    </xsd:annotation>
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <!-- Rekursive Kind-Elemente -->
+      <xsd:annotation>
+        <xsd:documentation>Liste weiterer Kind-Elemente</xsd:documentation>
+      </xsd:annotation>
       <xsd:element name="item" type="tns:naviItemType" />
     </xsd:sequence>
-    <xsd:attribute name="name"     type="xsd:string"  use="required" />
-    <xsd:attribute name="id"       type="xsd:string"  use="optional" />
-    <xsd:attribute name="action"   type="xsd:string"  use="optional" />
-    <xsd:attribute name="enabled"  type="xsd:boolean" use="optional" />
-    <xsd:attribute name="shortcut" type="xsd:string"  use="optional" />
+    <xsd:attribute name="name" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Bezeichnung des Eintrages im Navigationsbaum.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="id" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Eindeutige ID innerhalb von Jameica. Für diese ID wird
+          automatisch ein Extendable erzeugt, damit das Navigations-Element
+          bei Bedarf von anderen Plugins erweitert oder aktiviert/deaktiviert
+          werden kann.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="action" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Name der Klasse, die beim Klick auf das Navigations-Element
+          ausgeführt werden soll. Die Klasse muss
+          de.willuhn.jameica.gui.Action implementieren.
+          Die Aktion wird nur ausgeführt, wenn das Navigations-Element
+          keine weiteren Kind-Elemente besitzt.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="enabled" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Legt fest, ob das Navigations-Element aktiviert sein soll.
+          Default: true
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="shortcut" type="xsd:string"  use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Legt eine optionale Tastenkombination für den Menu-Eintrag
+          fest. Z.Bsp. CTRL+B oder ALT+Z
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
 
     <!-- Zusaetzliche Attribute in der Navigation -->
-    <xsd:attribute name="icon-open"  type="xsd:string"  use="optional" />
-    <xsd:attribute name="icon-close" type="xsd:string"  use="optional" />
-    <xsd:attribute name="expanded"   type="xsd:boolean" use="optional" />
+    <xsd:attribute name="icon-open"  type="xsd:string"  use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Pfad und Dateiname zu einer Icon-Datei, die angezeigt werden
+          soll, wenn das Navigations-Element aufgeklappt wird. Die Datei
+          muss sich in einem Verzeichnis mit dem Namen img innerhalb
+          des Classpath befinden.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="icon-close" type="xsd:string"  use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Pfad und Dateiname zu einer Icon-Datei, die angezeigt werden
+          soll, wenn das Navigations-Element zugeklappt wird. Die Datei
+          muss sich in einem Verzeichnis mit dem Namen img innerhalb
+          des Classpath befinden.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="expanded" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Legt fest, ob das Navigations-Element beim Systemstart
+          aufgeklappt sein soll.
+          Default: true
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
   </xsd:complexType>
 
 </xsd:schema>
