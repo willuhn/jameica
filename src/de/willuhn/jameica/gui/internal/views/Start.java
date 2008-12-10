@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/12/18 17:10:14 $
+ * $Revision: 1.14 $
+ * $Date: 2008/12/10 23:54:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,14 @@ public class Start extends AbstractView implements Extendable
     ExpandPart expand = new ExpandPart();
     for (int i=0;i<boxes.length;++i)
     {
-      expand.add((Box) boxes[i]);
+      try
+      {
+        expand.add(boxes[i]);
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to add box " + boxes[i].getClass().getName() + ", skipping",e);
+      }
     }
     expand.paint(getParent());
     
@@ -86,6 +93,9 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.14  2008/12/10 23:54:41  willuhn
+ * @B fehlerhafte Boxen ueberspringen. Sonst wird die komplette Startseite nicht angezeigt
+ *
  * Revision 1.13  2007/12/18 17:10:14  willuhn
  * @N Neues ExpandPart
  * @N Boxen auf der Startseite koennen jetzt zusammengeklappt werden
