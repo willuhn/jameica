@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Dependency.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/12/09 16:43:32 $
+ * $Revision: 1.5 $
+ * $Date: 2008/12/11 22:42:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -119,19 +119,19 @@ public class Dependency implements Serializable
       // Versionsnummer ist mit einem Minus angegeben.
       // also darf hoechstens die angegebene Versionsnummer vorhanden sein
       if (this.version.endsWith("-"))
-        return current < required;
+        return Double.compare(current,required) < 0;
       
       // Versionsnummer mit Plus, also muss die vorhandene Version
       // gleicher ODER groesser sein
       if (this.version.endsWith("+"))
-        return current >= required;
+        return (Double.compare(current,required) >= 0);
 
       // Kein Vorzeichen, dann muss die Versionsnummer exakt passen
-      return current == required;
+      return Double.compare(current,required) == 0;
     }
     catch (Exception e)
     {
-      Logger.error("invalid version number: " + this.version + " - " + e.getMessage());
+      Logger.error("invalid version number: " + this.version + " - " + e.getMessage(),e);
     }
     return false;
   }
@@ -209,6 +209,9 @@ public class Dependency implements Serializable
 
 /**********************************************************************
  * $Log: Dependency.java,v $
+ * Revision 1.5  2008/12/11 22:42:13  willuhn
+ * @C doubles mit Double.compare vergleichen
+ *
  * Revision 1.4  2008/12/09 16:43:32  willuhn
  * @N Getter fuer "required"
  *

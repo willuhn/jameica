@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.38 $
- * $Date: 2008/12/11 00:01:54 $
+ * $Revision: 1.39 $
+ * $Date: 2008/12/11 22:42:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -314,7 +314,7 @@ public final class PluginLoader
       // Version
       double newVersion = manifest.getVersion();
 
-      if (oldVersion < newVersion)
+      if (Double.compare(oldVersion,newVersion) < 0)
       {
         Logger.info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
         // hui, sogar eine neuere Version. Also starten wir dessen Update
@@ -632,6 +632,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.39  2008/12/11 22:42:13  willuhn
+ * @C doubles mit Double.compare vergleichen
+ *
  * Revision 1.38  2008/12/11 00:01:54  willuhn
  * *** empty log message ***
  *
