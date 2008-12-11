@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/SystemMessages.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/01/07 23:31:44 $
+ * $Revision: 1.7 $
+ * $Date: 2008/12/11 00:00:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,6 +60,15 @@ public class SystemMessages extends AbstractBox
     // Das darf der User nicht.
   }
 
+  
+  /**
+   * @see de.willuhn.jameica.gui.boxes.AbstractBox#getHeight()
+   */
+  public int getHeight()
+  {
+    return 100;
+  }
+
   /**
    * @see de.willuhn.jameica.gui.boxes.Box#getDefaultEnabled()
    */
@@ -111,6 +120,9 @@ public class SystemMessages extends AbstractBox
 
 /*********************************************************************
  * $Log: SystemMessages.java,v $
+ * Revision 1.7  2008/12/11 00:00:37  willuhn
+ * @C Box wird sonst in voller verfuegbarer Hoehe angezeigt.
+ *
  * Revision 1.6  2008/01/07 23:31:44  willuhn
  * *** empty log message ***
  *
