@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SysinfoService.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/04/20 23:30:58 $
+ * $Revision: 1.3 $
+ * $Date: 2008/12/11 21:10:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -78,14 +78,19 @@ public class SysinfoService implements Bootable
     }
     else
     {
-      Logger.info("os.arch       : " + System.getProperty("os.arch"));
-      Logger.info("os.name       : " + System.getProperty("os.name"));
-      Logger.info("os.version    : " + System.getProperty("os.version"));
-      Logger.info("java.version  : " + System.getProperty("java.version"));
-      Logger.info("java.vendor   : " + System.getProperty("java.vendor"));
-      Logger.info("user.name     : " + System.getProperty("user.name"));
-      Logger.info("user.home     : " + System.getProperty("user.home"));
-      Logger.info("file.encoding : " + System.getProperty("file.encoding"));
+      Logger.info("os.arch          : " + System.getProperty("os.arch"));
+      Logger.info("os.name          : " + System.getProperty("os.name"));
+      Logger.info("os.version       : " + System.getProperty("os.version"));
+
+      Logger.info("java.version     : " + System.getProperty("java.version"));
+      Logger.info("java.vendor      : " + System.getProperty("java.vendor"));
+      Logger.info("java.runtime.name: " + System.getProperty("java.runtime.name"));
+      Logger.info("java.vm.name     : " + System.getProperty("java.vm.name"));
+            
+      Logger.info("user.name        : " + System.getProperty("user.name"));
+      Logger.info("user.home        : " + System.getProperty("user.home"));
+
+      Logger.info("file.encoding    : " + System.getProperty("file.encoding"));
     }
   }
 
@@ -101,6 +106,9 @@ public class SysinfoService implements Bootable
 
 /**********************************************************************
  * $Log: SysinfoService.java,v $
+ * Revision 1.3  2008/12/11 21:10:47  willuhn
+ * @N java.runtime.name und java.vm.name ausgeben, um OpenJDK zu detektieren
+ *
  * Revision 1.2  2008/04/20 23:30:58  willuhn
  * @N MACOS Kommandozeilen-Parameter ausgeben
  *
