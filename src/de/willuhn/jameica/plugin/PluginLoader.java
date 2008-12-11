@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.37 $
- * $Date: 2008/12/10 23:51:42 $
+ * $Revision: 1.38 $
+ * $Date: 2008/12/11 00:01:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -184,12 +184,12 @@ public final class PluginLoader
       }
       catch (ApplicationException ae)
       {
-        Logger.error("unable to init plugin  " + name, ae); // Muessen wir loggen, weil es sein kann, dass die Welcome-Message nicht angezeigt werden kann.
+        Logger.error("unable to init plugin " + name, ae); // Muessen wir loggen, weil es sein kann, dass die Welcome-Message nicht angezeigt werden kann.
         Application.addWelcomeMessage(ae.getMessage());
       }
       catch (Throwable t)
       {
-        Logger.error("unable to init plugin  " + name, t);
+        Logger.error("unable to init plugin " + name, t);
         Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",new String[] { name, t.getMessage() }));
       }
     }
@@ -632,6 +632,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.38  2008/12/11 00:01:54  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.37  2008/12/10 23:51:42  willuhn
  * @B loggen der ApplicationException von AbstractPlugin#init
  *
