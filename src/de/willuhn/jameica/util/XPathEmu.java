@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/XPathEmu.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/05/07 23:00:44 $
+ * $Revision: 1.2 $
+ * $Date: 2008/12/16 15:18:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,12 +55,17 @@ public class XPathEmu
     if (this.node == null || path == null)
       return null;
 
+    IXMLElement element = null;
+    
     ////////////////////////////////////////////////////////////////
     // Attribut
     String attribute = null;
     int iAttr = path.indexOf("@");
     if (iAttr != -1)
     {
+      if (path.startsWith("@"))
+        element = this.node;
+
       attribute = path.substring(iAttr+1);
       path = path.substring(0,iAttr);
     }
@@ -69,7 +74,9 @@ public class XPathEmu
 
     ////////////////////////////////////////////////////////////////
     // Element ermitteln
-    IXMLElement element = getElement(path);
+    if (element == null)
+      element = getElement(path);
+
     if (element == null)
       return null;
     ////////////////////////////////////////////////////////////////
@@ -130,6 +137,9 @@ public class XPathEmu
 
 /*********************************************************************
  * $Log: XPathEmu.java,v $
+ * Revision 1.2  2008/12/16 15:18:49  willuhn
+ * @N Attribute auch fuer das Root-Element selbst abfragbar
+ *
  * Revision 1.1  2007/05/07 23:00:44  willuhn
  * @N Helfer-Klasse zum bequemeren Parsen von XML-Strukturen mit nanoXML
  *
