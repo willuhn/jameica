@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.44 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.45 $
+ * $Date: 2008/12/16 12:45:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -168,7 +168,17 @@ public class SSLFactory
 		generator.setSubjectDN(user);
 		generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre sollten reichen ;)
     generator.setNotBefore(new Date());
-    generator.addExtension(X509Extensions.KeyUsage, false, new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyAgreement | KeyUsage.keyEncipherment | KeyUsage.nonRepudiation));
+    
+    generator.addExtension(X509Extensions.KeyUsage, true,
+        new KeyUsage(KeyUsage.digitalSignature |
+                     KeyUsage.keyAgreement | 
+                     KeyUsage.keyEncipherment | 
+                     KeyUsage.nonRepudiation |
+                     KeyUsage.dataEncipherment |
+                     KeyUsage.keyCertSign |
+                     KeyUsage.cRLSign
+                    )
+    );
     
     generator.setPublicKey(this.publicKey);
     generator.setSignatureAlgorithm("SHA1withRSA");
@@ -715,6 +725,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.45  2008/12/16 12:45:26  willuhn
+ * @N Erweiterte Key-Usage
+ *
  * Revision 1.44  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen
