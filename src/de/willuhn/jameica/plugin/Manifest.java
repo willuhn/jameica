@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.20 $
- * $Date: 2008/11/30 22:57:08 $
+ * $Revision: 1.21 $
+ * $Date: 2008/12/16 23:57:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.plugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -65,10 +66,7 @@ public class Manifest implements Comparable
       throw new IOException("manifest " + manifest.getAbsolutePath() + " not readable");
 
     this.manifest = manifest;
-
-		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
-		parser.setReader(new StdXMLReader(new FileInputStream(manifest)));
-		root = (IXMLElement) parser.parse();
+    read(new FileInputStream(manifest));
 
     try
     {
@@ -88,11 +86,38 @@ public class Manifest implements Comparable
   }
 
   /**
+   * ct.
+   * @param manifest InputStream mit dem Manifest.
+   * @throws Exception
+   */
+  public Manifest(InputStream manifest) throws Exception
+  {
+    if (manifest == null)
+      throw new IOException("no manifest (plugin.xml) given");
+    read(manifest);
+  }
+  
+  /**
+   * Liest das Manifest ein.
+   * @param is InputStream mit dem Manifest.
+   * @throws Exception
+   */
+  private void read(InputStream is) throws Exception
+  {
+    IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+    parser.setReader(new StdXMLReader(is));
+    root = (IXMLElement) parser.parse();
+  }
+
+  /**
    * Liefert das Verzeichnis, in dem sich das Plugin befindet.
    * @return das Installations-Verzeichnis.
    */
   public String getPluginDir()
   {
+    if (this.manifest == null)
+      return null;
+    
     String s = this.manifest.getParent();
     if (s != null)
       return s;
@@ -532,6 +557,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.21  2008/12/16 23:57:59  willuhn
+ * @N Manifest-Objekt jetzt auch via InputStream erzeugbar
+ *
  * Revision 1.20  2008/11/30 22:57:08  willuhn
  * @N Neues optionales Attribute "required", um optionale Abhaengigkeiten abbilden zu koennen
  *
