@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.81 $
- * $Date: 2008/05/23 09:24:52 $
+ * $Revision: 1.82 $
+ * $Date: 2008/12/17 22:28:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -266,17 +266,8 @@ public final class Application {
    */
   public static PluginLoader getPluginLoader()
 	{
-    // TODO: try/catch-Block ist Migrationshilfe fuer de_willuhn_util
-    try
-    {
-      PluginService ps = (PluginService) getBootLoader().getBootable(PluginService.class);
-      return ps.getPluginLoader();
-    }
-    catch (Exception e)
-    {
-      app.startupError(e);
-      return null;
-    }
+    PluginService ps = (PluginService) getBootLoader().getBootable(PluginService.class);
+    return ps.getPluginLoader();
 	}
 
   /**
@@ -513,6 +504,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.82  2008/12/17 22:28:38  willuhn
+ * @R t o d o  tag entfernt
+ *
  * Revision 1.81  2008/05/23 09:24:52  willuhn
  * @N fatale Stacktraces immer auch auf der Console direkt ausgeben
  *

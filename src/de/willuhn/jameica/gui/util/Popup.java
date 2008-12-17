@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Popup.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/07/18 13:01:08 $
+ * $Revision: 1.2 $
+ * $Date: 2008/12/17 22:26:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,6 @@ import de.willuhn.logging.Logger;
 
 /**
  * Kleines Tooltipp-Popup.
- * TODO: Popup still under construction ;)
  */
 public class Popup
 {
@@ -182,6 +181,9 @@ public class Popup
 
 /*********************************************************************
  * $Log: Popup.java,v $
+ * Revision 1.2  2008/12/17 22:26:49  willuhn
+ * @R t o d o  tag entfernt
+ *
  * Revision 1.1  2008/07/18 13:01:08  willuhn
  * @N Popup
  *
