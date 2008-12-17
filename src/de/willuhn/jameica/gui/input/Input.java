@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Input.java,v $
- * $Revision: 1.8 $
- * $Date: 2007/04/26 11:56:28 $
+ * $Revision: 1.9 $
+ * $Date: 2008/12/17 22:45:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,6 @@ public interface Input extends Part
   public void setValue(Object value);
   
   /**
-   * TODO: Koennte man kuenftig auch noch zusaetzlich via Listener machen
    * Prueft, ob sich der Wert von <code>getValue()</code> seit dem
    * letzten Aufruf von <code>hasChanged</code> geaendert hat.
    * @return true, wenn sich der Wert geaendert hat, sonstfalse.
@@ -143,6 +142,9 @@ public interface Input extends Part
 
 /**********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.9  2008/12/17 22:45:03  willuhn
+ * @R t o d o  tag entfernt
+ *
  * Revision 1.8  2007/04/26 11:56:28  willuhn
  * *** empty log message ***
  *

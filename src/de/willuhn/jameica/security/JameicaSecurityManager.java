@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/01/16 10:55:06 $
+ * $Revision: 1.6 $
+ * $Date: 2008/12/17 22:44:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -102,7 +102,6 @@ public class JameicaSecurityManager extends SecurityManager
    */
   public void checkPermission(Permission perm, Object context)
   {
-    // TODO: Das koennte man noch erweiterbar machen.
     // Zur Zeit laesst der Security-Manager alles bis auf Schreib-Zugriff
     // im Jameica-Programmverzeichnis zu. Also identisch mit dem
     // Default-Security-Manager fuer lokalen Code - nur halt mit der genannten
@@ -117,6 +116,9 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.6  2008/12/17 22:44:35  willuhn
+ * @R t o d o  tag entfernt
+ *
  * Revision 1.5  2008/01/16 10:55:06  willuhn
  * @C SecurityManager zwecks MBean-Registrierung angepasst
  *

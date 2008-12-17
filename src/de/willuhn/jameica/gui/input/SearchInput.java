@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/02/14 12:06:36 $
+ * $Revision: 1.6 $
+ * $Date: 2008/12/17 22:45:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -259,7 +259,6 @@ public class SearchInput extends AbstractInput
         
         if (inSearch)
         {
-          // TODO Das Updateverhalten ist noch nicht optimal.
           inSearch = false;
           return;
         }
@@ -405,6 +404,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.6  2008/12/17 22:45:22  willuhn
+ * @R t o d o  tag entfernt
+ *
  * Revision 1.5  2008/02/14 12:06:36  willuhn
  * @N Korrektes Focus-Handling
  *

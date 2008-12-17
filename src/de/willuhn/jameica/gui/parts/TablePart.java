@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.82 $
- * $Date: 2008/12/04 22:03:33 $
+ * $Revision: 1.83 $
+ * $Date: 2008/12/17 22:45:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -233,7 +233,6 @@ public class TablePart extends AbstractTablePart
     if (this.table == null || this.table.isDisposed())
     {
       // Wir geben eine Kopie der Liste raus, damit sie niemand manipuliert
-      // TODO: Man koennte ggf. checken, ob die Liste Cloneable implementiert und die Kopie dann damit erstellen
       l.addAll(this.temp);
       return l;
     }
@@ -1323,6 +1322,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.83  2008/12/17 22:45:39  willuhn
+ * @R t o d o  tag entfernt
+ *
  * Revision 1.82  2008/12/04 22:03:33  willuhn
  * @N BUGZILLA 665
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/formatter/TreeFormatter.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/03/21 18:42:16 $
+ * $Revision: 1.2 $
+ * $Date: 2008/12/17 22:44:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,9 +16,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Klasse, welche fuer die Formatierung von Trees verwendet werden kann.
- * TODO: Waere schoen, wenn man das mit TableFormatter zusammenlegen
- * koennte. Nur leider haben swt.TableItem und swt.TreeItem keine
- * gemeinsame Basisklasse mit Format-Funktionen.
  */
 public interface TreeFormatter {
 	
@@ -32,6 +29,9 @@ public interface TreeFormatter {
 
 /**********************************************************************
  * $Log: TreeFormatter.java,v $
+ * Revision 1.2  2008/12/17 22:44:18  willuhn
+ * @R t o d o  tag entfernt
+ *
  * Revision 1.1  2007/03/21 18:42:16  willuhn
  * @N Formatter fuer TreePart
  * @C mehr gemeinsamer Code in AbstractTablePart
