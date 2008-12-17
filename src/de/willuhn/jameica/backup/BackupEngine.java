@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.10 $
- * $Date: 2008/07/21 11:15:06 $
+ * $Revision: 1.11 $
+ * $Date: 2008/12/17 01:05:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,6 +29,7 @@ import java.util.Date;
 import java.util.zip.ZipFile;
 
 import de.willuhn.io.FileFinder;
+import de.willuhn.io.FileUtil;
 import de.willuhn.io.ZipCreator;
 import de.willuhn.io.ZipExtractor;
 import de.willuhn.jameica.system.Application;
@@ -218,7 +218,7 @@ public class BackupEngine
       for (int i=0;i<content.length;++i)
       {
         Logger.info("purge " + content[i]);
-        deleteRecursive(content[i]);
+        FileUtil.deleteRecursive(content[i]);
       }
 
       // Und sichern das Backup zurueck
@@ -351,48 +351,15 @@ public class BackupEngine
       }
     }
   }
-  
-  /**
-   * Loescht ein Verzeichnis rekursiv.
-   * @param dir das rekursiv zu loeschende Verzeichnis.
-   * @throws IOException wenn beim Loeschen ein Fehler auftrat.
-   */
-  private static boolean deleteRecursive(File dir) throws IOException
-  {
-    File candir = dir.getCanonicalFile();
-
-    // Wen sich der kanonische Pfad vom absoluten unterscheidet,
-    // ist es ein Symlink. Es waere viel zu gefaehrlich, dem zu folgen
-    if (!candir.equals(dir.getAbsoluteFile()))
-      return false;
-
-    // Rekursion
-    File[] files = candir.listFiles();
-    if (files != null)
-    {
-      for (int i=0;i<files.length;++i)
-      {
-        // Wenn es sich so loeschen laesst, war es eine Datei,
-        // ein leeres Verzeichnis oder ein Symlink. Im letzteren
-        // Fall haben wir nur den Symlink geloescht, sind ihm
-        // jedoch nicht gefolgt
-        boolean deleted = files[i].delete();
-        if (!deleted)
-        {
-          if (files[i].isDirectory())
-            deleteRecursive(files[i]); // Scheint ein Verzeichnis zu sein?
-        }
-      }
-    }
-
-    // So, fertig. Verzeichnis selbst kann geloescht werden
-    return dir.delete();  
-  }
 }
 
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.11  2008/12/17 01:05:42  willuhn
+ * @N Deployment von heruntergeladenen in "DeployService" verschoben. Dann geschieht das Entpacken erst beim naechsten Start. Da zu dem Zeitpunkt der Classloader die Dateien noch nicht geladen hat, kann eine ggf. vorhandene vorherige Installation geloescht werden
+ * @C FileUtil.deleteRecursive
+ *
  * Revision 1.10  2008/07/21 11:15:06  willuhn
  * @B Beim Rotieren der Backups blieb eins zuwenig uebrig
  *

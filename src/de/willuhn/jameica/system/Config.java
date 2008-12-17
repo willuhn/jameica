@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.42 $
- * $Date: 2008/05/19 10:04:45 $
+ * $Revision: 1.43 $
+ * $Date: 2008/12/17 01:05:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,6 +44,7 @@ public final class Config
 
   private File systemPluginDir = null;
   private File userPluginDir   = null;
+  private File userDeployDir   = null;
   private File[] pluginDirs    = null;
 
   /**
@@ -419,6 +420,35 @@ public final class Config
   }
 
   /**
+   * Liefert das User-Deploy-Verzeichnis.
+   * Das ist jenes, welches sich im Work-Verzeichnis des Users befindet.
+   * In der Regel ist das ~/.jameica/deploy.
+   * @return das user-Deploy-Verzeichnis.
+   */
+  public File getUserDeployDir()
+  {
+    if (this.userDeployDir == null)
+    {
+      // Wir erstellen noch ein userspezifisches Deploy-Verzeichnis
+      this.userDeployDir = new File(this.workDir,"deploy");
+      if (!userDeployDir.exists())
+      {
+        Logger.info("creating " + userDeployDir.getAbsolutePath());
+        userDeployDir.mkdirs();
+      }
+      try
+      {
+        this.userDeployDir = this.userDeployDir.getCanonicalFile();
+      }
+      catch (IOException e)
+      {
+        Logger.warn("unable to convert " + this.userDeployDir.getAbsolutePath() + " into canonical path");
+      }
+    }
+    return this.userDeployDir;
+  }
+  
+  /**
    * Liefert Pfad und Dateiname des Log-Files.
    * @return Logfile.
    */
@@ -629,6 +659,10 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.43  2008/12/17 01:05:41  willuhn
+ * @N Deployment von heruntergeladenen in "DeployService" verschoben. Dann geschieht das Entpacken erst beim naechsten Start. Da zu dem Zeitpunkt der Classloader die Dateien noch nicht geladen hat, kann eine ggf. vorhandene vorherige Installation geloescht werden
+ * @C FileUtil.deleteRecursive
+ *
  * Revision 1.42  2008/05/19 10:04:45  willuhn
  * @B ungueltige Resource-Bundle tolerieren
  *

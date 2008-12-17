@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ClassService.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/08/31 23:07:10 $
+ * $Revision: 1.4 $
+ * $Date: 2008/12/17 01:05:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ public class ClassService implements Bootable
    */
   public Class[] depends()
   {
-    return new Class[]{LogService.class};
+    return new Class[]{LogService.class, DeployService.class};
   }
 
   /**
@@ -278,6 +278,10 @@ public class ClassService implements Bootable
 
 /**********************************************************************
  * $Log: ClassService.java,v $
+ * Revision 1.4  2008/12/17 01:05:41  willuhn
+ * @N Deployment von heruntergeladenen in "DeployService" verschoben. Dann geschieht das Entpacken erst beim naechsten Start. Da zu dem Zeitpunkt der Classloader die Dateien noch nicht geladen hat, kann eine ggf. vorhandene vorherige Installation geloescht werden
+ * @C FileUtil.deleteRecursive
+ *
  * Revision 1.3  2008/08/31 23:07:10  willuhn
  * @N Erster GUI-Code fuer die Suche
  *
