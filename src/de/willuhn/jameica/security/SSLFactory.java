@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.45 $
- * $Date: 2008/12/16 12:45:26 $
+ * $Revision: 1.46 $
+ * $Date: 2008/12/17 11:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,6 +69,7 @@ public class SSLFactory
 
   private final static String SYSTEM_ALIAS = "jameica";
 
+  private CertificateFactory factory    = null;
 	private KeyStore keystore							= null;
 	private X509Certificate certificate 	= null;
 	private PrivateKey privateKey 				= null;
@@ -560,13 +561,25 @@ public class SSLFactory
   {
     try
     {
-      CertificateFactory cf = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
+      CertificateFactory cf = getCertificateFactory();
       return (X509Certificate)cf.generateCertificate(is);
     }
     finally
     {
       is.close();
     }
+  }
+  
+  /**
+   * Liefert die Certificate-Factory.
+   * @return die Certificate-Factory.
+   * @throws Exception
+   */
+  public synchronized CertificateFactory getCertificateFactory() throws Exception
+  {
+    if (this.factory == null)
+      this.factory = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
+    return this.factory;
   }
 	
   /**
@@ -725,6 +738,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.46  2008/12/17 11:50:32  willuhn
+ * @N User muss jetzt nicht mehr die kompletten Zertifikatskette abnicken, es genuegt das Peer-Zertifikat. Verhalten jetzt so in Browsern typischerweise. Das CA-Zertifikat wird also nicht mehr implizit importiert
+ *
  * Revision 1.45  2008/12/16 12:45:26  willuhn
  * @N Erweiterte Key-Usage
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.16 $
- * $Date: 2008/07/04 17:50:39 $
+ * $Revision: 1.17 $
+ * $Date: 2008/12/17 11:50:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,10 @@ package de.willuhn.jameica.security;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.cert.CertPath;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -196,18 +198,28 @@ public class JameicaTrustManager implements X509TrustManager
 
     try
     {
-      for (int i=0;i<chain.length;++i)
-      {
-        X509Certificate own = factory.getSystemCertificate();
-        if (chain[i].equals(own))
-        {
-          Logger.info("this is our own certificate, trusting");
-          continue;
-        }
+      // Gleicher Ablauf wie in Android (Der Code dort stammte aus dem Apache Harmony-Projekt)
+      // Siehe git://android.git.kernel.org/platform/dalvik.git&cs_f=libcore/x-net/src/main/java/org/apache/harmony/xnet/provider/jsse/TrustManagerImpl.java
+      // Wir bringen die Chain erst mal in die richtige Reihenfolge
+      CertPath certPath = factory.getCertificateFactory().generateCertPath(Arrays.asList(chain));
+      
+      // Jetzt holen wir uns das Peer-Zertifikat. Das ist das, welchem
+      // wir vertrazen muessen. Alle anderen sind uebergeordnete CA-Zertifikate.
+      X509Certificate cert = (X509Certificate) certPath.getCertificates().get(0);
 
-        Logger.info("import certificate: " + toString(chain[i]));
-        factory.addTrustedCertificate(chain[i]);
+      // Sanity check. Wir stellen sicher, dass die Chain korrekt war
+      if (!cert.equals(chain[0]))
+        throw new Exception("certificate chain invalid: " + toString(cert) +" != " + toString(chain[0]));
+      
+      if (cert.equals(factory.getSystemCertificate()))
+      {
+        Logger.info("this is our own certificate, trusting");
+        return;
       }
+
+      // Importieren
+      Logger.info("import certificate: " + toString(cert));
+      factory.addTrustedCertificate(cert);
     }
     catch (OperationCanceledException oe)
     {
@@ -257,6 +269,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.17  2008/12/17 11:50:32  willuhn
+ * @N User muss jetzt nicht mehr die kompletten Zertifikatskette abnicken, es genuegt das Peer-Zertifikat. Verhalten jetzt so in Browsern typischerweise. Das CA-Zertifikat wird also nicht mehr implizit importiert
+ *
  * Revision 1.16  2008/07/04 17:50:39  willuhn
  * @R UNDO - hat unter OpenJDK NICHT funktioniert
  *
