@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/08/22 14:57:51 $
+ * $Revision: 1.4 $
+ * $Date: 2008/12/18 23:21:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,7 +67,7 @@ public class NewPasswordDialog extends SimpleDialog {
     super(position);
     labelText = i18n.tr("Neues Passwort");
 		labelText2 = i18n.tr("Passwort-Wiederholung");
-		setSideImage(SWTUtil.getImage("password.gif"));
+		setSideImage(SWTUtil.getImage("dialog-password.png"));
   }
 
 	/**
@@ -243,6 +243,11 @@ public class NewPasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: NewPasswordDialog.java,v $
+ * Revision 1.4  2008/12/18 23:21:13  willuhn
+ * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
+ * @R Nicht mehr benoetigte Grafiken entfernt
+ * @C Anordnung des SideImages in AbstractDialog etwas geaendert (ein paar Pixel Abstand des Images vom Rand)
+ *
  * Revision 1.3  2006/08/22 14:57:51  willuhn
  * @B Bug 275
  *

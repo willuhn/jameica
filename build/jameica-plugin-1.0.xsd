@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
-  $Revision: 1.11 $
-  $Date: 2008/12/09 00:53:33 $
+  $Revision: 1.12 $
+  $Date: 2008/12/18 23:21:13 $
   $Author: willuhn $
  
   Copyright (c) by willuhn software & services
@@ -366,6 +366,16 @@
         <xsd:documentation>
           Legt eine optionale Tastenkombination für den Menu-Eintrag
           fest. Z.Bsp. CTRL+B oder ALT+Z
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <!-- Zusaetzliche Attribute im Menu -->
+    <xsd:attribute name="icon" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Pfad und Dateiname zu einer Icon-Datei.
+          Die Datei muss sich in einem Verzeichnis mit dem Namen img innerhalb
+          des Classpath befinden.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>

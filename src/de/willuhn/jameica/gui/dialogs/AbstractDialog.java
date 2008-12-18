@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.41 $
- * $Date: 2008/07/04 16:02:11 $
+ * $Revision: 1.42 $
+ * $Date: 2008/12/18 23:21:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -209,8 +209,15 @@ public abstract class AbstractDialog
 				c.setLayoutData(new GridData(GridData.FILL_BOTH));
 				c.setLayout(cl);
 				c.setBackground(Color.BACKGROUND.getSWTColor());
-				imageLabel = new Label(c,SWT.NONE);
-				imageLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+        Composite cp = new Composite(c,SWT.NONE);
+        cp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        GridLayout gl1 = new GridLayout();
+        gl1.marginHeight = 8;
+        gl1.marginWidth = 8;
+        cp.setLayout(gl1);
+				imageLabel = new Label(cp,SWT.NONE);
+				imageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 				parent = new Composite(c,SWT.NONE);
 				GridLayout parentLayout = new GridLayout();
@@ -474,6 +481,11 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.42  2008/12/18 23:21:13  willuhn
+ * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
+ * @R Nicht mehr benoetigte Grafiken entfernt
+ * @C Anordnung des SideImages in AbstractDialog etwas geaendert (ein paar Pixel Abstand des Images vom Rand)
+ *
  * Revision 1.41  2008/07/04 16:02:11  willuhn
  * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
  * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.

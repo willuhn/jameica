@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/LoginDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/01/31 16:11:47 $
+ * $Revision: 1.3 $
+ * $Date: 2008/12/18 23:21:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,7 +67,7 @@ public class LoginDialog extends SimpleDialog
     super(position);
     labelUser     = i18n.tr("Benutzername");
     labelPassword = i18n.tr("Passwort");
-    setSideImage(SWTUtil.getImage("password.gif"));
+    setSideImage(SWTUtil.getImage("dialog-password.png"));
   }
 
   /**
@@ -244,6 +244,11 @@ public class LoginDialog extends SimpleDialog
 
 /*********************************************************************
  * $Log: LoginDialog.java,v $
+ * Revision 1.3  2008/12/18 23:21:13  willuhn
+ * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
+ * @R Nicht mehr benoetigte Grafiken entfernt
+ * @C Anordnung des SideImages in AbstractDialog etwas geaendert (ein paar Pixel Abstand des Images vom Rand)
+ *
  * Revision 1.2  2007/01/31 16:11:47  willuhn
  * *** empty log message ***
  *

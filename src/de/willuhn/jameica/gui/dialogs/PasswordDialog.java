@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.20 $
- * $Date: 2007/01/31 13:07:52 $
+ * $Revision: 1.21 $
+ * $Date: 2008/12/18 23:21:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,7 +63,7 @@ public abstract class PasswordDialog extends AbstractDialog {
   public PasswordDialog(int position) {
     super(position);
     this.labelText = i18n.tr("Passwort");
-    this.setSideImage(SWTUtil.getImage("password.gif"));
+    this.setSideImage(SWTUtil.getImage("dialog-password.png"));
   }
 
 	/**
@@ -226,6 +226,11 @@ public abstract class PasswordDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.21  2008/12/18 23:21:13  willuhn
+ * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
+ * @R Nicht mehr benoetigte Grafiken entfernt
+ * @C Anordnung des SideImages in AbstractDialog etwas geaendert (ein paar Pixel Abstand des Images vom Rand)
+ *
  * Revision 1.20  2007/01/31 13:07:52  willuhn
  * @N Login-Dialog
  * @N SystemMessage
