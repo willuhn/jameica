@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenuItem.java,v $
- * $Revision: 1.3 $
- * $Date: 2004/10/18 23:37:42 $
+ * $Revision: 1.4 $
+ * $Date: 2008/12/19 01:12:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.gui.parts;
 import org.eclipse.swt.graphics.Image;
 
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.logging.Logger;
 
 /**
  * Bildet ein Element eines Kontext-Menus ab.
@@ -41,6 +43,7 @@ public class ContextMenuItem
    */
   public ContextMenuItem()
 	{
+    this(null,null);
 	}
 
 	/**
@@ -50,11 +53,33 @@ public class ContextMenuItem
    */
   public ContextMenuItem(String text, Action a)
 	{
-		this.text = text;
-		this.action = a;
+    this(text,a,null);
 	}
 
-	/**
+  /**
+   * ct.
+   * @param text Anzuzeigender Text.
+   * @param a Action, die beim Klick ausgefuehrt werden soll.
+   * @param icon optionale Angabe eines Icons.
+   */
+  public ContextMenuItem(String text, Action a, String icon)
+  {
+    this.text = text;
+    this.action = a;
+    if (icon != null)
+    {
+      try
+      {
+        this.setImage(SWTUtil.getImage(icon));
+      }
+      catch (Exception e)
+      {
+        Logger.warn("icon " + icon + " not found");
+      }
+    }
+  }
+
+  /**
 	 * Legt fest, ob das Menu ein Separator sein soll.
    * @param separator true, wenn es ein Separator sein soll.
    */
@@ -151,6 +176,9 @@ public class ContextMenuItem
 
 /**********************************************************************
  * $Log: ContextMenuItem.java,v $
+ * Revision 1.4  2008/12/19 01:12:06  willuhn
+ * @N Icons in Contextmenus
+ *
  * Revision 1.3  2004/10/18 23:37:42  willuhn
  * *** empty log message ***
  *

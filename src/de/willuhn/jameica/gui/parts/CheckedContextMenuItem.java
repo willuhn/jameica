@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/CheckedContextMenuItem.java,v $
- * $Revision: 1.2 $
- * $Date: 2004/10/18 23:37:42 $
+ * $Revision: 1.3 $
+ * $Date: 2008/12/19 01:12:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,7 +37,18 @@ public class CheckedContextMenuItem extends ContextMenuItem
    */
   public CheckedContextMenuItem(String text, Action a)
   {
-    super(text, a);
+    super(text,a);
+  }
+
+  /**
+   * ct.
+   * @param text anzuzeigender Text.
+   * @param a Action, die beim Klick ausgeloest werden soll.
+   * @param icon optionales Icon.
+   */
+  public CheckedContextMenuItem(String text, Action a, String icon)
+  {
+    super(text, a, icon);
   }
 
   /**
@@ -53,6 +64,9 @@ public class CheckedContextMenuItem extends ContextMenuItem
 
 /**********************************************************************
  * $Log: CheckedContextMenuItem.java,v $
+ * Revision 1.3  2008/12/19 01:12:06  willuhn
+ * @N Icons in Contextmenus
+ *
  * Revision 1.2  2004/10/18 23:37:42  willuhn
  * *** empty log message ***
  *
