@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.7 $
- * $Date: 2008/03/11 10:23:42 $
+ * $Revision: 1.8 $
+ * $Date: 2008/12/19 12:16:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -194,7 +194,7 @@ public class BackupControl extends AbstractControl
       {
         handleRestore();
       }
-    }));
+    },"edit-undo.png"));
     this.backups.setContextMenu(ctx);
     return this.backups;
   }
@@ -262,6 +262,10 @@ public class BackupControl extends AbstractControl
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
+ * Revision 1.8  2008/12/19 12:16:02  willuhn
+ * @N Mehr Icons
+ * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
+ *
  * Revision 1.7  2008/03/11 10:23:42  willuhn
  * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
  *

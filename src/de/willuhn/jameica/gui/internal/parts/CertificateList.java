@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.16 $
- * $Date: 2007/06/21 18:32:54 $
+ * $Revision: 1.17 $
+ * $Date: 2008/12/19 12:16:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,24 +61,7 @@ public class CertificateList extends TablePart
    */
   public CertificateList()
   {
-    super(init(),new Action()
-    {
-      public void handleAction(Object context) throws ApplicationException
-      {
-        if (context == null || !(context instanceof CertObject))
-          return;
-        try
-        {
-          CertObject c = (CertObject) context;
-          CertificateDetailDialog d = new CertificateDetailDialog(CertificateDetailDialog.POSITION_CENTER,c.cert);
-          d.open();
-        }
-        catch (Exception e)
-        {
-          Logger.error("error while displaying certificate",e);
-        }
-      }
-    });
+    super(init(),new Open());
     addColumn(Application.getI18n().tr("Ausgestellt für"),"name");
     addColumn(Application.getI18n().tr("Organisation"),"organization");
     addColumn(Application.getI18n().tr("OU"),"ou");
@@ -89,7 +72,8 @@ public class CertificateList extends TablePart
     this.setMulti(false);
     this.setSummary(false);
     ContextMenu menu = new ContextMenu();
-    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Zertifikat löschen..."), new Action()
+    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Öffnen..."),new Open(),"document-open.png"));
+    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Löschen..."), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -121,7 +105,7 @@ public class CertificateList extends TablePart
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Löschen des Zertifikats."),StatusBarMessage.TYPE_ERROR));
         }
       }
-    })
+    },"user-trash-full.png")
     {
       /**
        * @see de.willuhn.jameica.gui.parts.ContextMenuItem#isEnabledFor(java.lang.Object)
@@ -140,14 +124,8 @@ public class CertificateList extends TablePart
         return super.isEnabledFor(o);
       }
     });
-    menu.addItem(new ContextMenuItem(Application.getI18n().tr("Zertifikat importieren..."),new Action() {
-      public void handleAction(Object context) throws ApplicationException
-      {
-        new CertificateImport().handleAction(context);
-        GUI.startView(GUI.getCurrentView().getClass(),GUI.getCurrentView().getCurrentObject());
-      }
-    }));
-    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Zertifikat exportieren..."),new Action() {
+    menu.addItem(ContextMenuItem.SEPARATOR);
+    menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Exportieren..."),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         try
@@ -199,7 +177,15 @@ public class CertificateList extends TablePart
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Export des Zertifikates"), StatusBarMessage.TYPE_ERROR));
         }
       }
-    }));
+    },"document-save.png"));
+    menu.addItem(new ContextMenuItem(Application.getI18n().tr("Importieren..."),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        new CertificateImport().handleAction(context);
+        GUI.startView(GUI.getCurrentView().getClass(),GUI.getCurrentView().getCurrentObject());
+      }
+    },"document-open.png"));
+
     setFormatter(new TableFormatter() {
     
       public void format(TableItem item)
@@ -368,11 +354,40 @@ public class CertificateList extends TablePart
       return this.getID().equals(arg0.getID());
     }
   }
+  
+  /**
+   * Action zum Oeffnen des Zertifikats.
+   */
+  private static class Open implements Action
+  {
+    /**
+     * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
+     */
+    public void handleAction(Object context) throws ApplicationException
+    {
+      if (context == null || !(context instanceof CertObject))
+        return;
+      try
+      {
+        CertObject c = (CertObject) context;
+        CertificateDetailDialog d = new CertificateDetailDialog(CertificateDetailDialog.POSITION_CENTER,c.cert);
+        d.open();
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while displaying certificate",e);
+      }
+    }
+  }
 }
 
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.17  2008/12/19 12:16:02  willuhn
+ * @N Mehr Icons
+ * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
+ *
  * Revision 1.16  2007/06/21 18:32:54  willuhn
  * @B ClassCastException
  *

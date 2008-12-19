@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.9 $
- * $Date: 2007/06/21 11:03:01 $
+ * $Revision: 1.10 $
+ * $Date: 2008/12/19 12:16:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.internal.dialogs.ServiceBindingDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
+import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.AbstractPlugin;
@@ -53,7 +54,7 @@ public class ServiceList extends TablePart
     final I18N i18n = Application.getI18n();
 
     ContextMenu menu = new ContextMenu();
-    menu.addItem(new CheckedContextMenuItem(i18n.tr("mit Server verbinden..."),new Action()
+    menu.addItem(new CheckedContextMenuItem(i18n.tr("Mit Server verbinden..."),new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -83,7 +84,7 @@ public class ServiceList extends TablePart
         }
         
       }
-    })
+    },"network-transmit-receive.png")
     {
       public boolean isEnabledFor(Object o)
       {
@@ -125,7 +126,7 @@ public class ServiceList extends TablePart
         }
         
       }
-    })
+    },"network-offline.png")
     {
       public boolean isEnabledFor(Object o)
       {
@@ -145,8 +146,66 @@ public class ServiceList extends TablePart
       }
     });
     
+    menu.addItem(ContextMenuItem.SEPARATOR);
     
-    
+    menu.addItem(new CheckedContextMenuItem(i18n.tr("Service starten..."),new Action()
+    {
+      public void handleAction(final Object context) throws ApplicationException
+      {
+        GUI.startSync(new Runnable()
+        {
+          public void run()
+          {
+            try
+            {
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service wird gestartet."),StatusBarMessage.TYPE_SUCCESS));
+              GUI.getStatusBar().startProgress();
+              ServiceObject so = (ServiceObject) context;
+              Service service = so.getService();
+              if (service != null)
+              {
+                service.start();
+                GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestartet."),StatusBarMessage.TYPE_SUCCESS));
+              }
+            }
+            catch (Exception e)
+            {
+              Logger.error("Error while starting service",e);
+              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Starten des Service."),StatusBarMessage.TYPE_ERROR));
+            }
+            finally
+            {
+              GUI.getStatusBar().stopProgress();
+            }
+          }
+        });
+      }
+    },"media-playback-start.png")
+    {
+      public boolean isEnabledFor(Object o)
+      {
+        try
+        {
+          if (o == null)
+            return false;
+
+          ServiceObject so = (ServiceObject) o;
+          // Die Option bieten wir nur an, wenn wir nicht im Client-Mode laufen und es kein Remote-Service ist.
+          if (Application.inClientMode())
+            return false;
+          if (Application.getServiceFactory().getLookupHost(plugin.getClass(),so.serviceName) != null)
+            return false;
+          Service service = so.getService();
+          return service != null && !service.isStarted();
+        }
+        catch (Exception e)
+        {
+          Logger.error("Error while checking service status",e);
+        }
+        return false;
+      }
+    });
     
     menu.addItem(new CheckedContextMenuItem(i18n.tr("Service stoppen..."),new Action()
     {
@@ -196,7 +255,7 @@ public class ServiceList extends TablePart
           }
         });
       }
-    })
+    },"media-playback-stop.png")
     {
       public boolean isEnabledFor(Object o)
       {
@@ -223,64 +282,6 @@ public class ServiceList extends TablePart
       }
     });
   
-    menu.addItem(new CheckedContextMenuItem(i18n.tr("Service starten..."),new Action()
-    {
-      public void handleAction(final Object context) throws ApplicationException
-      {
-        GUI.startSync(new Runnable()
-        {
-          public void run()
-          {
-            try
-            {
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service wird gestartet."),StatusBarMessage.TYPE_SUCCESS));
-              GUI.getStatusBar().startProgress();
-              ServiceObject so = (ServiceObject) context;
-              Service service = so.getService();
-              if (service != null)
-              {
-                service.start();
-                GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
-                Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestartet."),StatusBarMessage.TYPE_SUCCESS));
-              }
-            }
-            catch (Exception e)
-            {
-              Logger.error("Error while starting service",e);
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Starten des Service."),StatusBarMessage.TYPE_ERROR));
-            }
-            finally
-            {
-              GUI.getStatusBar().stopProgress();
-            }
-          }
-        });
-      }
-    })
-    {
-      public boolean isEnabledFor(Object o)
-      {
-        try
-        {
-          if (o == null)
-            return false;
-
-          ServiceObject so = (ServiceObject) o;
-          // Die Option bieten wir nur an, wenn wir nicht im Client-Mode laufen und es kein Remote-Service ist.
-          if (Application.inClientMode())
-            return false;
-          if (Application.getServiceFactory().getLookupHost(plugin.getClass(),so.serviceName) != null)
-            return false;
-          Service service = so.getService();
-          return service != null && !service.isStarted();
-        }
-        catch (Exception e)
-        {
-          Logger.error("Error while checking service status",e);
-        }
-        return false;
-      }
-    });
   
     setContextMenu(menu);
     addColumn(i18n.tr("Name"),"name");
@@ -453,6 +454,10 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.10  2008/12/19 12:16:02  willuhn
+ * @N Mehr Icons
+ * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
+ *
  * Revision 1.9  2007/06/21 11:03:01  willuhn
  * @C ServiceSettings in ServiceFactory verschoben
  * @N Aenderungen an Service-Bindings sofort uebernehmen

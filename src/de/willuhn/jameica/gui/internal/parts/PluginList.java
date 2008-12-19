@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.3 $
- * $Date: 2007/04/16 12:36:44 $
+ * $Revision: 1.4 $
+ * $Date: 2008/12/19 12:16:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,7 +46,7 @@ public class PluginList extends TablePart
     I18N i18n = Application.getI18n();
 
     ContextMenu menu = new ContextMenu();
-    menu.addItem(new ContextMenuItem(i18n.tr("Öffnen..."),new CustomAction()));
+    menu.addItem(new ContextMenuItem(i18n.tr("Öffnen..."),new CustomAction(),"document-open.png"));
     setContextMenu(menu);
     addColumn(i18n.tr("Name"),"name");
     addColumn(i18n.tr("Beschreibung"),"description");
@@ -172,6 +172,10 @@ public class PluginList extends TablePart
 
 /*********************************************************************
  * $Log: PluginList.java,v $
+ * Revision 1.4  2008/12/19 12:16:02  willuhn
+ * @N Mehr Icons
+ * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
+ *
  * Revision 1.3  2007/04/16 12:36:44  willuhn
  * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
  *
