@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
-  $Revision: 1.12 $
-  $Date: 2008/12/18 23:21:13 $
+  $Revision: 1.13 $
+  $Date: 2008/12/30 15:38:55 $
   $Author: willuhn $
  
   Copyright (c) by willuhn software & services
@@ -82,10 +82,10 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
-    <xsd:attribute name="version" type="xsd:double" use="required">
+    <xsd:attribute name="version" type="xsd:string" use="required">
       <xsd:annotation>
         <xsd:documentation>
-          Versionsnummer des Plugins. Z.Bsp. 1.4
+          Versionsnummer des Plugins. Z.Bsp. 1.4 oder 1.2.1 oder 1.0.0-test
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
