@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Version.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/12/30 15:46:49 $
+ * $Revision: 1.4 $
+ * $Date: 2008/12/30 22:44:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,22 +25,22 @@ import de.willuhn.logging.Logger;
 public class Version implements Serializable, Comparable<Version>
 {
   private static final long serialVersionUID = -8081873180699134869L;
-  
+
   /**
    * Dummy-Version: Keine Versionsnummer.
    */
   public final static Version NONE = new Version();
-  
-  boolean oldVersion = false;
 
   private static final Pattern OLD     = Pattern.compile("^(\\d+)\\.(\\d+)$");
   private static final Pattern PATTERN = Pattern.compile("^v?(\\d+)\\.(\\d+)\\.(\\d+)-?(.*)$");
+
+  boolean oldVersion = false;
 
   private int major     = 0;
   private int minor     = 0;
   private int patch     = 0;
   private String suffix = null;
-  
+
   /**
    * ct.
    */
@@ -189,11 +189,15 @@ public class Version implements Serializable, Comparable<Version>
     {
       if (other.suffix != null)
         return false;
-    } else if (!this.suffix.equals(other.suffix))
+    }
+    else if (!this.suffix.equals(other.suffix))
       return false;
     return true;
   }
 
+  /**
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
   public int compareTo(Version v)
   {
     int r = this.major - v.major;
@@ -209,15 +213,17 @@ public class Version implements Serializable, Comparable<Version>
   /**
    * @see java.lang.Object#toString()
    */
-  public String toString() {
+  public String toString()
+  {
     StringBuffer sb = new StringBuffer();
-    sb.append(getMajor()); sb.append(".");
+    sb.append(getMajor());
+    sb.append(".");
     sb.append(getMinor());
     if (!this.oldVersion)
     {
       sb.append(".");
       sb.append(getPatch());
-      if (getSuffix() != null)
+      if (getSuffix() != null && getSuffix().length() > 0)
       {
         sb.append("-");
         sb.append(getSuffix());
@@ -227,19 +233,22 @@ public class Version implements Serializable, Comparable<Version>
   }
 }
 
-
 /**********************************************************************
  * $Log: Version.java,v $
- * Revision 1.3  2008/12/30 15:46:49  willuhn
+ * Revision 1.4  2008/12/30 22:44:36  willuhn
+ * @B Heiners Patch um den Bindestrich in toString() nicht auszugeben, wenn kein Suffix angegeben ist
+ *
+ * Revision 1.3 2008/12/30 15:46:49 willuhn
+ * 
  * @N Umstellung auf neue Versionierung
  * @N Umstellung auf Java 1.5!
  * @R rmic aus Build-Scripts entfernt
  * @N Nightly-Builds sind ab sofort in der Versionsnummer als solche markiert
- *
- * Revision 1.2  2008/12/30 15:21:42  willuhn
+ * 
+ *    Revision 1.2 2008/12/30 15:21:42 willuhn
  * @N Umstellung auf neue Versionierung
- *
- * Revision 1.1  2008/12/30 14:43:20  willuhn
+ * 
+ *    Revision 1.1 2008/12/30 14:43:20 willuhn
  * @N Versionsobjekt
- *
+ * 
  **********************************************************************/
