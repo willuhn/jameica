@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.21 $
- * $Date: 2008/12/16 23:57:59 $
+ * $Revision: 1.22 $
+ * $Date: 2008/12/30 15:21:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -138,17 +138,17 @@ public class Manifest implements Comparable
   
 	/**
    * Liefert die Versionsnummer.
-   * @return Versionsnummer oder 1.0 wenn sie nicht ermittelt werden konnte.
+   * @return Versionsnummer.
    */
-  public double getVersion()
+  public Version getVersion()
 	{
     try
     {
-      return Double.parseDouble(root.getAttribute("version","1.0"));
+      return new Version(root.getAttribute("version","1.0"));
     }
     catch (Exception e)
     {
-      return 1.0;
+      return new Version();
     }
 	}
   
@@ -557,6 +557,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.22  2008/12/30 15:21:42  willuhn
+ * @N Umstellung auf neue Versionierung
+ *
  * Revision 1.21  2008/12/16 23:57:59  willuhn
  * @N Manifest-Objekt jetzt auch via InputStream erzeugbar
  *

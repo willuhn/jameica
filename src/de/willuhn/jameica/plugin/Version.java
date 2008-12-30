@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Version.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/12/30 14:43:20 $
+ * $Revision: 1.2 $
+ * $Date: 2008/12/30 15:21:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,15 @@ import de.willuhn.logging.Logger;
 public class Version implements Serializable, Comparable<Version>
 {
   private static final long serialVersionUID = -8081873180699134869L;
+  
+  /**
+   * Dummy-Version: Keine Versionsnummer.
+   */
+  public final static Version NONE = new Version();
+  
+  boolean oldVersion = false;
 
+  private static final Pattern OLD     = Pattern.compile("^(\\d+)\\.(\\d+)$");
   private static final Pattern PATTERN = Pattern.compile("^v?(\\d+)\\.(\\d+)\\.(\\d+)-?(.*)$");
 
   private int major     = 0;
@@ -46,17 +54,27 @@ public class Version implements Serializable, Comparable<Version>
    */
   public Version(String v)
   {
-    final Matcher m = PATTERN.matcher(v);
-    if (!m.matches())
+    if (v != null && v.length() > 0)
     {
-      Logger.warn("unparsable version number: " + v);
-    }
-    else
-    {
-      this.major = Integer.parseInt(m.group(1));
-      this.minor = Integer.parseInt(m.group(2));
-      this.patch = Integer.parseInt(m.group(3));
-      this.suffix = m.group(4);
+      final Matcher mOld = OLD.matcher(v);
+      final Matcher mNew = PATTERN.matcher(v);
+      if (mOld.matches())
+      {
+        this.oldVersion = true;
+        this.major = Integer.parseInt(mOld.group(1));
+        this.minor = Integer.parseInt(mOld.group(2));
+      }
+      else if (mNew.matches())
+      {
+        this.major = Integer.parseInt(mNew.group(1));
+        this.minor = Integer.parseInt(mNew.group(2));
+        this.patch = Integer.parseInt(mNew.group(3));
+        this.suffix = mNew.group(4);
+      }
+      else
+      {
+        Logger.warn("unparsable version number: " + v);
+      }
     }
   }
 
@@ -194,12 +212,16 @@ public class Version implements Serializable, Comparable<Version>
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append(getMajor()); sb.append(".");
-    sb.append(getMinor()); sb.append(".");
-    sb.append(getPatch());
-    if (getSuffix() != null)
+    sb.append(getMinor());
+    if (!this.oldVersion)
     {
-      sb.append("-");
-      sb.append(getSuffix());
+      sb.append(".");
+      sb.append(getPatch());
+      if (getSuffix() != null)
+      {
+        sb.append("-");
+        sb.append(getSuffix());
+      }
     }
     return sb.toString();
   }
@@ -208,6 +230,9 @@ public class Version implements Serializable, Comparable<Version>
 
 /**********************************************************************
  * $Log: Version.java,v $
+ * Revision 1.2  2008/12/30 15:21:42  willuhn
+ * @N Umstellung auf neue Versionierung
+ *
  * Revision 1.1  2008/12/30 14:43:20  willuhn
  * @N Versionsobjekt
  *

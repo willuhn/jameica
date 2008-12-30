@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Dependency.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/12/11 22:42:13 $
+ * $Revision: 1.6 $
+ * $Date: 2008/12/30 15:21:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -105,29 +105,29 @@ public class Dependency implements Serializable
    * @param current die vorhandene Versionsnummer.
    * @return true, wenn die Bedingung erfuellt ist, sonst false.
    */
-  private boolean compareVersion(double current)
+  private boolean compareVersion(Version current)
   {
     // Keine bestimmte Versionsnummer gefordert.
     if (this.version == null || this.version.length() == 0)
       return true;
     
-    double required = 0.0d;
+    Version required = new Version();
     try
     {
-      required = Double.parseDouble(this.version.replaceAll("[+-]",""));
+      required = new Version(this.version.replaceAll("[+-]",""));
 
       // Versionsnummer ist mit einem Minus angegeben.
       // also darf hoechstens die angegebene Versionsnummer vorhanden sein
       if (this.version.endsWith("-"))
-        return Double.compare(current,required) < 0;
+        return current.compareTo(required) < 0;
       
       // Versionsnummer mit Plus, also muss die vorhandene Version
       // gleicher ODER groesser sein
       if (this.version.endsWith("+"))
-        return (Double.compare(current,required) >= 0);
+        return current.compareTo(required) >= 0;
 
       // Kein Vorzeichen, dann muss die Versionsnummer exakt passen
-      return Double.compare(current,required) == 0;
+      return current.compareTo(required) == 0;
     }
     catch (Exception e)
     {
@@ -209,6 +209,9 @@ public class Dependency implements Serializable
 
 /**********************************************************************
  * $Log: Dependency.java,v $
+ * Revision 1.6  2008/12/30 15:21:42  willuhn
+ * @N Umstellung auf neue Versionierung
+ *
  * Revision 1.5  2008/12/11 22:42:13  willuhn
  * @C doubles mit Double.compare vergleichen
  *

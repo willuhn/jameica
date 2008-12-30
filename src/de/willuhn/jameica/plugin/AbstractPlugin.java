@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.13 $
- * $Date: 2007/12/06 09:31:19 $
+ * $Revision: 1.14 $
+ * $Date: 2008/12/30 15:21:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -112,11 +112,32 @@ public abstract class AbstractPlugin
 	 * der Services aufgerufen.
 	 * @param oldVersion Version, die vorher installiert war.
    * @throws ApplicationException muss geworfen werden, wenn das Update fehlschlug und das Plugin nicht aktiviert werden soll.
+   * @deprecated Bitte kuenftig {@link AbstractPlugin#update(Version)} implementieren
 	 */
 	public void update(double oldVersion) throws ApplicationException
   {
     // Per Default nichts machen
   }
+	
+  /**
+   * Diese Funktion wird beim Start der Anwendung genau dann aufgerufen, wenn
+   * das Plugin bereits erfolgreich installiert wurde, jedoch jetzt in einer
+   * anderen Version vorliegt als die vorherige. Sie wird solange bei jedem Start
+   * aufgerufen, bis sie fehlerfrei durchlaeuft.
+   * Andernfalls wird der Text der geworfenen Exception dem Benutzer auf der
+   * Start-Seite von Jameica angezeigt. Von daher empfiehlt es sich, verstaendliche
+   * Formulierungen fuer ggf aufgetretene Fehler zu verwenden.
+   * Hinweis: Diese Funktion wird von Jameica <b>vor</b> dem Initialisieren
+   * der Services aufgerufen.
+   * @param oldVersion Version, die vorher installiert war.
+   * @throws ApplicationException muss geworfen werden, wenn das Update fehlschlug und das Plugin nicht aktiviert werden soll.
+   */
+	public void update(Version oldVersion) throws ApplicationException
+	{
+	  // Fuer Abwaertskompatibilitaet
+	  double old = Double.parseDouble(oldVersion.getMajor() + "." + oldVersion.getMinor());
+	  update(old);
+	}
 
 	/**
 	 * Diese Funktion wird beim Beenden der Anwendung ausgefuehrt.
@@ -130,6 +151,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.14  2008/12/30 15:21:42  willuhn
+ * @N Umstellung auf neue Versionierung
+ *
  * Revision 1.13  2007/12/06 09:31:19  willuhn
  * @D javadoc warnings
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.39 $
- * $Date: 2008/12/11 22:42:13 $
+ * $Revision: 1.40 $
+ * $Date: 2008/12/30 15:21:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -299,8 +299,8 @@ public final class PluginLoader
     // Bevor wir das Plugin initialisieren, pruefen, ob vorher eine aeltere
     // Version des Plugins installiert war. Ist das der Fall rufen wir dessen
     // update() Methode vorher auf.
-    double oldVersion = updateChecker.getDouble(clazz.getName() + ".version",-1);
-    if (oldVersion == -1)
+    String s = updateChecker.getString(clazz.getName() + ".version",null);
+    if (s == null)
     {
       // Plugin wurde zum ersten mal gestartet
       Logger.info("Plugin started for the first time. Starting install");
@@ -310,11 +310,13 @@ public final class PluginLoader
     }
     else
     {
+      Version oldVersion = new Version(s);
+
       // Huu - das Plugin war schon mal installiert. Mal schauen, in welcher
       // Version
-      double newVersion = manifest.getVersion();
+      Version newVersion = manifest.getVersion();
 
-      if (Double.compare(oldVersion,newVersion) < 0)
+      if (oldVersion.compareTo(newVersion) < 0)
       {
         Logger.info("detected update from version " + oldVersion + " to " + newVersion + ", starting update");
         // hui, sogar eine neuere Version. Also starten wir dessen Update
@@ -331,7 +333,7 @@ public final class PluginLoader
     Application.getCallback().getStartupMonitor().addPercentComplete(10);
 
     // ok, wir haben alles durchlaufen, wir speichern die neue Version.
-    updateChecker.setAttribute(clazz.getName() + ".version", manifest.getVersion());
+    updateChecker.setAttribute(clazz.getName() + ".version", manifest.getVersion().toString());
 
     // Und jetzt muessen wir noch ggf. vorhandene Extensions registrieren
     Logger.info("register plugin extensions");
@@ -632,6 +634,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.40  2008/12/30 15:21:42  willuhn
+ * @N Umstellung auf neue Versionierung
+ *
  * Revision 1.39  2008/12/11 22:42:13  willuhn
  * @C doubles mit Double.compare vergleichen
  *

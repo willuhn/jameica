@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackupVersionsList.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.4 $
+ * $Date: 2008/12/30 15:21:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.Version;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -135,7 +136,7 @@ public class BackupVersionsList extends TablePart
       
       // Ist im Backup enthalten. Aus der "installed"-Liste streichen
       installed.remove(pc);
-      list.add(new Plugin(pc,version,null));
+      list.add(new Plugin(pc,new Version(version),null));
     }
     
     // Jetzt checken wir, ob in der "installed"-Liste noch
@@ -146,7 +147,7 @@ public class BackupVersionsList extends TablePart
     {
       String pc = (String) missing.nextElement();
       Manifest mf = (Manifest) installed.get(pc);
-      list.add(new Plugin(pc,null,Double.toString(mf.getVersion())));
+      list.add(new Plugin(pc,null,mf.getVersion().toString()));
     }
     return list;
   }
@@ -159,8 +160,8 @@ public class BackupVersionsList extends TablePart
     private String pluginClass    = null;
     private String name           = null;
 
-    private String backupVersion  = null;
-    private String currentVersion = null;
+    private Version backupVersion  = null;
+    private Version currentVersion = null;
     
     private boolean versionMissmatch = false;
     private boolean noBackup         = false;
@@ -172,7 +173,7 @@ public class BackupVersionsList extends TablePart
      * @param backupVersion Version aus dem Backup
      * @param currentVersion aktuelle Version.
      */
-    private Plugin(String pluginClass, String backupVersion, String currentVersion)
+    private Plugin(String pluginClass, Version backupVersion, String currentVersion)
     {
       this.pluginClass   = pluginClass;
       this.backupVersion = backupVersion;
@@ -190,7 +191,7 @@ public class BackupVersionsList extends TablePart
         // Plugin ist installiert. Versionsnummer checken
         Manifest mf = plugin.getManifest();
         this.name             = mf.getName();
-        this.currentVersion   = Double.toString(mf.getVersion());
+        this.currentVersion   = mf.getVersion();
         this.versionMissmatch = this.backupVersion != null && !this.backupVersion.equals(this.currentVersion);
       }
     }
@@ -251,6 +252,9 @@ public class BackupVersionsList extends TablePart
 
 /**********************************************************************
  * $Log: BackupVersionsList.java,v $
+ * Revision 1.4  2008/12/30 15:21:42  willuhn
+ * @N Umstellung auf neue Versionierung
+ *
  * Revision 1.3  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *
