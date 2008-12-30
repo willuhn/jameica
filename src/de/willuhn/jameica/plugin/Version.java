@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Version.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/12/30 15:21:42 $
+ * $Revision: 1.3 $
+ * $Date: 2008/12/30 15:46:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -107,7 +107,7 @@ public class Version implements Serializable, Comparable<Version>
 
   /**
    * Speichert die Minor-Versionsnummer.
-   * @param major Minor-Versionsnummer.
+   * @param minor Minor-Versionsnummer.
    */
   public void setMinor(int minor)
   {
@@ -230,6 +230,12 @@ public class Version implements Serializable, Comparable<Version>
 
 /**********************************************************************
  * $Log: Version.java,v $
+ * Revision 1.3  2008/12/30 15:46:49  willuhn
+ * @N Umstellung auf neue Versionierung
+ * @N Umstellung auf Java 1.5!
+ * @R rmic aus Build-Scripts entfernt
+ * @N Nightly-Builds sind ab sofort in der Versionsnummer als solche markiert
+ *
  * Revision 1.2  2008/12/30 15:21:42  willuhn
  * @N Umstellung auf neue Versionierung
  *

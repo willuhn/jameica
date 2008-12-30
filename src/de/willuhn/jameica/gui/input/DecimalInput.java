@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.21 $
- * $Date: 2008/12/07 22:16:00 $
+ * $Revision: 1.22 $
+ * $Date: 2008/12/30 15:46:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,7 +54,7 @@ public class DecimalInput extends TextInput
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
-   * @param d anzuzeigender Wert.
+   * @param n anzuzeigender Wert.
    * @param format Formatter fuer die Anzeige.
    */
   public DecimalInput(Number n, DecimalFormat format)
@@ -198,6 +198,12 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.22  2008/12/30 15:46:49  willuhn
+ * @N Umstellung auf neue Versionierung
+ * @N Umstellung auf Java 1.5!
+ * @R rmic aus Build-Scripts entfernt
+ * @N Nightly-Builds sind ab sofort in der Versionsnummer als solche markiert
+ *
  * Revision 1.21  2008/12/07 22:16:00  willuhn
  * @B BUGZILLA 662 https://www.willuhn.de/bugzilla/show_bug.cgi?id=662#c4
  *
