@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.25 $
- * $Date: 2008/12/04 22:03:33 $
+ * $Revision: 1.26 $
+ * $Date: 2008/12/31 00:34:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -417,6 +417,9 @@ public class TreePart extends AbstractTablePart
 	 */
 	private void handleSelect(MouseEvent event)
 	{
+	  if (this.action == null)
+	    return;
+	  
 	  Object o = getSelection();
 
 	  if (o == null)
@@ -575,6 +578,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.26  2008/12/31 00:34:43  willuhn
+ * @B NPE, wenn Tree keine Action hat
+ *
  * Revision 1.25  2008/12/04 22:03:33  willuhn
  * @N BUGZILLA 665
  *
