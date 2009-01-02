@@ -5,4 +5,4 @@
 
 cd `dirname $(readlink -f $0)`
 
-java -Xmx128m -Djava.library.path=lib/swt/linux-amd64 -jar jameica-linux-amd64.jar $@
+java -Xmx256m -jar jameica-linux-amd64.jar $@

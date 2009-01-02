@@ -17,4 +17,4 @@ fi
 BASEDIR=`dirname "$0"`
 cd "$BASEDIR"
 
-exec ${JAVACMD} -Xdock:name="Jameica" -Xmx128m -XstartOnFirstThread -Djava.library.path="$BASEDIR/lib/swt/macos" -jar "$BASEDIR/jameica-macos.jar" -o $@  >/dev/null
+exec ${JAVACMD} -Xdock:name="Jameica" -Xmx256m -XstartOnFirstThread -jar "$BASEDIR/jameica-macos.jar" -o $@  >/dev/null

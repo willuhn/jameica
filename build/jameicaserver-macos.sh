@@ -5,4 +5,4 @@
 
 cd `dirname "$0"`
 
-java -Xmx128m -jar jameica-macos.jar -d $@
+java -Xmx256m -jar jameica-macos.jar -d $@
