@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/CheckedSingleContextMenuItem.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/01/18 17:50:58 $
+ * $Revision: 1.2 $
+ * $Date: 2009/01/02 17:34:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,18 @@ public class CheckedSingleContextMenuItem extends CheckedContextMenuItem
     super(text, a);
   }
 
+
+  /**
+   * ct.
+   * @param text anzuzeigender Text.
+   * @param a Action, die beim Klick ausgeloest werden soll.
+   * @param icon optionales Icon.
+   */
+  public CheckedSingleContextMenuItem(String text, Action a, String icon)
+  {
+    super(text, a, icon);
+  }
+
   /**
    * @see de.willuhn.jameica.gui.parts.ContextMenuItem#isEnabledFor(java.lang.Object)
    */
@@ -55,6 +67,9 @@ public class CheckedSingleContextMenuItem extends CheckedContextMenuItem
 
 /**********************************************************************
  * $Log: CheckedSingleContextMenuItem.java,v $
+ * Revision 1.2  2009/01/02 17:34:15  willuhn
+ * @C Konstruktor fehlte hier noch
+ *
  * Revision 1.1  2007/01/18 17:50:58  willuhn
  * @N Kontextmenu-Item, welches nur fuer einzelne Objekte aktiv ist
  *
