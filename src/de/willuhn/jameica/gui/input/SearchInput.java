@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/12/17 22:45:22 $
+ * $Revision: 1.7 $
+ * $Date: 2009/01/04 01:24:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -76,6 +76,8 @@ public class SearchInput extends AbstractInput
   private boolean enabled     = true;
   private String search       = null;
   private boolean focus       = false;
+  
+  private List<Listener> listeners = new ArrayList<Listener>();
 
 
   /**
@@ -116,8 +118,6 @@ public class SearchInput extends AbstractInput
     if (list == null || list.size() == 0)
       return;
 
-    boolean haveAttribute = this.attribute != null && this.attribute.length() > 0;
-
     try
     {
       // Liste von Strings fuer die Anzeige in der Popup-Box.
@@ -133,21 +133,9 @@ public class SearchInput extends AbstractInput
           continue;
 
         // Anzuzeigenden Text ermitteln
-        String text = null;
-        if (haveAttribute)
-        {
-          Object value = BeanUtil.get(object,this.attribute);
-          if (value == null)
-            continue;
-          
-          text = value.toString();
-          if (text == null)
-            continue;
-        }
-        else
-        {
-          text = BeanUtil.toString(object);
-        }
+        String text = format(object);
+        if (text == null)
+          continue;
         items.add(text);
         values.put(text,object);
       }
@@ -174,12 +162,47 @@ public class SearchInput extends AbstractInput
         // bewegt werden
         this.text.setText("");
         this.text.insert(selected);
+        
+        if (this.listeners.size() > 0)
+        {
+          Event e = new Event();
+          e.data = this.value;
+          e.text = selected;
+          for (Listener l:this.listeners)
+          {
+            l.handleEvent(e);
+          }
+        }
       }
     }
-    catch (RemoteException e)
+    catch (Exception e)
     {
       Logger.error("unable to create combo box",e);
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Laden der Daten..."),StatusBarMessage.TYPE_ERROR));
+    }
+  }
+  
+  /**
+   * Formatiert die Bean passend fuer die Anzeige in der Combo-Box.
+   * @param bean die Bean.
+   * @return String mit dem anzuzeigenden Wert.
+   */
+  protected String format(Object bean)
+  {
+    if (bean == null)
+      return null;
+    try
+    {
+      if (this.attribute == null || this.attribute.length() == 0)
+        return BeanUtil.toString(bean);
+
+      Object value = BeanUtil.get(bean,this.attribute);
+      return value == null ? null : value.toString();
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to format object",re);
+      return null;
     }
   }
 
@@ -199,13 +222,25 @@ public class SearchInput extends AbstractInput
   }
   
   /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#addListener(org.eclipse.swt.widgets.Listener)
+   */
+  public void addListener(Listener l)
+  {
+    this.listeners.add(l);
+  }
+
+  /**
    * @see de.willuhn.jameica.gui.input.Input#getControl()
    */
   public Control getControl()
   {
 
     this.text = GUI.getStyleFactory().createText(getParent());
-    this.text.setText(this.value == null ? search : toString(this.value));
+    
+    String display = this.value == null ? null : format(this.value);
+    if (display == null)
+      display = this.search;
+    this.text.setText(display);
 
     // "Suche..." grau einfaerben
     if (this.value == null || !enabled)
@@ -364,35 +399,12 @@ public class SearchInput extends AbstractInput
     this.value = o;
     
     if (this.text != null && !this.text.isDisposed())
-      this.text.setText(toString(this.value));
+    {
+      String s = format(this.value);
+      this.text.setText(s == null ? "" : s);
+    }
   }
   
-  /**
-   * Liefert eine String-Repraesentation des uebergebenen Objektes.
-   * @param value Objekt.
-   * @return String - nie null.
-   */
-  private String toString(Object value)
-  {
-    if (value == null)
-      return "";
-
-    try
-    {
-      if (attribute != null)
-      {
-        Object o = BeanUtil.get(value,attribute);
-        return o == null ? "" : o.toString();
-      }
-      return BeanUtil.toString(value);
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to apply value",e);
-    }
-    return "";
-  }
-
   /**
    * @see de.willuhn.jameica.gui.input.Input#isEnabled()
    */
@@ -404,6 +416,10 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.7  2009/01/04 01:24:30  willuhn
+ * @N Format-Funktion zum Uberschreiben der Anzeige von Elementen in SearchInput
+ * @N AbstractInput#addListener ueberschreibbar
+ *
  * Revision 1.6  2008/12/17 22:45:22  willuhn
  * @R t o d o  tag entfernt
  *

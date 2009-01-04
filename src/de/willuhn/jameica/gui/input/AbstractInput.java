@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.23 $
- * $Date: 2007/08/28 22:42:53 $
+ * $Revision: 1.24 $
+ * $Date: 2009/01/04 01:24:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -88,7 +88,7 @@ public abstract class AbstractInput implements Input
   /**
    * @see de.willuhn.jameica.gui.input.Input#addListener(org.eclipse.swt.widgets.Listener)
    */
-  public final void addListener(Listener l)
+  public void addListener(Listener l)
 	{
 		listeners.add(l);
 	}
@@ -388,6 +388,10 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.24  2009/01/04 01:24:30  willuhn
+ * @N Format-Funktion zum Uberschreiben der Anzeige von Elementen in SearchInput
+ * @N AbstractInput#addListener ueberschreibbar
+ *
  * Revision 1.23  2007/08/28 22:42:53  willuhn
  * @N Bei Aufruf von setMandatory() ggf. Farb-Aenderungen sofort durchfuehren, wenn sich Wert von "mandatory" geaendert hat und das Control bereits gezeichnet wurde
  *
