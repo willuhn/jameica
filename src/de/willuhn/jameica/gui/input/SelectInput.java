@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.37 $
- * $Date: 2008/02/07 09:57:31 $
+ * $Revision: 1.38 $
+ * $Date: 2009/01/04 16:59:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -159,7 +159,6 @@ public class SelectInput extends AbstractInput
     
     int selected             = -1;
     boolean havePleaseChoose = false;
-    boolean haveAttribute    = this.attribute != null && this.attribute.length() > 0;
 
     // Haben wir einen "bitte waehlen..."-Text?
     if (this.pleaseChoose != null && this.pleaseChoose.length() > 0)
@@ -179,21 +178,10 @@ public class SelectInput extends AbstractInput
           continue;
 
         // Anzuzeigenden Text ermitteln
-        if (haveAttribute)
-        {
-          Object value = BeanUtil.get(object,this.attribute);
-          if (value == null)
-            continue;
-          
-          String text = value.toString();
-          if (text == null)
-            continue;
-          this.combo.add(text);
-        }
-        else
-        {
-          this.combo.add(BeanUtil.toString(object));
-        }
+        String text = format(object);
+        if (text == null)
+          continue;
+        this.combo.add(text);
         this.combo.setData(Integer.toString(havePleaseChoose ? i+1 : i),object);
         
         // Wenn unser Objekt dem vorausgewaehlten entspricht, und wir noch
@@ -230,6 +218,30 @@ public class SelectInput extends AbstractInput
       this.combo.setText((String)this.preselected);
 
     return this.combo;
+  }
+
+  /**
+   * Formatiert die Bean passend fuer die Anzeige in der Combo-Box.
+   * @param bean die Bean.
+   * @return String mit dem anzuzeigenden Wert.
+   */
+  protected String format(Object bean)
+  {
+    if (bean == null)
+      return null;
+    try
+    {
+      if (this.attribute == null || this.attribute.length() == 0)
+        return BeanUtil.toString(bean);
+
+      Object value = BeanUtil.get(bean,this.attribute);
+      return value == null ? null : value.toString();
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to format object",re);
+      return null;
+    }
   }
 
   /**
@@ -350,6 +362,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.38  2009/01/04 16:59:44  willuhn
+ * @N Format-Funktion zum Uberschreiben der Anzeige von Elementen in SelectInput
+ *
  * Revision 1.37  2008/02/07 09:57:31  willuhn
  * @N Bug 550
  *
