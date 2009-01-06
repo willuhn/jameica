@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.10 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.11 $
+ * $Date: 2009/01/06 23:58:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -161,7 +161,19 @@ public interface ApplicationCallback
    * @throws Exception
    */
   public boolean checkTrust(X509Certificate cert) throws Exception;
-  
+
+  /**
+   * Wird aufgerufen, wenn Jameica versucht, sich via HTTPS mit einem
+   * Server zu verbinden, dessen Hostname mit keinem der uebertragenen
+   * SSL-Zertifikate uebereinstimmt. Der Benutzer soll dann entscheiden,
+   * ob der Hostname korrekt ist.
+   * @param hostname der Hostname des Servers.
+   * @param certs die Zertifikate des Servers.
+   * @return true, wenn der Hostname akzeptiert werden soll, andernfalls false.
+   * @throws Exception
+   */
+  public boolean checkHostname(String hostname, javax.security.cert.X509Certificate[] certs) throws Exception;
+
   /**
    * Liefert den Hostnamen des Systems.
    * Dieser wird fuer die Erstellung des X.509-Zertifikats benoetigt.
@@ -177,6 +189,9 @@ public interface ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.11  2009/01/06 23:58:03  willuhn
+ * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
+ *
  * Revision 1.10  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *

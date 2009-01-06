@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.29 $
- * $Date: 2008/04/20 22:37:32 $
+ * $Revision: 1.30 $
+ * $Date: 2009/01/06 23:58:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -274,7 +274,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public boolean checkTrust(X509Certificate cert) throws Exception
   {
-    // Wir senden die Trust-Abrfrage vorher noch per Message
+    // Wir senden die Trust-Abfrage vorher noch per Message
     CheckTrustMessage msg = new CheckTrustMessage(cert);
     Application.getMessagingFactory().sendSyncMessage(msg);
     if (msg.isTrusted())
@@ -459,6 +459,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.30  2009/01/06 23:58:03  willuhn
+ * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
+ *
  * Revision 1.29  2008/04/20 22:37:32  willuhn
  * @B MACOS Test auf NULL statt "" in Passwort-Checksumme
  *

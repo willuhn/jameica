@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.46 $
- * $Date: 2008/12/17 11:50:32 $
+ * $Revision: 1.47 $
+ * $Date: 2009/01/06 23:58:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -454,14 +454,12 @@ public class SSLFactory
           }
 
           boolean match = false;
-          String hostnames = "";
           for (int i=0;i<certs.length;++i)
           {
             Certificate c = new Certificate(certs[i]);
             String h = c.getSubject().getAttribute(Principal.COMMON_NAME);
             if (h == null || h.length() == 0)
               continue;
-            hostnames += "," + h;
             Logger.debug("comparing hostname " + hostname + " with CN " + h);
             if (h.equalsIgnoreCase(hostname))
             {
@@ -469,20 +467,13 @@ public class SSLFactory
               match = true;
               break;
             }
-            
           }
           
           if (!match)
           {
-            hostnames = hostnames.replaceFirst(",","");
-
-            String s =
-              Application.getI18n().tr("Der Hostname \"{0}\" stimmt mit keinem der Server-Zertifikate überein ({1}). " +
-                  "Wollen Sie den Vorgang dennoch fortsetzen?",new String[]{hostname,hostnames});
-
             try
             {
-              return Application.getCallback().askUser(s);
+              return Application.getCallback().checkHostname(hostname,certs);
             }
             catch (OperationCanceledException oce)
             {
@@ -738,6 +729,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.47  2009/01/06 23:58:03  willuhn
+ * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
+ *
  * Revision 1.46  2008/12/17 11:50:32  willuhn
  * @N User muss jetzt nicht mehr die kompletten Zertifikatskette abnicken, es genuegt das Peer-Zertifikat. Verhalten jetzt so in Browsern typischerweise. Das CA-Zertifikat wird also nicht mehr implizit importiert
  *
