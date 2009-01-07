@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.40 $
- * $Date: 2008/12/30 15:21:42 $
+ * $Revision: 1.41 $
+ * $Date: 2009/01/07 16:19:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,7 +13,6 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -266,21 +265,7 @@ public final class PluginLoader
     // zugehoerigen Classloader
     Class clazz = loader.load(pluginClass);
 
-    // TODO: Migration. Wir versuchen erst den neuen Konstruktor testen
-    AbstractPlugin plugin = null;
-    try
-    {
-      plugin = (AbstractPlugin) clazz.newInstance();
-    }
-    catch (Exception e)
-    {
-      Logger.warn("plugin " + manifest.getName() + " uses a deprecated constructor - please inform the autor: " + manifest.getHomepage());
-      Constructor ct = clazz.getConstructor(new Class[] { File.class });
-      ct.setAccessible(true);
-      File dir = new File(manifest.getPluginDir());
-      plugin = (AbstractPlugin) ct.newInstance(new Object[] { (dir) });
-    }
-
+    AbstractPlugin plugin = (AbstractPlugin) clazz.newInstance();
     plugin.getResources().setClassLoader(loader);
     manifest.setPluginInstance(plugin);
 
@@ -634,6 +619,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.41  2009/01/07 16:19:49  willuhn
+ * @R alter Konstruktor AbstractPlugin(file) entfernt (existierte nur noch aus Gruenden der Abwaertskompatibilitaet
+ *
  * Revision 1.40  2008/12/30 15:21:42  willuhn
  * @N Umstellung auf neue Versionierung
  *
