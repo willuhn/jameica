@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/AbstractApplicationCallback.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/01/07 00:09:03 $
+ * $Revision: 1.4 $
+ * $Date: 2009/01/07 00:09:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -80,7 +80,7 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
     Object data = msg.getData();
     if (data != null && (data instanceof Boolean) && ((Boolean)data).booleanValue())
     {
-      Logger.debug("hostname: " + hostname + ", trusted by: " + msg.getName());
+      Logger.info("hostname: " + hostname + ", trusted by: " + msg.getName());
       return true;
     }
 
@@ -106,6 +106,9 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
 
 /*********************************************************************
  * $Log: AbstractApplicationCallback.java,v $
+ * Revision 1.4  2009/01/07 00:09:49  willuhn
+ * @R UNDO
+ *
  * Revision 1.3  2009/01/07 00:09:03  willuhn
  * @C changed log level
  *
