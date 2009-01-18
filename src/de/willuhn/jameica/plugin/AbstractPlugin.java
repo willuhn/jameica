@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.14 $
- * $Date: 2008/12/30 15:21:42 $
+ * $Revision: 1.15 $
+ * $Date: 2009/01/18 13:46:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,8 +11,6 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.plugin;
-
-import java.io.File;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
@@ -37,16 +35,6 @@ public abstract class AbstractPlugin
     this.manifest = Application.getPluginLoader().getManifest(this.getClass());
     this.res = new PluginResources(this);
   }
-
-  /**
-	 * ct.
-   * @deprecated Muss nicht mehr implementiert werden. Stattdessen genuegt der parameterlose Konstruktor.
-   * @param file Das Verzeichnis, in dem sich das Plugin befindet.
-   */
-  public AbstractPlugin(File file)
-	{
-    this();
-	}
 
 	/**
 	 * Liefert ein Objekt mit Resourcen, auf die das Plugin zugreifen kann.
@@ -151,6 +139,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.15  2009/01/18 13:46:23  willuhn
+ * @R deprecated Konstruktor entfernt - wurde eh nicht mehr aufgerufen.
+ *
  * Revision 1.14  2008/12/30 15:21:42  willuhn
  * @N Umstellung auf neue Versionierung
  *
