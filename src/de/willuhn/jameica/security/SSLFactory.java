@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.48 $
- * $Date: 2009/01/18 00:03:46 $
+ * $Revision: 1.49 $
+ * $Date: 2009/01/18 15:20:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -597,6 +597,7 @@ public class SSLFactory
   public synchronized String addTrustedCertificate(X509Certificate cert) throws Exception
   {
     String dn = cert.getSubjectDN().getName();
+    String alias = dn + "-" + cert.getSerialNumber().toString();
     
     // Pruefen, dass nicht das System-Zertifikat ueberschrieben wird.
     if (getSystemCertificate().equals(cert))
@@ -609,10 +610,10 @@ public class SSLFactory
     {
       for (int i=0;i<certs.length;++i)
       {
-        if (cert.equals(certs[i]) && !Application.inNonInteractiveMode() && !Application.getCallback().askUser(Application.getI18n().tr("Zertifikat ist bereits installiert. Überschreiben?")))
+        if (cert.equals(certs[i]))
         {
-          Logger.info("import of certificate " + dn + " cancelled by user, allready installed");
-          throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
+          Logger.info("certificate " + dn + " allready installed, skipping");
+          return alias;
         }
       }
     }
@@ -649,7 +650,6 @@ public class SSLFactory
       throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
     }
 
-    String alias = dn + "-" + cert.getSerialNumber().toString();
     Logger.warn("adding certificate to keystore. alias: " + alias);
     getKeyStore().setCertificateEntry(alias,cert);
     storeKeystore();
@@ -744,6 +744,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.49  2009/01/18 15:20:31  willuhn
+ * @C Wenn ein Zertifikat bereits installiert ist, dann nicht ueberschreiben (ist ja auch nicht noetig, da es sich gar nicht geaendert hat) sondern Import einfach ignorieren. Das sollte auch die nervigen immerwiederkehrenden "Ueberschreiben?"-Dialoge unter GCJ erledigen
+ *
  * Revision 1.48  2009/01/18 00:03:46  willuhn
  * @N SSLFactory#addTrustedCertificate() liefert jetzt den erzeugten Alias-Namen des Keystore-Entries
  * @N SSLFactory#getTrustedCertificate(String) zum Abrufen eines konkreten Zertifikates
