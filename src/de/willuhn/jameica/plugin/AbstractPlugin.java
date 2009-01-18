@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.15 $
- * $Date: 2009/01/18 13:46:23 $
+ * $Revision: 1.16 $
+ * $Date: 2009/01/18 13:47:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,18 +24,9 @@ import de.willuhn.util.ApplicationException;
 public abstract class AbstractPlugin
 {
 
-	private PluginResources res = null;
-	private Manifest manifest   = null;
+	private PluginResources res = new PluginResources(this);
+	private Manifest manifest   = Application.getPluginLoader().getManifest(this.getClass());
 	
-  /**
-   * ct.
-   */
-  public AbstractPlugin()
-  {
-    this.manifest = Application.getPluginLoader().getManifest(this.getClass());
-    this.res = new PluginResources(this);
-  }
-
 	/**
 	 * Liefert ein Objekt mit Resourcen, auf die das Plugin zugreifen kann.
    * @return Resource-Pack.
@@ -139,6 +130,9 @@ public abstract class AbstractPlugin
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.16  2009/01/18 13:47:38  willuhn
+ * @R Expliziten Konstruktor entfernt. Damit muss er in abgeleiteten Klassen gar nicht mehr implementiert werden.
+ *
  * Revision 1.15  2009/01/18 13:46:23  willuhn
  * @R deprecated Konstruktor entfernt - wurde eh nicht mehr aufgerufen.
  *
