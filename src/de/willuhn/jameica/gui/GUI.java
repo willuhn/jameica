@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.115 $
- * $Date: 2008/07/04 16:02:11 $
+ * $Revision: 1.116 $
+ * $Date: 2009/01/18 01:43:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -799,8 +799,18 @@ public class GUI implements ApplicationController
         {
           if (monitor != null) 
           {
-            monitor.setPercentComplete(100);
             monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
+            monitor.setPercentComplete(100);
+            monitor.setStatusText(oce.getMessage());
+          }
+        }
+        catch (ApplicationException ae)
+        {
+          if (monitor != null) 
+          {
+            monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+            monitor.setPercentComplete(100);
+            monitor.setStatusText(ae.getMessage());
           }
         }
         catch (Throwable t)
@@ -808,8 +818,8 @@ public class GUI implements ApplicationController
           Logger.error("error while executing background task",t);
           if (monitor != null) 
           {
-            monitor.setPercentComplete(100);
             monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+            monitor.setPercentComplete(100);
           }
         }
         finally
@@ -845,6 +855,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.116  2009/01/18 01:43:07  willuhn
+ * @N Fehlermeldung in Progress-View anzeigen
+ *
  * Revision 1.115  2008/07/04 16:02:11  willuhn
  * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
  * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
