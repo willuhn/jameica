@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.47 $
- * $Date: 2009/01/06 23:58:03 $
+ * $Revision: 1.48 $
+ * $Date: 2009/01/18 00:03:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,7 +51,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
-import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -344,6 +343,21 @@ public class SSLFactory
     }
     return (X509Certificate[]) list.toArray(new X509Certificate[list.size()]);
   }
+  
+  /**
+   * Liefert das Zertifikat mit dem genannten Alias.
+   * Die Funktion liefert NIE das System-Zertifikat von Jameica. Hierfuer
+   * kann stattdessen {@link SSLFactory#getSystemCertificate()} verwendet werden.
+   * @param alias Alias des Zertifikats.
+   * @return das Zertifikat oder NULL, wenn es nicht gefunden wurde.
+   * @throws Exception
+   */
+  public X509Certificate getTrustedCertificate(String alias) throws Exception
+  {
+    if (alias == null || SYSTEM_ALIAS.equals(alias))
+      return null;
+    return (X509Certificate) getKeyStore().getCertificate(alias);
+  }
 
   /**
    * Liefert eine Liste von Zertifikate, die noch zu bestaetigen sind.
@@ -576,18 +590,17 @@ public class SSLFactory
   /**
    * Fuegt dem Keystore ein Zertifikat hinzu und uebernimmt dabei auch alle noetigen Sicherheitsabfragen.
    * @param cert das Zertifikat.
+   * @return der Alias-Name, unter dem das Zertifikat im Keystore abgelegt wurde.
+   * Die Funktion liefert NIE NULL sondern wirft stattdessen eine {@link OperationCanceledException}.
    * @throws Exception
    */
-  public synchronized void addTrustedCertificate(X509Certificate cert) throws Exception
+  public synchronized String addTrustedCertificate(X509Certificate cert) throws Exception
   {
     String dn = cert.getSubjectDN().getName();
     
     // Pruefen, dass nicht das System-Zertifikat ueberschrieben wird.
     if (getSystemCertificate().equals(cert))
-    {
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Das System-Zertifikat darf nicht überschrieben werden"), StatusBarMessage.TYPE_ERROR));
-      return;
-    }
+      throw new OperationCanceledException(Application.getI18n().tr("Das System-Zertifikat darf nicht überschrieben werden"));
     
     // Pruefen, ob nicht ein anderes Zertifikat ueberschrieben wird
     // BUGZILLA 330
@@ -636,9 +649,11 @@ public class SSLFactory
       throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
     }
 
-    Logger.warn("adding certificate DN: " + dn + " to keystore");
-    getKeyStore().setCertificateEntry(dn + "-" + cert.getSerialNumber().toString(),cert);
+    String alias = dn + "-" + cert.getSerialNumber().toString();
+    Logger.warn("adding certificate to keystore. alias: " + alias);
+    getKeyStore().setCertificateEntry(alias,cert);
     storeKeystore();
+    return alias;
   } 
 
   /**
@@ -729,6 +744,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.48  2009/01/18 00:03:46  willuhn
+ * @N SSLFactory#addTrustedCertificate() liefert jetzt den erzeugten Alias-Namen des Keystore-Entries
+ * @N SSLFactory#getTrustedCertificate(String) zum Abrufen eines konkreten Zertifikates
+ *
  * Revision 1.47  2009/01/06 23:58:03  willuhn
  * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
  *

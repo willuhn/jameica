@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/CertificateImport.java,v $
- * $Revision: 1.5 $
- * $Date: 2007/01/04 15:24:21 $
+ * $Revision: 1.6 $
+ * $Date: 2009/01/18 00:03:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,7 +69,7 @@ public class CertificateImport implements Action
     }
     catch (OperationCanceledException oce)
     {
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Import abgebrochen"),StatusBarMessage.TYPE_ERROR));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr(oce.getMessage()),StatusBarMessage.TYPE_ERROR));
     }
     catch (Exception e)
     {
@@ -84,6 +84,10 @@ public class CertificateImport implements Action
 
 /*********************************************************************
  * $Log: CertificateImport.java,v $
+ * Revision 1.6  2009/01/18 00:03:46  willuhn
+ * @N SSLFactory#addTrustedCertificate() liefert jetzt den erzeugten Alias-Namen des Keystore-Entries
+ * @N SSLFactory#getTrustedCertificate(String) zum Abrufen eines konkreten Zertifikates
+ *
  * Revision 1.5  2007/01/04 15:24:21  willuhn
  * @C certificate import handling
  * @B Bug 330

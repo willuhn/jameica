@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.17 $
- * $Date: 2008/12/17 11:50:32 $
+ * $Revision: 1.18 $
+ * $Date: 2009/01/18 00:03:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -223,8 +223,8 @@ public class JameicaTrustManager implements X509TrustManager
     }
     catch (OperationCanceledException oe)
     {
-      Logger.warn("operation cancelled");
-      throw new CertificateException(Application.getI18n().tr("Vorgang abgebrochen"));
+      Logger.warn("operation cancelled: " + oe.getMessage());
+      throw new CertificateException(oe.getMessage());
     }
     catch (Exception e)
     {
@@ -269,6 +269,10 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.18  2009/01/18 00:03:46  willuhn
+ * @N SSLFactory#addTrustedCertificate() liefert jetzt den erzeugten Alias-Namen des Keystore-Entries
+ * @N SSLFactory#getTrustedCertificate(String) zum Abrufen eines konkreten Zertifikates
+ *
  * Revision 1.17  2008/12/17 11:50:32  willuhn
  * @N User muss jetzt nicht mehr die kompletten Zertifikatskette abnicken, es genuegt das Peer-Zertifikat. Verhalten jetzt so in Browsern typischerweise. Das CA-Zertifikat wird also nicht mehr implizit importiert
  *
