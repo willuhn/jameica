@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.13 $
- * $Date: 2005/09/01 14:02:34 $
- * $Author: web0 $
+ * $Revision: 1.14 $
+ * $Date: 2009/01/20 10:51:51 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -54,9 +54,16 @@ public class ButtonArea
    * @param button der Button.
    * @throws RemoteException
    */
-  public void addButton(Button button) throws RemoteException
+  public void addButton(Button button)
   {
-    button.paint(buttonArea);
+    try
+    {
+      button.paint(buttonArea);
+    }
+    catch (RemoteException e)
+    {
+      Logger.error("error while painting button",e);
+    }
   }
   
   /**
@@ -93,7 +100,21 @@ public class ButtonArea
    */
   public void addButton(String name, final Action action, final Object context, boolean isDefault)
 	{
-    Button button = new Button(name,action,context,isDefault);
+    addButton(name,action,context,isDefault,null);
+	}
+
+  /**
+   * Fuegt der Area einen Button hinzu.
+   * Beim Klick wird die Action ausgeloest.
+   * @param name Bezeichnung des Buttons.
+   * @param action auszuloesende Action.
+   * @param context Optionaler Context, der der Action mitgegeben wird.
+   * @param isDefault markiert den per Default aktiven Button.
+   * @param icon Icon, welches links neben dem Button angezeigt werden soll.
+   */
+  public void addButton(String name, final Action action, final Object context, boolean isDefault, String icon)
+  {
+    Button button = new Button(name,action,context,isDefault,icon);
     try
     {
       button.paint(buttonArea);
@@ -102,11 +123,15 @@ public class ButtonArea
     {
       Logger.error("error while painting button \"" + name + "\"",e);
     }
-	}
+  }
+
 }
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
+ * Revision 1.14  2009/01/20 10:51:51  willuhn
+ * @N Mehr Icons - fuer Buttons
+ *
  * Revision 1.13  2005/09/01 14:02:34  web0
  * *** empty log message ***
  *

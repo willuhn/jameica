@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/License.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/03/01 22:58:24 $
- * $Author: web0 $
+ * $Revision: 1.5 $
+ * $Date: 2009/01/20 10:51:51 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -14,7 +14,7 @@ package de.willuhn.jameica.gui.internal.views;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.internal.action.Back;
+import de.willuhn.jameica.gui.internal.buttons.Back;
 import de.willuhn.jameica.gui.internal.controller.LicenseControl;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
@@ -42,7 +42,7 @@ public class License extends AbstractView {
 		libs.paint(getParent());
 
 		ButtonArea buttons = new ButtonArea(getParent(),1);
-		buttons.addButton(i18n.tr("Zurück"),new Back());
+		buttons.addButton(new Back());
   }
 
   /**
@@ -56,6 +56,9 @@ public class License extends AbstractView {
 
 /**********************************************************************
  * $Log: License.java,v $
+ * Revision 1.5  2009/01/20 10:51:51  willuhn
+ * @N Mehr Icons - fuer Buttons
+ *
  * Revision 1.4  2005/03/01 22:58:24  web0
  * @B typo
  *

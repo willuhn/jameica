@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.24 $
- * $Date: 2008/08/29 13:15:42 $
+ * $Revision: 1.25 $
+ * $Date: 2009/01/20 10:51:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,8 @@ import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.extension.Extendable;
-import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.action.CertificateImport;
+import de.willuhn.jameica.gui.internal.buttons.Back;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
@@ -128,6 +128,7 @@ public class Settings extends AbstractView implements Extendable
       getTabFolder().setSelection(lastActiveTab.intValue());
 
     ButtonArea colorButtons = new ButtonArea(getParent(),3);
+    colorButtons.addButton(new Back());
     colorButtons.addButton(i18n.tr("Zurücksetzen"),new Action()
     {
       public void handleAction(Object context) throws ApplicationException
@@ -135,7 +136,6 @@ public class Settings extends AbstractView implements Extendable
         control.handleRestore();
       }
     });
-    colorButtons.addButton(i18n.tr("Zurück"), new Back());
     colorButtons.addButton(i18n.tr("Speichern"), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
@@ -183,6 +183,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.25  2009/01/20 10:51:51  willuhn
+ * @N Mehr Icons - fuer Buttons
+ *
  * Revision 1.24  2008/08/29 13:15:42  willuhn
  * @C Java 1.4 Compatibility - wieso zur Hoelle sind die Fehler vorher nie aufgefallen? Ich compiliere immer gegen 1.4? Suspekt
  *

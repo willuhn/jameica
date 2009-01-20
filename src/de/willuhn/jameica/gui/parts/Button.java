@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/10/02 16:15:13 $
+ * $Revision: 1.7 $
+ * $Date: 2009/01/20 10:51:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -35,6 +36,7 @@ public class Button implements Part
 {
 
   private String title      = null;
+  private String icon       = null;
   private Action action     = null;
   private Object context    = null;
   private boolean isDefault = false;
@@ -72,10 +74,24 @@ public class Button implements Part
    */
   public Button(String title, Action action, Object context, boolean defaultButton)
   {
-    this.title = title;
-    this.action = action;
-    this.context = context;
+    this(title,action,context,defaultButton,null);
+  }
+
+  /**
+   * ct.
+   * @param title Beschriftung.
+   * @param action Action, die beim Klick ausgefuehrt werden soll.
+   * @param context ein Context-Objekt, welches beim Click der Action uebergeben wird.
+   * @param defaultButton legt fest, ob das der Default-Button der Shell sein soll.
+   * @param Icon, welches links neben der Beschriftung angezeigt werden soll.
+   */
+  public Button(String title, Action action, Object context, boolean defaultButton, String icon)
+  {
+    this.title     = title;
+    this.action    = action;
+    this.context   = context;
     this.isDefault = defaultButton;
+    this.icon      = icon;
   }
 
   /**
@@ -97,6 +113,8 @@ public class Button implements Part
     button = GUI.getStyleFactory().createButton(parent);
     button.setText(this.title == null ? "" : this.title);
     button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+    if (this.icon != null)
+      button.setImage(SWTUtil.getImage(this.icon));
 
     try
     {
@@ -148,6 +166,9 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
+ * Revision 1.7  2009/01/20 10:51:51  willuhn
+ * @N Mehr Icons - fuer Buttons
+ *
  * Revision 1.6  2006/10/02 16:15:13  willuhn
  * @B IllegalArgumentException unter MacOS
  *

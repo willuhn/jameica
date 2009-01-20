@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.14 $
- * $Date: 2008/12/10 23:54:41 $
+ * $Revision: 1.15 $
+ * $Date: 2009/01/20 10:51:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -70,7 +70,7 @@ public class Start extends AbstractView implements Extendable
           Logger.error("error while loading box config dialog",e);
         }
       }
-    },null,true);
+    },null,true,"document-properties.png");
   }        
 
   /**
@@ -93,6 +93,9 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.15  2009/01/20 10:51:51  willuhn
+ * @N Mehr Icons - fuer Buttons
+ *
  * Revision 1.14  2008/12/10 23:54:41  willuhn
  * @B fehlerhafte Boxen ueberspringen. Sonst wird die komplette Startseite nicht angezeigt
  *
