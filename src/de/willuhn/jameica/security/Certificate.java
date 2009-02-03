@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Certificate.java,v $
- * $Revision: 1.7 $
- * $Date: 2009/02/03 00:18:17 $
+ * $Revision: 1.8 $
+ * $Date: 2009/02/03 10:06:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,12 +13,12 @@
 
 package de.willuhn.jameica.security;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 import de.willuhn.logging.Logger;
+import de.willuhn.security.Checksum;
 
 /**
  * Kleine Hilfs-Klasse mit der sich X509-Zertifikate einfach auslesen lassen.
@@ -54,7 +54,7 @@ public class Certificate
    */
   public String getMD5Fingerprint() throws CertificateEncodingException, NoSuchAlgorithmException
   {
-    return getFingerprint("MD5");
+    return getFingerprint(Checksum.MD5);
   }
 
   /**
@@ -65,7 +65,7 @@ public class Certificate
    */
   public String getSHA1Fingerprint() throws CertificateEncodingException, NoSuchAlgorithmException
   {
-    return getFingerprint("SHA1");
+    return getFingerprint(Checksum.SHA1);
   }
 
   /**
@@ -93,8 +93,7 @@ public class Certificate
       }
     }
     
-    MessageDigest md = MessageDigest.getInstance(algorithm);
-    byte[] digest = md.digest(sig);
+    byte[] digest = Checksum.checksum(sig,algorithm);
     StringBuffer sb = new StringBuffer(2 * digest.length);
     for (int i = 0; i < digest.length; ++i) {
       int k = digest[i] & 0xFF;
@@ -137,6 +136,9 @@ public class Certificate
 
 /*********************************************************************
  * $Log: Certificate.java,v $
+ * Revision 1.8  2009/02/03 10:06:31  willuhn
+ * @C Digest via de.willuhn.security.Checksum ermitteln
+ *
  * Revision 1.7  2009/02/03 00:18:17  willuhn
  * @B Fingerprints der Zertifikate wurden falsch gruppiert
  *
