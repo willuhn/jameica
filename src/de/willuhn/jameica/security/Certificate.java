@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Certificate.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/11/15 00:12:35 $
+ * $Revision: 1.7 $
+ * $Date: 2009/02/03 00:18:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -101,10 +101,12 @@ public class Certificate
       if (k < 0x10) {
         sb.append('0');
       }
-      sb.append(":");
       sb.append(Integer.toHexString(k));
+      
+      if (i+1 < digest.length)
+        sb.append(":");
     }
-    return sb.toString().substring(1); // Ersten Doppelpunkt noch wegschneiden
+    return sb.toString().toUpperCase();
   }
 
   /**
@@ -135,6 +137,9 @@ public class Certificate
 
 /*********************************************************************
  * $Log: Certificate.java,v $
+ * Revision 1.7  2009/02/03 00:18:17  willuhn
+ * @B Fingerprints der Zertifikate wurden falsch gruppiert
+ *
  * Revision 1.6  2006/11/15 00:12:35  willuhn
  * @B Bug 329
  *
