@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.60 $
- $Date: 2008/12/30 15:46:49 $
+ $Revision: 1.61 $
+ $Date: 2009/02/18 12:22:03 $
  $Author: willuhn $
  
  All rights reserved
@@ -199,6 +199,7 @@
 			<fileset dir="${build.dir}">
 				<include name="*.sh"/>
 				<include name="*.bat"/>
+        <include name=".jameica"/>
 				<include name="rcjameica"/>
 				<include name="jameica-icon-01.png"/>
         <include name="jameica-icon-02.png"/>
@@ -221,6 +222,7 @@
 				<include name="${define.projectname}/README"/>
 				<include name="${define.projectname}/jameica.sh"/>
 				<include name="${define.projectname}/jameicaserver.sh"/>
+        <include name="${define.projectname}/.jameica"/>
 				<include name="${define.projectname}/rcjameica"/>
 				<include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
@@ -247,7 +249,8 @@
 				<include name="${define.projectname}/README"/>
 				<include name="${define.projectname}/jameica-amd64.sh"/>
 				<include name="${define.projectname}/jameicaserver-amd64.sh"/>
-				<include name="${define.projectname}/rcjameica"/>
+				<include name="${define.projectname}/.jameica"/>
+        <include name="${define.projectname}/rcjameica"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
@@ -300,6 +303,7 @@
         <include name="Info.plist"/>
         <include name="jameica-macos.sh"/>
         <include name="jameicaserver-macos.sh"/>
+        <include name=".jameica"/>
         <include name="rcjameica"/>
         <include name="jameica-icon-01.png"/>
         <include name="jameica-icon-02.png"/>
@@ -328,6 +332,7 @@
         <include name="${define.projectname}/README"/>
         <include name="${define.projectname}/jameica-openbsd.sh"/>
         <include name="${define.projectname}/jameicaserver-openbsd.sh"/>
+        <include name="${define.projectname}/.jameica"/>
         <include name="${define.projectname}/rcjameica"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>

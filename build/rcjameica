@@ -18,15 +18,17 @@ link=${base#*[SK][0-9][0-9]}
 
 JAVA=`which java`
 BASEDIR=`dirname $0`
-WORKDIR=~/.jameica
-PASSWORD=CHANGE_THIS_BEFORE_YOU_START_JAMEICA
-PIDFILE=$WORKDIR/jameica.pid
-LOCKFILE=$WORKDIR/jameica.lock
+
 
 ### Please do not edit anything below this line! ########################
 #                                                                       #
 
 . /etc/rc.status
+. "$BASEDIR/.jameica"
+
+if [ -f "$WORKDIR/.jameica" ]; then
+  . "$WORKDIR/.jameica"
+fi
 
 rc_reset
 
@@ -36,7 +38,7 @@ case "$1" in
       mkdir -p $WORKDIR
       cd $BASEDIR
       echo -n "Starting Jameica "
-      echo $PASSWORD | $JAVA -Xmx256m -jar jameica-linux.jar -d -f $WORKDIR > /dev/null 2>&1 & PID=$!
+      echo $PASSWORD | $JAVA -Xmx256m -jar jameica-linux.jar -d -f $WORKDIR > /dev/null & PID=$!
       rc_status -v
       echo $PID > $PIDFILE
     ;;
