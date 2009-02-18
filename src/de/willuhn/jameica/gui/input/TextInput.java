@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.20 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Revision: 1.21 $
+ * $Date: 2009/02/18 00:43:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,6 +58,8 @@ public class TextInput extends AbstractInput
   public void setMaxLength(int maxLength)
 	{
 		this.maxLength = maxLength;
+		if (this.text != null && !this.text.isDisposed())
+		  this.text.setTextLimit(this.maxLength);
 	}
 
   /**
@@ -169,6 +171,9 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.21  2009/02/18 00:43:21  willuhn
+ * @N maxlength live aktualisieren, wenn Control bereits gezeichnet ist
+ *
  * Revision 1.20  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput
