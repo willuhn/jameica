@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FontInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2008/07/16 14:27:29 $
+ * $Revision: 1.13 $
+ * $Date: 2009/02/23 11:40:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -83,7 +83,7 @@ public class FontInput extends ButtonInput
       FontData[] data = this.font.getFontData();
       if (data != null && data.length > 0)
       {
-        if (data[0] != null && data[0].name != null && data[0].name.length() > 0)
+        if (data[0] != null && data[0].getName() != null && data[0].getName().length() > 0)
         {
           String stil = Application.getI18n().tr("normal");
           switch (data[0].getStyle())
@@ -98,7 +98,7 @@ public class FontInput extends ButtonInput
               stil = Application.getI18n().tr("fett,kursiv");
               break;
           }
-          return Application.getI18n().tr("{0}, {1} Punkt, {2}", new String[]{data[0].name,Integer.toString(data[0].getHeight()),stil});
+          return Application.getI18n().tr("{0}, {1} Punkt, {2}", new String[]{data[0].getName(),Integer.toString(data[0].getHeight()),stil});
         }
       }
     }
@@ -135,6 +135,9 @@ public class FontInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FontInput.java,v $
+ * Revision 1.13  2009/02/23 11:40:30  willuhn
+ * @B BUGZILLA 702
+ *
  * Revision 1.12  2008/07/16 14:27:29  willuhn
  * @N Groesse und Schriftstil mit ausgeben
  *
