@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchPart.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/09/03 23:32:14 $
+ * $Revision: 1.5 $
+ * $Date: 2009/02/23 23:44:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -127,7 +127,6 @@ public class SearchPart implements Part
           SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
           List result = service.search(text);
 
-          // TODO Mittelfristig sollte die Suche in einem Hintergrund-Task laufen 
           SearchResultPart part = new SearchResultPart(result);
           Panel panel = new Panel(Application.getI18n().tr("Suchergebnis"), part, false);
           panel.addMinimizeListener(new Listener()
@@ -182,6 +181,9 @@ public class SearchPart implements Part
 
 /**********************************************************************
  * $Log: SearchPart.java,v $
+ * Revision 1.5  2009/02/23 23:44:11  willuhn
+ * @D
+ *
  * Revision 1.4  2008/09/03 23:32:14  willuhn
  * @C Suchergebnis nicht mehr als View sondern als Snapin am unteren Rand anzeigen. Dann kann man durch die Elemente klicken, ohne das Suchergebnis zu verlassen
  *
