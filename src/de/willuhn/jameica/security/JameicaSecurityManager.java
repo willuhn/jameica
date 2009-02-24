@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/12/17 22:44:35 $
+ * $Revision: 1.7 $
+ * $Date: 2009/02/24 16:46:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -78,7 +78,6 @@ public class JameicaSecurityManager extends SecurityManager
     try
     {
       String s = check.getCanonicalPath();
-      Logger.debug("checking write permissions for file: \"" + s + "\"");
       if (s.startsWith(jameicaPath))
         throw new SecurityException("write access to \"" + s + "\" denied");
     }
@@ -116,6 +115,9 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.7  2009/02/24 16:46:57  willuhn
+ * @R Log-Meldung entfernt - flutet nur sinnlos das Log
+ *
  * Revision 1.6  2008/12/17 22:44:35  willuhn
  * @R t o d o  tag entfernt
  *
