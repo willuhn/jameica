@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2009/02/24 23:23:46 $
+ * $Revision: 1.9 $
+ * $Date: 2009/02/24 23:35:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -359,9 +359,24 @@ public class SearchInput extends AbstractInput
 	{
     if (this.text == null || this.text.isDisposed())
       return null;
-		return text.getText();
+		return this.text.getText();
 	}
 
+  /**
+   * Speichert den anzuzeigenden Text.
+   * @param s Text.
+   */
+  public void setText(String s)
+  {
+    if (s != null && this.text != null && !this.text.isDisposed())
+    {
+      this.text.setText("");
+      this.text.insert(s);
+    }
+  }
+
+
+  
   /**
    * @see de.willuhn.jameica.gui.input.Input#focus()
    */
@@ -431,6 +446,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.9  2009/02/24 23:35:33  willuhn
+ * @N setText()
+ *
  * Revision 1.8  2009/02/24 23:23:46  willuhn
  * @N Maximale Textlaenge konfigurierbar
  *
