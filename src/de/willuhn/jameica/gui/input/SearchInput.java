@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2009/01/04 01:24:30 $
+ * $Revision: 1.8 $
+ * $Date: 2009/02/24 23:23:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -76,6 +76,7 @@ public class SearchInput extends AbstractInput
   private boolean enabled     = true;
   private String search       = null;
   private boolean focus       = false;
+  private int maxLength       = 0;
   
   private List<Listener> listeners = new ArrayList<Listener>();
 
@@ -103,6 +104,17 @@ public class SearchInput extends AbstractInput
 			this.attribute = name;
 	}
   
+  /**
+   * Definiert die maximal eingebbare Menge von Zeichen.
+   * @param maxLength
+   */
+  public void setMaxLength(int maxLength)
+  {
+    this.maxLength = maxLength;
+    if (this.text != null && !this.text.isDisposed())
+      this.text.setTextLimit(this.maxLength);
+  }
+
   private boolean inSearch = false;
 
   /**
@@ -248,7 +260,10 @@ public class SearchInput extends AbstractInput
     
     this.text.setEnabled(enabled);
     this.text.setEditable(enabled);
-    
+
+    if (maxLength > 0)
+      text.setTextLimit(maxLength);
+
     this.text.addFocusListener(new FocusListener() {
     
       public void focusLost(FocusEvent e)
@@ -416,6 +431,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.8  2009/02/24 23:23:46  willuhn
+ * @N Maximale Textlaenge konfigurierbar
+ *
  * Revision 1.7  2009/01/04 01:24:30  willuhn
  * @N Format-Funktion zum Uberschreiben der Anzeige von Elementen in SearchInput
  * @N AbstractInput#addListener ueberschreibbar
