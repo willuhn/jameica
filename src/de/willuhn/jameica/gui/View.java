@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.42 $
- * $Date: 2008/04/23 11:10:24 $
+ * $Revision: 1.43 $
+ * $Date: 2009/02/27 14:05:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -192,18 +192,9 @@ public class View implements Part
       public void run()
       {
 				sash.setMaximizedControl(null);
-        // BUGZILLA 432 - Restore der Hoehe des Snapins
-        int[] weights = new int[] {3,1};
-        int h1 = view.getSize().y;
-        int h2 = GUI.SETTINGS.getInt("snapin.height",0);
-        if (h2 > 0 && h1 > 0)
-        {
-          // Leider akzeptiert Sash keine absoluten Werte. Daher muessen
-          // wird das in Prozent-Angaben umrechnen
-          int p1 = h2 * 100 / (h1+h2);
-          weights = new int[]{100-p1,p1};
-        }
-
+        int[] weights = new int[] {GUI.SETTINGS.getInt("snapin.height.0",3),GUI.SETTINGS.getInt("snapin.height.1",1)};
+        if (weights[0] <= 0) weights[0] = 3;
+        if (weights[1] <= 0) weights[1] = 1;
         sash.setWeights(weights);
 				snappedIn = true;
       }
@@ -222,7 +213,9 @@ public class View implements Part
         try
         {
           // BUGZILLA 432 - Speichern der letzten Hoehe des Snapins
-          GUI.SETTINGS.setAttribute("snapin.height",snapin.getSize().y);
+          int[] weights = sash.getWeights();
+          GUI.SETTINGS.setAttribute("snapin.height.0",weights[0]);
+          GUI.SETTINGS.setAttribute("snapin.height.1",weights[1]);
           SWTUtil.disposeChildren(snapin);
           sash.setMaximizedControl(view);
         }
@@ -360,6 +353,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.43  2009/02/27 14:05:34  willuhn
+ * @B BUGZILLA 432 - das Speichern der Verhaeltnisse geht ja viel einfacher ;) Ich muss doch gar nicht selbst ausrechnen, wie die prozentuale Verteilung ist sondern kann einfach die SWT-Komponente fragen. Dann muss ich gar nichts rechnen
+ *
  * Revision 1.42  2008/04/23 11:10:24  willuhn
  * @N Bug 432 Snapin merkt sich jetzt seine letzte Hoehe und stellt diese wieder her
  *
