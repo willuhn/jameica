@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.83 $
- * $Date: 2008/12/17 22:45:39 $
+ * $Revision: 1.84 $
+ * $Date: 2009/03/01 22:58:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1083,7 +1083,12 @@ public class TablePart extends AbstractTablePart
     for (int i=0;i<this.columns.size();++i)
     {
       Column col = (Column) this.columns.get(i);
-      if (col.getColumnId().equals(colName))
+      if (col == null)
+        return;
+      String id = col.getColumnId();
+      if (id == null)
+        return;
+      if (id.equals(colName))
       {
         Logger.debug("table ordered by " + colName);
         orderBy(i);
@@ -1322,6 +1327,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.84  2009/03/01 22:58:58  willuhn
+ * @B BUGZILLA 708
+ *
  * Revision 1.83  2008/12/17 22:45:39  willuhn
  * @R t o d o  tag entfernt
  *
