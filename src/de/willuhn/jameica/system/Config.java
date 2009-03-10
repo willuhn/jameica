@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.43 $
- * $Date: 2008/12/17 01:05:41 $
+ * $Revision: 1.44 $
+ * $Date: 2009/03/10 14:06:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -204,6 +204,74 @@ public final class Config
     settings.setAttribute("jameica.system.proxy.port",port);
   }
 
+  /**
+   * Liefert einen ggf definierten HTTPS-Proxy, ueber den Jameica mit der Aussenwelt
+   * kommunizieren soll.
+   * @return Hostname/IP des Proxy oder <code>null</code> wenn keiner definiert ist.
+   */
+  public String getHttpsProxyHost()
+  {
+    return settings.getString("jameica.system.proxy.https.host",null);
+  }
+
+  /**
+   * Liefert den TCP-Port des HTTPS-Proxys insofern einer definiert ist.
+   * @return TCP-Portnummer des Proxys oder -1,
+   */
+  public int getHttpsProxyPort()
+  {
+    return settings.getInt("jameica.system.proxy.https.port",-1);
+  }
+
+  /**
+   * Speichert den HTTPS-Proxy-Host,
+   * @param host Proxy-Host.
+   */
+  public void setHttpsProxyHost(String host)
+  {
+    if ("".equals(host))
+      host = null;
+    settings.setAttribute("jameica.system.proxy.https.host",host);
+  }
+  
+  /**
+   * Speichert die TCP-Portnummer des HTTPS-Proxys.
+   * @param port Port-Nummer.
+   * @throws ApplicationException Bei Angabe eines ungueltigen Ports (kleiner 1 oder groesser 65535).
+   * Es sei denn, es wurde "-1" angegeben. Der Wert steht fuer "nicht verwenden".
+   */
+  public void setHttpsProxyPort(int port) throws ApplicationException
+  {
+    if (port == -1)
+    {
+      settings.setAttribute("jameica.system.proxy.https.port",-1);
+      return;
+    }
+
+    if (port < 1 || port > 65535)
+      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für HTTPS-Proxy ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+
+    settings.setAttribute("jameica.system.proxy.https.port",port);
+  }
+  
+  /**
+   * Prueft, ob die Proxy-Einstellungen des Systems verwendet werden sollen.
+   * @return true, wenn die Default-Systemeinstellungen verwendet werden sollen.
+   */
+  public boolean getUseSystemProxy()
+  {
+    return settings.getBoolean("jameica.system.proxy.usesystem",false);
+  }
+  
+  /**
+   * Legt fest, ob die System-Einstellungen fuer den Proxy verwendet werden sollen. 
+   * @param b true, wenn die System-Einstellungen des Betriebssystems verwendet werden sollen.
+   */
+  public void setUseSystemProxy(boolean b)
+  {
+    settings.setAttribute("jameica.system.proxy.usesystem",b);
+  }
+  
   /**
    * Prueft, ob im Server-Mode die Dienste nach aussen freigegeben werden sollen.
    * Der Parameter wird nur im Server-Mode interpretiert.
@@ -659,6 +727,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.44  2009/03/10 14:06:25  willuhn
+ * @N Proxy-Server fuer HTTPS konfigurierbar
+ *
  * Revision 1.43  2008/12/17 01:05:41  willuhn
  * @N Deployment von heruntergeladenen in "DeployService" verschoben. Dann geschieht das Entpacken erst beim naechsten Start. Da zu dem Zeitpunkt der Classloader die Dateien noch nicht geladen hat, kann eine ggf. vorhandene vorherige Installation geloescht werden
  * @C FileUtil.deleteRecursive

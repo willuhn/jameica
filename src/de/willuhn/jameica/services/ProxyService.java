@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ProxyService.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/13 01:04:34 $
+ * $Revision: 1.2 $
+ * $Date: 2009/03/10 14:06:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,6 +39,12 @@ public class ProxyService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
+    if (Application.getConfig().getUseSystemProxy())
+    {
+      Logger.info("Using system proxy settings");
+      return;
+    }
+    
     String proxyHost = Application.getConfig().getProxyHost();
     int proxyPort    = Application.getConfig().getProxyPort();
    
@@ -48,6 +54,17 @@ public class ProxyService implements Bootable
       System.setProperty("http.proxyHost",proxyHost);
       System.setProperty("http.proxyPort",""+proxyPort);
     }
+
+    proxyHost = Application.getConfig().getHttpsProxyHost();
+    proxyPort = Application.getConfig().getHttpsProxyPort();
+   
+    if (proxyHost != null && proxyHost.length() > 0 && proxyPort > 0)
+    {
+      Logger.info("Applying https proxy settings: " + proxyHost + ":" + proxyPort);
+      System.setProperty("https.proxyHost",proxyHost);
+      System.setProperty("https.proxyPort",""+proxyPort);
+    }
+  
   }
 
   /**
@@ -62,6 +79,9 @@ public class ProxyService implements Bootable
 
 /**********************************************************************
  * $Log: ProxyService.java,v $
+ * Revision 1.2  2009/03/10 14:06:26  willuhn
+ * @N Proxy-Server fuer HTTPS konfigurierbar
+ *
  * Revision 1.1  2008/02/13 01:04:34  willuhn
  * @N Jameica auf neuen Bootloader umgestellt
  * @C Markus' Aenderungen RMI-Registrierung uebernommen

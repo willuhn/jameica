@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.25 $
- * $Date: 2009/01/20 10:51:51 $
+ * $Revision: 1.26 $
+ * $Date: 2009/03/10 14:06:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,8 @@ import de.willuhn.jameica.gui.internal.buttons.Back;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.ColumnLayout;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.gui.util.TabGroup;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -72,8 +74,16 @@ public class Settings extends AbstractView implements Extendable
     system.addCheckbox(control.getRmiSSL(),i18n.tr("Daten im Netzwerk-Betrieb (RMI) verschlüsselt übertragen"));
     system.addLabelPair(i18n.tr("TCP-Portnummer für Netzwerk-Betrieb (RMI)"), control.getRmiPort());
 
-    system.addLabelPair(i18n.tr("Hostname eines HTTP-Proxy"), control.getProxyHost());
-    system.addLabelPair(i18n.tr("TCP-Port eines HTTP-Proxy"), control.getProxyPort());
+    system.addHeadline(i18n.tr("Proxy-Optionen"));
+    system.addCheckbox(control.getUseSystemProxy(),i18n.tr("System-Einstellungen verwenden"));
+    ColumnLayout cl = new ColumnLayout(system.getComposite(),2);
+
+    SimpleContainer left = new SimpleContainer(cl.getComposite());
+    left.addLabelPair(i18n.tr("HTTP Proxy"), control.getProxyHost());
+    left.addLabelPair(i18n.tr("HTTPS Proxy"), control.getHttpsProxyHost());
+    SimpleContainer right = new SimpleContainer(cl.getComposite());
+    right.addLabelPair(i18n.tr("Port"), control.getProxyPort());
+    right.addLabelPair(i18n.tr("Port"), control.getHttpsProxyPort());
 
     system.addHeadline(i18n.tr("Installierte SSL-Zertifikate"));
     system.addPart(control.getCertificates());
@@ -183,6 +193,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.26  2009/03/10 14:06:26  willuhn
+ * @N Proxy-Server fuer HTTPS konfigurierbar
+ *
  * Revision 1.25  2009/01/20 10:51:51  willuhn
  * @N Mehr Icons - fuer Buttons
  *

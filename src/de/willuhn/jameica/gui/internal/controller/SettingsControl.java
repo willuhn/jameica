@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.25 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Revision: 1.26 $
+ * $Date: 2009/03/10 14:06:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,13 +16,15 @@ package de.willuhn.jameica.gui.internal.controller;
 import java.rmi.RemoteException;
 import java.util.Locale;
 
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
-import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.ColorInput;
@@ -59,6 +61,10 @@ public class SettingsControl extends AbstractControl
   private Input rmiPort;
   private Input proxyHost;
   private Input proxyPort;
+  private Input httpsProxyHost;
+  private Input httpsProxyPort;
+  private CheckboxInput systemProxy;
+  
   private TablePart certs;
 
   // Plugins
@@ -142,7 +148,6 @@ public class SettingsControl extends AbstractControl
     if (this.proxyHost != null)
       return this.proxyHost;
     this.proxyHost = new TextInput(Application.getConfig().getProxyHost());
-    this.proxyHost.setComment(Application.getI18n().tr("freilassen, wenn nicht gewünscht"));
     return this.proxyHost;
   }
 
@@ -157,6 +162,63 @@ public class SettingsControl extends AbstractControl
     this.proxyPort = new IntegerInput(Application.getConfig().getProxyPort());
     this.proxyPort.setComment(Application.getI18n().tr("freilassen, wenn nicht gewünscht"));
     return this.proxyPort;
+  }
+  
+  /**
+   * Liefert ein Eingabefeld fuer die Definition des HTTPS-Proxy-Hosts.
+   * @return Eingabefeld fuer den HTTPS-Proxy.
+   */
+  public Input getHttpsProxyHost()
+  {
+    if (this.httpsProxyHost != null)
+      return this.httpsProxyHost;
+    this.httpsProxyHost = new TextInput(Application.getConfig().getHttpsProxyHost());
+    return this.httpsProxyHost;
+  }
+
+  /**
+   * Liefert ein Eingabefeld fuer die TCP-Portnummer des HTTPS-Proxys.
+   * @return Eingabefeld fuer die Proxy-Portnummer des HTTPS-Proxy.
+   */
+  public Input getHttpsProxyPort()
+  {
+    if (this.httpsProxyPort != null)
+      return this.httpsProxyPort;
+    this.httpsProxyPort = new IntegerInput(Application.getConfig().getHttpsProxyPort());
+    this.httpsProxyPort.setComment(Application.getI18n().tr("freilassen, wenn nicht gewünscht"));
+    return this.httpsProxyPort;
+  }
+
+  public CheckboxInput getUseSystemProxy()
+  {
+    if (this.systemProxy == null)
+    {
+      this.systemProxy = new CheckboxInput(Application.getConfig().getUseSystemProxy());
+      final Listener l = new Listener()
+      {
+        public void handleEvent(Event event)
+        {
+          try
+          {
+            boolean value = ((Boolean)systemProxy.getValue()).booleanValue();
+            getProxyHost().setEnabled(!value);
+            getProxyPort().setEnabled(!value);
+            getHttpsProxyHost().setEnabled(!value);
+            getHttpsProxyPort().setEnabled(!value);
+          }
+          catch (Exception e)
+          {
+            Logger.error("unable to apply settings",e);
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Fehler beim Übernehmen der Proxy-Einstellungen: {0}",e.getMessage()),StatusBarMessage.TYPE_ERROR));
+          }
+        }
+      };
+      this.systemProxy.addListener(l);
+      
+      // einmal initial ausloesen
+      l.handleEvent(null);
+    }
+    return this.systemProxy;
   }
   /**
    * Liefert eine Tabelle mit den installierten Zertifikaten.
@@ -363,6 +425,19 @@ public class SettingsControl extends AbstractControl
       restartNeeded |= getProxyHost().hasChanged();
       Application.getConfig().setProxyHost((String)getProxyHost().getValue());
 
+      restartNeeded |= getHttpsProxyPort().hasChanged();
+      proxyPort = (Integer) getHttpsProxyPort().getValue();
+      if (proxyPort == null)
+        Application.getConfig().setHttpsProxyPort(-1);
+      else
+        Application.getConfig().setHttpsProxyPort(proxyPort.intValue());
+
+      restartNeeded |= getHttpsProxyHost().hasChanged();
+      Application.getConfig().setHttpsProxyHost((String)getHttpsProxyHost().getValue());
+      
+      restartNeeded |= getUseSystemProxy().hasChanged();
+      Application.getConfig().setUseSystemProxy(((Boolean)getUseSystemProxy().getValue()).booleanValue());
+
       // Look & Feel
       Application.getConfig().setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
     	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
@@ -385,13 +460,8 @@ public class SettingsControl extends AbstractControl
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
 
-      if (!restartNeeded)
-        return;
-
-      SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
-			d.setTitle(i18n.tr("Neustart erforderlich"));
-			d.setText(i18n.tr("Bitte starten Sie Jameica neu, damit alle Änderungen wirksam werden."));
-			d.open();
+      if (restartNeeded)
+        Application.getCallback().notifyUser(i18n.tr("Bitte starten Sie Jameica neu, damit alle Änderungen wirksam werden."));
     }
     catch (ApplicationException ae)
     {
@@ -509,6 +579,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.26  2009/03/10 14:06:26  willuhn
+ * @N Proxy-Server fuer HTTPS konfigurierbar
+ *
  * Revision 1.25  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput
