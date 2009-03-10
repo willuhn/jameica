@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/PluginControl.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/14 23:15:30 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2009/03/10 23:51:28 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -99,7 +99,7 @@ public class PluginControl extends AbstractControl
 	{
 		if (path != null)
 			return path;
-		path = new LabelInput(""+getPlugin().getResources().getPath());
+		path = new LabelInput(""+getPlugin().getManifest().getPluginDir());
 		return path;
 	}
 
@@ -155,6 +155,9 @@ public class PluginControl extends AbstractControl
 
 /**********************************************************************
  * $Log: PluginControl.java,v $
+ * Revision 1.2  2009/03/10 23:51:28  willuhn
+ * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
+ *
  * Revision 1.1  2005/06/14 23:15:30  web0
  * @N added settings for plugins/services
  *

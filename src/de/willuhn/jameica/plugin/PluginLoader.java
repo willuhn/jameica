@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.41 $
- * $Date: 2009/01/07 16:19:49 $
+ * $Revision: 1.42 $
+ * $Date: 2009/03/10 23:51:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -274,10 +274,8 @@ public final class PluginLoader
 
     // /////////////////////////////////////////////////////////////
     // Velocity-Template-Verzeichnisse
-    PluginResources r = plugin.getResources();
-
     VelocityService vs = (VelocityService) Application.getBootLoader().getBootable(VelocityService.class);
-    vs.addTemplateDir(new File(r.getPath() + File.separator + "lib","velocity"));
+    vs.addTemplateDir(new File(manifest.getPluginDir() + File.separator + "lib","velocity"));
     //
     // /////////////////////////////////////////////////////////////
 
@@ -619,6 +617,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.42  2009/03/10 23:51:28  willuhn
+ * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
+ *
  * Revision 1.41  2009/01/07 16:19:49  willuhn
  * @R alter Konstruktor AbstractPlugin(file) entfernt (existierte nur noch aus Gruenden der Abwaertskompatibilitaet
  *

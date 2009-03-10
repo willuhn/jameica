@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/12/19 12:16:02 $
+ * $Revision: 1.5 $
+ * $Date: 2009/03/10 23:51:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -115,7 +115,7 @@ public class PluginList extends TablePart
       if ("version".equals(name))
         return ""+plugin.getManifest().getVersion();
       if ("path".equals(name))
-        return plugin.getResources().getPath();
+        return plugin.getManifest().getPluginDir();
       if ("workpath".equals(name))
         return plugin.getResources().getWorkPath();
       if ("description".equals(name))
@@ -172,6 +172,9 @@ public class PluginList extends TablePart
 
 /*********************************************************************
  * $Log: PluginList.java,v $
+ * Revision 1.5  2009/03/10 23:51:28  willuhn
+ * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
+ *
  * Revision 1.4  2008/12/19 12:16:02  willuhn
  * @N Mehr Icons
  * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht

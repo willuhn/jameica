@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/07/18 10:41:30 $
+ * $Revision: 1.6 $
+ * $Date: 2009/03/10 23:51:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,7 +66,7 @@ public class About extends AbstractDialog
       "<p>Version: " + Application.getManifest().getVersion() + "</p>" +
       "<p>SWT-Version: " + SWT.getVersion() + " / " + SWT.getPlatform() + "</p>" +
       "<p>Build: " + Application.getBuildnumber() + " [Datum " + Application.getBuildDate() + "]</p>" +
-      "<p>Work-Dir: " + Application.getConfig().getWorkDir() + "</p>" +
+      "<p>Benutzerverzeichnis: " + Application.getConfig().getWorkDir() + "</p>" +
       "</form>");
 
     container.addPart(text);
@@ -94,6 +94,9 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.6  2009/03/10 23:51:28  willuhn
+ * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
+ *
  * Revision 1.5  2008/07/18 10:41:30  willuhn
  * @N Zeitgesteuertes Ausfuehren von Reminder-Actions
  *
