@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.18 $
- * $Date: 2009/01/18 00:03:46 $
+ * $Revision: 1.19 $
+ * $Date: 2009/03/11 23:12:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -231,7 +231,6 @@ public class JameicaTrustManager implements X509TrustManager
       Logger.error("error while checking trust",e);
       throw new CertificateException(Application.getI18n().tr("Fehler beim Prüfen des Zertifikats"));
     }
-    return;
   }
 
   /**
@@ -269,6 +268,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.19  2009/03/11 23:12:06  willuhn
+ * @R unnuetzes return-Statement
+ *
  * Revision 1.18  2009/01/18 00:03:46  willuhn
  * @N SSLFactory#addTrustedCertificate() liefert jetzt den erzeugten Alias-Namen des Keystore-Entries
  * @N SSLFactory#getTrustedCertificate(String) zum Abrufen eines konkreten Zertifikates
