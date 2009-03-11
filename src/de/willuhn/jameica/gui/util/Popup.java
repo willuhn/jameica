@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Popup.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/12/17 22:26:49 $
+ * $Revision: 1.3 $
+ * $Date: 2009/03/11 23:21:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,7 +48,7 @@ public class Popup
    */
   public Popup(String text)
   {
-    this(text,null);
+    this(null,text);
   }
 
   /**
@@ -58,7 +58,7 @@ public class Popup
    */
   public Popup(String title, String text)
   {
-    this(text,null,null);
+    this(title,text,null);
   }
 
   /**
@@ -181,6 +181,9 @@ public class Popup
 
 /*********************************************************************
  * $Log: Popup.java,v $
+ * Revision 1.3  2009/03/11 23:21:44  willuhn
+ * @B falsche Parameter-Uebergabe in Konstruktor
+ *
  * Revision 1.2  2008/12/17 22:26:49  willuhn
  * @R t o d o  tag entfernt
  *
