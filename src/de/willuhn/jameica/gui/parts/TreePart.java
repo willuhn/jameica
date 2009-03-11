@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.26 $
- * $Date: 2008/12/31 00:34:43 $
+ * $Revision: 1.27 $
+ * $Date: 2009/03/11 23:19:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -183,7 +183,7 @@ public class TreePart extends AbstractTablePart
       }
       public void mouseDown(MouseEvent e)
       {
-        handleMenu(e);
+        handleMenu();
       }
     });
 
@@ -403,9 +403,8 @@ public class TreePart extends AbstractTablePart
 
 	/**
    * Oeffnet das Menu. 
-   * @param event das ausgeloeste Event.
    */
-  private void handleMenu(MouseEvent event)
+  private void handleMenu()
   {
     if (menu == null) return;
     menu.setCurrentObject(getSelection());
@@ -578,6 +577,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.27  2009/03/11 23:19:29  willuhn
+ * @R unbenutzten Parameter entfernt
+ *
  * Revision 1.26  2008/12/31 00:34:43  willuhn
  * @B NPE, wenn Tree keine Action hat
  *
