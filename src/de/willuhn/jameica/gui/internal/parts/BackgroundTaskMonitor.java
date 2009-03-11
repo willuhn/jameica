@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.7 $
- * $Date: 2008/04/23 11:43:40 $
+ * $Revision: 1.8 $
+ * $Date: 2009/03/11 23:09:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,7 +18,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -187,19 +186,14 @@ public class BackgroundTaskMonitor extends ProgressBar
     check();
     super.clearLog();
   }
-  
-  /**
-   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
-   */
-  public void paint(Composite parent) throws RemoteException
-  {
-    super.paint(parent);
-  }
 }
 
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
+ * Revision 1.8  2009/03/11 23:09:56  willuhn
+ * @C unnuetzes Ueberschreiben der paint()-Methode
+ *
  * Revision 1.7  2008/04/23 11:43:40  willuhn
  * @B 432+179 Snapin nach 30 Sekunden automatisch ausblenden (jetzt einfacher via DelayedListener geloest)
  *
