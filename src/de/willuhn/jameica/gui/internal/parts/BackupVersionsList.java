@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackupVersionsList.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/12/30 15:21:42 $
+ * $Revision: 1.5 $
+ * $Date: 2009/03/11 23:17:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -136,7 +136,7 @@ public class BackupVersionsList extends TablePart
       
       // Ist im Backup enthalten. Aus der "installed"-Liste streichen
       installed.remove(pc);
-      list.add(new Plugin(pc,new Version(version),null));
+      list.add(new Plugin(pc,new Version(version)));
     }
     
     // Jetzt checken wir, ob in der "installed"-Liste noch
@@ -146,8 +146,7 @@ public class BackupVersionsList extends TablePart
     while (missing.hasMoreElements())
     {
       String pc = (String) missing.nextElement();
-      Manifest mf = (Manifest) installed.get(pc);
-      list.add(new Plugin(pc,null,mf.getVersion().toString()));
+      list.add(new Plugin(pc,null));
     }
     return list;
   }
@@ -171,9 +170,8 @@ public class BackupVersionsList extends TablePart
      * ct.
      * @param pluginClass
      * @param backupVersion Version aus dem Backup
-     * @param currentVersion aktuelle Version.
      */
-    private Plugin(String pluginClass, Version backupVersion, String currentVersion)
+    private Plugin(String pluginClass, Version backupVersion)
     {
       this.pluginClass   = pluginClass;
       this.backupVersion = backupVersion;
@@ -252,6 +250,9 @@ public class BackupVersionsList extends TablePart
 
 /**********************************************************************
  * $Log: BackupVersionsList.java,v $
+ * Revision 1.5  2009/03/11 23:17:01  willuhn
+ * @R unbenutzten Parameter aus Konstruktor entfernt
+ *
  * Revision 1.4  2008/12/30 15:21:42  willuhn
  * @N Umstellung auf neue Versionierung
  *
