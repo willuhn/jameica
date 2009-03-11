@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.43 $
- * $Date: 2008/12/19 10:35:59 $
+ * $Revision: 1.44 $
+ * $Date: 2009/03/11 23:06:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -452,11 +452,13 @@ public abstract class AbstractDialog
       public void run()
       {
         try {
-          if (shell != null && !shell.isDisposed());
-          SWTUtil.disposeChildren(shell);
-          shell.dispose();
-          shell = null;
-          Logger.debug("dialog closed");
+          if (shell != null && !shell.isDisposed())
+          {
+            SWTUtil.disposeChildren(shell);
+            shell.dispose();
+            shell = null;
+            Logger.debug("dialog closed");
+          }
         }
         catch (Throwable t) {
           Logger.error("error while closing dialog",t);
@@ -483,6 +485,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.44  2009/03/11 23:06:41  willuhn
+ * @B empty if statement
+ *
  * Revision 1.43  2008/12/19 10:35:59  willuhn
  * @C Widgets erst on demand rendern
  *
