@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.16 $
- * $Date: 2009/03/10 23:51:28 $
+ * $Revision: 1.17 $
+ * $Date: 2009/03/11 23:11:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -105,13 +105,10 @@ public final class PluginResources {
 		workPath += File.separator + pluginPath.getName();
 
 		File f = new File(workPath);
-		if (!f.exists())
+		if (!f.exists() && !f.mkdirs())
 		{
-			if (!f.mkdirs())
-			{
-				Logger.error("unable to create work dir " + workPath);
-				throw new RuntimeException("unable to create work dir " + workPath);
-			}
+      Logger.error("unable to create work dir " + workPath);
+      throw new RuntimeException("unable to create work dir " + workPath);
 		}
 		
 		return workPath;
@@ -149,6 +146,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.17  2009/03/11 23:11:33  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.16  2009/03/10 23:51:28  willuhn
  * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
  *
