@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.43 $
- * $Date: 2009/02/27 14:05:34 $
+ * $Revision: 1.44 $
+ * $Date: 2009/03/18 22:40:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -165,7 +165,7 @@ public class View implements Part
    */
   protected void cleanContent()
 	{
-		if (content != null)
+		if (content != null && !content.isDisposed())
 			content.dispose();
 
 		// Wir machen hier deshalb nicht nur ein layout() oder redraw()
@@ -353,6 +353,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.44  2009/03/18 22:40:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.43  2009/02/27 14:05:34  willuhn
  * @B BUGZILLA 432 - das Speichern der Verhaeltnisse geht ja viel einfacher ;) Ich muss doch gar nicht selbst ausrechnen, wie die prozentuale Verteilung ist sondern kann einfach die SWT-Komponente fragen. Dann muss ich gar nichts rechnen
  *
