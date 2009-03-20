@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.44 $
- * $Date: 2009/03/10 14:06:25 $
+ * $Revision: 1.45 $
+ * $Date: 2009/03/20 16:38:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -722,11 +722,31 @@ public final class Config
     settings.setAttribute("jameica.system.backup.enabled",enabled);
   }
 
+  /**
+   * Legt fest, ob die Main-View gescrollt werden kann, wenn der Inhalt zu gross ist.
+   * @param b true, wenn gescrollt werden soll.
+   */
+  public void setScrollView(boolean b)
+  {
+    settings.setAttribute("jameica.system.scrollview",b);
+  }
+
+  /**
+   * Legt fest, ob die Main-View gescrollt werden kann, wenn der Inhalt zu gross ist.
+   * @return b true, wenn gescrollt werden soll.
+   */
+  public boolean getScrollView()
+  {
+    return settings.getBoolean("jameica.system.scrollview",false);
+  }
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.45  2009/03/20 16:38:09  willuhn
+ * @N BUGZILLA 576
+ *
  * Revision 1.44  2009/03/10 14:06:25  willuhn
  * @N Proxy-Server fuer HTTPS konfigurierbar
  *
@@ -763,14 +783,4 @@ public final class Config
  *
  * Revision 1.34  2008/01/09 22:25:06  willuhn
  * @C Namensueberschneidung bei den Locales
- *
- * Revision 1.33  2007/12/14 13:29:05  willuhn
- * @N Multicast Lookup-Service
- *
- * Revision 1.32  2007/09/06 22:21:55  willuhn
- * @N Hervorhebung von Pflichtfeldern konfigurierbar
- * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
- *
- * Revision 1.31  2007/08/20 12:27:08  willuhn
- * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
  **********************************************************************/

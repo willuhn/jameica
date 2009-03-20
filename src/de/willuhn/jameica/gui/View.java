@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.44 $
- * $Date: 2009/03/18 22:40:27 $
+ * $Revision: 1.45 $
+ * $Date: 2009/03/20 16:38:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,9 @@ import java.rmi.RemoteException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -33,6 +36,7 @@ import org.eclipse.swt.widgets.Listener;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Application;
 
 /**
  * Bildet das Content-Frame ab.
@@ -43,9 +47,12 @@ public class View implements Part
 	private SashForm sash;
 
 	private Composite view;
+	private ScrolledComposite scroll;
 	private Composite content;
 	private Composite snapin;
-	private boolean snappedIn = false;
+	private boolean snappedIn    = false;
+  private boolean sizeComputed = false;
+
 
 	private Composite parent;
 	private CLabel messages;
@@ -66,7 +73,7 @@ public class View implements Part
     init();
     cleanContent();
   }
-
+  
   /**
    * Initialisiert das Layout der View.
    */
@@ -77,15 +84,11 @@ public class View implements Part
 		sash.setLayout(SWTUtil.createGrid(1,true));
 		
 		view = new Composite(sash, SWT.BORDER);
-		view.setBackground(Color.BACKGROUND.getSWTColor());
-		view.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		view.setLayout(layout);
-	
+    view.setBackground(Color.BACKGROUND.getSWTColor());
+    view.setLayoutData(new GridData(GridData.FILL_BOTH));
+		view.setLayout(SWTUtil.createGrid(1,true));
+
+
 		snapin = new Composite(sash, SWT.BORDER);
 		snapin.setLayoutData(new GridData(GridData.FILL_BOTH));
 		snapin.setLayout(SWTUtil.createGrid(1,true));
@@ -97,12 +100,7 @@ public class View implements Part
     final Rectangle imageSize = logo.getBounds();
 		logoBg = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
     logoBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
-    GridLayout layout1 = new GridLayout();
-    layout1.marginHeight = 0;
-    layout1.marginWidth = 0;
-    layout1.horizontalSpacing = 0;
-    layout1.verticalSpacing = 0;
-    logoBg.setLayout(layout1);
+    logoBg.setLayout(SWTUtil.createGrid(1,false));
 
     logoBg.addListener(SWT.Paint, new Listener()
     {
@@ -127,12 +125,7 @@ public class View implements Part
     ////////////////////////////////////////////////////////////////////////////
     //
     panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
-    GridLayout layout2 = new GridLayout();
-    layout2.marginHeight = 0;
-    layout2.marginWidth = 0;
-    layout2.horizontalSpacing = 0;
-    layout2.verticalSpacing = 0;
-    panelBg.setLayout(layout2);
+    panelBg.setLayout(SWTUtil.createGrid(1,false));
     panelBg.setBackground(Color.BACKGROUND.getSWTColor());
 
     panelBg.addListener(SWT.Paint,new Listener()
@@ -157,6 +150,34 @@ public class View implements Part
     Label sep3 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
     sep3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
+    
+    if (Application.getConfig().getScrollView())
+    {
+      scroll = new ScrolledComposite(view,SWT.V_SCROLL | SWT.H_SCROLL);
+      scroll.setBackground(Color.BACKGROUND.getSWTColor());
+      scroll.setLayoutData(new GridData(GridData.FILL_BOTH));
+      scroll.setLayout(SWTUtil.createGrid(1,true));
+      scroll.setExpandHorizontal(true);
+      scroll.setExpandVertical(true);
+      scroll.addPaintListener(new PaintListener() {
+        public void paintControl(PaintEvent e)
+        {
+          if (sizeComputed)
+            return;
+          try
+          {
+            content.setSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+            scroll.setMinSize(content.getSize());
+          }
+          finally
+          {
+            sizeComputed = true;
+          }
+        }
+      });
+    }
+    
+    
 	}
 	
   /**
@@ -167,19 +188,25 @@ public class View implements Part
 	{
 		if (content != null && !content.isDisposed())
 			content.dispose();
-
+		
+		boolean b = Application.getConfig().getScrollView();
 		// Wir machen hier deshalb nicht nur ein layout() oder redraw()
 		// weil wir wollen, dass die gesamte View disposed und entfernt
 		// wird, bevor eine neue drauf kommt.
-		content = new Composite(view, SWT.NONE);
+		content = new Composite(b ? scroll : view, SWT.NONE);
 		content.setBackground(Color.BACKGROUND.getSWTColor());
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout l = new GridLayout();
 		l.marginHeight = 6;
 		l.marginWidth = 6;
 		content.setLayout(l);
+
+		if (b)
+      scroll.setContent(content);
+
 		messages.setText("");
 		messages.layout();
+		sizeComputed = false;
 	}
 
 	/**
@@ -336,6 +363,7 @@ public class View implements Part
    */
   protected void refreshContent()
 	{
+    sizeComputed = false;
 		view.layout();
 	}
 
@@ -345,6 +373,7 @@ public class View implements Part
    */
   protected Composite getContent()
 	{
+    sizeComputed = false;
 		return content;
 	}
 }
@@ -353,8 +382,8 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
- * Revision 1.44  2009/03/18 22:40:27  willuhn
- * *** empty log message ***
+ * Revision 1.45  2009/03/20 16:38:09  willuhn
+ * @N BUGZILLA 576
  *
  * Revision 1.43  2009/02/27 14:05:34  willuhn
  * @B BUGZILLA 432 - das Speichern der Verhaeltnisse geht ja viel einfacher ;) Ich muss doch gar nicht selbst ausrechnen, wie die prozentuale Verteilung ist sondern kann einfach die SWT-Komponente fragen. Dann muss ich gar nichts rechnen

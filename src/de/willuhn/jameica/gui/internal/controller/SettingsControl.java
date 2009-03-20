@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.26 $
- * $Date: 2009/03/10 14:06:26 $
+ * $Revision: 1.27 $
+ * $Date: 2009/03/20 16:38:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -81,6 +81,7 @@ public class SettingsControl extends AbstractControl
   private Input colorMandatoryBG;
 	private Input styleFactory;
   private CheckboxInput mandatoryLabel;
+  private CheckboxInput scrollView;
 	
 	private SelectInput locale;
 	
@@ -395,6 +396,18 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
+   * Liefert eine Checkbox, mit der konfiguriert werden kann, ob die View Scrollbalken anzeigen soll, wenn der Inhalt nicht hineinpasst.
+   * @return Checkbox.
+   */
+  public CheckboxInput getScrollView()
+  {
+    if (this.scrollView != null)
+      return this.scrollView;
+    this.scrollView = new CheckboxInput(Application.getConfig().getScrollView());
+    return this.scrollView;
+  }
+
+  /**
    * Speichert die Einstellungen.
    */
   public void handleStore()
@@ -456,6 +469,9 @@ public class SettingsControl extends AbstractControl
       restartNeeded |= getLocale().hasChanged();
       Locale lo = (Locale) getLocale().getValue();
 			Application.getConfig().setLocale(lo);
+			
+			restartNeeded |= getScrollView().hasChanged();
+      Application.getConfig().setScrollView(((Boolean)getScrollView().getValue()).booleanValue());
 
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
@@ -579,6 +595,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.27  2009/03/20 16:38:09  willuhn
+ * @N BUGZILLA 576
+ *
  * Revision 1.26  2009/03/10 14:06:26  willuhn
  * @N Proxy-Server fuer HTTPS konfigurierbar
  *
