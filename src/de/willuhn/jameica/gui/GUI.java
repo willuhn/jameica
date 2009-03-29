@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.116 $
- * $Date: 2009/01/18 01:43:07 $
+ * $Revision: 1.117 $
+ * $Date: 2009/03/29 21:43:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -355,21 +355,83 @@ public class GUI implements ApplicationController
     return gui.menu;
   }
 
-	/**
-	 * Zeigt die View im angegebenen Composite an.
-	 * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
-	 * @param o das Fachobjekt.
-	 */
-	public static void startView(final String className, final Object o)
-	{
-
-    if (className == null)
+  /**
+   * Zeigt die View im angegebenen Composite an.
+   * Macht das gleiche, wie die anderen startView-Funktionen.
+   * Nur mit dem Unterschied, dass die View als Class-Objekt uebergeben wird.
+   * @see GUI#startView(String, Object)
+   * @param clazz
+   * @param o
+   */
+  public static void startView(Class clazz, final Object o)
+  {
+    if (clazz == null)
     {
-      Logger.warn("no classname for view given, skipping request");
+      Logger.error("no view class given");
+      return;
+    }
+    
+    try
+    {
+      startView((AbstractView)clazz.newInstance(),o);
+    }
+    catch (Throwable t)
+    {
+      Logger.error("error while loading view " + clazz.getName(),t);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen der View"),StatusBarMessage.TYPE_ERROR));
+      // Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
+      // in der History landet
+      gui.skipHistory = true;
+      GUI.startView(FatalErrorView.class, t);
+    }
+  }
+
+  /**
+   * Zeigt die View im angegebenen Composite an.
+   * Macht das gleiche, wie die anderen startView-Funktionen.
+   * Nur mit dem Unterschied, dass der Klassenname der View als String
+   * uebergeben wird.
+   * @see GUI#startView(String, Object)
+   * @param className Name der Klasse (muss von AbstractView abgeleitet sein).
+   * @param o das Fachobjekt.
+   */
+  public static void startView(String className, final Object o)
+  {
+    if (className == null || className.length() == 0)
+    {
+      Logger.error("no view class given");
       return;
     }
 
-		Logger.debug("starting view: " + className);
+    try
+    {
+      startView(Application.getClassLoader().load(className),o);
+    }
+    catch (Throwable t)
+    {
+      Logger.error("error while loading view " + className,t);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen der View"),StatusBarMessage.TYPE_ERROR));
+      // Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
+      // in der History landet
+      gui.skipHistory = true;
+      GUI.startView(FatalErrorView.class, t);
+    }
+  }
+
+  /**
+	 * Zeigt die View im angegebenen Composite an.
+	 * @param view die anzuzeigende View.
+   * @param o das Fachobjekt.
+	 */
+	public static void startView(final AbstractView view, final Object o)
+	{
+    if (view == null)
+    {
+      Logger.error("no view given");
+      return;
+    }
+
+		Logger.debug("starting view: " + view.getClass().getName());
 
 		startSync(new Runnable() {
 
@@ -421,7 +483,7 @@ public class GUI implements ApplicationController
             // sowie deren Objekte identisch sind, muessen wir sie
             // nicht der History hinzufuegen
             if (gui.currentView.getCurrentObject() != o ||
-                !gui.currentView.getClass().getName().equals(className))
+                !gui.currentView.getClass().getName().equals(view.getClass().getName()))
             {
               HistoryEntry entry = new HistoryEntry(gui.currentView);
               gui.history.push(entry);
@@ -441,108 +503,77 @@ public class GUI implements ApplicationController
 
 				}
 
-				try
+				gui.view.cleanContent();
+
+				gui.currentView = view;
+				gui.currentView.setParent(gui.view.getContent());
+				gui.currentView.setCurrentObject(o);
+
+        try
 				{
-					Class clazz = Application.getClassLoader().load(className);
+					gui.currentView.bind();
 
-					gui.view.cleanContent();
-
-					gui.currentView = (AbstractView) clazz.newInstance();
-					gui.currentView.setParent(gui.view.getContent());
-					gui.currentView.setCurrentObject(o);
-
-          try
-					{
-						gui.currentView.bind();
-
-            if (gui.currentView instanceof Extendable)
-            {
-              try
-              {
-                
-                ExtensionRegistry.extend((Extendable)gui.currentView);
-              }
-              catch (Exception e)
-              {
-                Logger.error("error while extending view " + gui.currentView.getClass().getName());
-              }
-            }
-
-            // Bis hierher hat alles geklappt, dann koennen wir mal
-						// schauen, ob's fuer die View eine Hilfe-Seite gibt.
-						loadHelp(gui.currentView);
-
-					}
-          catch (ApplicationException ae)
+          if (gui.currentView instanceof Extendable)
           {
-            SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
-            d.setTitle(Application.getI18n().tr("Fehler"));
-            d.setText(ae.getMessage());
-            try {
-              d.open();
-            }
-            catch (Exception e2)
+            try
             {
-              Logger.error("error while showing error dialog",e2);
+              
+              ExtensionRegistry.extend((Extendable)gui.currentView);
+            }
+            catch (Exception e)
+            {
+              Logger.error("error while extending view " + gui.currentView.getClass().getName());
             }
           }
-					catch (Throwable t)
-					{
-            // Falls es zu einer OperationCancelledException gekommen
-            // ist, oeffnen wir die vorherige Seite
-            Throwable current = t;
-            for (int i=0;i<10;++i)
-            {
-              if (current == null)
-                break;
-              if (current instanceof OperationCanceledException)
-              {
-                GUI.startPreviousView();
-                return;
-              }
-              current = current.getCause();
-            }
-            
-            // Ansonsten zeigen wir die Fehlerseite
-            Logger.error("error while loading view " + className,t);
-            Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Öffnen des Dialogs"),StatusBarMessage.TYPE_ERROR));
-						// Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
-            // in der History landet
-            gui.skipHistory = true;
-						GUI.startView(FatalErrorView.class, t);
-					}
 
-					// View aktualisieren
-					gui.view.refreshContent();
+          // Bis hierher hat alles geklappt, dann koennen wir mal
+					// schauen, ob's fuer die View eine Hilfe-Seite gibt.
+					loadHelp(gui.currentView);
+
 				}
-				catch (InstantiationException e)
+        catch (ApplicationException ae)
+        {
+          try
+          {
+            Application.getCallback().notifyUser(ae.getMessage());
+          }
+          catch (Exception e)
+          {
+            Logger.error(ae.getMessage());
+            Logger.error("additional: ",e);
+          }
+        }
+				catch (Throwable t)
 				{
-					Logger.error("error while instanciating view", e);
+          // Falls es zu einer OperationCancelledException gekommen
+          // ist, oeffnen wir die vorherige Seite
+          Throwable current = t;
+          for (int i=0;i<10;++i)
+          {
+            if (current == null)
+              break;
+            if (current instanceof OperationCanceledException)
+            {
+              GUI.startPreviousView();
+              return;
+            }
+            current = current.getCause();
+          }
+          
+          // Ansonsten zeigen wir die Fehlerseite
+          Logger.error("error while loading view " + view.getClass().getName(),t);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Öffnen des Dialogs"),StatusBarMessage.TYPE_ERROR));
+					// Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
+          // in der History landet
+          gui.skipHistory = true;
+					GUI.startView(FatalErrorView.class, t);
 				}
-				catch (IllegalAccessException e)
-				{
-					Logger.error("not allowed to bind view", e);
-				}
-				catch (ClassNotFoundException e)
-				{
-					Logger.error("view does not exist", e);
-				}
+
+				// View aktualisieren
+				gui.view.refreshContent();
 			}
 		});
 
-	}
-
-	/**
-	 * Macht das gleiche, wie die andere startView-Funktion.
-	 * Nur mit dem Unterschied, dass hier die zu ladende Klasse auch direkt
-	 * angegeben werden kann.
-	 * @see GUI#startView(String, Object)
-   * @param clazz
-   * @param o
-   */
-  public static void startView(Class clazz, final Object o)
-	{
-		startView(clazz.getName(),o);
 	}
 
 	/**
@@ -855,6 +886,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.117  2009/03/29 21:43:42  willuhn
+ * @N Neue startView()-Funktion, mit der AbstractView-Objekte direkt uebergeben werden koennen
+ *
  * Revision 1.116  2009/01/18 01:43:07  willuhn
  * @N Fehlermeldung in Progress-View anzeigen
  *
