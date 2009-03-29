@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.117 $
- * $Date: 2009/03/29 21:43:42 $
+ * $Revision: 1.118 $
+ * $Date: 2009/03/29 22:28:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -554,6 +554,9 @@ public class GUI implements ApplicationController
               break;
             if (current instanceof OperationCanceledException)
             {
+              String text = current.getMessage();
+              if (text != null)
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(text,StatusBarMessage.TYPE_ERROR));
               GUI.startPreviousView();
               return;
             }
@@ -886,6 +889,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.118  2009/03/29 22:28:01  willuhn
+ * @N Text der OperationCancelledException anzeigen
+ *
  * Revision 1.117  2009/03/29 21:43:42  willuhn
  * @N Neue startView()-Funktion, mit der AbstractView-Objekte direkt uebergeben werden koennen
  *
