@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/RegistryService.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/02/13 13:34:02 $
+ * $Revision: 1.3 $
+ * $Date: 2009/04/02 15:00:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.messaging.LookupService;
+import de.willuhn.jameica.security.LocalRMISocketFactory;
 import de.willuhn.jameica.security.SSLRMISocketFactory;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -51,7 +52,17 @@ public class RegistryService implements Bootable
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
     if (!Application.inServerMode() || !Application.getConfig().getShareServices())
+    {  
+      try
+      {
+        RMISocketFactory.setSocketFactory(new LocalRMISocketFactory());
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to apply local rmi socket factory, fallback to default",e);
+      }
       return;
+    }
 
     try
     {
@@ -150,6 +161,9 @@ public class RegistryService implements Bootable
 
 /**********************************************************************
  * $Log: RegistryService.java,v $
+ * Revision 1.3  2009/04/02 15:00:31  willuhn
+ * @N RMI-Patch von Jan
+ *
  * Revision 1.2  2008/02/13 13:34:02  willuhn
  * *** empty log message ***
  *
