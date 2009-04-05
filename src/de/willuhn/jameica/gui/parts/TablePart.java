@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.84 $
- * $Date: 2009/03/01 22:58:58 $
+ * $Revision: 1.85 $
+ * $Date: 2009/04/05 22:02:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1087,7 +1087,7 @@ public class TablePart extends AbstractTablePart
         return;
       String id = col.getColumnId();
       if (id == null)
-        return;
+        continue; // HU? Ignorieren
       if (id.equals(colName))
       {
         Logger.debug("table ordered by " + colName);
@@ -1327,6 +1327,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.85  2009/04/05 22:02:22  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.84  2009/03/01 22:58:58  willuhn
  * @B BUGZILLA 708
  *
