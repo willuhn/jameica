@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.9 $
- * $Date: 2008/04/21 10:15:56 $
+ * $Revision: 1.10 $
+ * $Date: 2009/04/14 09:25:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,11 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.system;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -75,6 +80,7 @@ public class StartupParams
 		options.addOption("f","file",true,"Optionale Angabe des Datenverzeichnisses (Workdir)");
     options.addOption("o","force-password",false,"Angabe des Master-Passworts via Kommandozeile ignorieren (für MacOS nötig)");
 		options.addOption("p","password",true,"Optionale Angabe des Master-Passworts");
+    options.addOption("w","passwordfile",true,"Optionale Angabe des Master-Passworts, welches sich in der angegebenen Datei befindet");
 
     options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +      "Es findet keine Benutzer-Interaktion mehr statt. Die Option wird nur ausgewertet, wenn Jameica " +      "im Server-Mode läuft.");
 
@@ -108,13 +114,46 @@ public class StartupParams
         this.noninteractive = true;
       }
 
-			if (line.hasOption("f")) this.workDir  = line.getOptionValue("f");
-			if (line.hasOption("p") && !line.hasOption("o")) this.password = line.getOptionValue("p");
-
-			Logger.info("workdir: " + this.workDir);
-			if (this.password != null)
-				Logger.info("master password given via commandline");
-
+			if (line.hasOption("f"))
+			  this.workDir  = line.getOptionValue("f");
+      Logger.info("workdir: " + this.workDir);
+      
+			if (line.hasOption("p") && !line.hasOption("o"))
+			{
+			  this.password = line.getOptionValue("p");
+        Logger.info("master password given via commandline");
+      }
+			
+			if (line.hasOption("w"))
+			{
+			  String file = line.getOptionValue("w");
+			  File f = new File(file);
+			  if (!f.exists() || !f.canRead() || !f.isFile())
+			  {
+			    Logger.warn("option \"w\" given, but file " + file + " not readable, ignoring");
+			  }
+			  else
+			  {
+			    BufferedReader r = null;
+			    try
+			    {
+			      r = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+			      this.password = r.readLine();
+			      Logger.info("master password given via file " + file);
+			    }
+			    finally
+			    {
+			      try
+			      {
+	            r.close();
+			      }
+			      catch (Exception e)
+			      {
+			        Logger.error("unable to close file " + file);
+			      }
+			    }
+			  }
+			}
 		}
 		catch (Exception e)
 		{
@@ -185,6 +224,9 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.10  2009/04/14 09:25:53  willuhn
+ * @N Neuer Parameter "-w <file>", mit dem das Masterpasswort auch ueber eine Datei uebergeben werden kann
+ *
  * Revision 1.9  2008/04/21 10:15:56  willuhn
  * @N MACOS Neuer Kommandozeilen-Parameter "-o", der in jameica-macos.sh standardmaessig gesetzt ist und dazu fuehrt, dass Master-Passwoerter via Kommandozeile grundsaetzlich ignoriert werden
  *
