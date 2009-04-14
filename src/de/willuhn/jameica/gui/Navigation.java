@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.45 $
- * $Date: 2008/11/03 23:07:47 $
+ * $Revision: 1.46 $
+ * $Date: 2009/04/14 07:50:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -267,7 +267,7 @@ public class Navigation implements Part
    * Selektiert das Navigationselement mit der angegebenen ID.
    * @param id zu selektierende ID.
    */
-  protected void select(String id)
+  public void select(String id)
   {
     if (id == null)
       return;
@@ -380,6 +380,9 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
+ * Revision 1.46  2009/04/14 07:50:07  willuhn
+ * @N select(String) public gemacht (brauchte Stefan von der ETH)
+ *
  * Revision 1.45  2008/11/03 23:07:47  willuhn
  * @C BUGZILLA 647
  *
