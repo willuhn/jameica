@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.118 $
- * $Date: 2009/03/29 22:28:01 $
+ * $Revision: 1.119 $
+ * $Date: 2009/04/16 12:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,6 +49,7 @@ import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.ApplicationCallbackSWT;
 import de.willuhn.jameica.system.ApplicationController;
 import de.willuhn.jameica.system.BackgroundTask;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
@@ -115,9 +116,10 @@ public class GUI implements ApplicationController
       // init shell
       getShell().setLayout(SWTUtil.createGrid(1, false));
       getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
-      getShell().setImage(SWTUtil.getImage("hibiscus-icon-64x64.png"));
+      getShell().setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon","hibiscus-icon-64x64.png")));
 
-      getShell().setText("Jameica " + Application.getManifest().getVersion());
+      String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
+      getShell().setText(name);
 
       ////////////////////////////
 
@@ -889,6 +891,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.119  2009/04/16 12:58:39  willuhn
+ * @N BUGZILLA 722
+ *
  * Revision 1.118  2009/03/29 22:28:01  willuhn
  * @N Text der OperationCancelledException anzeigen
  *

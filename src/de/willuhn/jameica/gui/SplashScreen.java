@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.30 $
- * $Date: 2008/11/25 00:50:26 $
+ * $Revision: 1.31 $
+ * $Date: 2009/04/16 12:58:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,6 @@
 
 package de.willuhn.jameica.gui;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.eclipse.swt.SWT;
@@ -29,6 +27,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ProgressMonitor;
 
@@ -69,7 +68,8 @@ public class SplashScreen implements ProgressMonitor, Runnable
 		display = GUI.getDisplay();
     
     shell = new Shell(display,SWT.NONE);
-    shell.setText("Jameica");
+    String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
+    shell.setText(name);
     shell.setBackground(new Color(display,0,0,0));
   }
   
@@ -101,22 +101,16 @@ public class SplashScreen implements ProgressMonitor, Runnable
     // Den laden wir aber nur, wenn nicht explizit einer angegeben ist
     if (this.logo == null)
     {
-      String[] ext = new String[] {"jpg","jpeg","gif","bmp","png"};
-      for (int i=0;i<ext.length;++i)
+      String name = Customizing.SETTINGS.getString("application.splashscreen",null);
+      if (name != null && name.length() > 0)
       {
-        File f = new File("splash." + ext[i]);
-        if (f.exists() && f.isFile() && f.canRead() && f.length() > 0)
+        try
         {
-          try
-          {
-            is = new FileInputStream(f);
-            Logger.info("using custom splash screen " + f.getAbsolutePath());
-          }
-          catch (Exception e)
-          {
-            Logger.error("unable to load custom splash screen",e);
-          }
-          break;
+          is = shell.getClass().getResourceAsStream(name);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to load custom splash screen " + name,e);
         }
       }
     }
@@ -292,6 +286,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.31  2009/04/16 12:58:39  willuhn
+ * @N BUGZILLA 722
+ *
  * Revision 1.30  2008/11/25 00:50:26  willuhn
  * @B "closed" wurde immer gesetzt - auch dann, wenn der Splashscreen noch gar nicht geschlossen werden sollte
  *
