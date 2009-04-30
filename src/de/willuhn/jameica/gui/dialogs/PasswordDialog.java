@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.21 $
- * $Date: 2008/12/18 23:21:13 $
+ * $Revision: 1.22 $
+ * $Date: 2009/04/30 13:20:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,9 +12,12 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.input.LabelInput;
@@ -137,6 +140,17 @@ public abstract class PasswordDialog extends AbstractDialog {
     // Der Freiraum fuer Erweiterungen
     extend(container);
 
+    // Listener, welcher passwordModified() aufruft wenn sich das
+    // passwort aendert (fuer Erweiterungen).
+    ((Text)this.passwordInput.getControl()).addModifyListener(
+        new ModifyListener() {
+          public void modifyText(ModifyEvent e)
+          {
+            passwordModified((String)passwordInput.getValue());
+          }
+        }
+    );
+
 
     ButtonArea buttons = container.createButtonArea(2);
     
@@ -204,7 +218,19 @@ public abstract class PasswordDialog extends AbstractDialog {
   {
   }
 	
-	/**
+  /**
+   * Kann von abgeleiteten Dialogen ueberschrieben werden, um
+   * denPassword-Dialog noch zu erweitern.
+   * Wird jedes mal aufgerufen, wenn die Eingabe im Passwort-Feld
+   * sich aendert. Kann z. B. benutzt werden, um das Passwort
+   * noch vor dem Klick auf OK zu pruefen.
+   * @param password
+   */
+  protected void passwordModified(String password)
+  {
+  }
+
+  /**
 	 * Liefert die Anzahl der moeglichen Rest-Versuche zur
 	 * Eingabe bevor der Dialog abgebrochen wird.
    * @return Anzahl der Restversuche.
@@ -226,6 +252,9 @@ public abstract class PasswordDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.22  2009/04/30 13:20:09  willuhn
+ * @N Jan's Patch, welches
+ *
  * Revision 1.21  2008/12/18 23:21:13  willuhn
  * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
  * @R Nicht mehr benoetigte Grafiken entfernt
