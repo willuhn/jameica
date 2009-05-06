@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.85 $
- * $Date: 2009/04/05 22:02:22 $
+ * $Revision: 1.86 $
+ * $Date: 2009/05/06 16:26:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -445,7 +445,7 @@ public class TablePart extends AbstractTablePart
       Column col     = (Column) this.columns.get(i);
 			Item di        = new Item(object,col);
 
-      String display = di.getFormattedValue();
+      String display = col.getFormattedValue(di.value,di.data);
 
 			item.setText(i,display);
 			text[i] = display;
@@ -1227,19 +1227,6 @@ public class TablePart extends AbstractTablePart
 			}
 		}
     
-    private String getFormattedValue() throws RemoteException
-    {
-      String display = null;
-      
-      // Formatter vorhanden?
-      if (this.column.getFormatter() != null)
-        display = this.column.getFormatter().format(this.value);
-      else
-        display = BeanUtil.toString(this.value);
-
-      return display != null ? display : "";
-    }
-
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -1276,7 +1263,7 @@ public class TablePart extends AbstractTablePart
           return 1;
         
         if (this.column != null && this.column.getSortMode() == Column.SORT_BY_DISPLAY)
-          return this.getFormattedValue().compareTo(other.getFormattedValue());
+          return this.column.getFormattedValue(this.value,this.data).compareTo(other.column.getFormattedValue(other.value,other.data));
         
 				return this.sortValue.compareTo(other.sortValue);
     	}
@@ -1327,6 +1314,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.86  2009/05/06 16:26:26  willuhn
+ * @N BUGZILLA 721
+ *
  * Revision 1.85  2009/04/05 22:02:22  willuhn
  * *** empty log message ***
  *

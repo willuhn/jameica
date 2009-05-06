@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Column.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/09/30 21:30:04 $
+ * $Revision: 1.3 $
+ * $Date: 2009/05/06 16:26:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,9 @@ import java.io.Serializable;
 
 import org.eclipse.swt.SWT;
 
+import de.willuhn.datasource.BeanUtil;
 import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.logging.Logger;
 
 
 /**
@@ -191,11 +193,52 @@ public class Column implements Serializable
   {
     return this.sort;
   }
+  
+  /**
+   * Liefert den Wert in der Form, wie er in der Tabelle angezeigt werden soll.
+   * Fuer die meisten Werte wird hier ein simples <code>value#toString</code>
+   * ausgefuehrt.
+   * @param value Der Wert des Attributes der Bean.
+   * @param context die Bean, aus der der Wert des Attributes stammt.
+   * Die Bean wird fuer gewoehnlich nicht benoetigt, da der Attribut-Wert
+   * ja bereits in <code>value</code> vorliegt. Sie wird als Context-Information
+   * dennoch uebergeben, damit eine ggf. von dieser Klasse abgeleitete Version
+   * abhaengig von der Bean (und damit dem Context die Formatierung unterschiedlich
+   * vornehmen kann.
+   * @return der formatierte Wert des Attributes.
+   * Die Funktion sollte nie NULL zurueckliefern sondern hoechstens einen
+   * Leerstring, da der Wert 1:1 in die Tabelle uebernommen wird und es
+   * dort unter Umstaenden zu einer NPE oder der Anzeige von "null" kommen koennte.
+   * BUGZILLA 721
+   */
+  public String getFormattedValue(Object value, Object context)
+  {
+    if (value == null)
+      return "";
+
+    String display = null;
+    try
+    {
+      // Formatter vorhanden?
+      if (this.formatter != null)
+        display = this.formatter.format(value);
+      else
+        display = BeanUtil.toString(value);
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to format value " + value + " for bean " + context,e);
+    }
+    return display != null ? display : "";
+  }
 }
 
 
 /**********************************************************************
  * $Log: Column.java,v $
+ * Revision 1.3  2009/05/06 16:26:26  willuhn
+ * @N BUGZILLA 721
+ *
  * Revision 1.2  2008/09/30 21:30:04  willuhn
  * @N TablePart-internes "SortItem" umbenannt in "Item" - dient jetzt nicht mehr nur der Sortierung sondern auch zur Ausgabe/Formatierung des Attribut-Wertes (getFormattedValue())
  * @N Objekt "Column" um ein neues Attribut "sort" erweitert, mit dem festgelegt werden kann, ob die Spalte nach dem tatsaechlichen Wert (SORT_BY_VALUE) des Attributs sortiert werden soll oder nach dem angezeigten Wert (SORT_BY_DISPLAY). SORT_BY_VALUE ist (wie bisher) Default. Damit kann man z.Bsp. eine Spalte mit Integer-Wert auch alphanumerisch sortieren (nach "1" kommt dann "10" und nicht "2")

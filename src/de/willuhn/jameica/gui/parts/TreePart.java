@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.27 $
- * $Date: 2009/03/11 23:19:29 $
+ * $Revision: 1.28 $
+ * $Date: 2009/05/06 16:26:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -471,13 +471,16 @@ public class TreePart extends AbstractTablePart
 
       if (columns.size() == 0)
       {
-        item.setText(getValue(data,null));
+        String s = BeanUtil.toString(data);
+        item.setText(s != null ? s : "");
       }
       else
       {
         for (int i=0;i<columns.size();++i)
         {
-          item.setText(i,getValue(data,(Column) columns.get(i)));
+          Column c = (Column) columns.get(i);
+          Object value = BeanUtil.get(data,c.getColumnId());
+          item.setText(i,c.getFormattedValue(value,data));
         }
       }
       
@@ -520,41 +523,6 @@ public class TreePart extends AbstractTablePart
         item.setImage(SWTUtil.getImage("page.gif"));
       }
 		}
-
-    /**
-     * Liefert den Wert eines Attributes des Objektes.
-     * @param object das Objekt.
-     * @param die Spalte.
-     * @return Wert des Attributs.
-     * @throws RemoteException
-     */
-    private String getValue(GenericObject object, Column col) throws RemoteException
-    {
-      if (object == null)
-        return "";
-
-      String attribute = null;
-
-      if (col == null || col.getColumnId() == null)
-        attribute = object.getPrimaryAttribute();
-      else
-        attribute = col.getColumnId();
-
-      Object value = object.getAttribute(attribute);
-      if (value instanceof GenericObject)
-      {
-        GenericObject foreign = (GenericObject) value;
-        value = foreign.getAttribute(foreign.getPrimaryAttribute());
-      }
-
-      if (value == null)
-        return "";
-      
-      if (col == null || col.getFormatter() == null)
-        return value.toString();
-
-      return col.getFormatter().format(value);
-    }
   }
 
 
@@ -577,6 +545,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.28  2009/05/06 16:26:26  willuhn
+ * @N BUGZILLA 721
+ *
  * Revision 1.27  2009/03/11 23:19:29  willuhn
  * @R unbenutzten Parameter entfernt
  *
