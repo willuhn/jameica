@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.38 $
- * $Date: 2009/01/04 16:59:44 $
+ * $Revision: 1.39 $
+ * $Date: 2009/05/07 13:36:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -153,6 +153,8 @@ public class SelectInput extends AbstractInput
    */
   public Control getControl()
   {
+    if (this.combo != null)
+      return this.combo;
 
     this.combo = GUI.getStyleFactory().createCombo(getParent());
     this.combo.setEditable(this.editable); // BUGZILLA 549
@@ -362,6 +364,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.39  2009/05/07 13:36:03  willuhn
+ * @C Unterstuetzung fuer Mehrfachaufruf von getControl
+ *
  * Revision 1.38  2009/01/04 16:59:44  willuhn
  * @N Format-Funktion zum Uberschreiben der Anzeige von Elementen in SelectInput
  *
