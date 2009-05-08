@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.39 $
- * $Date: 2009/05/07 13:36:03 $
+ * $Revision: 1.40 $
+ * $Date: 2009/05/08 14:22:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -92,12 +92,9 @@ public class SelectInput extends AbstractInput
    */
   public void setPreselected(Object preselected)
   {
-    if (preselected == null)
-      return;
-    
     this.preselected = preselected;
     
-    if (this.combo == null || this.combo.isDisposed())
+    if (this.combo == null || this.combo.isDisposed() || this.preselected == null)
       return;
 
     int size = this.list.size();
@@ -364,6 +361,9 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.40  2009/05/08 14:22:36  willuhn
+ * @C preselected in SelectInput nullable
+ *
  * Revision 1.39  2009/05/07 13:36:03  willuhn
  * @C Unterstuetzung fuer Mehrfachaufruf von getControl
  *
