@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2009/02/24 23:35:33 $
+ * $Revision: 1.10 $
+ * $Date: 2009/05/10 21:54:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,6 +34,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 
 /**
@@ -79,6 +80,8 @@ public class SearchInput extends AbstractInput
   private int maxLength       = 0;
   
   private List<Listener> listeners = new ArrayList<Listener>();
+  
+  private final static Settings settings = new Settings(SearchInput.class);
 
 
   /**
@@ -330,7 +333,7 @@ public class SearchInput extends AbstractInput
       }
     
     };
-    this.text.addListener(SWT.KeyUp, new DelayedListener(360,listener));
+    this.text.addListener(SWT.KeyUp, new DelayedListener(settings.getInt("delay",1000),listener));
 
     return this.text;
   }
@@ -446,6 +449,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.10  2009/05/10 21:54:05  willuhn
+ * @C Delay auf 1 Sekunde erhoeht und konfigurierbar gemacht (https://lists.berlios.de/pipermail/jameica-devel/2009-May/000001.html)
+ *
  * Revision 1.9  2009/02/24 23:35:33  willuhn
  * @N setText()
  *
