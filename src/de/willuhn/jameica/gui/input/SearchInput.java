@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.10 $
- * $Date: 2009/05/10 21:54:05 $
+ * $Revision: 1.11 $
+ * $Date: 2009/05/11 08:56:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,6 +68,12 @@ import de.willuhn.logging.Logger;
  */
 public class SearchInput extends AbstractInput
 {
+  /**
+   * Das Default-Delay nach dessen Ablauf das Widget mit der Suche beginnen soll.
+   * Angabe in Millisekunden.
+   */
+  public final static int DEFAULT_DELAY = 1000;
+  
   // Fachdaten
   private String attribute    = null;
   private Object value        = null;
@@ -81,8 +87,7 @@ public class SearchInput extends AbstractInput
   
   private List<Listener> listeners = new ArrayList<Listener>();
   
-  private final static Settings settings = new Settings(SearchInput.class);
-
+  private int delay           = DEFAULT_DELAY;
 
   /**
    * Erzeugt eine neue Such-Box.
@@ -116,6 +121,16 @@ public class SearchInput extends AbstractInput
     this.maxLength = maxLength;
     if (this.text != null && !this.text.isDisposed())
       this.text.setTextLimit(this.maxLength);
+  }
+  
+  /**
+   * Legt ein abweichendes Delay fest.
+   * @param millis das Delay.
+   */
+  public void setDelay(int millis)
+  {
+    if (millis > 0)
+      this.delay = millis;
   }
 
   private boolean inSearch = false;
@@ -333,7 +348,7 @@ public class SearchInput extends AbstractInput
       }
     
     };
-    this.text.addListener(SWT.KeyUp, new DelayedListener(settings.getInt("delay",1000),listener));
+    this.text.addListener(SWT.KeyUp, new DelayedListener(this.delay,listener));
 
     return this.text;
   }
@@ -449,6 +464,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.11  2009/05/11 08:56:24  willuhn
+ * @C Config-Parameter ersetzt gegen "setDelay(int)"
+ *
  * Revision 1.10  2009/05/10 21:54:05  willuhn
  * @C Delay auf 1 Sekunde erhoeht und konfigurierbar gemacht (https://lists.berlios.de/pipermail/jameica-devel/2009-May/000001.html)
  *
