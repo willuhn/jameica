@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.86 $
- * $Date: 2009/05/06 16:26:26 $
+ * $Revision: 1.87 $
+ * $Date: 2009/05/11 13:43:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,6 +57,7 @@ import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Session;
 
 /**
  * Erzeugt eine Standard-Tabelle.
@@ -106,6 +107,12 @@ public class TablePart extends AbstractTablePart
   private boolean showSummary           = true;
   private boolean check                 = false;
   //////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////
+  // State
+  private static Session state = new Session();
+  //////////////////////////////////////////////////////////
+  
 
   /**
    * Hilfsmethode, um die RemoteException im Konstruktor zu vermeiden.
@@ -260,7 +267,7 @@ public class TablePart extends AbstractTablePart
       return;
     table.setTopIndex(i);
   }
-  
+
   /**
    * Entfernt alle Elemente aus der Tabelle.
    */
@@ -658,6 +665,25 @@ public class TablePart extends AbstractTablePart
 
       }
     });
+		
+		if (this.rememberState)
+		{
+		  this.addSelectionListener(new Listener()
+      {
+        public void handleEvent(Event event)
+        {
+          try
+          {
+            state.put(getID() + ".object",event.data);
+            state.put(getID() + ".index",new Integer(table.getTopIndex()));
+          }
+          catch (Exception e)
+          {
+            Logger.error("unable to store table state",e);
+          }
+        }
+      });
+		}
     
     table.addListener(SWT.MouseDown, new Listener() {
       public void handleEvent(Event event)
@@ -866,8 +892,9 @@ public class TablePart extends AbstractTablePart
         Logger.error("unable to restore last table order",e);
       }
     }
-    
-    
+		
+    restoreState();
+
     // wir wurden gezeichnet. Die temporaere Tabelle brauchen wir
     // nicht mehr
     this.temp.clear();
@@ -1108,6 +1135,35 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
+   * Stellt den Status der Tabelle wieder her (Scroll-Position und markierte Objekte).
+   * Geschieht jedoch nur, wenn das Feature mit setRememberState(true) aktiviert wurde.
+   */
+  public void restoreState()
+  {
+    if (!this.rememberState)
+      return;
+    try
+    {
+      Object object = state.get(getID() + ".object");
+      if (object != null)
+      {
+        if (object instanceof Object[])
+          this.select((Object[])object);
+        else
+          this.select(object);
+      }
+      Integer index = (Integer) state.get(getID() + ".index");
+      if (index != null)
+        this.setTopIndex(index.intValue());
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to restore last table state",e);
+    }
+  }
+  
+
+  /**
    * Aktiviert oder deaktiviert die Tabelle.
    * @param enabled true, wenn sie aktiv sein soll.
    */
@@ -1314,6 +1370,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.87  2009/05/11 13:43:48  willuhn
+ * @N setRememberState(boolean)
+ *
  * Revision 1.86  2009/05/06 16:26:26  willuhn
  * @N BUGZILLA 721
  *

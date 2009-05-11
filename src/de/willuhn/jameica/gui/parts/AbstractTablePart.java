@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.9 $
- * $Date: 2008/12/04 22:03:33 $
+ * $Revision: 1.10 $
+ * $Date: 2009/05/11 13:43:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,7 @@ public abstract class AbstractTablePart implements Part
   protected boolean changeable             = false;
   protected boolean rememberColWidth       = false;
   protected boolean rememberOrder          = false;
+  protected boolean rememberState          = false;
   protected Vector columns                 = new Vector();
   protected final static Settings settings = new Settings(AbstractTablePart.class);
 
@@ -211,6 +212,15 @@ public abstract class AbstractTablePart implements Part
   }
   
   /**
+   * Legt fest, ob sich die Tabelle die zuletzt markierten Objekte samt der Scrollposition merken soll.
+   * @param remember true, wenn sich die Tabelle Selektion und Position merken soll.
+   */
+  public void setRememberState(boolean remember)
+  {
+    this.rememberState = remember;
+  }
+  
+  /**
    * Legt fest, ob mehrere Elemente gleichzeitig markiert werden koennen.
    * Default: False.
    * @param multi true, wenn mehrere Elemente gleichzeitig markiert werden koennen.
@@ -224,6 +234,9 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.10  2009/05/11 13:43:48  willuhn
+ * @N setRememberState(boolean)
+ *
  * Revision 1.9  2008/12/04 22:03:33  willuhn
  * @N BUGZILLA 665
  *
