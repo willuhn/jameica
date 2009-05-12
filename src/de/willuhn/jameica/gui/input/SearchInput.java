@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.11 $
- * $Date: 2009/05/11 08:56:24 $
+ * $Revision: 1.12 $
+ * $Date: 2009/05/12 22:25:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,6 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 
 /**
@@ -464,6 +463,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.12  2009/05/12 22:25:21  willuhn
+ * @R removed unused import
+ *
  * Revision 1.11  2009/05/11 08:56:24  willuhn
  * @C Config-Parameter ersetzt gegen "setDelay(int)"
  *
