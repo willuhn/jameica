@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.19 $
- * $Date: 2009/03/11 23:12:06 $
+ * $Revision: 1.20 $
+ * $Date: 2009/05/13 21:48:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -204,7 +204,7 @@ public class JameicaTrustManager implements X509TrustManager
       CertPath certPath = factory.getCertificateFactory().generateCertPath(Arrays.asList(chain));
       
       // Jetzt holen wir uns das Peer-Zertifikat. Das ist das, welchem
-      // wir vertrazen muessen. Alle anderen sind uebergeordnete CA-Zertifikate.
+      // wir vertrauen muessen. Alle anderen sind uebergeordnete CA-Zertifikate.
       X509Certificate cert = (X509Certificate) certPath.getCertificates().get(0);
 
       // Sanity check. Wir stellen sicher, dass die Chain korrekt war
@@ -268,6 +268,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.20  2009/05/13 21:48:36  willuhn
+ * @D typo
+ *
  * Revision 1.19  2009/03/11 23:12:06  willuhn
  * @R unnuetzes return-Statement
  *
