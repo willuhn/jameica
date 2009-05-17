@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2009/05/12 22:25:21 $
+ * $Revision: 1.13 $
+ * $Date: 2009/05/17 21:51:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,6 +95,18 @@ public class SearchInput extends AbstractInput
   {
     super();
     this.search = Application.getI18n().tr("Suche...");
+  }
+  
+  /**
+   * Legt einen abweichenden Text fest, der vor Eingabe der Suche angezeigt wird.
+   * Standardmaessig wird "Suche..." verwendet. Mit dieser Funktion kann der
+   * Wert geaendert werden.
+   * @param text der anzuzeigende Text.
+   */
+  public void setSearchString(String text)
+  {
+    if (text != null && text.length() > 0)
+      this.search = text;
   }
 
   /**
@@ -463,6 +475,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.13  2009/05/17 21:51:56  willuhn
+ * @N setSearchText(String) zum Aendern des Such-Textes (Heiners Wunsch)
+ *
  * Revision 1.12  2009/05/12 22:25:21  willuhn
  * @R removed unused import
  *
