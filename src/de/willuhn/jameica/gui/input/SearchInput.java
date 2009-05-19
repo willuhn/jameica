@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2009/05/17 21:51:56 $
+ * $Revision: 1.14 $
+ * $Date: 2009/05/19 10:20:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -105,7 +105,7 @@ public class SearchInput extends AbstractInput
    */
   public void setSearchString(String text)
   {
-    if (text != null && text.length() > 0)
+    if (text != null)
       this.search = text;
   }
 
@@ -475,6 +475,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.14  2009/05/19 10:20:50  willuhn
+ * @C Suchtext soll auch entfernt werden koennen
+ *
  * Revision 1.13  2009/05/17 21:51:56  willuhn
  * @N setSearchText(String) zum Aendern des Such-Textes (Heiners Wunsch)
  *
