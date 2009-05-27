@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.45 $
- * $Date: 2009/05/27 12:56:45 $
+ * $Revision: 1.46 $
+ * $Date: 2009/05/27 16:01:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -400,7 +400,7 @@ public abstract class AbstractDialog
 	
 					Rectangle shellRect = shell.getBounds();
           // BUGZILLA 183
-					Rectangle displayRect = display.getPrimaryMonitor().getBounds();
+					Rectangle displayRect = GUI.getShell().getMonitor().getBounds(); // Wir wollen auf den Monitor, auf dem auch das Anwendungsfenster laeuft
 
 					// Per Default POSITION_CENTER
 					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2);
@@ -485,6 +485,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.46  2009/05/27 16:01:05  willuhn
+ * @C Dialoge auf dem Monitor anzeigen, auf dem auch das Hauptfenster laeuft
+ *
  * Revision 1.45  2009/05/27 12:56:45  willuhn
  * @B BUGZILLA 183
  *
