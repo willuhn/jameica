@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.44 $
- * $Date: 2009/03/11 23:06:41 $
+ * $Revision: 1.45 $
+ * $Date: 2009/05/27 12:56:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -403,8 +403,8 @@ public abstract class AbstractDialog
 					Rectangle displayRect = display.getPrimaryMonitor().getBounds();
 
 					// Per Default POSITION_CENTER
-					int x = (displayRect.width - shellRect.width) / 2;
-					int y = (displayRect.height - shellRect.height) / 2;
+					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2);
+					int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);
 					if (pos == POSITION_MOUSE)
 					{
 						x = display.getCursorLocation().x - (shell.getSize().x / 2);
@@ -485,6 +485,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.45  2009/05/27 12:56:45  willuhn
+ * @B BUGZILLA 183
+ *
  * Revision 1.44  2009/03/11 23:06:41  willuhn
  * @B empty if statement
  *

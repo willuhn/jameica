@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.119 $
- * $Date: 2009/04/16 12:58:39 $
+ * $Revision: 1.120 $
+ * $Date: 2009/05/27 12:56:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -225,53 +226,35 @@ public class GUI implements ApplicationController
   {
     ////////////////////////////
     // size and position restore
-    int x = -1;
-    int y = -1;
-    int width = 920;
-    int height = 720;
-    x = SETTINGS.getInt("window.x", x);
-    y = SETTINGS.getInt("window.y", y);
-    width = SETTINGS.getInt("window.width", width);
-    height = SETTINGS.getInt("window.height", height);
+    int x      = SETTINGS.getInt("window.x", 0);
+    int y      = SETTINGS.getInt("window.y", 0);
+    int width  = SETTINGS.getInt("window.width", 920);
+    int height = SETTINGS.getInt("window.height", 720);
 
     // BUGZILLA 194
     boolean maximized = SETTINGS.getBoolean("window.maximized", false);
     
-    int dwidth  = getDisplay().getBounds().width;
-    int dheight = getDisplay().getBounds().height;
-    Logger.info("display size: " + dwidth + "x" + dheight);
-
-    if (x >= dwidth)
-    {
-      Logger.info("last window x position outer range, resetting");
-      x = -1;
-    }
-    if (y >= dheight)
-    {
-      Logger.info("last window y position outer range, resetting");
-       y = -1;
-    } 
-
-    if (maximized)
-    {
-      getShell().setLocation(0,0);
-    }
-    else if (y > 0 && x > 0)
-    {
-      Logger.info("window position: " + x + "x" + y);
-      getShell().setLocation(x,y);
-    }
-
-    // SWT3 behaviour
     if (maximized)
     {
       Logger.info("window size: maximized");
+      getShell().setLocation(0,0);
       getShell().setMaximized(true);
     }
     else
     {
-      Logger.info("window size: " + width + "x" + height);
+      Logger.info("window position: " + x + "x" + y +", size: " + width + "x" + height);
       getShell().setSize(width,height);
+      
+      // Wir checken noch, ob die Position ueberhaupt auf dem Bildschirm ist
+      if (x != 0 && y != 0)
+      {
+        // OK, es ist etwas angegeben. Checken, ob die Werte plausibel sind
+        // Sonst koennte es passieren, dass das Fenster ausserhalb des sichtbaren
+        // Bereiches landet
+        Rectangle rect = getDisplay().getPrimaryMonitor().getClientArea(); // getClientArea liefert die Groesse des gesamten virtuellen Screens
+        if ((x < (rect.width)) && (y < rect.height))
+          getShell().setLocation(x,y);
+      }
     }
 
     getShell().addDisposeListener(new DisposeListener() {
@@ -279,28 +262,31 @@ public class GUI implements ApplicationController
       {
         try
         {
-          Logger.info("saving window position/size");
           // BUGZILLA 194
-          boolean maximized = getShell().getMaximized();
-          Point location    = getShell().getLocation();
-          Point size        = getShell().getSize();
-
+          Shell shell = (Shell) e.widget;
+          
+          boolean maximized = shell.getMaximized();
+          Point size        = shell.getSize();
+          Point loc         = shell.toDisplay(0,0); // Nicht fragen, warum. Ist so ;)
+          
+          Logger.info("saving window maximized flag: " + maximized);
           SETTINGS.setAttribute("window.maximized", maximized);
 
-          Logger.info("size: " + size.x + "x" + size.y + ", position: " + location.x + "x" + location.y + ", maximized: " + maximized);
-
+          // Nur speichern, wenn plausible und sinnvolle Werte vorliegen
           if (size.x != 0 && size.y != 0)
           {
+            Logger.info("saving window size: " + size.x + "x" + size.y);
             SETTINGS.setAttribute("window.width", size.x);
             SETTINGS.setAttribute("window.height",size.y);
           }
 
-          if (location.x != 0 && location.y != 0)
+          if (loc.x != 0 && loc.y != 0)
           {
+            Logger.info("saving window location: " + loc.x + "x" + loc.y);
             // Zumindest unter Linux liefert das immer 0.
             // Dann brauchen wir es auch nicht speichern
-            SETTINGS.setAttribute("window.x", location.x);
-            SETTINGS.setAttribute("window.y", location.y);
+            SETTINGS.setAttribute("window.x", loc.x);
+            SETTINGS.setAttribute("window.y", loc.y);
           }
         }
         catch (Throwable t)
@@ -891,6 +877,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.120  2009/05/27 12:56:45  willuhn
+ * @B BUGZILLA 183
+ *
  * Revision 1.119  2009/04/16 12:58:39  willuhn
  * @N BUGZILLA 722
  *

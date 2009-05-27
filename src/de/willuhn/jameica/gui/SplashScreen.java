@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.31 $
- * $Date: 2009/04/16 12:58:39 $
+ * $Revision: 1.32 $
+ * $Date: 2009/05/27 12:56:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -150,8 +150,8 @@ public class SplashScreen implements ProgressMonitor, Runnable
     Rectangle splashRect = shell.getBounds();
     // BUGZILLA 183
     Rectangle displayRect = display.getPrimaryMonitor().getBounds();
-    int x = (displayRect.width - splashRect.width) / 2;
-    int y = (displayRect.height - splashRect.height) / 2;
+    int x = displayRect.x + ((displayRect.width - splashRect.width) / 2);
+    int y = displayRect.y + ((displayRect.height - splashRect.height) / 2);
     shell.setLocation(x, y);
     
     // oeffnen
@@ -286,6 +286,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.32  2009/05/27 12:56:45  willuhn
+ * @B BUGZILLA 183
+ *
  * Revision 1.31  2009/04/16 12:58:39  willuhn
  * @N BUGZILLA 722
  *
