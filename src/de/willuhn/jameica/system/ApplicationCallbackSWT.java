@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.19 $
- * $Date: 2008/04/20 22:37:32 $
+ * $Revision: 1.20 $
+ * $Date: 2009/05/28 10:11:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,6 +73,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 				"Sie starten Jameica zum ersten Mal.\n\n" +
 				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +				"Es wird anschließend bei jedem Start von Jameica benötigt."));
 			p.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
+			p.setMonitor(NewPasswordDialog.MONITOR_PRIMARY);
 
 			try
 			{
@@ -117,10 +118,6 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		}
 
 		PWD dialog = new PWD();
-		
-		String text = Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein.");
-		dialog.setText(text);
-		dialog.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
 
 		try
 		{
@@ -379,7 +376,11 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     public PWD()
     {
       super(PWD.POSITION_CENTER);
-      setSize(400,SWT.DEFAULT);
+      
+      this.setSize(400,SWT.DEFAULT);
+      this.setText(Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein."));
+      this.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
+      this.setMonitor(PWD.MONITOR_PRIMARY);
     }
 
     /**
@@ -427,6 +428,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.20  2009/05/28 10:11:49  willuhn
+ * @N In AbstractDialog kann nun explizit angegeben werden, auf welchen Monitor der Dialog soll (CURRENT == Monitor, auf dem sich das Jameica-Fenster befindet oder PRIMARY == der Primaer-Monitor). Letzteres ist fuer Dialoge noetig, die zu einem Zeitpunkt angezeigt werden, zu denen das Anwendungsfenster noch nicht da ist - etwa der Dialog fuer das Masterpasswort. Wuerde man da "MONITOR_CURRENT" verwenden, haette das zur Folge, dass die Shell des Anwendungsfensters unnoetig erzeugt wird
+ *
  * Revision 1.19  2008/04/20 22:37:32  willuhn
  * @B MACOS Test auf NULL statt "" in Passwort-Checksumme
  *

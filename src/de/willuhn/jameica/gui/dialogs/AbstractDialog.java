@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.46 $
- * $Date: 2009/05/27 16:01:05 $
+ * $Revision: 1.47 $
+ * $Date: 2009/05/28 10:11:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,6 +95,18 @@ public abstract class AbstractDialog
 	 * Positioniert den Dialog mittig auf dem Bildschirm.
 	 */
 	public final static int POSITION_CENTER = 1;
+	
+	/**
+	 * Positioniert den Dialog auf dem Primaer-Monitor.
+	 */
+	public final static int MONITOR_PRIMARY = 0;
+	
+	/**
+	 * Positioniert den Dialog auf dem Monitor, auf dem sich das Jameica-Fenster befindet.
+	 * Das ist der Default-Wert.
+	 */
+	public final static int MONITOR_CURRENT = 1;
+	
 
   private Shell shell;
   private Display display;
@@ -113,6 +125,7 @@ public abstract class AbstractDialog
 	private int width = SWT.DEFAULT;
   
   private boolean resizable = false;
+  private int monitor = MONITOR_CURRENT;
   
 	protected I18N i18n;
 
@@ -304,6 +317,17 @@ public abstract class AbstractDialog
       });
     }
   }
+  
+  /**
+   * Legt fest, auf welchem Monitor der Dialog angezeigt werden soll.
+   * @param monitor der Monitor.
+   * @see AbstractDialog#MONITOR_CURRENT
+   * @see AbstractDialog#MONITOR_PRIMARY
+   */
+  public void setMonitor(int monitor)
+  {
+    this.monitor = monitor;
+  }
 
 	/**
 	 * Legt Breite und Hoehe des Dialogs fest.
@@ -398,11 +422,15 @@ public abstract class AbstractDialog
             shell.pack();
           }
 	
-					Rectangle shellRect = shell.getBounds();
           // BUGZILLA 183
-					Rectangle displayRect = GUI.getShell().getMonitor().getBounds(); // Wir wollen auf den Monitor, auf dem auch das Anwendungsfenster laeuft
+          Rectangle displayRect = null;
+          if (monitor == AbstractDialog.MONITOR_CURRENT)
+            displayRect = GUI.getShell().getMonitor().getBounds(); // Wir wollen auf den Monitor, auf dem auch das Anwendungsfenster laeuft
+          else
+            displayRect = display.getPrimaryMonitor().getBounds(); // Primaer-Monitor
 
 					// Per Default POSITION_CENTER
+          Rectangle shellRect = shell.getBounds();
 					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2);
 					int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);
 					if (pos == POSITION_MOUSE)
@@ -485,6 +513,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.47  2009/05/28 10:11:49  willuhn
+ * @N In AbstractDialog kann nun explizit angegeben werden, auf welchen Monitor der Dialog soll (CURRENT == Monitor, auf dem sich das Jameica-Fenster befindet oder PRIMARY == der Primaer-Monitor). Letzteres ist fuer Dialoge noetig, die zu einem Zeitpunkt angezeigt werden, zu denen das Anwendungsfenster noch nicht da ist - etwa der Dialog fuer das Masterpasswort. Wuerde man da "MONITOR_CURRENT" verwenden, haette das zur Folge, dass die Shell des Anwendungsfensters unnoetig erzeugt wird
+ *
  * Revision 1.46  2009/05/27 16:01:05  willuhn
  * @C Dialoge auf dem Monitor anzeigen, auf dem auch das Hauptfenster laeuft
  *
