@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.47 $
- * $Date: 2009/05/28 10:11:49 $
+ * $Revision: 1.48 $
+ * $Date: 2009/06/04 10:34:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -127,6 +128,8 @@ public abstract class AbstractDialog
   private boolean resizable = false;
   private int monitor = MONITOR_CURRENT;
   
+  private Point cursor = null;
+  
 	protected I18N i18n;
 
   /**
@@ -170,7 +173,10 @@ public abstract class AbstractDialog
           shell = new Shell(display, SWT.RESIZE | SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
         else
           shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-				shell.setLocation(display.getCursorLocation());
+				
+        if (pos == POSITION_MOUSE)
+          cursor = display.getCursorLocation();
+        
 				GridLayout shellLayout = new GridLayout();
 				shellLayout.horizontalSpacing = 0;
 				shellLayout.verticalSpacing = 0;
@@ -433,22 +439,12 @@ public abstract class AbstractDialog
           Rectangle shellRect = shell.getBounds();
 					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2);
 					int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);
-					if (pos == POSITION_MOUSE)
+					if (pos == POSITION_MOUSE && cursor != null)
 					{
-						x = display.getCursorLocation().x - (shell.getSize().x / 2);
-						y = display.getCursorLocation().y - (shell.getSize().y / 2);
-						// Jetzt mussen wir noch checken, ob das Fenster ueber
-						// die Display-Groesse hinausgeht
-						if ((x + shell.getSize().x) > displayRect.width)
-						{
-							// Fenster wuerde ueber den rechten Rand hinausgehen
-							x = displayRect.width - shell.getSize().x - 4; // 4 Pixel Puffer zum Rand
-						}
-						if ((y + shell.getSize().y) > displayRect.height)
-						{
-							// Fenster wuerde ueber den unteren Rand hinausgehen
-							y = displayRect.height - shell.getSize().y - 4; // 4 Pixel Puffer zum Rand
-						}
+						x = cursor.x - (shell.getSize().x / 2);
+						y = cursor.y - (shell.getSize().y / 2);
+						// Das Checken, ob das Fenster das Display ueberragt, muessen wir
+						// nicht mehr selbst machen. Das uebernimmt SWT bzw. der Windows-Manager bereits
 					}
 					shell.setLocation(x, y);
 	
@@ -513,6 +509,11 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.48  2009/06/04 10:34:00  willuhn
+ * @N Cursor-Position bereits beim Initialisieren ermitteln. Andernfalls besteht die Moeglichkeit, nach dem Klick die Maus schnell wegzubewegen, was dazu fuehrte, dass der Dialog dann nicht an der urspruenglichen Klick-Position erscheint sondern an der neuen Maus-Position
+ * @B Dualhead wurde bei POSITION_MOUSE nicht korrekt beruecksichtigt
+ * @R Out-of-Range-Check bei POSITION_MOUSE entfernt - uebernimmt bereits SWT/Window-Manager
+ *
  * Revision 1.47  2009/05/28 10:11:49  willuhn
  * @N In AbstractDialog kann nun explizit angegeben werden, auf welchen Monitor der Dialog soll (CURRENT == Monitor, auf dem sich das Jameica-Fenster befindet oder PRIMARY == der Primaer-Monitor). Letzteres ist fuer Dialoge noetig, die zu einem Zeitpunkt angezeigt werden, zu denen das Anwendungsfenster noch nicht da ist - etwa der Dialog fuer das Masterpasswort. Wuerde man da "MONITOR_CURRENT" verwenden, haette das zur Folge, dass die Shell des Anwendungsfensters unnoetig erzeugt wird
  *
