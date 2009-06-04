@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.45 $
- * $Date: 2009/03/20 16:38:09 $
+ * $Revision: 1.46 $
+ * $Date: 2009/06/04 10:36:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 
 /**
  * Bildet das Content-Frame ab.
@@ -94,61 +95,72 @@ public class View implements Part
 		snapin.setLayout(SWTUtil.createGrid(1,true));
 		sash.setMaximizedControl(view);
 
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    final Image logo = SWTUtil.getImage("panel.bmp");
-    final Rectangle imageSize = logo.getBounds();
-		logoBg = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
-    logoBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
-    logoBg.setLayout(SWTUtil.createGrid(1,false));
+		if (!Customizing.SETTINGS.getBoolean("application.view.hidelogo",false))
+		{
+	    ////////////////////////////////////////////////////////////////////////////
+	    //
+	    final Image logo = SWTUtil.getImage("panel.bmp");
+	    final Rectangle imageSize = logo.getBounds();
+	    logoBg = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
+	    logoBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+	    logoBg.setLayout(SWTUtil.createGrid(1,false));
 
-    logoBg.addListener(SWT.Paint, new Listener()
+	    logoBg.addListener(SWT.Paint, new Listener()
+	    {
+	      public void handleEvent(Event event)
+	      {
+	        GC gc = event.gc;
+	        Rectangle size = logoBg.getBounds();
+	        gc.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+	        gc.fillRectangle(size);
+	        gc.drawImage(logo,size.width - imageSize.width,0);
+	        gc.setFont(Font.SMALL.getSWTFont());
+	        gc.setForeground(Color.COMMENT.getSWTColor());
+	        gc.drawText(logotext == null ? "" : logotext,8,14,true);
+	      }
+	    });
+	    ////////////////////////////////////////////////////////////////////////////
+
+	    Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+	    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		}
+
+    if (!Customizing.SETTINGS.getBoolean("application.view.hidepanel",false))
     {
-      public void handleEvent(Event event)
+      ////////////////////////////////////////////////////////////////////////////
+      //
+      panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+      panelBg.setLayout(SWTUtil.createGrid(1,false));
+      panelBg.setBackground(Color.BACKGROUND.getSWTColor());
+
+      panelBg.addListener(SWT.Paint,new Listener()
       {
-        GC gc = event.gc;
-        Rectangle size = logoBg.getBounds();
-        gc.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
-        gc.fillRectangle(size);
-        gc.drawImage(logo,size.width - imageSize.width,0);
-        gc.setFont(Font.SMALL.getSWTFont());
-        gc.setForeground(Color.COMMENT.getSWTColor());
-        gc.drawText(logotext == null ? "" : logotext,8,14,true);
-      }
-    });
-    ////////////////////////////////////////////////////////////////////////////
+        public void handleEvent(Event event)
+        {
+          GC gc = event.gc;
+          gc.setFont(Font.H2.getSWTFont());
+          gc.drawText(title == null ? "" : title,8,1,true);
+        }
+      });
+      ////////////////////////////////////////////////////////////////////////////
 
+      Label sep2 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+      sep2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    }
 
-    Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-    ////////////////////////////////////////////////////////////////////////////
-    //
-    panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
-    panelBg.setLayout(SWTUtil.createGrid(1,false));
-    panelBg.setBackground(Color.BACKGROUND.getSWTColor());
-
-    panelBg.addListener(SWT.Paint,new Listener()
+    if (!Customizing.SETTINGS.getBoolean("application.view.hidemessages",false))
     {
-      public void handleEvent(Event event)
-      {
-        GC gc = event.gc;
-        gc.setFont(Font.H2.getSWTFont());
-        gc.drawText(title == null ? "" : title,8,1,true);
-      }
-    });
-    ////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////////////
+      //
+  		messages = new CLabel(view,SWT.NONE);
+  		messages.setFont(Font.H2.getSWTFont());
+      messages.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+  		messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Label sep2 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-		sep2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		messages = new CLabel(view,SWT.NONE);
-		messages.setFont(Font.H2.getSWTFont());
-    messages.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
-		messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-    Label sep3 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-    sep3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+  		Label sep3 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+      sep3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      ////////////////////////////////////////////////////////////////////////////
+    }
 
     
     if (Application.getConfig().getScrollView())
@@ -204,8 +216,11 @@ public class View implements Part
 		if (b)
       scroll.setContent(content);
 
-		messages.setText("");
-		messages.layout();
+		if (messages != null)
+		{
+	    messages.setText("");
+	    messages.layout();
+		}
 		sizeComputed = false;
 	}
 
@@ -329,23 +344,26 @@ public class View implements Part
    */
   private void setStatusText(final String text, final Color color)
   {
-		final long currentClick = System.currentTimeMillis();
-
-    GUI.getDisplay().asyncExec(new Runnable() {
-      public void run() {
-        messages.setText(text == null ? "" : " " + text);
-        messages.setForeground(color.getSWTColor());
-				lastClick = currentClick;
-      }
-    });
-    GUI.getDisplay().timerExec(10000,new Runnable()
+    if (this.messages != null && !this.messages.isDisposed())
     {
-      public void run()
+      final long currentClick = System.currentTimeMillis();
+
+      GUI.getDisplay().asyncExec(new Runnable() {
+        public void run() {
+          messages.setText(text == null ? "" : " " + text);
+          messages.setForeground(color.getSWTColor());
+          lastClick = currentClick;
+        }
+      });
+      GUI.getDisplay().timerExec(10000,new Runnable()
       {
-				if (currentClick == lastClick && !messages.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
-					messages.setText("");
-      }
-    });
+        public void run()
+        {
+          if (currentClick == lastClick && !messages.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
+            messages.setText("");
+        }
+      });
+    }
   }
 	private long lastClick;
 
@@ -382,6 +400,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.46  2009/06/04 10:36:01  willuhn
+ * @N Customizing-Parameter zum Ausblenden von Logo-Bar, Message-Bar und Title-Panel
+ *
  * Revision 1.45  2009/03/20 16:38:09  willuhn
  * @N BUGZILLA 576
  *
