@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.40 $
- * $Date: 2008/12/07 22:18:03 $
+ * $Revision: 1.41 $
+ * $Date: 2009/06/04 10:55:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -53,7 +54,8 @@ public class Menu
 		this.parent = parent;
 
     mainMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
-		parent.setMenuBar(mainMenu);
+    if (!Customizing.SETTINGS.getBoolean("application.hidemenu",false))
+  		parent.setMenuBar(mainMenu);
 
 		// System-Menu laden
 		load(Application.getManifest().getMenu(),mainMenu);
@@ -240,6 +242,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.41  2009/06/04 10:55:22  willuhn
+ * @N Customizing-Parameter zum Ausblenden des Top-Menus
+ *
  * Revision 1.40  2008/12/07 22:18:03  willuhn
  * @B BUGZILLA 667
  *
