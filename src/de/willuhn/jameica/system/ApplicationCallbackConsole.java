@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.30 $
- * $Date: 2009/01/06 23:58:03 $
+ * $Revision: 1.31 $
+ * $Date: 2009/06/04 14:26:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -262,8 +262,13 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     }
 
     flush();
-		System.out.println(question);
-		System.out.print(labeltext);
+    if (labeltext != null && labeltext.length() > 0)
+    {
+      System.out.println(question);
+      System.out.print(labeltext);
+    }
+    else
+      System.out.print(question);
 		InputStreamReader isr = new InputStreamReader(System.in);
 		BufferedReader keyboard = new BufferedReader(isr);
 		return keyboard.readLine();
@@ -459,6 +464,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.31  2009/06/04 14:26:49  willuhn
+ * @N Popup-Messages im Server-Mode auf der Konsole ausgeben
+ *
  * Revision 1.30  2009/01/06 23:58:03  willuhn
  * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
  *
