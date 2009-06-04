@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.120 $
- * $Date: 2009/05/27 12:56:45 $
+ * $Revision: 1.121 $
+ * $Date: 2009/06/04 10:35:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -169,6 +169,9 @@ public class GUI implements ApplicationController
 
       left.setWeights(new int[] { 2, 1 });
       sash.setWeights(new int[] { 1, 3 });
+      
+      if (Customizing.SETTINGS.getBoolean("application.hidenavigation",false))
+        sash.setMaximizedControl(right);
 
       Composite bottom = new Composite(shell, SWT.NONE);
       bottom.setLayout(SWTUtil.createGrid(1, true));
@@ -212,7 +215,7 @@ public class GUI implements ApplicationController
       Logger.info("open shell");
       getShell().open();
       
-      Application.getMessagingFactory().sendSyncMessage(new SystemMessage(SystemMessage.SYSTEM_STARTED,Application.getI18n().tr("Jameica erfolgreich gestartet")));
+      Application.getMessagingFactory().sendSyncMessage(new SystemMessage(SystemMessage.SYSTEM_STARTED,Application.getI18n().tr("{0} erfolgreich gestartet",name)));
       loop();
     }
     catch (Exception e)
@@ -877,6 +880,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.121  2009/06/04 10:35:32  willuhn
+ * @N Customizing-Parameter zum Ausblenden von Navigation und Hilfe-Box
+ *
  * Revision 1.120  2009/05/27 12:56:45  willuhn
  * @B BUGZILLA 183
  *
