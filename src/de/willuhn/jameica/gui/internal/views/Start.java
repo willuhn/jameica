@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.15 $
- * $Date: 2009/01/20 10:51:51 $
+ * $Revision: 1.16 $
+ * $Date: 2009/06/04 10:34:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import de.willuhn.jameica.gui.internal.dialogs.ChooseBoxesDialog;
 import de.willuhn.jameica.gui.parts.ExpandPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -56,21 +57,24 @@ public class Start extends AbstractView implements Extendable
     }
     expand.paint(getParent());
     
-    ButtonArea buttons = new ButtonArea(getParent(),1);
-    buttons.addButton(Application.getI18n().tr("Startseite anpassen"),new Action() {
-      public void handleAction(Object context) throws ApplicationException
-      {
-        ChooseBoxesDialog d = new ChooseBoxesDialog(ChooseBoxesDialog.POSITION_CENTER);
-        try
+    if (!Customizing.SETTINGS.getBoolean("application.start.hidecustomize",false))
+    {
+      ButtonArea buttons = new ButtonArea(getParent(),1);
+      buttons.addButton(Application.getI18n().tr("Startseite anpassen"),new Action() {
+        public void handleAction(Object context) throws ApplicationException
         {
-          d.open();
+          ChooseBoxesDialog d = new ChooseBoxesDialog(ChooseBoxesDialog.POSITION_CENTER);
+          try
+          {
+            d.open();
+          }
+          catch (Exception e)
+          {
+            Logger.error("error while loading box config dialog",e);
+          }
         }
-        catch (Exception e)
-        {
-          Logger.error("error while loading box config dialog",e);
-        }
-      }
-    },null,true,"document-properties.png");
+      },null,true,"document-properties.png");
+    }
   }        
 
   /**
@@ -93,6 +97,9 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
+ * Revision 1.16  2009/06/04 10:34:59  willuhn
+ * @N Customizing-Parameter zum Ausblenden des "Startseite anpassen..."-Button
+ *
  * Revision 1.15  2009/01/20 10:51:51  willuhn
  * @N Mehr Icons - fuer Buttons
  *
