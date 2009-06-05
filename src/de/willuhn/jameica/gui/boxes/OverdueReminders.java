@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/Attic/OverdueReminders.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/06/05 16:46:39 $
+ * $Revision: 1.3 $
+ * $Date: 2009/06/05 17:17:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -124,7 +124,8 @@ public class OverdueReminders extends AbstractBox
     Date now = new Date();
     for (int i=0;i<reminders.length;++i)
     {
-      if (reminders[i].getDueDate().before(now))
+      Date due = reminders[i].getDueDate();
+      if (due == null || due.before(now))
         list.add(reminders[i]);
     }
     return (Reminder[]) list.toArray(new Reminder[list.size()]);
@@ -135,6 +136,9 @@ public class OverdueReminders extends AbstractBox
 
 /**********************************************************************
  * $Log: OverdueReminders.java,v $
+ * Revision 1.3  2009/06/05 17:17:56  willuhn
+ * @N Erster Code fuer den GUI-Teil der Reminder
+ *
  * Revision 1.2  2009/06/05 16:46:39  willuhn
  * @B debugging
  *

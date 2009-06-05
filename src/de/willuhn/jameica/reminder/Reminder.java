@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Attic/Reminder.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/06/05 16:46:39 $
+ * $Revision: 1.4 $
+ * $Date: 2009/06/05 17:17:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -224,10 +224,14 @@ public class Reminder implements Serializable, Comparable
     
     if (other == null || !(other instanceof Reminder))
       return -1;
+    Date d1 = this.getDueDate();
+    if (d1 == null)
+      return -1;
+
     Date d2 = ((Reminder) other).getDueDate();
     if (d2 == null)
       return 1;
-    return this.dueDate.compareTo(d2);
+    return d1.compareTo(d2);
   }
   
   
@@ -236,6 +240,9 @@ public class Reminder implements Serializable, Comparable
 
 /**********************************************************************
  * $Log: Reminder.java,v $
+ * Revision 1.4  2009/06/05 17:17:56  willuhn
+ * @N Erster Code fuer den GUI-Teil der Reminder
+ *
  * Revision 1.3  2009/06/05 16:46:39  willuhn
  * @B debugging
  *

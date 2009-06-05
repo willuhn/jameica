@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.8 $
- * $Date: 2009/06/05 16:46:39 $
+ * $Revision: 1.9 $
+ * $Date: 2009/06/05 17:17:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,13 +73,6 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     if (reminder == null)
       return;
 
-    Date due = reminder.getDueDate();
-    if (due == null)
-    {
-      Logger.warn("no due date given");
-      return;
-    }
-    
     String action   = reminder.getAction();
     String renderer = reminder.getRenderer();
     if (action == null && renderer == null)
@@ -197,22 +190,23 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     Reminder[] reminders = this.getReminders();
     for (int i=0;i<reminders.length;++i)
     {
-      if (reminders[i].getDueDate().after(now))
-        continue; // Noch nicht faellig
-
-      String action = reminders[i].getAction();
-      if (action == null || action.length() == 0)
-        continue; // Keine Action angegeben
-      try
+      Date due = reminders[i].getDueDate();
+      if (due == null || due.before(now))
       {
-        delete(reminders[i]); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
-        Logger.info("executing action " + action + " for reminder");
-        Action a = (Action) Application.getClassLoader().load(action).newInstance();
-        a.handleAction(reminders[i]);
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to execute action " + action + " for reminder " + reminders[i],e);
+        String action = reminders[i].getAction();
+        if (action == null || action.length() == 0)
+          continue; // Keine Action angegeben
+        try
+        {
+          delete(reminders[i]); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
+          Logger.info("executing action " + action + " for reminder");
+          Action a = (Action) Application.getClassLoader().load(action).newInstance();
+          a.handleAction(reminders[i]);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to execute action " + action + " for reminder " + reminders[i],e);
+        }
       }
     }
   }
@@ -323,6 +317,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.9  2009/06/05 17:17:56  willuhn
+ * @N Erster Code fuer den GUI-Teil der Reminder
+ *
  * Revision 1.8  2009/06/05 16:46:39  willuhn
  * @B debugging
  *
