@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Attic/Reminder.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/07/18 10:41:29 $
+ * $Revision: 1.3 $
+ * $Date: 2009/06/05 16:46:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,7 +106,7 @@ public class Reminder implements Serializable, Comparable
    */
   public void setRenderer(String renderer)
   {
-    this.renderer = renderer == null ? ToStringRenderer.class.getName() : renderer;
+    this.renderer = renderer;
   }
 
   /**
@@ -236,6 +236,9 @@ public class Reminder implements Serializable, Comparable
 
 /**********************************************************************
  * $Log: Reminder.java,v $
+ * Revision 1.3  2009/06/05 16:46:39  willuhn
+ * @B debugging
+ *
  * Revision 1.2  2008/07/18 10:41:29  willuhn
  * @N Zeitgesteuertes Ausfuehren von Reminder-Actions
  *

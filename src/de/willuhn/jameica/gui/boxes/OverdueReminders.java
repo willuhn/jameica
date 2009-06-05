@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/Attic/OverdueReminders.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/07/22 23:02:59 $
+ * $Revision: 1.2 $
+ * $Date: 2009/06/05 16:46:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,11 +15,13 @@ package de.willuhn.jameica.gui.boxes;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.reminder.Renderer;
+import de.willuhn.jameica.reminder.ToStringRenderer;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -92,6 +94,8 @@ public class OverdueReminders extends AbstractBox
     for (int i=0;i<overdue.length;++i)
     {
       String r = overdue[i].getRenderer();
+      if (r == null)
+        r = ToStringRenderer.class.getName();
       try
       {
         Renderer renderer = (Renderer) Application.getClassLoader().load(r).newInstance();
@@ -113,14 +117,15 @@ public class OverdueReminders extends AbstractBox
   {
     ArrayList list = new ArrayList();
     ReminderService service = (ReminderService) Application.getBootLoader().getBootable(ReminderService.class);
-    Reminder[] overdue = service.getOverdueReminders();
-    if (overdue == null)
+    Reminder[] reminders = service.getReminders();
+    if (reminders == null)
       return new Reminder[0];
     
-    for (int i=0;i<overdue.length;++i)
+    Date now = new Date();
+    for (int i=0;i<reminders.length;++i)
     {
-      if (overdue[i].getRenderer() != null)
-        list.add(overdue[0]);
+      if (reminders[i].getDueDate().before(now))
+        list.add(reminders[i]);
     }
     return (Reminder[]) list.toArray(new Reminder[list.size()]);
   }
@@ -130,6 +135,9 @@ public class OverdueReminders extends AbstractBox
 
 /**********************************************************************
  * $Log: OverdueReminders.java,v $
+ * Revision 1.2  2009/06/05 16:46:39  willuhn
+ * @B debugging
+ *
  * Revision 1.1  2008/07/22 23:02:59  willuhn
  * @N Box zum Anzeigen faelliger Reminder (mit Renderer) auf der Startseite
  * @C ReminderPopupAction in "reminder"-Package verschoben

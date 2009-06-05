@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.7 $
- * $Date: 2008/08/29 13:15:42 $
+ * $Revision: 1.8 $
+ * $Date: 2009/06/05 16:46:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,23 +93,19 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
   }
   
   /**
-   * Liefert eine Liste von ueberfaelligen Remindern - sortiert nach Faelligkeit - aelteste zuerst.
+   * Liefert eine Liste aller Reminder - sortiert nach Faelligkeit - aelteste zuerst.
    * @return Liste der ueberfaelligen Reminder.
    */
-  public Reminder[] getOverdueReminders()
+  public Reminder[] getReminders()
   {
     synchronized(this.reminders)
     {
-      Date now = new Date(System.currentTimeMillis());
-      
       ArrayList overdue = new ArrayList();
       for (int i=0;i<this.reminders.size();++i)
       {
         Reminder r = (Reminder) this.reminders.get(i);
         if (r == null)
           continue;
-        if (r.getDueDate().before(now))
-            overdue.add(r);
       }
       Collections.sort(overdue);
       return (Reminder[]) overdue.toArray(new Reminder[overdue.size()]);
@@ -197,22 +193,26 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
    */
   public void run()
   {
-    Reminder[] overdue = this.getOverdueReminders();
-    for (int i=0;i<overdue.length;++i)
+    Date now = new Date();
+    Reminder[] reminders = this.getReminders();
+    for (int i=0;i<reminders.length;++i)
     {
-      String action = overdue[i].getAction();
+      if (reminders[i].getDueDate().after(now))
+        continue; // Noch nicht faellig
+
+      String action = reminders[i].getAction();
       if (action == null || action.length() == 0)
         continue; // Keine Action angegeben
       try
       {
-        delete(overdue[i]); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
+        delete(reminders[i]); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
         Logger.info("executing action " + action + " for reminder");
         Action a = (Action) Application.getClassLoader().load(action).newInstance();
-        a.handleAction(overdue[i]);
+        a.handleAction(reminders[i]);
       }
       catch (Exception e)
       {
-        Logger.error("unable to execute action " + action + " for reminder " + overdue[i],e);
+        Logger.error("unable to execute action " + action + " for reminder " + reminders[i],e);
       }
     }
   }
@@ -323,6 +323,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.8  2009/06/05 16:46:39  willuhn
+ * @B debugging
+ *
  * Revision 1.7  2008/08/29 13:15:42  willuhn
  * @C Java 1.4 Compatibility - wieso zur Hoelle sind die Fehler vorher nie aufgefallen? Ich compiliere immer gegen 1.4? Suspekt
  *
