@@ -16,7 +16,6 @@
 		<item id="jameica.menu.file"             name="Datei">
 			<item id="jameica.menu.settings"       name="&amp;Einstellungen"     shortcut="CTRL+E" action="de.willuhn.jameica.gui.internal.action.Settings" />
       <item id="jameica.menu.backups"        name="&amp;Backups verwalten" shortcut="CTRL+B" action="de.willuhn.jameica.gui.internal.action.Backup" />
-<!--      <item id="jameica.menu.reminders"      name="&amp;Termine verwalten" shortcut="CTRL+T" action="de.willuhn.jameica.gui.internal.action.Reminders" /> //-->
 			<item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	             action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
 			<item name="-" />
 			<item id="jameica.menu.quit"           name="Beenden"    			 							           action="de.willuhn.jameica.gui.internal.action.FileClose" />

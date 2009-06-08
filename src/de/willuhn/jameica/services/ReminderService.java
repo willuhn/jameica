@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.9 $
- * $Date: 2009/06/05 17:17:56 $
+ * $Revision: 1.10 $
+ * $Date: 2009/06/08 12:13:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -73,14 +74,6 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     if (reminder == null)
       return;
 
-    String action   = reminder.getAction();
-    String renderer = reminder.getRenderer();
-    if (action == null && renderer == null)
-    {
-      Logger.warn("neither action nor renderer defined in reminder, skipping");
-      return;
-    }
-    
     this.reminders.add(reminder);
     store();
   }
@@ -91,18 +84,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
    */
   public Reminder[] getReminders()
   {
-    synchronized(this.reminders)
-    {
-      ArrayList overdue = new ArrayList();
-      for (int i=0;i<this.reminders.size();++i)
-      {
-        Reminder r = (Reminder) this.reminders.get(i);
-        if (r == null)
-          continue;
-      }
-      Collections.sort(overdue);
-      return (Reminder[]) overdue.toArray(new Reminder[overdue.size()]);
-    }
+    List<Reminder> l = (List<Reminder>)this.reminders.clone();
+    Collections.sort(l);
+    return (Reminder[]) l.toArray(new Reminder[l.size()]);
   }
 
   /**
@@ -317,6 +301,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.10  2009/06/08 12:13:09  willuhn
+ * @R Reminder-GUI in neues Plugin "jameica.reminder" ausgelagert
+ *
  * Revision 1.9  2009/06/05 17:17:56  willuhn
  * @N Erster Code fuer den GUI-Teil der Reminder
  *
