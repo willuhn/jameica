@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.31 $
- * $Date: 2009/06/04 14:26:49 $
+ * $Revision: 1.32 $
+ * $Date: 2009/06/09 12:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 
 import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.jameica.security.Certificate;
+import de.willuhn.jameica.security.Login;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
@@ -459,11 +460,23 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       // ignore
     }
   }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#login(java.lang.Object)
+   */
+  public Login login(Object context) throws Exception
+  {
+    // TODO: Implementieren
+    throw new Exception("Not implemented");
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.32  2009/06/09 12:43:01  willuhn
+ * @N Erster Code fuer Jameica Authenticator
+ *
  * Revision 1.31  2009/06/04 14:26:49  willuhn
  * @N Popup-Messages im Server-Mode auf der Konsole ausgeben
  *

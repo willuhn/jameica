@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.20 $
- * $Date: 2009/05/28 10:11:49 $
+ * $Revision: 1.21 $
+ * $Date: 2009/06/09 12:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,6 +40,7 @@ import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.messaging.CheckTrustMessage;
+import de.willuhn.jameica.security.Login;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
@@ -423,11 +424,23 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     }
 
   }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#login(java.lang.Object)
+   */
+  public Login login(Object context) throws Exception
+  {
+    // TODO: Implementieren
+    throw new Exception("Not implemented");
+  }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.21  2009/06/09 12:43:01  willuhn
+ * @N Erster Code fuer Jameica Authenticator
+ *
  * Revision 1.20  2009/05/28 10:11:49  willuhn
  * @N In AbstractDialog kann nun explizit angegeben werden, auf welchen Monitor der Dialog soll (CURRENT == Monitor, auf dem sich das Jameica-Fenster befindet oder PRIMARY == der Primaer-Monitor). Letzteres ist fuer Dialoge noetig, die zu einem Zeitpunkt angezeigt werden, zu denen das Anwendungsfenster noch nicht da ist - etwa der Dialog fuer das Masterpasswort. Wuerde man da "MONITOR_CURRENT" verwenden, haette das zur Folge, dass die Shell des Anwendungsfensters unnoetig erzeugt wird
  *

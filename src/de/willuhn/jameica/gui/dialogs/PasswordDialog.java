@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.22 $
- * $Date: 2009/04/30 13:20:09 $
+ * $Revision: 1.23 $
+ * $Date: 2009/06/09 12:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -103,7 +103,7 @@ public abstract class PasswordDialog extends AbstractDialog {
    */
   public void setText(String text)
   {
-    if (text == null || text.length() == 0)
+    if (text == null)
       return;
     this.text = text;
   }
@@ -252,6 +252,9 @@ public abstract class PasswordDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.23  2009/06/09 12:43:01  willuhn
+ * @N Erster Code fuer Jameica Authenticator
+ *
  * Revision 1.22  2009/04/30 13:20:09  willuhn
  * @N Jan's Patch, welches
  *

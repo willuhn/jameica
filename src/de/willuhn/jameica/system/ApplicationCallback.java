@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.11 $
- * $Date: 2009/01/06 23:58:03 $
+ * $Revision: 1.12 $
+ * $Date: 2009/06/09 12:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.system;
 
 import java.security.cert.X509Certificate;
 
+import de.willuhn.jameica.security.Login;
 import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
 
@@ -183,12 +184,23 @@ public interface ApplicationCallback
    * @throws Exception
    */
   public String getHostname() throws Exception;
+  
+  /**
+   * Fragt vom User ein Login ab.
+   * @param context Context-Informationen zum abgefragten Login.
+   * @return das Login.
+   * @throws Exception
+   */
+  public Login login(Object context) throws Exception;
 
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.12  2009/06/09 12:43:01  willuhn
+ * @N Erster Code fuer Jameica Authenticator
+ *
  * Revision 1.11  2009/01/06 23:58:03  willuhn
  * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
  *

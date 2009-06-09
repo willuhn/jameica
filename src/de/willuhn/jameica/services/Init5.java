@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/Init5.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/08/31 23:07:10 $
+ * $Revision: 1.5 $
+ * $Date: 2009/06/09 12:43:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ public class Init5 implements Bootable
       SysinfoService.class,
       BackupService.class,
       ProxyService.class,
+      AuthenticateService.class,
       RegistryService.class,
       ClassService.class,
       SSLService.class,
@@ -67,6 +68,9 @@ public class Init5 implements Bootable
 
 /**********************************************************************
  * $Log: Init5.java,v $
+ * Revision 1.5  2009/06/09 12:43:01  willuhn
+ * @N Erster Code fuer Jameica Authenticator
+ *
  * Revision 1.4  2008/08/31 23:07:10  willuhn
  * @N Erster GUI-Code fuer die Suche
  *
