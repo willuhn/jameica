@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.12 $
- * $Date: 2009/06/09 12:43:01 $
+ * $Revision: 1.13 $
+ * $Date: 2009/06/10 11:25:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.system;
 
 import java.security.cert.X509Certificate;
 
+import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
 import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
@@ -187,17 +188,21 @@ public interface ApplicationCallback
   
   /**
    * Fragt vom User ein Login ab.
-   * @param context Context-Informationen zum abgefragten Login.
+   * @param authenticator der Authenticator.
+   * Er liefert Context-Infos zum abgefragten Login.
    * @return das Login.
    * @throws Exception
    */
-  public Login login(Object context) throws Exception;
+  public Login login(JameicaAuthenticator authenticator) throws Exception;
 
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.13  2009/06/10 11:25:54  willuhn
+ * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
+ *
  * Revision 1.12  2009/06/09 12:43:01  willuhn
  * @N Erster Code fuer Jameica Authenticator
  *

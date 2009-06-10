@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.32 $
- * $Date: 2009/06/09 12:43:01 $
+ * $Revision: 1.33 $
+ * $Date: 2009/06/10 11:25:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 
 import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.jameica.security.Certificate;
+import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
@@ -462,18 +463,34 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
   }
 
   /**
-   * @see de.willuhn.jameica.system.ApplicationCallback#login(java.lang.Object)
+   * @see de.willuhn.jameica.system.ApplicationCallback#login(de.willuhn.jameica.security.JameicaAuthenticator)
    */
-  public Login login(Object context) throws Exception
+  public Login login(JameicaAuthenticator auth) throws Exception
   {
-    // TODO: Implementieren
-    throw new Exception("Not implemented");
+    String notify = Application.getI18n().tr("Bitten geben Sie Benutzername und Passwort ein");
+
+    String prompt = (String) auth.getRequestParam(JameicaAuthenticator.RequestParam.PROMPT);
+    String host   = (String) auth.getRequestParam(JameicaAuthenticator.RequestParam.HOST);
+
+    if (host != null && host.length() > 0)
+      notify += "\n" + Application.getI18n().tr("Host: {0}",host);
+    if (prompt != null && prompt.length() > 0)
+      notify += "\n" + Application.getI18n().tr("Seite: {0}",prompt);
+
+    notifyUser(notify);
+    String username = askUser(Application.getI18n().tr("Benutzername: "),(String) null);
+    String password = askUser(Application.getI18n().tr("Passwort: "),(String) null);
+    
+    return new Login(username,password == null ? null : password.toCharArray());
   }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.33  2009/06/10 11:25:54  willuhn
+ * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
+ *
  * Revision 1.32  2009/06/09 12:43:01  willuhn
  * @N Erster Code fuer Jameica Authenticator
  *
@@ -494,79 +511,4 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
  *
  * Revision 1.26  2008/02/26 17:45:21  willuhn
  * @N flush console
- *
- * Revision 1.25  2007/11/05 13:01:13  willuhn
- * @C Compiler-Warnings
- *
- * Revision 1.24  2007/08/31 10:00:11  willuhn
- * @N CheckTrustMessage synchron versenden, wenn Vertrauensstellung abgefragt wird
- *
- * Revision 1.23  2007/06/21 22:27:54  willuhn
- * @C Nacharbeiten zu SSL-Fixes
- *
- * Revision 1.22  2007/06/21 14:08:41  willuhn
- * Korrekter Fortschrittsanzeige des Boot-Vorgangs auch im Server-Mode
- *
- * Revision 1.21  2007/06/21 11:06:23  willuhn
- * @N Neue Zertifikate im Non-Interactive-Mode sofort uebernehmen
- *
- * Revision 1.20  2007/04/20 14:48:02  willuhn
- * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
- * @N Zusaetzliche parametrisierbare askUser-Funktion
- *
- * Revision 1.19  2007/04/18 14:37:29  willuhn
- * @N changed untrusted dir from "incoming" to "untrusted"
- *
- * Revision 1.18  2007/01/25 10:44:10  willuhn
- * @N autoanswer in ApplicationCallbackConsole
- *
- * Revision 1.17  2006/10/28 01:05:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.16  2005/10/21 16:17:03  web0
- * @C bugfixing in network code (ssl)
- *
- * Revision 1.15  2005/09/05 11:14:31  web0
- * *** empty log message ***
- *
- * Revision 1.14  2005/07/14 22:58:36  web0
- * *** empty log message ***
- *
- * Revision 1.13  2005/06/28 17:13:40  web0
- * *** empty log message ***
- *
- * Revision 1.12  2005/06/24 14:55:56  web0
- * *** empty log message ***
- *
- * Revision 1.11  2005/06/21 20:02:02  web0
- * @C cvs merge
- *
- * Revision 1.9  2005/06/16 13:29:20  web0
- * *** empty log message ***
- *
- * Revision 1.8  2005/06/10 13:04:41  web0
- * @N non-interactive Mode
- * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode
- *
- * Revision 1.7  2005/06/09 23:07:47  web0
- * @N certificate checking activated
- *
- * Revision 1.6  2005/05/19 23:30:33  web0
- * @B RMI over SSL support
- *
- * Revision 1.5  2005/03/17 22:44:10  web0
- * @N added fallback if system is not able to determine hostname
- *
- * Revision 1.4  2005/03/01 22:56:48  web0
- * @N master password can now be changed
- *
- * Revision 1.3  2005/02/02 16:16:38  willuhn
- * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
- *
- * Revision 1.2  2005/02/01 17:15:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2005/01/30 20:47:43  willuhn
- * *** empty log message ***
- *
  **********************************************************************/

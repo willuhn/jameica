@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.48 $
- * $Date: 2009/06/04 10:34:00 $
+ * $Revision: 1.49 $
+ * $Date: 2009/06/10 11:25:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,6 +35,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
@@ -131,6 +132,8 @@ public abstract class AbstractDialog
   private Point cursor = null;
   
 	protected I18N i18n;
+	
+	private int closeState = SWT.OK;
 
   /**
    * Erzeugt einen neuen Dialog.
@@ -457,6 +460,11 @@ public abstract class AbstractDialog
       });
 			return getData();
 		}
+		catch (OperationCanceledException oce)
+		{
+		  this.closeState = SWT.CANCEL;
+		  throw oce;
+		}
 		finally
 		{
 			close();
@@ -495,6 +503,7 @@ public abstract class AbstractDialog
 			Listener l = null;
 			Event e = new Event();
 			e.data = getData();
+			e.detail = closeState;
 			for (int i=0;i<listeners.size();++i)
 			{
 				l = (Listener) listeners.get(i);
@@ -509,6 +518,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.49  2009/06/10 11:25:53  willuhn
+ * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
+ *
  * Revision 1.48  2009/06/04 10:34:00  willuhn
  * @N Cursor-Position bereits beim Initialisieren ermitteln. Andernfalls besteht die Moeglichkeit, nach dem Klick die Maus schnell wegzubewegen, was dazu fuehrte, dass der Dialog dann nicht an der urspruenglichen Klick-Position erscheint sondern an der neuen Maus-Position
  * @B Dualhead wurde bei POSITION_MOUSE nicht korrekt beruecksichtigt

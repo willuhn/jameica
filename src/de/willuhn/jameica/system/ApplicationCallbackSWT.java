@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.21 $
- * $Date: 2009/06/09 12:43:01 $
+ * $Revision: 1.22 $
+ * $Date: 2009/06/10 11:25:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,6 +30,7 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.SplashScreen;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
+import de.willuhn.jameica.gui.dialogs.HttpAuthDialog;
 import de.willuhn.jameica.gui.dialogs.NewPasswordDialog;
 import de.willuhn.jameica.gui.dialogs.PasswordDialog;
 import de.willuhn.jameica.gui.dialogs.SimpleDialog;
@@ -40,6 +41,7 @@ import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.messaging.CheckTrustMessage;
+import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
@@ -377,8 +379,6 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     public PWD()
     {
       super(PWD.POSITION_CENTER);
-      
-      this.setSize(400,SWT.DEFAULT);
       this.setText(Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein."));
       this.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
       this.setMonitor(PWD.MONITOR_PRIMARY);
@@ -426,18 +426,21 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   }
 
   /**
-   * @see de.willuhn.jameica.system.ApplicationCallback#login(java.lang.Object)
+   * @see de.willuhn.jameica.system.ApplicationCallback#login(de.willuhn.jameica.security.JameicaAuthenticator)
    */
-  public Login login(Object context) throws Exception
+  public Login login(JameicaAuthenticator auth) throws Exception
   {
-    // TODO: Implementieren
-    throw new Exception("Not implemented");
+    HttpAuthDialog d = new HttpAuthDialog(HttpAuthDialog.POSITION_CENTER, auth);
+    return (Login) d.open();
   }
 }
 
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.22  2009/06/10 11:25:54  willuhn
+ * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
+ *
  * Revision 1.21  2009/06/09 12:43:01  willuhn
  * @N Erster Code fuer Jameica Authenticator
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/LoginDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/12/18 23:21:13 $
+ * $Revision: 1.4 $
+ * $Date: 2009/06/10 11:25:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,50 +14,45 @@
 package de.willuhn.jameica.gui.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.input.PasswordInput;
+import de.willuhn.jameica.gui.input.TextInput;
+import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.security.Login;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Ein vorkonfigurierter Login-Dialog zur Abfrage von Username und Passwort.
  */
-public class LoginDialog extends SimpleDialog
+public class LoginDialog extends AbstractDialog
 {
-  private int retries    = 0;
-
-  private Composite comp = null;
-  private Label label    = null;
-
-  private Label userLabel     = null;
-  private Label passwordLabel = null;
-
-  private Label error   = null;
-
-  private Text user     = null;
-  private Text password = null;
-
-  private Button button = null;
-  private Button cancel = null;
-  
-  private String labelUser       = "";
-  private String labelPassword   = "";
-  
   private Login login = null;
-
-
+  
+  // Die Beschriftungen der Felder fuer Username und Passwort.
+  private String labelUser     = null;
+  private String labelPassword = null;
+  
+  // Label fuer die Fehlermeldung.
+  private LabelInput error     = null;
+  
+  // Ueber Username und Passwort angezeigter Text.
+  private String text          = null;
+  
+  // Anzuzeigender Fehlertext.
+  private String errorText     = null;
+  
   /**
    * ct.
    * @param position
@@ -65,9 +60,22 @@ public class LoginDialog extends SimpleDialog
   public LoginDialog(int position)
   {
     super(position);
-    labelUser     = i18n.tr("Benutzername");
-    labelPassword = i18n.tr("Passwort");
-    setSideImage(SWTUtil.getImage("dialog-password.png"));
+    this.setSize(400,SWT.DEFAULT);
+    this.setTitle(i18n.tr("Login"));
+    this.setSideImage(SWTUtil.getImage("dialog-password.png"));
+    
+    this.labelUser     = i18n.tr("Benutzername");
+    this.labelPassword = i18n.tr("Passwort");
+    this.text          = i18n.tr("Bitte geben Sie Benutzername und Passwort ein.");
+  }
+  
+  /**
+   * Speichert das vorausgefuellte Login.
+   * @param login das vorausgefuellte Login.
+   */
+  public void setLogin(Login login)
+  {
+    this.login = login;
   }
 
   /**
@@ -77,9 +85,8 @@ public class LoginDialog extends SimpleDialog
    */
   public void setUsernameLabelText(String text)
   {
-    if (text == null || text.length() == 0)
-      return;
-    labelUser = text;
+    if (text != null && text.length() > 0)
+      this.labelUser = text;
   }
 
   /**
@@ -89,121 +96,104 @@ public class LoginDialog extends SimpleDialog
    */
   public void setPasswordLabelText(String text)
   {
-    if (text == null || text.length() == 0)
-      return;
-    labelPassword = text;
+    if (text != null && text.length() > 0)
+      this.labelPassword = text;
   }
   
   /**
-   * Legt den standardmaessig anzuzeigenden Usernamen fest.
-   * @param username
+   * Speichert den anzuzeigenden Text.
+   * @param text anzuzeigender Text.
    */
-  public void setDefaultUsername(String username)
+  public void setText(String text)
   {
-    if (username != null)
-      this.login = new Login(username,null);
+    if (text != null)
+      this.text = text;
   }
   
+  /**
+   * Aktualisiert den Fehlertext.
+   * @param text der Fehlertext.
+   */
+  public void setErrorText(String text)
+  {
+    this.errorText = text;
+    if (this.error != null)
+      this.error.setValue(this.errorText == null ? "" : this.errorText);
+  }
+
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
   protected void paint(Composite parent) throws Exception
   {
-    // Composite um alles drumrum.
-    comp = new Composite(parent,SWT.NONE);
-    comp.setBackground(Color.BACKGROUND.getSWTColor());
-    comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-    GridLayout gl = new GridLayout(3,false);
-    comp.setLayout(gl);
-    
+    Container container = new SimpleContainer(parent);
+
     // Text
-    label = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
-    label.setText(getText());
-    GridData grid = new GridData(GridData.FILL_HORIZONTAL);
-    grid.horizontalSpan = 3;
-    label.setLayoutData(grid);
+    if (this.text != null && this.text.length() > 0)
+      container.addText(this.text,true);
     
-    // Fehlertext 
-    error = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
-    error.setForeground(Color.ERROR.getSWTColor());
-    GridData grid2 = new GridData(GridData.FILL_HORIZONTAL);
-    grid2.horizontalSpan = 3;
-    grid2.horizontalIndent = 0;
-    error.setLayoutData(grid2);
+    // Username
+    final TextInput username = new TextInput(null);
+    username.setName(this.labelUser);
+    username.setMaxLength(100); // Das sollte lang genug fuer jeden Usernamen sein ;)
+    container.addInput(username);
 
-    // Label vor User-Eingabefeld
-    userLabel = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-    userLabel.setText(labelUser);
-    userLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-
-    user = GUI.getStyleFactory().createText(comp);
-    GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
-    grid3.horizontalSpan = 2;
-    user.setLayoutData(grid3);
-
-    // Label vor Passwort-Eingabe
-    passwordLabel = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-    passwordLabel.setText(labelPassword);
-    passwordLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-
-    password = GUI.getStyleFactory().createText(comp);
-    password.setEchoChar('*');
-    GridData grid4 = new GridData(GridData.FILL_HORIZONTAL);
-    grid4.horizontalSpan = 2;
-    password.setLayoutData(grid4);
-
-    if (login != null && login.getUsername() != null)
+    // Passwort.
+    final PasswordInput password = new PasswordInput(null);
+    password.setName(this.labelPassword);
+    password.setMaxLength(100);
+    container.addInput(password);
+    
+    // Falls ein Login angegeben ist, uebernehmen wir es und platzieren
+    // den Focus gleich im Passwortfeld.
+    if (this.login != null)
     {
-      user.setText(login.getUsername());
-      password.setFocus();
+      username.setValue(this.login.getUsername());
+      char[] pw = this.login.getPassword();
+      if (pw != null)
+        password.setValue(new String(pw));
+      else
+        password.focus();
     }
+    
+    // Fehlertext
+    this.error = new LabelInput(this.errorText);
+    this.error.setColor(Color.ERROR);
+    this.error.setName("");
+    container.addInput(this.error);
 
-    // Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
-    Label dummy = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-    dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-    // OK-Button
-    button = GUI.getStyleFactory().createButton(comp);
-    button.setText("    " + i18n.tr("OK") + "    ");
-    button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    button.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
+    // Ggf. erweitern.
+    extend(container);
+
+    ButtonArea buttons = container.createButtonArea(2);
+    
+    buttons.addButton("    " + i18n.tr("OK") + "    ",new Action() {
+      public void handleAction(Object context) throws ApplicationException
       {
-        retries++;
-        login = new Login(user.getText(),password.getText() == null ? null : password.getText().toCharArray());
-
-        if (!checkLogin(login))
-        {
-          password.setText("");
-          if (retries >= PasswordDialog.MAX_RETRIES)
-          {
-            // maximale Anzahl der Fehlversuche erreicht.
-            throw new OperationCanceledException(i18n.tr("{0} falsche Login-Versuche",""+PasswordDialog.MAX_RETRIES));
-          }
-          
-          if (error != null && !error.isDisposed())
-          {
-            int remaining = PasswordDialog.MAX_RETRIES - retries;
-            String s = remaining > 1 ? i18n.tr("Versuche") : i18n.tr("Versuch");
-            error.setText(i18n.tr("Login fehlgeschlagen. Noch {0} {1}.", new String[]{""+remaining,s}));
-          }
-          return;
-        }
-        close();
+        if (login == null)
+          login = new Login();
+        
+        login.setUsername((String)username.getValue());
+        login.setPassword((String)password.getValue());
+        
+        if (checkLogin(login))
+          close();
       }
-    });
-    getShell().setDefaultButton(button);
+    },null,true);
 
-    // Abbrechen-Button
-    cancel = GUI.getStyleFactory().createButton(comp);
-    cancel.setText(i18n.tr("Abbrechen"));
-    cancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    cancel.addSelectionListener(new SelectionAdapter()
-    {
-      public void widgetSelected(SelectionEvent e)
+    buttons.addButton(i18n.tr("Abbrechen"), new Action() {
+      public void handleAction(Object context) throws ApplicationException
       {
         throw new OperationCanceledException("Dialog abgebrochen");
+      }
+    });
+
+    // Dialog bei Druck auf ESC automatisch schliessen
+    parent.addKeyListener(new KeyAdapter() {
+      public void keyReleased(KeyEvent e) {
+        if (e.keyCode == SWT.ESC)
+          throw new OperationCanceledException();
       }
     });
 
@@ -226,24 +216,39 @@ public class LoginDialog extends SimpleDialog
    */
   protected Object getData() throws Exception 
   {
-    return login;
+    return this.login;
+  }
+
+  /**
+   * Kann von abgeleiteten Dialogen ueberschrieben werden, um
+   * den Login-Dialog noch zu erweitern. 
+   * Angezeigt wird die Erweiterung dann direkt ueber den beiden
+   * Buttons.
+   * @param container der Container.
+   * @throws Exception
+   */
+  protected void extend(Container container) throws Exception
+  {
   }
 
   /**
    * Kann ueberschrieben werden, wenn das Passwort geprueft werden soll.
    * @param login das eingegebene Login.
-   * @return true, wenn das Login i.o. ist.
+   * @return true, wenn das Login ok ist und der Dialog geschlosssen werden kann.
+   * Die Funktion liefert per Default true zurueck.
    */
   protected boolean checkLogin(Login login)
   {
     return true;
   }
-
 }
 
 
 /*********************************************************************
  * $Log: LoginDialog.java,v $
+ * Revision 1.4  2009/06/10 11:25:54  willuhn
+ * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
+ *
  * Revision 1.3  2008/12/18 23:21:13  willuhn
  * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
  * @R Nicht mehr benoetigte Grafiken entfernt

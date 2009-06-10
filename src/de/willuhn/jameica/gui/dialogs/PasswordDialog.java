@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.23 $
- * $Date: 2009/06/09 12:43:01 $
+ * $Revision: 1.24 $
+ * $Date: 2009/06/10 11:25:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ShellEvent;
@@ -65,8 +66,11 @@ public abstract class PasswordDialog extends AbstractDialog {
 	 */
   public PasswordDialog(int position) {
     super(position);
-    this.labelText = i18n.tr("Passwort");
+    this.setSize(400,SWT.DEFAULT);
+    this.setTitle(i18n.tr("Passwort"));
     this.setSideImage(SWTUtil.getImage("dialog-password.png"));
+
+    this.labelText = i18n.tr("Passwort");
   }
 
 	/**
@@ -131,6 +135,7 @@ public abstract class PasswordDialog extends AbstractDialog {
     // das Passwort
     this.passwordInput = new PasswordInput(this.enteredPassword);
     this.passwordInput.setShowPassword(this.showPassword);
+    this.passwordInput.focus();
     container.addLabelPair(labelText,this.passwordInput);
     // Fehlertext
     this.errorTextInput = new LabelInput(this.errorText);
@@ -252,6 +257,9 @@ public abstract class PasswordDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.24  2009/06/10 11:25:53  willuhn
+ * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
+ *
  * Revision 1.23  2009/06/09 12:43:01  willuhn
  * @N Erster Code fuer Jameica Authenticator
  *
@@ -262,79 +270,4 @@ public abstract class PasswordDialog extends AbstractDialog {
  * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
  * @R Nicht mehr benoetigte Grafiken entfernt
  * @C Anordnung des SideImages in AbstractDialog etwas geaendert (ein paar Pixel Abstand des Images vom Rand)
- *
- * Revision 1.20  2007/01/31 13:07:52  willuhn
- * @N Login-Dialog
- * @N SystemMessage
- *
- * Revision 1.19  2006/07/05 23:29:15  willuhn
- * @B Bug 174
- *
- * Revision 1.18  2005/06/06 09:54:30  web0
- * *** empty log message ***
- *
- * Revision 1.17  2005/06/02 22:57:42  web0
- * *** empty log message ***
- *
- * Revision 1.16  2005/02/01 17:15:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.15  2005/01/30 20:47:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.14  2004/10/19 23:33:44  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2004/10/18 23:37:42  willuhn
- * *** empty log message ***
- *
- * Revision 1.12  2004/08/15 17:55:17  willuhn
- * @C sync handling
- *
- * Revision 1.11  2004/07/27 23:41:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.10  2004/06/10 20:56:53  willuhn
- * @D javadoc comments fixed
- *
- * Revision 1.9  2004/05/23 16:34:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.8  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.7  2004/03/06 18:24:24  willuhn
- * @D javadoc
- *
- * Revision 1.6  2004/03/03 22:27:10  willuhn
- * @N help texts
- * @C refactoring
- *
- * Revision 1.5  2004/02/24 22:46:53  willuhn
- * @N GUI refactoring
- *
- * Revision 1.4  2004/02/23 20:30:34  willuhn
- * @C refactoring in AbstractDialog
- *
- * Revision 1.3  2004/02/22 20:05:21  willuhn
- * @N new Logo panel
- *
- * Revision 1.2  2004/02/21 19:49:41  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/02/20 20:45:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/02/20 01:25:06  willuhn
- * @N nice dialog
- * @N busy indicator
- * @N new status bar
- *
- * Revision 1.1  2004/02/17 00:53:47  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/02/12 23:46:27  willuhn
- * *** empty log message ***
- *
  **********************************************************************/

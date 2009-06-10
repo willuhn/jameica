@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Login.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/01/31 13:07:52 $
+ * $Revision: 1.2 $
+ * $Date: 2009/06/10 11:25:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,14 @@ public class Login implements Serializable
 
   /**
    * ct.
+   */
+  public Login()
+  {
+    this(null,null);
+  }
+
+  /**
+   * ct.
    * @param username
    * @param password
    */
@@ -44,6 +52,15 @@ public class Login implements Serializable
   }
   
   /**
+   * Speichert den Usernamen.
+   * @param username der Username.
+   */
+  public void setUsername(String username)
+  {
+    this.username = username;
+  }
+  
+  /**
    * Liefert das Passwort.
    * @return das Passwort.
    */
@@ -51,12 +68,32 @@ public class Login implements Serializable
   {
     return this.password;
   }
+  
+  /**
+   * Speichert das Passwort.
+   * @param password das Passwort.
+   */
+  public void setPassword(char[] password)
+  {
+    this.password = password;
+  }
 
+  /**
+   * Speichert das Passwort.
+   * @param password das Passwort.
+   */
+  public void setPassword(String password)
+  {
+    this.password = password == null ? null : password.toCharArray();
+  }
 }
 
 
 /*********************************************************************
  * $Log: Login.java,v $
+ * Revision 1.2  2009/06/10 11:25:53  willuhn
+ * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
+ *
  * Revision 1.1  2007/01/31 13:07:52  willuhn
  * @N Login-Dialog
  * @N SystemMessage
