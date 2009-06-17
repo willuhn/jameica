@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.7 $
- * $Date: 2009/02/24 16:46:57 $
+ * $Revision: 1.8 $
+ * $Date: 2009/06/17 16:58:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class JameicaSecurityManager extends SecurityManager
     }
     catch (IOException e)
     {
-      throw new RuntimeException("unable to determine absolute path for " + new File(".").getAbsolutePath());
+      throw new RuntimeException("unable to determine absolute path for " + new File(".").getAbsolutePath(),e);
     }
   }
 
@@ -83,7 +83,7 @@ public class JameicaSecurityManager extends SecurityManager
     }
     catch (IOException e)
     {
-      throw new SecurityException("error while checking write permissions for \"" + path + "\"");
+      throw new SecurityException("error while checking write permissions for \"" + path + "\"",e);
     }
   }
 
@@ -115,6 +115,9 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
+ * Revision 1.8  2009/06/17 16:58:51  willuhn
+ * @N Urspruengliche IOException weiterwerfen
+ *
  * Revision 1.7  2009/02/24 16:46:57  willuhn
  * @R Log-Meldung entfernt - flutet nur sinnlos das Log
  *
