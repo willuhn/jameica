@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.24 $
- * $Date: 2009/06/10 11:25:53 $
+ * $Revision: 1.25 $
+ * $Date: 2009/06/22 23:08:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,7 +66,7 @@ public abstract class PasswordDialog extends AbstractDialog {
 	 */
   public PasswordDialog(int position) {
     super(position);
-    this.setSize(400,SWT.DEFAULT);
+    this.setSize(420,SWT.DEFAULT);
     this.setTitle(i18n.tr("Passwort"));
     this.setSideImage(SWTUtil.getImage("dialog-password.png"));
 
@@ -257,6 +257,9 @@ public abstract class PasswordDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.25  2009/06/22 23:08:55  willuhn
+ * @N Dialog 20px breiter gemacht. Bei MacOS bricht das letzte Wort (wegen der dort groesseren Schrift) unter Umstaenden um, was dazu fuehrt, dass die Buttons unten abgeschnitten werden
+ *
  * Revision 1.24  2009/06/10 11:25:53  willuhn
  * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
  *
