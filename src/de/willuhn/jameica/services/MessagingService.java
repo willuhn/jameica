@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/MessagingService.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/02/18 17:59:12 $
+ * $Revision: 1.3 $
+ * $Date: 2009/06/24 11:24:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,7 @@ public class MessagingService implements Bootable
    */
   public Class[] depends()
   {
-    return null;
+    return new Class[]{LogService.class};
   }
 
   /**
@@ -67,6 +67,9 @@ public class MessagingService implements Bootable
 
 /**********************************************************************
  * $Log: MessagingService.java,v $
+ * Revision 1.3  2009/06/24 11:24:33  willuhn
+ * @N Security-Manager via Bootloader setzen
+ *
  * Revision 1.2  2008/02/18 17:59:12  willuhn
  * @C Nach Autoregister-Messageconsumern erst beim Versand der ersten Nachricht suchen
  *

@@ -1,6 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/AuthenticateService.java,v $
- * $Revision: 1.2 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SecurityManagerService.java,v $
+ * $Revision: 1.1 $
  * $Date: 2009/06/24 11:24:33 $
  * $Author: willuhn $
  * $Locker:  $
@@ -13,18 +13,16 @@
 
 package de.willuhn.jameica.services;
 
-import java.net.Authenticator;
-
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
-import de.willuhn.jameica.security.JameicaAuthenticator;
-
+import de.willuhn.jameica.security.JameicaSecurityManager;
+import de.willuhn.logging.Logger;
 
 /**
- * Authentifizierungs-Service fuer HTTP-Basic-Authentication.
+ * Service, der den Security-Manager setzt.
  */
-public class AuthenticateService implements Bootable
+public class SecurityManagerService implements Bootable
 {
 
   /**
@@ -32,7 +30,7 @@ public class AuthenticateService implements Bootable
    */
   public Class[] depends()
   {
-    return new Class[]{ProxyService.class,SecurityManagerService.class};
+    return null;
   }
 
   /**
@@ -40,7 +38,8 @@ public class AuthenticateService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-    Authenticator.setDefault(new JameicaAuthenticator());
+    Logger.info("applying jameica security manager");
+    System.setSecurityManager(new JameicaSecurityManager());
   }
 
   /**
@@ -49,15 +48,13 @@ public class AuthenticateService implements Bootable
   public void shutdown()
   {
   }
+
 }
 
 
 /**********************************************************************
- * $Log: AuthenticateService.java,v $
- * Revision 1.2  2009/06/24 11:24:33  willuhn
+ * $Log: SecurityManagerService.java,v $
+ * Revision 1.1  2009/06/24 11:24:33  willuhn
  * @N Security-Manager via Bootloader setzen
- *
- * Revision 1.1  2009/06/09 12:43:01  willuhn
- * @N Erster Code fuer Jameica Authenticator
  *
  **********************************************************************/

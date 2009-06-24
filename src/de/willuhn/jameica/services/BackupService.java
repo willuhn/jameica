@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BackupService.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/03/11 00:13:08 $
+ * $Revision: 1.6 $
+ * $Date: 2009/06/24 11:24:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,7 @@ public class BackupService implements Bootable
    */
   public Class[] depends()
   {
-    return null;
+    return new Class[]{LogService.class};
   }
 
   /**
@@ -82,6 +82,9 @@ public class BackupService implements Bootable
 
 /**********************************************************************
  * $Log: BackupService.java,v $
+ * Revision 1.6  2009/06/24 11:24:33  willuhn
+ * @N Security-Manager via Bootloader setzen
+ *
  * Revision 1.5  2008/03/11 00:13:08  willuhn
  * @N Backup scharf geschaltet
  *

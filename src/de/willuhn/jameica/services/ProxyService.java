@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ProxyService.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/03/10 14:06:26 $
+ * $Revision: 1.3 $
+ * $Date: 2009/06/24 11:24:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,7 @@ public class ProxyService implements Bootable
    */
   public Class[] depends()
   {
-    return null;
+    return new Class[]{LogService.class};
   }
 
   /**
@@ -79,6 +79,9 @@ public class ProxyService implements Bootable
 
 /**********************************************************************
  * $Log: ProxyService.java,v $
+ * Revision 1.3  2009/06/24 11:24:33  willuhn
+ * @N Security-Manager via Bootloader setzen
+ *
  * Revision 1.2  2009/03/10 14:06:26  willuhn
  * @N Proxy-Server fuer HTTPS konfigurierbar
  *

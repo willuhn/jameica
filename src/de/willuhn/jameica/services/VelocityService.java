@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/VelocityService.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/11/05 00:18:59 $
+ * $Revision: 1.3 $
+ * $Date: 2009/06/24 11:24:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class VelocityService extends ResourceLoader implements Bootable
    */
   public Class[] depends()
   {
-    return null;
+    return new Class[]{LogService.class};
   }
 
   /**
@@ -209,6 +209,9 @@ public class VelocityService extends ResourceLoader implements Bootable
 
 /**********************************************************************
  * $Log: VelocityService.java,v $
+ * Revision 1.3  2009/06/24 11:24:33  willuhn
+ * @N Security-Manager via Bootloader setzen
+ *
  * Revision 1.2  2008/11/05 00:18:59  willuhn
  * @N Apache Velocity aktualisiert (1.4 -> 1.5)
  * @N Apache Commons aktualisiert (noetig wegen Velocity-Update)

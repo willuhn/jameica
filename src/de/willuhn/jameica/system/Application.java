@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.82 $
- * $Date: 2008/12/17 22:28:38 $
+ * $Revision: 1.83 $
+ * $Date: 2009/06/24 11:24:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,7 +24,6 @@ import de.willuhn.jameica.messaging.MessagingFactory;
 import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
-import de.willuhn.jameica.security.JameicaSecurityManager;
 import de.willuhn.jameica.security.SSLFactory;
 import de.willuhn.jameica.services.Init5;
 import de.willuhn.jameica.services.MessagingService;
@@ -94,9 +93,6 @@ public final class Application {
 
     Logger.info("starting jameica...");
     getCallback().getStartupMonitor().setStatusText("starting jameica");
-
-    Logger.info("setting security manager");
-    System.setSecurityManager(new JameicaSecurityManager());
 
     try
     {
@@ -504,6 +500,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.83  2009/06/24 11:24:33  willuhn
+ * @N Security-Manager via Bootloader setzen
+ *
  * Revision 1.82  2008/12/17 22:28:38  willuhn
  * @R t o d o  tag entfernt
  *

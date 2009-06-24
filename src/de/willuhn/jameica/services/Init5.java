@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/Init5.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/06/09 12:43:01 $
+ * $Revision: 1.6 $
+ * $Date: 2009/06/24 11:24:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ public class Init5 implements Bootable
   public Class[] depends()
   {
     return new Class[]{
+      SecurityManagerService.class,
       LockService.class,
       LogService.class,
       SysinfoService.class,
@@ -68,6 +69,9 @@ public class Init5 implements Bootable
 
 /**********************************************************************
  * $Log: Init5.java,v $
+ * Revision 1.6  2009/06/24 11:24:33  willuhn
+ * @N Security-Manager via Bootloader setzen
+ *
  * Revision 1.5  2009/06/09 12:43:01  willuhn
  * @N Erster Code fuer Jameica Authenticator
  *
