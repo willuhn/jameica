@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenu.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.7 $
+ * $Date: 2009/07/16 10:25:27 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -27,6 +27,7 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -35,22 +36,61 @@ import de.willuhn.util.ApplicationException;
 public class ContextMenu implements Part
 {
 
-	private ArrayList items 			= new ArrayList();
-	private ArrayList swtItems 		= new ArrayList();
+	private ArrayList items    = new ArrayList();
+	private ArrayList swtItems = new ArrayList();
 
 	private Object currentObject	= null;
-
+	private ContextMenu parent    = null;
+	private Menu menu             = null;
+	private String name           = null;
+	private Image image           = null;
+	
 	/**
 	 * Fuegt dem Context-Menu ein neues Element hinzu.
    * @param item das hinzuzufuegende Element.
    */
   public void addItem(ContextMenuItem item)
 	{
-		if (item == null)
-			return;
-		items.add(item);
+		if (item != null)
+  		this.items.add(item);
 	}
+  
+  /**
+   * Fuegt ein Sub-Menu hinzu.
+   * @param menu Sub-Menu.
+   */
+  public void addMenu(ContextMenu menu)
+  {
+    if (menu != null)
+      this.items.add(menu);
+  }
+  
+  /**
+   * Legt einen Namen fuer das Menu fest.
+   * Der Name wird nur dann benoetigt, wenn das Menu als Submenu
+   * innerhalb eines anderen Menus verwendet wird.
+   * Ist dieser Name nicht gesetzt, kann das Menu nicht als
+   * Submenu verwendet werden.
+   * @param name anzuzeigender Name fuer das Sub-Menu.
+   */
+  public void setText(String text)
+  {
+    if (text != null && text.length() > 0)
+      this.name = text;
+  }
+  
+  /**
+   * Speichert das anzuzeigende Icon.
+   * Die Angabe des Icons macht nur dann Sinn, wenn das
+   * Menu als Submenu verwendet werden soll.
+   * @param image Image.
+   */
+  public void setImage(Image image)
+  {
+    this.image = image;
+  }
 
+  
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
@@ -59,37 +99,70 @@ public class ContextMenu implements Part
   	if (swtItems.size() > 0)
   		return; // wir wurden schonmal gemalt.
 
-		// Ja, ich weiss, eigentlich muesste man hier einen doppelten
-		// synchronized-Block um "items" und "swtItems" machen, aber das
-		// ist mir zu bloed ;) 
-		
-		Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
-		parent.setMenu(menu);
+  	if (this.parent != null)
+  	{
+  	  if (this.name == null || this.name.length() == 0)
+  	  {
+  	    Logger.warn("menu defined as sub menu but contains no name");
+  	    return;
+  	  }
+  	  
+  	  MenuItem i = new MenuItem(this.parent.menu, SWT.CASCADE);
+  	  i.setText(this.name);
 
-		for (int i=0;i<items.size();++i)
+      if (this.image != null)
+        i.setImage(image);
+
+      this.menu = new Menu(parent.getShell(),SWT.DROP_DOWN);
+      i.setMenu(this.menu);
+  	}
+  	else
+  	{
+  	  this.menu = new Menu(parent.getShell(),SWT.POP_UP);
+  	  parent.setMenu(this.menu);
+  	}
+
+		for (int i=0;i<this.items.size();++i)
 		{
-			final ContextMenuItem item = (ContextMenuItem) items.get(i);
+		  Object o = this.items.get(i);
 
-			if (item.isSeparator())
+		  //////////////////////////////////////////////////////////////////////////
+		  // Sub-Menu?
+		  if (o instanceof ContextMenu)
+		  {
+		    ContextMenu sub = (ContextMenu) o;
+		    sub.parent = this;
+		    sub.paint(parent);
+		    continue;
+		  }
+      //////////////////////////////////////////////////////////////////////////
+
+		  final ContextMenuItem item = (ContextMenuItem) o;
+
+      //////////////////////////////////////////////////////////////////////////
+		  // Separator?
+		  if (item.isSeparator())
 			{
-				swtItems.add(i,new MenuItem(menu, SWT.SEPARATOR));
+				this.swtItems.add(new MenuItem(this.menu, SWT.SEPARATOR));
 				continue;
 			}
+      //////////////////////////////////////////////////////////////////////////
 
-			if (item.getText() == null || item.getText().length() == 0)
+		  
+			String text = item.getText();
+			
+			// Kein Separator und kein Text -> ignorieren wir
+			if (text == null || text.length() == 0)
 				continue;
 
-			final MenuItem mi = new MenuItem(menu, SWT.PUSH);
-			mi.setText(item.getText());
+			final MenuItem mi = new MenuItem(this.menu, SWT.PUSH);
+			mi.setText(text);
 
 			Image image = item.getImage();
 			if (image != null) mi.setImage(image);
 
 			mi.addListener(SWT.Selection,new Listener()
       {
-				// Wir packen hier nochmal nen eigenen Listener drum,
-				// damit wir das currentObject in das data-Member eines
-				// Events tun koennen.
         public void handleEvent(Event event)
         {
         	Action a = item.getAction();
@@ -105,7 +178,7 @@ public class ContextMenu implements Part
         }
       });
       
-      swtItems.add(i,mi);
+      this.swtItems.add(mi);
 		}
   }
 
@@ -121,21 +194,28 @@ public class ContextMenu implements Part
 		this.currentObject = object;
 		// Jetzt iterieren wir noch ueber alle MenuItems und fragen die,
 		// ob sie fuer das aktuelle Objekt angezeigt werden wollen.
-		ContextMenuItem item = null;
+		Object o = null;
 		MenuItem mi = null;
 		for (int i=0;i<swtItems.size();++i)
 		{
-			item = (ContextMenuItem) items.get(i);
+			o = items.get(i);
 			mi = (MenuItem) swtItems.get(i);
-			if (item == null || mi == null)
+			if (o == null || mi == null)
 				continue;
-			mi.setEnabled(item.isEnabledFor(object));
+			
+			if (o instanceof ContextMenu)
+			  ((ContextMenu)o).setCurrentObject(object);
+			else
+  			mi.setEnabled(((ContextMenuItem)o).isEnabledFor(object));
 		}
 	}
 }
 
 /**********************************************************************
  * $Log: ContextMenu.java,v $
+ * Revision 1.7  2009/07/16 10:25:27  willuhn
+ * @N Support fuer Sub-Menus
+ *
  * Revision 1.6  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
