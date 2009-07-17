@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingQueue.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/06/05 11:45:09 $
+ * $Revision: 1.2 $
+ * $Date: 2009/07/17 10:13:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,12 +56,23 @@ public interface MessagingQueue
    * Schliesst die Queue und sendet alle noch offenen Nachrichten.
    */
   public void close();
+  
+  /**
+   * Sendet alle noch offenen Nachrichten.
+   * Die Funktion kehrt erst zurueck, nachdem alle Nachrichten
+   * zugestellt wurden.
+   */
+  public void flush();
 
 }
 
 
 /*********************************************************************
  * $Log: MessagingQueue.java,v $
+ * Revision 1.2  2009/07/17 10:13:03  willuhn
+ * @N MessagingQueue#flush()
+ * @N MessageCollector zum Sammeln von Nachrichten
+ *
  * Revision 1.1  2007/06/05 11:45:09  willuhn
  * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
  *

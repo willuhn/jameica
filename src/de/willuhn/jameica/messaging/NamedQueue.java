@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.5 $
- * $Date: 2008/10/08 23:22:14 $
+ * $Revision: 1.6 $
+ * $Date: 2009/07/17 10:13:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,6 +106,23 @@ public final class NamedQueue implements MessagingQueue
     worker.unregister(this);
     this.consumers = null;
     this.messages = null;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.messaging.MessagingQueue#flush()
+   */
+  public void flush()
+  {
+    try
+    {
+      // Ich weiss, eigentlich waere das mit einem wait() notify() eleganter ;)
+      while (this.messages != null && this.messages.size() > 0)
+        Thread.sleep(5);
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to flush queue",e);
+    }
   }
 
   /**
@@ -283,6 +300,10 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.6  2009/07/17 10:13:03  willuhn
+ * @N MessagingQueue#flush()
+ * @N MessageCollector zum Sammeln von Nachrichten
+ *
  * Revision 1.5  2008/10/08 23:22:14  willuhn
  * *** empty log message ***
  *

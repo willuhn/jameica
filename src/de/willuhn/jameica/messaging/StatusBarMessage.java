@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/StatusBarMessage.java,v $
- * $Revision: 1.4 $
- * $Date: 2007/06/05 11:45:09 $
+ * $Revision: 1.5 $
+ * $Date: 2009/07/17 10:13:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ public class StatusBarMessage extends TextMessage
    */
   public StatusBarMessage(String text, int type)
   {
-    super(text);
+    super((type == TYPE_SUCCESS ? "OK" : "ERROR"),text);
     this.type = type;
   }
   
@@ -60,6 +60,10 @@ public class StatusBarMessage extends TextMessage
 
 /*********************************************************************
  * $Log: StatusBarMessage.java,v $
+ * Revision 1.5  2009/07/17 10:13:03  willuhn
+ * @N MessagingQueue#flush()
+ * @N MessageCollector zum Sammeln von Nachrichten
+ *
  * Revision 1.4  2007/06/05 11:45:09  willuhn
  * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
  *

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.20 $
- * $Date: 2008/02/18 17:59:12 $
+ * $Revision: 1.21 $
+ * $Date: 2009/07/17 10:13:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,6 +95,10 @@ public final class MessagingFactory implements MessagingQueue
           registerMessageConsumer(mc);
         }
       }
+      catch (NoSuchMethodException e)
+      {
+        Logger.warn("message consumer has no default constructor, skipping");
+      }
       catch (Throwable t)
       {
         Logger.error("unable to register message consumer " + c[i].getName(),t);
@@ -185,10 +189,35 @@ public final class MessagingFactory implements MessagingQueue
     init();
     this.defaultQueue.sendSyncMessage(message);
   }
+
+  /**
+   * @see de.willuhn.jameica.messaging.MessagingQueue#flush()
+   */
+  public void flush()
+  {
+    init();
+    try
+    {
+      Iterator it = this.queues.keySet().iterator();
+      while (it.hasNext())
+      {
+        MessagingQueue q = (MessagingQueue) this.queues.get(it.next());
+        q.flush();
+      }
+    }
+    finally
+    {
+      this.defaultQueue.flush();
+    }
+  }
 }
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.21  2009/07/17 10:13:03  willuhn
+ * @N MessagingQueue#flush()
+ * @N MessageCollector zum Sammeln von Nachrichten
+ *
  * Revision 1.20  2008/02/18 17:59:12  willuhn
  * @C Nach Autoregister-Messageconsumern erst beim Versand der ersten Nachricht suchen
  *
