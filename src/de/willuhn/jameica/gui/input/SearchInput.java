@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2009/05/19 10:20:50 $
+ * $Revision: 1.15 $
+ * $Date: 2009/07/26 22:34:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,6 +34,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
 /**
@@ -471,10 +472,39 @@ public class SearchInput extends AbstractInput
   {
     return enabled;
   }
+  
+  /**
+   * BUGZILLA 743
+   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+   */
+  void update() throws OperationCanceledException
+  {
+    super.update();
+
+    // ueberschrieben, weil getValue() das Objekt zurueckliefert.
+    // Wir pruefen hier aber auch, ob lediglich ein Text drin steht.
+    if (text == null || text.isDisposed())
+      return;
+    
+    String s = text.getText();
+
+    org.eclipse.swt.graphics.Color color = null;
+    
+    if (isMandatory() && (s == null || s.length() == 0 || s.equals(this.search)))
+      color = Color.MANDATORY_BG.getSWTColor();
+    else
+      color = Color.WIDGET_BG.getSWTColor();
+
+    text.setBackground(color);
+  }
+
 }
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.15  2009/07/26 22:34:42  willuhn
+ * @B BUGZILLA 743
+ *
  * Revision 1.14  2009/05/19 10:20:50  willuhn
  * @C Suchtext soll auch entfernt werden koennen
  *
