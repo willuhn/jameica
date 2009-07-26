@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2008/05/30 10:16:25 $
+ * $Revision: 1.16 $
+ * $Date: 2009/07/26 22:40:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,6 +47,7 @@ public abstract class ButtonInput extends AbstractInput
 	private String buttonText;
 	private Image  buttonImage;
 	private ArrayList buttonListeners = new ArrayList();
+	private boolean focus = false;
 
   /**
    * Liefert das einzubettende Eingabefeld.
@@ -74,6 +75,8 @@ public abstract class ButtonInput extends AbstractInput
 		gd.horizontalIndent = 1;
 		clientControl.setLayoutData(gd);
 		clientControl.setEnabled(clientControlEnabled);
+		if (this.focus)
+  		clientControl.setFocus();
     button = GUI.getStyleFactory().createButton(comp);
 		if (this.buttonImage == null && this.buttonText == null)
 	    button.setText("...");
@@ -150,7 +153,9 @@ public abstract class ButtonInput extends AbstractInput
    */
   public final void focus()
   {
-    clientControl.setFocus();
+    this.focus = true;
+    if (this.clientControl != null && !this.clientControl.isDisposed())
+      clientControl.setFocus();
   }
 
   /**
@@ -246,6 +251,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.16  2009/07/26 22:40:35  willuhn
+ * @B BUGZILLA 744
+ *
  * Revision 1.15  2008/05/30 10:16:25  willuhn
  * @N Text/Image des Button on-the-fly aktualisierbar
  *
