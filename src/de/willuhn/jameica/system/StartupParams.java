@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.10 $
- * $Date: 2009/04/14 09:25:53 $
+ * $Revision: 1.11 $
+ * $Date: 2009/08/17 09:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,6 +52,7 @@ public class StartupParams
 	private int mode 				       = MODE_STANDALONE;
 
   private boolean noninteractive = false;
+  private boolean ignoreLockfile = false;
   
   private String[] params   = null;
 
@@ -84,6 +85,7 @@ public class StartupParams
 
     options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +      "Es findet keine Benutzer-Interaktion mehr statt. Die Option wird nur ausgewertet, wenn Jameica " +      "im Server-Mode läuft.");
 
+    options.addOption("l","ignore-lock",false,"Ignoriert eine ggf. vorhandene Lock-Datei");
 
 		PosixParser parser = new PosixParser();
 		try
@@ -112,6 +114,12 @@ public class StartupParams
       {
         Logger.info("activating noninteractive mode");
         this.noninteractive = true;
+      }
+      
+      if (line.hasOption("l"))
+      {
+        Logger.info("ignoring lock file");
+        this.ignoreLockfile = true;
       }
 
 			if (line.hasOption("f"))
@@ -212,6 +220,15 @@ public class StartupParams
   }
   
   /**
+   * Liefert true, wenn eine ggf vorhandene Lock-Datei ignoriert werden soll.
+   * @return true, wenn die Lock-Datei ignoriert werden soll.
+   */
+  public boolean isIgnoreLockfile()
+  {
+    return this.ignoreLockfile;
+  }
+  
+  /**
    * Liefert die Kommandozeilen-Parameter.
    * @return Liste der ungeparsten Kommandozeilen-Parameter.
    */
@@ -224,6 +241,9 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.11  2009/08/17 09:29:22  willuhn
+ * @N Neuer Startup-Parameter "-l", mit dem die Lock-Datei von Jameica ignoriert werden kann. Habe ich eigentlich nur wegen Eclipse eingebaut. Denn dort werden Shutdown-Hooks nicht ausgefuehrt, wenn man die Anwendung im Debugger laufen laesst und auf "Terminate" klickt. Da das Debuggen maechtig nervig ist, wenn man im Server-Mode immer erst auf "Y" druecken muss, um den Start trotz Lockfile fortzusetzen, kann man mit dem Parameter "-l" das Pruefen auf die Lock-Datei einfach ignorieren
+ *
  * Revision 1.10  2009/04/14 09:25:53  willuhn
  * @N Neuer Parameter "-w <file>", mit dem das Masterpasswort auch ueber eine Datei uebergeben werden kann
  *

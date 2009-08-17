@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/LockService.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/06/24 11:24:33 $
+ * $Revision: 1.3 $
+ * $Date: 2009/08/17 09:29:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,10 @@ public class LockService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
+    // Wenn der Parameter angegeben ist, ignorieren wir das Lock-File komplett
+    if (Application.getStartupParams().isIgnoreLockfile())
+      return;
+    
     File lock = new File(Application.getConfig().getWorkDir(),"jameica.lock");
     Logger.info("creating lockfile " + lock.getAbsolutePath());
     try {
@@ -73,6 +77,9 @@ public class LockService implements Bootable
 
 /**********************************************************************
  * $Log: LockService.java,v $
+ * Revision 1.3  2009/08/17 09:29:22  willuhn
+ * @N Neuer Startup-Parameter "-l", mit dem die Lock-Datei von Jameica ignoriert werden kann. Habe ich eigentlich nur wegen Eclipse eingebaut. Denn dort werden Shutdown-Hooks nicht ausgefuehrt, wenn man die Anwendung im Debugger laufen laesst und auf "Terminate" klickt. Da das Debuggen maechtig nervig ist, wenn man im Server-Mode immer erst auf "Y" druecken muss, um den Start trotz Lockfile fortzusetzen, kann man mit dem Parameter "-l" das Pruefen auf die Lock-Datei einfach ignorieren
+ *
  * Revision 1.2  2009/06/24 11:24:33  willuhn
  * @N Security-Manager via Bootloader setzen
  *
