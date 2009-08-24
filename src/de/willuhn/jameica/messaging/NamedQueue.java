@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.8 $
- * $Date: 2009/08/24 22:43:58 $
+ * $Revision: 1.9 $
+ * $Date: 2009/08/24 23:54:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -175,6 +175,7 @@ public final class NamedQueue implements MessagingQueue
    */
   private static class Worker extends Thread
   {
+    private Object lock = new Object();
     private ArrayList queues = new ArrayList();
     private boolean quit = false;
 
@@ -228,9 +229,9 @@ public final class NamedQueue implements MessagingQueue
      */
     private void wakeup()
     {
-      synchronized (this)
+      synchronized (lock)
       {
-        this.notify();
+        lock.notify();
       }
     }
 
@@ -284,25 +285,28 @@ public final class NamedQueue implements MessagingQueue
     /**
      * @see java.lang.Runnable#run()
      */
-    public synchronized void run()
+    public void run()
     {
       while(!quit)
       {
         try
         {
-          this.wait();
-          
-          // Alle Queues abarbeiten
-          for (int i=0;i<this.queues.size();++i)
+          synchronized (this.lock)
           {
-            NamedQueue queue = (NamedQueue) this.queues.get(i);
-            while (queue.messages != null && queue.messages.size() > 0)
-            {
-              send(queue.consumers, (Message) queue.messages.pop());
-            }
+            lock.wait();
           }
         }
         catch (InterruptedException e) {}
+        
+        // Alle Queues abarbeiten
+        for (int i=0;i<this.queues.size();++i)
+        {
+          NamedQueue queue = (NamedQueue) this.queues.get(i);
+          while (queue.messages != null && queue.messages.size() > 0)
+          {
+            send(queue.consumers, (Message) queue.messages.pop());
+          }
+        }
       }
     }
   }
@@ -310,8 +314,8 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
- * Revision 1.8  2009/08/24 22:43:58  willuhn
- * @C locking nochmal geaendert
+ * Revision 1.9  2009/08/24 23:54:15  willuhn
+ * @B deadlock
  *
  * Revision 1.7  2009/08/24 22:30:00  willuhn
  * @C Worker-Thread nicht mehr mit interrupt() sondern mit notify() aufwecken - unter Umstaenden wird sonst eine laufende Nachrichtenzustellung abgebrochen
