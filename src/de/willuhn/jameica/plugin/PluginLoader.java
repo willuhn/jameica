@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.42 $
- * $Date: 2009/03/10 23:51:28 $
+ * $Revision: 1.43 $
+ * $Date: 2009/08/24 11:53:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -275,7 +275,7 @@ public final class PluginLoader
     // /////////////////////////////////////////////////////////////
     // Velocity-Template-Verzeichnisse
     VelocityService vs = (VelocityService) Application.getBootLoader().getBootable(VelocityService.class);
-    vs.addTemplateDir(new File(manifest.getPluginDir() + File.separator + "lib","velocity"));
+    vs.add(manifest);
     //
     // /////////////////////////////////////////////////////////////
 
@@ -617,6 +617,13 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.43  2009/08/24 11:53:08  willuhn
+ * @C Der VelocityService besitzt jetzt keinen globalen Resource-Loader mehr. Stattdessen hat jedes Plugin einen eigenen. Damit das funktioniert, darf man Velocity aber nicht mehr mit der statischen Methode "Velocity.getTemplate()" nutzen sondern mit folgendem Code:
+ *
+ * VelocityService s = (VelocityService) Application.getBootLoader().getBootable(VelocityService.class);
+ * VelocityEngine engine = service.getEngine(MeinPlugin.class.getName());
+ * Template = engine.getTemplate(name);
+ *
  * Revision 1.42  2009/03/10 23:51:28  willuhn
  * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
  *
