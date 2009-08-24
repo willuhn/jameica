@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.6 $
- * $Date: 2009/07/17 10:13:03 $
+ * $Revision: 1.7 $
+ * $Date: 2009/08/24 22:30:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -115,7 +115,7 @@ public final class NamedQueue implements MessagingQueue
   {
     try
     {
-      // Ich weiss, eigentlich waere das mit einem wait() notify() eleganter ;)
+      worker.wakeup();
       while (this.messages != null && this.messages.size() > 0)
         Thread.sleep(5);
     }
@@ -143,7 +143,7 @@ public final class NamedQueue implements MessagingQueue
     try
     {
       messages.push(message);
-      worker.interrupt();
+      worker.wakeup();
     }
     catch (Queue.QueueFullException e)
     {
@@ -175,6 +175,7 @@ public final class NamedQueue implements MessagingQueue
    */
   private static class Worker extends Thread
   {
+    private Object lock = new Object();
     private ArrayList queues = new ArrayList();
     private boolean quit = false;
 
@@ -201,7 +202,7 @@ public final class NamedQueue implements MessagingQueue
      */
     private void unregister(NamedQueue queue)
     {
-      interrupt(); // Noch offene Nachrichten zustellen
+      wakeup(); // Noch offene Nachrichten zustellen
       Logger.info("closing queue: " + queue.getName());
       this.queues.remove(queue);
 
@@ -212,7 +213,7 @@ public final class NamedQueue implements MessagingQueue
         
         try {
           Logger.info("shutting down messaging factory");
-          worker.interrupt();
+          wakeup();
           join(5 * 1000l); // wir warten, bis der Thread fertig ist.
         }
         catch (Exception e)
@@ -220,6 +221,17 @@ public final class NamedQueue implements MessagingQueue
           Logger.error("error while waiting for worker shutdown",e);
         }
         Logger.info("messaging factory shut down");
+      }
+    }
+    
+    /**
+     * Weckt den Zustell-Thread auf.
+     */
+    private void wakeup()
+    {
+      synchronized (lock)
+      {
+        lock.notify();
       }
     }
 
@@ -277,21 +289,23 @@ public final class NamedQueue implements MessagingQueue
     {
       while(!quit)
       {
+        try
+        {
+          synchronized (this.lock)
+          {
+            lock.wait();
+          }
+        }
+        catch (InterruptedException e) {}
+        
         // Alle Queues abarbeiten
         for (int i=0;i<this.queues.size();++i)
         {
           NamedQueue queue = (NamedQueue) this.queues.get(i);
           while (queue.messages != null && queue.messages.size() > 0)
+          {
             send(queue.consumers, (Message) queue.messages.pop());
-        }
-
-        try
-        {
-          sleep(60 * 1000L);
-        }
-        catch (InterruptedException e)
-        {
-          // Wakeup
+          }
         }
       }
     }
@@ -300,6 +314,9 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.7  2009/08/24 22:30:00  willuhn
+ * @C Worker-Thread nicht mehr mit interrupt() sondern mit notify() aufwecken - unter Umstaenden wird sonst eine laufende Nachrichtenzustellung abgebrochen
+ *
  * Revision 1.6  2009/07/17 10:13:03  willuhn
  * @N MessagingQueue#flush()
  * @N MessageCollector zum Sammeln von Nachrichten
