@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.9 $
- * $Date: 2009/08/24 23:54:15 $
+ * $Revision: 1.10 $
+ * $Date: 2009/08/25 11:47:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -231,7 +231,7 @@ public final class NamedQueue implements MessagingQueue
     {
       synchronized (lock)
       {
-        lock.notify();
+        lock.notifyAll();
       }
     }
 
@@ -289,15 +289,6 @@ public final class NamedQueue implements MessagingQueue
     {
       while(!quit)
       {
-        try
-        {
-          synchronized (this.lock)
-          {
-            lock.wait();
-          }
-        }
-        catch (InterruptedException e) {}
-        
         // Alle Queues abarbeiten
         for (int i=0;i<this.queues.size();++i)
         {
@@ -307,6 +298,18 @@ public final class NamedQueue implements MessagingQueue
             send(queue.consumers, (Message) queue.messages.pop());
           }
         }
+
+        try
+        {
+          synchronized (this.lock)
+          {
+            // Nur fuer den Fall, dass wir mal nicht sauber aufgeweckt
+            // wurden (man weiss ja nie ;)) schauen wir einmal pro
+            // Minute trotzdem, ob neue Messages da sind.
+            lock.wait(60 * 1000L);
+          }
+        }
+        catch (InterruptedException e) {}
       }
     }
   }
@@ -314,6 +317,9 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.10  2009/08/25 11:47:04  willuhn
+ * @C auch wenn offensichtlich keine neuen Messages eingetroffen sind, alle 60 Sekunden mal nachschauen. Sicher ist sicher ;)
+ *
  * Revision 1.9  2009/08/24 23:54:15  willuhn
  * @B deadlock
  *
