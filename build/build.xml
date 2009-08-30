@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.61 $
- $Date: 2009/02/18 12:22:03 $
+ $Revision: 1.62 $
+ $Date: 2009/08/30 22:13:58 $
  $Author: willuhn $
  
  All rights reserved
@@ -135,7 +135,20 @@
 			</manifest>
 			<fileset dir="${class.dir}" includes="**/Main.class" />
 		</jar>
+	    <jar destfile="${project.zipdir}/${define.jarfilename.macos64}">
+	      <manifest>
+	        <attribute name="Built-By" value="${user.name}" />
+	        <attribute name="Built-Date" value="${DSTAMP}" />
+	        <attribute name="Implementation-Title" value="${define.projectname}" />
+	        <attribute name="Implementation-Version" value="${appversion}" />
+	        <attribute name="Implementation-Buildnumber" value="${build.number}" />
+	        <attribute name="Main-Class" value="de.willuhn.jameica.Main" />
+	        <attribute name="Class-Path" value="${classpath.macos64}" />
+	      </manifest>
+	      <fileset dir="${class.dir}" includes="**/Main.class" />
+	    </jar>
 
+	  
     <jar destfile="${project.zipdir}/${define.jarfilename.openbsd}">
       <manifest>
         <attribute name="Built-By" value="${user.name}" />
@@ -182,6 +195,7 @@
     <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.linux}"/>
     <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.linux-amd64}"/>
     <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.macos}"/>
+    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.macos64}"/>
     <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.openbsd}"/>
     <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.win32}"/>
   </target>
@@ -207,6 +221,7 @@
 				<include name="README"/>
         <include name="Jameica.icns"/>
         <include name="Info.plist"/>
+        <include name="Info64.plist"/>
 			</fileset>
 		</copy>
     <copy file="plugin.xml" todir="${project.zipdir}" />
@@ -232,9 +247,11 @@
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
+        <exclude name="${define.projectname}/lib/swt/macos64/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
         <exclude name="${define.projectname}/Jameica.icns"/>
         <exclude name="${define.projectname}/Info.plist"/>
+        <exclude name="${define.projectname}/Info64.plist"/>
 			</zipfileset>
 		</zip>
 
@@ -259,9 +276,11 @@
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
+        <exclude name="${define.projectname}/lib/swt/macos64/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
         <exclude name="${define.projectname}/Jameica.icns"/>
         <exclude name="${define.projectname}/Info.plist"/>
+        <exclude name="${define.projectname}/Info64.plist"/>
 			</zipfileset>
 		</zip>
 
@@ -283,10 +302,12 @@
 
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
+        <exclude name="${define.projectname}/lib/swt/macos64/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
         <exclude name="${define.projectname}/Jameica.icns"/>
         <exclude name="${define.projectname}/Info.plist"/>
+        <exclude name="${define.projectname}/Info64.plist"/>
 			</zipfileset>
 		</zip>
 
@@ -309,9 +330,11 @@
         <include name="jameica-icon-02.png"/>
         <include name="plugins"/>
         <include name="lib/**"/>
+        <exclude name="Info64.plist"/>
         <exclude name="lib/swt/openbsd/**"/>
         <exclude name="lib/swt/win32/**"/>
         <exclude name="lib/swt/linux/**"/>
+        <exclude name="lib/swt/macos64/**"/>
         <exclude name="lib/swt/linux-amd64/**"/>
       </fileset>
     </copy>
@@ -320,6 +343,43 @@
         <include name="${define.projectname}.app/**"/>
       </zipfileset>
 		</zip>
+
+    <!-- ZIP-File fuer MacOS64 -->
+    <delete dir="${project.tmp}/${define.projectname}.app"/>
+    <mkdir dir="${project.tmp}/${define.projectname}.app" />
+    <copy todir="${project.tmp}/${define.projectname}.app">
+      <fileset dir="${project.release}/${define.projectname}">
+        <include name="plugin.xml"/>
+        <include name="${define.jarfilename}"/>
+        <include name="${define.jarfilename.macos64}"/>
+        <include name="COPYING"/>
+        <include name="README"/>
+        <include name="Jameica.icns"/>
+        <include name="Info64.plist"/>
+        <include name="jameica-macos64.sh"/>
+        <include name="jameicaserver-macos64.sh"/>
+        <include name=".jameica"/>
+        <include name="rcjameica"/>
+        <include name="jameica-icon-01.png"/>
+        <include name="jameica-icon-02.png"/>
+        <include name="plugins"/>
+        <include name="lib/**"/>
+        <exclude name="jameica-macos64.sh"/>
+        <exclude name="jameicaserver-macos64.sh"/>
+        <exclude name="Info.plist"/>
+        <exclude name="lib/swt/openbsd/**"/>
+        <exclude name="lib/swt/win32/**"/>
+        <exclude name="lib/swt/linux/**"/>
+        <exclude name="lib/swt/macos/**"/>
+        <exclude name="lib/swt/linux-amd64/**"/>
+      </fileset>
+    </copy>
+    <move file="${project.tmp}/${define.projectname}.app/Info64.plist" tofile="${project.tmp}/${define.projectname}.app/Info.plist" />
+    <zip destfile="${project.release}/${project.zipfilename.macos64}">
+      <zipfileset dir="${project.tmp}" filemode="755">
+        <include name="${define.projectname}.app/**"/>
+      </zipfileset>
+    </zip>
 
     <!-- ZIP-File fuer OpenBSD -->
     <zip destfile="${project.release}/${project.zipfilename.openbsd}">
@@ -340,11 +400,13 @@
         <include name="${define.projectname}/lib/**"/>
 
         <exclude name="${define.projectname}/lib/swt/macos/**"/>
+        <exclude name="${define.projectname}/lib/swt/macos64/**"/>
         <exclude name="${define.projectname}/lib/swt/win32/**"/>
         <exclude name="${define.projectname}/lib/swt/linux/**"/>
         <exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
         <exclude name="${define.projectname}/Jameica.icns"/>
         <exclude name="${define.projectname}/Info.plist"/>
+        <exclude name="${define.projectname}/Info64.plist"/>
       </zipfileset>
     </zip>
 
@@ -416,6 +478,7 @@
 		<checksum file="${project.release}/${project.zipfilename.linux}" />
 		<checksum file="${project.release}/${project.zipfilename.linux-amd64}" />
 		<checksum file="${project.release}/${project.zipfilename.macos}" />
+    <checksum file="${project.release}/${project.zipfilename.macos64}" />
     <checksum file="${project.release}/${project.zipfilename.openbsd}" />
 		<echo message="Creating PGP signatures" />
 
@@ -439,6 +502,9 @@
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos}" />
 		</exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos64}" />
+    </exec>
+    <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.openbsd}" />
     </exec>
 	</target>
@@ -455,6 +521,7 @@
 		<copy file="${project.release}/${project.zipfilename.linux}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-linux.zip" />
 		<copy file="${project.release}/${project.zipfilename.linux-amd64}" 	tofile="${project.nightly}/${define.projectname}-${appversion}-linux-amd64.zip" />
 		<copy file="${project.release}/${project.zipfilename.macos}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-macos.zip" />
+    <copy file="${project.release}/${project.zipfilename.macos64}"      tofile="${project.nightly}/${define.projectname}-${appversion}-macos64.zip" />
 		<copy file="${project.release}/${project.zipfilename.win32}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-win32.zip" />
     <copy file="${project.release}/${project.zipfilename.openbsd}"      tofile="${project.nightly}/${define.projectname}-${appversion}-openbsd.zip" />
 
