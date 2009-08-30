@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.62 $
- $Date: 2009/08/30 22:13:58 $
+ $Revision: 1.63 $
+ $Date: 2009/08/30 23:01:46 $
  $Author: willuhn $
  
  All rights reserved
@@ -364,8 +364,6 @@
         <include name="jameica-icon-02.png"/>
         <include name="plugins"/>
         <include name="lib/**"/>
-        <exclude name="jameica-macos64.sh"/>
-        <exclude name="jameicaserver-macos64.sh"/>
         <exclude name="Info.plist"/>
         <exclude name="lib/swt/openbsd/**"/>
         <exclude name="lib/swt/win32/**"/>
