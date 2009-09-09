@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/AbstractApplicationCallback.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/01/07 00:24:13 $
+ * $Revision: 1.6 $
+ * $Date: 2009/09/09 09:16:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,6 +19,8 @@ import javax.security.cert.X509Certificate;
 
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.security.Certificate;
+import de.willuhn.jameica.security.JameicaAuthenticator;
+import de.willuhn.jameica.security.Login;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
 
@@ -101,11 +103,29 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
                                         "Wollen Sie den Vorgang dennoch fortsetzen?",new String[]{hostname,hostnames.toString()});
     return askUser(s);
   }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#login(de.willuhn.jameica.security.JameicaAuthenticator)
+   */
+  public Login login(JameicaAuthenticator authenticator) throws Exception
+  {
+    // Wir checken mal, ob wir das Login via Messaging delegieren koennen
+    QueryMessage msg = new QueryMessage(authenticator);
+    Application.getMessagingFactory().getMessagingQueue("jameica.auth").sendSyncMessage(msg);
+    Object result = msg.getData();
+    if (result != null && (result instanceof Login))
+      return (Login) result; // jepp, war jemand zustaendig
+    
+    return null; // keiner zustaendig. Dann soll es die konkrete Callback-Implementierung machen
+  }
 }
 
 
 /*********************************************************************
  * $Log: AbstractApplicationCallback.java,v $
+ * Revision 1.6  2009/09/09 09:16:19  willuhn
+ * @N HTP-Auth via Messaging delegierbar
+ *
  * Revision 1.5  2009/01/07 00:24:13  willuhn
  * @C log level doch wieder auf DEBUG - muellt in der Tat das Log voll
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.33 $
- * $Date: 2009/06/10 11:25:54 $
+ * $Revision: 1.34 $
+ * $Date: 2009/09/09 09:16:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -467,6 +467,10 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public Login login(JameicaAuthenticator auth) throws Exception
   {
+    Login l = super.login(auth);
+    if (l != null)
+      return l; // wurde bereits in der Super-Klasse abgefackelt
+
     String notify = Application.getI18n().tr("Bitten geben Sie Benutzername und Passwort ein");
 
     String prompt = (String) auth.getRequestParam(JameicaAuthenticator.RequestParam.PROMPT);
@@ -488,6 +492,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.34  2009/09/09 09:16:19  willuhn
+ * @N HTP-Auth via Messaging delegierbar
+ *
  * Revision 1.33  2009/06/10 11:25:54  willuhn
  * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
  *
