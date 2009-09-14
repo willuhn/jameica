@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenu.java,v $
- * $Revision: 1.7 $
- * $Date: 2009/07/16 10:25:27 $
+ * $Revision: 1.8 $
+ * $Date: 2009/09/14 23:05:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -133,6 +133,7 @@ public class ContextMenu implements Part
 		    ContextMenu sub = (ContextMenu) o;
 		    sub.parent = this;
 		    sub.paint(parent);
+		    this.swtItems.add(sub);
 		    continue;
 		  }
       //////////////////////////////////////////////////////////////////////////
@@ -195,24 +196,27 @@ public class ContextMenu implements Part
 		// Jetzt iterieren wir noch ueber alle MenuItems und fragen die,
 		// ob sie fuer das aktuelle Objekt angezeigt werden wollen.
 		Object o = null;
-		MenuItem mi = null;
+		Object mi = null;
 		for (int i=0;i<swtItems.size();++i)
 		{
 			o = items.get(i);
-			mi = (MenuItem) swtItems.get(i);
+			mi = swtItems.get(i);
 			if (o == null || mi == null)
 				continue;
 			
 			if (o instanceof ContextMenu)
 			  ((ContextMenu)o).setCurrentObject(object);
 			else
-  			mi.setEnabled(((ContextMenuItem)o).isEnabledFor(object));
+  			((MenuItem)mi).setEnabled(((ContextMenuItem)o).isEnabledFor(object));
 		}
 	}
 }
 
 /**********************************************************************
  * $Log: ContextMenu.java,v $
+ * Revision 1.8  2009/09/14 23:05:49  willuhn
+ * @B setEnabled/isEnabledFor wurde nicht fuer Submenu-Elemente aufgerufen
+ *
  * Revision 1.7  2009/07/16 10:25:27  willuhn
  * @N Support fuer Sub-Menus
  *
