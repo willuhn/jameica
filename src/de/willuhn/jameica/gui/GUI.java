@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.121 $
- * $Date: 2009/06/04 10:35:32 $
+ * $Revision: 1.122 $
+ * $Date: 2009/09/20 22:28:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -368,6 +368,11 @@ public class GUI implements ApplicationController
     }
     catch (Throwable t)
     {
+      if (clazz.equals(FatalErrorView.class))
+      {
+        Logger.error("error loop detected");
+        throw new RuntimeException("unable to display error view");
+      }
       Logger.error("error while loading view " + clazz.getName(),t);
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen der View"),StatusBarMessage.TYPE_ERROR));
       // Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
@@ -880,6 +885,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.122  2009/09/20 22:28:40  willuhn
+ * @B Endlosschleife verhindern
+ *
  * Revision 1.121  2009/06/04 10:35:32  willuhn
  * @N Customizing-Parameter zum Ausblenden von Navigation und Hilfe-Box
  *
