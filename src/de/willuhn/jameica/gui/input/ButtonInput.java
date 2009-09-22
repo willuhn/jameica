@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2009/07/26 22:40:35 $
+ * $Revision: 1.17 $
+ * $Date: 2009/09/22 11:14:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
@@ -63,6 +64,7 @@ public abstract class ButtonInput extends AbstractInput
   {
 
 		comp = new Composite(getParent(),SWT.BORDER);
+		comp.setBackground(Color.WIDGET_BG.getSWTColor());
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight=0;
 		layout.marginWidth=0;
@@ -239,18 +241,51 @@ public abstract class ButtonInput extends AbstractInput
     return buttonEnabled && clientControlEnabled;
   }
   
+  private boolean inUpdate = false;
+
   /**
-   * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
   void update() throws OperationCanceledException
   {
+    if (inUpdate)
+      throw new OperationCanceledException();
+
+    try
+    {
+      inUpdate = true;
+
+      if (this.comp == null || this.comp.isDisposed())
+        return;
+
+      if (!isEnabled())
+      {
+        this.comp.setBackground(Color.BACKGROUND.getSWTColor());
+        return;
+      }
+      
+      Object value = getValue();
+
+      if (isMandatory() && (value == null || "".equals(value.toString())))
+      {
+        this.comp.setBackground(Color.MANDATORY_BG.getSWTColor());
+        return;
+      }
+      this.comp.setBackground(Color.WIDGET_BG.getSWTColor());
+    }
+    finally
+    {
+      inUpdate = false;
+    }
   }
 
 }
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.17  2009/09/22 11:14:51  willuhn
+ * @B Hintergrundfarbe wurde im Composite nicht gesetzt - fuehrte zu einem grauen Rand
+ *
  * Revision 1.16  2009/07/26 22:40:35  willuhn
  * @B BUGZILLA 744
  *
