@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ArchiveService.java,v $
- * $Revision: 1.1 $
- * $Date: 2009/09/28 23:55:16 $
+ * $Revision: 1.2 $
+ * $Date: 2009/09/29 00:03:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,7 +55,7 @@ import de.willuhn.logging.Logger;
  * 
  * QueryMessage qm = new QueryMessage("test.remote","Das ist der Dateiinhalt".getBytes());
  * Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").sendSyncMessage(qm);
- *  String uuid = qm.getData().toString();
+ * String uuid = qm.getData().toString();
  * 
  *  
  * // 2. Die Datei mit der genannten UUID wieder abrufen. Der Dateiinhalt wird
@@ -543,6 +543,9 @@ public class ArchiveService implements Bootable
 
 /**********************************************************************
  * $Log: ArchiveService.java,v $
+ * Revision 1.2  2009/09/29 00:03:27  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2009/09/28 23:55:16  willuhn
  * @N Archiv-Service fuer die Zustellung von Messages/Dateien an einen Jameica Archiv-Server (jameica.messaging) via TCP-Port 9000
  *
