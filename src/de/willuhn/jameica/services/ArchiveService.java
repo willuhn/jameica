@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ArchiveService.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/09/29 00:05:59 $
+ * $Revision: 1.4 $
+ * $Date: 2009/09/29 00:13:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,6 +64,10 @@ import de.willuhn.logging.Logger;
  * //    archivierte Datei jederzeit wieder abrufen.
  * //    "test.remote" ist hier der Name eines Channels. Mit dem laesst sich
  * //    das Archiv auf dem Server hierarich strukturieren.
+ * //
+ * //    Die Nutzdaten koennen in Form eines byte[] (Byte-Array) oder als InputStream
+ * //    uebergeben werden. Sind die Nutzdaten von keinem dieser beiden Typen,
+ * //    wird der Wert von data.toString().getBytes() gesendet.
  * 
  * QueryMessage qm = new QueryMessage("test.remote","Das ist der Dateiinhalt".getBytes());
  * Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").sendSyncMessage(qm);
@@ -71,7 +75,7 @@ import de.willuhn.logging.Logger;
  * 
  *  
  * // 2. Die Datei mit der genannten UUID wieder abrufen. Der Dateiinhalt wird
- * //    anschliessend in qm.getData() als Byte-Array bereitgestellt
+ * //    anschliessend in qm.getData() als byte[] (Byte-Array) bereitgestellt
  *
  * qm = new QueryMessage(uuid,null);
  * Application.getMessagingFactory().getMessagingQueue("jameica.messaging.get").sendSyncMessage(qm);
@@ -296,11 +300,9 @@ public class ArchiveService implements Bootable
     void handle(QueryMessage message, Socket socket) throws Exception
     {
       Object o = message.getData();
-      if (o == null || !(o instanceof byte[]))
-        throw new Exception("message contains no byte array as data");
+      if (o == null)
+        throw new Exception("message contains no data");
 
-      byte[] data = (byte[]) o;
-      
       String channel = message.getName();
       if (channel == null)
         channel = "";
@@ -312,7 +314,24 @@ public class ArchiveService implements Bootable
         // Request senden
         os = new BufferedOutputStream(socket.getOutputStream());
         os.write(("put " + channel + "\r\n").getBytes());
-        os.write(data);
+        
+        long length = 0;
+        if (o instanceof byte[])
+        {
+          byte[] data = (byte[]) o;
+          length = data.length;
+          os.write(data);
+        }
+        else if (o instanceof InputStream)
+        {
+          length = copy((InputStream)o,os);
+        }
+        else
+        {
+          byte[] data = o.toString().getBytes();
+          length = data.length;
+          os.write(data);
+        }
         os.flush();
         socket.shutdownOutput(); // teilt dem Server mit, dass nichts mehr kommt
         
@@ -322,7 +341,7 @@ public class ArchiveService implements Bootable
         copy(is,bos);
 
         String uuid = bos.toString().trim();
-        Logger.info("sent " + data.length + " bytes to channel " + channel + ", generated uuid: " + uuid);
+        Logger.info("sent " + length + " bytes to channel " + channel + ", generated uuid: " + uuid);
         message.setData(uuid);
       }
       finally
@@ -555,6 +574,9 @@ public class ArchiveService implements Bootable
 
 /**********************************************************************
  * $Log: ArchiveService.java,v $
+ * Revision 1.4  2009/09/29 00:13:09  willuhn
+ * @N Bei PUT ist jetzt auch in InputStream moeglich
+ *
  * Revision 1.3  2009/09/29 00:05:59  willuhn
  * *** empty log message ***
  *
