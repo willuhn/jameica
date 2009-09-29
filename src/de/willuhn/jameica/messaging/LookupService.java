@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/LookupService.java,v $
- * $Revision: 1.7 $
- * $Date: 2009/03/11 23:10:47 $
+ * $Revision: 1.8 $
+ * $Date: 2009/09/29 14:50:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -155,8 +155,14 @@ public class LookupService implements MessageConsumer
         return; // nix sinnvolles
       }
       
-      Logger.info("got lookup request for service " + s + " from " + sender.getCanonicalHostName());
       String url = (String) lookup.get(s);
+      if (url == null)
+      {
+        Logger.debug("service " + s + " not found on this system, ignoring");
+        return; // wir haben den Service nicht.
+      }
+      
+      Logger.info("got lookup request for service " + s + " from " + sender.getCanonicalHostName());
       Logger.info("sending url: " + url);
       send(url.getBytes());
     }
@@ -278,6 +284,9 @@ public class LookupService implements MessageConsumer
 
 /*********************************************************************
  * $Log: LookupService.java,v $
+ * Revision 1.8  2009/09/29 14:50:08  willuhn
+ * @B Service-Request ignorieren, wenn wir ihn nicht haben
+ *
  * Revision 1.7  2009/03/11 23:10:47  willuhn
  * *** empty log message ***
  *
