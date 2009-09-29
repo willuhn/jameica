@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ArchiveService.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/09/29 00:03:27 $
+ * $Revision: 1.3 $
+ * $Date: 2009/09/29 00:05:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,13 +39,25 @@ import de.willuhn.logging.Logger;
  * auf der das Plugin "jameica.messaging" installiert ist. Da diese andere
  * Jameica-Instanz via Multicast-Lookup automatisch im LAN gefunden wird,
  * kann man auf diese Weise einen konfigurationsfreien Archiv-Server aufsetzen
- * und Dokumente einfach via QueryMessage an den Server senden. Beispielcode
- * kann so aussehen:
+ * und Dokumente einfach via QueryMessage an den Server senden. 
+ * 
+ * Falls auf dem lokalen System bereits das Plugin "jameica.messaging" installiert
+ * ist, schaltet Jameica automatisch in lokale Zustellung um. In dem Fall wird
+ * nicht im LAN nach einem Archiv-Server gesucht - stattdessen werden die
+ * Dateien/Nachrichten an die lokale Instanz zur Archivierung uebergeben.
+ * 
+ * Beispielcode kann so aussehen:
  * 
  * <pre>
  * 
  * // Laedt den Archiv-Service on demand
+ * // WICHTIG: Dieser Aufruf muss zumindest einmal pro Jameica-Sitzung
+ * // stattfinden, bevor Messages an den Archiv-Server verschickt werden.
+ * // Andernfalls wird der Archiv-Service nicht initialisiert und die
+ * // Nachrichten werden nicht zugestellt.
+ * 
  * Application.getBootLoader().getBootable(ArchiveService.class);
+ *
  * 
  * // 1. Neue Datei zum Archiv hinzufuegen. Die Nachricht wird synchron geschickt,
  * //    damit wir die vergebene UUID erhalten. Anhand dieser UUID koennen wir die
@@ -543,6 +555,9 @@ public class ArchiveService implements Bootable
 
 /**********************************************************************
  * $Log: ArchiveService.java,v $
+ * Revision 1.3  2009/09/29 00:05:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2009/09/29 00:03:27  willuhn
  * *** empty log message ***
  *
