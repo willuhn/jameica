@@ -7,4 +7,4 @@ cd `dirname $(readlink -f $0)`
 
 #_JCONSOLE="-Dcom.sun.management.jmxremote"
 
-java -Xmx256m $_JCONSOLE -jar jameica-linux-amd64.jar -d $@
+java -Xmx256m $_JCONSOLE -jar jameica-linux64.jar -d $@

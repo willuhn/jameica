@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.63 $
- $Date: 2009/08/30 23:01:46 $
+ $Revision: 1.64 $
+ $Date: 2009/10/02 11:17:55 $
  $Author: willuhn $
  
  All rights reserved
@@ -28,6 +28,8 @@
 		</loadfile>
 
 		<loadproperties srcFile="${build.dir}/build.properties"/>
+
+	  <available file="${signjar.keystore}" type="file" property="havekeystore" />
 
 		<!-- prepare cvs tag -->
 		<copy file="${build.dir}/RELEASE" tofile="${build.dir}/TAG" />
@@ -96,8 +98,10 @@
 		<mkdir dir="${project.release}" />
 		<mkdir dir="${project.zipdir}" />
 
+	  <!-- Erzeugt ${DSTAMP} -->
 		<tstamp/>
 
+	  <!-- Die plattformneutrale JAR-Datei mit allen Klassen -->
 		<jar destfile="${project.zipdir}/${define.jarfilename}">
 			<manifest>
 				<attribute name="Built-By" value="${user.name}" />
@@ -108,98 +112,38 @@
 			</manifest>
 			<fileset dir="${class.dir}" />
 		</jar>
+    <antcall target="sub_jar_sign">
+      <param name="param.filename" value="${define.jarfilename}" />
+    </antcall>
 
 
-		<jar destfile="${project.zipdir}/${define.jarfilename.linux}">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${DSTAMP}" />
-				<attribute name="Implementation-Title" value="${define.projectname}" />
-				<attribute name="Implementation-Version" value="${appversion}" />
-				<attribute name="Implementation-Buildnumber" value="${build.number}" />
-				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${classpath.linux}" />
-			</manifest>
-			<fileset dir="${class.dir}" includes="**/Main.class" />
-		</jar>
-
-		<jar destfile="${project.zipdir}/${define.jarfilename.macos}">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${DSTAMP}" />
-				<attribute name="Implementation-Title" value="${define.projectname}" />
-				<attribute name="Implementation-Version" value="${appversion}" />
-				<attribute name="Implementation-Buildnumber" value="${build.number}" />
-				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${classpath.macos}" />
-			</manifest>
-			<fileset dir="${class.dir}" includes="**/Main.class" />
-		</jar>
-	    <jar destfile="${project.zipdir}/${define.jarfilename.macos64}">
-	      <manifest>
-	        <attribute name="Built-By" value="${user.name}" />
-	        <attribute name="Built-Date" value="${DSTAMP}" />
-	        <attribute name="Implementation-Title" value="${define.projectname}" />
-	        <attribute name="Implementation-Version" value="${appversion}" />
-	        <attribute name="Implementation-Buildnumber" value="${build.number}" />
-	        <attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-	        <attribute name="Class-Path" value="${classpath.macos64}" />
-	      </manifest>
-	      <fileset dir="${class.dir}" includes="**/Main.class" />
-	    </jar>
-
-	  
-    <jar destfile="${project.zipdir}/${define.jarfilename.openbsd}">
-      <manifest>
-        <attribute name="Built-By" value="${user.name}" />
-        <attribute name="Built-Date" value="${DSTAMP}" />
-        <attribute name="Implementation-Title" value="${define.projectname}" />
-        <attribute name="Implementation-Version" value="${appversion}" />
-        <attribute name="Implementation-Buildnumber" value="${build.number}" />
-        <attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-        <attribute name="Class-Path" value="${classpath.openbsd}" />
-      </manifest>
-      <fileset dir="${class.dir}" includes="**/Main.class" />
-    </jar>
-
-    <jar destfile="${project.zipdir}/${define.jarfilename.linux-amd64}">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${DSTAMP}" />
-				<attribute name="Implementation-Title" value="${define.projectname}" />
-				<attribute name="Implementation-Version" value="${appversion}" />
-				<attribute name="Implementation-Buildnumber" value="${build.number}" />
-				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${classpath.linux-amd64}" />
-			</manifest>
-			<fileset dir="${class.dir}" includes="**/Main.class" />
-		</jar>
-
-		<jar destfile="${project.zipdir}/${define.jarfilename.win32}">
-			<manifest>
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name="Built-Date" value="${DSTAMP}" />
-				<attribute name="Implementation-Title" value="${define.projectname}" />
-				<attribute name="Implementation-Version" value="${appversion}" />
-				<attribute name="Implementation-Buildnumber" value="${build.number}" />
-				<attribute name="Main-Class" value="de.willuhn.jameica.Main" />
-				<attribute name="Class-Path" value="${classpath.win32}" />
-			</manifest>
-			<fileset dir="${class.dir}" includes="**/Main.class" />
-		</jar>
+	  <!-- Die plattformspezifischen JAR-Dateien mit dem Classpath des OS -->
+	  <antcall target="sub_jar_create">
+	    <param name="param.filename" value="${define.jarfilename.linux}" />
+      <param name="param.classpath" value="${classpath.linux}" />
+	  </antcall>
+    <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.linux64}" />
+      <param name="param.classpath" value="${classpath.linux64}" />
+    </antcall>
+    <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.win32}" />
+      <param name="param.classpath" value="${classpath.win32}" />
+    </antcall>
+    <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.macos}" />
+      <param name="param.classpath" value="${classpath.macos}" />
+    </antcall>
+    <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.macos64}" />
+      <param name="param.classpath" value="${classpath.macos64}" />
+    </antcall>
+    <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.openbsd}" />
+      <param name="param.classpath" value="${classpath.openbsd}" />
+    </antcall>
   </target>
   
-  <target depends="jar" name="signjar" description="signs the zip files">
-    <loadfile property="storepass" srcFile="${signjar.storepass}"/>
-    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename}"/>
-    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.linux}"/>
-    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.linux-amd64}"/>
-    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.macos}"/>
-    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.macos64}"/>
-    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.openbsd}"/>
-    <signjar alias="${signjar.alias}" storepass="${storepass}" keystore="${signjar.keystore}" verbose="true" jar="${project.zipdir}/${define.jarfilename.win32}"/>
-  </target>
-
   <target depends="jar" name="zip" description="generates the zip files">
 
     <mkdir dir="${project.zipdir}/lib" />
@@ -246,9 +190,10 @@
 
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
+        <exclude name="${define.projectname}/lib/swt/win64/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
         <exclude name="${define.projectname}/lib/swt/macos64/**"/>
-				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux64/**"/>
         <exclude name="${define.projectname}/Jameica.icns"/>
         <exclude name="${define.projectname}/Info.plist"/>
         <exclude name="${define.projectname}/Info64.plist"/>
@@ -256,16 +201,16 @@
 		</zip>
 
 		<!-- ZIP-File fuer Linux AMD 64 -->
-		<zip destfile="${project.release}/${project.zipfilename.linux-amd64}">
+		<zip destfile="${project.release}/${project.zipfilename.linux64}">
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
         <include name="${define.projectname}/plugin.xml"/>
 				<include name="${define.projectname}/${define.jarfilename}"/>
-				<include name="${define.projectname}/${define.jarfilename.linux-amd64}"/>
+				<include name="${define.projectname}/${define.jarfilename.linux64}"/>
 				<include name="${define.projectname}/COPYING"/>
 				<include name="${define.projectname}/README"/>
-				<include name="${define.projectname}/jameica-amd64.sh"/>
-				<include name="${define.projectname}/jameicaserver-amd64.sh"/>
+				<include name="${define.projectname}/jameica-linux64.sh"/>
+				<include name="${define.projectname}/jameicaserver-linux64.sh"/>
 				<include name="${define.projectname}/.jameica"/>
         <include name="${define.projectname}/rcjameica"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
@@ -275,6 +220,7 @@
 
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win32/**"/>
+        <exclude name="${define.projectname}/lib/swt/win64/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
         <exclude name="${define.projectname}/lib/swt/macos64/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
@@ -300,11 +246,12 @@
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
+        <exclude name="${define.projectname}/lib/swt/win64/**"/>
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos/**"/>
         <exclude name="${define.projectname}/lib/swt/macos64/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
-				<exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux64/**"/>
         <exclude name="${define.projectname}/Jameica.icns"/>
         <exclude name="${define.projectname}/Info.plist"/>
         <exclude name="${define.projectname}/Info64.plist"/>
@@ -332,10 +279,11 @@
         <include name="lib/**"/>
         <exclude name="Info64.plist"/>
         <exclude name="lib/swt/openbsd/**"/>
+        <exclude name="lib/swt/win64/**"/>
         <exclude name="lib/swt/win32/**"/>
         <exclude name="lib/swt/linux/**"/>
         <exclude name="lib/swt/macos64/**"/>
-        <exclude name="lib/swt/linux-amd64/**"/>
+        <exclude name="lib/swt/linux64/**"/>
       </fileset>
     </copy>
 		<zip destfile="${project.release}/${project.zipfilename.macos}">
@@ -367,9 +315,10 @@
         <exclude name="Info.plist"/>
         <exclude name="lib/swt/openbsd/**"/>
         <exclude name="lib/swt/win32/**"/>
+        <exclude name="lib/swt/win64/**"/>
         <exclude name="lib/swt/linux/**"/>
         <exclude name="lib/swt/macos/**"/>
-        <exclude name="lib/swt/linux-amd64/**"/>
+        <exclude name="lib/swt/linux64/**"/>
       </fileset>
     </copy>
     <move file="${project.tmp}/${define.projectname}.app/Info64.plist" tofile="${project.tmp}/${define.projectname}.app/Info.plist" />
@@ -399,9 +348,10 @@
 
         <exclude name="${define.projectname}/lib/swt/macos/**"/>
         <exclude name="${define.projectname}/lib/swt/macos64/**"/>
+        <exclude name="${define.projectname}/lib/swt/win64/**"/>
         <exclude name="${define.projectname}/lib/swt/win32/**"/>
         <exclude name="${define.projectname}/lib/swt/linux/**"/>
-        <exclude name="${define.projectname}/lib/swt/linux-amd64/**"/>
+        <exclude name="${define.projectname}/lib/swt/linux64/**"/>
         <exclude name="${define.projectname}/Jameica.icns"/>
         <exclude name="${define.projectname}/Info.plist"/>
         <exclude name="${define.projectname}/Info64.plist"/>
@@ -474,7 +424,7 @@
 		<checksum file="${project.release}/${project.zipfilename}" />
 		<checksum file="${project.release}/${project.zipfilename.win32}" />
 		<checksum file="${project.release}/${project.zipfilename.linux}" />
-		<checksum file="${project.release}/${project.zipfilename.linux-amd64}" />
+		<checksum file="${project.release}/${project.zipfilename.linux64}" />
 		<checksum file="${project.release}/${project.zipfilename.macos}" />
     <checksum file="${project.release}/${project.zipfilename.macos64}" />
     <checksum file="${project.release}/${project.zipfilename.openbsd}" />
@@ -494,7 +444,7 @@
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux}" />
 		</exec>
 		<exec executable="gpg" failonerror="true" timeout="60000">
-      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux-amd64}" />
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux64}" />
 		</exec>
 		<exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos}" />
@@ -508,7 +458,7 @@
 	</target>
 
 
-	<target depends="init,compile,cvstag,jar,signjar,zip,javadoc,src,sign,clean" description="build an official release" name="all" />
+	<target depends="init,compile,cvstag,jar,zip,javadoc,src,sign,clean" description="build an official release" name="all" />
 
 	<target depends="init,compile,jar,zip,src,clean" description="build inofficial release" name="fast" />
 
@@ -517,7 +467,7 @@
 
 		<copy file="${project.release}/${project.zipfilename}" 				      tofile="${project.nightly}/${define.projectname}-${appversion}.zip" />
 		<copy file="${project.release}/${project.zipfilename.linux}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-linux.zip" />
-		<copy file="${project.release}/${project.zipfilename.linux-amd64}" 	tofile="${project.nightly}/${define.projectname}-${appversion}-linux-amd64.zip" />
+		<copy file="${project.release}/${project.zipfilename.linux64}"    	tofile="${project.nightly}/${define.projectname}-${appversion}-linux64.zip" />
 		<copy file="${project.release}/${project.zipfilename.macos}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-macos.zip" />
     <copy file="${project.release}/${project.zipfilename.macos64}"      tofile="${project.nightly}/${define.projectname}-${appversion}-macos64.zip" />
 		<copy file="${project.release}/${project.zipfilename.win32}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-win32.zip" />
@@ -533,5 +483,45 @@
 		<delete dir="${project.release}" />
 	</target>
 
+  
+  
+  
+  <!-- Sub-Routinen -->
+  
+  <!--
+    Erzeugt die plattform-spezifische JAR-Datei
+    @param param.filename Dateiname der zu erzeugenden JAR-Datei
+    @param param.classpath Classpath, der im Manifest angegeben werden soll
+  //-->
+  <target name="sub_jar_create">
+    <jar destfile="${project.zipdir}/${param.filename}">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <attribute name="Built-Date" value="${DSTAMP}" />
+        <attribute name="Implementation-Title" value="${define.projectname}" />
+        <attribute name="Implementation-Version" value="${appversion}" />
+        <attribute name="Implementation-Buildnumber" value="${build.number}" />
+        <attribute name="Main-Class" value="de.willuhn.jameica.Main" />
+        <attribute name="Class-Path" value="${param.classpath}" />
+      </manifest>
+      <fileset dir="${class.dir}" includes="**/Main.class" />
+    </jar>
+    
+    <!-- Signieren der JAR-Datei - aber nur, wenn der Keystore existiert -->
+    <antcall target="sub_jar_sign">
+      <param name="param.filename" value="${param.filename}" />
+    </antcall>
+  </target>
 
+  <!--
+    Signiert die JAR-Datei.
+    @param param.filename Dateiname der zu signierenden JAR-Datei
+  //-->
+  <target name="sub_jar_sign" if="havekeystore">
+    <loadfile property="storepass" srcFile="${signjar.storepass}"/>
+    <signjar alias="${signjar.alias}"
+             storepass="${storepass}" 
+             keystore="${signjar.keystore}" 
+             verbose="true" jar="${project.zipdir}/${param.filename}"/>
+  </target>
 </project>
