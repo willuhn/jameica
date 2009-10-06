@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.49 $
- * $Date: 2009/01/18 15:20:31 $
+ * $Revision: 1.50 $
+ * $Date: 2009/10/06 13:36:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,10 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
@@ -46,8 +48,8 @@ import javax.net.ssl.TrustManager;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
-import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
@@ -63,7 +65,12 @@ public class SSLFactory
 {
 	static
 	{
-		java.security.Security.addProvider(new BouncyCastleProvider());
+    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
+    {
+      Provider p = new BouncyCastleProvider();
+      Logger.info("applying security provider " + p.getInfo());
+      Security.addProvider(p);
+    }
 	}
 
   private final static String SYSTEM_ALIAS = "jameica";
@@ -119,7 +126,7 @@ public class SSLFactory
 
 		Logger.info("  generating rsa keypair");
 		KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-    kp.initialize(1024);
+    kp.initialize(2048);
 		KeyPair keypair = kp.generateKeyPair();
 
 		this.privateKey = keypair.getPrivate();
@@ -152,7 +159,7 @@ public class SSLFactory
       attributes.put(X509Name.GIVENNAME,prefix + username);
       attributes.put(X509Name.OU,prefix + username);
     }
-		X509Name user   = new X509Name(attributes);
+		X509Name user   = new X509Name(null,attributes); // Der erste Parameter ist ein Vector mit der Reihenfolge der Attribute. Brauchen wir aber nicht
     X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 
 
@@ -183,7 +190,7 @@ public class SSLFactory
     generator.setPublicKey(this.publicKey);
     generator.setSignatureAlgorithm("SHA1withRSA");
 
-    this.certificate = generator.generateX509Certificate(this.privateKey);
+    this.certificate = generator.generate(this.privateKey);
 
     //
 		////////////////////////////////////////////////////////////////////////////
@@ -744,6 +751,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.50  2009/10/06 13:36:26  willuhn
+ * @N BouncyCastle auf 1.44 (vorher 1.24) aktualisiert. Wurde ja auch mal Zeit - die alte Version stammte noch von 2004! ;)
+ * @C Der Private-Key des Jameica-Systemzertifikats wird jetzt mit 2048 Bit Schluessellaenge erstellt
+ *
  * Revision 1.49  2009/01/18 15:20:31  willuhn
  * @C Wenn ein Zertifikat bereits installiert ist, dann nicht ueberschreiben (ist ja auch nicht noetig, da es sich gar nicht geaendert hat) sondern Import einfach ignorieren. Das sollte auch die nervigen immerwiederkehrenden "Ueberschreiben?"-Dialoge unter GCJ erledigen
  *
