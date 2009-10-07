@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/formatter/DateFormatter.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/03/03 09:43:54 $
+ * $Revision: 1.4 $
+ * $Date: 2009/10/07 16:36:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,9 +27,16 @@ public class DateFormatter implements Formatter
 
   private DateFormat formatter = DateUtil.DEFAULT_FORMAT;
 
+  /**
+   * Erzeugt einen neuen Formatierer mit dem Default-Format dd.MM.yyyy.
+   */
+  public DateFormatter()
+  {
+    this(null);
+  }
 
   /**
-   * Erzueugt einen neuen Formatierer.
+   * Erzeugt einen neuen Formatierer.
    * @param formatter kann optional angegeben werden, um das Datum zu formatieren.
    * Wird der Parameter weggelassen, wird das Format dd.MM.yyyy verwendet.
    */
@@ -68,6 +75,9 @@ public class DateFormatter implements Formatter
 
 /*********************************************************************
  * $Log: DateFormatter.java,v $
+ * Revision 1.4  2009/10/07 16:36:12  willuhn
+ * @N Neuer parameterloser Konstruktor
+ *
  * Revision 1.3  2008/03/03 09:43:54  willuhn
  * @N DateUtil-Patch von Heiner
  * @N Weiterer Code fuer das Backup-System
