@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.40 $
- * $Date: 2009/05/08 14:22:36 $
+ * $Revision: 1.41 $
+ * $Date: 2009/10/08 22:45:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -94,8 +94,11 @@ public class SelectInput extends AbstractInput
   {
     this.preselected = preselected;
     
-    if (this.combo == null || this.combo.isDisposed() || this.preselected == null)
+    if (this.combo == null || this.combo.isDisposed())
       return;
+    
+    if (this.preselected == null)
+      this.combo.select(0);
 
     int size = this.list.size();
     for (int i=0;i<size;++i)
@@ -335,11 +338,11 @@ public class SelectInput extends AbstractInput
   }
 
   /**
-   * Die Funktion macht nichts.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object o)
   {
+    this.setPreselected(o);
   }
 
   /**
@@ -361,6 +364,10 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.41  2009/10/08 22:45:10  willuhn
+ * @N Button "Geprueft" in Umsatz-Details, um einen Umsatz auch dort als geprueft markieren zu koennen
+ * @N Button "Filter zuruecksetzen" in Kontoauszug
+ *
  * Revision 1.40  2009/05/08 14:22:36  willuhn
  * @C preselected in SelectInput nullable
  *
