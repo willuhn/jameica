@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.27 $
- * $Date: 2009/03/20 16:38:09 $
+ * $Revision: 1.28 $
+ * $Date: 2009/10/12 08:55:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -470,7 +470,7 @@ public class SettingsControl extends AbstractControl
       Locale lo = (Locale) getLocale().getValue();
 			Application.getConfig().setLocale(lo);
 			
-			restartNeeded |= getScrollView().hasChanged();
+			restartNeeded |= getScrollView().hasChanged() || ((Boolean) getScrollView().getValue()).booleanValue();
       Application.getConfig().setScrollView(((Boolean)getScrollView().getValue()).booleanValue());
 
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
@@ -595,6 +595,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.28  2009/10/12 08:55:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.27  2009/03/20 16:38:09  willuhn
  * @N BUGZILLA 576
  *

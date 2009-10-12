@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.46 $
- * $Date: 2009/06/04 10:36:01 $
+ * $Revision: 1.47 $
+ * $Date: 2009/10/12 08:55:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -214,7 +214,10 @@ public class View implements Part
 		content.setLayout(l);
 
 		if (b)
+		{
       scroll.setContent(content);
+      scroll.redraw();
+		}
 
 		if (messages != null)
 		{
@@ -400,6 +403,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.47  2009/10/12 08:55:36  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.46  2009/06/04 10:36:01  willuhn
  * @N Customizing-Parameter zum Ausblenden von Logo-Bar, Message-Bar und Title-Panel
  *
