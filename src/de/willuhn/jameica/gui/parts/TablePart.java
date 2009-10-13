@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.87 $
- * $Date: 2009/05/11 13:43:48 $
+ * $Revision: 1.88 $
+ * $Date: 2009/10/13 10:36:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -685,7 +685,7 @@ public class TablePart extends AbstractTablePart
       });
 		}
     
-    table.addListener(SWT.MouseDown, new Listener() {
+    table.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event event)
       {
         if (selectionListeners.size() == 0)
@@ -1090,13 +1090,25 @@ public class TablePart extends AbstractTablePart
 	/**
    * Aktualisiert die Summenzeile.
    */
-  private void refreshSummary()
+  protected void refreshSummary()
 	{
-		if (!showSummary)
+		if (!showSummary || summary == null || summary.isDisposed())
 			return;
-    if (summary != null && !summary.isDisposed())
-      summary.setText(size() + " " + (size() == 1 ? i18n.tr("Datensatz") : i18n.tr("Datensätze")) + ".");
+    summary.setText(getSummary());
 	}
+  
+  /**
+   * Liefert den anzuzeigenden Summen-Text.
+   * Kann von abgeleiteten Klassen ueberschrieben werde, um etwas anderes anzuzeigen.
+   * @return anzuzeigender Text oder null, wenn nichts angezeigt werden soll.
+   */
+  protected String getSummary()
+  {
+    int size = size();
+    if (size > 1)
+      return i18n.tr("1 Datensatz");
+    return i18n.tr("{0} Datensätze",Integer.toString(size));
+  }
 
   /**
    * Gibt an, nach welcher Spalte sortiert werden soll.
@@ -1370,6 +1382,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.88  2009/10/13 10:36:43  willuhn
+ * @N BUGZILLA #590
+ *
  * Revision 1.87  2009/05/11 13:43:48  willuhn
  * @N setRememberState(boolean)
  *
