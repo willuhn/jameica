@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.28 $
- * $Date: 2009/05/06 16:26:26 $
+ * $Revision: 1.29 $
+ * $Date: 2009/10/13 23:12:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -64,6 +65,7 @@ public class TreePart extends AbstractTablePart
   private String id                 = null;
   private boolean expanded          = true;
   private HashMap itemLookup        = new HashMap();
+  private Map<TreeItem,Boolean> autoimage = new HashMap<TreeItem,Boolean>();
 
     
 	/**
@@ -341,6 +343,8 @@ public class TreePart extends AbstractTablePart
 		if (!(widget instanceof TreeItem))
 			return;
 		TreeItem item = (TreeItem) widget;
+    if (autoimage.get(item) == null)
+      return;
 		item.setImage(SWTUtil.getImage("folderopen.gif"));
 	}
 
@@ -354,6 +358,8 @@ public class TreePart extends AbstractTablePart
 		if (!(widget instanceof TreeItem))
 			return;
 		TreeItem item = (TreeItem) widget;
+		if (autoimage.get(item) == null)
+		  return;
   	item.setImage(SWTUtil.getImage("folder.gif"));
 	}
 
@@ -495,8 +501,13 @@ public class TreePart extends AbstractTablePart
         final GenericObjectNode node = (GenericObjectNode) data;
         final GenericIterator children = node.getChildren();
         
-        // Nur als Ordner darstellen, wenn es Kinder hat
-        item.setImage(SWTUtil.getImage(children != null && children.size() > 0 ? "folder.gif" : "page.gif"));
+        // Nur dann, wenn der Formatter nicht schon ein Icon eingefuegt hat
+        if (item.getImage() == null)
+        {
+          // Nur als Ordner darstellen, wenn es Kinder hat
+          item.setImage(SWTUtil.getImage(children != null && children.size() > 0 ? "folder.gif" : "page.gif"));
+          autoimage.put(item,Boolean.TRUE);
+        }
 
         // load the children
         if (children != null)
@@ -545,6 +556,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.29  2009/10/13 23:12:36  willuhn
+ * @N Items im Treepart koennen (via TreeFormatter) mit eigenen Icons versehen werden
+ *
  * Revision 1.28  2009/05/06 16:26:26  willuhn
  * @N BUGZILLA 721
  *
