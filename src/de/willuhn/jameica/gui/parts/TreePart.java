@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.30 $
- * $Date: 2009/10/15 16:01:11 $
+ * $Revision: 1.31 $
+ * $Date: 2009/10/15 17:04:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -298,7 +298,7 @@ public class TreePart extends AbstractTablePart
       GenericObject data = list.next();
       Item i = new Item(null,data);
       itemLookup.put(data,i);
-      setExpanded(data,this.expanded); // BUGZILLA 395
+      setExpanded(data,this.expanded,true); // BUGZILLA 395
     }
     /////////////////////////////////////////////////////////////////
     
@@ -335,20 +335,54 @@ public class TreePart extends AbstractTablePart
   }
   
   /**
-   * Klappt das Element auf.
+   * Klappt das Element auf oder zu.
    * @param object das Objekt.
    * @param expanded true, wenn es aufgeklappt sein soll, sonst false.
    */
   public void setExpanded(GenericObject object, boolean expanded)
   {
+    setExpanded(object,expanded,false);
+  }
+  
+  /**
+   * Klappt das Element auf oder zu.
+   * @param object das Objekt.
+   * @param expanded true, wenn es aufgeklappt sein soll, sonst false.
+   * @param recursive true, wenn auch alle Kinder aufgeklappt werden sollen.
+   */
+  public void setExpanded(GenericObject object, boolean expanded, boolean recursive)
+  {
     Item i = (Item) itemLookup.get(object);
     if (i == null)
       return;
-    TreeItem ti = i.item;
-    if (ti == null || ti.isDisposed())
+    
+    setExpanded(i.item,expanded,recursive);
+  }
+
+  /**
+   * Klappte das Element auf oder zu.
+   * @param item das Item.
+   * @param expanded true, wenn es aufgeklappt sein soll, sonst false.
+   * @param recursive true, wenn auch alle Kind-Elemente rekursiv mit aufgeklappt werden sollen.
+   * @return true, wenn es aufgeklappt sein soll.
+   */
+  private void setExpanded(TreeItem item, boolean expanded, boolean recursive)
+  {
+    if (item == null || item.isDisposed())
       return;
     
-    ti.setExpanded(expanded);
+    item.setExpanded(expanded);
+    if (!recursive)
+      return;
+
+    TreeItem[] children = item.getItems();
+    if (children != null && children.length > 0)
+    {
+      for (int k=0;k<children.length;++k)
+      {
+        setExpanded(children[k],expanded,recursive);
+      }
+    }
   }
   
 	/**
@@ -574,6 +608,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.31  2009/10/15 17:04:35  willuhn
+ * @N Auf- und Zuklappen jetzt auch rekursiv
+ *
  * Revision 1.30  2009/10/15 16:01:11  willuhn
  * @N setList()/setRootObject() in TreePart
  * @C leere X.500-Attribute tolerieren
