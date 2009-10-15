@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Principal.java,v $
- * $Revision: 1.5 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.6 $
+ * $Date: 2009/10/15 16:01:11 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -94,6 +94,8 @@ public class Principal
         continue;
       }
       String[] pair = token.trim().split("=");
+      if (pair.length != 2)
+        continue;
       if (pair[1] == null || pair[1].length() == 0)
         continue;
       attributes.put(pair[0].toUpperCase(),pair[1]);
@@ -114,6 +116,10 @@ public class Principal
 
 /*********************************************************************
  * $Log: Principal.java,v $
+ * Revision 1.6  2009/10/15 16:01:11  willuhn
+ * @N setList()/setRootObject() in TreePart
+ * @C leere X.500-Attribute tolerieren
+ *
  * Revision 1.5  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *

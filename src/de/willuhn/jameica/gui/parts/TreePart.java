@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.29 $
- * $Date: 2009/10/13 23:12:36 $
+ * $Revision: 1.30 $
+ * $Date: 2009/10/15 16:01:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,14 +77,7 @@ public class TreePart extends AbstractTablePart
   public TreePart(GenericObjectNode object, Action action)
 	{
     this.action = action;
-    try
-    {
-      this.list = PseudoIterator.fromArray(new GenericObject[]{object});
-    }
-    catch (RemoteException re)
-    {
-      Logger.error("unable to add item to table",re);
-    }
+    setRootObject(object);
 	}
 
   /**
@@ -99,7 +92,32 @@ public class TreePart extends AbstractTablePart
   public TreePart(GenericIterator list, Action action)
   {
 		this.action = action;
+		setList(list);
+  }
+  
+  /**
+   * Speichert die Liste der anzuzeigenden Daten.
+   * @param list Liste der anzuzeigenden Daten.
+   */
+  public void setList(GenericIterator list)
+  {
     this.list = list;
+  }
+  
+  /**
+   * Alternativ zu setList: Speichert das Root-Element.
+   * @param node das Root-Element.
+   */
+  public void setRootObject(GenericObjectNode node)
+  {
+    try
+    {
+      this.list = PseudoIterator.fromArray(new GenericObject[]{node});
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to add item to table",re);
+    }
   }
 
   /**
@@ -556,6 +574,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.30  2009/10/15 16:01:11  willuhn
+ * @N setList()/setRootObject() in TreePart
+ * @C leere X.500-Attribute tolerieren
+ *
  * Revision 1.29  2009/10/13 23:12:36  willuhn
  * @N Items im Treepart koennen (via TreeFormatter) mit eigenen Icons versehen werden
  *
