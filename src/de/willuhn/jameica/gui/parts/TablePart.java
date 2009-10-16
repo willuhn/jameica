@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.88 $
- * $Date: 2009/10/13 10:36:43 $
+ * $Revision: 1.89 $
+ * $Date: 2009/10/16 00:08:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1106,8 +1106,8 @@ public class TablePart extends AbstractTablePart
   {
     int size = size();
     if (size > 1)
-      return i18n.tr("1 Datensatz");
-    return i18n.tr("{0} Datensätze",Integer.toString(size));
+      return i18n.tr("{0} Datensätze",Integer.toString(size));
+    return i18n.tr("1 Datensatz");
   }
 
   /**
@@ -1382,6 +1382,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.89  2009/10/16 00:08:11  willuhn
+ * @B Anzeige der Anzahl der Datensaetze falsch
+ *
  * Revision 1.88  2009/10/13 10:36:43  willuhn
  * @N BUGZILLA #590
  *
