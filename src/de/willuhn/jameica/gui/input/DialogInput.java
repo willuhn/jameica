@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.23 $
- * $Date: 2008/05/30 12:00:24 $
+ * $Revision: 1.24 $
+ * $Date: 2009/10/22 17:26:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,6 +54,18 @@ public class DialogInput extends ButtonInput
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
+   * Der dialog sollte anschliessend noch mittels setDialog() gesetzt werden.
+   * Dieser Konstruktor ist nur eine Convenience-Funktion, um den Dialog
+   * auch nach der Erzeugung des Input-Objektes setzen zu koennen.
+   * @param value der initial einzufuegende Wert fuer das Eingabefeld.
+   */
+  public DialogInput(String value)
+  {
+    this(value,null);
+  }
+
+  /**
+   * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param value der initial einzufuegende Wert fuer das Eingabefeld.
    * @param d der Dialog.
    */
@@ -81,6 +93,15 @@ public class DialogInput extends ButtonInput
 				}
       }
     });
+  }
+  
+  /**
+   * Speichert den anzuzeigenden Dialog.
+   * @param d der anzuzeigende Dialog.
+   */
+  public void setDialog(AbstractDialog d)
+  {
+    this.dialog = d;
   }
 
   /**
@@ -223,6 +244,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.24  2009/10/22 17:26:48  willuhn
+ * @N setDialog in DialogInput
+ *
  * Revision 1.23  2008/05/30 12:00:24  willuhn
  * @B Eingabefeld wurde auch dann grau gezeichnet, wenn nur der Button dahinter inaktiv ist
  *
