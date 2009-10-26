@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.27 $
- * $Date: 2009/03/20 16:38:09 $
+ * $Revision: 1.28 $
+ * $Date: 2009/10/26 09:26:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -130,8 +130,6 @@ public class Settings extends AbstractView implements Extendable
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Eingabefeldern"),control.getColorWidgetBG());
     lnfGroup.addLabelPair(i18n.tr("Textfarbe von Fehler- und Warnmeldungen"),control.getColorError());
     lnfGroup.addLabelPair(i18n.tr("Textfarbe von Erfolgsmeldungen"),control.getColorSuccess());
-    lnfGroup.addSeparator();
-    lnfGroup.addCheckbox(control.getScrollView(),i18n.tr("Scrollbalken in übergroßen Dialogen anzeigen"));
 		//
 		/////////////////////////////////////////////////////////////////
 
@@ -195,6 +193,9 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.28  2009/10/26 09:26:33  willuhn
+ * @R Scroll-View-Parameter entfernt - verursachte Darstellungsfehler
+ *
  * Revision 1.27  2009/03/20 16:38:09  willuhn
  * @N BUGZILLA 576
  *

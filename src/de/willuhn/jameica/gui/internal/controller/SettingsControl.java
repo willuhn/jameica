@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.28 $
- * $Date: 2009/10/12 08:55:36 $
+ * $Revision: 1.29 $
+ * $Date: 2009/10/26 09:26:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -81,7 +81,6 @@ public class SettingsControl extends AbstractControl
   private Input colorMandatoryBG;
 	private Input styleFactory;
   private CheckboxInput mandatoryLabel;
-  private CheckboxInput scrollView;
 	
 	private SelectInput locale;
 	
@@ -396,18 +395,6 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
-   * Liefert eine Checkbox, mit der konfiguriert werden kann, ob die View Scrollbalken anzeigen soll, wenn der Inhalt nicht hineinpasst.
-   * @return Checkbox.
-   */
-  public CheckboxInput getScrollView()
-  {
-    if (this.scrollView != null)
-      return this.scrollView;
-    this.scrollView = new CheckboxInput(Application.getConfig().getScrollView());
-    return this.scrollView;
-  }
-
-  /**
    * Speichert die Einstellungen.
    */
   public void handleStore()
@@ -470,9 +457,6 @@ public class SettingsControl extends AbstractControl
       Locale lo = (Locale) getLocale().getValue();
 			Application.getConfig().setLocale(lo);
 			
-			restartNeeded |= getScrollView().hasChanged() || ((Boolean) getScrollView().getValue()).booleanValue();
-      Application.getConfig().setScrollView(((Boolean)getScrollView().getValue()).booleanValue());
-
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
 
@@ -595,6 +579,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.29  2009/10/26 09:26:33  willuhn
+ * @R Scroll-View-Parameter entfernt - verursachte Darstellungsfehler
+ *
  * Revision 1.28  2009/10/12 08:55:36  willuhn
  * *** empty log message ***
  *

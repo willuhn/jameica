@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.45 $
- * $Date: 2009/03/20 16:38:09 $
+ * $Revision: 1.46 $
+ * $Date: 2009/10/26 09:26:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -724,26 +724,22 @@ public final class Config
 
   /**
    * Legt fest, ob die Main-View gescrollt werden kann, wenn der Inhalt zu gross ist.
-   * @param b true, wenn gescrollt werden soll.
-   */
-  public void setScrollView(boolean b)
-  {
-    settings.setAttribute("jameica.system.scrollview",b);
-  }
-
-  /**
-   * Legt fest, ob die Main-View gescrollt werden kann, wenn der Inhalt zu gross ist.
    * @return b true, wenn gescrollt werden soll.
+   * TODO: Mal so umstellen, dass der Parameter nur dann true liefert, wenn die Bildschirmhoehe <= 600px ist.
+   * Bei der Gelegenheit koennte der Parameter eigentlich auch nach "Customizing" verschoben werden.
    */
   public boolean getScrollView()
   {
-    return settings.getBoolean("jameica.system.scrollview",false);
+    return false;
   }
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.46  2009/10/26 09:26:33  willuhn
+ * @R Scroll-View-Parameter entfernt - verursachte Darstellungsfehler
+ *
  * Revision 1.45  2009/03/20 16:38:09  willuhn
  * @N BUGZILLA 576
  *
