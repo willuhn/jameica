@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Version.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/12/30 22:44:36 $
+ * $Revision: 1.5 $
+ * $Date: 2009/10/28 17:54:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -149,6 +149,15 @@ public class Version implements Serializable, Comparable<Version>
   {
     this.suffix = suffix;
   }
+  
+  /**
+   * Liefert true, wenn es sich um eine 3-stellige Versionsnummer mit Patch-Level handelt.
+   * @return true, wenn es sich um eine 3-stellige Versionsnummer mit Patch-Level handelt.
+   */
+  public boolean hasPatchLevel()
+  {
+    return !this.oldVersion;
+  }
 
   /**
    * @see java.lang.Object#hashCode()
@@ -235,6 +244,9 @@ public class Version implements Serializable, Comparable<Version>
 
 /**********************************************************************
  * $Log: Version.java,v $
+ * Revision 1.5  2009/10/28 17:54:50  willuhn
+ * @N hasPatchLevel
+ *
  * Revision 1.4  2008/12/30 22:44:36  willuhn
  * @B Heiners Patch um den Bindestrich in toString() nicht auszugeben, wenn kein Suffix angegeben ist
  *
