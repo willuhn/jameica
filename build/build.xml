@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.65 $
- $Date: 2009/10/16 11:11:27 $
+ $Revision: 1.66 $
+ $Date: 2009/10/29 11:30:54 $
  $Author: willuhn $
  
  All rights reserved
@@ -19,31 +19,22 @@
 
 		<!-- read build number -->
 		<buildnumber file="${build.dir}/BUILD" />
+    <xmlproperty file="plugin.xml" collapseattributes="true"/>
 
-		<!-- read version number -->
-		<loadfile property="appversion" srcFile="${build.dir}/RELEASE">
-			<filterchain>
-				<striplinebreaks />
-			</filterchain>
-		</loadfile>
+    <!-- create cvs tag -->
+    <propertyfile file="${build.dir}/TAG">
+      <entry key="mytag" value="${system.version}" />
+    </propertyfile>
+    <replaceregexp flags="g" file="${build.dir}/TAG" match="\." replace="_" />
+    <loadproperties srcFile="${build.dir}/TAG"/>
+    <delete file="${build.dir}/TAG" />
+    <property name="tag" value="V_${mytag}_BUILD_${build.number}" />
 
-		<loadproperties srcFile="${build.dir}/build.properties"/>
+	  <loadproperties srcFile="${build.dir}/build.properties"/>
 
 	  <available file="${signjar.keystore}" type="file" property="havekeystore" />
 
-		<!-- prepare cvs tag -->
-		<copy file="${build.dir}/RELEASE" tofile="${build.dir}/TAG" />
-		<replaceregexp flags="g" file="${build.dir}/TAG" match="\." replace="_" />
-		<loadfile property="mytag" srcFile="${build.dir}/TAG">
-			<filterchain>
-				<striplinebreaks />
-			</filterchain>
-		</loadfile>
-
-		<delete file="${build.dir}/TAG" />
-		<property name="tag" value="V_${mytag}_BUILD_${build.number}" />
-
-		<echo message="VERSION: ${appversion}" />
+		<echo message="VERSION: ${system.version}" />
 		<echo message="CVS-Tag: ${tag}" />
 		<echo message="BUILD  : ${build.number}" />
 		<echo message="JAVA   : ${java.version}" />
@@ -107,7 +98,7 @@
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Built-Date" value="${DSTAMP}" />
 				<attribute name="Implementation-Title" value="${define.projectname}" />
-				<attribute name="Implementation-Version" value="${appversion}" />
+				<attribute name="Implementation-Version" value="${system.version}" />
 				<attribute name="Implementation-Buildnumber" value="${build.number}" />
 			</manifest>
 			<fileset dir="${class.dir}" />
@@ -465,17 +456,17 @@
 	<target depends="init,cvs,compile,jar,zip,javadoc,src" description="build nightly build" name="nightly">
 		<mkdir dir="${project.nightly}" />
 
-		<copy file="${project.release}/${project.zipfilename}" 				      tofile="${project.nightly}/${define.projectname}-${appversion}.zip" />
-		<copy file="${project.release}/${project.zipfilename.linux}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-linux.zip" />
-		<copy file="${project.release}/${project.zipfilename.linux64}"    	tofile="${project.nightly}/${define.projectname}-${appversion}-linux64.zip" />
-		<copy file="${project.release}/${project.zipfilename.macos}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-macos.zip" />
-    <copy file="${project.release}/${project.zipfilename.macos64}"      tofile="${project.nightly}/${define.projectname}-${appversion}-macos64.zip" />
-		<copy file="${project.release}/${project.zipfilename.win32}" 		    tofile="${project.nightly}/${define.projectname}-${appversion}-win32.zip" />
-    <copy file="${project.release}/${project.zipfilename.openbsd}"      tofile="${project.nightly}/${define.projectname}-${appversion}-openbsd.zip" />
+		<copy file="${project.release}/${project.zipfilename}" 				      tofile="${project.nightly}/${define.projectname}-${system.version}.zip" />
+		<copy file="${project.release}/${project.zipfilename.linux}" 		    tofile="${project.nightly}/${define.projectname}-${system.version}-linux.zip" />
+		<copy file="${project.release}/${project.zipfilename.linux64}"    	tofile="${project.nightly}/${define.projectname}-${system.version}-linux64.zip" />
+		<copy file="${project.release}/${project.zipfilename.macos}" 		    tofile="${project.nightly}/${define.projectname}-${system.version}-macos.zip" />
+    <copy file="${project.release}/${project.zipfilename.macos64}"      tofile="${project.nightly}/${define.projectname}-${system.version}-macos64.zip" />
+		<copy file="${project.release}/${project.zipfilename.win32}" 		    tofile="${project.nightly}/${define.projectname}-${system.version}-win32.zip" />
+    <copy file="${project.release}/${project.zipfilename.openbsd}"      tofile="${project.nightly}/${define.projectname}-${system.version}-openbsd.zip" />
 
 
-		<copy file="${project.release}/${define.srcfilename}" 		          tofile="${project.nightly}/${define.projectname}-${appversion}.src.zip" />
-		<copy file="${project.release}/${define.javadocfilename}" 	        tofile="${project.nightly}/${define.projectname}-${appversion}.javadoc.zip" />
+		<copy file="${project.release}/${define.srcfilename}" 		          tofile="${project.nightly}/${define.projectname}-${system.version}.src.zip" />
+		<copy file="${project.release}/${define.javadocfilename}" 	        tofile="${project.nightly}/${define.projectname}-${system.version}.javadoc.zip" />
 
 		<!-- Die Datei brauchen die anderen Plugins zum Kompilieren //-->
 		<copy file="${project.zipdir}/${define.jarfilename}" tofile="releases/jameica-lib.jar" />
@@ -499,7 +490,7 @@
         <attribute name="Built-By" value="${user.name}" />
         <attribute name="Built-Date" value="${DSTAMP}" />
         <attribute name="Implementation-Title" value="${define.projectname}" />
-        <attribute name="Implementation-Version" value="${appversion}" />
+        <attribute name="Implementation-Version" value="${system.version}" />
         <attribute name="Implementation-Buildnumber" value="${build.number}" />
         <attribute name="Main-Class" value="de.willuhn.jameica.Main" />
         <attribute name="Class-Path" value="${param.classpath}" />
