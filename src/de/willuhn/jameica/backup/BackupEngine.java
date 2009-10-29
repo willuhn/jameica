@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.11 $
- * $Date: 2008/12/17 01:05:42 $
+ * $Revision: 1.12 $
+ * $Date: 2009/10/29 12:40:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -282,6 +282,13 @@ public class BackupEngine
       {
         if (!children[i].isDirectory())
           continue; // Wir sichern nur Unterverzeichnisse. Also keine Backups (rekursiv) und Logs
+        
+        // Wir sichern die Verzeichnisse "plugins" und "deploy" nicht mit. Die koennen jederzeit
+        // neu installiert werden
+        if ("deploy".equals(children[i].getName()))
+          continue;
+        if ("plugins".equals(children[i].getName()))
+          continue;
         if (children[i].getCanonicalFile().equals(dir.getCanonicalFile()))
           continue; // Das Backup-Verzeichnis selbst ist ein Unterverzeichnis. Nicht sichern wegen Rekursion
         zip.add(children[i]);
@@ -356,6 +363,9 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.12  2009/10/29 12:40:08  willuhn
+ * @C Verzeichnisse "plugins" und "deploy" nicht mitsichern
+ *
  * Revision 1.11  2008/12/17 01:05:42  willuhn
  * @N Deployment von heruntergeladenen in "DeployService" verschoben. Dann geschieht das Entpacken erst beim naechsten Start. Da zu dem Zeitpunkt der Classloader die Dateien noch nicht geladen hat, kann eine ggf. vorhandene vorherige Installation geloescht werden
  * @C FileUtil.deleteRecursive
