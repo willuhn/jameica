@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.21 $
- * $Date: 2008/11/13 18:43:21 $
+ * $Revision: 1.22 $
+ * $Date: 2009/11/03 01:19:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,7 +65,7 @@ public class SWTUtil {
 		}
 		catch (Throwable t)
 		{
-			Logger.error("error while disposing composite childs",t);
+			Logger.error("error while disposing composite children",t);
 		}
 	}
 
@@ -246,6 +246,9 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.22  2009/11/03 01:19:33  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.21  2008/11/13 18:43:21  willuhn
  * @B Children muessen nicht disposed werden, wenn das Parent schon disposed wurde
  *

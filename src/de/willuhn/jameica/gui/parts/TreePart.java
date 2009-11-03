@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.31 $
- * $Date: 2009/10/15 17:04:35 $
+ * $Revision: 1.32 $
+ * $Date: 2009/11/03 01:21:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -420,6 +420,9 @@ public class TreePart extends AbstractTablePart
    */
   public Object getSelection()
   {
+    if (tree == null || tree.isDisposed())
+      return null;
+    
     TreeItem[] items = tree.getSelection();
 
     if (items == null || items.length == 0)
@@ -608,6 +611,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.32  2009/11/03 01:21:28  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.31  2009/10/15 17:04:35  willuhn
  * @N Auf- und Zuklappen jetzt auch rekursiv
  *
