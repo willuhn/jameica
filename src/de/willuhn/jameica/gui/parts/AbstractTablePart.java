@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.10 $
- * $Date: 2009/05/11 13:43:48 $
+ * $Revision: 1.11 $
+ * $Date: 2009/11/09 23:45:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -229,11 +229,21 @@ public abstract class AbstractTablePart implements Part
   {
     this.multi = multi;
   }
+  
+  /**
+   * Entfernt alle Elemente aus der Tabelle.
+   */
+  public abstract void removeAll();
+
 }
 
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.11  2009/11/09 23:45:18  willuhn
+ * @N removeAll() nun auch in TreePart zum Leeren des gesamten Baumes
+ * @N setList() und setRootObject() koennen nun mehrfach aufgerufen werden. Wurde der Tree schon gezeichnet, wird er automatisch geleert und mit den neuen Objekten gefuellt
+ *
  * Revision 1.10  2009/05/11 13:43:48  willuhn
  * @N setRememberState(boolean)
  *

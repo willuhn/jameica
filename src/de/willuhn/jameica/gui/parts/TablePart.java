@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.89 $
- * $Date: 2009/10/16 00:08:11 $
+ * $Revision: 1.90 $
+ * $Date: 2009/11/09 23:45:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -269,7 +269,7 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
-   * Entfernt alle Elemente aus der Tabelle.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#removeAll()
    */
   public void removeAll()
   {
@@ -1382,6 +1382,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.90  2009/11/09 23:45:18  willuhn
+ * @N removeAll() nun auch in TreePart zum Leeren des gesamten Baumes
+ * @N setList() und setRootObject() koennen nun mehrfach aufgerufen werden. Wurde der Tree schon gezeichnet, wird er automatisch geleert und mit den neuen Objekten gefuellt
+ *
  * Revision 1.89  2009/10/16 00:08:11  willuhn
  * @B Anzeige der Anzahl der Datensaetze falsch
  *

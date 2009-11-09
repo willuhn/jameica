@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.33 $
- * $Date: 2009/11/09 09:51:55 $
+ * $Revision: 1.34 $
+ * $Date: 2009/11/09 23:45:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -101,7 +101,17 @@ public class TreePart extends AbstractTablePart
    */
   public void setList(GenericIterator list)
   {
-    this.list = list;
+    this.removeAll();
+
+    try
+    {
+      this.list = list;
+      this.loadData();
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to apply list",re);
+    }
   }
   
   /**
@@ -110,9 +120,12 @@ public class TreePart extends AbstractTablePart
    */
   public void setRootObject(GenericObjectNode node)
   {
+    this.removeAll();
+
     try
     {
       this.list = PseudoIterator.fromArray(new GenericObject[]{node});
+      this.loadData();
     }
     catch (RemoteException re)
     {
@@ -147,10 +160,15 @@ public class TreePart extends AbstractTablePart
     if (this.id != null)
       return id;
 
-    this.list.begin();
     StringBuffer sb = new StringBuffer();
-    if (this.list.hasNext())
-      sb.append(this.list.next().getClass().getName());
+
+    if (this.list != null)
+    {
+      this.list.begin();
+      if (this.list.hasNext())
+        sb.append(this.list.next().getClass().getName());
+      this.list.begin();
+    }
 
     for (int i=0;i<this.columns.size();++i)
     {
@@ -162,7 +180,6 @@ public class TreePart extends AbstractTablePart
     if (s == null || s.length() == 0)
       s = "unknown";
     this.id = Checksum.md5(s.getBytes());
-    this.list.begin();
     return this.id;
   }
 
@@ -171,9 +188,6 @@ public class TreePart extends AbstractTablePart
    */
   public void paint(Composite parent) throws RemoteException
   {
-    if (this.list == null)
-      throw new RemoteException("Keine darstellbaren Objekte übergeben.");
-
     /////////////////////////////////////////////////////////////////
     // Tree erzeugen
     this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER | (this.multi ? SWT.MULTI : SWT.SINGLE));
@@ -213,7 +227,7 @@ public class TreePart extends AbstractTablePart
       this.tree.setHeaderVisible(true);
       this.tree.setLinesVisible(true);
 
-      GenericObject test = list.hasNext() ? list.next() : null;
+      GenericObject test = this.list != null && this.list.hasNext() ? this.list.next() : null;
 
       for (int i=0;i<this.columns.size();++i)
       {
@@ -285,21 +299,17 @@ public class TreePart extends AbstractTablePart
         });
       }
 
-      // Liste zuruecksetzen
-      list.begin();
     }
-    
     /////////////////////////////////////////////////////////////////
 
+    // Und jetzt noch das ContextMenu malen
+    if (menu != null)
+      menu.paint(this.tree);
+
+    
     /////////////////////////////////////////////////////////////////
     // Nutzdaten einfuegen
-    while (list.hasNext())
-    {
-      GenericObject data = list.next();
-      Item i = new Item(null,data);
-      itemLookup.put(data,i);
-      setExpanded(data,this.expanded,true); // BUGZILLA 395
-    }
+    loadData();
     /////////////////////////////////////////////////////////////////
     
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
@@ -328,10 +338,25 @@ public class TreePart extends AbstractTablePart
         col.pack();
       }
     }
-    
-    // Und jetzt noch das ContextMenu malen
-    if (menu != null)
-      menu.paint(this.tree);
+  }
+  
+  /**
+   * Laedt die Elemente in den Tree.
+   * @throws RemoteException
+   */
+  private void loadData() throws RemoteException
+  {
+    if (this.list == null || this.tree == null || this.tree.isDisposed())
+      return;
+
+    list.begin();
+    while (list.hasNext())
+    {
+      GenericObject data = list.next();
+      Item i = new Item(null,data);
+      itemLookup.put(data,i);
+      setExpanded(data,this.expanded,true); // BUGZILLA 395
+    }
   }
   
   /**
@@ -601,16 +626,34 @@ public class TreePart extends AbstractTablePart
    */
   public List getItems() throws RemoteException
   {
+    if (this.list == null)
+      return null;
+
     this.list.begin();
     return PseudoIterator.asList(this.list);
   }
 
-  
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#removeAll()
+   */
+  public void removeAll()
+  {
+    this.list = null;
+    this.itemLookup.clear();
+    this.autoimage.clear();
+    
+    if (this.tree != null && !this.tree.isDisposed())
+      this.tree.removeAll();
+  }
 }
 
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.34  2009/11/09 23:45:19  willuhn
+ * @N removeAll() nun auch in TreePart zum Leeren des gesamten Baumes
+ * @N setList() und setRootObject() koennen nun mehrfach aufgerufen werden. Wurde der Tree schon gezeichnet, wird er automatisch geleert und mit den neuen Objekten gefuellt
+ *
  * Revision 1.33  2009/11/09 09:51:55  willuhn
  * @N Neue Standard-Icons
  * @N korrekte Initial-Icons fuer aufgeklappte Folder
@@ -633,120 +676,4 @@ public class TreePart extends AbstractTablePart
  *
  * Revision 1.27  2009/03/11 23:19:29  willuhn
  * @R unbenutzten Parameter entfernt
- *
- * Revision 1.26  2008/12/31 00:34:43  willuhn
- * @B NPE, wenn Tree keine Action hat
- *
- * Revision 1.25  2008/12/04 22:03:33  willuhn
- * @N BUGZILLA 665
- *
- * Revision 1.24  2008/09/03 11:14:20  willuhn
- * @N Suchfeld anzeigen
- * @N Such-Optionen
- *
- * Revision 1.23  2008/09/03 00:11:43  willuhn
- * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
- *
- * Revision 1.22  2008/05/25 22:31:30  willuhn
- * @N Explizite Angabe der Spaltenausrichtung moeglich
- *
- * Revision 1.21  2007/12/04 23:41:53  willuhn
- * @B ContextMenu#setCurrentObject wurde nicht aufgerufen, wenn kein Element im Tree aktiv war - daher wurden faelschlicherweise alle Eintraege des Contextmenus aktiviert
- *
- * Revision 1.20  2007/11/01 21:07:35  willuhn
- * @N Spalten von Tabellen und mehrspaltigen Trees koennen mit mit Drag&Drop umsortiert werden. Die Sortier-Reihenfolge wird automatisch gespeichert und wiederhergestellt
- *
- * Revision 1.19  2007/08/28 09:47:11  willuhn
- * @N Bug 395
- *
- * Revision 1.18  2007/05/14 11:18:09  willuhn
- * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
- * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
- *
- * Revision 1.17  2007/04/20 09:49:28  willuhn
- * @B wrong index in iterator
- *
- * Revision 1.16  2007/04/15 21:31:33  willuhn
- * @N "getItems()" in TreePart
- *
- * Revision 1.15  2007/03/22 22:36:47  willuhn
- * @N Contextmenu in Trees
- * @C Kategorie-Baum in separates TreePart ausgelagert
- *
- * Revision 1.14  2007/03/21 18:42:16  willuhn
- * @N Formatter fuer TreePart
- * @C mehr gemeinsamer Code in AbstractTablePart
- *
- * Revision 1.13  2007/03/08 18:55:49  willuhn
- * @N Tree mit Unterstuetzung fuer Spalten
- *
- * Revision 1.12  2007/01/18 09:49:29  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2006/04/20 08:44:03  web0
- * @C s/Childs/Children/
- *
- * Revision 1.10  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.9  2004/11/05 20:00:44  willuhn
- * @D javadoc fixes
- *
- * Revision 1.8  2004/10/20 12:08:17  willuhn
- * @C MVC-Refactoring (new Controllers)
- *
- * Revision 1.7  2004/10/08 13:38:20  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2004/07/23 15:51:20  willuhn
- * @C Rest des Refactorings
- *
- * Revision 1.5  2004/07/09 00:12:46  willuhn
- * @C Redesign
- *
- * Revision 1.4  2004/06/17 00:05:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2004/06/10 20:56:53  willuhn
- * @D javadoc comments fixed
- *
- * Revision 1.2  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.1  2004/04/12 19:15:58  willuhn
- * @C refactoring
- * @N forms
- *
- * Revision 1.4  2004/03/06 18:24:23  willuhn
- * @D javadoc
- *
- * Revision 1.3  2004/02/24 22:46:53  willuhn
- * @N GUI refactoring
- *
- * Revision 1.2  2004/02/22 20:05:21  willuhn
- * @N new Logo panel
- *
- * Revision 1.1  2004/01/28 20:51:24  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.6  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2004/01/08 20:50:32  willuhn
- * @N database stuff separated from jameica
- *
- * Revision 1.4  2003/12/30 03:41:44  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2003/12/29 20:07:19  willuhn
- * @N Formatter
- *
- * Revision 1.2  2003/12/29 16:29:47  willuhn
- * @N javadoc
- *
- * Revision 1.1  2003/12/19 01:43:27  willuhn
- * @N added Tree
- *
  **********************************************************************/
