@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.32 $
- * $Date: 2009/11/03 01:21:28 $
+ * $Revision: 1.33 $
+ * $Date: 2009/11/09 09:51:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -397,7 +397,7 @@ public class TreePart extends AbstractTablePart
 		TreeItem item = (TreeItem) widget;
     if (autoimage.get(item) == null)
       return;
-		item.setImage(SWTUtil.getImage("folderopen.gif"));
+		item.setImage(SWTUtil.getImage("folder-open.png"));
 	}
 
 	/**
@@ -412,7 +412,7 @@ public class TreePart extends AbstractTablePart
 		TreeItem item = (TreeItem) widget;
 		if (autoimage.get(item) == null)
 		  return;
-  	item.setImage(SWTUtil.getImage("folder.gif"));
+  	item.setImage(SWTUtil.getImage("folder.png"));
 	}
 
   /**
@@ -560,7 +560,7 @@ public class TreePart extends AbstractTablePart
         if (item.getImage() == null)
         {
           // Nur als Ordner darstellen, wenn es Kinder hat
-          item.setImage(SWTUtil.getImage(children != null && children.size() > 0 ? "folder.gif" : "page.gif"));
+          item.setImage(SWTUtil.getImage(children != null && children.size() > 0 ? (expanded ? "folder-open.png" : "folder.png") : "text-x-generic.png"));
           autoimage.put(item,Boolean.TRUE);
         }
 
@@ -586,7 +586,7 @@ public class TreePart extends AbstractTablePart
       }
       else
       {
-        item.setImage(SWTUtil.getImage("page.gif"));
+        item.setImage(SWTUtil.getImage("text-x-generic.png"));
       }
 		}
   }
@@ -611,6 +611,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.33  2009/11/09 09:51:55  willuhn
+ * @N Neue Standard-Icons
+ * @N korrekte Initial-Icons fuer aufgeklappte Folder
+ *
  * Revision 1.32  2009/11/03 01:21:28  willuhn
  * *** empty log message ***
  *
