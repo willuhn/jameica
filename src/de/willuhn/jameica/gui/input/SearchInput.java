@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2009/07/26 22:34:42 $
+ * $Revision: 1.16 $
+ * $Date: 2009/11/16 11:51:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -276,6 +276,8 @@ public class SearchInput extends AbstractInput
    */
   public Control getControl()
   {
+    if (this.text != null && !this.text.isDisposed())
+      return this.text;
 
     this.text = GUI.getStyleFactory().createText(getParent());
     
@@ -502,6 +504,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.16  2009/11/16 11:51:59  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.15  2009/07/26 22:34:42  willuhn
  * @B BUGZILLA 743
  *
