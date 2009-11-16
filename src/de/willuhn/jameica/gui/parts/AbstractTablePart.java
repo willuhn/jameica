@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.11 $
- * $Date: 2009/11/09 23:45:18 $
+ * $Revision: 1.12 $
+ * $Date: 2009/11/16 10:44:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,7 +35,8 @@ public abstract class AbstractTablePart implements Part
   protected Vector columns                 = new Vector();
   protected final static Settings settings = new Settings(AbstractTablePart.class);
 
-  protected boolean multi                  = false; // Multiple Markierung 
+  protected boolean multi                  = false; // Multiple Markierung
+  protected boolean checkable              = false;
 
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
@@ -231,6 +232,18 @@ public abstract class AbstractTablePart implements Part
   }
   
   /**
+   * Legt fest, ob jede Zeile der Tabelle mit einer Checkbox versehen werden soll.
+   * Ist dies der Fall, liefert <code>getItems</code> nur noch die aktiven
+   * Elemente zurueck.
+   * Default: false
+   * @param checkable
+   */
+  public void setCheckable(boolean checkable)
+  {
+    this.checkable = checkable;
+  }
+  
+  /**
    * Entfernt alle Elemente aus der Tabelle.
    */
   public abstract void removeAll();
@@ -240,6 +253,9 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.12  2009/11/16 10:44:31  willuhn
+ * @N TreePart hat nun ebenfalls Checkbox-Support. Damit wandert setCheckable(boolean) in die gemeinsame Basis-Klasse AbstractTablePart
+ *
  * Revision 1.11  2009/11/09 23:45:18  willuhn
  * @N removeAll() nun auch in TreePart zum Leeren des gesamten Baumes
  * @N setList() und setRootObject() koennen nun mehrfach aufgerufen werden. Wurde der Tree schon gezeichnet, wird er automatisch geleert und mit den neuen Objekten gefuellt

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.34 $
- * $Date: 2009/11/09 23:45:19 $
+ * $Revision: 1.35 $
+ * $Date: 2009/11/16 10:44:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -182,7 +182,7 @@ public class TreePart extends AbstractTablePart
     this.id = Checksum.md5(s.getBytes());
     return this.id;
   }
-
+  
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
@@ -190,7 +190,7 @@ public class TreePart extends AbstractTablePart
   {
     /////////////////////////////////////////////////////////////////
     // Tree erzeugen
-    this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER | (this.multi ? SWT.MULTI : SWT.SINGLE));
+    this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER | (this.multi ? SWT.MULTI : SWT.SINGLE) | (this.checkable ? SWT.CHECK : SWT.NONE));
     this.tree.setFont(Font.DEFAULT.getSWTFont());
     final GridData gridData = new GridData(GridData.FILL_BOTH);
     this.tree.setLayoutData(gridData);
@@ -383,7 +383,12 @@ public class TreePart extends AbstractTablePart
     
     setExpanded(i.item,expanded,recursive);
   }
-
+  
+  public void setCheckable(boolean checkable)
+  {
+    this.changeable = checkable;
+  }
+ 
   /**
    * Klappte das Element auf oder zu.
    * @param item das Item.
@@ -486,6 +491,7 @@ public class TreePart extends AbstractTablePart
       return data.toArray();
     }
   }
+
 
 	/**
    * Oeffnet das Menu. 
@@ -622,6 +628,9 @@ public class TreePart extends AbstractTablePart
    * Wenn es sich um Objekte des Typs <code>GenericObjectNode</code>
    * handelt, kann man sich die Kinder dann dort mit <code>getChildren</code>
    * holen.
+   * Falls der Tree mit Checkboxen versehen ist, wird eine Liste aller selektierten
+   * Items zurueckgeliefert - diese enthaelt auch Kind-Objekte, insofern deren
+   * Checkbox aktiviert ist.
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
    */
   public List getItems() throws RemoteException
@@ -630,7 +639,41 @@ public class TreePart extends AbstractTablePart
       return null;
 
     this.list.begin();
-    return PseudoIterator.asList(this.list);
+    
+    // Tree existiert noch nicht, existiert nicht mehr, oder Checkbox-Support ist inaktiv -> alle Items
+    if (this.tree == null || this.tree.isDisposed() || !this.checkable)
+      return PseudoIterator.asList(this.list);
+    
+    List checkedList = new ArrayList();
+    TreeItem[] items = this.tree.getItems();
+
+    for (TreeItem item:items)
+    {
+      add(item,checkedList);
+    }
+    return checkedList;
+  }
+  
+  /**
+   * Fuegt rekursiv alle aktivierten Kinder zur Liste hinzu.
+   * @param item das Tree-Item.
+   * @param list Liste, zu der die Kinder hinzugefuegt werden sollen.
+   */
+  private void add(TreeItem item, List list)
+  {
+    if (item == null || item.isDisposed())
+      return;
+
+    // Wir selbst
+    if (item.getChecked())
+      list.add(item.getData());
+
+    TreeItem[] children = item.getItems();
+    for (TreeItem child:children)
+    {
+      // Rekursion
+      add(child,list);
+    }
   }
 
   /**
@@ -650,6 +693,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.35  2009/11/16 10:44:31  willuhn
+ * @N TreePart hat nun ebenfalls Checkbox-Support. Damit wandert setCheckable(boolean) in die gemeinsame Basis-Klasse AbstractTablePart
+ *
  * Revision 1.34  2009/11/09 23:45:19  willuhn
  * @N removeAll() nun auch in TreePart zum Leeren des gesamten Baumes
  * @N setList() und setRootObject() koennen nun mehrfach aufgerufen werden. Wurde der Tree schon gezeichnet, wird er automatisch geleert und mit den neuen Objekten gefuellt

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.90 $
- * $Date: 2009/11/09 23:45:18 $
+ * $Revision: 1.91 $
+ * $Date: 2009/11/16 10:44:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -105,7 +105,6 @@ public class TablePart extends AbstractTablePart
 	// Flags
   private boolean enabled               = true;
   private boolean showSummary           = true;
-  private boolean check                 = false;
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -214,18 +213,6 @@ public class TablePart extends AbstractTablePart
 	}
   
   /**
-   * Legt fest, ob jede Zeile der Tabelle mit einer Checkbox versehen werden soll.
-   * Ist dies der Fall, liefert <code>getItems</code> nur noch die aktiven
-   * Elemente zurueck.
-   * Default: false
-   * @param checkable
-   */
-  public void setCheckable(boolean checkable)
-  {
-    this.check = checkable;
-  }
-  
-  /**
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
    * Ist <code>setCheckable(true)</code> gesetzt, werden nur die Elemente zurueckgeliefert,
    * bei denen das Haekchen gesetzt ist.
@@ -250,7 +237,7 @@ public class TablePart extends AbstractTablePart
     {
       if (items[i] == null || items[i].isDisposed())
         continue;
-      if (this.check && !items[i].getChecked())
+      if (this.checkable && !items[i].getChecked())
         continue;
       l.add(items[i].getData());
     }
@@ -420,7 +407,7 @@ public class TablePart extends AbstractTablePart
     }
     
 		final TableItem item = new TableItem(table, SWT.NONE,index);
-    if (check) item.setChecked(checked);
+    if (this.checkable) item.setChecked(checked);
 
 		// hihi, wenn es sich um ein DBObject handelt, haengen wir einen
 		// Listener dran, der uns ueber das Loeschen des Objektes
@@ -518,7 +505,7 @@ public class TablePart extends AbstractTablePart
 		comp.setLayout(layout);
 
     int flags = (this.multi ? SWT.MULTI : SWT.SINGLE) | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
-    if (this.check)
+    if (this.checkable)
       flags |= SWT.CHECK;
 
     table = GUI.getStyleFactory().createTable(comp, flags);
@@ -1382,6 +1369,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.91  2009/11/16 10:44:31  willuhn
+ * @N TreePart hat nun ebenfalls Checkbox-Support. Damit wandert setCheckable(boolean) in die gemeinsame Basis-Klasse AbstractTablePart
+ *
  * Revision 1.90  2009/11/09 23:45:18  willuhn
  * @N removeAll() nun auch in TreePart zum Leeren des gesamten Baumes
  * @N setList() und setRootObject() koennen nun mehrfach aufgerufen werden. Wurde der Tree schon gezeichnet, wird er automatisch geleert und mit den neuen Objekten gefuellt
