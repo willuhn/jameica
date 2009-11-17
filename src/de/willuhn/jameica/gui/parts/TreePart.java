@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.35 $
- * $Date: 2009/11/16 10:44:31 $
+ * $Revision: 1.36 $
+ * $Date: 2009/11/17 10:42:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -384,13 +384,8 @@ public class TreePart extends AbstractTablePart
     setExpanded(i.item,expanded,recursive);
   }
   
-  public void setCheckable(boolean checkable)
-  {
-    this.changeable = checkable;
-  }
- 
   /**
-   * Klappte das Element auf oder zu.
+   * Klappt das Element auf oder zu.
    * @param item das Item.
    * @param expanded true, wenn es aufgeklappt sein soll, sonst false.
    * @param recursive true, wenn auch alle Kind-Elemente rekursiv mit aufgeklappt werden sollen.
@@ -693,6 +688,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.36  2009/11/17 10:42:49  willuhn
+ * @R vergessen, zu entfernen - steht in AbstractTablePart
+ *
  * Revision 1.35  2009/11/16 10:44:31  willuhn
  * @N TreePart hat nun ebenfalls Checkbox-Support. Damit wandert setCheckable(boolean) in die gemeinsame Basis-Klasse AbstractTablePart
  *
