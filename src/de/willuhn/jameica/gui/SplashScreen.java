@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.32 $
- * $Date: 2009/05/27 12:56:45 $
+ * $Revision: 1.33 $
+ * $Date: 2009/11/17 14:58:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -164,7 +164,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
    */
   public void setPercentComplete(int percent)
   {
-    if (Application.inServerMode() || closed || percent < percentComplete)
+    if (Application.inServerMode() || closed || percent < percentComplete || display == null || display.isDisposed())
       return;
 
     if (percent > 100)
@@ -286,6 +286,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.33  2009/11/17 14:58:06  willuhn
+ * @B Beim Beenden kann u.U. eine SWTException "Widget disposed" erscheinen
+ *
  * Revision 1.32  2009/05/27 12:56:45  willuhn
  * @B BUGZILLA 183
  *
