@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2009/11/16 11:51:59 $
+ * $Revision: 1.17 $
+ * $Date: 2009/12/07 23:48:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -194,27 +194,7 @@ public class SearchInput extends AbstractInput
       // keine Position kriegen sondern nur den Text.
       if (selected != null)
       {
-        // Das "setText" loest eine erneute Suche aus. Daher
-        // ueberpringen wir die naechste
-        this.inSearch = true;
-        this.value = values.get(selected);
-        
-        // Bei einem einfachen setText() landet der Cursor leider
-        // am Anfang des Textes und kann auch nicht nach hinten
-        // bewegt werden
-        this.text.setText("");
-        this.text.insert(selected);
-        
-        if (this.listeners.size() > 0)
-        {
-          Event e = new Event();
-          e.data = this.value;
-          e.text = selected;
-          for (Listener l:this.listeners)
-          {
-            l.handleEvent(e);
-          }
-        }
+        this.setValue(values.get(selected));
       }
     }
     catch (Exception e)
@@ -354,8 +334,6 @@ public class SearchInput extends AbstractInput
         if (newText == oldText || newText.equals(oldText))
           return; // Text wurde nicht geaendert
 
-        text.setForeground(Color.WIDGET_FG.getSWTColor());
-
         oldText = newText;
         List newList = startSearch(newText);
         setList(newList);
@@ -462,8 +440,26 @@ public class SearchInput extends AbstractInput
     
     if (this.text != null && !this.text.isDisposed())
     {
+      // Das "setText" loest eine erneute Suche aus. Daher
+      // ueberpringen wir die naechste
+      this.inSearch = true;
+
       String s = format(this.value);
       this.text.setText(s == null ? "" : s);
+      
+      if (s != null && !s.equals(this.search))
+        text.setForeground(Color.WIDGET_FG.getSWTColor());
+
+      if (this.listeners.size() > 0)
+      {
+        Event e = new Event();
+        e.data = this.value;
+        e.text = s;
+        for (Listener l:this.listeners)
+        {
+          l.handleEvent(e);
+        }
+      }
     }
   }
   
@@ -504,6 +500,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.17  2009/12/07 23:48:45  willuhn
+ * @N Adress-Auswahl nun via Autosuggest UND Adress-Dialog moeglich
+ *
  * Revision 1.16  2009/11/16 11:51:59  willuhn
  * *** empty log message ***
  *
