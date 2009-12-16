@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.46 $
- * $Date: 2009/10/26 09:26:33 $
+ * $Revision: 1.47 $
+ * $Date: 2009/12/16 00:11:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -721,22 +721,14 @@ public final class Config
   {
     settings.setAttribute("jameica.system.backup.enabled",enabled);
   }
-
-  /**
-   * Legt fest, ob die Main-View gescrollt werden kann, wenn der Inhalt zu gross ist.
-   * @return b true, wenn gescrollt werden soll.
-   * TODO: Mal so umstellen, dass der Parameter nur dann true liefert, wenn die Bildschirmhoehe <= 600px ist.
-   * Bei der Gelegenheit koennte der Parameter eigentlich auch nach "Customizing" verschoben werden.
-   */
-  public boolean getScrollView()
-  {
-    return false;
-  }
 }
 
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.47  2009/12/16 00:11:59  willuhn
+ * @N Scroll-Support fuer Views - nochmal ueberarbeitet und jetzt via Customizing konfigurierbar
+ *
  * Revision 1.46  2009/10/26 09:26:33  willuhn
  * @R Scroll-View-Parameter entfernt - verursachte Darstellungsfehler
  *

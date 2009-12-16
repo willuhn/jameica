@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.47 $
- * $Date: 2009/10/12 08:55:36 $
+ * $Revision: 1.48 $
+ * $Date: 2009/12/16 00:11:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,8 +20,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -36,7 +34,6 @@ import org.eclipse.swt.widgets.Listener;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 
 /**
@@ -52,7 +49,6 @@ public class View implements Part
 	private Composite content;
 	private Composite snapin;
 	private boolean snappedIn    = false;
-  private boolean sizeComputed = false;
 
 
 	private Composite parent;
@@ -161,35 +157,6 @@ public class View implements Part
       sep3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       ////////////////////////////////////////////////////////////////////////////
     }
-
-    
-    if (Application.getConfig().getScrollView())
-    {
-      scroll = new ScrolledComposite(view,SWT.V_SCROLL | SWT.H_SCROLL);
-      scroll.setBackground(Color.BACKGROUND.getSWTColor());
-      scroll.setLayoutData(new GridData(GridData.FILL_BOTH));
-      scroll.setLayout(SWTUtil.createGrid(1,true));
-      scroll.setExpandHorizontal(true);
-      scroll.setExpandVertical(true);
-      scroll.addPaintListener(new PaintListener() {
-        public void paintControl(PaintEvent e)
-        {
-          if (sizeComputed)
-            return;
-          try
-          {
-            content.setSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-            scroll.setMinSize(content.getSize());
-          }
-          finally
-          {
-            sizeComputed = true;
-          }
-        }
-      });
-    }
-    
-    
 	}
 	
   /**
@@ -201,11 +168,28 @@ public class View implements Part
 		if (content != null && !content.isDisposed())
 			content.dispose();
 		
-		boolean b = Application.getConfig().getScrollView();
-		// Wir machen hier deshalb nicht nur ein layout() oder redraw()
-		// weil wir wollen, dass die gesamte View disposed und entfernt
-		// wird, bevor eine neue drauf kommt.
-		content = new Composite(b ? scroll : view, SWT.NONE);
+		if (scroll != null && !scroll.isDisposed())
+		  scroll.dispose();
+		
+
+		if (Customizing.SETTINGS.getBoolean("application.scrollview",false))
+		{
+      scroll = new ScrolledComposite(view,SWT.V_SCROLL | SWT.H_SCROLL);
+      scroll.setBackground(Color.BACKGROUND.getSWTColor());
+      scroll.setLayoutData(new GridData(GridData.FILL_BOTH));
+      scroll.setLayout(SWTUtil.createGrid(1,true));
+      scroll.setExpandHorizontal(true);
+      scroll.setExpandVertical(true);
+      scroll.setMinHeight(Customizing.SETTINGS.getInt("application.scrollview.minheight",580));
+
+      content = new Composite(scroll, SWT.NONE);
+      scroll.setContent(content);
+		}
+		else
+		{
+	    content = new Composite(view, SWT.NONE);
+		}
+		
 		content.setBackground(Color.BACKGROUND.getSWTColor());
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout l = new GridLayout();
@@ -213,18 +197,11 @@ public class View implements Part
 		l.marginWidth = 6;
 		content.setLayout(l);
 
-		if (b)
-		{
-      scroll.setContent(content);
-      scroll.redraw();
-		}
-
 		if (messages != null)
 		{
 	    messages.setText("");
 	    messages.layout();
 		}
-		sizeComputed = false;
 	}
 
 	/**
@@ -384,8 +361,7 @@ public class View implements Part
    */
   protected void refreshContent()
 	{
-    sizeComputed = false;
-		view.layout();
+    view.layout();
 	}
 
   /**
@@ -394,7 +370,6 @@ public class View implements Part
    */
   protected Composite getContent()
 	{
-    sizeComputed = false;
 		return content;
 	}
 }
@@ -403,6 +378,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.48  2009/12/16 00:11:59  willuhn
+ * @N Scroll-Support fuer Views - nochmal ueberarbeitet und jetzt via Customizing konfigurierbar
+ *
  * Revision 1.47  2009/10/12 08:55:36  willuhn
  * *** empty log message ***
  *
@@ -411,136 +389,4 @@ public class View implements Part
  *
  * Revision 1.45  2009/03/20 16:38:09  willuhn
  * @N BUGZILLA 576
- *
- * Revision 1.43  2009/02/27 14:05:34  willuhn
- * @B BUGZILLA 432 - das Speichern der Verhaeltnisse geht ja viel einfacher ;) Ich muss doch gar nicht selbst ausrechnen, wie die prozentuale Verteilung ist sondern kann einfach die SWT-Komponente fragen. Dann muss ich gar nichts rechnen
- *
- * Revision 1.42  2008/04/23 11:10:24  willuhn
- * @N Bug 432 Snapin merkt sich jetzt seine letzte Hoehe und stellt diese wieder her
- *
- * Revision 1.41  2007/12/18 23:05:42  willuhn
- * @C Farben wieder explizit vorgegeben. Unter Windows XP sieht es so oder so (ob Expand-Bar mit oder ohne XP-Lookp) haesslich aus
- *
- * Revision 1.40  2007/12/18 17:50:12  willuhn
- * @R Background-Color nicht mehr aenderbar
- * @C Layout der Startseite
- *
- * Revision 1.39  2007/04/26 17:33:25  willuhn
- * @C Logo-Text mit asyncExec setzen
- *
- * Revision 1.38  2007/01/25 12:07:58  willuhn
- * @R removed debug output
- * @C dispose snapin content on snapout()
- *
- * Revision 1.37  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.36  2006/06/20 23:26:51  willuhn
- * @N View#setLogoText
- *
- * Revision 1.35  2006/04/20 08:44:03  web0
- * @C s/Childs/Children/
- *
- * Revision 1.34  2005/08/15 13:15:32  web0
- * @C fillLayout removed
- *
- * Revision 1.33  2005/08/12 16:24:19  web0
- * @B paint bug when using gtk-qt-engine. Untested!
- *
- * Revision 1.32  2005/06/13 23:18:18  web0
- * *** empty log message ***
- *
- * Revision 1.31  2005/06/13 22:05:32  web0
- * *** empty log message ***
- *
- * Revision 1.30  2005/06/13 11:48:41  web0
- * *** empty log message ***
- *
- * Revision 1.29  2005/06/13 11:47:25  web0
- * *** empty log message ***
- *
- * Revision 1.28  2005/06/03 17:14:41  web0
- * @N Livelog
- *
- * Revision 1.27  2004/11/17 19:02:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.26  2004/11/10 16:19:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.25  2004/11/10 15:53:23  willuhn
- * @N Panel
- *
- * Revision 1.24  2004/10/24 17:19:11  willuhn
- * *** empty log message ***
- *
- * Revision 1.23  2004/10/08 00:19:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.22  2004/08/27 19:11:11  willuhn
- * *** empty log message ***
- *
- * Revision 1.21  2004/08/27 17:46:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.20  2004/08/26 23:19:44  willuhn
- * *** empty log message ***
- *
- * Revision 1.19  2004/05/26 23:23:23  willuhn
- * @N Timeout fuer Messages in Statusbars
- *
- * Revision 1.18  2004/05/23 16:34:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.17  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.16  2004/04/29 23:05:54  willuhn
- * @N new snapin feature
- *
- * Revision 1.15  2004/03/24 00:46:03  willuhn
- * @C refactoring
- *
- * Revision 1.14  2004/03/06 18:24:24  willuhn
- * @D javadoc
- *
- * Revision 1.13  2004/03/03 22:27:10  willuhn
- * @N help texts
- * @C refactoring
- *
- * Revision 1.12  2004/02/22 20:05:21  willuhn
- * @N new Logo panel
- *
- * Revision 1.11  2004/02/18 01:40:30  willuhn
- * @N new white style
- *
- * Revision 1.10  2004/01/28 20:51:24  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.9  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.8  2003/12/29 16:29:47  willuhn
- * @N javadoc
- *
- * Revision 1.7  2003/12/12 01:28:05  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2003/12/11 21:00:54  willuhn
- * @C refactoring
- *
- * Revision 1.5  2003/12/05 18:43:01  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2003/11/20 03:48:41  willuhn
- * @N first dialogues
- *
- * Revision 1.3  2003/11/13 00:37:35  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2003/10/29 00:41:26  willuhn
- * *** empty log message ***
- *
  ***************************************************************************/
