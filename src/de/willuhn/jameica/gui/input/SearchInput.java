@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2009/12/07 23:48:45 $
+ * $Revision: 1.18 $
+ * $Date: 2010/01/18 22:59:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -369,7 +369,12 @@ public class SearchInput extends AbstractInput
 	{
     if (this.text == null || this.text.isDisposed())
       return null;
-		return this.text.getText();
+		String s = this.text.getText();
+    if (s == null || s.length() == 0)
+      return s;
+    if (s.equals(this.search))
+      return null;
+    return s;
 	}
 
   /**
@@ -500,6 +505,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.18  2010/01/18 22:59:02  willuhn
+ * @B BUGZILLA 808
+ *
  * Revision 1.17  2009/12/07 23:48:45  willuhn
  * @N Adress-Auswahl nun via Autosuggest UND Adress-Dialog moeglich
  *
