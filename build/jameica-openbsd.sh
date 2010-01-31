@@ -5,4 +5,4 @@
 
 cd `dirname $(readlink -f $0)`
 
-java -Xmx256m -Djava.library.path=lib/swt/openbsd -jar jameica-openbsd.jar $@
+java -Xmx256m -Djava.library.path=/usr/local/lib -jar jameica-openbsd.jar $@
