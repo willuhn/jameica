@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/VelocityService.java,v $
- * $Revision: 1.4 $
- * $Date: 2009/08/24 11:53:08 $
+ * $Revision: 1.5 $
+ * $Date: 2010/02/04 11:58:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.services;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.velocity.app.Velocity;
@@ -34,8 +35,9 @@ import de.willuhn.logging.Logger;
 public class VelocityService implements Bootable
 {
 
-  private VelocityLogger logger = null;
-  private Map<String,VelocityEngine> engines = new HashMap<String,VelocityEngine>();
+  private VelocityLogger logger                = null;
+  private Map<Manifest,VelocityEngine> engines = new HashMap<Manifest,VelocityEngine>();
+  private VelocityEngine defaultEngine         = null;
   
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -56,10 +58,9 @@ public class VelocityService implements Bootable
       this.logger = new VelocityLogger();
 
       // Unkonfigurierte Default-Engine
-      VelocityEngine engine = new VelocityEngine();
-      engine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM,this.logger);
-      engine.init();
-      this.engines.put(null,engine);
+      this.defaultEngine = new VelocityEngine();
+      this.defaultEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM,this.logger);
+      this.defaultEngine.init();
     }
     catch (Exception e)
     {
@@ -73,38 +74,53 @@ public class VelocityService implements Bootable
   public void shutdown()
   {
     this.engines.clear();
-    this.logger = null;
+    this.logger        = null;
+    this.defaultEngine = null;
   }
 
   /**
    * Erstellt fuer das Plugin einen Velocity-Context - insofern es ein Verzeichnis lib/verlocity besitzt.
    * @param mf das Manifest des Plugins.
+   * @return die erzeugte Engine.
    */
-  public void add(Manifest mf)
+  private VelocityEngine get(Manifest mf)
   {
+    // Kein Manifest angegeben.
+    if (mf == null)
+      return null;
+
+    VelocityEngine e = null;
+    
+    e = this.engines.get(mf);
+    if (e != null)
+      return e;
+    
+    // Neu initialisieren
     File templates = new File(mf.getPluginDir() + File.separator + "lib","velocity");
     if (!templates.exists())
     {
-      Logger.debug("plugin " + mf.getName() + " contains no lib/velocity dir, skipping velocity engine");
-      return;
+      Logger.debug("plugin " + mf.getName() + " contains no lib/velocity dir, using default velocity engine");
+      return this.defaultEngine;
     }
     
     try
     {
       Logger.debug("init velocity engine for plugin " + mf.getName());
 
-      VelocityEngine engine = new VelocityEngine();
-      engine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM,this.logger);
-      engine.setProperty(VelocityEngine.FILE_RESOURCE_LOADER_PATH,templates.getAbsolutePath());
-      engine.init();
+      e = new VelocityEngine();
+      e.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM,this.logger);
+      e.setProperty(VelocityEngine.FILE_RESOURCE_LOADER_PATH,templates.getAbsolutePath());
+      e.init();
 
-      // Engine wird sowohl ueber den Plugin-Namen als auch ueber die Plugin-Klasse gefunden
-      this.engines.put(mf.getName(),engine);
-      this.engines.put(mf.getPluginClass(),engine);
+      // Wir merken uns die Engine
+      this.engines.put(mf,e);
+      
+      return e;
     }
-    catch (Exception e)
+    catch (Exception ex)
     {
-      Logger.error("unable to init velocity engine for plugin " + mf.getName(),e);
+      Logger.error("unable to init velocity engine for plugin " + mf.getName(),ex);
+      return this.defaultEngine;
     }
   }
   
@@ -115,7 +131,18 @@ public class VelocityService implements Bootable
    */
   public VelocityEngine getEngine(String plugin)
   {
-    return this.engines.get(plugin);
+    if (plugin == null || plugin.length() == 0)
+      return this.defaultEngine;
+
+    // Zugehoeriges Manifest suchen
+    List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
+    for (Manifest mf:list)
+    {
+      VelocityEngine e = this.get(mf);
+      if (e != null)
+        return e;
+    }
+    return this.defaultEngine;
   }
 
   /**
@@ -175,6 +202,9 @@ public class VelocityService implements Bootable
 
 /**********************************************************************
  * $Log: VelocityService.java,v $
+ * Revision 1.5  2010/02/04 11:58:49  willuhn
+ * @N Velocity on-demand initialisieren
+ *
  * Revision 1.4  2009/08/24 11:53:08  willuhn
  * @C Der VelocityService besitzt jetzt keinen globalen Resource-Loader mehr. Stattdessen hat jedes Plugin einen eigenen. Damit das funktioniert, darf man Velocity aber nicht mehr mit der statischen Methode "Velocity.getTemplate()" nutzen sondern mit folgendem Code:
  *

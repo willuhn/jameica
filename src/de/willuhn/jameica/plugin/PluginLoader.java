@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.43 $
- * $Date: 2009/08/24 11:53:08 $
+ * $Revision: 1.44 $
+ * $Date: 2010/02/04 11:58:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,6 @@ import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.services.ClassService;
-import de.willuhn.jameica.services.VelocityService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
@@ -269,13 +268,6 @@ public final class PluginLoader
     plugin.getResources().setClassLoader(loader);
     manifest.setPluginInstance(plugin);
 
-    //
-    // /////////////////////////////////////////////////////////////
-
-    // /////////////////////////////////////////////////////////////
-    // Velocity-Template-Verzeichnisse
-    VelocityService vs = (VelocityService) Application.getBootLoader().getBootable(VelocityService.class);
-    vs.add(manifest);
     //
     // /////////////////////////////////////////////////////////////
 
@@ -617,6 +609,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.44  2010/02/04 11:58:49  willuhn
+ * @N Velocity on-demand initialisieren
+ *
  * Revision 1.43  2009/08/24 11:53:08  willuhn
  * @C Der VelocityService besitzt jetzt keinen globalen Resource-Loader mehr. Stattdessen hat jedes Plugin einen eigenen. Damit das funktioniert, darf man Velocity aber nicht mehr mit der statischen Methode "Velocity.getTemplate()" nutzen sondern mit folgendem Code:
  *
