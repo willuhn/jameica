@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.91 $
- * $Date: 2009/11/16 10:44:31 $
+ * $Revision: 1.92 $
+ * $Date: 2010/02/04 00:15:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1092,7 +1092,7 @@ public class TablePart extends AbstractTablePart
   protected String getSummary()
   {
     int size = size();
-    if (size > 1)
+    if (size != 1)
       return i18n.tr("{0} Datensätze",Integer.toString(size));
     return i18n.tr("1 Datensatz");
   }
@@ -1369,6 +1369,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.92  2010/02/04 00:15:15  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.91  2009/11/16 10:44:31  willuhn
  * @N TreePart hat nun ebenfalls Checkbox-Support. Damit wandert setCheckable(boolean) in die gemeinsame Basis-Klasse AbstractTablePart
  *
