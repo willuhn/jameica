@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/VelocityService.java,v $
- * $Revision: 1.5 $
- * $Date: 2010/02/04 11:58:49 $
+ * $Revision: 1.6 $
+ * $Date: 2010/02/08 11:09:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -99,8 +99,8 @@ public class VelocityService implements Bootable
     File templates = new File(mf.getPluginDir() + File.separator + "lib","velocity");
     if (!templates.exists())
     {
-      Logger.debug("plugin " + mf.getName() + " contains no lib/velocity dir, using default velocity engine");
-      return this.defaultEngine;
+      Logger.debug("plugin " + mf.getName() + " contains no lib/velocity dir");
+      return null;
     }
     
     try
@@ -120,7 +120,7 @@ public class VelocityService implements Bootable
     catch (Exception ex)
     {
       Logger.error("unable to init velocity engine for plugin " + mf.getName(),ex);
-      return this.defaultEngine;
+      return null;
     }
   }
   
@@ -138,9 +138,17 @@ public class VelocityService implements Bootable
     List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
     for (Manifest mf:list)
     {
-      VelocityEngine e = this.get(mf);
-      if (e != null)
-        return e;
+      String name = mf.getName();
+      String clazz = mf.getPluginClass();
+      if (name == null || clazz == null)
+        continue;
+      
+      if (name.equals(plugin) || clazz.equals(plugin))
+      {
+        VelocityEngine e = this.get(mf);
+        if (e != null)
+          return e;
+      }
     }
     return this.defaultEngine;
   }
@@ -202,6 +210,9 @@ public class VelocityService implements Bootable
 
 /**********************************************************************
  * $Log: VelocityService.java,v $
+ * Revision 1.6  2010/02/08 11:09:17  willuhn
+ * @B TICKET #39 Fehler in Velocity-Engine
+ *
  * Revision 1.5  2010/02/04 11:58:49  willuhn
  * @N Velocity on-demand initialisieren
  *
