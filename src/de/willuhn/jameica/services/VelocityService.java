@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/VelocityService.java,v $
- * $Revision: 1.6 $
- * $Date: 2010/02/08 11:09:17 $
+ * $Revision: 1.7 $
+ * $Date: 2010/02/08 11:53:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -127,7 +127,7 @@ public class VelocityService implements Bootable
   /**
    * Liefert die Velocity-Engine fuer das angegebene Plugin.
    * @param plugin Name des Plugins oder Name der Plugin-Klasse.
-   * @return die Velocity-Engine oder NULL wenn keine existiert.
+   * @return die Velocity-Engine oder die Default-Velocity-Engine von Jameica selbst wenn keine Plugin-spezifische gefunden wurde.
    */
   public VelocityEngine getEngine(String plugin)
   {
@@ -210,6 +210,9 @@ public class VelocityService implements Bootable
 
 /**********************************************************************
  * $Log: VelocityService.java,v $
+ * Revision 1.7  2010/02/08 11:53:57  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2010/02/08 11:09:17  willuhn
  * @B TICKET #39 Fehler in Velocity-Engine
  *
