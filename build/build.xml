@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.66 $
- $Date: 2009/10/29 11:30:54 $
+ $Revision: 1.67 $
+ $Date: 2010/02/09 10:21:20 $
  $Author: willuhn $
  
  All rights reserved
@@ -132,6 +132,10 @@
     <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.openbsd}" />
       <param name="param.classpath" value="${classpath.openbsd}" />
+    </antcall>
+    <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.osol}" />
+      <param name="param.classpath" value="${classpath.osol}" />
     </antcall>
   </target>
   
@@ -337,12 +341,32 @@
         <include name="${define.projectname}/plugins"/>
         <include name="${define.projectname}/lib/**"/>
 
-        <exclude name="${define.projectname}/lib/swt/macos/**"/>
-        <exclude name="${define.projectname}/lib/swt/macos64/**"/>
-        <exclude name="${define.projectname}/lib/swt/win64/**"/>
-        <exclude name="${define.projectname}/lib/swt/win32/**"/>
-        <exclude name="${define.projectname}/lib/swt/linux/**"/>
-        <exclude name="${define.projectname}/lib/swt/linux64/**"/>
+        <exclude name="${define.projectname}/lib/swt/**"/>
+        <exclude name="${define.projectname}/Jameica.icns"/>
+        <exclude name="${define.projectname}/Info.plist"/>
+        <exclude name="${define.projectname}/Info64.plist"/>
+      </zipfileset>
+    </zip>
+
+    <!-- ZIP-File fuer OpenSolaris -->
+    <zip destfile="${project.release}/${project.zipfilename.osol}">
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}" />
+        <include name="${define.projectname}/plugin.xml"/>
+        <include name="${define.projectname}/${define.jarfilename}"/>
+        <include name="${define.projectname}/${define.jarfilename.osol}"/>
+        <include name="${define.projectname}/COPYING"/>
+        <include name="${define.projectname}/README"/>
+        <include name="${define.projectname}/jameica-osol.sh"/>
+        <include name="${define.projectname}/jameicaserver-osol.sh"/>
+        <include name="${define.projectname}/.jameica"/>
+        <include name="${define.projectname}/rcjameica"/>
+        <include name="${define.projectname}/jameica-icon-01.png"/>
+        <include name="${define.projectname}/jameica-icon-02.png"/>
+        <include name="${define.projectname}/plugins"/>
+        <include name="${define.projectname}/lib/**"/>
+
+        <exclude name="${define.projectname}/lib/swt/**"/>
         <exclude name="${define.projectname}/Jameica.icns"/>
         <exclude name="${define.projectname}/Info.plist"/>
         <exclude name="${define.projectname}/Info64.plist"/>
@@ -419,6 +443,7 @@
 		<checksum file="${project.release}/${project.zipfilename.macos}" />
     <checksum file="${project.release}/${project.zipfilename.macos64}" />
     <checksum file="${project.release}/${project.zipfilename.openbsd}" />
+    <checksum file="${project.release}/${project.zipfilename.osol}" />
 		<echo message="Creating PGP signatures" />
 
 		<exec executable="gpg" failonerror="true" timeout="60000">
@@ -446,6 +471,9 @@
     <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.openbsd}" />
     </exec>
+    <exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.osol}" />
+    </exec>
 	</target>
 
 
@@ -463,6 +491,7 @@
     <copy file="${project.release}/${project.zipfilename.macos64}"      tofile="${project.nightly}/${define.projectname}-${system.version}-macos64.zip" />
 		<copy file="${project.release}/${project.zipfilename.win32}" 		    tofile="${project.nightly}/${define.projectname}-${system.version}-win32.zip" />
     <copy file="${project.release}/${project.zipfilename.openbsd}"      tofile="${project.nightly}/${define.projectname}-${system.version}-openbsd.zip" />
+    <copy file="${project.release}/${project.zipfilename.osol}"         tofile="${project.nightly}/${define.projectname}-${system.version}-osol.zip" />
 
 
 		<copy file="${project.release}/${define.srcfilename}" 		          tofile="${project.nightly}/${define.projectname}-${system.version}.src.zip" />
