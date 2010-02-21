@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.67 $
- $Date: 2010/02/09 10:21:20 $
+ $Revision: 1.68 $
+ $Date: 2010/02/21 22:13:14 $
  $Author: willuhn $
  
  All rights reserved
@@ -155,6 +155,7 @@
         <include name=".jameica"/>
 				<include name="rcjameica"/>
 				<include name="jameica-icon-01.png"/>
+        <include name="jameica-icon-01.ico"/>
         <include name="jameica-icon-02.png"/>
 				<include name="COPYING"/>
 				<include name="README"/>
@@ -236,6 +237,7 @@
 				<include name="${define.projectname}/README"/>
 				<include name="${define.projectname}/jameica.bat"/>
 				<include name="${define.projectname}/jameicaserver.bat"/>
+        <include name="${define.projectname}/jameica-icon-01.ico"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
