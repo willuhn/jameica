@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchPart.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/02/23 23:44:11 $
+ * $Revision: 1.6 $
+ * $Date: 2010/02/24 22:44:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,11 +106,11 @@ public class SearchPart implements Part
     {
       public void keyTraversed(TraverseEvent e)
       {
-        if (search == null || search.isDisposed())
+        if (search == null || search.isDisposed() || !search.isFocusControl())
           return;
         
         final String text = search.getText();
-        if (text == null || text.length() < 3)
+        if (text == null || text.length() < 3 || text.equals(searchText))
           return; // weniger als 3 Zeichen eingegeben
 
         try
@@ -181,6 +181,9 @@ public class SearchPart implements Part
 
 /**********************************************************************
  * $Log: SearchPart.java,v $
+ * Revision 1.6  2010/02/24 22:44:16  willuhn
+ * @B Suche konnte ausgeloest werden - auch wenn das Feld gar keinen Focus hat oder "Suche..." drin stand
+ *
  * Revision 1.5  2009/02/23 23:44:11  willuhn
  * @D
  *
