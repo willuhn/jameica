@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.83 $
- * $Date: 2009/06/24 11:24:33 $
+ * $Revision: 1.84 $
+ * $Date: 2010/03/04 23:08:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -102,6 +102,9 @@ public final class Application {
     }
     catch (Exception e)
     {
+      if (e instanceof OperationCanceledException)
+        Logger.warn("startup cancelled by user");
+
       app.startupError(e);
     }
 
@@ -151,31 +154,39 @@ public final class Application {
    */
   private void startupError(Throwable t)
 	{
-    t.printStackTrace();
-    Logger.error("FATAL ERROR WHILE JAMEICA STARTUP",t);
-
-    StringBuffer sb = new StringBuffer();
-    Throwable cause = t;
-    
-    for (int i=0;i<20;++i) // maximal 20 Schritte nach oben
+    if (t != null && !(t instanceof OperationCanceledException))
     {
-      Throwable current = cause.getCause();
+      t.printStackTrace();
+      Logger.error("FATAL ERROR WHILE JAMEICA STARTUP",t);
 
-      if (current == null)
-        break; // Ende, hier kommt nichts mehr
+      StringBuffer sb = new StringBuffer();
+      Throwable cause = t;
       
-      if (current == cause) // Wir wiederholen uns
-        break;
+      for (int i=0;i<20;++i) // maximal 20 Schritte nach oben
+      {
+        Throwable current = cause.getCause();
+
+        if (current == null)
+          break; // Ende, hier kommt nichts mehr
+        
+        if (current == cause) // Wir wiederholen uns
+          break;
+        
+        sb.append(current.getMessage());
+        sb.append("\n");
+        cause = current;
+      }
       
-      sb.append(current.getMessage());
-      sb.append("\n");
-      cause = current;
+      String msg = sb.toString();
+      if (msg == null || msg.length() == 0)
+        msg = "Fatal error while jameica startup";
+      getCallback().startupError(msg,t);
     }
-    
-		String msg = sb.toString();
-		if (msg == null || msg.length() == 0)
-			msg = "Fatal error while jameica startup";
-		getCallback().startupError(msg,t);
+		try
+		{
+	    Logger.flush();
+		}
+		catch (Exception e){} // useless
 		System.exit(1);
 	}
 
@@ -500,6 +511,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.84  2010/03/04 23:08:30  willuhn
+ * @N Sauberes Programm-Ende, wenn der User den Startvorgang selbst abgebrochen hat
+ *
  * Revision 1.83  2009/06/24 11:24:33  willuhn
  * @N Security-Manager via Bootloader setzen
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.24 $
- * $Date: 2010/03/04 22:59:29 $
+ * $Revision: 1.25 $
+ * $Date: 2010/03/04 23:08:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -180,11 +180,6 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public void startupError(String errorMessage, Throwable t)
   {
-  	if (t != null && t instanceof OperationCanceledException)
-  	{
-  		Logger.error("it seems the user has forgotten the master password. not startup error dialog needed",t);
-			return; // da hat der user wohl beim Login den Abbrechen-Knopf gedrueckt.
-  	}
 		Display d = Display.getCurrent();
 		if (d == null)
 			d = new Display();
@@ -433,6 +428,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.25  2010/03/04 23:08:30  willuhn
+ * @N Sauberes Programm-Ende, wenn der User den Startvorgang selbst abgebrochen hat
+ *
  * Revision 1.24  2010/03/04 22:59:29  willuhn
  * @R redundantes try/catch
  *
