@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.25 $
- * $Date: 2009/06/22 23:08:55 $
+ * $Revision: 1.26 $
+ * $Date: 2010/03/04 22:54:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,6 +43,8 @@ import de.willuhn.util.ApplicationException;
  */
 public abstract class PasswordDialog extends AbstractDialog {
 
+  private final static int WINDOW_WIDTH = 420;
+  
 	/**
 	 * Maximale Anzahl von Fehlversuchen.
 	 */
@@ -66,7 +68,7 @@ public abstract class PasswordDialog extends AbstractDialog {
 	 */
   public PasswordDialog(int position) {
     super(position);
-    this.setSize(420,SWT.DEFAULT);
+    this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
     this.setTitle(i18n.tr("Passwort"));
     this.setSideImage(SWTUtil.getImage("dialog-password.png"));
 
@@ -199,6 +201,9 @@ public abstract class PasswordDialog extends AbstractDialog {
       public void shellDeiconified(ShellEvent e) {}
       public void shellIconified(ShellEvent e) {}
     });
+		
+    // BUGZILLA 828
+		getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,SWT.DEFAULT));
 	}		
 
   /**
@@ -257,6 +262,9 @@ public abstract class PasswordDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
+ * Revision 1.26  2010/03/04 22:54:06  willuhn
+ * @N BUGZILLA 828
+ *
  * Revision 1.25  2009/06/22 23:08:55  willuhn
  * @N Dialog 20px breiter gemacht. Bei MacOS bricht das letzte Wort (wegen der dort groesseren Schrift) unter Umstaenden um, was dazu fuehrt, dass die Buttons unten abgeschnitten werden
  *
