@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.23 $
- * $Date: 2009/09/09 09:16:19 $
+ * $Revision: 1.24 $
+ * $Date: 2010/03/04 22:59:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -121,15 +121,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		}
 
 		PWD dialog = new PWD();
-
-		try
-		{
-			this.password = (String) dialog.open();
-		}
-		catch (OperationCanceledException e)
-		{
-			throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
-		}
+  	this.password = (String) dialog.open();
 		return this.password;
   }
 
@@ -441,6 +433,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.24  2010/03/04 22:59:29  willuhn
+ * @R redundantes try/catch
+ *
  * Revision 1.23  2009/09/09 09:16:19  willuhn
  * @N HTP-Auth via Messaging delegierbar
  *
