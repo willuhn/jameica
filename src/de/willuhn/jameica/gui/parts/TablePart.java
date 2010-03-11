@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.92 $
- * $Date: 2010/02/04 00:15:15 $
+ * $Revision: 1.93 $
+ * $Date: 2010/03/11 08:05:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -214,11 +214,20 @@ public class TablePart extends AbstractTablePart
   
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
-   * Ist <code>setCheckable(true)</code> gesetzt, werden nur die Elemente zurueckgeliefert,
-   * bei denen das Haekchen gesetzt ist.
-   * Die Objekte werden genau in der angezeigten Reihenfolge zurueckgeliefert.
+   * Entspricht <code>getItems(true)</code>
    */
   public List getItems() throws RemoteException
+  {
+    return this.getItems(true);
+  }
+  
+  /**
+   * Liefert die Fach-Objekte der Tabelle.
+   * @param onlyChecked true, falls bei Aktivierung des Features <code>setCheckable(true)</code>
+   * nur genau die Objekte geliefert werden sollen, bei denen das Haekchen gesetzt ist.
+   * Die Objekte werden genau in der angezeigten Reihenfolge zurueckgeliefert.
+   */
+  public List getItems(boolean onlyChecked) throws RemoteException
   {
     ArrayList l = new ArrayList();
 
@@ -237,7 +246,7 @@ public class TablePart extends AbstractTablePart
     {
       if (items[i] == null || items[i].isDisposed())
         continue;
-      if (this.checkable && !items[i].getChecked())
+      if (onlyChecked && this.checkable && !items[i].getChecked())
         continue;
       l.add(items[i].getData());
     }
@@ -1369,6 +1378,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.93  2010/03/11 08:05:10  willuhn
+ * @N getItems(boolean onlyChecked) - siehe Heiners Mail vom 11.03.2010
+ *
  * Revision 1.92  2010/02/04 00:15:15  willuhn
  * *** empty log message ***
  *
