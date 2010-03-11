@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.50 $
- * $Date: 2009/10/06 13:36:26 $
+ * $Revision: 1.51 $
+ * $Date: 2010/03/11 09:45:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -90,7 +90,6 @@ public class SSLFactory
    */
   public SSLFactory()
   {
-    super();
     this.callback = Application.getCallback();
   }
 
@@ -438,17 +437,7 @@ public class SSLFactory
 
 			Logger.info("reading keys");
 			this.keystore.load(is,this.callback.getPassword().toCharArray());
-
-
-      Logger.info("keystore loaded successfully, applying system properties");
-
-      String s = getKeyStoreFile().getAbsolutePath();
-      Logger.debug("javax.net.ssl.trustStore: " + s);
-      Logger.debug("javax.net.ssl.keyStore  : " + s);
-      System.setProperty("javax.net.ssl.trustStore", s);
-      System.setProperty("javax.net.ssl.trustStorePassword",Application.getCallback().getPassword());
-      System.setProperty("javax.net.ssl.keyStore",   s);
-      System.setProperty("javax.net.ssl.keyStorePassword",Application.getCallback().getPassword());
+      Logger.info("keystore loaded successfully");
 
       // Wir sagen der HttpsUrlConnection, dass sie unsere SocketFactory
       // nutzen soll, damit es ueber unseren TrustManager geht
@@ -751,6 +740,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.51  2010/03/11 09:45:20  willuhn
+ * @B System-Properties entfernt - fuehrte dazu, dass auch der System-Truststore nur die Jameica-Zertifikate kannte.
+ *
  * Revision 1.50  2009/10/06 13:36:26  willuhn
  * @N BouncyCastle auf 1.44 (vorher 1.24) aktualisiert. Wurde ja auch mal Zeit - die alte Version stammte noch von 2004! ;)
  * @C Der Private-Key des Jameica-Systemzertifikats wird jetzt mit 2048 Bit Schluessellaenge erstellt

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.20 $
- * $Date: 2009/05/13 21:48:36 $
+ * $Revision: 1.21 $
+ * $Date: 2010/03/11 09:45:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,8 +44,6 @@ public class JameicaTrustManager implements X509TrustManager
    */
   public JameicaTrustManager() throws KeyStoreException, Exception
   {
-    super();
-
 		// Wir ermitteln den System-TrustManager.
 		// und lassen die Zertifikatspruefungen erstmal von dem machen
     // Nur wenn er die Zertifikate als nicht vertrauenswuerdig
@@ -141,6 +139,27 @@ public class JameicaTrustManager implements X509TrustManager
     {
       try
       {
+
+        
+        
+        
+        
+        
+        
+        
+        
+        ///////////
+        X509Certificate[] trusted = this.standardTrustManager.getAcceptedIssuers();
+        for (X509Certificate c:trusted)
+        {
+          System.out.println(c.getSubjectDN());
+        }
+        ///////////
+
+        
+        
+        
+        
         Logger.debug("checking server certificate via system trustmanager");
         this.standardTrustManager.checkServerTrusted(certificates,authType);
         Logger.debug("certificate trusted");
@@ -268,6 +287,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.21  2010/03/11 09:45:20  willuhn
+ * @B System-Properties entfernt - fuehrte dazu, dass auch der System-Truststore nur die Jameica-Zertifikate kannte.
+ *
  * Revision 1.20  2009/05/13 21:48:36  willuhn
  * @D typo
  *
