@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.123 $
- * $Date: 2009/12/16 00:11:59 $
+ * $Revision: 1.124 $
+ * $Date: 2010/03/17 22:19:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -249,7 +249,7 @@ public class GUI implements ApplicationController
       getShell().setSize(width,height);
       
       // Wir checken noch, ob die Position ueberhaupt auf dem Bildschirm ist
-      if (x != 0 && y != 0)
+      if (x >= 0 && y >= 0)
       {
         // OK, es ist etwas angegeben. Checken, ob die Werte plausibel sind
         // Sonst koennte es passieren, dass das Fenster ausserhalb des sichtbaren
@@ -283,7 +283,7 @@ public class GUI implements ApplicationController
             SETTINGS.setAttribute("window.height",size.y);
           }
 
-          if (loc.x != 0 && loc.y != 0)
+          if (loc.x >= 0 && loc.y >= 0)
           {
             Logger.info("saving window location: " + loc.x + "x" + loc.y);
             // Zumindest unter Linux liefert das immer 0.
@@ -885,6 +885,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.124  2010/03/17 22:19:18  willuhn
+ * @C Negative x/y-Werte bei Fenster-Position nicht beruecksichtigen
+ *
  * Revision 1.123  2009/12/16 00:11:59  willuhn
  * @N Scroll-Support fuer Views - nochmal ueberarbeitet und jetzt via Customizing konfigurierbar
  *
