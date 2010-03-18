@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/SystemMessages.java,v $
- * $Revision: 1.7 $
- * $Date: 2008/12/11 00:00:37 $
+ * $Revision: 1.8 $
+ * $Date: 2010/03/18 11:38:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.boxes;
 
 import java.rmi.RemoteException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.parts.FormTextPart;
@@ -66,7 +67,7 @@ public class SystemMessages extends AbstractBox
    */
   public int getHeight()
   {
-    return 100;
+    return 250;
   }
 
   /**
@@ -102,14 +103,16 @@ public class SystemMessages extends AbstractBox
       
       sb.append("<li>");
       
+      String text = StringEscapeUtils.escapeXml(messages[i]);
+      text = text.replaceAll("\n","<br/>");
+      
       // Wenn in dem Text die Begriffe "Error", "Fehler" oder "Exception" auftreten, markieren wir es gleich rot
-      if (messages[i].toLowerCase().matches(".*(error|fehler|exception).*"))
-        sb.append("<span color=\"error\">" + messages[i] + "</span>");
-      else
-        sb.append(messages[i]);
+      if (text.toLowerCase().matches(".*(error|fehler|exception).*"))
+        sb.append("<span color=\"error\">" + Application.getI18n().tr("Fehler") + "</span><br/>");
+      sb.append(text);
       sb.append("</li>");
     }
-    sb.append("<br/><br/><p>Klicken Sie ggf. auf das Pfeil-Symbol in der Jameica-Statusleiste, um die letzten Meldungen des System-Logs anzuzeigen.</p>");
+    sb.append("<br/><br/><p>" + Application.getI18n().tr("Klicken Sie ggf. auf das Pfeil-Symbol in der Jameica-Statusleiste, um die letzten Meldungen des System-Logs anzuzeigen.") + "</p>");
     sb.append("</form>");
     FormTextPart part = new FormTextPart(sb.toString());
     part.paint(parent);
@@ -120,6 +123,9 @@ public class SystemMessages extends AbstractBox
 
 /*********************************************************************
  * $Log: SystemMessages.java,v $
+ * Revision 1.8  2010/03/18 11:38:03  willuhn
+ * @N Ausfuehrlichere und hilfreichere Fehlermeldung, wenn Hibiscus-Datenbank defekt ist oder nicht geoeffnet werden konnte.
+ *
  * Revision 1.7  2008/12/11 00:00:37  willuhn
  * @C Box wird sonst in voller verfuegbarer Hoehe angezeigt.
  *
