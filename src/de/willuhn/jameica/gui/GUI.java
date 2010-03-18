@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.124 $
- * $Date: 2010/03/17 22:19:18 $
+ * $Revision: 1.125 $
+ * $Date: 2010/03/18 09:33:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -276,7 +276,7 @@ public class GUI implements ApplicationController
           SETTINGS.setAttribute("window.maximized", maximized);
 
           // Nur speichern, wenn plausible und sinnvolle Werte vorliegen
-          if (size.x != 0 && size.y != 0)
+          if (size.x >= 0 && size.y >= 0)
           {
             Logger.info("saving window size: " + size.x + "x" + size.y);
             SETTINGS.setAttribute("window.width", size.x);
@@ -885,6 +885,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.125  2010/03/18 09:33:09  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.124  2010/03/17 22:19:18  willuhn
  * @C Negative x/y-Werte bei Fenster-Position nicht beruecksichtigen
  *
