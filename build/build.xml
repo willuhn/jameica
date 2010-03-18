@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.68 $
- $Date: 2010/02/21 22:13:14 $
+ $Revision: 1.69 $
+ $Date: 2010/03/18 11:49:42 $
  $Author: willuhn $
  
  All rights reserved
@@ -122,6 +122,10 @@
       <param name="param.classpath" value="${classpath.win32}" />
     </antcall>
     <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.win64}" />
+      <param name="param.classpath" value="${classpath.win64}" />
+    </antcall>
+    <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.macos}" />
       <param name="param.classpath" value="${classpath.macos}" />
     </antcall>
@@ -185,18 +189,15 @@
 				<include name="${define.projectname}/lib/**"/>
 
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
-				<exclude name="${define.projectname}/lib/swt/win32/**"/>
-        <exclude name="${define.projectname}/lib/swt/win64/**"/>
-				<exclude name="${define.projectname}/lib/swt/macos/**"/>
-        <exclude name="${define.projectname}/lib/swt/macos64/**"/>
+				<exclude name="${define.projectname}/lib/swt/win*/**"/>
+				<exclude name="${define.projectname}/lib/swt/macos*/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux64/**"/>
-        <exclude name="${define.projectname}/Jameica.icns"/>
-        <exclude name="${define.projectname}/Info.plist"/>
-        <exclude name="${define.projectname}/Info64.plist"/>
+        <exclude name="${define.projectname}/*.icns"/>
+        <exclude name="${define.projectname}/*.plist"/>
 			</zipfileset>
 		</zip>
 
-		<!-- ZIP-File fuer Linux AMD 64 -->
+		<!-- ZIP-File fuer Linux64 -->
 		<zip destfile="${project.release}/${project.zipfilename.linux64}">
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
@@ -215,14 +216,11 @@
 				<include name="${define.projectname}/lib/**"/>
 
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
-				<exclude name="${define.projectname}/lib/swt/win32/**"/>
-        <exclude name="${define.projectname}/lib/swt/win64/**"/>
-				<exclude name="${define.projectname}/lib/swt/macos/**"/>
-        <exclude name="${define.projectname}/lib/swt/macos64/**"/>
+				<exclude name="${define.projectname}/lib/swt/win*/**"/>
+				<exclude name="${define.projectname}/lib/swt/macos*/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
-        <exclude name="${define.projectname}/Jameica.icns"/>
-        <exclude name="${define.projectname}/Info.plist"/>
-        <exclude name="${define.projectname}/Info64.plist"/>
+        <exclude name="${define.projectname}/*.icns"/>
+        <exclude name="${define.projectname}/*.plist"/>
 			</zipfileset>
 		</zip>
 
@@ -245,17 +243,40 @@
 
         <exclude name="${define.projectname}/lib/swt/win64/**"/>
         <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
-				<exclude name="${define.projectname}/lib/swt/macos/**"/>
-        <exclude name="${define.projectname}/lib/swt/macos64/**"/>
-				<exclude name="${define.projectname}/lib/swt/linux/**"/>
-				<exclude name="${define.projectname}/lib/swt/linux64/**"/>
-        <exclude name="${define.projectname}/Jameica.icns"/>
-        <exclude name="${define.projectname}/Info.plist"/>
-        <exclude name="${define.projectname}/Info64.plist"/>
+				<exclude name="${define.projectname}/lib/swt/macos*/**"/>
+				<exclude name="${define.projectname}/lib/swt/linux*/**"/>
+        <exclude name="${define.projectname}/*.icns"/>
+        <exclude name="${define.projectname}/*.plist"/>
 			</zipfileset>
 		</zip>
 
-		<!-- ZIP-File fuer MacOS -->
+	    <!-- ZIP-File fuer Win64 -->
+	    <zip destfile="${project.release}/${project.zipfilename.win64}">
+	      <zipfileset dir="${project.release}" filemode="755">
+	        <include name="${define.projectname}" />
+	        <include name="${define.projectname}/plugin.xml"/>
+	        <include name="${define.projectname}/${define.jarfilename}"/>
+	        <include name="${define.projectname}/${define.jarfilename.win64}"/>
+	        <include name="${define.projectname}/COPYING"/>
+	        <include name="${define.projectname}/README"/>
+	        <include name="${define.projectname}/jameica-win64.bat"/>
+	        <include name="${define.projectname}/jameicaserver-win64.bat"/>
+	        <include name="${define.projectname}/jameica-icon-01.ico"/>
+	        <include name="${define.projectname}/jameica-icon-01.png"/>
+	        <include name="${define.projectname}/jameica-icon-02.png"/>
+	        <include name="${define.projectname}/plugins"/>
+	        <include name="${define.projectname}/lib/**"/>
+
+	        <exclude name="${define.projectname}/lib/swt/win32/**"/>
+	        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
+	        <exclude name="${define.projectname}/lib/swt/macos*/**"/>
+	        <exclude name="${define.projectname}/lib/swt/linux*/**"/>
+	        <exclude name="${define.projectname}/*.icns"/>
+	        <exclude name="${define.projectname}/*.plist"/>
+	      </zipfileset>
+	    </zip>
+
+  	<!-- ZIP-File fuer MacOS -->
     <mkdir dir="${project.tmp}/${define.projectname}.app" />
     <copy todir="${project.tmp}/${define.projectname}.app">
       <fileset dir="${project.release}/${define.projectname}">
@@ -276,11 +297,9 @@
         <include name="lib/**"/>
         <exclude name="Info64.plist"/>
         <exclude name="lib/swt/openbsd/**"/>
-        <exclude name="lib/swt/win64/**"/>
-        <exclude name="lib/swt/win32/**"/>
-        <exclude name="lib/swt/linux/**"/>
+        <exclude name="lib/swt/win*/**"/>
+        <exclude name="lib/swt/linux*/**"/>
         <exclude name="lib/swt/macos64/**"/>
-        <exclude name="lib/swt/linux64/**"/>
       </fileset>
     </copy>
 		<zip destfile="${project.release}/${project.zipfilename.macos}">
@@ -311,11 +330,9 @@
         <include name="lib/**"/>
         <exclude name="Info.plist"/>
         <exclude name="lib/swt/openbsd/**"/>
-        <exclude name="lib/swt/win32/**"/>
-        <exclude name="lib/swt/win64/**"/>
-        <exclude name="lib/swt/linux/**"/>
+        <exclude name="lib/swt/win*/**"/>
+        <exclude name="lib/swt/linux*/**"/>
         <exclude name="lib/swt/macos/**"/>
-        <exclude name="lib/swt/linux64/**"/>
       </fileset>
     </copy>
     <move file="${project.tmp}/${define.projectname}.app/Info64.plist" tofile="${project.tmp}/${define.projectname}.app/Info.plist" />
@@ -344,9 +361,8 @@
         <include name="${define.projectname}/lib/**"/>
 
         <exclude name="${define.projectname}/lib/swt/**"/>
-        <exclude name="${define.projectname}/Jameica.icns"/>
-        <exclude name="${define.projectname}/Info.plist"/>
-        <exclude name="${define.projectname}/Info64.plist"/>
+        <exclude name="${define.projectname}/*.icns"/>
+        <exclude name="${define.projectname}/*.plist"/>
       </zipfileset>
     </zip>
 
@@ -369,9 +385,8 @@
         <include name="${define.projectname}/lib/**"/>
 
         <exclude name="${define.projectname}/lib/swt/**"/>
-        <exclude name="${define.projectname}/Jameica.icns"/>
-        <exclude name="${define.projectname}/Info.plist"/>
-        <exclude name="${define.projectname}/Info64.plist"/>
+        <exclude name="${define.projectname}/*.icns"/>
+        <exclude name="${define.projectname}/*.plist"/>
       </zipfileset>
     </zip>
 
@@ -440,6 +455,7 @@
 		<checksum file="${project.release}/${define.srcfilename}" />
 		<checksum file="${project.release}/${project.zipfilename}" />
 		<checksum file="${project.release}/${project.zipfilename.win32}" />
+    <checksum file="${project.release}/${project.zipfilename.win64}" />
 		<checksum file="${project.release}/${project.zipfilename.linux}" />
 		<checksum file="${project.release}/${project.zipfilename.linux64}" />
 		<checksum file="${project.release}/${project.zipfilename.macos}" />
@@ -458,6 +474,9 @@
 		<exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.win32}" />
 		</exec>
+    <exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.win64}" />
+    </exec>
 		<exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux}" />
 		</exec>
@@ -492,6 +511,7 @@
 		<copy file="${project.release}/${project.zipfilename.macos}" 		    tofile="${project.nightly}/${define.projectname}-${system.version}-macos.zip" />
     <copy file="${project.release}/${project.zipfilename.macos64}"      tofile="${project.nightly}/${define.projectname}-${system.version}-macos64.zip" />
 		<copy file="${project.release}/${project.zipfilename.win32}" 		    tofile="${project.nightly}/${define.projectname}-${system.version}-win32.zip" />
+    <copy file="${project.release}/${project.zipfilename.win64}"        tofile="${project.nightly}/${define.projectname}-${system.version}-win64.zip" />
     <copy file="${project.release}/${project.zipfilename.openbsd}"      tofile="${project.nightly}/${define.projectname}-${system.version}-openbsd.zip" />
     <copy file="${project.release}/${project.zipfilename.osol}"         tofile="${project.nightly}/${define.projectname}-${system.version}-osol.zip" />
 
