@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/08/29 14:38:43 $
+ * $Revision: 1.7 $
+ * $Date: 2010/03/24 13:00:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,6 +85,7 @@ public class ExpandPart implements Part
   public void paint(Composite parent) throws RemoteException
   {
     ExpandBar bar = new ExpandBar(parent, SWT.V_SCROLL);
+    bar.setSpacing(1);
     bar.setBackground(Color.BACKGROUND.getSWTColor());
     bar.setLayoutData(new GridData(GridData.FILL_BOTH));
     
@@ -168,6 +169,9 @@ public class ExpandPart implements Part
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
+ * Revision 1.7  2010/03/24 13:00:03  willuhn
+ * @N der linke Rand wird sonst in GTK ueberdeckt
+ *
  * Revision 1.6  2008/08/29 14:38:43  willuhn
  * @N wen ein einzelnes Part beim Zeichnen einen Fehler wirft, dann ueberspringen und Fehler melden - fuehrt sonst dazu, dass ggf. die Box mit den Jameica-Startmeldungen nicht angezeigt wird
  *
