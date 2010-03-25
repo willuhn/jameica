@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.23 $
- * $Date: 2010/03/11 14:43:57 $
+ * $Revision: 1.24 $
+ * $Date: 2010/03/25 12:59:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,11 @@
 
 package de.willuhn.jameica.security;
 
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
@@ -203,7 +203,7 @@ public class JameicaTrustManager implements X509TrustManager
         Logger.info("certificate chain trusted: " + toString(cert));
         verified = true;
       }
-      catch (CertPathValidatorException e)
+      catch (GeneralSecurityException e)
       {
         // OK, die Chain ist zwar unvollstaendig. Aber vielleicht kennen
         // wir das Peer selbst.
@@ -306,6 +306,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.24  2010/03/25 12:59:08  willuhn
+ * @N InvalidAlgorithmParameterException ebenfalls fangen
+ *
  * Revision 1.23  2010/03/11 14:43:57  willuhn
  * @N TrustManager ueberarbeitet
  *
