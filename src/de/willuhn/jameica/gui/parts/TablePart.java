@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.95 $
- * $Date: 2010/03/29 21:54:51 $
+ * $Revision: 1.96 $
+ * $Date: 2010/03/29 22:08:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -87,7 +87,6 @@ public class TablePart extends AbstractTablePart
 
   //////////////////////////////////////////////////////////
   // Listeners, Actions
-  private ArrayList selectionListeners = new ArrayList();
   private de.willuhn.datasource.rmi.Listener deleteListener = new DeleteListener();
   private ArrayList changeListeners     = new ArrayList();
   private Action action                 = null;
@@ -191,17 +190,6 @@ public class TablePart extends AbstractTablePart
       this.changeListeners.add(l);
   }
   
-  /**
-   * Fuegt der Tabelle einen Listener hinzu, der ausgeloest wird, wenn
-   * ein oder mehrere Elemente markiert wurden.
-   * @param l der Listener.
-   */
-  public void addSelectionListener(Listener l)
-  {
-    if (l != null)
-      this.selectionListeners.add(l);
-  }
-
   /**
    * Legt fest, ob eine Summenzeile am Ende angezeigt werden soll.
    * @param show true, wenn die Summenzeile angezeigt werden soll (Default) oder false
@@ -1372,6 +1360,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.96  2010/03/29 22:08:08  willuhn
+ * @N addSelectionListener in Basis-Klasse verschoben, damit auch TreePart die Funktion nutzen kann
+ *
  * Revision 1.95  2010/03/29 21:54:51  willuhn
  * @N setChecked-Support in TreePart
  *

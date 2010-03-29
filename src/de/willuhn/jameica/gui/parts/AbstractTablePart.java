@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.13 $
- * $Date: 2010/03/29 21:54:51 $
+ * $Revision: 1.14 $
+ * $Date: 2010/03/29 22:08:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,11 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
@@ -37,6 +40,8 @@ public abstract class AbstractTablePart implements Part
 
   protected boolean multi                  = false; // Multiple Markierung
   protected boolean checkable              = false;
+  
+  protected List<Listener> selectionListeners = new ArrayList();
 
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
@@ -265,6 +270,17 @@ public abstract class AbstractTablePart implements Part
   {
     setChecked(new Object[]{o},checked);
   }
+  
+  /**
+   * Fuegt der Tabelle einen Listener hinzu, der ausgeloest wird, wenn
+   * ein oder mehrere Elemente markiert wurden.
+   * @param l der Listener.
+   */
+  public void addSelectionListener(Listener l)
+  {
+    if (l != null)
+      this.selectionListeners.add(l);
+  }
 
   /**
    * Entfernt alle Elemente aus der Tabelle.
@@ -276,6 +292,9 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.14  2010/03/29 22:08:08  willuhn
+ * @N addSelectionListener in Basis-Klasse verschoben, damit auch TreePart die Funktion nutzen kann
+ *
  * Revision 1.13  2010/03/29 21:54:51  willuhn
  * @N setChecked-Support in TreePart
  *

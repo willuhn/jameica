@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.37 $
- * $Date: 2010/03/29 21:54:51 $
+ * $Revision: 1.38 $
+ * $Date: 2010/03/29 22:08:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -221,6 +221,31 @@ public class TreePart extends AbstractTablePart
       }
     });
 
+    // Listener fuer Markierung/Aktivierung der Checkbox
+    this.tree.addListener(SWT.Selection, new Listener() {
+      public void handleEvent(Event event)
+      {
+        if (selectionListeners.size() == 0)
+          return;
+        
+        event.data = getSelection();
+        // Noch die Selection-Listeners
+        for (int i=0;i<selectionListeners.size();++i)
+        {
+          try
+          {
+            Listener l = (Listener) selectionListeners.get(i);
+            l.handleEvent(event);
+          }
+          catch (Throwable t)
+          {
+            Logger.error("error while executing listener, skipping",t);
+          }
+        }
+      }
+    });
+    
+    
     // Spalten hinzufuegen
     if (this.columns.size() > 0)
     {
@@ -715,6 +740,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.38  2010/03/29 22:08:09  willuhn
+ * @N addSelectionListener in Basis-Klasse verschoben, damit auch TreePart die Funktion nutzen kann
+ *
  * Revision 1.37  2010/03/29 21:54:51  willuhn
  * @N setChecked-Support in TreePart
  *
