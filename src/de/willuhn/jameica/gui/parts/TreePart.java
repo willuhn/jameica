@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.38 $
- * $Date: 2010/03/29 22:08:09 $
+ * $Revision: 1.39 $
+ * $Date: 2010/03/29 22:20:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -229,6 +229,18 @@ public class TreePart extends AbstractTablePart
           return;
         
         event.data = getSelection();
+
+        // Wir setzen noch ein Flag, in dem der Aufrufer erkennt,
+        // ob die Checkbox gesetzt ist.
+        if (checkable)
+        {
+          TreeItem[] items = tree.getSelection();
+          if (items != null && items.length > 0)
+          {
+            event.detail = items[0].getChecked() ? 1 : 0;
+          }
+        }
+        
         // Noch die Selection-Listeners
         for (int i=0;i<selectionListeners.size();++i)
         {
@@ -740,6 +752,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.39  2010/03/29 22:20:01  willuhn
+ * @N Checked-Flag setzen
+ *
  * Revision 1.38  2010/03/29 22:08:09  willuhn
  * @N addSelectionListener in Basis-Klasse verschoben, damit auch TreePart die Funktion nutzen kann
  *
