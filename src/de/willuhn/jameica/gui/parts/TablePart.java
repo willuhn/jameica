@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.93 $
- * $Date: 2010/03/11 08:05:10 $
+ * $Revision: 1.94 $
+ * $Date: 2010/03/29 21:31:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -989,8 +989,14 @@ public class TablePart extends AbstractTablePart
    */
   public void setChecked(Object[] objects, boolean checked)
   {
-    if (objects == null || objects.length == 0 || table == null)
+    if (objects == null || objects.length == 0)
       return;
+    
+    if (table == null || table.isDisposed())
+    {
+      Logger.error("unable to set checked state - no paint(Composite) called or table disposed");
+      return;
+    }
     
     for (int i=0;i<objects.length;++i)
     {
@@ -1378,6 +1384,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.94  2010/03/29 21:31:20  willuhn
+ * @N BUGZILLA 840
+ *
  * Revision 1.93  2010/03/11 08:05:10  willuhn
  * @N getItems(boolean onlyChecked) - siehe Heiners Mail vom 11.03.2010
  *
