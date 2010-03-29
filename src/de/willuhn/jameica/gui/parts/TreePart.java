@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.40 $
- * $Date: 2010/03/29 22:22:00 $
+ * $Revision: 1.41 $
+ * $Date: 2010/03/29 22:22:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -232,14 +232,17 @@ public class TreePart extends AbstractTablePart
 
         // Wir setzen noch ein Flag, in dem der Aufrufer erkennt,
         // ob die Checkbox gesetzt ist.
-        event.detail = -1;
-        if (checkable)
+        if (checkable && event.detail == SWT.CHECK)
         {
           TreeItem[] items = tree.getSelection();
           if (items != null && items.length > 0)
           {
             event.detail = items[0].getChecked() ? 1 : 0;
           }
+        }
+        else
+        {
+          event.detail = -1;
         }
         
         // Noch die Selection-Listeners
@@ -753,6 +756,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.41  2010/03/29 22:22:47  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.40  2010/03/29 22:22:00  willuhn
  * *** empty log message ***
  *
