@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.94 $
- * $Date: 2010/03/29 21:31:20 $
+ * $Revision: 1.95 $
+ * $Date: 2010/03/29 21:54:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -983,9 +983,7 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
-   * Wenn die Tabelle mit Checkboxen versehen ist, kann man damit bei einem Element das Haeckchen setzen oder entfernen.
-   * @param objects Liste der zu checkenden Objekte.
-   * @param checked true, wenn das Haekchen gesetzt werden soll.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#setChecked(java.lang.Object[], boolean)
    */
   public void setChecked(Object[] objects, boolean checked)
   {
@@ -1033,16 +1031,6 @@ public class TablePart extends AbstractTablePart
   public void select(Object o)
   {
     select(new Object[]{o});
-  }
-
-  /**
-   * Wenn die Tabelle mit Checkboxen versehen ist, kann man damit bei einem Element das Haeckchen setzen oder entfernen.
-   * @param o das zu checkende Element.
-   * @param checked true, wenn das Haekchen gesetzt werden soll.
-   */
-  public void setChecked(Object o, boolean checked)
-  {
-    setChecked(new Object[]{o},checked);
   }
 
   /**
@@ -1384,6 +1372,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.95  2010/03/29 21:54:51  willuhn
+ * @N setChecked-Support in TreePart
+ *
  * Revision 1.94  2010/03/29 21:31:20  willuhn
  * @N BUGZILLA 840
  *

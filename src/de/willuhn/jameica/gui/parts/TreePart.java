@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.36 $
- * $Date: 2009/11/17 10:42:49 $
+ * $Revision: 1.37 $
+ * $Date: 2010/03/29 21:54:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -650,6 +650,33 @@ public class TreePart extends AbstractTablePart
   }
   
   /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#setChecked(java.lang.Object[], boolean)
+   */
+  public void setChecked(Object[] objects, boolean checked)
+  {
+    if (objects == null || objects.length == 0)
+      return;
+    
+    if (this.tree == null || this.tree.isDisposed())
+    {
+      Logger.error("unable to set checked state - no paint(Composite) called or tree disposed");
+      return;
+    }
+    
+    for (int i=0;i<objects.length;++i)
+    {
+      if (objects[i] == null)
+        continue;
+
+      Item item = (Item) itemLookup.get(objects[i]);
+      if (item == null)
+        continue; // kennen wir nicht.
+      
+      item.item.setChecked(checked);
+    }
+  }
+  
+  /**
    * Fuegt rekursiv alle aktivierten Kinder zur Liste hinzu.
    * @param item das Tree-Item.
    * @param list Liste, zu der die Kinder hinzugefuegt werden sollen.
@@ -688,6 +715,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.37  2010/03/29 21:54:51  willuhn
+ * @N setChecked-Support in TreePart
+ *
  * Revision 1.36  2009/11/17 10:42:49  willuhn
  * @R vergessen, zu entfernen - steht in AbstractTablePart
  *

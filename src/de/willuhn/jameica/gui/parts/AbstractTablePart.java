@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.12 $
- * $Date: 2009/11/16 10:44:31 $
+ * $Revision: 1.13 $
+ * $Date: 2010/03/29 21:54:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -244,6 +244,29 @@ public abstract class AbstractTablePart implements Part
   }
   
   /**
+   * Wenn die Tabelle mit Checkboxen versehen ist, kann man damit bei einem Element 
+   * das Haeckchen setzen oder entfernen.
+   * Hinweis: Dies hier ist eine leere Dummy-Implementierung. Sie muss von
+   * abgeleiteten Klassen ueberschrieben werden.
+   * @param objects Liste der zu checkenden Objekte.
+   * @param checked true, wenn das Haekchen gesetzt werden soll.
+   */
+  public void setChecked(Object[] objects, boolean checked)
+  {
+    Logger.warn("setChecked not implemented in " + this.getClass().getName());
+  }
+  
+  /**
+   * Wenn die Tabelle mit Checkboxen versehen ist, kann man damit bei einem Element das Haeckchen setzen oder entfernen.
+   * @param o das zu checkende Element.
+   * @param checked true, wenn das Haekchen gesetzt werden soll.
+   */
+  public void setChecked(Object o, boolean checked)
+  {
+    setChecked(new Object[]{o},checked);
+  }
+
+  /**
    * Entfernt alle Elemente aus der Tabelle.
    */
   public abstract void removeAll();
@@ -253,6 +276,9 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.13  2010/03/29 21:54:51  willuhn
+ * @N setChecked-Support in TreePart
+ *
  * Revision 1.12  2009/11/16 10:44:31  willuhn
  * @N TreePart hat nun ebenfalls Checkbox-Support. Damit wandert setCheckable(boolean) in die gemeinsame Basis-Klasse AbstractTablePart
  *
