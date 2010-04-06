@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.7 $
- * $Date: 2009/01/20 10:51:51 $
+ * $Revision: 1.8 $
+ * $Date: 2010/04/06 11:52:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -83,7 +83,7 @@ public class Button implements Part
    * @param action Action, die beim Klick ausgefuehrt werden soll.
    * @param context ein Context-Objekt, welches beim Click der Action uebergeben wird.
    * @param defaultButton legt fest, ob das der Default-Button der Shell sein soll.
-   * @param Icon, welches links neben der Beschriftung angezeigt werden soll.
+   * @param icon Icon, welches links neben der Beschriftung angezeigt werden soll.
    */
   public Button(String title, Action action, Object context, boolean defaultButton, String icon)
   {
@@ -166,6 +166,9 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
+ * Revision 1.8  2010/04/06 11:52:38  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.7  2009/01/20 10:51:51  willuhn
  * @N Mehr Icons - fuer Buttons
  *

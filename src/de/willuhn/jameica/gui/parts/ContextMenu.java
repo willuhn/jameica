@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ContextMenu.java,v $
- * $Revision: 1.8 $
- * $Date: 2009/09/14 23:05:49 $
+ * $Revision: 1.9 $
+ * $Date: 2010/04/06 11:53:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,7 +71,7 @@ public class ContextMenu implements Part
    * innerhalb eines anderen Menus verwendet wird.
    * Ist dieser Name nicht gesetzt, kann das Menu nicht als
    * Submenu verwendet werden.
-   * @param name anzuzeigender Name fuer das Sub-Menu.
+   * @param text anzuzeigender Name fuer das Sub-Menu.
    */
   public void setText(String text)
   {
@@ -214,6 +214,9 @@ public class ContextMenu implements Part
 
 /**********************************************************************
  * $Log: ContextMenu.java,v $
+ * Revision 1.9  2010/04/06 11:53:02  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2009/09/14 23:05:49  willuhn
  * @B setEnabled/isEnabledFor wurde nicht fuer Submenu-Elemente aufgerufen
  *
