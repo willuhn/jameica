@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.69 $
- $Date: 2010/03/18 11:49:42 $
+ $Revision: 1.70 $
+ $Date: 2010/04/11 14:18:49 $
  $Author: willuhn $
  
  All rights reserved
@@ -188,7 +188,6 @@
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
-        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win*/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos*/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux64/**"/>
@@ -215,7 +214,6 @@
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
-        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/win*/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos*/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux/**"/>
@@ -242,7 +240,6 @@
 				<include name="${define.projectname}/lib/**"/>
 
         <exclude name="${define.projectname}/lib/swt/win64/**"/>
-        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 				<exclude name="${define.projectname}/lib/swt/macos*/**"/>
 				<exclude name="${define.projectname}/lib/swt/linux*/**"/>
         <exclude name="${define.projectname}/*.icns"/>
@@ -268,7 +265,6 @@
 	        <include name="${define.projectname}/lib/**"/>
 
 	        <exclude name="${define.projectname}/lib/swt/win32/**"/>
-	        <exclude name="${define.projectname}/lib/swt/openbsd/**"/>
 	        <exclude name="${define.projectname}/lib/swt/macos*/**"/>
 	        <exclude name="${define.projectname}/lib/swt/linux*/**"/>
 	        <exclude name="${define.projectname}/*.icns"/>
@@ -296,7 +292,6 @@
         <include name="plugins"/>
         <include name="lib/**"/>
         <exclude name="Info64.plist"/>
-        <exclude name="lib/swt/openbsd/**"/>
         <exclude name="lib/swt/win*/**"/>
         <exclude name="lib/swt/linux*/**"/>
         <exclude name="lib/swt/macos64/**"/>
@@ -329,7 +324,6 @@
         <include name="plugins"/>
         <include name="lib/**"/>
         <exclude name="Info.plist"/>
-        <exclude name="lib/swt/openbsd/**"/>
         <exclude name="lib/swt/win*/**"/>
         <exclude name="lib/swt/linux*/**"/>
         <exclude name="lib/swt/macos/**"/>
@@ -360,7 +354,9 @@
         <include name="${define.projectname}/plugins"/>
         <include name="${define.projectname}/lib/**"/>
 
-        <exclude name="${define.projectname}/lib/swt/**"/>
+        <exclude name="${define.projectname}/lib/swt/win*/**"/>
+        <exclude name="${define.projectname}/lib/swt/linux*/**"/>
+        <exclude name="${define.projectname}/lib/swt/macos*/**"/>
         <exclude name="${define.projectname}/*.icns"/>
         <exclude name="${define.projectname}/*.plist"/>
       </zipfileset>
@@ -384,7 +380,9 @@
         <include name="${define.projectname}/plugins"/>
         <include name="${define.projectname}/lib/**"/>
 
-        <exclude name="${define.projectname}/lib/swt/**"/>
+        <exclude name="${define.projectname}/lib/swt/win*/**"/>
+        <exclude name="${define.projectname}/lib/swt/linux*/**"/>
+        <exclude name="${define.projectname}/lib/swt/macos*/**"/>
         <exclude name="${define.projectname}/*.icns"/>
         <exclude name="${define.projectname}/*.plist"/>
       </zipfileset>
