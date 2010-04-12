@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.125 $
- * $Date: 2010/03/18 09:33:09 $
+ * $Revision: 1.126 $
+ * $Date: 2010/04/12 16:26:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -113,6 +113,8 @@ public class GUI implements ApplicationController
     try
     {
       Logger.info("startup GUI");
+      
+      Logger.info("SWT version: " + SWT.getVersion());
 
       // init shell
       getShell().setLayout(SWTUtil.createGrid(1, false));
@@ -885,6 +887,9 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.126  2010/04/12 16:26:23  willuhn
+ * @N SWT-Version beim Start in Log schreiben
+ *
  * Revision 1.125  2010/03/18 09:33:09  willuhn
  * *** empty log message ***
  *
