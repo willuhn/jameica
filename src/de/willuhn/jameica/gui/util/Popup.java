@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Popup.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/03/11 23:21:44 $
+ * $Revision: 1.4 $
+ * $Date: 2010/04/13 12:17:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -98,6 +98,7 @@ public class Popup
     Display display = GUI.getDisplay();
     
     final Shell shell = new Shell(GUI.getShell(), SWT.ON_TOP | SWT.TOOL);
+    shell.setAlpha(210);
     shell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
   
     GridLayout gl = new GridLayout(2,false);
@@ -181,6 +182,9 @@ public class Popup
 
 /*********************************************************************
  * $Log: Popup.java,v $
+ * Revision 1.4  2010/04/13 12:17:03  willuhn
+ * @N Alpha-Blending in Splashscreen und Popup-Messages - seit SWT 3.4 moeglich
+ *
  * Revision 1.3  2009/03/11 23:21:44  willuhn
  * @B falsche Parameter-Uebergabe in Konstruktor
  *

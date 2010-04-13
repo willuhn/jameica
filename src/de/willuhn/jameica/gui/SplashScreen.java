@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.33 $
- * $Date: 2009/11/17 14:58:06 $
+ * $Revision: 1.34 $
+ * $Date: 2010/04/13 12:17:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,6 +68,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
 		display = GUI.getDisplay();
     
     shell = new Shell(display,SWT.NONE);
+    shell.setAlpha(Customizing.SETTINGS.getInt("application.splashscreen.alpha",210));
     String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
     shell.setText(name);
     shell.setBackground(new Color(display,0,0,0));
@@ -286,6 +287,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.34  2010/04/13 12:17:03  willuhn
+ * @N Alpha-Blending in Splashscreen und Popup-Messages - seit SWT 3.4 moeglich
+ *
  * Revision 1.33  2009/11/17 14:58:06  willuhn
  * @B Beim Beenden kann u.U. eine SWTException "Widget disposed" erscheinen
  *
