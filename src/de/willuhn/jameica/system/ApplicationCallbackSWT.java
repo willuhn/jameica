@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.25 $
- * $Date: 2010/03/04 23:08:30 $
+ * $Revision: 1.26 $
+ * $Date: 2010/04/13 10:42:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -183,7 +183,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		Display d = Display.getCurrent();
 		if (d == null)
 			d = new Display();
-		final Shell s = new Shell();
+		final Shell s = new Shell(d);
 		s.setLayout(new GridLayout());
 		s.setText(Application.getI18n().tr("Fehler beim Start von Jameica."));
 		Label l = new Label(s,SWT.NONE);
@@ -428,6 +428,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.26  2010/04/13 10:42:16  willuhn
+ * @
+ *
  * Revision 1.25  2010/03/04 23:08:30  willuhn
  * @N Sauberes Programm-Ende, wenn der User den Startvorgang selbst abgebrochen hat
  *
