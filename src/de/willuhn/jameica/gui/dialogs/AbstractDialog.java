@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.49 $
- * $Date: 2009/06/10 11:25:53 $
+ * $Revision: 1.50 $
+ * $Date: 2010/04/13 10:50:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -172,10 +172,17 @@ public abstract class AbstractDialog
     {
       public void run()
       {
+        // "PRIMARY_MODAL" untersagt Eingaben im Parent (also im Hauptfenster)
+        // Das funktioniert, weil die Shell dieses Dialogs hier als Parent
+        // das Hauptfenster hat. "APPLICATION_MODAL" wurde frueher verwendet,
+        // das untersagt aber Eingaben an ALLEN anderen Stellen des Displays.
+        // Und damit z.Bsp. auch in einer CCombo, die in diesem Dialog angezeigt
+        // wird (da CCombo intern eine borderless Shell fuer die Liste nutzt).
+        int flags = SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL;
         if (resizable)
-          shell = new Shell(display, SWT.RESIZE | SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-        else
-          shell = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+          flags |= SWT.RESIZE;
+
+        shell = new Shell(GUI.getShell(),flags);
 				
         if (pos == POSITION_MOUSE)
           cursor = display.getCursorLocation();
@@ -518,6 +525,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.50  2010/04/13 10:50:41  willuhn
+ * @B AbstractDialog hatte das falsche Parent und den falschen MODAL-Typ (APPLICATION_MODAL statt PRIMARY_MODAL)
+ *
  * Revision 1.49  2009/06/10 11:25:53  willuhn
  * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
  *
