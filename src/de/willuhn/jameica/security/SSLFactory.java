@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.51 $
- * $Date: 2010/03/11 09:45:20 $
+ * $Revision: 1.52 $
+ * $Date: 2010/04/14 11:06:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -166,7 +166,7 @@ public class SSLFactory
 
     byte[] serno = new byte[8];
     SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-    random.setSeed((long) (new Date().getTime()));
+    random.setSeed(System.nanoTime());
     random.nextBytes(serno);
     generator.setSerialNumber((new BigInteger(serno)).abs());
 
@@ -740,6 +740,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.52  2010/04/14 11:06:42  willuhn
+ * @C seed unnoetig kompliziert
+ *
  * Revision 1.51  2010/03/11 09:45:20  willuhn
  * @B System-Properties entfernt - fuehrte dazu, dass auch der System-Truststore nur die Jameica-Zertifikate kannte.
  *
