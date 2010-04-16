@@ -12,11 +12,11 @@ for i in "1.4.2" "1.5" "1.6"; do
 done
 
 if [ -z "$JAVACMD" ]; then
-  echo Fehler: Es wird Java 1.4.2 oder 1.5 benoetigt.
+  echo Fehler: Es wird Java 1.4.2, 1.5 oder 1.6 benoetigt.
   exit 1
 fi
 
 BASEDIR=$(dirname "$0")
 cd "${BASEDIR}"
 
-exec ${JAVACMD} -d32 -Xdock:name="Jameica" -Xmx256m -XstartOnFirstThread -jar "${BASEDIR}/jameica-macos.jar" -o $@  >/dev/null
+exec ${JAVACMD} -Xdock:name="Jameica" -Xmx256m -XstartOnFirstThread -jar "${BASEDIR}/jameica-macos.jar" -o $@  >/dev/null
