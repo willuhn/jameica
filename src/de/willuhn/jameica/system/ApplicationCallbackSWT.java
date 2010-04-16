@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.26 $
- * $Date: 2010/04/13 10:42:16 $
+ * $Revision: 1.25.2.1 $
+ * $Date: 2010/04/16 14:41:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,9 +54,9 @@ import de.willuhn.util.ProgressMonitor;
 public class ApplicationCallbackSWT extends AbstractApplicationCallback
 {
 
-	private SplashScreen startupMonitor  = null;
+  private SplashScreen startupMonitor  = null;
   private SplashScreen shutdownMonitor = null;
-	private String password              = null;
+  private String password              = null;
 
 
   /**
@@ -64,33 +64,33 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public String createPassword() throws Exception
   {
-		this.password = Application.getStartupParams().getPassword();
-		if (this.password != null)
-		{
-			Logger.info("master password given via commandline");
-		}
-		else
-		{
-	  	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
-	  	p.setText(Application.getI18n().tr(
-				"Sie starten Jameica zum ersten Mal.\n\n" +
-				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +				"Es wird anschließend bei jedem Start von Jameica benötigt."));
-			p.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
-			p.setMonitor(NewPasswordDialog.MONITOR_PRIMARY);
+    this.password = Application.getStartupParams().getPassword();
+    if (this.password != null)
+    {
+      Logger.info("master password given via commandline");
+    }
+    else
+    {
+      NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
+      p.setText(Application.getI18n().tr(
+        "Sie starten Jameica zum ersten Mal.\n\n" +
+        "Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +        "Es wird anschließend bei jedem Start von Jameica benötigt."));
+      p.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
+      p.setMonitor(NewPasswordDialog.MONITOR_PRIMARY);
 
-			try
-			{
-				this.password = (String) p.open();
-			}
-			catch (OperationCanceledException e)
-			{
-				throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
-			}
-		}
-		// Wir speichern eine Checksumme des neuen Passwortes.
-		// Dann koennen wir spaeter checken, ob es ok ist.
-		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
-		return this.password;
+      try
+      {
+        this.password = (String) p.open();
+      }
+      catch (OperationCanceledException e)
+      {
+        throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
+      }
+    }
+    // Wir speichern eine Checksumme des neuen Passwortes.
+    // Dann koennen wir spaeter checken, ob es ok ist.
+    settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
+    return this.password;
   }
 
   /**
@@ -98,68 +98,68 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public String getPassword() throws Exception
   {
-  	if (this.password != null)
-  		return password;
+    if (this.password != null)
+      return password;
 
-		String checksum = settings.getString("jameica.system.callback.checksum",null);
-		this.password  	= Application.getStartupParams().getPassword();
+    String checksum = settings.getString("jameica.system.callback.checksum",null);
+    this.password   = Application.getStartupParams().getPassword();
 
-		if (password != null)
-		{
-			Logger.info("master password given via commandline");
-			if (checksum == null)
-			{
-				return password;
-			}
+    if (password != null)
+    {
+      Logger.info("master password given via commandline");
+      if (checksum == null)
+      {
+        return password;
+      }
 
-			Logger.info("checksum found, testing");
-			if (checksum.equals(Checksum.md5(password.getBytes())))
-			{
-				return password;
-			}
-			Logger.info("checksum test failed, asking for password in interactive mode");
-		}
+      Logger.info("checksum found, testing");
+      if (checksum.equals(Checksum.md5(password.getBytes())))
+      {
+        return password;
+      }
+      Logger.info("checksum test failed, asking for password in interactive mode");
+    }
 
-		PWD dialog = new PWD();
-  	this.password = (String) dialog.open();
-		return this.password;
+    PWD dialog = new PWD();
+    this.password = (String) dialog.open();
+    return this.password;
   }
 
-	/**
-	 * @see de.willuhn.jameica.system.ApplicationCallback#changePassword()
-	 */
-	public void changePassword() throws Exception
-	{
-		NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
-		p.setText(Application.getI18n().tr(
-			"Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\n" +
-			"Es wird anschließend bei jedem Start von Jameica benötigt."));
-		p.setTitle(Application.getI18n().tr("Neues Jameica Master-Passwort"));
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#changePassword()
+   */
+  public void changePassword() throws Exception
+  {
+    NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
+    p.setText(Application.getI18n().tr(
+      "Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\n" +
+      "Es wird anschließend bei jedem Start von Jameica benötigt."));
+    p.setTitle(Application.getI18n().tr("Neues Jameica Master-Passwort"));
 
-		try
-		{
-			this.password = (String) p.open();
-			// Wir speichern eine Checksumme des neuen Passwortes.
-			// Dann koennen wir spaeter checken, ob es ok ist.
-			settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
-		}
-		catch (OperationCanceledException e)
-		{
-			throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
-		}
-	}
+    try
+    {
+      this.password = (String) p.open();
+      // Wir speichern eine Checksumme des neuen Passwortes.
+      // Dann koennen wir spaeter checken, ob es ok ist.
+      settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
+    }
+    catch (OperationCanceledException e)
+    {
+      throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
+    }
+  }
 
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#getStartupMonitor()
    */
   public ProgressMonitor getStartupMonitor()
   {
-  	if (startupMonitor != null)
-  		return startupMonitor;
-  	startupMonitor = new SplashScreen(null,false);
+    if (startupMonitor != null)
+      return startupMonitor;
+    startupMonitor = new SplashScreen(null,false);
     startupMonitor.setStatusText(" starting...");
-  	startupMonitor.init();
-  	return startupMonitor;
+    startupMonitor.init();
+    return startupMonitor;
   }
 
   /**
@@ -180,38 +180,38 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public void startupError(String errorMessage, Throwable t)
   {
-		Display d = Display.getCurrent();
-		if (d == null)
-			d = new Display();
-		final Shell s = new Shell(d);
-		s.setLayout(new GridLayout());
-		s.setText(Application.getI18n().tr("Fehler beim Start von Jameica."));
-		Label l = new Label(s,SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l.setText(Application.getI18n().tr("Beim Start von Jameica ist ein Fehler aufgetreten:\n") + errorMessage);
+    Display d = Display.getCurrent();
+    if (d == null)
+      d = new Display();
+    final Shell s = new Shell(d);
+    s.setLayout(new GridLayout());
+    s.setText(Application.getI18n().tr("Fehler beim Start von Jameica."));
+    Label l = new Label(s,SWT.NONE);
+    l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    l.setText(Application.getI18n().tr("Beim Start von Jameica ist ein Fehler aufgetreten:\n") + errorMessage);
 
-		Button b = new Button(s,SWT.BORDER);
-		b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		b.setText("    OK    ");
-		b.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				s.close();
-			}
-		});
-		s.pack();
-		s.open();
-		while (!s.isDisposed()) {
-			if (!d.readAndDispatch()) d.sleep();
-		}
-		try {
-			s.dispose();
-			d.dispose();
-		}
-		catch (Exception e2) {
-			// useless
-		}
+    Button b = new Button(s,SWT.BORDER);
+    b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+    b.setText("    OK    ");
+    b.addSelectionListener(new SelectionAdapter()
+    {
+      public void widgetSelected(SelectionEvent e)
+      {
+        s.close();
+      }
+    });
+    s.pack();
+    s.open();
+    while (!s.isDisposed()) {
+      if (!d.readAndDispatch()) d.sleep();
+    }
+    try {
+      s.dispose();
+      d.dispose();
+    }
+    catch (Exception e2) {
+      // useless
+    }
   }
 
 
@@ -220,11 +220,11 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public String askUser(String question, String labeltext) throws Exception
   {
-  	TextDialog d = new TextDialog(TextDialog.POSITION_CENTER);
-  	d.setText(question);
-  	d.setTitle(labeltext);
-  	d.setLabelText(labeltext);
-  	return (String) d.open();
+    TextDialog d = new TextDialog(TextDialog.POSITION_CENTER);
+    d.setText(question);
+    d.setTitle(labeltext);
+    d.setLabelText(labeltext);
+    return (String) d.open();
   }
 
   /**
@@ -428,6 +428,13 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.25.2.1  2010/04/16 14:41:05  willuhn
+ * @N Backport-Patches aus 1.10
+ *  - Build-Scripts (fuer OpenBSD und Solaris)
+ *  - Start-Scripts (fuer Mac OS X)
+ *  - SWT-Version beim Start ausgeben
+ *  - Modal-Verhalten in AbstractDialog
+ *
  * Revision 1.26  2010/04/13 10:42:16  willuhn
  * @
  *

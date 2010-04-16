@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.126 $
- * $Date: 2010/04/12 16:26:23 $
+ * $Revision: 1.125.2.1 $
+ * $Date: 2010/04/16 14:41:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,53 +63,53 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class GUI implements ApplicationController
 {
-	final static Settings SETTINGS = new Settings(GUI.class);
+  final static Settings SETTINGS = new Settings(GUI.class);
 
   private static GUI gui = null;
     private ApplicationCallback callback = null;
     private Display display;
-  	private Shell shell;
+    private Shell shell;
   
-  	private Navigation navi;
-  	private View view;
-  	private StatusBar statusBar;
-  	private Menu menu;
-  	private FormTextPart help;
-  	private AbstractView currentView;
-  	
-  	private Stack history;
-  	private boolean skipHistory = false;
-  	private StyleFactory styleFactory;
+    private Navigation navi;
+    private View view;
+    private StatusBar statusBar;
+    private Menu menu;
+    private FormTextPart help;
+    private AbstractView currentView;
+    
+    private Stack history;
+    private boolean skipHistory = false;
+    private StyleFactory styleFactory;
   
     private boolean stop = false;
 
 
-	private static class HistoryEntry
-	{
+  private static class HistoryEntry
+  {
     private AbstractView view;
 
     private HistoryEntry(AbstractView view)
     {
       this.view = view;
     }
-	}
+  }
 
-	/**
-	 * Erzeugt die GUI-Instanz.
-	 */
-	public GUI()
-	{
+  /**
+   * Erzeugt die GUI-Instanz.
+   */
+  public GUI()
+  {
     if (gui != null)
       throw new RuntimeException("unable to start second gui");
     gui = this;
     SETTINGS.setStoreWhenRead(false);
-	}
+  }
 
-	/**
-	 * @see de.willuhn.jameica.system.ApplicationController#init()
-	 */
-	public void init() throws ApplicationException
-	{
+  /**
+   * @see de.willuhn.jameica.system.ApplicationController#init()
+   */
+  public void init() throws ApplicationException
+  {
     try
     {
       Logger.info("startup GUI");
@@ -225,7 +225,7 @@ public class GUI implements ApplicationController
       Logger.error("unable to load GUI",e);
       throw new ApplicationException(Application.getI18n().tr("Fehler beim Starten der Benutzeroberfläche"));
     }
-	}
+  }
 
   private void position()
   {
@@ -303,41 +303,41 @@ public class GUI implements ApplicationController
   }
 
 
-	/**
-	 * Startet die vorherige View. Existiert keine solche, kehrt die Funktion
-	 * tatenlos zurueck.
-	 */
-	public static void startPreviousView()
-	{
+  /**
+   * Startet die vorherige View. Existiert keine solche, kehrt die Funktion
+   * tatenlos zurueck.
+   */
+  public static void startPreviousView()
+  {
     // BUGZILLA 247
     if (gui == null || gui.history == null || gui.history.size() == 0)
     {
       Logger.warn("unable to start previous view. you are allready at the first page in this session ;)");
       return;
     }
-		HistoryEntry entry = (HistoryEntry) gui.history.pop();
-		if (entry == null) return;
-		gui.skipHistory = true;
-		startView(entry.view.getClass(), entry.view.getCurrentObject());
-	}
+    HistoryEntry entry = (HistoryEntry) gui.history.pop();
+    if (entry == null) return;
+    gui.skipHistory = true;
+    startView(entry.view.getClass(), entry.view.getCurrentObject());
+  }
 
-	/**
-	 * Liefert die aktuelle View.
+  /**
+   * Liefert die aktuelle View.
    * @return aktuelle View.
    */
   public static AbstractView getCurrentView()
-	{
-		return gui.currentView;
-	}
+  {
+    return gui.currentView;
+  }
 
-	/**
-	 * Liefert die Navigation (linker Tree) von Jameica.
+  /**
+   * Liefert die Navigation (linker Tree) von Jameica.
    * @return Navigation.
    */
   public static Navigation getNavigation()
-	{
-		return gui.navi;
-	}
+  {
+    return gui.navi;
+  }
 
   /**
    * Liefert das Menu (oben) von Jameica.
@@ -417,65 +417,65 @@ public class GUI implements ApplicationController
   }
 
   /**
-	 * Zeigt die View im angegebenen Composite an.
-	 * @param view die anzuzeigende View.
+   * Zeigt die View im angegebenen Composite an.
+   * @param view die anzuzeigende View.
    * @param o das Fachobjekt.
-	 */
-	public static void startView(final AbstractView view, final Object o)
-	{
+   */
+  public static void startView(final AbstractView view, final Object o)
+  {
     if (view == null)
     {
       Logger.error("no view given");
       return;
     }
 
-		Logger.debug("starting view: " + view.getClass().getName());
+    Logger.debug("starting view: " + view.getClass().getName());
 
-		startSync(new Runnable() {
+    startSync(new Runnable() {
 
-			public void run()
-			{
+      public void run()
+      {
 
-				if (gui.currentView != null)
-				{
-					try
-					{
-						gui.currentView.unbind();
+        if (gui.currentView != null)
+        {
+          try
+          {
+            gui.currentView.unbind();
 
-						// dispose all childs
-						Logger.debug("disposing previous view");
-						SWTUtil.disposeChildren(gui.view.getContent());
-						Logger.debug("dispose finished");
+            // dispose all childs
+            Logger.debug("disposing previous view");
+            SWTUtil.disposeChildren(gui.view.getContent());
+            Logger.debug("dispose finished");
 
-					}
-					catch (ApplicationException e)
-					{
-						Logger.debug("cancel sent from dialog (in unbind())");
-						SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
-						d.setTitle(Application.getI18n().tr("Fehler"));
-						d.setText(e.getMessage());
-						try {
-							d.open();
-						}
-						catch (Exception e2)
-						{
-							Logger.error("error while showing unbind dialog",e2);
-						}
-						return;
-					}
-					catch (Throwable t)
-					{
-						Logger.error("error while unbind current view", t);
+          }
+          catch (ApplicationException e)
+          {
+            Logger.debug("cancel sent from dialog (in unbind())");
+            SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
+            d.setTitle(Application.getI18n().tr("Fehler"));
+            d.setText(e.getMessage());
+            try {
+              d.open();
+            }
+            catch (Exception e2)
+            {
+              Logger.error("error while showing unbind dialog",e2);
+            }
+            return;
+          }
+          catch (Throwable t)
+          {
+            Logger.error("error while unbind current view", t);
             Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Beenden des aktuellen Dialogs"),StatusBarMessage.TYPE_ERROR));
-					}
+          }
 
           // Die alte View ist entfernt, wir koennen sie jetzt
           // in die History aufnehmen
-					if (!gui.skipHistory && gui.currentView != null)
-					{
-						// wir machen das erst nach dem unbind, damit sichergestellt
-						// ist, dass die Seite nicht mehrfach in der History landet,
-						// wenn ihr unbind() eine Exception wirft.
+          if (!gui.skipHistory && gui.currentView != null)
+          {
+            // wir machen das erst nach dem unbind, damit sichergestellt
+            // ist, dass die Seite nicht mehrfach in der History landet,
+            // wenn ihr unbind() eine Exception wirft.
             
             // Und nochwas: Wenn die neue Seite und und die aktuelle
             // sowie deren Objekte identisch sind, muessen wir sie
@@ -494,22 +494,22 @@ public class GUI implements ApplicationController
             {
               Logger.debug("gui view reload detected, skipping history entry");
             }
-					}
-					// jetzt koennen wir skipHistory auf jeden Fall wieder
-					// ausschalten
-					gui.skipHistory = false;
+          }
+          // jetzt koennen wir skipHistory auf jeden Fall wieder
+          // ausschalten
+          gui.skipHistory = false;
 
-				}
+        }
 
-				gui.view.cleanContent();
+        gui.view.cleanContent();
 
-				gui.currentView = view;
-				gui.currentView.setParent(gui.view.getContent());
-				gui.currentView.setCurrentObject(o);
+        gui.currentView = view;
+        gui.currentView.setParent(gui.view.getContent());
+        gui.currentView.setCurrentObject(o);
 
         try
-				{
-					gui.currentView.bind();
+        {
+          gui.currentView.bind();
 
           if (gui.currentView instanceof Extendable)
           {
@@ -525,10 +525,10 @@ public class GUI implements ApplicationController
           }
 
           // Bis hierher hat alles geklappt, dann koennen wir mal
-					// schauen, ob's fuer die View eine Hilfe-Seite gibt.
-					loadHelp(gui.currentView);
+          // schauen, ob's fuer die View eine Hilfe-Seite gibt.
+          loadHelp(gui.currentView);
 
-				}
+        }
         catch (ApplicationException ae)
         {
           try
@@ -541,8 +541,8 @@ public class GUI implements ApplicationController
             Logger.error("additional: ",e);
           }
         }
-				catch (Throwable t)
-				{
+        catch (Throwable t)
+        {
           // Falls es zu einer OperationCancelledException gekommen
           // ist, oeffnen wir die vorherige Seite
           Throwable current = t;
@@ -564,175 +564,175 @@ public class GUI implements ApplicationController
           // Ansonsten zeigen wir die Fehlerseite
           Logger.error("error while loading view " + view.getClass().getName(),t);
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Öffnen des Dialogs"),StatusBarMessage.TYPE_ERROR));
-					// Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
+          // Wir setzen das skipHistory Flag, damit die Fehlerseite selbst nicht
           // in der History landet
           gui.skipHistory = true;
-					GUI.startView(FatalErrorView.class, t);
-				}
+          GUI.startView(FatalErrorView.class, t);
+        }
 
-				// View aktualisieren
-				gui.view.refreshContent();
-			}
-		});
+        // View aktualisieren
+        gui.view.refreshContent();
+      }
+    });
 
-	}
+  }
 
-	/**
-	 * Schaut, ob fuer diese View eine Hilfe-Seite existiert und laedt diese. Es
-	 * wird versucht, eine Hilfe-Seite der konfigurierten Sprache zu laden.
-	 * @param view die View, fuer die nach der Hilfe-Seite gesucht werden soll.
-	 */
-	public static void loadHelp(AbstractView view)
-	{
+  /**
+   * Schaut, ob fuer diese View eine Hilfe-Seite existiert und laedt diese. Es
+   * wird versucht, eine Hilfe-Seite der konfigurierten Sprache zu laden.
+   * @param view die View, fuer die nach der Hilfe-Seite gesucht werden soll.
+   */
+  public static void loadHelp(AbstractView view)
+  {
 
-		String path = "help/"
-				+ Application.getConfig().getLocale().toString().toLowerCase() + "/"
-				+ view.getClass().getName() + ".txt";
-		InputStream is = Application.getClassLoader().getResourceAsStream(path);
-		if (is == null)
-		{
-			path = "help/" + Locale.getDefault().toString().toLowerCase() + "/"
-					+ view.getClass().getName() + ".txt";
-			is = Application.getClassLoader().getResourceAsStream(path);
-		}
-		if (is == null) return;
+    String path = "help/"
+        + Application.getConfig().getLocale().toString().toLowerCase() + "/"
+        + view.getClass().getName() + ".txt";
+    InputStream is = Application.getClassLoader().getResourceAsStream(path);
+    if (is == null)
+    {
+      path = "help/" + Locale.getDefault().toString().toLowerCase() + "/"
+          + view.getClass().getName() + ".txt";
+      is = Application.getClassLoader().getResourceAsStream(path);
+    }
+    if (is == null) return;
 
-		try
-		{
+    try
+    {
       // BUGZILLA 4 http://www.willuhn.de/bugzilla/show_bug.cgi?id=4
-			gui.help.setText(new InputStreamReader(is,"ISO-8859-1"));
-		}
-		catch (Exception e)
-		{/* ignore */}
-	}
+      gui.help.setText(new InputStreamReader(is,"ISO-8859-1"));
+    }
+    catch (Exception e)
+    {/* ignore */}
+  }
 
-	/**
-	 * Liefert die View-Komponente von Jameica. Das ist quasi der Content-Bereich.
-	 * @return die View.
-	 */
-	public static View getView()
-	{
-		return gui.view;
-	}
+  /**
+   * Liefert die View-Komponente von Jameica. Das ist quasi der Content-Bereich.
+   * @return die View.
+   */
+  public static View getView()
+  {
+    return gui.view;
+  }
 
-	/**
-	 * Liefert die StatusBar.
-	 * @return StatusBar.
-	 */
-	public static StatusBar getStatusBar()
-	{
-		return gui.statusBar;
-	}
+  /**
+   * Liefert die StatusBar.
+   * @return StatusBar.
+   */
+  public static StatusBar getStatusBar()
+  {
+    return gui.statusBar;
+  }
 
-	/**
-	 * Liefert die konfigurierte Style-Factory.
-	 * @return die aktuelle Style-Factory.
-	 */
-	public static StyleFactory getStyleFactory()
-	{
-		if (gui.styleFactory != null) return gui.styleFactory;
-		String className = SETTINGS.getString("stylefactory",
-				StyleFactoryDefaultImpl.class.getName());
-		try
-		{
-			gui.styleFactory = (StyleFactory) Application.getClassLoader().load(
-					className).newInstance();
-		}
-		catch (Exception e)
-		{
-			Logger.error(
-					"unable to load configured stylefactory, using default", e);
-			gui.styleFactory = new StyleFactoryDefaultImpl();
-		}
-		return gui.styleFactory;
-	}
+  /**
+   * Liefert die konfigurierte Style-Factory.
+   * @return die aktuelle Style-Factory.
+   */
+  public static StyleFactory getStyleFactory()
+  {
+    if (gui.styleFactory != null) return gui.styleFactory;
+    String className = SETTINGS.getString("stylefactory",
+        StyleFactoryDefaultImpl.class.getName());
+    try
+    {
+      gui.styleFactory = (StyleFactory) Application.getClassLoader().load(
+          className).newInstance();
+    }
+    catch (Exception e)
+    {
+      Logger.error(
+          "unable to load configured stylefactory, using default", e);
+      gui.styleFactory = new StyleFactoryDefaultImpl();
+    }
+    return gui.styleFactory;
+  }
 
-	/**
-	 * Speichert die zu verwendende StyleFactory.
-	 * @param factory die zu verwendende StyleFactory.
-	 */
-	public static void setStyleFactory(StyleFactory factory)
-	{
-		if (factory == null) return;
-		gui.styleFactory = factory;
+  /**
+   * Speichert die zu verwendende StyleFactory.
+   * @param factory die zu verwendende StyleFactory.
+   */
+  public static void setStyleFactory(StyleFactory factory)
+  {
+    if (factory == null) return;
+    gui.styleFactory = factory;
     SETTINGS.setAttribute("stylefactory", factory.getClass().getName());
-	}
+  }
 
-	/**
-	 * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
-	 * Waehrend der Ausfuehrung wird eine Sanduhr angezeigt und die GUI geblockt.
-	 * @param job
-	 */
-	public static void startSync(final Runnable job)
-	{
+  /**
+   * Startet einen Job synchron zur GUI, der typischerweise laenger dauert.
+   * Waehrend der Ausfuehrung wird eine Sanduhr angezeigt und die GUI geblockt.
+   * @param job
+   */
+  public static void startSync(final Runnable job)
+  {
 
-		if (getDisplay() == null || getDisplay().isDisposed()) return;
+    if (getDisplay() == null || getDisplay().isDisposed()) return;
 
-		getDisplay().syncExec(new Runnable()
+    getDisplay().syncExec(new Runnable()
     {
       public void run()
       {
-				BusyIndicator.showWhile(getDisplay(), job);
+        BusyIndicator.showWhile(getDisplay(), job);
       }
     });
-	}
+  }
 
-	/**
-	 * Main-Loop
-	 */
-	private void loop()
-	{
-		int retry = 0;
+  /**
+   * Main-Loop
+   */
+  private void loop()
+  {
+    int retry = 0;
     
     navi.select("jameica.start");
-		while (!shell.isDisposed() && !stop && retry < 4)
-		{
-			try
-			{
-				if (!display.readAndDispatch()) display.sleep();
-			}
+    while (!shell.isDisposed() && !stop && retry < 4)
+    {
+      try
+      {
+        if (!display.readAndDispatch()) display.sleep();
+      }
       catch (OperationCanceledException oce)
       {
         // ignore
       }
-			catch (Throwable t)
-			{
+      catch (Throwable t)
+      {
         Throwable cause = t.getCause();
         if (cause == null || !(cause instanceof OperationCanceledException))
         {
           Logger.error("main loop crashed, retry", t);
           retry++;
         }
-			}
-		}
-		quit();
-	}
+      }
+    }
+    quit();
+  }
 
-	/**
-	 * Liefert die Shell der Anwendung.
-	 * @return Shell der Anwendung.
-	 */
-	public static Shell getShell()
-	{
-		if (gui.shell != null && !gui.shell.isDisposed())
-			return gui.shell;
+  /**
+   * Liefert die Shell der Anwendung.
+   * @return Shell der Anwendung.
+   */
+  public static Shell getShell()
+  {
+    if (gui.shell != null && !gui.shell.isDisposed())
+      return gui.shell;
 
-		gui.shell = new Shell(getDisplay());
-		return gui.shell;
-	}
+    gui.shell = new Shell(getDisplay());
+    return gui.shell;
+  }
 
-	/**
-	 * Liefert das Display der Anwendung.
-	 * @return Display der Anwendung.
-	 */
-	public static Display getDisplay()
-	{
-		// Mal schauen, ob wir schon eins haben
-		if (gui.display != null && !gui.display.isDisposed())
-			return gui.display;
-		
-		// Hat der Thread schon eins
-		gui.display = Display.findDisplay(Thread.currentThread());
+  /**
+   * Liefert das Display der Anwendung.
+   * @return Display der Anwendung.
+   */
+  public static Display getDisplay()
+  {
+    // Mal schauen, ob wir schon eins haben
+    if (gui.display != null && !gui.display.isDisposed())
+      return gui.display;
+    
+    // Hat der Thread schon eins
+    gui.display = Display.findDisplay(Thread.currentThread());
 
     boolean sleak = Boolean.valueOf(System.getProperty("sleak","false")).booleanValue();
     if (!sleak)
@@ -761,43 +761,43 @@ public class GUI implements ApplicationController
       }
     }
 
-		return gui.display;
-	}
+    return gui.display;
+  }
 
-	/**
-	 * @see de.willuhn.jameica.system.ApplicationController#shutDown()
-	 */
-	public void shutDown()
-	{
+  /**
+   * @see de.willuhn.jameica.system.ApplicationController#shutDown()
+   */
+  public void shutDown()
+  {
     // Wir benachrichtigen die GUI nur, aber fahren nicht 
     // selbst runter.
-		gui.stop = true;
-	}
+    gui.stop = true;
+  }
 
-	/**
-	 * Die Beenden-Methoden sind deshalb getrennt, damit es moeglich ist, die GUI
-	 * von einem anderen Thread beenden zu lassen (z.Bsp. vom ShutdownHook).
-	 */
-	private static void quit()
-	{
+  /**
+   * Die Beenden-Methoden sind deshalb getrennt, damit es moeglich ist, die GUI
+   * von einem anderen Thread beenden zu lassen (z.Bsp. vom ShutdownHook).
+   */
+  private static void quit()
+  {
 
     Logger.info("shutting down GUI");
-		try
-		{
+    try
+    {
       if (gui.shell != null && !gui.shell.isDisposed())
         gui.shell.dispose();
-		}
-		catch (Exception e)
-		{
-			Logger.error("error while disposing shell", e);
-		}
+    }
+    catch (Exception e)
+    {
+      Logger.error("error while disposing shell", e);
+    }
     finally
     {
       gui.shell = null;
     }
     // Display muss nicht disposed werden - das macht der Shutdown-Splashscreen
     Application.shutDown();
-	}
+  }
 
   /**
    * @see de.willuhn.jameica.system.ApplicationController#getApplicationCallback()
@@ -887,6 +887,13 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
+ * Revision 1.125.2.1  2010/04/16 14:41:04  willuhn
+ * @N Backport-Patches aus 1.10
+ *  - Build-Scripts (fuer OpenBSD und Solaris)
+ *  - Start-Scripts (fuer Mac OS X)
+ *  - SWT-Version beim Start ausgeben
+ *  - Modal-Verhalten in AbstractDialog
+ *
  * Revision 1.126  2010/04/12 16:26:23  willuhn
  * @N SWT-Version beim Start in Log schreiben
  *

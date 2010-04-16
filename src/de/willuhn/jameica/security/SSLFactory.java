@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.52 $
- * $Date: 2010/04/14 11:06:42 $
+ * $Revision: 1.51.2.1 $
+ * $Date: 2010/04/16 14:41:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,27 +63,27 @@ import de.willuhn.logging.Logger;
  */
 public class SSLFactory
 {
-	static
-	{
+  static
+  {
     if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
     {
       Provider p = new BouncyCastleProvider();
       Logger.info("applying security provider " + p.getInfo());
       Security.addProvider(p);
     }
-	}
+  }
 
   private final static String SYSTEM_ALIAS = "jameica";
 
   private CertificateFactory factory    = null;
-	private KeyStore keystore							= null;
-	private X509Certificate certificate 	= null;
-	private PrivateKey privateKey 				= null;
-	private PublicKey publicKey						= null;
+  private KeyStore keystore             = null;
+  private X509Certificate certificate   = null;
+  private PrivateKey privateKey         = null;
+  private PublicKey publicKey           = null;
 
-	private SSLContext sslContext					= null;
+  private SSLContext sslContext         = null;
 
-	private ApplicationCallback callback 	= null;
+  private ApplicationCallback callback  = null;
 
   /**
    * ct.
@@ -93,56 +93,56 @@ public class SSLFactory
     this.callback = Application.getCallback();
   }
 
-	/**
-	 * Prueft die Zertifikate und erstellt sie bei Bedarf.
+  /**
+   * Prueft die Zertifikate und erstellt sie bei Bedarf.
    * @throws Exception
    */
   public synchronized void init() throws Exception
-	{
+  {
 
-		Logger.info("init ssl factory");
+    Logger.info("init ssl factory");
     Application.getCallback().getStartupMonitor().setStatusText("init ssl factory");
 
 //    if (Logger.getLevel().getValue() <= Level.DEBUG.getValue())
 //      System.setProperty("javax.net.debug","ssl handshake");
 
-		File keyStoreFile = getKeyStoreFile();
+    File keyStoreFile = getKeyStoreFile();
 
-		if (keyStoreFile.exists() && keyStoreFile.canRead() && keyStoreFile.length() > 0)
-		{
+    if (keyStoreFile.exists() && keyStoreFile.canRead() && keyStoreFile.length() > 0)
+    {
       // Wir laden mal das Zertifikat. Dadurch wird der Keystore und alles mitgeladen ;)
-			getSystemCertificate();
-			return;
-		}
+      getSystemCertificate();
+      return;
+    }
 
-		Application.getCallback().getStartupMonitor().addPercentComplete(10);
-		Logger.info("no ssl certificates found, creating...");
+    Application.getCallback().getStartupMonitor().addPercentComplete(10);
+    Logger.info("no ssl certificates found, creating...");
 
 
-		////////////////////////////////////////////////////////////////////////////
-		// Keys erstellen
-		Application.getCallback().getStartupMonitor().setStatusText("generating new ssl keys and certificates");
+    ////////////////////////////////////////////////////////////////////////////
+    // Keys erstellen
+    Application.getCallback().getStartupMonitor().setStatusText("generating new ssl keys and certificates");
 
-		Logger.info("  generating rsa keypair");
-		KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+    Logger.info("  generating rsa keypair");
+    KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
     kp.initialize(2048);
-		KeyPair keypair = kp.generateKeyPair();
+    KeyPair keypair = kp.generateKeyPair();
 
-		this.privateKey = keypair.getPrivate();
-		this.publicKey 	= keypair.getPublic();
+    this.privateKey = keypair.getPrivate();
+    this.publicKey  = keypair.getPublic();
 
-		Application.getCallback().getStartupMonitor().addPercentComplete(10);
-		//
-		////////////////////////////////////////////////////////////////////////////
+    Application.getCallback().getStartupMonitor().addPercentComplete(10);
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
 
-		////////////////////////////////////////////////////////////////////////////
-		// Zertifikat erstellen
-		Logger.info("  generating selfsigned x.509 certificate");
-		Hashtable attributes = new Hashtable();
-		String hostname = Application.getCallback().getHostname();
-		Logger.info("  using hostname: " + hostname);
-		attributes.put(X509Name.CN,hostname);
+    ////////////////////////////////////////////////////////////////////////////
+    // Zertifikat erstellen
+    Logger.info("  generating selfsigned x.509 certificate");
+    Hashtable attributes = new Hashtable();
+    String hostname = Application.getCallback().getHostname();
+    Logger.info("  using hostname: " + hostname);
+    attributes.put(X509Name.CN,hostname);
     attributes.put(X509Name.O,"Jameica Certificate");
 
     // BUGZILLA 326
@@ -158,7 +158,7 @@ public class SSLFactory
       attributes.put(X509Name.GIVENNAME,prefix + username);
       attributes.put(X509Name.OU,prefix + username);
     }
-		X509Name user   = new X509Name(null,attributes); // Der erste Parameter ist ein Vector mit der Reihenfolge der Attribute. Brauchen wir aber nicht
+    X509Name user   = new X509Name(null,attributes); // Der erste Parameter ist ein Vector mit der Reihenfolge der Attribute. Brauchen wir aber nicht
     X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
 
 
@@ -171,8 +171,8 @@ public class SSLFactory
     generator.setSerialNumber((new BigInteger(serno)).abs());
 
     generator.setIssuerDN(user);
-		generator.setSubjectDN(user);
-		generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre sollten reichen ;)
+    generator.setSubjectDN(user);
+    generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre sollten reichen ;)
     generator.setNotBefore(new Date());
     
     generator.addExtension(X509Extensions.KeyUsage, true,
@@ -192,75 +192,75 @@ public class SSLFactory
     this.certificate = generator.generate(this.privateKey);
 
     //
-		////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
-		////////////////////////////////////////////////////////////////////////////
-		// Keystore erstellen
-		Logger.info("  creating keystore");
+    ////////////////////////////////////////////////////////////////////////////
+    // Keystore erstellen
+    Logger.info("  creating keystore");
     this.keystore = KeyStore.getInstance("JKS");
 
-		this.callback.createPassword();
+    this.callback.createPassword();
 
-		this.keystore.load(null,this.callback.getPassword().toCharArray());
+    this.keystore.load(null,this.callback.getPassword().toCharArray());
 
-		Logger.info("  saving certificates");
-		this.keystore.setKeyEntry(SYSTEM_ALIAS,this.privateKey,
-															this.callback.getPassword().toCharArray(),
-															new X509Certificate[]{this.certificate});
+    Logger.info("  saving certificates");
+    this.keystore.setKeyEntry(SYSTEM_ALIAS,this.privateKey,
+                              this.callback.getPassword().toCharArray(),
+                              new X509Certificate[]{this.certificate});
 
-		storeKeystore();
-		Application.getCallback().getStartupMonitor().addPercentComplete(10);
-		//
-		////////////////////////////////////////////////////////////////////////////
-	}
-	
-	/**
-	 * Aendert das Passwort des Keystores.
-	 * Die Eingaben erfolgen ueber den ApplicationCallback.
-	 * @see ApplicationCallback#changePassword()
+    storeKeystore();
+    Application.getCallback().getStartupMonitor().addPercentComplete(10);
+    //
+    ////////////////////////////////////////////////////////////////////////////
+  }
+  
+  /**
+   * Aendert das Passwort des Keystores.
+   * Die Eingaben erfolgen ueber den ApplicationCallback.
+   * @see ApplicationCallback#changePassword()
    * @throws Exception
    */
   public synchronized void changePassword() throws Exception
-	{
-		Logger.warn("starting password change for keystore");
+  {
+    Logger.warn("starting password change for keystore");
 
-		Logger.warn("  reading private key");
-		PrivateKey k 					= this.getPrivateKey();
-		X509Certificate cert 	= this.getSystemCertificate();
+    Logger.warn("  reading private key");
+    PrivateKey k          = this.getPrivateKey();
+    X509Certificate cert  = this.getSystemCertificate();
 
-		this.certificate = null;
-		this.privateKey  = null;
-		this.publicKey	 = null;
+    this.certificate = null;
+    this.privateKey  = null;
+    this.publicKey   = null;
 
-		Logger.warn("  starting password change dialog");
-		this.callback.changePassword();
+    Logger.warn("  starting password change dialog");
+    this.callback.changePassword();
 
-		Logger.warn("  changing password of private key");
+    Logger.warn("  changing password of private key");
 
-		this.keystore.setKeyEntry(SYSTEM_ALIAS,k,
-															this.callback.getPassword().toCharArray(),
-															new X509Certificate[]{cert});
+    this.keystore.setKeyEntry(SYSTEM_ALIAS,k,
+                              this.callback.getPassword().toCharArray(),
+                              new X509Certificate[]{cert});
 
-		Logger.warn("  saving changed keystore");
-		storeKeystore();		
-		Logger.warn("keystore password successfully changed");
-	}
+    Logger.warn("  saving changed keystore");
+    storeKeystore();    
+    Logger.warn("keystore password successfully changed");
+  }
 
-	/**
-	 * Speichert den Keystore.
+  /**
+   * Speichert den Keystore.
    * @throws Exception
    */
   private synchronized void storeKeystore() throws Exception
-	{
-		OutputStream os = null;
-		try
-		{
-			Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
-			os = new FileOutputStream(getKeyStoreFile());
-			this.keystore.store(os,this.callback.getPassword().toCharArray());
-		}
-		finally
-		{
+  {
+    OutputStream os = null;
+    try
+    {
+      Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
+      os = new FileOutputStream(getKeyStoreFile());
+      this.keystore.store(os,this.callback.getPassword().toCharArray());
+    }
+    finally
+    {
       if (os != null)
         os.close();
 
@@ -272,60 +272,60 @@ public class SSLFactory
       this.sslContext  = null;
       getKeyStore();
       Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
-		}
-	}
-
-	/**
-	 * Liefert die Datei mit dem Keystore.
-	 * @return Keystore.
-	 */
-	public File getKeyStoreFile()
-	{
-		return new File(Application.getConfig().getConfigDir() + "/jameica.keystore");
-	}
+    }
+  }
 
   /**
-	 * Liefert den PublicKey von Jameica.
+   * Liefert die Datei mit dem Keystore.
+   * @return Keystore.
+   */
+  public File getKeyStoreFile()
+  {
+    return new File(Application.getConfig().getConfigDir() + "/jameica.keystore");
+  }
+
+  /**
+   * Liefert den PublicKey von Jameica.
    * @return Private-Key.
    * @throws Exception
    */
   public synchronized PublicKey getPublicKey()
-  	throws Exception
-	{
-		if (this.publicKey != null)
-			return this.publicKey;
+    throws Exception
+  {
+    if (this.publicKey != null)
+      return this.publicKey;
 
-		return getSystemCertificate().getPublicKey();
-	}
+    return getSystemCertificate().getPublicKey();
+  }
 
   /**
-	 * Liefert den PrivateKey von Jameica.
-	 * @return Private-Key.
+   * Liefert den PrivateKey von Jameica.
+   * @return Private-Key.
    * @throws Exception
-	 */
-	public synchronized PrivateKey getPrivateKey()
-		throws Exception
-	{
-		if (this.privateKey != null)
-			return this.privateKey;
+   */
+  public synchronized PrivateKey getPrivateKey()
+    throws Exception
+  {
+    if (this.privateKey != null)
+      return this.privateKey;
 
-		this.privateKey = (PrivateKey) getKeyStore().getKey(SYSTEM_ALIAS,this.callback.getPassword().toCharArray());
-		return this.privateKey;
-	}
+    this.privateKey = (PrivateKey) getKeyStore().getKey(SYSTEM_ALIAS,this.callback.getPassword().toCharArray());
+    return this.privateKey;
+  }
 
   /**
-	 * Liefert das X.509-Zertifikat der Jameica-Installation.
+   * Liefert das X.509-Zertifikat der Jameica-Installation.
    * @return X.509-Zertifikat.
    * @throws Exception
    */
   public synchronized X509Certificate getSystemCertificate() throws Exception
-	{
-		if (this.certificate != null)
-			return this.certificate;
+  {
+    if (this.certificate != null)
+      return this.certificate;
 
-		this.certificate = (X509Certificate) getKeyStore().getCertificate(SYSTEM_ALIAS);
-		return this.certificate;
-	}
+    this.certificate = (X509Certificate) getKeyStore().getCertificate(SYSTEM_ALIAS);
+    return this.certificate;
+  }
   
   /**
    * Liefert eine Liste aller installierten Zertifikate <b>ausser</b> dem Jameica-eigenen System-Zertifikat.
@@ -416,27 +416,27 @@ public class SSLFactory
   }
 
   /**
-	 * Liefert den Keystore mit dem Zertifikat.
+   * Liefert den Keystore mit dem Zertifikat.
    * @return Keystore
    * @throws Exception
    */
   public synchronized KeyStore getKeyStore() throws Exception
-	{
-		if (keystore != null)
-			return keystore;
+  {
+    if (keystore != null)
+      return keystore;
 
-		InputStream is = null;
-		try
-		{
-			File f = getKeyStoreFile();
-			Logger.info("reading keystore from file " + f.getAbsolutePath());
-			is = new FileInputStream(f);
+    InputStream is = null;
+    try
+    {
+      File f = getKeyStoreFile();
+      Logger.info("reading keystore from file " + f.getAbsolutePath());
+      is = new FileInputStream(f);
 
-			Logger.info("init keystore");
+      Logger.info("init keystore");
       this.keystore = KeyStore.getInstance("JKS");
 
-			Logger.info("reading keys");
-			this.keystore.load(is,this.callback.getPassword().toCharArray());
+      Logger.info("reading keys");
+      this.keystore.load(is,this.callback.getPassword().toCharArray());
       Logger.info("keystore loaded successfully");
 
       // Wir sagen der HttpsUrlConnection, dass sie unsere SocketFactory
@@ -499,21 +499,21 @@ public class SSLFactory
       };
       HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier); 
 
-			return this.keystore;
-		}
-		finally
-		{
-			try
-			{
-				is.close();
-			}
-			catch (Exception e) 
-			{
-				// useless
-			}
-		}
-	}
-	
+      return this.keystore;
+    }
+    finally
+    {
+      try
+      {
+        is.close();
+      }
+      catch (Exception e) 
+      {
+        // useless
+      }
+    }
+  }
+  
   /**
    * Entfernt das Zertifikat mit dem genannten Namen aus dem Keystore.
    * @param cert das zu entfernende Zertifikat.
@@ -582,7 +582,7 @@ public class SSLFactory
       this.factory = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
     return this.factory;
   }
-	
+  
   /**
    * Fuegt dem Keystore ein Zertifikat hinzu und uebernimmt dabei auch alle noetigen Sicherheitsabfragen.
    * @param cert das Zertifikat.
@@ -653,34 +653,34 @@ public class SSLFactory
   } 
 
   /**
-	 * Liefert einen fertig konfigurierten SSLContext mit den Jameica-Zertifikaten.
+   * Liefert einen fertig konfigurierten SSLContext mit den Jameica-Zertifikaten.
    * @return SSLContect.
    * @throws Exception
    */
   public SSLContext getSSLContext() throws Exception
-	{
-		if (sslContext != null)
-			return sslContext;
+  {
+    if (sslContext != null)
+      return sslContext;
 
-		Logger.info("init ssl context");
-		this.sslContext = SSLContext.getInstance("TLS");
+    Logger.info("init ssl context");
+    this.sslContext = SSLContext.getInstance("TLS");
 
-		Logger.info("init key manager [using algorithm: " + KeyManagerFactory.getDefaultAlgorithm() + "]");
-		KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+    Logger.info("init key manager [using algorithm: " + KeyManagerFactory.getDefaultAlgorithm() + "]");
+    KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 
     // Der KeyManager soll ausschliesslich unsere Keys verwenden, wenn
     // wir uns irgendwohin connecten.    
-		keyManagerFactory.init(this.getKeyStore(),this.callback.getPassword().toCharArray());
+    keyManagerFactory.init(this.getKeyStore(),this.callback.getPassword().toCharArray());
 
-		// Wir benutzen unseren eignen TrustManager
-		Logger.info("init Jameica trust manager");
+    // Wir benutzen unseren eignen TrustManager
+    Logger.info("init Jameica trust manager");
     TrustManager trustManager = new JameicaTrustManager();
-		this.sslContext.init(keyManagerFactory.getKeyManagers(),
-												 new TrustManager[]{trustManager},null);
-				
-		return this.sslContext;
-	}
-	
+    this.sslContext.init(keyManagerFactory.getKeyManagers(),
+                         new TrustManager[]{trustManager},null);
+        
+    return this.sslContext;
+  }
+  
   /**
    * Verschluesselt die Daten aus is und schreibt sie in os.
    * @param is InputStream mit den unverschluesselten Daten.
@@ -740,6 +740,13 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.51.2.1  2010/04/16 14:41:04  willuhn
+ * @N Backport-Patches aus 1.10
+ *  - Build-Scripts (fuer OpenBSD und Solaris)
+ *  - Start-Scripts (fuer Mac OS X)
+ *  - SWT-Version beim Start ausgeben
+ *  - Modal-Verhalten in AbstractDialog
+ *
  * Revision 1.52  2010/04/14 11:06:42  willuhn
  * @C seed unnoetig kompliziert
  *
