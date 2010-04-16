@@ -3,14 +3,16 @@
 # MacOS64 Start-Script fuer regulaeren Standalone-Betrieb.
 # Jameica wird hierbei mit GUI gestartet.
 
-TERM=xterm
+TERM="xterm"
+JAVACMD=""
 
-if [ -x /System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Commands/java ]; then
-  JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Commands/java"
-elif [ -x /System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java ]; then
-  JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java"
-else
-  echo Fehler: Es wird Java 1.4.2 oder 1.5 benoetigt.
+for i in "1.4.2" "1.5" "1.6"; do
+  [ -x "/System/Library/Frameworks/JavaVM.framework/Versions/${i}/Commands/java" ] && \
+    JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/${i}/Commands/java"
+done
+
+if [ -z "$JAVACMD" ]; then
+  echo Fehler: Es wird Java 1.4.2, 1.5 oder 1.6 benoetigt.
   exit 1
 fi
 
