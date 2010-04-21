@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BackupService.java,v $
- * $Revision: 1.6 $
- * $Date: 2009/06/24 11:24:33 $
+ * $Revision: 1.7 $
+ * $Date: 2010/04/21 10:39:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,11 +13,17 @@
 
 package de.willuhn.jameica.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.backup.BackupEngine;
 import de.willuhn.jameica.backup.BackupFile;
+import de.willuhn.jameica.messaging.Message;
+import de.willuhn.jameica.messaging.MessageConsumer;
+import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -28,6 +34,8 @@ import de.willuhn.util.ApplicationException;
  */
 public class BackupService implements Bootable
 {
+  private Consumer mc = new Consumer();
+  
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
@@ -41,6 +49,8 @@ public class BackupService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
+    Application.getMessagingFactory().getMessagingQueue("jameica.error").registerMessageConsumer(this.mc);
+    
     try
     {
       BackupFile file = BackupEngine.getCurrentRestore();
@@ -68,12 +78,66 @@ public class BackupService implements Bootable
   {
     try
     {
+      if (this.mc.errors.size() > 0)
+      {
+        String text = this.mc.errors.size() + " error(s) occured in current jameica session, skipping backup";
+        Application.getCallback().getShutdownMonitor().setStatusText(text);
+        Logger.warn("**** " + text);
+        return;
+      }
       BackupEngine.doBackup(Application.getCallback().getShutdownMonitor(),true);
     }
     catch (ApplicationException e)
     {
       // Mehr als loggen koennen wir hier leider nicht machen
       Logger.error(e.getMessage(),e);
+    }
+    finally
+    {
+      Application.getMessagingFactory().getMessagingQueue("jameica.error").unRegisterMessageConsumer(this.mc);
+    }
+  }
+  
+  /**
+   * Mit dem Consumer lassen wir uns ueber System-Fehler benachrichtigen.
+   * Abhaengig davon koennen wir entscheiden, ob wir beim Shutdown ggf.
+   * kein Backup erzeugen, weil wir durch die Backup-Rotation unter Umstaenden
+   * die letzten noch funktionierenden Backups ueberschreiben wuerden.
+   * Sprich: Ein Backup sollte nur dann gemacht werden, wenn sichergestellt
+   * ist, dass die zu sichernden Daten auch wiederverwendbar sind.
+   */
+  private class Consumer implements MessageConsumer
+  {
+    private List<Throwable> errors = new ArrayList<Throwable>();
+    
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+     */
+    public boolean autoRegister()
+    {
+      return false;
+    }
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+     */
+    public Class[] getExpectedMessageTypes()
+    {
+      return new Class[]{QueryMessage.class};
+    }
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+     */
+    public void handleMessage(Message message) throws Exception
+    {
+      Object data = ((QueryMessage)message).getData();
+      if (!(data instanceof Throwable))
+        return;
+      
+      Throwable t = (Throwable) data;
+      Logger.warn("detected error: " + t.getMessage());
+      this.errors.add(t);
     }
   }
 
@@ -82,6 +146,9 @@ public class BackupService implements Bootable
 
 /**********************************************************************
  * $Log: BackupService.java,v $
+ * Revision 1.7  2010/04/21 10:39:55  willuhn
+ * @N Beim Shutdown kein Backup erstellen, wenn ein Plugin einen Fehler an den Channel "jameica.error" gemeldet hat. Das soll verhindern, dass die Backup-Rotation die letzten noch verbliebenen intakten Backups ueberschreibt
+ *
  * Revision 1.6  2009/06/24 11:24:33  willuhn
  * @N Security-Manager via Bootloader setzen
  *
