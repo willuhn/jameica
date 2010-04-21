@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.21 $
- * $Date: 2009/07/17 10:13:03 $
+ * $Revision: 1.22 $
+ * $Date: 2010/04/21 22:54:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,10 +28,10 @@ import de.willuhn.logging.Logger;
  */
 public final class MessagingFactory implements MessagingQueue
 {
-  private static MessagingFactory singleton   = null;
-    private MessagingQueue defaultQueue       = null;
-    private HashMap queues                    = null;
-    private boolean loaded                    = false;
+  private static MessagingFactory singleton        = null;
+    private MessagingQueue defaultQueue            = null;
+    private HashMap<String, MessagingQueue> queues = null;
+    private boolean loaded                         = false;
 
   /**
    * Privater Konstruktor.
@@ -40,7 +40,7 @@ public final class MessagingFactory implements MessagingQueue
   private MessagingFactory()
   {
     this.defaultQueue = new NamedQueue("[default]");
-    this.queues       = new HashMap();
+    this.queues       = new HashMap<String, MessagingQueue>();
   }
   
   /**
@@ -68,7 +68,7 @@ public final class MessagingFactory implements MessagingQueue
     Logger.info("init messaging factory");
     
     Logger.info("searching for message consumers");
-    Class[] c = new Class[0];
+    Class<MessageConsumer>[] c = new Class[0];
     try
     {
       c = Application.getClassLoader().getClassFinder().findImplementors(MessageConsumer.class);
@@ -125,7 +125,7 @@ public final class MessagingFactory implements MessagingQueue
    */
   public MessagingQueue getMessagingQueue(String name)
   {
-    MessagingQueue queue = (MessagingQueue) queues.get(name);
+    MessagingQueue queue = queues.get(name);
     if (queue == null)
     {
       queue = new NamedQueue(name);
@@ -158,10 +158,10 @@ public final class MessagingFactory implements MessagingQueue
     Logger.info("shutting down messaging factory");
     try
     {
-      Iterator it = this.queues.keySet().iterator();
+      Iterator<String> it = this.queues.keySet().iterator();
       while (it.hasNext())
       {
-        MessagingQueue q = (MessagingQueue) this.queues.get(it.next());
+        MessagingQueue q = this.queues.get(it.next());
         q.close();
       }
     }
@@ -198,10 +198,10 @@ public final class MessagingFactory implements MessagingQueue
     init();
     try
     {
-      Iterator it = this.queues.keySet().iterator();
+      Iterator<String> it = this.queues.keySet().iterator();
       while (it.hasNext())
       {
-        MessagingQueue q = (MessagingQueue) this.queues.get(it.next());
+        MessagingQueue q = this.queues.get(it.next());
         q.flush();
       }
     }
@@ -214,6 +214,9 @@ public final class MessagingFactory implements MessagingQueue
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.22  2010/04/21 22:54:41  willuhn
+ * @N Ralfs Patch fuer Offline-Konten
+ *
  * Revision 1.21  2009/07/17 10:13:03  willuhn
  * @N MessagingQueue#flush()
  * @N MessageCollector zum Sammeln von Nachrichten
