@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/MultiInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2010/05/06 11:47:13 $
+ * $Revision: 1.2 $
+ * $Date: 2010/05/06 11:48:35 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -199,10 +199,12 @@ public class MultiInput implements Input
     layout.horizontalSpacing = 0;
     layout.verticalSpacing = 0;
     this.composite.setLayout(layout);
-    this.composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+    gd.widthHint = width / size;
+    this.composite.setLayoutData(gd);
 
     for (int i=0;i<this.inputs.size();++i) {
-      this.inputs.get(i).paint(this.composite);
+      this.inputs.get(i).paint(this.composite,width / size);
     }
     
     // den Kommentar hinten dran fuegen
@@ -302,6 +304,9 @@ public class MultiInput implements Input
 
 /**********************************************************************
  * $Log: MultiInput.java,v $
+ * Revision 1.2  2010/05/06 11:48:35  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2010/05/06 11:47:13  willuhn
  * @N Multi-Eingabefeld
  *
