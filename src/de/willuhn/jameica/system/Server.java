@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.14 $
- * $Date: 2008/03/07 16:31:48 $
+ * $Revision: 1.15 $
+ * $Date: 2010/05/19 14:51:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,6 +53,24 @@ public class Server implements ApplicationController
     Logger.info("----------------------------------------------------------------------");
     if (!Application.inNonInteractiveMode())
       Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));
+    
+    if (Application.inNonInteractiveMode())
+    {
+      try
+      {
+        Logger.flush();
+        Logger.info("detatching terminal");
+        Logger.flush();
+        System.out.close();
+        System.in.close();
+        System.err.close();
+        Logger.info("terminal detached");
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to detach terminal",e);
+      }
+    }
   }
 
   /**
@@ -157,6 +175,10 @@ public class Server implements ApplicationController
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.15  2010/05/19 14:51:53  willuhn
+ * @N Ausfall von STDOUT tolerieren
+ * @N STDOUT, STDERR und STDIN beim Start mit dem Parameter "-n" (Noninteractive mode) schliessen
+ *
  * Revision 1.14  2008/03/07 16:31:48  willuhn
  * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
  *
