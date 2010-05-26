@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/LogService.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/06/24 11:24:33 $
+ * $Revision: 1.3 $
+ * $Date: 2010/05/26 09:43:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,7 +47,21 @@ public class LogService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-    Logger.addTarget(new OutputStreamTarget(System.out));
+    String lf = Application.getConfig().getLogFile();
+
+    if (Application.inNonInteractiveMode())
+    {
+      Logger.info("running in non-interactive mode - logging to stdout disabled, check " + lf + " for logs");
+      try
+      {
+        Logger.flush();
+      }
+      catch (Exception e) {/*useless*/}
+    }
+    else
+    {
+      Logger.addTarget(new OutputStreamTarget(System.out));
+    }
     
     // Loglevel
     Level level = Level.findByName(Application.getConfig().getLogLevel());
@@ -62,7 +76,6 @@ public class LogService implements Bootable
     
     // Logtarget
     try {
-      String lf = Application.getConfig().getLogFile();
       Logger.info("log file " + lf);
       File logFile = new File(lf);
       try
@@ -94,6 +107,9 @@ public class LogService implements Bootable
 
 /**********************************************************************
  * $Log: LogService.java,v $
+ * Revision 1.3  2010/05/26 09:43:54  willuhn
+ * @N Logging nach STDOUT im Nicht-interaktiven Mode deaktivieren
+ *
  * Revision 1.2  2009/06/24 11:24:33  willuhn
  * @N Security-Manager via Bootloader setzen
  *
