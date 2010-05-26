@@ -3,6 +3,15 @@
 # MacOS Start-Script fuer Server-Betrieb.
 # Jameica wird hierbei OHNE GUI gestartet.
 
-cd `dirname "$0"`
+JAVAVERSION="`readlink /System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK`"
+JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/${JAVAVERSION}/Commands/java"
 
-java -Xmx256m -jar jameica-macos.jar -d $@
+if [ -z "$JAVACMD" ]; then
+  echo Fehler: Java nicht installiert.
+  exit 1
+fi
+
+BASEDIR=$(dirname "$0")
+cd "${BASEDIR}"
+
+${JAVACMD} -Xmx256m -XstartOnFirstThread -jar "${BASEDIR}/jameica-macos.jar" -d -o $@

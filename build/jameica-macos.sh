@@ -4,15 +4,11 @@
 # Jameica wird hierbei mit GUI gestartet.
 
 TERM="xterm"
-JAVACMD=""
-
-for i in "1.4.2" "1.5" "1.6"; do
-  [ -x "/System/Library/Frameworks/JavaVM.framework/Versions/${i}/Commands/java" ] && \
-    JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/${i}/Commands/java"
-done
+JAVAVERSION="`readlink /System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK`"
+JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/${JAVAVERSION}/Commands/java"
 
 if [ -z "$JAVACMD" ]; then
-  echo Fehler: Es wird Java 1.4.2, 1.5 oder 1.6 benoetigt.
+  echo Fehler: Java nicht installiert.
   exit 1
 fi
 
