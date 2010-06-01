@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ClassService.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/12/17 01:05:41 $
+ * $Revision: 1.5 $
+ * $Date: 2010/06/01 21:35:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -57,6 +58,7 @@ public class ClassService implements Bootable
       File[] jars = Application.getClassLoader().addJars(new File("lib"));
       if (jars != null)
       {
+        Arrays.sort(jars); // Das machen wir nur der Optik wegen. Dann kann man das im Log besser lesen
         for (int i=0;i<jars.length;++i)
         {
           Logger.info("loaded system jar " + jars[i].getAbsolutePath());
@@ -156,6 +158,7 @@ public class ClassService implements Bootable
     File[] jars = mycl.addJars(dir);
     if (jars != null)
     {
+      Arrays.sort(jars); // Das machen wir nur der Optik wegen. Dann kann man das im Log besser lesen
       for (int i=0;i<jars.length;++i)
       {
         Logger.info("loaded jar " + jars[i].getAbsolutePath());
@@ -278,6 +281,9 @@ public class ClassService implements Bootable
 
 /**********************************************************************
  * $Log: ClassService.java,v $
+ * Revision 1.5  2010/06/01 21:35:21  willuhn
+ * @N Geladene Jars im Log alphabetisch ausgeben - das ist besser lesbar
+ *
  * Revision 1.4  2008/12/17 01:05:41  willuhn
  * @N Deployment von heruntergeladenen in "DeployService" verschoben. Dann geschieht das Entpacken erst beim naechsten Start. Da zu dem Zeitpunkt der Classloader die Dateien noch nicht geladen hat, kann eine ggf. vorhandene vorherige Installation geloescht werden
  * @C FileUtil.deleteRecursive
