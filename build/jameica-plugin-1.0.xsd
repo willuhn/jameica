@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
-  $Revision: 1.13 $
-  $Date: 2008/12/30 15:38:55 $
+  $Revision: 1.14 $
+  $Date: 2010/06/03 12:54:32 $
   $Author: willuhn $
  
   Copyright (c) by willuhn software & services
@@ -304,6 +304,14 @@
           <xsd:attribute name="extends" type="xsd:string" use="required">
             <xsd:annotation>
               <xsd:documentation>Komma-separierte Liste von IDs der Extendables</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+          <xsd:attribute name="requires" type="xsd:string" use="optional">
+            <xsd:annotation>
+              <xsd:documentation>
+                optional: Komma-separierte Liste von Plugins, die installiert sein muessen,
+                damit die Extension registriert wird.
+              </xsd:documentation>
             </xsd:annotation>
           </xsd:attribute>
         </xsd:complexType>
