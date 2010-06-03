@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.45 $
- * $Date: 2010/06/03 13:52:45 $
+ * $Revision: 1.46 $
+ * $Date: 2010/06/03 13:59:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -343,17 +343,16 @@ public final class PluginLoader
         if (!ok)
           continue;
         
-        Logger.info("  trying to register " + ext[i].getClassname());
         try
         {
           Class c = loader.load(ext[i].getClassname());
           ExtensionRegistry.register((Extension) c.newInstance(), ext[i].getExtendableIDs());
-          Logger.info("  extension registered");
+          Logger.info("  register " + c.getName());
         }
         catch (Exception e)
         {
           // Wenn eine Erweiterung fehlschlaegt, loggen wir das nur
-          Logger.error("  failed, skipping extension", e);
+          Logger.error("  unable to register extension " + ext[i].getClassname() + ", skipping", e);
         }
       }
     }
@@ -652,6 +651,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.46  2010/06/03 13:59:33  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.45  2010/06/03 13:52:45  willuhn
  * @N Neues optionales Attribut "requires", damit Extensions nur dann registriert werden, wenn ein benoetigtes Plugin installiert ist
  *
