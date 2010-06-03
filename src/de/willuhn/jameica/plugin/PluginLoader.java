@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.44 $
- * $Date: 2010/02/04 11:58:49 $
+ * $Revision: 1.45 $
+ * $Date: 2010/06/03 13:52:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -319,9 +319,30 @@ public final class PluginLoader
     {
       for (int i = 0; i < ext.length; ++i)
       {
+        // Extension-Klasse angegeben?
         if (ext[i].getClassname() == null || ext[i].getClassname().length() == 0)
           continue;
+        
+        // Abhaengkeiten vorhanden und erfuellt?
+        String[] required = ext[i].getRequiredPlugins();
 
+        boolean ok = true;
+        if (required != null && required.length > 0)
+        {
+          for (String r:required)
+          {
+            if (this.getManifestByName(r) == null)
+            {
+              Logger.warn("  skippging extension " + ext[i].getClassname() + ", requires plugin " + r);
+              ok = false;
+              break;
+            }
+          }
+        }
+        
+        if (!ok)
+          continue;
+        
         Logger.info("  trying to register " + ext[i].getClassname());
         try
         {
@@ -347,9 +368,9 @@ public final class PluginLoader
    * @return Liste aller installierten Plugins. Die Elemente sind vom Typ
    *         <code>AbstractPlugin</code>.
    */
-  public List getInstalledPlugins()
+  public List<AbstractPlugin> getInstalledPlugins()
   {
-    ArrayList l = new ArrayList();
+    List<AbstractPlugin> l = new ArrayList<AbstractPlugin>();
     int size = plugins.size();
     for (int i = 0; i < size; ++i)
     {
@@ -365,10 +386,10 @@ public final class PluginLoader
    * 
    * @return Liste der installierten Manifeste.
    */
-  public List getInstalledManifests()
+  public List<Manifest> getInstalledManifests()
   {
     List all = getManifests();
-    List installed = new ArrayList();
+    List<Manifest> installed = new ArrayList<Manifest>();
     for (int i = 0; i < all.size(); ++i)
     {
       Manifest p = (Manifest) plugins.get(i);
@@ -384,7 +405,7 @@ public final class PluginLoader
    * @return Liste aller Manifeste (unabhaengig ob erfolgreich installiert oder
    *         nicht).
    */
-  List getManifests()
+  List<Manifest> getManifests()
   {
     return this.plugins;
   }
@@ -411,7 +432,7 @@ public final class PluginLoader
    */
   public Manifest getManifest(String pluginClass)
   {
-    if (pluginClass == null)
+    if (pluginClass == null || pluginClass.length() == 0)
       return null;
 
     int size = plugins.size();
@@ -420,6 +441,28 @@ public final class PluginLoader
     {
       mf = (Manifest) plugins.get(i);
       if (mf.getPluginClass().equals(pluginClass))
+        return mf;
+    }
+    return null;
+  }
+
+  /**
+   * Liefert das Manifest anhand des Plugin-Namens.
+   * 
+   * @param name Name des Plugins.
+   * @return das Manifest.
+   */
+  public Manifest getManifestByName(String name)
+  {
+    if (name == null || name.length() == 0)
+      return null;
+
+    int size = plugins.size();
+    Manifest mf = null;
+    for (int i = 0; i < size; ++i)
+    {
+      mf = (Manifest) plugins.get(i);
+      if (mf.getName().equals(name))
         return mf;
     }
     return null;
@@ -609,6 +652,9 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.45  2010/06/03 13:52:45  willuhn
+ * @N Neues optionales Attribut "requires", damit Extensions nur dann registriert werden, wenn ein benoetigtes Plugin installiert ist
+ *
  * Revision 1.44  2010/02/04 11:58:49  willuhn
  * @N Velocity on-demand initialisieren
  *
@@ -624,268 +670,4 @@ public final class PluginLoader
  *
  * Revision 1.41  2009/01/07 16:19:49  willuhn
  * @R alter Konstruktor AbstractPlugin(file) entfernt (existierte nur noch aus Gruenden der Abwaertskompatibilitaet
- *
- * Revision 1.40  2008/12/30 15:21:42  willuhn
- * @N Umstellung auf neue Versionierung
- *
- * Revision 1.39  2008/12/11 22:42:13  willuhn
- * @C doubles mit Double.compare vergleichen
- *
- * Revision 1.38  2008/12/11 00:01:54  willuhn
- * *** empty log message ***
- *
- * Revision 1.37  2008/12/10 23:51:42  willuhn
- * @B loggen der ApplicationException von AbstractPlugin#init
- *
- * Revision 1.36  2008/12/09 16:45:30  willuhn
- * @N Im Log ausgeben, wenn eine Abhaengigkeit optional ist
- *
- * Revision 1.35  2008/09/11 18:04:42  willuhn
- * @D reformat
- *
- * Revision 1.34  2008/09/03 00:11:43  willuhn
- * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
- * Revision 1.33 2008/08/27 14:41:17 willuhn
- * 
- * @N Angabe der Versionsnummer von abhaengigen Plugins oder der Jameica RT
- * 
- * Revision 1.32 2008/04/10 13:36:14 willuhn
- * @N Reihenfolge beim Laden/Initialisieren der Plugins geaendert.
- * 
- * Vorher:
- * 
- * 1) Plugin A: Klassen laden 2) Plugn A: init() 3) Plugin B: Klassen laden 4)
- * Plugn B: init() 5) Plugin A: Services starten 6) Plugin B: Services starten
- * 
- * Nun:
- * 
- * 1) Plugin A: Klassen laden 2) Plugin B: Klassen laden 3) Plugn A: init() 4)
- * Plugin A: Services starten 5) Plugn B: init() 6) Plugin B: Services starten
- * 
- * 
- * Vorteile:
- * 
- * 1) Wenn das erste Plugin initialisiert wird, sind bereits alle Klassen
- * geladen und der Classfinder findet alles relevante 2) Wenn Plugin B auf
- * Services von Plugin A angewiesen ist, sind diese nun bereits in
- * PluginB.init() verfuegbar
- * 
- * Revision 1.31 2008/04/09 16:55:18 willuhn
- * @N Manifest#getDependencies() liefert nun auch indirekte Abhaengigkeiten
- * @C Sortierung der Plugins auf Quicksort umgestellt
- * 
- * Revision 1.30 2008/03/04 00:49:25 willuhn
- * @N GUI fuer Backup fertig
- * 
- * Revision 1.29 2008/02/13 01:04:34 willuhn
- * @N Jameica auf neuen Bootloader umgestellt
- * @C Markus' Aenderungen RMI-Registrierung uebernommen
- * 
- * Revision 1.28 2007/11/19 11:30:39 willuhn *** empty log message ***
- * 
- * Revision 1.27 2007/11/13 14:14:56 willuhn
- * @N Bei exklusivem Classloader wird nun das gesamte Plugin (incl. Services)
- *    ueber dessen Classloader geladen
- * 
- * Revision 1.26 2007/10/25 23:18:04 willuhn
- * @B Fix in i18n Initialisierung (verursachte Warnung "Plugin ... unterstuetzt
- *    Locale ... nicht")
- * @C i18n erst bei Bedarf initialisieren
- * @C AbstractPlugin vereinfacht (neuer parameterloser Konstruktor, install(),
- *    update(),... nicht mehr abstract)
- * 
- * Revision 1.25 2007/04/16 12:36:44 willuhn
- * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom
- *    Typ "List" statt "Iterator"
- * 
- * Revision 1.24 2007/04/10 17:40:15 willuhn
- * @B Beruecksichtigung der Plugin-Abhaengigkeiten auch bei der Reihenfolge der
- *    zu ladenden Klassen (erzeugt sonst ggf. NoClassDefFoundErrors)
- * 
- * Revision 1.23 2007/04/04 22:19:39 willuhn
- * @N Plugin-Dependencies im PluginLoader
- * 
- * Revision 1.22 2007/03/29 15:29:48 willuhn
- * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
- * 
- * Revision 1.21 2006/06/30 13:51:34 willuhn
- * @N Pluginloader Redesign in HEAD uebernommen
- * 
- * Revision 1.20.4.1 2006/06/06 21:27:08 willuhn
- * @N New Pluginloader (in separatem Branch)
- * 
- * Revision 1.20 2006/03/01 15:20:13 web0
- * @N more debug output while booting
- * 
- * Revision 1.19 2006/01/09 23:55:41 web0 *** empty log message ***
- * 
- * Revision 1.18 2005/12/17 18:38:13 web0 *** empty log message ***
- * 
- * Revision 1.17 2005/11/18 13:58:37 web0
- * @N Splashscreen in separate thread (again ;)
- * 
- * Revision 1.16 2005/06/02 22:57:42 web0 *** empty log message ***
- * 
- * Revision 1.15 2005/05/27 17:31:46 web0
- * @N extension system
- * 
- * Revision 1.14 2005/03/21 21:46:47 web0
- * @N added manifest tag "built-date"
- * @N version number, built-date and buildnumber are written to log now
- * 
- * Revision 1.13 2005/01/30 20:47:43 willuhn *** empty log message ***
- * 
- * Revision 1.12 2004/11/12 18:23:58 willuhn *** empty log message ***
- * 
- * Revision 1.11 2004/11/04 22:41:36 willuhn *** empty log message ***
- * 
- * Revision 1.10 2004/11/04 19:29:22 willuhn
- * @N TextAreaInput
- * 
- * Revision 1.9 2004/10/17 14:08:10 willuhn *** empty log message ***
- * 
- * Revision 1.8 2004/10/11 22:41:17 willuhn *** empty log message ***
- * 
- * Revision 1.7 2004/10/08 16:41:58 willuhn *** empty log message ***
- * 
- * Revision 1.6 2004/10/08 00:19:19 willuhn *** empty log message ***
- * 
- * Revision 1.5 2004/10/07 18:05:26 willuhn *** empty log message ***
- * 
- * Revision 1.4 2004/08/15 17:55:17 willuhn
- * @C sync handling
- * 
- * Revision 1.3 2004/08/11 00:39:25 willuhn *** empty log message ***
- * 
- * Revision 1.2 2004/07/25 17:15:20 willuhn
- * @C PluginLoader is no longer static
- * 
- * Revision 1.1 2004/07/21 20:08:44 willuhn
- * @C massive Refactoring ;)
- * 
- * Revision 1.47 2004/07/04 17:07:20 willuhn *** empty log message ***
- * 
- * Revision 1.46 2004/06/30 20:58:39 willuhn *** empty log message ***
- * 
- * Revision 1.45 2004/06/10 20:56:53 willuhn
- * @D javadoc comments fixed
- * 
- * Revision 1.44 2004/05/11 21:11:11 willuhn *** empty log message ***
- * 
- * Revision 1.43 2004/04/26 22:42:17 willuhn
- * @N added InfoReader
- * 
- * Revision 1.42 2004/04/26 21:00:11 willuhn
- * @N made menu and navigation entries translatable
- * 
- * Revision 1.41 2004/04/01 19:06:26 willuhn *** empty log message ***
- * 
- * Revision 1.40 2004/04/01 00:23:24 willuhn
- * @N FontInput
- * @N ColorInput
- * @C improved ClassLoader
- * @N Tabs in Settings
- * 
- * Revision 1.39 2004/03/30 22:08:26 willuhn *** empty log message ***
- * 
- * Revision 1.38 2004/03/29 23:20:49 willuhn *** empty log message ***
- * 
- * Revision 1.37 2004/03/18 01:24:47 willuhn
- * @C refactoring
- * 
- * Revision 1.36 2004/03/16 23:59:40 willuhn
- * @N 2 new Input fields
- * 
- * Revision 1.35 2004/03/06 18:24:24 willuhn
- * @D javadoc
- * 
- * Revision 1.34 2004/03/03 22:27:11 willuhn
- * @N help texts
- * @C refactoring
- * 
- * Revision 1.33 2004/02/09 13:06:33 willuhn
- * @C added support for uncompressed plugins
- * 
- * Revision 1.32 2004/01/28 20:51:25 willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- * 
- * Revision 1.31 2004/01/25 18:39:56 willuhn *** empty log message ***
- * 
- * Revision 1.30 2004/01/08 20:50:32 willuhn
- * @N database stuff separated from jameica
- * 
- * Revision 1.29 2004/01/05 19:14:45 willuhn *** empty log message ***
- * 
- * Revision 1.28 2004/01/05 18:27:13 willuhn *** empty log message ***
- * 
- * Revision 1.27 2004/01/05 18:04:46 willuhn
- * @N added MultipleClassLoader
- * 
- * Revision 1.26 2004/01/04 18:48:36 willuhn
- * @N config store support
- * 
- * Revision 1.25 2004/01/03 18:08:05 willuhn
- * @N Exception logging
- * @C replaced bb.util xml parser with nanoxml
- * 
- * Revision 1.24 2003/12/30 19:11:27 willuhn
- * @N new splashscreen
- * 
- * Revision 1.23 2003/12/30 02:25:35 willuhn *** empty log message ***
- * 
- * Revision 1.22 2003/12/30 02:10:57 willuhn
- * @N updateChecker
- * 
- * Revision 1.21 2003/12/29 20:07:19 willuhn
- * @N Formatter
- * 
- * Revision 1.20 2003/12/29 17:44:10 willuhn *** empty log message ***
- * 
- * Revision 1.19 2003/12/29 17:11:49 willuhn *** empty log message ***
- * 
- * Revision 1.18 2003/12/29 16:29:47 willuhn
- * @N javadoc
- * 
- * Revision 1.17 2003/12/22 21:00:34 willuhn *** empty log message ***
- * 
- * Revision 1.16 2003/12/22 16:25:48 willuhn *** empty log message ***
- * 
- * Revision 1.15 2003/12/22 15:07:11 willuhn *** empty log message ***
- * 
- * Revision 1.14 2003/12/21 20:59:00 willuhn
- * @N added internal SSH tunnel
- * 
- * Revision 1.13 2003/12/19 01:43:27 willuhn
- * @N added Tree
- * 
- * Revision 1.12 2003/12/18 21:47:12 willuhn
- * @N AbstractDBObjectNode
- * 
- * Revision 1.11 2003/12/12 01:28:05 willuhn *** empty log message ***
- * 
- * Revision 1.10 2003/12/05 17:12:23 willuhn
- * @C SelectInput
- * 
- * Revision 1.9 2003/11/30 16:37:45 willuhn *** empty log message ***
- * 
- * Revision 1.8 2003/11/24 23:01:58 willuhn
- * @N added settings
- * 
- * Revision 1.7 2003/11/24 11:51:41 willuhn *** empty log message ***
- * 
- * Revision 1.6 2003/11/20 03:48:41 willuhn
- * @N first dialogues
- * 
- * Revision 1.5 2003/11/18 18:56:07 willuhn
- * @N added support for pluginmenus and plugin navigation
- * 
- * Revision 1.4 2003/11/14 00:57:38 willuhn *** empty log message ***
- * 
- * Revision 1.3 2003/11/14 00:54:12 willuhn *** empty log message ***
- * 
- * Revision 1.2 2003/11/14 00:49:46 willuhn *** empty log message ***
- * 
- * Revision 1.1 2003/11/13 00:37:35 willuhn *** empty log message ***
- * 
  ******************************************************************************/

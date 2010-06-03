@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ExtensionDescriptor.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/05/27 17:31:46 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2010/06/03 13:52:55 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -40,11 +40,21 @@ public interface ExtensionDescriptor
    * Extendable erweitern wuerde. Die Extension waere damit nutzlos.
    */
   public String[] getExtendableIDs();
+  
+  /**
+   * Liste von Plugins, die installiert sein muessen, damit die
+   * Extension registriert wird.
+   * @return Liste von Plugin-Namen.
+   */
+  public String[] getRequiredPlugins();
 }
 
 
 /**********************************************************************
  * $Log: ExtensionDescriptor.java,v $
+ * Revision 1.2  2010/06/03 13:52:55  willuhn
+ * @N Neues optionales Attribut "requires", damit Extensions nur dann registriert werden, wenn ein benoetigtes Plugin installiert ist
+ *
  * Revision 1.1  2005/05/27 17:31:46  web0
  * @N extension system
  *
