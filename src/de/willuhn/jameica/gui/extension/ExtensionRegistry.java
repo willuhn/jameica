@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/ExtensionRegistry.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/06/03 12:41:43 $
+ * $Revision: 1.8 $
+ * $Date: 2010/06/03 17:06:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,10 @@
 
 package de.willuhn.jameica.gui.extension;
 
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.willuhn.logging.Logger;
 
@@ -27,7 +29,7 @@ import de.willuhn.logging.Logger;
 public class ExtensionRegistry
 {
 
-  private static Hashtable extensions = new Hashtable();
+  private static Map<String,List<Extension>> extensions = new HashMap<String,List<Extension>>();
   
   /**
    * Erweitert das Extendable insofern Extensions registriert sind.
@@ -42,14 +44,13 @@ public class ExtensionRegistry
     if (id == null)
       return;
 
-    Vector v = (Vector) extensions.get(id);
+    List<Extension> v = extensions.get(id);
     if (v == null || v.size() == 0)
       return;
-    for (int i=0;i<v.size();++i)
+    for (Extension e:v)
     {
       try
       {
-        Extension e = (Extension) v.get(i);
         e.extend(extendable);
       }
       catch (Throwable t)
@@ -69,9 +70,9 @@ public class ExtensionRegistry
       
     for (int i=0;i<extendableIDs.length;++i)
     {
-      Vector v = (Vector) extensions.get(extendableIDs[i]);
+      List<Extension> v = extensions.get(extendableIDs[i]);
       if (v == null)
-        v = new Vector();
+        v = new ArrayList<Extension>();
       v.add(extension);
       
       extensions.put(extendableIDs[i],v);
@@ -88,11 +89,28 @@ public class ExtensionRegistry
     register(extension, new String[]{extendableID});
   }
 
+  /**
+   * Liefert die Erweiterungsmodule zur genannten Extendable-ID.
+   * @param extendableID die Extendable-ID.
+   * @return die Liste der gefundenen Extensions.
+   */
+  public static List<Extension> getExtensions(String extendableID)
+  {
+    // Ja, wir geben keine Kopie der Liste raus sondern direkt
+    // das Original. Damit kann der Aufrufer eine Extension auch
+    // wieder deregistrieren. Irgendwann sollte vielleicht nochmal
+    // geprueft werden, ob das sinnvoll ist.
+    return extensions.get(extendableID);
+  }
+
 }
 
 
 /*********************************************************************
  * $Log: ExtensionRegistry.java,v $
+ * Revision 1.8  2010/06/03 17:06:51  willuhn
+ * @N getExtension(), damit man an die Instanz von bereits registrierten Extensions rankommt
+ *
  * Revision 1.7  2010/06/03 12:41:43  willuhn
  * *** empty log message ***
  *
