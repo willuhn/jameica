@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/ExtensionRegistry.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/06/07 21:57:32 $
- * $Author: web0 $
+ * $Revision: 1.6 $
+ * $Date: 2010/06/03 12:41:33 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -52,7 +52,7 @@ public class ExtensionRegistry
         Extension e = (Extension) v.get(i);
         e.extend(extendable);
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
         Logger.error("error while extending " + id);
       }
@@ -93,6 +93,9 @@ public class ExtensionRegistry
 
 /*********************************************************************
  * $Log: ExtensionRegistry.java,v $
+ * Revision 1.6  2010/06/03 12:41:33  willuhn
+ * @N Throwable toleriert auch NoClassDefFoundError
+ *
  * Revision 1.5  2005/06/07 21:57:32  web0
  * *** empty log message ***
  *
