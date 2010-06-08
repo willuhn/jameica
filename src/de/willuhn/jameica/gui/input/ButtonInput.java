@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2009/09/22 11:14:51 $
+ * $Revision: 1.18 $
+ * $Date: 2010/06/08 11:57:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -191,6 +191,7 @@ public abstract class ButtonInput extends AbstractInput
       disableButton();
       disableClientControl();
     }
+    update();
   }
 
   /**
@@ -200,7 +201,10 @@ public abstract class ButtonInput extends AbstractInput
 	{
 		clientControlEnabled = true;
 		if (clientControl != null && !clientControl.isDisposed())
-			clientControl.setEnabled(true);
+		{
+      clientControl.setEnabled(true);
+	    update();
+		}
 	}
 	
 	/**
@@ -210,7 +214,10 @@ public abstract class ButtonInput extends AbstractInput
 	{
 		buttonEnabled = true;
 		if (button != null && !button.isDisposed())
-			button.setEnabled(true);
+		{
+      button.setEnabled(true);
+      update();
+		}
 	}
 	
 	/**
@@ -220,7 +227,10 @@ public abstract class ButtonInput extends AbstractInput
 	{
 		clientControlEnabled = false;
 		if (clientControl != null && !clientControl.isDisposed())
-			clientControl.setEnabled(false);
+		{
+      clientControl.setEnabled(false);
+      update();
+		}
 	}
 	
 	/**
@@ -230,7 +240,10 @@ public abstract class ButtonInput extends AbstractInput
 	{
 		buttonEnabled = false;
 		if (button != null && !button.isDisposed())
-			button.setEnabled(false);
+		{
+      button.setEnabled(false);
+      update();
+		}
 	}
   
   /**
@@ -283,6 +296,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.18  2010/06/08 11:57:54  willuhn
+ * @B Beim Aendern des Enabled-Status wurde die Hintergrundfarbe nicht sofort geaendert - da fehlte nur ein update()
+ *
  * Revision 1.17  2009/09/22 11:14:51  willuhn
  * @B Hintergrundfarbe wurde im Composite nicht gesetzt - fuehrte zu einem grauen Rand
  *
