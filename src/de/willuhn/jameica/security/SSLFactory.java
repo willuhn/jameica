@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.53 $
- * $Date: 2010/06/14 10:06:18 $
+ * $Revision: 1.54 $
+ * $Date: 2010/06/14 11:30:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,6 +51,7 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 
+import de.willuhn.datasource.BeanUtil;
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
 import de.willuhn.jameica.system.Application;
@@ -681,11 +682,13 @@ public class SSLFactory
 		try
 		{
 	    Logger.info("set jameica ssl context as system default");
-	    SSLContext.setDefault(this.sslContext);
+	    
+	    // Koennen wir nicht direkt aufrufen, weil wir sonst eine Compiler-Abhaengigkeit zu Java 1.5 haben
+	    BeanUtil.set(SSLContext.class,"default",this.sslContext);
 		}
-		catch (Throwable t)
+		catch (Exception e)
 		{
-		  Logger.info("unable to set ssl context, this java version seems to be < 1.6, error message: [" + t.getClass().getName() + "]: " + t.getMessage());
+		  Logger.info("unable to set ssl context, this java version seems to be < 1.6, error message: " + e.getMessage());
 		}
 				
 		return this.sslContext;
@@ -750,6 +753,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.54  2010/06/14 11:30:49  willuhn
+ * @N Aufruf indirekt via Reflection, da wir sonst eine Compile-Abhaengigkeit zu Java 1.6 haben
+ *
  * Revision 1.53  2010/06/14 10:06:18  willuhn
  * @N BUGZILLA 872
  *
