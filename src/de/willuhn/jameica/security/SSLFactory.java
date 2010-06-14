@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.52 $
- * $Date: 2010/04/14 11:06:42 $
+ * $Revision: 1.53 $
+ * $Date: 2010/06/14 10:06:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -677,6 +677,16 @@ public class SSLFactory
     TrustManager trustManager = new JameicaTrustManager();
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
 												 new TrustManager[]{trustManager},null);
+		
+		try
+		{
+	    Logger.info("set jameica ssl context as system default");
+	    SSLContext.setDefault(this.sslContext);
+		}
+		catch (Throwable t)
+		{
+		  Logger.info("unable to set ssl context, this java version seems to be < 1.6, error message: [" + t.getClass().getName() + "]: " + t.getMessage());
+		}
 				
 		return this.sslContext;
 	}
@@ -740,6 +750,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.53  2010/06/14 10:06:18  willuhn
+ * @N BUGZILLA 872
+ *
  * Revision 1.52  2010/04/14 11:06:42  willuhn
  * @C seed unnoetig kompliziert
  *
