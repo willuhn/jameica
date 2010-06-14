@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.34 $
- * $Date: 2010/04/13 12:17:03 $
+ * $Revision: 1.35 $
+ * $Date: 2010/06/14 08:23:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
@@ -68,6 +69,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
 		display = GUI.getDisplay();
     
     shell = new Shell(display,SWT.NONE);
+    shell.setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon","hibiscus-icon-64x64.png")));
     shell.setAlpha(Customizing.SETTINGS.getInt("application.splashscreen.alpha",210));
     String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
     shell.setText(name);
@@ -287,6 +289,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.35  2010/06/14 08:23:13  willuhn
+ * @N Icon auch in Splashscreen verwenden
+ *
  * Revision 1.34  2010/04/13 12:17:03  willuhn
  * @N Alpha-Blending in Splashscreen und Popup-Messages - seit SWT 3.4 moeglich
  *
