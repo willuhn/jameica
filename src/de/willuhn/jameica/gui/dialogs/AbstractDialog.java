@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.50 $
- * $Date: 2010/04/13 10:50:41 $
+ * $Revision: 1.51 $
+ * $Date: 2010/07/13 10:52:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.dialogs;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -472,6 +473,16 @@ public abstract class AbstractDialog
 		  this.closeState = SWT.CANCEL;
 		  throw oce;
 		}
+		catch (SWTException e)
+		{
+		  Throwable t = e.getCause();
+		  if (t instanceof OperationCanceledException)
+		  {
+		    this.closeState = SWT.CANCEL;
+		    throw (OperationCanceledException) t;
+		  }
+		  throw e;
+		}
 		finally
 		{
 			close();
@@ -525,6 +536,9 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
+ * Revision 1.51  2010/07/13 10:52:59  willuhn
+ * @N OperationCancelledException auch aus SWTException herausfischen - wird z.Bsp. dann gebraucht, wenn der Vorgang in einem separaten Thread laeuft
+ *
  * Revision 1.50  2010/04/13 10:50:41  willuhn
  * @B AbstractDialog hatte das falsche Parent und den falschen MODAL-Typ (APPLICATION_MODAL statt PRIMARY_MODAL)
  *
