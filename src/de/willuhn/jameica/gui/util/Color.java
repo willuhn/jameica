@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.12 $
- * $Date: 2008/09/23 14:02:10 $
+ * $Revision: 1.13 $
+ * $Date: 2010/07/16 13:11:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,6 +85,11 @@ public class Color {
 	private static Settings settings = new Settings(Color.class);
   
   private static HashMap colorCache = new HashMap();
+  
+  static
+  {
+    settings.setStoreWhenRead(false);
+  }
 
   /**
 	 * ct.
@@ -147,6 +152,9 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
+ * Revision 1.13  2010/07/16 13:11:31  willuhn
+ * @N Config-Dateien nicht mehr automatisch anlegen
+ *
  * Revision 1.12  2008/09/23 14:02:10  willuhn
  * @B Wenn wir Farben aus dem Cache loeschen, duerfen wir sie nicht disposen, weil sie ggf. noch irgendwo verwendet werden
  *

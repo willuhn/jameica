@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.12 $
- * $Date: 2008/07/04 16:02:11 $
+ * $Revision: 1.13 $
+ * $Date: 2010/07/16 13:11:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -88,6 +88,11 @@ public class Font {
 	private FontData defaultValue;
 	private static Settings settings = new Settings(Font.class);
 	
+	static
+	{
+	  settings.setStoreWhenRead(false);
+	}
+	
 	/**
 	 * ct.
    * @param name
@@ -140,6 +145,9 @@ public class Font {
 
 /**********************************************************************
  * $Log: Font.java,v $
+ * Revision 1.13  2010/07/16 13:11:31  willuhn
+ * @N Config-Dateien nicht mehr automatisch anlegen
+ *
  * Revision 1.12  2008/07/04 16:02:11  willuhn
  * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
  * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
