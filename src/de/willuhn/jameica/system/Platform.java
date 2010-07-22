@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/11/17 23:22:19 $
+ * $Revision: 1.3 $
+ * $Date: 2010/07/22 21:20:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,6 +52,16 @@ public class Platform
    * Konstante fuer: Windows 64Bit.
    */
   public final static int OS_WINDOWS_64 = 5;
+  
+  /**
+   * Konstante fuer: FreeBSD
+   */
+  public final static int OS_FREEBSD    = 6;
+  
+  /**
+   * Konstante fuer: FreeBSD 64Bit.
+   */
+  public final static int OS_FREEBSD_64 = 7;
 
 
   protected File workdir = null;
@@ -146,6 +156,17 @@ public class Platform
       Logger.debug("macos");
       return OS_MAC;
     }
+    
+    if (os.toLowerCase().indexOf("FreeBSD") != -1)
+    {
+      if (arch.toLowerCase().indexOf("64") != -1)
+      {
+        Logger.debug("freebsd 64bit");
+        return OS_FREEBSD_64;
+      }
+      Logger.debug("freebsd 32bit");
+      return OS_FREEBSD;
+    }
     Logger.debug("unknown os");
     return OS_UNKNOWN;
   }
@@ -155,6 +176,9 @@ public class Platform
 
 /**********************************************************************
  * $Log: Platform.java,v $
+ * Revision 1.3  2010/07/22 21:20:39  willuhn
+ * @N FreeBSD64-Support - siehe Mak's Mail vom 22.07.2010
+ *
  * Revision 1.2  2008/11/17 23:22:19  willuhn
  * @N "getOS" zur Ermittlung des Betriebssystems
  *
