@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/07/22 21:20:39 $
+ * $Revision: 1.4 $
+ * $Date: 2010/07/23 22:19:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -157,7 +157,7 @@ public class Platform
       return OS_MAC;
     }
     
-    if (os.toLowerCase().indexOf("FreeBSD") != -1)
+    if (os.toLowerCase().indexOf("freebsd") != -1)
     {
       if (arch.toLowerCase().indexOf("64") != -1)
       {
@@ -176,7 +176,10 @@ public class Platform
 
 /**********************************************************************
  * $Log: Platform.java,v $
- * Revision 1.3  2010/07/22 21:20:39  willuhn
+ * Revision 1.4  2010/07/23 22:19:42  willuhn
+ * @B typo
+ *
+ * Revision 1.3  2010-07-22 21:20:39  willuhn
  * @N FreeBSD64-Support - siehe Mak's Mail vom 22.07.2010
  *
  * Revision 1.2  2008/11/17 23:22:19  willuhn
