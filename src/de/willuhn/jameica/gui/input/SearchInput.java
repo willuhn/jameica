@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2010/01/18 22:59:02 $
+ * $Revision: 1.19 $
+ * $Date: 2010/07/23 10:28:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,8 +19,6 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.PopupList;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -276,26 +274,13 @@ public class SearchInput extends AbstractInput
     if (maxLength > 0)
       text.setTextLimit(maxLength);
 
-    this.text.addFocusListener(new FocusListener() {
-    
-      public void focusLost(FocusEvent e)
+    this.text.addListener(SWT.FOCUSED,new Listener() {
+      public void handleEvent(Event event)
       {
         if (text == null || text.isDisposed())
           return;
 
-        String s = text.getText();
-        if (s == null || s.length() == 0)
-        {
-          text.setText(search);
-          text.setForeground(Color.COMMENT.getSWTColor());
-        }
-      }
-    
-      public void focusGained(FocusEvent e)
-      {
-        if (text == null || text.isDisposed())
-          return;
-
+        // Text "Suche..." entfernen, wenn man reinklickt
         String s = text.getText();
         if (s != null && s.equals(search))
         {
@@ -303,7 +288,21 @@ public class SearchInput extends AbstractInput
           text.setForeground(Color.WIDGET_FG.getSWTColor());
         }
       }
-    
+    });
+    this.text.addListener(SWT.FocusOut,new Listener() {
+      public void handleEvent(Event event)
+      {
+        if (text == null || text.isDisposed())
+          return;
+
+        // Text "Suche..." eintragen, wenn nichts drin steht
+        String s = text.getText();
+        if (s == null || s.length() == 0)
+        {
+          text.setText(search);
+          text.setForeground(Color.COMMENT.getSWTColor());
+        }
+      }
     });
 
     if (this.focus)
@@ -505,6 +504,9 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
+ * Revision 1.19  2010/07/23 10:28:58  willuhn
+ * @B Focus wurde unter bestimmten Umstaenden nicht ausgeloest. Das "Suche..." blieb dann im Textfeld stehen
+ *
  * Revision 1.18  2010/01/18 22:59:02  willuhn
  * @B BUGZILLA 808
  *
