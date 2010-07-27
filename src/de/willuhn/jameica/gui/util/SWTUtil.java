@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.22 $
- * $Date: 2009/11/03 01:19:33 $
+ * $Revision: 1.23 $
+ * $Date: 2010/07/27 11:54:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,9 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.eclipse.swt.SWT;
@@ -98,20 +101,53 @@ public class SWTUtil {
     InputStream is = null;
     try
     {
-      is = cl.getResourceAsStream("img/" + filename);
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to load image from " + filename,e);
-    }
+      
+      // Wir versuchen erstmal, das Bild via Resource-Loader zu laden
+      try
+      {
+        is = cl.getResourceAsStream("img/" + filename);
+      }
+      catch (Exception e)
+      {
+        // tolerieren wir
+      }
 
-    image = getImage(is);
+      // OK, dann via Filesystem
+      if (is == null)
+      {
+        try
+        {
+          File file = new File(filename);
+          if (file.isFile() && file.canRead())
+            is = new BufferedInputStream(new FileInputStream(file));
+        }
+        catch (Exception e2)
+        {
+          Logger.error("unable to load image from " + filename,e2);
+        }
+      }
+      image = getImage(is);
 
-    if (image != null)
-    {
-      imagecache.put(filename, image);
+      if (image != null)
+      {
+        imagecache.put(filename, image);
+      }
+      return image;
     }
-    return image;
+    finally
+    {
+      if (is != null)
+      {
+        try
+        {
+          is.close();
+        }
+        catch (Exception e)
+        {
+          // ignore
+        }
+      }
+    }
   }
 
   /**
@@ -125,23 +161,26 @@ public class SWTUtil {
   {
     Image image = null;
     
-    try
+    if (is != null)
     {
-      ImageData data = new ImageData(is);
-      ImageData data2 = null;
-      if (data.transparentPixel > 0) {
-        data2 = data.getTransparencyMask();
-        image = new Image(GUI.getDisplay(), data, data2);
+      try
+      {
+        ImageData data = new ImageData(is);
+        ImageData data2 = null;
+        if (data.transparentPixel > 0) {
+          data2 = data.getTransparencyMask();
+          image = new Image(GUI.getDisplay(), data, data2);
+        }
+        else {
+          image = new Image(GUI.getDisplay(), data);
+        }
+        
+        return image;
       }
-      else {
-        image = new Image(GUI.getDisplay(), data);
+      catch (Throwable t)
+      {
+        Logger.error("unable to load image",t);
       }
-      
-      return image;
-    }
-    catch (Throwable t)
-    {
-      Logger.error("unable to load image",t);
     }
     return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img" + "/empty.gif"));
   }
@@ -246,6 +285,10 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
+ * Revision 1.23  2010/07/27 11:54:43  willuhn
+ * @N Fehlertoleranteres Laden von Bildern
+ * @N Bilder koennen nun auch direkt im Filesystem liegen und koennen ueber den Pfad im Filesystem angegeben werden
+ *
  * Revision 1.22  2009/11/03 01:19:33  willuhn
  * *** empty log message ***
  *
