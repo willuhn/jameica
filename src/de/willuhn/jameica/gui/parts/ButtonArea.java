@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.15 $
- * $Date: 2010/07/29 09:15:40 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
+ * $Revision: 1.9 $
+ * $Date: 2010/07/29 09:15:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,9 +10,11 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.util;
+package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -20,34 +22,41 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.parts.Button;
-import de.willuhn.logging.Logger;
+import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.util.Color;
 
 /**
- * Diese Klasse erzeugt standardisierte Bereiche fuer die Dialog-Buttons.
+ * Diese Klasse erzeugt standardisierte Bereiche fuer Buttons.
+ * Das ist die neue Button-Area. Sie hat den Vorteil, dass
+ * sie {@link Part} implementiert und daher erzeugt werden kann,
+ * bevor das {@link Composite} bekannt ist.
+ * @author willuhn
  */
-public class ButtonArea
+public class ButtonArea implements Part
 {
-  private Composite buttonArea;
+  private List<Button> buttons = new ArrayList<Button>();
 
   /**
-   * Erzeugt einen neuen Standard-Button-Bereich.
-   * @param parent Composite, in dem die Buttons gezeichnet werden sollen.
-   * @param numButtons Anzahl der Buttons, die hier drin gespeichert werden sollen.
-   * @#deprecated Bitte kuenftig stattdessen {@link de.willuhn.jameica.gui.parts.ButtonArea} verwenden.
+   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
-  public ButtonArea(Composite parent, int numButtons)
+  public void paint(Composite parent) throws RemoteException
   {
     GridLayout layout = new GridLayout();
     layout.marginHeight=0;
     layout.marginWidth=0;
-    layout.numColumns = numButtons;
+    layout.numColumns = buttons.size();
 
-    buttonArea = new Composite(parent, SWT.NONE);
-		buttonArea.setBackground(Color.BACKGROUND.getSWTColor());
-    buttonArea.setLayout(layout);
-    buttonArea.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+    Composite comp = new Composite(parent, SWT.NONE);
+    comp.setBackground(Color.BACKGROUND.getSWTColor());
+    comp.setLayout(layout);
+    comp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+    
+    for (Button b:this.buttons)
+    {
+      b.paint(comp);
+    }
   }
+
 
   /**
    * fuegt der Area einen Button hinzu.
@@ -56,14 +65,7 @@ public class ButtonArea
    */
   public void addButton(Button button)
   {
-    try
-    {
-      button.paint(buttonArea);
-    }
-    catch (RemoteException e)
-    {
-      Logger.error("error while painting button",e);
-    }
+    this.buttons.add(button);
   }
   
   /**
@@ -114,24 +116,14 @@ public class ButtonArea
    */
   public void addButton(String name, final Action action, final Object context, boolean isDefault, String icon)
   {
-    Button button = new Button(name,action,context,isDefault,icon);
-    try
-    {
-      button.paint(buttonArea);
-    }
-    catch (RemoteException e)
-    {
-      Logger.error("error while painting button \"" + name + "\"",e);
-    }
+    this.buttons.add(new Button(name,action,context,isDefault,icon));
   }
 
 }
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
- * Revision 1.15  2010/07/29 09:15:40  willuhn
+ * Revision 1.9  2010/07/29 09:15:41  willuhn
  * @N Neue ButtonArea - die alte muss irgendwann mal abgeloest werden
  *
- * Revision 1.14  2009-01-20 10:51:51  willuhn
- * @N Mehr Icons - fuer Buttons
  **********************************************************************/

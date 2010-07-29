@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.14 $
- * $Date: 2008/04/23 15:28:02 $
+ * $Revision: 1.15 $
+ * $Date: 2010/07/29 09:15:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -265,11 +265,42 @@ public abstract class Container
 		comp.setLayout(gl);
   	return new ButtonArea(comp,numButtons);
   }
+  
+  /**
+   * Fuegt eine neue ButtonArea hinzu.
+   * @param buttonArea die hinzuzufuegende Button-Area.
+   */
+  public void addButtonArea(de.willuhn.jameica.gui.parts.ButtonArea buttonArea)
+  {
+    try
+    {
+      addSeparator();
+      final GridData g = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
+      g.horizontalSpan = 2;
+      final Composite comp = new Composite(getComposite(),SWT.NONE);
+      comp.setBackground(Color.BACKGROUND.getSWTColor());
+      comp.setLayoutData(g);
+
+      final GridLayout gl = new GridLayout();
+      gl.marginHeight = 0;
+      gl.marginWidth = 0;
+      comp.setLayout(gl);
+      buttonArea.paint(comp);
+    }
+    catch (RemoteException e)
+    {
+      Logger.error("error while adding button area",e);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen des Buttons."),StatusBarMessage.TYPE_ERROR));
+    }
+  }
 }
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.14  2008/04/23 15:28:02  willuhn
+ * Revision 1.15  2010/07/29 09:15:41  willuhn
+ * @N Neue ButtonArea - die alte muss irgendwann mal abgeloest werden
+ *
+ * Revision 1.14  2008-04-23 15:28:02  willuhn
  * @N Checkboxen korrekt in "addInput" erkennen
  *
  * Revision 1.13  2007/09/06 22:21:55  willuhn
