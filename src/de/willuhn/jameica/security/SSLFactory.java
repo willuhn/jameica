@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.54 $
- * $Date: 2010/06/14 11:30:49 $
+ * $Revision: 1.55 $
+ * $Date: 2010/08/06 09:26:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -688,7 +688,7 @@ public class SSLFactory
 		}
 		catch (Exception e)
 		{
-		  Logger.info("unable to set ssl context, this java version seems to be < 1.6, error message: " + e.getMessage());
+		  Logger.info("unable to set ssl context, this java version seems to be < 1.6");
 		}
 				
 		return this.sslContext;
@@ -753,6 +753,9 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
+ * Revision 1.55  2010/08/06 09:26:28  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.54  2010/06/14 11:30:49  willuhn
  * @N Aufruf indirekt via Reflection, da wir sonst eine Compile-Abhaengigkeit zu Java 1.6 haben
  *
