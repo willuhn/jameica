@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ColumnLayout.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/02/22 16:40:16 $
+ * $Revision: 1.3 $
+ * $Date: 2010/08/12 15:21:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,6 +65,8 @@ public class ColumnLayout
     this.comp.setLayoutData(grid);
 
     GridLayout layout = new GridLayout(columns < 1 ? 1 : columns, false);
+    layout.marginHeight = 0;
+    layout.marginWidth = 0;
     this.comp.setLayout(layout);
   }
   
@@ -96,7 +98,10 @@ public class ColumnLayout
 
 /*********************************************************************
  * $Log: ColumnLayout.java,v $
- * Revision 1.2  2008/02/22 16:40:16  willuhn
+ * Revision 1.3  2010/08/12 15:21:33  willuhn
+ * @C Einrueckungen weglassen. Die Kind-Container haben bereits eigene Raender
+ *
+ * Revision 1.2  2008-02-22 16:40:16  willuhn
  * @N ColumnLayout erkennt selbst, ob das Parent bereits mehrspaltig ist und erstreckt sich ueber die volle Breite
  *
  * Revision 1.1  2008/02/22 16:20:40  willuhn
