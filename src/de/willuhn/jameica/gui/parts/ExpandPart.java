@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/03/24 13:00:03 $
+ * $Revision: 1.8 $
+ * $Date: 2010/08/12 15:35:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -98,8 +98,10 @@ public class ExpandPart implements Part
         final Composite composite = new Composite(bar, SWT.NONE);
         composite.setBackground(Color.BACKGROUND.getSWTColor());
         GridLayout layout = new GridLayout();
-        layout.marginLeft = layout.marginTop = layout.marginRight = layout.marginBottom = 10;
-        layout.verticalSpacing = 10;
+        layout.marginLeft = 10;
+        layout.marginTop = layout.marginRight = layout.marginBottom = 0;
+        layout.verticalSpacing = 2;
+        layout.horizontalSpacing = 0;
         composite.setLayout(layout);
 
         ei.part.paint(composite);
@@ -169,7 +171,10 @@ public class ExpandPart implements Part
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
- * Revision 1.7  2010/03/24 13:00:03  willuhn
+ * Revision 1.8  2010/08/12 15:35:23  willuhn
+ * @C Etwas mehr Platz geschafft
+ *
+ * Revision 1.7  2010-03-24 13:00:03  willuhn
  * @N der linke Rand wird sonst in GTK ueberdeckt
  *
  * Revision 1.6  2008/08/29 14:38:43  willuhn
