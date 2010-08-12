@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/AbstractBox.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/08/29 13:15:42 $
+ * $Revision: 1.5 $
+ * $Date: 2010/08/12 15:48:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,13 +25,6 @@ public abstract class AbstractBox implements Box
   // Wir cachen den Index. Das erspart unnoetige Zugriffe auf die properties-Dateien
   private Integer index   = null;
   private Boolean enabled = null;
-
-  /**
-   * ct.
-   */
-  public AbstractBox()
-  {
-  }
 
   /**
    * @see de.willuhn.jameica.gui.boxes.Box#isEnabled()
@@ -111,6 +104,9 @@ public abstract class AbstractBox implements Box
 
 /*********************************************************************
  * $Log: AbstractBox.java,v $
+ * Revision 1.5  2010/08/12 15:48:24  willuhn
+ * @R Unnoetigen Default-Konstruktor entfernt
+ *
  * Revision 1.4  2008/08/29 13:15:42  willuhn
  * @C Java 1.4 Compatibility - wieso zur Hoelle sind die Fehler vorher nie aufgefallen? Ich compiliere immer gegen 1.4? Suspekt
  *
