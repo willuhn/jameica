@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ColumnLayout.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/08/12 15:21:33 $
+ * $Revision: 1.4 $
+ * $Date: 2010/08/13 14:06:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,6 +67,8 @@ public class ColumnLayout
     GridLayout layout = new GridLayout(columns < 1 ? 1 : columns, false);
     layout.marginHeight = 0;
     layout.marginWidth = 0;
+    layout.horizontalSpacing = 0;
+    layout.verticalSpacing = 0;
     this.comp.setLayout(layout);
   }
   
@@ -98,7 +100,10 @@ public class ColumnLayout
 
 /*********************************************************************
  * $Log: ColumnLayout.java,v $
- * Revision 1.3  2010/08/12 15:21:33  willuhn
+ * Revision 1.4  2010/08/13 14:06:33  willuhn
+ * @C Schmalere Raender
+ *
+ * Revision 1.3  2010-08-12 15:21:33  willuhn
  * @C Einrueckungen weglassen. Die Kind-Container haben bereits eigene Raender
  *
  * Revision 1.2  2008-02-22 16:40:16  willuhn
