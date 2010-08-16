@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.13 $
- * $Date: 2009/06/10 11:25:54 $
+ * $Revision: 1.14 $
+ * $Date: 2010/08/16 10:44:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -123,6 +123,14 @@ public interface ApplicationCallback
   public String askUser(String question, String labeltext) throws Exception;
 
   /**
+   * Benoetigt Jameica ein Passwort, wird diese Funktion aufgerufen.
+   * @param question Die anzuzeigende Frage.
+   * @return der vom User eingegebene Text.
+   * @throws Exception
+   */
+  public String askPassword(String question) throws Exception;
+
+  /**
    * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
    * @param question Die anzuzeigende Frage.
    * @return true fuer ja, false fuer nein.
@@ -200,6 +208,9 @@ public interface ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
+ * Revision 1.14  2010/08/16 10:44:21  willuhn
+ * @N Application-Callback hat jetzt auch eine Callback-Funktion zur Abfrage eines beliebigen Passwortes
+ *
  * Revision 1.13  2009/06/10 11:25:54  willuhn
  * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
  *

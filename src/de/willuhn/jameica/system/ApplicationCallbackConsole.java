@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.35 $
- * $Date: 2010/05/19 14:51:53 $
+ * $Revision: 1.36 $
+ * $Date: 2010/08/16 10:44:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -269,6 +269,15 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
   }
 
   /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askPassword(java.lang.String)
+   */
+  public String askPassword(String question) throws Exception
+  {
+    // Sternchen-Eingabe gibts nicht in der Console.
+    return askUser(question,Application.getI18n().tr("Passwort"));
+  }
+
+  /**
    * @see de.willuhn.jameica.system.ApplicationCallback#checkTrust(java.security.cert.X509Certificate)
    */
   public boolean checkTrust(X509Certificate cert) throws Exception
@@ -491,6 +500,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.36  2010/08/16 10:44:21  willuhn
+ * @N Application-Callback hat jetzt auch eine Callback-Funktion zur Abfrage eines beliebigen Passwortes
+ *
  * Revision 1.35  2010/05/19 14:51:53  willuhn
  * @N Ausfall von STDOUT tolerieren
  * @N STDOUT, STDERR und STDIN beim Start mit dem Parameter "-n" (Noninteractive mode) schliessen

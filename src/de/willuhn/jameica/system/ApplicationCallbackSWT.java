@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.26 $
- * $Date: 2010/04/13 10:42:16 $
+ * $Revision: 1.27 $
+ * $Date: 2010/08/16 10:44:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -228,6 +228,21 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   }
 
   /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askPassword(java.lang.String)
+   */
+  public String askPassword(String question) throws Exception
+  {
+    PasswordDialog d = new PasswordDialog(PasswordDialog.POSITION_CENTER) {
+      protected boolean checkPassword(String password)
+      {
+        return true; // wir checken nicht.
+      }
+    };
+    d.setText(question);
+    return (String) d.open();
+  }
+
+  /**
    * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String)
    */
   public boolean askUser(final String question) throws Exception
@@ -428,6 +443,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.27  2010/08/16 10:44:21  willuhn
+ * @N Application-Callback hat jetzt auch eine Callback-Funktion zur Abfrage eines beliebigen Passwortes
+ *
  * Revision 1.26  2010/04/13 10:42:16  willuhn
  * @
  *
