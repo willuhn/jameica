@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchPart.java,v $
- * $Revision: 1.6 $
- * $Date: 2010/02/24 22:44:16 $
+ * $Revision: 1.7 $
+ * $Date: 2010/08/17 16:05:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,8 +17,6 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -36,7 +34,6 @@ import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.View;
 import de.willuhn.jameica.gui.internal.dialogs.SearchOptionsDialog;
 import de.willuhn.jameica.gui.parts.Panel;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.SearchService;
 import de.willuhn.jameica.system.Application;
@@ -67,90 +64,57 @@ public class SearchPart implements Part
     layout.marginWidth  = 3;
     this.comp.setLayout(layout);
       
-    final String searchText = Application.getI18n().tr("Suche...");
-
-    this.search = GUI.getStyleFactory().createText(this.comp);
+    this.search = new Text(this.comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
     this.search.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    this.search.setText(searchText);
-    this.search.setForeground(Color.COMMENT.getSWTColor());
-    this.search.addFocusListener(new FocusAdapter()
-    {
-      public void focusLost(FocusEvent e)
-      {
-        if (search == null || search.isDisposed())
-          return;
-        String currentText = search.getText();
-        if (currentText == null || currentText.length() == 0)
-        {
-          search.setText(searchText);
-          search.setForeground(Color.COMMENT.getSWTColor());
-        }
-      }
+    this.search.setMessage(Application.getI18n().tr("Suche..."));
     
+    // Fuer den Search-Button
+    this.search.addSelectionListener(new SelectionAdapter()
+    {
       /**
-       * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
+       * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
        */
-      public void focusGained(FocusEvent e)
+      public void widgetDefaultSelected(SelectionEvent e)
       {
-        if (search == null || search.isDisposed())
+        if (search == null || search.isDisposed() || !search.isFocusControl())
           return;
-        String currentText = search.getText();
-        if (currentText != null && currentText.equals(searchText))
+        
+        try
         {
-          search.setText("");
-          search.setForeground(Color.WIDGET_FG.getSWTColor());
+          if (e.detail == SWT.ICON_SEARCH)
+          {
+            // Wir reagieren nur, wenn wirklich das Icon angeklickt wurde.
+            doSearch();
+          }
+        }
+        finally
+        {
+          // bewirkt, dass das Event nicht noch von weiteren
+          // Listenern ausgewertet und die Suche u.U. ein
+          // zweites Mal ausloest.
+          e.doit = false;
         }
       }
     });
     this.search.addTraverseListener(new TraverseListener()
     {
+      /**
+       * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
+       */
       public void keyTraversed(TraverseEvent e)
       {
         if (search == null || search.isDisposed() || !search.isFocusControl())
           return;
-        
-        final String text = search.getText();
-        if (text == null || text.length() < 3 || text.equals(searchText))
-          return; // weniger als 3 Zeichen eingegeben
 
         try
         {
-          final View view = GUI.getView();
-
-          // Wird schon angezeigt.
-          if (started)
-          {
-            view.snapOut();
-            started = false;
-          }
-
-          SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
-          List result = service.search(text);
-
-          SearchResultPart part = new SearchResultPart(result);
-          Panel panel = new Panel(Application.getI18n().tr("Suchergebnis"), part, false);
-          panel.addMinimizeListener(new Listener()
-          {
-            public void handleEvent(Event event)
-            {
-              view.snapOut();
-              started = false;
-            }
-          });
-          panel.paint(view.getSnapin());
-          view.snapIn();
-          started = true;
-        }
-        catch (Exception ex)
-        {
-          Logger.error("error while opening search result",ex);
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen des Suchergebnisses: {0}", ex.getMessage()), StatusBarMessage.TYPE_ERROR));
+          doSearch();
         }
         finally
         {
-          // bewirkt, dass Folge-Events nicht mehr ausgeloest werden.
-          // Das kann z.Bsp. sein, wenn gerade ein Dialog mit
-          // Default-Button angezeigt wird.
+          // bewirkt, dass das Event nicht noch von weiteren
+          // Listenern ausgewertet und die Suche u.U. ein
+          // zweites Mal ausloest.
           e.doit = false;
         }
       }
@@ -175,12 +139,62 @@ public class SearchPart implements Part
     
     });
   }
+  
+  /**
+   * Fuehrt die Suche aus.
+   */
+  private void doSearch()
+  {
+    if (search == null || search.isDisposed())
+      return;
+    
+    final String text = search.getText();
+    if (text == null || text.length() < 3)
+      return; // weniger als 3 Zeichen eingegeben
 
+    try
+    {
+      final View view = GUI.getView();
+
+      // Wird schon angezeigt.
+      if (started)
+      {
+        view.snapOut();
+        started = false;
+      }
+
+      SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
+      List result = service.search(text);
+
+      SearchResultPart part = new SearchResultPart(result);
+      Panel panel = new Panel(Application.getI18n().tr("Suchergebnis"), part, false);
+      panel.addMinimizeListener(new Listener()
+      {
+        public void handleEvent(Event event)
+        {
+          view.snapOut();
+          started = false;
+        }
+      });
+      panel.paint(view.getSnapin());
+      view.snapIn();
+      started = true;
+    }
+    catch (Exception ex)
+    {
+      Logger.error("error while opening search result",ex);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen des Suchergebnisses: {0}", ex.getMessage()), StatusBarMessage.TYPE_ERROR));
+    }
+  }
 }
 
 
 /**********************************************************************
  * $Log: SearchPart.java,v $
+ * Revision 1.7  2010/08/17 16:05:32  willuhn
+ * @N Update auf SWT 3.6
+ * @N Such-Feld ist jetzt ein SWT.SEARCH mit Icons
+ *
  * Revision 1.6  2010/02/24 22:44:16  willuhn
  * @B Suche konnte ausgeloest werden - auch wenn das Feld gar keinen Focus hat oder "Suche..." drin stand
  *
