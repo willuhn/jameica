@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.18 $
- * $Date: 2008/02/22 16:20:40 $
+ * $Revision: 1.19 $
+ * $Date: 2010/08/19 11:59:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 
 /**
  * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
@@ -56,8 +59,8 @@ public class LabelGroup extends Container
 		group = new Group(parent, SWT.NONE);
 		
 		// BUGZILLA 435
-		String os = System.getProperty("os.name");
-		if (os != null && os.toLowerCase().indexOf("windows") == -1)
+		int os = Application.getPlatform().getOS();
+		if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64)
 		  group.setBackground(Color.BACKGROUND.getSWTColor());
 
 		if (name != null)
@@ -82,7 +85,10 @@ public class LabelGroup extends Container
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
- * Revision 1.18  2008/02/22 16:20:40  willuhn
+ * Revision 1.19  2010/08/19 11:59:08  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.18  2008-02-22 16:20:40  willuhn
  * @N Mehrspalten-Layouts
  *
  * Revision 1.17  2007/07/17 15:57:42  willuhn
