@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.126 $
- * $Date: 2010/04/12 16:26:23 $
+ * $Revision: 1.127 $
+ * $Date: 2010/08/23 11:03:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -115,6 +115,25 @@ public class GUI implements ApplicationController
       Logger.info("startup GUI");
       
       Logger.info("SWT version: " + SWT.getVersion());
+      
+      // Wenn das Display weniger als 700 Pixel hoch ist, aktivieren wir
+      // automatisch den "Netbook"-Mode
+      
+      Rectangle r = GUI.getDisplay().getBounds();
+      if (r.height < 700)
+      {
+        Logger.info("display height smaller than 700px (" + r.width + "x" + r.width + ") - auto-activating netbook mode");
+        Customizing.SETTINGS.setAttribute("application.scrollview",true);
+      }
+      else
+      {
+        // Falls der Netbook-Mode schonmal aktiviert war, deaktivieren wir ihn automatisch wieder - das Display ist ja nun gross genug
+        if (Customizing.SETTINGS.getString("application.scrollview",null) != null)
+        {
+          Logger.info("display height larger than 700px (" + r.width + "x" + r.width + ") - disable netbook mode");
+          Customizing.SETTINGS.setAttribute("application.scrollview",(String)null);
+        }
+      }
 
       // init shell
       getShell().setLayout(SWTUtil.createGrid(1, false));
@@ -631,17 +650,14 @@ public class GUI implements ApplicationController
 	public static StyleFactory getStyleFactory()
 	{
 		if (gui.styleFactory != null) return gui.styleFactory;
-		String className = SETTINGS.getString("stylefactory",
-				StyleFactoryDefaultImpl.class.getName());
+		String className = SETTINGS.getString("stylefactory",StyleFactoryDefaultImpl.class.getName());
 		try
 		{
-			gui.styleFactory = (StyleFactory) Application.getClassLoader().load(
-					className).newInstance();
+			gui.styleFactory = (StyleFactory) Application.getClassLoader().load(className).newInstance();
 		}
 		catch (Exception e)
 		{
-			Logger.error(
-					"unable to load configured stylefactory, using default", e);
+			Logger.error("unable to load configured stylefactory, using default", e);
 			gui.styleFactory = new StyleFactoryDefaultImpl();
 		}
 		return gui.styleFactory;
@@ -887,7 +903,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.126  2010/04/12 16:26:23  willuhn
+ * Revision 1.127  2010/08/23 11:03:10  willuhn
+ * @N Automatische Aktivierung des Netbook-Modes auf kleinen Displays
+ *
+ * Revision 1.126  2010-04-12 16:26:23  willuhn
  * @N SWT-Version beim Start in Log schreiben
  *
  * Revision 1.125  2010/03/18 09:33:09  willuhn
