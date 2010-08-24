@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.24 $
- * $Date: 2009/01/04 01:24:30 $
+ * $Revision: 1.25 $
+ * $Date: 2010/08/24 22:43:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,10 +37,9 @@ import de.willuhn.util.I18N;
  */
 public abstract class AbstractInput implements Input
 {
+  final static I18N i18n = Application.getI18n();
 
   private final static Object PLACEHOLDER = new Object();
-
-  I18N i18n;
 
   private Composite parent = null;
 
@@ -57,14 +56,6 @@ public abstract class AbstractInput implements Input
   private boolean mandatory = false;
   
   private Object oldValue = PLACEHOLDER;
-
-	/**
-   * Erzeugt ein neues Eingabe-Feld.
-   */
-  public AbstractInput()
-	{
-		i18n = Application.getI18n();
-	}
 
   /**
    * Liefert das Composite, in dem das Control gemalt werden soll.
@@ -96,7 +87,7 @@ public abstract class AbstractInput implements Input
   /**
    * @see de.willuhn.jameica.gui.input.Input#setComment(java.lang.String)
    */
-  public final void setComment(String comment)
+  public void setComment(String comment)
   {
     this.comment = comment;
 		if (commentLabel != null && ! commentLabel.isDisposed() && this.comment != null)
@@ -136,10 +127,13 @@ public abstract class AbstractInput implements Input
     control = getControl();
     applyVerifier(control);
     
-    final GridData inputGrid = new GridData(getStyleBits());
-    inputGrid.widthHint = hasComment ? width / 2 : width;
-    inputGrid.horizontalSpan = hasComment ? 1 : 2;
-    control.setLayoutData(inputGrid);
+    if (control.getLayoutData() == null)
+    {
+      final GridData inputGrid = new GridData(getStyleBits());
+      inputGrid.widthHint = hasComment ? width / 2 : width;
+      inputGrid.horizontalSpan = hasComment ? 1 : 2;
+      control.setLayoutData(inputGrid);
+    }
 
     // den Kommentar hinten dran fuegen
     if (hasComment) {
@@ -388,6 +382,9 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
+ * Revision 1.25  2010/08/24 22:43:56  willuhn
+ * @N ImageInput - wollte Heiner in JVerein fuer Mitgliedsfotos haben
+ *
  * Revision 1.24  2009/01/04 01:24:30  willuhn
  * @N Format-Funktion zum Uberschreiben der Anzeige von Elementen in SearchInput
  * @N AbstractInput#addListener ueberschreibbar
