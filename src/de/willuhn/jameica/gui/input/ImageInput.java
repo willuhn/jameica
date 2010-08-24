@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ImageInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2010/08/24 22:43:57 $
+ * $Revision: 1.2 $
+ * $Date: 2010/08/24 23:06:10 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -50,7 +50,9 @@ public class ImageInput extends AbstractInput
   private boolean focus      = false;
   private boolean enabled    = true;
   private boolean hasComment = false;
+  
   private Button button      = null;
+  private MenuItem menu      = null;
   
   private int height         = 80;
   private int width          = 80;
@@ -208,12 +210,13 @@ public class ImageInput extends AbstractInput
       }
     });
 
-    // Menu zum Loeschen des Bildes
-    Menu m = new Menu(GUI.getShell());
-    MenuItem mi = new MenuItem(m,SWT.CASCADE);
-    mi.setText(i18n.tr("Bild entfernen"));
-    mi.setImage(SWTUtil.getImage("user-trash-full.png"));
-    mi.addSelectionListener(new SelectionAdapter() {
+    // Pop-Up-Menu zum Loeschen des Bildes
+    Menu m = new Menu(getParent().getShell(), SWT.POP_UP);
+    this.menu = new MenuItem(m,SWT.CASCADE);
+    this.menu.setText(i18n.tr("Bild entfernen"));
+    this.menu.setEnabled(this.data != null);
+    this.menu.setImage(SWTUtil.getImage("user-trash-full.png"));
+    this.menu.addSelectionListener(new SelectionAdapter() {
       /**
        * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
        */
@@ -298,7 +301,10 @@ public class ImageInput extends AbstractInput
   {
     if (this.button == null || this.button.isDisposed())
       return;
-    
+
+    if (this.menu != null && !this.menu.isDisposed())
+      this.menu.setEnabled(this.data != null);
+
     if (this.data == null)
     {
       this.button.setImage(null);
@@ -356,7 +362,10 @@ public class ImageInput extends AbstractInput
 
 /**********************************************************************
  * $Log: ImageInput.java,v $
- * Revision 1.1  2010/08/24 22:43:57  willuhn
+ * Revision 1.2  2010/08/24 23:06:10  willuhn
+ * @N Context-Menu deaktivieren, wenn kein Bild vorhanden ist.
+ *
+ * Revision 1.1  2010-08-24 22:43:57  willuhn
  * @N ImageInput - wollte Heiner in JVerein fuer Mitgliedsfotos haben
  *
  **********************************************************************/
