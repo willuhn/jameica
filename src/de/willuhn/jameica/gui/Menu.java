@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.41 $
- * $Date: 2009/06/04 10:55:22 $
+ * $Revision: 1.42 $
+ * $Date: 2010/08/26 21:47:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -115,6 +116,10 @@ public class Menu
 
     item.setData("item",element);
     item.setEnabled(element.isEnabled());
+    
+    Image icon = element.getIcon();
+    if (icon != null)
+      item.setImage(icon);
     
     ////////////////////////////////////////////////////////////////////////////
     // Shortcut vorhanden?
@@ -242,6 +247,9 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
+ * Revision 1.42  2010/08/26 21:47:47  willuhn
+ * @N Icons auch im Hauptmenu
+ *
  * Revision 1.41  2009/06/04 10:55:22  willuhn
  * @N Customizing-Parameter zum Ausblenden des Top-Menus
  *

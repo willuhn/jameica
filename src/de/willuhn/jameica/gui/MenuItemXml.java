@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/MenuItemXml.java,v $
- * $Revision: 1.6 $
- * $Date: 2006/06/29 14:56:48 $
+ * $Revision: 1.7 $
+ * $Date: 2010/08/26 21:47:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,10 @@ package de.willuhn.jameica.gui;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 
+import org.eclipse.swt.graphics.Image;
+
 import net.n3.nanoxml.IXMLElement;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
 
 /**
@@ -51,6 +54,17 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
   }
 
   /**
+   * @see de.willuhn.jameica.gui.MenuItem#getIcon()
+   */
+  public Image getIcon() throws RemoteException
+  {
+    String icon = (String) getAttribute("icon");
+    if (icon == null || icon.length() == 0)
+      return null;
+    return SWTUtil.getImage(icon);
+  }
+
+  /**
    * Ueberschrieben, um dabei auch das Menu anzupassen.
    * @see de.willuhn.jameica.gui.Item#setEnabled(boolean, boolean)
    */
@@ -75,6 +89,9 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
 
 /*********************************************************************
  * $Log: MenuItemXml.java,v $
+ * Revision 1.7  2010/08/26 21:47:48  willuhn
+ * @N Icons auch im Hauptmenu
+ *
  * Revision 1.6  2006/06/29 14:56:48  willuhn
  * @N Menu ist nun auch deaktivierbar
  *
