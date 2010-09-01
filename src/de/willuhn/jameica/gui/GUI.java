@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.127 $
- * $Date: 2010/08/23 11:03:10 $
+ * $Revision: 1.128 $
+ * $Date: 2010/09/01 15:52:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,35 +64,28 @@ import de.willuhn.util.ProgressMonitor;
 public class GUI implements ApplicationController
 {
 	final static Settings SETTINGS = new Settings(GUI.class);
+	static
+	{
+    SETTINGS.setStoreWhenRead(false);
+	}
 
   private static GUI gui = null;
+    private Display display              = null;
+    private Shell shell                  = null;
     private ApplicationCallback callback = null;
-    private Display display;
-  	private Shell shell;
+    private StyleFactory styleFactory    = null;
   
-  	private Navigation navi;
-  	private View view;
-  	private StatusBar statusBar;
-  	private Menu menu;
-  	private FormTextPart help;
-  	private AbstractView currentView;
+  	private Navigation navi              = null;
+    private Menu menu                    = null;
+  	private View view                    = null;
+  	private StatusBar statusBar          = null;
+  	private FormTextPart help            = null;
+  	private AbstractView currentView     = null;
   	
-  	private Stack history;
-  	private boolean skipHistory = false;
-  	private StyleFactory styleFactory;
-  
-    private boolean stop = false;
+  	private Stack history                = new Stack();
+  	private boolean skipHistory          = false;
+    private boolean stop                 = false;
 
-
-	private static class HistoryEntry
-	{
-    private AbstractView view;
-
-    private HistoryEntry(AbstractView view)
-    {
-      this.view = view;
-    }
-	}
 
 	/**
 	 * Erzeugt die GUI-Instanz.
@@ -102,7 +95,6 @@ public class GUI implements ApplicationController
     if (gui != null)
       throw new RuntimeException("unable to start second gui");
     gui = this;
-    SETTINGS.setStoreWhenRead(false);
 	}
 
 	/**
@@ -113,12 +105,12 @@ public class GUI implements ApplicationController
     try
     {
       Logger.info("startup GUI");
-      
       Logger.info("SWT version: " + SWT.getVersion());
-      
+
+      ////////////////////////////////////////////////////////////////////////
+      // Netbook-Mode
       // Wenn das Display weniger als 700 Pixel hoch ist, aktivieren wir
       // automatisch den "Netbook"-Mode
-      
       Rectangle r = GUI.getDisplay().getBounds();
       if (r.height < 700)
       {
@@ -134,17 +126,22 @@ public class GUI implements ApplicationController
           Customizing.SETTINGS.setAttribute("application.scrollview",(String)null);
         }
       }
+      //
+      ////////////////////////////////////////////////////////////////////////
 
+      
+      ////////////////////////////////////////////////////////////////////////
       // init shell
+      String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
       getShell().setLayout(SWTUtil.createGrid(1, false));
       getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
       getShell().setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon","hibiscus-icon-64x64.png")));
-
-      String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
       getShell().setText(name);
+      //
+      ////////////////////////////////////////////////////////////////////////
 
-      ////////////////////////////
-
+      ////////////////////////////////////////////////////////////////////////
+      // init Menu
       Logger.info("adding menu");
       try
       {
@@ -154,15 +151,23 @@ public class GUI implements ApplicationController
       {
         Logger.error("error while loading menu, skipping",e);
       }
+      //
+      ////////////////////////////////////////////////////////////////////////
 
-      SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
+      ////////////////////////////////////////////////////////////////////////
+      // init Layout
+      final SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
       sash.setLayout(SWTUtil.createGrid(1,true));
       sash.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-      SashForm left = new SashForm(sash, SWT.VERTICAL);
+      final SashForm left = new SashForm(sash, SWT.VERTICAL);
       left.setLayout(SWTUtil.createGrid(1,true));
       left.setLayoutData(new GridData(GridData.FILL_BOTH));
+      //
+      ////////////////////////////////////////////////////////////////////////
 
+      ////////////////////////////////////////////////////////////////////////
+      // init Navigation
       Logger.info("adding navigation");
       navi = new Navigation();
       Panel np = new Panel(Application.getI18n().tr("Navigation"),navi);
@@ -174,40 +179,76 @@ public class GUI implements ApplicationController
       {
         Logger.error("error while loading navigation, skipping",e);
       }
+      //
+      ////////////////////////////////////////////////////////////////////////
 
+      ////////////////////////////////////////////////////////////////////////
+      // init help
       help = new FormTextPart();
       Panel p = new Panel(Application.getI18n().tr("Hilfe"),help);
       p.paint(left);
+      //
+      ////////////////////////////////////////////////////////////////////////
 
+      ////////////////////////////////////////////////////////////////////////
+      // init content view
       Composite right = new Composite(sash, SWT.NONE);
       right.setLayout(SWTUtil.createGrid(1,true));
       right.setLayoutData(new GridData(GridData.FILL_BOTH));
       right.setBackground(Color.BACKGROUND.getSWTColor());
       Logger.info("adding content view");
-
       view = new View();
       view.paint(right);
+      //
+      ////////////////////////////////////////////////////////////////////////
 
-      left.setWeights(new int[] { 2, 1 });
-      sash.setWeights(new int[] { 1, 3 });
-      
+      ////////////////////////////////////////////////////////////////////////
+      // init sashes
+      left.setWeights(new int[] {SETTINGS.getInt("navi.height.0",7), SETTINGS.getInt("navi.height.1",3)});
+      left.addDisposeListener(new DisposeListener() {
+        public void widgetDisposed(DisposeEvent e)
+        {
+          if (left == null || left.isDisposed())
+            return;
+          int[] i = left.getWeights();
+          SETTINGS.setAttribute("navi.height.0",i[0]);
+          SETTINGS.setAttribute("navi.height.1",i[1]);
+        }
+      });
+      sash.setWeights(new int[] {SETTINGS.getInt("main.width.0",1), SETTINGS.getInt("main.width.1",3)});
+      sash.addDisposeListener(new DisposeListener() {
+        public void widgetDisposed(DisposeEvent e)
+        {
+          if (sash == null || sash.isDisposed())
+            return;
+          int[] i = sash.getWeights();
+          SETTINGS.setAttribute("main.width.0",i[0]);
+          SETTINGS.setAttribute("main.width.1",i[1]);
+        }
+      });
       if (Customizing.SETTINGS.getBoolean("application.hidenavigation",false))
         sash.setMaximizedControl(right);
+      //
+      ////////////////////////////////////////////////////////////////////////
 
+      
+      ////////////////////////////////////////////////////////////////////////
+      // init status bar
+      Logger.info("adding status panel");
       Composite bottom = new Composite(shell, SWT.NONE);
       bottom.setLayout(SWTUtil.createGrid(1, true));
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.horizontalSpan = 2;
       bottom.setLayoutData(gd);
-      
-      Logger.info("adding status panel");
       this.statusBar = new StatusBar();
       this.statusBar.addItem(new StatusBarCalendarItem());
       this.statusBar.addItem(new StatusBarTextItem());
       this.statusBar.paint(bottom);
+      //
+      ////////////////////////////////////////////////////////////////////////
 
-      // so, und jetzt fuegen wir noch die Menus und Navigationen der Plugins
-      // hinzu.
+      ////////////////////////////////////////////////////////////////////////
+      // Fill menu + navigation
       List list = Application.getPluginLoader().getInstalledManifests();
       for (int i=0;i<list.size();++i)
       {
@@ -227,16 +268,20 @@ public class GUI implements ApplicationController
           Logger.error("error while loading navigation for plugin",t);
         }
       }
+      //
+      ////////////////////////////////////////////////////////////////////////
 
-      // History initialisieren
-      history = new Stack();
-
+      ////////////////////////////////////////////////////////////////////////
+      // launch gui
       position();
       getNavigation().expand();
       Logger.info("open shell");
       getShell().open();
-      
       Application.getMessagingFactory().sendSyncMessage(new SystemMessage(SystemMessage.SYSTEM_STARTED,Application.getI18n().tr("{0} erfolgreich gestartet",name)));
+      //
+      ////////////////////////////////////////////////////////////////////////
+
+      // main loop
       loop();
     }
     catch (Exception e)
@@ -246,6 +291,9 @@ public class GUI implements ApplicationController
     }
 	}
 
+  /**
+   * Positioniert die GUI.
+   */
   private void position()
   {
     ////////////////////////////
@@ -604,14 +652,13 @@ public class GUI implements ApplicationController
 	public static void loadHelp(AbstractView view)
 	{
 
-		String path = "help/"
-				+ Application.getConfig().getLocale().toString().toLowerCase() + "/"
-				+ view.getClass().getName() + ".txt";
+		String path = "help/" +
+				          Application.getConfig().getLocale().toString().toLowerCase() + "/" +
+				          view.getClass().getName() + ".txt";
 		InputStream is = Application.getClassLoader().getResourceAsStream(path);
 		if (is == null)
 		{
-			path = "help/" + Locale.getDefault().toString().toLowerCase() + "/"
-					+ view.getClass().getName() + ".txt";
+			path = "help/" + Locale.getDefault().toString().toLowerCase() + "/" + view.getClass().getName() + ".txt";
 			is = Application.getClassLoader().getResourceAsStream(path);
 		}
 		if (is == null) return;
@@ -899,11 +946,28 @@ public class GUI implements ApplicationController
 
     getDisplay().asyncExec(job);
   }
+
+  /**
+   * Ein einzelner Eintrag in der History.
+   */
+  private static class HistoryEntry
+  {
+    private AbstractView view;
+
+    private HistoryEntry(AbstractView view)
+    {
+      this.view = view;
+    }
+  }
+
 }
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.127  2010/08/23 11:03:10  willuhn
+ * Revision 1.128  2010/09/01 15:52:28  willuhn
+ * @N GUI speichert beim Beenden die Breite der Navi und die Hoehe des Hilfe-Fensters und stellt die Groessen beim naechsten Start automatisch wieder her
+ *
+ * Revision 1.127  2010-08-23 11:03:10  willuhn
  * @N Automatische Aktivierung des Netbook-Modes auf kleinen Displays
  *
  * Revision 1.126  2010-04-12 16:26:23  willuhn
