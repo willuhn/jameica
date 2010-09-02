@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.128 $
- * $Date: 2010/09/01 15:52:28 $
+ * $Revision: 1.129 $
+ * $Date: 2010/09/02 22:33:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -156,7 +156,7 @@ public class GUI implements ApplicationController
 
       ////////////////////////////////////////////////////////////////////////
       // init Layout
-      final SashForm sash = new SashForm(shell, SWT.HORIZONTAL);
+      final SashForm sash = new SashForm(getShell(), SWT.HORIZONTAL);
       sash.setLayout(SWTUtil.createGrid(1,true));
       sash.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -235,7 +235,7 @@ public class GUI implements ApplicationController
       ////////////////////////////////////////////////////////////////////////
       // init status bar
       Logger.info("adding status panel");
-      Composite bottom = new Composite(shell, SWT.NONE);
+      Composite bottom = new Composite(getShell(), SWT.NONE);
       bottom.setLayout(SWTUtil.createGrid(1, true));
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.horizontalSpan = 2;
@@ -964,7 +964,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.128  2010/09/01 15:52:28  willuhn
+ * Revision 1.129  2010/09/02 22:33:43  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.128  2010-09-01 15:52:28  willuhn
  * @N GUI speichert beim Beenden die Breite der Navi und die Hoehe des Hilfe-Fensters und stellt die Groessen beim naechsten Start automatisch wieder her
  *
  * Revision 1.127  2010-08-23 11:03:10  willuhn
