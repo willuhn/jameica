@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.41 $
- * $Date: 2010/03/29 22:22:47 $
+ * $Revision: 1.42 $
+ * $Date: 2010/09/03 00:02:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -190,7 +190,7 @@ public class TreePart extends AbstractTablePart
   {
     /////////////////////////////////////////////////////////////////
     // Tree erzeugen
-    this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER | (this.multi ? SWT.MULTI : SWT.SINGLE) | (this.checkable ? SWT.CHECK : SWT.NONE));
+    this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER | SWT.FULL_SELECTION | (this.multi ? SWT.MULTI : SWT.SINGLE) | (this.checkable ? SWT.CHECK : SWT.NONE));
     this.tree.setFont(Font.DEFAULT.getSWTFont());
     final GridData gridData = new GridData(GridData.FILL_BOTH);
     this.tree.setLayoutData(gridData);
@@ -756,6 +756,9 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
+ * Revision 1.42  2010/09/03 00:02:31  willuhn
+ * @B Ganze Zeile markieren - siehe http://www.jverein.de/forum/viewtopic.php?f=5&t=187&start=0. In TablePart war das schon drin
+ *
  * Revision 1.41  2010/03/29 22:22:47  willuhn
  * *** empty log message ***
  *
