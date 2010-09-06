@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ImageInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2010/08/24 23:06:10 $
+ * $Revision: 1.3 $
+ * $Date: 2010/09/06 15:31:53 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -319,12 +319,29 @@ public class ImageInput extends AbstractInput
       image = new Image(GUI.getDisplay(),new ByteArrayInputStream(this.data));
       if (this.scale)
       {
+        ////////////////////////////////////////////////////////////////////////
+        // Bild proportional passend skalieren
+        Rectangle r = image.getBounds();
+        double w = (double) r.width / (double)(this.width - this.border);
+        double h = (double) r.height / (double)(this.height - this.border);
+        if (w > h)
+        {
+          h = r.height / w;
+          w = this.width - this.border;
+        }
+        else
+        {
+          w = r.width / h;
+          h = this.height - this.border;
+        }
+        ////////////////////////////////////////////////////////////////////////
+
         Image scaled = new Image(GUI.getDisplay(), this.width - this.border,this.height - this.border);
         gc = new GC(scaled);
         gc.setAntialias(SWT.ON);
         gc.setInterpolation(SWT.HIGH);
         Rectangle source = image.getBounds();
-        gc.drawImage(image, 0, 0, source.width, source.height, 0, 0, this.width - this.border, this.height - this.border);
+        gc.drawImage(image, 0, 0, source.width, source.height, 0, 0, (int) w, (int) h);
         this.button.setImage(scaled);
       }
       else
@@ -362,7 +379,10 @@ public class ImageInput extends AbstractInput
 
 /**********************************************************************
  * $Log: ImageInput.java,v $
- * Revision 1.2  2010/08/24 23:06:10  willuhn
+ * Revision 1.3  2010/09/06 15:31:53  willuhn
+ * @N Heiners Patch zum proportionalen Skalieren des Bildes
+ *
+ * Revision 1.2  2010-08-24 23:06:10  willuhn
  * @N Context-Menu deaktivieren, wenn kein Bild vorhanden ist.
  *
  * Revision 1.1  2010-08-24 22:43:57  willuhn
