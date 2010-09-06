@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.6 $
- * $Date: 2009/03/10 23:51:28 $
+ * $Revision: 1.7 $
+ * $Date: 2010/09/06 20:44:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -60,7 +60,7 @@ public class About extends AbstractDialog
     FormTextPart text = new FormTextPart();
     text.setText("<form>" +
       "<p><b>Jameica - Java based message interchange</b></p>" +
-      "<p>Licence: GPL [<a href=\"" + Program.class.getName() + "\">http://www.gnu.org/copyleft/gpl.html</a>]</p>" +
+      "<p>Lizenz: GPL [<a href=\"" + Program.class.getName() + "\">http://www.gnu.org/copyleft/gpl.html</a>]</p>" +
       "<p>Copyright by Olaf Willuhn [<a href=\"" + Program.class.getName() + "\">mailto:info@jameica.org</a>]</p>" +
       "<p><a href=\"" + Program.class.getName() + "\">http://www.jameica.org</a></p>" +
       "<p>Version: " + Application.getManifest().getVersion() + "</p>" +
@@ -94,6 +94,9 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
+ * Revision 1.7  2010/09/06 20:44:55  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.6  2009/03/10 23:51:28  willuhn
  * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
  *
