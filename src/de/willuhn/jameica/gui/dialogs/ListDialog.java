@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/04/05 15:37:53 $
- * $Author: web0 $
+ * $Revision: 1.12 $
+ * $Date: 2010/09/06 23:49:39 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -12,8 +12,8 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -21,8 +21,9 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.parts.Column;
 import de.willuhn.jameica.gui.parts.TablePart;
-import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.util.ApplicationException;
 
@@ -34,11 +35,10 @@ import de.willuhn.util.ApplicationException;
  */
 public class ListDialog extends AbstractDialog
 {
-
-  private Object object = null;
-  private GenericIterator list = null;
-  private Hashtable fields = new Hashtable();
-  private Hashtable formatter = new Hashtable();
+  private Object object            = null;
+  private GenericIterator iterator = null;
+  private List list                = null;
+  private List<Column> columns     = new ArrayList<Column>();
 
   /**
    * ct.
@@ -49,11 +49,35 @@ public class ListDialog extends AbstractDialog
    */
   public ListDialog(GenericIterator list, int position)
   {
+    this(position);
+    this.iterator = list;
+  }
+  
+  /**
+   * ct.
+   * @param list anzuzeigende Liste.
+   * @param position Position.
+   * @see AbstractDialog#POSITION_CENTER
+   * @see AbstractDialog#POSITION_MOUSE
+   */
+  public ListDialog(List list, int position)
+  {
+    this(position);
+    this.list = list;
+  }
+  
+  /**
+   * ct.
+   * @param position Position.
+   * @see AbstractDialog#POSITION_CENTER
+   * @see AbstractDialog#POSITION_MOUSE
+   */
+  private ListDialog(int position)
+  {
     super(position);
     setSize(SWT.DEFAULT,250);
-    this.list = list;
-
   }
+
 
   /**
    * Fuegt der Tabelle eine weitere Spalte hinzu.
@@ -62,9 +86,7 @@ public class ListDialog extends AbstractDialog
    */
   public void addColumn(String title, String field)
   {
-    if (title == null || field == null)
-      return;
-    this.fields.put(title,field);
+    addColumn(title,field,null);
   }
 
   /**
@@ -75,39 +97,41 @@ public class ListDialog extends AbstractDialog
    */
   public void addColumn(String title, String field, Formatter f)
   {
-    addColumn(title,field);
-
-    if (title == null || f == null)
+    if (title == null || field == null)
       return;
-    this.formatter.put(title,f);
+    
+    addColumn(new Column(field,title,f));
+  }
+  
+  /**
+   * Fuegt eine Spalte hinzu.
+   * @param col
+   */
+  public void addColumn(Column col)
+  {
+    if (col == null)
+      return;
+    this.columns.add(col);
   }
 
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
-  protected void paint(Composite parent) throws Exception {
+  protected void paint(Composite parent) throws Exception
+  {
+    final TablePart table = (iterator != null) ? new TablePart(iterator,new MyAction()) : new TablePart(list,new MyAction());
+    
+    for (Column c:this.columns)
+      table.addColumn(c);
 
-    final TablePart table = new TablePart(list,new Action()
-    {
-      public void handleAction(Object context) throws ApplicationException
-      {
-				object = context;
-				// Wir schliessen den Dialog bei Auswahl eines Objektes.
-				close();
-      }
-    });
-
-    Enumeration keys = this.fields.keys();
-    while (keys.hasMoreElements())
-    {
-      String title = (String) keys.nextElement();
-      String field = (String) this.fields.get(title);
-      Formatter f  = (Formatter) this.formatter.get(title);
-      table.addColumn(title,field,f);
-    }
+    table.setSummary(false);
+    table.setMulti(false);
+    table.setRememberColWidths(true);
+    table.setRememberOrder(true);
+    table.setRememberState(false);
     table.paint(parent);
     
-    ButtonArea b = new ButtonArea(parent,2);
+    ButtonArea b = new ButtonArea();
     b.addButton(i18n.tr("Übernehmen"), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
@@ -120,97 +144,38 @@ public class ListDialog extends AbstractDialog
     {
       public void handleAction(Object context) throws ApplicationException
       {
+        object = null;
         throw new OperationCanceledException();
       }
     });
+    b.paint(parent);
   }
 
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
-  protected Object getData() throws Exception {
+  protected Object getData() throws Exception
+  {
     return object;
+  }
+  
+  /**
+   * Hilfsklasse fuer die Aktion beim Doppelklick auf einen Datensatz.
+   */
+  private class MyAction implements Action
+  {
+    public void handleAction(Object context) throws ApplicationException
+    {
+      object = context;
+      // Wir schliessen den Dialog bei Auswahl eines Objektes.
+      close();
+    }
   }
 }
 
 /*********************************************************************
  * $Log: ListDialog.java,v $
- * Revision 1.11  2006/04/05 15:37:53  web0
- * @N better list dialog
- *
- * Revision 1.10  2004/10/20 12:08:16  willuhn
- * @C MVC-Refactoring (new Controllers)
- *
- * Revision 1.9  2004/10/08 13:38:20  willuhn
+ * Revision 1.12  2010/09/06 23:49:39  willuhn
  * *** empty log message ***
- *
- * Revision 1.8  2004/07/23 15:51:20  willuhn
- * @C Rest des Refactorings
- *
- * Revision 1.7  2004/06/18 19:47:17  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2004/04/24 19:05:05  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2004/04/21 22:28:56  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2004/04/12 19:15:59  willuhn
- * @C refactoring
- * @N forms
- *
- * Revision 1.3  2004/03/06 18:24:23  willuhn
- * @D javadoc
- *
- * Revision 1.2  2004/02/26 18:47:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/02/24 22:46:53  willuhn
- * @N GUI refactoring
- *
- * Revision 1.2  2004/02/23 20:30:34  willuhn
- * @C refactoring in AbstractDialog
- *
- * Revision 1.1  2004/02/22 20:05:21  willuhn
- * @N new Logo panel
- *
- * Revision 1.12  2004/02/18 17:14:40  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2004/01/28 20:51:25  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.10  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.9  2004/01/08 20:50:33  willuhn
- * @N database stuff separated from jameica
- *
- * Revision 1.8  2003/12/29 20:07:19  willuhn
- * @N Formatter
- *
- * Revision 1.7  2003/12/29 16:29:47  willuhn
- * @N javadoc
- *
- * Revision 1.6  2003/12/12 01:28:05  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2003/12/11 21:00:54  willuhn
- * @C refactoring
- *
- * Revision 1.4  2003/12/10 01:12:55  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2003/12/10 00:47:12  willuhn
- * @N SearchDialog done
- * @N FatalErrorView
- *
- * Revision 1.2  2003/12/08 16:19:06  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2003/12/08 15:41:09  willuhn
- * @N searchInput
  *
  **********************************************************************/
