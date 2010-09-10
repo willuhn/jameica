@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ClassService.java,v $
- * $Revision: 1.5 $
- * $Date: 2010/06/01 21:35:21 $
+ * $Revision: 1.6 $
+ * $Date: 2010/09/10 11:34:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -198,6 +198,7 @@ public class ClassService implements Bootable
     File[] child = ff.findRecursive();
     
     String path = dir.getCanonicalPath();
+    path = path.replaceAll("\\\\","/"); // Windows-Backslash gegen Linux-Slash ersetzen
     
     // Wir iterieren ueber alle Dateien in dem Verzeichnis.
     for (int i=0;i<child.length;++i)
@@ -206,13 +207,14 @@ public class ClassService implements Bootable
         Application.getCallback().getStartupMonitor().addPercentComplete(1);
 
       String name = child[i].getCanonicalPath();
+      name = name.replaceAll("\\\\","/"); // Windows-Backslash gegen Linux-Slash ersetzen
       
       // Class-Files nur, wenn sie sich im bin-Verzeichnis befinden
-      if (name.matches(".*([\\\\|/])bin([\\\\|/]).*\\.class"))
+      if (name.matches(path + "/bin/.*\\.class"))
       {
         // Jetzt muessen wir vorn noch den Verzeichnisnamen abschneiden
         name = name.substring(path.length() + 5); // fuehrenden Pfad abschneiden ("/bin" beachten)
-        name = name.substring(0, name.indexOf(".class")).replace('/', '.').replace('\\', '.'); // .class weg Trenner ersetzen
+        name = name.substring(0, name.indexOf(".class")).replace('/', '.'); // .class weg Trenner ersetzen
         if (name.startsWith("."))
           name = name.substring(1); // ggf. fuehrenden Punkt abschneiden
     
@@ -281,6 +283,9 @@ public class ClassService implements Bootable
 
 /**********************************************************************
  * $Log: ClassService.java,v $
+ * Revision 1.6  2010/09/10 11:34:52  willuhn
+ * @C Klassen im bin-Verzeichnis nur noch finden, wenn das "bin" der direkte Unterordner ist. Fuehrte sonst zu unnoetigen Fehlermeldungen, wenn Jameica in einem Pfad installiert ist, der "/bin/" enthaelt
+ *
  * Revision 1.5  2010/06/01 21:35:21  willuhn
  * @N Geladene Jars im Log alphabetisch ausgeben - das ist besser lesbar
  *
