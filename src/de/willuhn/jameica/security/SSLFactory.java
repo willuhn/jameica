@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.55 $
- * $Date: 2010/08/06 09:26:28 $
+ * $Revision: 1.56 $
+ * $Date: 2010/09/13 16:37:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -209,7 +209,7 @@ public class SSLFactory
 															this.callback.getPassword().toCharArray(),
 															new X509Certificate[]{this.certificate});
 
-		storeKeystore();
+		storeKeystore(true);
 		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -243,15 +243,16 @@ public class SSLFactory
 															new X509Certificate[]{cert});
 
 		Logger.warn("  saving changed keystore");
-		storeKeystore();		
+		storeKeystore(false);		
 		Logger.warn("keystore password successfully changed");
 	}
 
 	/**
 	 * Speichert den Keystore.
+   * @param created true, wenn der Keystore frisch erstellt wurde.
    * @throws Exception
    */
-  private synchronized void storeKeystore() throws Exception
+  private synchronized void storeKeystore(boolean created) throws Exception
 	{
 		OutputStream os = null;
 		try
@@ -272,7 +273,11 @@ public class SSLFactory
       this.publicKey   = null;
       this.sslContext  = null;
       getKeyStore();
-      Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
+      
+      // Ist eigentlich nur fuer den allerersten Start von Jameica noetig,
+      // weil die MessagingFactory sonst zu frueh initialisiert wird
+      if (!created)
+        Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
 		}
 	}
 
@@ -544,7 +549,7 @@ public class SSLFactory
       {
         Logger.warn("deleting certificate for alias " + alias);
         getKeyStore().deleteEntry(alias);
-        storeKeystore();
+        storeKeystore(false);
         return;
       }
     }
@@ -649,7 +654,7 @@ public class SSLFactory
 
     Logger.warn("adding certificate to keystore. alias: " + alias);
     getKeyStore().setCertificateEntry(alias,cert);
-    storeKeystore();
+    storeKeystore(false);
     return alias;
   } 
 
@@ -753,7 +758,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.55  2010/08/06 09:26:28  willuhn
+ * Revision 1.56  2010/09/13 16:37:46  willuhn
+ * @B race condition beim allerersten Start
+ *
+ * Revision 1.55  2010-08-06 09:26:28  willuhn
  * *** empty log message ***
  *
  * Revision 1.54  2010/06/14 11:30:49  willuhn
