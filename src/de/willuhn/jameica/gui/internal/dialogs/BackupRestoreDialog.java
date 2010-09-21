@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/BackupRestoreDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/03/11 10:23:42 $
+ * $Revision: 1.4 $
+ * $Date: 2010/09/21 10:14:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,14 +69,14 @@ public class BackupRestoreDialog extends AbstractDialog
     // Die Versionsnummern stimmen nicht exakt ueberein. Warnung anzeign.
     if (table.hasWarnings())
     {
-      container.addText(Application.getI18n().tr("Bei mindestens einem Plugin stimmt entweder die Versionsnummer " +
-          "nicht mit dem aktuellen Stand überein oder es ist nicht im Backup enthalten. " +
-          "Beim Wiederherstellen kann es zu Fehlern oder Datenverlusten kommen."),true,Color.ERROR);
+      container.addText(Application.getI18n().tr("Die Benutzerdaten des Backup passen nicht exakt " +
+          "zu den Versionen der installierten Plugins. " +
+          "Unter Umständen werden nicht alle Daten aus dem Backup wiederhergestellt."),true,Color.ERROR);
     }
 
     container.addHeadline(Application.getI18n().tr("Warnung"));
     container.addText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Backup wiederherstellen möchten?\n" +
-    "Die Anwendung wird daraufhin beendet, die Wiederherstellung erfolgt automatisch beim nächsten Start."),true);
+          "Die Anwendung wird daraufhin beendet, die Wiederherstellung erfolgt automatisch beim nächsten Start."),true);
 
     ButtonArea buttons = container.createButtonArea(2);
     buttons.addButton(Application.getI18n().tr("Ja, Backup wiederherstellen"),new Action() {
@@ -88,7 +88,7 @@ public class BackupRestoreDialog extends AbstractDialog
         choice = Boolean.TRUE;
         close();
       }
-    });
+    },null,false,"ok.png");
     buttons.addButton(Application.getI18n().tr("Nein, Vorgang abbrechen"),new Action() {
       /**
        * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
@@ -98,7 +98,7 @@ public class BackupRestoreDialog extends AbstractDialog
         choice = Boolean.FALSE;
         close();
       }
-    },null,true);
+    },null,true,"process-stop.png");
 
   }
 
@@ -107,6 +107,9 @@ public class BackupRestoreDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: BackupRestoreDialog.java,v $
+ * Revision 1.4  2010/09/21 10:14:59  willuhn
+ * @C Keine Warnung mehr anzeigen, wenn die Benutzerdaten des Backups eine aeltere Version des Plugins enthalten. Die Daten werden dann ohnehin automatisch auf den aktuellen Stand gebracht. Der Warnhinweis verwirrte manche User unnoetig und sie glaubten, das Backup nicht einspielen zu koennen.
+ *
  * Revision 1.3  2008/03/11 10:23:42  willuhn
  * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
  *

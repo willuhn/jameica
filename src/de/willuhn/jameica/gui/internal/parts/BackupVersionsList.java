@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackupVersionsList.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/03/11 23:17:01 $
+ * $Revision: 1.6 $
+ * $Date: 2010/09/21 10:14:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -190,7 +190,11 @@ public class BackupVersionsList extends TablePart
         Manifest mf = plugin.getManifest();
         this.name             = mf.getName();
         this.currentVersion   = mf.getVersion();
-        this.versionMissmatch = this.backupVersion != null && !this.backupVersion.equals(this.currentVersion);
+        
+        // Wir maengeln einen Versionskonflikt nur an, wenn die Version aus dem Backup
+        // aktueller als die installierte ist. Sollte das Backup aelter sein, findet
+        // ja ein automatisches Upgrade statt
+        this.versionMissmatch = this.backupVersion != null && (this.backupVersion.compareTo(this.currentVersion) > 0);
       }
     }
 
@@ -250,6 +254,9 @@ public class BackupVersionsList extends TablePart
 
 /**********************************************************************
  * $Log: BackupVersionsList.java,v $
+ * Revision 1.6  2010/09/21 10:14:59  willuhn
+ * @C Keine Warnung mehr anzeigen, wenn die Benutzerdaten des Backups eine aeltere Version des Plugins enthalten. Die Daten werden dann ohnehin automatisch auf den aktuellen Stand gebracht. Der Warnhinweis verwirrte manche User unnoetig und sie glaubten, das Backup nicht einspielen zu koennen.
+ *
  * Revision 1.5  2009/03/11 23:17:01  willuhn
  * @R unbenutzten Parameter aus Konstruktor entfernt
  *
