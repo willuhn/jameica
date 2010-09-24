@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.72 $
- $Date: 2010/09/24 11:04:59 $
+ $Revision: 1.73 $
+ $Date: 2010/09/24 16:34:48 $
  $Author: willuhn $
  
  All rights reserved
@@ -202,7 +202,7 @@
 				<include name="${define.projectname}/${define.jarfilename.linux64}"/>
 				<include name="${define.projectname}/COPYING"/>
 				<include name="${define.projectname}/README"/>
-				<include name="${define.projectname}/jameica-linux64.sh"/>
+				<include name="${define.projectname}/jameica.sh"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
