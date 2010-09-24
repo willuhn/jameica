@@ -1,0 +1,35 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>jameica-win32.jar</jar>
+  <outfile>/tmp/install/jameica-win32.exe</outfile>
+  <errTitle>Bitte installieren Sie Java.</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>/work/willuhn/eclipse/hibiscus/icons/hibiscus.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <opt>-Xmx256m</opt>
+  </jre>
+  <versionInfo>
+    <fileVersion>1.10.0.0</fileVersion>
+    <txtFileVersion>1.10.0</txtFileVersion>
+    <fileDescription>Jameica</fileDescription>
+    <copyright>willuhn - software &amp; services</copyright>
+    <productVersion>1.10.0.0</productVersion>
+    <txtProductVersion>1.10.0</txtProductVersion>
+    <productName>Jameica</productName>
+    <companyName>willuhn - software &amp; services</companyName>
+    <internalName>jameica-win32</internalName>
+    <originalFilename>jameica-win32.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>

@@ -1,7 +1,7 @@
 ###########################################################################
 # Jameica                                                                 #
 #                                                                         #
-# Copyright (C) 2004 Olaf Willuhn                                         #
+# Copyright (C) 2010 Olaf Willuhn                                         #
 # email: info@jameica.org                                                 #
 # www  : http://www.jameica.org                                           #
 #                                                                         #
@@ -35,7 +35,7 @@ Hinweis:
   Geben Sie "java -version" an einer Shell (Windows: Eingabeaufforderung)
   ein um die Version zu ueberpruefen.
 
-  SUN Java koennen Sie von http://java.sun.com/j2se/index.jsp herunterladen.
+  SUN Java koennen Sie von http://www.java.com herunterladen.
 
 ###########################################################################
 # 2. INSTALLATION                                                         #
@@ -46,13 +46,13 @@ Hinweis:
    Windows:     "C:\Progamme\jameica"
    Linux/MacOS: "/opt/jameica"
 
-2) Wechseln Sie in das Programm-Verzeichnis und geben Sie ein:
+2) Wechseln Sie in das Programm-Verzeichnis und starten Sie mit:
 
    Linux (32 Bit)   :    "./jameica.sh"
    Linux (64 Bit)   :    "./jameica-linux64.sh"
 
-   Windows (32 Bit) :    "jameica.bat"
-   Windows (64 Bit) :    "jameica-win64.bat"
+   Windows (32 Bit) :    "jameica-win32.exe"
+   Windows (64 Bit) :    "jameica-win64.exe"
 
    Mac OS X (32 Bit):    "./jameica-macos.sh"
    Mac OS X (64 Bit):    "./jameica-macos64.sh"
@@ -97,7 +97,7 @@ Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
   Mit diesem Parameter koennen Sie ein abweichendes Benutzer-Verzeichnis
   verwenden. Somit ist es z.Bsp. moeglich mehrere Konfigurationen parallel
   zu benutzen. Bsp.:
-  Windows:  "jameica.bat -f d:\daten\.jameica"
+  Windows:  "jameica-win32.exe -f d:\daten\.jameica"
   Linux:    "./jameica.sh -f /tmp/jameicatest"
 
 -p <Passwort>, --password=<Passwort>
@@ -108,8 +108,5 @@ Hinweis: Konnte das Plugin nicht installiert werden (es erscheint
   WICHTIG: Bitte stellen Sie sicher, dass das Passwort hierbei nicht
   fuer Dritte zugaenglich wird.
  
--d, --server
-  Im Server-Modus wird die komplette GUI weggelassen.
-
 #                                                                         #
 ###########################################################################

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.71 $
- $Date: 2010/07/25 23:16:17 $
+ $Revision: 1.72 $
+ $Date: 2010/09/24 11:04:59 $
  $Author: willuhn $
  
  All rights reserved
@@ -156,10 +156,10 @@
 			<fileset dir="${build.dir}">
 				<include name="*.sh"/>
 				<include name="*.bat"/>
+        <include name="*.exe"/>
         <include name=".jameica"/>
 				<include name="rcjameica"/>
 				<include name="jameica-icon-01.png"/>
-        <include name="jameica-icon-01.ico"/>
         <include name="jameica-icon-02.png"/>
 				<include name="COPYING"/>
 				<include name="README"/>
@@ -180,9 +180,6 @@
 				<include name="${define.projectname}/COPYING"/>
 				<include name="${define.projectname}/README"/>
 				<include name="${define.projectname}/jameica.sh"/>
-				<include name="${define.projectname}/jameicaserver.sh"/>
-        <include name="${define.projectname}/.jameica"/>
-				<include name="${define.projectname}/rcjameica"/>
 				<include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
@@ -206,9 +203,6 @@
 				<include name="${define.projectname}/COPYING"/>
 				<include name="${define.projectname}/README"/>
 				<include name="${define.projectname}/jameica-linux64.sh"/>
-				<include name="${define.projectname}/jameicaserver-linux64.sh"/>
-				<include name="${define.projectname}/.jameica"/>
-        <include name="${define.projectname}/rcjameica"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
@@ -231,11 +225,7 @@
 				<include name="${define.projectname}/${define.jarfilename.win32}"/>
 				<include name="${define.projectname}/COPYING"/>
 				<include name="${define.projectname}/README"/>
-				<include name="${define.projectname}/jameica.bat"/>
-				<include name="${define.projectname}/jameicaserver.bat"/>
-        <include name="${define.projectname}/jameica-icon-01.ico"/>
-        <include name="${define.projectname}/jameica-icon-01.png"/>
-        <include name="${define.projectname}/jameica-icon-02.png"/>
+				<include name="${define.projectname}/jameica-win32.exe"/>
 				<include name="${define.projectname}/plugins"/>
 				<include name="${define.projectname}/lib/**"/>
 
@@ -256,11 +246,7 @@
 	        <include name="${define.projectname}/${define.jarfilename.win64}"/>
 	        <include name="${define.projectname}/COPYING"/>
 	        <include name="${define.projectname}/README"/>
-	        <include name="${define.projectname}/jameica-win64.bat"/>
-	        <include name="${define.projectname}/jameicaserver-win64.bat"/>
-	        <include name="${define.projectname}/jameica-icon-01.ico"/>
-	        <include name="${define.projectname}/jameica-icon-01.png"/>
-	        <include name="${define.projectname}/jameica-icon-02.png"/>
+	        <include name="${define.projectname}/jameica-win64.exe"/>
 	        <include name="${define.projectname}/plugins"/>
 	        <include name="${define.projectname}/lib/**"/>
 
@@ -284,9 +270,6 @@
         <include name="Jameica.icns"/>
         <include name="Info.plist"/>
         <include name="jameica-macos.sh"/>
-        <include name="jameicaserver-macos.sh"/>
-        <include name=".jameica"/>
-        <include name="rcjameica"/>
         <include name="jameica-icon-01.png"/>
         <include name="jameica-icon-02.png"/>
         <include name="plugins"/>
@@ -316,9 +299,6 @@
         <include name="Jameica.icns"/>
         <include name="Info64.plist"/>
         <include name="jameica-macos64.sh"/>
-        <include name="jameicaserver-macos64.sh"/>
-        <include name=".jameica"/>
-        <include name="rcjameica"/>
         <include name="jameica-icon-01.png"/>
         <include name="jameica-icon-02.png"/>
         <include name="plugins"/>
@@ -346,9 +326,6 @@
         <include name="${define.projectname}/COPYING"/>
         <include name="${define.projectname}/README"/>
         <include name="${define.projectname}/jameica-openbsd.sh"/>
-        <include name="${define.projectname}/jameicaserver-openbsd.sh"/>
-        <include name="${define.projectname}/.jameica"/>
-        <include name="${define.projectname}/rcjameica"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
         <include name="${define.projectname}/plugins"/>
@@ -372,9 +349,6 @@
         <include name="${define.projectname}/COPYING"/>
         <include name="${define.projectname}/README"/>
         <include name="${define.projectname}/jameica-osol.sh"/>
-        <include name="${define.projectname}/jameicaserver-osol.sh"/>
-        <include name="${define.projectname}/.jameica"/>
-        <include name="${define.projectname}/rcjameica"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
         <include name="${define.projectname}/plugins"/>
@@ -393,6 +367,10 @@
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
 				<include name="${define.projectname}/**" />
+
+        <exclude name="${define.projectname}/rcjameica"/>
+        <exclude name="${define.projectname}/.jameica"/>
+				<exclude name="${define.projectname}/jameicaserver.*"/>
 			</zipfileset>
 		</zip>
 
