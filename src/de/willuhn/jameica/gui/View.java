@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.48 $
- * $Date: 2009/12/16 00:11:59 $
+ * $Revision: 1.49 $
+ * $Date: 2010/09/28 23:42:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,7 +95,7 @@ public class View implements Part
 		{
 	    ////////////////////////////////////////////////////////////////////////////
 	    //
-	    final Image logo = SWTUtil.getImage("panel.bmp");
+	    final Image logo = SWTUtil.getImage(Customizing.SETTINGS.getString("application.view.logo","panel.bmp"));
 	    final Rectangle imageSize = logo.getBounds();
 	    logoBg = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
 	    logoBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
@@ -378,6 +378,9 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
+ * Revision 1.49  2010/09/28 23:42:52  willuhn
+ * @N Panel-Grafik customizable
+ *
  * Revision 1.48  2009/12/16 00:11:59  willuhn
  * @N Scroll-Support fuer Views - nochmal ueberarbeitet und jetzt via Customizing konfigurierbar
  *
