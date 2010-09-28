@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.27 $
- * $Date: 2010/08/16 10:44:21 $
+ * $Revision: 1.28 $
+ * $Date: 2010/09/28 22:38:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,9 +73,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		{
 	  	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
 	  	p.setText(Application.getI18n().tr(
-				"Sie starten Jameica zum ersten Mal.\n\n" +
-				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +				"Es wird anschließend bei jedem Start von Jameica benötigt."));
-			p.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
+				"Sie starten die Anwendung zum ersten Mal.\n\n" +
+				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +				"Es wird anschließend bei jedem Start des Programms benötigt."));
+			p.setTitle(Application.getI18n().tr("Master-Passwort"));
 			p.setMonitor(NewPasswordDialog.MONITOR_PRIMARY);
 
 			try
@@ -381,8 +381,8 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     public PWD()
     {
       super(PWD.POSITION_CENTER);
-      this.setText(Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein."));
-      this.setTitle(Application.getI18n().tr("Jameica Master-Passwort"));
+      this.setText(Application.getI18n().tr("Bitte geben Sie das Master-Passwort ein."));
+      this.setTitle(Application.getI18n().tr("Master-Passwort"));
       this.setMonitor(PWD.MONITOR_PRIMARY);
     }
 
@@ -443,7 +443,11 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.27  2010/08/16 10:44:21  willuhn
+ * Revision 1.28  2010/09/28 22:38:32  willuhn
+ * @N Schreibzugriff auf Programmverzeichnis via Customizing aktivierbar
+ * @C Master-Passwort-Abfrage allgemeiner formuliert
+ *
+ * Revision 1.27  2010-08-16 10:44:21  willuhn
  * @N Application-Callback hat jetzt auch eine Callback-Funktion zur Abfrage eines beliebigen Passwortes
  *
  * Revision 1.26  2010/04/13 10:42:16  willuhn
