@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.28 $
- * $Date: 2010/09/28 22:38:32 $
+ * $Revision: 1.29 $
+ * $Date: 2010/09/29 16:03:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -307,7 +307,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
         });
       }
     };
-    d.setTitle(Application.getI18n().tr("Jameica: Frage"));
+    d.setTitle(Application.getI18n().tr("Frage"));
     try
     {
       return ((Boolean)d.open()).booleanValue();
@@ -443,7 +443,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.28  2010/09/28 22:38:32  willuhn
+ * Revision 1.29  2010/09/29 16:03:33  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.28  2010-09-28 22:38:32  willuhn
  * @N Schreibzugriff auf Programmverzeichnis via Customizing aktivierbar
  * @C Master-Passwort-Abfrage allgemeiner formuliert
  *
