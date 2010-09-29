@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.47 $
- * $Date: 2009/12/16 00:11:59 $
+ * $Revision: 1.48 $
+ * $Date: 2010/09/29 21:39:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -680,12 +680,12 @@ public final class Config
   
   /**
    * Liefert die Anzahl zu erstellender Backups.
-   * Default-Wert: 5.
+   * Default-Wert: 10.
    * @return Anzahl der Backups.
    */
   public int getBackupCount()
   {
-    int count = settings.getInt("jameica.system.backup.count",5);
+    int count = settings.getInt("jameica.system.backup.count",10);
     if (count < 1)
     {
       Logger.warn("invalid backup count: " + count + ", resetting to default");
@@ -700,7 +700,7 @@ public final class Config
    */
   public void setBackupCount(int count)
   {
-    settings.setAttribute("jameica.system.backup.count",count < 1 ? 5 : count);
+    settings.setAttribute("jameica.system.backup.count",count < 1 ? 10 : count);
   }
   
   /**
@@ -726,6 +726,9 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
+ * Revision 1.48  2010/09/29 21:39:07  willuhn
+ * @C Default-Anzahl der Backups auf 10 erhoeht
+ *
  * Revision 1.47  2009/12/16 00:11:59  willuhn
  * @N Scroll-Support fuer Views - nochmal ueberarbeitet und jetzt via Customizing konfigurierbar
  *
