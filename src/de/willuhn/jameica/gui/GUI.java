@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.130 $
- * $Date: 2010/10/04 08:22:28 $
+ * $Revision: 1.131 $
+ * $Date: 2010/10/04 15:01:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -850,7 +850,19 @@ public class GUI implements ApplicationController
 	{
 
     Logger.info("shutting down GUI");
-		try
+    if (gui.currentView != null)
+    {
+      try
+      {
+        gui.currentView.unbind();
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to unbind last view",e);
+      }
+    }
+
+    try
 		{
       if (gui.shell != null && !gui.shell.isDisposed())
         gui.shell.dispose();
@@ -969,7 +981,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.130  2010/10/04 08:22:28  willuhn
+ * Revision 1.131  2010/10/04 15:01:38  willuhn
+ * @N unbind bei der letzten View beim Beenden aufrufen
+ *
+ * Revision 1.130  2010-10-04 08:22:28  willuhn
  * @N Message schicken, wenn fuer eine View kein Hilfetext gefunden wurde. Siehe Heiners Anfrage in hibiscus-devel am 03.10.2010
  *
  * Revision 1.129  2010-09-02 22:33:43  willuhn
