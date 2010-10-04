@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.42 $
- * $Date: 2010/09/03 00:02:31 $
+ * $Revision: 1.43 $
+ * $Date: 2010/10/04 09:31:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -213,11 +213,15 @@ public class TreePart extends AbstractTablePart
     {
       public void mouseDoubleClick(MouseEvent e)
       {
-        handleSelect(e);
+        handleDoubleClick(e);
       }
       public void mouseDown(MouseEvent e)
       {
-        handleMenu();
+        handleMouseDown(e);
+      }
+      public void mouseUp(MouseEvent e)
+      {
+        handleMouseUp(e);
       }
     });
 
@@ -530,19 +534,36 @@ public class TreePart extends AbstractTablePart
 
 
 	/**
-   * Oeffnet das Menu. 
+   * Wird bei MouseDown ausgeloest.
+   * @param event das ausgeloeste Event.
    */
-  private void handleMenu()
+  protected void handleMouseDown(MouseEvent event)
   {
     if (menu == null) return;
     menu.setCurrentObject(getSelection());
   }
+  
+  /**
+   * Wird bei MouseUp ausgeloest.
+   * @param event das ausgeloeste Event.
+   */
+  protected void handleMouseUp(MouseEvent event)
+  {
+  }
+  
+  /**
+   * Wird bei Singleklick ausgeloest.
+   * @param event das ausgeloeste Event.
+   */
+  protected void handleSingleClick(MouseEvent event)
+  {
+  }
 
   /**
-	 * Behandelt das Event "action". 
+	 * Wird bei Doppelklick ausgeloest.
 	 * @param event das ausgeloeste Event.
 	 */
-	private void handleSelect(MouseEvent event)
+  protected void handleDoubleClick(MouseEvent event)
 	{
 	  if (this.action == null)
 	    return;
@@ -756,7 +777,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.42  2010/09/03 00:02:31  willuhn
+ * Revision 1.43  2010/10/04 09:31:48  willuhn
+ * @N Mouse-Events ueberschreibbar
+ *
+ * Revision 1.42  2010-09-03 00:02:31  willuhn
  * @B Ganze Zeile markieren - siehe http://www.jverein.de/forum/viewtopic.php?f=5&t=187&start=0. In TablePart war das schon drin
  *
  * Revision 1.41  2010/03/29 22:22:47  willuhn
