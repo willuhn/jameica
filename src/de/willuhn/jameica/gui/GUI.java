@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.129 $
- * $Date: 2010/09/02 22:33:43 $
+ * $Revision: 1.130 $
+ * $Date: 2010/10/04 08:22:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,7 @@ import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.plugin.Manifest;
@@ -661,7 +662,11 @@ public class GUI implements ApplicationController
 			path = "help/" + Locale.getDefault().toString().toLowerCase() + "/" + view.getClass().getName() + ".txt";
 			is = Application.getClassLoader().getResourceAsStream(path);
 		}
-		if (is == null) return;
+		if (is == null)
+		{
+		  Application.getMessagingFactory().getMessagingQueue("jameica.help.missing").sendMessage(new QueryMessage(view));
+		  return;
+		}
 
 		try
 		{
@@ -964,7 +969,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.129  2010/09/02 22:33:43  willuhn
+ * Revision 1.130  2010/10/04 08:22:28  willuhn
+ * @N Message schicken, wenn fuer eine View kein Hilfetext gefunden wurde. Siehe Heiners Anfrage in hibiscus-devel am 03.10.2010
+ *
+ * Revision 1.129  2010-09-02 22:33:43  willuhn
  * *** empty log message ***
  *
  * Revision 1.128  2010-09-01 15:52:28  willuhn
