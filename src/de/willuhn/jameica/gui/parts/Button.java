@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.8 $
- * $Date: 2010/04/06 11:52:38 $
+ * $Revision: 1.9 $
+ * $Date: 2010/10/04 10:47:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class Button implements Part
   private boolean isDefault = false;
   private boolean enabled   = true;
   
-  private org.eclipse.swt.widgets.Button button = null;
+  protected org.eclipse.swt.widgets.Button button = null;
   
   /**
    * ct.
@@ -166,7 +166,10 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
- * Revision 1.8  2010/04/06 11:52:38  willuhn
+ * Revision 1.9  2010/10/04 10:47:14  willuhn
+ * @N Button protected, damit er in abgeleiteten Klassen noch modifiziert werden kann
+ *
+ * Revision 1.8  2010-04-06 11:52:38  willuhn
  * *** empty log message ***
  *
  * Revision 1.7  2009/01/20 10:51:51  willuhn
