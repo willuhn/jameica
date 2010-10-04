@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.9 $
- * $Date: 2010/09/28 22:38:32 $
+ * $Revision: 1.10 $
+ * $Date: 2010/10/04 13:49:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Permission;
 
-import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 
 /**
@@ -28,8 +27,7 @@ import de.willuhn.logging.Logger;
  */
 public class JameicaSecurityManager extends SecurityManager
 {
-  private String jameicaPath = null;
-  private boolean writable = Customizing.SETTINGS.getBoolean("application.security.programdir.writable",false);
+  private String jameicaPath       = null;
 
   /**
    * ct.
@@ -39,11 +37,8 @@ public class JameicaSecurityManager extends SecurityManager
     super();
     try
     {
-      if (!writable)
-      {
-        jameicaPath = new File(".").getCanonicalPath() + File.separator; // current dir
-        Logger.info("write permissions disabled for " + jameicaPath);
-      }
+      jameicaPath = new File(".").getCanonicalPath() + File.separator; // current dir
+      Logger.info("write permissions disabled for " + jameicaPath);
     }
     catch (IOException e)
     {
@@ -77,9 +72,6 @@ public class JameicaSecurityManager extends SecurityManager
   private void checkFile(String path)
   {
     if (path == null)
-      return;
-
-    if (writable)
       return;
 
     File check = new File(path);
@@ -123,11 +115,10 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
- * Revision 1.9  2010/09/28 22:38:32  willuhn
- * @N Schreibzugriff auf Programmverzeichnis via Customizing aktivierbar
- * @C Master-Passwort-Abfrage allgemeiner formuliert
+ * Revision 1.10  2010/10/04 13:49:41  willuhn
+ * @R Schreib-Support wieder entfernt - wird doch nicht gebraucht
  *
- * Revision 1.8  2009/06/17 16:58:51  willuhn
+ * Revision 1.8  2009-06-17 16:58:51  willuhn
  * @N Urspruengliche IOException weiterwerfen
  *
  * Revision 1.7  2009/02/24 16:46:57  willuhn
