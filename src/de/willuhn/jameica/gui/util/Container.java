@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.15 $
- * $Date: 2010/07/29 09:15:41 $
+ * $Revision: 1.16 $
+ * $Date: 2010/10/05 10:59:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.TextAreaInput;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 
 /**
@@ -76,7 +77,8 @@ public abstract class Container
   public void addLabelPair(String name, Input input)
   {
     // Label
-    final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_END);
+    int align = Customizing.SETTINGS.getBoolean("application.view.labels.alignleft",false) ? GridData.HORIZONTAL_ALIGN_BEGINNING : GridData.HORIZONTAL_ALIGN_END;
+    final GridData labelGrid = new GridData(align);
     if (input instanceof TextAreaInput)
       labelGrid.verticalAlignment = GridData.BEGINNING;
     else
@@ -297,7 +299,10 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.15  2010/07/29 09:15:41  willuhn
+ * Revision 1.16  2010/10/05 10:59:39  willuhn
+ * @N Links- oder rechtsbuendige Ausrichtung der Labels in Formularen via Customizing konfigurierbar
+ *
+ * Revision 1.15  2010-07-29 09:15:41  willuhn
  * @N Neue ButtonArea - die alte muss irgendwann mal abgeloest werden
  *
  * Revision 1.14  2008-04-23 15:28:02  willuhn
