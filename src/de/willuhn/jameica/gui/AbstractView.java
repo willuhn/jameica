@@ -1,8 +1,8 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractView.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/01/18 00:35:57 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2010/10/06 15:48:18 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -92,12 +92,28 @@ public abstract class AbstractView
 	{
 		this.parent = p;
 	}
+  
+  /**
+   * Liefert einen Hilfetext fuer die View.
+   * Normalerweise liegen die Hilfetexte in help/${locale} in Form
+   * von Text-Dateien und werden automatisch geladen, wenn sie existieren.
+   * Durch diese Funktion hier existiert eine Alternative, mit der
+   * die Hilfetexte auch zur Laufzeit erzeugt werden koennen.
+   * @return der Hilfetext fuer die View.
+   */
+  public String getHelp()
+  {
+    return null;
+  }
 }
 
 
 
 /***************************************************************************
  * $Log: AbstractView.java,v $
+ * Revision 1.4  2010/10/06 15:48:18  willuhn
+ * @N Heiners Patch vom 06.10.2010 fuer Hilfetexte zur Laufzeit
+ *
  * Revision 1.3  2006/01/18 00:35:57  web0
  * @N AbstractView#reload
  *

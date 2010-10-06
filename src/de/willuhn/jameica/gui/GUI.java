@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.132 $
- * $Date: 2010/10/04 15:12:14 $
+ * $Revision: 1.133 $
+ * $Date: 2010/10/06 15:48:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
@@ -42,7 +43,6 @@ import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.plugin.Manifest;
@@ -652,29 +652,45 @@ public class GUI implements ApplicationController
    */
   public static void loadHelp(AbstractView view)
   {
-
-    String path = "help/" +
-                  Application.getConfig().getLocale().toString().toLowerCase() + "/" +
-                  view.getClass().getName() + ".txt";
+    // Hilfe fuer das eingestellte Locale laden
+    String path = "help/" + Application.getConfig().getLocale().toString().toLowerCase() + "/" + view.getClass().getName() + ".txt";
     InputStream is = Application.getClassLoader().getResourceAsStream(path);
+
+    // Nicht gefunden. Haben wir vielleicht eine fuer das Default-Locale?
     if (is == null)
     {
       path = "help/" + Locale.getDefault().toString().toLowerCase() + "/" + view.getClass().getName() + ".txt";
       is = Application.getClassLoader().getResourceAsStream(path);
     }
-    if (is == null)
+
+    // Wir haben eine Hilfe in einer Textdatei gefunden, die nehmen wir
+    if (is != null)
     {
-      Application.getMessagingFactory().getMessagingQueue("jameica.help.missing").sendMessage(new QueryMessage(view));
+      try
+      {
+        // BUGZILLA 4 http://www.willuhn.de/bugzilla/show_bug.cgi?id=4
+        gui.help.setText(new InputStreamReader(is,"ISO-8859-1"));
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to display help",e);
+      }
       return;
     }
 
-    try
+    // Hat alternativ vielleicht die View selbst eine Hilfe?
+    String help = view.getHelp();
+    if (help != null)
     {
-      // BUGZILLA 4 http://www.willuhn.de/bugzilla/show_bug.cgi?id=4
-      gui.help.setText(new InputStreamReader(is,"ISO-8859-1"));
+      try
+      {
+        gui.help.setText(new StringReader(help));
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to display help",e);
+      }
     }
-    catch (Exception e)
-    {/* ignore */}
   }
 
   /**
@@ -969,7 +985,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.132  2010/10/04 15:12:14  willuhn
+ * Revision 1.133  2010/10/06 15:48:18  willuhn
+ * @N Heiners Patch vom 06.10.2010 fuer Hilfetexte zur Laufzeit
+ *
+ * Revision 1.132  2010-10-04 15:12:14  willuhn
  * @R bringt nichts, weil die Widgets da schon disposed sind
  *
  * Revision 1.130  2010-10-04 08:22:28  willuhn
