@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.46 $
- * $Date: 2009/04/14 07:50:07 $
+ * $Revision: 1.47 $
+ * $Date: 2010/10/07 21:52:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -249,6 +249,9 @@ public class Navigation implements Part
     while (i.hasNext())
     {
       TreeItem test = (TreeItem) i.next();
+      if (test == null || test.isDisposed())
+        continue;
+      
       Object data = test.getData();
       if (data == null || !data.equals(item))
         continue;
@@ -380,7 +383,10 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
- * Revision 1.46  2009/04/14 07:50:07  willuhn
+ * Revision 1.47  2010/10/07 21:52:35  willuhn
+ * @B Moegliche SWTException beim Shutdown
+ *
+ * Revision 1.46  2009-04-14 07:50:07  willuhn
  * @N select(String) public gemacht (brauchte Stefan von der ETH)
  *
  * Revision 1.45  2008/11/03 23:07:47  willuhn
