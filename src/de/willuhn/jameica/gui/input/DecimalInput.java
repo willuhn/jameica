@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.22 $
- * $Date: 2008/12/30 15:46:49 $
+ * $Revision: 1.23 $
+ * $Date: 2010/10/07 23:40:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -182,6 +182,10 @@ public class DecimalInput extends TextInput
         Logger.error("unable to parse " + value);
       }
     }
+    else
+    {
+      this.value = null; // kein gueltiger Wert oder NULL
+    }
 
     // In den Text uebernehmen
     if (this.text != null && !this.text.isDisposed())
@@ -198,6 +202,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
+ * Revision 1.23  2010/10/07 23:40:55  willuhn
+ * @B setValue(null) ueberschrieb den Wert nicht
+ *
  * Revision 1.22  2008/12/30 15:46:49  willuhn
  * @N Umstellung auf neue Versionierung
  * @N Umstellung auf Java 1.5!
