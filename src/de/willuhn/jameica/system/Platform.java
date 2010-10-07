@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.4 $
- * $Date: 2010/07/23 22:19:42 $
+ * $Revision: 1.5 $
+ * $Date: 2010/10/07 22:28:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -65,6 +65,7 @@ public class Platform
 
 
   protected File workdir = null;
+  private int os = -1;
 
   /**
    * Liefert eine plattform-spezifische Instanz.
@@ -124,6 +125,9 @@ public class Platform
    */
   public int getOS()
   {
+    if (this.os != -1)
+      return this.os;
+    
     String os = System.getProperty("os.name");
     String arch = System.getProperty("os.arch");
     Logger.debug("os.name: " + os);
@@ -134,27 +138,31 @@ public class Platform
       if (arch.toLowerCase().indexOf("64") != -1)
       {
         Logger.debug("linux 64bit");
-        return OS_LINUX_64;
+        this.os = OS_LINUX_64;
       }
-      Logger.debug("linux 32bit");
-      return OS_LINUX;
+      else
+      {
+        Logger.debug("linux 32bit");
+        this.os = OS_LINUX;
+      }
     }
-    
-    if (os.toLowerCase().indexOf("windows") != -1)
+    else if (os.toLowerCase().indexOf("windows") != -1)
     {
       if (arch.toLowerCase().indexOf("64") != -1)
       {
         Logger.debug("windows 64bit");
-        return OS_WINDOWS_64;
+        this.os = OS_WINDOWS_64;
       }
-      Logger.debug("windows 32bit");
-      return OS_WINDOWS;
+      {
+        Logger.debug("windows 32bit");
+        this.os = OS_WINDOWS;
+      }
     }
 
-    if (os.toLowerCase().indexOf("mac") != -1)
+    else if (os.toLowerCase().indexOf("mac") != -1)
     {
       Logger.debug("macos");
-      return OS_MAC;
+      this.os = OS_MAC;
     }
     
     if (os.toLowerCase().indexOf("freebsd") != -1)
@@ -162,13 +170,20 @@ public class Platform
       if (arch.toLowerCase().indexOf("64") != -1)
       {
         Logger.debug("freebsd 64bit");
-        return OS_FREEBSD_64;
+        this.os = OS_FREEBSD_64;
       }
-      Logger.debug("freebsd 32bit");
-      return OS_FREEBSD;
+      else
+      {
+        Logger.debug("freebsd 32bit");
+        this.os = OS_FREEBSD;
+      }
     }
-    Logger.debug("unknown os");
-    return OS_UNKNOWN;
+    else
+    {
+      Logger.debug("unknown os");
+      this.os = OS_UNKNOWN;
+    }
+    return this.os;
   }
 
 }
@@ -176,7 +191,10 @@ public class Platform
 
 /**********************************************************************
  * $Log: Platform.java,v $
- * Revision 1.4  2010/07/23 22:19:42  willuhn
+ * Revision 1.5  2010/10/07 22:28:31  willuhn
+ * @N Platform cachen
+ *
+ * Revision 1.4  2010-07-23 22:19:42  willuhn
  * @B typo
  *
  * Revision 1.3  2010-07-22 21:20:39  willuhn
