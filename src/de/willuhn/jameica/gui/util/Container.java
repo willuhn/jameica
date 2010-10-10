@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.16 $
- * $Date: 2010/10/05 10:59:39 $
+ * $Revision: 1.17 $
+ * $Date: 2010/10/10 21:20:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -123,7 +123,10 @@ public abstract class Container
    */
   public void addCheckbox(CheckboxInput checkbox, String text)
   {
-    final GridData labelGrid = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+    if (text != null && checkbox.getName() == null)
+      checkbox.setName(text);
+
+    final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
     labelGrid.horizontalSpan = 2;
     final Composite comp = new Composite(getComposite(),SWT.NONE);
 		comp.setBackground(Color.BACKGROUND.getSWTColor());
@@ -134,12 +137,6 @@ public abstract class Container
     comp.setLayoutData(labelGrid);
 
     checkbox.paint(comp,40);
-
-    final Label label = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-    label.setText(text);
-    if (checkbox.isMandatory() && Application.getConfig().getMandatoryLabel())
-      label.setForeground(Color.ERROR.getSWTColor());
-    label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
   }
 
   /**
@@ -299,7 +296,10 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.16  2010/10/05 10:59:39  willuhn
+ * Revision 1.17  2010/10/10 21:20:34  willuhn
+ * @N BUGZILLA 924
+ *
+ * Revision 1.16  2010-10-05 10:59:39  willuhn
  * @N Links- oder rechtsbuendige Ausrichtung der Labels in Formularen via Customizing konfigurierbar
  *
  * Revision 1.15  2010-07-29 09:15:41  willuhn

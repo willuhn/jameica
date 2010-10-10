@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.12 $
- * $Date: 2007/07/17 14:34:23 $
+ * $Revision: 1.13 $
+ * $Date: 2010/10/10 21:20:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
@@ -48,8 +49,13 @@ public class CheckboxInput extends AbstractInput
 			return button;
     button = new Button(getParent(), SWT.CHECK);
     button.setSelection(value);
+    if (this.getName() != null)
+      button.setText(this.getName());
 		button.setBackground(Color.BACKGROUND.getSWTColor());
 		button.setEnabled(enabled);
+		
+		if (isMandatory() && Application.getConfig().getMandatoryLabel())
+      button.setForeground(Color.ERROR.getSWTColor());
     return button;
   }
 
@@ -141,6 +147,9 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
+ * Revision 1.13  2010/10/10 21:20:34  willuhn
+ * @N BUGZILLA 924
+ *
  * Revision 1.12  2007/07/17 14:34:23  willuhn
  * @B Updates nichts bei Buttons und Checkboxen durchfuehren
  *
