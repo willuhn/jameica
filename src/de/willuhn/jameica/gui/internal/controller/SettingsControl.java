@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.29 $
- * $Date: 2009/10/26 09:26:33 $
+ * $Revision: 1.30 $
+ * $Date: 2010/10/10 21:20:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -57,8 +57,6 @@ public class SettingsControl extends AbstractControl
 
   // System
   private Input logLevel;
-  private CheckboxInput rmiSSL;
-  private Input rmiPort;
   private Input proxyHost;
   private Input proxyPort;
   private Input httpsProxyHost;
@@ -112,31 +110,6 @@ public class SettingsControl extends AbstractControl
     };
     logLevel = new SelectInput(levels,Logger.getLevel().getName());
     return logLevel;
-  }
-
-  /**
-   * Liefert ein Eingabe-Feld fuer den zu verwendenden RMI-Port.
-   * @return Eingabe-Feld fuer den RMI-Port.
-   */
-  public Input getRmiPort()
-  {
-    if (this.rmiPort != null)
-      return this.rmiPort;
-
-    rmiPort = new IntegerInput(Application.getConfig().getRmiPort());
-    return rmiPort;
-  }
-
-  /**
-   * Liefert eine Checkbox zur Aktivierung von SSL bei der RMI-Uebertragung.
-   * @return Checkbox zur Aktivierung von SSL bei der Datenuebertragung.
-   */
-  public CheckboxInput getRmiSSL()
-  {
-    if (this.rmiSSL != null)
-      return this.rmiSSL;
-    rmiSSL = new CheckboxInput(Application.getConfig().getRmiSSL());
-    return this.rmiSSL;
   }
 
   /**
@@ -407,14 +380,6 @@ public class SettingsControl extends AbstractControl
       // System
       Application.getConfig().setLoglevel((String)getLogLevel().getValue());
 
-      restartNeeded |= getRmiPort().hasChanged();
-      Integer in = (Integer) getRmiPort().getValue();
-      if (in != null)
-        Application.getConfig().setRmiPort(in.intValue());
-
-      restartNeeded |= getRmiSSL().hasChanged();
-      Application.getConfig().setRmiSSL(((Boolean) getRmiSSL().getValue()).booleanValue());
-
       restartNeeded |= getProxyPort().hasChanged();
       Integer proxyPort = (Integer) getProxyPort().getValue();
       if (proxyPort == null)
@@ -579,6 +544,9 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
+ * Revision 1.30  2010/10/10 21:20:55  willuhn
+ * @R RMI-Einstellungen entfernt - braucht kein Schwein und irritiert nur
+ *
  * Revision 1.29  2009/10/26 09:26:33  willuhn
  * @R Scroll-View-Parameter entfernt - verursachte Darstellungsfehler
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.28 $
- * $Date: 2009/10/26 09:26:33 $
+ * $Revision: 1.29 $
+ * $Date: 2010/10/10 21:20:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,11 +68,8 @@ public class Settings extends AbstractView implements Extendable
     // System-Einstellungen
     TabGroup system = new TabGroup(getTabFolder(),i18n.tr("System"));
     
+    system.addHeadline(i18n.tr("System-Optionen"));
     system.addLabelPair(i18n.tr("Log-Level"), control.getLogLevel());
-
-    system.addHeadline(i18n.tr("Netzwerk-Optionen"));
-    system.addCheckbox(control.getRmiSSL(),i18n.tr("Daten im Netzwerk-Betrieb (RMI) verschlüsselt übertragen"));
-    system.addLabelPair(i18n.tr("TCP-Portnummer für Netzwerk-Betrieb (RMI)"), control.getRmiPort());
 
     system.addHeadline(i18n.tr("Proxy-Optionen"));
     system.addCheckbox(control.getUseSystemProxy(),i18n.tr("System-Einstellungen verwenden"));
@@ -193,7 +190,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.28  2009/10/26 09:26:33  willuhn
+ * Revision 1.29  2010/10/10 21:20:55  willuhn
+ * @R RMI-Einstellungen entfernt - braucht kein Schwein und irritiert nur
+ *
+ * Revision 1.28  2009-10-26 09:26:33  willuhn
  * @R Scroll-View-Parameter entfernt - verursachte Darstellungsfehler
  *
  * Revision 1.27  2009/03/20 16:38:09  willuhn
