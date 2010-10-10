@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.48 $
- * $Date: 2010/09/29 21:39:07 $
+ * $Revision: 1.49 $
+ * $Date: 2010/10/10 21:19:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -260,7 +260,7 @@ public final class Config
    */
   public boolean getUseSystemProxy()
   {
-    return settings.getBoolean("jameica.system.proxy.usesystem",false);
+    return settings.getBoolean("jameica.system.proxy.usesystem",true);
   }
   
   /**
@@ -726,7 +726,10 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
- * Revision 1.48  2010/09/29 21:39:07  willuhn
+ * Revision 1.49  2010/10/10 21:19:47  willuhn
+ * @C Default-Wert fuer "System-Einstellungen fuer Proxy verwenden" geaendert
+ *
+ * Revision 1.48  2010-09-29 21:39:07  willuhn
  * @C Default-Anzahl der Backups auf 10 erhoeht
  *
  * Revision 1.47  2009/12/16 00:11:59  willuhn
