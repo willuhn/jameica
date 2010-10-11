@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/09/06 20:44:55 $
+ * $Revision: 1.8 $
+ * $Date: 2010/10/11 20:46:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,7 +42,7 @@ public class About extends AbstractDialog
   public About(int position)
   {
     super(position);
-    this.setTitle(Application.getI18n().tr("About"));
+    this.setTitle("Jameica");
   }
 
   /**
@@ -55,7 +55,7 @@ public class About extends AbstractDialog
     Label l = GUI.getStyleFactory().createLabel(parent,SWT.BORDER);
     l.setImage(SWTUtil.getImage("splash.png"));
 
-    Container container = new LabelGroup(parent, i18n.tr("About"),true);
+    Container container = new LabelGroup(parent, i18n.tr("Versionsinformationen"),true);
     
     FormTextPart text = new FormTextPart();
     text.setText("<form>" +
@@ -94,7 +94,10 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
- * Revision 1.7  2010/09/06 20:44:55  willuhn
+ * Revision 1.8  2010/10/11 20:46:22  willuhn
+ * @N BUGZILLA 928
+ *
+ * Revision 1.7  2010-09-06 20:44:55  willuhn
  * *** empty log message ***
  *
  * Revision 1.6  2009/03/10 23:51:28  willuhn
