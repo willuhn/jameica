@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.29 $
- * $Date: 2010/09/29 16:03:33 $
+ * $Revision: 1.30 $
+ * $Date: 2010/10/11 15:26:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -170,7 +170,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     if (shutdownMonitor != null)
       return shutdownMonitor;
     
-    shutdownMonitor = new SplashScreen("/img/shutdown.png",true);
+    shutdownMonitor = new SplashScreen(Customizing.SETTINGS.getString("application.splashscreen.shutdown","/img/shutdown.png"),true);
     shutdownMonitor.init();
     return shutdownMonitor;
   }
@@ -443,7 +443,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.29  2010/09/29 16:03:33  willuhn
+ * Revision 1.30  2010/10/11 15:26:43  willuhn
+ * @N Shutdown-Screen customizable
+ *
+ * Revision 1.29  2010-09-29 16:03:33  willuhn
  * *** empty log message ***
  *
  * Revision 1.28  2010-09-28 22:38:32  willuhn
