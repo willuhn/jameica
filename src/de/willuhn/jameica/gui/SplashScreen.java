@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.35 $
- * $Date: 2010/06/14 08:23:13 $
+ * $Revision: 1.36 $
+ * $Date: 2010/10/11 15:45:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,8 @@
 
 package de.willuhn.jameica.gui;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.eclipse.swt.SWT;
@@ -65,6 +67,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
     Logger.debug("init splash screen");
 
     this.logo = logo;
+    if (this.logo == null)
+      this.logo = Customizing.SETTINGS.getString("application.splashscreen","/img/splash.png");
+
     this.disposeDisplay = disposeDisplay;
 		display = GUI.getDisplay();
     
@@ -98,28 +103,22 @@ public class SplashScreen implements ProgressMonitor, Runnable
     l.verticalSpacing = 0;
 		shell.setLayout(l);
     
-		InputStream is = null;
-
-    // Mal schauen, ob wir einen Custom-Splashscreen haben
-    // Den laden wir aber nur, wenn nicht explizit einer angegeben ist
-    if (this.logo == null)
-    {
-      String name = Customizing.SETTINGS.getString("application.splashscreen",null);
-      if (name != null && name.length() > 0)
+		InputStream is = shell.getClass().getResourceAsStream(this.logo);
+		if (is == null)
+		{
+      File f = new File(this.logo);
+      if (f.exists() && f.isFile())
       {
         try
         {
-          is = shell.getClass().getResourceAsStream(name);
+          is = new FileInputStream(f);
         }
         catch (Exception e)
         {
-          Logger.error("unable to load custom splash screen " + name,e);
+          // ignore
         }
       }
-    }
-
-    if (is == null)
-      is = shell.getClass().getResourceAsStream(logo == null ? "/img/splash.png" : logo);
+		}
     
 
     // Label erzeugen und Image drauf pappen
@@ -289,6 +288,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
+ * Revision 1.36  2010/10/11 15:45:36  willuhn
+ * @C Handling der Splash-Grafik vereinfacht
+ *
  * Revision 1.35  2010/06/14 08:23:13  willuhn
  * @N Icon auch in Splashscreen verwenden
  *
