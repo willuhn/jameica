@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.5 $
- * $Date: 2010/10/07 22:28:31 $
+ * $Revision: 1.6 $
+ * $Date: 2010/10/12 09:22:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -158,14 +158,12 @@ public class Platform
         this.os = OS_WINDOWS;
       }
     }
-
     else if (os.toLowerCase().indexOf("mac") != -1)
     {
       Logger.debug("macos");
       this.os = OS_MAC;
     }
-    
-    if (os.toLowerCase().indexOf("freebsd") != -1)
+    else if (os.toLowerCase().indexOf("freebsd") != -1)
     {
       if (arch.toLowerCase().indexOf("64") != -1)
       {
@@ -191,7 +189,10 @@ public class Platform
 
 /**********************************************************************
  * $Log: Platform.java,v $
- * Revision 1.5  2010/10/07 22:28:31  willuhn
+ * Revision 1.6  2010/10/12 09:22:36  willuhn
+ * @B Falsches if
+ *
+ * Revision 1.5  2010-10-07 22:28:31  willuhn
  * @N Platform cachen
  *
  * Revision 1.4  2010-07-23 22:19:42  willuhn
