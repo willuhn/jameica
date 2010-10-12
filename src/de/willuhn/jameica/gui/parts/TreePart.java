@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.44 $
- * $Date: 2010/10/12 21:50:17 $
+ * $Revision: 1.45 $
+ * $Date: 2010/10/12 23:21:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +65,7 @@ public class TreePart extends AbstractTablePart
   
   private String id                 = null;
   private boolean expanded          = true;
-  private Map<Object,Item> itemLookup     = new HashMap<Object,Item>();
+  private Map<GenericObject,Item> itemLookup = new HashMap<GenericObject,Item>();
   private Map<TreeItem,Boolean> autoimage = new HashMap<TreeItem,Boolean>();
 
     
@@ -548,19 +549,33 @@ public class TreePart extends AbstractTablePart
       return;
     }
 
-    
-    List<TreeItem> selection = new ArrayList<TreeItem>();
-    for (int i=0;i<objects.length;++i)
+    try
     {
-      if (objects[i] == null)
-        continue;
-
-      Item item = this.itemLookup.get(objects[i]);
-      if (item != null)
-        selection.add(item.item);
+      List<TreeItem> selection = new ArrayList<TreeItem>();
+      for (Object o:objects)
+      {
+        if (o == null)
+          continue;
+        
+        Iterator<GenericObject> it = this.itemLookup.keySet().iterator();
+        while (it.hasNext())
+        {
+          GenericObject go = it.next();
+          if (BeanUtil.equals(go,o))
+          {
+            Item item = this.itemLookup.get(go);
+            if (item != null)
+              selection.add(item.item);
+          }
+        }
+      }
+      if (selection.size() > 0)
+        tree.setSelection(selection.toArray(new TreeItem[selection.size()]));
     }
-    if (selection.size() > 0)
-      tree.setSelection(selection.toArray(new TreeItem[selection.size()]));
+    catch (RemoteException e)
+    {
+      Logger.error("error while selecting tree items",e);
+    }
   }
 
 
@@ -809,7 +824,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.44  2010/10/12 21:50:17  willuhn
+ * Revision 1.45  2010/10/12 23:21:19  willuhn
+ * @C GenericObject#equals beim Selektieren beachten
+ *
+ * Revision 1.44  2010-10-12 21:50:17  willuhn
  * @N select(Object) und select(Object[]) jetzt auch in TreePart
  *
  * Revision 1.43  2010-10-04 09:31:48  willuhn
