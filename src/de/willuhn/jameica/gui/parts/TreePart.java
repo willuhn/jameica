@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.43 $
- * $Date: 2010/10/04 09:31:48 $
+ * $Revision: 1.44 $
+ * $Date: 2010/10/12 21:50:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,7 +64,7 @@ public class TreePart extends AbstractTablePart
   
   private String id                 = null;
   private boolean expanded          = true;
-  private HashMap itemLookup        = new HashMap();
+  private Map<Object,Item> itemLookup     = new HashMap<Object,Item>();
   private Map<TreeItem,Boolean> autoimage = new HashMap<TreeItem,Boolean>();
 
     
@@ -422,7 +422,7 @@ public class TreePart extends AbstractTablePart
    */
   public void setExpanded(GenericObject object, boolean expanded, boolean recursive)
   {
-    Item i = (Item) itemLookup.get(object);
+    Item i = itemLookup.get(object);
     if (i == null)
       return;
     
@@ -533,6 +533,38 @@ public class TreePart extends AbstractTablePart
   }
 
 
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#select(java.lang.Object[])
+   */
+  public void select(Object[] objects)
+  {
+    if (objects == null || objects.length == 0 || tree == null)
+      return;
+    
+    if (!this.multi && objects.length > 1)
+    {
+      Logger.warn("multi selection disabled but user wants to select more than one element, selecting only the first one");
+      select(objects[0]);
+      return;
+    }
+
+    
+    List<TreeItem> selection = new ArrayList<TreeItem>();
+    for (int i=0;i<objects.length;++i)
+    {
+      if (objects[i] == null)
+        continue;
+
+      Item item = this.itemLookup.get(objects[i]);
+      if (item != null)
+        selection.add(item.item);
+    }
+    if (selection.size() > 0)
+      tree.setSelection(selection.toArray(new TreeItem[selection.size()]));
+  }
+
+
+  
 	/**
    * Wird bei MouseDown ausgeloest.
    * @param event das ausgeloeste Event.
@@ -730,7 +762,7 @@ public class TreePart extends AbstractTablePart
       if (objects[i] == null)
         continue;
 
-      Item item = (Item) itemLookup.get(objects[i]);
+      Item item = itemLookup.get(objects[i]);
       if (item == null)
         continue; // kennen wir nicht.
       
@@ -777,7 +809,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.43  2010/10/04 09:31:48  willuhn
+ * Revision 1.44  2010/10/12 21:50:17  willuhn
+ * @N select(Object) und select(Object[]) jetzt auch in TreePart
+ *
+ * Revision 1.43  2010-10-04 09:31:48  willuhn
  * @N Mouse-Events ueberschreibbar
  *
  * Revision 1.42  2010-09-03 00:02:31  willuhn

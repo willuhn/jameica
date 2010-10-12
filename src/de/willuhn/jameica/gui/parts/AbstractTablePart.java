@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.14 $
- * $Date: 2010/03/29 22:08:08 $
+ * $Revision: 1.15 $
+ * $Date: 2010/10/12 21:50:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -200,6 +200,21 @@ public abstract class AbstractTablePart implements Part
   public abstract Object getSelection();
 
   /**
+   * Markiert die Liste der uebergebenen Objekte.
+   * @param objects Liste der zu markierenden Objekte.
+   */
+  public abstract void select(Object[] objects);
+
+  /**
+   * Markiert das uebergebene Element.
+   * @param o das zu markierende Element.
+   */
+  public void select(Object o)
+  {
+    select(new Object[]{o});
+  }
+
+  /**
    * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
    * @param remember true, wenn sie sich die Spaltenbreiten merken soll.
    */
@@ -292,6 +307,9 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
+ * Revision 1.15  2010/10/12 21:50:17  willuhn
+ * @N select(Object) und select(Object[]) jetzt auch in TreePart
+ *
  * Revision 1.14  2010/03/29 22:08:08  willuhn
  * @N addSelectionListener in Basis-Klasse verschoben, damit auch TreePart die Funktion nutzen kann
  *

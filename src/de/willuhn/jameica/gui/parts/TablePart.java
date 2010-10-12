@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.96 $
- * $Date: 2010/03/29 22:08:08 $
+ * $Revision: 1.97 $
+ * $Date: 2010/10/12 21:50:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -926,8 +926,7 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
-   * Markiert die Liste der uebergebenen Objekte.
-   * @param objects Liste der zu markierenden Objekte.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#select(java.lang.Object[])
    */
   public void select(Object[] objects)
   {
@@ -1010,15 +1009,6 @@ public class TablePart extends AbstractTablePart
         }
       }
     }
-  }
-
-  /**
-   * Markiert das uebergebene Element.
-   * @param o das zu markierende Element.
-   */
-  public void select(Object o)
-  {
-    select(new Object[]{o});
   }
 
   /**
@@ -1360,6 +1350,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.97  2010/10/12 21:50:17  willuhn
+ * @N select(Object) und select(Object[]) jetzt auch in TreePart
+ *
  * Revision 1.96  2010/03/29 22:08:08  willuhn
  * @N addSelectionListener in Basis-Klasse verschoben, damit auch TreePart die Funktion nutzen kann
  *
