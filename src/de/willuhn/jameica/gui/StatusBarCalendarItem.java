@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarCalendarItem.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/06/04 10:50:11 $
+ * $Revision: 1.6 $
+ * $Date: 2010/10/19 15:33:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -59,7 +59,7 @@ public class StatusBarCalendarItem implements StatusBarItem
     text = GUI.getStyleFactory().createLabel(parent, SWT.NONE);
     GridData at = new GridData(GridData.FILL_HORIZONTAL);
     at.verticalAlignment = GridData.CENTER;
-    at.widthHint = 200;
+    at.widthHint = 210;
     at.horizontalIndent = 5;
     at.verticalIndent = 1;
     text.setAlignment(SWT.LEFT);
@@ -154,6 +154,9 @@ public class StatusBarCalendarItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarCalendarItem.java,v $
+ * Revision 1.6  2010/10/19 15:33:21  willuhn
+ * @N Statusbar via Customizing anpassbar
+ *
  * Revision 1.5  2009/06/04 10:50:11  willuhn
  * @N Optisches Feedback beim Klick aufs Datum
  *

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.133 $
- * $Date: 2010/10/06 15:48:18 $
+ * $Revision: 1.134 $
+ * $Date: 2010/10/19 15:33:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -242,7 +242,8 @@ public class GUI implements ApplicationController
       gd.horizontalSpan = 2;
       bottom.setLayoutData(gd);
       this.statusBar = new StatusBar();
-      this.statusBar.addItem(new StatusBarCalendarItem());
+      if (!Customizing.SETTINGS.getBoolean("application.statusbar.hidecalendar",false))
+        this.statusBar.addItem(new StatusBarCalendarItem());
       this.statusBar.addItem(new StatusBarTextItem());
       this.statusBar.paint(bottom);
       //
@@ -985,7 +986,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.133  2010/10/06 15:48:18  willuhn
+ * Revision 1.134  2010/10/19 15:33:21  willuhn
+ * @N Statusbar via Customizing anpassbar
+ *
+ * Revision 1.133  2010-10-06 15:48:18  willuhn
  * @N Heiners Patch vom 06.10.2010 fuer Hilfetexte zur Laufzeit
  *
  * Revision 1.132  2010-10-04 15:12:14  willuhn

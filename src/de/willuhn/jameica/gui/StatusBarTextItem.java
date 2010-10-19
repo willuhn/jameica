@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarTextItem.java,v $
- * $Revision: 1.6 $
- * $Date: 2007/11/02 01:19:38 $
+ * $Revision: 1.7 $
+ * $Date: 2010/10/19 15:33:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,6 +36,7 @@ import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 
 /**
@@ -79,62 +80,65 @@ public class StatusBarTextItem implements StatusBarItem
     text.setLayoutData(at);
     text.setText("");
     
-    final Canvas c = new Canvas(comp,SWT.NONE);
-    GridData gd = new GridData(GridData.FILL_BOTH);
-    at.verticalAlignment = GridData.END;
-    gd.widthHint = 20;
-    c.setLayoutData(gd);
-    c.addListener(SWT.Paint,new Listener()
+    if (!Customizing.SETTINGS.getBoolean("application.statusbar.hidelog",false))
     {
-      public void handleEvent(Event event)
+      final Canvas c = new Canvas(comp,SWT.NONE);
+      GridData gd = new GridData(GridData.FILL_BOTH);
+      at.verticalAlignment = GridData.END;
+      gd.widthHint = 20;
+      c.setLayoutData(gd);
+      c.addListener(SWT.Paint,new Listener()
       {
-        GC gc = event.gc;
-        Rectangle size = c.getBounds();
-        gc.drawImage(SWTUtil.getImage(snapIn ? "minimize.png" : "maximize.png"),size.width - 20,0);
-      }
-    });
+        public void handleEvent(Event event)
+        {
+          GC gc = event.gc;
+          Rectangle size = c.getBounds();
+          gc.drawImage(SWTUtil.getImage(snapIn ? "minimize.png" : "maximize.png"),size.width - 20,0);
+        }
+      });
 
-    MouseAdapter ma = new MouseAdapter()
-    {
-      public void mouseUp(MouseEvent e)
+      MouseAdapter ma = new MouseAdapter()
       {
-        if (GUI.getView().snappedIn())
-          GUI.getView().snapOut();
+        public void mouseUp(MouseEvent e)
+        {
+          if (GUI.getView().snappedIn())
+            GUI.getView().snapOut();
 
-        if (snapIn)
-        {
-          // wir werden schon angezeigt, dann zoomen wir uns wieder raus
-          snapIn = false;
-          c.redraw();
-          return;
+          if (snapIn)
+          {
+            // wir werden schon angezeigt, dann zoomen wir uns wieder raus
+            snapIn = false;
+            c.redraw();
+            return;
+          }
+          try
+          {
+            Panel panel = new Panel(Application.getI18n().tr("System-Meldungen"),new LogList(),false);
+            panel.addMinimizeListener(new Listener() {
+              public void handleEvent(Event event)
+              {
+                if (GUI.getView().snappedIn())
+                  GUI.getView().snapOut();
+                snapIn = false;
+                c.redraw();
+              }
+            });
+            panel.paint(GUI.getView().getSnapin());
+            GUI.getView().snapIn();
+            snapIn = true;
+            c.redraw();
+          }
+          catch (RemoteException re)
+          {
+            Logger.error("unable to display log list",re);
+          }
         }
-        try
-        {
-          Panel panel = new Panel(Application.getI18n().tr("System-Meldungen"),new LogList(),false);
-          panel.addMinimizeListener(new Listener() {
-            public void handleEvent(Event event)
-            {
-              if (GUI.getView().snappedIn())
-                GUI.getView().snapOut();
-              snapIn = false;
-              c.redraw();
-            }
-          });
-          panel.paint(GUI.getView().getSnapin());
-          GUI.getView().snapIn();
-          snapIn = true;
-          c.redraw();
-        }
-        catch (RemoteException re)
-        {
-          Logger.error("unable to display log list",re);
-        }
-      }
-    };
+      };
 
-    String s = Application.getI18n().tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen.");
-    c.setToolTipText(s);
-    c.addMouseListener(ma);
+      String s = Application.getI18n().tr("Klicken Sie hier, um die letzten Zeilen des System-Logs anzuzeigen.");
+      c.setToolTipText(s);
+      c.addMouseListener(ma);
+    }
   }
 
   /**
@@ -221,6 +225,9 @@ public class StatusBarTextItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarTextItem.java,v $
+ * Revision 1.7  2010/10/19 15:33:21  willuhn
+ * @N Statusbar via Customizing anpassbar
+ *
  * Revision 1.6  2007/11/02 01:19:38  willuhn
  * @N Vorbereitungen fuer Drag&Drop von Panels
  * @N besserer Klick-Indikator in Statusleiste fuer Oeffnen des Logs
