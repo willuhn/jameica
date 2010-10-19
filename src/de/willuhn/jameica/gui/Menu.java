@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.42 $
- * $Date: 2010/08/26 21:47:47 $
+ * $Revision: 1.43 $
+ * $Date: 2010/10/19 16:13:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,8 +37,8 @@ import de.willuhn.util.ApplicationException;
 public class Menu
 {
 
-  private final org.eclipse.swt.widgets.Menu mainMenu;
-	private final org.eclipse.swt.widgets.Menu pluginMenu;
+  private org.eclipse.swt.widgets.Menu mainMenu;
+	private org.eclipse.swt.widgets.Menu pluginMenu;
 
 	private Decorations parent;
 
@@ -61,10 +61,13 @@ public class Menu
 		// System-Menu laden
 		load(Application.getManifest().getMenu(),mainMenu);
 
-    org.eclipse.swt.widgets.MenuItem mi = new org.eclipse.swt.widgets.MenuItem(mainMenu,SWT.CASCADE);
-		mi.setText(Application.getI18n().tr("Plugins"));
-		pluginMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
-		mi.setMenu(pluginMenu);
+    if (!Customizing.SETTINGS.getBoolean("application.menu.hideplugins",false))
+    {
+      org.eclipse.swt.widgets.MenuItem mi = new org.eclipse.swt.widgets.MenuItem(mainMenu,SWT.CASCADE);
+      mi.setText(Application.getI18n().tr("Plugins"));
+      pluginMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
+      mi.setMenu(pluginMenu);
+    }
   }
 
   /**
@@ -74,7 +77,7 @@ public class Menu
    */
 	protected void add(MenuItem menu) throws Exception
 	{
-    if (menu == null)
+    if (menu == null || pluginMenu == null)
       return;
     load(menu,pluginMenu);
 	}
@@ -247,7 +250,10 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
- * Revision 1.42  2010/08/26 21:47:47  willuhn
+ * Revision 1.43  2010/10/19 16:13:19  willuhn
+ * @N Plugins-Submenu via Customizing ausblendbar
+ *
+ * Revision 1.42  2010-08-26 21:47:47  willuhn
  * @N Icons auch im Hauptmenu
  *
  * Revision 1.41  2009/06/04 10:55:22  willuhn
