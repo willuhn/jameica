@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.135 $
- * $Date: 2010/10/21 10:04:08 $
+ * $Revision: 1.136 $
+ * $Date: 2010/10/21 10:04:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -951,7 +951,7 @@ public class GUI implements ApplicationController
     // Wird nur unter MacOS direkt als Thread uebergeben.
     // Unter Linux wuerde das zu verspaetetem GUI-Refresh fuehren.
     Runnable job = null;
-    if (Platform.getInstance().getOS() == Platform.OS_MAC)
+    if (Application.getPlatform().getOS() == Platform.OS_MAC)
     {
       job = t;
     }
@@ -986,7 +986,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.135  2010/10/21 10:04:08  willuhn
+ * Revision 1.136  2010/10/21 10:04:30  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.135  2010-10-21 10:04:08  willuhn
  * *** empty log message ***
  *
  * Revision 1.134  2010-10-19 15:33:21  willuhn
