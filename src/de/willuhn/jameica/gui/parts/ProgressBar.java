@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.18 $
- * $Date: 2008/04/23 11:43:40 $
+ * $Revision: 1.19 $
+ * $Date: 2010/10/21 10:48:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,6 +34,7 @@ public class ProgressBar implements ProgressMonitor, Part
 	private int status	= STATUS_NONE;
 
   private boolean showLogs = true;
+  private boolean showPercent = true;
 
 	private TextPart log																= null;
 	private Composite parent														= null;
@@ -163,12 +164,15 @@ public class ProgressBar implements ProgressMonitor, Part
 		bar.setMaximum(100);
 		bar.setSelection(0);
 
-    percentLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
-    GridData gd1 = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-    gd1.widthHint = 80;
-    percentLabel.setLayoutData(gd1);
-    percentLabel.setText("[0 %]");
-
+		if (showPercent)
+		{
+	    percentLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
+	    GridData gd1 = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+	    gd1.widthHint = 50;
+	    percentLabel.setLayoutData(gd1);
+	    percentLabel.setText(" [0 %]");
+		}
+		
     barLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
 		barLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     barLabel.setText("");
@@ -221,11 +225,24 @@ public class ProgressBar implements ProgressMonitor, Part
     this.showLogs = show;
   }
 
+  /**
+   * Legt fest, ob der Fortschritt neben dem Balken auch nochmal als
+   * Prozentwert angezeigt werden soll.
+   * @param show true, wenn er angezeigt werden sollen (Default).
+   */
+  public void showPercent(boolean show)
+  {
+    this.showPercent = show;
+  }
+
 }
 
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
+ * Revision 1.19  2010/10/21 10:48:45  willuhn
+ * @N BackgroundTaskDialog
+ *
  * Revision 1.18  2008/04/23 11:43:40  willuhn
  * @B 432+179 Snapin nach 30 Sekunden automatisch ausblenden (jetzt einfacher via DelayedListener geloest)
  *
