@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.134 $
- * $Date: 2010/10/19 15:33:21 $
+ * $Revision: 1.135 $
+ * $Date: 2010/10/21 10:04:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,6 +53,7 @@ import de.willuhn.jameica.system.ApplicationController;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.system.Platform;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -950,8 +951,7 @@ public class GUI implements ApplicationController
     // Wird nur unter MacOS direkt als Thread uebergeben.
     // Unter Linux wuerde das zu verspaetetem GUI-Refresh fuehren.
     Runnable job = null;
-    String os = System.getProperty("os.name");
-    if (os.toLowerCase().indexOf("mac") != -1)
+    if (Platform.getInstance().getOS() == Platform.OS_MAC)
     {
       job = t;
     }
@@ -986,7 +986,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.134  2010/10/19 15:33:21  willuhn
+ * Revision 1.135  2010/10/21 10:04:08  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.134  2010-10-19 15:33:21  willuhn
  * @N Statusbar via Customizing anpassbar
  *
  * Revision 1.133  2010-10-06 15:48:18  willuhn
