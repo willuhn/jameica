@@ -4,8 +4,7 @@
 # Jameica wird hierbei mit GUI gestartet.
 
 TERM="xterm"
-JAVAVERSION="`readlink /System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK`"
-JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/${JAVAVERSION}/Commands/java"
+JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Commands/java"
 
 if [ -z "$JAVACMD" ]; then
   echo Fehler: Java nicht installiert.
