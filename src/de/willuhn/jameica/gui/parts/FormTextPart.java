@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.15 $
- * $Date: 2010/10/28 21:35:25 $
+ * $Revision: 1.16 $
+ * $Date: 2010/10/28 22:08:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,149 +45,156 @@ import de.willuhn.util.ApplicationException;
  */
 public class FormTextPart implements Part {
 
-	private StringBuffer content 				= new StringBuffer();
-	private ScrolledComposite container = null;
-	private FormText text								= null;
+  private StringBuffer content        = new StringBuffer();
+  private ScrolledComposite container = null;
+  private FormText text               = null;
 
-	/**
-	 * ct.
-	 */
-	public FormTextPart()
-	{
-	}
+  /**
+   * ct.
+   */
+  public FormTextPart()
+  {
+  }
 
-	/**
-	 * ct.
-	 * @param text der anzuzeigenden Text.
-	 */
-	public FormTextPart(String text)
-	{
-		setText(text);
-	}
+  /**
+   * ct.
+   * @param text der anzuzeigenden Text.
+   */
+  public FormTextPart(String text)
+  {
+    setText(text);
+  }
   
-	/**
-	 * ct.
-	 * @param text die PlainText-Datei.
-	 * @throws IOException Wenn beim Lesen der Datei Fehler auftreten.
-	 */
-	public FormTextPart(Reader text) throws IOException
-	{
-		setText(text);
-	}
+  /**
+   * ct.
+   * @param text die PlainText-Datei.
+   * @throws IOException Wenn beim Lesen der Datei Fehler auftreten.
+   */
+  public FormTextPart(Reader text) throws IOException
+  {
+    setText(text);
+  }
 
-	/**
-	 * Zeigt den Text aus der uebergebenen Datei an.
+  /**
+   * Zeigt den Text aus der uebergebenen Datei an.
    * @param text anzuzeigender Text.
    * @throws IOException
    */
   public void setText(Reader text) throws IOException
-	{
-		BufferedReader br =  null;
-		
-		try {
-			br = new BufferedReader(text);
+  {
+    BufferedReader br =  null;
+    
+    try {
+      br = new BufferedReader(text);
 
-			String thisLine = null;
-			StringBuffer buffer = new StringBuffer();
-			while ((thisLine =  br.readLine()) != null)
-			{
-				if (thisLine.length() == 0) // Leerzeile
-				{
-					buffer.append("\n\n");
-					continue;
-				}
-				buffer.append(thisLine.trim() + " "); // Leerzeichen am Ende einfuegen.
+      String thisLine = null;
+      StringBuffer buffer = new StringBuffer();
+      while ((thisLine =  br.readLine()) != null)
+      {
+        if (thisLine.length() == 0) // Leerzeile
+        {
+          buffer.append("\n\n");
+          continue;
+        }
+        buffer.append(thisLine.trim() + " "); // Leerzeichen am Ende einfuegen.
 
 
-			}
+      }
 
-			content = buffer; // machen wir erst wenn die gesamte Datei gelesen werden konnte
-			refresh();
-		}
-		catch (IOException e)
-		{
-			throw e;
-		}
-		finally
-		{
-			try {
-				br.close();
-			}
-			catch (Exception e) {}
-		}
-	}
+      content = buffer; // machen wir erst wenn die gesamte Datei gelesen werden konnte
+      refresh();
+    }
+    catch (IOException e)
+    {
+      throw e;
+    }
+    finally
+    {
+      try {
+        br.close();
+      }
+      catch (Exception e) {}
+    }
+  }
 
-	/**
-	 * Zeigt den uebergebenen Hilfe-Text an.
-	 * @param s anzuzeigender Hilfe-Text.
-	 */
-	public void setText(String s)
-	{
-		content = new StringBuffer(s);
-		refresh();
-	}
+  /**
+   * Zeigt den uebergebenen Hilfe-Text an.
+   * @param s anzuzeigender Hilfe-Text.
+   */
+  public void setText(String s)
+  {
+    content = new StringBuffer(s);
+    refresh();
+  }
 
 
   /**
    */
   public void refresh()
-	{
-		if (text == null || content == null)
-			return;
-		String s = content.toString();
-		boolean b = s != null && s.startsWith("<form>");
-		text.setText(s == null ? "" : s,b,b);
-		resize();
-	}
+  {
+    if (text == null || content == null)
+      return;
+    String s = content.toString();
+    boolean b = s != null && s.startsWith("<form>");
+    text.setText(s == null ? "" : s,b,b);
+    resize();
+  }
 
-	/**
+  /**
    * Passt die Groesse des Textes an die Umgebung an.
    */
   private void resize()
-	{
-		if (text == null || container == null)
-			return;
-		text.setSize(text.computeSize(text.getParent().getClientArea().width,SWT.DEFAULT));
-	}
+  {
+    if (text == null || container == null)
+      return;
+    text.setSize(text.computeSize(text.getParent().getClientArea().width,SWT.DEFAULT));
+  }
 
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent) throws RemoteException {
 
-		container = new ScrolledComposite(parent,SWT.H_SCROLL | SWT.V_SCROLL);
-		container.setBackground(Color.BACKGROUND.getSWTColor());
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalIndent = 4;
-		container.setLayoutData(gd);
-		container.setLayout(SWTUtil.createGrid(1,true));
-		container.addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event event) {
-				resize();
-			}
-		});
+    container = new ScrolledComposite(parent,SWT.H_SCROLL | SWT.V_SCROLL);
+    container.setBackground(Color.BACKGROUND.getSWTColor());
+    GridData gd = new GridData(GridData.FILL_BOTH);
+    gd.horizontalIndent = 4;
+    container.setLayoutData(gd);
+    container.setLayout(SWTUtil.createGrid(1,true));
+    container.addListener(SWT.Resize, new Listener() {
+      public void handleEvent(Event event) {
+        resize();
+      }
+    });
 
-		text = new FormText(container,SWT.WRAP);
+    text = new FormText(container,SWT.WRAP);
 
-		text.setBackground(Color.BACKGROUND.getSWTColor());
+    // Die HyperlinkSettings muessen zwingend an den
+    // FormText uebergeben werden, BEVOR der eigentliche Text uebergeben
+    // wird. Das gibts sonst eine NPE. Und das laesst sich extrem
+    // schlecht debuggen.
+    // Den Quellcode von eclipse.ui.forms hab ich hier gefunden:
+    // http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.ui.forms/src/org/eclipse/ui/internal/forms/widgets/?hideattic=0
+    
+    // Daher machen wir das gleich als erstes. Sicher ist sicher.
+    HyperlinkSettings hs = new HyperlinkSettings(GUI.getDisplay());
+    hs.setBackground(Color.WIDGET_BG.getSWTColor());
+    hs.setForeground(Color.LINK.getSWTColor());
+    hs.setActiveBackground(Color.WIDGET_BG.getSWTColor());
+    hs.setActiveForeground(Color.LINK_ACTIVE.getSWTColor());
+    text.setHyperlinkSettings(hs);
+
+    text.setBackground(Color.BACKGROUND.getSWTColor());
     text.setFont(Font.DEFAULT.getSWTFont());
 
-		text.setColor("header",Color.COMMENT.getSWTColor());
+    text.setColor("header",Color.COMMENT.getSWTColor());
     text.setColor("error",Color.ERROR.getSWTColor());
     text.setColor("success",Color.SUCCESS.getSWTColor());
-		text.setFont("header", Font.H1.getSWTFont());
+    text.setFont("header", Font.H1.getSWTFont());
 
-		container.setContent(text);
-	
-		HyperlinkSettings hs = new HyperlinkSettings(GUI.getDisplay());
-		hs.setBackground(Color.WIDGET_BG.getSWTColor());
-		hs.setForeground(Color.LINK.getSWTColor());
-		hs.setActiveBackground(Color.WIDGET_BG.getSWTColor());
-		hs.setActiveForeground(Color.LINK_ACTIVE.getSWTColor());
+    container.setContent(text);
 
-		text.setHyperlinkSettings(hs);
-
-		text.addHyperlinkListener(new HyperlinkAdapter() {
+    text.addHyperlinkListener(new HyperlinkAdapter() {
       public void linkActivated(HyperlinkEvent e) {
         Object href = e.getHref();
         if (href == null)
@@ -230,15 +237,15 @@ public class FormTextPart implements Part {
       }
     });
 
-		refresh();
+    refresh();
   }
 }
 
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
- * Revision 1.15  2010/10/28 21:35:25  willuhn
- * @R unsinniger Code
+ * Revision 1.16  2010/10/28 22:08:44  willuhn
+ * @N HyperlinkSettings so frueh wie moeglich setzen - wegen moeglicher NPE
  *
  * Revision 1.14  2007-12-21 13:46:27  willuhn
  * @N H2-Migration scharf geschaltet
