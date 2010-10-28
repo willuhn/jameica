@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.8 $
- * $Date: 2010/10/11 20:46:22 $
+ * $Revision: 1.9 $
+ * $Date: 2010/10/28 22:48:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ public class About extends AbstractDialog
    */
   public About(int position)
   {
-    super(position);
+    super(position,false);
     this.setTitle("Jameica");
   }
 
@@ -94,7 +94,10 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
- * Revision 1.8  2010/10/11 20:46:22  willuhn
+ * Revision 1.9  2010/10/28 22:48:13  willuhn
+ * @C Groesse nicht mehr aenderbar
+ *
+ * Revision 1.8  2010-10-11 20:46:22  willuhn
  * @N BUGZILLA 928
  *
  * Revision 1.7  2010-09-06 20:44:55  willuhn
