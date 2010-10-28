@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.14 $
- * $Date: 2007/12/21 13:46:27 $
+ * $Revision: 1.15 $
+ * $Date: 2010/10/28 21:35:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -189,19 +189,18 @@ public class FormTextPart implements Part {
 
 		text.addHyperlinkListener(new HyperlinkAdapter() {
       public void linkActivated(HyperlinkEvent e) {
-     		Event ev = new Event();
-     		ev.data = e.getHref();
-        if (ev.data == null)
+        Object href = e.getHref();
+        if (href == null)
         {
           Logger.info("got hyperlink event, but data was null. nothing to do");
           return;
         }
-        if (!(ev.data instanceof String))
+        if (!(href instanceof String))
         {
           Logger.info("got hyperlink event, but data is not a string, skipping");
           return;
         }
-        String action = (String) ev.data;
+        String action = (String) href;
         
         // Wir versuchen die Action als Klasse zu laden. Wenn das fehlschlaegt,
         // starten wir die Action einfach als Programm
@@ -238,7 +237,10 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
- * Revision 1.14  2007/12/21 13:46:27  willuhn
+ * Revision 1.15  2010/10/28 21:35:25  willuhn
+ * @R unsinniger Code
+ *
+ * Revision 1.14  2007-12-21 13:46:27  willuhn
  * @N H2-Migration scharf geschaltet
  *
  * Revision 1.13  2007/05/14 11:18:09  willuhn
