@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.51 $
- * $Date: 2010/07/13 10:52:59 $
+ * $Revision: 1.52 $
+ * $Date: 2010/10/29 09:17:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.gui.dialogs;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -110,29 +111,31 @@ public abstract class AbstractDialog
 	 */
 	public final static int MONITOR_CURRENT = 1;
 	
+  protected I18N i18n = Application.getI18n();
+
+  private List<Listener> listeners = new ArrayList();
+
+  private int pos = POSITION_CENTER;
+  private int height = SWT.DEFAULT;
+  private int width = SWT.DEFAULT;
+  
+  private boolean resizable = false;
+
+  private int monitor = MONITOR_CURRENT;
+  private Point cursor = null;
 
   private Shell shell;
   private Display display;
-	private ArrayList listeners = new ArrayList();
-  
+
   private Composite parent;
+  private Canvas panel;
+
   private Label imageLabel;
-  private Canvas title;
-  
   private Image sideImage;
 
-	private int pos = POSITION_CENTER;
 
 	private String titleText;
-	private int height = SWT.DEFAULT;
-	private int width = SWT.DEFAULT;
-  
-  private boolean resizable = false;
-  private int monitor = MONITOR_CURRENT;
-  
-  private Point cursor = null;
-  
-	protected I18N i18n;
+  private String panelText;
 	
 	private int closeState = SWT.OK;
 
@@ -158,7 +161,6 @@ public abstract class AbstractDialog
   public AbstractDialog(int position, boolean resizable)
   {
     this.pos       = position;
-    this.i18n      = Application.getI18n();
     this.resizable = resizable;
   }
 
@@ -207,21 +209,22 @@ public abstract class AbstractDialog
 		
         ///////////////////////////////
         // Der Titel selbst
-        title = SWTUtil.getCanvas(comp,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+        panel = SWTUtil.getCanvas(comp,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
         GridLayout layout2 = new GridLayout();
         layout2.marginHeight = 0;
         layout2.marginWidth = 0;
         layout2.horizontalSpacing = 0;
         layout2.verticalSpacing = 0;
-        title.setLayout(layout2);
+        panel.setLayout(layout2);
 
-        title.addListener(SWT.Paint,new Listener()
+        panel.addListener(SWT.Paint,new Listener()
         {
           public void handleEvent(Event event)
           {
             GC gc = event.gc;
             gc.setFont(Font.H2.getSWTFont());
-            gc.drawText(titleText == null ? "" : titleText,8,1,true);
+            String s = panelText != null ? panelText : titleText;
+            gc.drawText(s == null ? "" : s,8,1,true);
           }
         });
         //
@@ -324,12 +327,43 @@ public abstract class AbstractDialog
   public void setTitle(String title)
   {
     this.titleText = title == null ? "" : title;
-    if (this.title != null && !this.title.isDisposed())
+    if (this.shell != null && !this.shell.isDisposed())
+    {
+      GUI.getDisplay().syncExec(new Runnable() {
+        
+        public void run()
+        {
+          shell.setText(titleText);
+        }
+      });
+    }
+    
+    // Panel muss auch neu gezeichnet werden
+    if (this.panel != null && !this.panel.isDisposed())
     {
       GUI.getDisplay().syncExec(new Runnable() {
         public void run()
         {
-          AbstractDialog.this.title.redraw();
+          AbstractDialog.this.panel.redraw();
+        }
+      });
+    }
+  }
+  
+  /**
+   * Legt einen abweichenden Text fuer das Panel direkt unter dem Titel fest.
+   * Per Default wird dort nochmal der Text des Dialog-Titels angezeigt.
+   * @param text ein abweichender Text fuer das Panel.
+   */
+  public void setPanelText(String text)
+  {
+    this.panelText = text;
+    if (this.panel != null && !this.panel.isDisposed())
+    {
+      GUI.getDisplay().syncExec(new Runnable() {
+        public void run()
+        {
+          AbstractDialog.this.panel.redraw();
         }
       });
     }
@@ -518,13 +552,11 @@ public abstract class AbstractDialog
 
 		try {
       Logger.debug("notifying listeners");
-			Listener l = null;
 			Event e = new Event();
 			e.data = getData();
 			e.detail = closeState;
-			for (int i=0;i<listeners.size();++i)
+			for (Listener l:this.listeners)
 			{
-				l = (Listener) listeners.get(i);
 				l.handleEvent(e);
 			}
 		}
@@ -536,175 +568,12 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.51  2010/07/13 10:52:59  willuhn
+ * Revision 1.52  2010/10/29 09:17:54  willuhn
+ * @N Abweichender Panel-Text konfigurierbar
+ *
+ * Revision 1.51  2010-07-13 10:52:59  willuhn
  * @N OperationCancelledException auch aus SWTException herausfischen - wird z.Bsp. dann gebraucht, wenn der Vorgang in einem separaten Thread laeuft
  *
  * Revision 1.50  2010/04/13 10:50:41  willuhn
  * @B AbstractDialog hatte das falsche Parent und den falschen MODAL-Typ (APPLICATION_MODAL statt PRIMARY_MODAL)
- *
- * Revision 1.49  2009/06/10 11:25:53  willuhn
- * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
- *
- * Revision 1.48  2009/06/04 10:34:00  willuhn
- * @N Cursor-Position bereits beim Initialisieren ermitteln. Andernfalls besteht die Moeglichkeit, nach dem Klick die Maus schnell wegzubewegen, was dazu fuehrte, dass der Dialog dann nicht an der urspruenglichen Klick-Position erscheint sondern an der neuen Maus-Position
- * @B Dualhead wurde bei POSITION_MOUSE nicht korrekt beruecksichtigt
- * @R Out-of-Range-Check bei POSITION_MOUSE entfernt - uebernimmt bereits SWT/Window-Manager
- *
- * Revision 1.47  2009/05/28 10:11:49  willuhn
- * @N In AbstractDialog kann nun explizit angegeben werden, auf welchen Monitor der Dialog soll (CURRENT == Monitor, auf dem sich das Jameica-Fenster befindet oder PRIMARY == der Primaer-Monitor). Letzteres ist fuer Dialoge noetig, die zu einem Zeitpunkt angezeigt werden, zu denen das Anwendungsfenster noch nicht da ist - etwa der Dialog fuer das Masterpasswort. Wuerde man da "MONITOR_CURRENT" verwenden, haette das zur Folge, dass die Shell des Anwendungsfensters unnoetig erzeugt wird
- *
- * Revision 1.46  2009/05/27 16:01:05  willuhn
- * @C Dialoge auf dem Monitor anzeigen, auf dem auch das Hauptfenster laeuft
- *
- * Revision 1.45  2009/05/27 12:56:45  willuhn
- * @B BUGZILLA 183
- *
- * Revision 1.44  2009/03/11 23:06:41  willuhn
- * @B empty if statement
- *
- * Revision 1.43  2008/12/19 10:35:59  willuhn
- * @C Widgets erst on demand rendern
- *
- * Revision 1.42  2008/12/18 23:21:13  willuhn
- * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
- * @R Nicht mehr benoetigte Grafiken entfernt
- * @C Anordnung des SideImages in AbstractDialog etwas geaendert (ein paar Pixel Abstand des Images vom Rand)
- *
- * Revision 1.41  2008/07/04 16:02:11  willuhn
- * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
- * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
- *
- * Revision 1.40  2007/07/09 14:14:14  willuhn
- * @B Dialog-Patch fuer MacOS von Juergen Krass (https://lists.berlios.de/pipermail/hibiscus-devel/2007-July/000190.html)
- *
- * Revision 1.39  2006/11/12 23:34:28  willuhn
- * @B Bug 183 (thanks to Juergen)
- *
- * Revision 1.38  2006/05/29 14:01:18  willuhn
- * @B Dialog-Groesse
- *
- * Revision 1.37  2006/05/11 17:18:04  web0
- * @B bug 234
- *
- * Revision 1.36  2006/04/20 08:44:03  web0
- * @C s/Childs/Children/
- *
- * Revision 1.35  2005/11/22 07:38:32  web0
- * *** empty log message ***
- *
- * Revision 1.34  2005/11/22 01:12:04  web0
- * @B SWTError "Device is disposed"
- *
- * Revision 1.33  2005/11/22 00:55:21  web0
- * @B SWTError "Device is disposed"
- *
- * Revision 1.32  2005/11/20 22:22:35  web0
- * @B SWTException
- *
- * Revision 1.31  2005/07/26 23:57:31  web0
- * *** empty log message ***
- *
- * Revision 1.30  2005/07/26 22:58:34  web0
- * @N background task refactoring
- *
- * Revision 1.29  2005/07/11 08:31:24  web0
- * *** empty log message ***
- *
- * Revision 1.28  2005/06/21 20:02:02  web0
- * @C cvs merge
- *
- * Revision 1.27  2005/06/15 17:51:31  web0
- * @N Code zum Konfigurieren der Service-Bindings
- *
- * Revision 1.26  2005/02/01 17:15:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.25  2004/11/15 18:09:32  willuhn
- * *** empty log message ***
- *
- * Revision 1.24  2004/11/15 00:38:20  willuhn
- * *** empty log message ***
- *
- * Revision 1.23  2004/11/12 18:23:59  willuhn
- * *** empty log message ***
- *
- * Revision 1.22  2004/09/13 23:27:12  willuhn
- * *** empty log message ***
- *
- * Revision 1.21  2004/08/15 18:45:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.20  2004/08/15 17:55:17  willuhn
- * @C sync handling
- *
- * Revision 1.19  2004/07/31 15:03:05  willuhn
- * *** empty log message ***
- *
- * Revision 1.18  2004/07/27 23:41:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.17  2004/07/21 23:54:54  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.16  2004/05/23 16:34:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.15  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.14  2004/04/21 22:28:56  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2004/03/30 22:08:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.12  2004/03/29 23:20:50  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2004/03/24 00:46:03  willuhn
- * @C refactoring
- *
- * Revision 1.10  2004/03/06 18:24:24  willuhn
- * @D javadoc
- *
- * Revision 1.9  2004/03/03 22:27:10  willuhn
- * @N help texts
- * @C refactoring
- *
- * Revision 1.8  2004/02/27 01:09:31  willuhn
- * *** empty log message ***
- *
- * Revision 1.7  2004/02/26 18:47:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2004/02/25 23:11:57  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2004/02/24 22:46:53  willuhn
- * @N GUI refactoring
- *
- * Revision 1.4  2004/02/23 20:30:33  willuhn
- * @C refactoring in AbstractDialog
- *
- * Revision 1.3  2004/02/22 20:05:21  willuhn
- * @N new Logo panel
- *
- * Revision 1.2  2004/02/21 19:49:41  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/02/20 20:45:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2004/02/20 01:25:06  willuhn
- * @N nice dialog
- * @N busy indicator
- * @N new status bar
- *
- * Revision 1.2  2004/02/17 00:53:47  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/02/12 23:46:27  willuhn
- * *** empty log message ***
- *
  **********************************************************************/
