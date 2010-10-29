@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.9 $
- * $Date: 2010/10/28 22:48:13 $
+ * $Revision: 1.10 $
+ * $Date: 2010/10/29 09:24:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,6 @@ import de.willuhn.jameica.gui.util.LabelGroup;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.I18N;
 
 /**
  * About-Dialog.
@@ -42,7 +41,8 @@ public class About extends AbstractDialog
   public About(int position)
   {
     super(position,false);
-    this.setTitle("Jameica");
+    this.setTitle(i18n.tr("Über ..."));
+    this.setPanelText(i18n.tr("Jameica {0}",Application.getManifest().getVersion().toString()));
   }
 
   /**
@@ -50,8 +50,6 @@ public class About extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception
   {
-    I18N i18n = Application.getI18n();
-
     Label l = GUI.getStyleFactory().createLabel(parent,SWT.BORDER);
     l.setImage(SWTUtil.getImage("splash.png"));
 
@@ -94,7 +92,10 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
- * Revision 1.9  2010/10/28 22:48:13  willuhn
+ * Revision 1.10  2010/10/29 09:24:29  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.9  2010-10-28 22:48:13  willuhn
  * @C Groesse nicht mehr aenderbar
  *
  * Revision 1.8  2010-10-11 20:46:22  willuhn
