@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.11 $
- * $Date: 2010/10/29 09:31:45 $
+ * $Revision: 1.12 $
+ * $Date: 2010/10/29 09:31:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Label;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
-import de.willuhn.jameica.gui.internal.action.Program;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Container;
@@ -92,7 +91,10 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
- * Revision 1.11  2010/10/29 09:31:45  willuhn
+ * Revision 1.12  2010/10/29 09:31:54  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.11  2010-10-29 09:31:45  willuhn
  * *** empty log message ***
  *
  * Revision 1.10  2010-10-29 09:24:29  willuhn
