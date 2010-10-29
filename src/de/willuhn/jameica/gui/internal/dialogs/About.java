@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.12 $
- * $Date: 2010/10/29 09:31:54 $
+ * $Revision: 1.13 $
+ * $Date: 2010/10/29 09:32:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,7 +58,7 @@ public class About extends AbstractDialog
     text.setText("<form>" +
       "<p><b>Jameica - Java based message interchange</b></p>" +
       "<p>Lizenz: GPL [<a href=\"http://www.gnu.org/copyleft/gpl.html\">www.gnu.org/copyleft/gpl.html</a>]<br/>" +
-      "Copyright by Olaf Willuhn [<a href=\"mailto:info@jameica.org\">mailto:info@jameica.org</a>]<br/>" +
+      "Copyright by Olaf Willuhn [<a href=\"mailto:info@jameica.org\">info@jameica.org</a>]<br/>" +
       "<a href=\"http://www.jameica.org\">www.jameica.org</a></p>" +
       "<p>Version: " + Application.getManifest().getVersion() + "<br/>" +
       "SWT-Version: " + SWT.getVersion() + " / " + SWT.getPlatform() + "<br/>" +
@@ -91,7 +91,10 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
- * Revision 1.12  2010/10/29 09:31:54  willuhn
+ * Revision 1.13  2010/10/29 09:32:59  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.12  2010-10-29 09:31:54  willuhn
  * *** empty log message ***
  *
  * Revision 1.11  2010-10-29 09:31:45  willuhn
