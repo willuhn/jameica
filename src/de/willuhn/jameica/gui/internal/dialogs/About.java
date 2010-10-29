@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/About.java,v $
- * $Revision: 1.10 $
- * $Date: 2010/10/29 09:24:29 $
+ * $Revision: 1.11 $
+ * $Date: 2010/10/29 09:31:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,25 +58,25 @@ public class About extends AbstractDialog
     FormTextPart text = new FormTextPart();
     text.setText("<form>" +
       "<p><b>Jameica - Java based message interchange</b></p>" +
-      "<p>Lizenz: GPL [<a href=\"" + Program.class.getName() + "\">http://www.gnu.org/copyleft/gpl.html</a>]</p>" +
-      "<p>Copyright by Olaf Willuhn [<a href=\"" + Program.class.getName() + "\">mailto:info@jameica.org</a>]</p>" +
-      "<p><a href=\"" + Program.class.getName() + "\">http://www.jameica.org</a></p>" +
-      "<p>Version: " + Application.getManifest().getVersion() + "</p>" +
-      "<p>SWT-Version: " + SWT.getVersion() + " / " + SWT.getPlatform() + "</p>" +
-      "<p>Build: " + Application.getBuildnumber() + " [Datum " + Application.getBuildDate() + "]</p>" +
+      "<p>Lizenz: GPL [<a href=\"http://www.gnu.org/copyleft/gpl.html\">www.gnu.org/copyleft/gpl.html</a>]<br/>" +
+      "Copyright by Olaf Willuhn [<a href=\"mailto:info@jameica.org\">mailto:info@jameica.org</a>]<br/>" +
+      "<a href=\"http://www.jameica.org\">www.jameica.org</a></p>" +
+      "<p>Version: " + Application.getManifest().getVersion() + "<br/>" +
+      "SWT-Version: " + SWT.getVersion() + " / " + SWT.getPlatform() + "<br/>" +
+      "Build: " + Application.getBuildnumber() + " [Datum " + Application.getBuildDate() + "]</p>" +
       "<p>Benutzerverzeichnis: " + Application.getConfig().getWorkDir() + "</p>" +
       "</form>");
 
     container.addPart(text);
 
     ButtonArea buttons = container.createButtonArea(1);
-    buttons.addButton("   " + i18n.tr("Schlieﬂen") + "   ",new Action() {
+    buttons.addButton(i18n.tr("Schlieﬂen"),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         close();
       }
-    },null,true);
-    setSize(SWT.DEFAULT,490);  // BUGZILLA 269
+    },null,true,"window-close.png");
+    setSize(SWT.DEFAULT,480);  // BUGZILLA 269
   }
 
   /**
@@ -92,7 +92,10 @@ public class About extends AbstractDialog
 
 /**********************************************************************
  * $Log: About.java,v $
- * Revision 1.10  2010/10/29 09:24:29  willuhn
+ * Revision 1.11  2010/10/29 09:31:45  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.10  2010-10-29 09:24:29  willuhn
  * *** empty log message ***
  *
  * Revision 1.9  2010-10-28 22:48:13  willuhn
