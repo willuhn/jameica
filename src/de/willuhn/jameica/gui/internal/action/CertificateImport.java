@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/CertificateImport.java,v $
- * $Revision: 1.6 $
- * $Date: 2009/01/18 00:03:46 $
+ * $Revision: 1.7 $
+ * $Date: 2010/11/02 00:10:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -46,7 +46,7 @@ public class CertificateImport implements Action
     FileDialog d = new FileDialog(GUI.getShell(),SWT.OPEN);
     d.setText(Application.getI18n().tr("Bitte wählen Sie das zu importierende Zertifikat aus"));
     d.setFilterPath(settings.getString("lastdir", System.getProperty("user.home")));
-    d.setFilterExtensions(new String[]{"*.pem","*.crt","*.cer"});
+    d.setFilterExtensions(new String[]{"*.pem;*.crt;*.cer"});
     String s = d.open();
     if (s == null || s.length() == 0)
       return;
@@ -84,6 +84,9 @@ public class CertificateImport implements Action
 
 /*********************************************************************
  * $Log: CertificateImport.java,v $
+ * Revision 1.7  2010/11/02 00:10:54  willuhn
+ * @C FilterExtension
+ *
  * Revision 1.6  2009/01/18 00:03:46  willuhn
  * @N SSLFactory#addTrustedCertificate() liefert jetzt den erzeugten Alias-Namen des Keystore-Entries
  * @N SSLFactory#getTrustedCertificate(String) zum Abrufen eines konkreten Zertifikates
