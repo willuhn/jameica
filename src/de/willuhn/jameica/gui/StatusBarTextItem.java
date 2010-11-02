@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarTextItem.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/10/19 15:33:21 $
+ * $Revision: 1.8 $
+ * $Date: 2010/11/02 22:33:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -166,8 +167,12 @@ public class StatusBarTextItem implements StatusBarItem
 
       final StatusBarMessage m = (StatusBarMessage) message;
 
+      final Display d = GUI.getDisplay();
+      if (d == null || d.isDisposed())
+        return;
+      
       final long currentClick = System.currentTimeMillis();
-      GUI.getDisplay().asyncExec(new Runnable() {
+      d.asyncExec(new Runnable() {
         public void run() {
           if (text != null && !text.isDisposed())
           {
@@ -191,10 +196,10 @@ public class StatusBarTextItem implements StatusBarItem
           }
         }
       });
-      GUI.getDisplay().asyncExec(new Runnable() {
+      d.asyncExec(new Runnable() {
         public void run()
         {
-          GUI.getDisplay().timerExec(10000,new Runnable()
+          d.timerExec(10000,new Runnable()
           {
             public void run()
             {
@@ -225,7 +230,10 @@ public class StatusBarTextItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarTextItem.java,v $
- * Revision 1.7  2010/10/19 15:33:21  willuhn
+ * Revision 1.8  2010/11/02 22:33:07  willuhn
+ * @B Kann beim Shutdown eine Racecondition mit "SWTException: Invalid thread access" ausloesen - stoert zwar nicht, sieht aber unschoen im Log aus
+ *
+ * Revision 1.7  2010-10-19 15:33:21  willuhn
  * @N Statusbar via Customizing anpassbar
  *
  * Revision 1.6  2007/11/02 01:19:38  willuhn
