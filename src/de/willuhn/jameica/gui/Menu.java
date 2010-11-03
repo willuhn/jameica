@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.43 $
- * $Date: 2010/10/19 16:13:19 $
+ * $Revision: 1.44 $
+ * $Date: 2010/11/03 16:09:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -184,6 +185,10 @@ public class Menu
               Logger.debug("executing menu entry " + mi.getID() + " [" + mi.getName() + "]");
               a.handleAction(event);
             }
+            catch (OperationCanceledException oce)
+            {
+              Logger.debug("operation cancelled: " + oce.getMessage());
+            }
             catch (ApplicationException ae)
             {
               Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getLocalizedMessage(),StatusBarMessage.TYPE_ERROR));
@@ -250,7 +255,10 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
- * Revision 1.43  2010/10/19 16:13:19  willuhn
+ * Revision 1.44  2010/11/03 16:09:08  willuhn
+ * @N OCE fangen
+ *
+ * Revision 1.43  2010-10-19 16:13:19  willuhn
  * @N Plugins-Submenu via Customizing ausblendbar
  *
  * Revision 1.42  2010-08-26 21:47:47  willuhn
