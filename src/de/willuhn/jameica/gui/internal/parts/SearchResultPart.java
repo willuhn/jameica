@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchResultPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/11/03 15:28:10 $
+ * $Revision: 1.4 $
+ * $Date: 2010/11/03 17:37:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,6 +30,7 @@ import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.search.Result;
 import de.willuhn.jameica.search.SearchResult;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -82,7 +83,6 @@ public class SearchResultPart extends TreePart
    */
   private static GenericIterator init(List<SearchResult> searchResult) throws RemoteException, ApplicationException
   {
-    boolean found = false;
     // Wir muessen das Suchergebnis hier als Baum aufbereiten
     HashMap plugins = new HashMap();
     for (int i=0;i<searchResult.size();++i)
@@ -99,25 +99,31 @@ public class SearchResultPart extends TreePart
       }
       p.add(result);
     }
-    
-    Iterator result = plugins.values().iterator();
 
-    ArrayList al = new ArrayList();
-    // All die Plugins und Provider rauswerfen, die nichts geliefert haben
+    // Wir uebernehmen nur die Plugins, die Ergebnisse geliefert haben
+    Iterator result = plugins.values().iterator();
+    List<Plugin> al = new ArrayList<Plugin>();
     while (result.hasNext())
     {
       Plugin p = (Plugin) result.next();
       if (p.providers.size() > 0)
-      {
         al.add(p);
-        found = true;
-      }
+    }
+    
+    if (al.size() == 0)
+      return PseudoIterator.fromArray(new GenericObject[]{new NotFound()});
+
+    // Die Anzeige der Plugins als Root-Knoten kann via Customizing ausgeblendet
+    // werden. In dem Fall werden direkt die Ergebnis-Gruppen angezeigt
+    if (Customizing.SETTINGS.getBoolean("application.search.hideplugins",false))
+    {
+      List<Provider> providers = new ArrayList<Provider>();
+      for (Plugin p:al)
+        providers.addAll(p.providers);
+      return PseudoIterator.fromArray(providers.toArray(new Provider[providers.size()]));
     }
 
-    if (found)
-      return PseudoIterator.fromArray((Plugin[])al.toArray(new Plugin[al.size()]));
-
-    return PseudoIterator.fromArray(new GenericObject[]{new NotFound()});
+    return PseudoIterator.fromArray(al.toArray(new Plugin[al.size()]));
   }
   
   /**
@@ -307,15 +313,15 @@ public class SearchResultPart extends TreePart
     {
       if (this.children == null)
       {
-        ArrayList l = new ArrayList();
+        List<ResultObject> l = new ArrayList<ResultObject>();
         try
         {
-          List result = this.result.getResult();
+          List<Result> result = this.result.getResult();
           if (result != null)
           {
             for (int i=0;i<result.size();++i)
             {
-              l.add(new ResultObject(this,(Result) result.get(i)));
+              l.add(new ResultObject(this,result.get(i)));
             }
           }
         }
@@ -323,7 +329,7 @@ public class SearchResultPart extends TreePart
         {
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
         }
-        this.children = PseudoIterator.fromArray((ResultObject[])l.toArray(new ResultObject[l.size()]));
+        this.children = PseudoIterator.fromArray(l.toArray(new ResultObject[l.size()]));
       }
       return this.children;
       
@@ -514,7 +520,10 @@ public class SearchResultPart extends TreePart
 
 /**********************************************************************
  * $Log: SearchResultPart.java,v $
- * Revision 1.3  2010/11/03 15:28:10  willuhn
+ * Revision 1.4  2010/11/03 17:37:18  willuhn
+ * @N Plugins via Customizing ausblendbar. Dann werden direkt die Ergebnisse der Provider-Gruppen angezeigt
+ *
+ * Revision 1.3  2010-11-03 15:28:10  willuhn
  * @N Ergebnisliste getypt
  *
  * Revision 1.2  2008/09/03 23:41:30  willuhn
