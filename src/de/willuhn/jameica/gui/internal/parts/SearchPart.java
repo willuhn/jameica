@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchPart.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/08/17 16:05:32 $
+ * $Revision: 1.8 $
+ * $Date: 2010/11/03 11:52:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.SearchService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 
 
@@ -120,24 +121,27 @@ public class SearchPart implements Part
       }
     });
     
-    Link link = new Link(this.comp,SWT.NONE);
-    link.setText("<a>" + Application.getI18n().tr("Optionen") + "</a>");
-    link.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER));
-    link.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e)
-      {
-        try
+    if (!Customizing.SETTINGS.getBoolean("application.search.hideoptions",false))
+    {
+      Link link = new Link(this.comp,SWT.NONE);
+      link.setText("<a>" + Application.getI18n().tr("Optionen") + "</a>");
+      link.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.VERTICAL_ALIGN_CENTER));
+      link.addSelectionListener(new SelectionAdapter() {
+        public void widgetSelected(SelectionEvent e)
         {
-          new SearchOptionsDialog(SearchOptionsDialog.POSITION_CENTER).open();
+          try
+          {
+            new SearchOptionsDialog(SearchOptionsDialog.POSITION_CENTER).open();
+          }
+          catch (Exception ex)
+          {
+            Logger.error("error while opening options dialog",ex);
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Öffnen der Optionen"), StatusBarMessage.TYPE_ERROR));
+          }
         }
-        catch (Exception ex)
-        {
-          Logger.error("error while opening options dialog",ex);
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Öffnen der Optionen"), StatusBarMessage.TYPE_ERROR));
-        }
-      }
-    
-    });
+      
+      });
+    }
   }
   
   /**
@@ -191,7 +195,10 @@ public class SearchPart implements Part
 
 /**********************************************************************
  * $Log: SearchPart.java,v $
- * Revision 1.7  2010/08/17 16:05:32  willuhn
+ * Revision 1.8  2010/11/03 11:52:18  willuhn
+ * @N Anzeige des "Optionen..."-Links via Customizing ausblendbar
+ *
+ * Revision 1.7  2010-08-17 16:05:32  willuhn
  * @N Update auf SWT 3.6
  * @N Such-Feld ist jetzt ein SWT.SEARCH mit Icons
  *
