@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchResultPart.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/09/03 23:41:30 $
+ * $Revision: 1.3 $
+ * $Date: 2010/11/03 15:28:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,7 +45,7 @@ public class SearchResultPart extends TreePart
    * @throws RemoteException
    * @throws ApplicationException
    */
-  public SearchResultPart(List searchResult) throws RemoteException, ApplicationException
+  public SearchResultPart(List<SearchResult> searchResult) throws RemoteException, ApplicationException
   {
     super(init(searchResult),new Action()
     {
@@ -80,14 +80,14 @@ public class SearchResultPart extends TreePart
    * @throws RemoteException
    * @throws ApplicationException
    */
-  private static GenericIterator init(List searchResult) throws RemoteException, ApplicationException
+  private static GenericIterator init(List<SearchResult> searchResult) throws RemoteException, ApplicationException
   {
     boolean found = false;
     // Wir muessen das Suchergebnis hier als Baum aufbereiten
     HashMap plugins = new HashMap();
     for (int i=0;i<searchResult.size();++i)
     {
-      SearchResult result = (SearchResult) searchResult.get(i);
+      SearchResult result = searchResult.get(i);
       
       // Plugin ermitteln
       AbstractPlugin ap = Application.getPluginLoader().findByClass(result.getSearchProvider().getClass());
@@ -514,6 +514,9 @@ public class SearchResultPart extends TreePart
 
 /**********************************************************************
  * $Log: SearchResultPart.java,v $
+ * Revision 1.3  2010/11/03 15:28:10  willuhn
+ * @N Ergebnisliste getypt
+ *
  * Revision 1.2  2008/09/03 23:41:30  willuhn
  * @N Anzeige eines Hinweistextes, wenn keine Treffer gefunden wurden
  *
