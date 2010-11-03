@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SearchService.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/09/03 23:32:14 $
+ * $Revision: 1.7 $
+ * $Date: 2010/11/03 15:28:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -89,12 +89,12 @@ public class SearchService implements Bootable
    * Aus Perfomanz-Gruenden beginnt die Suche nicht sofort
    * sondern erst, wenn die SearchResults vom Aufrufer ausgewertet werden.
    * @param text der Suchbegriff.
-   * @return das Suchergebnis als Liste von Objekten des Typs "SearchResult".
+   * @return das Suchergebnis.
    * Jedes SearchResult enthaelt die Suchergebnisse fuer einen Provider.
    */
-  public List search(String text)
+  public List<SearchResult> search(String text)
   {
-    ArrayList result = new ArrayList();
+    List<SearchResult> result = new ArrayList<SearchResult>();
     
     // Suche ohne Suchbegriff gibts nicht
     if (text == null || text.length() == 0)
@@ -154,6 +154,9 @@ public class SearchService implements Bootable
 
 /**********************************************************************
  * $Log: SearchService.java,v $
+ * Revision 1.7  2010/11/03 15:28:31  willuhn
+ * @N Ergebnisliste getypt
+ *
  * Revision 1.6  2008/09/03 23:32:14  willuhn
  * @C Suchergebnis nicht mehr als View sondern als Snapin am unteren Rand anzeigen. Dann kann man durch die Elemente klicken, ohne das Suchergebnis zu verlassen
  *
