@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.36 $
- * $Date: 2010/10/11 15:45:36 $
+ * $Revision: 1.37 $
+ * $Date: 2010/11/04 01:11:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,12 @@ package de.willuhn.jameica.gui;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Random;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -67,6 +73,10 @@ public class SplashScreen implements ProgressMonitor, Runnable
     Logger.debug("init splash screen");
 
     this.logo = logo;
+
+    if (this.logo == null)
+      this.logo = randomSplash();
+
     if (this.logo == null)
       this.logo = Customizing.SETTINGS.getString("application.splashscreen","/img/splash.png");
 
@@ -75,10 +85,46 @@ public class SplashScreen implements ProgressMonitor, Runnable
     
     shell = new Shell(display,SWT.NONE);
     shell.setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon","hibiscus-icon-64x64.png")));
-    shell.setAlpha(Customizing.SETTINGS.getInt("application.splashscreen.alpha",210));
+    shell.setAlpha(Customizing.SETTINGS.getInt("application.splashscreen.alpha",255));
     String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
     shell.setText(name);
     shell.setBackground(new Color(display,0,0,0));
+  }
+  
+  /**
+   * Liefert einen zufaelligen Splash-Screen, insofern via Customizing aktiviert.
+   * @return Zufalls-Splash-Screen oder NULL.
+   */
+  private String randomSplash()
+  {
+    if (!Customizing.SETTINGS.getBoolean("application.splashscreen.random",false))
+      return null;
+
+    try
+    {
+      JarFile jar = new JarFile("lib/splash.jar");
+      List<String> names = new ArrayList<String>();
+      Enumeration<JarEntry> entries = jar.entries();
+      while (entries.hasMoreElements())
+      {
+        JarEntry e = entries.nextElement();
+        if (e.getSize() <= 0 || e.isDirectory())
+          continue;
+        String s = e.getName().toLowerCase();
+        if (!s.toLowerCase().endsWith(".jpg") && !s.toLowerCase().endsWith(".png"))
+          continue;
+        names.add("/" + e.getName());
+      }
+      
+      String name = names.get(new Random().nextInt(names.size()));
+      Logger.debug("using random splashscreen " + name);
+      return name;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to get splash",e);
+    }
+    return null;
   }
   
 	/**
@@ -288,7 +334,10 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
- * Revision 1.36  2010/10/11 15:45:36  willuhn
+ * Revision 1.37  2010/11/04 01:11:20  willuhn
+ * @N Random Splashscreen ;)
+ *
+ * Revision 1.36  2010-10-11 15:45:36  willuhn
  * @C Handling der Splash-Grafik vereinfacht
  *
  * Revision 1.35  2010/06/14 08:23:13  willuhn

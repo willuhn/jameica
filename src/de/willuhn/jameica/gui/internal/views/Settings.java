@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.29 $
- * $Date: 2010/10/10 21:20:55 $
+ * $Revision: 1.30 $
+ * $Date: 2010/11/04 01:11:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -120,6 +120,7 @@ public class Settings extends AbstractView implements Extendable
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ermitteln der Sprach-Einstellungen."),StatusBarMessage.TYPE_ERROR));
 		}
     lnfGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
+    lnfGroup.addCheckbox(control.getRandomSplash(),i18n.tr("Zufallsbild in Splashscreen anzeigen"));
     lnfGroup.addSeparator();
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Pflichtfeldern"),control.getColorMandatoryBG());
     lnfGroup.addCheckbox(control.getLabelMandatory(),i18n.tr("Auch den Text vor diesen Pflichtfeldern (Label) hervorheben"));
@@ -190,7 +191,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.29  2010/10/10 21:20:55  willuhn
+ * Revision 1.30  2010/11/04 01:11:20  willuhn
+ * @N Random Splashscreen ;)
+ *
+ * Revision 1.29  2010-10-10 21:20:55  willuhn
  * @R RMI-Einstellungen entfernt - braucht kein Schwein und irritiert nur
  *
  * Revision 1.28  2009-10-26 09:26:33  willuhn

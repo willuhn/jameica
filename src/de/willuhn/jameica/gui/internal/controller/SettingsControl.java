@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.30 $
- * $Date: 2010/10/10 21:20:55 $
+ * $Revision: 1.31 $
+ * $Date: 2010/11/04 01:11:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,7 @@ import de.willuhn.jameica.messaging.SettingsChangedMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Config;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -70,15 +71,12 @@ public class SettingsControl extends AbstractControl
 
   // Look & Feel
 	private Input colorWidgetBG;
-	private Input colorWidgetFG;
-	private Input colorComment;
 	private Input colorError;
 	private Input colorSuccess;
-	private Input colorLink;
-	private Input colorLinkActive;
   private Input colorMandatoryBG;
 	private Input styleFactory;
   private CheckboxInput mandatoryLabel;
+  private CheckboxInput randomSplash;
 	
 	private SelectInput locale;
 	
@@ -275,18 +273,6 @@ public class SettingsControl extends AbstractControl
    * Auswahlfeld.
    * @return Auswahl-Feld.
    */
-  public Input getColorWidgetFG()
-  {
-  	if (colorWidgetFG != null)
-  		return colorWidgetFG;
-  	colorWidgetFG = new ColorInput(Color.WIDGET_FG.getSWTColor(),true);
-  	return colorWidgetFG;
-  }
-
-  /**
-   * Auswahlfeld.
-   * @return Auswahl-Feld.
-   */
   public Input getColorMandatoryBG()
   {
     if (colorMandatoryBG != null)
@@ -294,18 +280,6 @@ public class SettingsControl extends AbstractControl
     colorMandatoryBG = new ColorInput(Color.MANDATORY_BG.getSWTColor(),false);
     return colorMandatoryBG;
   }
-
-  /**
-	 * Auswahlfeld.
-   * @return Auswahl-Feld.
-	 */
-	public Input getColorComment()
-	{
-		if (colorComment != null)
-			return colorComment;
-		colorComment = new ColorInput(Color.COMMENT.getSWTColor(),true);
-		return colorComment;
-	}
 
 	/**
 	 * Auswahlfeld.
@@ -331,30 +305,6 @@ public class SettingsControl extends AbstractControl
 		return colorSuccess;
 	}
 
-	/**
-	 * Auswahlfeld.
-   * @return Auswahl-Feld.
-	 */
-	public Input getColorLink()
-	{
-		if (colorLink != null)
-			return colorLink;
-		colorLink = new ColorInput(Color.LINK.getSWTColor(),true);
-		return colorLink;
-	}
-
-	/**
-	 * Auswahlfeld.
-   * @return Auswahl-Feld.
-	 */
-	public Input getColorLinkActive()
-	{
-		if (colorLinkActive != null)
-			return colorLinkActive;
-		colorLinkActive = new ColorInput(Color.LINK_ACTIVE.getSWTColor(),true);
-		return colorLinkActive;
-	}
-  
   /**
    * Liefert eine Checkbox, mit der konfiguriert werden kann, ob auch die Labels vor Pflichtfeldern rot gefaerbt werden.
    * @return Checkbox.
@@ -365,6 +315,18 @@ public class SettingsControl extends AbstractControl
       return this.mandatoryLabel;
     this.mandatoryLabel = new CheckboxInput(Application.getConfig().getMandatoryLabel());
     return this.mandatoryLabel;
+  }
+
+  /**
+   * Liefert eine Checkbox, mit der konfiguriert werden kann, ob ein zufaelliger Splashscreen angezeigt werden soll.
+   * @return Checkbox.
+   */
+  public CheckboxInput getRandomSplash()
+  {
+    if (this.randomSplash != null)
+      return this.randomSplash;
+    this.randomSplash = new CheckboxInput(Customizing.SETTINGS.getBoolean("application.splashscreen.random",false));
+    return this.randomSplash;
   }
 
   /**
@@ -405,13 +367,10 @@ public class SettingsControl extends AbstractControl
 
       // Look & Feel
       Application.getConfig().setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
+      Customizing.SETTINGS.setAttribute("application.splashscreen.random",((Boolean)getRandomSplash().getValue()).booleanValue());
     	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
-			Color.COMMENT.setSWTColor((org.eclipse.swt.graphics.Color)getColorComment().getValue());
-			Color.WIDGET_FG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetFG().getValue());
 			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
 			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
-			Color.LINK.setSWTColor((org.eclipse.swt.graphics.Color)getColorLink().getValue());
-			Color.LINK_ACTIVE.setSWTColor((org.eclipse.swt.graphics.Color)getColorLinkActive().getValue());
       Color.MANDATORY_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorMandatoryBG().getValue());
 
       restartNeeded |= getStyleFactory().hasChanged();
@@ -544,7 +503,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
- * Revision 1.30  2010/10/10 21:20:55  willuhn
+ * Revision 1.31  2010/11/04 01:11:20  willuhn
+ * @N Random Splashscreen ;)
+ *
+ * Revision 1.30  2010-10-10 21:20:55  willuhn
  * @R RMI-Einstellungen entfernt - braucht kein Schwein und irritiert nur
  *
  * Revision 1.29  2009/10/26 09:26:33  willuhn
