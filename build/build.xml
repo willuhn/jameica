@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.73 $
- $Date: 2010/09/24 16:34:48 $
+ $Revision: 1.74 $
+ $Date: 2010/11/04 11:24:58 $
  $Author: willuhn $
  
  All rights reserved
@@ -179,7 +179,10 @@
 				<include name="${define.projectname}/${define.jarfilename.linux}"/>
 				<include name="${define.projectname}/COPYING"/>
 				<include name="${define.projectname}/README"/>
-				<include name="${define.projectname}/jameica.sh"/>
+        <include name="${define.projectname}/jameica.sh"/>
+        <include name="${define.projectname}/jameicaserver.sh"/>
+        <include name="${define.projectname}/rcjameica"/>
+        <include name="${define.projectname}/.jameica"/>
 				<include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
@@ -203,6 +206,9 @@
 				<include name="${define.projectname}/COPYING"/>
 				<include name="${define.projectname}/README"/>
 				<include name="${define.projectname}/jameica.sh"/>
+        <include name="${define.projectname}/jameicaserver.sh"/>
+        <include name="${define.projectname}/rcjameica"/>
+        <include name="${define.projectname}/.jameica"/>
         <include name="${define.projectname}/jameica-icon-01.png"/>
         <include name="${define.projectname}/jameica-icon-02.png"/>
 				<include name="${define.projectname}/plugins"/>
@@ -367,10 +373,6 @@
 			<zipfileset dir="${project.release}" filemode="755">
 				<include name="${define.projectname}" />
 				<include name="${define.projectname}/**" />
-
-        <exclude name="${define.projectname}/rcjameica"/>
-        <exclude name="${define.projectname}/.jameica"/>
-				<exclude name="${define.projectname}/jameicaserver.*"/>
 			</zipfileset>
 		</zip>
 
