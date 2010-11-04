@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.37 $
- * $Date: 2010/11/04 01:11:20 $
+ * $Revision: 1.38 $
+ * $Date: 2010/11/04 10:31:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -102,7 +102,13 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
     try
     {
-      JarFile jar = new JarFile("lib/splash.jar");
+      File f = new File("lib/splash.jar");
+      if (!f.exists() || !f.isFile() || !f.canRead())
+      {
+        Logger.warn(f.getCanonicalPath() + " not found or not readable, skipping random splashscreen");
+        return null;
+      }
+      JarFile jar = new JarFile(f);
       List<String> names = new ArrayList<String>();
       Enumeration<JarEntry> entries = jar.entries();
       while (entries.hasMoreElements())
@@ -334,7 +340,10 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
- * Revision 1.37  2010/11/04 01:11:20  willuhn
+ * Revision 1.38  2010/11/04 10:31:13  willuhn
+ * @N Checken, ob splash.jar existiert
+ *
+ * Revision 1.37  2010-11-04 01:11:20  willuhn
  * @N Random Splashscreen ;)
  *
  * Revision 1.36  2010-10-11 15:45:36  willuhn
