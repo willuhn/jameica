@@ -31,11 +31,11 @@ Hinweis:
 # 1. Systemvoraussetzungen                                                #
 ###########################################################################
 
-- SUN Java 1.5 oder hoeher (JRE oder SDK)
+- SUN/Oracle Java 1.6 oder hoeher (JRE oder SDK)
   Geben Sie "java -version" an einer Shell (Windows: Eingabeaufforderung)
   ein um die Version zu ueberpruefen.
 
-  SUN Java koennen Sie von http://www.java.com herunterladen.
+  Java koennen Sie von http://www.java.com herunterladen.
 
 ###########################################################################
 # 2. INSTALLATION                                                         #
@@ -49,7 +49,7 @@ Hinweis:
 2) Wechseln Sie in das Programm-Verzeichnis und starten Sie mit:
 
    Linux (32 Bit)   :    "./jameica.sh"
-   Linux (64 Bit)   :    "./jameica-linux64.sh"
+   Linux (64 Bit)   :    "./jameica.sh"
 
    Windows (32 Bit) :    "jameica-win32.exe"
    Windows (64 Bit) :    "jameica-win64.exe"
