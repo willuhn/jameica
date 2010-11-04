@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.6 $
- * $Date: 2010/10/12 09:22:36 $
+ * $Revision: 1.7 $
+ * $Date: 2010/11/04 15:35:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -153,6 +153,7 @@ public class Platform
         Logger.debug("windows 64bit");
         this.os = OS_WINDOWS_64;
       }
+      else
       {
         Logger.debug("windows 32bit");
         this.os = OS_WINDOWS;
@@ -189,7 +190,10 @@ public class Platform
 
 /**********************************************************************
  * $Log: Platform.java,v $
- * Revision 1.6  2010/10/12 09:22:36  willuhn
+ * Revision 1.7  2010/11/04 15:35:03  willuhn
+ * @B BUGZULLA 942
+ *
+ * Revision 1.6  2010-10-12 09:22:36  willuhn
  * @B Falsches if
  *
  * Revision 1.5  2010-10-07 22:28:31  willuhn
