@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ButtonArea.java,v $
- * $Revision: 1.16 $
- * $Date: 2010/11/10 12:39:59 $
+ * $Revision: 1.17 $
+ * $Date: 2010/11/10 12:40:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import de.willuhn.logging.Logger;
 
 /**
  * Diese Klasse erzeugt standardisierte Bereiche fuer die Dialog-Buttons.
+ * Bitte kuenftig stattdessen {@link de.willuhn.jameica.gui.parts.ButtonArea} verwenden.
  */
 public class ButtonArea
 {
@@ -32,7 +33,6 @@ public class ButtonArea
 
   /**
    * Erzeugt einen neuen Standard-Button-Bereich.
-   * Bitte kuenftig stattdessen {@link de.willuhn.jameica.gui.parts.ButtonArea} verwenden.
    * @param parent Composite, in dem die Buttons gezeichnet werden sollen.
    * @param numButtons Anzahl der Buttons, die hier drin gespeichert werden sollen.
    */
@@ -129,7 +129,10 @@ public class ButtonArea
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
- * Revision 1.16  2010/11/10 12:39:59  willuhn
+ * Revision 1.17  2010/11/10 12:40:16  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.16  2010-11-10 12:39:59  willuhn
  * *** empty log message ***
  *
  * Revision 1.15  2010-07-29 09:15:40  willuhn
