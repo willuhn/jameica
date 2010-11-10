@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?> 
 
-<system name="Jameica" version="1.10.0-nightly">
+<system name="Jameica" version="1.10.0">
 
 	<description>Jameica - Java based messages interchange</description>
 	<url>http://www.willuhn.de/products/jameica/releases/1.10/jameica.zip</url>
@@ -18,18 +18,18 @@
       <item id="jameica.menu.backups"        name="&amp;Backups verwalten" shortcut="CTRL+B" icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
 			<item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	             icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
 			<item name="-" />
-			<item id="jameica.menu.quit"           name="Beenden"    			 							           icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
+			<item id="jameica.menu.quit"           name="Beenden"                                  icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
 		</item>
 
 		<item name="Hilfe">
-			<item name="Über"				 								            icon="dialog-information.png" action="de.willuhn.jameica.gui.internal.action.About" />
+			<item name="Über"                  icon="dialog-information.png" action="de.willuhn.jameica.gui.internal.action.About" />
 			<item name="-" />
-		    <item name="Lizenzinformationen"	 							    icon="text-x-generic.png"     action="de.willuhn.jameica.gui.internal.action.License" />
+		    <item name="Lizenzinformationen" icon="text-x-generic.png"     action="de.willuhn.jameica.gui.internal.action.License" />
 	  </item>
 	</menu>
 
 	<navigation>
-		<item id="jameica.start" name="Jameica" icon-close="computer.png"              action="de.willuhn.jameica.gui.internal.action.Start" />
+		<item id="jameica.start" name="Jameica" icon-close="computer.png" action="de.willuhn.jameica.gui.internal.action.Start" />
 	</navigation>
 
 	<services/>
