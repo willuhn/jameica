@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <!--
- $Revision: 1.75 $
- $Date: 2010/11/05 11:49:27 $
+ $Revision: 1.76 $
+ $Date: 2010/11/10 14:58:09 $
  $Author: willuhn $
  
  All rights reserved
@@ -430,16 +430,16 @@
 
 
 	<target name="sign" description="signs the jar/zip file">
-		<checksum algorithm="SHA" file="${project.release}/${define.srcfilename}" />
-		<checksum algorithm="SHA" file="${project.release}/${project.zipfilename}" />
-		<checksum algorithm="SHA" file="${project.release}/${project.zipfilename.win32}" />
-    <checksum algorithm="SHA" file="${project.release}/${project.zipfilename.win64}" />
-		<checksum algorithm="SHA" file="${project.release}/${project.zipfilename.linux}" />
-		<checksum algorithm="SHA" file="${project.release}/${project.zipfilename.linux64}" />
-		<checksum algorithm="SHA" file="${project.release}/${project.zipfilename.macos}" />
-    <checksum algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
-    <checksum algorithm="SHA" file="${project.release}/${project.zipfilename.openbsd}" />
-    <checksum algorithm="SHA" file="${project.release}/${project.zipfilename.osol}" />
+		<checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${define.srcfilename}" />
+		<checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename}" />
+		<checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.win32}" />
+    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.win64}" />
+		<checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux}" />
+		<checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux64}" />
+		<checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos}" />
+    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
+    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.openbsd}" />
+    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.osol}" />
 		<echo message="Creating PGP signatures" />
 
 		<exec executable="gpg" failonerror="true" timeout="60000">
