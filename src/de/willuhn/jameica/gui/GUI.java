@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.136 $
- * $Date: 2010/10/21 10:04:30 $
+ * $Revision: 1.137 $
+ * $Date: 2010/11/11 10:59:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -107,7 +107,7 @@ public class GUI implements ApplicationController
     try
     {
       Logger.info("startup GUI");
-      Logger.info("SWT version: " + SWT.getVersion());
+      Logger.info("SWT version: " + SWT.getVersion() + "/" + SWT.getPlatform());
 
       ////////////////////////////////////////////////////////////////////////
       // Netbook-Mode
@@ -986,7 +986,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.136  2010/10/21 10:04:30  willuhn
+ * Revision 1.137  2010/11/11 10:59:12  willuhn
+ * @N Platform in SWT-Version mit anzeigen
+ *
+ * Revision 1.136  2010-10-21 10:04:30  willuhn
  * *** empty log message ***
  *
  * Revision 1.135  2010-10-21 10:04:08  willuhn
