@@ -23,5 +23,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/velocity/velocity-1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/splash.jar"/>
+	<classpathentry kind="lib" path="lib/mckoi/mckoidb.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
