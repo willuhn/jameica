@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/mckoi/mckoidb.jar" sourcepath="lib.src/mckoi/mckoidb.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-jdk15-144.jar" sourcepath="lib.src/bouncycastle/bcprov-jdk15-144.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/linux/swt.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
