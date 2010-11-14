@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupFile.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/03/03 09:43:54 $
+ * $Revision: 1.2 $
+ * $Date: 2010/11/14 23:13:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -88,7 +88,7 @@ public class BackupFile implements GenericObject
       zip = new ZipFile(this.file);
       ZipEntry entry = zip.getEntry("cfg/de.willuhn.jameica.plugin.PluginLoader.properties");
       if (entry == null)
-        throw new ApplicationException(Application.getI18n().tr("Ungültiges Backup-Format"));
+        throw new ApplicationException(Application.getI18n().tr("Backup enthält keine Plugin-Daten"));
       
       is = zip.getInputStream(entry);
       if (is == null)
@@ -178,6 +178,9 @@ public class BackupFile implements GenericObject
 
 /*********************************************************************
  * $Log: BackupFile.java,v $
+ * Revision 1.2  2010/11/14 23:13:50  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2008/03/03 09:43:54  willuhn
  * @N DateUtil-Patch von Heiner
  * @N Weiterer Code fuer das Backup-System
