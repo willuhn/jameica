@@ -9,7 +9,7 @@
 # https://www.willuhn.de/bugzilla/show_bug.cgi?id=798
 
 cd `dirname $(readlink -f $0)`
-bit=`arch |grep 64`
+bit=`uname -m |grep 64`
 if [ $? = 0 ]
  then  GDK_NATIVE_WINDOWS=1 java -Djava.net.preferIPv4Stack=true -Xmx256m $_JCONSOLE -jar jameica-linux64.jar $@
  else  GDK_NATIVE_WINDOWS=1 java -Djava.net.preferIPv4Stack=true -Xmx256m $_JCONSOLE -jar jameica-linux.jar $@
