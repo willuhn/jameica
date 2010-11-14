@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupFile.java,v $
- * $Revision: 1.2 $
- * $Date: 2010/11/14 23:13:50 $
+ * $Revision: 1.3 $
+ * $Date: 2010/11/14 23:16:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,7 @@ import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
- * Meta-Container fuer ein einzelnes Backup.
+ * Container fuer ein einzelnes Backup.
  */
 public class BackupFile implements GenericObject
 {
@@ -178,7 +178,10 @@ public class BackupFile implements GenericObject
 
 /*********************************************************************
  * $Log: BackupFile.java,v $
- * Revision 1.2  2010/11/14 23:13:50  willuhn
+ * Revision 1.3  2010/11/14 23:16:58  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.2  2010-11-14 23:13:50  willuhn
  * *** empty log message ***
  *
  * Revision 1.1  2008/03/03 09:43:54  willuhn
