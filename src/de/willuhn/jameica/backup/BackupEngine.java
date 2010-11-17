@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/backup/BackupEngine.java,v $
- * $Revision: 1.12 $
- * $Date: 2009/10/29 12:40:08 $
+ * $Revision: 1.13 $
+ * $Date: 2010/11/17 15:39:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -289,6 +289,8 @@ public class BackupEngine
           continue;
         if ("plugins".equals(children[i].getName()))
           continue;
+        if ("lost+found".equals(children[i].getName()))
+          continue;
         if (children[i].getCanonicalFile().equals(dir.getCanonicalFile()))
           continue; // Das Backup-Verzeichnis selbst ist ein Unterverzeichnis. Nicht sichern wegen Rekursion
         zip.add(children[i]);
@@ -363,6 +365,9 @@ public class BackupEngine
 
 /**********************************************************************
  * $Log: BackupEngine.java,v $
+ * Revision 1.13  2010/11/17 15:39:37  willuhn
+ * @C "lost+found" nicht mit sichern, falls das Benutzerverzeichnis direkt eine Ext-Partition ist
+ *
  * Revision 1.12  2009/10/29 12:40:08  willuhn
  * @C Verzeichnisse "plugins" und "deploy" nicht mitsichern
  *
