@@ -1,8 +1,8 @@
 package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/11/19 15:46:21 $
+ * $Revision: 1.4 $
+ * $Date: 2010/11/19 15:47:55 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -78,16 +78,16 @@ public class CalendarPart implements Part
     gl.horizontalSpacing = gl.verticalSpacing = 1;
     comp.setLayout(gl);
 
-    createPager(comp,"<<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {moveTo(Calendar.YEAR, -1);}});
-    createPager(comp,"<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {moveTo(Calendar.MONTH, -1);}});
+    createPager(comp,"<<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, -1);}});
+    createPager(comp,"<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, -1);}});
 
     this.nowLabel = new CLabel(comp, SWT.CENTER | SWT.SHADOW_OUT);
     GridData gd = new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan = 3;
     this.nowLabel.setLayoutData(gd);
 
-    createPager(comp,">",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {moveTo(Calendar.MONTH, 1);}});
-    createPager(comp,">>",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {moveTo(Calendar.YEAR, 1);}});
+    createPager(comp,">",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, 1);}});
+    createPager(comp,">>",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, 1);}});
 
     // Header mit den Wochentagen.
     I18N i18n = Application.getI18n();
@@ -130,7 +130,7 @@ public class CalendarPart implements Part
    * @param type Zeitraum. Calendar.MONTH oder Calender.YEAR
    * @param value Betrag.
    */
-  private void moveTo(int type, int value)
+  private void move(int type, int value)
   {
     // Datum verschieben
     Calendar now = Calendar.getInstance();
@@ -297,7 +297,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.3  2010/11/19 15:46:21  willuhn
+ * Revision 1.4  2010/11/19 15:47:55  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.3  2010-11-19 15:46:21  willuhn
  * @B minor fixes
  *
  * Revision 1.2  2010-11-19 13:44:15  willuhn
