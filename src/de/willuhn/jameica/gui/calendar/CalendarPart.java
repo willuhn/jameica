@@ -1,8 +1,8 @@
 package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.2 $
- * $Date: 2010/11/19 13:44:15 $
+ * $Revision: 1.3 $
+ * $Date: 2010/11/19 15:46:21 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -74,7 +74,7 @@ public class CalendarPart implements Part
   {
     Composite comp = new Composite(parent,SWT.NONE);
     comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-    GridLayout gl = new GridLayout(7,false);
+    GridLayout gl = new GridLayout(7,true);
     gl.horizontalSpacing = gl.verticalSpacing = 1;
     comp.setLayout(gl);
 
@@ -297,7 +297,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.2  2010/11/19 13:44:15  willuhn
+ * Revision 1.3  2010/11/19 15:46:21  willuhn
+ * @B minor fixes
+ *
+ * Revision 1.2  2010-11-19 13:44:15  willuhn
  * @N Appointment-API zum Anzeigen von Terminen im Kalender.
  *
  * Revision 1.1  2010-11-17 16:59:56  willuhn

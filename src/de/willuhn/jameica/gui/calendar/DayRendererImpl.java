@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.2 $
- * $Date: 2010/11/19 13:44:15 $
+ * $Revision: 1.3 $
+ * $Date: 2010/11/19 15:46:21 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -148,11 +148,11 @@ public class DayRendererImpl implements DayRenderer
     // Haben wir Termine an dem Tag?
     if (appointments != null && appointments.size() > 0)
     {
-      // Wenn wir mehr als 2 Termine an dem Tag haben, verwenden
+      // Wenn wir mehr als 1 Termin an dem Tag haben, verwenden
       // wir CLabel statt Label. Das verkuerzt den Text, damit alle
       // Eintraege reinpassen.
-      boolean more = appointments.size() > 2;
-      
+      boolean more = appointments.size() > 1;
+
       for (final Appointment a:appointments)
       {
         if (more)
@@ -204,6 +204,12 @@ public class DayRendererImpl implements DayRenderer
         });
       }
     }
+    else
+    {
+      // Content entfernen
+      SWTUtil.disposeChildren(this.content);
+    }
+    this.content.layout();
   }
   
   /**
@@ -230,7 +236,10 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.2  2010/11/19 13:44:15  willuhn
+ * Revision 1.3  2010/11/19 15:46:21  willuhn
+ * @B minor fixes
+ *
+ * Revision 1.2  2010-11-19 13:44:15  willuhn
  * @N Appointment-API zum Anzeigen von Terminen im Kalender.
  *
  * Revision 1.1  2010-11-17 16:59:56  willuhn
