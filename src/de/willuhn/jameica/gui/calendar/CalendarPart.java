@@ -1,8 +1,8 @@
 package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.5 $
- * $Date: 2010/11/19 15:52:06 $
+ * $Revision: 1.6 $
+ * $Date: 2010/11/19 16:04:05 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -33,7 +33,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
@@ -76,8 +78,9 @@ public class CalendarPart implements Part
   {
     Composite comp = new Composite(parent,SWT.NONE);
     comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-    GridLayout gl = new GridLayout(7,true);
+    GridLayout gl = SWTUtil.createGrid(7,true);
     gl.horizontalSpacing = gl.verticalSpacing = 1;
+    gl.marginHeight = gl.marginWidth = 0;
     comp.setLayout(gl);
 
     createPager(comp,"<<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, -1);}});
@@ -266,7 +269,7 @@ public class CalendarPart implements Part
    */
   private void createPager(Composite parent, String label, SelectionListener l)
   {
-    Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+    Button b = GUI.getStyleFactory().createButton(parent);
     b.setText(label);
     b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     b.addSelectionListener(l);
@@ -307,7 +310,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.5  2010/11/19 15:52:06  willuhn
+ * Revision 1.6  2010/11/19 16:04:05  willuhn
+ * @C honor style factory
+ *
+ * Revision 1.5  2010-11-19 15:52:06  willuhn
  * @N Funktion, zum Zurueckkehren zum aktuellen Monat
  *
  * Revision 1.4  2010-11-19 15:47:55  willuhn
