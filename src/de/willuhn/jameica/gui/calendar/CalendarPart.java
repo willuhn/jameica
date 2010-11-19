@@ -1,8 +1,8 @@
 package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.6 $
- * $Date: 2010/11/19 16:04:05 $
+ * $Revision: 1.7 $
+ * $Date: 2010/11/19 16:09:39 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -32,6 +32,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
@@ -47,7 +48,7 @@ public class CalendarPart implements Part
   private DateFormat dateformat = new SimpleDateFormat("MMMM yyyy", Application.getConfig().getLocale());
 
   private Date currentDate = new Date();
-  private CLabel nowLabel  = null;
+  private Label text       = null;
 
   private List<DayRenderer> days = new ArrayList<DayRenderer>();
   private Class<? extends DayRenderer> renderer = DayRendererImpl.class;
@@ -76,22 +77,28 @@ public class CalendarPart implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
+    ////////////////////////////////////////////////////////////////////////////
+    // Haupt-Layout
     Composite comp = new Composite(parent,SWT.NONE);
     comp.setLayoutData(new GridData(GridData.FILL_BOTH));
     GridLayout gl = SWTUtil.createGrid(7,true);
     gl.horizontalSpacing = gl.verticalSpacing = 1;
     gl.marginHeight = gl.marginWidth = 0;
     comp.setLayout(gl);
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
+    // Blaettern nach links
     createPager(comp,"<<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, -1);}});
     createPager(comp,"<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, -1);}});
 
-    this.nowLabel = new CLabel(comp, SWT.CENTER | SWT.SHADOW_OUT);
+    // Label mit aktuellem Monat
+    this.text = new Label(comp, SWT.CENTER);
     GridData gd = new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan = 3;
-    this.nowLabel.setLayoutData(gd);
-    this.nowLabel.setToolTipText(Application.getI18n().tr("Klicken Sie hier, um zum aktuellen Monat zurückzukehren."));
-    this.nowLabel.addMouseListener(new MouseAdapter() {
+    this.text.setLayoutData(gd);
+    this.text.setToolTipText(Application.getI18n().tr("Klicken Sie hier, um zum aktuellen Monat zurückzukehren."));
+    this.text.addMouseListener(new MouseAdapter() {
       public void mouseUp(MouseEvent e)
       {
         currentDate = new Date();
@@ -99,6 +106,7 @@ public class CalendarPart implements Part
       }
     });
 
+    // Blaettern nach rechts
     createPager(comp,">",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, 1);}});
     createPager(comp,">>",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, 1);}});
 
@@ -135,6 +143,7 @@ public class CalendarPart implements Part
       throw new RemoteException("unable to load day renderer",e);
     }
 
+    // Und einmal laden bitte ;)
     refresh();
   }
 
@@ -208,7 +217,7 @@ public class CalendarPart implements Part
   private void refresh()
   {
     // Label aktualisieren.
-    nowLabel.setText(dateformat.format(currentDate));
+    text.setText(dateformat.format(currentDate));
     
     Calendar now = Calendar.getInstance();
     now.setTime(currentDate);
@@ -310,7 +319,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.6  2010/11/19 16:04:05  willuhn
+ * Revision 1.7  2010/11/19 16:09:39  willuhn
+ * @B Content-Composite wurde beim Neuladen nicht leer gemacht
+ *
+ * Revision 1.6  2010-11-19 16:04:05  willuhn
  * @C honor style factory
  *
  * Revision 1.5  2010-11-19 15:52:06  willuhn

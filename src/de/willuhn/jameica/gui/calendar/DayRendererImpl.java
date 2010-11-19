@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/11/19 15:46:21 $
+ * $Revision: 1.4 $
+ * $Date: 2010/11/19 16:09:39 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -106,20 +106,24 @@ public class DayRendererImpl implements DayRenderer
    */
   public void update(Status status, Date date, List<Appointment> appointments)
   {
+    // Content entfernen
+    SWTUtil.disposeChildren(this.content);
+    
+
     // Tag ist nicht Bestandteil des Monats
     if (date == null || status == Status.OFF)
     {
       // Tag entfernen
       this.day.setText("");
 
-      // Content entfernen
-      SWTUtil.disposeChildren(this.content);
-      this.content.layout();
-      
       // Hintergrund grau
       this.comp.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
       this.content.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
       this.day.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
+
+      // Content noch neu zeichnen
+      this.content.layout();
+
       return;
     }
 
@@ -204,11 +208,8 @@ public class DayRendererImpl implements DayRenderer
         });
       }
     }
-    else
-    {
-      // Content entfernen
-      SWTUtil.disposeChildren(this.content);
-    }
+
+    // Content noch neu zeichnen
     this.content.layout();
   }
   
@@ -236,7 +237,10 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.3  2010/11/19 15:46:21  willuhn
+ * Revision 1.4  2010/11/19 16:09:39  willuhn
+ * @B Content-Composite wurde beim Neuladen nicht leer gemacht
+ *
+ * Revision 1.3  2010-11-19 15:46:21  willuhn
  * @B minor fixes
  *
  * Revision 1.2  2010-11-19 13:44:15  willuhn
