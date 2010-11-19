@@ -1,8 +1,8 @@
 package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/11/19 16:09:39 $
+ * $Revision: 1.8 $
+ * $Date: 2010/11/19 18:36:48 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -38,6 +38,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
 /**
@@ -180,32 +181,39 @@ public class CalendarPart implements Part
     
     for (AppointmentProvider provider:this.providers)
     {
-      List<Appointment> list = provider.getAppointments(start,end);
-      
-      // Hat der Provider Termine?
-      if (list == null || list.size() == 0)
-        continue;
-
-      // Wir fuegen die Termine in die Map ein.
-      for (Appointment a:list)
+      try
       {
-        if (a == null)
-          continue;
+        List<Appointment> list = provider.getAppointments(start,end);
         
-        Date d = a.getDate();
-        if (d == null)
+        // Hat der Provider Termine?
+        if (list == null || list.size() == 0)
           continue;
-        
-        d = startOfDay(d); // Uhrzeit nicht beruecksichtigen
 
-        // Haben wir fuer den Tag schon Termine?
-        List<Appointment> current = dates.get(d);
-        if (current == null)
+        // Wir fuegen die Termine in die Map ein.
+        for (Appointment a:list)
         {
-          current = new LinkedList();
-          dates.put(d,current);
+          if (a == null)
+            continue;
+          
+          Date d = a.getDate();
+          if (d == null)
+            continue;
+          
+          d = startOfDay(d); // Uhrzeit nicht beruecksichtigen
+
+          // Haben wir fuer den Tag schon Termine?
+          List<Appointment> current = dates.get(d);
+          if (current == null)
+          {
+            current = new LinkedList();
+            dates.put(d,current);
+          }
+          current.add(a);
         }
-        current.add(a);
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while fetching appointments from " + provider.getName() + ", skipping",e);
       }
     }
     return dates;
@@ -319,7 +327,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.7  2010/11/19 16:09:39  willuhn
+ * Revision 1.8  2010/11/19 18:36:48  willuhn
+ * @B Fehlerhafte Provider ueberspringen
+ *
+ * Revision 1.7  2010-11-19 16:09:39  willuhn
  * @B Content-Composite wurde beim Neuladen nicht leer gemacht
  *
  * Revision 1.6  2010-11-19 16:04:05  willuhn
