@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.4 $
- * $Date: 2010/11/19 16:09:39 $
+ * $Revision: 1.5 $
+ * $Date: 2010/11/19 17:00:31 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -137,9 +137,9 @@ public class DayRendererImpl implements DayRenderer
     int weekday = cal.get(Calendar.DAY_OF_WEEK);
     Color color = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
     if (status == Status.CURRENT)
-      color = getColor(250,250,183); // aktueller Tag
+      color = getColor(new RGB(250,250,183)); // aktueller Tag
     else if (weekday == Calendar.SATURDAY || weekday == Calendar.SUNDAY)
-      color = getColor(240,240,240);
+      color = getColor(new RGB(240,240,240));
 
     // Und uebernehmen
     this.comp.setBackground(color);
@@ -147,7 +147,7 @@ public class DayRendererImpl implements DayRenderer
     
     // Die Farbe vom Day-Label machen wir einen Tick dunkler
     RGB rgb = color.getRGB();
-    this.day.setBackground(getColor(rgb.red - 15,rgb.green - 15, rgb.blue - 15));
+    this.day.setBackground(getColor(new RGB(rgb.red - 15,rgb.green - 15, rgb.blue - 15)));
     
     // Haben wir Termine an dem Tag?
     if (appointments != null && appointments.size() > 0)
@@ -159,11 +159,15 @@ public class DayRendererImpl implements DayRenderer
 
       for (final Appointment a:appointments)
       {
+        RGB fg = a.getColor();
+        
         if (more)
         {
           CLabel label = new CLabel(this.content,SWT.LEFT);
           label.setMargins(0,0,0,0);
           label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+          if (fg != null)
+            label.setForeground(getColor(fg));
           
           String name = a.getName();
           label.setText(name);
@@ -178,6 +182,8 @@ public class DayRendererImpl implements DayRenderer
         {
           Label label = new Label(this.content,SWT.LEFT | SWT.WRAP);
           label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+          if (fg != null)
+            label.setForeground(getColor(fg));
 
           String name = a.getName();
           label.setText(name);
@@ -193,6 +199,7 @@ public class DayRendererImpl implements DayRenderer
         link.setText("<a>...</a>");
         link.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.HORIZONTAL_ALIGN_BEGINNING));
         link.setToolTipText("Öffnen");
+
         link.addSelectionListener(new SelectionAdapter() {
           public void widgetSelected(SelectionEvent e)
           {
@@ -215,14 +222,13 @@ public class DayRendererImpl implements DayRenderer
   
   /**
    * Liefert ein Color-Objekt fuer den angegebenen Farb-Code.
-   * @param red Rot-Wert.
+   * @param rgb der Farbcode.
    * @param green Gruen-Wert.
    * @param blue Blau-Wert.
    * @return das Farb-Objekt.
    */
-  private Color getColor(int red, int green, int blue)
+  private Color getColor(RGB rgb)
   {
-    RGB rgb = new RGB(red,green,blue);
     Color color = this.colorMap.get(rgb);
     if (color != null)
       return color;
@@ -237,7 +243,10 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.4  2010/11/19 16:09:39  willuhn
+ * Revision 1.5  2010/11/19 17:00:31  willuhn
+ * @C Farben fuer einzelne Termine
+ *
+ * Revision 1.4  2010-11-19 16:09:39  willuhn
  * @B Content-Composite wurde beim Neuladen nicht leer gemacht
  *
  * Revision 1.3  2010-11-19 15:46:21  willuhn

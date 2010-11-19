@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/Appointment.java,v $
- * $Revision: 1.1 $
- * $Date: 2010/11/19 13:44:15 $
+ * $Revision: 1.2 $
+ * $Date: 2010/11/19 17:00:30 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -13,6 +13,8 @@ package de.willuhn.jameica.gui.calendar;
 
 import java.rmi.RemoteException;
 import java.util.Date;
+
+import org.eclipse.swt.graphics.RGB;
 
 import de.willuhn.util.ApplicationException;
 
@@ -46,13 +48,23 @@ public interface Appointment
    * @throws ApplicationException
    */
   public void execute() throws ApplicationException;
+  
+  /**
+   * Liefert eine optionale Textfarbe, die fuer den Termin
+   * verwendet werden soll. Darf NULL sein.
+   * @return optionale Textfarbe.
+   */
+  public RGB getColor();
 }
 
 
 
 /**********************************************************************
  * $Log: Appointment.java,v $
- * Revision 1.1  2010/11/19 13:44:15  willuhn
+ * Revision 1.2  2010/11/19 17:00:30  willuhn
+ * @C Farben fuer einzelne Termine
+ *
+ * Revision 1.1  2010-11-19 13:44:15  willuhn
  * @N Appointment-API zum Anzeigen von Terminen im Kalender.
  *
  **********************************************************************/
