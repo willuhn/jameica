@@ -22,7 +22,7 @@
 		</item>
 
 		<item name="Hilfe">
-			<item name="Über"                  icon="dialog-information.png" action="de.willuhn.jameica.gui.internal.action.About" />
+			<item name="Über"                  icon="gtk-info.png"           action="de.willuhn.jameica.gui.internal.action.About" />
 			<item name="-" />
 		    <item name="Lizenzinformationen" icon="text-x-generic.png"     action="de.willuhn.jameica.gui.internal.action.License" />
 	  </item>
