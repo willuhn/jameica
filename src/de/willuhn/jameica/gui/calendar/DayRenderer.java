@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRenderer.java,v $
- * $Revision: 1.1 $
- * $Date: 2010/11/17 16:59:56 $
+ * $Revision: 1.2 $
+ * $Date: 2010/11/19 13:44:15 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -12,6 +12,7 @@
 package de.willuhn.jameica.gui.calendar;
 
 import java.util.Date;
+import java.util.List;
 
 import de.willuhn.jameica.gui.Part;
 
@@ -46,16 +47,20 @@ public interface DayRenderer extends Part
   /**
    * Aktualisiert den Tag.
    * @param status Status des Tages.
-   * @param das Datum.
+   * @param das Datum. Kann NULL sein. Insbesondere dann, wenn status == Status.OFF.
+   * @param appointments die Liste der Termine an dem Tag. Kann NULL sein.
    */
-  public void update(Status status, Date date);
+  public void update(Status status, Date date, List<Appointment> appointments);
 }
 
 
 
 /**********************************************************************
  * $Log: DayRenderer.java,v $
- * Revision 1.1  2010/11/17 16:59:56  willuhn
+ * Revision 1.2  2010/11/19 13:44:15  willuhn
+ * @N Appointment-API zum Anzeigen von Terminen im Kalender.
+ *
+ * Revision 1.1  2010-11-17 16:59:56  willuhn
  * @N Erster Code fuer eine Kalender-Komponente, ueber die man z.Bsp. kommende Termine anzeigen kann
  *
  **********************************************************************/

@@ -1,8 +1,8 @@
 package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2010/11/17 16:59:56 $
+ * $Revision: 1.2 $
+ * $Date: 2010/11/19 13:44:15 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -16,7 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -44,6 +47,7 @@ public class CalendarPart implements Part
 
   private List<DayRenderer> days = new ArrayList<DayRenderer>();
   private Class<? extends DayRenderer> renderer = DayRendererImpl.class;
+  private List<AppointmentProvider> providers = new ArrayList<AppointmentProvider>();
 
   /**
    * Legt einen abweichenden Renderer fuer die Tage des Kalenders fest.
@@ -52,6 +56,15 @@ public class CalendarPart implements Part
   public void setDayRenderer(Class<? extends DayRenderer> renderer)
   {
     this.renderer = renderer;
+  }
+  
+  /**
+   * Fuegt einen Termin-Provider hinzu.
+   * @param provider ein Termin-Provider.
+   */
+  public void addAppointmentProvider(AppointmentProvider provider)
+  {
+    this.providers.add(provider);
   }
   
   /**
@@ -128,6 +141,53 @@ public class CalendarPart implements Part
     // GUI aktualisieren
     refresh();
   }
+  
+  /**
+   * Laedt die Termine fuer den angegeben Zeitraum.
+   * @param start Start-Datum.
+   * @param end End-Datum.
+   * @return Map mit den einzelnen Tagen und den zugehoerigen Terminen.
+   */
+  private Map<Date,List<Appointment>> getAppointments(Date start, Date end)
+  {
+    // Uhrzeiten auf 00:00 bzw 23:59 setzen
+    start = startOfDay(start);
+    end   = endOfDay(end);
+
+    Map<Date,List<Appointment>> dates = new HashMap<Date,List<Appointment>>();
+    
+    for (AppointmentProvider provider:this.providers)
+    {
+      List<Appointment> list = provider.getAppointments(start,end);
+      
+      // Hat der Provider Termine?
+      if (list == null || list.size() == 0)
+        continue;
+
+      // Wir fuegen die Termine in die Map ein.
+      for (Appointment a:list)
+      {
+        if (a == null)
+          continue;
+        
+        Date d = a.getDate();
+        if (d == null)
+          continue;
+        
+        d = startOfDay(d); // Uhrzeit nicht beruecksichtigen
+
+        // Haben wir fuer den Tag schon Termine?
+        List<Appointment> current = dates.get(d);
+        if (current == null)
+        {
+          current = new LinkedList();
+          dates.put(d,current);
+        }
+        current.add(a);
+      }
+    }
+    return dates;
+  }
 
   /**
    * Aktualisiert die GUI basierend auf dem aktuellen Datum.
@@ -141,21 +201,28 @@ public class CalendarPart implements Part
     now.setTime(currentDate);
     
     // Der aktuelle Tag
-    int currentDay = now.get(Calendar.DATE);
+    int toDay   = now.get(Calendar.DAY_OF_MONTH);
+
+    // Der Monatsletzte
+    int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
+    now.set(Calendar.DAY_OF_MONTH,lastDay);
+    Date end = now.getTime();
     
-    // Start-Offset ermitteln
-    now.add(Calendar.DAY_OF_MONTH, -(now.get(Calendar.DAY_OF_MONTH) - 1));
+    // Jetzt setzen wir den Tag auf den 1.
+    now.set(Calendar.DAY_OF_MONTH,1);
+    
+    // Wir holen uns die Termine des gesamten Monats auf einmal
+    Map<Date,List<Appointment>> appointments = getAppointments(now.getTime(),end);
+    
+    // Wochentag herausfinden, bei dem wir anfangen.
+    // Wir muessen 2 abziehen. 1, weil die Wochentage bei 0 beginnen
+    // und noch 1, weil die Woche in java.util.Calendar bei Sonntag beginnt
     int startIndex = now.get(Calendar.DAY_OF_WEEK) - 2;
+    if (startIndex < 0) startIndex = 6; // Sonderregel fuer Sonntag, bloede Schikane, und das nur, weil die Woche bei den Amis mit So. anfaengt ;)
     
-    // Monats-Letzten ermitteln
-    Calendar cal = Calendar.getInstance();
-    cal.set(Calendar.YEAR,now.get(Calendar.YEAR));
-    cal.set(Calendar.MONTH,now.get(Calendar.MONTH));
-    int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-    
-    int endIndex = startIndex + lastDay - 1;
-    int startDay = 1;
-    int pos      = 0;
+    int endIndex   = startIndex + lastDay - 1;
+    int currentDay = 1;
+    int pos        = 0;
     
     for (DayRenderer day:this.days)
     {
@@ -163,16 +230,18 @@ public class CalendarPart implements Part
       {
         DayRenderer.Status status = DayRenderer.Status.NORMAL;
 
-        if (startDay == currentDay)
+        if (currentDay == toDay)
           status = DayRenderer.Status.CURRENT;
 
-        cal.set(Calendar.DAY_OF_MONTH,startDay);
-        day.update(status,cal.getTime());
-        startDay++;
+        // aktuelle Position in Kalender uebernehmen und Day-Renderer aktualisieren
+        now.set(Calendar.DAY_OF_MONTH,currentDay);
+        Date d = startOfDay(now.getTime());
+        day.update(status,d,appointments.get(d));
+        currentDay++;
       }
       else
       {
-        day.update(DayRenderer.Status.OFF,null);
+        day.update(DayRenderer.Status.OFF,null,null);
       }
       pos++;
     }
@@ -192,11 +261,46 @@ public class CalendarPart implements Part
     b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     b.addSelectionListener(l);
   }
+  
+  /**
+   * Resettet die Uhrzeit eines Datums.
+   * @param date das Datum.
+   * @return das neue Datum.
+   */
+  public static Date startOfDay(Date date)
+  {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date == null ? new Date() : date);
+    cal.set(Calendar.HOUR_OF_DAY,0);
+    cal.set(Calendar.MINUTE,0);
+    cal.set(Calendar.SECOND,0);
+    cal.set(Calendar.MILLISECOND,0);
+    return cal.getTime();
+  }
+
+  /**
+   * Setzt die Uhrzeit eines Datums auf 23:59:59.999.
+   * @param date das Datum.
+   * @return das neue Datum.
+   */
+  public static Date endOfDay(Date date)
+  {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date == null ? new Date() : date);
+    cal.set(Calendar.HOUR_OF_DAY,23);
+    cal.set(Calendar.MINUTE,59);
+    cal.set(Calendar.SECOND,59);
+    cal.set(Calendar.MILLISECOND,999);
+    return cal.getTime();
+  }
 }
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.1  2010/11/17 16:59:56  willuhn
+ * Revision 1.2  2010/11/19 13:44:15  willuhn
+ * @N Appointment-API zum Anzeigen von Terminen im Kalender.
+ *
+ * Revision 1.1  2010-11-17 16:59:56  willuhn
  * @N Erster Code fuer eine Kalender-Komponente, ueber die man z.Bsp. kommende Termine anzeigen kann
  *
  **********************************************************************/
