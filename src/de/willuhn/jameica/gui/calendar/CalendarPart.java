@@ -1,8 +1,8 @@
 package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.4 $
- * $Date: 2010/11/19 15:47:55 $
+ * $Revision: 1.5 $
+ * $Date: 2010/11/19 15:52:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -85,6 +87,14 @@ public class CalendarPart implements Part
     GridData gd = new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan = 3;
     this.nowLabel.setLayoutData(gd);
+    this.nowLabel.setToolTipText(Application.getI18n().tr("Klicken Sie hier, um zum aktuellen Monat zurückzukehren."));
+    this.nowLabel.addMouseListener(new MouseAdapter() {
+      public void mouseUp(MouseEvent e)
+      {
+        currentDate = new Date();
+        refresh();
+      }
+    });
 
     createPager(comp,">",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, 1);}});
     createPager(comp,">>",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, 1);}});
@@ -297,7 +307,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.4  2010/11/19 15:47:55  willuhn
+ * Revision 1.5  2010/11/19 15:52:06  willuhn
+ * @N Funktion, zum Zurueckkehren zum aktuellen Monat
+ *
+ * Revision 1.4  2010-11-19 15:47:55  willuhn
  * *** empty log message ***
  *
  * Revision 1.3  2010-11-19 15:46:21  willuhn
