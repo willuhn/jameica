@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.5 $
- * $Date: 2010/11/19 17:00:31 $
+ * $Revision: 1.6 $
+ * $Date: 2010/11/21 23:56:47 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -23,17 +23,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -74,7 +74,7 @@ public class DayRendererImpl implements DayRenderer
     
     this.content = new Composite(this.comp,SWT.NONE);
     this.content.setLayoutData(new GridData(GridData.FILL_BOTH));
-    this.content.setLayout(new GridLayout(2,false));
+    this.content.setLayout(new GridLayout(1,false));
   }
   
   /**
@@ -152,10 +152,10 @@ public class DayRendererImpl implements DayRenderer
     // Haben wir Termine an dem Tag?
     if (appointments != null && appointments.size() > 0)
     {
-      // Wenn wir mehr als 1 Termin an dem Tag haben, verwenden
+      // Wenn wir mehr als 2 Termine an dem Tag haben, verwenden
       // wir CLabel statt Label. Das verkuerzt den Text, damit alle
       // Eintraege reinpassen.
-      boolean more = appointments.size() > 1;
+      boolean more = appointments.size() > 2;
 
       for (final Appointment a:appointments)
       {
@@ -164,55 +164,64 @@ public class DayRendererImpl implements DayRenderer
         if (more)
         {
           CLabel label = new CLabel(this.content,SWT.LEFT);
+          label.setFont(Font.SMALL.getSWTFont());
           label.setMargins(0,0,0,0);
           label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
           if (fg != null)
             label.setForeground(getColor(fg));
-          
+
+          // Name und Beschreibung
           String name = a.getName();
           label.setText(name);
-          
           String desc = a.getDescription();
           if (desc == null || desc.length() == 0)
             desc = name;
-          
           label.setToolTipText(desc);
+
+          label.addMouseListener(new MouseAdapter() {
+            public void mouseUp(MouseEvent e)
+            {
+              try
+              {
+                a.execute();
+              }
+              catch (ApplicationException ae)
+              {
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+              }
+            }
+          });
         }
         else
         {
           Label label = new Label(this.content,SWT.LEFT | SWT.WRAP);
+          label.setFont(Font.SMALL.getSWTFont());
           label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
           if (fg != null)
             label.setForeground(getColor(fg));
 
+          // Name und Beschreibung
           String name = a.getName();
           label.setText(name);
-          
           String desc = a.getDescription();
           if (desc == null || desc.length() == 0)
             desc = name;
-          
           label.setToolTipText(desc);
+          
+          label.addMouseListener(new MouseAdapter() {
+            public void mouseUp(MouseEvent e)
+            {
+              try
+              {
+                a.execute();
+              }
+              catch (ApplicationException ae)
+              {
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+              }
+            }
+          });
         }
-
-        Link link = new Link(this.content,SWT.WRAP);
-        link.setText("<a>...</a>");
-        link.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.HORIZONTAL_ALIGN_BEGINNING));
-        link.setToolTipText("Öffnen");
-
-        link.addSelectionListener(new SelectionAdapter() {
-          public void widgetSelected(SelectionEvent e)
-          {
-            try
-            {
-              a.execute();
-            }
-            catch (ApplicationException ae)
-            {
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-            }
-          }
-        });
       }
     }
 
@@ -243,7 +252,11 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.5  2010/11/19 17:00:31  willuhn
+ * Revision 1.6  2010/11/21 23:56:47  willuhn
+ * @N Schrift einen Tick kleiner - dann passt mehr rein
+ * @C Hyperlink entfernt - man kann direkt auf das Label klicken
+ *
+ * Revision 1.5  2010-11-19 17:00:31  willuhn
  * @C Farben fuer einzelne Termine
  *
  * Revision 1.4  2010-11-19 16:09:39  willuhn

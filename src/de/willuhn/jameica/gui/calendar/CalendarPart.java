@@ -1,8 +1,8 @@
 package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.8 $
- * $Date: 2010/11/19 18:36:48 $
+ * $Revision: 1.9 $
+ * $Date: 2010/11/21 23:56:47 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -55,6 +55,29 @@ public class CalendarPart implements Part
   private Class<? extends DayRenderer> renderer = DayRendererImpl.class;
   private List<AppointmentProvider> providers = new ArrayList<AppointmentProvider>();
 
+  /**
+   * Legt das aktuelle Datum fest.
+   * @param d das aktuelle Datum.
+   */
+  public void setCurrentDate(Date d)
+  {
+    if (d != null)
+      this.currentDate = d;
+    
+    // Neu laden, falls wir schon angezeigt werden.
+    if (text != null)
+      refresh();
+  }
+  
+  /**
+   * Liefert das aktuelle Datum.
+   * @return das aktuelle Datum.
+   */
+  public Date getCurrentDate()
+  {
+    return currentDate;
+  }
+  
   /**
    * Legt einen abweichenden Renderer fuer die Tage des Kalenders fest.
    * @param renderer der Renderer.
@@ -327,7 +350,11 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.8  2010/11/19 18:36:48  willuhn
+ * Revision 1.9  2010/11/21 23:56:47  willuhn
+ * @N Schrift einen Tick kleiner - dann passt mehr rein
+ * @C Hyperlink entfernt - man kann direkt auf das Label klicken
+ *
+ * Revision 1.8  2010-11-19 18:36:48  willuhn
  * @B Fehlerhafte Provider ueberspringen
  *
  * Revision 1.7  2010-11-19 16:09:39  willuhn
