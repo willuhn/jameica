@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.12 $
- * $Date: 2010/11/22 11:32:04 $
+ * $Revision: 1.13 $
+ * $Date: 2010/11/22 11:36:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -184,7 +184,7 @@ public class StartupParams
    */
   private void printHelp()
 	{
-		new HelpFormatter().printHelp("java de.willuhn.jameica.Main", options);
+		new HelpFormatter().printHelp("jameica.sh|jameica-*.exe|jameica-*.sh <Optionen>","\nOptionen", options,"");
 		System.exit(1);
 	}
 
@@ -258,7 +258,10 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
- * Revision 1.12  2010/11/22 11:32:04  willuhn
+ * Revision 1.13  2010/11/22 11:36:12  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.12  2010-11-22 11:32:04  willuhn
  * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
  *
  * Revision 1.11  2009/08/17 09:29:22  willuhn
