@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.14 $
- * $Date: 2010/08/16 10:44:21 $
+ * $Revision: 1.15 $
+ * $Date: 2010/11/22 11:32:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,14 @@ public interface ApplicationCallback
    * werden soll. False, wenn der Start abgebrochen werden soll.
    */
   public boolean lockExists(String lockfile);
+  
+  /**
+   * Liefert den eingegebenen Benutzernamen, insofern der Start im
+   * Masterpasswort-Dialog mit Benutzername erfolgte.
+   * @return der eingegebene Username oder NULL.
+   * Oder Customizing liefert die Funktion immer NULL.
+   */
+  public String getUsername();
   
 	/**
 	 * Wird von der SSLFactory aufgerufen, wenn ein neuer Keystore
@@ -208,7 +216,10 @@ public interface ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
- * Revision 1.14  2010/08/16 10:44:21  willuhn
+ * Revision 1.15  2010/11/22 11:32:04  willuhn
+ * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
+ *
+ * Revision 1.14  2010-08-16 10:44:21  willuhn
  * @N Application-Callback hat jetzt auch eine Callback-Funktion zur Abfrage eines beliebigen Passwortes
  *
  * Revision 1.13  2009/06/10 11:25:54  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.30 $
- * $Date: 2010/10/11 15:26:43 $
+ * $Revision: 1.31 $
+ * $Date: 2010/11/22 11:32:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -56,8 +56,17 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 	private SplashScreen startupMonitor  = null;
   private SplashScreen shutdownMonitor = null;
+  private String username              = null;
 	private String password              = null;
 
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#getUsername()
+   */
+  public String getUsername()
+  {
+    return this.username;
+  }
 
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#createPassword()
@@ -72,15 +81,20 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		else
 		{
 	  	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
-	  	p.setText(Application.getI18n().tr(
-				"Sie starten die Anwendung zum ersten Mal.\n\n" +
-				"Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten.\n" +				"Es wird anschließend bei jedem Start des Programms benötigt."));
+	  	String text = Application.getI18n().tr("Sie starten die Anwendung zum ersten Mal.\n\n" +
+	                                           "Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten. " +
+	                                           "Es wird anschließend bei jedem Start des Programms benötigt.");
+	  	text = Customizing.SETTINGS.getString("application.firststart.text",text);
+	  	
+	  	p.setText(text);
+	  	p.setUsernameText(Customizing.SETTINGS.getString("application.firststart.username",null));
 			p.setTitle(Application.getI18n().tr("Master-Passwort"));
 			p.setMonitor(NewPasswordDialog.MONITOR_PRIMARY);
 
 			try
 			{
 				this.password = (String) p.open();
+				this.username = p.getUsername();
 			}
 			catch (OperationCanceledException e)
 			{
@@ -98,6 +112,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public String getPassword() throws Exception
   {
+    // Machen wir hier gleich mit, weil das bei allen Folgestarts aufgerufen wird
+    if (this.username == null)
+      this.username = Application.getStartupParams().getUsername();
+    
   	if (this.password != null)
   		return password;
 
@@ -122,6 +140,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 		PWD dialog = new PWD();
   	this.password = (String) dialog.open();
+  	this.username = dialog.getUsername();
 		return this.password;
   }
 
@@ -382,6 +401,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     {
       super(PWD.POSITION_CENTER);
       this.setText(Application.getI18n().tr("Bitte geben Sie das Master-Passwort ein."));
+      this.setUsernameText(Customizing.SETTINGS.getString("application.start.username",null));
       this.setTitle(Application.getI18n().tr("Master-Passwort"));
       this.setMonitor(PWD.MONITOR_PRIMARY);
     }
@@ -402,10 +422,8 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
         String checksum = settings.getString("jameica.system.callback.checksum","");
         boolean b = checksum.equals(pw);
         if (!b)
-        {
           setErrorText(Application.getI18n().tr("Passwort falsch.") + " " + getRetryString());
-        }
-        return b;
+        return b && super.checkPassword(password);
       }
       catch (Exception e)
       {
@@ -443,7 +461,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.30  2010/10/11 15:26:43  willuhn
+ * Revision 1.31  2010/11/22 11:32:04  willuhn
+ * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
+ *
+ * Revision 1.30  2010-10-11 15:26:43  willuhn
  * @N Shutdown-Screen customizable
  *
  * Revision 1.29  2010-09-29 16:03:33  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.11 $
- * $Date: 2009/08/17 09:29:22 $
+ * $Revision: 1.12 $
+ * $Date: 2010/11/22 11:32:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,6 +48,7 @@ public class StartupParams
 	private Options options = null;
 
 	private String workDir         = null;
+	private String username        = null;
 	private String password        = null;
 	private int mode 				       = MODE_STANDALONE;
 
@@ -79,9 +80,10 @@ public class StartupParams
 
 		options.addOption("h","help",false,"Gibt diesen Hilfe-Text aus");
 		options.addOption("f","file",true,"Optionale Angabe des Datenverzeichnisses (Workdir)");
-    options.addOption("o","force-password",false,"Angabe des Master-Passworts via Kommandozeile ignorieren (für MacOS nötig)");
+    options.addOption("u","username",true,"Optionale Angabe des Benutzernamens");
 		options.addOption("p","password",true,"Optionale Angabe des Master-Passworts");
     options.addOption("w","passwordfile",true,"Optionale Angabe des Master-Passworts, welches sich in der angegebenen Datei befindet");
+    options.addOption("o","force-password",false,"Angabe des Master-Passworts via Kommandozeile ignorieren (für MacOS nötig)");
 
     options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +      "Es findet keine Benutzer-Interaktion mehr statt. Die Option wird nur ausgewertet, wenn Jameica " +      "im Server-Mode läuft.");
 
@@ -132,6 +134,12 @@ public class StartupParams
         Logger.info("master password given via commandline");
       }
 			
+      if (line.hasOption("u"))
+      {
+        this.username = line.getOptionValue("u");
+        Logger.info("username given via commandline");
+      }
+
 			if (line.hasOption("w"))
 			{
 			  String file = line.getOptionValue("w");
@@ -188,6 +196,15 @@ public class StartupParams
 	{
 		return password;
 	}
+  
+  /**
+   * Liefert den ggf als Kommandozeilen-Parameter angegebenen Usernamen.
+   * @return der Username oder <code>null</code>.
+   */
+  public String getUsername()
+  {
+    return username;
+  }
 	
 	/**
 	 * Liefert den Start-Modus von Jameica.
@@ -241,35 +258,12 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.12  2010/11/22 11:32:04  willuhn
+ * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
+ *
  * Revision 1.11  2009/08/17 09:29:22  willuhn
  * @N Neuer Startup-Parameter "-l", mit dem die Lock-Datei von Jameica ignoriert werden kann. Habe ich eigentlich nur wegen Eclipse eingebaut. Denn dort werden Shutdown-Hooks nicht ausgefuehrt, wenn man die Anwendung im Debugger laufen laesst und auf "Terminate" klickt. Da das Debuggen maechtig nervig ist, wenn man im Server-Mode immer erst auf "Y" druecken muss, um den Start trotz Lockfile fortzusetzen, kann man mit dem Parameter "-l" das Pruefen auf die Lock-Datei einfach ignorieren
  *
  * Revision 1.10  2009/04/14 09:25:53  willuhn
  * @N Neuer Parameter "-w <file>", mit dem das Masterpasswort auch ueber eine Datei uebergeben werden kann
- *
- * Revision 1.9  2008/04/21 10:15:56  willuhn
- * @N MACOS Neuer Kommandozeilen-Parameter "-o", der in jameica-macos.sh standardmaessig gesetzt ist und dazu fuehrt, dass Master-Passwoerter via Kommandozeile grundsaetzlich ignoriert werden
- *
- * Revision 1.8  2008/04/20 23:44:34  willuhn
- * @C MACOS Masterpasswort ignorieren, wenn es mit "sn_0_" beginnt
- *
- * Revision 1.7  2008/04/20 23:30:58  willuhn
- * @N MACOS Kommandozeilen-Parameter ausgeben
- *
- * Revision 1.6  2006/02/06 14:20:13  web0
- * @R removed parameter "ask"
- *
- * Revision 1.4  2005/06/15 16:10:57  web0
- * @B javadoc fixes
- *
- * Revision 1.3  2005/06/10 13:04:41  web0
- * @N non-interactive Mode
- * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode
- *
- * Revision 1.2  2005/02/04 00:34:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2005/02/02 16:16:38  willuhn
- * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
- *
  **********************************************************************/

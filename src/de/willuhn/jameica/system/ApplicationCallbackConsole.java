@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.36 $
- * $Date: 2010/08/16 10:44:21 $
+ * $Revision: 1.37 $
+ * $Date: 2010/11/22 11:32:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,6 +43,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 	private ProgressMonitor startup		= null;
   private ProgressMonitor shutdown  = null;
+  private String username           = null;
 	private String password 					= null;
 	
   /**
@@ -78,10 +79,36 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
   }
 
   /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#getUsername()
+   */
+  public String getUsername()
+  {
+    return this.username;
+  }
+
+  /**
    * @see de.willuhn.jameica.system.ApplicationCallback#createPassword()
    */
   public String createPassword() throws Exception
   {
+    this.username = Application.getStartupParams().getUsername();
+    String s = Customizing.SETTINGS.getString("application.firststart.username",null);
+    if (s != null && s.length() > 0)
+    {
+      // Wir sollen nach einem Usernamen fragen
+      if (Application.inNonInteractiveMode())
+      {
+        Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und kein Benutzername via Kommandozeile übergeben"));
+        throw new ApplicationException(Application.getI18n().tr("Username kann nicht abgefragt werden"));
+      }
+      flush();
+      System.out.print(s);
+      InputStreamReader isr = new InputStreamReader(System.in);
+      BufferedReader keyboard = new BufferedReader(isr);
+      this.username = keyboard.readLine();
+    }
+      
+      
 		this.password = Application.getStartupParams().getPassword();
 		if (this.password != null)
 		{
@@ -111,8 +138,29 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public String getPassword() throws Exception
   {
+    // Machen wir hier gleich mit, weil das bei allen Folgestarts aufgerufen wird
+    if (this.username == null)
+      this.username = Application.getStartupParams().getUsername();
+
     if (this.password != null)
       return this.password;
+
+    String s = Customizing.SETTINGS.getString("application.start.username",null);
+    if (s != null && s.length() > 0)
+    {
+      // Wir sollen nach einem Usernamen fragen
+      if (Application.inNonInteractiveMode())
+      {
+        Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und kein Benutzername via Kommandozeile übergeben"));
+        throw new ApplicationException(Application.getI18n().tr("Username kann nicht abgefragt werden"));
+      }
+      flush();
+      System.out.print(s);
+      InputStreamReader isr = new InputStreamReader(System.in);
+      BufferedReader keyboard = new BufferedReader(isr);
+      this.username = keyboard.readLine();
+    }
+    
     
 		String checksum = settings.getString("jameica.system.callback.checksum",null);
   	String pw		= Application.getStartupParams().getPassword();
@@ -500,7 +548,10 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
- * Revision 1.36  2010/08/16 10:44:21  willuhn
+ * Revision 1.37  2010/11/22 11:32:04  willuhn
+ * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
+ *
+ * Revision 1.36  2010-08-16 10:44:21  willuhn
  * @N Application-Callback hat jetzt auch eine Callback-Funktion zur Abfrage eines beliebigen Passwortes
  *
  * Revision 1.35  2010/05/19 14:51:53  willuhn

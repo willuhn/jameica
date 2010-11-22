@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.26 $
- * $Date: 2010/03/04 22:54:06 $
+ * $Revision: 1.27 $
+ * $Date: 2010/11/22 11:32:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,25 +23,25 @@ import org.eclipse.swt.widgets.Text;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.PasswordInput;
-import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.input.TextInput;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.gui.util.SimpleContainer;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog zu Passwort-Eingabe.
- * Die Klasse ist deshalb abstract, damit sie bei der konkreten
- * Verwendung abgeleitet wird und dort via <code>checkPassword(String)</code>
- * die Eingabe geprueft werden kann.
  * Hinweis: Diese Klasse hat einen internen Zaehler, der die Anzahl
  * der fehlgeschlagenen Aufrufe von <code>checkPassword(String)</code>
  * zaehlt. Nach 3 Versuchen wird die Funktion <code>cancel()</code>
  * aufgerufen und der Dialog geschlossen.
  */
-public abstract class PasswordDialog extends AbstractDialog {
+public class PasswordDialog extends AbstractDialog
+{
 
   private final static int WINDOW_WIDTH = 420;
   
@@ -51,14 +51,17 @@ public abstract class PasswordDialog extends AbstractDialog {
 	public final static int MAX_RETRIES = 3;
 
   private int retries                 = 0;
-  private String text                 = "";
-	private String labelText 					  = "";
-  private String errorText            = "";
-	private String enteredPassword      = "";
   private boolean showPassword        = false;
   
-  private LabelInput errorTextInput   = null;
-  private PasswordInput passwordInput = null;
+  private String text                 = null;
+  private String userText             = null;
+  private String labelText 					  = i18n.tr("Passwort");
+  private String errorText            = null;
+
+  private String enteredUsername      = null;
+  private String enteredPassword      = null;
+  
+  private LabelInput error            = null;
 
 	/**
 	 * Erzeugt einen neuen Passwort-Dialog.
@@ -66,21 +69,48 @@ public abstract class PasswordDialog extends AbstractDialog {
 	 * @see AbstractDialog#POSITION_MOUSE
 	 * @see AbstractDialog#POSITION_CENTER
 	 */
-  public PasswordDialog(int position) {
+  public PasswordDialog(int position)
+  {
     super(position);
     this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
     this.setTitle(i18n.tr("Passwort"));
     this.setSideImage(SWTUtil.getImage("dialog-password.png"));
-
-    this.labelText = i18n.tr("Passwort");
   }
 
-	/**
+  /**
+   * Speichert den anzuzeigenden Text.
+   * @param text anzuzeigender Text.
+   */
+  public void setText(String text)
+  {
+    if (text == null)
+      return;
+    this.text = text;
+  }
+
+  /**
+   * Speichert ein optionales Label fuer die zusaetzliche Eingabe eines
+   * Usernamens. Wird hier ein Wert uebergeben, zeigt der Dialog neben
+   * den beiden Passwort-Feldern extra noch ein Feld fuer den Usernamen an.
+   * Der da eingegebene Wert kann nach dem Aufruf von <code>open()</code>
+   * mit <code>getUsername()</code> ermittelt werden.
+   * Wenn das Eingabefeld fuer den Usernamen angezeigt wird, ist es auch Pflicht.
+   * Es gibt also entweder gar keinen Usernamen oder ein verpflichtetenden.
+   * Jedoch keinen optionalen Usernamen.
+   * @param text das anzuzeigende Label vor dem Eingabefeld, insofern
+   * es angezeigt werden soll.
+   */
+  public void setUsernameText(String text)
+  {
+    this.userText = text;
+  }
+
+  /**
 	 * Speichert den Text, der links neben dem Eingabefeld fuer die
 	 * Passwort-Eingabe angezeigt werden soll (Optional).
    * @param text anzuzeigender Text.
    */
-  protected void setLabelText(String text)
+  public void setLabelText(String text)
 	{
 		if (text == null || text.length() == 0)
 			return;
@@ -99,26 +129,15 @@ public abstract class PasswordDialog extends AbstractDialog {
 		if (text == null || text.length() == 0)
 			return;
 		this.errorText = text;
-    if (this.errorTextInput != null)
-      this.errorTextInput.setValue(this.errorText);
+    if (this.error != null)
+      this.error.setValue(this.errorText);
 	}
-
-  /**
-   * Speichert den anzuzeigenden Text.
-   * @param text anzuzeigender Text.
-   */
-  public void setText(String text)
-  {
-    if (text == null)
-      return;
-    this.text = text;
-  }
 
   /**
    * Legt fest, ob das Passwort waehrend der Eingabe angezeigt werden soll.
    * @param show
    */
-  protected void setShowPassword(boolean show)
+  public void setShowPassword(boolean show)
   {
     this.showPassword = show;
   }
@@ -134,22 +153,36 @@ public abstract class PasswordDialog extends AbstractDialog {
     if (this.text != null && this.text.length() > 0)
       container.addText(this.text,true);
 		
+    final TextInput username = (this.userText != null && this.userText.length() > 0) ? new TextInput(null) : null;
+    if (username != null)
+    {
+      username.setValue(Application.getStartupParams().getUsername());
+      username.setName(this.userText);
+      username.setMandatory(true);
+      username.focus();
+      container.addInput(username);
+    }
+
     // das Passwort
-    this.passwordInput = new PasswordInput(this.enteredPassword);
-    this.passwordInput.setShowPassword(this.showPassword);
-    this.passwordInput.focus();
-    container.addLabelPair(labelText,this.passwordInput);
+    final PasswordInput passwordInput = new PasswordInput(this.enteredPassword);
+    passwordInput.setName(this.labelText);
+    passwordInput.setShowPassword(this.showPassword);
+    if (username == null) passwordInput.focus();
+    container.addInput(passwordInput);
+    
     // Fehlertext
-    this.errorTextInput = new LabelInput(this.errorText);
-    this.errorTextInput.setColor(Color.ERROR);
-    container.addLabelPair("",this.errorTextInput);
+    this.error = new LabelInput(this.errorText);
+    this.error.setName("");
+    this.error.setColor(Color.ERROR);
+    this.error.setValue(this.errorText);
+    container.addInput(this.error);
 
     // Der Freiraum fuer Erweiterungen
     extend(container);
 
     // Listener, welcher passwordModified() aufruft wenn sich das
     // passwort aendert (fuer Erweiterungen).
-    ((Text)this.passwordInput.getControl()).addModifyListener(
+    ((Text)passwordInput.getControl()).addModifyListener(
         new ModifyListener() {
           public void modifyText(ModifyEvent e)
           {
@@ -159,35 +192,43 @@ public abstract class PasswordDialog extends AbstractDialog {
     );
 
 
-    ButtonArea buttons = container.createButtonArea(2);
-    
+    ButtonArea buttons = new ButtonArea();
     buttons.addButton("    " + i18n.tr("OK") + "    ",new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
-        String p = (String) passwordInput.getValue();
         retries++;
 
+        if (username != null)
+        {
+          String u = (String) username.getValue();
+          if (!checkUsername(u))
+            return;
+          enteredUsername = u;
+        }
+
+        String p = (String) passwordInput.getValue();
         if (!checkPassword(p))
         {
           passwordInput.setValue("");
           if (retries >= MAX_RETRIES)
           {
             // maximale Anzahl der Fehlversuche erreicht.
-            throw new OperationCanceledException(MAX_RETRIES + " falsche Passwort-Eingaben");
+            throw new OperationCanceledException(i18n.tr("{0} falsche Passwort-Eingaben",Integer.toString(MAX_RETRIES)));
           }
           return;
         }
         enteredPassword = p;
         close();
       }
-    },null,true);
-
+    },null,true,"ok.png");
     buttons.addButton(i18n.tr("Abbrechen"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         throw new OperationCanceledException("Dialog abgebrochen");
       }
-    });
+    },null,false,"process-stop.png");
+    
+    container.addButtonArea(buttons);
 
 		// so und jetzt noch der Shell-Listener, damit der
 		// User den Dialog nicht schliessen kann ohne was
@@ -204,16 +245,36 @@ public abstract class PasswordDialog extends AbstractDialog {
 		
     // BUGZILLA 828
 		getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,SWT.DEFAULT));
-	}		
+	}
+
+  /**
+   * Prueft die Eingabe des Usernamens, insofern das Eingabefeld vorhanden ist. 
+   * @param username der eingegebene Username.
+   * @return true, wenn die Eingabe OK ist, andernfalls false.
+   */
+  protected boolean checkUsername(String username)
+  {
+    boolean set = username != null && username.length() > 0;
+    if (!set)
+    {
+      setErrorText(i18n.tr("Bitte geben Sie einen Namen ein."));
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Prueft die Eingabe des Passwortes.
    * Hinweis: Der Dialog wird erst geschlossen, wenn diese
    * Funktion <code>true</code> zurueckliefert.
+   * Die Default-Implementierung liefert immer TRUE.
    * @param password das gerade eingegebene Passwort.
    * @return true, wenn die Eingabe OK ist, andernfalls false.
    */
-  protected abstract boolean checkPassword(String password);
+  protected boolean checkPassword(String password)
+  {
+    return true;
+  }
   
   /**
    * Kann von abgeleiteten Dialogen ueberschrieben werden, um
@@ -230,7 +291,7 @@ public abstract class PasswordDialog extends AbstractDialog {
 	
   /**
    * Kann von abgeleiteten Dialogen ueberschrieben werden, um
-   * denPassword-Dialog noch zu erweitern.
+   * den Password-Dialog noch zu erweitern.
    * Wird jedes mal aufgerufen, wenn die Eingabe im Passwort-Feld
    * sich aendert. Kann z. B. benutzt werden, um das Passwort
    * noch vor dem Klick auf OK zu pruefen.
@@ -253,32 +314,27 @@ public abstract class PasswordDialog extends AbstractDialog {
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
-  protected Object getData() throws Exception {
-    return enteredPassword;
+  protected Object getData() throws Exception
+  {
+    return this.enteredPassword;
   }
 
+  /**
+   * Liefert den eingegebenen Benutzernamen.
+   * @return der eingegebene Benutzername.
+   */
+  public String getUsername()
+  {
+    return this.enteredUsername;
+  }
 }
 
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
- * Revision 1.26  2010/03/04 22:54:06  willuhn
+ * Revision 1.27  2010/11/22 11:32:03  willuhn
+ * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
+ *
+ * Revision 1.26  2010-03-04 22:54:06  willuhn
  * @N BUGZILLA 828
- *
- * Revision 1.25  2009/06/22 23:08:55  willuhn
- * @N Dialog 20px breiter gemacht. Bei MacOS bricht das letzte Wort (wegen der dort groesseren Schrift) unter Umstaenden um, was dazu fuehrt, dass die Buttons unten abgeschnitten werden
- *
- * Revision 1.24  2009/06/10 11:25:53  willuhn
- * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
- *
- * Revision 1.23  2009/06/09 12:43:01  willuhn
- * @N Erster Code fuer Jameica Authenticator
- *
- * Revision 1.22  2009/04/30 13:20:09  willuhn
- * @N Jan's Patch, welches
- *
- * Revision 1.21  2008/12/18 23:21:13  willuhn
- * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
- * @R Nicht mehr benoetigte Grafiken entfernt
- * @C Anordnung des SideImages in AbstractDialog etwas geaendert (ein paar Pixel Abstand des Images vom Rand)
  **********************************************************************/

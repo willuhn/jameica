@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/12/18 23:21:13 $
+ * $Revision: 1.5 $
+ * $Date: 2010/11/22 11:32:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,21 +13,22 @@
 package de.willuhn.jameica.gui.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.input.PasswordInput;
+import de.willuhn.jameica.gui.input.TextInput;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.gui.util.SimpleContainer;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog zur Neuvergabe von Passworten.
@@ -36,26 +37,20 @@ import de.willuhn.jameica.system.OperationCanceledException;
  * uebereinstimmen. Sollen weitere Pruefungen vorgenommen werden, dann bitte
  * einfach diese Funktion ueberschreiben.
  */
-public class NewPasswordDialog extends SimpleDialog {
+public class NewPasswordDialog extends AbstractDialog
+{
+  private final static int WINDOW_WIDTH = 450;
 
-	private Composite comp = null;
-	private Label label = null;
-	private Label pLabel = null;
+  private String text               = null;
+  private String userText           = null;
+  private String labelText          = i18n.tr("Neues Passwort");
+  private String labelText2         = i18n.tr("Passwort-Wiederholung");
+  private String errorText          = null;
+  
+  private String enteredUsername    = null;
+  private String enteredPassword    = null;
 
-	private Label pLabel2 = null;
-
-	private Label error = null;
-
-	private Text password = null;
-	private Text password2 = null;
-
-	private Button button = null;
-	private Button cancel = null;
-	
-	private String labelText 					= "";
-	private String labelText2					= "";
-	
-	private String enteredPassword = "";
+  private LabelInput error = null;
 
 	/**
 	 * Erzeugt einen neuen Passwort-Dialog.
@@ -63,19 +58,47 @@ public class NewPasswordDialog extends SimpleDialog {
 	 * @see AbstractDialog#POSITION_MOUSE
 	 * @see AbstractDialog#POSITION_CENTER
 	 */
-  public NewPasswordDialog(int position) {
+  public NewPasswordDialog(int position)
+  {
     super(position);
-    labelText = i18n.tr("Neues Passwort");
-		labelText2 = i18n.tr("Passwort-Wiederholung");
+    this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
 		setSideImage(SWTUtil.getImage("dialog-password.png"));
   }
 
-	/**
+  /**
+   * Speichert den anzuzeigenden Text.
+   * @param text anzuzeigender Text.
+   */
+  public void setText(String text)
+  {
+    if (text == null)
+      return;
+    this.text = text;
+  }
+  
+  /**
+   * Speichert ein optionales Label fuer die zusaetzliche Eingabe eines
+   * Usernamens. Wird hier ein Wert uebergeben, zeigt der Dialog neben
+   * den beiden Passwort-Feldern extra noch ein Feld fuer den Usernamen an.
+   * Der da eingegebene Wert kann nach dem Aufruf von <code>open()</code>
+   * mit <code>getUsername()</code> ermittelt werden.
+   * Wenn das Eingabefeld fuer den Usernamen angezeigt wird, ist es auch Pflicht.
+   * Es gibt also entweder gar keinen Usernamen oder ein verpflichtetenden.
+   * Jedoch keinen optionalen Usernamen.
+   * @param text das anzuzeigende Label vor dem Eingabefeld, insofern
+   * es angezeigt werden soll.
+   */
+  public void setUsernameText(String text)
+  {
+    this.userText = text;
+  }
+
+  /**
 	 * Speichert den Text, der links neben dem Eingabefeld fuer die
 	 * Passwort-Eingabe angezeigt werden soll (Optional).
    * @param text anzuzeigender Text.
    */
-  protected void setLabelText(String text)
+  public void setLabelText(String text)
 	{
 		if (text == null || text.length() == 0)
 			return;
@@ -87,7 +110,7 @@ public class NewPasswordDialog extends SimpleDialog {
 	 * Passwort-Wiederholung angezeigt werden soll (Optional).
 	 * @param text anzuzeigender Text.
 	 */
-	protected void setLabel2Text(String text)
+	public void setLabel2Text(String text)
 	{
 		if (text == null || text.length() == 0)
 			return;
@@ -101,11 +124,15 @@ public class NewPasswordDialog extends SimpleDialog {
 	 * Passwort-Eingabe falsch war. 
    * @param text Der anzuzeigende Fehlertext.
    */
-  protected final void setErrorText(String text)
+  public final void setErrorText(String text)
 	{
 		if (text == null || text.length() == 0)
 			return;
-		error.setText(text);
+		
+		this.errorText = text;
+		
+		if (error != null)
+  		error.setValue(this.errorText);
 	}
 
   /**
@@ -113,84 +140,70 @@ public class NewPasswordDialog extends SimpleDialog {
    */
   protected void paint(Composite parent) throws Exception
 	{
-		// Composite um alles drumrum.
-		comp = new Composite(parent,SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout gl = new GridLayout(3,false);
-		comp.setLayout(gl);
+    Container container = new SimpleContainer(parent);
 		
-		// Text
-		label = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
-		label.setText(getText());
-		GridData grid = new GridData(GridData.FILL_HORIZONTAL);
-		grid.horizontalSpan = 3;
-		label.setLayoutData(grid);
-		
-		// Fehlertext 
-		error = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
-		error.setForeground(Color.ERROR.getSWTColor());
-		GridData grid2 = new GridData(GridData.FILL_HORIZONTAL);
-		grid2.horizontalSpan = 3;
-		grid2.horizontalIndent = 0;
-		error.setLayoutData(grid2);
+    // Text
+    if (this.text != null && this.text.length() > 0)
+      container.addText(this.text,true);
 
-		// Label vor Eingabefeld
-		pLabel = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-		pLabel.setText(labelText);
-		pLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+    final TextInput username = (this.userText != null && this.userText.length() > 0) ? new TextInput(null) : null;
+    if (username != null)
+    {
+      username.setValue(Application.getStartupParams().getUsername());
+      username.setName(this.userText);
+      username.setMandatory(true);
+      username.focus();
+      container.addInput(username);
+    }
+    
+    final PasswordInput password = new PasswordInput(null);
+    password.setName(this.labelText);
+    password.setMandatory(true);
+    if (username == null) password.focus();
+    container.addInput(password);
+    
+    final PasswordInput password2 = new PasswordInput(null);
+    password2.setName(this.labelText2);
+    password2.setMandatory(true);
+    container.addInput(password2);
 
-		password = GUI.getStyleFactory().createText(comp);
-		password.setEchoChar('*');
-		GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
-		grid3.horizontalSpan = 2;
-		password.setLayoutData(grid3);
+    this.error = new LabelInput(null);
+    this.error.setColor(Color.ERROR);
+    this.error.setName("");
+    this.error.setValue(this.errorText);
+    container.addInput(this.error);
 
-		pLabel2 = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-		pLabel2.setText(labelText2);
-		pLabel2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+    ButtonArea buttons = new ButtonArea();
+    
+    buttons.addButton("    " + i18n.tr("OK") + "    ",new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        if (username != null)
+        {
+          String u = (String) username.getValue();
+          if (!checkUsername(u))
+            return;
+          enteredUsername = u;
+        }
+        
+        String p = (String) password.getValue();
+        String p2 = (String) password2.getValue();
 
-		password2 = GUI.getStyleFactory().createText(comp);
-		password2.setEchoChar('*');
-		GridData grid4 = new GridData(GridData.FILL_HORIZONTAL);
-		grid4.horizontalSpan = 2;
-		password2.setLayoutData(grid4);
+        if (!checkPassword(p,p2))
+          return;
 
-		// Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
-		Label dummy = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-		dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		// OK-Button
-		button = GUI.getStyleFactory().createButton(comp);
-		button.setText("    " + i18n.tr("OK") + "    ");
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		getShell().setDefaultButton(button);
-		button.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				String p = password.getText();
-				String p2 = password2.getText();
-
-				if (!checkPassword(p,p2))
-					return;
-
-				enteredPassword = p;
-				close();
-			}
-		});
-
-		// Abbrechen-Button
-		cancel = GUI.getStyleFactory().createButton(comp);
-		cancel.setText(i18n.tr("Abbrechen"));
-		cancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		cancel.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				throw new OperationCanceledException("Dialog abgebrochen");
+        enteredPassword = p;
+        close();
       }
-    });
+    },null,true,"ok.png");
+    buttons.addButton(i18n.tr("Abbrechen"),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        throw new OperationCanceledException("Dialog abgebrochen");
+      }
+    },null,false,"process-stop.png");
+    
+    container.addButtonArea(buttons);
 
 		// so und jetzt noch der Shell-Listener, damit der
 		// User den Dialog nicht schliessen kann ohne was
@@ -204,7 +217,25 @@ public class NewPasswordDialog extends SimpleDialog {
       public void shellDeiconified(ShellEvent e) {}
       public void shellIconified(ShellEvent e) {}
     });
-	}		
+
+	   getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,SWT.DEFAULT));
+  }
+  
+  /**
+   * Prueft die Eingabe des Usernamens, insofern das Eingabefeld vorhanden ist. 
+   * @param username der eingegebene Username.
+   * @return true, wenn die Eingabe OK ist, andernfalls false.
+   */
+  protected boolean checkUsername(String username)
+  {
+    boolean set = username != null && username.length() > 0;
+    if (!set)
+    {
+      setErrorText(i18n.tr("Bitte geben Sie einen Namen ein."));
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Prueft die Eingabe der Passworte.
@@ -219,7 +250,7 @@ public class NewPasswordDialog extends SimpleDialog {
     
     if (!set)
     {
-      setErrorText(i18n.tr("Bitte geben Sie ein Passwort an."));
+      setErrorText(i18n.tr("Bitte geben Sie ein Passwort ein."));
       return false;
     }
 
@@ -234,8 +265,18 @@ public class NewPasswordDialog extends SimpleDialog {
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
-  protected Object getData() throws Exception {
-    return enteredPassword;
+  protected Object getData() throws Exception
+  {
+    return this.enteredPassword;
+  }
+  
+  /**
+   * Liefert den eingegebenen Benutzernamen.
+   * @return der eingegebene Benutzername.
+   */
+  public String getUsername()
+  {
+    return this.enteredUsername;
   }
 
 }
@@ -243,73 +284,7 @@ public class NewPasswordDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: NewPasswordDialog.java,v $
- * Revision 1.4  2008/12/18 23:21:13  willuhn
- * @N GUI-Polishing: Neue Icons in Hibiscus und Jameica aus dem Tango-Projekt (http://tango.freedesktop.org/)
- * @R Nicht mehr benoetigte Grafiken entfernt
- * @C Anordnung des SideImages in AbstractDialog etwas geaendert (ein paar Pixel Abstand des Images vom Rand)
- *
- * Revision 1.3  2006/08/22 14:57:51  willuhn
- * @B Bug 275
- *
- * Revision 1.2  2005/02/01 17:15:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2005/01/30 20:47:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.14  2004/10/19 23:33:44  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2004/10/18 23:37:42  willuhn
- * *** empty log message ***
- *
- * Revision 1.12  2004/08/15 17:55:17  willuhn
- * @C sync handling
- *
- * Revision 1.11  2004/07/27 23:41:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.10  2004/06/10 20:56:53  willuhn
- * @D javadoc comments fixed
- *
- * Revision 1.9  2004/05/23 16:34:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.8  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.7  2004/03/06 18:24:24  willuhn
- * @D javadoc
- *
- * Revision 1.6  2004/03/03 22:27:10  willuhn
- * @N help texts
- * @C refactoring
- *
- * Revision 1.5  2004/02/24 22:46:53  willuhn
- * @N GUI refactoring
- *
- * Revision 1.4  2004/02/23 20:30:34  willuhn
- * @C refactoring in AbstractDialog
- *
- * Revision 1.3  2004/02/22 20:05:21  willuhn
- * @N new Logo panel
- *
- * Revision 1.2  2004/02/21 19:49:41  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/02/20 20:45:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/02/20 01:25:06  willuhn
- * @N nice dialog
- * @N busy indicator
- * @N new status bar
- *
- * Revision 1.1  2004/02/17 00:53:47  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/02/12 23:46:27  willuhn
- * *** empty log message ***
+ * Revision 1.5  2010/11/22 11:32:03  willuhn
+ * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
  *
  **********************************************************************/
