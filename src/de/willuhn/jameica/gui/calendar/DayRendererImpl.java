@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.6 $
- * $Date: 2010/11/21 23:56:47 $
+ * $Revision: 1.7 $
+ * $Date: 2010/11/22 00:17:16 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -181,6 +181,9 @@ public class DayRendererImpl implements DayRenderer
           label.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e)
             {
+              if (e.button != 1)
+                return;
+              
               try
               {
                 a.execute();
@@ -211,6 +214,9 @@ public class DayRendererImpl implements DayRenderer
           label.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e)
             {
+              if (e.button != 1)
+                return;
+              
               try
               {
                 a.execute();
@@ -252,7 +258,10 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.6  2010/11/21 23:56:47  willuhn
+ * Revision 1.7  2010/11/22 00:17:16  willuhn
+ * @N Nur noch auf Mouse-Button 1 reagieren
+ *
+ * Revision 1.6  2010-11-21 23:56:47  willuhn
  * @N Schrift einen Tick kleiner - dann passt mehr rein
  * @C Hyperlink entfernt - man kann direkt auf das Label klicken
  *
