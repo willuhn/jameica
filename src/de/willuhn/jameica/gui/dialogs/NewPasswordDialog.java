@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2010/11/25 14:24:30 $
+ * $Revision: 1.7 $
+ * $Date: 2010/11/25 16:01:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class NewPasswordDialog extends AbstractDialog
 {
-  private final static int WINDOW_WIDTH = 450;
+  private final static int WINDOW_WIDTH = 460;
 
   private String text               = null;
   private String userText           = null;
@@ -294,7 +294,10 @@ public class NewPasswordDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: NewPasswordDialog.java,v $
- * Revision 1.6  2010/11/25 14:24:30  willuhn
+ * Revision 1.7  2010/11/25 16:01:50  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.6  2010-11-25 14:24:30  willuhn
  * @N Im Usernamen muessen mindestens 3 Zeichen eingegeben werden
  * @N Automatisch Focus im betreffenden Feld
  *
