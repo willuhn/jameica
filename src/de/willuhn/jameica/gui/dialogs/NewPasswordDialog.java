@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2010/11/22 11:32:03 $
+ * $Revision: 1.6 $
+ * $Date: 2010/11/25 14:24:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -182,7 +182,10 @@ public class NewPasswordDialog extends AbstractDialog
         {
           String u = (String) username.getValue();
           if (!checkUsername(u))
+          {
+            username.focus();
             return;
+          }
           enteredUsername = u;
         }
         
@@ -190,7 +193,10 @@ public class NewPasswordDialog extends AbstractDialog
         String p2 = (String) password2.getValue();
 
         if (!checkPassword(p,p2))
+        {
+          password.focus();
           return;
+        }
 
         enteredPassword = p;
         close();
@@ -228,10 +234,14 @@ public class NewPasswordDialog extends AbstractDialog
    */
   protected boolean checkUsername(String username)
   {
-    boolean set = username != null && username.length() > 0;
-    if (!set)
+    if (username == null || username.trim().length() == 0)
     {
       setErrorText(i18n.tr("Bitte geben Sie einen Namen ein."));
+      return false;
+    }
+    if (username.trim().length() < 3)
+    {
+      setErrorText(i18n.tr("Bitte geben Sie als Name mindestens 3 Zeichen ein."));
       return false;
     }
     return true;
@@ -284,7 +294,11 @@ public class NewPasswordDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: NewPasswordDialog.java,v $
- * Revision 1.5  2010/11/22 11:32:03  willuhn
+ * Revision 1.6  2010/11/25 14:24:30  willuhn
+ * @N Im Usernamen muessen mindestens 3 Zeichen eingegeben werden
+ * @N Automatisch Focus im betreffenden Feld
+ *
+ * Revision 1.5  2010-11-22 11:32:03  willuhn
  * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
  *
  **********************************************************************/
