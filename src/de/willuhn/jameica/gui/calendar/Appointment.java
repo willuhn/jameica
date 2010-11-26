@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/Appointment.java,v $
- * $Revision: 1.2 $
- * $Date: 2010/11/19 17:00:30 $
+ * $Revision: 1.3 $
+ * $Date: 2010/11/26 00:28:52 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -11,7 +11,6 @@
 
 package de.willuhn.jameica.gui.calendar;
 
-import java.rmi.RemoteException;
 import java.util.Date;
 
 import org.eclipse.swt.graphics.RGB;
@@ -44,7 +43,6 @@ public interface Appointment
   
   /**
    * Wird ausgefuehrt, wenn der User auf den Termin klickt.
-   * @throws RemoteException
    * @throws ApplicationException
    */
   public void execute() throws ApplicationException;
@@ -61,7 +59,10 @@ public interface Appointment
 
 /**********************************************************************
  * $Log: Appointment.java,v $
- * Revision 1.2  2010/11/19 17:00:30  willuhn
+ * Revision 1.3  2010/11/26 00:28:52  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.2  2010-11-19 17:00:30  willuhn
  * @C Farben fuer einzelne Termine
  *
  * Revision 1.1  2010-11-19 13:44:15  willuhn
