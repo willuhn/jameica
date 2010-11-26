@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/11/22 00:17:16 $
+ * $Revision: 1.8 $
+ * $Date: 2010/11/26 00:18:49 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -25,6 +25,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -78,6 +79,196 @@ public class DayRendererImpl implements DayRenderer
   }
   
   /**
+   * @see de.willuhn.jameica.gui.calendar.DayRenderer#update(de.willuhn.jameica.gui.calendar.DayRenderer.Status, java.util.Date, java.util.List)
+   */
+  public void update(Status status, Date date, List<Appointment> appointments)
+  {
+    // Content leeren
+    SWTUtil.disposeChildren(this.content);
+    
+    try
+    {
+      ////////////////////////////////////////////////////////////////////////////
+      // Tag ist nicht Bestandteil des Monats
+      if (date == null || status == Status.OFF)
+      {
+        renderNone();
+        return;
+      }
+      //
+      ////////////////////////////////////////////////////////////////////////////
+
+      ////////////////////////////////////////////////////////////////////////////
+      // Tag rendern
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(date);
+      this.day.setText(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + " ");
+      //
+      ////////////////////////////////////////////////////////////////////////////
+      
+      ////////////////////////////////////////////////////////////////////////////
+      // Farbe ermitteln
+      int weekday = cal.get(Calendar.DAY_OF_WEEK);
+      Color color = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+      if (status == Status.CURRENT)
+        color = getColor(new RGB(250,250,183)); // aktueller Tag
+      else if (weekday == Calendar.SATURDAY || weekday == Calendar.SUNDAY)
+        color = getColor(new RGB(240,240,240));
+
+      // Und uebernehmen
+      this.comp.setBackground(color);
+      this.content.setBackground(color);
+      
+      // Die Farbe vom Day-Label machen wir einen Tick dunkler
+      RGB rgb = color.getRGB();
+      this.day.setBackground(getColor(new RGB(rgb.red - 15,rgb.green - 15, rgb.blue - 15)));
+      //
+      ////////////////////////////////////////////////////////////////////////////
+
+      
+      ////////////////////////////////////////////////////////////////////////////
+      // Haben wir Termine an dem Tag?
+      if (appointments != null && appointments.size() > 0)
+      {
+        // Wenn wir mehr als 2 Termine an dem Tag haben, verwenden
+        // wir CLabel statt Label. Das verkuerzt den Text, damit alle
+        // Eintraege reinpassen.
+        boolean more = appointments.size() > 2;
+
+        for (final Appointment a:appointments)
+        {
+          if (more)
+            renderLong(a);
+          else
+            renderShort(a);
+        }
+      }
+      //
+      ////////////////////////////////////////////////////////////////////////////
+    }
+    finally
+    {
+      // Content noch neu zeichnen
+      this.content.layout();
+    }
+  }
+  
+  /**
+   * Rendert den Tag als nicht vorhanden.
+   */
+  private void renderNone()
+  {
+    // Tag entfernen
+    this.day.setText("");
+
+    // Hintergrund grau
+    Color bg = de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor();
+    this.comp.setBackground(bg);
+    this.content.setBackground(bg);
+    this.day.setBackground(bg);
+  }
+
+  /**
+   * Erzeugt den Mouselistener fuer den Termin.
+   * @param a der Termin.
+   * @return der Listener.
+   */
+  private MouseListener createListener(final Appointment a)
+  {
+    return new MouseAdapter() {
+      public void mouseUp(MouseEvent e)
+      {
+        if (e.button != 1)
+          return;
+        
+        try
+        {
+          a.execute();
+        }
+        catch (ApplicationException ae)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+        }
+      }
+    };
+  }
+  
+  // Die folgenden beiden Funktionen sehen ziemlich aehnlich aus
+  // und man moechte meinen, der Code koenne auch gemeinsam verwendet
+  // werden. Geht aber leider nicht. CLabel kann nettes Text-Shortening
+  // fuer einzeilige Darstellung, hat jedoch keinen Mehrzeilen-Support.
+  // Label kann zwar Mehrzeilen, jedoch kein Text-Shortening.
+  // Und beide Klassen sind nicht von einander abgeleitet, haben
+  // also keine gemeinsame Basisklasse. Die Funktionen heissen nur gleich.
+  /**
+   * Rendert die ausfuehrliche Ansicht eines Termins. 
+   * @param a der Termin.
+   */
+  private void renderLong(final Appointment a)
+  {
+    CLabel label = new CLabel(this.content,SWT.LEFT);
+    label.setFont(Font.SMALL.getSWTFont());
+    label.setMargins(0,0,0,0);
+    label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    label.addMouseListener(createListener(a));
+
+    // Farbe des Textes
+    RGB fg = a.getColor();
+    if (fg != null)
+      label.setForeground(getColor(fg));
+
+    // Name und Beschreibung
+    String name = a.getName();
+    label.setText(name);
+    String desc = a.getDescription();
+    if (desc == null || desc.length() == 0)
+      desc = name;
+    label.setToolTipText(desc);
+  }
+  
+  /**
+   * Rendert die gekuerzte Ansicht eines Termins.
+   * Das ist sinnvoll, wenn wir an dem Tag mehrere Termine haben.
+   * @param a der Termin.
+   */
+  private void renderShort(final Appointment a)
+  {
+    Label label = new Label(this.content,SWT.LEFT | SWT.WRAP);
+    label.setFont(Font.SMALL.getSWTFont());
+    label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    label.addMouseListener(createListener(a));
+
+    // Farbe des Textes.
+    RGB fg = a.getColor();
+    if (fg != null)
+      label.setForeground(getColor(fg));
+
+    // Name und Beschreibung
+    String name = a.getName();
+    label.setText(name);
+    String desc = a.getDescription();
+    if (desc == null || desc.length() == 0)
+      desc = name;
+    label.setToolTipText(desc);
+  }
+  
+  /**
+   * Liefert ein Color-Objekt fuer den angegebenen Farb-Code.
+   * @param rgb der Farbcode.
+   * @return das Farb-Objekt.
+   */
+  private Color getColor(RGB rgb)
+  {
+    Color color = this.colorMap.get(rgb);
+    if (color != null && !color.isDisposed())
+      return color;
+    
+    color = new Color(GUI.getDisplay(),rgb);
+    this.colorMap.put(rgb,color);
+    return color;
+  }
+
+  /**
    * Disposed die Farben.
    */
   private void disposeColors()
@@ -100,165 +291,16 @@ public class DayRendererImpl implements DayRenderer
       }
     }
   }
-  
-  /**
-   * @see de.willuhn.jameica.gui.calendar.DayRenderer#update(de.willuhn.jameica.gui.calendar.DayRenderer.Status, java.util.Date, java.util.List)
-   */
-  public void update(Status status, Date date, List<Appointment> appointments)
-  {
-    // Content entfernen
-    SWTUtil.disposeChildren(this.content);
-    
-
-    // Tag ist nicht Bestandteil des Monats
-    if (date == null || status == Status.OFF)
-    {
-      // Tag entfernen
-      this.day.setText("");
-
-      // Hintergrund grau
-      this.comp.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
-      this.content.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
-      this.day.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
-
-      // Content noch neu zeichnen
-      this.content.layout();
-
-      return;
-    }
-
-    // Tag rendern
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-
-    this.day.setText(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)) + " ");
-    
-    // Farbe ermitteln
-    int weekday = cal.get(Calendar.DAY_OF_WEEK);
-    Color color = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
-    if (status == Status.CURRENT)
-      color = getColor(new RGB(250,250,183)); // aktueller Tag
-    else if (weekday == Calendar.SATURDAY || weekday == Calendar.SUNDAY)
-      color = getColor(new RGB(240,240,240));
-
-    // Und uebernehmen
-    this.comp.setBackground(color);
-    this.content.setBackground(color);
-    
-    // Die Farbe vom Day-Label machen wir einen Tick dunkler
-    RGB rgb = color.getRGB();
-    this.day.setBackground(getColor(new RGB(rgb.red - 15,rgb.green - 15, rgb.blue - 15)));
-    
-    // Haben wir Termine an dem Tag?
-    if (appointments != null && appointments.size() > 0)
-    {
-      // Wenn wir mehr als 2 Termine an dem Tag haben, verwenden
-      // wir CLabel statt Label. Das verkuerzt den Text, damit alle
-      // Eintraege reinpassen.
-      boolean more = appointments.size() > 2;
-
-      for (final Appointment a:appointments)
-      {
-        RGB fg = a.getColor();
-        
-        if (more)
-        {
-          CLabel label = new CLabel(this.content,SWT.LEFT);
-          label.setFont(Font.SMALL.getSWTFont());
-          label.setMargins(0,0,0,0);
-          label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-          if (fg != null)
-            label.setForeground(getColor(fg));
-
-          // Name und Beschreibung
-          String name = a.getName();
-          label.setText(name);
-          String desc = a.getDescription();
-          if (desc == null || desc.length() == 0)
-            desc = name;
-          label.setToolTipText(desc);
-
-          label.addMouseListener(new MouseAdapter() {
-            public void mouseUp(MouseEvent e)
-            {
-              if (e.button != 1)
-                return;
-              
-              try
-              {
-                a.execute();
-              }
-              catch (ApplicationException ae)
-              {
-                Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-              }
-            }
-          });
-        }
-        else
-        {
-          Label label = new Label(this.content,SWT.LEFT | SWT.WRAP);
-          label.setFont(Font.SMALL.getSWTFont());
-          label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-          if (fg != null)
-            label.setForeground(getColor(fg));
-
-          // Name und Beschreibung
-          String name = a.getName();
-          label.setText(name);
-          String desc = a.getDescription();
-          if (desc == null || desc.length() == 0)
-            desc = name;
-          label.setToolTipText(desc);
-          
-          label.addMouseListener(new MouseAdapter() {
-            public void mouseUp(MouseEvent e)
-            {
-              if (e.button != 1)
-                return;
-              
-              try
-              {
-                a.execute();
-              }
-              catch (ApplicationException ae)
-              {
-                Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-              }
-            }
-          });
-        }
-      }
-    }
-
-    // Content noch neu zeichnen
-    this.content.layout();
-  }
-  
-  /**
-   * Liefert ein Color-Objekt fuer den angegebenen Farb-Code.
-   * @param rgb der Farbcode.
-   * @param green Gruen-Wert.
-   * @param blue Blau-Wert.
-   * @return das Farb-Objekt.
-   */
-  private Color getColor(RGB rgb)
-  {
-    Color color = this.colorMap.get(rgb);
-    if (color != null)
-      return color;
-    
-    color = new Color(GUI.getDisplay(),rgb);
-    this.colorMap.put(rgb,color);
-    return color;
-  }
 }
 
 
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.7  2010/11/22 00:17:16  willuhn
+ * Revision 1.8  2010/11/26 00:18:49  willuhn
+ * @C Code-Cleanup
+ *
+ * Revision 1.7  2010-11-22 00:17:16  willuhn
  * @N Nur noch auf Mouse-Button 1 reagieren
  *
  * Revision 1.6  2010-11-21 23:56:47  willuhn
