@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SysinfoService.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/12/11 21:10:47 $
+ * $Revision: 1.4 $
+ * $Date: 2010/12/03 15:57:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,7 +73,7 @@ public class SysinfoService implements Bootable
       while (e.hasMoreElements())
       {
         String key = (String) e.nextElement();
-        Logger.debug(key + ": " + System.getProperty(key));
+        Logger.debug(key + ": " + p.getProperty(key));
       }
     }
     else
@@ -106,6 +106,9 @@ public class SysinfoService implements Bootable
 
 /**********************************************************************
  * $Log: SysinfoService.java,v $
+ * Revision 1.4  2010/12/03 15:57:40  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.3  2008/12/11 21:10:47  willuhn
  * @N java.runtime.name und java.vm.name ausgeben, um OpenJDK zu detektieren
  *
