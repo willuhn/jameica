@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.137 $
- * $Date: 2010/11/11 10:59:12 $
+ * $Revision: 1.138 $
+ * $Date: 2010/12/07 10:04:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -117,6 +117,11 @@ public class GUI implements ApplicationController
       if (r.height < 700)
       {
         Logger.info("display height smaller than 700px (" + r.width + "x" + r.width + ") - auto-activating netbook mode");
+        Customizing.SETTINGS.setAttribute("application.scrollview",true);
+      }
+      else if (Customizing.SETTINGS.getBoolean("application.scrollview.force",false))
+      {
+        Logger.info("forcing netbook mode");
         Customizing.SETTINGS.setAttribute("application.scrollview",true);
       }
       else
@@ -986,7 +991,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.137  2010/11/11 10:59:12  willuhn
+ * Revision 1.138  2010/12/07 10:04:17  willuhn
+ * @N Netbook-Mode jetzt auch zwangsweise via application.scrollview.force aktivierbar (siehe Mail von Markus vom 06.12.2010)
+ *
+ * Revision 1.137  2010-11-11 10:59:12  willuhn
  * @N Platform in SWT-Version mit anzeigen
  *
  * Revision 1.136  2010-10-21 10:04:30  willuhn
