@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ArchiveService.java,v $
- * $Revision: 1.4 $
- * $Date: 2009/09/29 00:13:09 $
+ * $Revision: 1.5 $
+ * $Date: 2010/12/07 16:10:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -27,6 +26,7 @@ import java.util.Properties;
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.messaging.LookupService;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
@@ -324,7 +324,7 @@ public class ArchiveService implements Bootable
         }
         else if (o instanceof InputStream)
         {
-          length = copy((InputStream)o,os);
+          length = IOUtil.copy((InputStream)o,os);
         }
         else
         {
@@ -338,7 +338,7 @@ public class ArchiveService implements Bootable
         // Response holen
         is = new BufferedInputStream(socket.getInputStream());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        copy(is,bos);
+        IOUtil.copy(is,bos);
 
         String uuid = bos.toString().trim();
         Logger.info("sent " + length + " bytes to channel " + channel + ", generated uuid: " + uuid);
@@ -346,8 +346,7 @@ public class ArchiveService implements Bootable
       }
       finally
       {
-        if (is != null) try {is.close();} catch (Exception e) {Logger.error("unable to close inputstream",e);}
-        if (os != null) try {os.close();} catch (Exception e) {Logger.error("unable to close outputstream",e);}
+        IOUtil.close(is,os);
       }
     }
   }
@@ -380,15 +379,14 @@ public class ArchiveService implements Bootable
         // Response holen
         is = new BufferedInputStream(socket.getInputStream());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        long count = copy(is,bos);
+        long count = IOUtil.copy(is,bos);
 
         message.setData(bos.toByteArray());
         Logger.info("got " + count + " bytes for message, uuid " + uuid);
       }
       finally
       {
-        if (is != null) try {is.close();} catch (Exception e) {Logger.error("unable to close inputstream",e);}
-        if (os != null) try {os.close();} catch (Exception e) {Logger.error("unable to close outputstream",e);}
+        IOUtil.close(is,os);
       }
     }
   }
@@ -419,7 +417,7 @@ public class ArchiveService implements Bootable
       }
       finally
       {
-        if (os != null) try {os.close();} catch (Exception e) {Logger.error("unable to close outputstream",e);}
+        IOUtil.close(os);
       }
     }
   }
@@ -451,7 +449,7 @@ public class ArchiveService implements Bootable
         // Response holen
         is = new BufferedInputStream(socket.getInputStream());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        copy(is,bos);
+        IOUtil.copy(is,bos);
 
         Properties props = new Properties();
         props.load(new ByteArrayInputStream(bos.toByteArray()));
@@ -460,8 +458,7 @@ public class ArchiveService implements Bootable
       }
       finally
       {
-        if (is != null) try {is.close();} catch (Exception e) {Logger.error("unable to close inputstream",e);}
-        if (os != null) try {os.close();} catch (Exception e) {Logger.error("unable to close outputstream",e);}
+        IOUtil.close(is,os);
       }
     }
   }
@@ -503,7 +500,7 @@ public class ArchiveService implements Bootable
       }
       finally
       {
-        if (os != null) try {os.close();} catch (Exception e) {Logger.error("unable to close outputstream",e);}
+        IOUtil.close(os);
       }
     }
   }
@@ -535,45 +532,25 @@ public class ArchiveService implements Bootable
         // Response holen
         is = new BufferedInputStream(socket.getInputStream());
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        long count = copy(is,bos);
+        long count = IOUtil.copy(is,bos);
 
         message.setData(bos.toByteArray());
         Logger.info("got " + count + " bytes for channel " + channel);
       }
       finally
       {
-        if (is != null) try {is.close();} catch (Exception e) {Logger.error("unable to close inputstream",e);}
-        if (os != null) try {os.close();} catch (Exception e) {Logger.error("unable to close outputstream",e);}
+        IOUtil.close(is,os);
       }
     }
-  }
-  
-  /**
-   * Kopiert Daten von is nach os.
-   * Schliesst/flusht keinen der Streams.
-   * @param is Datenquelle.
-   * @param os Datenziel.
-   * @return Anzahl der geschriebenen Bytes.
-   * @throws IOException
-   */
-  private static long copy(InputStream is, OutputStream os) throws IOException
-  {
-    byte[] buf = new byte[4096];
-    long count = 0;
-    int read   = 0;
-    while ((read = is.read(buf)) != -1)
-    {
-      if (read > 0) // Nur schreiben, wenn wirklich was gelesen wurde
-        os.write(buf,0,read);
-      count += read;
-    }
-    return count;
   }
 }
 
 
 /**********************************************************************
  * $Log: ArchiveService.java,v $
+ * Revision 1.5  2010/12/07 16:10:50  willuhn
+ * @C Code cleanup
+ *
  * Revision 1.4  2009/09/29 00:13:09  willuhn
  * @N Bei PUT ist jetzt auch in InputStream moeglich
  *
