@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.24 $
- * $Date: 2010/03/25 12:59:08 $
+ * $Revision: 1.25 $
+ * $Date: 2010/12/08 16:02:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -124,7 +124,7 @@ public class JameicaTrustManager implements X509TrustManager
       {
         Logger.debug("checking server certificate via system trustmanager");
         this.standardTrustManager.checkServerTrusted(certificates,authType);
-        Logger.info("server certificate trusted via system trustmanager [vendor: " + System.getProperty("java.vendor") + "]");
+        Logger.debug("server certificate trusted via system trustmanager [vendor: " + System.getProperty("java.vendor") + "]");
       }
       catch (CertificateException c)
       {
@@ -152,7 +152,7 @@ public class JameicaTrustManager implements X509TrustManager
     }
     else
     {
-      Logger.info("no system trustmanager defined, checking server certificate via jameica trustmanager");
+      Logger.debug("no system trustmanager defined, checking server certificate via jameica trustmanager");
       this.checkTrusted(certificates,authType);
     }
   }
@@ -200,7 +200,7 @@ public class JameicaTrustManager implements X509TrustManager
         PKIXParameters params = new PKIXParameters(factory.getKeyStore());
         params.setRevocationEnabled(false); // wir haben keine CRLs
         validator.validate(certPath,params);
-        Logger.info("certificate chain trusted: " + toString(cert));
+        Logger.debug("certificate chain trusted: " + toString(cert));
         verified = true;
       }
       catch (GeneralSecurityException e)
@@ -213,7 +213,7 @@ public class JameicaTrustManager implements X509TrustManager
           if (cert.equals(c))
           {
             verified = true;
-            Logger.info("peer certificate trusted: " + toString(c));
+            Logger.debug("peer certificate trusted: " + toString(c));
             break;
           }
         }
@@ -229,16 +229,18 @@ public class JameicaTrustManager implements X509TrustManager
         try
         {
           cert.checkValidity();
-          Logger.info("validity: " + validFrom + " - " + validTo);
+          Logger.debug("validity: " + validFrom + " - " + validTo);
           return; // Alles i.O.
         }
         catch (CertificateExpiredException exp)
         {
+          Logger.debug("certificate expired: " + validFrom + " - " + validTo);
           if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo})))
             return; // Abgelaufen, aber der User ist damit einverstanden
         }
         catch (CertificateNotYetValidException not)
         {
+          Logger.debug("certificate not yet valid: " + validFrom + " - " + validTo);
           if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo})))
             return; // Noch nicht gueltig, aber der User ist damit einverstanden
         }
@@ -248,7 +250,7 @@ public class JameicaTrustManager implements X509TrustManager
       // nicht vertrauenswuerdig, also importieren
       // Wir uebernehmen nur das direkte Peer-Zertifikat. Ggf.
       // drueber haengende CA-Zertifikate nicht
-      Logger.info("import certificate: " + toString(cert));
+      Logger.debug("import certificate: " + toString(cert));
       factory.addTrustedCertificate(cert);
 
       
@@ -306,6 +308,9 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
+ * Revision 1.25  2010/12/08 16:02:28  willuhn
+ * @C Log-Level auf DEBUG geaendert
+ *
  * Revision 1.24  2010/03/25 12:59:08  willuhn
  * @N InvalidAlgorithmParameterException ebenfalls fangen
  *
