@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/MultiInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2010/05/06 11:48:35 $
+ * $Revision: 1.3 $
+ * $Date: 2010/12/09 15:57:10 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -191,20 +191,35 @@ public class MultiInput implements Input
     if (this.comment != null)
       size++;
 
+    for (Input i:this.inputs)
+    {
+      String name = i.getName();
+      if (name != null)
+        size++;
+    }
+
     this.composite = new Composite(parent, SWT.NONE);
     this.composite.setBackground(Color.BACKGROUND.getSWTColor());
     final GridLayout layout = new GridLayout(size,false);
     layout.marginHeight = 0;
     layout.marginWidth = 0;
-    layout.horizontalSpacing = 0;
+    layout.horizontalSpacing = 5;
     layout.verticalSpacing = 0;
     this.composite.setLayout(layout);
     GridData gd = new GridData(GridData.FILL_HORIZONTAL);
     gd.widthHint = width / size;
     this.composite.setLayoutData(gd);
 
-    for (int i=0;i<this.inputs.size();++i) {
-      this.inputs.get(i).paint(this.composite,width / size);
+    for (Input i:this.inputs) {
+      String name = i.getName();
+      if (name != null)
+      {
+        Label l = GUI.getStyleFactory().createLabel(this.composite,SWT.NONE);
+        l.setText(name);
+        l.setAlignment(SWT.RIGHT);
+        l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER));
+      }
+      i.paint(this.composite,width / size);
     }
     
     // den Kommentar hinten dran fuegen
@@ -304,7 +319,10 @@ public class MultiInput implements Input
 
 /**********************************************************************
  * $Log: MultiInput.java,v $
- * Revision 1.2  2010/05/06 11:48:35  willuhn
+ * Revision 1.3  2010/12/09 15:57:10  willuhn
+ * @N Input-Label mit anzeigen, falls vorhanden
+ *
+ * Revision 1.2  2010-05-06 11:48:35  willuhn
  * *** empty log message ***
  *
  * Revision 1.1  2010/05/06 11:47:13  willuhn
