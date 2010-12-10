@@ -3,6 +3,8 @@
 # Open-BSD Start-Script fuer regulaeren Standalone-Betrieb.
 # Jameica wird hierbei mit GUI gestartet.
 
-cd `dirname $(readlink -f $0)`
+link=$(readlink -f "$0")
+dir=$(dirname "$link")
+cd "$dir" 
 
 java -Xmx256m -jar jameica-openbsd.jar $@
