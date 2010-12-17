@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.25 $
- * $Date: 2010/12/08 16:02:28 $
+ * $Revision: 1.26 $
+ * $Date: 2010/12/17 16:49:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -167,10 +167,7 @@ public class JameicaTrustManager implements X509TrustManager
   private void checkTrusted(X509Certificate[] chain, String authType) throws CertificateException
   {
     if (chain == null || chain.length == 0)
-    {
-      Logger.error("checkTrusted called, but no certificates given, strange!");
-      return;
-    }
+      throw new IllegalArgumentException("no certificates given to check, strange!");
     
     if (Logger.isLogging(Level.DEBUG))
     {
@@ -308,7 +305,10 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
- * Revision 1.25  2010/12/08 16:02:28  willuhn
+ * Revision 1.26  2010/12/17 16:49:29  willuhn
+ * @C IllegalArgumentException werfen, wenn keine zu pruefenden Zertifikate uebergeben wurden. Mach die Standard-Impl (javax.net.ssl.X509TrustManager) auch so.
+ *
+ * Revision 1.25  2010-12-08 16:02:28  willuhn
  * @C Log-Level auf DEBUG geaendert
  *
  * Revision 1.24  2010/03/25 12:59:08  willuhn
