@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2008/07/17 08:47:12 $
+ * $Revision: 1.17 $
+ * $Date: 2010/12/31 01:01:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,6 +11,8 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
+
+import java.io.File;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -25,13 +27,10 @@ import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
 /**
- * @author willuhn
- * Ist zustaendig fuer Text-Eingabefelder, hinter denen sich jedoch noch ein
- * zusaetzlicher Button fuer eine Dateisuche befindet.
+ * Input-Feld fuer die Auswahl von Dateien.
  */
 public class FileInput extends ButtonInput
 {
-
 	private Text text;
 	
   /**
@@ -43,7 +42,6 @@ public class FileInput extends ButtonInput
     this(file,false);
   }
   
-
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param file der initial einzufuegende Wert fuer das Eingabefeld.
@@ -73,12 +71,21 @@ public class FileInput extends ButtonInput
           dialog.setFilterExtensions(extensions);
         dialog.setText(Application.getI18n().tr("Bitte wählen Sie die Datei aus"));
         dialog.setFileName(value);
+        customize(dialog);
         setValue(dialog.open());
         text.forceFocus(); // das muessen wir machen, damit die Listener ausgeloest werden
       }
     });
   }
 
+  /**
+   * Erlaubt benutzerdefinierte Anpassungen am Dialog in abgeleiteten Klassen.
+   * @param fd der Datei-Dialog.
+   */
+  protected void customize(FileDialog fd)
+  {
+  }
+  
   /**
    * Liefert ein Objekt des Typs java.lang.String.
    * @see de.willuhn.jameica.gui.input.Input#getValue()
@@ -91,7 +98,7 @@ public class FileInput extends ButtonInput
   }
 
   /**
-   * Erwartet ein Objekt des Typs java.lang.String.
+   * Erwartet ein Objekt des Typs String oder File.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)
@@ -99,10 +106,10 @@ public class FileInput extends ButtonInput
     if (value == null)
       return;
 
-    if (!(value instanceof String))
+    if (!(value instanceof String) && !(value instanceof File))
 			return;
 
-    this.value = (String) value;
+    this.value = value.toString();
     if (this.text != null && !this.text.isDisposed())
     {
       this.text.setText((String) value);
@@ -113,16 +120,23 @@ public class FileInput extends ButtonInput
   /**
 	 * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
 	 */
-  public Control getClientControl(Composite parent) {
-    text = GUI.getStyleFactory().createText(parent);
-    text.setText(this.value == null ? "" : this.value);
-  	return text;
+  public Control getClientControl(Composite parent)
+  {
+    if (this.text != null && !this.text.isDisposed())
+      return this.text;
+    
+    this.text = GUI.getStyleFactory().createText(parent);
+    this.text.setText(this.value == null ? "" : this.value);
+  	return this.text;
   }
 
 }
 
 /*********************************************************************
  * $Log: FileInput.java,v $
+ * Revision 1.17  2010/12/31 01:01:05  willuhn
+ * @N BUGZILLA 969
+ *
  * Revision 1.16  2008/07/17 08:47:12  willuhn
  * @N Heiners Patch zum expliziten Vorgeben von Dateiendungen im Dialog
  *
@@ -130,49 +144,4 @@ public class FileInput extends ButtonInput
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput
  * @B Fixes an FileInput, TextInput
- *
- * Revision 1.14  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.13  2006/04/20 08:44:03  web0
- * @C s/Childs/Children/
- *
- * Revision 1.12  2005/11/14 11:36:23  web0
- * *** empty log message ***
- *
- * Revision 1.11  2005/03/09 01:06:36  web0
- * @D javadoc fixes
- *
- * Revision 1.10  2005/01/18 23:00:32  willuhn
- * @C Default focus to actual file
- *
- * Revision 1.9  2004/11/12 18:23:59  willuhn
- * *** empty log message ***
- *
- * Revision 1.8  2004/07/27 23:41:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.7  2004/07/09 00:12:47  willuhn
- * @C Redesign
- *
- * Revision 1.6  2004/06/30 20:58:40  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2004/06/08 22:54:00  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2004/06/02 21:15:15  willuhn
- * @B win32 fixes in flat style
- * @C made ButtonInput more abstract
- *
- * Revision 1.3  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.2  2004/04/27 00:04:44  willuhn
- * @D javadoc
- *
- * Revision 1.1  2004/04/12 19:15:58  willuhn
- * @C refactoring
- * @N forms
  **********************************************************************/
