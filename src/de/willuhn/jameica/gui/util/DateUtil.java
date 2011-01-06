@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/DateUtil.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/03/03 09:43:54 $
+ * $Revision: 1.2 $
+ * $Date: 2011/01/06 23:18:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.util;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.system.Application;
@@ -41,6 +42,8 @@ public class DateUtil
   {
     int tag = 0;
     int monat = 0;
+    
+    // Datum im Format dd eingegeben. Wir vervollstaendigen mit aktuellem Monat und Jahr
     if (text.length() <= 2)
     {
       try
@@ -56,6 +59,8 @@ public class DateUtil
         return text;
       }
     }
+    
+    // Datum im Format ddmm eingegeben. Wir parsen beides und vervollstaendigen mit dem aktuellen Jahr
     if (text.length() == 4)
     {
       try
@@ -74,6 +79,47 @@ public class DateUtil
         return text;
       }
     }
+    
+    // Try/Error-Variante fuer dd.mm.yy
+    try
+    {
+      // Checken, ob wir das Datum als Date-Objekt parsen koennen
+      Date d = DEFAULT_FORMAT.parse(text);
+      
+      // Falls der User das Jahr zweistellig eingegeben hat, kann es zwar
+      // geparst werden, "DEFAULT_FORMAT" nimmt das aber woertlich und versteht
+      // unter 01.01.11 nicht den 1.1.2011 sondern Jahr 11 n.Chr.
+      // Wir checken daher noch, ob das geparste Jahr < 100 ist. In dem Fall
+      // pappen wir selbst noch das passende Jahrtausend dran.
+      
+      Calendar cal = Calendar.getInstance();
+      int yNow = cal.get(Calendar.YEAR); // aktuelles Jahr merken
+
+      cal.setTime(d); // geparstes Datum uebernehmen
+      int yGiven = cal.get(Calendar.YEAR); // Jahr laut User-Eingabe
+      
+      // Jahr 2-stellig eingegeben?
+      if (yGiven < 100)
+      {
+        // Rausfinden, ob der User 19xx oder 20xx meinte.
+        // Wenn es irgendwo zwischen 0 - 11 (wobei "11" das aktuelle Jahr ist), gehen
+        // wir von 20xx aus.
+        
+        int test = yNow - 2000 + 2; // ok, zwei Jahre Toleranz lassen wir zu. Bei "13" akzeptieren wir es auch als 20xx
+        if (yGiven <= test)
+          cal.set(Calendar.YEAR, yGiven + 2000); // Ja, der User meinte wohl 20xx
+        else
+          cal.set(Calendar.YEAR, yGiven + 1900); // Ne, er meinte wohl 19xx
+      }
+      return new DateFormatter(DEFAULT_FORMAT).format(cal.getTime());
+    }
+    catch (Exception e)
+    {
+      // User hat Quatsch eingegeben
+    }
+    
+    // Es wurde in keinem parse-faehigen Format eingegeben. Der String wird
+    // wie eingegeben zurückgereicht.
     return text;
   }
 
@@ -107,7 +153,10 @@ public class DateUtil
 
 /**********************************************************************
  * $Log: DateUtil.java,v $
- * Revision 1.1  2008/03/03 09:43:54  willuhn
+ * Revision 1.2  2011/01/06 23:18:33  willuhn
+ * @N Heiners Patch um auch zweistellige Jahres-Angaben in DateInput zu tolerieren. Wir "raten" hierbei das passende Jahrtausend nach Plausibilitaet
+ *
+ * Revision 1.1  2008-03-03 09:43:54  willuhn
  * @N DateUtil-Patch von Heiner
  * @N Weiterer Code fuer das Backup-System
  *
