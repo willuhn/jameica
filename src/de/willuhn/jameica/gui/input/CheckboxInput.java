@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.13 $
- * $Date: 2010/10/10 21:20:34 $
+ * $Revision: 1.14 $
+ * $Date: 2011/01/11 22:43:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,6 +38,7 @@ public class CheckboxInput extends AbstractInput
   public CheckboxInput(boolean value)
   {
     this.value = value;
+    this.hasChanged(); // Muessen wir einmal aufrufen, weil hasChanged sonst erst nach dem 2. Mal funktioniert
   }
 
   /**
@@ -147,7 +148,10 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
- * Revision 1.13  2010/10/10 21:20:34  willuhn
+ * Revision 1.14  2011/01/11 22:43:50  willuhn
+ * @B hasChanged() funktionierte nicht beim ersten Aufruf, weil da "oldValue" noch den Wert von "PLACEHOLDER" in AbstractObject hatte. Das explizite "hasChanged()" aendert "oldValue" auf den aktuellen Wert
+ *
+ * Revision 1.13  2010-10-10 21:20:34  willuhn
  * @N BUGZILLA 924
  *
  * Revision 1.12  2007/07/17 14:34:23  willuhn
