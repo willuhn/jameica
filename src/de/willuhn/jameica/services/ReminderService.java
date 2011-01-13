@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.10 $
- * $Date: 2009/06/08 12:13:09 $
+ * $Revision: 1.11 $
+ * $Date: 2011/01/13 18:02:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,8 +50,8 @@ import de.willuhn.logging.Logger;
  */
 public class ReminderService extends TimerTask implements Bootable, MessageConsumer
 {
-  private Timer timer = null;
-  private ArrayList reminders = new ArrayList();
+  private Timer timer              = null;
+  private List<Reminder> reminders = new ArrayList<Reminder>();
 
   /**
    * Loescht einen Reminder.
@@ -80,13 +80,13 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
   
   /**
    * Liefert eine Liste aller Reminder - sortiert nach Faelligkeit - aelteste zuerst.
-   * @return Liste der ueberfaelligen Reminder.
+   * @return Liste der aller Reminder.
    */
-  public Reminder[] getReminders()
+  public List<Reminder> getReminders()
   {
-    List<Reminder> l = (List<Reminder>)this.reminders.clone();
+    List<Reminder> l = new ArrayList<Reminder>(this.reminders);
     Collections.sort(l);
-    return (Reminder[]) l.toArray(new Reminder[l.size()]);
+    return l;
   }
 
   /**
@@ -171,25 +171,26 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
   public void run()
   {
     Date now = new Date();
-    Reminder[] reminders = this.getReminders();
-    for (int i=0;i<reminders.length;++i)
+
+    List<Reminder> reminders = this.getReminders();
+    for (Reminder r:reminders)
     {
-      Date due = reminders[i].getDueDate();
+      Date due = r.getDueDate();
       if (due == null || due.before(now))
       {
-        String action = reminders[i].getAction();
+        String action = r.getAction();
         if (action == null || action.length() == 0)
           continue; // Keine Action angegeben
         try
         {
-          delete(reminders[i]); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
-          Logger.info("executing action " + action + " for reminder");
+          delete(r); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
+          Logger.info("executing reminder action " + action);
           Action a = (Action) Application.getClassLoader().load(action).newInstance();
-          a.handleAction(reminders[i]);
+          a.handleAction(r);
         }
         catch (Exception e)
         {
-          Logger.error("unable to execute action " + action + " for reminder " + reminders[i],e);
+          Logger.error("unable to execute action " + action + " for reminder " + r,e);
         }
       }
     }
@@ -203,9 +204,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     File f = getReminderFile();
     
     // Wenn keine Reminder existieren, brauchen wir nichts laden
-    if (!f.exists())
+    if (!f.exists() || f.length() == 0)
       return;
-    
+
     Logger.info("load reminder file " + f.getAbsolutePath());
     XMLDecoder decoder = null;
     try
@@ -215,7 +216,7 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     }
     catch (Exception e)
     {
-      this.reminders = new ArrayList(); // um Folgefehler zu vermeiden
+      this.reminders = new ArrayList<Reminder>(); // um Folgefehler zu vermeiden
       Logger.error("unable to load reminders",e);
       Application.getI18n().tr("Fehler beim Laden der Reminder-Datei");
     }
@@ -285,7 +286,7 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
       }
     }
   }
-
+  
   /**
    * Liefert die Reminder-Datei.
    * @return die Reminder-Datei.
@@ -301,7 +302,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
- * Revision 1.10  2009/06/08 12:13:09  willuhn
+ * Revision 1.11  2011/01/13 18:02:44  willuhn
+ * @C Code-Cleanup
+ *
+ * Revision 1.10  2009-06-08 12:13:09  willuhn
  * @R Reminder-GUI in neues Plugin "jameica.reminder" ausgelagert
  *
  * Revision 1.9  2009/06/05 17:17:56  willuhn

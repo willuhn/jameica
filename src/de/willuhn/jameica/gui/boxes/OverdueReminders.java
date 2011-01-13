@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/Attic/OverdueReminders.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/06/05 17:17:56 $
+ * $Revision: 1.4 $
+ * $Date: 2011/01/13 18:02:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ package de.willuhn.jameica.gui.boxes;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 
@@ -54,8 +55,8 @@ public class OverdueReminders extends AbstractBox
    */
   public boolean isEnabled()
   {
-    Reminder[] overdue = getOverdueReminders();
-    return overdue != null && overdue.length > 0;
+    List<Reminder> overdue = getOverdueReminders();
+    return overdue != null && overdue.size() > 0;
   }
 
   /**
@@ -87,19 +88,19 @@ public class OverdueReminders extends AbstractBox
    */
   public void paint(Composite parent) throws RemoteException
   {
-    Reminder[] overdue = getOverdueReminders();
-    if (overdue == null || overdue.length == 0)
+    List<Reminder> overdue = getOverdueReminders();
+    if (overdue.size() == 0)
       return;
     
-    for (int i=0;i<overdue.length;++i)
+    for (Reminder reminder:overdue)
     {
-      String r = overdue[i].getRenderer();
+      String r = reminder.getRenderer();
       if (r == null)
         r = ToStringRenderer.class.getName();
       try
       {
         Renderer renderer = (Renderer) Application.getClassLoader().load(r).newInstance();
-        renderer.render(parent,overdue[i]);
+        renderer.render(parent,reminder);
       }
       catch (Exception e)
       {
@@ -113,22 +114,23 @@ public class OverdueReminders extends AbstractBox
    * Naemlich nur genau jene, fuer die ein Renderer angegeben ist.
    * @return Liste der renderbaren ueberfaelligen Reminder oder eine leere Liste.
    */
-  private Reminder[] getOverdueReminders()
+  private List<Reminder> getOverdueReminders()
   {
-    ArrayList list = new ArrayList();
+    List<Reminder> result = new ArrayList<Reminder>();
+
     ReminderService service = (ReminderService) Application.getBootLoader().getBootable(ReminderService.class);
-    Reminder[] reminders = service.getReminders();
-    if (reminders == null)
-      return new Reminder[0];
+    List<Reminder> reminders = service.getReminders();
+    if (reminders == null || reminders.size() == 0)
+      return result;
     
     Date now = new Date();
-    for (int i=0;i<reminders.length;++i)
+    for (Reminder r:reminders)
     {
-      Date due = reminders[i].getDueDate();
+      Date due = r.getDueDate();
       if (due == null || due.before(now))
-        list.add(reminders[i]);
+        result.add(r);
     }
-    return (Reminder[]) list.toArray(new Reminder[list.size()]);
+    return result;
   }
 
 }
@@ -136,6 +138,9 @@ public class OverdueReminders extends AbstractBox
 
 /**********************************************************************
  * $Log: OverdueReminders.java,v $
+ * Revision 1.4  2011/01/13 18:02:44  willuhn
+ * @C Code-Cleanup
+ *
  * Revision 1.3  2009/06/05 17:17:56  willuhn
  * @N Erster Code fuer den GUI-Teil der Reminder
  *

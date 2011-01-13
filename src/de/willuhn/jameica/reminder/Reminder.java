@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Attic/Reminder.java,v $
- * $Revision: 1.4 $
- * $Date: 2009/06/05 17:17:56 $
+ * $Revision: 1.5 $
+ * $Date: 2011/01/13 18:02:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,24 +15,22 @@ package de.willuhn.jameica.reminder;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 
 /**
  * Der Container fuer einen einzelnen Reminder.
- * 
- * W I C H T I G!
- * NIEMALS VERTRAULICHE DATEN MIT EINEM REMINDER SENDEN!
- * DIE DATEN WERDEN UNVERSCHLUESSELT ALS XML-DATEI IM cfg-VERZEICHNIS
- * VON JAMEICA GESPEICHERT!
- * 
  * Das Erstellen und Speichern des Reminders geschieht beispielhaft so:
+ * 
+ * WICHTIG: Die Reminder werden unverschluesselt in ~/.jameica/cfg/jameica.reminders.xml
+ * gespeichert. Also bitte keine sensiblen Daten darin speichern.
  * 
  * <pre>
  *   Date due = new Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L));
  *   Hashtable data = new Hashtable();
  *   data.put("foo","bar");
  *   data.put("faellig",due);
- *   Reminder reminder = new Reminder(due,null,data);
+ *   Reminder reminder = new Reminder(due,data);
  *
  *   // Via Messaging
  *   Application.getMessagingFactory().getMessagingQueue("jameica.reminder").sendMessage(new QueryMessage(reminder));
@@ -44,22 +42,18 @@ import java.util.Date;
  */
 public class Reminder implements Serializable, Comparable
 {
-
-  /**
-   * Generiert von Eclipse.
-   */
-  private static final long serialVersionUID = -5237884776673903314L;
-  
+  private String uuid         = null;
   private Date dueDate        = null;
   private String action       = null;
   private String renderer     = null;
-  private Serializable data   = null;
+  private Object data         = null;
 
   /**
    * Konstruktor fuer Bean-Konformitaet.
    */
   public Reminder()
   {
+    this(null,null);
   }
   
   /**
@@ -69,10 +63,29 @@ public class Reminder implements Serializable, Comparable
    */
   public Reminder(Date due, Serializable data)
   {
+    this.uuid     = UUID.randomUUID().toString();
     this.dueDate  = due;
     this.data     = data;
   }
   
+  /**
+   * Liefert die UUID des Reminders.
+   * @return uuid die UUID des Reminders.
+   */
+  public String getUuid()
+  {
+    return uuid;
+  }
+  
+  /**
+   * Speichert die UUID des Reminders.
+   * @param uuid die UUID des Reminders.
+   */
+  public void setUuid(String uuid)
+  {
+    this.uuid = uuid;
+  }
+
   /**
    * Liefert das Faelligkeitsdatum.
    * @return Faelligkeitsdatum.
@@ -136,7 +149,7 @@ public class Reminder implements Serializable, Comparable
    * Liefert die Nutzdaten.
    * @return die Nutzdaten.
    */
-  public Serializable getData()
+  public Object getData()
   {
     return this.data;
   }
@@ -145,7 +158,7 @@ public class Reminder implements Serializable, Comparable
    * Speichert die Nutzdaten.
    * @param data die Nutzdaten.
    */
-  public void setData(Serializable data)
+  public void setData(Object data)
   {
     this.data = data;
   }
@@ -171,12 +184,7 @@ public class Reminder implements Serializable, Comparable
    */
   public int hashCode()
   {
-    final int PRIME = 31;
-    int result = 1;
-    result = PRIME * result + ((data == null) ? 0 : data.hashCode());
-    result = PRIME * result + ((dueDate == null) ? 0 : dueDate.hashCode());
-    result = PRIME * result + ((renderer == null) ? 0 : renderer.hashCode());
-    return result;
+    return 31 * this.uuid.hashCode();
   }
 
   /**
@@ -185,32 +193,11 @@ public class Reminder implements Serializable, Comparable
    */
   public boolean equals(Object obj)
   {
-    if (this == obj)
-      return true;
-    if (obj == null)
+    if (obj == null || !(obj instanceof Reminder))
       return false;
-    if (getClass() != obj.getClass())
-      return false;
-    final Reminder other = (Reminder) obj;
-    if (data == null)
-    {
-      if (other.data != null)
-        return false;
-    } else if (!data.equals(other.data))
-      return false;
-    if (dueDate == null)
-    {
-      if (other.dueDate != null)
-        return false;
-    } else if (!dueDate.equals(other.dueDate))
-      return false;
-    if (renderer == null)
-    {
-      if (other.renderer != null)
-        return false;
-    } else if (!renderer.equals(other.renderer))
-      return false;
-    return true;
+    
+    Reminder other = (Reminder) obj;
+    return this.uuid.equals(other.uuid);
   }
 
   /**
@@ -233,14 +220,15 @@ public class Reminder implements Serializable, Comparable
       return 1;
     return d1.compareTo(d2);
   }
-  
-  
 }
 
 
 /**********************************************************************
  * $Log: Reminder.java,v $
- * Revision 1.4  2009/06/05 17:17:56  willuhn
+ * Revision 1.5  2011/01/13 18:02:44  willuhn
+ * @C Code-Cleanup
+ *
+ * Revision 1.4  2009-06-05 17:17:56  willuhn
  * @N Erster Code fuer den GUI-Teil der Reminder
  *
  * Revision 1.3  2009/06/05 16:46:39  willuhn
