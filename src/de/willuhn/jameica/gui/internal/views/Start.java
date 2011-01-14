@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.17 $
- * $Date: 2011/01/13 18:02:44 $
+ * $Revision: 1.18 $
+ * $Date: 2011/01/14 12:02:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,9 +13,6 @@
 
 package de.willuhn.jameica.gui.internal.views;
 
-import java.util.Date;
-import java.util.Hashtable;
-
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
@@ -25,8 +22,6 @@ import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.dialogs.ChooseBoxesDialog;
 import de.willuhn.jameica.gui.parts.ExpandPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
-import de.willuhn.jameica.messaging.QueryMessage;
-import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
@@ -44,13 +39,6 @@ public class Start extends AbstractView implements Extendable
    */
   public void bind() throws Exception
   {
-    Date due = new Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L));
-    Hashtable data = new Hashtable();
-    data.put("foo","bar");
-    data.put("faellig",due);
-    Reminder reminder = new Reminder(due,data);
-    Application.getMessagingFactory().getMessagingQueue("jameica.reminder").sendMessage(new QueryMessage(reminder));
-    
     GUI.getView().setTitle(Application.getI18n().tr("Willkommen"));
 
     Box[] boxes = BoxRegistry.getBoxes();
@@ -109,8 +97,8 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
- * Revision 1.17  2011/01/13 18:02:44  willuhn
- * @C Code-Cleanup
+ * Revision 1.18  2011/01/14 12:02:15  willuhn
+ * @B Versehentlich Test-Code eingecheckt
  *
  * Revision 1.16  2009-06-04 10:34:59  willuhn
  * @N Customizing-Parameter zum Ausblenden des "Startseite anpassen..."-Button
