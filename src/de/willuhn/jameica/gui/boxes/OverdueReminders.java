@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/Attic/OverdueReminders.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/01/13 18:02:44 $
+ * $Revision: 1.5 $
+ * $Date: 2011/01/14 17:33:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,18 +14,17 @@
 package de.willuhn.jameica.gui.boxes;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.formatter.DateFormatter;
+import de.willuhn.jameica.gui.internal.action.ReminderDetails;
+import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.reminder.Reminder;
-import de.willuhn.jameica.reminder.Renderer;
-import de.willuhn.jameica.reminder.ToStringRenderer;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
 
 
 /**
@@ -80,7 +79,7 @@ public class OverdueReminders extends AbstractBox
    */
   public String getName()
   {
-    return Application.getI18n().tr("Fällige Erinnerungen");
+    return "Jameica: " + Application.getI18n().tr("Fällige Termine");
   }
 
   /**
@@ -91,22 +90,16 @@ public class OverdueReminders extends AbstractBox
     List<Reminder> overdue = getOverdueReminders();
     if (overdue.size() == 0)
       return;
+
+    TablePart table = new TablePart(overdue,new ReminderDetails());
+    table.addColumn(Application.getI18n().tr("Termin"),"dueDate",new DateFormatter());
+    table.addColumn(Application.getI18n().tr("Name"),"name");
+    table.setMulti(false);
+    table.setRememberColWidths(true);
+    table.setRememberOrder(true);
+    table.setSummary(false);
     
-    for (Reminder reminder:overdue)
-    {
-      String r = reminder.getRenderer();
-      if (r == null)
-        r = ToStringRenderer.class.getName();
-      try
-      {
-        Renderer renderer = (Renderer) Application.getClassLoader().load(r).newInstance();
-        renderer.render(parent,reminder);
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to render " +r,e);
-      }
-    }
+    table.paint(parent);
   }
 
   /**
@@ -116,29 +109,18 @@ public class OverdueReminders extends AbstractBox
    */
   private List<Reminder> getOverdueReminders()
   {
-    List<Reminder> result = new ArrayList<Reminder>();
-
     ReminderService service = (ReminderService) Application.getBootLoader().getBootable(ReminderService.class);
-    List<Reminder> reminders = service.getReminders();
-    if (reminders == null || reminders.size() == 0)
-      return result;
-    
-    Date now = new Date();
-    for (Reminder r:reminders)
-    {
-      Date due = r.getDueDate();
-      if (due == null || due.before(now))
-        result.add(r);
-    }
-    return result;
+    return service.getReminders(null,new Date());
   }
-
 }
 
 
 /**********************************************************************
  * $Log: OverdueReminders.java,v $
- * Revision 1.4  2011/01/13 18:02:44  willuhn
+ * Revision 1.5  2011/01/14 17:33:39  willuhn
+ * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
+ *
+ * Revision 1.4  2011-01-13 18:02:44  willuhn
  * @C Code-Cleanup
  *
  * Revision 1.3  2009/06/05 17:17:56  willuhn

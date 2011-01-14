@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.8 $
- * $Date: 2010/11/26 00:18:49 $
+ * $Revision: 1.9 $
+ * $Date: 2011/01/14 17:33:38 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -245,7 +245,7 @@ public class DayRendererImpl implements DayRenderer
 
     // Name und Beschreibung
     String name = a.getName();
-    label.setText(name);
+    label.setText(name == null ? "" : name);
     String desc = a.getDescription();
     if (desc == null || desc.length() == 0)
       desc = name;
@@ -297,7 +297,10 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.8  2010/11/26 00:18:49  willuhn
+ * Revision 1.9  2011/01/14 17:33:38  willuhn
+ * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
+ *
+ * Revision 1.8  2010-11-26 00:18:49  willuhn
  * @C Code-Cleanup
  *
  * Revision 1.7  2010-11-22 00:17:16  willuhn

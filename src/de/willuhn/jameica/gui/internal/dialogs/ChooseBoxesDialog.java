@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/04/23 09:53:02 $
+ * $Revision: 1.4 $
+ * $Date: 2011/01/14 17:33:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,8 +73,8 @@ public class ChooseBoxesDialog extends AbstractDialog
     for (int i=0;i<list.length;++i)
     {
       Box box = (Box)list[i];
-//      if (!box.isActive())
-//        continue;
+      if (!box.isActive())
+        continue;
       v.add(new BoxObject(box));
     }
     
@@ -321,7 +321,10 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.3  2008/04/23 09:53:02  willuhn
+ * Revision 1.4  2011/01/14 17:33:39  willuhn
+ * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
+ *
+ * Revision 1.3  2008-04-23 09:53:02  willuhn
  * @N Abbrechen-Button in Dialog
  *
  * Revision 1.2  2006/08/02 09:12:02  willuhn

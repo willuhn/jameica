@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/12/11 00:12:22 $
+ * $Revision: 1.12 $
+ * $Date: 2011/01/14 17:33:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -119,14 +119,14 @@ public class CalendarDialog extends AbstractDialog
         date = getDateWithoutTime(cal);
         close();
       }
-    }, null, false);
+    }, null, false,"ok.png");
     buttons.addButton(Application.getI18n().tr("Abbrechen"), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
         close();
       }
-    });
+    },null,false,"process-stop.png");
   }
 
   /**
@@ -151,7 +151,10 @@ public class CalendarDialog extends AbstractDialog
 
 /*******************************************************************************
  * $Log: CalendarDialog.java,v $
- * Revision 1.11  2007/12/11 00:12:22  willuhn
+ * Revision 1.12  2011/01/14 17:33:39  willuhn
+ * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
+ *
+ * Revision 1.11  2007-12-11 00:12:22  willuhn
  * @R removed unused import
  *
  * Revision 1.10  2007/12/07 14:58:31  willuhn

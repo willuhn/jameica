@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Attic/ReminderPopupAction.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/07/22 23:02:59 $
+ * $Revision: 1.2 $
+ * $Date: 2011/01/14 17:33:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,9 +26,7 @@ public class ReminderPopupAction implements Action
 {
 
   /**
-   * Erwartet ein Reminder-Objekt. Dessen Nutzdaten (Attribut "data")
-   * kann entweder ein Serializable (dann wird dessen toString-Repraesentation
-   * als Popup angezeigt) oder direkt eine TextMessage sein.
+   * Erwartet ein Reminder-Objekt.
    * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
    */
   public void handleAction(Object context) throws ApplicationException
@@ -36,15 +34,12 @@ public class ReminderPopupAction implements Action
     if (context == null || !(context instanceof Reminder))
       return;
 
-    Object data = ((Reminder)context).getData();
-    if (data == null)
-      return;
+    Reminder r = (Reminder) context;
+    Object data = r.getData();
     
-    TextMessage msg = null;
-    if (data instanceof TextMessage)
-      msg = (TextMessage) data;
-    else
-      msg = new TextMessage(Application.getI18n().tr("Hinweis"),data.toString());
+    TextMessage msg = new TextMessage();
+    msg.setTitle(r.getName());
+    msg.setText(data != null ? data.toString() : null);
     
     Application.getMessagingFactory().getMessagingQueue("jameica.popup").sendMessage(msg);
     
@@ -55,6 +50,9 @@ public class ReminderPopupAction implements Action
 
 /*********************************************************************
  * $Log: ReminderPopupAction.java,v $
+ * Revision 1.2  2011/01/14 17:33:39  willuhn
+ * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
+ *
  * Revision 1.1  2008/07/22 23:02:59  willuhn
  * @N Box zum Anzeigen faelliger Reminder (mit Renderer) auf der Startseite
  * @C ReminderPopupAction in "reminder"-Package verschoben

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/01/13 18:02:44 $
+ * $Revision: 1.12 $
+ * $Date: 2011/01/14 17:33:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -79,12 +79,31 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
   }
   
   /**
-   * Liefert eine Liste aller Reminder - sortiert nach Faelligkeit - aelteste zuerst.
+   * Liefert eine Liste aller Reminder im angegebenen Zeitraum.
+   * Die Termine sind sortiert nach Faelligkeit - aelteste zuerst.
+   * @param from Start-Datum des Zeitraumes (optional).
+   * @param to End-Datum des Zeitraumes (optional).
    * @return Liste der aller Reminder.
    */
-  public List<Reminder> getReminders()
+  public List<Reminder> getReminders(Date from, Date to)
   {
-    List<Reminder> l = new ArrayList<Reminder>(this.reminders);
+    Date now = new Date();
+    
+    List<Reminder> l = new ArrayList<Reminder>();
+    for (Reminder r:this.reminders)
+    {
+      Date d = r.getDueDate();
+      if (d == null) // Reminder ohne Termin kriegen das aktuelle Datum
+        d = now;
+      
+      if (from != null && d.before(from))
+        continue; // Liegt vorm gesuchten Zeitraum
+      
+      if (to != null && d.after(to))
+        continue; // Liegt nach gesuchtem Zeitraum.
+      
+      l.add(r);
+    }
     Collections.sort(l);
     return l;
   }
@@ -170,28 +189,22 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
    */
   public void run()
   {
-    Date now = new Date();
-
-    List<Reminder> reminders = this.getReminders();
+    List<Reminder> reminders = this.getReminders(null,new Date());
     for (Reminder r:reminders)
     {
-      Date due = r.getDueDate();
-      if (due == null || due.before(now))
+      String action = r.getAction();
+      if (action == null || action.length() == 0)
+        continue; // Keine Action angegeben
+      try
       {
-        String action = r.getAction();
-        if (action == null || action.length() == 0)
-          continue; // Keine Action angegeben
-        try
-        {
-          delete(r); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
-          Logger.info("executing reminder action " + action);
-          Action a = (Action) Application.getClassLoader().load(action).newInstance();
-          a.handleAction(r);
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to execute action " + action + " for reminder " + r,e);
-        }
+        delete(r); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
+        Logger.info("executing reminder action " + action);
+        Action a = (Action) Application.getClassLoader().load(action).newInstance();
+        a.handleAction(r);
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to execute action " + action + " for reminder " + r,e);
       }
     }
   }
@@ -302,7 +315,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
- * Revision 1.11  2011/01/13 18:02:44  willuhn
+ * Revision 1.12  2011/01/14 17:33:39  willuhn
+ * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
+ *
+ * Revision 1.11  2011-01-13 18:02:44  willuhn
  * @C Code-Cleanup
  *
  * Revision 1.10  2009-06-08 12:13:09  willuhn

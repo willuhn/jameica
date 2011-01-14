@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Attic/Reminder.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/01/13 18:02:44 $
+ * $Revision: 1.6 $
+ * $Date: 2011/01/14 17:33:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,9 +17,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
+import de.willuhn.jameica.messaging.QueryMessage;
+
 
 /**
- * Der Container fuer einen einzelnen Reminder.
+ * Ein einzelner Reminder.
  * Das Erstellen und Speichern des Reminders geschieht beispielhaft so:
  * 
  * WICHTIG: Die Reminder werden unverschluesselt in ~/.jameica/cfg/jameica.reminders.xml
@@ -27,45 +29,45 @@ import java.util.UUID;
  * 
  * <pre>
  *   Date due = new Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L));
+ *   Reminder reminder = new Reminder(due);
+ *   
  *   Hashtable data = new Hashtable();
  *   data.put("foo","bar");
  *   data.put("faellig",due);
- *   Reminder reminder = new Reminder(due,data);
- *
+ *   reminder.setData(data);
+ *   
  *   // Via Messaging
- *   Application.getMessagingFactory().getMessagingQueue("jameica.reminder").sendMessage(new QueryMessage(reminder));
+ *   Application.getMessagingFactory().getMessagingQueue("jameica.reminder").sendMessage(reminder);
  *   
  *   // Alternativ direkt
  *   ReminderService service = (ReminderService) Application.getBootloader().getBootable(ReminderService.class);
  *   service.add(reminder);
  * </pre>
  */
-public class Reminder implements Serializable, Comparable
+public class Reminder extends QueryMessage implements Serializable, Comparable
 {
   private String uuid         = null;
+  
   private Date dueDate        = null;
   private String action       = null;
-  private String renderer     = null;
-  private Object data         = null;
 
   /**
    * Konstruktor fuer Bean-Konformitaet.
    */
   public Reminder()
   {
-    this(null,null);
+    this(null);
   }
   
   /**
    * ct.
    * @param due Faelligkeitsdatum.
-   * @param data die eigentlichen Nutzdaten.
    */
-  public Reminder(Date due, Serializable data)
+  public Reminder(Date due)
   {
+    super();
     this.uuid     = UUID.randomUUID().toString();
     this.dueDate  = due;
-    this.data     = data;
   }
   
   /**
@@ -105,24 +107,6 @@ public class Reminder implements Serializable, Comparable
   }
 
   /**
-   * Liefert den Klassennamen zugehoerigen Renderer.
-   * @return Klassennamde des Renderers.
-   */
-  public String getRenderer()
-  {
-    return this.renderer;
-  }
-  
-  /**
-   * Speichert den Klassennamen des Renderers.
-   * @param renderer Klassenname des Renderers.
-   */
-  public void setRenderer(String renderer)
-  {
-    this.renderer = renderer;
-  }
-
-  /**
    * Liefert eine Action, die bei Faelligkeit ausgefuehrt werden soll.
    * @return Klassennamde der Action.
    */
@@ -146,35 +130,14 @@ public class Reminder implements Serializable, Comparable
   }
 
   /**
-   * Liefert die Nutzdaten.
-   * @return die Nutzdaten.
-   */
-  public Object getData()
-  {
-    return this.data;
-  }
-  
-  /**
-   * Speichert die Nutzdaten.
-   * @param data die Nutzdaten.
-   */
-  public void setData(Object data)
-  {
-    this.data = data;
-  }
-  
-  /**
    * @see java.lang.Object#toString()
    */
   public String toString()
   {
     StringBuffer sb = new StringBuffer();
-    sb.append("due-date: ");
-    sb.append(this.dueDate);
-    sb.append(", renderer: ");
-    sb.append(this.renderer);
-    sb.append(", data: ");
-    sb.append(this.data);
+    sb.append(this.getDueDate());
+    sb.append(": ");
+    sb.append(this.getName());
     return sb.toString();
   }
 
@@ -225,20 +188,9 @@ public class Reminder implements Serializable, Comparable
 
 /**********************************************************************
  * $Log: Reminder.java,v $
- * Revision 1.5  2011/01/13 18:02:44  willuhn
+ * Revision 1.6  2011/01/14 17:33:38  willuhn
+ * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
+ *
+ * Revision 1.5  2011-01-13 18:02:44  willuhn
  * @C Code-Cleanup
- *
- * Revision 1.4  2009-06-05 17:17:56  willuhn
- * @N Erster Code fuer den GUI-Teil der Reminder
- *
- * Revision 1.3  2009/06/05 16:46:39  willuhn
- * @B debugging
- *
- * Revision 1.2  2008/07/18 10:41:29  willuhn
- * @N Zeitgesteuertes Ausfuehren von Reminder-Actions
- *
- * Revision 1.1  2008/07/17 23:21:27  willuhn
- * @N Generische Darstellung von Remindern mittels "Renderer"-Interface geloest. Es fehlt noch eine Box fuer die Startseite, welche die faelligen Reminder anzeigt.
- * @N Laden und Speichern der Reminder mittels XMLEncoder/XMLDecoder
- *
  **********************************************************************/

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Popup.java,v $
- * $Revision: 1.4 $
- * $Date: 2010/04/13 12:17:03 $
+ * $Revision: 1.5 $
+ * $Date: 2011/01/14 17:33:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -175,13 +175,16 @@ public class Popup
     label.setLayoutData(new RowData());
     label.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
     label.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-    label.setText(text);
+    label.setText(text == null ? "" : text);
   }
 }
 
 
 /*********************************************************************
  * $Log: Popup.java,v $
+ * Revision 1.5  2011/01/14 17:33:39  willuhn
+ * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
+ *
  * Revision 1.4  2010/04/13 12:17:03  willuhn
  * @N Alpha-Blending in Splashscreen und Popup-Messages - seit SWT 3.4 moeglich
  *
