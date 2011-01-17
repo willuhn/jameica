@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/01/14 17:33:39 $
+ * $Revision: 1.13 $
+ * $Date: 2011/01/17 17:31:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,6 @@ import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
-import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -61,8 +60,17 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
   {
     if (reminder == null)
       return;
-    this.reminders.remove(reminder);
-    store();
+
+    try
+    {
+      this.reminders.remove(reminder);
+      store();
+      Application.getMessagingFactory().getMessagingQueue("jameica.reminder.deleted").sendMessage(reminder);
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to delete reminder",e);
+    }
   }
   
   /**
@@ -74,8 +82,16 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     if (reminder == null)
       return;
 
-    this.reminders.add(reminder);
-    store();
+    try
+    {
+      this.reminders.add(reminder);
+      store();
+      Application.getMessagingFactory().getMessagingQueue("jameica.reminder.added").sendMessage(reminder);
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to add reminder",e);
+    }
   }
   
   /**
@@ -121,10 +137,11 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-    load();
-    Application.getMessagingFactory().getMessagingQueue("jameica.reminder").registerMessageConsumer(this);
     try
     {
+      load();
+      Application.getMessagingFactory().getMessagingQueue("jameica.reminder").registerMessageConsumer(this);
+      
       this.timer = new Timer(true);
       this.timer.schedule(this,0,60 * 1000L); // alle 60 Sekunden, Start jetzt
     }
@@ -167,7 +184,7 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
    */
   public Class[] getExpectedMessageTypes()
   {
-    return new Class[]{QueryMessage.class};
+    return new Class[]{Reminder.class};
   }
 
   /**
@@ -175,13 +192,12 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
    */
   public void handleMessage(Message message) throws Exception
   {
-    Object reminder = ((QueryMessage)message).getData();
-    if (reminder == null || !(reminder instanceof Reminder))
+    if (message == null || !(message instanceof Reminder))
     {
-      Logger.warn("got no valid reminder, expected: " + Reminder.class.getName() + ", got: " + reminder);
+      Logger.warn("got no valid reminder, expected: " + Reminder.class.getName() + ", got: " + message);
       return;
     }
-    add((Reminder) reminder);
+    add((Reminder) message);
   }
 
   /**
@@ -198,9 +214,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
       try
       {
         delete(r); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
-        Logger.info("executing reminder action " + action);
+        Logger.debug("executing reminder action " + action);
         Action a = (Action) Application.getClassLoader().load(action).newInstance();
         a.handleAction(r);
+        Application.getMessagingFactory().getMessagingQueue("jameica.reminder.executed").sendMessage(r);
       }
       catch (Exception e)
       {
@@ -211,8 +228,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
   
   /**
    * Laedt die Reminder-Datei.
+   * @throws Exception wenn es beim Laden zu einem Fehler kam.
    */
-  private synchronized void load()
+  private synchronized void load() throws Exception
   {
     File f = getReminderFile();
     
@@ -226,12 +244,6 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     {
       decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(f)));
       this.reminders = (ArrayList) decoder.readObject();
-    }
-    catch (Exception e)
-    {
-      this.reminders = new ArrayList<Reminder>(); // um Folgefehler zu vermeiden
-      Logger.error("unable to load reminders",e);
-      Application.getI18n().tr("Fehler beim Laden der Reminder-Datei");
     }
     finally
     {
@@ -252,8 +264,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
   /**
    * Speichert die Reminders-Datei.
+   * @throws Exception wenn es beim Speichern zu einem Fehler kam.
    */
-  private synchronized void store()
+  private synchronized void store() throws Exception
   {
     File f = getReminderFile();
     
@@ -277,11 +290,6 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
       {
         encoder.writeObject(this.reminders);
       }
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to store reminders",e);
-      Application.getI18n().tr("Fehler beim Speichern der Reminder-Datei");
     }
     finally
     {
@@ -315,7 +323,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
- * Revision 1.12  2011/01/14 17:33:39  willuhn
+ * Revision 1.13  2011/01/17 17:31:09  willuhn
+ * @C Reminder-Zeug
+ *
+ * Revision 1.12  2011-01-14 17:33:39  willuhn
  * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
  *
  * Revision 1.11  2011-01-13 18:02:44  willuhn

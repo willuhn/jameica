@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/Attic/ReminderDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/01/14 17:33:39 $
+ * $Revision: 1.2 $
+ * $Date: 2011/01/17 17:31:09 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -24,6 +24,7 @@ import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.TextAreaInput;
 import de.willuhn.jameica.gui.input.TextInput;
+import de.willuhn.jameica.gui.internal.action.ReminderPopup;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
@@ -109,6 +110,7 @@ public class ReminderDialog extends AbstractDialog
         
         reminder.setName(s);
         reminder.setDueDate(getDate(cal));
+        reminder.setAction(ReminderPopup.class.getName());
         reminder.setData((String) desc.getValue());
         close();
       }
@@ -144,7 +146,10 @@ public class ReminderDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: ReminderDialog.java,v $
- * Revision 1.1  2011/01/14 17:33:39  willuhn
+ * Revision 1.2  2011/01/17 17:31:09  willuhn
+ * @C Reminder-Zeug
+ *
+ * Revision 1.1  2011-01-14 17:33:39  willuhn
  * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
  *
  **********************************************************************/

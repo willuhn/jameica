@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointmentProvider.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/01/14 17:33:38 $
+ * $Revision: 1.2 $
+ * $Date: 2011/01/17 17:31:08 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.RGB;
 
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
@@ -133,6 +134,12 @@ public class ReminderAppointmentProvider implements AppointmentProvider
      */
     public RGB getColor()
     {
+      Date due = this.r.getDueDate();
+      if (due == null)
+        return null;
+      
+      if (due.before(new Date()))
+        return Color.ERROR.getSWTColor().getRGB();
       return null;
     }
   }
@@ -142,7 +149,10 @@ public class ReminderAppointmentProvider implements AppointmentProvider
 
 /**********************************************************************
  * $Log: ReminderAppointmentProvider.java,v $
- * Revision 1.1  2011/01/14 17:33:38  willuhn
+ * Revision 1.2  2011/01/17 17:31:08  willuhn
+ * @C Reminder-Zeug
+ *
+ * Revision 1.1  2011-01-14 17:33:38  willuhn
  * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
  *
  **********************************************************************/
