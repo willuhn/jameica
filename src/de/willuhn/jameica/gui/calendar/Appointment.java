@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/Appointment.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/11/26 00:28:52 $
+ * $Revision: 1.4 $
+ * $Date: 2011/01/20 17:12:10 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -53,13 +53,33 @@ public interface Appointment
    * @return optionale Textfarbe.
    */
   public RGB getColor();
+  
+  /**
+   * Liefert true, wenn fuer den Termin ein Alarm ausgeloest werden soll.
+   * @return true, wenn fuer den Termin ein Alarm ausgeloest werden soll.
+   */
+  public boolean hasAlarm();
+  
+  /**
+   * Liefert einen eindeutigen Identifier, der auch dann gleich bleibt,
+   * wenn sich die Eigenschaften des Termins - wie Datum oder Name - aendern.
+   * Die UID sollte - falls angegeben - global eindeutig sein. Das Format der
+   * UID ist freigestellt.
+   * Anhand der UID kann das Reminder-System erkennen, ob ein neuer Termin
+   * angelegt oder ein bestehender geaendert wurde.
+   * @return die UID des Termins. Darf NULL sein.
+   */
+  public String getUid();
 }
 
 
 
 /**********************************************************************
  * $Log: Appointment.java,v $
- * Revision 1.3  2010/11/26 00:28:52  willuhn
+ * Revision 1.4  2011/01/20 17:12:10  willuhn
+ * @N Appointment-Interface erweitert. Damit man nicht bei jeder kuenftigen neuen Methode einen Compile-Fehler im eigenen Code kriegt, ist es besser, nicht direkt das Interface "Appointment" zu implementieren sondern stattdessen von AbstractAppointment abzuleiten. Dort sind dann bereits Dummy-Implementierungen der relevanten Methoden enthalten.
+ *
+ * Revision 1.3  2010-11-26 00:28:52  willuhn
  * *** empty log message ***
  *
  * Revision 1.2  2010-11-19 17:00:30  willuhn

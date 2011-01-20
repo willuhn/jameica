@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointmentProvider.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/01/17 17:31:08 $
+ * $Revision: 1.3 $
+ * $Date: 2011/01/20 17:12:10 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -64,7 +64,7 @@ public class ReminderAppointmentProvider implements AppointmentProvider
   /**
    * Hilfsklasse zum Anzeigen und Oeffnen des Appointments.
    */
-  private class MyAppointment implements Appointment
+  private class MyAppointment extends AbstractAppointment
   {
     private Reminder r = null;
     
@@ -78,7 +78,7 @@ public class ReminderAppointmentProvider implements AppointmentProvider
     }
 
     /**
-     * @see de.willuhn.jameica.gui.calendar.Appointment#execute()
+     * @see de.willuhn.jameica.gui.calendar.AbstractAppointment#execute()
      */
     public void execute() throws ApplicationException
     {
@@ -111,7 +111,7 @@ public class ReminderAppointmentProvider implements AppointmentProvider
     }
 
     /**
-     * @see de.willuhn.jameica.gui.calendar.Appointment#getDescription()
+     * @see de.willuhn.jameica.gui.calendar.AbstractAppointment#getDescription()
      */
     public String getDescription()
     {
@@ -130,7 +130,7 @@ public class ReminderAppointmentProvider implements AppointmentProvider
     }
 
     /**
-     * @see de.willuhn.jameica.gui.calendar.Appointment#getColor()
+     * @see de.willuhn.jameica.gui.calendar.AbstractAppointment#getColor()
      */
     public RGB getColor()
     {
@@ -142,6 +142,8 @@ public class ReminderAppointmentProvider implements AppointmentProvider
         return Color.ERROR.getSWTColor().getRGB();
       return null;
     }
+    
+    
   }
 }
 
@@ -149,7 +151,10 @@ public class ReminderAppointmentProvider implements AppointmentProvider
 
 /**********************************************************************
  * $Log: ReminderAppointmentProvider.java,v $
- * Revision 1.2  2011/01/17 17:31:08  willuhn
+ * Revision 1.3  2011/01/20 17:12:10  willuhn
+ * @N Appointment-Interface erweitert. Damit man nicht bei jeder kuenftigen neuen Methode einen Compile-Fehler im eigenen Code kriegt, ist es besser, nicht direkt das Interface "Appointment" zu implementieren sondern stattdessen von AbstractAppointment abzuleiten. Dort sind dann bereits Dummy-Implementierungen der relevanten Methoden enthalten.
+ *
+ * Revision 1.2  2011-01-17 17:31:08  willuhn
  * @C Reminder-Zeug
  *
  * Revision 1.1  2011-01-14 17:33:38  willuhn
