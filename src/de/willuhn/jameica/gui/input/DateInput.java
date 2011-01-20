@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.8 $
- * $Date: 2008/03/03 09:43:54 $
+ * $Revision: 1.9 $
+ * $Date: 2011/01/20 17:13:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.dialogs.CalendarDialog;
-import de.willuhn.jameica.gui.util.DateUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
 
 /**
@@ -388,6 +388,9 @@ public class DateInput implements Input
 
 /*********************************************************************
  * $Log: DateInput.java,v $
+ * Revision 1.9  2011/01/20 17:13:24  willuhn
+ * @C HBCIProperties#startOfDay und HBCIProperties#endOfDay nach Jameica in DateUtil verschoben
+ *
  * Revision 1.8  2008/03/03 09:43:54  willuhn
  * @N DateUtil-Patch von Heiner
  * @N Weiterer Code fuer das Backup-System

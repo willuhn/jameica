@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/formatter/DateFormatter.java,v $
- * $Revision: 1.4 $
- * $Date: 2009/10/07 16:36:12 $
+ * $Revision: 1.5 $
+ * $Date: 2011/01/20 17:13:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.Date;
 
-import de.willuhn.jameica.gui.util.DateUtil;
+import de.willuhn.jameica.util.DateUtil;
 
 /**
  * Formatierer fuer Datums-Angaben.
@@ -75,6 +75,9 @@ public class DateFormatter implements Formatter
 
 /*********************************************************************
  * $Log: DateFormatter.java,v $
+ * Revision 1.5  2011/01/20 17:13:24  willuhn
+ * @C HBCIProperties#startOfDay und HBCIProperties#endOfDay nach Jameica in DateUtil verschoben
+ *
  * Revision 1.4  2009/10/07 16:36:12  willuhn
  * @N Neuer parameterloser Konstruktor
  *

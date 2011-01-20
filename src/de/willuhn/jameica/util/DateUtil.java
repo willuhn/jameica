@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Attic/DateUtil.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/01/06 23:18:33 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/DateUtil.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2011/01/20 17:13:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -10,7 +10,7 @@
  * All rights reserved
  *
  **********************************************************************/
-package de.willuhn.jameica.gui.util;
+package de.willuhn.jameica.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -148,12 +148,47 @@ public class DateUtil
       throw new NumberFormatException();
     }
   }
+
+  /**
+   * Resettet die Uhrzeit eines Datums.
+   * @param date das Datum.
+   * @return das neue Datum.
+   */
+  public static Date startOfDay(Date date)
+  {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date == null ? new Date() : date);
+    cal.set(Calendar.HOUR_OF_DAY,0);
+    cal.set(Calendar.MINUTE,0);
+    cal.set(Calendar.SECOND,0);
+    cal.set(Calendar.MILLISECOND,0);
+    return cal.getTime();
+  }
+
+  /**
+   * Setzt die Uhrzeit eines Datums auf 23:59:59.999.
+   * @param date das Datum.
+   * @return das neue Datum.
+   */
+  public static Date endOfDay(Date date)
+  {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date == null ? new Date() : date);
+    cal.set(Calendar.HOUR_OF_DAY,23);
+    cal.set(Calendar.MINUTE,59);
+    cal.set(Calendar.SECOND,59);
+    cal.set(Calendar.MILLISECOND,999);
+    return cal.getTime();
+  }
 }
 
 
 /**********************************************************************
  * $Log: DateUtil.java,v $
- * Revision 1.2  2011/01/06 23:18:33  willuhn
+ * Revision 1.1  2011/01/20 17:13:24  willuhn
+ * @C HBCIProperties#startOfDay und HBCIProperties#endOfDay nach Jameica in DateUtil verschoben
+ *
+ * Revision 1.2  2011-01-06 23:18:33  willuhn
  * @N Heiners Patch um auch zweistellige Jahres-Angaben in DateInput zu tolerieren. Wir "raten" hierbei das passende Jahrtausend nach Plausibilitaet
  *
  * Revision 1.1  2008-03-03 09:43:54  willuhn
