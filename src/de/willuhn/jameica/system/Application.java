@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.84 $
- * $Date: 2010/03/04 23:08:30 $
+ * $Revision: 1.85 $
+ * $Date: 2011/01/25 23:32:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,26 +44,26 @@ import de.willuhn.util.MultipleClassLoader;
  */
 public final class Application {
 
-  
+
   // singleton
   private static Application app   = null;
-    private boolean             inShutdown  = false;
-    private boolean             hookRunning = false;
-		
-		private StartupParams 			params;
+  private boolean             inShutdown  = false;
+  private boolean             hookRunning = false;
 
-    private Manifest            manifest;
-    private Platform            platform;
-    private Config 							config;
-    private MultipleClassLoader classLoader;
-    private BootLoader          loader;
+  private StartupParams       params;
 
-    private I18N 								i18n;
-		private ArrayList 					welcomeMessages = new ArrayList();
-    private Date                started = new Date();
+  private Manifest            manifest;
+  private Platform            platform;
+  private Config              config;
+  private MultipleClassLoader classLoader;
+  private BootLoader          loader;
 
-    private ApplicationController controller;
-    
+  private I18N                i18n;
+  private ArrayList           welcomeMessages = new ArrayList();
+  private Date                started = new Date();
+
+  private ApplicationController controller;
+
   /**
    * Erzeugt eine neue Instanz der Anwendung.
    * @param params die Start-Parameter.
@@ -71,25 +71,25 @@ public final class Application {
   public static void newInstance(StartupParams params) {
 
 
-		// Wir nehmen grundsaetzlich unseren eingenen Classloader.
-		MultipleClassLoader cl = new MultipleClassLoader();
-		cl.addClassloader(Application.class.getClassLoader());
+    // Wir nehmen grundsaetzlich unseren eingenen Classloader.
+    MultipleClassLoader cl = new MultipleClassLoader();
+    cl.addClassloader(Application.class.getClassLoader());
 
-		// Wir machen unseren Classloader zum Context-Classloader fuer diesen Thread
-		Thread.currentThread().setContextClassLoader(cl);
+    // Wir machen unseren Classloader zum Context-Classloader fuer diesen Thread
+    Thread.currentThread().setContextClassLoader(cl);
 
-		// Instanz erstellen.
-		app = new Application();
-		app.params = params;
-		app.classLoader = cl;
-		app.init();
+    // Instanz erstellen.
+    app = new Application();
+    app.params = params;
+    app.classLoader = cl;
+    app.init();
   }
 
   /**
    * Initialisiert die Instanz.#
    */
   private void init()
-	{
+  {
 
     Logger.info("starting jameica...");
     getCallback().getStartupMonitor().setStatusText("starting jameica");
@@ -108,8 +108,8 @@ public final class Application {
       app.startupError(e);
     }
 
-		//
-		////////////////////////////////////////////////////////////////////////////
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
     getCallback().getStartupMonitor().setPercentComplete(100);
 
@@ -148,12 +148,12 @@ public final class Application {
     }
   }
 
-	/**
-	 * Startup-Error zeigt eine Fehlermeldung an und beendet Jameica dann.
+  /**
+   * Startup-Error zeigt eine Fehlermeldung an und beendet Jameica dann.
    * @param t anzuzeigender Fehler.
    */
   private void startupError(Throwable t)
-	{
+  {
     if (t != null && !(t instanceof OperationCanceledException))
     {
       t.printStackTrace();
@@ -161,34 +161,34 @@ public final class Application {
 
       StringBuffer sb = new StringBuffer();
       Throwable cause = t;
-      
+
       for (int i=0;i<20;++i) // maximal 20 Schritte nach oben
       {
         Throwable current = cause.getCause();
 
         if (current == null)
           break; // Ende, hier kommt nichts mehr
-        
+
         if (current == cause) // Wir wiederholen uns
           break;
-        
+
         sb.append(current.getMessage());
         sb.append("\n");
         cause = current;
       }
-      
+
       String msg = sb.toString();
       if (msg == null || msg.length() == 0)
         msg = "Fatal error while jameica startup";
       getCallback().startupError(msg,t);
     }
-		try
-		{
-	    Logger.flush();
-		}
-		catch (Exception e){} // useless
-		System.exit(1);
-	}
+    try
+    {
+      Logger.flush();
+    }
+    catch (Exception e){} // useless
+    System.exit(1);
+  }
 
   /**
    * Faehrt die gesamte Anwendung herunter.
@@ -227,16 +227,16 @@ public final class Application {
   }
 
 
-	/**
-	 * Liefert einen Classloader, der alle installierten Plugins und
-	 * deren Jars kennt. Also quasi die gesamte Jameica-Umbegung.
+  /**
+   * Liefert einen Classloader, der alle installierten Plugins und
+   * deren Jars kennt. Also quasi die gesamte Jameica-Umbegung.
    * @return Jameicas ClassLoader.
    */
   public static MultipleClassLoader getClassLoader()
-	{
-		return app.classLoader;
-	}
-  
+  {
+    return app.classLoader;
+  }
+
   /**
    * Liefert den Boot-Loader des Systems.
    * @return der Loader.
@@ -245,37 +245,37 @@ public final class Application {
   {
     return app.loader;
   }
-  
+
   /**
-	 * Liefert die SSL-Factory von Jameica. Ueber diese kann unter anderem der
-	 * Public- und Private-Key der Jameica-Instanz bezogen werden.
+   * Liefert die SSL-Factory von Jameica. Ueber diese kann unter anderem der
+   * Public- und Private-Key der Jameica-Instanz bezogen werden.
    * @return SSL-Factory.
    */
   public static SSLFactory getSSLFactory()
-	{
+  {
     SSLService sss = (SSLService) getBootLoader().getBootable(SSLService.class);
     return sss.getSSLFactory();
-	}
+  }
 
-	/**
-	 * Liefert die ServiceFactory, ueber die alle Services von Plugins bezogen werden koennen.
+  /**
+   * Liefert die ServiceFactory, ueber die alle Services von Plugins bezogen werden koennen.
    * @return die ServiceFactory.
    */
   public static ServiceFactory getServiceFactory()
-	{
+  {
     PluginServiceService pss = (PluginServiceService) getBootLoader().getBootable(PluginServiceService.class);
     return pss.getServiceFactory();
-	}
+  }
 
-	/**
-	 * Liefert den PluginLoader, ueber den die Instanzen der Plugins geholt werden koennen.
+  /**
+   * Liefert den PluginLoader, ueber den die Instanzen der Plugins geholt werden koennen.
    * @return den PluginLoader.
    */
   public static PluginLoader getPluginLoader()
-	{
+  {
     PluginService ps = (PluginService) getBootLoader().getBootable(PluginService.class);
     return ps.getPluginLoader();
-	}
+  }
 
   /**
    * Liefert die MessagingFactory von Jameica.
@@ -293,20 +293,20 @@ public final class Application {
    */
   public static Config getConfig()
   {
-  	if (app.config != null)
-  		return app.config;
-		try
+    if (app.config != null)
+      return app.config;
+    try
     {
-			app.config = new Config();
+      app.config = new Config();
       app.config.init();
-		}
-		catch (Throwable t)
-		{
-			app.startupError(t);
-		}
+    }
+    catch (Throwable t)
+    {
+      app.startupError(t);
+    }
     return app.config;
   }
-  
+
   /**
    * Liefert eine Hilfsklasse fuer Plattform-/OS-Spezifisches.
    * @return Plattform.
@@ -315,7 +315,7 @@ public final class Application {
   {
     if (app.platform != null)
       return app.platform;
-    
+
     app.platform = Platform.getInstance();
     return app.platform;
   }
@@ -328,25 +328,25 @@ public final class Application {
   {
     return app.params.getMode() == StartupParams.MODE_SERVER;
   }
-  
-	/**
-	 * Preuft ob die Anwendung im Standalone-Mode laeuft.
-	 * @return true, wenn sie im Standalone-Mode laeuft.
-	 */
-	public static boolean inStandaloneMode()
-	{
-		return app.params.getMode() == StartupParams.MODE_STANDALONE;
-	}
-	
-	/**
-	 * Preuft ob die Anwendung im Client-Mode laeuft.
-	 * @return true, wenn sie im Client-Mode laeuft.
-	 */
+
+  /**
+   * Preuft ob die Anwendung im Standalone-Mode laeuft.
+   * @return true, wenn sie im Standalone-Mode laeuft.
+   */
+  public static boolean inStandaloneMode()
+  {
+    return app.params.getMode() == StartupParams.MODE_STANDALONE;
+  }
+
+  /**
+   * Preuft ob die Anwendung im Client-Mode laeuft.
+   * @return true, wenn sie im Client-Mode laeuft.
+   */
   public static boolean inClientMode()
   {
-		return app.params.getMode() == StartupParams.MODE_CLIENT;
+    return app.params.getMode() == StartupParams.MODE_CLIENT;
   }
-  
+
   /**
    * Prueft, ob Jameica im nichtinteraktiven Server-Mode laeuft
    * und damit keinerlei Eingaben vom Benutzer verlangt werden koennen.
@@ -357,15 +357,15 @@ public final class Application {
     return app.params.isNonInteractiveMode();
   }
 
-	/**
-	 * Liefert das Language-Pack fuer Jameica selbst.
+  /**
+   * Liefert das Language-Pack fuer Jameica selbst.
    * @return Language-Pack.
    */
   public static I18N getI18n()
-	{
-		if (app.i18n != null)
-			return app.i18n;
-    
+  {
+    if (app.i18n != null)
+      return app.i18n;
+
     try
     {
       app.i18n = new I18N("lang/system_messages",getConfig().getLocale(),getClassLoader());
@@ -375,18 +375,18 @@ public final class Application {
       Logger.error("unable to load system resource bundle, fallback to dummy",e);
       app.i18n = new I18N();
     }
-		return app.i18n;
-	}
+    return app.i18n;
+  }
 
-	/**
-	 * Liefert die Start-Parameter von Jameica.
+  /**
+   * Liefert die Start-Parameter von Jameica.
    * @return Start-Parameter von Jameica.
    */
   public static StartupParams getStartupParams()
-	{
-		return app.params;
-	}
-  
+  {
+    return app.params;
+  }
+
   /**
    * Liefert das Startdatum der aktuellen Instanz.
    * @return Startdatum.
@@ -410,7 +410,7 @@ public final class Application {
       else
         app.controller = new GUI();
     }
-		return app.controller;
+    return app.controller;
   }
 
   /**
@@ -424,34 +424,34 @@ public final class Application {
   }
 
   /**
-	 * Speichert waehrend des Bootens einen Text.
-	 * Dieser wird dem Benutzer angezeigt, sowie die Anwendung mit dem Startvorgang fertig ist.
-	 * @param message der anzuzeigende Text.
-	 */
-	public static void addWelcomeMessage(String message)
-	{
-		if (app == null || message == null || message.length() == 0)
-			return;
-		app.welcomeMessages.add(message);
-	}
-  
-	/**
-	 * Liefert eine Liste aller bis dato angefallenen Welcome-Messages.
-	 * @return String-Array mit den Meldungen.
-	 */
-	public static String[] getWelcomeMessages()
-	{
-		if (app == null)
-			return new String[] {};
-		return (String[]) app.welcomeMessages.toArray(new String[app.welcomeMessages.size()]);
-	}
+   * Speichert waehrend des Bootens einen Text.
+   * Dieser wird dem Benutzer angezeigt, sowie die Anwendung mit dem Startvorgang fertig ist.
+   * @param message der anzuzeigende Text.
+   */
+  public static void addWelcomeMessage(String message)
+  {
+    if (app == null || message == null || message.length() == 0)
+      return;
+    app.welcomeMessages.add(message);
+  }
 
   /**
-	 * Liefert das Manifest von Jameica selbst.
+   * Liefert eine Liste aller bis dato angefallenen Welcome-Messages.
+   * @return String-Array mit den Meldungen.
+   */
+  public static String[] getWelcomeMessages()
+  {
+    if (app == null)
+      return new String[] {};
+    return (String[]) app.welcomeMessages.toArray(new String[app.welcomeMessages.size()]);
+  }
+
+  /**
+   * Liefert das Manifest von Jameica selbst.
    * @return Manifest von Jameica selbst.
    */
   public static Manifest getManifest()
-	{
+  {
     if (app.manifest == null)
     {
       try
@@ -465,7 +465,7 @@ public final class Application {
       }
     }
     return app.manifest;
-	}
+  }
 
   /**
    * Liefert die Build-Nummer, insofern sie ermittelbar ist.
@@ -511,6 +511,9 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
+ * Revision 1.85  2011/01/25 23:32:26  willuhn
+ * @I indention cleanup
+ *
  * Revision 1.84  2010/03/04 23:08:30  willuhn
  * @N Sauberes Programm-Ende, wenn der User den Startvorgang selbst abgebrochen hat
  *
