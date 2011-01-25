@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.85 $
- * $Date: 2011/01/25 23:32:26 $
+ * $Revision: 1.86 $
+ * $Date: 2011/01/25 23:33:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,7 +71,7 @@ public final class Application {
   public static void newInstance(StartupParams params) {
 
 
-    // Wir nehmen grundsaetzlich unseren eingenen Classloader.
+    // Wir nehmen grundsaetzlich unseren eigenen Classloader.
     MultipleClassLoader cl = new MultipleClassLoader();
     cl.addClassloader(Application.class.getClassLoader());
 
@@ -86,7 +86,7 @@ public final class Application {
   }
 
   /**
-   * Initialisiert die Instanz.#
+   * Initialisiert die Instanz.
    */
   private void init()
   {
@@ -511,7 +511,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
- * Revision 1.85  2011/01/25 23:32:26  willuhn
+ * Revision 1.86  2011/01/25 23:33:54  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.85  2011-01-25 23:32:26  willuhn
  * @I indention cleanup
  *
  * Revision 1.84  2010/03/04 23:08:30  willuhn
