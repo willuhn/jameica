@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.56 $
- * $Date: 2011/01/26 12:52:56 $
+ * $Revision: 1.57 $
+ * $Date: 2011/01/26 12:53:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -288,7 +288,7 @@ public final class ServiceFactory
         }
         catch (Throwable t)
         {
-          Logger.error("error while closing service " + name,t);
+          Logger.error("error while stopping service " + name,t);
         }
       }
     }
@@ -367,7 +367,10 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
- * Revision 1.56  2011/01/26 12:52:56  willuhn
+ * Revision 1.57  2011/01/26 12:53:26  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.56  2011-01-26 12:52:56  willuhn
  * @B NULL-Check fehlte
  *
  * Revision 1.55  2011-01-26 12:50:59  willuhn
