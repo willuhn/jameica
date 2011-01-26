@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.55 $
- * $Date: 2011/01/26 12:50:59 $
+ * $Revision: 1.56 $
+ * $Date: 2011/01/26 12:52:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -277,16 +277,14 @@ public final class ServiceFactory
         try
         {
           ServiceEntry entry = this.services.get(name);
-          Logger.info("closing service " + name);
-          
-          if (entry.remote)
-          {
-            Logger.debug("  remote, skipping");
+          if (entry == null || entry.service == null || entry.remote)
             continue;
-          }
           
           if (entry.service.isStarted())
+          {
+            Logger.info("  " + name);
             entry.service.stop(false);
+          }
         }
         catch (Throwable t)
         {
@@ -369,7 +367,10 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
- * Revision 1.55  2011/01/26 12:50:59  willuhn
+ * Revision 1.56  2011/01/26 12:52:56  willuhn
+ * @B NULL-Check fehlte
+ *
+ * Revision 1.55  2011-01-26 12:50:59  willuhn
  * @C ServiceFactory Refactoring (unnoetiges und mehrfaches Halten der Services und Zustaende
  * @B Beim Shutdown wurden nur die Services beendet, die die Service-Factory selbst gestartet hatte, nicht aber die vom User manuell gestarteten
  *
