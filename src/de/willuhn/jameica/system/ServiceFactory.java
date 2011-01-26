@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.52 $
- * $Date: 2008/04/10 13:36:14 $
+ * $Revision: 1.53 $
+ * $Date: 2011/01/26 00:29:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -196,28 +196,12 @@ public final class ServiceFactory
 		Class impl = null;
 		try
 		{
-			// Mal schauen, ob wir auch eine Implementierung dazu finden
-			Class[] impls = plugin.getResources().getClassLoader().getClassFinder().findImplementors(serviceClass);
-			if (impls != null && impls.length > 0)
-      {
-        // Wir nehmen die erste, die keine Inner-Class ist
-        boolean found = false;
-        for (int i=0;i<impls.length;++i)
-        {
-          found = true;
-          impl = impls[i];
-        }
-        
-        if (!found)
-        {
-          Logger.info("only inner classes as implementor found for " + serviceClass.getName());
-          impl = impls[0];
-        }
-      }
+			// Wir nehmen die erste Implementierung, dir wir finden
+			impl = plugin.getResources().getClassLoader().getClassFinder().findImplementors(serviceClass)[0];
 		}
-		catch (Throwable t)
+		catch (ClassNotFoundException e)
 		{
-      Logger.error("unable to find implementor for interface " + serviceClass.getName() + ", trying to load " + serviceClass.getName(),t);
+      Logger.warn("unable to find implementor for interface " + serviceClass.getName() + ", trying to load " + serviceClass.getName());
 		}
     
     if (impl == null)
@@ -383,6 +367,9 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
+ * Revision 1.53  2011/01/26 00:29:50  willuhn
+ * @R Bullshit-Code entfernt ;) 1. liefert findImplementors() nie NULL oder ein leeres Array und 2. filtert es bereits intern Inner-Classes aus. Die For-Schleife war ein historisches - und voellig unnoetiges - Ueberbleibsel ;)
+ *
  * Revision 1.52  2008/04/10 13:36:14  willuhn
  * @N Reihenfolge beim Laden/Initialisieren der Plugins geaendert.
  *
