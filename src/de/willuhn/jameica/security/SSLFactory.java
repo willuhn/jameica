@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.56 $
- * $Date: 2010/09/13 16:37:46 $
+ * $Revision: 1.57 $
+ * $Date: 2011/02/08 18:27:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.crypto.Cipher;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
@@ -54,6 +53,8 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
+import de.willuhn.jameica.security.crypto.Engine;
+import de.willuhn.jameica.security.crypto.RSAEngine;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -701,28 +702,16 @@ public class SSLFactory
 	
   /**
    * Verschluesselt die Daten aus is und schreibt sie in os.
+   * Warnung: Die Daten werden direkt mit RSA verschluesselt. Die Funktion eignet
+   * sich daher nur fuer sehr kleine Datenmengen - z.Bsp. fuer Passwoerter.
    * @param is InputStream mit den unverschluesselten Daten.
    * @param os OutputStream fuer die verschluesselten Daten.
    * @throws Exception
    */
   public void encrypt(InputStream is, OutputStream os) throws Exception
   {
-    Logger.debug("creating cipher");
-    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-    cipher.init(Cipher.ENCRYPT_MODE,getPublicKey());
-
-    Logger.debug("encrypting data");
-    int size = cipher.getBlockSize();
-    Logger.debug("using block size (in bytes): " + size);
-    byte[] buf = new byte[size];
-    int read = 0;
-    do
-    {
-      read = is.read(buf);
-      if (read > 0)
-        os.write(cipher.doFinal(buf,0,read));
-    }
-    while (read != -1);
+    Engine e = new RSAEngine();
+    e.encrypt(is,os);
   }
   
   /**
@@ -733,32 +722,18 @@ public class SSLFactory
    */
   public void decrypt(InputStream is, OutputStream os) throws Exception
   {
-    Logger.debug("creating cipher");
-    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
-    cipher.init(Cipher.DECRYPT_MODE,getPrivateKey());
-
-    int size = cipher.getBlockSize();
-    Logger.debug("using block size (in bytes): " + size);
-
-    Logger.debug("decrypting data");
-    byte[] buf = new byte[size];
-    int read = 0;
-    do
-    {
-      read = is.read(buf);
-      if (read > 0)
-      {
-        os.write(cipher.doFinal(buf,0,read));
-      }
-    }
-    while (read != -1);
+    Engine e = new RSAEngine();
+    e.decrypt(is,os);
   }
 }
 
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.56  2010/09/13 16:37:46  willuhn
+ * Revision 1.57  2011/02/08 18:27:53  willuhn
+ * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
+ *
+ * Revision 1.56  2010-09-13 16:37:46  willuhn
  * @B race condition beim allerersten Start
  *
  * Revision 1.55  2010-08-06 09:26:28  willuhn

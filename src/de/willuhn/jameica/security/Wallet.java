@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.14 $
- * $Date: 2008/02/05 19:14:06 $
+ * $Revision: 1.15 $
+ * $Date: 2011/02/08 18:27:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,9 +37,8 @@ import de.willuhn.logging.Logger;
  * verschluesselt abspeichern koennen.
  * 
  * HINWEIS: Das Wallet verwendet zum Verschluesseln den asymmetrischen
- * RSA-Algorithmus. Es ist aufgrund des Rechenaufwandes also nicht fuer
- * groessere Daten (Dateien, Streams, etc.) geeignet sondern typischerweise
- * fuer Passwoerter.
+ * RSA-Algorithmus. Es ist also nicht fuer groessere Daten (Dateien, Streams, etc.)
+ * geeignet sondern typischerweise fuer Passwoerter.
  * 
  * Will zum Beispiel ein Plugin irgendwelche Passwort-Informationen
  * sicher speichern, dann kann es mittels folgenden Codes ein
@@ -330,6 +329,9 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
+ * Revision 1.15  2011/02/08 18:27:53  willuhn
+ * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
+ *
  * Revision 1.14  2008/02/05 19:14:06  willuhn
  * @B BUGZILLA 546
  *
