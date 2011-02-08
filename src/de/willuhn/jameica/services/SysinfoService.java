@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SysinfoService.java,v $
- * $Revision: 1.4 $
- * $Date: 2010/12/03 15:57:40 $
+ * $Revision: 1.5 $
+ * $Date: 2011/02/08 15:08:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,6 +53,7 @@ public class SysinfoService implements Bootable
     }
     Logger.info("  Built-Date : " + Application.getBuildDate());
     Logger.info("  Buildnumber: " + Application.getBuildnumber());
+    Logger.info("  max. memory: " + (Runtime.getRuntime().maxMemory() / 1024 / 1024) + "mb");
 
     Logger.info("command line parameters");
     String[] args = Application.getStartupParams().getParams();
@@ -106,7 +107,10 @@ public class SysinfoService implements Bootable
 
 /**********************************************************************
  * $Log: SysinfoService.java,v $
- * Revision 1.4  2010/12/03 15:57:40  willuhn
+ * Revision 1.5  2011/02/08 15:08:17  willuhn
+ * @N Verfuegbaren Speicher (-Xmx) mit ausgeben
+ *
+ * Revision 1.4  2010-12-03 15:57:40  willuhn
  * *** empty log message ***
  *
  * Revision 1.3  2008/12/11 21:10:47  willuhn
