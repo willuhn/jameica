@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/02/08 18:27:53 $
+ * $Revision: 1.16 $
+ * $Date: 2011/02/09 09:47:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import de.willuhn.jameica.security.crypto.Engine;
+import de.willuhn.jameica.security.crypto.RSAEngine;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -56,9 +58,9 @@ import de.willuhn.logging.Logger;
 public final class Wallet
 {
 
-	private Class clazz 	= null;
-
+	private Class clazz 	       = null;
 	private Hashtable	serialized = new Hashtable();
+	private Engine engine        = new RSAEngine();
   
   /**
 	 * ct.
@@ -71,6 +73,16 @@ public final class Wallet
 		this.clazz = clazz;
 		read();
 	}
+  
+  /**
+   * Legt fest, mit welcher Crypto-Engine die Speicherung erfolgen soll.
+   * @param engine die zu verwendende Engine.
+   */
+  public void setEngine(Engine engine)
+  {
+    if (engine != null)
+      this.engine = engine;
+  }
 
 	/**
 	 * Speichert einen Datensatz verschluesselt in dem Wallet.
@@ -228,7 +240,7 @@ public final class Wallet
 
     InputStream is = null;
 
-    Logger.info("reading xml-wallet file " + f.getAbsolutePath());
+    Logger.info("reading xml-wallet file " + f.getAbsolutePath() + " via " + this.engine.getClass().getSimpleName());
     try
     {
       is = new BufferedInputStream(new FileInputStream(f));
@@ -236,7 +248,7 @@ public final class Wallet
       // Einlesen und entschluesseln
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-      Application.getSSLFactory().decrypt(is,bos);
+      this.engine.decrypt(is,bos);
 
       Logger.debug("deserializing xml-wallet");
       ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
@@ -277,7 +289,7 @@ public final class Wallet
 	{
     synchronized(serialized)
     {
-      Logger.info("writing wallet file " + getFilename());
+      Logger.info("writing wallet file " + getFilename() + " via " + this.engine.getClass().getSimpleName());
 
       // Wir schreiben die Daten erstmal in eine Temp-Datei
       // und kopieren sie danach.
@@ -301,7 +313,7 @@ public final class Wallet
       ByteArrayInputStream bis    = new ByteArrayInputStream(bos.toByteArray());
       OutputStream os             = new BufferedOutputStream(new FileOutputStream(tempfile));
 
-      Application.getSSLFactory().encrypt(bis,os);
+      this.engine.encrypt(bis,os);
 
       // Wir koennen das Flushen und Schliessen nicht im finally() machen,
       // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
@@ -329,7 +341,10 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
- * Revision 1.15  2011/02/08 18:27:53  willuhn
+ * Revision 1.16  2011/02/09 09:47:35  willuhn
+ * @N Im Wallet kann jetzt die Crypto-Engine angegeben werden
+ *
+ * Revision 1.15  2011-02-08 18:27:53  willuhn
  * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
  *
  * Revision 1.14  2008/02/05 19:14:06  willuhn
