@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SysinfoService.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/02/08 15:08:17 $
+ * $Revision: 1.6 $
+ * $Date: 2011/02/09 11:24:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 
 package de.willuhn.jameica.services;
 
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -54,6 +55,7 @@ public class SysinfoService implements Bootable
     Logger.info("  Built-Date : " + Application.getBuildDate());
     Logger.info("  Buildnumber: " + Application.getBuildnumber());
     Logger.info("  max. memory: " + (Runtime.getRuntime().maxMemory() / 1024 / 1024) + "mb");
+    Logger.info("  sys charset: " + Charset.defaultCharset().name());
 
     Logger.info("command line parameters");
     String[] args = Application.getStartupParams().getParams();
@@ -107,7 +109,10 @@ public class SysinfoService implements Bootable
 
 /**********************************************************************
  * $Log: SysinfoService.java,v $
- * Revision 1.5  2011/02/08 15:08:17  willuhn
+ * Revision 1.6  2011/02/09 11:24:45  willuhn
+ * @N Sys-Charset mit ausgeben
+ *
+ * Revision 1.5  2011-02-08 15:08:17  willuhn
  * @N Verfuegbaren Speicher (-Xmx) mit ausgeben
  *
  * Revision 1.4  2010-12-03 15:57:40  willuhn
