@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/AbstractPasswordBasedEngine.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/02/09 11:25:08 $
+ * $Revision: 1.2 $
+ * $Date: 2011/02/09 11:25:23 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -132,7 +132,6 @@ public abstract class AbstractPasswordBasedEngine implements Engine
       // Neu erstellen
       Logger.debug("creating random password");
       password = RandomStringUtils.randomAscii(len).toCharArray();
-      System.out.println(password);
       wallet.set(getAlgorithm() + ".password",password);
     }
     return password;
@@ -163,7 +162,10 @@ public abstract class AbstractPasswordBasedEngine implements Engine
 
 /**********************************************************************
  * $Log: AbstractPasswordBasedEngine.java,v $
- * Revision 1.1  2011/02/09 11:25:08  willuhn
+ * Revision 1.2  2011/02/09 11:25:23  willuhn
+ * @R Debug-Ausgabe entfernt
+ *
+ * Revision 1.1  2011-02-09 11:25:08  willuhn
  * @C Code-Cleanup
  *
  **********************************************************************/
