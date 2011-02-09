@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/AbstractPasswordBasedEngine.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/02/09 11:25:23 $
+ * $Revision: 1.3 $
+ * $Date: 2011/02/09 12:26:51 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -26,6 +26,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.security.Wallet;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.Base64;
 
 /**
  * Abstrakte Basis-Implementierung einer Passwort-basierten Crypto-Engine.
@@ -82,7 +83,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
   private synchronized Wallet getWallet() throws Exception
   {
     if (this.wallet == null)
-      this.wallet = new Wallet(AbstractPasswordBasedEngine.class);
+      this.wallet = new Wallet(this.getClass(), new RSAEngine());
     return this.wallet;
   }
   
@@ -99,17 +100,17 @@ public abstract class AbstractPasswordBasedEngine implements Engine
     
     // Checken, ob wir schon eins haben.
     Wallet wallet = this.getWallet();
-    byte[] salt = (byte[]) wallet.get(getAlgorithm() + ".salt");
-    if (salt == null)
-    {
-      // Neu erstellen
-      Logger.debug("creating new salt");
-      salt = new byte[len];
-      SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-      random.setSeed(System.nanoTime());
-      random.nextBytes(salt);
-      wallet.set(getAlgorithm() + ".salt",salt);
-    }
+    String s = (String) wallet.get("salt"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
+    if (s != null)
+      return Base64.decode(s);
+      
+    // Neu erstellen
+    Logger.debug("creating new salt");
+    byte[] salt = new byte[len];
+    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+    random.setSeed(System.nanoTime());
+    random.nextBytes(salt);
+    wallet.set("salt",Base64.encode(salt));
     return salt;
   }
   
@@ -126,15 +127,15 @@ public abstract class AbstractPasswordBasedEngine implements Engine
 
     // Checken, ob wir schon eins haben.
     Wallet wallet = this.getWallet();
-    char[] password = (char[]) wallet.get(getAlgorithm() + ".password");
-    if (password == null)
-    {
-      // Neu erstellen
-      Logger.debug("creating random password");
-      password = RandomStringUtils.randomAscii(len).toCharArray();
-      wallet.set(getAlgorithm() + ".password",password);
-    }
-    return password;
+    String s = (String) wallet.get("password"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
+    if (s != null)
+      return s.toCharArray();
+    
+    // Neu erstellen
+    Logger.debug("creating random password");
+    s = RandomStringUtils.randomAscii(len);
+    wallet.set("password",s);
+    return s.toCharArray();
   }
   
   /**
@@ -162,7 +163,10 @@ public abstract class AbstractPasswordBasedEngine implements Engine
 
 /**********************************************************************
  * $Log: AbstractPasswordBasedEngine.java,v $
- * Revision 1.2  2011/02/09 11:25:23  willuhn
+ * Revision 1.3  2011/02/09 12:26:51  willuhn
+ * @C Salt und Passwort NICHT als char[]/byte[] im RSA-Wallet speichern. Der XML-Encoder verwendet fuer jedes char/byte ein XML-Element, was dazu fuehrt, dass das Wallet auf eine kritische Groesse aufgeblasen wird
+ *
+ * Revision 1.2  2011-02-09 11:25:23  willuhn
  * @R Debug-Ausgabe entfernt
  *
  * Revision 1.1  2011-02-09 11:25:08  willuhn
