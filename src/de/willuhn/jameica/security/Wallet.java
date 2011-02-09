@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.16 $
- * $Date: 2011/02/09 09:47:35 $
+ * $Revision: 1.17 $
+ * $Date: 2011/02/09 12:27:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,11 +69,23 @@ public final class Wallet
    */
   public Wallet(Class clazz) throws Exception
 	{
-		Logger.info("creating wallet for class " + clazz.getName());
-		this.clazz = clazz;
-		read();
+    this(clazz,null);
 	}
-  
+
+  /**
+   * ct.
+   * @param clazz Klasse, fuer die das Wallet gilt.
+   * @param engine die zu verwendende Crypto-Engine.
+   * @throws Exception
+   */
+  public Wallet(Class clazz, Engine engine) throws Exception
+  {
+    this.clazz = clazz;
+    this.setEngine(engine);
+    Logger.debug("creating wallet " + clazz.getName() + " via " + this.engine.getClass().getSimpleName());
+    read();
+  }
+
   /**
    * Legt fest, mit welcher Crypto-Engine die Speicherung erfolgen soll.
    * @param engine die zu verwendende Engine.
@@ -240,7 +252,7 @@ public final class Wallet
 
     InputStream is = null;
 
-    Logger.info("reading xml-wallet file " + f.getAbsolutePath() + " via " + this.engine.getClass().getSimpleName());
+    Logger.info("reading wallet file " + f.getAbsolutePath() + " via " + this.engine.getClass().getSimpleName());
     try
     {
       is = new BufferedInputStream(new FileInputStream(f));
@@ -250,12 +262,12 @@ public final class Wallet
 
       this.engine.decrypt(is,bos);
 
-      Logger.debug("deserializing xml-wallet");
+      Logger.debug("deserializing wallet");
       ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
       XMLDecoder xml = new XMLDecoder(bis);
       this.serialized = (Hashtable) xml.readObject();
       xml.close();
-      Logger.debug("reading xml-wallet done");
+      Logger.debug("reading wallet done");
       return;
     }
     finally
@@ -302,7 +314,7 @@ public final class Wallet
       // Objekt serialisieren
       ByteArrayOutputStream bos   = new ByteArrayOutputStream();
 
-      Logger.debug("serializing xml-wallet");
+      Logger.debug("serializing wallet");
       
       // BUGZILLA 109 http://www.willuhn.de/bugzilla/show_bug.cgi?id=109
       // Wir speichern nur noch im neuen XML-Format
@@ -332,7 +344,7 @@ public final class Wallet
       // OK, Schreiben war erfolgreich. Jetzt kopieren wir die Temp-Datei rueber.
       file.delete();
       tempfile.renameTo(file);
-      Logger.debug("writing xml-wallet done");
+      Logger.debug("writing wallet done");
     }
 	}
   
@@ -341,53 +353,12 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
- * Revision 1.16  2011/02/09 09:47:35  willuhn
+ * Revision 1.17  2011/02/09 12:27:26  willuhn
+ * @N Neuer Konstruktor zur expliziten Angabe der Engine VOR dem Lesen
+ *
+ * Revision 1.16  2011-02-09 09:47:35  willuhn
  * @N Im Wallet kann jetzt die Crypto-Engine angegeben werden
  *
  * Revision 1.15  2011-02-08 18:27:53  willuhn
  * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
- *
- * Revision 1.14  2008/02/05 19:14:06  willuhn
- * @B BUGZILLA 546
- *
- * Revision 1.13  2007/10/22 22:58:24  willuhn
- * @R Altes Wallet-Format (aus Jameica 1.2) entfernt
- *
- * Revision 1.12  2006/10/06 13:07:46  willuhn
- * @B Bug 185, 211
- *
- * Revision 1.11  2006/08/03 15:33:08  willuhn
- * @N Bug 62
- *
- * Revision 1.10  2006/03/28 23:04:06  web0
- * *** empty log message ***
- *
- * Revision 1.9  2005/08/04 22:17:26  web0
- * @N migration to new wallet format (xml)
- * @B SWT layout bug on macos (GridLayout vs. FillLayout)
- *
- * Revision 1.8  2005/07/15 09:20:49  web0
- * *** empty log message ***
- *
- * Revision 1.7  2005/03/21 23:02:16  web0
- * @B removed debug code
- *
- * Revision 1.6  2005/03/19 18:17:37  web0
- * @B bloeder CipherInputStream
- *
- * Revision 1.5  2005/03/16 18:16:44  web0
- * @B bug 25
- *
- * Revision 1.4  2005/03/16 18:13:57  web0
- * @B bug 25
- *
- * Revision 1.3  2005/02/01 17:15:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2005/01/30 20:49:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2005/01/19 02:14:00  willuhn
- * @N Wallet zum Verschluesseln von Benutzerdaten
- *
  **********************************************************************/
