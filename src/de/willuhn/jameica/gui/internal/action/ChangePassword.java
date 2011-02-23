@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/ChangePassword.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/03/15 16:25:32 $
- * $Author: web0 $
+ * $Revision: 1.4 $
+ * $Date: 2011/02/23 11:50:20 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -33,9 +33,7 @@ public class ChangePassword implements Action
   {
   	try
   	{
-			Logger.warn("trying to change master password");
   		Application.getSSLFactory().changePassword();
-			Logger.warn("master password successfully changed");
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Master-Passwort erfolgreich geändert."),StatusBarMessage.TYPE_SUCCESS));
   	}
   	catch (OperationCanceledException oe)
@@ -53,6 +51,9 @@ public class ChangePassword implements Action
 
 /**********************************************************************
  * $Log: ChangePassword.java,v $
+ * Revision 1.4  2011/02/23 11:50:20  willuhn
+ * @R redundante Log-Ausgaben
+ *
  * Revision 1.3  2006/03/15 16:25:32  web0
  * @N Statusbar refactoring
  *
