@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.31 $
- * $Date: 2010/11/22 11:32:04 $
+ * $Revision: 1.32 $
+ * $Date: 2011/02/23 15:08:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -150,10 +150,13 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 	public void changePassword() throws Exception
 	{
 		NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
-		p.setText(Application.getI18n().tr(
-			"Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\n" +
-			"Es wird anschließend bei jedem Start von Jameica benötigt."));
-		p.setTitle(Application.getI18n().tr("Neues Jameica Master-Passwort"));
+
+    String text = Application.getI18n().tr("Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\n" +
+                                           "Es wird anschließend bei jedem Start von Jameica benötigt.");
+    text = Customizing.SETTINGS.getString("application.changepassword.text",text);
+		
+		p.setText(text);
+		p.setTitle(Application.getI18n().tr("Neues Master-Passwort"));
 
 		try
 		{
@@ -461,7 +464,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.31  2010/11/22 11:32:04  willuhn
+ * Revision 1.32  2011/02/23 15:08:38  willuhn
+ * @C Text im Dialog "Master-Passwort" aendern customizable
+ *
+ * Revision 1.31  2010-11-22 11:32:04  willuhn
  * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
  *
  * Revision 1.30  2010-10-11 15:26:43  willuhn
