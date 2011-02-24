@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaSecurityManager.java,v $
- * $Revision: 1.10 $
- * $Date: 2010/10/04 13:49:41 $
+ * $Revision: 1.11 $
+ * $Date: 2011/02/24 09:21:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,7 +38,7 @@ public class JameicaSecurityManager extends SecurityManager
     try
     {
       jameicaPath = new File(".").getCanonicalPath() + File.separator; // current dir
-      Logger.info("write permissions disabled for " + jameicaPath);
+      Logger.info("protecting program dir " + jameicaPath);
     }
     catch (IOException e)
     {
@@ -115,7 +115,10 @@ public class JameicaSecurityManager extends SecurityManager
 
 /*********************************************************************
  * $Log: JameicaSecurityManager.java,v $
- * Revision 1.10  2010/10/04 13:49:41  willuhn
+ * Revision 1.11  2011/02/24 09:21:38  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.10  2010-10-04 13:49:41  willuhn
  * @R Schreib-Support wieder entfernt - wird doch nicht gebraucht
  *
  * Revision 1.8  2009-06-17 16:58:51  willuhn
