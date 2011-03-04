@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DirectoryInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/02/29 01:12:30 $
+ * $Revision: 1.2 $
+ * $Date: 2011/03/04 16:30:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -40,6 +41,7 @@ public class DirectoryInput extends ButtonInput
   public DirectoryInput(String dir)
   {
     this.value = dir;
+    this.setButtonImage(SWTUtil.getImage("folder.png"));
     addButtonListener(new Listener()
     {
       public void handleEvent(Event event)
@@ -98,6 +100,9 @@ public class DirectoryInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DirectoryInput.java,v $
+ * Revision 1.2  2011/03/04 16:30:51  willuhn
+ * @C Folder-Icon statt "..."
+ *
  * Revision 1.1  2008/02/29 01:12:30  willuhn
  * @N Erster Code fuer neues Backup-System
  * @N DirectoryInput
