@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.13 $
- * $Date: 2010/11/22 11:36:12 $
+ * $Revision: 1.14 $
+ * $Date: 2011/03/04 18:13:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -54,6 +54,7 @@ public class StartupParams
 
   private boolean noninteractive = false;
   private boolean ignoreLockfile = false;
+  private boolean askWorkdir     = false;
   
   private String[] params   = null;
 
@@ -79,7 +80,8 @@ public class StartupParams
 		options.addOptionGroup(mode);
 
 		options.addOption("h","help",false,"Gibt diesen Hilfe-Text aus");
-		options.addOption("f","file",true,"Optionale Angabe des Datenverzeichnisses (Workdir)");
+		options.addOption("f","file",true,"Optionale Angabe des Benutzer-Verzeichnisses (Workdir)");
+    options.addOption("a","ask",false,"Fragt beim Start nach dem zu verwendenden Benutzer-Verzeichnis. Wird im Server-Mode ignoriert");
     options.addOption("u","username",true,"Optionale Angabe des Benutzernamens");
 		options.addOption("p","password",true,"Optionale Angabe des Master-Passworts");
     options.addOption("w","passwordfile",true,"Optionale Angabe des Master-Passworts, welches sich in der angegebenen Datei befindet");
@@ -96,7 +98,7 @@ public class StartupParams
 
 			if (line.hasOption("h"))
 				printHelp();
-			
+
 			if (line.hasOption("d"))
 			{
 				Logger.info("starting in SERVER mode");
@@ -112,7 +114,14 @@ public class StartupParams
 				Logger.info("starting in STANDALONE mode");
 			}
 
-      if (this.mode == MODE_SERVER && line.hasOption("n"))
+      if (this.mode != MODE_SERVER && line.hasOption("a"))
+      {
+        Logger.info("asking user for work dir");
+        this.askWorkdir = true;
+      }
+      
+
+			if (this.mode == MODE_SERVER && line.hasOption("n"))
       {
         Logger.info("activating noninteractive mode");
         this.noninteractive = true;
@@ -226,6 +235,15 @@ public class StartupParams
 	}
   
   /**
+   * Liefert true, wenn explizit nach dem Benutzer-Verzeichnis gefragt werden soll.
+   * @return true, wenn explizit nach dem Benutzer-Verzeichnis gefragt werden soll.
+   */
+  public boolean isAskWorkDir()
+  {
+    return this.askWorkdir;
+  }
+
+  /**
    * Liefert true, wenn Jameica im nichtinteraktiven Server-Mode
    * laeuft und damit keine direkte Interaktion mit dem Benutzer ueber
    * die Konsole moeglich ist.
@@ -258,7 +276,10 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
- * Revision 1.13  2010/11/22 11:36:12  willuhn
+ * Revision 1.14  2011/03/04 18:13:38  willuhn
+ * @N Erster Code fuer einen Workdir-Chooser
+ *
+ * Revision 1.13  2010-11-22 11:36:12  willuhn
  * *** empty log message ***
  *
  * Revision 1.12  2010-11-22 11:32:04  willuhn
