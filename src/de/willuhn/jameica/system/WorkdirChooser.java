@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Attic/WorkdirChooser.java,v $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
  * $Revision: 1.1 $
- * $Date: 2011/03/04 18:13:38 $
+ * $Date: 2011/03/07 12:52:11 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -9,14 +9,18 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.gui;
+package de.willuhn.jameica.system;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
@@ -36,24 +40,45 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
 /**
- * Hilfsklasse zum Erfragen des Benutzerverzeichnisses.
+ * Ermittelt das zu verwendende Arbeitsverzeichnis durch Nachfrage beim User.
  */
 public class WorkdirChooser
 {
   private final static int WINDOW_WIDTH = 450;
  
-  private Display display = null;
-  private Shell shell     = null;
-  private Text dir        = null;
-  private Label error     = null;
-  private Button check    = null;
+  private Properties props = null;
+  private Display display  = null;
+  private Shell shell      = null;
+  private Text dir         = null;
+  private Label error      = null;
+  private Button check     = null;
   
+  /**
+   * Liefert das zu verwendende Arbeitsverzeichnis.
+   * @return das zu verwendende Arbeitsverzeichnis.
+   */
   public String getWorkDir()
   {
+    // Soll der User ueberhaupt gefragt werden?
+    if (!Application.getStartupParams().isAskWorkDir())
+      return Application.getStartupParams().getWorkDir(); // Ne, soll er nicht
+    
+    // Wenn der User die Auswahl gespeichert hat, fragen wir nicht mehr. Aber
+    // nur, wenn wir auch wirklich was haben
+    String ask = getProps().getProperty("ask","true");
+    if (ask != null && !Boolean.parseBoolean(ask.toLowerCase()))
+    {
+      // OK, der User hat die Auswahl mal gespeichert. Mal schauen,
+      // ob er auch was eingegeben hatte
+      String dir = getProps().getProperty("dir",null);
+      if (dir != null && dir.trim().length() > 0)
+        return dir; // Ja, wir haben auch wirklich etwas
+    }
+    
+    // OK, wir fragen den User
     this.display = Display.getDefault();
     this.shell = new Shell(display,SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
 
@@ -63,16 +88,7 @@ public class WorkdirChooser
     this.shell.addShellListener(new ShellAdapter() {
       public void shellClosed(ShellEvent e)
       {
-        System.exit(1);
-      }
-    });
-    this.shell.addKeyListener(new KeyAdapter() {
-      public void keyReleased(KeyEvent e) {
-        if (e.keyCode == SWT.ESC)
-        {
-          close();
-          System.exit(1);
-        }
+        e.doit = false; // Wir wollen nur das Schliessen ueber das Kreuz rechts oben verhindern
       }
     });
     
@@ -87,7 +103,8 @@ public class WorkdirChooser
 
     // Zeile 2
     {
-      final String suggest = this.getDir();
+      String s = this.getProps().getProperty("dir",null);
+      final String suggest = s != null && s.length() > 0 ? s : Application.getStartupParams().getWorkDir();
 
       Label label = new Label(this.shell,SWT.NONE);
       label.setText("Benutzer-Ordner");
@@ -120,24 +137,24 @@ public class WorkdirChooser
 
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.horizontalSpan = 2;
-      this.check = new Button(this.shell,SWT.CHECK);
-      this.check.setText("Künftig immer diesen Ordner verwenden");
-      this.check.setLayoutData(gd);
-    }
-    
-    // Zeile 3
-    {
-      Label dummy = new Label(this.shell,SWT.NONE);
-      dummy.setLayoutData(new GridData(GridData.BEGINNING));
-
-      GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-      gd.horizontalSpan = 2;
       this.error = new Label(this.shell,SWT.NONE);
       this.error.setForeground(new Color(this.display,250,10,10));
       this.error.setLayoutData(gd);
     }
 
 
+    // Zeile 4
+    {
+      Label dummy = new Label(this.shell,SWT.NONE);
+      dummy.setLayoutData(new GridData(GridData.BEGINNING));
+
+      GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+      gd.horizontalSpan = 2;
+      this.check = new Button(this.shell,SWT.CHECK);
+      this.check.setText("Künftig immer diesen Ordner verwenden");
+      this.check.setLayoutData(gd);
+    }
+    
     // Zeile 5
     {
       GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -190,7 +207,7 @@ public class WorkdirChooser
       if (!display.readAndDispatch()) display.sleep();
     }
     
-    return getDir();
+    return getProps().getProperty("dir",Application.getStartupParams().getWorkDir());
   }
   
   /**
@@ -215,6 +232,12 @@ public class WorkdirChooser
    */
   private void apply()
   {
+    if (this.dir == null || this.dir.isDisposed())
+    {
+      Logger.warn("dialog allready disposed");
+      return;
+    }
+    
     String dir = this.dir.getText();
     
     if (dir == null || dir.length() == 0)
@@ -231,7 +254,42 @@ public class WorkdirChooser
       return;
     }
     
+    if (!file.canWrite())
+    {
+      this.error.setText("Sie besitzen keinen Schreibzugriff in diesem Ordner.");
+      return;
+    }
+    
     // Scheint alles i.O.
+    // Wir speichern die Auswahl
+    this.props.setProperty("dir",dir);
+    if (this.check != null && !this.check.isDisposed())
+      this.props.setProperty("ask",Boolean.toString(!this.check.getSelection()));
+    
+    // Datei abspeichern
+    OutputStream os = null;
+    File f = new File(System.getProperty("user.home"),".jameica.properties");
+    try
+    {
+      Logger.info("writing " + f);
+      os = new BufferedOutputStream(new FileOutputStream(f));
+      this.props.store(os,"created by " + System.getProperty("user.name"));
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to store " + f + " - ignoring",e);
+    }
+    finally
+    {
+      if (os != null)
+      {
+        try
+        {
+          os.close();
+        }
+        catch (Exception e) {/*ignore*/}
+      }
+    }
     close();
   }
   
@@ -268,12 +326,42 @@ public class WorkdirChooser
   }
   
   /**
-   * Liefert das zuletzt verwendete Verzeichnis oder das via -f angegebene.
-   * @return das 
+   * Liefert die Properties-Datei, in der wir die Einstellungen speichern.
+   * @return die Properties-Datei.
    */
-  private String getDir()
+  private synchronized Properties getProps()
   {
-    return Application.getStartupParams().getWorkDir();
+    if (this.props == null)
+    {
+      this.props = new Properties();
+      File f = new File(System.getProperty("user.home"),".jameica.properties");
+      if (f.exists() && f.canRead() && f.isFile())
+      {
+        Logger.info("reading " + f);
+        InputStream is = null;
+        try
+        {
+          is = new BufferedInputStream(new FileInputStream(f));
+          this.props.load(is);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to load " + f + " - ignoring file",e);
+        }
+        finally
+        {
+          if (is != null)
+          {
+            try
+            {
+              is.close();
+            }
+            catch (Exception e) {/*ignore*/}
+          }
+        }
+      }
+    }
+    return this.props;
   }
 }
 
@@ -281,7 +369,10 @@ public class WorkdirChooser
 
 /**********************************************************************
  * $Log: WorkdirChooser.java,v $
- * Revision 1.1  2011/03/04 18:13:38  willuhn
+ * Revision 1.1  2011/03/07 12:52:11  willuhn
+ * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
+ *
+ * Revision 1.1  2011-03-04 18:13:38  willuhn
  * @N Erster Code fuer einen Workdir-Chooser
  *
  **********************************************************************/

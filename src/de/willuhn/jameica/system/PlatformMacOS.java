@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/PlatformMacOS.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/04/23 23:10:14 $
+ * $Revision: 1.2 $
+ * $Date: 2011/03/07 12:52:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,9 +35,8 @@ public class PlatformMacOS extends Platform
     if (this.workdir != null)
       return this.workdir;
 
-    // Wenn explizit ein Verzeichnis angegeben ist, nehmen wir
-    // das auf jeden Fall.
-    String dir = Application.getStartupParams().getWorkDir();
+    // Mal schauen, ob ein explizites angegeben ist
+    String dir = new WorkdirChooser().getWorkDir();
     
     if (dir == null)
     {
@@ -77,6 +76,9 @@ public class PlatformMacOS extends Platform
 
 /**********************************************************************
  * $Log: PlatformMacOS.java,v $
+ * Revision 1.2  2011/03/07 12:52:11  willuhn
+ * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
+ *
  * Revision 1.1  2008/04/23 23:10:14  willuhn
  * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
  * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica

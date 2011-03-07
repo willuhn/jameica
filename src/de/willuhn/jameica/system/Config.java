@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.49 $
- * $Date: 2010/10/10 21:19:47 $
+ * $Revision: 1.50 $
+ * $Date: 2011/03/07 12:52:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,27 +58,23 @@ public final class Config
    * Initialisiert die Konfiguration.
    * @throws Exception
    */
-  protected void init() throws Exception
+  protected synchronized void init() throws Exception
   {
     // Das init() koennen wir nicht im Konstruktor
     // machen, weil es sonst eine Rekursion gibt.
-    // denn unten erzeugen wir ein Settings-Objekt,
+    // denn wir erzeugen hier ein Settings-Objekt,
     // welches wiederrum Application.getConfig()
     // aufruft, um an das Work-Dir zu kommen ;)
-    if (this.workDir != null)
-      return;
-    
-    this.workDir = Application.getPlatform().getWorkdir();
-
-    this.configDir  = new File(this.workDir,"cfg");
-    if (!this.configDir.exists())
+    if (this.workDir == null)
     {
-      Logger.info("creating " + this.configDir.getAbsolutePath());
-      this.configDir.mkdir();
+      this.workDir = Application.getPlatform().getWorkdir();
     }
 
-    this.settings = new Settings(this.getClass());
-    this.settings.setStoreWhenRead(true);
+    if (this.settings == null)
+    {
+      this.settings = new Settings(this.getClass());
+      this.settings.setStoreWhenRead(true);
+    }
   }
 
   /**
@@ -585,8 +581,17 @@ public final class Config
    * Liefert den Pfad zum Config-Verzeichnis.
    * @return Pfad zum Config-Verzeichnis.
    */
-  public String getConfigDir()
+  public synchronized String getConfigDir()
   {
+    if (this.configDir == null)
+    {
+      this.configDir  = new File(this.getWorkDir(),"cfg");
+      if (!this.configDir.exists())
+      {
+        Logger.info("creating " + this.configDir.getAbsolutePath());
+        this.configDir.mkdir();
+      }
+    }
     return configDir.getAbsolutePath();
   }
 
@@ -726,7 +731,10 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
- * Revision 1.49  2010/10/10 21:19:47  willuhn
+ * Revision 1.50  2011/03/07 12:52:11  willuhn
+ * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
+ *
+ * Revision 1.49  2010-10-10 21:19:47  willuhn
  * @C Default-Wert fuer "System-Einstellungen fuer Proxy verwenden" geaendert
  *
  * Revision 1.48  2010-09-29 21:39:07  willuhn

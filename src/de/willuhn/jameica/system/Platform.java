@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/11/04 15:35:03 $
+ * $Revision: 1.8 $
+ * $Date: 2011/03/07 12:52:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,8 +93,8 @@ public class Platform
     if (this.workdir != null)
       return this.workdir;
     
-    // Mal schauen, ob eines via Commandline uebergeben wurde
-    String dir = Application.getStartupParams().getWorkDir();
+    // Mal schauen, ob ein explizites angegeben ist
+    String dir = new WorkdirChooser().getWorkDir();
     
     if (dir != null && dir.length() > 0)
       this.workdir = new File(dir);
@@ -190,7 +190,10 @@ public class Platform
 
 /**********************************************************************
  * $Log: Platform.java,v $
- * Revision 1.7  2010/11/04 15:35:03  willuhn
+ * Revision 1.8  2011/03/07 12:52:11  willuhn
+ * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
+ *
+ * Revision 1.7  2010-11-04 15:35:03  willuhn
  * @B BUGZULLA 942
  *
  * Revision 1.6  2010-10-12 09:22:36  willuhn
