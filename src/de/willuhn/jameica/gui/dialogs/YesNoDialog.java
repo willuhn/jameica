@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
- * $Revision: 1.10 $
- * $Date: 2005/08/25 21:18:24 $
- * $Author: web0 $
+ * $Revision: 1.11 $
+ * $Date: 2011/03/07 10:33:51 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -13,29 +13,22 @@
 package de.willuhn.jameica.gui.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SimpleContainer;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog, der nur einen Text und einen Ja/Nein-Button enthaelt.
  */
-public class YesNoDialog extends AbstractDialog {
-
-	private Composite comp = null;
-	private Label label = null;
-	private Button yes = null;
-	private Button no = null;
-	
-	private String text = null;
-
+public class YesNoDialog extends AbstractDialog
+{
+	private String text    = null;
 	private boolean choice = false;
 
 	/**
@@ -71,41 +64,53 @@ public class YesNoDialog extends AbstractDialog {
    */
   protected void paint(Composite parent) throws Exception
 	{
-		comp = new Composite(parent,SWT.NONE);
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		comp.setLayout(new GridLayout(2,false));
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
-		
-		label = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
-		label.setText(getText() + "\n");
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-		
-		yes = GUI.getStyleFactory().createButton(comp);
-		yes.setText("   " + i18n.tr("Ja") + "   ");
-		yes.setLayoutData(new GridData(GridData.BEGINNING));
-		yes.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				choice = true;
-				close();
-			}
-		});
+    // Bei Druck auf ESC interpretieren wir das als NEIN.
+    parent.addKeyListener(new KeyAdapter() {
+      public void keyReleased(KeyEvent e) {
+        if (e.keyCode == SWT.ESC)
+        {
+          choice = false;
+          close();
+        }
+      }
+    });
 
-		no = GUI.getStyleFactory().createButton(comp);
-		no.setText("   " + i18n.tr("Nein") + "   ");
-		no.setLayoutData(new GridData(GridData.BEGINNING));
-		no.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				choice = false;
-				close();
-			}
-		});
+    Container container = new SimpleContainer(parent);
+    container.addText(this.text,true);
+		
+    extend(container);
+    
+    ButtonArea buttons = new ButtonArea();
+    
+    buttons.addButton("   " + i18n.tr("Ja") + "   ",new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        choice = true;
+        close();
+      }
+    },null,false,"ok.png");
+
+    buttons.addButton("   " + i18n.tr("Nein") + "   ", new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        choice = false;
+        close();
+      }
+    },null,false,"process-stop.png");
+    
+    container.addButtonArea(buttons);
 	}
+
+  /**
+   * Kann von abgeleiteten Dialogen ueberschrieben werden, um
+   * den Dialog noch zu erweitern.
+   * Angezeigt wird die Erweiterung dann direkt ueber den Buttons.
+   * @param container der Container.
+   * @throws Exception
+   */
+  protected void extend(Container container) throws Exception
+  {
+  }
 
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
@@ -118,6 +123,9 @@ public class YesNoDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: YesNoDialog.java,v $
+ * Revision 1.11  2011/03/07 10:33:51  willuhn
+ * @N BUGZILLA 999
+ *
  * Revision 1.10  2005/08/25 21:18:24  web0
  * @C changes accoring to findbugs eclipse plugin
  *
