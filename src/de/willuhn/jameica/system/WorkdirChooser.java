@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/03/07 12:52:11 $
+ * $Revision: 1.2 $
+ * $Date: 2011/03/08 13:43:46 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -62,10 +62,6 @@ public class WorkdirChooser
    */
   public String getWorkDir()
   {
-    // Soll der User ueberhaupt gefragt werden?
-    if (!Application.getStartupParams().isAskWorkDir())
-      return Application.getStartupParams().getWorkDir(); // Ne, soll er nicht
-    
     // Wenn der User die Auswahl gespeichert hat, fragen wir nicht mehr. Aber
     // nur, wenn wir auch wirklich was haben
     String ask = getProps().getProperty("ask","true");
@@ -75,8 +71,13 @@ public class WorkdirChooser
       // ob er auch was eingegeben hatte
       String dir = getProps().getProperty("dir",null);
       if (dir != null && dir.trim().length() > 0)
+      {
+        Logger.info("using last used workdir " + dir);
         return dir; // Ja, wir haben auch wirklich etwas
+      }
     }
+
+    Logger.info("asking user for workdir");
     
     // OK, wir fragen den User
     this.display = Display.getDefault();
@@ -103,8 +104,15 @@ public class WorkdirChooser
 
     // Zeile 2
     {
-      String s = this.getProps().getProperty("dir",null);
-      final String suggest = s != null && s.length() > 0 ? s : Application.getStartupParams().getWorkDir();
+      String s = this.getProps().getProperty("dir",null);       // Prio 1: Das beim letzten Mal ausgewaehlte
+      if (s == null || s.trim().length() == 0)
+        s = Application.getStartupParams().getWorkDir();        // Prio 2: Das explizit angegebene
+      if (s == null || s.trim().length() == 0)
+        s = Application.getPlatform().getDefaultWorkdir();      // Prio 3: Das Default-Verzeichnis
+      if (s == null || s.trim().length() == 0)
+        s = "";                                                 // Prio 4: gar kein Vorschlag
+      
+      final String suggest = s;
 
       Label label = new Label(this.shell,SWT.NONE);
       label.setText("Benutzer-Ordner");
@@ -207,7 +215,7 @@ public class WorkdirChooser
       if (!display.readAndDispatch()) display.sleep();
     }
     
-    return getProps().getProperty("dir",Application.getStartupParams().getWorkDir());
+    return getProps().getProperty("dir",null);
   }
   
   /**
@@ -240,7 +248,7 @@ public class WorkdirChooser
     
     String dir = this.dir.getText();
     
-    if (dir == null || dir.length() == 0)
+    if (dir == null || dir.trim().length() == 0)
     {
       this.error.setText("Bitte wählen Sie einen Ordner aus.");
       return;
@@ -369,7 +377,10 @@ public class WorkdirChooser
 
 /**********************************************************************
  * $Log: WorkdirChooser.java,v $
- * Revision 1.1  2011/03/07 12:52:11  willuhn
+ * Revision 1.2  2011/03/08 13:43:46  willuhn
+ * @B Debugging/Cleanup
+ *
+ * Revision 1.1  2011-03-07 12:52:11  willuhn
  * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
  *
  * Revision 1.1  2011-03-04 18:13:38  willuhn

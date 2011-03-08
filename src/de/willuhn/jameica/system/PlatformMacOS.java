@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/PlatformMacOS.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/03/07 12:52:11 $
+ * $Revision: 1.3 $
+ * $Date: 2011/03/08 13:43:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,6 @@ package de.willuhn.jameica.system;
 
 import java.io.File;
 
-import de.willuhn.logging.Logger;
-
 
 /**
  * Ueberschrieben fuer MacOS-spezfisches Verhalten.
@@ -24,59 +22,28 @@ import de.willuhn.logging.Logger;
 public class PlatformMacOS extends Platform
 {
   /**
-   * Liefert das Benutzerverzeichnis, in dem Jameica alle Daten speichert.
-   * Falls es noch nicht existiert, wird es automatisch angelegt.
-   * @return Benutzerverzeichnis.
-   * @throws Exception wenn das Benutzerverzeichnis nicht lesbar ist oder
-   * nicht erstellt werden konnte.
+   * @see de.willuhn.jameica.system.Platform#getDefaultWorkdir()
    */
-  public File getWorkdir() throws Exception
+  public String getDefaultWorkdir()
   {
-    if (this.workdir != null)
-      return this.workdir;
+    // Checken, ob das alte existiert (Migration)
+    String dir = super.getDefaultWorkdir();
+    File f = new File(dir);
+    if (f.exists() && f.isDirectory())
+      return dir; // OK, existiert. Dann raus hier.
 
-    // Mal schauen, ob ein explizites angegeben ist
-    String dir = new WorkdirChooser().getWorkDir();
-    
-    if (dir == null)
-    {
-      // Es ist keines angegeben. Dann schauen wir, ob
-      // das alte schon existiert (Migration.
-      this.workdir = new File(System.getProperty("user.home"),".jameica");
-      if (this.workdir.exists() && this.workdir.isDirectory())
-      {
-        Logger.info("using workdir: " + this.workdir.getCanonicalPath());
-        return this.workdir; // OK, existiert. Dann raus hier.
-      }
-      
-      // Existiert noch nicht. Und es ist auch keines explizit
-      // angegeben. Na dann koennen wir doch gleich den neuen
-      // Pfad nehmen ;)
-      dir = System.getProperty("user.home") + "/Library/jameica";
-    }
-
-    this.workdir = new File(dir);
-    Logger.info("using workdir: " + this.workdir.getCanonicalPath());
-    
-    // existiert bereits, ist aber eine Datei. FATAL!
-    if (this.workdir.exists() && !this.workdir.isDirectory())
-      throw new Exception("File " + dir + " allready exists.");
-    
-    if (!this.workdir.exists())
-    {
-      Logger.info("creating " + dir);
-      if (!this.workdir.mkdir())
-        throw new Exception("creating of " + dir + " failed");    
-    }
-    
-    return this.workdir;
+    // Existiert noch nicht. Dann nehmen wir den neuen Pfad.
+    return System.getProperty("user.home") + File.separator + "Library" + File.separator + "jameica";
   }
 }
 
 
 /**********************************************************************
  * $Log: PlatformMacOS.java,v $
- * Revision 1.2  2011/03/07 12:52:11  willuhn
+ * Revision 1.3  2011/03/08 13:43:46  willuhn
+ * @B Debugging/Cleanup
+ *
+ * Revision 1.2  2011-03-07 12:52:11  willuhn
  * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
  *
  * Revision 1.1  2008/04/23 23:10:14  willuhn

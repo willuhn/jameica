@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/03/07 12:52:11 $
+ * $Revision: 1.9 $
+ * $Date: 2011/03/08 13:43:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,29 +93,46 @@ public class Platform
     if (this.workdir != null)
       return this.workdir;
     
-    // Mal schauen, ob ein explizites angegeben ist
-    String dir = new WorkdirChooser().getWorkDir();
+    String dir = null;
     
-    if (dir != null && dir.length() > 0)
-      this.workdir = new File(dir);
-    else
-      this.workdir = new File(System.getProperty("user.home"),".jameica");
+    // 1. User fragen, wenn aktiviert
+    if (Application.getStartupParams().isAskWorkDir())
+      dir = new WorkdirChooser().getWorkDir();
+    
+    // 2. Wenn wir nicht gefragt haben oder der User keines ausgewaehlt hat,
+    //    Start-Parameter checken
+    if (dir == null || dir.length() == 0)
+      dir = Application.getStartupParams().getWorkDir();
+    
+    // 3. Wenn auch da nichts angegeben ist, nehmen wir das Default-Dir
+    if (dir == null || dir.length() == 0)
+      dir = this.getDefaultWorkdir();
+      
 
-    dir = this.workdir.getCanonicalPath();
-    Logger.info("using workdir: " + dir);
+    this.workdir = new File(dir).getCanonicalFile();
+    Logger.info("using workdir: " + this.workdir);
     
     // existiert bereits, ist aber eine Datei. FATAL!
     if (this.workdir.exists() && !this.workdir.isDirectory())
-      throw new Exception("File " + dir + " allready exists.");
+      throw new Exception("File " + this.workdir + " allready exists.");
     
     if (!this.workdir.exists())
     {
-      Logger.info("creating " + dir);
+      Logger.info("creating " + this.workdir);
       if (!this.workdir.mkdir())
-        throw new Exception("creating of " + dir + " failed");    
+        throw new Exception("creating of " + this.workdir + " failed");    
     }
     
     return this.workdir;
+  }
+  
+  /**
+   * Liefert das Default-Workdir, wenn kein abweichendes angegeben ist.
+   * @return das Default-Workdir.
+   */
+  public String getDefaultWorkdir()
+  {
+    return System.getProperty("user.home") + File.separator + ".jameica";
   }
   
   /**
@@ -190,7 +207,10 @@ public class Platform
 
 /**********************************************************************
  * $Log: Platform.java,v $
- * Revision 1.8  2011/03/07 12:52:11  willuhn
+ * Revision 1.9  2011/03/08 13:43:46  willuhn
+ * @B Debugging/Cleanup
+ *
+ * Revision 1.8  2011-03-07 12:52:11  willuhn
  * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
  *
  * Revision 1.7  2010-11-04 15:35:03  willuhn
