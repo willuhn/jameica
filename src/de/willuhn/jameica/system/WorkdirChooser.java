@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/03/08 14:49:04 $
+ * $Revision: 1.4 $
+ * $Date: 2011/03/08 14:53:25 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -280,13 +280,15 @@ public class WorkdirChooser
     
     // Scheint alles i.O.
     // Wir speichern die Auswahl
-    this.props.setProperty("dir",dir);
+    Properties props = this.getProps();
+    
+    props.setProperty("dir",dir);
     
     // Wir fuegen das Verzeichnis noch zur History hinzu
     addHistory(dir);
     
     if (this.check != null && !this.check.isDisposed())
-      this.props.setProperty("ask",Boolean.toString(!this.check.getSelection()));
+      props.setProperty("ask",Boolean.toString(!this.check.getSelection()));
     
     // Datei abspeichern
     OutputStream os = null;
@@ -295,7 +297,7 @@ public class WorkdirChooser
     {
       Logger.info("writing " + f);
       os = new BufferedOutputStream(new FileOutputStream(f));
-      this.props.store(os,"created by " + System.getProperty("user.name"));
+      props.store(os,"created by " + System.getProperty("user.name"));
     }
     catch (Exception e)
     {
@@ -468,7 +470,10 @@ public class WorkdirChooser
 
 /**********************************************************************
  * $Log: WorkdirChooser.java,v $
- * Revision 1.3  2011/03/08 14:49:04  willuhn
+ * Revision 1.4  2011/03/08 14:53:25  willuhn
+ * @B Achtung, NPE-Gefahr
+ *
+ * Revision 1.3  2011-03-08 14:49:04  willuhn
  * @N Liste der letzten 5 Verzeichnisse merken und als Auswahlbox anzeigen
  *
  * Revision 1.2  2011-03-08 13:43:46  willuhn
