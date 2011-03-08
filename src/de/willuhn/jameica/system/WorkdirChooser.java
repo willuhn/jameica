@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/03/08 13:43:46 $
+ * $Revision: 1.3 $
+ * $Date: 2011/03/08 14:49:04 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -18,6 +18,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.swt.SWT;
@@ -32,12 +36,12 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.logging.Logger;
@@ -52,7 +56,7 @@ public class WorkdirChooser
   private Properties props = null;
   private Display display  = null;
   private Shell shell      = null;
-  private Text dir         = null;
+  private Combo dir        = null;
   private Label error      = null;
   private Button check     = null;
   
@@ -118,22 +122,28 @@ public class WorkdirChooser
       label.setText("Benutzer-Ordner");
       label.setLayoutData(new GridData(GridData.BEGINNING));
 
-      this.dir = new Text(this.shell,SWT.BORDER | SWT.SINGLE);
+      this.dir = new Combo(this.shell,SWT.DROP_DOWN);
+      List<String> history = this.getHistory();
+      this.dir.setItems(history.toArray(new String[history.size()]));
       this.dir.setText(suggest);
       this.dir.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       
+      final DirectoryDialog dialog = new DirectoryDialog(shell);
+      dialog.setText("Bitte wählen Sie den Ordner aus.");
+      dialog.setFilterPath(suggest);
+
       final Button button = new Button(this.shell,SWT.PUSH);
       button.setImage(getImage("folder.png"));
       button.setLayoutData(new GridData(GridData.END));
       button.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e)
         {
-          DirectoryDialog dialog = new DirectoryDialog(shell);
-          dialog.setText("Bitte wählen Sie den Ordner aus.");
-          dialog.setFilterPath(suggest);
           String s = dialog.open();
           if (s != null && s.length() > 0)
+          {
+            dialog.setFilterPath(s); // Fuers naechste Mal merken
             dir.setText(s);
+          }
         }
       });
     }
@@ -271,6 +281,10 @@ public class WorkdirChooser
     // Scheint alles i.O.
     // Wir speichern die Auswahl
     this.props.setProperty("dir",dir);
+    
+    // Wir fuegen das Verzeichnis noch zur History hinzu
+    addHistory(dir);
+    
     if (this.check != null && !this.check.isDisposed())
       this.props.setProperty("ask",Boolean.toString(!this.check.getSelection()));
     
@@ -334,6 +348,83 @@ public class WorkdirChooser
   }
   
   /**
+   * Fuegt ein Verzeichnis zur History hinzu.
+   * @param dir das hinzuzufuegende Verzeichnis
+   */
+  private void addHistory(String dir)
+  {
+    if (dir == null || dir.trim().length() == 0)
+      return;
+    
+    // Wir holen uns die aktuelle History und fuegen das neue Verzeichnis vorn dran
+    // Wir schreiben aber nur die letzten 5 Eintraege
+    List<String> history = this.getHistory();
+    
+    // Checken, ob wir es schon in der History haben. Wenn ja, loeschen wir
+    // es raus, damit es nicht doppelt drin erscheint
+    if (history.contains(dir))
+      history.remove(dir);
+    
+    history.add(0,dir);
+    
+    // Alte Verzeichnisse abschneiden
+    if (history.size() > 5)
+      history = history.subList(0,5);
+    
+    // Speichern
+    // Vorher muessen wir die alten loeschen
+    Properties props = this.getProps();
+    Enumeration e = props.propertyNames();
+    while (e.hasMoreElements())
+    {
+      String name = (String) e.nextElement();
+      if (name != null && name.startsWith("history."))
+        props.remove(name);
+    }
+    // Und jetzt die neuen speichern
+    for (int i=0;i<history.size();++i)
+    {
+      String s = history.get(i);
+      if (s == null || s.trim().length() == 0)
+        continue;
+      props.setProperty("history." + i,s);
+    }
+    
+  }
+  
+  /**
+   * Liefert die aktuelle History.
+   * @return die aktuelle History.
+   */
+  private List<String> getHistory()
+  {
+    Properties props = this.getProps();
+    List<String> list = new LinkedList<String>();
+    List<String> names = new LinkedList<String>();
+    
+    Enumeration e = props.propertyNames();
+    while (e.hasMoreElements())
+    {
+      String name = (String) e.nextElement();
+      if (name != null && name.startsWith("history."))
+        names.add(name);
+    }
+    
+    // Sortieren (damit die neuesten zuerst kommen)
+    Collections.sort(names);
+
+    for (String name:names)
+    {
+      String dir = props.getProperty(name);
+      if (dir == null || dir.trim().length() == 0)
+        continue;
+      list.add(dir);
+    }
+    
+    return list;
+  }
+  
+  /**
    * Liefert die Properties-Datei, in der wir die Einstellungen speichern.
    * @return die Properties-Datei.
    */
@@ -377,7 +468,10 @@ public class WorkdirChooser
 
 /**********************************************************************
  * $Log: WorkdirChooser.java,v $
- * Revision 1.2  2011/03/08 13:43:46  willuhn
+ * Revision 1.3  2011/03/08 14:49:04  willuhn
+ * @N Liste der letzten 5 Verzeichnisse merken und als Auswahlbox anzeigen
+ *
+ * Revision 1.2  2011-03-08 13:43:46  willuhn
  * @B Debugging/Cleanup
  *
  * Revision 1.1  2011-03-07 12:52:11  willuhn
