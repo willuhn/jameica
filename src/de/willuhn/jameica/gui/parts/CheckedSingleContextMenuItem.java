@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/CheckedSingleContextMenuItem.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/01/02 17:34:15 $
+ * $Revision: 1.3 $
+ * $Date: 2011/03/17 10:05:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,7 +17,7 @@ import de.willuhn.jameica.gui.Action;
 
 /**
  * ContextMenu-Element, dass immer genau dann automatisch
- * deaktiviert ist, wenn das aktuelle Objekt <code>null</code> ist <b>oder</b> das Objekt ein Array ist.
+ * aktiviert ist, wenn genau ein einzelner Datensatz selektiert ist.
  */
 public class CheckedSingleContextMenuItem extends CheckedContextMenuItem
 {
@@ -67,6 +67,9 @@ public class CheckedSingleContextMenuItem extends CheckedContextMenuItem
 
 /**********************************************************************
  * $Log: CheckedSingleContextMenuItem.java,v $
+ * Revision 1.3  2011/03/17 10:05:47  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2009/01/02 17:34:15  willuhn
  * @C Konstruktor fehlte hier noch
  *
