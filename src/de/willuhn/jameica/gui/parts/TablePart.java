@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.97 $
- * $Date: 2010/10/12 21:50:17 $
+ * $Revision: 1.98 $
+ * $Date: 2011/03/17 09:49:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1169,6 +1169,8 @@ public class TablePart extends AbstractTablePart
    */
   protected void orderBy(int index)
 	{
+    if (table == null || table.isDisposed())
+      return;
 
 		List l = (List) sortTable.get(new Integer(index));
 		if (l == null)
@@ -1350,7 +1352,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.97  2010/10/12 21:50:17  willuhn
+ * Revision 1.98  2011/03/17 09:49:17  willuhn
+ * @N Disposed-Check
+ *
+ * Revision 1.97  2010-10-12 21:50:17  willuhn
  * @N select(Object) und select(Object[]) jetzt auch in TreePart
  *
  * Revision 1.96  2010/03/29 22:08:08  willuhn
