@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.44 $
- * $Date: 2010/11/03 16:09:08 $
+ * $Revision: 1.45 $
+ * $Date: 2011/03/17 18:04:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,6 @@ public class Menu
 {
 
   private org.eclipse.swt.widgets.Menu mainMenu;
-	private org.eclipse.swt.widgets.Menu pluginMenu;
 
 	private Decorations parent;
 
@@ -61,14 +60,6 @@ public class Menu
 
 		// System-Menu laden
 		load(Application.getManifest().getMenu(),mainMenu);
-
-    if (!Customizing.SETTINGS.getBoolean("application.menu.hideplugins",false))
-    {
-      org.eclipse.swt.widgets.MenuItem mi = new org.eclipse.swt.widgets.MenuItem(mainMenu,SWT.CASCADE);
-      mi.setText(Application.getI18n().tr("Plugins"));
-      pluginMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.DROP_DOWN);
-      mi.setMenu(pluginMenu);
-    }
   }
 
   /**
@@ -78,9 +69,13 @@ public class Menu
    */
 	protected void add(MenuItem menu) throws Exception
 	{
-    if (menu == null || pluginMenu == null)
+    if (menu == null || mainMenu == null)
       return;
-    load(menu,pluginMenu);
+    
+    if (Customizing.SETTINGS.getBoolean("application.menu.hideplugins",false))
+      return;
+    
+    load(menu,mainMenu);
 	}
 
   /**
@@ -255,7 +250,10 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
- * Revision 1.44  2010/11/03 16:09:08  willuhn
+ * Revision 1.45  2011/03/17 18:04:00  willuhn
+ * @N Menu-Elemente der Plugins direkt im Hauptmenu anzeigen
+ *
+ * Revision 1.44  2010-11-03 16:09:08  willuhn
  * @N OCE fangen
  *
  * Revision 1.43  2010-10-19 16:13:19  willuhn
