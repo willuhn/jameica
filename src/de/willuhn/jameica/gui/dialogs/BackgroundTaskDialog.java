@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/BackgroundTaskDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2010/10/21 10:48:45 $
+ * $Revision: 1.2 $
+ * $Date: 2011/03/17 11:01:13 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.ProgressBar;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -98,10 +99,12 @@ public class BackgroundTaskDialog extends AbstractDialog
             monitor.setPercentComplete(100);
             monitor.setStatusText(ae.getMessage());
           }
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
         }
         catch (Throwable t)
         {
           Logger.error("error while executing background task",t);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler: {0}",t.getMessage()),StatusBarMessage.TYPE_ERROR));
           if (monitor != null) 
           {
             monitor.setStatus(ProgressMonitor.STATUS_ERROR);
@@ -145,7 +148,10 @@ public class BackgroundTaskDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: BackgroundTaskDialog.java,v $
- * Revision 1.1  2010/10/21 10:48:45  willuhn
+ * Revision 1.2  2011/03/17 11:01:13  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.1  2010-10-21 10:48:45  willuhn
  * @N BackgroundTaskDialog
  *
  **********************************************************************/
