@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.23 $
- * $Date: 2010/10/07 23:40:55 $
+ * $Revision: 1.24 $
+ * $Date: 2011/03/22 09:28:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,7 @@ package de.willuhn.jameica.gui.input;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.ParseException;
+import java.text.DecimalFormatSymbols;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
@@ -152,9 +152,30 @@ public class DecimalInput extends TextInput
       return null;
     
     try {
+      // Der folgende Code soll verhindern, dass z.Bsp. "160.44" als "16.044,00"
+      // geparst wird, wenn die Anzeige von Tausenderpunkten aktiviert ist.
+      if (format.isGroupingUsed())
+      {
+        DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
+        char komma = symbols.getDecimalSeparator();
+        char group = symbols.getGroupingSeparator();
+        
+        // Wenn der Text jetzt Punkt UND Komma enthaelt, entfernen wir die Punkte - das koennen
+        // dann nur Tausender-Trenner sein. Die brauchen wir zum Parsen nicht
+        if (s.indexOf(komma) != -1 && s.indexOf(group) != -1)
+          s = s.replace(""+group,"");
+
+        // Wenn wir jetzt KEIN Komma, dafuer aber einen Punkt an dritt-letzter
+        // Stelle haben, wurde ein Punkt als Komma angegeben. Etwa so: 160.44
+        // Den ersetzen wir gegen Komma
+        int lastDot = s.lastIndexOf(group);
+        if (s.indexOf(komma) == -1 && s.length() - 3 == lastDot)
+          s = s.substring(0,lastDot) + komma + s.substring(lastDot+1);
+      }
+      
       return format.parse(s);
     }
-    catch (ParseException e)
+    catch (Exception e)
     {
       // ignore
     }
@@ -202,118 +223,9 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
- * Revision 1.23  2010/10/07 23:40:55  willuhn
+ * Revision 1.24  2011/03/22 09:28:50  willuhn
+ * @B "100.00" konnte als "10.000,00" geparst werden, wenn die Anzeige von Tausender-Punkten aktiviert war
+ *
+ * Revision 1.23  2010-10-07 23:40:55  willuhn
  * @B setValue(null) ueberschrieb den Wert nicht
- *
- * Revision 1.22  2008/12/30 15:46:49  willuhn
- * @N Umstellung auf neue Versionierung
- * @N Umstellung auf Java 1.5!
- * @R rmic aus Build-Scripts entfernt
- * @N Nightly-Builds sind ab sofort in der Versionsnummer als solche markiert
- *
- * Revision 1.21  2008/12/07 22:16:00  willuhn
- * @B BUGZILLA 662 https://www.willuhn.de/bugzilla/show_bug.cgi?id=662#c4
- *
- * Revision 1.20  2008/12/07 22:14:05  willuhn
- * @B BUGZILLA 662: CT-Parameter wurde ignoriert
- *
- * Revision 1.19  2008/12/02 10:52:42  willuhn
- * @N BUGZILLA 662
- *
- * Revision 1.18  2007/05/02 13:00:46  willuhn
- * @C ParseException nicht loggen
- *
- * Revision 1.17  2007/01/31 17:56:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.16  2007/01/31 17:52:58  willuhn
- * @N Support for Double.NaN
- *
- * Revision 1.15  2005/08/22 13:31:52  web0
- * *** empty log message ***
- *
- * Revision 1.14  2005/08/12 16:43:05  web0
- * @B DecimalInput
- *
- * Revision 1.13  2005/08/12 00:10:40  web0
- * *** empty log message ***
- *
- * Revision 1.12  2005/07/24 22:26:52  web0
- * @B bug 101
- *
- * Revision 1.11  2005/07/04 10:36:04  web0
- * @B bug 91
- *
- * Revision 1.10  2005/06/21 20:02:02  web0
- * @C cvs merge
- *
- * Revision 1.8  2004/11/12 18:23:59  willuhn
- * *** empty log message ***
- *
- * Revision 1.7  2004/10/15 20:06:09  willuhn
- * @N added maxLength to TextInput
- * @N double comma check in DecimalInput
- *
- * Revision 1.6  2004/10/14 23:15:05  willuhn
- * @N maded locale configurable via GUI
- * @B fixed locale handling
- * @B DecimalInput now honors locale
- *
- * Revision 1.5  2004/10/04 15:44:40  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2004/07/09 00:12:47  willuhn
- * @C Redesign
- *
- * Revision 1.3  2004/06/30 20:58:40  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/04/27 00:04:44  willuhn
- * @D javadoc
- *
- * Revision 1.1  2004/04/12 19:15:58  willuhn
- * @C refactoring
- * @N forms
- *
- * Revision 1.8  2004/03/25 00:45:49  willuhn
- * *** empty log message ***
- *
- * Revision 1.7  2004/03/22 22:53:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2004/03/18 01:24:47  willuhn
- * @C refactoring
- *
- * Revision 1.5  2004/03/16 23:59:40  willuhn
- * @N 2 new Input fields
- *
- * Revision 1.4  2004/03/11 08:56:55  willuhn
- * @C some refactoring
- *
- * Revision 1.3  2004/03/06 18:24:23  willuhn
- * @D javadoc
- *
- * Revision 1.2  2004/02/18 20:28:45  willuhn
- * @N jameica now stores window position and size
- *
- * Revision 1.1  2004/01/28 20:51:24  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.5  2003/12/29 16:29:47  willuhn
- * @N javadoc
- *
- * Revision 1.4  2003/12/16 02:27:44  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2003/12/11 21:00:54  willuhn
- * @C refactoring
- *
- * Revision 1.2  2003/12/01 21:22:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2003/12/01 20:28:58  willuhn
- * @B filter in DBIteratorImpl
- * @N InputFelder generalisiert
- *
  **********************************************************************/
