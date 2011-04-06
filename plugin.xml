@@ -18,6 +18,8 @@
       <item id="jameica.menu.backups"        name="&amp;Backups verwalten" shortcut="CTRL+B" icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
 			<item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	             icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
 			<item name="-" />
+      <item id="jameica.menu.back"           name="&amp;Zurück"            shortcut="CTRL+Z" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
+      <item name="-" />
 			<item id="jameica.menu.quit"           name="Beenden"                                  icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
 		</item>
 
