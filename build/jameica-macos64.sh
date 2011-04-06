@@ -20,7 +20,7 @@ if [ ! -x "$JAVACMD" ]; then
   exit 1
 fi
 
-BASEDIR=`dirname "$0"`
-cd "$BASEDIR"
+BASEDIR=$(dirname "$0")
+cd "${BASEDIR}"
 
-exec ${JAVACMD} -Xdock:name="Jameica" -Xmx256m -XstartOnFirstThread -jar "$BASEDIR/jameica-macos64.jar" -o $@  >/dev/null
+exec ${JAVACMD} -Xdock:name="Jameica" -Xmx256m -XstartOnFirstThread -jar "${BASEDIR}/jameica-macos64.jar" -o $@  >/dev/null
