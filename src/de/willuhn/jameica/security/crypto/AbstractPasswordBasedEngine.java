@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/AbstractPasswordBasedEngine.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/02/09 12:26:51 $
+ * $Revision: 1.4 $
+ * $Date: 2011/04/06 08:49:56 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -132,8 +132,8 @@ public abstract class AbstractPasswordBasedEngine implements Engine
       return s.toCharArray();
     
     // Neu erstellen
-    Logger.debug("creating random password");
     s = RandomStringUtils.randomAscii(len);
+    Logger.info("created random password, length: " + s.length());
     wallet.set("password",s);
     return s.toCharArray();
   }
@@ -163,7 +163,10 @@ public abstract class AbstractPasswordBasedEngine implements Engine
 
 /**********************************************************************
  * $Log: AbstractPasswordBasedEngine.java,v $
- * Revision 1.3  2011/02/09 12:26:51  willuhn
+ * Revision 1.4  2011/04/06 08:49:56  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.3  2011-02-09 12:26:51  willuhn
  * @C Salt und Passwort NICHT als char[]/byte[] im RSA-Wallet speichern. Der XML-Encoder verwendet fuer jedes char/byte ein XML-Element, was dazu fuehrt, dass das Wallet auf eine kritische Groesse aufgeblasen wird
  *
  * Revision 1.2  2011-02-09 11:25:23  willuhn
