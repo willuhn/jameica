@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.49 $
- * $Date: 2010/09/28 23:42:52 $
+ * $Revision: 1.50 $
+ * $Date: 2011/04/06 16:13:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,8 @@ package de.willuhn.jameica.gui;
 
 
 import java.rmi.RemoteException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -31,10 +33,13 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.gui.internal.parts.PanelButtonBack;
+import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Customizing;
+import de.willuhn.logging.Logger;
 
 /**
  * Bildet das Content-Frame ab.
@@ -56,6 +61,8 @@ public class View implements Part
   
   private Canvas logoBg;
   private Canvas panelBg;
+  private Composite panelButtons;
+  private List<PanelButton> buttons = new LinkedList<PanelButton>();
 	
 
   private String title;
@@ -115,19 +122,27 @@ public class View implements Part
 	        gc.drawText(logotext == null ? "" : logotext,8,14,true);
 	      }
 	    });
-	    ////////////////////////////////////////////////////////////////////////////
 
-	    Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-	    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+      sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+      ////////////////////////////////////////////////////////////////////////////
 		}
 
     if (!Customizing.SETTINGS.getBoolean("application.view.hidepanel",false))
     {
       ////////////////////////////////////////////////////////////////////////////
       //
-      panelBg = SWTUtil.getCanvas(view,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+      Composite comp = new Composite(view,SWT.NONE);
+      comp.setLayout(SWTUtil.createGrid(2,false));
+      GridData gd1 = new GridData(GridData.FILL_HORIZONTAL);
+      gd1.heightHint = 20; // panelbar.png ist 20 Pixel hoch
+      comp.setLayoutData(gd1);
+
+      panelBg = SWTUtil.getCanvas(comp,SWTUtil.getImage("panelbar.png"), SWT.TOP | SWT.LEFT);
       panelBg.setLayout(SWTUtil.createGrid(1,false));
       panelBg.setBackground(Color.BACKGROUND.getSWTColor());
+      panelBg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
       panelBg.addListener(SWT.Paint,new Listener()
       {
@@ -135,13 +150,16 @@ public class View implements Part
         {
           GC gc = event.gc;
           gc.setFont(Font.H2.getSWTFont());
-          gc.drawText(title == null ? "" : title,8,1,true);
+          gc.drawText(title == null ? "" : title,8,3,true);
         }
       });
-      ////////////////////////////////////////////////////////////////////////////
-
+      this.panelButtons = new Composite(comp,SWT.NONE);
+      this.panelButtons.setLayoutData(new GridData());
+      
       Label sep2 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
       sep2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+      ////////////////////////////////////////////////////////////////////////////
     }
 
     if (!Customizing.SETTINGS.getBoolean("application.view.hidemessages",false))
@@ -189,7 +207,7 @@ public class View implements Part
 		{
 	    content = new Composite(view, SWT.NONE);
 		}
-		
+
 		content.setBackground(Color.BACKGROUND.getSWTColor());
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout l = new GridLayout();
@@ -197,12 +215,68 @@ public class View implements Part
 		l.marginWidth = 6;
 		content.setLayout(l);
 
-		if (messages != null)
+		if (this.panelButtons != null)
 		{
-	    messages.setText("");
-	    messages.layout();
+		  this.buttons.clear();
+		  this.addPanelButton(new PanelButtonBack()); // Zurueckbutton ist immer dabei
 		}
+		
+    setErrorText(null);
+    setTitle(null);
 	}
+  
+  /**
+   * Fuegt einen Panel-Button hinzu.
+   * @param b der Panel-Button.
+   */
+  public void addPanelButton(PanelButton b)
+  {
+    if (panelButtons == null)
+      return;
+
+    // Button zur Liste hinzufuegen
+    this.buttons.add(b);
+    
+    GUI.getDisplay().syncExec(new Runnable() {
+      public void run()
+      {
+        if (panelButtons.isDisposed())
+          return;
+        
+        try
+        {
+          // Kurz ausblenden - sieht beim Aufbau der View sauberer aus
+          panelButtons.setVisible(false);
+
+          int size = buttons.size();
+          // Damit der Zurueckbutton immer ganz links steht, werfen
+          // wir alle raus und zeichnen sie neu - von rechts nach links
+          SWTUtil.disposeChildren(panelButtons);
+          panelButtons.setLayout(SWTUtil.createGrid(size,false)); // Neues Layout anlegen
+
+          // Alle Buttons zeichnen
+          for (int i=size-1;i>=0;i--)
+          {
+            buttons.get(i).paint(panelButtons);
+          }
+          
+          // Das Neuberechnen des Parent fuehrt dazu, dass wir mehr Breite fuer die neuen Buttons kriegen
+          panelButtons.getParent().layout(); 
+          
+          // Und wir zeichnen uns selbst neu
+          panelButtons.layout();
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to paint panel buttons",e);
+        }
+        finally
+        {
+          panelButtons.setVisible(true);
+        }
+      }
+    });
+  }
 
 	/**
    * Das Snapin-Composite wird angezeigt.
@@ -378,7 +452,10 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
- * Revision 1.49  2010/09/28 23:42:52  willuhn
+ * Revision 1.50  2011/04/06 16:13:16  willuhn
+ * @N BUGZILLA 631
+ *
+ * Revision 1.49  2010-09-28 23:42:52  willuhn
  * @N Panel-Grafik customizable
  *
  * Revision 1.48  2009/12/16 00:11:59  willuhn

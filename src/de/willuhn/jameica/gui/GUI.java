@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.138 $
- * $Date: 2010/12/07 10:04:17 $
+ * $Revision: 1.139 $
+ * $Date: 2011/04/06 16:13:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -377,6 +377,14 @@ public class GUI implements ApplicationController
     });
   }
 
+  /**
+   * Liefert true, wenn es eine vorherige Seite zum Oeffnen gibt.
+   * @return true, wenn es eine vorherige Seite zum Oeffnen gibt.
+   */
+  public static boolean hasPreviousView()
+  {
+    return (gui != null && gui.history != null && gui.history.size() > 0);
+  }
 
   /**
    * Startet die vorherige View. Existiert keine solche, kehrt die Funktion
@@ -387,7 +395,7 @@ public class GUI implements ApplicationController
     // BUGZILLA 247
     if (gui == null || gui.history == null || gui.history.size() == 0)
     {
-      Logger.warn("unable to start previous view. you are allready at the first page in this session ;)");
+      Logger.debug("unable to start previous view. you are allready at the first page in this session ;)");
       return;
     }
     HistoryEntry entry = (HistoryEntry) gui.history.pop();
@@ -991,7 +999,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.138  2010/12/07 10:04:17  willuhn
+ * Revision 1.139  2011/04/06 16:13:16  willuhn
+ * @N BUGZILLA 631
+ *
+ * Revision 1.138  2010-12-07 10:04:17  willuhn
  * @N Netbook-Mode jetzt auch zwangsweise via application.scrollview.force aktivierbar (siehe Mail von Markus vom 06.12.2010)
  *
  * Revision 1.137  2010-11-11 10:59:12  willuhn

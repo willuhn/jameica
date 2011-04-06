@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.52 $
- * $Date: 2010/10/29 09:17:54 $
+ * $Revision: 1.53 $
+ * $Date: 2011/04/06 16:13:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -209,7 +209,7 @@ public abstract class AbstractDialog
 		
         ///////////////////////////////
         // Der Titel selbst
-        panel = SWTUtil.getCanvas(comp,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+        panel = SWTUtil.getCanvas(comp,SWTUtil.getImage("panelbar.png"), SWT.TOP | SWT.RIGHT);
         GridLayout layout2 = new GridLayout();
         layout2.marginHeight = 0;
         layout2.marginWidth = 0;
@@ -224,7 +224,7 @@ public abstract class AbstractDialog
             GC gc = event.gc;
             gc.setFont(Font.H2.getSWTFont());
             String s = panelText != null ? panelText : titleText;
-            gc.drawText(s == null ? "" : s,8,1,true);
+            gc.drawText(s == null ? "" : s,8,3,true);
           }
         });
         //
@@ -568,7 +568,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.52  2010/10/29 09:17:54  willuhn
+ * Revision 1.53  2011/04/06 16:13:16  willuhn
+ * @N BUGZILLA 631
+ *
+ * Revision 1.52  2010-10-29 09:17:54  willuhn
  * @N Abweichender Panel-Text konfigurierbar
  *
  * Revision 1.51  2010-07-13 10:52:59  willuhn

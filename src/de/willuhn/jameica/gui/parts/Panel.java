@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.12 $
- * $Date: 2008/01/07 22:19:55 $
+ * $Revision: 1.13 $
+ * $Date: 2011/04/06 16:13:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -143,7 +143,7 @@ public class Panel implements Part
 
       ///////////////////////////////
       // Der Titel selbst
-      title = SWTUtil.getCanvas(head,SWTUtil.getImage("panel-reverse.gif"), SWT.TOP | SWT.RIGHT);
+      title = SWTUtil.getCanvas(head,SWTUtil.getImage("panelbar.png"), SWT.TOP | SWT.RIGHT);
       GridLayout layout2 = new GridLayout();
       layout2.marginHeight = 0;
       layout2.marginWidth = 0;
@@ -182,7 +182,7 @@ public class Panel implements Part
         {
           GC gc = event.gc;
           gc.setFont(Font.H2.getSWTFont());
-          gc.drawText(titleText == null ? "" : titleText,8,1,true);
+          gc.drawText(titleText == null ? "" : titleText,8,3,true);
           if (mExists)
           {
             Rectangle size = title.getBounds();
@@ -207,6 +207,9 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
+ * Revision 1.13  2011/04/06 16:13:16  willuhn
+ * @N BUGZILLA 631
+ *
  * Revision 1.12  2008/01/07 22:19:55  willuhn
  * @R DnD-Code wieder entfernt
  *

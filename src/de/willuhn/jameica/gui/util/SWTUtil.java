@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.23 $
- * $Date: 2010/07/27 11:54:43 $
+ * $Revision: 1.24 $
+ * $Date: 2011/04/06 16:13:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,7 +95,7 @@ public class SWTUtil {
   public static Image getImage(String filename, ClassLoader cl)
   {
     Image image = (Image) imagecache.get(filename);
-    if (image != null)
+    if (image != null && !image.isDisposed())
       return image;
 
     InputStream is = null;
@@ -191,7 +191,7 @@ public class SWTUtil {
 	 * Hinweis: Das Composite muss ein GridLayout haben.
 	 * @param image anzuzeigendes Hintergrundbild.
 	 * @param align logische Kombinationen aus SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT.
-	 * @return das erzeuigte Canvas.
+	 * @return das erzeugte Canvas.
 	 */
 	public static Canvas getCanvas(final Composite parent, final Image image, final int align)
 	{
@@ -285,7 +285,10 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
- * Revision 1.23  2010/07/27 11:54:43  willuhn
+ * Revision 1.24  2011/04/06 16:13:16  willuhn
+ * @N BUGZILLA 631
+ *
+ * Revision 1.23  2010-07-27 11:54:43  willuhn
  * @N Fehlertoleranteres Laden von Bildern
  * @N Bilder koennen nun auch direkt im Filesystem liegen und koennen ueber den Pfad im Filesystem angegeben werden
  *
