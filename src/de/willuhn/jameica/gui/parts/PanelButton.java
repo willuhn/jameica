@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/PanelButton.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/04/07 15:09:15 $
+ * $Revision: 1.4 $
+ * $Date: 2011/04/07 16:49:56 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -68,6 +68,7 @@ public class PanelButton implements Part
     this.action  = action;
     this.tooltip = tooltip;
   }
+  
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
@@ -213,7 +214,10 @@ public class PanelButton implements Part
 
 /**********************************************************************
  * $Log: PanelButton.java,v $
- * Revision 1.3  2011/04/07 15:09:15  willuhn
+ * Revision 1.4  2011/04/07 16:49:56  willuhn
+ * @N Rudimentaere GUI-Klassen fuer die Druck-Anbindung
+ *
+ * Revision 1.3  2011-04-07 15:09:15  willuhn
  * @N Exception-Handling
  *
  * Revision 1.2  2011-04-07 08:31:01  willuhn
