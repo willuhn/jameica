@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/PanelButton.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/04/07 08:31:01 $
+ * $Revision: 1.3 $
+ * $Date: 2011/04/07 15:09:15 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -31,6 +31,8 @@ import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -145,9 +147,18 @@ public class PanelButton implements Part
         {
           action.handleAction(null);
         }
+        catch (OperationCanceledException oce)
+        {
+          Logger.info("operation cancelled");
+        }
         catch (ApplicationException ae)
         {
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+        }
+        catch (Exception ex)
+        {
+          Logger.error("unable to execute action",ex);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler: {0}",ex.getMessage()),StatusBarMessage.TYPE_ERROR));
         }
       }
     });
@@ -202,7 +213,10 @@ public class PanelButton implements Part
 
 /**********************************************************************
  * $Log: PanelButton.java,v $
- * Revision 1.2  2011/04/07 08:31:01  willuhn
+ * Revision 1.3  2011/04/07 15:09:15  willuhn
+ * @N Exception-Handling
+ *
+ * Revision 1.2  2011-04-07 08:31:01  willuhn
  * @N Setter zum Deaktivieren des Panel-Buttons
  *
  * Revision 1.1  2011-04-06 16:13:16  willuhn
