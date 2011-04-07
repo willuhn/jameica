@@ -24,5 +24,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/splash.jar"/>
 	<classpathentry kind="lib" path="lib/mckoi/mckoidb.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/paperclips/net.sf.paperclips_1.0.4.jar" sourcepath="lib.src/paperclips/net.sf.paperclips_1.0.4.src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/paperclips/net.sf.paperclips.ui_1.0.4.jar" sourcepath="lib.src/paperclips/net.sf.paperclips_1.0.4.src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
