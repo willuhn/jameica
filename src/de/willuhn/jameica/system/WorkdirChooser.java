@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/03/08 14:53:25 $
+ * $Revision: 1.5 $
+ * $Date: 2011/04/07 08:04:05 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -102,7 +102,7 @@ public class WorkdirChooser
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.horizontalSpan = 3;
       Label text = new Label(this.shell,SWT.WRAP);
-      text.setText("Bitte wählen Sie den Ordner,in dem die Benutzerdaten gespeichert werden sollen.");
+      text.setText("Bitte wählen Sie den Ordner, in dem die Benutzerdaten gespeichert werden sollen.");
       text.setLayoutData(gd);
     }
 
@@ -470,7 +470,10 @@ public class WorkdirChooser
 
 /**********************************************************************
  * $Log: WorkdirChooser.java,v $
- * Revision 1.4  2011/03/08 14:53:25  willuhn
+ * Revision 1.5  2011/04/07 08:04:05  willuhn
+ * @B da fehlte ein Leerzeichen
+ *
+ * Revision 1.4  2011-03-08 14:53:25  willuhn
  * @B Achtung, NPE-Gefahr
  *
  * Revision 1.3  2011-03-08 14:49:04  willuhn
