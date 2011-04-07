@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/PanelButton.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/04/06 16:13:16 $
+ * $Revision: 1.2 $
+ * $Date: 2011/04/07 08:31:01 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -51,6 +51,8 @@ public class PanelButton implements Part
   private String icon    = null;
   private Action action  = null;
   private String tooltip = null;
+  
+  private boolean enabled = true;
   
   /**
    * ct.
@@ -178,13 +180,21 @@ public class PanelButton implements Part
   }
   
   /**
-   * Kann ueberschrieben werden, um den Button bei Bedarf nicht anklickbar zu machen.
+   * Prueft, ob der Button derzeit anklickbar sein soll.
    * @return true, wenn er anklickbar sein soll.
-   * Liefert per Default true.
    */
   public boolean isEnabled()
   {
-    return true;
+    return this.enabled;
+  }
+  
+  /**
+   * Legt fest, ob der Button anklickbar sein soll.
+   * @param b true, wenn er anklickbar sein soll, sonst false.
+   */
+  public void setEnabled(boolean b)
+  {
+    this.enabled = b;
   }
 }
 
@@ -192,7 +202,10 @@ public class PanelButton implements Part
 
 /**********************************************************************
  * $Log: PanelButton.java,v $
- * Revision 1.1  2011/04/06 16:13:16  willuhn
+ * Revision 1.2  2011/04/07 08:31:01  willuhn
+ * @N Setter zum Deaktivieren des Panel-Buttons
+ *
+ * Revision 1.1  2011-04-06 16:13:16  willuhn
  * @N BUGZILLA 631
  *
  **********************************************************************/
