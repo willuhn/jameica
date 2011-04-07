@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.25 $
- * $Date: 2011/04/07 17:52:09 $
+ * $Revision: 1.26 $
+ * $Date: 2011/04/07 17:56:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,7 +69,7 @@ public class DecimalInput extends TextInput
         this.format.setParseBigDecimal(true);
     }
 
-    // BUGZILLA 1014
+    // BUGZILLA 1014 Der Code war vorher 1:1 in Hibiscus auch drin. Ich hoffe, der macht hier jetzt keine Probleme.
     this.addListener(new Listener() {
       public void handleEvent(Event event)
       {
@@ -232,7 +232,10 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
- * Revision 1.25  2011/04/07 17:52:09  willuhn
+ * Revision 1.26  2011/04/07 17:56:14  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.25  2011-04-07 17:52:09  willuhn
  * @N BUGZILLA 1014
  *
  * Revision 1.24  2011-03-22 09:28:50  willuhn
