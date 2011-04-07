@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.24 $
- * $Date: 2011/03/22 09:28:50 $
+ * $Revision: 1.25 $
+ * $Date: 2011/04/07 17:52:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,6 +68,14 @@ public class DecimalInput extends TextInput
       if (n != null && (n instanceof BigDecimal))
         this.format.setParseBigDecimal(true);
     }
+
+    // BUGZILLA 1014
+    this.addListener(new Listener() {
+      public void handleEvent(Event event)
+      {
+        setValue(getValue()); // forciert das Formatieren des Betrages
+      }
+    });
   }
 
   /**
@@ -78,10 +86,7 @@ public class DecimalInput extends TextInput
 		Control c = super.getControl();
     try
     {
-      if (this.value == null)
-        text.setText("");
-      else
-        text.setText(format.format(this.value));
+      text.setText(this.value == null ? "" : format.format(this.value));
     }
     catch (Exception e)
     {
@@ -192,7 +197,7 @@ public class DecimalInput extends TextInput
     {
       this.value = (Number) value;
     }
-    else if ((value instanceof String) && this.format != null && value != null)
+    else if (value instanceof String)
     {
       try
       {
@@ -207,23 +212,30 @@ public class DecimalInput extends TextInput
     {
       this.value = null; // kein gueltiger Wert oder NULL
     }
-
-    // In den Text uebernehmen
-    if (this.text != null && !this.text.isDisposed())
-    {
-      String s = "";
-      if (this.value != null)
-        s = format.format(this.value);
-      this.text.setText(""); // Strange. Mache ich das nicht, meckert oben der Komma-Checker
-      this.text.setText(s);
-      this.text.redraw();
-    }
+    format();
+  }
+  
+  /**
+   * Aktualisiert den angezeigten Betrag und fuehrt bei Bedarf Formatierungen durch.
+   */
+  private void format()
+  {
+    if (this.text == null || this.text.isDisposed())
+      return;
+    
+    this.text.setText(""); // Strange. Mache ich das nicht vorher, meckert oben der Komma-Checker
+    if (this.value != null)
+      this.text.setText(format.format(this.value));
+    this.text.redraw();
   }
 }
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
- * Revision 1.24  2011/03/22 09:28:50  willuhn
+ * Revision 1.25  2011/04/07 17:52:09  willuhn
+ * @N BUGZILLA 1014
+ *
+ * Revision 1.24  2011-03-22 09:28:50  willuhn
  * @B "100.00" konnte als "10.000,00" geparst werden, wenn die Anzeige von Tausender-Punkten aktiviert war
  *
  * Revision 1.23  2010-10-07 23:40:55  willuhn
