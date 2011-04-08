@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DecimalInput.java,v $
- * $Revision: 1.26 $
- * $Date: 2011/04/07 17:56:14 $
+ * $Revision: 1.27 $
+ * $Date: 2011/04/08 17:35:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -174,7 +174,7 @@ public class DecimalInput extends TextInput
         // Stelle haben, wurde ein Punkt als Komma angegeben. Etwa so: 160.44
         // Den ersetzen wir gegen Komma
         int lastDot = s.lastIndexOf(group);
-        if (s.indexOf(komma) == -1 && s.length() - 3 == lastDot)
+        if (s.indexOf(komma) == -1 && lastDot != -1 && s.length() - 3 == lastDot) // BUGZILLA 1014
           s = s.substring(0,lastDot) + komma + s.substring(lastDot+1);
       }
       
@@ -183,6 +183,7 @@ public class DecimalInput extends TextInput
     catch (Exception e)
     {
       // ignore
+      e.printStackTrace();
     }
     return null;
   }
@@ -232,7 +233,10 @@ public class DecimalInput extends TextInput
 
 /*********************************************************************
  * $Log: DecimalInput.java,v $
- * Revision 1.26  2011/04/07 17:56:14  willuhn
+ * Revision 1.27  2011/04/08 17:35:26  willuhn
+ * @B BUGZILLA 1014
+ *
+ * Revision 1.26  2011-04-07 17:56:14  willuhn
  * *** empty log message ***
  *
  * Revision 1.25  2011-04-07 17:52:09  willuhn
