@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PanelButtonPrint.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/04/08 13:37:35 $
+ * $Revision: 1.3 $
+ * $Date: 2011/04/08 13:38:13 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -27,7 +27,7 @@ public class PanelButtonPrint extends PanelButton
    * ct.
    * @param job der Druck-Job.
    */
-  private PanelButtonPrint(final PrintSupport job)
+  public PanelButtonPrint(final PrintSupport job)
   {
     super("document-print.png", new Action() {
       public void handleAction(Object context) throws ApplicationException
@@ -43,7 +43,10 @@ public class PanelButtonPrint extends PanelButton
 
 /**********************************************************************
  * $Log: PanelButtonPrint.java,v $
- * Revision 1.2  2011/04/08 13:37:35  willuhn
+ * Revision 1.3  2011/04/08 13:38:13  willuhn
+ * @B Falscher Modifier
+ *
+ * Revision 1.2  2011-04-08 13:37:35  willuhn
  * @N Neues PrintSupport-Interface - andernfalls muesste man den Druck-Auftrag vor Ausfuehrung der Action - und damit vor dem Klick auf den Button - erstellen
  *
  * Revision 1.1  2011-04-07 16:49:56  willuhn
