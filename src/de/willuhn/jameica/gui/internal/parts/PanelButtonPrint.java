@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PanelButtonPrint.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/04/14 16:58:48 $
+ * $Revision: 1.5 $
+ * $Date: 2011/04/14 17:18:10 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -57,6 +57,10 @@ public class PanelButtonPrint extends PanelButton
     super.paint(parent);
 
     // Shortcut aktivieren
+    // Damit das immer funktioniert, musste ich in GUI#startView
+    // noch ein "parent.setFocus()" vor dem bind() der View machen,
+    // damit irgendwas den Focus hat. Wenn gar kein Control einen Focus
+    // hat, werden naemlich auch keinerlei Key-Listener ausgeloest
     GUI.getDisplay().addFilter(SWT.KeyDown,listener);
     
     // Wieder deaktivieren
@@ -99,7 +103,10 @@ public class PanelButtonPrint extends PanelButton
 
 /**********************************************************************
  * $Log: PanelButtonPrint.java,v $
- * Revision 1.4  2011/04/14 16:58:48  willuhn
+ * Revision 1.5  2011/04/14 17:18:10  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.4  2011-04-14 16:58:48  willuhn
  * @N Globaler Shortcut <CTRL><P> zum Drucken (falls PanelButtonPrint aktiv ist)
  *
  * Revision 1.3  2011-04-08 13:38:13  willuhn
