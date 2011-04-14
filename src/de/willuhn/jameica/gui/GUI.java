@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.139 $
- * $Date: 2011/04/06 16:13:16 $
+ * $Revision: 1.140 $
+ * $Date: 2011/04/14 16:58:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -586,9 +586,22 @@ public class GUI implements ApplicationController
 
         gui.view.cleanContent();
 
+        Composite parent = gui.view.getContent();
+        
         gui.currentView = view;
-        gui.currentView.setParent(gui.view.getContent());
+        gui.currentView.setParent(parent);
         gui.currentView.setCurrentObject(o);
+
+        // Wir setzen den Focus erstmal auf das Parent der View. Die View
+        // kann das dann bei Bedarf in bind() noch aendern. Wichtig ist,
+        // dass ueberhaupt irgendein Control den Focus hat, damit globale
+        // Shortcuts (z.Bsp. der in PanelButtonPrint via Display.addFilter)
+        // auch dann ausgeloest werden, wenn der User nicht explizit ein
+        // Control angeklickt hat. Sonst kann es (abhaengig davon, ob die
+        // View oder ein Widget selbst einen Focus gesetzt hat) naemlich
+        // sein, dass gar nichts den Focus hat. Dann werden globale Shortcut
+        // gar nicht gesendet
+        parent.setFocus();
 
         try
         {
@@ -999,7 +1012,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.139  2011/04/06 16:13:16  willuhn
+ * Revision 1.140  2011/04/14 16:58:48  willuhn
+ * @N Globaler Shortcut <CTRL><P> zum Drucken (falls PanelButtonPrint aktiv ist)
+ *
+ * Revision 1.139  2011-04-06 16:13:16  willuhn
  * @N BUGZILLA 631
  *
  * Revision 1.138  2010-12-07 10:04:17  willuhn

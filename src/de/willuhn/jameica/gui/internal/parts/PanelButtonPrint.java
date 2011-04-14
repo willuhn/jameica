@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PanelButtonPrint.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/04/08 13:38:13 $
+ * $Revision: 1.4 $
+ * $Date: 2011/04/14 16:58:48 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -11,7 +11,17 @@
 
 package de.willuhn.jameica.gui.internal.parts;
 
+import java.rmi.RemoteException;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.Print;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.print.PrintSupport;
@@ -23,6 +33,8 @@ import de.willuhn.util.ApplicationException;
  */
 public class PanelButtonPrint extends PanelButton
 {
+  private PrintListener listener = new PrintListener();
+  
   /**
    * ct.
    * @param job der Druck-Job.
@@ -36,14 +48,61 @@ public class PanelButtonPrint extends PanelButton
       }
     }, Application.getI18n().tr("Drucken"));
   }
+  
+  /**
+   * @see de.willuhn.jameica.gui.parts.PanelButton#paint(org.eclipse.swt.widgets.Composite)
+   */
+  public void paint(Composite parent) throws RemoteException
+  {
+    super.paint(parent);
 
+    // Shortcut aktivieren
+    GUI.getDisplay().addFilter(SWT.KeyDown,listener);
+    
+    // Wieder deaktivieren
+    getControl().addDisposeListener(new DisposeListener() {
+      public void widgetDisposed(DisposeEvent e)
+      {
+        GUI.getDisplay().removeFilter(SWT.KeyDown,listener);
+      }
+    });
+  }
+
+  /**
+   * Listener fuer den Shortchut CTRL+P.
+   */
+  private class PrintListener implements Listener
+  {
+    /**
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void handleEvent(Event event)
+    {
+      if (!isEnabled())
+        return;
+      
+      if((event.stateMask & SWT.CTRL) != 0 && event.keyCode == 'p')
+      {
+        GUI.getDisplay().syncExec(new Runnable() {
+          public void run()
+          {
+            handleClick();
+          }
+        });
+        event.doit = false; // wir haben die Sache ja jetzt behandelt
+      }
+    }
+  }
 }
 
 
 
 /**********************************************************************
  * $Log: PanelButtonPrint.java,v $
- * Revision 1.3  2011/04/08 13:38:13  willuhn
+ * Revision 1.4  2011/04/14 16:58:48  willuhn
+ * @N Globaler Shortcut <CTRL><P> zum Drucken (falls PanelButtonPrint aktiv ist)
+ *
+ * Revision 1.3  2011-04-08 13:38:13  willuhn
  * @B Falscher Modifier
  *
  * Revision 1.2  2011-04-08 13:37:35  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/PanelButton.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/04/07 16:49:56 $
+ * $Revision: 1.5 $
+ * $Date: 2011/04/14 16:58:48 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.Part;
@@ -50,6 +51,7 @@ public class PanelButton implements Part
   private final static String BG_DEFAULT   = "panelbar-button-default.png";
   private final static String BG_HOVER     = "panelbar-button-hover.png";
 
+  private Canvas canvas  = null;
   private String icon    = null;
   private Action action  = null;
   private String tooltip = null;
@@ -76,18 +78,18 @@ public class PanelButton implements Part
   {
     final Image bgDefault = SWTUtil.getImage(BG_DEFAULT);
     
-    final Canvas canvas = new Canvas(parent,SWT.NONE);
+    this.canvas = new Canvas(parent,SWT.NONE);
 
     GridData gd = new GridData();
     gd.widthHint = bgDefault.getBounds().width;
-    canvas.setLayoutData(gd);
+    this.canvas.setLayoutData(gd);
 
     if (this.tooltip != null)
-      canvas.setToolTipText(this.tooltip);
+      this.canvas.setToolTipText(this.tooltip);
     
     
     // Default
-    canvas.addPaintListener(new PaintListener() {
+    this.canvas.addPaintListener(new PaintListener() {
       public void paintControl(PaintEvent e)
       {
         e.gc.setAlpha(ALPHA_NONE);
@@ -99,7 +101,7 @@ public class PanelButton implements Part
     });
 
     // Mausklick
-    canvas.addMouseListener(new MouseAdapter() {
+    this.canvas.addMouseListener(new MouseAdapter() {
 
       // Maus runtergedrueckt
       public void mouseDown(MouseEvent e)
@@ -144,27 +146,11 @@ public class PanelButton implements Part
         gc.drawImage(bgDefault,0,0);
         gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y);
 
-        try
-        {
-          action.handleAction(null);
-        }
-        catch (OperationCanceledException oce)
-        {
-          Logger.info("operation cancelled");
-        }
-        catch (ApplicationException ae)
-        {
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-        }
-        catch (Exception ex)
-        {
-          Logger.error("unable to execute action",ex);
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler: {0}",ex.getMessage()),StatusBarMessage.TYPE_ERROR));
-        }
+        handleClick();
       }
     });
     
-    canvas.addMouseTrackListener(new MouseTrackAdapter() {
+    this.canvas.addMouseTrackListener(new MouseTrackAdapter() {
       public void mouseExit(MouseEvent e)
       {
         GC gc = new GC(canvas);
@@ -192,6 +178,40 @@ public class PanelButton implements Part
   }
   
   /**
+   * Liefert das Control des Buttons.
+   * @return das Control des Buttons.
+   * Ist null, wenn paint() noch nicht aufgerufen wurde.
+   */
+  protected Control getControl()
+  {
+    return this.canvas;
+  }
+  
+  /**
+   * Fuehrt den Click-Aktion aus.
+   */
+  protected void handleClick()
+  {
+    try
+    {
+      action.handleAction(null);
+    }
+    catch (OperationCanceledException oce)
+    {
+      Logger.info("operation cancelled");
+    }
+    catch (ApplicationException ae)
+    {
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+    }
+    catch (Exception ex)
+    {
+      Logger.error("unable to execute action",ex);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler: {0}",ex.getMessage()),StatusBarMessage.TYPE_ERROR));
+    }
+  }
+  
+  /**
    * Prueft, ob der Button derzeit anklickbar sein soll.
    * @return true, wenn er anklickbar sein soll.
    */
@@ -214,7 +234,10 @@ public class PanelButton implements Part
 
 /**********************************************************************
  * $Log: PanelButton.java,v $
- * Revision 1.4  2011/04/07 16:49:56  willuhn
+ * Revision 1.5  2011/04/14 16:58:48  willuhn
+ * @N Globaler Shortcut <CTRL><P> zum Drucken (falls PanelButtonPrint aktiv ist)
+ *
+ * Revision 1.4  2011-04-07 16:49:56  willuhn
  * @N Rudimentaere GUI-Klassen fuer die Druck-Anbindung
  *
  * Revision 1.3  2011-04-07 15:09:15  willuhn
