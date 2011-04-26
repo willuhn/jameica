@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.8 $
- * $Date: 2008/12/19 12:16:02 $
+ * $Revision: 1.9 $
+ * $Date: 2011/04/26 11:48:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.internal.action.FileClose;
 import de.willuhn.jameica.gui.internal.dialogs.BackupRestoreDialog;
+import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
@@ -52,6 +53,7 @@ public class BackupControl extends AbstractControl
   private Input target        = null;
   private Input count         = null;
   private TablePart backups   = null;
+  private Button restore      = null;
   
   /**
    * @param view
@@ -184,9 +186,16 @@ public class BackupControl extends AbstractControl
     
     });
     this.backups.setMulti(false);
-    this.backups.setRememberColWidths(false);
+    this.backups.setRememberColWidths(true);
     this.backups.setRememberOrder(false);
     this.backups.setSummary(false);
+    
+    this.backups.addSelectionListener(new Listener() {
+      public void handleEvent(Event event)
+      {
+        getRestoreButton().setEnabled(backups.getSelection() != null);
+      }
+    });
     
     ContextMenu ctx = new ContextMenu();
     ctx.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Backup wiederherstellen..."),new Action() {
@@ -197,6 +206,26 @@ public class BackupControl extends AbstractControl
     },"edit-undo.png"));
     this.backups.setContextMenu(ctx);
     return this.backups;
+  }
+  
+  /**
+   * Liefert den Restore-Button.
+   * @return der Restore-Button.
+   */
+  public Button getRestoreButton()
+  {
+    if (this.restore != null)
+      return this.restore;
+    
+    this.restore = new Button(Application.getI18n().tr("Ausgewähltes Backup wiederherstellen..."),new Action() {
+      
+      public void handleAction(Object context) throws ApplicationException
+      {
+        handleRestore();
+      }
+    },null,false,"edit-undo.png");
+    this.restore.setEnabled(false); // initial deaktivieren
+    return this.restore;
   }
   
   /**
@@ -262,6 +291,11 @@ public class BackupControl extends AbstractControl
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
+ * Revision 1.9  2011/04/26 11:48:45  willuhn
+ * @R Back-Button entfernt
+ * @C Restore-Button nur aktivieren, wenn ein Backup markiert ist
+ * @C Layout geaendert
+ *
  * Revision 1.8  2008/12/19 12:16:02  willuhn
  * @N Mehr Icons
  * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht

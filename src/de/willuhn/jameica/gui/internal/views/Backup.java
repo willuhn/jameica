@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Backup.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/03/11 10:23:42 $
+ * $Revision: 1.4 $
+ * $Date: 2011/04/26 11:48:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,10 +16,9 @@ package de.willuhn.jameica.gui.internal.views;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.controller.BackupControl;
-import de.willuhn.jameica.gui.util.ButtonArea;
-import de.willuhn.jameica.gui.util.ColumnLayout;
+import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
@@ -42,32 +41,13 @@ public class Backup extends AbstractView
     
     final BackupControl control = new BackupControl(this);
     
-    ColumnLayout columns = new ColumnLayout(getParent(),2);
-    
-    SimpleContainer setup = new SimpleContainer(columns.getComposite());
-    setup.addHeadline(i18n.tr("Einstellungen"));
-    setup.addCheckbox(control.getState(),i18n.tr("Backups automatisch beim Beenden von Jameica erstellen"));
-    setup.addLabelPair(i18n.tr("Zielverzeichnis für die Backups"),control.getTarget());
-    setup.addLabelPair(i18n.tr("Maximale Anzahl zu erstellender Backups"),control.getCount());
+    Container container = new SimpleContainer(getParent());
+    container.addHeadline(i18n.tr("Einstellungen"));
+    container.addCheckbox(control.getState(),i18n.tr("Backups automatisch beim Beenden von Jameica erstellen"));
+    container.addLabelPair(i18n.tr("Zielverzeichnis für die Backups"),control.getTarget());
+    container.addLabelPair(i18n.tr("Maximale Anzahl zu erstellender Backups"),control.getCount());
 
-    SimpleContainer backups = new SimpleContainer(columns.getComposite());
-    backups.addHeadline(i18n.tr("Verfügbare Backups"));
-    backups.addPart(control.getBackups());
-    
-    SimpleContainer bottom = new SimpleContainer(getParent());
-    ButtonArea buttons = bottom.createButtonArea(3);
-    buttons.addButton(i18n.tr("Zurück"),new Back(),null,true);
-    buttons.addButton(i18n.tr("Ausgewähltes Backup wiederherstellen..."),new Action()
-    {
-      /**
-       * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
-       */
-      public void handleAction(Object context) throws ApplicationException
-      {
-        control.handleRestore();
-      }
-    
-    });
+    ButtonArea buttons = new ButtonArea();
     buttons.addButton(i18n.tr("Einstellungen speichern"),new Action()
     {
       /**
@@ -77,8 +57,15 @@ public class Backup extends AbstractView
       {
         control.handleStore();
       }
-    
-    });
+    },null,false,"document-save.png");
+    container.addButtonArea(buttons);
+
+    container.addHeadline(i18n.tr("Verfügbare Backups"));
+    control.getBackups().paint(getParent());
+
+    ButtonArea buttons2 = new ButtonArea();
+    buttons2.addButton(control.getRestoreButton());
+    buttons2.paint(getParent());
   }
 
 }
@@ -86,6 +73,11 @@ public class Backup extends AbstractView
 
 /**********************************************************************
  * $Log: Backup.java,v $
+ * Revision 1.4  2011/04/26 11:48:45  willuhn
+ * @R Back-Button entfernt
+ * @C Restore-Button nur aktivieren, wenn ein Backup markiert ist
+ * @C Layout geaendert
+ *
  * Revision 1.3  2008/03/11 10:23:42  willuhn
  * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
  *
