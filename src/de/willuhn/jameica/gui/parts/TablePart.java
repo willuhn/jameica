@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.101 $
- * $Date: 2011/04/26 12:20:24 $
+ * $Revision: 1.102 $
+ * $Date: 2011/04/26 16:13:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,9 +16,11 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -94,10 +96,10 @@ public class TablePart extends AbstractTablePart
 
   //////////////////////////////////////////////////////////
 	// Sortierung
-	private Hashtable sortTable				  	= new Hashtable();
-	private Hashtable textTable				  	= new Hashtable();
-	private int sortedBy 							  	= -1; // Index der sortierten Spalte
-	private boolean direction						  = true; // Ausrichtung
+	private Hashtable sortTable			  	  	= new Hashtable();
+	private Map<Object,String[]> textTable  = new HashMap<Object,String[]>();
+	private int sortedBy 							    	= -1; // Index der sortierten Spalte
+	private boolean direction						    = true; // Ausrichtung
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -783,12 +785,19 @@ public class TablePart extends AbstractTablePart
                   return; // nothing changed
 
                 item.setText(index,newValue);
+
+                // BUGZILLA 1025: Text-Cache aktualisieren
+                String[] values = textTable.get(item.getData());
+                if (values != null)
+                  values[index] = newValue;
+                
                 for (int i=0;i<changeListeners.size();++i)
                 {
                   TableChangeListener l = (TableChangeListener) changeListeners.get(i);
                   try
                   {
                     l.itemChanged(item.getData(),col.getColumnId(),newValue);
+                    
                     if (color == null)
                       item.setForeground(index,Color.COMMENT.getSWTColor());
                     else
@@ -1207,7 +1216,7 @@ public class TablePart extends AbstractTablePart
 			sort = (Item) l.get(i);
 			final TableItem item = new TableItem(table,SWT.NONE,i);
 			item.setData(sort.data);
-			item.setText((String[])textTable.get(sort.data));
+			item.setText(textTable.get(sort.data));
 			if (tableFormatter != null)
 				tableFormatter.format(item);
 		}
@@ -1354,7 +1363,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.101  2011/04/26 12:20:24  willuhn
+ * Revision 1.102  2011/04/26 16:13:57  willuhn
+ * @B BUGZILLA 1025
+ *
+ * Revision 1.101  2011-04-26 12:20:24  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.100  2011-04-26 12:09:17  willuhn
