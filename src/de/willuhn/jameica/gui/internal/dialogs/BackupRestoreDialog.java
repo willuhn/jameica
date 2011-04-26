@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/BackupRestoreDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2010/09/21 10:14:59 $
+ * $Revision: 1.5 $
+ * $Date: 2011/04/26 11:50:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,7 @@ public class BackupRestoreDialog extends AbstractDialog
   {
     super(position);
     this.backup = backup;
-    this.setSize(470,300);
+    this.setSize(470,400);
     this.setTitle(Application.getI18n().tr("Backup wiederherstellen?"));
   }
 
@@ -107,7 +107,10 @@ public class BackupRestoreDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: BackupRestoreDialog.java,v $
- * Revision 1.4  2010/09/21 10:14:59  willuhn
+ * Revision 1.5  2011/04/26 11:50:41  willuhn
+ * @C Dialog etwas hoeher
+ *
+ * Revision 1.4  2010-09-21 10:14:59  willuhn
  * @C Keine Warnung mehr anzeigen, wenn die Benutzerdaten des Backups eine aeltere Version des Plugins enthalten. Die Daten werden dann ohnehin automatisch auf den aktuellen Stand gebracht. Der Warnhinweis verwirrte manche User unnoetig und sie glaubten, das Backup nicht einspielen zu koennen.
  *
  * Revision 1.3  2008/03/11 10:23:42  willuhn
