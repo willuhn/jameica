@@ -14,13 +14,13 @@
 
 	<menu>
 		<item id="jameica.menu.file"             name="Datei">
-			<item id="jameica.menu.settings"       name="&amp;Einstellungen"     shortcut="CTRL+E" icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
-      <item id="jameica.menu.backups"        name="&amp;Backups verwalten" shortcut="CTRL+B" icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
-			<item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	             icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
+			<item id="jameica.menu.settings"       name="&amp;Einstellungen"     shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
+      <item id="jameica.menu.backups"        name="&amp;Backups verwalten" shortcut="CTRL+B"         icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
+			<item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	                     icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
 			<item name="-" />
-      <item id="jameica.menu.back"           name="&amp;Zurück"            shortcut="CTRL+Z" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
+      <item id="jameica.menu.back"           name="&amp;Zurück"            shortcut="ALT+ARROW_LEFT" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
       <item name="-" />
-			<item id="jameica.menu.quit"           name="Beenden"                                  icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
+			<item id="jameica.menu.quit"           name="Beenden"                                          icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
 		</item>
 
 		<item name="Hilfe">

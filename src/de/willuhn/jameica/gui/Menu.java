@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.45 $
- * $Date: 2011/03/17 18:04:00 $
+ * $Revision: 1.46 $
+ * $Date: 2011/04/26 08:31:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Decorations;
@@ -126,12 +127,12 @@ public class Menu
     if (shortCut != null)
     {
       try {
-        String modifier = shortCut.substring(0,shortCut.indexOf("+"));
-        String key = shortCut.substring(shortCut.indexOf("+")+1);
-        int modi = SWT.ALT;
-        if ("CTRL".equalsIgnoreCase(modifier)) modi = SWT.CTRL;
-        item.setAccelerator(modi + key.getBytes()[0]);
-        name += "\t" + shortCut;
+        KeyStroke stroke = KeyStroke.getInstance(shortCut);
+        if (stroke.isComplete())
+        {
+          item.setAccelerator(stroke.getModifierKeys() + stroke.getNaturalKey());
+          name += "\t" + stroke.format();
+        }
       }
       catch (Exception e)
       {
@@ -250,7 +251,11 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
- * Revision 1.45  2011/03/17 18:04:00  willuhn
+ * Revision 1.46  2011/04/26 08:31:58  willuhn
+ * @N Shortcuts nicht mehr selbst parsen sondern ueber KeyStroke aus JFace
+ * @C Shortcut ALT+LEFT fuer "Zurueck"
+ *
+ * Revision 1.45  2011-03-17 18:04:00  willuhn
  * @N Menu-Elemente der Plugins direkt im Hauptmenu anzeigen
  *
  * Revision 1.44  2010-11-03 16:09:08  willuhn
