@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/PluginDetails.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/14 23:15:30 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2011/04/26 11:54:51 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -14,12 +14,10 @@ package de.willuhn.jameica.gui.internal.views;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.controller.PluginControl;
-import de.willuhn.jameica.gui.util.ButtonArea;
-import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
@@ -38,35 +36,28 @@ public class PluginDetails extends AbstractView
 
 		GUI.getView().setTitle(i18n.tr("Details des Plugins"));
 
-		LabelGroup group = new LabelGroup(getParent(),i18n.tr("Eigenschaften"));
-		group.addLabelPair(i18n.tr("Name"),control.getName());
-		group.addLabelPair(i18n.tr("Version"),control.getVersion());
-		group.addLabelPair(i18n.tr("Lizenz"),control.getLicense());
-		group.addLabelPair(i18n.tr("URL"),control.getUrl());
+		Container container = new SimpleContainer(getParent());
+		container.addHeadline(i18n.tr("Eigenschaften"));
+		container.addLabelPair(i18n.tr("Name"),control.getName());
+		container.addLabelPair(i18n.tr("Version"),control.getVersion());
+		container.addLabelPair(i18n.tr("Lizenz"),control.getLicense());
+		container.addLabelPair(i18n.tr("URL"),control.getUrl());
 
-		LabelGroup path = new LabelGroup(getParent(),i18n.tr("Pfade"));
-		path.addLabelPair(i18n.tr("Installations-Verzeichnis"),control.getPath());
-		path.addLabelPair(i18n.tr("Arbeitsverzeichnis"),control.getWorkPath());
+		container.addHeadline(i18n.tr("Pfade"));
+		container.addLabelPair(i18n.tr("Installations-Verzeichnis"),control.getPath());
+		container.addLabelPair(i18n.tr("Arbeitsverzeichnis"),control.getWorkPath());
 
-		LabelGroup services = new LabelGroup(getParent(),i18n.tr("Services"));
-		services.addPart(control.getServiceList());
-
-		ButtonArea buttons = new ButtonArea(getParent(),1);
-		buttons.addButton(i18n.tr("Zurück"), new Back());
+		container.addHeadline(i18n.tr("Services"));
+		container.addPart(control.getServiceList());
   }
-
-  /**
-   * @see de.willuhn.jameica.gui.AbstractView#unbind()
-   */
-  public void unbind() throws ApplicationException
-  {
-  }
-
 }
 
 
 /**********************************************************************
  * $Log: PluginDetails.java,v $
+ * Revision 1.2  2011/04/26 11:54:51  willuhn
+ * @R Back-Button entfernt
+ *
  * Revision 1.1  2005/06/14 23:15:30  web0
  * @N added settings for plugins/services
  *
