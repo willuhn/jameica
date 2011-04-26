@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.10 $
- * $Date: 2008/12/19 12:16:02 $
+ * $Revision: 1.11 $
+ * $Date: 2011/04/26 11:55:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -284,6 +284,10 @@ public class ServiceList extends TablePart
   
   
     setContextMenu(menu);
+    setMulti(false);
+    setRememberColWidths(true);
+    setRememberOrder(true);
+    setSummary(false);
     addColumn(i18n.tr("Name"),"name");
     addColumn(i18n.tr("Beschreibung"),"description");
     addColumn(i18n.tr("Status"),"status");
@@ -454,6 +458,9 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.11  2011/04/26 11:55:16  willuhn
+ * @R Summen-Zeile entfernt
+ *
  * Revision 1.10  2008/12/19 12:16:02  willuhn
  * @N Mehr Icons
  * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
