@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
- * $Revision: 1.9 $
- * $Date: 2010/07/29 09:15:41 $
+ * $Revision: 1.10 $
+ * $Date: 2011/04/26 12:01:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,7 +61,6 @@ public class ButtonArea implements Part
   /**
    * fuegt der Area einen Button hinzu.
    * @param button der Button.
-   * @throws RemoteException
    */
   public void addButton(Button button)
   {
@@ -123,7 +122,10 @@ public class ButtonArea implements Part
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
- * Revision 1.9  2010/07/29 09:15:41  willuhn
+ * Revision 1.10  2011/04/26 12:01:42  willuhn
+ * @D javadoc Fixes
+ *
+ * Revision 1.9  2010-07-29 09:15:41  willuhn
  * @N Neue ButtonArea - die alte muss irgendwann mal abgeloest werden
  *
  **********************************************************************/

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaAuthenticator.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/06/10 11:25:53 $
+ * $Revision: 1.3 $
+ * $Date: 2011/04/26 12:01:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,13 +30,44 @@ public class JameicaAuthenticator extends Authenticator
    */
   public static enum RequestParam
   {
+    /**
+     * Request-Parameter fuer den Host.
+     */
     HOST,
+    
+    /**
+     * Request-Parameter fuer die Site.
+     */
     SITE,
+    
+    /**
+     * Request-Parameter fuer den Port.
+     */
     PORT,
+    
+    /**
+     * Request-Parameter fuer das verwendete Protokoll.
+     */
     PROTOCOL,
+    
+    /**
+     * Request-Parameter fuer den anzuzeigenden Prompt-Text.
+     */
     PROMPT,
+    
+    /**
+     * Request-Parameter fuer das URL-Schema.
+     */
     SCHEME,
+    
+    /**
+     * Request-Parameter fuer die URL.
+     */
     URL,
+    
+    /**
+     * Request-Parameter fuer den Authentifizierungstyp.
+     */
     AUTHTYPE
   }
 
@@ -98,6 +129,9 @@ public class JameicaAuthenticator extends Authenticator
 
 /**********************************************************************
  * $Log: JameicaAuthenticator.java,v $
+ * Revision 1.3  2011/04/26 12:01:42  willuhn
+ * @D javadoc Fixes
+ *
  * Revision 1.2  2009/06/10 11:25:53  willuhn
  * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
  *

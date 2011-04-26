@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/buttons/Back.java,v $
- * $Revision: 1.1 $
- * $Date: 2009/01/20 10:51:51 $
+ * $Revision: 1.2 $
+ * $Date: 2011/04/26 12:01:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ public class Back extends Button
   /**
    * ct.
    * Der Button ist als Default-Button markiert.
+   * @deprecated Ist nicht mehr noetig, da Jameica inzwischen einen globalen Back-Button besitzt
    */
   public Back()
   {
@@ -33,6 +34,7 @@ public class Back extends Button
   /**
    * ct.
    * @param isDefault true, wenn es der Default-Button sein soll.
+   * @deprecated Ist nicht mehr noetig, da Jameica inzwischen einen globalen Back-Button besitzt
    */
   public Back(boolean isDefault)
   {
@@ -43,7 +45,10 @@ public class Back extends Button
 
 /**********************************************************************
  * $Log: Back.java,v $
- * Revision 1.1  2009/01/20 10:51:51  willuhn
+ * Revision 1.2  2011/04/26 12:01:42  willuhn
+ * @D javadoc Fixes
+ *
+ * Revision 1.1  2009-01-20 10:51:51  willuhn
  * @N Mehr Icons - fuer Buttons
  *
  **********************************************************************/

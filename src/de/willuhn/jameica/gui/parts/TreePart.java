@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.45 $
- * $Date: 2010/10/12 23:21:19 $
+ * $Revision: 1.46 $
+ * $Date: 2011/04/26 12:01:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -435,7 +435,6 @@ public class TreePart extends AbstractTablePart
    * @param item das Item.
    * @param expanded true, wenn es aufgeklappt sein soll, sonst false.
    * @param recursive true, wenn auch alle Kind-Elemente rekursiv mit aufgeklappt werden sollen.
-   * @return true, wenn es aufgeklappt sein soll.
    */
   private void setExpanded(TreeItem item, boolean expanded, boolean recursive)
   {
@@ -824,7 +823,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.45  2010/10/12 23:21:19  willuhn
+ * Revision 1.46  2011/04/26 12:01:42  willuhn
+ * @D javadoc Fixes
+ *
+ * Revision 1.45  2010-10-12 23:21:19  willuhn
  * @C GenericObject#equals beim Selektieren beachten
  *
  * Revision 1.44  2010-10-12 21:50:17  willuhn

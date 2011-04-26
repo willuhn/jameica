@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ImageInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/09/06 15:31:53 $
+ * $Revision: 1.4 $
+ * $Date: 2011/04/26 12:01:42 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -246,7 +246,7 @@ public class ImageInput extends AbstractInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  public void update()
+  void update()
   {
     // Wir wollen nicht, dass die Hintergrund-Farbe geaendert wird
   }
@@ -379,7 +379,10 @@ public class ImageInput extends AbstractInput
 
 /**********************************************************************
  * $Log: ImageInput.java,v $
- * Revision 1.3  2010/09/06 15:31:53  willuhn
+ * Revision 1.4  2011/04/26 12:01:42  willuhn
+ * @D javadoc Fixes
+ *
+ * Revision 1.3  2010-09-06 15:31:53  willuhn
  * @N Heiners Patch zum proportionalen Skalieren des Bildes
  *
  * Revision 1.2  2010-08-24 23:06:10  willuhn

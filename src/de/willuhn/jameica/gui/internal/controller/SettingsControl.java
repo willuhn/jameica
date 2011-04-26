@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.31 $
- * $Date: 2010/11/04 01:11:20 $
+ * $Revision: 1.32 $
+ * $Date: 2011/04/26 12:01:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -160,6 +160,10 @@ public class SettingsControl extends AbstractControl
     return this.httpsProxyPort;
   }
 
+  /**
+   * Liefert die Checkbox zum Aktivieren der System-Proxy-Einstellungen.
+   * @return Checkbox.
+   */
   public CheckboxInput getUseSystemProxy()
   {
     if (this.systemProxy == null)
@@ -503,7 +507,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
- * Revision 1.31  2010/11/04 01:11:20  willuhn
+ * Revision 1.32  2011/04/26 12:01:42  willuhn
+ * @D javadoc Fixes
+ *
+ * Revision 1.31  2010-11-04 01:11:20  willuhn
  * @N Random Splashscreen ;)
  *
  * Revision 1.30  2010-10-10 21:20:55  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.98 $
- * $Date: 2011/03/17 09:49:17 $
+ * $Revision: 1.99 $
+ * $Date: 2011/04/26 12:01:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -214,6 +214,8 @@ public class TablePart extends AbstractTablePart
    * @param onlyChecked true, falls bei Aktivierung des Features <code>setCheckable(true)</code>
    * nur genau die Objekte geliefert werden sollen, bei denen das Haekchen gesetzt ist.
    * Die Objekte werden genau in der angezeigten Reihenfolge zurueckgeliefert.
+   * @return die Liste der Objekte.
+   * @throws RemoteException
    */
   public List getItems(boolean onlyChecked) throws RemoteException
   {
@@ -1352,7 +1354,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.98  2011/03/17 09:49:17  willuhn
+ * Revision 1.99  2011/04/26 12:01:42  willuhn
+ * @D javadoc Fixes
+ *
+ * Revision 1.98  2011-03-17 09:49:17  willuhn
  * @N Disposed-Check
  *
  * Revision 1.97  2010-10-12 21:50:17  willuhn
