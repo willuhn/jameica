@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/License.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/01/20 10:51:51 $
+ * $Revision: 1.6 $
+ * $Date: 2011/04/26 11:38:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,10 +14,8 @@ package de.willuhn.jameica.gui.internal.views;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.internal.buttons.Back;
 import de.willuhn.jameica.gui.internal.controller.LicenseControl;
 import de.willuhn.jameica.gui.parts.FormTextPart;
-import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -25,7 +23,8 @@ import de.willuhn.util.I18N;
 /**
  * View fuer die Lizenz-Informationen
  */
-public class License extends AbstractView {
+public class License extends AbstractView
+{
 
   /**
    * @see de.willuhn.jameica.gui.AbstractView#bind()
@@ -40,9 +39,6 @@ public class License extends AbstractView {
 
 		FormTextPart libs = control.getLibList();
 		libs.paint(getParent());
-
-		ButtonArea buttons = new ButtonArea(getParent(),1);
-		buttons.addButton(new Back());
   }
 
   /**
@@ -56,7 +52,10 @@ public class License extends AbstractView {
 
 /**********************************************************************
  * $Log: License.java,v $
- * Revision 1.5  2009/01/20 10:51:51  willuhn
+ * Revision 1.6  2011/04/26 11:38:28  willuhn
+ * @R Back-Button entfernt
+ *
+ * Revision 1.5  2009-01-20 10:51:51  willuhn
  * @N Mehr Icons - fuer Buttons
  *
  * Revision 1.4  2005/03/01 22:58:24  web0
