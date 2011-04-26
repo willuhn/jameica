@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.46 $
- * $Date: 2011/04/26 12:01:42 $
+ * $Revision: 1.47 $
+ * $Date: 2011/04/26 12:20:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -255,7 +255,7 @@ public class TreePart extends AbstractTablePart
         {
           try
           {
-            Listener l = (Listener) selectionListeners.get(i);
+            Listener l = selectionListeners.get(i);
             l.handleEvent(event);
           }
           catch (Throwable t)
@@ -823,7 +823,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.46  2011/04/26 12:01:42  willuhn
+ * Revision 1.47  2011/04/26 12:20:24  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.46  2011-04-26 12:01:42  willuhn
  * @D javadoc Fixes
  *
  * Revision 1.45  2010-10-12 23:21:19  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.47 $
- * $Date: 2010/10/07 21:52:35 $
+ * $Revision: 1.48 $
+ * $Date: 2011/04/26 12:20:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -321,7 +321,7 @@ public class Navigation implements Part
       {
         if (event.type == SWT.Selection)
         {
-          Action a = (Action) ni.getAction();
+          Action a = ni.getAction();
           if (a == null || !ni.isEnabled())
             return;
           try
@@ -383,7 +383,10 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
- * Revision 1.47  2010/10/07 21:52:35  willuhn
+ * Revision 1.48  2011/04/26 12:20:24  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.47  2010-10-07 21:52:35  willuhn
  * @B Moegliche SWTException beim Shutdown
  *
  * Revision 1.46  2009-04-14 07:50:07  willuhn

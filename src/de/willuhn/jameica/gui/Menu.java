@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.46 $
- * $Date: 2011/04/26 08:31:58 $
+ * $Revision: 1.47 $
+ * $Date: 2011/04/26 12:20:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -174,7 +174,7 @@ public class Menu
 
             try
             {
-              Action a = (Action) mi.getAction();
+              Action a = mi.getAction();
               if (a == null || !mi.isEnabled())
                 return;
 
@@ -251,7 +251,10 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
- * Revision 1.46  2011/04/26 08:31:58  willuhn
+ * Revision 1.47  2011/04/26 12:20:23  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.46  2011-04-26 08:31:58  willuhn
  * @N Shortcuts nicht mehr selbst parsen sondern ueber KeyStroke aus JFace
  * @C Shortcut ALT+LEFT fuer "Zurueck"
  *

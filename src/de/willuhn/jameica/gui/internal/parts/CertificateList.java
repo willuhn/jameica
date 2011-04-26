@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.17 $
- * $Date: 2008/12/19 12:16:02 $
+ * $Revision: 1.18 $
+ * $Date: 2011/04/26 12:20:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -91,7 +91,7 @@ public class CertificateList extends TablePart
             Application.getSSLFactory().removeTrustedCertificate(c);
             
             // jetzt noch aus der Tabelle loeschen
-            removeItem((CertObject)context);
+            removeItem(context);
           }
         }
         catch (OperationCanceledException oce)
@@ -384,6 +384,9 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
+ * Revision 1.18  2011/04/26 12:20:23  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
  * Revision 1.17  2008/12/19 12:16:02  willuhn
  * @N Mehr Icons
  * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/Attic/ReminderDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/01/17 17:31:09 $
+ * $Revision: 1.3 $
+ * $Date: 2011/04/26 12:20:24 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -111,7 +111,7 @@ public class ReminderDialog extends AbstractDialog
         reminder.setName(s);
         reminder.setDueDate(getDate(cal));
         reminder.setAction(ReminderPopup.class.getName());
-        reminder.setData((String) desc.getValue());
+        reminder.setData(desc.getValue());
         close();
       }
     }, null, false,"ok.png");
@@ -146,7 +146,10 @@ public class ReminderDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: ReminderDialog.java,v $
- * Revision 1.2  2011/01/17 17:31:09  willuhn
+ * Revision 1.3  2011/04/26 12:20:24  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.2  2011-01-17 17:31:09  willuhn
  * @C Reminder-Zeug
  *
  * Revision 1.1  2011-01-14 17:33:39  willuhn

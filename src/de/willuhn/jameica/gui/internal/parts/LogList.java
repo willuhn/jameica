@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/LogList.java,v $
- * $Revision: 1.5 $
- * $Date: 2007/01/25 12:07:58 $
+ * $Revision: 1.6 $
+ * $Date: 2011/04/26 12:20:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -325,7 +325,7 @@ public class LogList extends TablePart
             // Wir zeigen nur maximal die letzten 100 Elemente an.
             // Aeltere entfernen wir
             if (last.size() > 100)
-              LogList.this.removeItem((LogObject)last.removeFirst());
+              LogList.this.removeItem(last.removeFirst());
             LogList.this.setTopIndex(LogList.this.size()-1); //zum Ende scrollen
           }
           catch (Throwable t)
@@ -354,6 +354,9 @@ public class LogList extends TablePart
 
 /*********************************************************************
  * $Log: LogList.java,v $
+ * Revision 1.6  2011/04/26 12:20:23  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
  * Revision 1.5  2007/01/25 12:07:58  willuhn
  * @R removed debug output
  * @C dispose snapin content on snapout()

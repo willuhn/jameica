@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.100 $
- * $Date: 2011/04/26 12:09:17 $
+ * $Revision: 1.101 $
+ * $Date: 2011/04/26 12:20:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -683,7 +683,7 @@ public class TablePart extends AbstractTablePart
         {
           try
           {
-            Listener l = (Listener) selectionListeners.get(i);
+            Listener l = selectionListeners.get(i);
             l.handleEvent(event);
           }
           catch (Throwable t)
@@ -1354,7 +1354,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.100  2011/04/26 12:09:17  willuhn
+ * Revision 1.101  2011/04/26 12:20:24  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.100  2011-04-26 12:09:17  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.99  2011-04-26 12:01:42  willuhn
