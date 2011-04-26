@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/FatalErrorView.java,v $
- * $Revision: 1.9 $
- * $Date: 2010/11/25 11:34:08 $
+ * $Revision: 1.10 $
+ * $Date: 2011/04/26 11:48:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,6 @@ import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.input.TextAreaInput;
-import de.willuhn.jameica.gui.internal.buttons.Back;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
@@ -81,7 +80,6 @@ public class FatalErrorView extends AbstractView
 		  }
 
 	    ButtonArea buttons = new ButtonArea();
-      buttons.addButton(new Back(true));
 	    buttons.addButton(i18n.tr("Diagnose-Protokoll speichern"),new Action()
       {
         public void handleAction(Object context) throws ApplicationException
@@ -207,7 +205,10 @@ public class FatalErrorView extends AbstractView
 
 /***************************************************************************
  * $Log: FatalErrorView.java,v $
- * Revision 1.9  2010/11/25 11:34:08  willuhn
+ * Revision 1.10  2011/04/26 11:48:08  willuhn
+ * @R Back-Button entfernt
+ *
+ * Revision 1.9  2010-11-25 11:34:08  willuhn
  * @N Error-View ueberarbeitet. Das System-Protokoll wird jetzt nicht mehr in die Zwischenablage kopiert sondern als Datei gespeichert. Das kann man als Attachment speichern und ist erheblich besser lesbar (keine Zeilenumbrueche in den Log-Ausgaben). Ausserdem enthaelt es jetzt auch noch Versionsinformationen zu OS, Java, Jameica und Plugins.
  *
  ***************************************************************************/
