@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.16 $
- * $Date: 2010/10/28 22:08:44 $
+ * $Revision: 1.17 $
+ * $Date: 2011/04/26 12:09:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
@@ -110,10 +111,7 @@ public class FormTextPart implements Part {
     }
     finally
     {
-      try {
-        br.close();
-      }
-      catch (Exception e) {}
+      IOUtil.close(br);
     }
   }
 
@@ -244,7 +242,10 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
- * Revision 1.16  2010/10/28 22:08:44  willuhn
+ * Revision 1.17  2011/04/26 12:09:17  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.16  2010-10-28 22:08:44  willuhn
  * @N HyperlinkSettings so frueh wie moeglich setzen - wegen moeglicher NPE
  *
  * Revision 1.14  2007-12-21 13:46:27  willuhn

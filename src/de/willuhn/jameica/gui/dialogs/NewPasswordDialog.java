@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/11/25 16:01:50 $
+ * $Revision: 1.8 $
+ * $Date: 2011/04/26 12:09:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -264,7 +264,7 @@ public class NewPasswordDialog extends AbstractDialog
       return false;
     }
 
-    if (!password.equals(password2))
+    if (password != null && !password.equals(password2))
     {
       setErrorText(i18n.tr("Die eingegebenen Passworte stimmen nicht überein."));
       return false;
@@ -294,7 +294,10 @@ public class NewPasswordDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: NewPasswordDialog.java,v $
- * Revision 1.7  2010/11/25 16:01:50  willuhn
+ * Revision 1.8  2011/04/26 12:09:18  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.7  2010-11-25 16:01:50  willuhn
  * *** empty log message ***
  *
  * Revision 1.6  2010-11-25 14:24:30  willuhn

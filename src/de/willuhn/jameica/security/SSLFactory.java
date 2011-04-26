@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.57 $
- * $Date: 2011/02/08 18:27:53 $
+ * $Revision: 1.58 $
+ * $Date: 2011/04/26 12:09:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,6 +52,7 @@ import org.bouncycastle.x509.X509V3CertificateGenerator;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.io.FileFinder;
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
 import de.willuhn.jameica.security.crypto.Engine;
 import de.willuhn.jameica.security.crypto.RSAEngine;
@@ -510,14 +511,7 @@ public class SSLFactory
 		}
 		finally
 		{
-			try
-			{
-				is.close();
-			}
-			catch (Exception e) 
-			{
-				// useless
-			}
+		  IOUtil.close(is);
 		}
 	}
 	
@@ -730,7 +724,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.57  2011/02/08 18:27:53  willuhn
+ * Revision 1.58  2011/04/26 12:09:18  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.57  2011-02-08 18:27:53  willuhn
  * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
  *
  * Revision 1.56  2010-09-13 16:37:46  willuhn

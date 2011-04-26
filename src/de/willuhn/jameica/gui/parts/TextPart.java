@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.9 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.10 $
+ * $Date: 2011/04/26 12:09:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
@@ -88,10 +89,7 @@ public class TextPart implements Part
 		}
 		finally
 		{
-			try {
-				br.close();
-			}
-			catch (Exception e) {}
+		  IOUtil.close(br);
 		}
 		
 	}
@@ -202,16 +200,21 @@ public class TextPart implements Part
    */
   public void setBackground(Color color)
   {
-    if (color != null)
-      this.background = color;
+    if (color == null)
+      return;
+    
+    this.background = color;
     if (stext != null && !stext.isDisposed())
-      stext.setBackground(color.getSWTColor());
+      stext.setBackground(this.background.getSWTColor());
   }
 }
 
 
 /**********************************************************************
  * $Log: TextPart.java,v $
+ * Revision 1.10  2011/04/26 12:09:17  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
  * Revision 1.9  2007/05/14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen

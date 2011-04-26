@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.15 $
- * $Date: 2010/05/19 14:51:53 $
+ * $Revision: 1.16 $
+ * $Date: 2011/04/26 12:09:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -169,12 +169,14 @@ public class Server implements ApplicationController
     public void log(String msg) {
       Logger.info(msg);
     }
-  };
-  
+  }
 }
 
 /*********************************************************************
  * $Log: Server.java,v $
+ * Revision 1.16  2011/04/26 12:09:18  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
  * Revision 1.15  2010/05/19 14:51:53  willuhn
  * @N Ausfall von STDOUT tolerieren
  * @N STDOUT, STDERR und STDIN beim Start mit dem Parameter "-n" (Noninteractive mode) schliessen

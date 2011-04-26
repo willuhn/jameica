@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/03/04 18:13:38 $
+ * $Revision: 1.15 $
+ * $Date: 2011/04/26 12:09:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 
+import de.willuhn.io.IOUtil;
 import de.willuhn.logging.Logger;
 
 /**
@@ -168,14 +169,7 @@ public class StartupParams
 			    }
 			    finally
 			    {
-			      try
-			      {
-	            r.close();
-			      }
-			      catch (Exception e)
-			      {
-			        Logger.error("unable to close file " + file);
-			      }
+			      IOUtil.close(r);
 			    }
 			  }
 			}
@@ -276,7 +270,10 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
- * Revision 1.14  2011/03/04 18:13:38  willuhn
+ * Revision 1.15  2011/04/26 12:09:18  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.14  2011-03-04 18:13:38  willuhn
  * @N Erster Code fuer einen Workdir-Chooser
  *
  * Revision 1.13  2010-11-22 11:36:12  willuhn

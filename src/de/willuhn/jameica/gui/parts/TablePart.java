@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.99 $
- * $Date: 2011/04/26 12:01:42 $
+ * $Revision: 1.100 $
+ * $Date: 2011/04/26 12:09:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -779,7 +779,7 @@ public class TablePart extends AbstractTablePart
                 String newValue = text.getText();
                 if (oldValue == null && newValue == null)
                   return; // nothing changed
-                if (oldValue.equals(newValue))
+                if (oldValue != null && oldValue.equals(newValue))
                   return; // nothing changed
 
                 item.setText(index,newValue);
@@ -1354,7 +1354,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.99  2011/04/26 12:01:42  willuhn
+ * Revision 1.100  2011/04/26 12:09:17  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
+ * Revision 1.99  2011-04-26 12:01:42  willuhn
  * @D javadoc Fixes
  *
  * Revision 1.98  2011-03-17 09:49:17  willuhn
