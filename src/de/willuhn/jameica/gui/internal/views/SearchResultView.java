@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/SearchResultView.java,v $
- * $Revision: 1.2 $
- * $Date: 2008/09/03 00:21:07 $
+ * $Revision: 1.3 $
+ * $Date: 2011/04/26 11:51:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,9 +17,7 @@ import java.util.List;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.internal.parts.SearchResultPart;
-import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
@@ -39,8 +37,6 @@ public class SearchResultView extends AbstractView
     
     SearchResultPart part = new SearchResultPart((List)getCurrentObject());
     part.paint(getParent());
-    ButtonArea buttons = new ButtonArea(getParent(),1);
-    buttons.addButton(i18n.tr("Zurück"), new Back());
   }
 
 }
@@ -48,6 +44,9 @@ public class SearchResultView extends AbstractView
 
 /**********************************************************************
  * $Log: SearchResultView.java,v $
+ * Revision 1.3  2011/04/26 11:51:24  willuhn
+ * @R Back-Button entfernt
+ *
  * Revision 1.2  2008/09/03 00:21:07  willuhn
  * @C SearchResultPart in "internal"-Package verschoben (wo auch schon das SearchPart ist)
  *
