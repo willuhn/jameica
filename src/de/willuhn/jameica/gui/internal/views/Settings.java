@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.31 $
- * $Date: 2010/11/04 10:31:13 $
+ * $Revision: 1.32 $
+ * $Date: 2011/04/26 11:38:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,9 +25,8 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.action.CertificateImport;
-import de.willuhn.jameica.gui.internal.buttons.Back;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
-import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.ColumnLayout;
 import de.willuhn.jameica.gui.util.SimpleContainer;
@@ -57,7 +56,7 @@ public class Settings extends AbstractView implements Extendable
   /**
    * @see de.willuhn.jameica.gui.AbstractView#bind()
    */
-  public void bind()
+  public void bind() throws Exception
   {
 
 		final I18N i18n = Application.getI18n();
@@ -86,14 +85,15 @@ public class Settings extends AbstractView implements Extendable
     system.addHeadline(i18n.tr("Installierte SSL-Zertifikate"));
     system.addPart(control.getCertificates());
     
-    ButtonArea buttons = system.createButtonArea(1);
-    buttons.addButton(i18n.tr("Zertifikat importieren"),new Action() {
+    ButtonArea certButtons = new ButtonArea();
+    certButtons.addButton(i18n.tr("Zertifikat importieren"),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         new CertificateImport().handleAction(context);
         GUI.startView(GUI.getCurrentView().getClass(),GUI.getCurrentView().getCurrentObject());
       }
-    });
+    },null,false,"document-open.png");
+    system.addButtonArea(certButtons);
     
     //
     /////////////////////////////////////////////////////////////////
@@ -140,22 +140,23 @@ public class Settings extends AbstractView implements Extendable
     if (lastActiveTab != null)
       getTabFolder().setSelection(lastActiveTab.intValue());
 
-    ButtonArea colorButtons = new ButtonArea(getParent(),3);
-    colorButtons.addButton(new Back());
-    colorButtons.addButton(i18n.tr("Zurücksetzen"),new Action()
+    
+    ButtonArea buttons = new ButtonArea();
+    buttons.addButton(i18n.tr("Zurücksetzen"),new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
         control.handleRestore();
       }
-    });
-    colorButtons.addButton(i18n.tr("Speichern"), new Action()
+    },null,false,"edit-undo.png");
+    buttons.addButton(i18n.tr("Speichern"), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
         control.handleStore();
       }
-    });
+    },null,false,"document-save.png");
+    buttons.paint(getParent());
   }
   
   /**
@@ -196,7 +197,11 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.31  2010/11/04 10:31:13  willuhn
+ * Revision 1.32  2011/04/26 11:38:16  willuhn
+ * @R Back-Button entfernt
+ * @N Icons auf Buttons
+ *
+ * Revision 1.31  2010-11-04 10:31:13  willuhn
  * @N Checken, ob splash.jar existiert
  *
  * Revision 1.30  2010-11-04 01:11:20  willuhn
