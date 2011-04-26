@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/LicenseControl.java,v $
- * $Revision: 1.4 $
- * $Date: 2005/03/09 01:06:36 $
- * $Author: web0 $
+ * $Revision: 1.5 $
+ * $Date: 2011/04/26 12:15:49 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -60,13 +60,14 @@ public class LicenseControl extends AbstractControl {
 		File[] infos = finder.findRecursive();
 		for (int i=0;i<infos.length;++i)
 		{
-			try {
+      if (!infos[i].isFile() || !infos[i].canRead())
+      {
+        Logger.warn("unable to read " + infos[i] + ", skipping");
+        continue;
+      }
+
+      try {
 				InfoReader ir = new InfoReader(new FileInputStream(infos[i]));
-				if (ir == null)
-				{
-					Logger.warn("inforeader is null, skipping lib");
-					continue;
-				}
 				buffer.append("<p>");
 				buffer.append("<b>" + ir.getName() + "</b>");
 				buffer.append("<br/>" + i18n.tr("Beschreibung") + ": " + ir.getDescription());
@@ -91,6 +92,9 @@ public class LicenseControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
+ * Revision 1.5  2011/04/26 12:15:49  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
  * Revision 1.4  2005/03/09 01:06:36  web0
  * @D javadoc fixes
  *

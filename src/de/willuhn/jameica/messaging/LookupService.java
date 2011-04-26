@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/LookupService.java,v $
- * $Revision: 1.8 $
- * $Date: 2009/09/29 14:50:08 $
+ * $Revision: 1.9 $
+ * $Date: 2011/04/26 12:15:49 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -139,7 +139,7 @@ public class LookupService implements MessageConsumer
         return; // ignore
 
       String s = new String(packet.getData());
-      if (s == null)
+      if (s.length() == 0)
       {
         Logger.debug("ignoring empty message");
         return; // nix erhalten
@@ -267,7 +267,7 @@ public class LookupService implements MessageConsumer
         return; // sind wir selbst
 
       String s = new String(packet.getData());
-      if (s == null)
+      if (s.length() == 0)
         return; // nix erhalten
       s = s.trim();
       
@@ -284,6 +284,9 @@ public class LookupService implements MessageConsumer
 
 /*********************************************************************
  * $Log: LookupService.java,v $
+ * Revision 1.9  2011/04/26 12:15:49  willuhn
+ * @B Potentielle Bugs gemaess Code-Checker
+ *
  * Revision 1.8  2009/09/29 14:50:08  willuhn
  * @B Service-Request ignorieren, wenn wir ihn nicht haben
  *
