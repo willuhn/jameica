@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.32 $
- * $Date: 2011/02/23 15:08:38 $
+ * $Revision: 1.33 $
+ * $Date: 2011/04/27 10:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,7 +44,6 @@ import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
 import de.willuhn.logging.Logger;
-import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
 
@@ -101,9 +100,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 				throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
 			}
 		}
+		
 		// Wir speichern eine Checksumme des neuen Passwortes.
 		// Dann koennen wir spaeter checken, ob es ok ist.
-		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
+		this.setChecksum(this.password);
 		return this.password;
   }
 
@@ -119,22 +119,14 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   	if (this.password != null)
   		return password;
 
-		String checksum = settings.getString("jameica.system.callback.checksum",null);
-		this.password  	= Application.getStartupParams().getPassword();
-
+  	// Haben wir ein Passwort via Kommandozeilen-Parameter?
+		this.password = Application.getStartupParams().getPassword();
 		if (password != null)
 		{
 			Logger.info("master password given via commandline");
-			if (checksum == null)
-			{
-				return password;
-			}
+			if (this.validateChecksum(this.password)) // Checken, ob das Passwort korrekt ist
+			  return this.password;
 
-			Logger.info("checksum found, testing");
-			if (checksum.equals(Checksum.md5(password.getBytes())))
-			{
-				return password;
-			}
 			Logger.info("checksum test failed, asking for password in interactive mode");
 		}
 
@@ -158,17 +150,11 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		p.setText(text);
 		p.setTitle(Application.getI18n().tr("Neues Master-Passwort"));
 
-		try
-		{
-			this.password = (String) p.open();
-			// Wir speichern eine Checksumme des neuen Passwortes.
-			// Dann koennen wir spaeter checken, ob es ok ist.
-			settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
-		}
-		catch (OperationCanceledException e)
-		{
-			throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
-		}
+		this.password = (String) p.open();
+		
+		// Wir speichern eine Checksumme des neuen Passwortes.
+		// Dann koennen wir spaeter checken, ob es ok ist.
+		this.setChecksum(this.password);
 	}
 
   /**
@@ -421,9 +407,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
       }
       try
       {
-        String pw       = Checksum.md5(password.getBytes());
-        String checksum = settings.getString("jameica.system.callback.checksum","");
-        boolean b = checksum.equals(pw);
+        boolean b = validateChecksum(password);
         if (!b)
           setErrorText(Application.getI18n().tr("Passwort falsch.") + " " + getRetryString());
         return b && super.checkPassword(password);
@@ -464,7 +448,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.32  2011/02/23 15:08:38  willuhn
+ * Revision 1.33  2011/04/27 10:27:10  willuhn
+ * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
+ *
+ * Revision 1.32  2011-02-23 15:08:38  willuhn
  * @C Text im Dialog "Master-Passwort" aendern customizable
  *
  * Revision 1.31  2010-11-22 11:32:04  willuhn
@@ -491,75 +478,4 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
  *
  * Revision 1.24  2010/03/04 22:59:29  willuhn
  * @R redundantes try/catch
- *
- * Revision 1.23  2009/09/09 09:16:19  willuhn
- * @N HTP-Auth via Messaging delegierbar
- *
- * Revision 1.22  2009/06/10 11:25:54  willuhn
- * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
- *
- * Revision 1.21  2009/06/09 12:43:01  willuhn
- * @N Erster Code fuer Jameica Authenticator
- *
- * Revision 1.20  2009/05/28 10:11:49  willuhn
- * @N In AbstractDialog kann nun explizit angegeben werden, auf welchen Monitor der Dialog soll (CURRENT == Monitor, auf dem sich das Jameica-Fenster befindet oder PRIMARY == der Primaer-Monitor). Letzteres ist fuer Dialoge noetig, die zu einem Zeitpunkt angezeigt werden, zu denen das Anwendungsfenster noch nicht da ist - etwa der Dialog fuer das Masterpasswort. Wuerde man da "MONITOR_CURRENT" verwenden, haette das zur Folge, dass die Shell des Anwendungsfensters unnoetig erzeugt wird
- *
- * Revision 1.19  2008/04/20 22:37:32  willuhn
- * @B MACOS Test auf NULL statt "" in Passwort-Checksumme
- *
- * Revision 1.18  2008/03/07 16:31:48  willuhn
- * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
- *
- * Revision 1.17  2007/12/21 13:46:27  willuhn
- * @N H2-Migration scharf geschaltet
- *
- * Revision 1.16  2007/11/05 13:01:13  willuhn
- * @C Compiler-Warnings
- *
- * Revision 1.15  2007/08/31 10:00:10  willuhn
- * @N CheckTrustMessage synchron versenden, wenn Vertrauensstellung abgefragt wird
- *
- * Revision 1.14  2007/04/20 14:48:02  willuhn
- * @N Nachtraegliches Hinzuegen von Elementen in TablePart auch vor paint() moeglich
- * @N Zusaetzliche parametrisierbare askUser-Funktion
- *
- * Revision 1.13  2007/01/25 10:44:10  willuhn
- * @N autoanswer in ApplicationCallbackConsole
- *
- * Revision 1.12  2006/10/28 01:05:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2006/07/13 21:43:31  willuhn
- * @N Passwort-Dialog etwas kleiner gemacht
- *
- * Revision 1.10  2005/06/27 13:58:18  web0
- * @N auto answer in application callback
- *
- * Revision 1.9  2005/06/24 14:55:56  web0
- * *** empty log message ***
- *
- * Revision 1.8  2005/06/16 13:29:20  web0
- * *** empty log message ***
- *
- * Revision 1.7  2005/06/13 12:13:37  web0
- * @N Certificate-Code completed
- *
- * Revision 1.6  2005/06/09 23:07:47  web0
- * @N certificate checking activated
- *
- * Revision 1.5  2005/03/17 22:44:10  web0
- * @N added fallback if system is not able to determine hostname
- *
- * Revision 1.4  2005/03/01 22:56:48  web0
- * @N master password can now be changed
- *
- * Revision 1.3  2005/02/02 16:16:38  willuhn
- * @N Kommandozeilen-Parser auf jakarta-commons umgestellt
- *
- * Revision 1.2  2005/02/01 17:15:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2005/01/30 20:47:43  willuhn
- * *** empty log message ***
- *
  **********************************************************************/

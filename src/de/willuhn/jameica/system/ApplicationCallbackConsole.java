@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.37 $
- * $Date: 2010/11/22 11:32:04 $
+ * $Revision: 1.38 $
+ * $Date: 2011/04/27 10:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,7 +29,6 @@ import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
-import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
@@ -129,7 +128,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 			this.password = keyboard.readLine();
 		}
 
-		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
+		this.setChecksum(this.password);
 		return this.password;
   }
 
@@ -162,22 +161,15 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     }
     
     
-		String checksum = settings.getString("jameica.system.callback.checksum",null);
-  	String pw		= Application.getStartupParams().getPassword();
+  	this.password = Application.getStartupParams().getPassword();
 
-  	if (pw != null)
+  	if (this.password != null)
   	{
-      this.password = pw;
-  		Logger.debug("master password given via commandline");
-  		if (checksum == null || checksum.length() == 0)
-				return this.password;
+      Logger.info("master password given via commandline");
+      if (this.validateChecksum(this.password)) // Checken, ob das Passwort korrekt ist
+        return this.password;
 
-			Logger.debug("checksum found, testing");
-			if (checksum.equals(Checksum.md5(this.password.getBytes())))
-			{
-				return this.password;
-			}
-			Logger.info("checksum test failed, asking for password in interactive mode");
+      Logger.info("checksum test failed, asking for password in interactive mode");
   	}
 
     if (Application.inNonInteractiveMode())
@@ -193,7 +185,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 		for (int i=0;i<3;++i)
 		{
 			this.password = keyboard.readLine();
-			if (this.password != null && checksum.equals(Checksum.md5(this.password.getBytes())))
+			if (this.validateChecksum(this.password))
 				return this.password;
 			System.out.println(Application.getI18n().tr("Passwort falsch. Bitte versuchen Sie es erneut:"));
 		}
@@ -217,7 +209,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 		BufferedReader keyboard = new BufferedReader(isr);
 		this.password = keyboard.readLine();
 
-		settings.setAttribute("jameica.system.callback.checksum",Checksum.md5(this.password.getBytes()));
+		this.setChecksum(this.password);
 	}
 
   /**
@@ -548,7 +540,10 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
- * Revision 1.37  2010/11/22 11:32:04  willuhn
+ * Revision 1.38  2011/04/27 10:27:10  willuhn
+ * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
+ *
+ * Revision 1.37  2010-11-22 11:32:04  willuhn
  * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
  *
  * Revision 1.36  2010-08-16 10:44:21  willuhn
@@ -557,31 +552,4 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
  * Revision 1.35  2010/05/19 14:51:53  willuhn
  * @N Ausfall von STDOUT tolerieren
  * @N STDOUT, STDERR und STDIN beim Start mit dem Parameter "-n" (Noninteractive mode) schliessen
- *
- * Revision 1.34  2009/09/09 09:16:19  willuhn
- * @N HTP-Auth via Messaging delegierbar
- *
- * Revision 1.33  2009/06/10 11:25:54  willuhn
- * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
- *
- * Revision 1.32  2009/06/09 12:43:01  willuhn
- * @N Erster Code fuer Jameica Authenticator
- *
- * Revision 1.31  2009/06/04 14:26:49  willuhn
- * @N Popup-Messages im Server-Mode auf der Konsole ausgeben
- *
- * Revision 1.30  2009/01/06 23:58:03  willuhn
- * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
- *
- * Revision 1.29  2008/04/20 22:37:32  willuhn
- * @B MACOS Test auf NULL statt "" in Passwort-Checksumme
- *
- * Revision 1.28  2008/04/09 15:14:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.27  2008/03/07 16:31:48  willuhn
- * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
- *
- * Revision 1.26  2008/02/26 17:45:21  willuhn
- * @N flush console
  **********************************************************************/

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.58 $
- * $Date: 2011/04/26 12:09:18 $
+ * $Revision: 1.59 $
+ * $Date: 2011/04/27 10:27:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -289,7 +289,7 @@ public class SSLFactory
 	 */
 	public File getKeyStoreFile()
 	{
-		return new File(Application.getConfig().getConfigDir() + "/jameica.keystore");
+		return new File(Application.getConfig().getConfigDir() + File.separator + "jameica.keystore");
 	}
 
   /**
@@ -297,8 +297,7 @@ public class SSLFactory
    * @return Private-Key.
    * @throws Exception
    */
-  public synchronized PublicKey getPublicKey()
-  	throws Exception
+  public synchronized PublicKey getPublicKey() throws Exception
 	{
 		if (this.publicKey != null)
 			return this.publicKey;
@@ -311,8 +310,7 @@ public class SSLFactory
 	 * @return Private-Key.
    * @throws Exception
 	 */
-	public synchronized PrivateKey getPrivateKey()
-		throws Exception
+	public synchronized PrivateKey getPrivateKey() throws Exception
 	{
 		if (this.privateKey != null)
 			return this.privateKey;
@@ -724,7 +722,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.58  2011/04/26 12:09:18  willuhn
+ * Revision 1.59  2011/04/27 10:27:10  willuhn
+ * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
+ *
+ * Revision 1.58  2011-04-26 12:09:18  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.57  2011-02-08 18:27:53  willuhn
