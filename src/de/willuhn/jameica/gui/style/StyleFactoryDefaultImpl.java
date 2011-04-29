@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.11 $
- * $Date: 2007/05/14 11:18:09 $
+ * $Revision: 1.12 $
+ * $Date: 2011/04/29 16:58:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Text;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 
 /**
  * Default-Implementierung der Style-Factory.
@@ -100,7 +102,9 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   {
 		Label label = new Label(parent,style);
     label.setFont(Font.DEFAULT.getSWTFont());
-		label.setBackground(Color.BACKGROUND.getSWTColor());
+    int os = Application.getPlatform().getOS();
+    if (os != Platform.OS_MAC)
+  		label.setBackground(Color.BACKGROUND.getSWTColor());
 		return label;
   }
 
@@ -109,7 +113,10 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
- * Revision 1.11  2007/05/14 11:18:09  willuhn
+ * Revision 1.12  2011/04/29 16:58:34  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.11  2007-05-14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
  * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
  *
