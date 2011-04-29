@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/Attic/StyleFactoryFlatImpl.java,v $
- * $Revision: 1.16 $
- * $Date: 2011/04/29 16:58:16 $
+ * $Revision: 1.17 $
+ * $Date: 2011/04/29 17:01:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,8 +35,6 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
-import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Platform;
 
 /**
  * Implementierung der Style-Factory im Flat-Style.
@@ -48,22 +46,22 @@ public class StyleFactoryFlatImpl implements StyleFactory
   private static VisibilityHandler visibilityHandler;
   private static KeyboardHandler keyboardHandler;
 
-	static
-	{
-		borderPainter = new BorderPainter();
-		visibilityHandler = new VisibilityHandler();
-		keyboardHandler = new KeyboardHandler();
-	}
+  static
+  {
+    borderPainter = new BorderPainter();
+    visibilityHandler = new VisibilityHandler();
+    keyboardHandler = new KeyboardHandler();
+  }
 
   /**
    * @see de.willuhn.jameica.gui.style.StyleFactory#createButton(org.eclipse.swt.widgets.Composite)
    */
   public Button createButton(Composite parent)
   {
-		Button button = new Button(parent,SWT.PUSH | SWT.FLAT);
+    Button button = new Button(parent,SWT.PUSH | SWT.FLAT);
     button.setFont(Font.DEFAULT.getSWTFont());
-		adapt(button, true, true);
-		return button;
+    adapt(button, true, true);
+    return button;
   }
 
   /**
@@ -71,14 +69,14 @@ public class StyleFactoryFlatImpl implements StyleFactory
    */
   public Text createText(Composite parent)
   {
-  	Text text = new Text(parent, SWT.SINGLE);
+    Text text = new Text(parent, SWT.SINGLE);
     text.setFont(Font.DEFAULT.getSWTFont());
-  	text.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
-		text.setForeground(Color.WIDGET_FG.getSWTColor());
-		text.setBackground(Color.WIDGET_BG.getSWTColor());
-		adapt(text, true, false);
-		parent.addPaintListener(borderPainter);
-		return text;
+    text.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
+    text.setForeground(Color.WIDGET_FG.getSWTColor());
+    text.setBackground(Color.WIDGET_BG.getSWTColor());
+    adapt(text, true, false);
+    parent.addPaintListener(borderPainter);
+    return text;
   }
 
   /**
@@ -100,39 +98,37 @@ public class StyleFactoryFlatImpl implements StyleFactory
    * @see de.willuhn.jameica.gui.style.StyleFactory#createCombo(org.eclipse.swt.widgets.Composite)
    */
   public CCombo createCombo(Composite parent)
-	{
-  	final CCombo combo = new CCombo(parent,SWT.READ_ONLY);
+  {
+    final CCombo combo = new CCombo(parent,SWT.READ_ONLY);
     combo.setFont(Font.DEFAULT.getSWTFont());
-		combo.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
-		combo.setForeground(Color.WIDGET_FG.getSWTColor());
-		parent.addPaintListener(borderPainter);
-		return combo;
-	}
+    combo.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
+    combo.setForeground(Color.WIDGET_FG.getSWTColor());
+    parent.addPaintListener(borderPainter);
+    return combo;
+  }
 
-	/**
-	 * @see de.willuhn.jameica.gui.style.StyleFactory#createTable(org.eclipse.swt.widgets.Composite, int)
-	 */
-	public Table createTable(Composite parent, int style)
-	{
-		Table table = new Table(parent, SWT.BORDER ^ style);
+  /**
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createTable(org.eclipse.swt.widgets.Composite, int)
+   */
+  public Table createTable(Composite parent, int style)
+  {
+    Table table = new Table(parent, SWT.BORDER ^ style);
     table.setFont(Font.DEFAULT.getSWTFont());
-		table.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
-		parent.addPaintListener(borderPainter);
-		return table;
-	}
+    table.setData(BorderPainter.KEY_DRAW_BORDER, BorderPainter.TEXT_BORDER);
+    parent.addPaintListener(borderPainter);
+    return table;
+  }
 
-	/**
-	 * @see de.willuhn.jameica.gui.style.StyleFactory#createLabel(org.eclipse.swt.widgets.Composite, int)
-	 */
-	public Label createLabel(Composite parent, int style)
-	{
-		Label label = new Label(parent,style);
+  /**
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createLabel(org.eclipse.swt.widgets.Composite, int)
+   */
+  public Label createLabel(Composite parent, int style)
+  {
+    Label label = new Label(parent,style);
     label.setFont(Font.DEFAULT.getSWTFont());
-    int os = Application.getPlatform().getOS();
-    if (os != Platform.OS_MAC)
-  		label.setBackground(Color.BACKGROUND.getSWTColor());
-		return label;
-	}
+    label.setBackground(Color.BACKGROUND.getSWTColor());
+    return label;
+  }
 
   /**
    * @see de.willuhn.jameica.gui.style.StyleFactory#getName()
@@ -142,122 +138,122 @@ public class StyleFactoryFlatImpl implements StyleFactory
   }
 
 
-	//////////////////////////////////////////////////////////////////////////////
-	// Der folgende Code ist nahezu 1:1 aus SWT-Forms entnommen.
-	// Grund: Bei deaktivierten Controls wurde kein Rahmen drum gemalt -
-	// das ist unschoen.
+  //////////////////////////////////////////////////////////////////////////////
+  // Der folgende Code ist nahezu 1:1 aus SWT-Forms entnommen.
+  // Grund: Bei deaktivierten Controls wurde kein Rahmen drum gemalt -
+  // das ist unschoen.
 
-	private void adapt(Control control, boolean trackFocus, boolean trackKeyboard) {
-		if (trackFocus)
-			control.addFocusListener(visibilityHandler);
-		if (trackKeyboard)
-			control.addKeyListener(keyboardHandler);
-	}
+  private void adapt(Control control, boolean trackFocus, boolean trackKeyboard) {
+    if (trackFocus)
+      control.addFocusListener(visibilityHandler);
+    if (trackKeyboard)
+      control.addKeyListener(keyboardHandler);
+  }
 
-	private static class VisibilityHandler extends FocusAdapter {
-		/**
-		 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
-		 */
-		public void focusGained(FocusEvent e) {
-			Widget w = e.widget;
-			if (w instanceof Control) {
-				FormUtil.ensureVisible((Control) w);
-			}
-		}
-	}
-	private static class KeyboardHandler extends KeyAdapter {
-		/**
-		 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
-		 */
-		public void keyPressed(KeyEvent e) {
-			Widget w = e.widget;
-			if (w instanceof Control) {
-				FormUtil.processKey(e.keyCode, (Control) w);
-			}
-		}
-	}
+  private static class VisibilityHandler extends FocusAdapter {
+    /**
+     * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+     */
+    public void focusGained(FocusEvent e) {
+      Widget w = e.widget;
+      if (w instanceof Control) {
+        FormUtil.ensureVisible((Control) w);
+      }
+    }
+  }
+  private static class KeyboardHandler extends KeyAdapter {
+    /**
+     * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+     */
+    public void keyPressed(KeyEvent e) {
+      Widget w = e.widget;
+      if (w instanceof Control) {
+        FormUtil.processKey(e.keyCode, (Control) w);
+      }
+    }
+  }
 
-	private static class BorderPainter implements PaintListener
-	{
-
-		/**
-		 * Konstante fuer "Rahmen malen".
-		 */
-		public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
+  private static class BorderPainter implements PaintListener
+  {
 
     /**
      * Konstante fuer "Rahmen malen".
      */
-		public static final String TREE_BORDER = "treeBorder";
+    public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
 
     /**
      * Konstante fuer "Rahmen malen".
      */
-		public static final String TEXT_BORDER = "textBorder";
+    public static final String TREE_BORDER = "treeBorder";
+
+    /**
+     * Konstante fuer "Rahmen malen".
+     */
+    public static final String TEXT_BORDER = "textBorder";
 
 
-		/**
-		 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-		 */
-		public void paintControl(PaintEvent event)
-		{
-			Composite composite = (Composite) event.widget;
-			Control[] children = composite.getChildren();
+    /**
+     * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
+     */
+    public void paintControl(PaintEvent event)
+    {
+      Composite composite = (Composite) event.widget;
+      Control[] children = composite.getChildren();
 
-			for (int i = 0; i < children.length; i++)
-			{
-				Control c = children[i];
+      for (int i = 0; i < children.length; i++)
+      {
+        Control c = children[i];
 
-				if (!c.isVisible()) continue;
-				if (c instanceof Hyperlink) continue;
+        if (!c.isVisible()) continue;
+        if (c instanceof Hyperlink) continue;
 
-				boolean inactiveBorder = false;
-				boolean textBorder = false;
+        boolean inactiveBorder = false;
+        boolean textBorder = false;
 
-				Object flag = c.getData(KEY_DRAW_BORDER);
+        Object flag = c.getData(KEY_DRAW_BORDER);
 
-				if (flag != null)
-				{
-					if (flag.equals(Boolean.FALSE)) continue;
+        if (flag != null)
+        {
+          if (flag.equals(Boolean.FALSE)) continue;
 
-					if (flag.equals(TREE_BORDER))
-						inactiveBorder = true;
-					else if (flag.equals(TEXT_BORDER))
-						textBorder = true;
-				}
+          if (flag.equals(TREE_BORDER))
+            inactiveBorder = true;
+          else if (flag.equals(TEXT_BORDER))
+            textBorder = true;
+        }
 
-				Rectangle b = c.getBounds();
-				GC gc = event.gc;
+        Rectangle b = c.getBounds();
+        GC gc = event.gc;
 
-				if (!inactiveBorder && (c instanceof Text || c instanceof CCombo || textBorder))
-				{
+        if (!inactiveBorder && (c instanceof Text || c instanceof CCombo || textBorder))
+        {
 
-					gc.setForeground(c.getBackground());
-					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
+          gc.setForeground(c.getBackground());
+          gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
 
-					gc.setForeground(Color.WIDGET_FG.getSWTColor());
-					if (c instanceof CCombo)
-						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
-					else
-						gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1, b.height + 3);
+          gc.setForeground(Color.WIDGET_FG.getSWTColor());
+          if (c instanceof CCombo)
+            gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
+          else
+            gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1, b.height + 3);
 
-				}
-				else if (inactiveBorder || c instanceof Table	|| c instanceof Tree)
-				{
+        }
+        else if (inactiveBorder || c instanceof Table || c instanceof Tree)
+        {
 
-					gc.setForeground(Color.BORDER.getSWTColor());
-					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 2, b.height + 2);
-				}
-			}
-		}
-	}
+          gc.setForeground(Color.BORDER.getSWTColor());
+          gc.drawRectangle(b.x - 1, b.y - 1, b.width + 2, b.height + 2);
+        }
+      }
+    }
+  }
 }
 
 
 /**********************************************************************
  * $Log: StyleFactoryFlatImpl.java,v $
- * Revision 1.16  2011/04/29 16:58:16  willuhn
- * *** empty log message ***
+ * Revision 1.17  2011/04/29 17:01:04  willuhn
+ * @R undo
  *
  * Revision 1.15  2007-05-14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse

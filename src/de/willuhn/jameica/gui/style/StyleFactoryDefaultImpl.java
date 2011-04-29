@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/04/29 16:58:34 $
+ * $Revision: 1.13 $
+ * $Date: 2011/04/29 17:01:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Text;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
-import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Platform;
 
 /**
  * Default-Implementierung der Style-Factory.
@@ -37,10 +35,10 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Button createButton(Composite parent)
   {
-  	Button button = new Button(parent,SWT.PUSH);
+    Button button = new Button(parent,SWT.PUSH);
     button.setFont(Font.DEFAULT.getSWTFont());
-		button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		return button;
+    button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+    return button;
   }
 
   /**
@@ -48,11 +46,11 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Text createText(Composite parent)
   {
-		Text text = new Text(parent,SWT.BORDER | SWT.SINGLE);
+    Text text = new Text(parent,SWT.BORDER | SWT.SINGLE);
     text.setFont(Font.DEFAULT.getSWTFont());
-		text.setForeground(Color.WIDGET_FG.getSWTColor());
-		text.setBackground(Color.WIDGET_BG.getSWTColor());
-		return text;
+    text.setForeground(Color.WIDGET_FG.getSWTColor());
+    text.setBackground(Color.WIDGET_BG.getSWTColor());
+    return text;
   }
 
   /**
@@ -74,19 +72,19 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   {
     CCombo combo = new CCombo(parent,SWT.READ_ONLY | SWT.BORDER);
     combo.setFont(Font.DEFAULT.getSWTFont());
-		combo.setForeground(Color.WIDGET_FG.getSWTColor());
-		return combo;
+    combo.setForeground(Color.WIDGET_FG.getSWTColor());
+    return combo;
   }
 
-	/**
-	 * @see de.willuhn.jameica.gui.style.StyleFactory#createTable(org.eclipse.swt.widgets.Composite, int)
-	 */
-	public Table createTable(Composite parent, int style)
-	{
-		Table t = new Table(parent, SWT.BORDER | style);
+  /**
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createTable(org.eclipse.swt.widgets.Composite, int)
+   */
+  public Table createTable(Composite parent, int style)
+  {
+    Table t = new Table(parent, SWT.BORDER | style);
     t.setFont(Font.DEFAULT.getSWTFont());
     return t;
-	}
+  }
 
   /**
    * @see de.willuhn.jameica.gui.style.StyleFactory#getName()
@@ -100,12 +98,10 @@ public class StyleFactoryDefaultImpl implements StyleFactory
    */
   public Label createLabel(Composite parent, int style)
   {
-		Label label = new Label(parent,style);
+    Label label = new Label(parent,style);
     label.setFont(Font.DEFAULT.getSWTFont());
-    int os = Application.getPlatform().getOS();
-    if (os != Platform.OS_MAC)
-  		label.setBackground(Color.BACKGROUND.getSWTColor());
-		return label;
+    label.setBackground(Color.BACKGROUND.getSWTColor());
+    return label;
   }
 
 }
@@ -113,8 +109,8 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
- * Revision 1.12  2011/04/29 16:58:34  willuhn
- * *** empty log message ***
+ * Revision 1.13  2011/04/29 17:01:04  willuhn
+ * @R undo
  *
  * Revision 1.11  2007-05-14 11:18:09  willuhn
  * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
