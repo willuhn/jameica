@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.33 $
- * $Date: 2011/04/27 10:27:10 $
+ * $Revision: 1.34 $
+ * $Date: 2011/04/29 17:02:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -39,7 +39,7 @@ import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Container;
-import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
@@ -287,7 +287,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
       protected void paint(Composite parent) throws Exception
       {
-        Container g = new LabelGroup(parent,"");
+        Container g = new SimpleContainer(parent);
         if (text.startsWith("<form>"))
           g.addPart(new FormTextPart(text));
         else
@@ -448,7 +448,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.33  2011/04/27 10:27:10  willuhn
+ * Revision 1.34  2011/04/29 17:02:39  willuhn
+ * @N GUI-Polish
+ *
+ * Revision 1.33  2011-04-27 10:27:10  willuhn
  * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
  *
  * Revision 1.32  2011-02-23 15:08:38  willuhn
