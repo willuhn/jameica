@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.103 $
- * $Date: 2011/04/26 16:15:49 $
+ * $Revision: 1.104 $
+ * $Date: 2011/04/29 07:41:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1126,8 +1126,7 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
-   * Stellt den Status der Tabelle wieder her (Scroll-Position und markierte Objekte).
-   * Geschieht jedoch nur, wenn das Feature mit setRememberState(true) aktiviert wurde.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#restoreState()
    */
   public void restoreState()
   {
@@ -1363,7 +1362,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.103  2011/04/26 16:15:49  willuhn
+ * Revision 1.104  2011/04/29 07:41:59  willuhn
+ * @N BUGZILLA 781
+ *
+ * Revision 1.103  2011-04-26 16:15:49  willuhn
  * *** empty log message ***
  *
  * Revision 1.102  2011-04-26 16:13:57  willuhn

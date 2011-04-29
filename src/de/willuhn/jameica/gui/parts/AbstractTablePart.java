@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.15 $
- * $Date: 2010/10/12 21:50:17 $
+ * $Revision: 1.16 $
+ * $Date: 2011/04/29 07:41:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -240,7 +240,16 @@ public abstract class AbstractTablePart implements Part
   {
     this.rememberState = remember;
   }
-  
+
+  /**
+   * Stellt den Zustand wieder her (markierte Objekte und Scroll-Position).
+   * Geschieht jedoch nur, wenn das Feature mit setRememberState(true) aktiviert wurde.
+   * Das ist eine Dummy-Implementierung, die in den abgeleiteten Klassen ueberschrieben werden kann.
+   */
+  public void restoreState()
+  {
+  }
+
   /**
    * Legt fest, ob mehrere Elemente gleichzeitig markiert werden koennen.
    * Default: False.
@@ -307,7 +316,10 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
- * Revision 1.15  2010/10/12 21:50:17  willuhn
+ * Revision 1.16  2011/04/29 07:41:59  willuhn
+ * @N BUGZILLA 781
+ *
+ * Revision 1.15  2010-10-12 21:50:17  willuhn
  * @N select(Object) und select(Object[]) jetzt auch in TreePart
  *
  * Revision 1.14  2010/03/29 22:08:08  willuhn

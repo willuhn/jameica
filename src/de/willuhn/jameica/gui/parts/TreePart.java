@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.47 $
- * $Date: 2011/04/26 12:20:24 $
+ * $Revision: 1.48 $
+ * $Date: 2011/04/29 07:41:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,6 +49,7 @@ import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.Session;
 
 /**
  * Erzeugt einen Baum.
@@ -68,6 +69,10 @@ public class TreePart extends AbstractTablePart
   private Map<GenericObject,Item> itemLookup = new HashMap<GenericObject,Item>();
   private Map<TreeItem,Boolean> autoimage = new HashMap<TreeItem,Boolean>();
 
+  //////////////////////////////////////////////////////////
+  // State
+  private static Session state = new Session();
+  //////////////////////////////////////////////////////////
     
 	/**
    * Erzeugt einen neuen Tree basierend auf dem uebergebenen Objekt.
@@ -344,6 +349,24 @@ public class TreePart extends AbstractTablePart
           }
         });
       }
+      
+      if (rememberState)
+      {
+        this.addSelectionListener(new Listener()
+        {
+          public void handleEvent(Event event)
+          {
+            try
+            {
+              state.put(getID(),getSelection());
+            }
+            catch (Exception ex)
+            {
+              Logger.error("unable to store state",ex);
+            }
+          }
+        });
+      }
 
     }
     /////////////////////////////////////////////////////////////////
@@ -384,8 +407,35 @@ public class TreePart extends AbstractTablePart
         col.pack();
       }
     }
+
+    restoreState();
   }
   
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#restoreState()
+   */
+  public void restoreState()
+  {
+    if (!this.rememberState)
+      return;
+
+    try
+    {
+      Object selection = state.get(getID());
+      if (selection != null)
+      {
+        if (selection instanceof Object[])
+          select((Object[]) selection);
+        else
+          select(selection);
+      }
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to restore state",e);
+    }
+  }
+
   /**
    * Laedt die Elemente in den Tree.
    * @throws RemoteException
@@ -718,7 +768,7 @@ public class TreePart extends AbstractTablePart
           }
         }
       }
-      else
+      else if (item.getImage() == null)
       {
         item.setImage(SWTUtil.getImage("text-x-generic.png"));
       }
@@ -823,7 +873,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.47  2011/04/26 12:20:24  willuhn
+ * Revision 1.48  2011/04/29 07:41:59  willuhn
+ * @N BUGZILLA 781
+ *
+ * Revision 1.47  2011-04-26 12:20:24  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.46  2011-04-26 12:01:42  willuhn
