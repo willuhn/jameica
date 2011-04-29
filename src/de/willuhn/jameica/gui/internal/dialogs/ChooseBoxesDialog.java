@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/04/29 16:27:02 $
+ * $Revision: 1.7 $
+ * $Date: 2011/04/29 16:34:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,6 +36,8 @@ import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -44,8 +46,6 @@ import de.willuhn.util.ApplicationException;
  */
 public class ChooseBoxesDialog extends AbstractDialog
 {
-  private final static int WINDOW_WIDTH = 550;
-  
   private TablePart table = null;
   private Button down     = null;
   private Button up       = null;
@@ -57,7 +57,6 @@ public class ChooseBoxesDialog extends AbstractDialog
   {
     super(position);
     setTitle(i18n.tr("Auswahl der anzuzeigenden Elemente"));
-    setSize(WINDOW_WIDTH,SWT.DEFAULT);
   }
 
   /**
@@ -110,7 +109,8 @@ public class ChooseBoxesDialog extends AbstractDialog
     menu.addItem(new MyMenuItem(false));
     table.setContextMenu(menu);
 
-    table.paint(parent);
+    Container c = new SimpleContainer(parent);
+    c.addPart(table);
 
     ButtonArea buttons = new ButtonArea();
     
@@ -172,9 +172,9 @@ public class ChooseBoxesDialog extends AbstractDialog
         close();
       }
     },null,false,"process-stop.png");
-    buttons.paint(parent);
+    c.addButtonArea(buttons);
     
-    getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH, SWT.DEFAULT));
+    getShell().setMinimumSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
   }
 
   /**
@@ -323,7 +323,10 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.6  2011/04/29 16:27:02  willuhn
+ * Revision 1.7  2011/04/29 16:34:01  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.6  2011-04-29 16:27:02  willuhn
  * @N MAC - Dialog war zu schmal
  *
  * Revision 1.5  2011-04-26 12:20:24  willuhn
