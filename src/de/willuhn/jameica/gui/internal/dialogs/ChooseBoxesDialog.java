@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/04/26 12:20:24 $
+ * $Revision: 1.6 $
+ * $Date: 2011/04/29 16:27:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ package de.willuhn.jameica.gui.internal.dialogs;
 import java.rmi.RemoteException;
 import java.util.Vector;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -30,22 +31,21 @@ import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.Start;
 import de.willuhn.jameica.gui.parts.Button;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
-import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.I18N;
 
 /**
  * Dialog zum Konfigurieren der Boxen.
  */
 public class ChooseBoxesDialog extends AbstractDialog
 {
-  private I18N i18n       = null;
+  private final static int WINDOW_WIDTH = 550;
+  
   private TablePart table = null;
   private Button down     = null;
   private Button up       = null;
@@ -56,9 +56,8 @@ public class ChooseBoxesDialog extends AbstractDialog
   public ChooseBoxesDialog(int position)
   {
     super(position);
-    i18n = Application.getI18n();
     setTitle(i18n.tr("Auswahl der anzuzeigenden Elemente"));
-    setSize(350,300);
+    setSize(WINDOW_WIDTH,SWT.DEFAULT);
   }
 
   /**
@@ -113,7 +112,7 @@ public class ChooseBoxesDialog extends AbstractDialog
 
     table.paint(parent);
 
-    ButtonArea buttons = new ButtonArea(parent,5);
+    ButtonArea buttons = new ButtonArea();
     
     up = new Button(i18n.tr("Nach oben"), new Action() {
       public void handleAction(Object context) throws ApplicationException
@@ -135,7 +134,7 @@ public class ChooseBoxesDialog extends AbstractDialog
           }
         }
       }
-    });
+    },null,false,"maximize.png");
     down = new Button(i18n.tr("Nach unten"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -156,7 +155,7 @@ public class ChooseBoxesDialog extends AbstractDialog
           }
         }
       }
-    });
+    },null,false,"minimize.png");
     
     buttons.addButton(up);
     buttons.addButton(down);
@@ -166,13 +165,16 @@ public class ChooseBoxesDialog extends AbstractDialog
         close();
         new Start().handleAction(context);
       }
-    },null,true);
+    },null,true,"ok.png");
     buttons.addButton(i18n.tr("Abbrechen"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         close();
       }
-    });
+    },null,false,"process-stop.png");
+    buttons.paint(parent);
+    
+    getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH, SWT.DEFAULT));
   }
 
   /**
@@ -321,7 +323,10 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.5  2011/04/26 12:20:24  willuhn
+ * Revision 1.6  2011/04/29 16:27:02  willuhn
+ * @N MAC - Dialog war zu schmal
+ *
+ * Revision 1.5  2011-04-26 12:20:24  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.4  2011-01-14 17:33:39  willuhn
