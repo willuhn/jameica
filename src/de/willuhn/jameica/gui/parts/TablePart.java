@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.104 $
- * $Date: 2011/04/29 07:41:59 $
+ * $Revision: 1.105 $
+ * $Date: 2011/05/02 10:47:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -754,11 +754,8 @@ public class TablePart extends AbstractTablePart
 
           final String oldValue = item.getText(index);
 
-          Text newText = new Text(table, SWT.NONE);
-          newText.setText(oldValue);
-          newText.selectAll();
-          newText.setFocus();
-          editor.setEditor(newText, item, index);
+          Control editorControl = getEditorControl(row, item, oldValue);
+          editor.setEditor(editorControl, item, index);
 
           // Wir deaktivieren den Default-Button fuer den Zeitraum der Bearbeitung
           Button b = GUI.getShell().getDefaultButton();
@@ -771,25 +768,20 @@ public class TablePart extends AbstractTablePart
           else
             enabled = false;
 
-          newText.addFocusListener(new FocusAdapter()
+          editorControl.addFocusListener(new FocusAdapter()
           {
             public void focusLost(FocusEvent e)
             {
               try
               {
-                Text text = (Text) editor.getEditor();
-                String newValue = text.getText();
+                Control control = editor.getEditor();
+                String newValue = getControlValue(control);
                 if (oldValue == null && newValue == null)
                   return; // nothing changed
                 if (oldValue != null && oldValue.equals(newValue))
                   return; // nothing changed
 
                 item.setText(index,newValue);
-
-                // BUGZILLA 1025: Text-Cache aktualisieren
-                String[] values = textTable.get(item.getData());
-                if (values != null)
-                  values[index] = newValue;
                 
                 for (int i=0;i<changeListeners.size();++i)
                 {
@@ -818,6 +810,14 @@ public class TablePart extends AbstractTablePart
                   }
                 }
                 
+                //allow formatter to format the new values
+                if (tableFormatter != null)
+                  tableFormatter.format(item);
+
+                // BUGZILLA 1025: Text-Cache aktualisieren
+                String[] values = textTable.get(item.getData());
+                if (values != null)
+                  values[index] = newValue;
               }
               finally
               {
@@ -1239,6 +1239,24 @@ public class TablePart extends AbstractTablePart
     return null;
   }
 	
+  protected Control getEditorControl(int row, TableItem item, final String oldValue)
+  {
+    Text newText = new Text(table, SWT.NONE);
+    newText.setText(oldValue);
+    newText.selectAll();
+    newText.setFocus();
+    return newText;
+  }
+
+  protected String getControlValue(Control control)
+  {
+    if (control instanceof Text)
+      return ((Text) control).getText();
+    else
+      return "";
+  }
+
+
   /**
 	 * Kleine Hilfs-Klasse fuer die Sortierung und Anzeige.
    */
@@ -1362,7 +1380,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.104  2011/04/29 07:41:59  willuhn
+ * Revision 1.105  2011/05/02 10:47:16  willuhn
+ * @N BUGZILLA 1033 - Patch von Jan
+ *
+ * Revision 1.104  2011-04-29 07:41:59  willuhn
  * @N BUGZILLA 781
  *
  * Revision 1.103  2011-04-26 16:15:49  willuhn
