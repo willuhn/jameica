@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/05/03 11:39:55 $
+ * $Revision: 1.11 $
+ * $Date: 2011/05/03 12:57:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,30 +14,31 @@
 package de.willuhn.jameica.gui.internal.dialogs;
 
 import java.rmi.RemoteException;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 
-import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.GenericObject;
-import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.boxes.Box;
 import de.willuhn.jameica.gui.boxes.BoxRegistry;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
-import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.Start;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
-import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
+import de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem;
+import de.willuhn.jameica.gui.parts.Column;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -64,28 +65,20 @@ public class ChooseBoxesDialog extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception
   {
-    Box[] list = BoxRegistry.getBoxes();
-
-    // Wir kopieren die Daten in eine Liste von GenericObjects
-    Vector v = new Vector();
-    for (int i=0;i<list.length;++i)
-    {
-      Box box = list[i];
-      if (!box.isActive())
-        continue;
-      v.add(new BoxObject(box));
-    }
+    List<Box> boxes = BoxRegistry.getBoxes();
     
-    GenericIterator iterator = PseudoIterator.fromArray((BoxObject[]) v.toArray(new BoxObject[v.size()]));
-    table = new TablePart(iterator,null);
+
+    table = new TablePart(boxes,null);
     table.addColumn(i18n.tr("Bezeichnung"),"name");
-    table.addColumn(i18n.tr("Status"),"enabled", new Formatter() {
-      public String format(Object o)
+    table.addColumn(new Column("name",i18n.tr("Status"))
+    {
+      public String getFormattedValue(Object value, Object context)
       {
-        if (o == null || !(o instanceof Boolean))
-          return null;
-        return ((Boolean) o).booleanValue() ? i18n.tr("Aktiv") : "-"; 
+        if (!(context instanceof Box))
+          return "";
+        return ((Box)context).isEnabled() ? i18n.tr("Aktiv") : "-";
       }
+      
     });
     table.setMulti(false);
     table.setSummary(false);
@@ -94,11 +87,11 @@ public class ChooseBoxesDialog extends AbstractDialog
       {
         if (item == null || item.getData() == null)
           return;
-        BoxObject o = (BoxObject) item.getData();
-        if (o.box.isEnabled())
-          item.setForeground(Color.SUCCESS.getSWTColor());
-        else if (!o.box.isActive())
+        Box box = (Box) item.getData();
+        if (!box.isActive())
           item.setForeground(Color.COMMENT.getSWTColor());
+        else if (box.isEnabled())
+          item.setForeground(Color.SUCCESS.getSWTColor());
         else
           item.setForeground(Color.WIDGET_FG.getSWTColor());
       }
@@ -108,6 +101,18 @@ public class ChooseBoxesDialog extends AbstractDialog
     menu.addItem(new MyMenuItem(true));
     menu.addItem(new MyMenuItem(false));
     table.setContextMenu(menu);
+    table.addSelectionListener(new Listener() {
+      public void handleEvent(Event event)
+      {
+        Box b = (Box) event.data;
+        if (b == null)
+          return;
+        
+        boolean active = b.isActive();
+        up.setEnabled(active);
+        down.setEnabled(active);
+      }
+    });
 
     Container c = new SimpleContainer(parent);
     c.addPart(table);
@@ -117,49 +122,50 @@ public class ChooseBoxesDialog extends AbstractDialog
     up = new Button(i18n.tr("Nach oben"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
-        BoxObject o = (BoxObject) table.getSelection();
-        if (o == null)
+        Box box = (Box) table.getSelection();
+        if (box == null) // Keine Box markiert
           return;
         
-        if (BoxRegistry.up(o.box))
+        // Entfernen und eins weiter oben wieder einfuegen
+        int index = table.removeItem(box);
+        if (index == -1)
+          return; // gabs gar nicht
+        
+        try
         {
-          int index = table.removeItem(o);
-          if (index != -1)
-          {
-            try
-            {
-              table.addItem(o,index-1);
-              table.select(o);
-            }
-            catch (Exception e)
-            {
-              Logger.error("Fehler beim Verschieben des Elementes",e);
-            }
-          }
+          table.addItem(box,index == 0 ? 0 : index-1); // wenn wir schon ganz oben waren, bleiben wir dort
+          table.select(box);
+        }
+        catch (Exception e)
+        {
+          Logger.error("Fehler beim Verschieben des Elementes",e);
         }
       }
     },null,false,"maximize.png");
     down = new Button(i18n.tr("Nach unten"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
-        BoxObject o = (BoxObject) table.getSelection();
-        if (o == null)
+        Box box = (Box) table.getSelection();
+        if (box == null) // Keine Box markiert
           return;
-        if (BoxRegistry.down(o.box))
+        
+        int index = table.removeItem(box);
+        if (index == -1)
+          return; // gabs gar nicht
+        
+        int size = table.size();
+        
+        if (index < size) // Index nur erhoehen, solange wir nich schon die letzten sind
+          index++;
+        
+        try
         {
-          int index = table.removeItem(o);
-          if (index != -1)
-          {
-            try
-            {
-              table.addItem(o,index+1);
-              table.select(o);
-            }
-            catch (Exception e)
-            {
-              Logger.error("Fehler beim Verschieben des Elementes",e);
-            }
-          }
+          table.addItem(box,index);
+          table.select(box);
+        }
+        catch (Exception e)
+        {
+          Logger.error("Fehler beim Verschieben des Elementes",e);
         }
       }
     },null,false,"minimize.png");
@@ -169,8 +175,23 @@ public class ChooseBoxesDialog extends AbstractDialog
     buttons.addButton(i18n.tr("Übernehmen"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
+        // Angezeigte Reihenfolge speichern
+        try
+        {
+          List<Box> boxes = table.getItems();
+          for (int i=0;i<boxes.size();++i)
+          {
+            boxes.get(i).setIndex(i);
+          }
+        }
+        catch (RemoteException re)
+        {
+          Logger.error("unable to apply box order",re);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Speichern: {0}",re.getMessage()),StatusBarMessage.TYPE_ERROR));
+        }
+        
         close();
-        new Start().handleAction(context);
+        new Start().handleAction(context); // Startseite neu laden
       }
     },null,true,"ok.png");
     buttons.addButton(i18n.tr("Abbrechen"), new Action() {
@@ -193,72 +214,9 @@ public class ChooseBoxesDialog extends AbstractDialog
   }
 
   /**
-   * Hilfs-Objekt, um Boxen zu GenericObjects zu machen.
-   */
-  private class BoxObject implements GenericObject
-  {
-    private Box box = null;
-    
-    /**
-     * ct.
-     * @param box
-     */
-    private BoxObject(Box box)
-    {
-      this.box = box;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
-     */
-    public Object getAttribute(String arg0) throws RemoteException
-    {
-      if ("enabled".equals(arg0))
-        return Boolean.valueOf(box.isEnabled());
-      return box.getName();
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
-     */
-    public String[] getAttributeNames() throws RemoteException
-    {
-      return new String[]{"name","enabled"};
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getID()
-     */
-    public String getID() throws RemoteException
-    {
-      return box.getClass().getName();
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-     */
-    public String getPrimaryAttribute() throws RemoteException
-    {
-      return "name";
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-     */
-    public boolean equals(GenericObject arg0) throws RemoteException
-    {
-      if (arg0 == null || !(arg0 instanceof BoxObject))
-        return false;
-      BoxObject other = (BoxObject) arg0;
-      return this.getID().equals(other.getID());
-    }
-    
-  }
-  
-  /**
    * Hilsklasse.
    */
-  private class MyMenuItem extends CheckedContextMenuItem
+  private class MyMenuItem extends CheckedSingleContextMenuItem
   {
     private boolean state = false;
     
@@ -273,16 +231,18 @@ public class ChooseBoxesDialog extends AbstractDialog
     }
     
     /**
-     * @see de.willuhn.jameica.gui.parts.ContextMenuItem#isEnabledFor(java.lang.Object)
+     * @see de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem#isEnabledFor(java.lang.Object)
      */
     public boolean isEnabledFor(Object o)
     {
-      if (o == null || !(o instanceof BoxObject))
+      if (!(o instanceof Box))
         return false;
-      BoxObject bo = (BoxObject) o;
-      if (!bo.box.isActive())
+      
+      Box b = (Box) o;
+      if (!b.isActive()) // Inaktive Boxen duerfen nicht aktiviert werden
         return false;
-      return state ^ bo.box.isEnabled();
+
+      return (state ^ b.isEnabled()) && super.isEnabledFor(o);
     }
   }
   
@@ -306,19 +266,20 @@ public class ChooseBoxesDialog extends AbstractDialog
      */
     public void handleAction(Object context) throws ApplicationException
     {
-      if (context == null || !(context instanceof BoxObject))
+      if (!(context instanceof Box))
         return;
-      BoxObject o = (BoxObject) context;
-      o.box.setEnabled(state);
+      
+      Box b = (Box) context;
+      b.setEnabled(state);
       
       // Element entfernen und wieder hinzufuegen, damit die Ansicht aktualisiert wird
-      int index = table.removeItem(o);
+      int index = table.removeItem(b);
       if (index != -1)
       {
         try
         {
-          table.addItem(o,index);
-          table.select(o);
+          table.addItem(b,index);
+          table.select(b);
         }
         catch (Exception e)
         {
@@ -333,7 +294,11 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.10  2011/05/03 11:39:55  willuhn
+ * Revision 1.11  2011/05/03 12:57:00  willuhn
+ * @B Das komplette Ausblenden nicht-aktiver Boxen fuehrte zu ziemlichem Durcheinander in dem Dialog
+ * @C Aendern der Sortier-Reihenfolge vereinfacht. Sie wird jetzt nicht mehr live sondern erst nach Klick auf "Uebernehmen" gespeichert - was fachlich ja auch richtiger ist
+ *
+ * Revision 1.10  2011-05-03 11:39:55  willuhn
  * *** empty log message ***
  *
  * Revision 1.9  2011-05-03 11:38:47  willuhn
@@ -354,21 +319,4 @@ public class ChooseBoxesDialog extends AbstractDialog
  *
  * Revision 1.4  2011-01-14 17:33:39  willuhn
  * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
- *
- * Revision 1.3  2008-04-23 09:53:02  willuhn
- * @N Abbrechen-Button in Dialog
- *
- * Revision 1.2  2006/08/02 09:12:02  willuhn
- * @B Sortierung der Boxen auf der Startseite
- *
- * Revision 1.1  2006/06/29 23:10:01  willuhn
- * @N Box-System aus Hibiscus in Jameica-Source verschoben
- *
- * Revision 1.2  2005/11/20 23:39:11  willuhn
- * @N box handling
- *
- * Revision 1.1  2005/11/09 01:13:53  willuhn
- * @N chipcard modul fuer AMD64 vergessen
- * @N Startseite jetzt frei konfigurierbar
- *
  **********************************************************************/
