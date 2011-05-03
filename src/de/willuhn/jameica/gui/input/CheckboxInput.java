@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/01/11 22:43:50 $
+ * $Revision: 1.15 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,6 @@ public class CheckboxInput extends AbstractInput
     button.setSelection(value);
     if (this.getName() != null)
       button.setText(this.getName());
-		button.setBackground(Color.BACKGROUND.getSWTColor());
 		button.setEnabled(enabled);
 		
 		if (isMandatory() && Application.getConfig().getMandatoryLabel())
@@ -148,7 +147,10 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
- * Revision 1.14  2011/01/11 22:43:50  willuhn
+ * Revision 1.15  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.14  2011-01-11 22:43:50  willuhn
  * @B hasChanged() funktionierte nicht beim ersten Aufruf, weil da "oldValue" noch den Wert von "PLACEHOLDER" in AbstractObject hatte. Das explizite "hasChanged()" aendert "oldValue" auf den aktuellen Wert
  *
  * Revision 1.13  2010-10-10 21:20:34  willuhn

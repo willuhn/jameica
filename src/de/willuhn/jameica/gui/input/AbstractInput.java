@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.25 $
- * $Date: 2010/08/24 22:43:56 $
+ * $Revision: 1.26 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -114,7 +114,6 @@ public abstract class AbstractInput implements Input
 
     // neues Composite erstellen, welches Platz fuer den Kommentar laesst.
     this.parent = new Composite(parent, SWT.NONE);
-		this.parent.setBackground(Color.BACKGROUND.getSWTColor());
     GridLayout layout = new GridLayout(2, true);
     layout.marginHeight = 2;
     layout.marginWidth = 1;
@@ -298,10 +297,7 @@ public abstract class AbstractInput implements Input
         return;
 
       if (!isEnabled())
-      {
-        this.control.setBackground(Color.BACKGROUND.getSWTColor());
         return;
-      }
       
       Object value = getValue();
 
@@ -382,7 +378,10 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
- * Revision 1.25  2010/08/24 22:43:56  willuhn
+ * Revision 1.26  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.25  2010-08-24 22:43:56  willuhn
  * @N ImageInput - wollte Heiner in JVerein fuer Mitgliedsfotos haben
  *
  * Revision 1.24  2009/01/04 01:24:30  willuhn

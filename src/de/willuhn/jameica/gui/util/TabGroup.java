@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/TabGroup.java,v $
- * $Revision: 1.4 $
- * $Date: 2008/02/22 16:20:40 $
+ * $Revision: 1.5 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,7 +72,6 @@ public class TabGroup extends Container
   		item.setText(name);
 
     this.composite = new Composite(parent,SWT.NONE);
-    this.composite.setBackground(Color.BACKGROUND.getSWTColor());
     this.composite.setFont(Font.H2.getSWTFont());
     GridLayout layout = new GridLayout(cols, false);
     this.composite.setLayout(layout);
@@ -94,7 +93,10 @@ public class TabGroup extends Container
 
 /*********************************************************************
  * $Log: TabGroup.java,v $
- * Revision 1.4  2008/02/22 16:20:40  willuhn
+ * Revision 1.5  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.4  2008-02-22 16:20:40  willuhn
  * @N Mehrspalten-Layouts
  *
  * Revision 1.3  2007/06/12 08:56:32  willuhn

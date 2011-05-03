@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/TextDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/03/17 22:44:10 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2011/05/03 10:13:11 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 
@@ -77,7 +76,6 @@ public class TextDialog extends SimpleDialog {
 	{
 		// Composite um alles drumrum.
 		comp = new Composite(parent,SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout(3,false));
 		
@@ -154,7 +152,10 @@ public class TextDialog extends SimpleDialog {
 
 /**********************************************************************
  * $Log: TextDialog.java,v $
- * Revision 1.1  2005/03/17 22:44:10  web0
+ * Revision 1.2  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.1  2005-03-17 22:44:10  web0
  * @N added fallback if system is not able to determine hostname
  *
  **********************************************************************/

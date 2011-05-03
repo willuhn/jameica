@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ButtonArea.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/04/26 12:01:42 $
+ * $Revision: 1.11 $
+ * $Date: 2011/05/03 10:13:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.Part;
-import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Diese Klasse erzeugt standardisierte Bereiche fuer Buttons.
@@ -47,7 +46,6 @@ public class ButtonArea implements Part
     layout.numColumns = buttons.size();
 
     Composite comp = new Composite(parent, SWT.NONE);
-    comp.setBackground(Color.BACKGROUND.getSWTColor());
     comp.setLayout(layout);
     comp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
     
@@ -122,7 +120,10 @@ public class ButtonArea implements Part
 
 /*********************************************************************
  * $Log: ButtonArea.java,v $
- * Revision 1.10  2011/04/26 12:01:42  willuhn
+ * Revision 1.11  2011/05/03 10:13:10  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.10  2011-04-26 12:01:42  willuhn
  * @D javadoc Fixes
  *
  * Revision 1.9  2010-07-29 09:15:41  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TextPart.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/04/26 12:09:17 $
+ * $Revision: 1.11 $
+ * $Date: 2011/05/03 10:13:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ public class TextPart implements Part
 	private boolean wrap = true;
 	private StyledText stext = null;
   
-  private Color background = Color.BACKGROUND;
+  private Color background = null;
 	
 	private boolean autoscroll = false; 
 
@@ -185,7 +185,8 @@ public class TextPart implements Part
 //		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		stext = new StyledText(parent,SWT.READ_ONLY | SWT.V_SCROLL);
     stext.setFont(Font.DEFAULT.getSWTFont());
- 		stext.setBackground(background.getSWTColor());
+    if (this.background != null)
+ 		  stext.setBackground(background.getSWTColor());
 		stext.setEditable(false);
 		stext.setWordWrap(wrap);
 		stext.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -212,7 +213,10 @@ public class TextPart implements Part
 
 /**********************************************************************
  * $Log: TextPart.java,v $
- * Revision 1.10  2011/04/26 12:09:17  willuhn
+ * Revision 1.11  2011/05/03 10:13:10  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.10  2011-04-26 12:09:17  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.9  2007/05/14 11:18:09  willuhn

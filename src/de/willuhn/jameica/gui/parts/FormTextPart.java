@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.17 $
- * $Date: 2011/04/26 12:09:17 $
+ * $Revision: 1.18 $
+ * $Date: 2011/05/03 10:13:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -154,7 +154,6 @@ public class FormTextPart implements Part {
   public void paint(Composite parent) throws RemoteException {
 
     container = new ScrolledComposite(parent,SWT.H_SCROLL | SWT.V_SCROLL);
-    container.setBackground(Color.BACKGROUND.getSWTColor());
     GridData gd = new GridData(GridData.FILL_BOTH);
     gd.horizontalIndent = 4;
     container.setLayoutData(gd);
@@ -182,7 +181,6 @@ public class FormTextPart implements Part {
     hs.setActiveForeground(Color.LINK_ACTIVE.getSWTColor());
     text.setHyperlinkSettings(hs);
 
-    text.setBackground(Color.BACKGROUND.getSWTColor());
     text.setFont(Font.DEFAULT.getSWTFont());
 
     text.setColor("header",Color.COMMENT.getSWTColor());
@@ -242,7 +240,10 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
- * Revision 1.17  2011/04/26 12:09:17  willuhn
+ * Revision 1.18  2011/05/03 10:13:10  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.17  2011-04-26 12:09:17  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.16  2010-10-28 22:08:44  willuhn

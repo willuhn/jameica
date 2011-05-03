@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ColumnLayout.java,v $
- * $Revision: 1.4 $
- * $Date: 2010/08/13 14:06:33 $
+ * $Revision: 1.5 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,7 +51,6 @@ public class ColumnLayout
   public ColumnLayout(Composite parent, int columns, boolean fullSize)
   {
     this.comp = new Composite(parent, SWT.NONE);
-    this.comp.setBackground(Color.BACKGROUND.getSWTColor());
     
     Layout parentLayout = parent.getLayout();
     int colspan = 1;
@@ -100,7 +99,10 @@ public class ColumnLayout
 
 /*********************************************************************
  * $Log: ColumnLayout.java,v $
- * Revision 1.4  2010/08/13 14:06:33  willuhn
+ * Revision 1.5  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.4  2010-08-13 14:06:33  willuhn
  * @C Schmalere Raender
  *
  * Revision 1.3  2010-08-12 15:21:33  willuhn

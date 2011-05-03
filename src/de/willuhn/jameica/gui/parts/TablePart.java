@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.105 $
- * $Date: 2011/05/02 10:47:16 $
+ * $Revision: 1.106 $
+ * $Date: 2011/05/03 10:13:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -496,7 +496,6 @@ public class TablePart extends AbstractTablePart
 		comp = new Composite(parent,SWT.NONE);
 		GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
 		comp.setLayoutData(gridData);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
 
 		GridLayout layout = new GridLayout();
 		layout.horizontalSpacing = 0;
@@ -1239,6 +1238,13 @@ public class TablePart extends AbstractTablePart
     return null;
   }
 	
+  /**
+   * Liefert das Editor-Control.
+   * @param row die Spalte.
+   * @param item das Tabellen-Element.
+   * @param oldValue der bisherige Wert.
+   * @return der Editor.
+   */
   protected Control getEditorControl(int row, TableItem item, final String oldValue)
   {
     Text newText = new Text(table, SWT.NONE);
@@ -1248,6 +1254,11 @@ public class TablePart extends AbstractTablePart
     return newText;
   }
 
+  /**
+   * Liefert den eingegebenen Wert im Editor.
+   * @param control das Control des Editors.
+   * @return der eingegebene Wert.
+   */
   protected String getControlValue(Control control)
   {
     if (control instanceof Text)
@@ -1380,7 +1391,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.105  2011/05/02 10:47:16  willuhn
+ * Revision 1.106  2011/05/03 10:13:10  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.105  2011-05-02 10:47:16  willuhn
  * @N BUGZILLA 1033 - Patch von Jan
  *
  * Revision 1.104  2011-04-29 07:41:59  willuhn

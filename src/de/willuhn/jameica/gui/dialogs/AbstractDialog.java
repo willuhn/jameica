@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.53 $
- * $Date: 2011/04/06 16:13:16 $
+ * $Revision: 1.54 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -240,7 +240,6 @@ public abstract class AbstractDialog
 				cl.marginWidth = 0;
 				c.setLayoutData(new GridData(GridData.FILL_BOTH));
 				c.setLayout(cl);
-				c.setBackground(Color.BACKGROUND.getSWTColor());
 
 				if (sideImage != null)
 				{
@@ -258,7 +257,6 @@ public abstract class AbstractDialog
 				GridLayout parentLayout = new GridLayout();
 				parentLayout.marginHeight = 2;
 				parentLayout.marginWidth = 2;
-				parent.setBackground(Color.BACKGROUND.getSWTColor());
 				parent.setLayout(parentLayout);
 				parent.setLayoutData(new GridData(GridData.FILL_BOTH));
       }
@@ -568,7 +566,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.53  2011/04/06 16:13:16  willuhn
+ * Revision 1.54  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.53  2011-04-06 16:13:16  willuhn
  * @N BUGZILLA 631
  *
  * Revision 1.52  2010-10-29 09:17:54  willuhn

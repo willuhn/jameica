@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SimpleDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2005/02/01 17:15:19 $
+ * $Revision: 1.10 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Billiger Dialog, der nur einen Text und einen OK-Button enthaelt.
@@ -71,7 +70,6 @@ public class SimpleDialog extends AbstractDialog {
 		comp = new Composite(parent,SWT.NONE);
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		comp.setLayout(new GridLayout(1,false));
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		
 		label = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
 		label.setText(getText() + "\n");
@@ -100,7 +98,10 @@ public class SimpleDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: SimpleDialog.java,v $
- * Revision 1.9  2005/02/01 17:15:19  willuhn
+ * Revision 1.10  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.9  2005-02-01 17:15:19  willuhn
  * *** empty log message ***
  *
  * Revision 1.8  2004/08/15 17:55:17  willuhn

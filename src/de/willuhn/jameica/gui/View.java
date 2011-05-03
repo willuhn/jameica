@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.50 $
- * $Date: 2011/04/06 16:13:16 $
+ * $Revision: 1.51 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -88,7 +88,6 @@ public class View implements Part
 		sash.setLayout(SWTUtil.createGrid(1,true));
 		
 		view = new Composite(sash, SWT.BORDER);
-    view.setBackground(Color.BACKGROUND.getSWTColor());
     view.setLayoutData(new GridData(GridData.FILL_BOTH));
 		view.setLayout(SWTUtil.createGrid(1,true));
 
@@ -141,7 +140,6 @@ public class View implements Part
 
       panelBg = SWTUtil.getCanvas(comp,SWTUtil.getImage("panelbar.png"), SWT.TOP | SWT.LEFT);
       panelBg.setLayout(SWTUtil.createGrid(1,false));
-      panelBg.setBackground(Color.BACKGROUND.getSWTColor());
       panelBg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
       panelBg.addListener(SWT.Paint,new Listener()
@@ -193,7 +191,6 @@ public class View implements Part
 		if (Customizing.SETTINGS.getBoolean("application.scrollview",false))
 		{
       scroll = new ScrolledComposite(view,SWT.V_SCROLL | SWT.H_SCROLL);
-      scroll.setBackground(Color.BACKGROUND.getSWTColor());
       scroll.setLayoutData(new GridData(GridData.FILL_BOTH));
       scroll.setLayout(SWTUtil.createGrid(1,true));
       scroll.setExpandHorizontal(true);
@@ -208,7 +205,6 @@ public class View implements Part
 	    content = new Composite(view, SWT.NONE);
 		}
 
-		content.setBackground(Color.BACKGROUND.getSWTColor());
 		content.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout l = new GridLayout();
 		l.marginHeight = 6;
@@ -452,7 +448,10 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
- * Revision 1.50  2011/04/06 16:13:16  willuhn
+ * Revision 1.51  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.50  2011-04-06 16:13:16  willuhn
  * @N BUGZILLA 631
  *
  * Revision 1.49  2010-09-28 23:42:52  willuhn

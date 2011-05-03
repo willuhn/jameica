@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/04/29 17:01:04 $
+ * $Revision: 1.14 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -100,7 +100,6 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   {
     Label label = new Label(parent,style);
     label.setFont(Font.DEFAULT.getSWTFont());
-    label.setBackground(Color.BACKGROUND.getSWTColor());
     return label;
   }
 
@@ -109,7 +108,10 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
- * Revision 1.13  2011/04/29 17:01:04  willuhn
+ * Revision 1.14  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.13  2011-04-29 17:01:04  willuhn
  * @R undo
  *
  * Revision 1.11  2007-05-14 11:18:09  willuhn

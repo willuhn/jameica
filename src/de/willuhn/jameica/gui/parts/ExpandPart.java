@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.8 $
- * $Date: 2010/08/12 15:35:23 $
+ * $Revision: 1.9 $
+ * $Date: 2011/05/03 10:13:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.ExpandItem;
 
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.boxes.Box;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
@@ -86,7 +85,6 @@ public class ExpandPart implements Part
   {
     ExpandBar bar = new ExpandBar(parent, SWT.V_SCROLL);
     bar.setSpacing(1);
-    bar.setBackground(Color.BACKGROUND.getSWTColor());
     bar.setLayoutData(new GridData(GridData.FILL_BOTH));
     
     for (int i=0;i<this.items.size();++i)
@@ -96,7 +94,6 @@ public class ExpandPart implements Part
       try
       {
         final Composite composite = new Composite(bar, SWT.NONE);
-        composite.setBackground(Color.BACKGROUND.getSWTColor());
         GridLayout layout = new GridLayout();
         layout.marginLeft = 10;
         layout.marginTop = layout.marginRight = layout.marginBottom = 0;
@@ -171,7 +168,10 @@ public class ExpandPart implements Part
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
- * Revision 1.8  2010/08/12 15:35:23  willuhn
+ * Revision 1.9  2011/05/03 10:13:10  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.8  2010-08-12 15:35:23  willuhn
  * @C Etwas mehr Platz geschafft
  *
  * Revision 1.7  2010-03-24 13:00:03  willuhn

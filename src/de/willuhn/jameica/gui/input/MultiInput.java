@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/MultiInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/12/09 15:57:10 $
+ * $Revision: 1.4 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -199,7 +199,6 @@ public class MultiInput implements Input
     }
 
     this.composite = new Composite(parent, SWT.NONE);
-    this.composite.setBackground(Color.BACKGROUND.getSWTColor());
     final GridLayout layout = new GridLayout(size,false);
     layout.marginHeight = 0;
     layout.marginWidth = 0;
@@ -319,7 +318,10 @@ public class MultiInput implements Input
 
 /**********************************************************************
  * $Log: MultiInput.java,v $
- * Revision 1.3  2010/12/09 15:57:10  willuhn
+ * Revision 1.4  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.3  2010-12-09 15:57:10  willuhn
  * @N Input-Label mit anzeigen, falls vorhanden
  *
  * Revision 1.2  2010-05-06 11:48:35  willuhn

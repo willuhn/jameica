@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/LabelGroup.java,v $
- * $Revision: 1.19 $
- * $Date: 2010/08/19 11:59:08 $
+ * $Revision: 1.20 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,9 +17,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
-import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Platform;
 
 /**
  * Diese Klasse kapselt Dialog-Teile in einer Gruppe.
@@ -58,11 +55,6 @@ public class LabelGroup extends Container
     super(fullSize);
 		group = new Group(parent, SWT.NONE);
 		
-		// BUGZILLA 435
-		int os = Application.getPlatform().getOS();
-		if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64)
-		  group.setBackground(Color.BACKGROUND.getSWTColor());
-
 		if (name != null)
   		group.setText(name);
 		group.setFont(Font.H2.getSWTFont());
@@ -85,7 +77,10 @@ public class LabelGroup extends Container
 
 /*********************************************************************
  * $Log: LabelGroup.java,v $
- * Revision 1.19  2010/08/19 11:59:08  willuhn
+ * Revision 1.20  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.19  2010-08-19 11:59:08  willuhn
  * *** empty log message ***
  *
  * Revision 1.18  2008-02-22 16:20:40  willuhn

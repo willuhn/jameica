@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.24 $
- * $Date: 2009/10/22 17:26:48 $
+ * $Revision: 1.25 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -204,9 +204,7 @@ public class DialogInput extends ButtonInput
 
     org.eclipse.swt.graphics.Color color = null;
     
-    if (!clientControlEnabled)
-      color = Color.BACKGROUND.getSWTColor();
-    else if (isMandatory() && (s == null || s.length() == 0))
+    if (isMandatory() && (s == null || s.length() == 0))
       color = Color.MANDATORY_BG.getSWTColor();
     else
       color = Color.WIDGET_BG.getSWTColor();
@@ -244,6 +242,9 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
+ * Revision 1.25  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
  * Revision 1.24  2009/10/22 17:26:48  willuhn
  * @N setDialog in DialogInput
  *

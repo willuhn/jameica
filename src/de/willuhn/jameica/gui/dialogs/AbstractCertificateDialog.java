@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractCertificateDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2007/01/04 15:24:21 $
+ * $Revision: 1.8 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,9 +19,11 @@ import java.text.DateFormat;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.TextPart;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.jameica.system.Application;
@@ -45,7 +47,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   {
     super(position);
     this.cert = cert;
-    //setSize(405,550); // Breite legen wir fest, damit der Fingerprint hinpasst
   }
 
   /**
@@ -55,9 +56,10 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   {
     DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
 
-    LabelGroup group = new LabelGroup(parent,i18n.tr("Details des Zertifikats"));
+    Container group = new SimpleContainer(parent);
     
-    group.addText(text == null ? "" : text,true);
+    if (text != null && text.length() > 0)
+      group.addText(text,true);
 
     /////////////////////////////////////////////////////////////////////////////
     // Aussteller
@@ -117,7 +119,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     /////////////////////////////////////////////////////////////////////////////
     // Fingerprint
     TextPart fingerprints = new TextPart();
-    fingerprints.setBackground(Color.WIDGET_BG);
     fingerprints.appendText(i18n.tr("MD5-Fingerabdruck:\n{0}",myCert.getMD5Fingerprint()));
     fingerprints.appendText("\n");
     fingerprints.appendText(i18n.tr("SHA1-Fingerabdruck:\n{0}",myCert.getSHA1Fingerprint()));
@@ -134,8 +135,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
       group.addText(Application.getI18n().tr("Zertifikat abgelaufen oder noch nicht gültig!"),true,Color.ERROR);
     }
 
-    paintButtons(parent);
-
+    ButtonArea buttons = new ButtonArea();
+    paintButtons(buttons);
+    group.addButtonArea(buttons);
   }
 
   private String format(String s)
@@ -148,9 +150,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   /**
    * Muss von der ableitenden Klasse implementiert werden,
    * um die Buttons am Ende des Dialogs zu zeichnen.
-   * @param parent Parent, in das die Buttons gemalt werden muessen.
+   * @param area die Button-Area.
    */
-  protected abstract void paintButtons(Composite parent);
+  protected abstract void paintButtons(ButtonArea area);
   
 
   /**
@@ -176,6 +178,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: AbstractCertificateDialog.java,v $
+ * Revision 1.8  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
  * Revision 1.7  2007/01/04 15:24:21  willuhn
  * @C certificate import handling
  * @B Bug 330

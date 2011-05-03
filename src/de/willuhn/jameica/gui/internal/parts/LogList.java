@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/LogList.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/04/26 12:20:23 $
+ * $Revision: 1.7 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -159,7 +159,7 @@ public class LogList extends TablePart
       if (context == null || !(context instanceof LogObject))
         return;
       Message m = ((LogObject)context).message;
-      LogDetailDialog d = new LogDetailDialog(m,LogDetailDialog.POSITION_MOUSE);
+      LogDetailDialog d = new LogDetailDialog(m,LogDetailDialog.POSITION_CENTER);
       try
       {
         d.open();
@@ -354,7 +354,10 @@ public class LogList extends TablePart
 
 /*********************************************************************
  * $Log: LogList.java,v $
- * Revision 1.6  2011/04/26 12:20:23  willuhn
+ * Revision 1.7  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.6  2011-04-26 12:20:23  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.5  2007/01/25 12:07:58  willuhn

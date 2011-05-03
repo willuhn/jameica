@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CertificateTrustDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/01/04 15:34:26 $
+ * $Revision: 1.3 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,10 +15,8 @@ package de.willuhn.jameica.gui.dialogs;
 
 import java.security.cert.X509Certificate;
 
-import org.eclipse.swt.widgets.Composite;
-
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.util.ApplicationException;
 
@@ -57,11 +55,10 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
   }
 
   /**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractCertificateDialog#paintButtons(org.eclipse.swt.widgets.Composite)
+   * @see de.willuhn.jameica.gui.dialogs.AbstractCertificateDialog#paintButtons(de.willuhn.jameica.gui.parts.ButtonArea)
    */
-  protected void paintButtons(Composite parent)
+  protected void paintButtons(ButtonArea buttons)
   {
-    ButtonArea buttons = new ButtonArea(parent,3);
     buttons.addButton("   " + i18n.tr("Ja") + "   ", new Action()
     {
       public void handleAction(Object context) throws ApplicationException
@@ -69,7 +66,7 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
         trust = Boolean.TRUE;
         close();
       }
-    });
+    },null,false,"ok.png");
     buttons.addButton("   " + i18n.tr("Nein") + "   ", new Action()
     {
       public void handleAction(Object context) throws ApplicationException
@@ -77,14 +74,14 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
         trust = Boolean.FALSE;
         close();
       }
-    },null,true);
+    },null,false,"window-close.png");
     buttons.addButton(i18n.tr("Abbrechen"), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
         throw new OperationCanceledException();
       }
-    });
+    },null,false,"process-stop.png");
   }
 
 }
@@ -92,6 +89,9 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
 
 /**********************************************************************
  * $Log: CertificateTrustDialog.java,v $
+ * Revision 1.3  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
  * Revision 1.2  2007/01/04 15:34:26  willuhn
  * @N linebreak
  *

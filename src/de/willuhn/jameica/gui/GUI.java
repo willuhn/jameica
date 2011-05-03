@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.140 $
- * $Date: 2011/04/14 16:58:48 $
+ * $Revision: 1.141 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,6 @@ import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.SystemMessage;
@@ -202,7 +201,6 @@ public class GUI implements ApplicationController
       Composite right = new Composite(sash, SWT.NONE);
       right.setLayout(SWTUtil.createGrid(1,true));
       right.setLayoutData(new GridData(GridData.FILL_BOTH));
-      right.setBackground(Color.BACKGROUND.getSWTColor());
       Logger.info("adding content view");
       view = new View();
       view.paint(right);
@@ -1012,7 +1010,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.140  2011/04/14 16:58:48  willuhn
+ * Revision 1.141  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.140  2011-04-14 16:58:48  willuhn
  * @N Globaler Shortcut <CTRL><P> zum Drucken (falls PanelButtonPrint aktiv ist)
  *
  * Revision 1.139  2011-04-06 16:13:16  willuhn

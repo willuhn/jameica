@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SimpleContainer.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/02/22 16:20:40 $
+ * $Revision: 1.4 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -47,7 +47,6 @@ public class SimpleContainer extends Container
   {
     super(fullSize);
     this.comp = new Composite(parent, SWT.NONE);
-    this.comp.setBackground(Color.BACKGROUND.getSWTColor());
     GridLayout layout = new GridLayout(2, false);
     this.comp.setLayout(layout);
     GridData grid = new GridData(fullSize ? GridData.FILL_BOTH : (GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
@@ -66,7 +65,10 @@ public class SimpleContainer extends Container
 
 /*********************************************************************
  * $Log: SimpleContainer.java,v $
- * Revision 1.3  2008/02/22 16:20:40  willuhn
+ * Revision 1.4  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.3  2008-02-22 16:20:40  willuhn
  * @N Mehrspalten-Layouts
  *
  * Revision 1.2  2007/06/13 09:43:02  willuhn

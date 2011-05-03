@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/04/06 16:13:16 $
+ * $Revision: 1.14 $
+ * $Date: 2011/05/03 10:13:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -114,7 +114,6 @@ public class Panel implements Part
     ///////////////////////////////
     // Eigenes Parent, damit wir ein GridLayout verwenden koennen
     myParent = new Composite(parent,this.border ? SWT.BORDER : SWT.NONE);
-    myParent.setBackground(de.willuhn.jameica.gui.util.Color.BACKGROUND.getSWTColor());
     GridLayout myLayout = new GridLayout();
     myLayout.horizontalSpacing = 0;
     myLayout.verticalSpacing = 0;
@@ -207,7 +206,10 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
- * Revision 1.13  2011/04/06 16:13:16  willuhn
+ * Revision 1.14  2011/05/03 10:13:10  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.13  2011-04-06 16:13:16  willuhn
  * @N BUGZILLA 631
  *
  * Revision 1.12  2008/01/07 22:19:55  willuhn

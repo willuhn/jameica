@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2010/06/08 11:57:54 $
+ * $Revision: 1.19 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -272,10 +272,7 @@ public abstract class ButtonInput extends AbstractInput
         return;
 
       if (!isEnabled())
-      {
-        this.comp.setBackground(Color.BACKGROUND.getSWTColor());
         return;
-      }
       
       Object value = getValue();
 
@@ -296,6 +293,9 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
+ * Revision 1.19  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
  * Revision 1.18  2010/06/08 11:57:54  willuhn
  * @B Beim Aendern des Enabled-Status wurde die Hintergrundfarbe nicht sofort geaendert - da fehlte nur ein update()
  *

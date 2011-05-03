@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.19 $
- * $Date: 2010/10/21 10:48:45 $
+ * $Revision: 1.20 $
+ * $Date: 2011/05/03 10:13:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -153,7 +153,6 @@ public class ProgressBar implements ProgressMonitor, Part
   public void paint(Composite parent) throws RemoteException
   {
   	this.parent = new Composite(parent,SWT.NONE);
-		this.parent.setBackground(Color.BACKGROUND.getSWTColor());
   	this.parent.setLayout(new GridLayout(3,false));
   	this.parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -181,7 +180,6 @@ public class ProgressBar implements ProgressMonitor, Part
       return;
     
 		Composite comp = new Composite(this.parent,SWT.BORDER);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		GridLayout gl = new GridLayout(2,false);
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
@@ -240,7 +238,10 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
- * Revision 1.19  2010/10/21 10:48:45  willuhn
+ * Revision 1.20  2011/05/03 10:13:10  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.19  2010-10-21 10:48:45  willuhn
  * @N BackgroundTaskDialog
  *
  * Revision 1.18  2008/04/23 11:43:40  willuhn

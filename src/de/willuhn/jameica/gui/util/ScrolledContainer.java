@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ScrolledContainer.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/04/02 10:12:18 $
+ * $Revision: 1.4 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,13 +42,11 @@ public class ScrolledContainer extends Container
     
     // BUGZILLA 412
     this.scrolled = new ScrolledComposite(parent,SWT.V_SCROLL);
-    this.scrolled.setBackground(Color.BACKGROUND.getSWTColor());
     this.scrolled.setLayoutData(new GridData(GridData.FILL_BOTH));
     this.scrolled.setLayout(new FillLayout());
     this.scrolled.setExpandHorizontal(true);
 
     this.comp = new Composite(this.scrolled, SWT.NONE);
-    this.comp.setBackground(Color.BACKGROUND.getSWTColor());
     this.comp.setLayout(new GridLayout(2, false));
     this.comp.setLayoutData(new GridData(GridData.FILL_BOTH));
     
@@ -85,7 +83,10 @@ public class ScrolledContainer extends Container
 
 /*********************************************************************
  * $Log: ScrolledContainer.java,v $
- * Revision 1.3  2008/04/02 10:12:18  willuhn
+ * Revision 1.4  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.3  2008-04-02 10:12:18  willuhn
  * @N Scrollverhalten und Auto-Resizing gefixt
  *
  * Revision 1.2  2008/04/01 10:38:25  willuhn

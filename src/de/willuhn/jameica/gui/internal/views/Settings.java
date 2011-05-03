@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.32 $
- * $Date: 2011/04/26 11:38:16 $
+ * $Revision: 1.33 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,6 @@ import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.action.CertificateImport;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.parts.ButtonArea;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.ColumnLayout;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.gui.util.TabGroup;
@@ -171,7 +170,6 @@ public class Settings extends AbstractView implements Extendable
     
     this.folder = new TabFolder(getParent(), SWT.NONE);
     this.folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-    this.folder.setBackground(Color.BACKGROUND.getSWTColor());
     return this.folder;
   }
 
@@ -197,7 +195,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.32  2011/04/26 11:38:16  willuhn
+ * Revision 1.33  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.32  2011-04-26 11:38:16  willuhn
  * @R Back-Button entfernt
  * @N Icons auf Buttons
  *

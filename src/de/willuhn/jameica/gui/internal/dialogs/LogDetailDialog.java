@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/LogDetailDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2008/04/15 16:16:36 $
+ * $Revision: 1.4 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,16 +16,17 @@ package de.willuhn.jameica.gui.internal.dialogs;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.TextPart;
-import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.Headline;
-import de.willuhn.jameica.gui.util.LabelGroup;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Message;
@@ -48,6 +49,7 @@ public class LogDetailDialog extends AbstractDialog
     super(position);
     this.message = message;
     this.setTitle(Application.getI18n().tr("Details der System-Nachricht"));
+    this.setSize(450,300);
   }
 
   /**
@@ -55,10 +57,10 @@ public class LogDetailDialog extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception
   {
-    LabelGroup group = new LabelGroup(parent, Application.getI18n().tr("Eigenschaften"));
+    Container container = new SimpleContainer(parent,true);
     
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    group.addLabelPair(Application.getI18n().tr("Datum"), new LabelInput(df.format(message.getDate())));
+    container.addLabelPair(Application.getI18n().tr("Datum"), new LabelInput(df.format(message.getDate())));
     
     Level level = message.getLevel();
     LabelInput l = new LabelInput(level.getName());
@@ -66,26 +68,28 @@ public class LogDetailDialog extends AbstractDialog
     else if (level.getValue() == Level.WARN.getValue()) l.setColor(Color.LINK_ACTIVE);
     else if (level.getValue() == Level.ERROR.getValue()) l.setColor(Color.ERROR);
 
-    group.addLabelPair(Application.getI18n().tr("Priorit‰t"), l);
-    group.addLabelPair(Application.getI18n().tr("Quelle"), new LabelInput(message.getLoggingClass() + "." + message.getLoggingMethod()));
+    container.addLabelPair(Application.getI18n().tr("Priorit‰t"), l);
+    container.addLabelPair(Application.getI18n().tr("Quelle"), new LabelInput(message.getLoggingClass() + "." + message.getLoggingMethod()));
     
-    new Headline(parent,Application.getI18n().tr("Nachricht"));
-    final String text = message.getText();
+    container.addHeadline(Application.getI18n().tr("Nachricht"));
+    
     TextPart tp = new TextPart();
     tp.setAutoscroll(false);
     tp.setWordWrap(false);
-    tp.appendText(text);
-    tp.paint(parent);
+    tp.appendText(message.getText());
+    
+    container.addPart(tp);
 
     
-    ButtonArea buttons = new ButtonArea(parent,1);
+    ButtonArea buttons = new ButtonArea();
     buttons.addButton(Application.getI18n().tr("Schlieﬂen"),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         close();
       }
-    },null,true);
-    
+    },null,true,"process-stop.png");
+    container.addButtonArea(buttons);
+    getShell().setMinimumSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
   }
 
   /**
@@ -101,6 +105,9 @@ public class LogDetailDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: LogDetailDialog.java,v $
+ * Revision 1.4  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
  * Revision 1.3  2008/04/15 16:16:36  willuhn
  * @B BUGZILLA 584
  *

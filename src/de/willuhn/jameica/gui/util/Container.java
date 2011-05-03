@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.17 $
- * $Date: 2010/10/10 21:20:34 $
+ * $Revision: 1.18 $
+ * $Date: 2011/05/03 10:13:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -129,7 +129,6 @@ public abstract class Container
     final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
     labelGrid.horizontalSpan = 2;
     final Composite comp = new Composite(getComposite(),SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
     GridLayout gl = new GridLayout(2,false);
     gl.marginHeight = 0;
     gl.marginWidth = 0;
@@ -188,7 +187,6 @@ public abstract class Container
       final GridData grid = new GridData(isFullSize() ? GridData.FILL_BOTH : GridData.FILL_HORIZONTAL);
       grid.horizontalSpan = 2;
       final Composite comp = new Composite(getComposite(),SWT.NONE);
-      comp.setBackground(Color.BACKGROUND.getSWTColor());
       comp.setLayoutData(grid);
 
       GridLayout layout = new GridLayout(1,true);
@@ -215,7 +213,6 @@ public abstract class Container
 		grid.horizontalSpan = 2;
 		grid.horizontalIndent = 0;
 		Composite comp = new Composite(getComposite(),SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		comp.setLayoutData(grid);
 
 		GridLayout layout = new GridLayout(2,false);
@@ -255,7 +252,6 @@ public abstract class Container
 		final GridData g = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
 		g.horizontalSpan = 2;
 		final Composite comp = new Composite(getComposite(),SWT.NONE);
-		comp.setBackground(Color.BACKGROUND.getSWTColor());
 		comp.setLayoutData(g);
 
 		final GridLayout gl = new GridLayout();
@@ -277,7 +273,6 @@ public abstract class Container
       final GridData g = new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
       g.horizontalSpan = 2;
       final Composite comp = new Composite(getComposite(),SWT.NONE);
-      comp.setBackground(Color.BACKGROUND.getSWTColor());
       comp.setLayoutData(g);
 
       final GridLayout gl = new GridLayout();
@@ -296,7 +291,10 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.17  2010/10/10 21:20:34  willuhn
+ * Revision 1.18  2011/05/03 10:13:11  willuhn
+ * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
+ *
+ * Revision 1.17  2010-10-10 21:20:34  willuhn
  * @N BUGZILLA 924
  *
  * Revision 1.16  2010-10-05 10:59:39  willuhn
