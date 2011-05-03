@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.19 $
- * $Date: 2011/05/03 11:07:37 $
+ * $Revision: 1.20 $
+ * $Date: 2011/05/03 11:33:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,8 +22,8 @@ import de.willuhn.jameica.gui.boxes.Box;
 import de.willuhn.jameica.gui.boxes.BoxRegistry;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.dialogs.ChooseBoxesDialog;
-import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.ExpandPart;
+import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
@@ -43,6 +43,27 @@ public class Start extends AbstractView implements Extendable
   {
     GUI.getView().setTitle(Application.getI18n().tr("Willkommen"));
 
+    if (!Customizing.SETTINGS.getBoolean("application.start.hidecustomize",false))
+    {
+      // Panel-Button zum Anpassen der Startseite
+      PanelButton button = new PanelButton("document-properties.png",new Action() {
+        public void handleAction(Object context) throws ApplicationException
+        {
+          ChooseBoxesDialog d = new ChooseBoxesDialog(ChooseBoxesDialog.POSITION_CENTER);
+          try
+          {
+            d.open();
+          }
+          catch (Exception e)
+          {
+            Logger.error("error while loading box config dialog",e);
+          }
+        }
+      },Application.getI18n().tr("Startseite anpassen"));
+      GUI.getView().addPanelButton(button);
+    }
+    
+    
     Box[] boxes = BoxRegistry.getBoxes();
     
     GridLayout layout = (GridLayout) getParent().getLayout();
@@ -63,26 +84,6 @@ public class Start extends AbstractView implements Extendable
       }
     }
     expand.paint(getParent());
-    
-    if (!Customizing.SETTINGS.getBoolean("application.start.hidecustomize",false))
-    {
-      ButtonArea buttons = new ButtonArea();
-      buttons.addButton(Application.getI18n().tr("Startseite anpassen"),new Action() {
-        public void handleAction(Object context) throws ApplicationException
-        {
-          ChooseBoxesDialog d = new ChooseBoxesDialog(ChooseBoxesDialog.POSITION_CENTER);
-          try
-          {
-            d.open();
-          }
-          catch (Exception e)
-          {
-            Logger.error("error while loading box config dialog",e);
-          }
-        }
-      },null,true,"document-properties.png");
-      buttons.paint(getParent());
-    }
   }        
 
   /**
@@ -105,7 +106,11 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
- * Revision 1.19  2011/05/03 11:07:37  willuhn
+ * Revision 1.20  2011/05/03 11:33:57  willuhn
+ * @N Button "Startseite anpassen" als Panel-Button
+ * @B das Entfernen und Wiederhinzufuegen von Elementen im ChooseBoxDialog fuehrte unter OS X zu einer ArrayIndexOutOfBoundsException - warum auch immer
+ *
+ * Revision 1.19  2011-05-03 11:07:37  willuhn
  * @N Styling-Fixes fuer Windows (Background)
  *
  * Revision 1.18  2011-01-14 12:02:15  willuhn

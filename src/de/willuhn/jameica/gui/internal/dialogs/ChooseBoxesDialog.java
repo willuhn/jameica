@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/04/29 16:34:01 $
+ * $Revision: 1.8 $
+ * $Date: 2011/05/03 11:33:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -305,15 +305,18 @@ public class ChooseBoxesDialog extends AbstractDialog
       o.box.setEnabled(state);
       
       // Element entfernen und wieder hinzufuegen, damit die Ansicht aktualisiert wird
-      table.removeItem(o);
-      try
+      int index = table.removeItem(o);
+      if (index != -1)
       {
-        table.addItem(o,o.box.getIndex());
-        table.select(o);
-      }
-      catch (Exception e)
-      {
-        Logger.error("Fehler beim Sortieren des Elementes",e);
+        try
+        {
+          table.addItem(o,index);
+          table.select(o);
+        }
+        catch (Exception e)
+        {
+          Logger.error("Fehler beim Aktualisieren des Elementes",e);
+        }
       }
     }
     
@@ -323,7 +326,11 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.7  2011/04/29 16:34:01  willuhn
+ * Revision 1.8  2011/05/03 11:33:57  willuhn
+ * @N Button "Startseite anpassen" als Panel-Button
+ * @B das Entfernen und Wiederhinzufuegen von Elementen im ChooseBoxDialog fuehrte unter OS X zu einer ArrayIndexOutOfBoundsException - warum auch immer
+ *
+ * Revision 1.7  2011-04-29 16:34:01  willuhn
  * *** empty log message ***
  *
  * Revision 1.6  2011-04-29 16:27:02  willuhn
