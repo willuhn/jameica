@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.25 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.26 $
+ * $Date: 2011/05/03 16:46:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -177,9 +177,7 @@ public class DialogInput extends ButtonInput
    * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
    */
   public Control getClientControl(Composite parent) {
-//  	text = GUI.getStyleFactory().createText(parent);
-    text = new Text(parent,SWT.NONE | SWT.SINGLE);
-    text.setForeground(Color.WIDGET_FG.getSWTColor());
+    text = new Text(parent,SWT.BORDER | SWT.SINGLE);
   	if (value != null)
   		text.setText(value);
     if (this.maxlength > 0)
@@ -210,11 +208,6 @@ public class DialogInput extends ButtonInput
       color = Color.WIDGET_BG.getSWTColor();
 
     text.setBackground(color);
-
-    // Das ist der Rahmen vom ButtonInput, den muessen wir auch noch anpassen
-    Composite comp = text.getParent();
-    if (comp != null && !comp.isDisposed())
-      comp.setBackground(color);
   }
 
   /**
@@ -242,7 +235,11 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
- * Revision 1.25  2011/05/03 10:13:11  willuhn
+ * Revision 1.26  2011/05/03 16:46:08  willuhn
+ * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
+ * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
+ *
+ * Revision 1.25  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.24  2009/10/22 17:26:48  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.15 $
+ * $Date: 2011/05/03 16:46:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,8 @@
 package de.willuhn.jameica.gui.style;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -66,13 +66,12 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   }
 
   /**
-   * @see de.willuhn.jameica.gui.style.StyleFactory#createCombo(org.eclipse.swt.widgets.Composite)
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createCombo(org.eclipse.swt.widgets.Composite, int)
    */
-  public CCombo createCombo(Composite parent)
+  public Combo createCombo(Composite parent, int style)
   {
-    CCombo combo = new CCombo(parent,SWT.READ_ONLY | SWT.BORDER);
+    Combo combo = new Combo(parent,SWT.BORDER | style);
     combo.setFont(Font.DEFAULT.getSWTFont());
-    combo.setForeground(Color.WIDGET_FG.getSWTColor());
     return combo;
   }
 
@@ -108,7 +107,11 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
- * Revision 1.14  2011/05/03 10:13:11  willuhn
+ * Revision 1.15  2011/05/03 16:46:08  willuhn
+ * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
+ * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
+ *
+ * Revision 1.14  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.13  2011-04-29 17:01:04  willuhn

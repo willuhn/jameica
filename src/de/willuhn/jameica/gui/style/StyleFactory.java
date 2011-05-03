@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactory.java,v $
- * $Revision: 1.5 $
- * $Date: 2005/02/01 17:15:19 $
+ * $Revision: 1.6 $
+ * $Date: 2011/05/03 16:46:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,8 +12,8 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.style;
 
-import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -58,9 +58,10 @@ public interface StyleFactory
 	/**
 	 * Erzeugt ein Combo.
    * @param parent Parent.
+   * @param style
    * @return Combo.
    */
-  public CCombo createCombo(Composite parent);
+  public Combo createCombo(Composite parent, int style);
   
   /**
    * Erzeugt eine neue Tabelle.
@@ -80,7 +81,11 @@ public interface StyleFactory
 
 /*********************************************************************
  * $Log: StyleFactory.java,v $
- * Revision 1.5  2005/02/01 17:15:19  willuhn
+ * Revision 1.6  2011/05/03 16:46:08  willuhn
+ * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
+ * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
+ *
+ * Revision 1.5  2005-02-01 17:15:19  willuhn
  * *** empty log message ***
  *
  * Revision 1.4  2004/11/04 19:29:22  willuhn

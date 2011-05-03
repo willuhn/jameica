@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.142 $
- * $Date: 2011/05/03 13:15:57 $
+ * $Revision: 1.143 $
+ * $Date: 2011/05/03 16:46:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -742,29 +742,9 @@ public class GUI implements ApplicationController
    */
   public static StyleFactory getStyleFactory()
   {
-    if (gui.styleFactory != null) return gui.styleFactory;
-    String className = SETTINGS.getString("stylefactory",StyleFactoryDefaultImpl.class.getName());
-    try
-    {
-      gui.styleFactory = (StyleFactory) Application.getClassLoader().load(className).newInstance();
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to load configured stylefactory, using default", e);
+    if (gui.styleFactory == null)
       gui.styleFactory = new StyleFactoryDefaultImpl();
-    }
     return gui.styleFactory;
-  }
-
-  /**
-   * Speichert die zu verwendende StyleFactory.
-   * @param factory die zu verwendende StyleFactory.
-   */
-  public static void setStyleFactory(StyleFactory factory)
-  {
-    if (factory == null) return;
-    gui.styleFactory = factory;
-    SETTINGS.setAttribute("stylefactory", factory.getClass().getName());
   }
 
   /**
@@ -997,7 +977,11 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.142  2011/05/03 13:15:57  willuhn
+ * Revision 1.143  2011/05/03 16:46:08  willuhn
+ * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
+ * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
+ *
+ * Revision 1.142  2011-05-03 13:15:57  willuhn
  * @R BUGZILLA 359 - die Sonderbehandlung gibts nicht mehr. Inzwischen fuehrt die unter OSX genau zum Gegenteil. Naemlich dass Hibiscus beim Testen der PIN/TAN-Config haengen bleibt, und das Snapin mit dem Progress nie sauber eingeblendet wird. Offentlich galt das Problem nur bei alten OSX-Versionen
  *
  * Revision 1.141  2011-05-03 10:13:11  willuhn

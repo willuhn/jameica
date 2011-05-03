@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.19 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.20 $
+ * $Date: 2011/05/03 16:46:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,8 +63,7 @@ public abstract class ButtonInput extends AbstractInput
   public final Control getControl()
   {
 
-		comp = new Composite(getParent(),SWT.BORDER);
-		comp.setBackground(Color.WIDGET_BG.getSWTColor());
+		comp = new Composite(getParent(),SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginHeight=0;
 		layout.marginWidth=0;
@@ -278,10 +277,10 @@ public abstract class ButtonInput extends AbstractInput
 
       if (isMandatory() && (value == null || "".equals(value.toString())))
       {
-        this.comp.setBackground(Color.MANDATORY_BG.getSWTColor());
+        this.clientControl.setBackground(Color.MANDATORY_BG.getSWTColor());
         return;
       }
-      this.comp.setBackground(Color.WIDGET_BG.getSWTColor());
+      this.clientControl.setBackground(Color.WIDGET_BG.getSWTColor());
     }
     finally
     {
@@ -293,7 +292,11 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
- * Revision 1.19  2011/05/03 10:13:11  willuhn
+ * Revision 1.20  2011/05/03 16:46:08  willuhn
+ * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
+ * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
+ *
+ * Revision 1.19  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.18  2010/06/08 11:57:54  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.41 $
- * $Date: 2009/10/08 22:45:10 $
+ * $Revision: 1.42 $
+ * $Date: 2011/05/03 16:46:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,8 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.datasource.BeanUtil;
@@ -24,7 +25,6 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
@@ -43,7 +43,7 @@ public class SelectInput extends AbstractInput
   private String attribute    = null;
   
   // SWT-Daten
-  private CCombo combo        = null;
+  private Combo combo         = null;
   private boolean enabled     = true;
   private boolean editable    = false;
   private String pleaseChoose = null;
@@ -156,8 +156,7 @@ public class SelectInput extends AbstractInput
     if (this.combo != null)
       return this.combo;
 
-    this.combo = GUI.getStyleFactory().createCombo(getParent());
-    this.combo.setEditable(this.editable); // BUGZILLA 549
+    this.combo = GUI.getStyleFactory().createCombo(getParent(),this.editable ? SWT.NONE : SWT.READ_ONLY);
     
     int selected             = -1;
     boolean havePleaseChoose = false;
@@ -212,8 +211,6 @@ public class SelectInput extends AbstractInput
     // Patch von Heiner
     this.combo.setVisibleItemCount(15);
     this.combo.setEnabled(enabled);
-   	if (!enabled)
-     this.combo.setForeground(Color.COMMENT.getSWTColor());
 
     // BUGZILLA 550
     if (this.editable && this.preselected != null && !this.list.contains(this.preselected) && (this.preselected instanceof String))
@@ -309,13 +306,7 @@ public class SelectInput extends AbstractInput
   {
     this.enabled = enabled;
     if (combo != null && !combo.isDisposed())
-    {
       combo.setEnabled(enabled);
-      if (enabled)
-        combo.setForeground(Color.WIDGET_FG.getSWTColor());
-      else
-        combo.setForeground(Color.COMMENT.getSWTColor());
-    }
   }
   
   /**
@@ -333,8 +324,6 @@ public class SelectInput extends AbstractInput
   public void setEditable(boolean editable)
   {
     this.editable = editable;
-    if (this.combo != null && !this.combo.isDisposed())
-      combo.setEditable(this.editable);
   }
 
   /**
@@ -364,6 +353,10 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
+ * Revision 1.42  2011/05/03 16:46:08  willuhn
+ * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
+ * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
+ *
  * Revision 1.41  2009/10/08 22:45:10  willuhn
  * @N Button "Geprueft" in Umsatz-Details, um einen Umsatz auch dort als geprueft markieren zu koennen
  * @N Button "Filter zuruecksetzen" in Kontoauszug
