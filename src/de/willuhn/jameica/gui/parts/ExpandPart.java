@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/05/03 10:13:10 $
+ * $Revision: 1.10 $
+ * $Date: 2011/05/03 11:07:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -37,7 +38,7 @@ import de.willuhn.logging.Logger;
  */
 public class ExpandPart implements Part
 {
-  private ArrayList items = new ArrayList();
+  private List<Item> items = new ArrayList<Item>();
   private Settings settings = new Settings(ExpandPart.class);
   
   /**
@@ -89,7 +90,7 @@ public class ExpandPart implements Part
     
     for (int i=0;i<this.items.size();++i)
     {
-      final Item ei = (Item) this.items.get(i);
+      final Item ei = this.items.get(i);
 
       try
       {
@@ -168,7 +169,10 @@ public class ExpandPart implements Part
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
- * Revision 1.9  2011/05/03 10:13:10  willuhn
+ * Revision 1.10  2011/05/03 11:07:37  willuhn
+ * @N Styling-Fixes fuer Windows (Background)
+ *
+ * Revision 1.9  2011-05-03 10:13:10  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.8  2010-08-12 15:35:23  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.18 $
- * $Date: 2011/01/14 12:02:15 $
+ * $Revision: 1.19 $
+ * $Date: 2011/05/03 11:07:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,8 @@
 
 package de.willuhn.jameica.gui.internal.views;
 
+import org.eclipse.swt.layout.GridLayout;
+
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
@@ -20,8 +22,8 @@ import de.willuhn.jameica.gui.boxes.Box;
 import de.willuhn.jameica.gui.boxes.BoxRegistry;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.dialogs.ChooseBoxesDialog;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.ExpandPart;
-import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
@@ -42,6 +44,11 @@ public class Start extends AbstractView implements Extendable
     GUI.getView().setTitle(Application.getI18n().tr("Willkommen"));
 
     Box[] boxes = BoxRegistry.getBoxes();
+    
+    GridLayout layout = (GridLayout) getParent().getLayout();
+    layout.horizontalSpacing = 0;
+    layout.marginHeight = 0;
+    layout.marginWidth = 0;
 
     ExpandPart expand = new ExpandPart();
     for (int i=0;i<boxes.length;++i)
@@ -59,7 +66,7 @@ public class Start extends AbstractView implements Extendable
     
     if (!Customizing.SETTINGS.getBoolean("application.start.hidecustomize",false))
     {
-      ButtonArea buttons = new ButtonArea(getParent(),1);
+      ButtonArea buttons = new ButtonArea();
       buttons.addButton(Application.getI18n().tr("Startseite anpassen"),new Action() {
         public void handleAction(Object context) throws ApplicationException
         {
@@ -74,6 +81,7 @@ public class Start extends AbstractView implements Extendable
           }
         }
       },null,true,"document-properties.png");
+      buttons.paint(getParent());
     }
   }        
 
@@ -97,7 +105,10 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
- * Revision 1.18  2011/01/14 12:02:15  willuhn
+ * Revision 1.19  2011/05/03 11:07:37  willuhn
+ * @N Styling-Fixes fuer Windows (Background)
+ *
+ * Revision 1.18  2011-01-14 12:02:15  willuhn
  * @B Versehentlich Test-Code eingecheckt
  *
  * Revision 1.16  2009-06-04 10:34:59  willuhn
