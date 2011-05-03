@@ -349,6 +349,7 @@ public class Sleak
     list.setBounds(0, height, width, rect.height - height - size4.y);
     text.setBounds(width, 0, rect.width - width, rect.height);
     canvas.setBounds(width, 0, rect.width - width, rect.height);
+    gc.dispose();
   }
 
   /**

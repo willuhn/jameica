@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/PanelButton.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/04/14 16:58:48 $
+ * $Revision: 1.6 $
+ * $Date: 2011/05/03 11:56:48 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -114,6 +114,7 @@ public class PanelButton implements Part
         gc.setAlpha(ALPHA_NONE);
         gc.drawImage(SWTUtil.getImage(BG_HOVER),0,0);
         gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y + 1);  // 1 Pixel weiter unten - gibt den Effekt des Reindrueckens
+        gc.dispose();
       }
 
       // Maus losgelassen
@@ -145,6 +146,7 @@ public class PanelButton implements Part
         gc.setAlpha(ALPHA_NONE);
         gc.drawImage(bgDefault,0,0);
         gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y);
+        gc.dispose();
 
         handleClick();
       }
@@ -160,6 +162,7 @@ public class PanelButton implements Part
 
         gc.setAlpha(isEnabled() ? ALPHA_DEFAULT : ALPHA_DISABLED);
         gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y);
+        gc.dispose();
       }
       
       public void mouseEnter(MouseEvent e)
@@ -173,6 +176,7 @@ public class PanelButton implements Part
 
         gc.setAlpha(isEnabled() ? ALPHA_NONE : ALPHA_DISABLED);
         gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y);
+        gc.dispose();
       }
     });
   }
@@ -234,7 +238,10 @@ public class PanelButton implements Part
 
 /**********************************************************************
  * $Log: PanelButton.java,v $
- * Revision 1.5  2011/04/14 16:58:48  willuhn
+ * Revision 1.6  2011/05/03 11:56:48  willuhn
+ * @B GC wurde nicht korrekt disposed - siehe http://www.eclipse.org/forums/index.php?t=msg&goto=528906
+ *
+ * Revision 1.5  2011-04-14 16:58:48  willuhn
  * @N Globaler Shortcut <CTRL><P> zum Drucken (falls PanelButtonPrint aktiv ist)
  *
  * Revision 1.4  2011-04-07 16:49:56  willuhn

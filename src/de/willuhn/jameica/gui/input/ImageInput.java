@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ImageInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/04/26 12:01:42 $
+ * $Revision: 1.5 $
+ * $Date: 2011/05/03 11:56:48 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -343,6 +343,7 @@ public class ImageInput extends AbstractInput
         Rectangle source = image.getBounds();
         gc.drawImage(image, 0, 0, source.width, source.height, 0, 0, (int) w, (int) h);
         this.button.setImage(scaled);
+        gc.dispose();
       }
       else
       {
@@ -379,7 +380,10 @@ public class ImageInput extends AbstractInput
 
 /**********************************************************************
  * $Log: ImageInput.java,v $
- * Revision 1.4  2011/04/26 12:01:42  willuhn
+ * Revision 1.5  2011/05/03 11:56:48  willuhn
+ * @B GC wurde nicht korrekt disposed - siehe http://www.eclipse.org/forums/index.php?t=msg&goto=528906
+ *
+ * Revision 1.4  2011-04-26 12:01:42  willuhn
  * @D javadoc Fixes
  *
  * Revision 1.3  2010-09-06 15:31:53  willuhn
