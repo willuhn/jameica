@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.106 $
- * $Date: 2011/05/03 10:13:10 $
+ * $Revision: 1.107 $
+ * $Date: 2011/05/03 13:29:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -977,6 +977,7 @@ public class TablePart extends AbstractTablePart
         }
       }
     }
+    table.setFocus();
   }
 
   /**
@@ -1391,7 +1392,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.106  2011/05/03 10:13:10  willuhn
+ * Revision 1.107  2011/05/03 13:29:56  willuhn
+ * @B das setFocus() ist noetig, weil die markierte Zeile nicht angezeigt wird, wenn sie keinen Focus hat
+ *
+ * Revision 1.106  2011-05-03 10:13:10  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.105  2011-05-02 10:47:16  willuhn
