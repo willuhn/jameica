@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.141 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.142 $
+ * $Date: 2011/05/03 13:15:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -52,7 +52,6 @@ import de.willuhn.jameica.system.ApplicationController;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.system.Platform;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -971,24 +970,12 @@ public class GUI implements ApplicationController
       }
     };
 
-    // BUGZILLA 359: Sonderbehandlung fuer MacOS
-    // Wird nur unter MacOS direkt als Thread uebergeben.
-    // Unter Linux wuerde das zu verspaetetem GUI-Refresh fuehren.
-    Runnable job = null;
-    if (Application.getPlatform().getOS() == Platform.OS_MAC)
-    {
-      job = t;
-    }
-    else
-    {
-      job = new Runnable() {
-      
-        public void run()
-        {
-          t.start();
-        }
-      };
-    }
+    Runnable job = new Runnable() { // BUGZILLA 359
+      public void run()
+      {
+        t.start();
+      }
+    };
 
     getDisplay().asyncExec(job);
   }
@@ -1010,7 +997,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.141  2011/05/03 10:13:11  willuhn
+ * Revision 1.142  2011/05/03 13:15:57  willuhn
+ * @R BUGZILLA 359 - die Sonderbehandlung gibts nicht mehr. Inzwischen fuehrt die unter OSX genau zum Gegenteil. Naemlich dass Hibiscus beim Testen der PIN/TAN-Config haengen bleibt, und das Snapin mit dem Progress nie sauber eingeblendet wird. Offentlich galt das Problem nur bei alten OSX-Versionen
+ *
+ * Revision 1.141  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.140  2011-04-14 16:58:48  willuhn
