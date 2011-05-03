@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.20 $
- * $Date: 2011/05/03 11:33:57 $
+ * $Revision: 1.21 $
+ * $Date: 2011/05/03 12:12:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -87,14 +87,6 @@ public class Start extends AbstractView implements Extendable
   }        
 
   /**
-   * @see de.willuhn.jameica.gui.AbstractView#unbind()
-   */
-  public void unbind()
-  {
-  }
-
-
-  /**
    * @see de.willuhn.jameica.gui.extension.Extendable#getExtendableID()
    */
   public String getExtendableID()
@@ -106,7 +98,10 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
- * Revision 1.20  2011/05/03 11:33:57  willuhn
+ * Revision 1.21  2011/05/03 12:12:03  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.20  2011-05-03 11:33:57  willuhn
  * @N Button "Startseite anpassen" als Panel-Button
  * @B das Entfernen und Wiederhinzufuegen von Elementen im ChooseBoxDialog fuehrte unter OS X zu einer ArrayIndexOutOfBoundsException - warum auch immer
  *
