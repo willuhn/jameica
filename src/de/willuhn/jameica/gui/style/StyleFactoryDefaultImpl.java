@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/05/03 16:46:08 $
+ * $Revision: 1.16 $
+ * $Date: 2011/05/03 17:04:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 
@@ -37,7 +36,6 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   {
     Button button = new Button(parent,SWT.PUSH);
     button.setFont(Font.DEFAULT.getSWTFont());
-    button.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
     return button;
   }
 
@@ -107,7 +105,10 @@ public class StyleFactoryDefaultImpl implements StyleFactory
 
 /**********************************************************************
  * $Log: StyleFactoryDefaultImpl.java,v $
- * Revision 1.15  2011/05/03 16:46:08  willuhn
+ * Revision 1.16  2011/05/03 17:04:44  willuhn
+ * @R Keine Hintergrundfarbe bei Buttons setzen
+ *
+ * Revision 1.15  2011-05-03 16:46:08  willuhn
  * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
  * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
  *
