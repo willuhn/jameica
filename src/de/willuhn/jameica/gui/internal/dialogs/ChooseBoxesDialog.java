@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/05/03 11:33:57 $
+ * $Revision: 1.9 $
+ * $Date: 2011/05/03 11:38:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -120,17 +120,21 @@ public class ChooseBoxesDialog extends AbstractDialog
         BoxObject o = (BoxObject) table.getSelection();
         if (o == null)
           return;
+        
         if (BoxRegistry.up(o.box))
         {
-          table.removeItem(o);
-          try
+          int index = table.removeItem(o);
+          if (index != -1)
           {
-            table.addItem(o,o.box.getIndex());
-            table.select(o);
-          }
-          catch (Exception e)
-          {
-            Logger.error("Fehler beim Verschieben des Elementes",e);
+            try
+            {
+              table.addItem(o,index-1);
+              table.select(o);
+            }
+            catch (Exception e)
+            {
+              Logger.error("Fehler beim Verschieben des Elementes",e);
+            }
           }
         }
       }
@@ -143,15 +147,18 @@ public class ChooseBoxesDialog extends AbstractDialog
           return;
         if (BoxRegistry.down(o.box))
         {
-          table.removeItem(o);
-          try
+          int index = table.removeItem(o);
+          if (index != -1)
           {
-            table.addItem(o,o.box.getIndex());
-            table.select(o);
-          }
-          catch (Exception e)
-          {
-            Logger.error("Fehler beim Verschieben des Elementes",e);
+            try
+            {
+              table.addItem(o,o.box.getIndex());
+              table.select(o);
+            }
+            catch (Exception e)
+            {
+              Logger.error("Fehler beim Verschieben des Elementes",e);
+            }
           }
         }
       }
@@ -326,7 +333,10 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.8  2011/05/03 11:33:57  willuhn
+ * Revision 1.9  2011/05/03 11:38:47  willuhn
+ * @B daemliches OS X
+ *
+ * Revision 1.8  2011-05-03 11:33:57  willuhn
  * @N Button "Startseite anpassen" als Panel-Button
  * @B das Entfernen und Wiederhinzufuegen von Elementen im ChooseBoxDialog fuehrte unter OS X zu einer ArrayIndexOutOfBoundsException - warum auch immer
  *
