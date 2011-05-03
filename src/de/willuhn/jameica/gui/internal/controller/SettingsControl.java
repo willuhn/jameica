@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.33 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.34 $
+ * $Date: 2011/05/03 16:45:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,30 +13,22 @@
 
 package de.willuhn.jameica.gui.internal.controller;
 
-import java.rmi.RemoteException;
-import java.util.Locale;
-
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.datasource.GenericObject;
-import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.ColorInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.IntegerInput;
-import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.input.TextInput;
 import de.willuhn.jameica.gui.internal.parts.CertificateList;
 import de.willuhn.jameica.gui.internal.parts.PluginList;
 import de.willuhn.jameica.gui.parts.TablePart;
-import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.SettingsChangedMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -74,11 +66,8 @@ public class SettingsControl extends AbstractControl
 	private Input colorError;
 	private Input colorSuccess;
   private Input colorMandatoryBG;
-	private Input styleFactory;
   private CheckboxInput mandatoryLabel;
   private CheckboxInput randomSplash;
-	
-	private SelectInput locale;
 	
   /**
    * ct.
@@ -219,48 +208,6 @@ public class SettingsControl extends AbstractControl
     return this.plugins;
   }
   
-  /**
-	 * Liefert ein Auswahl-Feld fuer die Style-Factory.
-   * @return Auswahl-Feld.
-   */
-  public Input getStyleFactory()
-	{
-		if (styleFactory != null)
-			return styleFactory;
-		try {
-			Class[] styles = Application.getClassLoader().getClassFinder().findImplementors(StyleFactory.class);
-
-
-			GenericObject[] s = new GenericObject[styles.length];
-			for (int i=0;i<styles.length;++i)
-			{
-				s[i] = new StyleFactoryObject((StyleFactory) styles[i].newInstance());
-			}
-			styleFactory = new SelectInput(PseudoIterator.fromArray(s),new StyleFactoryObject(GUI.getStyleFactory()));
-		}
-		catch (Exception e)
-		{
-			Logger.error("unable to load available stylefactories",e);
-			styleFactory = new LabelInput(i18n.tr("Fehler beim Laden der Styles"));
-		}
-		return styleFactory;
-	}
-
-  /**
-	 * Auswahlfeld fuer die Sprache.
-   * @return Sprach-Auswahl.
-   * @throws RemoteException
-   */
-  public SelectInput getLocale() throws RemoteException
-	{
-		if (locale != null)
-			return locale;
-
-		locale = new SelectInput(Locale.getAvailableLocales(),Application.getConfig().getLocale());
-    locale.setAttribute("displayName");
-		return locale;
-	}
-
 	/**
 	 * Auswahlfeld.
    * @return Auswahl-Feld.
@@ -377,14 +324,6 @@ public class SettingsControl extends AbstractControl
 			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
       Color.MANDATORY_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorMandatoryBG().getValue());
 
-      restartNeeded |= getStyleFactory().hasChanged();
-      StyleFactoryObject fo = (StyleFactoryObject) getStyleFactory().getValue();
-			GUI.setStyleFactory(fo.factory);
-
-      restartNeeded |= getLocale().hasChanged();
-      Locale lo = (Locale) getLocale().getValue();
-			Application.getConfig().setLocale(lo);
-			
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
 
@@ -438,268 +377,18 @@ public class SettingsControl extends AbstractControl
   	}
   	
   }
-  
-  /**
-   * Hilfs-Klasse, die StyleFactories in GenericObjects wrappt, um sie einfacher
-   * in den GUI-Bibliotheken von Jameica anzeigen zu koennen.
-   */
-  private static class StyleFactoryObject implements GenericObject
-  {
-
-		private StyleFactory factory;
-
-		/**
-		 * ct.
-     * @param f
-     */
-    private StyleFactoryObject(StyleFactory f)
-		{
-			this.factory = f;
-		}
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
-     */
-    public Object getAttribute(String name) throws RemoteException
-    {
-    	if ("name".equalsIgnoreCase(name))
-    		return factory.getName();
-    	return factory;
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getID()
-     */
-    public String getID() throws RemoteException
-    {
-      return factory.getClass().getName();
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-     */
-    public String getPrimaryAttribute() throws RemoteException
-    {
-      return "name";
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-     */
-    public boolean equals(GenericObject other) throws RemoteException
-    {
-    	if (other == null)
-	      return false;
-			return getID().equals(other.getID());
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
-     */
-    public String[] getAttributeNames() throws RemoteException
-    {
-      return new String[] {"name"};
-    }
-  }
 }
 
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
- * Revision 1.33  2011/05/03 10:13:11  willuhn
+ * Revision 1.34  2011/05/03 16:45:20  willuhn
+ * @R Locale nicht mehr ueber GUI aenderbar - hat eh keiner verwendet
+ * @R Style nicht mehr aenderbar - der Flatstyle war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
+ *
+ * Revision 1.33  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.32  2011-04-26 12:01:42  willuhn
  * @D javadoc Fixes
- *
- * Revision 1.31  2010-11-04 01:11:20  willuhn
- * @N Random Splashscreen ;)
- *
- * Revision 1.30  2010-10-10 21:20:55  willuhn
- * @R RMI-Einstellungen entfernt - braucht kein Schwein und irritiert nur
- *
- * Revision 1.29  2009/10/26 09:26:33  willuhn
- * @R Scroll-View-Parameter entfernt - verursachte Darstellungsfehler
- *
- * Revision 1.28  2009/10/12 08:55:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.27  2009/03/20 16:38:09  willuhn
- * @N BUGZILLA 576
- *
- * Revision 1.26  2009/03/10 14:06:26  willuhn
- * @N Proxy-Server fuer HTTPS konfigurierbar
- *
- * Revision 1.25  2008/02/29 01:12:30  willuhn
- * @N Erster Code fuer neues Backup-System
- * @N DirectoryInput
- * @B Fixes an FileInput, TextInput
- *
- * Revision 1.24  2007/12/18 17:50:12  willuhn
- * @R Background-Color nicht mehr aenderbar
- * @C Layout der Startseite
- *
- * Revision 1.23  2007/10/22 23:23:13  willuhn
- * *** empty log message ***
- *
- * Revision 1.22  2007/09/08 14:20:11  willuhn
- * @C Pflichtfelder nicht mehr via GUI deaktivierbar
- *
- * Revision 1.21  2007/09/06 22:21:55  willuhn
- * @N Hervorhebung von Pflichtfeldern konfigurierbar
- * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
- *
- * Revision 1.20  2007/08/20 12:27:08  willuhn
- * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
- *
- * Revision 1.19  2007/04/02 23:01:43  willuhn
- * @N SelectInput auf BeanUtil umgestellt
- *
- * Revision 1.18  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.17  2006/10/31 23:57:26  willuhn
- * @N MessagingFactory.sendSyncMessage()
- * @N Senden einer SettingsChangedMessage beim Aendern von System-Einstellungen
- *
- * Revision 1.16  2006/08/28 23:41:48  willuhn
- * @N ColorInput verbessert
- *
- * Revision 1.15  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.14  2005/08/25 21:18:24  web0
- * @C changes accoring to findbugs eclipse plugin
- *
- * Revision 1.13  2005/06/16 13:47:56  web0
- * *** empty log message ***
- *
- * Revision 1.12  2005/06/16 13:02:55  web0
- * *** empty log message ***
- *
- * Revision 1.11  2005/06/15 17:51:31  web0
- * @N Code zum Konfigurieren der Service-Bindings
- *
- * Revision 1.10  2005/06/14 23:15:30  web0
- * @N added settings for plugins/services
- *
- * Revision 1.9  2005/06/10 22:13:09  web0
- * @N new TabGroup
- * @N extended Settings
- *
- * Revision 1.8  2005/01/13 19:31:37  willuhn
- * @C SSLFactory geaendert
- * @N Settings auf property-Format umgestellt
- *
- * Revision 1.7  2004/12/13 22:48:31  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2004/11/12 18:23:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2004/11/05 20:00:44  willuhn
- * @D javadoc fixes
- *
- * Revision 1.4  2004/10/23 18:13:59  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2004/10/20 12:08:16  willuhn
- * @C MVC-Refactoring (new Controllers)
- *
- * Revision 1.2  2004/10/14 23:15:05  willuhn
- * @N maded locale configurable via GUI
- * @B fixed locale handling
- * @B DecimalInput now honors locale
- *
- * Revision 1.1  2004/10/08 13:38:20  willuhn
- * *** empty log message ***
- *
- * Revision 1.27  2004/08/18 23:14:19  willuhn
- * @D Javadoc
- *
- * Revision 1.26  2004/07/23 15:51:20  willuhn
- * @C Rest des Refactorings
- *
- * Revision 1.25  2004/07/21 23:54:54  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.24  2004/07/09 00:12:47  willuhn
- * @C Redesign
- *
- * Revision 1.23  2004/06/30 20:58:39  willuhn
- * *** empty log message ***
- *
- * Revision 1.22  2004/06/18 19:47:17  willuhn
- * *** empty log message ***
- *
- * Revision 1.21  2004/06/03 00:24:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.20  2004/06/02 21:15:15  willuhn
- * @B win32 fixes in flat style
- * @C made ButtonInput more abstract
- *
- * Revision 1.19  2004/05/27 23:38:25  willuhn
- * @B deadlock in swt event queue while startGUITimeout
- *
- * Revision 1.18  2004/05/23 18:15:32  willuhn
- * *** empty log message ***
- *
- * Revision 1.17  2004/05/23 16:34:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.16  2004/04/19 22:05:27  willuhn
- * *** empty log message ***
- *
- * Revision 1.15  2004/04/12 19:16:00  willuhn
- * @C refactoring
- * @N forms
- *
- * Revision 1.14  2004/04/01 00:23:24  willuhn
- * @N FontInput
- * @N ColorInput
- * @C improved ClassLoader
- * @N Tabs in Settings
- *
- * Revision 1.13  2004/03/30 22:08:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.12  2004/03/24 00:46:03  willuhn
- * @C refactoring
- *
- * Revision 1.11  2004/03/11 08:56:56  willuhn
- * @C some refactoring
- *
- * Revision 1.10  2004/03/06 18:24:24  willuhn
- * @D javadoc
- *
- * Revision 1.9  2004/03/03 22:27:11  willuhn
- * @N help texts
- * @C refactoring
- *
- * Revision 1.8  2004/02/24 22:46:53  willuhn
- * @N GUI refactoring
- *
- * Revision 1.7  2004/02/11 00:10:42  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2004/01/28 20:51:25  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.5  2004/01/23 00:29:04  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2004/01/08 20:50:33  willuhn
- * @N database stuff separated from jameica
- *
- * Revision 1.3  2004/01/06 20:11:22  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/01/06 01:27:30  willuhn
- * @N table order
- *
- * Revision 1.1  2004/01/04 19:51:01  willuhn
- * *** empty log message ***
- *
  **********************************************************************/

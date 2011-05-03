@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.33 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.34 $
+ * $Date: 2011/05/03 16:45:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,6 @@
 package de.willuhn.jameica.gui.internal.views;
 
 import java.io.File;
-import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -30,9 +29,7 @@ import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.ColumnLayout;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.gui.util.TabGroup;
-import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -110,29 +107,21 @@ public class Settings extends AbstractView implements Extendable
 		// Farb-Einstellungen
 
     TabGroup lnfGroup = new TabGroup(getTabFolder(),i18n.tr("Look and Feel"));
-		try
-		{
-      lnfGroup.addLabelPair(i18n.tr("Vorausgewählte Sprache"), control.getLocale());
-		}
-		catch (RemoteException e)
-		{
-			Logger.error("error while reading locale settings",e);
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ermitteln der Sprach-Einstellungen."),StatusBarMessage.TYPE_ERROR));
-		}
-    lnfGroup.addLabelPair(i18n.tr("Style"), control.getStyleFactory());
 
-    File f = new File("lib/splash.jar");
-    if (f.exists() && f.isFile() && f.canRead())
-      lnfGroup.addCheckbox(control.getRandomSplash(),i18n.tr("Zufallsbild in Splashscreen anzeigen"));
-
-    lnfGroup.addSeparator();
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Pflichtfeldern"),control.getColorMandatoryBG());
     lnfGroup.addCheckbox(control.getLabelMandatory(),i18n.tr("Auch den Text vor diesen Pflichtfeldern (Label) hervorheben"));
     lnfGroup.addSeparator();
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Eingabefeldern"),control.getColorWidgetBG());
     lnfGroup.addLabelPair(i18n.tr("Textfarbe von Fehler- und Warnmeldungen"),control.getColorError());
     lnfGroup.addLabelPair(i18n.tr("Textfarbe von Erfolgsmeldungen"),control.getColorSuccess());
-		//
+
+    lnfGroup.addSeparator();
+
+    File f = new File("lib/splash.jar");
+    if (f.exists() && f.isFile() && f.canRead())
+      lnfGroup.addCheckbox(control.getRandomSplash(),i18n.tr("Zufallsbild in Splashscreen anzeigen"));
+
+    //
 		/////////////////////////////////////////////////////////////////
 
 		// Mal checken, ob wir uns das zuletzt aktive Tab gemerkt haben.
@@ -195,7 +184,11 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.33  2011/05/03 10:13:11  willuhn
+ * Revision 1.34  2011/05/03 16:45:20  willuhn
+ * @R Locale nicht mehr ueber GUI aenderbar - hat eh keiner verwendet
+ * @R Style nicht mehr aenderbar - der Flatstyle war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
+ *
+ * Revision 1.33  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.32  2011-04-26 11:38:16  willuhn
