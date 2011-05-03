@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/05/03 11:38:47 $
+ * $Revision: 1.10 $
+ * $Date: 2011/05/03 11:39:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -152,7 +152,7 @@ public class ChooseBoxesDialog extends AbstractDialog
           {
             try
             {
-              table.addItem(o,o.box.getIndex());
+              table.addItem(o,index+1);
               table.select(o);
             }
             catch (Exception e)
@@ -333,7 +333,10 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.9  2011/05/03 11:38:47  willuhn
+ * Revision 1.10  2011/05/03 11:39:55  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.9  2011-05-03 11:38:47  willuhn
  * @B daemliches OS X
  *
  * Revision 1.8  2011-05-03 11:33:57  willuhn
