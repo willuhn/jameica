@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.48 $
- * $Date: 2011/04/29 07:41:59 $
+ * $Revision: 1.49 $
+ * $Date: 2011/05/04 09:20:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -661,7 +661,7 @@ public class TreePart extends AbstractTablePart
 	 */
   protected void handleDoubleClick(MouseEvent event)
 	{
-	  if (this.action == null)
+	  if (this.action == null || event.button != 1)
 	    return;
 	  
 	  Object o = getSelection();
@@ -873,7 +873,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.48  2011/04/29 07:41:59  willuhn
+ * Revision 1.49  2011/05/04 09:20:58  willuhn
+ * @N Doppelklick nur beachten, wenn die linke Maustaste verwendet wurde - das bisherige Verhalten konnte unter OS X nervig sein, wenn Linksklick, kurz gefolgt von einem Rechtsklick als Doppelklick interpretiert wurde
+ *
+ * Revision 1.48  2011-04-29 07:41:59  willuhn
  * @N BUGZILLA 781
  *
  * Revision 1.47  2011-04-26 12:20:24  willuhn
