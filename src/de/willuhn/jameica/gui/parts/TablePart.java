@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.107 $
- * $Date: 2011/05/03 13:29:56 $
+ * $Revision: 1.108 $
+ * $Date: 2011/05/04 09:26:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -618,11 +620,14 @@ public class TablePart extends AbstractTablePart
     }
     /////////////////////////////////////////////////////////////////
 
-    // noch der Listener fuer den Doppelklick drauf.
-    final Listener open = new Listener(){
-      public void handleEvent(Event e){
+    // table.addListener(SWT.DefaultSelection,open); // BUGZILLA 574 Deaktiviert - weil noch nicht hinreichend getestet
 
-        if (action == null) return;
+    // Listener fuer die Maus.
+    table.addMouseListener(new MouseAdapter() {
+      public void mouseDoubleClick(MouseEvent e)
+      {
+        if (action == null || e.button != 1)
+          return;
 
         Object o = getSelection();
         if (o == null) return;
@@ -636,21 +641,14 @@ public class TablePart extends AbstractTablePart
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
         }
       }
-    };
 
-    // table.addListener(SWT.DefaultSelection,open); // BUGZILLA 574 Deaktiviert - weil noch nicht hinreichend getestet
-    table.addListener(SWT.MouseDoubleClick,open);
-
-		// jetzt noch dem Menu Bescheid sagen, wenn ein Element markiert wurde
-		table.addListener(SWT.MouseDown,new Listener()
-    {
-      public void handleEvent(Event e)
+      public void mouseDown(MouseEvent e)
       {
-      	if (menu == null) return;
-
-        menu.setCurrentObject(getSelection());
-
+        // jetzt noch dem Menu Bescheid sagen, wenn ein Element markiert wurde
+        if (menu != null)
+          menu.setCurrentObject(getSelection());
       }
+      
     });
 		
 		if (this.rememberState)
@@ -1392,7 +1390,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.107  2011/05/03 13:29:56  willuhn
+ * Revision 1.108  2011/05/04 09:26:23  willuhn
+ * @N Doppelklick nur beachten, wenn die linke Maustaste verwendet wurde - das bisherige Verhalten konnte unter OS X nervig sein, wenn Linksklick, kurz gefolgt von einem Rechtsklick als Doppelklick interpretiert wurde
+ *
+ * Revision 1.107  2011-05-03 13:29:56  willuhn
  * @B das setFocus() ist noetig, weil die markierte Zeile nicht angezeigt wird, wenn sie keinen Focus hat
  *
  * Revision 1.106  2011-05-03 10:13:10  willuhn
