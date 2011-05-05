@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/05/05 09:36:25 $
+ * $Revision: 1.14 $
+ * $Date: 2011/05/05 09:43:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -118,16 +118,19 @@ public class ChooseBoxesDialog extends AbstractDialog
         Box box = (Box) table.getSelection();
         if (box == null) // Keine Box markiert
           return;
-        
-        // Entfernen und eins weiter oben wieder einfuegen
-        int index = table.removeItem(box);
-        if (index == -1)
-          return; // gabs gar nicht
-        
+
         try
         {
+          List checked = table.getItems(true);
+          
+          // Entfernen und eins weiter oben wieder einfuegen
+          int index = table.removeItem(box);
+          if (index == -1)
+            return; // gabs gar nicht
+          
           table.addItem(box,index == 0 ? 0 : index-1); // wenn wir schon ganz oben waren, bleiben wir dort
           table.select(box);
+          table.setChecked(box,checked.contains(box)); // Checked-State wiederherstellen
         }
         catch (Exception e)
         {
@@ -142,19 +145,23 @@ public class ChooseBoxesDialog extends AbstractDialog
         if (box == null) // Keine Box markiert
           return;
         
-        int index = table.removeItem(box);
-        if (index == -1)
-          return; // gabs gar nicht
-        
-        int size = table.size();
-        
-        if (index < size) // Index nur erhoehen, solange wir nich schon die letzten sind
-          index++;
-        
         try
         {
+          List checked = table.getItems(true);
+
+          int index = table.removeItem(box);
+          if (index == -1)
+            return; // gabs gar nicht
+          
+          int size = table.size();
+          
+          if (index < size) // Index nur erhoehen, solange wir nich schon die letzten sind
+            index++;
+          
+
           table.addItem(box,index);
           table.select(box);
+          table.setChecked(box,checked.contains(box)); // Checked-State wiederherstellen
         }
         catch (Exception e)
         {
@@ -213,7 +220,10 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.13  2011/05/05 09:36:25  willuhn
+ * Revision 1.14  2011/05/05 09:43:00  willuhn
+ * @B Beim Umsortierungen ging der Checked-State verloren, wenn er noch nicht gespeichert war
+ *
+ * Revision 1.13  2011-05-05 09:36:25  willuhn
  * @C SearchOptionsDialog ueberarbeitet - beim Aendern der Sortierung gingen die Markierungen verloren
  *
  * Revision 1.12  2011-05-05 09:18:41  willuhn
