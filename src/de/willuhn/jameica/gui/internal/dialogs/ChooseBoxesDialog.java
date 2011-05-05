@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/05/05 09:18:41 $
+ * $Revision: 1.13 $
+ * $Date: 2011/05/05 09:36:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,11 +68,13 @@ public class ChooseBoxesDialog extends AbstractDialog
     c.addText(i18n.tr("Wählen Sie die anzuzeigenden Elemente aus."),true);
 
     table = new TablePart(boxes,null);
-    table.setCheckable(true);
     table.addColumn(i18n.tr("Bezeichnung"),"name");
+    table.setCheckable(true);
     table.setMulti(false);
     table.setSummary(false);
     table.setRememberColWidths(true);
+    table.setRememberOrder(false); // Die Reihenfolge wird ja durch die Indizes bestimmt
+    
     table.setFormatter(new TableFormatter() {
       public void format(TableItem item)
       {
@@ -211,7 +213,10 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.12  2011/05/05 09:18:41  willuhn
+ * Revision 1.13  2011/05/05 09:36:25  willuhn
+ * @C SearchOptionsDialog ueberarbeitet - beim Aendern der Sortierung gingen die Markierungen verloren
+ *
+ * Revision 1.12  2011-05-05 09:18:41  willuhn
  * @C Contextmenu ersetzt gegen anklickbare Zeilen. Erheblich ergonomischer
  *
  * Revision 1.11  2011-05-03 12:57:00  willuhn

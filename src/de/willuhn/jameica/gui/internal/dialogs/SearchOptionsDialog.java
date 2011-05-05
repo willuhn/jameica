@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/SearchOptionsDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2008/09/03 11:14:20 $
+ * $Revision: 1.2 $
+ * $Date: 2011/05/05 09:36:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,14 +18,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
+import de.willuhn.jameica.gui.formatter.TableFormatter;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.TablePart;
-import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.AbstractPlugin;
@@ -66,48 +71,58 @@ public class SearchOptionsDialog extends AbstractDialog
   protected void paint(Composite parent) throws Exception
   {
     final I18N i18n = Application.getI18n();
-    SimpleContainer container = new SimpleContainer(parent);
+    
+    Container container = new SimpleContainer(parent);
     container.addText(i18n.tr("Bitte wählen Sie die Themen, in denen gesucht werden soll:"),true);
     
     final SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
     final SearchProvider[] providers = service.getSearchProviders();
-    
-    final TablePart table = new TablePart(null);
-    table.addColumn(i18n.tr("Plugin"),"plugin");
-    table.addColumn(i18n.tr("Thema"),"name");
-    table.setRememberColWidths(true);
-    table.setRememberOrder(true);
-    table.setCheckable(true);
-    table.setSummary(false);
-    table.paint(parent);
 
+    ////////////////////////////////////////////////////////////////////////////
     // Wir muessen die SearchProvider noch nach Plugin gruppieren
-    HashMap plugins = new HashMap();
+    Map<String,List<ProviderObject>> plugins = new HashMap<String,List<ProviderObject>>();
     for (int i=0;i<providers.length;++i)
     {
       ProviderObject o = new ProviderObject(providers[i]);
-      Object name = o.getAttribute("plugin");
-      ArrayList l = (ArrayList) plugins.get(name);
+      String name      = (String) o.getAttribute("plugin");
+
+      List<ProviderObject> l = (List<ProviderObject>) plugins.get(name);
       if (l == null)
       {
-        l = new ArrayList();
+        l = new ArrayList<ProviderObject>();
         plugins.put(name,l);
       }
       l.add(o);
     }
-    Iterator it = plugins.values().iterator();
+    List<ProviderObject> list = new ArrayList<ProviderObject>();
+    Iterator<List<ProviderObject>> it = plugins.values().iterator();
     while (it.hasNext())
     {
-      ArrayList l = (ArrayList) it.next();
-      for (int i=0;i<l.size();++i)
-      {
-        ProviderObject o = (ProviderObject) l.get(i);
-        table.addItem(o);
-        table.setChecked(o,service.isEnabled(o.provider));
-      }
+      list.addAll(it.next());
     }
+    ////////////////////////////////////////////////////////////////////////////
+
+    final TablePart table = new TablePart(list,null);
+    table.addColumn(i18n.tr("Bezeichnung"),"name");
+    table.setCheckable(true);
+    table.setMulti(false);
+    table.setSummary(false);
+    table.setRememberColWidths(true);
+    table.setFormatter(new TableFormatter() {
+      
+      public void format(TableItem item)
+      {
+        if (item == null || item.getData() == null)
+          return;
+        
+        ProviderObject o = (ProviderObject) item.getData();
+        item.setChecked(service.isEnabled(o.provider));
+      }
+    });
     
-    ButtonArea buttons = new ButtonArea(parent,2);
+    container.addPart(table);
+
+    ButtonArea buttons = new ButtonArea();
     buttons.addButton(i18n.tr("Übernehmen"),new Action() {
     
       public void handleAction(Object context) throws ApplicationException
@@ -139,14 +154,17 @@ public class SearchOptionsDialog extends AbstractDialog
         close();
       }
     
-    },null,true);
+    },null,true,"ok.png");
     buttons.addButton(i18n.tr("Abbrechen"),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         close();
       }
     
-    },null,true);
+    },null,false,"process-stop.png");
+
+    container.addButtonArea(buttons);
+    getShell().setMinimumSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
   }
   
   /**
@@ -180,12 +198,16 @@ public class SearchOptionsDialog extends AbstractDialog
      */
     public Object getAttribute(String name) throws RemoteException
     {
+      AbstractPlugin p = Application.getPluginLoader().findByClass(this.provider.getClass());
+      
+      // Wenn kein Plugin gefunden wurde, ist es offensichtlich ein Provider direkt aus Jameica
+      String plugin = p == null ? "Jameica" : p.getManifest().getName();
+      
       if ("plugin".equals(name))
-      {
-        AbstractPlugin p = Application.getPluginLoader().findByClass(this.provider.getClass());
-        return p == null ? null : p.getManifest().getName();
-      }
-      return this.provider.getName();
+        return plugin;
+      
+      // Name
+      return plugin + ": " + this.provider.getName();
     }
 
     /**
@@ -218,6 +240,9 @@ public class SearchOptionsDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: SearchOptionsDialog.java,v $
+ * Revision 1.2  2011/05/05 09:36:25  willuhn
+ * @C SearchOptionsDialog ueberarbeitet - beim Aendern der Sortierung gingen die Markierungen verloren
+ *
  * Revision 1.1  2008/09/03 11:14:20  willuhn
  * @N Suchfeld anzeigen
  * @N Such-Optionen
