@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/05/03 12:57:00 $
+ * $Revision: 1.12 $
+ * $Date: 2011/05/05 09:18:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,9 +30,6 @@ import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.Start;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
-import de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem;
-import de.willuhn.jameica.gui.parts.Column;
-import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
@@ -67,40 +64,35 @@ public class ChooseBoxesDialog extends AbstractDialog
   {
     List<Box> boxes = BoxRegistry.getBoxes();
     
+    Container c = new SimpleContainer(parent);
+    c.addText(i18n.tr("Wählen Sie die anzuzeigenden Elemente aus."),true);
 
     table = new TablePart(boxes,null);
+    table.setCheckable(true);
     table.addColumn(i18n.tr("Bezeichnung"),"name");
-    table.addColumn(new Column("name",i18n.tr("Status"))
-    {
-      public String getFormattedValue(Object value, Object context)
-      {
-        if (!(context instanceof Box))
-          return "";
-        return ((Box)context).isEnabled() ? i18n.tr("Aktiv") : "-";
-      }
-      
-    });
     table.setMulti(false);
     table.setSummary(false);
+    table.setRememberColWidths(true);
     table.setFormatter(new TableFormatter() {
       public void format(TableItem item)
       {
         if (item == null || item.getData() == null)
           return;
         Box box = (Box) item.getData();
+        item.setChecked(box.isEnabled());
+        
         if (!box.isActive())
+        {
           item.setForeground(Color.COMMENT.getSWTColor());
-        else if (box.isEnabled())
-          item.setForeground(Color.SUCCESS.getSWTColor());
+          item.setGrayed(true);
+        }
         else
+        {
           item.setForeground(Color.WIDGET_FG.getSWTColor());
+        }
       }
     });
     
-    ContextMenu menu = new ContextMenu();
-    menu.addItem(new MyMenuItem(true));
-    menu.addItem(new MyMenuItem(false));
-    table.setContextMenu(menu);
     table.addSelectionListener(new Listener() {
       public void handleEvent(Event event)
       {
@@ -114,7 +106,6 @@ public class ChooseBoxesDialog extends AbstractDialog
       }
     });
 
-    Container c = new SimpleContainer(parent);
     c.addPart(table);
 
     ButtonArea buttons = new ButtonArea();
@@ -175,18 +166,21 @@ public class ChooseBoxesDialog extends AbstractDialog
     buttons.addButton(i18n.tr("Übernehmen"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
-        // Angezeigte Reihenfolge speichern
         try
         {
-          List<Box> boxes = table.getItems();
+          // Indizes und Status speichern
+          List<Box> boxes   = table.getItems(false);
+          List<Box> checked = table.getItems(true);
           for (int i=0;i<boxes.size();++i)
           {
-            boxes.get(i).setIndex(i);
+            Box box = boxes.get(i);
+            box.setIndex(i);
+            box.setEnabled(checked.contains(box));
           }
         }
         catch (RemoteException re)
         {
-          Logger.error("unable to apply box order",re);
+          Logger.error("unable to apply box states",re);
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Speichern: {0}",re.getMessage()),StatusBarMessage.TYPE_ERROR));
         }
         
@@ -212,89 +206,15 @@ public class ChooseBoxesDialog extends AbstractDialog
   {
     return null;
   }
-
-  /**
-   * Hilsklasse.
-   */
-  private class MyMenuItem extends CheckedSingleContextMenuItem
-  {
-    private boolean state = false;
-    
-    /**
-     * ct.
-     * @param state
-     */
-    private MyMenuItem(boolean state)
-    {
-      super(state ? i18n.tr("Aktivieren") : i18n.tr("Deaktivieren"), new MyAction(state));
-      this.state = state;
-    }
-    
-    /**
-     * @see de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem#isEnabledFor(java.lang.Object)
-     */
-    public boolean isEnabledFor(Object o)
-    {
-      if (!(o instanceof Box))
-        return false;
-      
-      Box b = (Box) o;
-      if (!b.isActive()) // Inaktive Boxen duerfen nicht aktiviert werden
-        return false;
-
-      return (state ^ b.isEnabled()) && super.isEnabledFor(o);
-    }
-  }
-  
-  /**
-   * Hilfsklasse.
-   */
-  private class MyAction implements Action
-  {
-    private boolean state = false;
-    
-    /**
-     * @param state
-     */
-    private MyAction(boolean state)
-    {
-      this.state = state;
-    }
-    
-    /**
-     * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
-     */
-    public void handleAction(Object context) throws ApplicationException
-    {
-      if (!(context instanceof Box))
-        return;
-      
-      Box b = (Box) context;
-      b.setEnabled(state);
-      
-      // Element entfernen und wieder hinzufuegen, damit die Ansicht aktualisiert wird
-      int index = table.removeItem(b);
-      if (index != -1)
-      {
-        try
-        {
-          table.addItem(b,index);
-          table.select(b);
-        }
-        catch (Exception e)
-        {
-          Logger.error("Fehler beim Aktualisieren des Elementes",e);
-        }
-      }
-    }
-    
-  }
 }
 
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.11  2011/05/03 12:57:00  willuhn
+ * Revision 1.12  2011/05/05 09:18:41  willuhn
+ * @C Contextmenu ersetzt gegen anklickbare Zeilen. Erheblich ergonomischer
+ *
+ * Revision 1.11  2011-05-03 12:57:00  willuhn
  * @B Das komplette Ausblenden nicht-aktiver Boxen fuehrte zu ziemlichem Durcheinander in dem Dialog
  * @C Aendern der Sortier-Reihenfolge vereinfacht. Sie wird jetzt nicht mehr live sondern erst nach Klick auf "Uebernehmen" gespeichert - was fachlich ja auch richtiger ist
  *
