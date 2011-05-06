@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.54 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.55 $
+ * $Date: 2011/05/06 12:34:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -186,7 +186,26 @@ public abstract class AbstractDialog
           flags |= SWT.RESIZE;
 
         shell = new Shell(GUI.getShell(),flags);
-				
+        shell.addListener(SWT.Traverse, new Listener() {
+          public void handleEvent(Event e) {
+            if (e.detail == SWT.TRAVERSE_ESCAPE) {
+
+              // Wir wollen das Abbruch-Verhalten ja selbst steuern. Daher
+              // setzen wir das "doit" generell auf "false", damit es nicht
+              // an SWT hochgereicht wird und dieses dann den Dialog abbricht
+              // (was dazu fuehren wuerde, dass die open()-Funktion fehlerfrei
+              // durchlaeuft - sie aber vermutlich NULL zurueckgibt.
+              e.doit = false;
+              
+              // Wird hier die OperationCancelledException geworfen,
+              // wird sie bis zum Aufrufer durchgereicht.
+              onEscape();
+            }
+          }
+        });        
+
+
+        
         if (pos == POSITION_MOUSE)
           cursor = display.getCursorLocation();
         
@@ -422,10 +441,32 @@ public abstract class AbstractDialog
    * @throws Exception
    */
   protected abstract Object getData() throws Exception;
+  
+  /**
+   * Kann ueberschrieben werden, um zu beeinflussen, was passieren soll, wenn
+   * der User versucht, den Dialog mit Escape zu beenden.
+   * Per Default wirft die Funktion eine OperationCancelledException,
+   * um den Dialog zu schliessen. Die Exception wird bis zum Aufrufer
+   * durchgereicht. Wenn er also um das open() ein try/catch macht und
+   * die OperationCancelledException faengt, kann er erkennen, ob der
+   * Dialog abgebrochen wurde.
+   * Um zum Beispiel zu verhinden, dass ein Dialog mit Escape abgebrochen werden
+   * kann, ueberschreibt man die Funktion einfach laesst sie leer. Will man hingegen
+   * zulassen, dass mit Escape abgebrochen wird, man dieses Event jedoch mitkriegen
+   * will, dann ueberschreibt man die Funktion, fuehrt dort die gewuenschten
+   * Aufgaben aus und macht anschliessend ein super.onEscape() um die
+   * OperationCancelledException auszuloesen. Alternativ kann man sie auch
+   * selbst werfen.
+   */
+  protected void onEscape()
+  {
+    throw new OperationCanceledException("dialog cancelled");
+  }
 
   /**
    * Oeffnet den Dialog.
    * @throws Exception wenn es beim Oeffnen zu einem Fehler gekommen ist.
+   * @throws OperationCanceledException wenn der User den Dialog mit Escape abgebrochen hat.
    * @return das ausgewaehlte Objekt.
    */
   public final Object open() throws Exception
@@ -551,8 +592,14 @@ public abstract class AbstractDialog
 		try {
       Logger.debug("notifying listeners");
 			Event e = new Event();
-			e.data = getData();
-			e.detail = closeState;
+      e.detail = closeState;
+			
+      // Wir geben die Daten nur weiter, wenn der Dialog nicht abgebrochen wurde
+      // Andernfalls werden Daten vom Aufrufer versehentlich ausgewertet, obwohl
+      // er das gar nicht wollte.
+      if (e.detail != SWT.CANCEL)
+  			e.data = getData();
+			
 			for (Listener l:this.listeners)
 			{
 				l.handleEvent(e);
@@ -566,7 +613,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.54  2011/05/03 10:13:11  willuhn
+ * Revision 1.55  2011/05/06 12:34:50  willuhn
+ * @C Irgendwann hat sich in SWT das Verhalten bei Escape geaendert. Frueher liessen sich Dialoge damit nicht schliessen, sodass man das manuell mit einem KeyListener implementieren musste. Zumindest unter Gnome und XP beendet SWT aber neuerdings Dialog einfach beim Druck auf Escape. Aber natuerlich nicht mit einer Exception. Stattdessen wird die open()-Methode einfach fehlerfrei durchlaufen. Sie liefert dann aber u.U. unerwartete Ergebnisse (z.Bsp. NULL) an den Aufrufer zurueck, da der Dialog ja einfach abgebrochen wurde. Daher die neue Funktion onEscape() - siehe Kommentare im Quelltext zum Verhalten
+ *
+ * Revision 1.54  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.53  2011-04-06 16:13:16  willuhn
