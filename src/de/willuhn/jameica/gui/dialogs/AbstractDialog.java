@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.55 $
- * $Date: 2011/05/06 12:34:50 $
+ * $Revision: 1.56 $
+ * $Date: 2011/05/06 13:41:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -202,9 +202,14 @@ public abstract class AbstractDialog
               onEscape();
             }
           }
-        });        
+        });
 
-
+        // BUGZILLA 1041 - keine Ahnung, ob das wirklich was bringt.
+        // Ich kann es aber nicht unten in open() nach dem Oeffnen
+        // der Shell machen. Weil sich im Dialog eventuell Controls
+        // befinden, die den Focus haben wollen. Denen wuerde ich ihn
+        // sonst wieder wegnehmen.
+        shell.forceFocus();
         
         if (pos == POSITION_MOUSE)
           cursor = display.getCursorLocation();
@@ -613,7 +618,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.55  2011/05/06 12:34:50  willuhn
+ * Revision 1.56  2011/05/06 13:41:54  willuhn
+ * @B BUGZILLA 1041
+ *
+ * Revision 1.55  2011-05-06 12:34:50  willuhn
  * @C Irgendwann hat sich in SWT das Verhalten bei Escape geaendert. Frueher liessen sich Dialoge damit nicht schliessen, sodass man das manuell mit einem KeyListener implementieren musste. Zumindest unter Gnome und XP beendet SWT aber neuerdings Dialog einfach beim Druck auf Escape. Aber natuerlich nicht mit einer Exception. Stattdessen wird die open()-Methode einfach fehlerfrei durchlaufen. Sie liefert dann aber u.U. unerwartete Ergebnisse (z.Bsp. NULL) an den Aufrufer zurueck, da der Dialog ja einfach abgebrochen wurde. Daher die neue Funktion onEscape() - siehe Kommentare im Quelltext zum Verhalten
  *
  * Revision 1.54  2011-05-03 10:13:11  willuhn
