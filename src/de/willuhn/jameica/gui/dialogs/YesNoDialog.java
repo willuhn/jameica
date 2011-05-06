@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/YesNoDialog.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/03/07 10:33:51 $
+ * $Revision: 1.12 $
+ * $Date: 2011/05/06 12:32:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,9 +12,6 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
@@ -60,21 +57,23 @@ public class YesNoDialog extends AbstractDialog
 	}
 
   /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
+   */
+  protected void onEscape()
+  {
+    // Bei Druck auf ESC interpretieren wir das als NEIN und schliessen
+    // den Dialog OHNE Exception (das entspricht dem bisherige Verhalten,
+    // wir lassen das daher lieber so. Sonst muesste bei allen Verwendern
+    // geprueft werden, ob die eine OCE korrekt fangen)
+    choice = false;
+    close();
+  }
+
+  /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
   protected void paint(Composite parent) throws Exception
 	{
-    // Bei Druck auf ESC interpretieren wir das als NEIN.
-    parent.addKeyListener(new KeyAdapter() {
-      public void keyReleased(KeyEvent e) {
-        if (e.keyCode == SWT.ESC)
-        {
-          choice = false;
-          close();
-        }
-      }
-    });
-
     Container container = new SimpleContainer(parent);
     container.addText(this.text,true);
 		
@@ -123,7 +122,10 @@ public class YesNoDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: YesNoDialog.java,v $
- * Revision 1.11  2011/03/07 10:33:51  willuhn
+ * Revision 1.12  2011/05/06 12:32:04  willuhn
+ * @R Nicht mehr noetig - macht AbstractDialog jetzt selbst
+ *
+ * Revision 1.11  2011-03-07 10:33:51  willuhn
  * @N BUGZILLA 999
  *
  * Revision 1.10  2005/08/25 21:18:24  web0

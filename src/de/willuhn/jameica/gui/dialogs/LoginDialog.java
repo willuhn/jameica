@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/LoginDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2009/06/10 11:25:54 $
+ * $Revision: 1.5 $
+ * $Date: 2011/05/06 12:32:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,6 @@
 package de.willuhn.jameica.gui.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Composite;
@@ -189,14 +187,6 @@ public class LoginDialog extends AbstractDialog
       }
     });
 
-    // Dialog bei Druck auf ESC automatisch schliessen
-    parent.addKeyListener(new KeyAdapter() {
-      public void keyReleased(KeyEvent e) {
-        if (e.keyCode == SWT.ESC)
-          throw new OperationCanceledException();
-      }
-    });
-
     // so und jetzt noch der Shell-Listener, damit der
     // User den Dialog nicht schliessen kann ohne was
     // einzugeben ;)
@@ -246,6 +236,9 @@ public class LoginDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: LoginDialog.java,v $
+ * Revision 1.5  2011/05/06 12:32:04  willuhn
+ * @R Nicht mehr noetig - macht AbstractDialog jetzt selbst
+ *
  * Revision 1.4  2009/06/10 11:25:54  willuhn
  * @N Transparente HTTP-Authentifizierung ueber Jameica (sowohl in GUI- als auch in Server-Mode) mittels ApplicationCallback
  *
