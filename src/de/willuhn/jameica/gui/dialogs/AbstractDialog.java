@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.56 $
- * $Date: 2011/05/06 13:41:54 $
+ * $Revision: 1.57 $
+ * $Date: 2011/05/09 15:39:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -204,12 +204,6 @@ public abstract class AbstractDialog
           }
         });
 
-        // BUGZILLA 1041 - keine Ahnung, ob das wirklich was bringt.
-        // Ich kann es aber nicht unten in open() nach dem Oeffnen
-        // der Shell machen. Weil sich im Dialog eventuell Controls
-        // befinden, die den Focus haben wollen. Denen wuerde ich ihn
-        // sonst wieder wegnehmen.
-        shell.forceFocus();
         
         if (pos == POSITION_MOUSE)
           cursor = display.getCursorLocation();
@@ -618,7 +612,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.56  2011/05/06 13:41:54  willuhn
+ * Revision 1.57  2011/05/09 15:39:37  willuhn
+ * @R UNDO BUGZILLA 1041
+ *
+ * Revision 1.56  2011-05-06 13:41:54  willuhn
  * @B BUGZILLA 1041
  *
  * Revision 1.55  2011-05-06 12:34:50  willuhn
