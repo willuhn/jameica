@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/AbstractPasswordBasedEngine.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/04/06 08:49:56 $
+ * $Revision: 1.5 $
+ * $Date: 2011/05/10 18:00:17 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -71,7 +71,11 @@ public abstract class AbstractPasswordBasedEngine implements Engine
   {
     Logger.debug("creating cipher");
     Cipher cipher = Cipher.getInstance(getAlgorithm());
-    cipher.init(mode,getKey(),getParameterSpec());
+    AlgorithmParameterSpec spec = getParameterSpec();
+    if (spec != null)
+      cipher.init(mode,getKey(),spec);
+    else
+      cipher.init(mode,getKey());
     return cipher;
   }
 
@@ -100,9 +104,15 @@ public abstract class AbstractPasswordBasedEngine implements Engine
     
     // Checken, ob wir schon eins haben.
     Wallet wallet = this.getWallet();
+    
+    // Migration. Wir hatten das anfangs falsch ohne Laenge gespeichert
     String s = (String) wallet.get("salt"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
+    if (s == null)
+      s = (String) wallet.get("salt." + len); // Das ist jetzt der neue Platz
     if (s != null)
       return Base64.decode(s);
+    
+    
       
     // Neu erstellen
     Logger.debug("creating new salt");
@@ -127,14 +137,18 @@ public abstract class AbstractPasswordBasedEngine implements Engine
 
     // Checken, ob wir schon eins haben.
     Wallet wallet = this.getWallet();
+    
+    // Migration. Wir hatten das anfangs falsch ohne Laenge gespeichert
     String s = (String) wallet.get("password"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
+    if (s == null)
+      s = (String) wallet.get("password." + len); // Das ist jetzt der neue Platz
     if (s != null)
       return s.toCharArray();
     
     // Neu erstellen
     s = RandomStringUtils.randomAscii(len);
     Logger.info("created random password, length: " + s.length());
-    wallet.set("password",s);
+    wallet.set("password." + len,s);
     return s.toCharArray();
   }
   
@@ -163,7 +177,10 @@ public abstract class AbstractPasswordBasedEngine implements Engine
 
 /**********************************************************************
  * $Log: AbstractPasswordBasedEngine.java,v $
- * Revision 1.4  2011/04/06 08:49:56  willuhn
+ * Revision 1.5  2011/05/10 18:00:17  willuhn
+ * @C AES-Keysize gekuerzt - verursachte auf manchen Systemen eine "java.security.InvalidKeyException: Illegal key size". Die bereits existierenden Keys bleiben aber erhalten
+ *
+ * Revision 1.4  2011-04-06 08:49:56  willuhn
  * *** empty log message ***
  *
  * Revision 1.3  2011-02-09 12:26:51  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/AESEngine.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/02/09 11:25:08 $
+ * $Revision: 1.3 $
+ * $Date: 2011/05/10 18:00:17 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -43,8 +43,8 @@ public class AESEngine extends AbstractPasswordBasedEngine
    */
   Key getKey() throws Exception
   {
-    byte[] password = new String(getPassword(24)).getBytes("ISO-8859-1");
-    return new SecretKeySpec(password, "AES");
+    byte[] password = new String(getPassword(16)).getBytes("ISO-8859-1");
+    return new SecretKeySpec(password,"AES");
   }
 
 }
@@ -53,7 +53,10 @@ public class AESEngine extends AbstractPasswordBasedEngine
 
 /**********************************************************************
  * $Log: AESEngine.java,v $
- * Revision 1.2  2011/02/09 11:25:08  willuhn
+ * Revision 1.3  2011/05/10 18:00:17  willuhn
+ * @C AES-Keysize gekuerzt - verursachte auf manchen Systemen eine "java.security.InvalidKeyException: Illegal key size". Die bereits existierenden Keys bleiben aber erhalten
+ *
+ * Revision 1.2  2011-02-09 11:25:08  willuhn
  * @C Code-Cleanup
  *
  * Revision 1.1  2011-02-08 18:27:53  willuhn
