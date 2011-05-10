@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Item.java,v $
- * $Revision: 1.5 $
- * $Date: 2007/03/07 10:29:14 $
+ * $Revision: 1.6 $
+ * $Date: 2011/05/10 11:53:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,8 +20,6 @@ import de.willuhn.jameica.gui.extension.Extendable;
 
 /**
  * Generisches Element fuer die Navigation/Menu.
- * TODO: Interface erweitert Remote (via GenericObject) und Extendable, das passt aber nicht, weil Extendable nicht remote ist 
- * @author willuhn
  */
 public interface Item extends GenericObjectNode, Extendable
 {
@@ -66,7 +64,10 @@ public interface Item extends GenericObjectNode, Extendable
 
 /*********************************************************************
  * $Log: Item.java,v $
- * Revision 1.5  2007/03/07 10:29:14  willuhn
+ * Revision 1.6  2011/05/10 11:53:21  willuhn
+ * @R Marker entfernt
+ *
+ * Revision 1.5  2007-03-07 10:29:14  willuhn
  * *** empty log message ***
  *
  * Revision 1.4  2006/06/27 23:14:11  willuhn
