@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/MultiInput.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.5 $
+ * $Date: 2011/05/11 08:42:07 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -12,7 +12,9 @@
 package de.willuhn.jameica.gui.input;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +33,8 @@ import de.willuhn.jameica.gui.util.Color;
  */
 public class MultiInput implements Input
 {
+  private Map<String,Object> data = new HashMap<String,Object>();
+
   private List<Input> inputs = new ArrayList<Input>();
   
   private Composite composite = null;
@@ -312,13 +316,32 @@ public class MultiInput implements Input
     else
       this.inputs.get(0).setValue(value);
   }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setData(java.lang.String, java.lang.Object)
+   */
+  public void setData(String key, Object data)
+  {
+    this.data.put(key,data);
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#getData(java.lang.String)
+   */
+  public Object getData(String key)
+  {
+    return this.data.get(key);
+  }
 }
 
 
 
 /**********************************************************************
  * $Log: MultiInput.java,v $
- * Revision 1.4  2011/05/03 10:13:11  willuhn
+ * Revision 1.5  2011/05/11 08:42:07  willuhn
+ * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
+ *
+ * Revision 1.4  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.3  2010-12-09 15:57:10  willuhn

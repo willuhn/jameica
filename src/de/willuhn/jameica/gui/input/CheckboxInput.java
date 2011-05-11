@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.16 $
+ * $Date: 2011/05/11 08:42:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -48,15 +48,30 @@ public class CheckboxInput extends AbstractInput
   {
 		if (button != null)
 			return button;
+		
     button = new Button(getParent(), SWT.CHECK);
     button.setSelection(value);
-    if (this.getName() != null)
-      button.setText(this.getName());
+    
+    String name = this.getName();
+    if (name != null)
+      button.setText(name);
+    
 		button.setEnabled(enabled);
 		
 		if (isMandatory() && Application.getConfig().getMandatoryLabel())
       button.setForeground(Color.ERROR.getSWTColor());
     return button;
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#setName(java.lang.String)
+   */
+  public void setName(String name)
+  {
+    super.setName(name);
+    
+    if (name != null && this.button != null && !this.button.isDisposed())
+      this.button.setText(name);
   }
 
   /**
@@ -147,7 +162,10 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
- * Revision 1.15  2011/05/03 10:13:11  willuhn
+ * Revision 1.16  2011/05/11 08:42:07  willuhn
+ * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
+ *
+ * Revision 1.15  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.14  2011-01-11 22:43:50  willuhn

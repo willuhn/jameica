@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DateInput.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/01/20 17:13:24 $
+ * $Revision: 1.10 $
+ * $Date: 2011/05/11 08:42:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,8 @@ package de.willuhn.jameica.gui.input;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -35,6 +37,8 @@ import de.willuhn.logging.Logger;
  */
 public class DateInput implements Input
 {
+  private Map<String,Object> data = new HashMap<String,Object>();
+
   private final static Object PLACEHOLDER = new Object();
   
   private DateFormat format = DateUtil.DEFAULT_FORMAT;
@@ -350,6 +354,21 @@ public class DateInput implements Input
     }
   }
   
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#setData(java.lang.String, java.lang.Object)
+   */
+  public void setData(String key, Object data)
+  {
+    this.data.put(key,data);
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#getData(java.lang.String)
+   */
+  public Object getData(String key)
+  {
+    return this.data.get(key);
+  }
   
   /**
    * Ueberschrieben, um ggf. das aktuelle Datum einzutragen
@@ -388,33 +407,9 @@ public class DateInput implements Input
 
 /*********************************************************************
  * $Log: DateInput.java,v $
- * Revision 1.9  2011/01/20 17:13:24  willuhn
+ * Revision 1.10  2011/05/11 08:42:07  willuhn
+ * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
+ *
+ * Revision 1.9  2011-01-20 17:13:24  willuhn
  * @C HBCIProperties#startOfDay und HBCIProperties#endOfDay nach Jameica in DateUtil verschoben
- *
- * Revision 1.8  2008/03/03 09:43:54  willuhn
- * @N DateUtil-Patch von Heiner
- * @N Weiterer Code fuer das Backup-System
- *
- * Revision 1.7  2007/08/28 22:42:53  willuhn
- * @N Bei Aufruf von setMandatory() ggf. Farb-Aenderungen sofort durchfuehren, wenn sich Wert von "mandatory" geaendert hat und das Control bereits gezeichnet wurde
- *
- * Revision 1.6  2007/04/26 14:38:11  willuhn
- * @B Manuell eingegebenes Datum bei anschliessendem Oeffnen des Kalender-Dialogs uebernehmen
- * @N hasChanged in DialogInput ueberschrieben
- *
- * Revision 1.5  2007/04/26 11:19:48  willuhn
- * @N Generische Funktion "hasChanged()" zum Pruefen auf Aenderungen in Eingabe-Feldern
- *
- * Revision 1.4  2007/03/19 12:30:06  willuhn
- * @N Input can now have it's own label
- *
- * Revision 1.3  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.2  2006/10/10 22:30:07  willuhn
- * @C besseres Text-handling in DateInput
- *
- * Revision 1.1  2006/09/10 12:12:26  willuhn
- * @N Neues kombiniertes Eingabefeld "DateInput"
- *
  **********************************************************************/

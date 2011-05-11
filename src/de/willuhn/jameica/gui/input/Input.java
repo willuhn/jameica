@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Input.java,v $
- * $Revision: 1.9 $
- * $Date: 2008/12/17 22:45:03 $
+ * $Revision: 1.10 $
+ * $Date: 2011/05/11 08:42:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,10 +15,12 @@ package de.willuhn.jameica.gui.input;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.jameica.gui.Part;
 
 /**
+ * Basis-Interface fuer alle Eingabefelder in Jameica.
  */
 public interface Input extends Part
 {
@@ -138,36 +140,28 @@ public interface Input extends Part
    * @return Label-Bezeichnung.
    */
   public String getName();
+  
+  /**
+   * Speichert optionale Context-Daten.
+   * @see Widget#setData(Object)
+   * @param key freier Schluessel.
+   * @param data beliebige Nutzdaten.
+   */
+  public void setData(String key, Object data);
+  
+  /**
+   * Liefert die Context-Daten.
+   * @param key der Schluessel.
+   * @return die Contextdaten.
+   */
+  public Object getData(String key);
 }
 
 /**********************************************************************
  * $Log: Input.java,v $
+ * Revision 1.10  2011/05/11 08:42:07  willuhn
+ * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
+ *
  * Revision 1.9  2008/12/17 22:45:03  willuhn
  * @R t o d o  tag entfernt
- *
- * Revision 1.8  2007/04/26 11:56:28  willuhn
- * *** empty log message ***
- *
- * Revision 1.7  2007/04/26 11:19:48  willuhn
- * @N Generische Funktion "hasChanged()" zum Pruefen auf Aenderungen in Eingabe-Feldern
- *
- * Revision 1.6  2007/03/19 12:30:06  willuhn
- * @N Input can now have it's own label
- *
- * Revision 1.5  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.4  2006/06/19 10:54:24  willuhn
- * @N neue Methode setEnabled(boolean) in Input
- * @N neue de_willuhn_util lib
- *
- * Revision 1.3  2005/08/22 13:31:52  web0
- * *** empty log message ***
- *
- * Revision 1.2  2005/07/11 18:12:39  web0
- * *** empty log message ***
- *
- * Revision 1.1  2004/07/09 00:12:46  willuhn
- * @C Redesign
- *
  **********************************************************************/

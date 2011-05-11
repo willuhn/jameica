@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.18 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.19 $
+ * $Date: 2011/05/11 08:42:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -40,8 +40,8 @@ import de.willuhn.logging.Logger;
  */
 public abstract class Container
 {
-
   private boolean fullSize = false;
+
   /**
    * ct.
    * @param fullSize Legt fest, ob der Container die volle moegliche Hoehe einnehmen
@@ -91,6 +91,9 @@ public abstract class Container
 
     // Inputfeld
     input.paint(getComposite());
+
+    // Wir speichern hier das Label, damit das Eingabefeld das bei Bedarf aendern kann.
+    input.setData("jameica.label",label);
   }
   
   /**
@@ -104,7 +107,7 @@ public abstract class Container
     else
       addLabelPair(input.getName(),input);
   }
-  
+
   /**
    * Fuegt ein Label-Paar hinzu, bei dem beide Seiten ein Eingabe-Feld sind.
    * @param left linkes Eingabe-Feld.
@@ -291,7 +294,10 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.18  2011/05/03 10:13:11  willuhn
+ * Revision 1.19  2011/05/11 08:42:08  willuhn
+ * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
+ *
+ * Revision 1.18  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.17  2010-10-10 21:20:34  willuhn
