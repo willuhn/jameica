@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.57 $
- * $Date: 2011/05/09 15:39:37 $
+ * $Revision: 1.58 $
+ * $Date: 2011/05/11 10:45:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -138,6 +138,8 @@ public abstract class AbstractDialog
   private String panelText;
 	
 	private int closeState = SWT.OK;
+	
+	private Exception onEscapeException = null;
 
   /**
    * Erzeugt einen neuen Dialog.
@@ -199,7 +201,22 @@ public abstract class AbstractDialog
               
               // Wird hier die OperationCancelledException geworfen,
               // wird sie bis zum Aufrufer durchgereicht.
-              onEscape();
+              
+              // Wir duerfen die Exception nicht direkt hier werfen. Das bringt
+              // SWT/GTK - und damit die ganze JVM - zumindest auf meinem System
+              // unter Umstaenden zum Absturz. Scheinbar immer dann, wenn im Dialog
+              // ein TablePart enthalten ist. Keine Ahnung, warum das so ist und
+              // ob das auf anderen Plattformen auch auftritt. Wir lassen die
+              // Exception aber der Sauberkeit halber nicht hier durchlaufen sondern
+              // werden sie dann unten in open() manuell.
+              try
+              {
+                onEscape();
+              }
+              catch (Exception ex)
+              {
+                onEscapeException = ex;
+              }
             }
           }
         });
@@ -533,11 +550,15 @@ public abstract class AbstractDialog
 	
 					shell.open();
           shell.forceActive();
-					while (shell != null && !shell.isDisposed()) {
+					while (shell != null && !shell.isDisposed() && onEscapeException == null) {
 						if (!display.readAndDispatch()) display.sleep();
 					}
         }
       });
+			
+			if (onEscapeException != null)
+			  throw onEscapeException;
+			
 			return getData();
 		}
 		catch (OperationCanceledException oce)
@@ -612,7 +633,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.57  2011/05/09 15:39:37  willuhn
+ * Revision 1.58  2011/05/11 10:45:27  willuhn
+ * @B Das Werfen einer Exception direkt im TraverseListener kann SWT - und damit die ganze JVM - zum Absturz bringen. Wir fangen die OCE daher und beenden den Display-Loop sauber, bevor wir die Exception weiterwerfen
+ *
+ * Revision 1.57  2011-05-09 15:39:37  willuhn
  * @R UNDO BUGZILLA 1041
  *
  * Revision 1.56  2011-05-06 13:41:54  willuhn
