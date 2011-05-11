@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SimpleDialog.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.11 $
+ * $Date: 2011/05/11 15:46:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,6 +61,15 @@ public class SimpleDialog extends AbstractDialog {
 	{
 		return text;
 	}
+	
+	
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
+   * Abbrechen nicht zulaessig.
+   */
+  protected void onEscape()
+  {
+  }
 
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
@@ -98,7 +107,10 @@ public class SimpleDialog extends AbstractDialog {
 
 /**********************************************************************
  * $Log: SimpleDialog.java,v $
- * Revision 1.10  2011/05/03 10:13:11  willuhn
+ * Revision 1.11  2011/05/11 15:46:34  willuhn
+ * @C Abrechen mit Escape in diesem Dialog nicht zulaessig
+ *
+ * Revision 1.10  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.9  2005-02-01 17:15:19  willuhn
