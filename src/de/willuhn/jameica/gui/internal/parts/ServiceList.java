@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/04/26 11:55:16 $
+ * $Revision: 1.12 $
+ * $Date: 2011/05/11 10:27:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,7 +75,8 @@ public class ServiceList extends TablePart
         }
         catch (OperationCanceledException oce)
         {
-          Logger.info("operation cancelled");
+          Logger.info(oce.getMessage());
+          return;
         }
         catch (Exception e)
         {
@@ -218,6 +219,11 @@ public class ServiceList extends TablePart
         try
         {
           doIt = ((Boolean) d.open()).booleanValue();
+        }
+        catch (OperationCanceledException oce)
+        {
+          Logger.info(oce.getMessage());
+          return;
         }
         catch (Exception e)
         {
@@ -458,7 +464,10 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
- * Revision 1.11  2011/04/26 11:55:16  willuhn
+ * Revision 1.12  2011/05/11 10:27:24  willuhn
+ * @N OCE fangen
+ *
+ * Revision 1.11  2011-04-26 11:55:16  willuhn
  * @R Summen-Zeile entfernt
  *
  * Revision 1.10  2008/12/19 12:16:02  willuhn

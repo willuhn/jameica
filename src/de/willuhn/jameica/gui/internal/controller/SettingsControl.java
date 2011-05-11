@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.34 $
- * $Date: 2011/05/03 16:45:20 $
+ * $Revision: 1.35 $
+ * $Date: 2011/05/11 10:27:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,6 +35,7 @@ import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Config;
 import de.willuhn.jameica.system.Customizing;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -370,6 +371,11 @@ public class SettingsControl extends AbstractControl
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen zurückgesetzt."),StatusBarMessage.TYPE_SUCCESS));
 			new de.willuhn.jameica.gui.internal.action.Settings().handleAction(null);
   	}
+    catch (OperationCanceledException oce)
+    {
+      Logger.info(oce.getMessage());
+      return;
+    }
   	catch (Exception e)
   	{
   		Logger.error("error while restoring settings",e);
@@ -382,7 +388,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
- * Revision 1.34  2011/05/03 16:45:20  willuhn
+ * Revision 1.35  2011/05/11 10:27:25  willuhn
+ * @N OCE fangen
+ *
+ * Revision 1.34  2011-05-03 16:45:20  willuhn
  * @R Locale nicht mehr ueber GUI aenderbar - hat eh keiner verwendet
  * @R Style nicht mehr aenderbar - der Flatstyle war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
  *

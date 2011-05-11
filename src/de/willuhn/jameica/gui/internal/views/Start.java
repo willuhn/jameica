@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.22 $
- * $Date: 2011/05/03 12:57:00 $
+ * $Revision: 1.23 $
+ * $Date: 2011/05/11 10:27:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,6 +28,7 @@ import de.willuhn.jameica.gui.parts.ExpandPart;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -55,6 +56,11 @@ public class Start extends AbstractView implements Extendable
           try
           {
             d.open();
+          }
+          catch (OperationCanceledException oce)
+          {
+            Logger.info(oce.getMessage());
+            return;
           }
           catch (Exception e)
           {
@@ -100,7 +106,10 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
- * Revision 1.22  2011/05/03 12:57:00  willuhn
+ * Revision 1.23  2011/05/11 10:27:25  willuhn
+ * @N OCE fangen
+ *
+ * Revision 1.22  2011-05-03 12:57:00  willuhn
  * @B Das komplette Ausblenden nicht-aktiver Boxen fuehrte zu ziemlichem Durcheinander in dem Dialog
  * @C Aendern der Sortier-Reihenfolge vereinfacht. Sie wird jetzt nicht mehr live sondern erst nach Klick auf "Uebernehmen" gespeichert - was fachlich ja auch richtiger ist
  *

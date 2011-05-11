@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/About.java,v $
- * $Revision: 1.6 $
- * $Date: 2005/11/07 19:07:59 $
- * $Author: web0 $
+ * $Revision: 1.7 $
+ * $Date: 2011/05/11 10:27:25 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.internal.action;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -34,6 +35,11 @@ public class About implements Action
     {
       a.open();
     }
+    catch (OperationCanceledException oce)
+    {
+      Logger.info(oce.getMessage());
+      return;
+    }
     catch (Exception e)
     {
       Logger.error("error while opening about dialog",e);
@@ -46,6 +52,9 @@ public class About implements Action
 
 /*********************************************************************
  * $Log: About.java,v $
+ * Revision 1.7  2011/05/11 10:27:25  willuhn
+ * @N OCE fangen
+ *
  * Revision 1.6  2005/11/07 19:07:59  web0
  * @N Update auf SWT 3.1
  *

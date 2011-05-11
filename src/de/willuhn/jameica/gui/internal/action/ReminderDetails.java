@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/Attic/ReminderDetails.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/01/14 17:33:39 $
+ * $Revision: 1.2 $
+ * $Date: 2011/05/11 10:27:25 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -16,6 +16,7 @@ import de.willuhn.jameica.gui.internal.dialogs.ReminderDialog;
 import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -45,6 +46,11 @@ public class ReminderDetails implements Action
       
       service.add(rNew); // Neuen Termin speichern
     }
+    catch (OperationCanceledException oce)
+    {
+      Logger.info(oce.getMessage());
+      return;
+    }
     catch (ApplicationException ae)
     {
       throw ae;
@@ -63,7 +69,10 @@ public class ReminderDetails implements Action
 
 /**********************************************************************
  * $Log: ReminderDetails.java,v $
- * Revision 1.1  2011/01/14 17:33:39  willuhn
+ * Revision 1.2  2011/05/11 10:27:25  willuhn
+ * @N OCE fangen
+ *
+ * Revision 1.1  2011-01-14 17:33:39  willuhn
  * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
  *
  **********************************************************************/

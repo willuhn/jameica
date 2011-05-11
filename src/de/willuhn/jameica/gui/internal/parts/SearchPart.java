@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchPart.java,v $
- * $Revision: 1.8 $
- * $Date: 2010/11/03 11:52:18 $
+ * $Revision: 1.9 $
+ * $Date: 2011/05/11 10:27:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,6 +38,7 @@ import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.SearchService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
 
@@ -133,6 +134,11 @@ public class SearchPart implements Part
           {
             new SearchOptionsDialog(SearchOptionsDialog.POSITION_CENTER).open();
           }
+          catch (OperationCanceledException oce)
+          {
+            Logger.info(oce.getMessage());
+            return;
+          }
           catch (Exception ex)
           {
             Logger.error("error while opening options dialog",ex);
@@ -195,7 +201,10 @@ public class SearchPart implements Part
 
 /**********************************************************************
  * $Log: SearchPart.java,v $
- * Revision 1.8  2010/11/03 11:52:18  willuhn
+ * Revision 1.9  2011/05/11 10:27:25  willuhn
+ * @N OCE fangen
+ *
+ * Revision 1.8  2010-11-03 11:52:18  willuhn
  * @N Anzeige des "Optionen..."-Links via Customizing ausblendbar
  *
  * Revision 1.7  2010-08-17 16:05:32  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.18 $
- * $Date: 2011/04/26 12:20:23 $
+ * $Revision: 1.19 $
+ * $Date: 2011/05/11 10:27:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -97,7 +97,7 @@ public class CertificateList extends TablePart
         catch (OperationCanceledException oce)
         {
           Logger.info(Application.getI18n().tr("Vorgang abgebrochen"));
-          // ignore
+          return;
         }
         catch (Exception e)
         {
@@ -170,6 +170,11 @@ public class CertificateList extends TablePart
             if (os != null)
               os.close();
           }
+        }
+        catch (OperationCanceledException oce)
+        {
+          Logger.info(oce.getMessage());
+          return;
         }
         catch (Exception e)
         {
@@ -373,6 +378,11 @@ public class CertificateList extends TablePart
         CertificateDetailDialog d = new CertificateDetailDialog(CertificateDetailDialog.POSITION_CENTER,c.cert);
         d.open();
       }
+      catch (OperationCanceledException oce)
+      {
+        Logger.info(oce.getMessage());
+        return;
+      }
       catch (Exception e)
       {
         Logger.error("error while displaying certificate",e);
@@ -384,7 +394,10 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
- * Revision 1.18  2011/04/26 12:20:23  willuhn
+ * Revision 1.19  2011/05/11 10:27:24  willuhn
+ * @N OCE fangen
+ *
+ * Revision 1.18  2011-04-26 12:20:23  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.17  2008/12/19 12:16:02  willuhn
