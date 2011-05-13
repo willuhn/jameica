@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.20 $
- * $Date: 2011/05/13 10:10:34 $
+ * $Revision: 1.21 $
+ * $Date: 2011/05/13 11:04:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -82,6 +82,8 @@ public class SearchInput extends AbstractInput
   private String search       = null;
   private boolean focus       = false;
   private int maxLength       = 0;
+  private int startAt         = 1;
+  private int minWidth        = 0;
   
   private List<Listener> listeners = new ArrayList<Listener>();
   
@@ -131,6 +133,29 @@ public class SearchInput extends AbstractInput
     this.maxLength = maxLength;
     if (this.text != null && !this.text.isDisposed())
       this.text.setTextLimit(this.maxLength);
+  }
+  
+  /**
+   * Legt fest, ab wieviel eingegebenen Zeichen die Suche starten soll.
+   * @param length Mindest-Anzahl von Zeichen, ab der die Suche starten soll.
+   * Werte <= 0 werden ignoriert.
+   * Default: 1.
+   */
+  public void setStartAt(int length)
+  {
+    if (length > 0)
+      this.startAt = length;
+  }
+  
+  /**
+   * Legt eine Mindest-Breite fuer die Ergebnisliste in Pixeln fest.
+   * Wird kein Wert oder 0 angegeben, wird die Breite automatisch ermittelt.
+   * @param width die Mindest-Breite der Ergebnisliste.
+   */
+  public void setMinWidth(int width)
+  {
+    if (width >= 0)
+      this.minWidth = width;
   }
   
   /**
@@ -185,6 +210,7 @@ public class SearchInput extends AbstractInput
 
       PopupList popup = new PopupList(GUI.getShell());
       popup.setItems((String[])items.toArray(new String[items.size()]));
+      popup.setMinimumWidth(this.minWidth);
       String selected = popup.open(new Rectangle(location.x, rect.y + location.y + rect.height, rect.width, 0));
 
       // Jetzt muessen wir das zugehoerige Fachobjekt suchen
@@ -313,14 +339,21 @@ public class SearchInput extends AbstractInput
       this.text.setFocus();
 
     // Loest die Suche aus
-    Listener listener = new Listener() {
-      private String oldText = null;
+    final Listener listener = new Listener()
+    {
       public void handleEvent(Event event)
       {
         if (text == null || text.isDisposed())
           return;
 
-        String newText = text.getText();
+        // Bei Escape loesen wir nicht aus
+        // Damit muessen wir jetzt nicht mehr vergleichen,
+        // ob sich der Text geaendert hat. Denn mit ESC wird das
+        // Popup geschlossen - da das allerdings bis hierhin durchgereicht
+        // wird, waere das Poup sonst in einem Loop immer wieder aufgegangen.
+        // Jetzt nicht mehr ;)
+        if (event.keyCode == SWT.ESC)
+          return;
         
         if (inSearch)
         {
@@ -328,22 +361,28 @@ public class SearchInput extends AbstractInput
           return;
         }
 
-        if (newText == null || newText.length() == 0)
-          return; // Kein Suchbegriff - keine Suche
+        String newText = text.getText();
+        if (newText == null || newText.length() <= startAt)
+          return; // Noch kein Suchbegriff - keine Suche
 
         if (newText.equals(search))
           return; // Nach "Suche..." suchen wir nicht
 
-        if (newText == oldText || newText.equals(oldText))
-          return; // Text wurde nicht geaendert
-
-        oldText = newText;
         List newList = startSearch(newText);
         setList(newList);
       }
     
     };
     this.text.addListener(SWT.KeyUp, new DelayedListener(this.delay,listener));
+    
+    // Bei Enter loesen wir sofort aus. Ohne auf das Timeout zu warten
+    this.text.addListener(SWT.Traverse,new Listener() {
+      public void handleEvent(Event event)
+      {
+        if (event.detail == SWT.TRAVERSE_RETURN)
+          listener.handleEvent(event);
+      }
+    });
 
     return this.text;
   }
@@ -508,7 +547,10 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
- * Revision 1.20  2011/05/13 10:10:34  willuhn
+ * Revision 1.21  2011/05/13 11:04:35  willuhn
+ * @N Tuning ;)
+ *
+ * Revision 1.20  2011-05-13 10:10:34  willuhn
  * @B Text nur dann grau faerben und "Suche..." reinschreiben, wenn wir nicht schon den Focus haben. Ansonsten bleibt der Text ja grau und wir muessen das "Suche..." manuell entfernen
  *
  * Revision 1.19  2010-07-23 10:28:58  willuhn
