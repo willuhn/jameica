@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.23 $
- * $Date: 2011/05/13 14:15:38 $
+ * $Revision: 1.24 $
+ * $Date: 2011/05/13 14:18:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -291,7 +291,7 @@ public class SearchInput extends AbstractInput
     
     // Wenn wir bereits den Focus haben, darf das "Suche..." nicht
     // mehr drin stehen
-    if (display.equals(this.search) && this.focus)
+    if (this.value == null && this.focus)
       display = "";
     
     this.text.setText(display);
@@ -549,7 +549,10 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
- * Revision 1.23  2011/05/13 14:15:38  willuhn
+ * Revision 1.24  2011/05/13 14:18:19  willuhn
+ * besser so
+ *
+ * Revision 1.23  2011-05-13 14:15:38  willuhn
  * @C So, jetzt ist es richtig
  *
  * Revision 1.22  2011-05-13 14:11:17  willuhn
