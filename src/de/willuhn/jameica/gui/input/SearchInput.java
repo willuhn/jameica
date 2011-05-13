@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.21 $
- * $Date: 2011/05/13 11:04:35 $
+ * $Revision: 1.22 $
+ * $Date: 2011/05/13 14:11:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -285,14 +285,10 @@ public class SearchInput extends AbstractInput
 
     this.text = GUI.getStyleFactory().createText(getParent());
 
-    // Nur, wenn wir nicht schon den Focus haben
-    if (!this.focus)
-    {
-      String display = this.value == null ? null : format(this.value);
-      if (display == null)
-        display = this.search;
-      this.text.setText(display);
-    }
+    String display = this.value == null ? null : format(this.value);
+    if (display == null)
+      display = this.search;
+    this.text.setText(display);
 
     // "Suche..." grau einfaerben - aber nur, wenn wir keinen Focus haben
     if ((!this.focus && this.value == null) || !enabled)
@@ -547,7 +543,10 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
- * Revision 1.21  2011/05/13 11:04:35  willuhn
+ * Revision 1.22  2011/05/13 14:11:17  willuhn
+ * @B Fuehrte dazu, dass der Inhalt nicht angezeigt wird, wenn das Control den Focus hat
+ *
+ * Revision 1.21  2011-05-13 11:04:35  willuhn
  * @N Tuning ;)
  *
  * Revision 1.20  2011-05-13 10:10:34  willuhn
