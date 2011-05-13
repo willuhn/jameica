@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.19 $
- * $Date: 2010/07/23 10:28:58 $
+ * $Revision: 1.20 $
+ * $Date: 2011/05/13 10:10:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -258,14 +258,18 @@ public class SearchInput extends AbstractInput
       return this.text;
 
     this.text = GUI.getStyleFactory().createText(getParent());
-    
-    String display = this.value == null ? null : format(this.value);
-    if (display == null)
-      display = this.search;
-    this.text.setText(display);
 
-    // "Suche..." grau einfaerben
-    if (this.value == null || !enabled)
+    // Nur, wenn wir nicht schon den Focus haben
+    if (!this.focus)
+    {
+      String display = this.value == null ? null : format(this.value);
+      if (display == null)
+        display = this.search;
+      this.text.setText(display);
+    }
+
+    // "Suche..." grau einfaerben - aber nur, wenn wir keinen Focus haben
+    if ((!this.focus && this.value == null) || !enabled)
       this.text.setForeground(Color.COMMENT.getSWTColor());
     
     this.text.setEnabled(enabled);
@@ -504,7 +508,10 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
- * Revision 1.19  2010/07/23 10:28:58  willuhn
+ * Revision 1.20  2011/05/13 10:10:34  willuhn
+ * @B Text nur dann grau faerben und "Suche..." reinschreiben, wenn wir nicht schon den Focus haben. Ansonsten bleibt der Text ja grau und wir muessen das "Suche..." manuell entfernen
+ *
+ * Revision 1.19  2010-07-23 10:28:58  willuhn
  * @B Focus wurde unter bestimmten Umstaenden nicht ausgeloest. Das "Suche..." blieb dann im Textfeld stehen
  *
  * Revision 1.18  2010/01/18 22:59:02  willuhn
