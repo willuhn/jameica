@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ScaleInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/05/04 12:04:09 $
+ * $Revision: 1.2 $
+ * $Date: 2011/05/17 20:59:02 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -14,6 +14,9 @@ package de.willuhn.jameica.gui.input;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Scale;
+
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 
 /**
  * Eingabefeld in Form eines Schiebereglers.
@@ -110,7 +113,13 @@ public class ScaleInput extends AbstractInput
     if (this.scale != null && !this.scale.isDisposed())
       return this.scale;
     
-    this.scale = new Scale(this.getParent(),this.orientation);
+    // Windows-Bug: Das Control uebernimmt hier nicht die Hintergrundfarbe
+    // sondern wird immer mit weissem Hintergrund gezeichnet. Ich konnte
+    // auch keinen Bug-Report bei eclipse.org finden. Als Workaround mache
+    // ich bei Windows jetzt einen Rahmen drum. Dann faellts nicht so auf ;)
+    int os = Application.getPlatform().getOS();
+    int style = (os == Platform.OS_WINDOWS || os == Platform.OS_WINDOWS_64) ? SWT.BORDER : SWT.NONE;
+    this.scale = new Scale(this.getParent(),this.orientation | style);
     this.scale.setEnabled(this.enabled);
 
     this.scale.setMinimum(this.minimum);
@@ -177,7 +186,10 @@ public class ScaleInput extends AbstractInput
 
 /**********************************************************************
  * $Log: ScaleInput.java,v $
- * Revision 1.1  2011/05/04 12:04:09  willuhn
+ * Revision 1.2  2011/05/17 20:59:02  willuhn
+ * @B Drawing-Bug unter Windows - siehe http://www.willuhn.de/blog/index.php?/archives/558-GUI-Cleanup.html#c1325
+ *
+ * Revision 1.1  2011-05-04 12:04:09  willuhn
  * @N ScaleInput fuer Schiebe-Regler
  *
  **********************************************************************/
