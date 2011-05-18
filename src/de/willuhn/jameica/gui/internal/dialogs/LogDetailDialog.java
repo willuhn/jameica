@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/LogDetailDialog.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.5 $
+ * $Date: 2011/05/18 15:18:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ package de.willuhn.jameica.gui.internal.dialogs;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
@@ -75,7 +74,7 @@ public class LogDetailDialog extends AbstractDialog
     
     TextPart tp = new TextPart();
     tp.setAutoscroll(false);
-    tp.setWordWrap(false);
+    tp.setWordWrap(true);
     tp.appendText(message.getText());
     
     container.addPart(tp);
@@ -89,7 +88,6 @@ public class LogDetailDialog extends AbstractDialog
       }
     },null,true,"process-stop.png");
     container.addButtonArea(buttons);
-    getShell().setMinimumSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
   }
 
   /**
@@ -105,7 +103,10 @@ public class LogDetailDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: LogDetailDialog.java,v $
- * Revision 1.4  2011/05/03 10:13:11  willuhn
+ * Revision 1.5  2011/05/18 15:18:43  willuhn
+ * @B BUGZILLA 1049
+ *
+ * Revision 1.4  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.3  2008/04/15 16:16:36  willuhn
