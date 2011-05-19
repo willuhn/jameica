@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ExpandPart.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/05/03 11:07:37 $
+ * $Revision: 1.11 $
+ * $Date: 2011/05/19 08:05:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -85,7 +85,7 @@ public class ExpandPart implements Part
   public void paint(Composite parent) throws RemoteException
   {
     ExpandBar bar = new ExpandBar(parent, SWT.V_SCROLL);
-    bar.setSpacing(1);
+    bar.setSpacing(5);
     bar.setLayoutData(new GridData(GridData.FILL_BOTH));
     
     for (int i=0;i<this.items.size();++i)
@@ -169,7 +169,10 @@ public class ExpandPart implements Part
 
 /*********************************************************************
  * $Log: ExpandPart.java,v $
- * Revision 1.10  2011/05/03 11:07:37  willuhn
+ * Revision 1.11  2011/05/19 08:05:30  willuhn
+ * @N Rand ein bisschen vergroessert. Sieht so besser aus
+ *
+ * Revision 1.10  2011-05-03 11:07:37  willuhn
  * @N Styling-Fixes fuer Windows (Background)
  *
  * Revision 1.9  2011-05-03 10:13:10  willuhn
