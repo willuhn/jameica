@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/LockService.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/08/17 09:29:22 $
+ * $Revision: 1.4 $
+ * $Date: 2011/05/24 12:28:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,7 +50,10 @@ public class LockService implements Bootable
     Logger.info("creating lockfile " + lock.getAbsolutePath());
     try {
       if (lock.exists())
+      {
+        Logger.error("existing lock file found: " + lock);
         throw new IOException("Lockfile allready exists");
+      }
       lock.createNewFile();
       lock.deleteOnExit();
     }
@@ -77,6 +80,9 @@ public class LockService implements Bootable
 
 /**********************************************************************
  * $Log: LockService.java,v $
+ * Revision 1.4  2011/05/24 12:28:36  willuhn
+ * @N Neuer zusaetzlicher Hinweis im Log: wegen http://forum.ubuntuusers.de/topic/jamaica-laesst-sich-nicht-starten/
+ *
  * Revision 1.3  2009/08/17 09:29:22  willuhn
  * @N Neuer Startup-Parameter "-l", mit dem die Lock-Datei von Jameica ignoriert werden kann. Habe ich eigentlich nur wegen Eclipse eingebaut. Denn dort werden Shutdown-Hooks nicht ausgefuehrt, wenn man die Anwendung im Debugger laufen laesst und auf "Terminate" klickt. Da das Debuggen maechtig nervig ist, wenn man im Server-Mode immer erst auf "Y" druecken muss, um den Start trotz Lockfile fortzusetzen, kann man mit dem Parameter "-l" das Pruefen auf die Lock-Datei einfach ignorieren
  *
