@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/NewPasswordDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/04/26 12:09:18 $
+ * $Revision: 1.9 $
+ * $Date: 2011/05/24 09:03:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -76,6 +76,14 @@ public class NewPasswordDialog extends AbstractDialog
     this.text = text;
   }
   
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
+   */
+  protected void onEscape()
+  {
+    // Kein Escape hier. Der User soll explizit auf "Abbrechen" klicken
+  }
+
   /**
    * Speichert ein optionales Label fuer die zusaetzliche Eingabe eines
    * Usernamens. Wird hier ein Wert uebergeben, zeigt der Dialog neben
@@ -294,7 +302,10 @@ public class NewPasswordDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: NewPasswordDialog.java,v $
- * Revision 1.8  2011/04/26 12:09:18  willuhn
+ * Revision 1.9  2011/05/24 09:03:45  willuhn
+ * @C Passwort-Dialoge koennen nicht mit Escape abgebrochen werden. Hier muss "Abbrechen" geklickt werden
+ *
+ * Revision 1.8  2011-04-26 12:09:18  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.7  2010-11-25 16:01:50  willuhn

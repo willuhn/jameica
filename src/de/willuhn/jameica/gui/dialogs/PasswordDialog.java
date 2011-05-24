@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.27 $
- * $Date: 2010/11/22 11:32:03 $
+ * $Revision: 1.28 $
+ * $Date: 2011/05/24 09:03:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,6 +75,14 @@ public class PasswordDialog extends AbstractDialog
     this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
     this.setTitle(i18n.tr("Passwort"));
     this.setSideImage(SWTUtil.getImage("dialog-password.png"));
+  }
+
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
+   */
+  protected void onEscape()
+  {
+    // Gibts hier nicht. Der User soll explizit auf "Abbrechen" klicken
   }
 
   /**
@@ -332,7 +340,10 @@ public class PasswordDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
- * Revision 1.27  2010/11/22 11:32:03  willuhn
+ * Revision 1.28  2011/05/24 09:03:45  willuhn
+ * @C Passwort-Dialoge koennen nicht mit Escape abgebrochen werden. Hier muss "Abbrechen" geklickt werden
+ *
+ * Revision 1.27  2010-11-22 11:32:03  willuhn
  * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
  *
  * Revision 1.26  2010-03-04 22:54:06  willuhn
