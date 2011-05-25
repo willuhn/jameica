@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.22 $
- * $Date: 2008/12/30 15:21:42 $
+ * $Revision: 1.23 $
+ * $Date: 2011/05/25 08:00:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,6 +68,9 @@ public class Manifest implements Comparable
     this.manifest = manifest;
     read(new FileInputStream(manifest));
 
+    Logger.info(getName() + " " + this.getVersion());
+    Logger.info("  Directory  : " + this.getPluginDir());
+
     try
     {
       // Das ist nur geraten und eher fuer Debugging-Zwecke ;)
@@ -76,8 +79,8 @@ public class Manifest implements Comparable
 
       this.buildnumber = mf.getMainAttributes().getValue("Implementation-Buildnumber");
       this.builtdate   = mf.getMainAttributes().getValue("Built-Date");
-      Logger.info(getName() + " - Buildnumber: " + buildnumber);
-      Logger.info(getName() + " - Built-Date : " + builtdate);
+      Logger.info("  Buildnumber: " + buildnumber);
+      Logger.info("  Built-Date : " + builtdate);
     }
     catch (Exception e)
     {
@@ -557,6 +560,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.23  2011/05/25 08:00:55  willuhn
+ * @N Doppler-Check. Wenn ein gleichnamiges Plugin bereits geladen wurde, wird das zweite jetzt ignoriert. Konnte passieren, wenn ein User ein Plugin sowohl im System- als auch im User-Plugindir installiert hatte
+ * @C Lade-Reihenfolge geaendert. Vorher 1. System, 2. User, 3. Config. Jetzt: 1. System, 2. Config, 3. User. Explizit in der Config angegebene Plugindirs haben also Vorrang vor ~/.jameica/plugins. Es bleibt weiterhin dabei, dass die Plugins im System-Dir Vorrang haben. Ist es dort bereits installiert, wird jetzt (dank Doppler-Check) das ggf. im User-Dir vorhandene ignoriert.
+ *
  * Revision 1.22  2008/12/30 15:21:42  willuhn
  * @N Umstellung auf neue Versionierung
  *

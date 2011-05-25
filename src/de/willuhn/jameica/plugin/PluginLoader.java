@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.46 $
- * $Date: 2010/06/03 13:59:33 $
+ * $Revision: 1.47 $
+ * $Date: 2011/05/25 08:00:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,8 +16,10 @@ import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.jameica.gui.extension.Extension;
@@ -40,7 +42,7 @@ public final class PluginLoader
 
   // Liste mit allen gefundenen Plugins.
   // Die Reihenfolge aus de.willuhn.jameica.system.Config.properties bleibt
-  private List plugins = new ArrayList();
+  private List<Manifest> plugins = new ArrayList<Manifest>();
 
   // Den brauchen wir, damit wir Updates an Plugins triggern und deren
   // Update-Methode aufrufen koennen.
@@ -59,54 +61,66 @@ public final class PluginLoader
     ArrayList dirs = new ArrayList();
 
     // //////////////////////////////////////////////////////////////////////////
-    // Plugins im Jameica-Verzeichnis selbst (System-Plugindir)
-    File dir = Application.getConfig().getSystemPluginDir();
-    File[] pluginDirs = new FileFinder(dir).findAll();
-
-    Logger.info("checking system plugin dir " + dir.getAbsolutePath());
-    for (int i = 0; i < pluginDirs.length; ++i)
+    // 1. Plugins im Jameica-Verzeichnis selbst (System-Plugindir)
     {
-      if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
+      File dir = Application.getConfig().getSystemPluginDir();
+      File[] pluginDirs = new FileFinder(dir).findAll();
+
+      Logger.info("checking system plugin dir " + dir.getAbsolutePath());
+      for (int i = 0; i < pluginDirs.length; ++i)
       {
-        Logger.info("skipping system plugin dir " + pluginDirs[i].getAbsolutePath());
-        continue;
+        if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
+        {
+          Logger.warn("skipping system plugin dir " + pluginDirs[i].getAbsolutePath() + " - no directory or not readable");
+          continue;
+        }
+        Logger.info("adding system plugin " + pluginDirs[i].getAbsolutePath());
+        dirs.add(pluginDirs[i]);
       }
-      Logger.info("adding system plugin " + pluginDirs[i].getAbsolutePath());
-      dirs.add(pluginDirs[i]);
     }
     //
     // //////////////////////////////////////////////////////////////////////////
 
     // //////////////////////////////////////////////////////////////////////////
-    // Plugins im Work-Verzeichnis des Users (User-Plugindir)
-    dir = Application.getConfig().getUserPluginDir();
-    pluginDirs = new FileFinder(dir).findAll();
-
-    Logger.info("checking user plugin dir " + dir.getAbsolutePath());
-    for (int i = 0; i < pluginDirs.length; ++i)
-    {
-      if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
-      {
-        Logger.info("skipping user plugin dir " + pluginDirs[i].getAbsolutePath());
-        continue;
-      }
-      Logger.info("adding user plugin " + pluginDirs[i].getAbsolutePath());
-      dirs.add(pluginDirs[i]);
-    }
-    // //////////////////////////////////////////////////////////////////////////
-
-    // //////////////////////////////////////////////////////////////////////////
-    // Plugins, die explizit in
+    // 2. Plugins, die explizit in
     // ~/.jameica/cfg/de.willuhn.jameica.system.Config.properties
     // definiert sind
-    pluginDirs = Application.getConfig().getPluginDirs();
-
-    for (int i = 0; i < pluginDirs.length; ++i)
     {
-      Logger.info("adding custom plugin dir " + pluginDirs[i].getAbsolutePath());
-      dirs.add(pluginDirs[i]);
+      File[] pluginDirs = Application.getConfig().getPluginDirs();
+
+      for (int i = 0; i < pluginDirs.length; ++i)
+      {
+        if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
+        {
+          Logger.warn("skipping custom plugin dir " + pluginDirs[i].getAbsolutePath() + " - no directory or not readable");
+          continue;
+        }
+        Logger.info("adding custom plugin dir " + pluginDirs[i].getAbsolutePath());
+        dirs.add(pluginDirs[i]);
+      }
     }
     // //////////////////////////////////////////////////////////////////////////
+
+    // //////////////////////////////////////////////////////////////////////////
+    // 3. Plugins im Work-Verzeichnis des Users (User-Plugindir)
+    {
+      File dir = Application.getConfig().getUserPluginDir();
+      File[] pluginDirs = new FileFinder(dir).findAll();
+
+      Logger.info("checking user plugin dir " + dir.getAbsolutePath());
+      for (int i = 0; i < pluginDirs.length; ++i)
+      {
+        if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
+        {
+          Logger.warn("skipping user plugin dir " + pluginDirs[i].getAbsolutePath() + " - no directory or not readable");
+          continue;
+        }
+        Logger.info("adding user plugin " + pluginDirs[i].getAbsolutePath());
+        dirs.add(pluginDirs[i]);
+      }
+    }
+    // //////////////////////////////////////////////////////////////////////////
+
 
     if (dirs.size() == 0)
     {
@@ -116,6 +130,7 @@ public final class PluginLoader
 
     // //////////////////////////////////////////////////////////////////////////
     // Liste der Manifeste laden
+    Map<String,Manifest> cache = new HashMap<String,Manifest>();
     for (int i = 0; i < dirs.size(); ++i)
     {
       File f = (File) dirs.get(i);
@@ -125,10 +140,18 @@ public final class PluginLoader
 
         if (!mf.canRead() || !mf.isFile())
         {
-          Logger.warn("no manifest found in " + f.getAbsolutePath() + ", skipping directory");
+          Logger.error("no manifest found in " + f.getAbsolutePath() + ", skipping directory");
           continue;
         }
-        this.plugins.add(new Manifest(mf));
+        Manifest m = new Manifest(mf);
+        Manifest first = cache.get(m.getName());
+        if (first != null)
+        {
+          Logger.error("found second plugin \"" + m.getName() + "\" in " + f + " (allready installed in " + first.getPluginDir() + ") skipping");
+          continue;
+        }
+        cache.put(m.getName(),m);
+        this.plugins.add(m);
       }
       catch (Throwable t)
       {
@@ -142,7 +165,7 @@ public final class PluginLoader
     QuickSort.quickSort(this.plugins);
     for (int i = 0; i < this.plugins.size(); ++i)
     {
-      Manifest mf = (Manifest) this.plugins.get(i);
+      Manifest mf = this.plugins.get(i);
       Logger.info("  " + mf.getName());
     }
     // //////////////////////////////////////////////////////////////////////////
@@ -170,7 +193,7 @@ public final class PluginLoader
 
     for (int i = 0; i < this.plugins.size(); ++i)
     {
-      Manifest mf = (Manifest) this.plugins.get(i);
+      Manifest mf = this.plugins.get(i);
       MultipleClassLoader loader = (MultipleClassLoader) loaders.get(mf);
       if (loader == null)
         continue; // Bereits das Laden der Klassen ging schief
@@ -373,7 +396,7 @@ public final class PluginLoader
     int size = plugins.size();
     for (int i = 0; i < size; ++i)
     {
-      Manifest p = (Manifest) plugins.get(i);
+      Manifest p = plugins.get(i);
       if (p.isInstalled())
         l.add(p.getPluginInstance());
     }
@@ -391,7 +414,7 @@ public final class PluginLoader
     List<Manifest> installed = new ArrayList<Manifest>();
     for (int i = 0; i < all.size(); ++i)
     {
-      Manifest p = (Manifest) plugins.get(i);
+      Manifest p = plugins.get(i);
       if (p.isInstalled())
         installed.add(p);
     }
@@ -438,7 +461,7 @@ public final class PluginLoader
     Manifest mf = null;
     for (int i = 0; i < size; ++i)
     {
-      mf = (Manifest) plugins.get(i);
+      mf = plugins.get(i);
       if (mf.getPluginClass().equals(pluginClass))
         return mf;
     }
@@ -460,7 +483,7 @@ public final class PluginLoader
     Manifest mf = null;
     for (int i = 0; i < size; ++i)
     {
-      mf = (Manifest) plugins.get(i);
+      mf = plugins.get(i);
       if (mf.getName().equals(name))
         return mf;
     }
@@ -587,7 +610,7 @@ public final class PluginLoader
     int size = plugins.size();
     for (int i = 0; i < size; ++i)
     {
-      Manifest mf = (Manifest) plugins.get(i);
+      Manifest mf = plugins.get(i);
       if (!mf.isInstalled())
         continue; // nicht installierte Plugins muessen nicht runtergefahren
                   // werden
@@ -651,6 +674,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
+ * Revision 1.47  2011/05/25 08:00:55  willuhn
+ * @N Doppler-Check. Wenn ein gleichnamiges Plugin bereits geladen wurde, wird das zweite jetzt ignoriert. Konnte passieren, wenn ein User ein Plugin sowohl im System- als auch im User-Plugindir installiert hatte
+ * @C Lade-Reihenfolge geaendert. Vorher 1. System, 2. User, 3. Config. Jetzt: 1. System, 2. Config, 3. User. Explizit in der Config angegebene Plugindirs haben also Vorrang vor ~/.jameica/plugins. Es bleibt weiterhin dabei, dass die Plugins im System-Dir Vorrang haben. Ist es dort bereits installiert, wird jetzt (dank Doppler-Check) das ggf. im User-Dir vorhandene ignoriert.
+ *
  * Revision 1.46  2010/06/03 13:59:33  willuhn
  * *** empty log message ***
  *
