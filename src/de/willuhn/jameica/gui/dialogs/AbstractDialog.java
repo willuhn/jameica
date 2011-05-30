@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.58 $
- * $Date: 2011/05/11 10:45:27 $
+ * $Revision: 1.59 $
+ * $Date: 2011/05/30 10:16:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -435,6 +435,8 @@ public abstract class AbstractDialog
   public final void setSideImage(Image image)
 	{
 		this.sideImage = image;
+		if (this.imageLabel != null && !this.imageLabel.isDisposed())
+		  this.imageLabel.setImage(image);
 	}
 
 	/**
@@ -633,7 +635,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.58  2011/05/11 10:45:27  willuhn
+ * Revision 1.59  2011/05/30 10:16:54  willuhn
+ * @N Image auch aktualisieren, wenn der Dialog schon angezeigt wird
+ *
+ * Revision 1.58  2011-05-11 10:45:27  willuhn
  * @B Das Werfen einer Exception direkt im TraverseListener kann SWT - und damit die ganze JVM - zum Absturz bringen. Wir fangen die OCE daher und beenden den Display-Loop sauber, bevor wir die Exception weiterwerfen
  *
  * Revision 1.57  2011-05-09 15:39:37  willuhn
