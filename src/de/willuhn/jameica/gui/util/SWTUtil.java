@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.24 $
- * $Date: 2011/04/06 16:13:16 $
+ * $Revision: 1.25 $
+ * $Date: 2011/05/30 10:17:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -233,7 +233,7 @@ public class SWTUtil {
   }
   
   /**
-   * Rechnet eine Angabe von pt (Point) entsprechend der DPI-Anzahl in Pixel um.
+   * Rechnet eine Angabe von pt (Point) entsprechend der DPI-Anzahl des Displays in Pixel um.
    * @param pt Points.
    * @return Anzahl der Pixel oder -1 wenn es zu einem Fehler kam.
    */
@@ -255,6 +255,37 @@ public class SWTUtil {
       
       // Also multiplizieren wir noch mit den pt und haben die Pixel
       return (int)((double) pt * i);
+    }
+    catch (Throwable t)
+    {
+      return -1;
+    }
+  }
+  
+  /**
+   * Rechnet eine Angabe von mm (Millimeter) entsprechend der DPI-Anzahl des Displays in Pixel um.
+   * @param mm die Millimeter.
+   * @return Anzahl der Pixel oder -1 wenn es zu einem Fehler kam.
+   */
+  public final static int mm2px(int mm)
+  {
+    try
+    {
+      Point dpi = GUI.getDisplay().getDPI();
+      if (dpi == null)
+        return -1;
+      
+      // Das sind die Pixel pro Inch.
+      int pixel = dpi.y;
+      
+      // Anzahl der Millimeter pro Inch
+      double millis = 25.4d;
+      
+      // Anzahl der Inches ermitteln
+      double inches = mm / millis;
+      
+      // Anzahl der Pixel auf dieser Laenge
+      return (int) (pixel * inches);
     }
     catch (Throwable t)
     {
@@ -285,7 +316,10 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
- * Revision 1.24  2011/04/06 16:13:16  willuhn
+ * Revision 1.25  2011/05/30 10:17:11  willuhn
+ * @N Funktion zum Umrechnen von mm in px
+ *
+ * Revision 1.24  2011-04-06 16:13:16  willuhn
  * @N BUGZILLA 631
  *
  * Revision 1.23  2010-07-27 11:54:43  willuhn
