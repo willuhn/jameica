@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginDetails.java,v $
- * $Revision: 1.1 $
- * $Date: 2005/06/14 23:15:30 $
- * $Author: web0 $
+ * $Revision: 1.2 $
+ * $Date: 2011/05/31 16:39:04 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -14,6 +14,8 @@ package de.willuhn.jameica.gui.internal.action;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -27,6 +29,8 @@ public class PluginDetails implements Action
    */
   public void handleAction(Object context) throws ApplicationException
   {
+    if (!(context instanceof Manifest))
+      throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie ein Plugin aus"));
   	GUI.startView(de.willuhn.jameica.gui.internal.views.PluginDetails.class.getName(),context);
   }
 
@@ -35,6 +39,9 @@ public class PluginDetails implements Action
 
 /**********************************************************************
  * $Log: PluginDetails.java,v $
+ * Revision 1.2  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
  * Revision 1.1  2005/06/14 23:15:30  web0
  * @N added settings for plugins/services
  *

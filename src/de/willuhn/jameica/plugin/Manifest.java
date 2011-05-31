@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.23 $
- * $Date: 2011/05/25 08:00:55 $
+ * $Revision: 1.24 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -379,23 +379,23 @@ public class Manifest implements Comparable
   }
 
   /**
-   * Liste der Plugins, von denen dieses hier abhaengig ist.
-   * @return  Liefert eine Liste von Plugin-Namen, die installiert und
-   * initialisiert sein muessen, damit dieses Plugin geladen
-   * werden kann. Die Namen sind genau die Bezeichnungen,
-   * die in den anderen Plugins in <plugin name="Foobar"... angegeben sind.
-   * Die Funktion liefert null, wenn keine Abhaengigkeiten existieren.
+   * Liste der Plugins, von denen dieses hier direkt abhaengig ist.
+   * Es werden also nur die direkt abhaengigen Plugins geliefert, nicht jedoch
+   * die indirekten Abhaengigkeiten.
+   * Wenn die komplette Liste der Abhaengigkeiten ermittelt werden soll (also incl.
+   * indirekter Abhaengigkeiten), dann muss "getDependencies()" verwendet werden.
+   * @return  Liste von Abhaengigkeiten fuer dieses Plugin.
+   * Die Funktion liefert nie NULL sondern hoechstens ein leeres Array.
    */
-  public Dependency[] getDependencies()
+  public Dependency[] getDirectDependencies()
   {
     IXMLElement deps = root.getFirstChildNamed("requires");
-    if (deps == null || !deps.hasChildren())
-      return null;
 
-    ArrayList toCheck = new ArrayList();
-    ArrayList found = new ArrayList();
+    if (deps == null || !deps.hasChildren())
+      return new Dependency[0];
+
+    List<Dependency> found = new ArrayList<Dependency>();
     
-    // Direkte Abhaengigkeiten
     Vector v = deps.getChildrenNamed("import");
     for (int i=0;i<v.size();++i)
     {
@@ -407,38 +407,58 @@ public class Manifest implements Comparable
       boolean required = Boolean.valueOf(plugin.getAttribute("required","true")).booleanValue();
       Dependency dep = new Dependency(name,plugin.getAttribute("version",null),required);
       found.add(dep);
-      toCheck.add(name);
+    }
+    return found.toArray(new Dependency[found.size()]);
+  }
+  
+  /**
+   * Liste der Plugins, von denen dieses hier direkt oder indirekt abhaengig ist.
+   * Es werden also nicht nur die direkt abhaengigen Plugins geliefert sondern auch alle
+   * Plugins, die von diesen wiederrum benoetigt werden.
+   * Wenn nur die einfache Liste der Abhaengigkeiten ermittelt werden soll (also ohne
+   * indirekte Abhaengigkeiten), dann muss "getDirectDependencies()" verwendet werden.
+   * @return  Liste von Abhaengigkeiten fuer dieses Plugin.
+   * Die Funktion liefert nie NULL sondern hoechstens ein leeres Array.
+   */
+  public Dependency[] getDependencies()
+  {
+    Dependency[] direct = this.getDirectDependencies();
+    if (direct.length == 0)
+      return direct; // Keine direkten Abhaengigkeiten. Also auch keine indirekten
+    
+    List<Dependency> found = new ArrayList<Dependency>();
+    List<String> toCheck = new ArrayList<String>();
+    
+    for (Dependency d:direct)
+    {
+      found.add(d);
+      toCheck.add(d.getName());
     }
     
-    // Indirekte Abhaengigkeiten
-    if (toCheck.size() > 0)
+    List all = Application.getPluginLoader().getManifests();
+    for (int i=0;i<all.size();++i)
     {
-      List all = Application.getPluginLoader().getManifests();
-      for (int i=0;i<all.size();++i)
-      {
-        Manifest mf = (Manifest) all.get(i);
-        String name = mf.getName();
-        
-        if (!toCheck.contains(name))
-          continue; // interessiert uns nicht
-        
-        // Jepp, das Plugin ist in unserer Pruef-Liste enthalten.
-        // Also brauchen wir auch dessen Abhaengigkeiten
-        Dependency[] secondDeps = mf.getDependencies();
-        if (secondDeps == null || secondDeps.length == 0)
-          continue; // Plugin hat keine Abhaengikeiten
+      Manifest mf = (Manifest) all.get(i);
+      String name = mf.getName();
+      
+      if (!toCheck.contains(name))
+        continue; // interessiert uns nicht
+      
+      // Jepp, das Plugin ist in unserer Pruef-Liste enthalten.
+      // Also brauchen wir auch dessen Abhaengigkeiten
+      Dependency[] secondDeps = mf.getDependencies();
+      if (secondDeps == null || secondDeps.length == 0)
+        continue; // Plugin hat keine Abhaengikeiten
 
-        // Checken, ob wir die Abhaengigkeit schon haben
-        // Nur bei Bedarf hinzufuegen
-        for (int k=0;k<secondDeps.length;++k)
-        {
-          if (found.contains(secondDeps[k]))
-            continue; // haben wir schon
-          found.add(secondDeps[k]);
-        }
+      // Checken, ob wir die Abhaengigkeit schon haben
+      // Nur bei Bedarf hinzufuegen
+      for (int k=0;k<secondDeps.length;++k)
+      {
+        if (found.contains(secondDeps[k]))
+          continue; // haben wir schon
+        found.add(secondDeps[k]);
       }
     }
-    
     return (Dependency[]) found.toArray(new Dependency[found.size()]);
   }
   
@@ -560,7 +580,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.23  2011/05/25 08:00:55  willuhn
+ * Revision 1.24  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
+ * Revision 1.23  2011-05-25 08:00:55  willuhn
  * @N Doppler-Check. Wenn ein gleichnamiges Plugin bereits geladen wurde, wird das zweite jetzt ignoriert. Konnte passieren, wenn ein User ein Plugin sowohl im System- als auch im User-Plugindir installiert hatte
  * @C Lade-Reihenfolge geaendert. Vorher 1. System, 2. User, 3. Config. Jetzt: 1. System, 2. Config, 3. User. Explizit in der Config angegebene Plugindirs haben also Vorrang vor ~/.jameica/plugins. Es bleibt weiterhin dabei, dass die Plugins im System-Dir Vorrang haben. Ist es dort bereits installiert, wird jetzt (dank Doppler-Check) das ggf. im User-Dir vorhandene ignoriert.
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.47 $
- * $Date: 2011/05/25 08:00:55 $
+ * $Revision: 1.48 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,14 +22,20 @@ import java.util.List;
 import java.util.Map;
 
 import de.willuhn.io.FileFinder;
+import de.willuhn.io.FileUtil;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.messaging.PluginMessage;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.ClassService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
 import de.willuhn.util.MultipleClassLoader;
+import de.willuhn.util.ProgressMonitor;
 
 
 /**
@@ -263,8 +269,7 @@ public final class PluginLoader
    * @param loader der Classloader fuer das Plugin.
    * @throws Exception wenn das Initialisieren des Plugins fehlschlug.
    */
-  private void initPlugin(final Manifest manifest,
-      final MultipleClassLoader loader) throws Exception
+  private void initPlugin(final Manifest manifest, final MultipleClassLoader loader) throws Exception
   {
     if (manifest.isInstalled())
     {
@@ -602,6 +607,247 @@ public final class PluginLoader
   }
 
   /**
+   * Prueft, ob das Plugin prinzipiell deinstalliert werden kann.
+   * @param mf das zu pruefende Plugin.
+   * @throws ApplicationException wird geworfen, wenn das Plugin nicht deinstalliert werden kann.
+   */
+  public void checkUnInstall(Manifest mf) throws ApplicationException
+  {
+    I18N i18n = Application.getI18n();
+    
+    if (mf == null)
+      throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu deinstallierende Plugin aus"));
+
+    final File dir = new File(mf.getPluginDir());
+    
+    try
+    {
+      //////////////////////////////////////////////////////////////////////////
+      // 1. Checken, ob es sich im User-Plugin-Ordner befindet
+      try
+      {
+        String dirAbsolute = dir.getCanonicalPath();
+        String userDirAbsolute = Application.getConfig().getUserPluginDir().getCanonicalPath();
+        if (!dirAbsolute.startsWith(userDirAbsolute))
+          throw new ApplicationException(i18n.tr("Nur Plugins in {0} können deinstalliert werden",userDirAbsolute));
+      }
+      catch (ApplicationException ae)
+      {
+        throw ae;
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to check plugin path",e);
+        throw new ApplicationException(i18n.tr("Plugin kann nicht deinstalliert werden: {0}",e.getMessage()));
+      }
+      //
+      //////////////////////////////////////////////////////////////////////////
+      
+      //////////////////////////////////////////////////////////////////////////
+      // 2. Checken, ob wir Schreibberechtigung haben
+      if (!dir.canWrite())
+        throw new ApplicationException(i18n.tr("Keine Berechtigung zum Löschen von {0}",dir.getCanonicalPath()));
+      //
+      //////////////////////////////////////////////////////////////////////////
+
+      //////////////////////////////////////////////////////////////////////////
+      // 3. Checken, ob andere Plugins von diesem abhaengig sind
+      List<Manifest> manifests = this.getInstalledManifests();
+      for (Manifest m:manifests)
+      {
+        if (m.getName().equals(mf.getName()))
+          continue; // sind wir selbst
+        Dependency[] deps = m.getDirectDependencies();
+        if (deps != null)
+        {
+          for (Dependency dep:deps)
+          {
+            String name = dep.getName();
+            if (dep.isRequired() && name != null && name.equals(mf.getName()))
+              throw new ApplicationException(i18n.tr("Plugin {0} benötigt {1}",name,mf.getName()));
+          }
+        }
+      }
+      //
+      //////////////////////////////////////////////////////////////////////////
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to perform uninstall check",e);
+      throw new ApplicationException(i18n.tr("Plugin kann nicht deinstalliert werden: {0}",e.getMessage()));
+    }
+  }
+  
+  /**
+   * Deinstalliert das angegebene Plugin.
+   * Die Deinstallation geschieht im Hintergrund.
+   * Die Funktion kehrt daher sofort zurueck.
+   * @param mf das zu deinstallierende Plugin.
+   * @param deleteUserData
+   * @param monitor der Fortschritts-Monitor.
+   */
+  public void unInstall(final Manifest mf, final boolean deleteUserData, ProgressMonitor monitor)
+  {
+    final I18N i18n = Application.getI18n();
+    
+    try
+    {
+      checkUnInstall(mf);
+      
+      String name = mf.getName();
+      monitor.setStatusText(i18n.tr("Deinstalliere Plugin {0}",name));
+      Logger.warn("uninstalling plugin " + name);
+
+      // "plugin" darf NULL sein - dann war es noch gar nicht aktiv und muss nur geloescht werden
+      AbstractPlugin plugin = getPlugin(mf.getPluginClass());
+      
+      //////////////////////////////////////////////////////////////////////
+      // 1. Uninstall-Routine des Plugins aufrufen und Plugin beenden
+      if (plugin != null)
+      {
+        monitor.addPercentComplete(10);
+        monitor.log("  " + i18n.tr("Stoppe Plugin"));
+        Logger.info("executing uninstall method of " + plugin.getClass().getName());
+        plugin.shutDown();
+        plugin.uninstall(deleteUserData);
+      }
+      
+      //
+      //////////////////////////////////////////////////////////////////////
+      
+      //////////////////////////////////////////////////////////////////////
+      // 2. Services stoppen und entfernen
+      if (plugin != null)
+      {
+        monitor.addPercentComplete(10);
+        monitor.log("  " + i18n.tr("Stoppe Services"));
+        Logger.info("stopping services");
+        Application.getServiceFactory().shutDown(plugin);
+      }
+      //
+      //////////////////////////////////////////////////////////////////////
+
+      //////////////////////////////////////////////////////////////////////
+      //
+      if (deleteUserData && plugin != null)
+      {
+        // 3. Config-Dateien des Plugins loeschen
+        monitor.addPercentComplete(10);
+        monitor.log("  " + i18n.tr("Lösche Konfigurationsdateien des Plugins"));
+        Logger.info("deleting config files");
+        deleteConfigs(plugin);
+        
+        // 4. Benutzerdateien des Plugins loeschen
+        monitor.addPercentComplete(10);
+        monitor.log("  " + i18n.tr("Lösche Benutzerdaten des Plugins"));
+        File dataDir = new File(plugin.getResources().getWorkPath());
+        if (dataDir.exists())
+        {
+          Logger.info("deleting " + dataDir);
+          FileUtil.deleteRecursive(dataDir);
+        }
+      }
+      //
+      //////////////////////////////////////////////////////////////////////
+
+      //////////////////////////////////////////////////////////////////////
+      // 5. Plugin-Dateien loeschen
+      monitor.addPercentComplete(10);
+      File pluginDir = new File(mf.getPluginDir());
+      monitor.log("  " + i18n.tr("Lösche Plugin"));
+      Logger.info("deleting " + pluginDir);
+      FileUtil.deleteRecursive(pluginDir);
+      //////////////////////////////////////////////////////////////////////
+      
+      //////////////////////////////////////////////////////////////////////
+      // 6. Plugin-Version verwerfen
+      monitor.addPercentComplete(10);
+      updateChecker.setAttribute(mf.getPluginClass() + ".version",(String) null);
+      //////////////////////////////////////////////////////////////////////
+      
+      //////////////////////////////////////////////////////////////////////
+      // 7. Aus der Liste der installierten Plugins entfernen
+      monitor.addPercentComplete(10);
+      plugins.remove(mf);
+      //////////////////////////////////////////////////////////////////////
+      
+      //////////////////////////////////////////////////////////////////////
+      // Fertig.
+      monitor.setStatus(ProgressMonitor.STATUS_DONE);
+      monitor.setPercentComplete(100);
+      monitor.setStatusText(i18n.tr("Plugin deinstalliert"));
+      Logger.warn("plugin " + mf.getName() + " uninstalled");
+      //////////////////////////////////////////////////////////////////////
+      
+      Application.getMessagingFactory().sendMessage(new PluginMessage(mf,PluginMessage.Event.UNINSTALLED));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Plugin deinstalliert, bitte starten Sie Jameica neu"),StatusBarMessage.TYPE_SUCCESS));
+    }
+    catch (Exception e)
+    {
+      String msg = e.getMessage();
+      
+      if (!(e instanceof ApplicationException))
+      {
+        Logger.error("unable to uninstall plugin",e);
+        msg = i18n.tr("Fehler beim Deinstallieren: {0}",msg);
+      }
+      
+      monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+      monitor.setStatusText(msg);
+    }
+  }
+  
+  /**
+   * Loescht die Config-Dateien des Plugins.
+   * @param plugin das Plugin.
+   */
+  private void deleteConfigs(AbstractPlugin plugin)
+  {
+    // Wir gehen im Config-Verzeichnis alle Dateien durch, laden zu jedem die Klasse
+    // und checken, ob sie zu diesem Plugin gehoert.
+    ClassLoader loader  = plugin.getResources().getClassLoader();
+
+    FileFinder finder = new FileFinder(new File(Application.getConfig().getConfigDir()));
+    finder.extension(".properties");
+    File[] files = finder.find();
+
+    for (File f:files)
+    {
+      // Wir nehmen nur den Dateinamen - ohne Endung
+      String name = f.getName();
+      name = name.replaceAll("\\.properties$","");
+
+      try
+      {
+        // Checken, ob wir das als Klasse laden koennen
+        Class c = loader.loadClass(name);
+        AbstractPlugin p = this.findByClass(c);
+        if (p == null)
+          continue; // kein Plugin gefunden
+        
+        // gehoert nicht zu diesem Plugin
+        if (!p.getClass().equals(plugin.getClass()))
+          continue;
+      }
+      catch (Exception e)
+      {
+        // Das darf durchaus passieren
+        Logger.write(Level.DEBUG,"unable to determine plugin for file " + f,e);
+        continue;
+      }
+      
+      Logger.info("  " + f.getName());
+      if (!f.delete())
+        Logger.warn("unable to delete " + f);
+    }
+    
+  }
+  
+  /**
    * Wird beim Beenden der Anwendung ausgefuehrt und beendet alle Plugins.
    */
   public void shutDown()
@@ -674,7 +920,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.47  2011/05/25 08:00:55  willuhn
+ * Revision 1.48  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
+ * Revision 1.47  2011-05-25 08:00:55  willuhn
  * @N Doppler-Check. Wenn ein gleichnamiges Plugin bereits geladen wurde, wird das zweite jetzt ignoriert. Konnte passieren, wenn ein User ein Plugin sowohl im System- als auch im User-Plugindir installiert hatte
  * @C Lade-Reihenfolge geaendert. Vorher 1. System, 2. User, 3. Config. Jetzt: 1. System, 2. Config, 3. User. Explizit in der Config angegebene Plugindirs haben also Vorrang vor ~/.jameica/plugins. Es bleibt weiterhin dabei, dass die Plugins im System-Dir Vorrang haben. Ist es dort bereits installiert, wird jetzt (dank Doppler-Check) das ggf. im User-Dir vorhandene ignoriert.
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.57 $
- * $Date: 2011/01/26 12:53:26 $
+ * $Revision: 1.58 $
+ * $Date: 2011/05/31 16:39:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -259,6 +259,57 @@ public final class ServiceFactory
       entry.service = (Service) LocateRegistry.getRegistry(host, port).lookup(fullName);
     return entry.service;
   }
+  
+  /**
+   * Faehrt die Services des angegebenen Plugins runter.
+   * @param plugin das Plugin, fuer das die Services beendet werden sollen.
+   */
+  public synchronized void shutDown(AbstractPlugin plugin)
+  {
+    // Wir haben keine lokalen Services
+    if (Application.inClientMode())
+      return;
+    
+    Logger.info("shutting down local services");
+    ServiceDescriptor[] services = plugin.getManifest().getServices();
+    if (services == null || services.length == 0)
+      return;
+    
+    for (ServiceDescriptor s:services)
+    {
+      String fullName = plugin.getClass().getName() + "." + s.getName();
+      ServiceEntry entry = this.services.get(fullName);
+
+      // Service kennen wir nicht oder er ist nicht lokal
+      if (entry == null || entry.service == null || entry.remote)
+        continue;
+      
+      try
+      {
+        // Service stoppen
+        if (entry.service.isStarted())
+        {
+          Logger.info("  " + s.getName());
+          entry.service.stop(false);
+        }
+        
+        // RMI-Unbind
+        if (s.share())
+        {
+          RegistryService rs = (RegistryService) Application.getBootLoader().getBootable(RegistryService.class);
+          rs.unbind(fullName);
+        }
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while stopping service",e);
+      }
+      finally
+      {
+        this.services.remove(fullName);
+      }
+    }
+  }
 
   /**
    * Faehrt die Services runter.
@@ -367,7 +418,10 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
- * Revision 1.57  2011/01/26 12:53:26  willuhn
+ * Revision 1.58  2011/05/31 16:39:05  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
+ * Revision 1.57  2011-01-26 12:53:26  willuhn
  * *** empty log message ***
  *
  * Revision 1.56  2011-01-26 12:52:56  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/RegistryService.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/04/02 15:00:31 $
+ * $Revision: 1.4 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -148,6 +148,20 @@ public class RegistryService implements Bootable
   }
   
   /**
+   * Entfernt ein Remote-Objekt aus der Registry.
+   * @param name der Lookup-Name.
+   * @throws Exception
+   */
+  public void unbind(String name) throws Exception
+  {
+    if (this.registry == null)
+      return;
+
+    this.registry.unbind(name);
+    LookupService.unRegister("rmi:" + name);
+  }
+  
+  /**
    * Liefert die aktuelle RMI-Socket-Factory.
    * @return aktuelle RMI-Socket-Factory.
    */
@@ -161,6 +175,9 @@ public class RegistryService implements Bootable
 
 /**********************************************************************
  * $Log: RegistryService.java,v $
+ * Revision 1.4  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
  * Revision 1.3  2009/04/02 15:00:31  willuhn
  * @N RMI-Patch von Jan
  *

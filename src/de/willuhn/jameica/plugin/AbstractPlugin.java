@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPlugin.java,v $
- * $Revision: 1.16 $
- * $Date: 2009/01/18 13:47:38 $
+ * $Revision: 1.17 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -126,10 +126,28 @@ public abstract class AbstractPlugin
     // Per Default nichts machen
   }
 	
+	/**
+	 * Wird aufgerufen, wenn das Plugin ueber Datei->Einstellungen->Plugins
+	 * deinstalliert wird. Hier kann das Plugin bei Bedarf eigene Aufraeum-Arbeiten durchfuehren.
+	 * VOR dem Aufruf dieser Funktion wird "shutDown" aufgerufen. Falls dort also
+	 * z.Bsp. Datenbankverbindungen geschlossen wurden, dann stehen diese hier nicht
+	 * mehr zur Verfuegung.
+	 * @param deleteUserData true, wenn der User bei der Deinstallation angegeben
+	 * hat, dass auch die Benutzer-Daten des Plugins geloescht werden sollen.
+	 * @throws ApplicationException kann geworfen werden, um die Deinstallation abzubrechen.
+	 */
+	public void uninstall(boolean deleteUserData) throws ApplicationException
+	{
+    // Per Default nichts machen
+	}
+	
 }
 
 /*********************************************************************
  * $Log: AbstractPlugin.java,v $
+ * Revision 1.17  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
  * Revision 1.16  2009/01/18 13:47:38  willuhn
  * @R Expliziten Konstruktor entfernt. Damit muss er in abgeleiteten Klassen gar nicht mehr implementiert werden.
  *

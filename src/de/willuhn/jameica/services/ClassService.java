@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ClassService.java,v $
- * $Revision: 1.6 $
- * $Date: 2010/09/10 11:34:52 $
+ * $Revision: 1.7 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -124,7 +124,9 @@ public class ClassService implements Bootable
       //   - sich selbst
       //   - die Plugins, von denen es abhaengig ist
       //   - Jameica
-      Dependency[] deps = manifest.getDependencies();
+      // Hier reichen die direkten Abhaengkeiten. Weil deren Classloader kennen
+      // ja wiederrum ihre Abhaengigkeiten
+      Dependency[] deps = manifest.getDirectDependencies();
       if (deps != null && deps.length > 0)
       {
         Logger.info("  adding depending classloaders");
@@ -283,7 +285,10 @@ public class ClassService implements Bootable
 
 /**********************************************************************
  * $Log: ClassService.java,v $
- * Revision 1.6  2010/09/10 11:34:52  willuhn
+ * Revision 1.7  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
+ * Revision 1.6  2010-09-10 11:34:52  willuhn
  * @C Klassen im bin-Verzeichnis nur noch finden, wenn das "bin" der direkte Unterordner ist. Fuehrte sonst zu unnoetigen Fehlermeldungen, wenn Jameica in einem Pfad installiert ist, der "/bin/" enthaelt
  *
  * Revision 1.5  2010/06/01 21:35:21  willuhn

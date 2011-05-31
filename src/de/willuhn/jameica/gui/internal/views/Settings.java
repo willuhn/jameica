@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.34 $
- * $Date: 2011/05/03 16:45:20 $
+ * $Revision: 1.35 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -96,9 +96,8 @@ public class Settings extends AbstractView implements Extendable
 
     /////////////////////////////////////////////////////////////////
     // Plugin-Einstellungen
-    TabGroup plugins = new TabGroup(getTabFolder(),i18n.tr("Plugins"));
-
-    plugins.addPart(control.getPlugins());
+    TabGroup plugins = new TabGroup(getTabFolder(),i18n.tr("Plugins"),false,1);
+    control.getPlugins().paint(plugins.getComposite());
 
     //
     /////////////////////////////////////////////////////////////////
@@ -184,7 +183,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.34  2011/05/03 16:45:20  willuhn
+ * Revision 1.35  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
+ * Revision 1.34  2011-05-03 16:45:20  willuhn
  * @R Locale nicht mehr ueber GUI aenderbar - hat eh keiner verwendet
  * @R Style nicht mehr aenderbar - der Flatstyle war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/PluginDetails.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/04/26 11:54:51 $
+ * $Revision: 1.3 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -44,8 +44,8 @@ public class PluginDetails extends AbstractView
 		container.addLabelPair(i18n.tr("URL"),control.getUrl());
 
 		container.addHeadline(i18n.tr("Pfade"));
-		container.addLabelPair(i18n.tr("Installations-Verzeichnis"),control.getPath());
-		container.addLabelPair(i18n.tr("Arbeitsverzeichnis"),control.getWorkPath());
+		container.addLabelPair(i18n.tr("Installationsordner"),control.getPath());
+		container.addLabelPair(i18n.tr("Ordner der Benutzerdaten"),control.getWorkPath());
 
 		container.addHeadline(i18n.tr("Services"));
 		container.addPart(control.getServiceList());
@@ -55,7 +55,10 @@ public class PluginDetails extends AbstractView
 
 /**********************************************************************
  * $Log: PluginDetails.java,v $
- * Revision 1.2  2011/04/26 11:54:51  willuhn
+ * Revision 1.3  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
+ * Revision 1.2  2011-04-26 11:54:51  willuhn
  * @R Back-Button entfernt
  *
  * Revision 1.1  2005/06/14 23:15:30  web0

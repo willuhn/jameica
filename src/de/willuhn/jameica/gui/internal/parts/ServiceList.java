@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/05/11 10:27:24 $
+ * $Revision: 1.13 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -317,16 +317,19 @@ public class ServiceList extends TablePart
    */
   private static GenericIterator init(AbstractPlugin plugin)
   {
-    ServiceDescriptor[] descriptors = plugin.getManifest().getServices();
-    ArrayList li = new ArrayList();
-    for (int i=0;i<descriptors.length;++i)
-    {
-      if (Application.inClientMode() && !descriptors[i].share())
-        continue;
-      li.add(new ServiceObject(plugin,descriptors[i].getName()));
-    }
     try
     {
+      if (plugin == null)
+        return PseudoIterator.fromArray(new ServiceObject[0]);
+        
+      ServiceDescriptor[] descriptors = plugin.getManifest().getServices();
+      ArrayList li = new ArrayList();
+      for (int i=0;i<descriptors.length;++i)
+      {
+        if (Application.inClientMode() && !descriptors[i].share())
+          continue;
+        li.add(new ServiceObject(plugin,descriptors[i].getName()));
+      }
       return PseudoIterator.fromArray((ServiceObject[]) li.toArray(new ServiceObject[li.size()]));
     }
     catch (RemoteException e)
@@ -464,7 +467,10 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
- * Revision 1.12  2011/05/11 10:27:24  willuhn
+ * Revision 1.13  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
+ * Revision 1.12  2011-05-11 10:27:24  willuhn
  * @N OCE fangen
  *
  * Revision 1.11  2011-04-26 11:55:16  willuhn

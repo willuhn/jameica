@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/03/10 23:51:28 $
+ * $Revision: 1.6 $
+ * $Date: 2011/05/31 16:39:04 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,17 +14,37 @@
 package de.willuhn.jameica.gui.internal.parts;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
-import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.GenericObject;
-import de.willuhn.datasource.pseudo.PseudoIterator;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TableItem;
+
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.formatter.TableFormatter;
+import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.internal.action.FileClose;
 import de.willuhn.jameica.gui.internal.action.PluginDetails;
+import de.willuhn.jameica.gui.internal.action.PluginInstall;
+import de.willuhn.jameica.gui.internal.action.PluginUnInstall;
+import de.willuhn.jameica.gui.parts.Button;
+import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SimpleContainer;
+import de.willuhn.jameica.messaging.Message;
+import de.willuhn.jameica.messaging.MessageConsumer;
+import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -35,136 +55,202 @@ import de.willuhn.util.I18N;
  */
 public class PluginList extends TablePart
 {
+  private final static I18N i18n = Application.getI18n();
+  private MessageConsumer mc = new MyMessageConsumer();
+  
+  private Button uninstallButton = null;
+  private LabelInput comment = null;
 
   /**
    * ct.
    */
   public PluginList()
   {
-    super(init(),new CustomAction());
+    super(Application.getPluginLoader().getInstalledManifests(),new PluginDetails());
 
-    I18N i18n = Application.getI18n();
-
+    // TODO 1. Das Update-Handling fehlt noch. Hier muessen wir pruefen, ob das Plugin aktualisiert werden kann
+    // TODO 2. Zertifikats-Check irgendwie moeglich?
     ContextMenu menu = new ContextMenu();
-    menu.addItem(new ContextMenuItem(i18n.tr("Öffnen..."),new CustomAction(),"document-open.png"));
+    menu.addItem(new CheckedSingleContextMenuItem(i18n.tr("Öffnen..."),new PluginDetails(),"text-x-generic.png"));
+    menu.addItem(new ContextMenuItem(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),"document-open.png"));
+    menu.addItem(ContextMenuItem.SEPARATOR);
+    menu.addItem(new CheckedSingleContextMenuItem(i18n.tr("Plugin löschen..."),new PluginUnInstall(),"user-trash-full.png") {
+      public boolean isEnabledFor(Object o)
+      {
+        return super.isEnabledFor(o) && canUninstall((Manifest)o);
+      }
+    });
     setContextMenu(menu);
+    
     addColumn(i18n.tr("Name"),"name");
     addColumn(i18n.tr("Beschreibung"),"description");
     addColumn(i18n.tr("Version"),"version");
-    addColumn(i18n.tr("Pfad"),"path");
+    addColumn(i18n.tr("Pfad"),"pluginDir");
+    
+    setFormatter(new TableFormatter() {
+      public void format(TableItem item)
+      {
+        Manifest mf = (Manifest) item.getData();
+        
+        // Wenn das Plugin noch nicht initialisiert ist, zeigen wir es in grauer Farbe an
+        AbstractPlugin plugin = Application.getPluginLoader().getPlugin(mf.getPluginClass());
+        item.setForeground(plugin != null ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
+      }
+    });
+    setMulti(false);
     setSummary(false);
   }
-
+  
   /**
-   * Ueberschrieben, damit wir nicht "PluginObject" rausgeben sondern nur AbstractPlugin.
+   * @see de.willuhn.jameica.gui.parts.TablePart#paint(org.eclipse.swt.widgets.Composite)
    */
-  private static class CustomAction extends PluginDetails
+  public synchronized void paint(Composite parent) throws RemoteException
   {
-    /**
-     * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
-     */
-    public void handleAction(Object context) throws ApplicationException
-    {
-      if (context == null || !(context instanceof PluginObject))
-        return;
-      PluginObject o = (PluginObject) context;
-      super.handleAction(o.plugin);
-    }
+    super.paint(parent);
+    
+    // Uninstall-Button nur aktivieren, wenn etwas ausgewaehlt ist
+    addSelectionListener(new Listener() {
+      public void handleEvent(Event event)
+      {
+        getUninstallButton().setEnabled(canUninstall((Manifest)getSelection()));
+      }
+    });
+    
+    Container container = new SimpleContainer(parent);
+    container.addInput(getComment());
+    
+    // Buttons zum Installieren/Deinstallieren
+    ButtonArea buttons = new ButtonArea();
+    buttons.addButton(getUninstallButton());
+    buttons.addButton(new Button(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),null,false,"document-open.png"));
+    buttons.paint(parent);
+
+    Application.getMessagingFactory().registerMessageConsumer(this.mc);
+    parent.addDisposeListener(new DisposeListener() {
+      public void widgetDisposed(DisposeEvent e)
+      {
+        Application.getMessagingFactory().unRegisterMessageConsumer(mc);
+      }
+    });
   }
-
+  
   /**
-   * Initialisiert die Liste der Plugins.
-   * @return Liste der Plugins.
+   * Liefert den Uninstall-Button.
+   * @return der Uninstall-Button.
    */
-  private static GenericIterator init()
+  private Button getUninstallButton()
   {
-    List list = Application.getPluginLoader().getInstalledPlugins();
-    ArrayList l = new ArrayList();
-    for (int i=0;i<list.size();++i)
+    if (this.uninstallButton != null)
+      return this.uninstallButton;
+
+    this.uninstallButton = new Button(i18n.tr("Plugin löschen..."),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        new PluginUnInstall().handleAction(getSelection());
+      }
+    },null,false,"user-trash-full.png");
+    this.uninstallButton.setEnabled(false);
+    
+    return this.uninstallButton;
+  }
+  
+  /**
+   * Liefert ein Label mit einem Kommentar.
+   * @return ein Label mit einem Kommentar.
+   */
+  private LabelInput getComment()
+  {
+    if (this.comment == null)
     {
-      l.add(new PluginObject((AbstractPlugin) list.get(i)));
+      this.comment = new LabelInput(i18n.tr("Nur Plugins in {0} können deinstalliert werden.", Application.getConfig().getUserPluginDir().getAbsolutePath()));
+      this.comment.setColor(Color.COMMENT);
+      this.comment.setName("Hinweis");
     }
+    return this.comment;
+  }
+  
+  /**
+   * Prueft, ob das angegebene Plugin deinstalliert werden kann.
+   * @param mf das zu pruefende Plugin.
+   * @return true, wenn es deinstalliert werden kann.
+   */
+  private boolean canUninstall(Manifest mf)
+  {
     try
     {
-      return PseudoIterator.fromArray((PluginObject[])l.toArray(new PluginObject[l.size()]));
+      Application.getPluginLoader().checkUnInstall(mf);
+      return true;
     }
-    catch (RemoteException e)
-    {
-      Logger.error("error while loading plugin list",e);
-      return null;
+    catch (ApplicationException ae) {
     }
+    return false;
   }
-
+  
   /**
-   * Ein Hilfs-Objekt, um die Eigenschaften eines Plugins generisch anzeigen zu koennen.
+   * Wird benachrichtigt, wenn ein Plugin deinstalliert wurde und loescht es aus
+   * der Liste
    */
-  private static class PluginObject implements GenericObject
+  private class MyMessageConsumer implements MessageConsumer
   {
-    private AbstractPlugin plugin;
-
-    private PluginObject(AbstractPlugin plugin)
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+     */
+    public Class[] getExpectedMessageTypes()
     {
-      this.plugin = plugin;
+      return new Class[]{PluginMessage.class};
     }
 
     /**
-     * @see de.willuhn.datasource.GenericObject#getAttribute(java.lang.String)
+     * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
      */
-    public Object getAttribute(String name) throws RemoteException
+    public void handleMessage(Message message) throws Exception
     {
-      if ("version".equals(name))
-        return ""+plugin.getManifest().getVersion();
-      if ("path".equals(name))
-        return plugin.getManifest().getPluginDir();
-      if ("workpath".equals(name))
-        return plugin.getResources().getWorkPath();
-      if ("description".equals(name))
-      {
-        return plugin.getManifest().getDescription();
-      }
-      return plugin.getManifest().getName();
+      final PluginMessage m = (PluginMessage) message;
+      final Manifest mf = m.getManifest();
+      
+      if (mf == null)
+        return;
+
+      GUI.getDisplay().syncExec(new Runnable() {
+        public void run()
+        {
+          try
+          {
+            // Das entfernen machen wir erstmal beim Deinstallieren und Installieren
+            List<Manifest> list = getItems();
+            // Checken, ob wir es in der Liste haben
+            for (Manifest o:list)
+            {
+              if (o.getName().equals(mf.getName()))
+                removeItem(o);
+            }
+
+            // Und wenn es installiert wurde, fuegen wir es neu ein
+            if (m.getEvent() == PluginMessage.Event.INSTALLED)
+              addItem(mf);
+            else if (m.getEvent() == PluginMessage.Event.UNINSTALLED)
+              getUninstallButton().setEnabled(false);
+            
+            if (Application.getCallback().askUser(i18n.tr("Jameica jetzt beenden?")))
+              new FileClose().handleAction(null);
+              
+          }
+          catch (Exception e)
+          {
+            Logger.error("unable to update table",e);
+          }
+        }
+      });
     }
 
     /**
-     * @see de.willuhn.datasource.GenericObject#getID()
+     * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
      */
-    public String getID() throws RemoteException
+    public boolean autoRegister()
     {
-      return (String)getAttribute("path");
+      return false;
     }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getPrimaryAttribute()
-     */
-    public String getPrimaryAttribute() throws RemoteException
-    {
-      return "name";
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#equals(de.willuhn.datasource.GenericObject)
-     */
-    public boolean equals(GenericObject other) throws RemoteException
-    {
-      if (other == null)
-        return false;
-      return getID().equals(other.getID());
-    }
-
-    /**
-     * @see de.willuhn.datasource.GenericObject#getAttributeNames()
-     */
-    public String[] getAttributeNames() throws RemoteException
-    {
-      return new String[]
-      {
-        "version",
-        "path",
-        "workpath",
-        "description",
-        "name"
-      };
-    }
+    
   }
 
 }
@@ -172,20 +258,7 @@ public class PluginList extends TablePart
 
 /*********************************************************************
  * $Log: PluginList.java,v $
- * Revision 1.5  2009/03/10 23:51:28  willuhn
- * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
- *
- * Revision 1.4  2008/12/19 12:16:02  willuhn
- * @N Mehr Icons
- * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
- *
- * Revision 1.3  2007/04/16 12:36:44  willuhn
- * @C getInstalledPlugins und getInstalledManifests liefern nun eine Liste vom Typ "List" statt "Iterator"
- *
- * Revision 1.2  2005/06/27 15:35:51  web0
- * @N ability to store last table order
- *
- * Revision 1.1  2005/06/14 23:15:30  web0
- * @N added settings for plugins/services
+ * Revision 1.6  2011/05/31 16:39:04  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  **********************************************************************/

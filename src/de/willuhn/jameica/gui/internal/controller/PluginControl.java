@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/PluginControl.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/03/10 23:51:28 $
+ * $Revision: 1.3 $
+ * $Date: 2011/05/31 16:39:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,15 +21,13 @@ import de.willuhn.jameica.gui.internal.parts.ServiceList;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.system.Application;
 
 /**
  * Controller zur Administration der installierten Plugins.
  */
 public class PluginControl extends AbstractControl
 {
-
-	private AbstractPlugin plugin = null;
-
 	private Input name					= null;
 	private Input version				= null;
 	private Input license				= null;
@@ -46,25 +44,22 @@ public class PluginControl extends AbstractControl
     super(view);
   }
 
-	/**
-	 * Liefert das gerade ausgewaehlte Plugin.
-   * @return ausgewaehltes Plugin.
-   */
-  private AbstractPlugin getPlugin()
-	{
-		if (plugin != null)
-			return plugin;
-		plugin = (AbstractPlugin) getCurrentObject();
-		return plugin;
-	}
-
-	/**
-	 * Liefert das Manifest eines Plugins.
+  /**
+   * Liefert das Manifest eines Plugins.
    * @return Manifest.
    */
   private Manifest getManifest()
 	{
-		return getPlugin().getManifest();
+		return (Manifest) getCurrentObject();
+	}
+
+  /**
+   * Liefert das gerade ausgewaehlte Plugin.
+   * @return ausgewaehltes Plugin.
+   */
+  private AbstractPlugin getPlugin()
+	{
+		return Application.getPluginLoader().getPlugin(getManifest().getPluginClass());
 	}
 
 	/**
@@ -87,7 +82,7 @@ public class PluginControl extends AbstractControl
 	{
 		if (version != null)
 			return version;
-		version = new LabelInput(""+getManifest().getVersion());
+		version = new LabelInput(getManifest().getVersion().toString());
 		return version;
 	}
 
@@ -99,7 +94,7 @@ public class PluginControl extends AbstractControl
 	{
 		if (path != null)
 			return path;
-		path = new LabelInput(""+getPlugin().getManifest().getPluginDir());
+		path = new LabelInput(getManifest().getPluginDir());
 		return path;
 	}
 
@@ -111,7 +106,12 @@ public class PluginControl extends AbstractControl
 	{
 		if (workPath != null)
 			return workPath;
-		workPath = new LabelInput(""+getPlugin().getResources().getWorkPath());
+		
+		String dir = Application.getI18n().tr("<noch nicht erstellt>");
+		AbstractPlugin p = getPlugin();
+		if (p != null)
+		  dir = p.getResources().getWorkPath();
+		workPath = new LabelInput(dir);
 		return workPath;
 	}
 
@@ -155,6 +155,9 @@ public class PluginControl extends AbstractControl
 
 /**********************************************************************
  * $Log: PluginControl.java,v $
+ * Revision 1.3  2011/05/31 16:39:05  willuhn
+ * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
+ *
  * Revision 1.2  2009/03/10 23:51:28  willuhn
  * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
  *
