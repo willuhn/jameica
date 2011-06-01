@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/Attic/PluginPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/01 17:35:58 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/01 17:52:03 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -62,18 +62,18 @@ public class PluginPart implements Part
   {
     I18N i18n = Application.getI18n();
 
-    org.eclipse.swt.graphics.Color bg = comp.getBackground();
+    org.eclipse.swt.graphics.Color white = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
 
-    ScrolledComposite scrolled = new ScrolledComposite(comp,SWT.V_SCROLL);
+    ScrolledComposite scrolled = new ScrolledComposite(comp,SWT.V_SCROLL | SWT.BORDER);
     scrolled.setLayoutData(new GridData(GridData.FILL_BOTH));
     scrolled.setLayout(new GridLayout());
     scrolled.setExpandHorizontal(true);
-    if (bg != null) scrolled.setBackground(bg);
+    scrolled.setBackground(white);
     
     this.parent = new Composite(scrolled,SWT.NONE);
     this.parent.setLayoutData(new GridData(GridData.FILL_BOTH));
     this.parent.setLayout(new GridLayout());
-    if (bg != null) this.parent.setBackground(bg);
+    this.parent.setBackground(white);
 
     scrolled.setContent(this.parent);
     
@@ -196,7 +196,10 @@ public class PluginPart implements Part
 
 /**********************************************************************
  * $Log: PluginPart.java,v $
- * Revision 1.1  2011/06/01 17:35:58  willuhn
+ * Revision 1.2  2011/06/01 17:52:03  willuhn
+ * @C Weisser Hintergrund: Der des Parent funktionierte unter Windows nicht richtig. Das gab haessliche graue Flaechen.
+ *
+ * Revision 1.1  2011-06-01 17:35:58  willuhn
  * @N Ergonomischere Verwaltung der Plugins
  *
  **********************************************************************/
