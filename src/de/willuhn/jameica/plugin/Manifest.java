@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.28 $
- * $Date: 2011/06/01 15:22:13 $
+ * $Revision: 1.29 $
+ * $Date: 2011/06/01 15:22:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -480,9 +480,9 @@ public class Manifest implements Comparable
   public void canDeploy() throws ApplicationException
   {
     // 1. Benoetigte Jameica-Version.
-    Dependency dep = this.getJameicaDependency();
-    if (!dep.check())
-      throw new ApplicationException(Application.getI18n().tr("Plugin benötigt Jameica {1}",dep.getVersion()));
+    Dependency jd = this.getJameicaDependency();
+    if (!jd.check())
+      throw new ApplicationException(Application.getI18n().tr("Plugin benötigt Jameica {1}",jd.getVersion()));
 
     // 2. Es reichen die direkten Abhaengigkeiten. Die indirekten werden ja
     //    von dem anderen Manifest geprueft
@@ -656,7 +656,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.28  2011/06/01 15:22:13  willuhn
+ * Revision 1.29  2011/06/01 15:22:28  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.28  2011-06-01 15:22:13  willuhn
  * *** empty log message ***
  *
  * Revision 1.27  2011-06-01 13:45:43  willuhn
