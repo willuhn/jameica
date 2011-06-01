@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginUnInstall.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/01 11:03:40 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -49,7 +49,7 @@ public class PluginUnInstall implements Action
       throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu deinstallierende Plugin aus"));
 
     // Bevor wir den Dialog anzeigen, checken wir, ob eine Deinstallation ueberhaupt moeglich ist
-    Application.getPluginLoader().checkUnInstall(mf);
+    Application.getPluginLoader().canUnInstall(mf);
 
     boolean deleteUserData = false;
     // Sicherheitsabfrage
@@ -103,7 +103,10 @@ public class PluginUnInstall implements Action
 
 /**********************************************************************
  * $Log: PluginUnInstall.java,v $
- * Revision 1.1  2011/05/31 16:39:04  willuhn
+ * Revision 1.2  2011/06/01 11:03:40  willuhn
+ * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
+ *
+ * Revision 1.1  2011-05-31 16:39:04  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  **********************************************************************/

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.3 $
+ * $Date: 2011/06/01 11:03:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,8 +24,8 @@ import de.willuhn.io.FileUtil;
 import de.willuhn.io.ZipExtractor;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.Dependency;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -98,6 +98,20 @@ public class DeployService implements Bootable
   }
   
   /**
+   * Prueft, ob das Plugin prinzipiell installiert werden kann.
+   * Hierzu wird geprueft, ob die ZIP-Datei den typischen Aufbau eines Plugins
+   * besitzt. Ausserdem wird das enthaltene Manifest geladen und geprueft, ob
+   * es korrekt ist und die darin definierten Abhaengigkeiten erfuellt sind.
+   * @param zip die ZIP-Datei mit dem zu pruefenden Plugin.
+   * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
+   */
+  public void canDeploy(File zip) throws ApplicationException
+  {
+    // Die Checks passieren alle im Konstruktor.
+    new ZippedPlugin(zip);
+  }
+  
+  /**
    * Deployed das Plugin im User-Plugin-Dir.
    * @param zip die ZIP-Datei mit dem Plugin.
    * @param monitor der Progressmonitor zur Anzeige des Fortschrittes.
@@ -106,124 +120,31 @@ public class DeployService implements Bootable
   {
     I18N i18n = Application.getI18n();
 
-    File tempDir = null;
-
     try
     {
-      if (zip == null)
-        throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu installierende Plugin"));
-
-      if (!zip.getName().endsWith(".zip"))
-        throw new ApplicationException(i18n.tr("Keine gültige ZIP-Datei"));
-
-      File deployDir = Application.getConfig().getUserDeployDir();
+      // Hier drin finden schon alle relevanten Checks statt
+      ZippedPlugin plugin = new ZippedPlugin(zip);
+      
+      // Ziel-Ordner
       File pluginDir = Application.getConfig().getUserPluginDir();
-
-      tempDir        = new File(deployDir,Long.toString(System.nanoTime()));
-
-      ////////////////////////////////////////////////////////////////////////////
-      // 1. Temp-Verzeichnis erstellen
       
-      if (tempDir.exists() && !FileUtil.deleteRecursive(tempDir))
-        throw new ApplicationException(i18n.tr("Ordner {0} kann nicht gelöscht werden",tempDir.getAbsolutePath()));
-
-      if (!tempDir.mkdirs())
-        throw new ApplicationException(i18n.tr("Ordner {0} kann nicht erstellt werden",tempDir.getAbsolutePath()));
-      //
-      ////////////////////////////////////////////////////////////////////////////
-
-      
-      ////////////////////////////////////////////////////////////////////////////
-      // 2. Temporaer entpacken
-      ZipExtractor extractor = new ZipExtractor(new ZipFile(zip,ZipFile.OPEN_READ));
-      extractor.setMonitor(monitor);
-      extractor.extract(tempDir);
-      
-      // Name des Plugins ist der Name des Ordners
-      File dir = null;
-      File[] children = tempDir.listFiles();
-      if (children == null || children.length == 0)
-        throw new ApplicationException(i18n.tr("Plugin enthält keine Daten"));
-      for (File f:children)
-      {
-        String name = f.getName();
-        if (name.equals(".") || name.equals(".."))
-          continue;
-
-        // Plugin darf nur diesen einen Ordner enthalten
-        if (!f.isDirectory())
-        {
-          Logger.error("plugin zip-file must contain only one folder");
-          throw new ApplicationException(i18n.tr("Kein gültiges Jameica-Plugin"));
-        }
-
-        // Hier darf nichts mehr kommen
-        if (dir != null)
-        {
-          Logger.error("plugin zip-file must contain only one folder");
-          throw new ApplicationException(i18n.tr("Kein gültiges Jameica-Plugin"));
-        }
-        
-        dir = f;
-      }
-      
-      if (dir == null)
-      {
-        Logger.error("plugin zip-file contains no subfolder");
-        throw new ApplicationException(i18n.tr("Kein gültiges Jameica-Plugin"));
-      }
-      //
-      ////////////////////////////////////////////////////////////////////////////
-      
-      ////////////////////////////////////////////////////////////////////////////
-      // 3. Plugin-Aufbau pruefen
-      
-      // Warnung: Die Abhaengigkeiten zu anderen Plugins koennen wir hier nicht
-      // pruefen, weil 
-      monitor.setStatusText(i18n.tr("Prüfe Abhängigkeiten"));
-      Logger.info("checking dependencies");
-      
-      File file = new File(dir,"plugin.xml");
-      if (!file.exists())
-      {
-        Logger.error("plugin zip-file contains no plugin.xml");
-        throw new ApplicationException(i18n.tr("Kein gültiges Jameica-Plugin"));
-      }
-      
-      Manifest mf = new Manifest(file);
-      
-      // Wir duerfen hier auf keinen Fall die indirekten Abhaengigkeiten
-      // pruefen, da das den kompletten Pluginloader initialisieren wuerde
-      Dependency[] deps = mf.getDirectDependencies();
-      for (Dependency dep:deps)
-      {
-        if (!dep.check())
-          throw new ApplicationException(i18n.tr("Plugin benötigt {0}, welches aber nicht (oder in der falschen Version) installiert ist",dep.getName()));
-      }
-      
-      Dependency dep = mf.getJameicaDependency();
-      if (!dep.check())
-        throw new ApplicationException(i18n.tr("Plugin benötigt Jameica {1}",dep.getVersion()));
-      //
-      ////////////////////////////////////////////////////////////////////////////
-      
-      ////////////////////////////////////////////////////////////////////////////
-      // 4. Deployen
-
       // Vorherige Version loeschen, falls vorhanden
-      File target = new File(pluginDir,dir.getName());
+      File target = new File(pluginDir,plugin.getName());
       if (target.exists())
       {
         monitor.setStatusText(i18n.tr("Lösche vorherige Version..."));
-        Logger.info("delete previous version of plugin");
+        Logger.info("deleting previous version in " + target);
         if (!FileUtil.deleteRecursive(target))
           throw new ApplicationException(i18n.tr("Ordner {0} kann nicht gelöscht werden",target.getAbsolutePath()));
       }
-      
+
+      // Entpacken
       monitor.setStatusText(i18n.tr("Installiere..."));
-      Logger.info("moving " + dir + " to " + target);
-      dir.renameTo(target);
-      
+      Logger.info("extracting " + zip + " to " + target);
+      ZipExtractor extractor = new ZipExtractor(new ZipFile(zip,ZipFile.OPEN_READ));
+      extractor.setMonitor(monitor);
+      extractor.extract(pluginDir);
+
       monitor.setStatus(ProgressMonitor.STATUS_DONE);
       monitor.setStatusText(i18n.tr("Plugin installiert, bitte starten Sie Jameica neu"));
       Logger.info("plugin successfully deployed");
@@ -248,23 +169,6 @@ public class DeployService implements Bootable
       monitor.setStatus(ProgressMonitor.STATUS_ERROR);
       monitor.setStatusText(msg);
     }
-    finally
-    {
-      // Temp-Verzeichnis loeschen
-      if (tempDir != null)
-      {
-        Logger.info("deleting temp dir " + tempDir);
-        try
-        {
-          if (!FileUtil.deleteRecursive(tempDir))
-            Logger.error("unable to delete temp dir " + tempDir); // Tja, mehr koennen wir hier auch nicht machen
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to delete temp dir " + tempDir,e);
-        }
-      }
-    }
   }
   
   /**
@@ -273,7 +177,6 @@ public class DeployService implements Bootable
   public void shutdown()
   {
   }
-
 }
 
 

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.48 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.49 $
+ * $Date: 2011/06/01 11:03:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -611,7 +611,7 @@ public final class PluginLoader
    * @param mf das zu pruefende Plugin.
    * @throws ApplicationException wird geworfen, wenn das Plugin nicht deinstalliert werden kann.
    */
-  public void checkUnInstall(Manifest mf) throws ApplicationException
+  public void canUnInstall(Manifest mf) throws ApplicationException
   {
     I18N i18n = Application.getI18n();
     
@@ -696,7 +696,7 @@ public final class PluginLoader
     
     try
     {
-      checkUnInstall(mf);
+      canUnInstall(mf);
       
       String name = mf.getName();
       monitor.setStatusText(i18n.tr("Deinstalliere Plugin {0}",name));
@@ -920,7 +920,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.48  2011/05/31 16:39:04  willuhn
+ * Revision 1.49  2011/06/01 11:03:40  willuhn
+ * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
+ *
+ * Revision 1.48  2011-05-31 16:39:04  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  * Revision 1.47  2011-05-25 08:00:55  willuhn

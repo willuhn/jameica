@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.7 $
+ * $Date: 2011/06/01 11:03:40 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -69,7 +69,6 @@ public class PluginList extends TablePart
     super(Application.getPluginLoader().getInstalledManifests(),new PluginDetails());
 
     // TODO 1. Das Update-Handling fehlt noch. Hier muessen wir pruefen, ob das Plugin aktualisiert werden kann
-    // TODO 2. Zertifikats-Check irgendwie moeglich?
     ContextMenu menu = new ContextMenu();
     menu.addItem(new CheckedSingleContextMenuItem(i18n.tr("Öffnen..."),new PluginDetails(),"text-x-generic.png"));
     menu.addItem(new ContextMenuItem(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),"document-open.png"));
@@ -178,7 +177,7 @@ public class PluginList extends TablePart
   {
     try
     {
-      Application.getPluginLoader().checkUnInstall(mf);
+      Application.getPluginLoader().canUnInstall(mf);
       return true;
     }
     catch (ApplicationException ae) {
@@ -258,7 +257,10 @@ public class PluginList extends TablePart
 
 /*********************************************************************
  * $Log: PluginList.java,v $
- * Revision 1.6  2011/05/31 16:39:04  willuhn
+ * Revision 1.7  2011/06/01 11:03:40  willuhn
+ * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
+ *
+ * Revision 1.6  2011-05-31 16:39:04  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  **********************************************************************/
