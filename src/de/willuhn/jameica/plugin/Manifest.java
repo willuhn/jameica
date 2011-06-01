@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.27 $
- * $Date: 2011/06/01 13:45:43 $
+ * $Revision: 1.28 $
+ * $Date: 2011/06/01 15:22:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -490,7 +490,7 @@ public class Manifest implements Comparable
     for (Dependency d:deps)
     {
       if (!d.check())
-        throw new ApplicationException(Application.getI18n().tr("Plugin benötigt {0}, welches aber nicht (oder in der falschen Version) installiert ist",dep.getName()));
+        throw new ApplicationException(Application.getI18n().tr("Plugin benötigt {0}, welches aber nicht (oder in der falschen Version) installiert ist",d.getName()));
     }
 
     Manifest installed = null;
@@ -656,7 +656,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.27  2011/06/01 13:45:43  willuhn
+ * Revision 1.28  2011/06/01 15:22:13  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.27  2011-06-01 13:45:43  willuhn
  * @B In ZippedPlugin duerfen die Deps nicht geprueft werden, weil dadurch indirekt (in Dependency.check()) der Plugin-Loader initialisiert werden wuerde
  *
  * Revision 1.26  2011-06-01 13:18:45  willuhn
