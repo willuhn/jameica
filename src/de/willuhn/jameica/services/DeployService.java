@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/06/01 13:01:06 $
+ * $Revision: 1.6 $
+ * $Date: 2011/06/01 13:18:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,6 @@
 package de.willuhn.jameica.services;
 
 import java.io.File;
-import java.util.List;
 import java.util.zip.ZipFile;
 
 import de.willuhn.boot.BootLoader;
@@ -121,33 +120,9 @@ public class DeployService implements Bootable
     // Hier drin finden die Checks fuer den korrekten Aufbau und die
     // korrekten Abhaengigkeiten statt.
     ZippedPlugin plugin = new ZippedPlugin(zip);
-
-    Manifest installed = null;
-    Manifest toInstall = plugin.getManifest();
-
+    
     // Checken, ob schon eine aktuellere Version installiert ist.
-    List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
-    
-    for (Manifest m:list)
-    {
-      if (m.getName().equals(toInstall.getName()))
-      {
-        installed = m;
-        break;
-      }
-    }
-    
-    if (installed == null)
-      return;
-
-    // 1. Checken, ob es ueberschrieben werden kann.
-    Type source = installed.getPluginSource();
-    if (source == null || source != Type.USER)
-      throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da es sich im Plugin-Ordner des Systems befinden"));
-
-    // 2. Checken, ob die installierte Version eventuell aktueller ist
-    if (installed.getVersion().compareTo(toInstall.getVersion()) > 0)
-      throw new ApplicationException(Application.getI18n().tr("Plugin ist bereits in einer aktuelleren Version installiert"));
+    plugin.getManifest().canDeploy();
   }
   
   /**

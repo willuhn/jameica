@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.25 $
- * $Date: 2011/06/01 12:35:58 $
+ * $Revision: 1.26 $
+ * $Date: 2011/06/01 13:18:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ import de.willuhn.jameica.gui.NavigationItemXml;
 import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
@@ -466,6 +467,64 @@ public class Manifest implements Comparable
   }
   
   /**
+   * Prueft die im Manifest angegebenen Abhaengigkeiten zu anderen
+   * Plugins und zu Jameica selbst.
+   * @throws ApplicationException wenn eine der Abhaengigkeiten nicht erfuellt ist.
+   */
+  public void checkDependencies() throws ApplicationException
+  {
+    // Benoetigte Jameica-Version.
+    Dependency dep = this.getJameicaDependency();
+    if (!dep.check())
+      throw new ApplicationException(Application.getI18n().tr("Plugin benötigt Jameica {1}",dep.getVersion()));
+
+    // Es reichen die direkten Abhaengigkeiten. Die indirekten sind
+    // ja schon installiert und erfuellt
+    Dependency[] deps = this.getDirectDependencies();
+    for (Dependency d:deps)
+    {
+      if (!d.check())
+        throw new ApplicationException(Application.getI18n().tr("Plugin benötigt {0}, welches aber nicht (oder in der falschen Version) installiert ist",dep.getName()));
+    }
+  }
+  
+  /**
+   * Prueft, ob das Plugin installiert werden kann.
+   * Konkret wird hier geprueft, ob das Plugin bereits installiert ist.
+   * Wenn ja, wird geprueft, ob es ueberschrieben werden kann und ob
+   * es nicht schon neuer als die zu installierende Version ist.
+   * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
+   */
+  public void canDeploy() throws ApplicationException
+  {
+    Manifest installed = null;
+
+    // Checken, ob schon eine aktuellere Version installiert ist.
+    List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
+    
+    for (Manifest m:list)
+    {
+      if (m.getName().equals(this.getName()))
+      {
+        installed = m;
+        break;
+      }
+    }
+    
+    if (installed == null)
+      return;
+
+    // 1. Checken, ob es ueberschrieben werden kann.
+    Type source = installed.getPluginSource();
+    if (source == null || source != Type.USER)
+      throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da es sich im Plugin-Ordner des Systems befinden"));
+
+    // 2. Checken, ob die installierte Version eventuell aktueller ist
+    if (installed.getVersion().compareTo(this.getVersion()) > 0)
+      throw new ApplicationException(Application.getI18n().tr("Plugin ist bereits in einer aktuelleren Version installiert"));
+  }
+  
+  /**
    * Liefert die Instanz des Plugins.
    * @return die Instanz des Plugins
    */
@@ -601,7 +660,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.25  2011/06/01 12:35:58  willuhn
+ * Revision 1.26  2011/06/01 13:18:45  willuhn
+ * @C Deploy- und Dependency-Checks in Manifest verschoben
+ *
+ * Revision 1.25  2011-06-01 12:35:58  willuhn
  * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
  *
  * Revision 1.24  2011-05-31 16:39:04  willuhn

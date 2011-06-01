@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ZippedPlugin.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/01 11:03:40 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/01 13:18:45 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -118,7 +118,7 @@ public class ZippedPlugin
       ////////////////////////////////////////////////////////////////////////////
 
       ////////////////////////////////////////////////////////////////////////////
-      // 2. Manifest laden
+      // 2. Manifest laden und checken
       
       // Im Hauptordner muss sich die plugin.xml befinden. Und sie darf natuerlich kein Dir sein
       ZipEntry entry = zipFile.getEntry(dir.getName() + "plugin.xml");
@@ -137,25 +137,7 @@ public class ZippedPlugin
       }
 
       this.manifest = new Manifest(is);
-      //
-      ////////////////////////////////////////////////////////////////////////////
-      
-      ////////////////////////////////////////////////////////////////////////////
-      // 3. Abhaengigkeiten checken
-
-      // Wir duerfen hier auf keinen Fall die indirekten Abhaengigkeiten
-      // pruefen, da das den kompletten Pluginloader initialisieren wuerde
-      Dependency[] deps = manifest.getDirectDependencies();
-      for (Dependency dep:deps)
-      {
-        if (!dep.check())
-          throw new ApplicationException(i18n.tr("Plugin benötigt {0}, welches aber nicht (oder in der falschen Version) installiert ist",dep.getName()));
-      }
-      
-      // Benoetigte Jameica-Version.
-      Dependency dep = manifest.getJameicaDependency();
-      if (!dep.check())
-        throw new ApplicationException(i18n.tr("Plugin benötigt Jameica {1}",dep.getVersion()));
+      this.manifest.checkDependencies();
       //
       ////////////////////////////////////////////////////////////////////////////
 
@@ -206,7 +188,10 @@ public class ZippedPlugin
 
 /**********************************************************************
  * $Log: ZippedPlugin.java,v $
- * Revision 1.1  2011/06/01 11:03:40  willuhn
+ * Revision 1.2  2011/06/01 13:18:45  willuhn
+ * @C Deploy- und Dependency-Checks in Manifest verschoben
+ *
+ * Revision 1.1  2011-06-01 11:03:40  willuhn
  * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
  *
  **********************************************************************/
