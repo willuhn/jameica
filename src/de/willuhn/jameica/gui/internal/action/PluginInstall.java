@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginInstall.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/01 13:00:36 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/01 15:18:42 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.services.DeployService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
@@ -55,15 +56,18 @@ public class PluginInstall implements Action
     // Wir merken uns das Verzeichnis
     settings.setAttribute("lastdir",f.getParent());
 
-    // Wir pruefen hier noch, ob ggf. eine aktuellere Version installiert ist
-    final DeployService service = Application.getBootLoader().getBootable(DeployService.class);
-    service.canDeploy(f);
+    // Hier drin wird der korrekte Aufbau des Plugins gecheckt.
+    final ZippedPlugin plugin = new ZippedPlugin(f);
+    
+    // Und hier die Abhaengigkeiten, korrekten Versionsnummerm, etc.
+    plugin.getManifest().canDeploy();
     
     // Installation starten
     Application.getController().start(new BackgroundTask() {
       public void run(ProgressMonitor monitor) throws ApplicationException
       {
-        service.deploy(f,monitor);
+        DeployService service = Application.getBootLoader().getBootable(DeployService.class);
+        service.deploy(plugin,monitor);
       }
       
       public boolean isInterrupted()
@@ -83,7 +87,10 @@ public class PluginInstall implements Action
 
 /**********************************************************************
  * $Log: PluginInstall.java,v $
- * Revision 1.3  2011/06/01 13:00:36  willuhn
+ * Revision 1.4  2011/06/01 15:18:42  willuhn
+ * @N Die Deploy-Funktion kriegt jetzt direkt ein ZippedPlugin - das erspart das extra "canDeploy()"
+ *
+ * Revision 1.3  2011-06-01 13:00:36  willuhn
  * *** empty log message ***
  *
  * Revision 1.2  2011-06-01 11:03:40  willuhn

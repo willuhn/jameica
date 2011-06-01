@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ZippedPlugin.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/01 13:45:43 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/01 15:18:42 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -27,6 +27,7 @@ import de.willuhn.util.I18N;
  */
 public class ZippedPlugin
 {
+  private File file         = null;
   private String name       = null;
   private Manifest manifest = null;
   
@@ -141,6 +142,8 @@ public class ZippedPlugin
       ////////////////////////////////////////////////////////////////////////////
 
       // Toll. Sieht alles OK aus ;)
+      
+      this.file = zip;
     }
     catch (ApplicationException ae2)
     {
@@ -181,13 +184,25 @@ public class ZippedPlugin
   {
     return this.manifest;
   }
+  
+  /**
+   * Liefert die eigentliche ZIP-Datei des Plugins.
+   * @return die eigentliche ZIP-Datei des Plugins.
+   */
+  public File getFile()
+  {
+    return this.file;
+  }
 }
 
 
 
 /**********************************************************************
  * $Log: ZippedPlugin.java,v $
- * Revision 1.3  2011/06/01 13:45:43  willuhn
+ * Revision 1.4  2011/06/01 15:18:42  willuhn
+ * @N Die Deploy-Funktion kriegt jetzt direkt ein ZippedPlugin - das erspart das extra "canDeploy()"
+ *
+ * Revision 1.3  2011-06-01 13:45:43  willuhn
  * @B In ZippedPlugin duerfen die Deps nicht geprueft werden, weil dadurch indirekt (in Dependency.check()) der Plugin-Loader initialisiert werden wuerde
  *
  * Revision 1.2  2011-06-01 13:18:45  willuhn

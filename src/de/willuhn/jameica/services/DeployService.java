@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/06/01 13:48:10 $
+ * $Revision: 1.9 $
+ * $Date: 2011/06/01 15:18:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -87,7 +87,16 @@ public class DeployService implements Bootable
     {
       try
       {
-        deploy(file,proxy);
+        ZippedPlugin plugin = new ZippedPlugin(file);
+        deploy(plugin,proxy);
+      }
+      catch (ApplicationException ae)
+      {
+        Logger.error("unable to deploy " + file + ": " + ae.getMessage());
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to deploy " + file,e);
       }
       finally
       {
@@ -99,43 +108,17 @@ public class DeployService implements Bootable
   }
   
   /**
-   * Prueft, ob das Plugin prinzipiell installiert werden kann.
-   * Hierzu wird geprueft, ob die ZIP-Datei den typischen Aufbau eines Plugins
-   * besitzt. Ausserdem wird das enthaltene Manifest geladen und geprueft, ob
-   * es korrekt ist und die darin definierten Abhaengigkeiten erfuellt sind.
-   * 
-   * Die Funktion prueft auch, ob ggf. schon eine aktuellere Version installiert ist
-   * oder ob das Plugin bereits via System- oder Config-Source installiert ist - in
-   * dem Fall kann es nicht ueberschrieben werden.
-   *  
-   * @param zip die ZIP-Datei mit dem zu pruefenden Plugin.
-   * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
-   */
-  // TODO: Die Funktion kann weg. Stattdessen sollte "deploy" gleich ein "ZippedPlugin" kriegen 
-  public void canDeploy(File zip) throws ApplicationException
-  {
-    // Hier drin finden die Checks fuer den korrekten Aufbau und die
-    // korrekten Abhaengigkeiten statt.
-    ZippedPlugin plugin = new ZippedPlugin(zip);
-    
-    // Checken, ob die Abhaengigkeiten erfuellt sind und ob schon eine aktuellere Version installiert ist.
-    // ACHTUNG: Das geht nur zur Laufzeit, nicht zur Bootzeit.
-    plugin.getManifest().canDeploy();
-  }
-  
-  /**
    * Deployed das Plugin im User-Plugin-Dir.
-   * @param zip die ZIP-Datei mit dem Plugin.
+   * @param plugin das Plugin.
    * @param monitor der Progressmonitor zur Anzeige des Fortschrittes.
    */
-  public void deploy(File zip, ProgressMonitor monitor)
+  public void deploy(ZippedPlugin plugin, ProgressMonitor monitor)
   {
     I18N i18n = Application.getI18n();
 
     try
     {
-      // Hier drin finden schon alle relevanten Checks statt
-      ZippedPlugin plugin = new ZippedPlugin(zip);
+      File zip = plugin.getFile();
       
       // Ziel-Ordner
       File pluginDir = Application.getConfig().getUserPluginDir();
