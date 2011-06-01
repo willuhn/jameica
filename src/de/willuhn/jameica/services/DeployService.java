@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/06/01 12:35:57 $
+ * $Revision: 1.5 $
+ * $Date: 2011/06/01 13:01:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@
 package de.willuhn.jameica.services;
 
 import java.io.File;
+import java.util.List;
 import java.util.zip.ZipFile;
 
 import de.willuhn.boot.BootLoader;
@@ -103,13 +104,50 @@ public class DeployService implements Bootable
    * Hierzu wird geprueft, ob die ZIP-Datei den typischen Aufbau eines Plugins
    * besitzt. Ausserdem wird das enthaltene Manifest geladen und geprueft, ob
    * es korrekt ist und die darin definierten Abhaengigkeiten erfuellt sind.
+   * 
+   * Die Funktion prueft auch, ob ggf. schon eine aktuellere Version installiert ist
+   * oder ob das Plugin bereits via System- oder Config-Source installiert ist - in
+   * dem Fall kann es nicht ueberschrieben werden. 
+   * 
+   * Die Funktion sollte nur zur Laufzeit ausgefuehrt werden und nicht zur Boot-Zeit,
+   * da sie intern den Plugin-Loader verwendet, was beim Boot-Zeitpunkt dazu fuehren
+   * kann, dass der Boot-Loader viel zu frueh initialisiert wird.
+   * 
    * @param zip die ZIP-Datei mit dem zu pruefenden Plugin.
    * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
    */
   public void canDeploy(File zip) throws ApplicationException
   {
-    // Die Checks passieren alle im Konstruktor.
-    new ZippedPlugin(zip);
+    // Hier drin finden die Checks fuer den korrekten Aufbau und die
+    // korrekten Abhaengigkeiten statt.
+    ZippedPlugin plugin = new ZippedPlugin(zip);
+
+    Manifest installed = null;
+    Manifest toInstall = plugin.getManifest();
+
+    // Checken, ob schon eine aktuellere Version installiert ist.
+    List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
+    
+    for (Manifest m:list)
+    {
+      if (m.getName().equals(toInstall.getName()))
+      {
+        installed = m;
+        break;
+      }
+    }
+    
+    if (installed == null)
+      return;
+
+    // 1. Checken, ob es ueberschrieben werden kann.
+    Type source = installed.getPluginSource();
+    if (source == null || source != Type.USER)
+      throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da es sich im Plugin-Ordner des Systems befinden"));
+
+    // 2. Checken, ob die installierte Version eventuell aktueller ist
+    if (installed.getVersion().compareTo(toInstall.getVersion()) > 0)
+      throw new ApplicationException(Application.getI18n().tr("Plugin ist bereits in einer aktuelleren Version installiert"));
   }
   
   /**
