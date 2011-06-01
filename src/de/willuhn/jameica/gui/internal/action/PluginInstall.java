@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginInstall.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/06/01 11:03:40 $
+ * $Revision: 1.3 $
+ * $Date: 2011/06/01 13:00:36 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -54,9 +54,8 @@ public class PluginInstall implements Action
     
     // Wir merken uns das Verzeichnis
     settings.setAttribute("lastdir",f.getParent());
-    
-    // Checken, ob es ein gueltiges Plugin ist. Macht service.deploy() zwar auch
-    // nochmal. Aber so kommt die Meldung gleich - bevor der Background-Task gestartet wird.
+
+    // Wir pruefen hier noch, ob ggf. eine aktuellere Version installiert ist
     final DeployService service = Application.getBootLoader().getBootable(DeployService.class);
     service.canDeploy(f);
     
@@ -84,7 +83,10 @@ public class PluginInstall implements Action
 
 /**********************************************************************
  * $Log: PluginInstall.java,v $
- * Revision 1.2  2011/06/01 11:03:40  willuhn
+ * Revision 1.3  2011/06/01 13:00:36  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.2  2011-06-01 11:03:40  willuhn
  * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
  *
  * Revision 1.1  2011-05-31 16:39:04  willuhn
