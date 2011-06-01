@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.29 $
- * $Date: 2011/06/01 15:22:28 $
+ * $Revision: 1.30 $
+ * $Date: 2011/06/01 16:06:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -245,13 +245,24 @@ public class Manifest implements Comparable
 
 	/**
    * Liefert die Lizenz der Komponente.
-   * @return Lizent.
+   * @return Lizenz.
    */
   public String getLicense()
 	{
 		IXMLElement desc = root.getFirstChildNamed("license");
 		return desc == null ? null: desc.getContent();
 	}
+
+  /**
+   * Liefert das Icon des Plugins.
+   * Sollte 64x64 Pixel gross sein.
+   * @return das Icon oder das Default-Icon fuer Plugins, wenn im Manifest keines definiert ist.
+   */
+  public String getIcon()
+  {
+    IXMLElement desc = root.getFirstChildNamed("icon");
+    return desc == null ? "package-x-generic-medium.png" : desc.getContent();
+  }
 
   /**
    * Liefert das Menu der Komponente.
@@ -656,7 +667,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.29  2011/06/01 15:22:28  willuhn
+ * Revision 1.30  2011/06/01 16:06:11  willuhn
+ * @N Mit Schema-Spezifikation 1.1 der plugin.xml kann jetzt auch der Dateiname eines Icon in der Groesse 64x64 Pixel angegeben werden, welches unter Datei->Einstellungen->Plugins angezeigt wird
+ *
+ * Revision 1.29  2011-06-01 15:22:28  willuhn
  * *** empty log message ***
  *
  * Revision 1.28  2011-06-01 15:22:13  willuhn
