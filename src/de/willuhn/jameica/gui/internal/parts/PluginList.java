@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/06/01 11:03:40 $
+ * $Revision: 1.8 $
+ * $Date: 2011/06/01 12:35:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -68,10 +68,15 @@ public class PluginList extends TablePart
   {
     super(Application.getPluginLoader().getInstalledManifests(),new PluginDetails());
 
-    // TODO 1. Das Update-Handling fehlt noch. Hier muessen wir pruefen, ob das Plugin aktualisiert werden kann
     ContextMenu menu = new ContextMenu();
-    menu.addItem(new CheckedSingleContextMenuItem(i18n.tr("Öffnen..."),new PluginDetails(),"text-x-generic.png"));
-    menu.addItem(new ContextMenuItem(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),"document-open.png"));
+    menu.addItem(new CheckedSingleContextMenuItem(i18n.tr("Öffnen..."),new PluginDetails(),"document-open.png"));
+    menu.addItem(new CheckedSingleContextMenuItem(i18n.tr("Plugin aktualisieren..."),new PluginInstall(),"emblem-package.png") {
+      public boolean isEnabledFor(Object o)
+      {
+        // Wenn das alte nicht deinstalliert werden kann, kann das neue auch nicht installiert werden - ganz einfach ;)
+        return super.isEnabledFor(o) && canUninstall((Manifest)o);
+      }
+    });
     menu.addItem(ContextMenuItem.SEPARATOR);
     menu.addItem(new CheckedSingleContextMenuItem(i18n.tr("Plugin löschen..."),new PluginUnInstall(),"user-trash-full.png") {
       public boolean isEnabledFor(Object o)
@@ -121,7 +126,7 @@ public class PluginList extends TablePart
     // Buttons zum Installieren/Deinstallieren
     ButtonArea buttons = new ButtonArea();
     buttons.addButton(getUninstallButton());
-    buttons.addButton(new Button(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),null,false,"document-open.png"));
+    buttons.addButton(new Button(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),null,false,"emblem-package.png"));
     buttons.paint(parent);
 
     Application.getMessagingFactory().registerMessageConsumer(this.mc);
@@ -161,7 +166,7 @@ public class PluginList extends TablePart
   {
     if (this.comment == null)
     {
-      this.comment = new LabelInput(i18n.tr("Nur Plugins in {0} können deinstalliert werden.", Application.getConfig().getUserPluginDir().getAbsolutePath()));
+      this.comment = new LabelInput(i18n.tr("Nur Plugins in {0} können aktualisiert oder deinstalliert werden.", Application.getConfig().getUserPluginDir().getAbsolutePath()));
       this.comment.setColor(Color.COMMENT);
       this.comment.setName("Hinweis");
     }
@@ -257,7 +262,10 @@ public class PluginList extends TablePart
 
 /*********************************************************************
  * $Log: PluginList.java,v $
- * Revision 1.7  2011/06/01 11:03:40  willuhn
+ * Revision 1.8  2011/06/01 12:35:58  willuhn
+ * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
+ *
+ * Revision 1.7  2011-06-01 11:03:40  willuhn
  * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
  *
  * Revision 1.6  2011-05-31 16:39:04  willuhn

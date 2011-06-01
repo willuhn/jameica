@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.24 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.25 $
+ * $Date: 2011/06/01 12:35:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,6 +29,7 @@ import de.willuhn.jameica.gui.MenuItem;
 import de.willuhn.jameica.gui.MenuItemXml;
 import de.willuhn.jameica.gui.NavigationItem;
 import de.willuhn.jameica.gui.NavigationItemXml;
+import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
@@ -46,6 +47,8 @@ public class Manifest implements Comparable
   private MenuItem menu                 = null;
   
   private AbstractPlugin pluginInstance = null;
+  
+  private Type source                   = null;
   
   private boolean isInstalled           = false;
   
@@ -479,6 +482,24 @@ public class Manifest implements Comparable
   {
     this.pluginInstance = plugin;
   }
+  
+  /**
+   * Legt die Art der Plugin-Quelle fest, aus der das Plugin stammt.
+   * @param type die Art der Plugin-Quelle.
+   */
+  public void setPluginSource(Type type)
+  {
+    this.source = type;
+  }
+  
+  /**
+   * Liefert die Art der Plugin-Quelle, aus der das Plugin stammt.
+   * @return die Art der Plugin-Quelle, aus der das Plugin stammt.
+   */
+  public Type getPluginSource()
+  {
+    return this.source;
+  }
 
   /**
    * Prueft, ob das Plugin initialisiert werden konnte.
@@ -580,7 +601,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.24  2011/05/31 16:39:04  willuhn
+ * Revision 1.25  2011/06/01 12:35:58  willuhn
+ * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
+ *
+ * Revision 1.24  2011-05-31 16:39:04  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  * Revision 1.23  2011-05-25 08:00:55  willuhn

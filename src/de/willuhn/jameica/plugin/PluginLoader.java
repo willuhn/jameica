@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.49 $
- * $Date: 2011/06/01 11:03:40 $
+ * $Revision: 1.50 $
+ * $Date: 2011/06/01 12:35:58 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,8 +16,8 @@ import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +27,7 @@ import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.services.ClassService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
@@ -64,109 +65,63 @@ public final class PluginLoader
     Application.getCallback().getStartupMonitor().setStatusText("init plugins");
     Logger.info("init plugins");
 
-    ArrayList dirs = new ArrayList();
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Liste der Manifeste laden
+    List<PluginSource> sources = AbstractPluginSource.getSources();
+    Collections.sort(sources); // Nach Prioritaet sortieren
+    
+    Map<String,Manifest> cache = new HashMap<String,Manifest>();
 
-    // //////////////////////////////////////////////////////////////////////////
-    // 1. Plugins im Jameica-Verzeichnis selbst (System-Plugindir)
+    for (PluginSource source:sources)
     {
-      File dir = Application.getConfig().getSystemPluginDir();
-      File[] pluginDirs = new FileFinder(dir).findAll();
-
-      Logger.info("checking system plugin dir " + dir.getAbsolutePath());
-      for (int i = 0; i < pluginDirs.length; ++i)
+      List<File> dirs = source.find();
+      if (dirs == null)
+        continue;
+      
+      for (File f:dirs)
       {
-        if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
+        try
         {
-          Logger.warn("skipping system plugin dir " + pluginDirs[i].getAbsolutePath() + " - no directory or not readable");
-          continue;
+          File mf = new File(f, "plugin.xml");
+
+          if (!mf.canRead() || !mf.isFile())
+          {
+            Logger.error("no manifest found in " + f.getAbsolutePath() + ", skipping directory");
+            continue;
+          }
+          Manifest m = new Manifest(mf);
+          m.setPluginSource(source.getType());
+          Manifest first = cache.get(m.getName());
+          if (first != null)
+          {
+            Logger.error("found second plugin \"" + m.getName() + "\" in " + f + " (allready installed in " + first.getPluginDir() + ") skipping");
+            continue;
+          }
+          cache.put(m.getName(),m);
+          this.plugins.add(m);
         }
-        Logger.info("adding system plugin " + pluginDirs[i].getAbsolutePath());
-        dirs.add(pluginDirs[i]);
-      }
-    }
-    //
-    // //////////////////////////////////////////////////////////////////////////
-
-    // //////////////////////////////////////////////////////////////////////////
-    // 2. Plugins, die explizit in
-    // ~/.jameica/cfg/de.willuhn.jameica.system.Config.properties
-    // definiert sind
-    {
-      File[] pluginDirs = Application.getConfig().getPluginDirs();
-
-      for (int i = 0; i < pluginDirs.length; ++i)
-      {
-        if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
+        catch (Throwable t)
         {
-          Logger.warn("skipping custom plugin dir " + pluginDirs[i].getAbsolutePath() + " - no directory or not readable");
-          continue;
+          Logger.error("unable to load manifest from " + f.getAbsolutePath(), t);
+          Application.addWelcomeMessage(Application.getI18n().tr("Plugin-Verzeichnis {0} ignoriert. Enthält kein gültiges Manifest",f.getAbsolutePath()));
         }
-        Logger.info("adding custom plugin dir " + pluginDirs[i].getAbsolutePath());
-        dirs.add(pluginDirs[i]);
       }
+      
     }
-    // //////////////////////////////////////////////////////////////////////////
-
-    // //////////////////////////////////////////////////////////////////////////
-    // 3. Plugins im Work-Verzeichnis des Users (User-Plugindir)
-    {
-      File dir = Application.getConfig().getUserPluginDir();
-      File[] pluginDirs = new FileFinder(dir).findAll();
-
-      Logger.info("checking user plugin dir " + dir.getAbsolutePath());
-      for (int i = 0; i < pluginDirs.length; ++i)
-      {
-        if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
-        {
-          Logger.warn("skipping user plugin dir " + pluginDirs[i].getAbsolutePath() + " - no directory or not readable");
-          continue;
-        }
-        Logger.info("adding user plugin " + pluginDirs[i].getAbsolutePath());
-        dirs.add(pluginDirs[i]);
-      }
-    }
-    // //////////////////////////////////////////////////////////////////////////
-
-
-    if (dirs.size() == 0)
+    
+    if (this.plugins.size() == 0)
     {
       Application.addWelcomeMessage(Application.getI18n().tr("Derzeit sind keine Plugins installiert"));
+      
+      // Den weiteren Code koennen wir komplett knicken
       return;
     }
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
-    // //////////////////////////////////////////////////////////////////////////
-    // Liste der Manifeste laden
-    Map<String,Manifest> cache = new HashMap<String,Manifest>();
-    for (int i = 0; i < dirs.size(); ++i)
-    {
-      File f = (File) dirs.get(i);
-      try
-      {
-        File mf = new File(f, "plugin.xml");
-
-        if (!mf.canRead() || !mf.isFile())
-        {
-          Logger.error("no manifest found in " + f.getAbsolutePath() + ", skipping directory");
-          continue;
-        }
-        Manifest m = new Manifest(mf);
-        Manifest first = cache.get(m.getName());
-        if (first != null)
-        {
-          Logger.error("found second plugin \"" + m.getName() + "\" in " + f + " (allready installed in " + first.getPluginDir() + ") skipping");
-          continue;
-        }
-        cache.put(m.getName(),m);
-        this.plugins.add(m);
-      }
-      catch (Throwable t)
-      {
-        Logger.error("unable to load manifest from " + f.getAbsolutePath(), t);
-        Application.addWelcomeMessage(Application.getI18n().tr("Plugin-Verzeichnis {0} ignoriert. Enthält kein gültiges Manifest",f.getAbsolutePath()));
-      }
-    }
-
-    // Sortieren der Manifeste nach Abhaengigkeiten
+    ////////////////////////////////////////////////////////////////////////////
+    // Sortieren nach Abhaengigkeiten
     Logger.info("sort plugins by dependency");
     QuickSort.quickSort(this.plugins);
     for (int i = 0; i < this.plugins.size(); ++i)
@@ -174,13 +129,15 @@ public final class PluginLoader
       Manifest mf = this.plugins.get(i);
       Logger.info("  " + mf.getName());
     }
-    // //////////////////////////////////////////////////////////////////////////
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
-    Hashtable loaders = new Hashtable();
-    for (int i = 0; i < this.plugins.size(); ++i)
+    Map<Manifest,MultipleClassLoader> loaders = new HashMap<Manifest,MultipleClassLoader>();
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Plugins laden
+    for (Manifest mf:this.plugins)
     {
-      Manifest mf = (Manifest) this.plugins.get(i);
-
       try
       {
         loaders.put(mf, loadPlugin(mf));
@@ -196,11 +153,14 @@ public final class PluginLoader
         Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht geladen werden. {1}",new String[] { name, t.getMessage() }));
       }
     }
+    //
+    ////////////////////////////////////////////////////////////////////////////
 
-    for (int i = 0; i < this.plugins.size(); ++i)
+    ////////////////////////////////////////////////////////////////////////////
+    // Plugins initialisieren
+    for (Manifest mf:this.plugins)
     {
-      Manifest mf = this.plugins.get(i);
-      MultipleClassLoader loader = (MultipleClassLoader) loaders.get(mf);
+      MultipleClassLoader loader = loaders.get(mf);
       if (loader == null)
         continue; // Bereits das Laden der Klassen ging schief
 
@@ -220,6 +180,8 @@ public final class PluginLoader
         Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",new String[] { name, t.getMessage() }));
       }
     }
+    //
+    ////////////////////////////////////////////////////////////////////////////
   }
 
   /**
@@ -623,23 +585,16 @@ public final class PluginLoader
     try
     {
       //////////////////////////////////////////////////////////////////////////
-      // 1. Checken, ob es sich im User-Plugin-Ordner befindet
-      try
+      // 1. Derzeit unterstuetzen wir nur das Deinstallieren von Plugins aus dem User-Ordner
+      Type source = mf.getPluginSource();
+      if (source == null)
       {
-        String dirAbsolute = dir.getCanonicalPath();
-        String userDirAbsolute = Application.getConfig().getUserPluginDir().getCanonicalPath();
-        if (!dirAbsolute.startsWith(userDirAbsolute))
-          throw new ApplicationException(i18n.tr("Nur Plugins in {0} können deinstalliert werden",userDirAbsolute));
+        Logger.warn("plugin " + mf.getName() + " has no plugin source");
+        throw new ApplicationException(i18n.tr("Nur Plugins im Plugin-Ordner des Benutzers können deinstalliert werden"));
       }
-      catch (ApplicationException ae)
-      {
-        throw ae;
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to check plugin path",e);
-        throw new ApplicationException(i18n.tr("Plugin kann nicht deinstalliert werden: {0}",e.getMessage()));
-      }
+      
+      if (source != Type.USER)
+        throw new ApplicationException(i18n.tr("Nur Plugins im Plugin-Ordner des Benutzers können deinstalliert werden"));
       //
       //////////////////////////////////////////////////////////////////////////
       
@@ -920,7 +875,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.49  2011/06/01 11:03:40  willuhn
+ * Revision 1.50  2011/06/01 12:35:58  willuhn
+ * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
+ *
+ * Revision 1.49  2011-06-01 11:03:40  willuhn
  * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
  *
  * Revision 1.48  2011-05-31 16:39:04  willuhn

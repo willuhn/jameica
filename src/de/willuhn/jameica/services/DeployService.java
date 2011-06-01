@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/01 11:03:40 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/01 12:35:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,7 @@ import de.willuhn.io.ZipExtractor;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -153,6 +154,7 @@ public class DeployService implements Bootable
 
       // Manifest neu laden. Das andere zeigt ja noch in das Deploy-Verzeichnis
       Manifest manifest = new Manifest(new File(target,"plugin.xml"));
+      manifest.setPluginSource(Type.USER);
       Application.getMessagingFactory().sendMessage(new PluginMessage(manifest,PluginMessage.Event.INSTALLED));
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Plugin installiert, bitte starten Sie Jameica neu"),StatusBarMessage.TYPE_SUCCESS));
     }
