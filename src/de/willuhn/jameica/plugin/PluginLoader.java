@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.51 $
- * $Date: 2011/06/01 21:20:02 $
+ * $Revision: 1.52 $
+ * $Date: 2011/06/01 21:26:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -673,9 +673,11 @@ public final class PluginLoader
             try
             {
               NavigationItemXml navi = (NavigationItemXml) mf.getNavigation();
-              navi.setEnabled(false,true);
+              if (navi != null)
+                navi.setEnabled(false,true);
               MenuItemXml menu = (MenuItemXml) mf.getMenu();
-              menu.setEnabled(false,true);
+              if (menu != null)
+                menu.setEnabled(false,true);
             }
             catch (Exception e)
             {
@@ -902,7 +904,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.51  2011/06/01 21:20:02  willuhn
+ * Revision 1.52  2011/06/01 21:26:48  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.51  2011-06-01 21:20:02  willuhn
  * @N Beim Deinstallieren die Navi und Menupunkte des Plugins deaktivieren
  * @N Frisch installierte aber noch nicht aktive Plugins auch dann anzeigen, wenn die View verlassen wird
  *
