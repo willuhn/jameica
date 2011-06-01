@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.52 $
- * $Date: 2011/06/01 21:26:48 $
+ * $Revision: 1.53 $
+ * $Date: 2011/06/01 21:31:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -744,6 +744,11 @@ public final class PluginLoader
       File pluginDir = new File(mf.getPluginDir());
       monitor.log("  " + i18n.tr("Lösche Plugin"));
       Logger.info("deleting " + pluginDir);
+      
+      // TODO: Unter Windows bleiben hier die Jar-Dateien liegen, weil die Filehandles noch offen sind
+      // Keine Ahnung, wie ich das loesen kann. Vielleicht kann man die irgendwie aus dem Classloader
+      // des Plugins entfernen. Alternativ koennte man die Dateien auch einfach im Deploy-Service beim
+      // naechsten Start loeschen - indem man in dem Ordner sowas wie eine Delete-Marker-Datei setzt
       FileUtil.deleteRecursive(pluginDir);
       //////////////////////////////////////////////////////////////////////
       
@@ -904,7 +909,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.52  2011/06/01 21:26:48  willuhn
+ * Revision 1.53  2011/06/01 21:31:26  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.52  2011-06-01 21:26:48  willuhn
  * *** empty log message ***
  *
  * Revision 1.51  2011-06-01 21:20:02  willuhn
