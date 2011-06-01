@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.50 $
- * $Date: 2011/06/01 12:35:58 $
+ * $Revision: 1.51 $
+ * $Date: 2011/06/01 21:20:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -23,6 +23,9 @@ import java.util.Map;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.io.FileUtil;
+import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.MenuItemXml;
+import de.willuhn.jameica.gui.NavigationItemXml;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.PluginMessage;
@@ -661,6 +664,30 @@ public final class PluginLoader
       AbstractPlugin plugin = getPlugin(mf.getPluginClass());
       
       //////////////////////////////////////////////////////////////////////
+      // 0. Menu- und Navi-Punkte im GUI-Modus deaktivieren
+      if (plugin != null && !Application.inServerMode())
+      {
+        GUI.getDisplay().syncExec(new Runnable() {
+          public void run()
+          {
+            try
+            {
+              NavigationItemXml navi = (NavigationItemXml) mf.getNavigation();
+              navi.setEnabled(false,true);
+              MenuItemXml menu = (MenuItemXml) mf.getMenu();
+              menu.setEnabled(false,true);
+            }
+            catch (Exception e)
+            {
+              Logger.error("unable to disable menu/navigation",e);
+            }
+          }
+        });
+      }
+      //////////////////////////////////////////////////////////////////////
+
+      
+      //////////////////////////////////////////////////////////////////////
       // 1. Uninstall-Routine des Plugins aufrufen und Plugin beenden
       if (plugin != null)
       {
@@ -875,7 +902,11 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.50  2011/06/01 12:35:58  willuhn
+ * Revision 1.51  2011/06/01 21:20:02  willuhn
+ * @N Beim Deinstallieren die Navi und Menupunkte des Plugins deaktivieren
+ * @N Frisch installierte aber noch nicht aktive Plugins auch dann anzeigen, wenn die View verlassen wird
+ *
+ * Revision 1.50  2011-06-01 12:35:58  willuhn
  * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
  *
  * Revision 1.49  2011-06-01 11:03:40  willuhn

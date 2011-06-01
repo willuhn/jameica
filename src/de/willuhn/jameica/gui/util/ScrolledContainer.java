@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/ScrolledContainer.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/06/01 17:25:38 $
+ * $Revision: 1.6 $
+ * $Date: 2011/06/01 21:20:02 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -54,9 +53,9 @@ public class ScrolledContainer extends Container
     org.eclipse.swt.graphics.Color bg = parent.getBackground();
     
     // BUGZILLA 412
-    this.scrolled = new ScrolledComposite(parent,SWT.V_SCROLL);
+    this.scrolled = new ScrolledComposite(parent,SWT.V_SCROLL | SWT.BORDER);
     this.scrolled.setLayoutData(new GridData(GridData.FILL_BOTH));
-    this.scrolled.setLayout(new FillLayout());
+    this.scrolled.setLayout(new GridLayout());
     this.scrolled.setExpandHorizontal(true);
     if (bg != null)
       this.scrolled.setBackground(bg);
@@ -77,7 +76,7 @@ public class ScrolledContainer extends Container
           return;
         try
         {
-          comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+          update();
         }
         finally
         {
@@ -86,7 +85,6 @@ public class ScrolledContainer extends Container
       }
     
     });
-
   }
   
   /**
@@ -96,11 +94,28 @@ public class ScrolledContainer extends Container
   {
     return this.comp;
   }
+  
+  /**
+   * Aktualisiert die Groesse des Containers zur korrekten Anzeige
+   * der Scrollbalken. Sollte immer genau dann aufgerufen werden, wenn
+   * sich die Groesse des Inhalt geaendert hat.
+   */
+  public void update()
+  {
+    if (comp == null || comp.isDisposed())
+      return;
+    comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+    comp.layout();
+  }
 }
 
 /*********************************************************************
  * $Log: ScrolledContainer.java,v $
- * Revision 1.5  2011/06/01 17:25:38  willuhn
+ * Revision 1.6  2011/06/01 21:20:02  willuhn
+ * @N Beim Deinstallieren die Navi und Menupunkte des Plugins deaktivieren
+ * @N Frisch installierte aber noch nicht aktive Plugins auch dann anzeigen, wenn die View verlassen wird
+ *
+ * Revision 1.5  2011-06-01 17:25:38  willuhn
  * @B Das uebernimmt sonst nicht automatisch die Default-Farbe des Parent
  *
  * Revision 1.4  2011-05-03 10:13:11  willuhn

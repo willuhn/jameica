@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/Attic/PluginInfoPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/01 17:35:58 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/01 21:20:02 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -109,8 +109,13 @@ public class PluginInfoPart implements Part
         title.setBackground(white);
         title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         title.setFont(Font.H2.getSWTFont());
-        if (freshInstall) title.setForeground(comment);
-        title.setText(this.manifest.getName());
+        String text = this.manifest.getName();
+        if (freshInstall) 
+        {
+          title.setForeground(comment);
+          text = i18n.tr("{0} (Neustart erforderlich)",text);
+        }
+        title.setText(text);
       }
       
       // Beschreibung
@@ -211,7 +216,11 @@ public class PluginInfoPart implements Part
 
 /**********************************************************************
  * $Log: PluginInfoPart.java,v $
- * Revision 1.1  2011/06/01 17:35:58  willuhn
+ * Revision 1.2  2011/06/01 21:20:02  willuhn
+ * @N Beim Deinstallieren die Navi und Menupunkte des Plugins deaktivieren
+ * @N Frisch installierte aber noch nicht aktive Plugins auch dann anzeigen, wenn die View verlassen wird
+ *
+ * Revision 1.1  2011-06-01 17:35:58  willuhn
  * @N Ergonomischere Verwaltung der Plugins
  *
  **********************************************************************/
