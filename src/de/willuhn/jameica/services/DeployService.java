@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/06/01 13:45:43 $
+ * $Revision: 1.8 $
+ * $Date: 2011/06/01 13:48:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -111,6 +111,7 @@ public class DeployService implements Bootable
    * @param zip die ZIP-Datei mit dem zu pruefenden Plugin.
    * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
    */
+  // TODO: Die Funktion kann weg. Stattdessen sollte "deploy" gleich ein "ZippedPlugin" kriegen 
   public void canDeploy(File zip) throws ApplicationException
   {
     // Hier drin finden die Checks fuer den korrekten Aufbau und die
