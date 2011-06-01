@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.26 $
- * $Date: 2011/06/01 13:18:45 $
+ * $Revision: 1.27 $
+ * $Date: 2011/06/01 13:45:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -467,36 +467,32 @@ public class Manifest implements Comparable
   }
   
   /**
-   * Prueft die im Manifest angegebenen Abhaengigkeiten zu anderen
-   * Plugins und zu Jameica selbst.
-   * @throws ApplicationException wenn eine der Abhaengigkeiten nicht erfuellt ist.
+   * Prueft, ob das Plugin installiert werden kann.
+   * Konkret wird hier geprueft:
+   * 
+   *  1. Ist die richtige Jameica-Version installiert
+   *  2. Sind die Abhaengigkeiten zu anderen Plugins erfuellt.
+   *  3. Ist das Plugin ggf. schon installiert, wenn ja
+   *     - kann es ueberschrieben werden?
+   *     - ist die installierte Version nicht neuer als die zu installierende
+   * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
    */
-  public void checkDependencies() throws ApplicationException
+  public void canDeploy() throws ApplicationException
   {
-    // Benoetigte Jameica-Version.
+    // 1. Benoetigte Jameica-Version.
     Dependency dep = this.getJameicaDependency();
     if (!dep.check())
       throw new ApplicationException(Application.getI18n().tr("Plugin benötigt Jameica {1}",dep.getVersion()));
 
-    // Es reichen die direkten Abhaengigkeiten. Die indirekten sind
-    // ja schon installiert und erfuellt
+    // 2. Es reichen die direkten Abhaengigkeiten. Die indirekten werden ja
+    //    von dem anderen Manifest geprueft
     Dependency[] deps = this.getDirectDependencies();
     for (Dependency d:deps)
     {
       if (!d.check())
         throw new ApplicationException(Application.getI18n().tr("Plugin benötigt {0}, welches aber nicht (oder in der falschen Version) installiert ist",dep.getName()));
     }
-  }
-  
-  /**
-   * Prueft, ob das Plugin installiert werden kann.
-   * Konkret wird hier geprueft, ob das Plugin bereits installiert ist.
-   * Wenn ja, wird geprueft, ob es ueberschrieben werden kann und ob
-   * es nicht schon neuer als die zu installierende Version ist.
-   * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
-   */
-  public void canDeploy() throws ApplicationException
-  {
+
     Manifest installed = null;
 
     // Checken, ob schon eine aktuellere Version installiert ist.
@@ -514,12 +510,12 @@ public class Manifest implements Comparable
     if (installed == null)
       return;
 
-    // 1. Checken, ob es ueberschrieben werden kann.
+    // 3a. Checken, ob es ueberschrieben werden kann.
     Type source = installed.getPluginSource();
     if (source == null || source != Type.USER)
       throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da es sich im Plugin-Ordner des Systems befinden"));
 
-    // 2. Checken, ob die installierte Version eventuell aktueller ist
+    // 3b. Checken, ob die installierte Version eventuell aktueller ist
     if (installed.getVersion().compareTo(this.getVersion()) > 0)
       throw new ApplicationException(Application.getI18n().tr("Plugin ist bereits in einer aktuelleren Version installiert"));
   }
@@ -660,7 +656,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.26  2011/06/01 13:18:45  willuhn
+ * Revision 1.27  2011/06/01 13:45:43  willuhn
+ * @B In ZippedPlugin duerfen die Deps nicht geprueft werden, weil dadurch indirekt (in Dependency.check()) der Plugin-Loader initialisiert werden wuerde
+ *
+ * Revision 1.26  2011-06-01 13:18:45  willuhn
  * @C Deploy- und Dependency-Checks in Manifest verschoben
  *
  * Revision 1.25  2011-06-01 12:35:58  willuhn

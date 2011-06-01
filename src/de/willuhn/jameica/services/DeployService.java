@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/06/01 13:18:45 $
+ * $Revision: 1.7 $
+ * $Date: 2011/06/01 13:45:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,12 +106,8 @@ public class DeployService implements Bootable
    * 
    * Die Funktion prueft auch, ob ggf. schon eine aktuellere Version installiert ist
    * oder ob das Plugin bereits via System- oder Config-Source installiert ist - in
-   * dem Fall kann es nicht ueberschrieben werden. 
-   * 
-   * Die Funktion sollte nur zur Laufzeit ausgefuehrt werden und nicht zur Boot-Zeit,
-   * da sie intern den Plugin-Loader verwendet, was beim Boot-Zeitpunkt dazu fuehren
-   * kann, dass der Boot-Loader viel zu frueh initialisiert wird.
-   * 
+   * dem Fall kann es nicht ueberschrieben werden.
+   *  
    * @param zip die ZIP-Datei mit dem zu pruefenden Plugin.
    * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
    */
@@ -121,7 +117,8 @@ public class DeployService implements Bootable
     // korrekten Abhaengigkeiten statt.
     ZippedPlugin plugin = new ZippedPlugin(zip);
     
-    // Checken, ob schon eine aktuellere Version installiert ist.
+    // Checken, ob die Abhaengigkeiten erfuellt sind und ob schon eine aktuellere Version installiert ist.
+    // ACHTUNG: Das geht nur zur Laufzeit, nicht zur Bootzeit.
     plugin.getManifest().canDeploy();
   }
   

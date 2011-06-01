@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ZippedPlugin.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/06/01 13:18:45 $
+ * $Revision: 1.3 $
+ * $Date: 2011/06/01 13:45:43 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -137,7 +137,6 @@ public class ZippedPlugin
       }
 
       this.manifest = new Manifest(is);
-      this.manifest.checkDependencies();
       //
       ////////////////////////////////////////////////////////////////////////////
 
@@ -188,7 +187,10 @@ public class ZippedPlugin
 
 /**********************************************************************
  * $Log: ZippedPlugin.java,v $
- * Revision 1.2  2011/06/01 13:18:45  willuhn
+ * Revision 1.3  2011/06/01 13:45:43  willuhn
+ * @B In ZippedPlugin duerfen die Deps nicht geprueft werden, weil dadurch indirekt (in Dependency.check()) der Plugin-Loader initialisiert werden wuerde
+ *
+ * Revision 1.2  2011-06-01 13:18:45  willuhn
  * @C Deploy- und Dependency-Checks in Manifest verschoben
  *
  * Revision 1.1  2011-06-01 11:03:40  willuhn
