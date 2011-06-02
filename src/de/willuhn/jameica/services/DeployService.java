@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/06/02 12:28:04 $
+ * $Revision: 1.13 $
+ * $Date: 2011/06/02 12:30:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -243,9 +243,16 @@ public class DeployService implements Bootable
         monitor.setStatusText(i18n.tr("Lösche vorherige Version..."));
         Logger.info("deleting previous version in " + target);
         
+        // Wenn hier eine Marker-Datei liegt, fehlte der Neustart dazwischen
+        // Wuerden wir jetzt den Ordner loeschen, wuerde auch der Delete-Marker verschwinden
+        // und die Jar-Datei wuerde sich nicht mehr entfernen lassen
+        File marker = new File(target,".deletemarker");
+        if (marker.exists())
+          throw new ApplicationException(i18n.tr("Bitte starten Sie erst Jameica neu."));
+        
         // Wenn das nicht klappt, fehlte der Neustart dazwischen, der hier aufraeumt
         if (!FileUtil.deleteRecursive(target))
-          throw new ApplicationException(i18n.tr("Bitte starten Sie erst Jameica neu.",target.getAbsolutePath()));
+          throw new ApplicationException(i18n.tr("Der ordner {0} konnte nicht gelöscht werden.",target.getAbsolutePath()));
       }
 
       // Entpacken
