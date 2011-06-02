@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/Attic/PluginPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/01 21:20:02 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginListPart.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -44,7 +44,7 @@ import de.willuhn.util.I18N;
  * Komponente, die die Plugins in einer huebsch formatierten Liste mit
  * Buttons zum Managen anzeigt.
  */
-public class PluginPart implements Part
+public class PluginListPart implements Part
 {
   // Wir cachen die Plugins hier statisch, damit auch die frisch installierten aber noch
   // nicht aktivierten hier angezeigt werden - auch dann, wenn wir die Seite mal verlassen
@@ -52,7 +52,7 @@ public class PluginPart implements Part
   private static Map<String,Manifest> cache = new LinkedHashMap<String,Manifest>();
   
   private MessageConsumer mc = new MyMessageConsumer();
-  private Map<String,PluginInfoPart> parts = new HashMap<String,PluginInfoPart>();
+  private Map<String,PluginDetailPart> parts = new HashMap<String,PluginDetailPart>();
   
   private ScrolledContainer scrolled = null;
 
@@ -80,7 +80,7 @@ public class PluginPart implements Part
     {
       String name = it.next();
       Manifest mf = cache.get(name);
-      PluginInfoPart part = new PluginInfoPart(mf);
+      PluginDetailPart part = new PluginDetailPart(mf);
       parts.put(name,part);
       part.paint(scrolled.getComposite());
     }
@@ -144,25 +144,35 @@ public class PluginPart implements Part
               String name = i.next();
               if (mf.getName().equals(name))
               {
-                PluginInfoPart part = parts.get(name);
+                PluginDetailPart part = parts.get(name);
                 part.dispose();
               }
             }
 
-            // Neu einfuegen. Aber nur, wenn es installiert wurde
-            if (m.getEvent() == Event.INSTALLED)
+            Event event = m.getEvent();
+            
+            // Neu einfuegen. Aber nur, wenn es installiert/aktualisiert wurde
+            switch (event)
             {
-              PluginInfoPart part = new PluginInfoPart(mf);
-              parts.put(mf.getName(),part);
-              part.paint(scrolled.getComposite());
-              
-              // Zum Cache tun
-              cache.put(mf.getName(),mf);
-            }
-            else if (m.getEvent() == Event.UNINSTALLED)
-            {
-              // Aus dem Cache werfen
-              cache.remove(mf.getName());
+              case INSTALLED:
+              case UPDATED:
+                PluginDetailPart part = new PluginDetailPart(mf);
+                parts.put(mf.getName(),part);
+                part.paint(scrolled.getComposite());
+                
+                // Zum Cache tun
+                cache.put(mf.getName(),mf);
+                
+                break;
+                
+              case UNINSTALLED:
+                // Aus dem Cache werfen
+                cache.remove(mf.getName());
+                
+                break;
+                
+              default:
+                Logger.warn("unknown event " + event);
             }
 
             // Layout aktualisieren
@@ -190,8 +200,11 @@ public class PluginPart implements Part
 
 
 /**********************************************************************
- * $Log: PluginPart.java,v $
- * Revision 1.3  2011/06/01 21:20:02  willuhn
+ * $Log: PluginListPart.java,v $
+ * Revision 1.1  2011/06/02 12:15:16  willuhn
+ * @B Das Handling beim Update war noch nicht sauber
+ *
+ * Revision 1.3  2011-06-01 21:20:02  willuhn
  * @N Beim Deinstallieren die Navi und Menupunkte des Plugins deaktivieren
  * @N Frisch installierte aber noch nicht aktive Plugins auch dann anzeigen, wenn die View verlassen wird
  *

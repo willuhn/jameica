@@ -1,6 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginInstall.java,v $
- * $Revision: 1.7 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginUpdate.java,v $
+ * $Revision: 1.1 $
  * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  *
@@ -33,11 +33,11 @@ import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
 
 /**
- * Action zum Installieren eines Plugins.
+ * Action zum Aktualisieren eines Plugins.
  */
-public class PluginInstall implements Action
+public class PluginUpdate implements Action
 {
-  private final static Settings settings = new Settings(PluginInstall.class);
+  private final static Settings settings = new Settings(PluginUpdate.class);
   
   /**
    * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
@@ -45,8 +45,14 @@ public class PluginInstall implements Action
   public void handleAction(Object context) throws ApplicationException
   {
     I18N i18n = Application.getI18n();
+    
+    if (!(context instanceof Manifest))
+      throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu aktualisierende Plugin aus"));
+    
+    final Manifest installed = (Manifest) context;
+    
     FileDialog d = new FileDialog(GUI.getShell(),SWT.OPEN);
-    d.setText(i18n.tr("Bitte wählen Sie die ZIP-Datei mit dem zu installierenden Plugin aus."));
+    d.setText(i18n.tr("Bitte wählen Sie die ZIP-Datei mit der neuen Version des Plugins aus."));
     d.setFilterExtensions(new String[]{"*.zip"});
     d.setFilterPath(settings.getString("lastdir",System.getProperty("user.home")));
     
@@ -64,21 +70,12 @@ public class PluginInstall implements Action
     // Hier drin wird der korrekte Aufbau des Plugins gecheckt.
     final ZippedPlugin plugin = new ZippedPlugin(f);
     
-    // Checken, ob das Plugin schon installiert ist. Wenn ja, muss es erst deinstalliert werden.
-    Manifest mf = plugin.getManifest();
-    Manifest installed = Application.getPluginLoader().getManifestByName(mf.getName());
-    if (installed != null)
-      throw new ApplicationException(i18n.tr("Das Plugin ist bereits installiert."));
-    
-    // Und hier die Abhaengigkeiten, korrekten Versionsnummerm, etc.
-    mf.canDeploy();
-    
-    // Installation starten
+    // Update starten
     BackgroundTask task = new BackgroundTask() {
       public void run(ProgressMonitor monitor) throws ApplicationException
       {
         DeployService service = Application.getBootLoader().getBootable(DeployService.class);
-        service.deploy(plugin,monitor);
+        service.update(installed, plugin,monitor);
       }
       public boolean isInterrupted()
       {
@@ -92,9 +89,9 @@ public class PluginInstall implements Action
     try
     {
       BackgroundTaskDialog bd = new BackgroundTaskDialog(BackgroundTaskDialog.POSITION_CENTER,task);
-      bd.setTitle(i18n.tr("Installiere..."));
+      bd.setTitle(i18n.tr("Aktualisiere..."));
       bd.setSideImage(SWTUtil.getImage("emblem-package.png"));
-      bd.setPanelText(i18n.tr("Installiere Plugin"));
+      bd.setPanelText(i18n.tr("Aktualisiere Plugin"));
       bd.open();
     }
     catch (ApplicationException ae)
@@ -117,26 +114,8 @@ public class PluginInstall implements Action
 
 
 /**********************************************************************
- * $Log: PluginInstall.java,v $
- * Revision 1.7  2011/06/02 12:15:16  willuhn
+ * $Log: PluginUpdate.java,v $
+ * Revision 1.1  2011/06/02 12:15:16  willuhn
  * @B Das Handling beim Update war noch nicht sauber
- *
- * Revision 1.6  2011-06-02 11:04:55  willuhn
- * @N Noch ein Icon
- *
- * Revision 1.5  2011-06-02 11:01:57  willuhn
- * @C Installation/Deinstallation ueber neuen modalen Backgroundtask-Dialog
- *
- * Revision 1.4  2011-06-01 15:18:42  willuhn
- * @N Die Deploy-Funktion kriegt jetzt direkt ein ZippedPlugin - das erspart das extra "canDeploy()"
- *
- * Revision 1.3  2011-06-01 13:00:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2011-06-01 11:03:40  willuhn
- * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
- *
- * Revision 1.1  2011-05-31 16:39:04  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  **********************************************************************/

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.53 $
- * $Date: 2011/06/01 21:31:26 $
+ * $Revision: 1.54 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -583,33 +584,18 @@ public final class PluginLoader
     if (mf == null)
       throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu deinstallierende Plugin aus"));
 
-    final File dir = new File(mf.getPluginDir());
-    
     try
     {
       //////////////////////////////////////////////////////////////////////////
-      // 1. Derzeit unterstuetzen wir nur das Deinstallieren von Plugins aus dem User-Ordner
+      // 1. Wir unterstuetzen nur das Deinstallieren von Plugins aus dem User-Ordner
       Type source = mf.getPluginSource();
-      if (source == null)
-      {
-        Logger.warn("plugin " + mf.getName() + " has no plugin source");
-        throw new ApplicationException(i18n.tr("Nur Plugins im Plugin-Ordner des Benutzers können deinstalliert werden"));
-      }
-      
-      if (source != Type.USER)
+      if (source == null || source != Type.USER)
         throw new ApplicationException(i18n.tr("Nur Plugins im Plugin-Ordner des Benutzers können deinstalliert werden"));
       //
       //////////////////////////////////////////////////////////////////////////
       
       //////////////////////////////////////////////////////////////////////////
-      // 2. Checken, ob wir Schreibberechtigung haben
-      if (!dir.canWrite())
-        throw new ApplicationException(i18n.tr("Keine Berechtigung zum Löschen von {0}",dir.getCanonicalPath()));
-      //
-      //////////////////////////////////////////////////////////////////////////
-
-      //////////////////////////////////////////////////////////////////////////
-      // 3. Checken, ob andere Plugins von diesem abhaengig sind
+      // 2. Checken, ob andere Plugins von diesem abhaengig sind
       List<Manifest> manifests = this.getInstalledManifests();
       for (Manifest m:manifests)
       {
@@ -658,13 +644,14 @@ public final class PluginLoader
       
       String name = mf.getName();
       monitor.setStatusText(i18n.tr("Deinstalliere Plugin {0}",name));
+      monitor.addPercentComplete(10);
       Logger.warn("uninstalling plugin " + name);
 
       // "plugin" darf NULL sein - dann war es noch gar nicht aktiv und muss nur geloescht werden
       AbstractPlugin plugin = getPlugin(mf.getPluginClass());
       
       //////////////////////////////////////////////////////////////////////
-      // 0. Menu- und Navi-Punkte im GUI-Modus deaktivieren
+      // 1. Menu- und Navi-Punkte im GUI-Modus deaktivieren
       if (plugin != null && !Application.inServerMode())
       {
         GUI.getDisplay().syncExec(new Runnable() {
@@ -685,32 +672,29 @@ public final class PluginLoader
             }
           }
         });
+        monitor.addPercentComplete(10);
       }
       //////////////////////////////////////////////////////////////////////
 
       
       //////////////////////////////////////////////////////////////////////
-      // 1. Uninstall-Routine des Plugins aufrufen und Plugin beenden
+      // 2. Uninstall-Routine des Plugins aufrufen und Plugin beenden
       if (plugin != null)
       {
-        monitor.addPercentComplete(10);
-        monitor.log("  " + i18n.tr("Stoppe Plugin"));
-        Logger.info("executing uninstall method of " + plugin.getClass().getName());
         plugin.shutDown();
         plugin.uninstall(deleteUserData);
+        monitor.addPercentComplete(10);
       }
       
       //
       //////////////////////////////////////////////////////////////////////
       
       //////////////////////////////////////////////////////////////////////
-      // 2. Services stoppen und entfernen
+      // 3. Services stoppen und entfernen
       if (plugin != null)
       {
-        monitor.addPercentComplete(10);
-        monitor.log("  " + i18n.tr("Stoppe Services"));
-        Logger.info("stopping services");
         Application.getServiceFactory().shutDown(plugin);
+        monitor.addPercentComplete(10);
       }
       //
       //////////////////////////////////////////////////////////////////////
@@ -719,49 +703,38 @@ public final class PluginLoader
       //
       if (deleteUserData && plugin != null)
       {
-        // 3. Config-Dateien des Plugins loeschen
-        monitor.addPercentComplete(10);
-        monitor.log("  " + i18n.tr("Lösche Konfigurationsdateien des Plugins"));
-        Logger.info("deleting config files");
+        // 4. Config-Dateien des Plugins loeschen
         deleteConfigs(plugin);
-        
-        // 4. Benutzerdateien des Plugins loeschen
         monitor.addPercentComplete(10);
-        monitor.log("  " + i18n.tr("Lösche Benutzerdaten des Plugins"));
+        
+        // 5. Benutzerdateien des Plugins loeschen
         File dataDir = new File(plugin.getResources().getWorkPath());
         if (dataDir.exists())
-        {
-          Logger.info("deleting " + dataDir);
           FileUtil.deleteRecursive(dataDir);
-        }
+        monitor.addPercentComplete(10);
       }
       //
       //////////////////////////////////////////////////////////////////////
 
       //////////////////////////////////////////////////////////////////////
-      // 5. Plugin-Dateien loeschen
+      // 6. Plugin-Dateien loeschen
+      // Unter Windows bleiben hier die Jar-Dateien liegen, weil die Filehandles noch offen sind
+      // Daher erzeugen wir nur eine Marker-Datei. Die sorgt dafuer, dass der Deploy-Service
+      // beim naechsten Start den Rest wegraeumt
+      markForDelete(mf);
       monitor.addPercentComplete(10);
-      File pluginDir = new File(mf.getPluginDir());
-      monitor.log("  " + i18n.tr("Lösche Plugin"));
-      Logger.info("deleting " + pluginDir);
-      
-      // TODO: Unter Windows bleiben hier die Jar-Dateien liegen, weil die Filehandles noch offen sind
-      // Keine Ahnung, wie ich das loesen kann. Vielleicht kann man die irgendwie aus dem Classloader
-      // des Plugins entfernen. Alternativ koennte man die Dateien auch einfach im Deploy-Service beim
-      // naechsten Start loeschen - indem man in dem Ordner sowas wie eine Delete-Marker-Datei setzt
-      FileUtil.deleteRecursive(pluginDir);
       //////////////////////////////////////////////////////////////////////
       
       //////////////////////////////////////////////////////////////////////
-      // 6. Plugin-Version verwerfen
-      monitor.addPercentComplete(10);
+      // 7. Plugin-Version verwerfen
       updateChecker.setAttribute(mf.getPluginClass() + ".version",(String) null);
+      monitor.addPercentComplete(10);
       //////////////////////////////////////////////////////////////////////
       
       //////////////////////////////////////////////////////////////////////
-      // 7. Aus der Liste der installierten Plugins entfernen
-      monitor.addPercentComplete(10);
+      // 8. Aus der Liste der installierten Plugins entfernen
       plugins.remove(mf);
+      monitor.addPercentComplete(10);
       //////////////////////////////////////////////////////////////////////
       
       //////////////////////////////////////////////////////////////////////
@@ -787,6 +760,35 @@ public final class PluginLoader
       
       monitor.setStatus(ProgressMonitor.STATUS_ERROR);
       monitor.setStatusText(msg);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(msg,StatusBarMessage.TYPE_ERROR));
+    }
+  }
+  
+  /**
+   * Deinstalliert ein Plugin nicht sofort sondern markiert es nur zur Loeschung.
+   * Das eigentliche Loeschen geschieht dann erst beim naechsten Start.
+   * @param manifest das Plugin, welches zur Loeschung vorgemerkt wird.
+   * @throws ApplicationException
+   */
+  public void markForDelete(Manifest manifest) throws ApplicationException
+  {
+    if (manifest == null)
+      return;
+    
+    File dir = new File(manifest.getPluginDir());
+    if (!dir.exists()) // Kein Delete-Marker noetig
+      return;
+    
+    Logger.warn("creating delete marker to cleanup on next restart");
+    File deleteMarker = new File(dir,".deletemarker");
+    try
+    {
+      deleteMarker.createNewFile();
+    }
+    catch (IOException e)
+    {
+      Logger.error("unable to create delete marker " + deleteMarker,e);
+      throw new ApplicationException(Application.getI18n().tr("Löschen des Plugins {0} fehlgeschlagen",manifest.getName()));
     }
   }
   
@@ -909,7 +911,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.53  2011/06/01 21:31:26  willuhn
+ * Revision 1.54  2011/06/02 12:15:16  willuhn
+ * @B Das Handling beim Update war noch nicht sauber
+ *
+ * Revision 1.53  2011-06-01 21:31:26  willuhn
  * *** empty log message ***
  *
  * Revision 1.52  2011-06-01 21:26:48  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/PluginMessage.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -33,6 +33,11 @@ public class PluginMessage implements Message
      * Plugin wurde installiert.
      */
     INSTALLED,
+    
+    /**
+     * Plugin wurde aktualisiert.
+     */
+    UPDATED,
   }
   
   private Manifest mf = null;
@@ -72,7 +77,10 @@ public class PluginMessage implements Message
 
 /**********************************************************************
  * $Log: PluginMessage.java,v $
- * Revision 1.1  2011/05/31 16:39:04  willuhn
+ * Revision 1.2  2011/06/02 12:15:16  willuhn
+ * @B Das Handling beim Update war noch nicht sauber
+ *
+ * Revision 1.1  2011-05-31 16:39:04  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  **********************************************************************/

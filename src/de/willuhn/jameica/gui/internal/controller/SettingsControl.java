@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.36 $
- * $Date: 2011/06/01 17:35:58 $
+ * $Revision: 1.37 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,7 +27,7 @@ import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.input.TextInput;
 import de.willuhn.jameica.gui.internal.parts.CertificateList;
-import de.willuhn.jameica.gui.internal.parts.PluginPart;
+import de.willuhn.jameica.gui.internal.parts.PluginListPart;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.SettingsChangedMessage;
@@ -205,7 +205,7 @@ public class SettingsControl extends AbstractControl
   {
     if (this.plugins != null)
       return this.plugins;
-     this.plugins = new PluginPart();
+     this.plugins = new PluginListPart();
     return this.plugins;
   }
   
@@ -388,7 +388,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
- * Revision 1.36  2011/06/01 17:35:58  willuhn
+ * Revision 1.37  2011/06/02 12:15:16  willuhn
+ * @B Das Handling beim Update war noch nicht sauber
+ *
+ * Revision 1.36  2011-06-01 17:35:58  willuhn
  * @N Ergonomischere Verwaltung der Plugins
  *
  * Revision 1.35  2011-05-11 10:27:25  willuhn

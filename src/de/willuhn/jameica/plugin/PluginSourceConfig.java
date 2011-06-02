@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginSourceConfig.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/01 12:35:58 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -38,15 +38,15 @@ public class PluginSourceConfig extends AbstractPluginSource
     Logger.info("searching for " + getType() + " plugins");
     File[] pluginDirs = Application.getConfig().getPluginDirs();
 
-    for (int i = 0; i < pluginDirs.length; ++i)
+    for (File pluginDir:pluginDirs)
     {
-      if (!pluginDirs[i].canRead() || !pluginDirs[i].isDirectory())
+      if (!pluginDir.canRead() || !pluginDir.isDirectory())
       {
-        Logger.warn("  skipping " + pluginDirs[i].getAbsolutePath() + " - no directory or not readable");
+        Logger.warn("  skipping " + pluginDir.getAbsolutePath() + " - no directory or not readable");
         continue;
       }
-      Logger.info("  adding dir " + pluginDirs[i].getAbsolutePath());
-      this.dirs.add(pluginDirs[i]);
+      Logger.info("  adding dir " + pluginDir.getAbsolutePath());
+      this.dirs.add(pluginDir);
     }
     
     return this.dirs;
@@ -65,7 +65,10 @@ public class PluginSourceConfig extends AbstractPluginSource
 
 /**********************************************************************
  * $Log: PluginSourceConfig.java,v $
- * Revision 1.1  2011/06/01 12:35:58  willuhn
+ * Revision 1.2  2011/06/02 12:15:16  willuhn
+ * @B Das Handling beim Update war noch nicht sauber
+ *
+ * Revision 1.1  2011-06-01 12:35:58  willuhn
  * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
  *
  **********************************************************************/

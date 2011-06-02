@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/06/01 12:35:58 $
+ * $Revision: 1.9 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,7 +43,6 @@ import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.PluginMessage;
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -95,10 +94,7 @@ public class PluginList extends TablePart
       public void format(TableItem item)
       {
         Manifest mf = (Manifest) item.getData();
-        
-        // Wenn das Plugin noch nicht initialisiert ist, zeigen wir es in grauer Farbe an
-        AbstractPlugin plugin = Application.getPluginLoader().getPlugin(mf.getPluginClass());
-        item.setForeground(plugin != null ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
+        item.setForeground(mf.isInstalled() ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
       }
     });
     setMulti(false);
@@ -262,7 +258,10 @@ public class PluginList extends TablePart
 
 /*********************************************************************
  * $Log: PluginList.java,v $
- * Revision 1.8  2011/06/01 12:35:58  willuhn
+ * Revision 1.9  2011/06/02 12:15:16  willuhn
+ * @B Das Handling beim Update war noch nicht sauber
+ *
+ * Revision 1.8  2011-06-01 12:35:58  willuhn
  * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
  *
  * Revision 1.7  2011-06-01 11:03:40  willuhn

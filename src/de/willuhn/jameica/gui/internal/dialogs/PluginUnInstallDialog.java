@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/PluginUnInstallDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/05/31 16:39:05 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -24,7 +24,6 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.gui.util.SimpleContainer;
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -83,9 +82,8 @@ public class PluginUnInstallDialog extends AbstractDialog
       }
     });
       
-    // Wenn das Plugin nicht installiert ist, muessen auch keine User-Daten geloescht werden
-    final AbstractPlugin plugin = Application.getPluginLoader().getPlugin(this.manifest.getPluginClass());
-    if (plugin != null)
+    // User-Daten muessen nur geloescht werden, wenn das Plugin auch aktiv ist
+    if (manifest.isInstalled())
       container.addInput(check);
 
     container.addInput(warning);
@@ -156,7 +154,10 @@ public class PluginUnInstallDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: PluginUnInstallDialog.java,v $
- * Revision 1.1  2011/05/31 16:39:05  willuhn
+ * Revision 1.2  2011/06/02 12:15:16  willuhn
+ * @B Das Handling beim Update war noch nicht sauber
+ *
+ * Revision 1.1  2011-05-31 16:39:05  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  **********************************************************************/

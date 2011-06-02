@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/Attic/PluginInfoPart.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/06/01 21:20:02 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginDetailPart.java,v $
+ * $Revision: 1.1 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Link;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.internal.action.PluginDetails;
-import de.willuhn.jameica.gui.internal.action.PluginInstall;
 import de.willuhn.jameica.gui.internal.action.PluginUnInstall;
+import de.willuhn.jameica.gui.internal.action.PluginUpdate;
 import de.willuhn.jameica.gui.internal.action.Program;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
@@ -44,7 +44,7 @@ import de.willuhn.util.I18N;
  * Zeigt die Kurz-Infos eines Plugins inclusive Buttons fuer die Verwaltung
  * des Plugins an.
  */
-public class PluginInfoPart implements Part
+public class PluginDetailPart implements Part
 {
   private Manifest manifest = null;
   private Composite comp = null;
@@ -53,7 +53,7 @@ public class PluginInfoPart implements Part
    * ct.
    * @param mf das Manifest des Plugins.
    */
-  public PluginInfoPart(Manifest mf)
+  public PluginDetailPart(Manifest mf)
   {
     this.manifest = mf;
   }
@@ -68,7 +68,6 @@ public class PluginInfoPart implements Part
       return;
     
     AbstractPlugin plugin = Application.getPluginLoader().getPlugin(this.manifest.getPluginClass());
-    boolean freshInstall = plugin == null;
 
     I18N i18n = Application.getI18n();
 
@@ -110,7 +109,7 @@ public class PluginInfoPart implements Part
         title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         title.setFont(Font.H2.getSWTFont());
         String text = this.manifest.getName();
-        if (freshInstall) 
+        if (!manifest.isInstalled())
         {
           title.setForeground(comment);
           text = i18n.tr("{0} (Neustart erforderlich)",text);
@@ -122,7 +121,7 @@ public class PluginInfoPart implements Part
       {
         Label desc = new Label(this.comp,SWT.NONE);
         desc.setBackground(white);
-        if (freshInstall) desc.setForeground(comment);
+        if (!manifest.isInstalled()) desc.setForeground(comment);
         desc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         desc.setText(this.manifest.getDescription());
       }
@@ -133,7 +132,7 @@ public class PluginInfoPart implements Part
         Link l = new Link(this.comp,SWT.NONE);
         l.setBackground(white);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        if (freshInstall) l.setForeground(comment);
+        if (!manifest.isInstalled()) l.setForeground(comment);
         l.setText("<A>" + link + "</A>");
         l.addSelectionListener(new SelectionAdapter() {
           public void widgetSelected(SelectionEvent e)
@@ -166,12 +165,12 @@ public class PluginInfoPart implements Part
       
       // Buttons zum Oeffnen, Deinstallieren, Aktualisieren
       Button open   = new Button(i18n.tr("Öffnen..."),new PluginDetails(),this.manifest,false,"document-open.png");
-      Button update = new Button(i18n.tr("Plugin aktualisieren..."),new PluginInstall(),null,false,"emblem-package.png");
+      Button update = new Button(i18n.tr("Plugin aktualisieren..."),new PluginUpdate(),this.manifest,false,"emblem-package.png");
       Button delete = new Button(i18n.tr("Plugin löschen..."),new PluginUnInstall(),this.manifest,false,"user-trash-full.png");
 
       // Update und oeffnen gibt es nicht bei neuen Installationen
-      open.setEnabled(!freshInstall);
-      update.setEnabled(!freshInstall);
+      open.setEnabled(manifest.isInstalled());
+      update.setEnabled(manifest.isInstalled());
 
       // Checken, ob es installiert/deinstalliert werden kann
       try
@@ -215,8 +214,11 @@ public class PluginInfoPart implements Part
 
 
 /**********************************************************************
- * $Log: PluginInfoPart.java,v $
- * Revision 1.2  2011/06/01 21:20:02  willuhn
+ * $Log: PluginDetailPart.java,v $
+ * Revision 1.1  2011/06/02 12:15:16  willuhn
+ * @B Das Handling beim Update war noch nicht sauber
+ *
+ * Revision 1.2  2011-06-01 21:20:02  willuhn
  * @N Beim Deinstallieren die Navi und Menupunkte des Plugins deaktivieren
  * @N Frisch installierte aber noch nicht aktive Plugins auch dann anzeigen, wenn die View verlassen wird
  *

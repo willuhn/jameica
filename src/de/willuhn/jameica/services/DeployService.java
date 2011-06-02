@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/06/01 15:18:42 $
+ * $Revision: 1.10 $
+ * $Date: 2011/06/02 12:15:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,11 +14,13 @@
 package de.willuhn.jameica.services;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.zip.ZipFile;
 
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.io.FileCopy;
 import de.willuhn.io.FileFinder;
 import de.willuhn.io.FileUtil;
 import de.willuhn.io.ZipExtractor;
@@ -51,7 +53,42 @@ public class DeployService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-    // Checken, ob Dateien zum Deployen vorliegen
+    ////////////////////////////////////////////////////////////////////////////
+    // 1. Checken, ob wir Delete-Marker im User-Plugin-Dir haben. Das sind Reste von
+    //    deinstallierten Plugins, die wir jetzt wegraeumen.
+    File dir = Application.getConfig().getUserPluginDir();
+    Logger.info("searching for uninstalled plugins in " + dir.getAbsolutePath());
+
+    File[] pluginDirs = new FileFinder(dir).findAll();
+    for (File pluginDir:pluginDirs)
+    {
+      if (!pluginDir.canRead() || !pluginDir.isDirectory())
+      {
+        Logger.warn("  skipping " + pluginDir.getAbsolutePath() + " - no directory or not readable");
+        continue;
+      }
+      
+      // Checken, ob ein Delete-Marker drin liegt
+      File marker = new File(pluginDir,".deletemarker");
+      if (marker.exists() && marker.isFile())
+      {
+        Logger.info("  clean up " + pluginDir);
+        try
+        {
+          if (!FileUtil.deleteRecursive(pluginDir))
+            throw new IOException("unable to delete " + pluginDir);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to cleanup uninstalled plugin in " + pluginDir);
+        }
+      }
+    }
+    //
+    ////////////////////////////////////////////////////////////////////////////
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // 2. Checken, ob Dateien zum Deployen vorliegen
     FileFinder finder = new FileFinder(Application.getConfig().getUserDeployDir());
     finder.extension(".zip");
     File[] files = finder.find();
@@ -105,6 +142,79 @@ public class DeployService implements Bootable
           Logger.error("FATAL: unable to delete " + file);
       }
     }
+    //
+    ////////////////////////////////////////////////////////////////////////////
+  }
+  
+  /**
+   * Aktualisiert ein bereits installiertes Plugin.
+   * @param current das installierte Plugin.
+   * @param plugin das zu aktualisierende Plugin.
+   * @param monitor der Progressmonitor zur Anzeige des Fortschrittes.
+   */
+  public void update(Manifest current, ZippedPlugin plugin, ProgressMonitor monitor)
+  {
+    I18N i18n = Application.getI18n();
+    try
+    {
+      if (plugin == null)
+        throw new ApplicationException(i18n.tr("Bitte wählen Sie die ZIP-Datei mit dem zu aktualisierenden Plugin"));
+      
+      if (current == null)
+        throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu aktualisierende Plugin"));
+
+      Manifest mf = plugin.getManifest();
+
+      // Checken, ob das wirklich das gleiche Plugin ist
+      if (!current.getName().equals(mf.getName()))
+        throw new ApplicationException(i18n.tr("Die ZIP-Datei enthält nicht das zu aktualisierende Plugin"));
+
+      // Checken, ob das neue prinzipiell installiert werden kann.
+      mf.canDeploy();
+
+      monitor.setStatusText(i18n.tr("Aktualisiere Plugin {0}",current.getName()));
+      
+      //////////////////////////////////////////////////////////////////////
+      // 1. Vorherige Version als zu loeschend markieren
+      Application.getPluginLoader().markForDelete(current);
+      monitor.addPercentComplete(20);
+      //
+      //////////////////////////////////////////////////////////////////////
+      
+      //////////////////////////////////////////////////////////////////////
+      // 2. Neue Version in das deploy-Verzeichnis kopieren, das Entpacken passiert beim naechsten Start
+      File source = plugin.getFile();
+      File target = new File(Application.getConfig().getUserDeployDir(),source.getName());
+      FileCopy.copy(source,target,true);
+      monitor.addPercentComplete(50);
+      //
+      //////////////////////////////////////////////////////////////////////
+      
+      //////////////////////////////////////////////////////////////////////
+      // Fertig.
+      monitor.setStatus(ProgressMonitor.STATUS_DONE);
+      monitor.setPercentComplete(100);
+      monitor.setStatusText(i18n.tr("Plugin aktualisiert"));
+      Logger.warn("plugin " + current.getName() + " updated");
+      //////////////////////////////////////////////////////////////////////
+      
+      Application.getMessagingFactory().sendMessage(new PluginMessage(mf,PluginMessage.Event.UPDATED)); // hier uebergeben wir das neue
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Plugin aktualisiert, bitte starten Sie Jameica neu"),StatusBarMessage.TYPE_SUCCESS));
+    }
+    catch (Exception e)
+    {
+      String msg = e.getMessage();
+      
+      if (!(e instanceof ApplicationException))
+      {
+        Logger.error("unable to update plugin",e);
+        msg = i18n.tr("Fehler beim Aktualisieren: {0}",msg);
+      }
+      
+      monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+      monitor.setStatusText(msg);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(msg,StatusBarMessage.TYPE_ERROR));
+    }
   }
   
   /**
@@ -118,6 +228,9 @@ public class DeployService implements Bootable
 
     try
     {
+      if (plugin == null)
+        throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu installierende Plugin"));
+      
       File zip = plugin.getFile();
       
       // Ziel-Ordner
