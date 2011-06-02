@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/PluginUnInstallDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/06/02 12:15:16 $
+ * $Revision: 1.3 $
+ * $Date: 2011/06/02 12:24:35 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -75,8 +75,7 @@ public class PluginUnInstallDialog extends AbstractDialog
       {
         if (((Boolean)check.getValue()).booleanValue())
           warning.setValue(i18n.tr("Die Benutzerdaten gehen unwiederbringlich verloren!\n" +
-                                   "Erstellen Sie im Zweifel ein Backup von\n" +
-                                   "{0}",Application.getConfig().getWorkDir()));
+                                   "Erstellen Sie im Zweifel ein Backup des Benutzer-Ordners."));
         else
           warning.setValue("\n\n");
       }
@@ -154,7 +153,10 @@ public class PluginUnInstallDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: PluginUnInstallDialog.java,v $
- * Revision 1.2  2011/06/02 12:15:16  willuhn
+ * Revision 1.3  2011/06/02 12:24:35  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.2  2011-06-02 12:15:16  willuhn
  * @B Das Handling beim Update war noch nicht sauber
  *
  * Revision 1.1  2011-05-31 16:39:05  willuhn
