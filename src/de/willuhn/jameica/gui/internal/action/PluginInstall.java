@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginInstall.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/06/02 11:01:57 $
+ * $Revision: 1.6 $
+ * $Date: 2011/06/02 11:04:55 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.BackgroundTaskDialog;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.services.DeployService;
 import de.willuhn.jameica.system.Application;
@@ -85,6 +86,7 @@ public class PluginInstall implements Action
     {
       BackgroundTaskDialog bd = new BackgroundTaskDialog(BackgroundTaskDialog.POSITION_CENTER,task);
       bd.setTitle(i18n.tr("Installiere..."));
+      bd.setSideImage(SWTUtil.getImage("emblem-package.png"));
       bd.setPanelText(i18n.tr("Installiere Plugin"));
       bd.open();
     }
@@ -109,7 +111,10 @@ public class PluginInstall implements Action
 
 /**********************************************************************
  * $Log: PluginInstall.java,v $
- * Revision 1.5  2011/06/02 11:01:57  willuhn
+ * Revision 1.6  2011/06/02 11:04:55  willuhn
+ * @N Noch ein Icon
+ *
+ * Revision 1.5  2011-06-02 11:01:57  willuhn
  * @C Installation/Deinstallation ueber neuen modalen Backgroundtask-Dialog
  *
  * Revision 1.4  2011-06-01 15:18:42  willuhn

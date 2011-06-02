@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginUnInstall.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/02 11:01:57 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/02 11:04:55 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -14,6 +14,7 @@ package de.willuhn.jameica.gui.internal.action;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.BackgroundTaskDialog;
 import de.willuhn.jameica.gui.internal.dialogs.PluginUnInstallDialog;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
@@ -98,6 +99,7 @@ public class PluginUnInstall implements Action
     try
     {
       BackgroundTaskDialog bd = new BackgroundTaskDialog(BackgroundTaskDialog.POSITION_CENTER,task);
+      bd.setSideImage(SWTUtil.getImage("user-trash-full.png"));
       bd.setTitle(i18n.tr("Deinstalliere..."));
       bd.setPanelText(i18n.tr("Deinstalliere Plugin"));
       bd.open();
@@ -123,7 +125,10 @@ public class PluginUnInstall implements Action
 
 /**********************************************************************
  * $Log: PluginUnInstall.java,v $
- * Revision 1.3  2011/06/02 11:01:57  willuhn
+ * Revision 1.4  2011/06/02 11:04:55  willuhn
+ * @N Noch ein Icon
+ *
+ * Revision 1.3  2011-06-02 11:01:57  willuhn
  * @C Installation/Deinstallation ueber neuen modalen Backgroundtask-Dialog
  *
  * Revision 1.2  2011-06-01 11:03:40  willuhn
