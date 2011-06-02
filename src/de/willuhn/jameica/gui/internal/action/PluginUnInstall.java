@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginUnInstall.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/06/01 11:03:40 $
+ * $Revision: 1.3 $
+ * $Date: 2011/06/02 11:01:57 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -12,6 +12,7 @@
 package de.willuhn.jameica.gui.internal.action;
 
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.dialogs.BackgroundTaskDialog;
 import de.willuhn.jameica.gui.internal.dialogs.PluginUnInstallDialog;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
@@ -76,11 +77,9 @@ public class PluginUnInstall implements Action
       throw new ApplicationException(i18n.tr("Fehler: {0}",e.getMessage()));
     }
 
-
-    // Deinstallation starten
     final Manifest m = mf;
     final boolean  d = deleteUserData;
-    Application.getController().start(new BackgroundTask() {
+    BackgroundTask task = new BackgroundTask() {
       public void run(ProgressMonitor monitor) throws ApplicationException
       {
         Application.getPluginLoader().unInstall(m,d,monitor);
@@ -94,7 +93,28 @@ public class PluginUnInstall implements Action
       public void interrupt()
       {
       }
-    });
+    };
+
+    try
+    {
+      BackgroundTaskDialog bd = new BackgroundTaskDialog(BackgroundTaskDialog.POSITION_CENTER,task);
+      bd.setTitle(i18n.tr("Deinstalliere..."));
+      bd.setPanelText(i18n.tr("Deinstalliere Plugin"));
+      bd.open();
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
+    }
+    catch (OperationCanceledException oce)
+    {
+      Logger.info("operation cancelled");
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to uninstall plugin",e);
+      throw new ApplicationException(i18n.tr("Deinstallation fehlgeschlagen: {0}",e.getMessage()));
+    }
   }
 
 }
@@ -103,7 +123,10 @@ public class PluginUnInstall implements Action
 
 /**********************************************************************
  * $Log: PluginUnInstall.java,v $
- * Revision 1.2  2011/06/01 11:03:40  willuhn
+ * Revision 1.3  2011/06/02 11:01:57  willuhn
+ * @C Installation/Deinstallation ueber neuen modalen Backgroundtask-Dialog
+ *
+ * Revision 1.2  2011-06-01 11:03:40  willuhn
  * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
  *
  * Revision 1.1  2011-05-31 16:39:04  willuhn

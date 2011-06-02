@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginInstall.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/06/01 15:18:42 $
+ * $Revision: 1.5 $
+ * $Date: 2011/06/02 11:01:57 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -18,11 +18,14 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.dialogs.BackgroundTaskDialog;
 import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.services.DeployService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.system.Settings;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
@@ -63,22 +66,41 @@ public class PluginInstall implements Action
     plugin.getManifest().canDeploy();
     
     // Installation starten
-    Application.getController().start(new BackgroundTask() {
+    BackgroundTask task = new BackgroundTask() {
       public void run(ProgressMonitor monitor) throws ApplicationException
       {
         DeployService service = Application.getBootLoader().getBootable(DeployService.class);
         service.deploy(plugin,monitor);
       }
-      
       public boolean isInterrupted()
       {
         return false;
       }
-      
       public void interrupt()
       {
       }
-    });
+    };
+    
+    try
+    {
+      BackgroundTaskDialog bd = new BackgroundTaskDialog(BackgroundTaskDialog.POSITION_CENTER,task);
+      bd.setTitle(i18n.tr("Installiere..."));
+      bd.setPanelText(i18n.tr("Installiere Plugin"));
+      bd.open();
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
+    }
+    catch (OperationCanceledException oce)
+    {
+      Logger.info("operation cancelled");
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to install plugin",e);
+      throw new ApplicationException(i18n.tr("Installation fehlgeschlagen: {0}",e.getMessage()));
+    }
   }
 
 }
@@ -87,7 +109,10 @@ public class PluginInstall implements Action
 
 /**********************************************************************
  * $Log: PluginInstall.java,v $
- * Revision 1.4  2011/06/01 15:18:42  willuhn
+ * Revision 1.5  2011/06/02 11:01:57  willuhn
+ * @C Installation/Deinstallation ueber neuen modalen Backgroundtask-Dialog
+ *
+ * Revision 1.4  2011-06-01 15:18:42  willuhn
  * @N Die Deploy-Funktion kriegt jetzt direkt ein ZippedPlugin - das erspart das extra "canDeploy()"
  *
  * Revision 1.3  2011-06-01 13:00:36  willuhn
