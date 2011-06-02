@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/06/02 12:30:41 $
+ * $Revision: 1.14 $
+ * $Date: 2011/06/02 13:30:19 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -175,18 +175,19 @@ public class DeployService implements Bootable
       monitor.setStatusText(i18n.tr("Aktualisiere Plugin {0}",current.getName()));
       
       //////////////////////////////////////////////////////////////////////
-      // 1. Vorherige Version als zu loeschend markieren
-      Application.getPluginLoader().markForDelete(current);
-      monitor.addPercentComplete(20);
-      //
-      //////////////////////////////////////////////////////////////////////
-      
-      //////////////////////////////////////////////////////////////////////
-      // 2. Neue Version in das deploy-Verzeichnis kopieren, das Entpacken passiert beim naechsten Start
+      // 1. Neue Version in das deploy-Verzeichnis kopieren, das Entpacken passiert beim naechsten Start
       File source = plugin.getFile();
       File target = new File(Application.getConfig().getUserDeployDir(),source.getName());
-      FileCopy.copy(source,target,true);
+      if (!source.equals(target)) // Nur, wenn es nicht schon im Deploy-Verzeichnis liegt
+        FileCopy.copy(source,target,true);
       monitor.addPercentComplete(50);
+      //
+      //////////////////////////////////////////////////////////////////////
+
+      //////////////////////////////////////////////////////////////////////
+      // 2. Vorherige Version als zu loeschend markieren
+      Application.getPluginLoader().markForDelete(current);
+      monitor.addPercentComplete(20);
       //
       //////////////////////////////////////////////////////////////////////
       
@@ -224,6 +225,10 @@ public class DeployService implements Bootable
    */
   public void deploy(ZippedPlugin plugin, ProgressMonitor monitor)
   {
+    // TODO: Wir koennen vermutlich hier selbst erkennen, ob deploy oder update gemacht
+    // werden soll. Folglich kann die public update()-Funktion eigentlich weg und wir
+    // machen die Unterscheidung direkt hier drin
+    
     I18N i18n = Application.getI18n();
 
     try
