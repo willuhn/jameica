@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/BackgroundTaskDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/03/17 11:01:13 $
+ * $Revision: 1.3 $
+ * $Date: 2011/06/02 10:55:32 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -20,7 +20,6 @@ import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.system.Platform;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -122,23 +121,12 @@ public class BackgroundTaskDialog extends AbstractDialog
     };
     getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,SWT.DEFAULT));
 
-    // BUGZILLA 359: Sonderbehandlung fuer MacOS
-    Runnable job = null;
-    if (Application.getPlatform().getOS() == Platform.OS_MAC)
-    {
-      job = t;
-    }
-    else
-    {
-      job = new Runnable() {
-      
-        public void run()
-        {
-          t.start();
-        }
-      };
-    }
-
+    Runnable job = new Runnable() {
+      public void run()
+      {
+        t.start();
+      }
+    };
     getDisplay().asyncExec(job);
   }
 
@@ -148,7 +136,10 @@ public class BackgroundTaskDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: BackgroundTaskDialog.java,v $
- * Revision 1.2  2011/03/17 11:01:13  willuhn
+ * Revision 1.3  2011/06/02 10:55:32  willuhn
+ * @R Die nicht mehr noetige Mac-Sonderbehandlung entfernt (in GUI ist es auch nicht mehr drin)
+ *
+ * Revision 1.2  2011-03-17 11:01:13  willuhn
  * *** empty log message ***
  *
  * Revision 1.1  2010-10-21 10:48:45  willuhn
