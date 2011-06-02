@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/06/02 12:15:16 $
+ * $Revision: 1.11 $
+ * $Date: 2011/06/02 12:27:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -277,6 +277,7 @@ public class DeployService implements Bootable
       
       monitor.setStatus(ProgressMonitor.STATUS_ERROR);
       monitor.setStatusText(msg);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(msg,StatusBarMessage.TYPE_ERROR));
     }
   }
   
