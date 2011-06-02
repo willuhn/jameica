@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginListPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/02 12:15:16 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/02 13:02:26 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -14,8 +14,6 @@ package de.willuhn.jameica.gui.internal.parts;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.events.DisposeEvent;
@@ -33,6 +31,7 @@ import de.willuhn.jameica.gui.util.ScrolledContainer;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
+import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.PluginMessage.Event;
 import de.willuhn.jameica.plugin.Manifest;
@@ -46,11 +45,6 @@ import de.willuhn.util.I18N;
  */
 public class PluginListPart implements Part
 {
-  // Wir cachen die Plugins hier statisch, damit auch die frisch installierten aber noch
-  // nicht aktivierten hier angezeigt werden - auch dann, wenn wir die Seite mal verlassen
-  // LinkedHashMap, damit die Reihenfolge erhalten bleibt
-  private static Map<String,Manifest> cache = new LinkedHashMap<String,Manifest>();
-  
   private MessageConsumer mc = new MyMessageConsumer();
   private Map<String,PluginDetailPart> parts = new HashMap<String,PluginDetailPart>();
   
@@ -64,17 +58,10 @@ public class PluginListPart implements Part
     I18N i18n = Application.getI18n();
 
     this.scrolled = new ScrolledContainer(comp,1);
-    
-    // Die aktuell installieren noch aktualisieren
-    List<Manifest> mfs = Application.getPluginLoader().getInstalledManifests();
-    for (Manifest m:mfs)
-    {
-      cache.put(m.getName(),m); // im Cache ggf. ueberschreiben.
-    }
-    
-    // Und jetzt alle anzeigen
+
     // In dem Cache stehen jetzt auch noch die frisch installierten drin, die
     // aber noch nicht aktiv sind
+    Map<String,Manifest> cache = PluginCacheMessageConsumer.getCache();
     Iterator<String> it = cache.keySet().iterator();
     while (it.hasNext())
     {
@@ -137,7 +124,7 @@ public class PluginListPart implements Part
         {
           try
           {
-            // Das entfernen machen wir erstmal beim Deinstallieren und Installieren
+            // Das Manifest erstmal entfernen
             Iterator<String> i = parts.keySet().iterator();
             while (i.hasNext())
             {
@@ -150,29 +137,13 @@ public class PluginListPart implements Part
             }
 
             Event event = m.getEvent();
-            
+
             // Neu einfuegen. Aber nur, wenn es installiert/aktualisiert wurde
-            switch (event)
+            if (event == Event.INSTALLED || event == Event.UPDATED)
             {
-              case INSTALLED:
-              case UPDATED:
-                PluginDetailPart part = new PluginDetailPart(mf);
-                parts.put(mf.getName(),part);
-                part.paint(scrolled.getComposite());
-                
-                // Zum Cache tun
-                cache.put(mf.getName(),mf);
-                
-                break;
-                
-              case UNINSTALLED:
-                // Aus dem Cache werfen
-                cache.remove(mf.getName());
-                
-                break;
-                
-              default:
-                Logger.warn("unknown event " + event);
+              PluginDetailPart part = new PluginDetailPart(mf);
+              parts.put(mf.getName(),part);
+              part.paint(scrolled.getComposite());
             }
 
             // Layout aktualisieren
@@ -201,7 +172,10 @@ public class PluginListPart implements Part
 
 /**********************************************************************
  * $Log: PluginListPart.java,v $
- * Revision 1.1  2011/06/02 12:15:16  willuhn
+ * Revision 1.2  2011/06/02 13:02:26  willuhn
+ * @N MessageConsumer fuer die Plugin-Install-Benachrichtigungen ausgelagert, damit die Messages auch von jameica.update empfangen werden koennen
+ *
+ * Revision 1.1  2011-06-02 12:15:16  willuhn
  * @B Das Handling beim Update war noch nicht sauber
  *
  * Revision 1.3  2011-06-01 21:20:02  willuhn
