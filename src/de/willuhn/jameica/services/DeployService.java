@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/DeployService.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/06/02 13:30:19 $
+ * $Revision: 1.15 $
+ * $Date: 2011/06/06 09:13:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -225,10 +225,6 @@ public class DeployService implements Bootable
    */
   public void deploy(ZippedPlugin plugin, ProgressMonitor monitor)
   {
-    // TODO: Wir koennen vermutlich hier selbst erkennen, ob deploy oder update gemacht
-    // werden soll. Folglich kann die public update()-Funktion eigentlich weg und wir
-    // machen die Unterscheidung direkt hier drin
-    
     I18N i18n = Application.getI18n();
 
     try
