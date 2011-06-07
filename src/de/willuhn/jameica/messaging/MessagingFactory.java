@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.23 $
- * $Date: 2011/06/07 11:08:55 $
+ * $Revision: 1.24 $
+ * $Date: 2011/06/07 11:09:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -156,78 +156,9 @@ public final class MessagingFactory implements MessagingQueue
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
- * Revision 1.23  2011/06/07 11:08:55  willuhn
- * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
- *
- * Revision 1.22  2010/04/21 22:54:41  willuhn
- * @N Ralfs Patch fuer Offline-Konten
- *
- * Revision 1.21  2009/07/17 10:13:03  willuhn
- * @N MessagingQueue#flush()
- * @N MessageCollector zum Sammeln von Nachrichten
- *
- * Revision 1.20  2008/02/18 17:59:12  willuhn
- * @C Nach Autoregister-Messageconsumern erst beim Versand der ersten Nachricht suchen
- *
- * Revision 1.19  2008/02/15 08:47:17  willuhn
- * @B ggf. NPE beim Shutdown
- *
- * Revision 1.18  2008/02/13 01:04:34  willuhn
- * @N Jameica auf neuen Bootloader umgestellt
- * @C Markus' Aenderungen RMI-Registrierung uebernommen
- *
- * Revision 1.17  2007/06/05 13:07:56  willuhn
- * @C changed init process of messaging factory
- *
- * Revision 1.16  2007/06/05 11:45:09  willuhn
- * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
- *
- * Revision 1.15  2007/05/22 15:51:04  willuhn
- * @N getQueueSize in MessagingFactory
- * @N getDate in StatusBarMessage
- *
- * Revision 1.14  2007/05/02 10:06:56  willuhn
- * @N Nachrichten-Queue vergroessert
- *
- * Revision 1.13  2007/04/19 21:09:54  willuhn
+ * Revision 1.24  2011/06/07 11:09:31  willuhn
  * *** empty log message ***
  *
- * Revision 1.12  2007/04/02 23:01:43  willuhn
- * @N SelectInput auf BeanUtil umgestellt
- *
- * Revision 1.11  2007/03/16 14:38:43  willuhn
- * @C Redesign ImportMessage
- * @N Aktualisierung der Umsatztabelle nach Kategorie-Zuordnung
- *
- * Revision 1.10  2007/03/08 16:00:58  willuhn
- * @R removed some boring log messages
- *
- * Revision 1.9  2006/11/27 18:46:45  willuhn
- * @C removed synchronized stuff
- *
- * Revision 1.8  2006/10/31 23:57:26  willuhn
- * @N MessagingFactory.sendSyncMessage()
- * @N Senden einer SettingsChangedMessage beim Aendern von System-Einstellungen
- *
- * Revision 1.7  2006/08/14 22:34:16  willuhn
- * @C changed register/unregister log level
- *
- * Revision 1.6  2006/06/06 22:42:04  willuhn
- * @N Logging des Textes von geworfenen Exceptions beim Zustellen von Nachrichten
- *
- * Revision 1.5  2006/06/06 22:10:32  willuhn
- * @N loader skips inner classes
- *
- * Revision 1.4  2006/05/02 22:34:05  web0
- * @B fehler im class-Vergleich
- *
- * Revision 1.3  2006/04/18 16:49:46  web0
- * @C redesign in MessagingFactory
- *
- * Revision 1.2  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.1  2005/02/11 09:33:48  willuhn
- * @N messaging system
- *
+ * Revision 1.23  2011-06-07 11:08:55  willuhn
+ * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
 *****************************************************************************/
