@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessagingFactory.java,v $
- * $Revision: 1.22 $
- * $Date: 2010/04/21 22:54:41 $
+ * $Revision: 1.23 $
+ * $Date: 2011/06/07 11:08:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,11 +12,9 @@
  ****************************************************************************/
 package de.willuhn.jameica.messaging;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
 /**
@@ -31,7 +29,6 @@ public final class MessagingFactory implements MessagingQueue
   private static MessagingFactory singleton        = null;
     private MessagingQueue defaultQueue            = null;
     private HashMap<String, MessagingQueue> queues = null;
-    private boolean loaded                         = false;
 
   /**
    * Privater Konstruktor.
@@ -52,58 +49,6 @@ public final class MessagingFactory implements MessagingQueue
     if (singleton == null)
       singleton = new MessagingFactory();
     return singleton;
-  }
-  
-  /**
-   * Initialisiert die MessagingFactory.
-   */
-  private synchronized void init()
-  {
-    if (loaded)
-      return;
-    
-    loaded = true;
-
-    Application.getCallback().getStartupMonitor().setStatusText("starting internal messaging system");
-    Logger.info("init messaging factory");
-    
-    Logger.info("searching for message consumers");
-    Class<MessageConsumer>[] c = new Class[0];
-    try
-    {
-      c = Application.getClassLoader().getClassFinder().findImplementors(MessageConsumer.class);
-    }
-    catch (ClassNotFoundException e)
-    {
-      Logger.info("  no messaging consumers found");
-    }
-    for (int i=0;i<c.length;++i)
-    {
-      if (c[i].getName().indexOf('$') != -1)
-      {
-        Logger.debug(c[i].getName() + " is an inner class, skipping");
-        continue;
-      }
-      try
-      {
-        Constructor ct = c[i].getConstructor((Class[])null);
-        ct.setAccessible(true);
-        MessageConsumer mc = (MessageConsumer)(ct.newInstance((Object[])null));
-        if (mc.autoRegister())
-        {
-          Logger.info("  register " + c[i].getName());
-          registerMessageConsumer(mc);
-        }
-      }
-      catch (NoSuchMethodException e)
-      {
-        Logger.warn("message consumer has no default constructor, skipping");
-      }
-      catch (Throwable t)
-      {
-        Logger.error("unable to register message consumer " + c[i].getName(),t);
-      }
-    }
   }
   
   /**
@@ -177,7 +122,6 @@ public final class MessagingFactory implements MessagingQueue
    */
   public void sendMessage(Message message)
   {
-    init();
     this.defaultQueue.sendMessage(message);
   }
   
@@ -186,7 +130,6 @@ public final class MessagingFactory implements MessagingQueue
    */
   public void sendSyncMessage(Message message)
   {
-    init();
     this.defaultQueue.sendSyncMessage(message);
   }
 
@@ -195,7 +138,6 @@ public final class MessagingFactory implements MessagingQueue
    */
   public void flush()
   {
-    init();
     try
     {
       Iterator<String> it = this.queues.keySet().iterator();
@@ -214,6 +156,9 @@ public final class MessagingFactory implements MessagingQueue
 
 /*****************************************************************************
  * $Log: MessagingFactory.java,v $
+ * Revision 1.23  2011/06/07 11:08:55  willuhn
+ * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
+ *
  * Revision 1.22  2010/04/21 22:54:41  willuhn
  * @N Ralfs Patch fuer Offline-Konten
  *

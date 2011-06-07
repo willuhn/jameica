@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/MessagingService.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/06/24 11:24:33 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/07 11:08:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ package de.willuhn.jameica.services;
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.jameica.messaging.AutoRegisterMessageConsumer;
 import de.willuhn.jameica.messaging.LogMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
 
@@ -43,6 +44,7 @@ public class MessagingService implements Bootable
   {
     this.factory = MessagingFactory.getInstance();
     this.factory.registerMessageConsumer(new LogMessageConsumer());
+    this.factory.registerMessageConsumer(new AutoRegisterMessageConsumer());
   }
 
   /**
@@ -67,6 +69,9 @@ public class MessagingService implements Bootable
 
 /**********************************************************************
  * $Log: MessagingService.java,v $
+ * Revision 1.4  2011/06/07 11:08:55  willuhn
+ * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
+ *
  * Revision 1.3  2009/06/24 11:24:33  willuhn
  * @N Security-Manager via Bootloader setzen
  *

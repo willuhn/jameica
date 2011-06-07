@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.10 $
- * $Date: 2009/08/25 11:47:04 $
+ * $Revision: 1.11 $
+ * $Date: 2011/06/07 11:08:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,7 +12,8 @@
  ****************************************************************************/
 package de.willuhn.jameica.messaging;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
@@ -29,9 +30,9 @@ public final class NamedQueue implements MessagingQueue
 
   private static Worker worker = null;
 
-  private ArrayList consumers  = new ArrayList();
-  private Queue messages       = new Queue(MAX_MESSAGES);
-  private String name          = null;
+  private List<MessageConsumer> consumers  = new LinkedList<MessageConsumer>();
+  private Queue messages                   = new Queue(MAX_MESSAGES);
+  private String name                      = null;
 
   /**
    * ct.
@@ -176,7 +177,7 @@ public final class NamedQueue implements MessagingQueue
   private static class Worker extends Thread
   {
     private Object lock = new Object();
-    private ArrayList queues = new ArrayList();
+    private List<NamedQueue> queues = new LinkedList<NamedQueue>();
     private boolean quit = false;
 
     /**
@@ -239,7 +240,7 @@ public final class NamedQueue implements MessagingQueue
      * Sendet die Nachricht an alle Consumer.
      * @param msg
      */
-    private void send(ArrayList consumers, Message msg)
+    private void send(List<MessageConsumer> consumers, Message msg)
     {
       if (quit)
       {
@@ -254,7 +255,7 @@ public final class NamedQueue implements MessagingQueue
 
         for (int i=0;i<consumers.size();++i)
         {
-          consumer = (MessageConsumer) consumers.get(i);
+          consumer = consumers.get(i);
           Class[] expected = consumer.getExpectedMessageTypes();
           boolean send = expected == null;
           if (expected != null)
@@ -292,7 +293,7 @@ public final class NamedQueue implements MessagingQueue
         // Alle Queues abarbeiten
         for (int i=0;i<this.queues.size();++i)
         {
-          NamedQueue queue = (NamedQueue) this.queues.get(i);
+          NamedQueue queue = this.queues.get(i);
           while (queue.messages != null && queue.messages.size() > 0)
           {
             send(queue.consumers, (Message) queue.messages.pop());
@@ -317,6 +318,9 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.11  2011/06/07 11:08:55  willuhn
+ * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
+ *
  * Revision 1.10  2009/08/25 11:47:04  willuhn
  * @C auch wenn offensichtlich keine neuen Messages eingetroffen sind, alle 60 Sekunden mal nachschauen. Sicher ist sicher ;)
  *
