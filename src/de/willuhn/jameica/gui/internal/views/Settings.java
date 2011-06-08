@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.35 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.36 $
+ * $Date: 2011/06/08 09:20:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,10 +64,10 @@ public class Settings extends AbstractView implements Extendable
     // System-Einstellungen
     TabGroup system = new TabGroup(getTabFolder(),i18n.tr("System"));
     
-    system.addHeadline(i18n.tr("System-Optionen"));
+    system.addHeadline(i18n.tr("System-Einstellungen"));
     system.addLabelPair(i18n.tr("Log-Level"), control.getLogLevel());
 
-    system.addHeadline(i18n.tr("Proxy-Optionen"));
+    system.addHeadline(i18n.tr("Proxy-Einstellungen"));
     system.addCheckbox(control.getUseSystemProxy(),i18n.tr("System-Einstellungen verwenden"));
     ColumnLayout cl = new ColumnLayout(system.getComposite(),2);
 
@@ -183,7 +183,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.35  2011/05/31 16:39:04  willuhn
+ * Revision 1.36  2011/06/08 09:20:24  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.35  2011-05-31 16:39:04  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  * Revision 1.34  2011-05-03 16:45:20  willuhn
