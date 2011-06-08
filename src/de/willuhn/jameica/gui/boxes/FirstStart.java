@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/FirstStart.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/08 13:22:22 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/08 13:36:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -122,32 +122,29 @@ public class FirstStart extends AbstractBox
       icon.setImage(SWTUtil.getImage("package-x-generic-medium.png"));
     }
     
-    // Rechte Spalte mit dem Text
+    // Ueberschrift
     {
-      // Ueberschrift
-      {
-        Label title = new Label(comp,SWT.NONE);
-        title.setBackground(white);
-        title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        title.setFont(Font.H2.getSWTFont());
-        title.setText(i18n.tr(pending ? "Plugin noch nicht aktiviert" : "Noch keine Plugins installiert"));
-      }
-      
-      // Text
-      {
-        Label desc = new Label(comp,SWT.NONE);
-        desc.setBackground(white);
-        desc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        desc.setText(i18n.tr(pending ? "Bitte starten Sie Jameica jetzt neu." : "Bitte klicken Sie auf \"Neues Plugin installieren...\", um ein neues Plugin hinzuzufügen."));
-      }
-      
-      ButtonArea buttons = new ButtonArea();
-      if (pending)
-        buttons.addButton(i18n.tr("Jameica beenden"),new FileClose(),null,true,"window-close.png");
-      
-      buttons.addButton(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),null,true,"emblem-package.png");
-      buttons.paint(comp);
+      Label title = new Label(comp,SWT.NONE);
+      title.setBackground(white);
+      title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      title.setFont(Font.H2.getSWTFont());
+      title.setText(i18n.tr(pending ? "Plugin noch nicht aktiviert" : "Noch keine Plugins installiert"));
     }
+    
+    // Text
+    {
+      Label desc = new Label(comp,SWT.NONE);
+      desc.setBackground(white);
+      desc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      desc.setText(i18n.tr(pending ? "Bitte starten Sie Jameica jetzt neu." : "Bitte klicken Sie auf \"Neues Plugin installieren...\", um ein neues Plugin hinzuzufügen."));
+    }
+    
+    ButtonArea buttons = new ButtonArea();
+    if (pending)
+      buttons.addButton(i18n.tr("Jameica beenden"),new FileClose(),null,true,"window-close.png");
+    
+    buttons.addButton(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),null,true,"emblem-package.png");
+    buttons.paint(comp);
     
     Application.getMessagingFactory().registerMessageConsumer(this.mc);
     comp.addDisposeListener(new DisposeListener() {
@@ -197,7 +194,10 @@ public class FirstStart extends AbstractBox
 
 /*********************************************************************
  * $Log: FirstStart.java,v $
- * Revision 1.1  2011/06/08 13:22:22  willuhn
+ * Revision 1.2  2011/06/08 13:36:45  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.1  2011-06-08 13:22:22  willuhn
  * @N Neuer First-Start-Assistent, der zum Installieren eines neuen Plugins auffordert
  *
  **********************************************************************/
