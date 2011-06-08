@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/SystemMessages.java,v $
- * $Revision: 1.8 $
- * $Date: 2010/03/18 11:38:03 $
+ * $Revision: 1.9 $
+ * $Date: 2011/06/08 12:53:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -112,7 +112,6 @@ public class SystemMessages extends AbstractBox
       sb.append(text);
       sb.append("</li>");
     }
-    sb.append("<br/><br/><p>" + Application.getI18n().tr("Klicken Sie ggf. auf das Pfeil-Symbol in der Jameica-Statusleiste, um die letzten Meldungen des System-Logs anzuzeigen.") + "</p>");
     sb.append("</form>");
     FormTextPart part = new FormTextPart(sb.toString());
     part.paint(parent);
@@ -123,7 +122,10 @@ public class SystemMessages extends AbstractBox
 
 /*********************************************************************
  * $Log: SystemMessages.java,v $
- * Revision 1.8  2010/03/18 11:38:03  willuhn
+ * Revision 1.9  2011/06/08 12:53:13  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.8  2010-03-18 11:38:03  willuhn
  * @N Ausfuehrlichere und hilfreichere Fehlermeldung, wenn Hibiscus-Datenbank defekt ist oder nicht geoeffnet werden konnte.
  *
  * Revision 1.7  2008/12/11 00:00:37  willuhn
