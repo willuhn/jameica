@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.31 $
- * $Date: 2011/06/01 17:35:59 $
+ * $Revision: 1.32 $
+ * $Date: 2011/06/08 13:22:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -493,7 +493,7 @@ public class Manifest implements Comparable
     // 1. Benoetigte Jameica-Version.
     Dependency jd = this.getJameicaDependency();
     if (!jd.check())
-      throw new ApplicationException(Application.getI18n().tr("Plugin benötigt Jameica {1}",jd.getVersion()));
+      throw new ApplicationException(Application.getI18n().tr("Plugin benötigt Jameica {0}",jd.getVersion()));
 
     // 2. Es reichen die direkten Abhaengigkeiten. Die indirekten werden ja
     //    von dem anderen Manifest geprueft
@@ -667,7 +667,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.31  2011/06/01 17:35:59  willuhn
+ * Revision 1.32  2011/06/08 13:22:22  willuhn
+ * @N Neuer First-Start-Assistent, der zum Installieren eines neuen Plugins auffordert
+ *
+ * Revision 1.31  2011-06-01 17:35:59  willuhn
  * @N Ergonomischere Verwaltung der Plugins
  *
  * Revision 1.30  2011-06-01 16:06:11  willuhn

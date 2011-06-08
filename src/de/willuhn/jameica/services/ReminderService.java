@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/01/17 17:31:09 $
+ * $Revision: 1.14 $
+ * $Date: 2011/06/08 13:22:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -148,7 +148,6 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
     catch (Exception e)
     {
       Logger.error("error while starting reminder service",e);
-      Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Starten des Reminder-Services. Bitte prüfen Sie das System-Log"));
     }
   }
 
@@ -323,7 +322,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
- * Revision 1.13  2011/01/17 17:31:09  willuhn
+ * Revision 1.14  2011/06/08 13:22:22  willuhn
+ * @N Neuer First-Start-Assistent, der zum Installieren eines neuen Plugins auffordert
+ *
+ * Revision 1.13  2011-01-17 17:31:09  willuhn
  * @C Reminder-Zeug
  *
  * Revision 1.12  2011-01-14 17:33:39  willuhn

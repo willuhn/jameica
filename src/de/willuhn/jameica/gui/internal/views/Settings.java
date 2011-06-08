@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.36 $
- * $Date: 2011/06/08 09:20:24 $
+ * $Revision: 1.37 $
+ * $Date: 2011/06/08 13:22:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -123,9 +123,17 @@ public class Settings extends AbstractView implements Extendable
     //
 		/////////////////////////////////////////////////////////////////
 
-		// Mal checken, ob wir uns das zuletzt aktive Tab gemerkt haben.
-    if (lastActiveTab != null)
-      getTabFolder().setSelection(lastActiveTab.intValue());
+    /////////////////////////////////////////////////////////////////
+		// Mal checken, ob ein konkretes Tab angegeben ist.
+    Integer activeTab = lastActiveTab;
+
+    Object context = this.getCurrentObject();
+    if (context instanceof Integer)
+      activeTab = (Integer) context;
+    
+    if (activeTab != null)
+      getTabFolder().setSelection(activeTab);
+    /////////////////////////////////////////////////////////////////
 
     
     ButtonArea buttons = new ButtonArea();
@@ -183,7 +191,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.36  2011/06/08 09:20:24  willuhn
+ * Revision 1.37  2011/06/08 13:22:22  willuhn
+ * @N Neuer First-Start-Assistent, der zum Installieren eines neuen Plugins auffordert
+ *
+ * Revision 1.36  2011-06-08 09:20:24  willuhn
  * *** empty log message ***
  *
  * Revision 1.35  2011-05-31 16:39:04  willuhn
