@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/05/11 10:27:25 $
+ * $Revision: 1.11 $
+ * $Date: 2011/06/08 09:22:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,7 +30,7 @@ import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.DirectoryInput;
 import de.willuhn.jameica.gui.input.Input;
-import de.willuhn.jameica.gui.input.IntegerInput;
+import de.willuhn.jameica.gui.input.SpinnerInput;
 import de.willuhn.jameica.gui.internal.action.FileClose;
 import de.willuhn.jameica.gui.internal.dialogs.BackupRestoreDialog;
 import de.willuhn.jameica.gui.parts.Button;
@@ -52,7 +52,7 @@ public class BackupControl extends AbstractControl
 {
   private CheckboxInput state = null;
   private Input target        = null;
-  private Input count         = null;
+  private SpinnerInput count  = null;
   private TablePart backups   = null;
   private Button restore      = null;
   
@@ -150,7 +150,7 @@ public class BackupControl extends AbstractControl
     if (this.count != null)
       return this.count;
     
-    this.count = new IntegerInput(Application.getConfig().getBackupCount());
+    this.count = new SpinnerInput(1,100,Application.getConfig().getBackupCount());
     this.count.setEnabled(Application.getConfig().getUseBackup());
     return this.count;
   }
@@ -297,7 +297,10 @@ public class BackupControl extends AbstractControl
 
 /**********************************************************************
  * $Log: BackupControl.java,v $
- * Revision 1.10  2011/05/11 10:27:25  willuhn
+ * Revision 1.11  2011/06/08 09:22:44  willuhn
+ * @C Spinner-Input fuer die Anzahl der Backups
+ *
+ * Revision 1.10  2011-05-11 10:27:25  willuhn
  * @N OCE fangen
  *
  * Revision 1.9  2011-04-26 11:48:45  willuhn
