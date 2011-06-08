@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.54 $
- * $Date: 2011/06/02 12:15:16 $
+ * $Revision: 1.55 $
+ * $Date: 2011/06/08 12:53:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -108,7 +108,6 @@ public final class PluginLoader
         catch (Throwable t)
         {
           Logger.error("unable to load manifest from " + f.getAbsolutePath(), t);
-          Application.addWelcomeMessage(Application.getI18n().tr("Plugin-Verzeichnis {0} ignoriert. Enthält kein gültiges Manifest",f.getAbsolutePath()));
         }
       }
       
@@ -116,9 +115,7 @@ public final class PluginLoader
     
     if (this.plugins.size() == 0)
     {
-      Application.addWelcomeMessage(Application.getI18n().tr("Derzeit sind keine Plugins installiert"));
-      
-      // Den weiteren Code koennen wir komplett knicken
+      Logger.info("*** no plugins installed ***");
       return;
     }
     //
@@ -911,7 +908,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.54  2011/06/02 12:15:16  willuhn
+ * Revision 1.55  2011/06/08 12:53:21  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.54  2011-06-02 12:15:16  willuhn
  * @B Das Handling beim Update war noch nicht sauber
  *
  * Revision 1.53  2011-06-01 21:31:26  willuhn
