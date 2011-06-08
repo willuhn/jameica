@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/LicenseControl.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/04/26 12:15:49 $
+ * $Revision: 1.6 $
+ * $Date: 2011/06/08 09:16:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -70,10 +70,10 @@ public class LicenseControl extends AbstractControl {
 				InfoReader ir = new InfoReader(new FileInputStream(infos[i]));
 				buffer.append("<p>");
 				buffer.append("<b>" + ir.getName() + "</b>");
-				buffer.append("<br/>" + i18n.tr("Beschreibung") + ": " + ir.getDescription());
-				buffer.append("<br/>" + i18n.tr("Verzeichnis") + ": " + infos[i].getParentFile().getAbsolutePath());
-				buffer.append("<br/>" + i18n.tr("URL") + ": " + ir.getUrl());
-				buffer.append("<br/>" + i18n.tr("Lizenz") + ": " + ir.getLicense());
+        buffer.append("<br/>" + infos[i].getParentFile().getAbsolutePath());
+				buffer.append("<br/>" + ir.getDescription());
+        buffer.append("<br/>" + ir.getUrl());
+				buffer.append("<br/>" + ir.getLicense());
 				buffer.append("</p>");
 			}
 			catch (Exception e)
@@ -92,7 +92,10 @@ public class LicenseControl extends AbstractControl {
 
 /**********************************************************************
  * $Log: LicenseControl.java,v $
- * Revision 1.5  2011/04/26 12:15:49  willuhn
+ * Revision 1.6  2011/06/08 09:16:46  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.5  2011-04-26 12:15:49  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.4  2005/03/09 01:06:36  web0
