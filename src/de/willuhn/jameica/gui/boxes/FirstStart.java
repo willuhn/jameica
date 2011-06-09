@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/FirstStart.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/06/08 13:36:45 $
+ * $Revision: 1.3 $
+ * $Date: 2011/06/09 09:50:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,6 +36,7 @@ import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.PluginMessage.Event;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 import de.willuhn.util.I18N;
 
 /**
@@ -100,11 +101,21 @@ public class FirstStart extends AbstractBox
   {
     I18N i18n = Application.getI18n();
 
-    org.eclipse.swt.graphics.Color white = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+    // Wir unterscheiden hier beim Layout nach Windows und Rest.
+    // Unter Windows sieht es ohne Rahmen und ohne Hintergrund besser aus
+    org.eclipse.swt.graphics.Color bg = null;
+    int border = SWT.NONE;
+    
+    int os = Application.getPlatform().getOS();
+    if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64)
+    {
+      bg = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+      border = SWT.BORDER;
+    }
     
     // 2-spaltige Anzeige. Links das Icon, rechts Text und Buttons
-    Composite comp = new Composite(parent,SWT.BORDER);
-    comp.setBackground(white);
+    Composite comp = new Composite(parent,border);
+    comp.setBackground(bg);
     comp.setBackgroundMode(SWT.INHERIT_FORCE);
     comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     comp.setLayout(new GridLayout(2,false));
@@ -117,7 +128,7 @@ public class FirstStart extends AbstractBox
       GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
       gd.verticalSpan = 3;
       Label icon = new Label(comp,SWT.NONE);
-      icon.setBackground(white);
+      icon.setBackground(bg);
       icon.setLayoutData(gd);
       icon.setImage(SWTUtil.getImage("package-x-generic-medium.png"));
     }
@@ -125,7 +136,7 @@ public class FirstStart extends AbstractBox
     // Ueberschrift
     {
       Label title = new Label(comp,SWT.NONE);
-      title.setBackground(white);
+      title.setBackground(bg);
       title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       title.setFont(Font.H2.getSWTFont());
       title.setText(i18n.tr(pending ? "Plugin noch nicht aktiviert" : "Noch keine Plugins installiert"));
@@ -134,7 +145,7 @@ public class FirstStart extends AbstractBox
     // Text
     {
       Label desc = new Label(comp,SWT.NONE);
-      desc.setBackground(white);
+      desc.setBackground(bg);
       desc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       desc.setText(i18n.tr(pending ? "Bitte starten Sie Jameica jetzt neu." : "Bitte klicken Sie auf \"Neues Plugin installieren...\", um ein neues Plugin hinzuzufügen."));
     }
@@ -194,7 +205,10 @@ public class FirstStart extends AbstractBox
 
 /*********************************************************************
  * $Log: FirstStart.java,v $
- * Revision 1.2  2011/06/08 13:36:45  willuhn
+ * Revision 1.3  2011/06/09 09:50:39  willuhn
+ * @C Rahmen und Hintergrundfarbe nur unter Windows anzeigen
+ *
+ * Revision 1.2  2011-06-08 13:36:45  willuhn
  * *** empty log message ***
  *
  * Revision 1.1  2011-06-08 13:22:22  willuhn
