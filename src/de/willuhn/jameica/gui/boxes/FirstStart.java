@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/FirstStart.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/09 09:50:39 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/09 09:57:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -102,12 +102,12 @@ public class FirstStart extends AbstractBox
     I18N i18n = Application.getI18n();
 
     // Wir unterscheiden hier beim Layout nach Windows und Rest.
-    // Unter Windows sieht es ohne Rahmen und ohne Hintergrund besser aus
+    // Unter Windows und OSX sieht es ohne Rahmen und ohne Hintergrund besser aus
     org.eclipse.swt.graphics.Color bg = null;
     int border = SWT.NONE;
     
     int os = Application.getPlatform().getOS();
-    if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64)
+    if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64 && os != Platform.OS_MAC)
     {
       bg = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
       border = SWT.BORDER;
@@ -205,7 +205,10 @@ public class FirstStart extends AbstractBox
 
 /*********************************************************************
  * $Log: FirstStart.java,v $
- * Revision 1.3  2011/06/09 09:50:39  willuhn
+ * Revision 1.4  2011/06/09 09:57:37  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.3  2011-06-09 09:50:39  willuhn
  * @C Rahmen und Hintergrundfarbe nur unter Windows anzeigen
  *
  * Revision 1.2  2011-06-08 13:36:45  willuhn
