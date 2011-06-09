@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.24 $
- * $Date: 2011/05/13 14:18:19 $
+ * $Revision: 1.25 $
+ * $Date: 2011/06/09 10:59:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,11 +14,9 @@ package de.willuhn.jameica.gui.input;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.PopupList;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -28,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.internal.swt.PopupList;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -186,14 +185,11 @@ public class SearchInput extends AbstractInput
     try
     {
       // Liste von Strings fuer die Anzeige in der Popup-Box.
-
-      ArrayList items  = new ArrayList();
-      Hashtable values = new Hashtable();
-      int size = list.size();
-      for (int i=0;i<size;++i)
+      List items  = new ArrayList();
+      List values = new ArrayList();
+      
+      for (Object object:list)
       {
-        Object object = list.get(i);
-
         if (object == null)
           continue;
 
@@ -202,7 +198,7 @@ public class SearchInput extends AbstractInput
         if (text == null)
           continue;
         items.add(text);
-        values.put(text,object);
+        values.add(object);
       }
 
       Point location = this.text.toDisplay(this.text.getLocation());
@@ -211,15 +207,10 @@ public class SearchInput extends AbstractInput
       PopupList popup = new PopupList(GUI.getShell());
       popup.setItems((String[])items.toArray(new String[items.size()]));
       popup.setMinimumWidth(this.minWidth);
-      String selected = popup.open(new Rectangle(location.x, rect.y + location.y + rect.height, rect.width, 0));
+      int selected = popup.open(new Rectangle(location.x, rect.y + location.y + rect.height, rect.width, 0));
 
-      // Jetzt muessen wir das zugehoerige Fachobjekt suchen
-      // geht leider nicht anders, weil wir von der PopupList
-      // keine Position kriegen sondern nur den Text.
-      if (selected != null)
-      {
+      if (selected >= 0) // ist -1, wenn nichts ausgewaehlt wurde
         this.setValue(values.get(selected));
-      }
     }
     catch (Exception e)
     {
@@ -549,7 +540,10 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
- * Revision 1.24  2011/05/13 14:18:19  willuhn
+ * Revision 1.25  2011/06/09 10:59:15  willuhn
+ * @B Musste leider einen Fork vom SWT-Custom-Widget PopupList machen - siehe Kommentar-Text im Fork
+ *
+ * Revision 1.24  2011-05-13 14:18:19  willuhn
  * besser so
  *
  * Revision 1.23  2011-05-13 14:15:38  willuhn
