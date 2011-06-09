@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/PluginUnInstallDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/02 12:24:35 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/09 11:57:36 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -69,7 +69,7 @@ public class PluginUnInstallDialog extends AbstractDialog
 
     // Checkbox fuer die Userdaten
     final CheckboxInput check = new CheckboxInput(false);
-    check.setName(i18n.tr("Benutzerdaten dieses Plugins löschen"));
+    check.setName(i18n.tr("Benutzerdaten des Plugins ebenfalls löschen"));
     check.addListener(new Listener() {
       public void handleEvent(Event event)
       {
@@ -153,7 +153,10 @@ public class PluginUnInstallDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: PluginUnInstallDialog.java,v $
- * Revision 1.3  2011/06/02 12:24:35  willuhn
+ * Revision 1.4  2011/06/09 11:57:36  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.3  2011-06-02 12:24:35  willuhn
  * *** empty log message ***
  *
  * Revision 1.2  2011-06-02 12:15:16  willuhn
