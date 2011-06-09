@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/SearchDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/06/09 10:31:00 $
+ * $Revision: 1.6 $
+ * $Date: 2011/06/09 11:09:25 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -109,7 +109,7 @@ public class SearchDialog extends AbstractDialog
     };
     input.setName("");
     input.setAttribute("name");
-    input.setDelay(600);
+    input.setDelay(1000);
     input.setStartAt(3);
     input.setSearchString("");
     input.setMinWidth(500);
@@ -155,7 +155,10 @@ public class SearchDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: SearchDialog.java,v $
- * Revision 1.5  2011/06/09 10:31:00  willuhn
+ * Revision 1.6  2011/06/09 11:09:25  willuhn
+ * @C Wartezeit etwas verlaengert
+ *
+ * Revision 1.5  2011-06-09 10:31:00  willuhn
  * @C Wartezeit etwas verlaengert
  *
  * Revision 1.4  2011-05-13 11:11:27  willuhn
