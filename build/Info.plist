@@ -5,9 +5,9 @@
 	<key>CFBundleExecutable</key>
 		<string>jameica-macos.sh</string>
 	<key>CFBundleGetInfoString</key>
-		<string>jameica and hibiscus for Mac OS X</string>
+		<string>Jameica for Apple OS X</string>
 	<key>CFBundleIconFile</key>
-		<string>Jameica.icns</string>
+		<string>jameica-icon.icns</string>
 	<key>CFBundleIdentifier</key>
 		<string>de.willuhn.jameica</string>
 	<key>CFBundleInfoDictionaryVersion</key>
