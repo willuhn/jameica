@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/LoginDialog.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/06/16 11:03:24 $
+ * $Revision: 1.7 $
+ * $Date: 2011/06/16 11:19:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -146,12 +146,15 @@ public class LoginDialog extends AbstractDialog
     // den Focus gleich im Passwortfeld.
     if (this.login != null)
     {
-      username.setValue(this.login.getUsername());
+      String user = this.login.getUsername();
+      username.setValue(user);
       char[] pw = this.login.getPassword();
       if (pw != null)
         password.setValue(new String(pw));
-      else
+      if (user != null)
         password.focus();
+      else 
+        username.focus();
     }
     
     // Fehlertext
@@ -236,7 +239,10 @@ public class LoginDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: LoginDialog.java,v $
- * Revision 1.6  2011/06/16 11:03:24  willuhn
+ * Revision 1.7  2011/06/16 11:19:05  willuhn
+ * @N Focus im Username-Feld, wenn ein Login angegeben ist, aber kein Username enthalten ist
+ *
+ * Revision 1.6  2011-06-16 11:03:24  willuhn
  * @N Icons auf den Buttons
  *
  * Revision 1.5  2011-05-06 12:32:04  willuhn
