@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/LoginDialog.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/05/06 12:32:04 $
+ * $Revision: 1.6 $
+ * $Date: 2011/06/16 11:03:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,7 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.input.PasswordInput;
 import de.willuhn.jameica.gui.input.TextInput;
-import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SWTUtil;
@@ -164,8 +164,7 @@ public class LoginDialog extends AbstractDialog
     // Ggf. erweitern.
     extend(container);
 
-    ButtonArea buttons = container.createButtonArea(2);
-    
+    ButtonArea buttons = new ButtonArea();
     buttons.addButton("    " + i18n.tr("OK") + "    ",new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -178,14 +177,15 @@ public class LoginDialog extends AbstractDialog
         if (checkLogin(login))
           close();
       }
-    },null,true);
+    },null,true,"ok.png");
 
     buttons.addButton(i18n.tr("Abbrechen"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         throw new OperationCanceledException("Dialog abgebrochen");
       }
-    });
+    },null,false,"process-stop.png");
+    container.addButtonArea(buttons);
 
     // so und jetzt noch der Shell-Listener, damit der
     // User den Dialog nicht schliessen kann ohne was
@@ -236,7 +236,10 @@ public class LoginDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: LoginDialog.java,v $
- * Revision 1.5  2011/05/06 12:32:04  willuhn
+ * Revision 1.6  2011/06/16 11:03:24  willuhn
+ * @N Icons auf den Buttons
+ *
+ * Revision 1.5  2011-05-06 12:32:04  willuhn
  * @R Nicht mehr noetig - macht AbstractDialog jetzt selbst
  *
  * Revision 1.4  2009/06/10 11:25:54  willuhn
