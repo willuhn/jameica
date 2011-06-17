@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/ManifestMessageConsumer.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/17 15:55:18 $
+ * $Revision: 1.2 $
+ * $Date: 2011/06/17 16:06:17 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -91,7 +91,7 @@ public class ManifestMessageConsumer implements MessageConsumer
           if (mc.autoRegister())
             continue;
           
-          Logger.info("  " + classname);
+          Logger.info("  " + queue + ": " + classname);
           factory.getMessagingQueue(queue).registerMessageConsumer(mc);
         }
         catch (NoSuchMethodException e)
@@ -121,7 +121,10 @@ public class ManifestMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: ManifestMessageConsumer.java,v $
- * Revision 1.1  2011/06/17 15:55:18  willuhn
+ * Revision 1.2  2011/06/17 16:06:17  willuhn
+ * @C Logging
+ *
+ * Revision 1.1  2011-06-17 15:55:18  willuhn
  * @N Registrieren von Message-Consumern im Manifest
  *
  * Revision 1.1  2011-06-07 11:08:55  willuhn

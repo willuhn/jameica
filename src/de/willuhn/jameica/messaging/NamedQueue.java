@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/06/17 15:55:18 $
+ * $Revision: 1.13 $
+ * $Date: 2011/06/17 16:06:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,7 @@ public final class NamedQueue implements MessagingQueue
   NamedQueue(String name)
   {
     this.name = name;
-    Logger.info("creating message queue " + this.name);
+    Logger.debug("creating message queue " + this.name);
     if (worker == null)
     {
       Logger.info("starting messaging worker thread");
@@ -318,7 +318,10 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
- * Revision 1.12  2011/06/17 15:55:18  willuhn
+ * Revision 1.13  2011/06/17 16:06:17  willuhn
+ * @C Logging
+ *
+ * Revision 1.12  2011-06-17 15:55:18  willuhn
  * @N Registrieren von Message-Consumern im Manifest
  *
  * Revision 1.11  2011-06-07 11:08:55  willuhn
