@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/06/07 11:08:55 $
+ * $Revision: 1.12 $
+ * $Date: 2011/06/17 15:55:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,7 +77,7 @@ public final class NamedQueue implements MessagingQueue
   {
     if (consumer == null)
       return;
-    Logger.debug("registering message consumer " + consumer.getClass().getName());
+    Logger.debug("queue " + this.name + ": registering message consumer " + consumer.getClass().getName());
     consumers.add(consumer);
   }
 
@@ -95,7 +95,7 @@ public final class NamedQueue implements MessagingQueue
     if (consumer == null)
       return;
 
-    Logger.debug("unregistering message consumer " + consumer.getClass().getName());
+    Logger.debug("queue " + this.name + ": unregistering message consumer " + consumer.getClass().getName());
     consumers.remove(consumer);
   }
 
@@ -148,7 +148,7 @@ public final class NamedQueue implements MessagingQueue
     }
     catch (Queue.QueueFullException e)
     {
-      Logger.error("unable to send message " + message.toString() + " - queue full");
+      Logger.error("unable to send message " + message.toString() + " - queue " + this.name + " full");
     }
   }
   
@@ -318,7 +318,10 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
- * Revision 1.11  2011/06/07 11:08:55  willuhn
+ * Revision 1.12  2011/06/17 15:55:18  willuhn
+ * @N Registrieren von Message-Consumern im Manifest
+ *
+ * Revision 1.11  2011-06-07 11:08:55  willuhn
  * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
  *
  * Revision 1.10  2009/08/25 11:47:04  willuhn

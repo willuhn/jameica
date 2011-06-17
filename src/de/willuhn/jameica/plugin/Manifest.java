@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.32 $
- * $Date: 2011/06/08 13:22:22 $
+ * $Revision: 1.33 $
+ * $Date: 2011/06/17 15:55:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -384,6 +384,26 @@ public class Manifest implements Comparable
   }
   
   /**
+   * Liefert eine Liste von Consumer-Desktriptoren zu diesem Plugin.
+   * @return Liste aller Consumer-Deskriptoren aus der plugin.xml oder
+   * <code>null</code> wenn keine definiert sind.
+   */
+  public ConsumerDescriptor[] getMessageConsumers()
+  {
+    IXMLElement consumers = root.getFirstChildNamed("messaging");
+    if (consumers == null || !consumers.hasChildren())
+      return null;
+
+    Vector v = consumers.getChildrenNamed("consumer");
+    ConsumerDescriptor[] s = new ConsumerDescriptor[v.size()];
+    for (int i=0;i<v.size();++i)
+    {
+      s[i] = new ConsumerDescriptorXml((IXMLElement)v.get(i));
+    }
+    return s;
+  }
+
+  /**
    * Liefert die Versionsabhaengigkeit zu Jameica.
    * @return Die Abhaengigkeit zu einer bestimmten Jameica-Version.
    */
@@ -667,7 +687,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.32  2011/06/08 13:22:22  willuhn
+ * Revision 1.33  2011/06/17 15:55:18  willuhn
+ * @N Registrieren von Message-Consumern im Manifest
+ *
+ * Revision 1.32  2011-06-08 13:22:22  willuhn
  * @N Neuer First-Start-Assistent, der zum Installieren eines neuen Plugins auffordert
  *
  * Revision 1.31  2011-06-01 17:35:59  willuhn

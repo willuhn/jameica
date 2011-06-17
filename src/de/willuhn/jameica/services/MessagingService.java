@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/MessagingService.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/06/07 11:08:55 $
+ * $Revision: 1.5 $
+ * $Date: 2011/06/17 15:55:18 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,6 +18,7 @@ import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.messaging.AutoRegisterMessageConsumer;
 import de.willuhn.jameica.messaging.LogMessageConsumer;
+import de.willuhn.jameica.messaging.ManifestMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
 
 
@@ -45,6 +46,7 @@ public class MessagingService implements Bootable
     this.factory = MessagingFactory.getInstance();
     this.factory.registerMessageConsumer(new LogMessageConsumer());
     this.factory.registerMessageConsumer(new AutoRegisterMessageConsumer());
+    this.factory.registerMessageConsumer(new ManifestMessageConsumer());
   }
 
   /**
@@ -69,7 +71,10 @@ public class MessagingService implements Bootable
 
 /**********************************************************************
  * $Log: MessagingService.java,v $
- * Revision 1.4  2011/06/07 11:08:55  willuhn
+ * Revision 1.5  2011/06/17 15:55:18  willuhn
+ * @N Registrieren von Message-Consumern im Manifest
+ *
+ * Revision 1.4  2011-06-07 11:08:55  willuhn
  * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
  *
  * Revision 1.3  2009/06/24 11:24:33  willuhn
