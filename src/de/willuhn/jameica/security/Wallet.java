@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.17 $
- * $Date: 2011/02/09 12:27:26 $
+ * $Revision: 1.18 $
+ * $Date: 2011/06/19 12:13:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -152,19 +152,20 @@ public final class Wallet
 		if (aliasPrefix == null || aliasPrefix.length() == 0)
 		{
 			this.serialized.clear();
-			return;
 		}
-
-		Enumeration e = this.serialized.keys();
-		String s = null;
-		while (e.hasMoreElements())
+		else
 		{
-			s = (String) e.nextElement();
-			if (s != null && s.startsWith(aliasPrefix))
-			{
-				Logger.debug("removing key " + s);
-				this.serialized.remove(s);
-			}
+	    Enumeration e = this.serialized.keys();
+	    String s = null;
+	    while (e.hasMoreElements())
+	    {
+	      s = (String) e.nextElement();
+	      if (s != null && s.startsWith(aliasPrefix))
+	      {
+	        Logger.debug("removing key " + s);
+	        this.serialized.remove(s);
+	      }
+	    }
 		}
 		write();
 	}
@@ -301,12 +302,19 @@ public final class Wallet
 	{
     synchronized(serialized)
     {
+      File file = new File(getFilename());
+      if (serialized.size() == 0 && file.exists())
+      {
+        Logger.info("deleting wallet file " + getFilename());
+        if (file.delete())
+          Logger.debug("wallet deleted");
+        return;
+      }
+      
       Logger.info("writing wallet file " + getFilename() + " via " + this.engine.getClass().getSimpleName());
-
       // Wir schreiben die Daten erstmal in eine Temp-Datei
       // und kopieren sie danach.
       // BUGZILLA 25 http://www.willuhn.de/bugzilla/show_bug.cgi?id=25
-      File file       = new File(getFilename());
       File directory  = file.getAbsoluteFile().getParentFile();
       String prefix   = file.getName() + "_";
       File tempfile   = File.createTempFile(prefix,"",directory);
@@ -353,7 +361,10 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
- * Revision 1.17  2011/02/09 12:27:26  willuhn
+ * Revision 1.18  2011/06/19 12:13:00  willuhn
+ * @C Wallet-Datei loeschen, wenn nichts mehr drin steht
+ *
+ * Revision 1.17  2011-02-09 12:27:26  willuhn
  * @N Neuer Konstruktor zur expliziten Angabe der Engine VOR dem Lesen
  *
  * Revision 1.16  2011-02-09 09:47:35  willuhn
