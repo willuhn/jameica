@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.33 $
- * $Date: 2011/06/17 15:55:18 $
+ * $Revision: 1.34 $
+ * $Date: 2011/06/19 11:15:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,6 +51,7 @@ public class Manifest implements Comparable
   
   private Type source                   = null;
   
+  private boolean isLoaded              = false;
   private boolean isInstalled           = false;
   
   private String buildnumber            = "";
@@ -606,6 +607,24 @@ public class Manifest implements Comparable
   }
 
   /**
+   * Prueft, ob das Plugin geladen werden konnte.
+   * @return true, wenn es geladen werden konnte.
+   */
+  public boolean isLoaded()
+  {
+    return this.isLoaded;
+  }
+  
+  /**
+   * Legt fest, ob das Plugin als erfolgreich geladen gelten soll.
+   * @param b
+   */
+  public void setLoaded(boolean b)
+  {
+    this.isLoaded = b;
+  }
+
+  /**
    * Wir implementieren die Funktion, damit wir eine Liste von Manifesten nach Abhaengigkeit sortieren koennen.
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
@@ -687,7 +706,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.33  2011/06/17 15:55:18  willuhn
+ * Revision 1.34  2011/06/19 11:15:46  willuhn
+ * @B BUGZILLA 1073
+ *
+ * Revision 1.33  2011-06-17 15:55:18  willuhn
  * @N Registrieren von Message-Consumern im Manifest
  *
  * Revision 1.32  2011-06-08 13:22:22  willuhn

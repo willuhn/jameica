@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Dependency.java,v $
- * $Revision: 1.6 $
- * $Date: 2008/12/30 15:21:42 $
+ * $Revision: 1.7 $
+ * $Date: 2011/06/19 11:15:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -92,8 +92,8 @@ public class Dependency implements Serializable
       if (n == null || !this.name.equals(n))
         continue;
       
-      // Plugin gefunden - schauen, ob die Versionsnummer passt
-      return compareVersion(mf.getVersion());
+      // Plugin gefunden - schauen, ob die Versionsnummer passt und ob es geladen werden konnte
+      return mf.isLoaded() && compareVersion(mf.getVersion());
     }
     
     // Benoetigte Abhaengigkeit nicht installiert
@@ -209,7 +209,10 @@ public class Dependency implements Serializable
 
 /**********************************************************************
  * $Log: Dependency.java,v $
- * Revision 1.6  2008/12/30 15:21:42  willuhn
+ * Revision 1.7  2011/06/19 11:15:46  willuhn
+ * @B BUGZILLA 1073
+ *
+ * Revision 1.6  2008-12-30 15:21:42  willuhn
  * @N Umstellung auf neue Versionierung
  *
  * Revision 1.5  2008/12/11 22:42:13  willuhn

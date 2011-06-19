@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.55 $
- * $Date: 2011/06/08 12:53:21 $
+ * $Revision: 1.56 $
+ * $Date: 2011/06/19 11:15:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -113,7 +113,7 @@ public final class PluginLoader
       
     }
     
-    if (this.plugins.size() == 0)
+    if (cache.size() == 0)
     {
       Logger.info("*** no plugins installed ***");
       return;
@@ -150,8 +150,8 @@ public final class PluginLoader
       catch (Throwable t)
       {
         String name = mf.getName();
-        Logger.error("unable to init plugin  " + name, t);
-        Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht geladen werden. {1}",new String[] { name, t.getMessage() }));
+        Logger.error("unable to load plugin  " + name, t);
+        Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht geladen werden. {1}",name, t.getMessage()));
       }
     }
     //
@@ -172,13 +172,13 @@ public final class PluginLoader
       }
       catch (ApplicationException ae)
       {
-        Logger.error("unable to init plugin " + name, ae); // Muessen wir loggen, weil es sein kann, dass die Welcome-Message nicht angezeigt werden kann.
+        Logger.error("unable to init plugin " + name, ae);
         Application.addWelcomeMessage(ae.getMessage());
       }
       catch (Throwable t)
       {
         Logger.error("unable to init plugin " + name, t);
-        Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",new String[] { name, t.getMessage() }));
+        Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",name, t.getMessage()));
       }
     }
     //
@@ -222,7 +222,9 @@ public final class PluginLoader
 
     // OK, jetzt laden wir die Klassen des Plugins.
     ClassService cs = (ClassService) Application.getBootLoader().getBootable(ClassService.class);
-    return cs.prepareClasses(manifest);
+    MultipleClassLoader loader = cs.prepareClasses(manifest);
+    manifest.setLoaded(true);
+    return loader;
   }
 
   /**
@@ -908,7 +910,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.55  2011/06/08 12:53:21  willuhn
+ * Revision 1.56  2011/06/19 11:15:46  willuhn
+ * @B BUGZILLA 1073
+ *
+ * Revision 1.55  2011-06-08 12:53:21  willuhn
  * *** empty log message ***
  *
  * Revision 1.54  2011-06-02 12:15:16  willuhn
