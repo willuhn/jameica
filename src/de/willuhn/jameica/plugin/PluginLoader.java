@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.56 $
- * $Date: 2011/06/19 11:15:46 $
+ * $Revision: 1.57 $
+ * $Date: 2011/06/19 12:09:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -726,8 +726,14 @@ public final class PluginLoader
       
       //////////////////////////////////////////////////////////////////////
       // 7. Plugin-Version verwerfen
-      updateChecker.setAttribute(mf.getPluginClass() + ".version",(String) null);
-      monitor.addPercentComplete(10);
+      // Machen wir nur, wenn die Benutzer-Daten auch geloescht werden sollen.
+      // Andernfalls wuerde bei der naechsten Installation das install neu gestartet
+      // werden, was dann aber im Plugin fehlschlaegt, weil die Daten ja schon da sind
+      if (deleteUserData)
+      {
+        updateChecker.setAttribute(mf.getPluginClass() + ".version",(String) null);
+        monitor.addPercentComplete(10);
+      }
       //////////////////////////////////////////////////////////////////////
       
       //////////////////////////////////////////////////////////////////////
@@ -910,7 +916,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.56  2011/06/19 11:15:46  willuhn
+ * Revision 1.57  2011/06/19 12:09:54  willuhn
+ * @B registrierte Versionsnummer nur dann loeschen, wenn auch die Benutzerdaten mit geloescht wurden.
+ *
+ * Revision 1.56  2011-06-19 11:15:46  willuhn
  * @B BUGZILLA 1073
  *
  * Revision 1.55  2011-06-08 12:53:21  willuhn
