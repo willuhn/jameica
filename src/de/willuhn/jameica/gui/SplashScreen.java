@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.38 $
- * $Date: 2010/11/04 10:31:13 $
+ * $Revision: 1.39 $
+ * $Date: 2011/06/22 10:34:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -235,6 +235,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
           return;
         Logger.debug("startup completed: " + percentComplete + " %");
         bar.setSelection(percentComplete);
+        bar.update();
 				display.readAndDispatch();
       }
     });
@@ -304,7 +305,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
         String s = " " + text + " ...";
         Logger.info(s);
         textLabel.setText(s);
-        textLabel.redraw();
+        textLabel.update();
 				display.readAndDispatch();
       }
     });
@@ -340,7 +341,10 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
 /***************************************************************************
  * $Log: SplashScreen.java,v $
- * Revision 1.38  2010/11/04 10:31:13  willuhn
+ * Revision 1.39  2011/06/22 10:34:37  willuhn
+ * @N Statusbalken und -text besser aktualisieren
+ *
+ * Revision 1.38  2010-11-04 10:31:13  willuhn
  * @N Checken, ob splash.jar existiert
  *
  * Revision 1.37  2010-11-04 01:11:20  willuhn
