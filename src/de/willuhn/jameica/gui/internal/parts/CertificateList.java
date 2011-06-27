@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.19 $
- * $Date: 2011/05/11 10:27:24 $
+ * $Revision: 1.20 $
+ * $Date: 2011/06/27 17:51:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,6 +20,10 @@ import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.net.ssl.X509TrustManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
@@ -58,10 +62,21 @@ public class CertificateList extends TablePart
 
   /**
    * ct.
+   * @throws Exception
    */
-  public CertificateList()
+  public CertificateList() throws Exception
   {
-    super(init(),new Open());
+    this(Application.getSSLFactory().getTrustManager(),true);
+  }
+
+  /**
+   * ct.
+   * @param trustManager der TrustManager, aus dem die Zertifikate geladen werden sollen.
+   * @param changable true, wenn Zertifikate importiert/exportiert werden koennen.
+   */
+  public CertificateList(X509TrustManager trustManager, final boolean changable)
+  {
+    super(init(trustManager),new Open());
     addColumn(Application.getI18n().tr("Ausgestellt für"),"name");
     addColumn(Application.getI18n().tr("Organisation"),"organization");
     addColumn(Application.getI18n().tr("OU"),"ou");
@@ -71,6 +86,29 @@ public class CertificateList extends TablePart
     addColumn(Application.getI18n().tr("Seriennummer"),"serial");
     this.setMulti(false);
     this.setSummary(false);
+    
+    setFormatter(new TableFormatter() {
+      
+      public void format(TableItem item)
+      {
+        if (item == null || item.getData() == null)
+          return;
+        try
+        {
+          CertObject o = (CertObject) item.getData();
+          if (Application.getSSLFactory().getSystemCertificate().equals(o.cert))
+            item.setForeground(Color.COMMENT.getSWTColor());
+          else
+            item.setForeground(Color.WIDGET_FG.getSWTColor());
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to check for system certificate",e);
+        }
+      }
+    
+    });
+    
     ContextMenu menu = new ContextMenu();
     menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Öffnen..."),new Open(),"document-open.png"));
     menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Löschen..."), new Action()
@@ -112,6 +150,8 @@ public class CertificateList extends TablePart
        */
       public boolean isEnabledFor(Object o)
       {
+        if (!changable)
+          return false;
         try
         {
           if (Application.getSSLFactory().getSystemCertificate().equals(((CertObject)o).cert))
@@ -189,45 +229,37 @@ public class CertificateList extends TablePart
         new CertificateImport().handleAction(context);
         GUI.startView(GUI.getCurrentView().getClass(),GUI.getCurrentView().getCurrentObject());
       }
-    },"document-open.png"));
-
-    setFormatter(new TableFormatter() {
-    
-      public void format(TableItem item)
+    },"document-open.png")
+    {
+      public boolean isEnabledFor(Object o)
       {
-        if (item == null || item.getData() == null)
-          return;
-        try
-        {
-          CertObject o = (CertObject) item.getData();
-          if (Application.getSSLFactory().getSystemCertificate().equals(o.cert))
-            item.setForeground(Color.COMMENT.getSWTColor());
-          else
-            item.setForeground(Color.WIDGET_FG.getSWTColor());
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to check for system certificate",e);
-        }
+        return changable && super.isEnabledFor(o);
       }
-    
     });
     this.setContextMenu(menu);
   }
 
-  private static GenericIterator init()
+  /**
+   * @return
+   * @param trustManager der Trustmanager mit den Zertifikaten.
+   */
+  private static GenericIterator init(X509TrustManager trustManager)
   {
     try
     {
-      X509Certificate[] list = Application.getSSLFactory().getTrustedCertificates();
-      ArrayList al = new ArrayList();
+      X509Certificate[] list = trustManager.getAcceptedIssuers();
+      List<CertObject> al = new ArrayList<CertObject>();
       for (int i=0;i<list.length;++i)
       {
         al.add(new CertObject(list[i]));
       }
       
-      // System-Zertifikat noch hinzufuegen
-      al.add(new CertObject(Application.getSSLFactory().getSystemCertificate()));
+      if (trustManager == Application.getSSLFactory().getTrustManager())
+      {
+        // System-Zertifikat noch hinzufuegen
+        al.add(new CertObject(Application.getSSLFactory().getSystemCertificate()));
+      }
+      Collections.sort(al);
       return PseudoIterator.fromArray((CertObject[])al.toArray(new CertObject[al.size()]));
     }
     catch (Exception e)
@@ -245,7 +277,7 @@ public class CertificateList extends TablePart
     }
   }
 
-  private static class CertObject implements GenericObject
+  private static class CertObject implements GenericObject, Comparable
   {
 
     private X509Certificate cert = null;
@@ -358,6 +390,28 @@ public class CertificateList extends TablePart
         return false;
       return this.getID().equals(arg0.getID());
     }
+
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(Object o)
+    {
+      if (!(o instanceof CertObject))
+        return -1;
+
+      try
+      {
+        CertObject other = (CertObject) o;
+        String n1 = (String) this.getAttribute("name");
+        String n2 = (String) other.getAttribute("name");
+        return n1.compareTo(n2);
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to compare certs",e);
+      }
+      return 0;
+    }
   }
   
   /**
@@ -394,7 +448,11 @@ public class CertificateList extends TablePart
 
 /**********************************************************************
  * $Log: CertificateList.java,v $
- * Revision 1.19  2011/05/11 10:27:24  willuhn
+ * Revision 1.20  2011/06/27 17:51:42  willuhn
+ * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
+ * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
+ *
+ * Revision 1.19  2011-05-11 10:27:24  willuhn
  * @N OCE fangen
  *
  * Revision 1.18  2011-04-26 12:20:23  willuhn

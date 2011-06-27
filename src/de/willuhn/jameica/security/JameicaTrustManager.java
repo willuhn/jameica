@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/JameicaTrustManager.java,v $
- * $Revision: 1.26 $
- * $Date: 2010/12/17 16:49:29 $
+ * $Revision: 1.27 $
+ * $Date: 2011/06/27 17:51:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,7 +41,8 @@ import de.willuhn.logging.Logger;
  */
 public class JameicaTrustManager implements X509TrustManager
 {
-  private X509TrustManager standardTrustManager = null;
+  private X509TrustManager systemTrustManager   = null;
+  private X509TrustManager parentTrustManager   = null;
   private CertPathValidator validator           = null;
 
 
@@ -53,11 +54,30 @@ public class JameicaTrustManager implements X509TrustManager
   public JameicaTrustManager() throws KeyStoreException, Exception
   {
     this.validator = CertPathValidator.getInstance("PKIX");
-
     
-    ////////////////////////////////////////////////////////////////////////////
+    if (Application.getConfig().getTrustJavaCerts())
+    {
+      Logger.info("trusting java trustmanager");
+      this.parentTrustManager = getSystemTrustManager();
+    }
+    else
+    {
+      Logger.info("system trustmanager disabled, will use only jameicas trustmanager");
+    }
+  }
+
+  /**
+   * Liefert den System-Trustmanager von Java.
+   * @return der System-Trustmanager.
+   * @throws Exception
+   */
+  public synchronized X509TrustManager getSystemTrustManager() throws Exception
+  {
+    if (this.systemTrustManager != null)
+      return this.systemTrustManager;
+    
     // Wir ermitteln den System-TrustManager.
-		// und lassen die Zertifikatspruefungen erstmal von dem machen
+    // und lassen die Zertifikatspruefungen erstmal von dem machen
     // Nur wenn er die Zertifikate als nicht vertrauenswuerdig
     // einstuft, greifen wir ein und checken, ob wir das Zertifikat
     // in unserem eigenen Keystore haben.
@@ -69,34 +89,33 @@ public class JameicaTrustManager implements X509TrustManager
       name = "IbmX509";
     }
 
-    Logger.info("using trustmanager " + name);
+    Logger.info("loading trustmanager " + name);
     TrustManagerFactory factory = TrustManagerFactory.getInstance(name);
     factory.init((KeyStore) null); // Wir initialisieren mit <code>null</code>, damit der System-Keystore genommen wird
 
     TrustManager[] trustmanagers = factory.getTrustManagers();
     if (trustmanagers == null || trustmanagers.length == 0)
     {
-      Logger.warn("NO system trustmanager found, will use only jameicas trustmanager");
-      return;
+      Logger.warn("NO system trustmanager found");
+      return null;
     }
 
     // uns interessiert nur der erste. Das ist der von Java selbst.
-    this.standardTrustManager = (X509TrustManager) trustmanagers[0];
-    //
-    ////////////////////////////////////////////////////////////////////////////
+    this.systemTrustManager = (X509TrustManager) trustmanagers[0];
+    return this.systemTrustManager;
   }
-
+  
   /**
    * @see javax.net.ssl.X509TrustManager#checkClientTrusted(java.security.cert.X509Certificate[], java.lang.String)
    */
   public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException
   {
-    if (this.standardTrustManager != null)
+    if (this.parentTrustManager != null)
     {
       try
       {
         Logger.debug("checking client certificate via system trustmanager");
-        this.standardTrustManager.checkClientTrusted(chain,authType);
+        this.parentTrustManager.checkClientTrusted(chain,authType);
         Logger.info("client certificate trusted via system trustmanager [vendor: " + System.getProperty("java.vendor") + "]");
       }
       catch (CertificateException c)
@@ -118,12 +137,12 @@ public class JameicaTrustManager implements X509TrustManager
    */
   public void checkServerTrusted(X509Certificate[] certificates, String authType) throws CertificateException
   {
-    if (this.standardTrustManager != null)
+    if (this.parentTrustManager != null)
     {
       try
       {
         Logger.debug("checking server certificate via system trustmanager");
-        this.standardTrustManager.checkServerTrusted(certificates,authType);
+        this.parentTrustManager.checkServerTrusted(certificates,authType);
         Logger.debug("server certificate trusted via system trustmanager [vendor: " + System.getProperty("java.vendor") + "]");
       }
       catch (CertificateException c)
@@ -277,8 +296,8 @@ public class JameicaTrustManager implements X509TrustManager
     {
       Logger.error("unable to load trusted certificates, fallback to system trustmanager",e);
     }
-    if (this.standardTrustManager != null)
-      return this.standardTrustManager.getAcceptedIssuers();
+    if (this.parentTrustManager != null)
+      return this.parentTrustManager.getAcceptedIssuers();
     return new X509Certificate[0];
   }
 
@@ -305,7 +324,11 @@ public class JameicaTrustManager implements X509TrustManager
 
 /**********************************************************************
  * $Log: JameicaTrustManager.java,v $
- * Revision 1.26  2010/12/17 16:49:29  willuhn
+ * Revision 1.27  2011/06/27 17:51:43  willuhn
+ * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
+ * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
+ *
+ * Revision 1.26  2010-12-17 16:49:29  willuhn
  * @C IllegalArgumentException werfen, wenn keine zu pruefenden Zertifikate uebergeben wurden. Mach die Standard-Impl (javax.net.ssl.X509TrustManager) auch so.
  *
  * Revision 1.25  2010-12-08 16:02:28  willuhn

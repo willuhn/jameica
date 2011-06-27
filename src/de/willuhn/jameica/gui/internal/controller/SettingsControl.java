@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.37 $
- * $Date: 2011/06/02 12:15:16 $
+ * $Revision: 1.38 $
+ * $Date: 2011/06/27 17:51:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -58,6 +58,7 @@ public class SettingsControl extends AbstractControl
   private CheckboxInput systemProxy;
   
   private TablePart certs;
+  private CheckboxInput trustJavaCerts;
 
   // Plugins
   private Part plugins;
@@ -188,13 +189,27 @@ public class SettingsControl extends AbstractControl
   /**
    * Liefert eine Tabelle mit den installierten Zertifikaten.
    * @return Tabelle mit einer Liste der installierten Zertifikate.
+   * @throws Exception
    */
-  public Part getCertificates()
+  public Part getCertificates() throws Exception
   {
     if (this.certs != null)
       return this.certs;
     this.certs = new CertificateList();
     return this.certs;
+  }
+  
+  /**
+   * Liefert eine Checkbox, mit der festgelegt werden kann, ob den CA-Zertifikaten von Java vertraut werden soll.
+   * @return Checkbox.
+   */
+  public CheckboxInput getTrustJavaCerts()
+  {
+    if (this.trustJavaCerts != null)
+      return this.trustJavaCerts;
+    this.trustJavaCerts = new CheckboxInput(Application.getConfig().getTrustJavaCerts());
+    this.trustJavaCerts.setName(i18n.tr("Den Aussteller-Zertifikaten von Java vertrauen"));
+    return this.trustJavaCerts;
   }
 
   /**
@@ -289,36 +304,35 @@ public class SettingsControl extends AbstractControl
 
   	try
     {
+  	  Config config = Application.getConfig();
+  	  
       boolean restartNeeded = false;
 
       // System
-      Application.getConfig().setLoglevel((String)getLogLevel().getValue());
+      config.setLoglevel((String)getLogLevel().getValue());
 
       restartNeeded |= getProxyPort().hasChanged();
       Integer proxyPort = (Integer) getProxyPort().getValue();
-      if (proxyPort == null)
-        Application.getConfig().setProxyPort(-1);
-      else
-        Application.getConfig().setProxyPort(proxyPort.intValue());
+      config.setProxyPort(proxyPort == null ? -1 : proxyPort.intValue());
 
       restartNeeded |= getProxyHost().hasChanged();
-      Application.getConfig().setProxyHost((String)getProxyHost().getValue());
+      config.setProxyHost((String)getProxyHost().getValue());
 
       restartNeeded |= getHttpsProxyPort().hasChanged();
       proxyPort = (Integer) getHttpsProxyPort().getValue();
-      if (proxyPort == null)
-        Application.getConfig().setHttpsProxyPort(-1);
-      else
-        Application.getConfig().setHttpsProxyPort(proxyPort.intValue());
+      config.setHttpsProxyPort(proxyPort == null ? -1 : proxyPort.intValue());
 
       restartNeeded |= getHttpsProxyHost().hasChanged();
-      Application.getConfig().setHttpsProxyHost((String)getHttpsProxyHost().getValue());
+      config.setHttpsProxyHost((String)getHttpsProxyHost().getValue());
       
       restartNeeded |= getUseSystemProxy().hasChanged();
-      Application.getConfig().setUseSystemProxy(((Boolean)getUseSystemProxy().getValue()).booleanValue());
+      config.setUseSystemProxy(((Boolean)getUseSystemProxy().getValue()).booleanValue());
+      
+      restartNeeded |= getTrustJavaCerts().hasChanged();
+      config.setTrustJavaCerts(((Boolean)getTrustJavaCerts().getValue()).booleanValue());
 
       // Look & Feel
-      Application.getConfig().setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
+      config.setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
       Customizing.SETTINGS.setAttribute("application.splashscreen.random",((Boolean)getRandomSplash().getValue()).booleanValue());
     	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
 			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
@@ -388,7 +402,11 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
- * Revision 1.37  2011/06/02 12:15:16  willuhn
+ * Revision 1.38  2011/06/27 17:51:43  willuhn
+ * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
+ * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
+ *
+ * Revision 1.37  2011-06-02 12:15:16  willuhn
  * @B Das Handling beim Update war noch nicht sauber
  *
  * Revision 1.36  2011-06-01 17:35:58  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Config.java,v $
- * $Revision: 1.50 $
- * $Date: 2011/03/07 12:52:11 $
+ * $Revision: 1.51 $
+ * $Date: 2011/06/27 17:51:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -268,6 +268,25 @@ public final class Config
     settings.setAttribute("jameica.system.proxy.usesystem",b);
   }
   
+  /**
+   * Liefert true, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
+   * @return true, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
+   * Liefert per Default true.
+   */
+  public boolean getTrustJavaCerts()
+  {
+    return settings.getBoolean("jameica.system.ssl.trustjava",true);
+  }
+
+  /**
+   * Legt fest, ob den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
+   * @param b true, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
+   */
+  public void setTrustJavaCerts(boolean b)
+  {
+    settings.setAttribute("jameica.system.ssl.trustjava",b);
+  }
+
   /**
    * Prueft, ob im Server-Mode die Dienste nach aussen freigegeben werden sollen.
    * Der Parameter wird nur im Server-Mode interpretiert.
@@ -731,7 +750,11 @@ public final class Config
 
 /*********************************************************************
  * $Log: Config.java,v $
- * Revision 1.50  2011/03/07 12:52:11  willuhn
+ * Revision 1.51  2011/06/27 17:51:43  willuhn
+ * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
+ * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
+ *
+ * Revision 1.50  2011-03-07 12:52:11  willuhn
  * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
  *
  * Revision 1.49  2010-10-10 21:19:47  willuhn

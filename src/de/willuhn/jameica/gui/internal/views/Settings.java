@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.37 $
- * $Date: 2011/06/08 13:22:22 $
+ * $Revision: 1.38 $
+ * $Date: 2011/06/27 17:51:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,6 +24,7 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.action.CertificateImport;
+import de.willuhn.jameica.gui.internal.action.SystemCertificates;
 import de.willuhn.jameica.gui.internal.controller.SettingsControl;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.ColumnLayout;
@@ -80,8 +81,10 @@ public class Settings extends AbstractView implements Extendable
 
     system.addHeadline(i18n.tr("Installierte SSL-Zertifikate"));
     system.addPart(control.getCertificates());
+    system.addInput(control.getTrustJavaCerts());
     
     ButtonArea certButtons = new ButtonArea();
+    certButtons.addButton(i18n.tr("Aussteller-Zertifikate von Java anzeigen"),new SystemCertificates(),null,false,"stock_keyring.png");
     certButtons.addButton(i18n.tr("Zertifikat importieren"),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -191,7 +194,11 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.37  2011/06/08 13:22:22  willuhn
+ * Revision 1.38  2011/06/27 17:51:43  willuhn
+ * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
+ * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
+ *
+ * Revision 1.37  2011-06-08 13:22:22  willuhn
  * @N Neuer First-Start-Assistent, der zum Installieren eines neuen Plugins auffordert
  *
  * Revision 1.36  2011-06-08 09:20:24  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.60 $
- * $Date: 2011/06/27 16:41:33 $
+ * $Revision: 1.61 $
+ * $Date: 2011/06/27 17:51:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,15 +77,16 @@ public class SSLFactory
 
   private final static String SYSTEM_ALIAS = "jameica";
 
-  private CertificateFactory factory    = null;
-	private KeyStore keystore							= null;
-	private X509Certificate certificate 	= null;
-	private PrivateKey privateKey 				= null;
-	private PublicKey publicKey						= null;
+  private CertificateFactory factory       = null;
+	private KeyStore keystore							   = null;
+	private X509Certificate certificate 	   = null;
+	private PrivateKey privateKey 				   = null;
+	private PublicKey publicKey						   = null;
 
-	private SSLContext sslContext					= null;
+	private SSLContext sslContext					   = null;
 
-	private ApplicationCallback callback 	= null;
+	private ApplicationCallback callback 	   = null;
+	private JameicaTrustManager trustmanager = null;
 
   /**
    * ct.
@@ -672,14 +673,26 @@ public class SSLFactory
 
 		// Wir benutzen unseren eignen TrustManager
 		Logger.info("init Jameica trust manager");
-    TrustManager trustManager = new JameicaTrustManager();
+    this.trustmanager = new JameicaTrustManager();
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
-												 new TrustManager[]{trustManager},null);
+												 new TrustManager[]{this.trustmanager},null);
 		
     Logger.info("set jameica ssl context as system default");
     SSLContext.setDefault(this.sslContext);
 		return this.sslContext;
 	}
+  
+  /**
+   * Liefert den Jameica-Trustmanager.
+   * @return der Jameica-Trustmanager.
+   * @throws Exception
+   */
+  public JameicaTrustManager getTrustManager() throws Exception
+  {
+    // sicherstellen, dass wir geladen wurden
+    getSSLContext();
+    return this.trustmanager;
+  }
 	
   /**
    * Verschluesselt die Daten aus is und schreibt sie in os.
@@ -711,7 +724,11 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.60  2011/06/27 16:41:33  willuhn
+ * Revision 1.61  2011/06/27 17:51:43  willuhn
+ * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
+ * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
+ *
+ * Revision 1.60  2011-06-27 16:41:33  willuhn
  * @R Abwaertskompatibilitaet zu Java 1.5 entfernt
  *
  * Revision 1.59  2011-04-27 10:27:10  willuhn
