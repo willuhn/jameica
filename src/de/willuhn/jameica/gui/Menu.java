@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Menu.java,v $
- * $Revision: 1.48 $
- * $Date: 2011/06/22 10:22:23 $
+ * $Revision: 1.49 $
+ * $Date: 2011/06/27 17:52:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -117,19 +117,9 @@ public class Menu
     item.setData("item",element);
     item.setEnabled(element.isEnabled());
     
-    try
-    {
       Image icon = element.getIcon();
       if (icon != null)
         item.setImage(icon);
-    }
-    catch (AbstractMethodError e)
-    {
-      // Kann passieren, wenn man versucht, ein sehr altes Plugin in Jameica
-      // zu laden, wo in MenuItem die Methode "getIcon" noch nicht existierte.
-      Logger.warn("trying to load incomatible plugin - has no MenuItem#getIcon");
-    }
-    
     ////////////////////////////////////////////////////////////////////////////
     // Shortcut vorhanden?
     String shortCut = element.getShortcut();
@@ -260,7 +250,10 @@ public class Menu
 
 /*********************************************************************
  * $Log: Menu.java,v $
- * Revision 1.48  2011/06/22 10:22:23  willuhn
+ * Revision 1.49  2011/06/27 17:52:54  willuhn
+ * @R Workaround wieder entfernt - reichte leider nicht
+ *
+ * Revision 1.48  2011-06-22 10:22:23  willuhn
  * @C Workaround, um emediaservices auch noch im aktuellen Jameica laufen zu lassen
  *
  * Revision 1.47  2011-04-26 12:20:23  willuhn
