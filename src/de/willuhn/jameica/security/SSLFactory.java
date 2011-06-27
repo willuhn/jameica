@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.59 $
- * $Date: 2011/04/27 10:27:10 $
+ * $Revision: 1.60 $
+ * $Date: 2011/06/27 16:41:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -50,7 +50,6 @@ import org.bouncycastle.asn1.x509.X509Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 
-import de.willuhn.datasource.BeanUtil;
 import de.willuhn.io.FileFinder;
 import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
@@ -677,18 +676,8 @@ public class SSLFactory
 		this.sslContext.init(keyManagerFactory.getKeyManagers(),
 												 new TrustManager[]{trustManager},null);
 		
-		try
-		{
-	    Logger.info("set jameica ssl context as system default");
-	    
-	    // Koennen wir nicht direkt aufrufen, weil wir sonst eine Compiler-Abhaengigkeit zu Java 1.5 haben
-	    BeanUtil.set(SSLContext.class,"default",this.sslContext);
-		}
-		catch (Exception e)
-		{
-		  Logger.info("unable to set ssl context, this java version seems to be < 1.6");
-		}
-				
+    Logger.info("set jameica ssl context as system default");
+    SSLContext.setDefault(this.sslContext);
 		return this.sslContext;
 	}
 	
@@ -722,7 +711,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.59  2011/04/27 10:27:10  willuhn
+ * Revision 1.60  2011/06/27 16:41:33  willuhn
+ * @R Abwaertskompatibilitaet zu Java 1.5 entfernt
+ *
+ * Revision 1.59  2011-04-27 10:27:10  willuhn
  * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
  *
  * Revision 1.58  2011-04-26 12:09:18  willuhn
