@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.49 $
- * $Date: 2011/05/04 09:20:58 $
+ * $Revision: 1.50 $
+ * $Date: 2011/06/28 09:24:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,6 +25,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -44,11 +46,8 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.formatter.TreeFormatter;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
-import de.willuhn.util.ApplicationException;
 import de.willuhn.util.Session;
 
 /**
@@ -60,7 +59,6 @@ public class TreePart extends AbstractTablePart
 {
 
   private TreeFormatter formatter   = null;
-  private Action action             = null;
   private GenericIterator list      = null;
   private Tree tree                 = null;
   
@@ -82,7 +80,7 @@ public class TreePart extends AbstractTablePart
    */
   public TreePart(GenericObjectNode object, Action action)
 	{
-    this.action = action;
+    super(action);
     setRootObject(object);
 	}
 
@@ -97,7 +95,7 @@ public class TreePart extends AbstractTablePart
    */
   public TreePart(GenericIterator list, Action action)
   {
-		this.action = action;
+    super(action);
 		setList(list);
   }
   
@@ -211,6 +209,39 @@ public class TreePart extends AbstractTablePart
     this.tree.addListener(SWT.Collapse, new Listener() {
       public void handleEvent(Event event) {
         handleFolderClose(event);
+      }
+    });
+
+    this.tree.addTraverseListener(new TraverseListener() {
+      public void keyTraversed(TraverseEvent e)
+      {
+        if (!tree.isFocusControl())
+          return;
+        
+        Object o = getSelection();
+        if (o == null)
+          return;
+
+        Item i = itemLookup.get(o);
+        if (i == null)
+          return;
+
+        if (e.detail == SWT.TRAVERSE_RETURN)
+        {
+          e.doit = false;
+          
+          if (i.item.getItemCount() > 0)
+            i.item.setExpanded(!i.item.getExpanded()); // Ist ein Ordner. Also auf/zu machen
+          else
+            open(getSelection()); // Ist ein Element. Oeffnen.
+        }
+        else if (e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT)
+        {
+          e.doit = false;
+          if (i.item.getItemCount() == 0)
+            return; // Kein Ordner
+          i.item.setExpanded(e.keyCode == SWT.ARROW_RIGHT);
+        }
       }
     });
 
@@ -676,17 +707,7 @@ public class TreePart extends AbstractTablePart
 	    o = item.getData();
 	  }
     
-    if (o == null)
-      return;
-
-    try
-    {
-			this.action.handleAction(o);
-    }
-    catch (ApplicationException e)
-    {
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getMessage(),StatusBarMessage.TYPE_ERROR));
-    }
+	  open(o);
 	}
 
 
@@ -873,7 +894,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.49  2011/05/04 09:20:58  willuhn
+ * Revision 1.50  2011/06/28 09:24:54  willuhn
+ * @N BUGZILLA 574
+ *
+ * Revision 1.49  2011-05-04 09:20:58  willuhn
  * @N Doppelklick nur beachten, wenn die linke Maustaste verwendet wurde - das bisherige Verhalten konnte unter OS X nervig sein, wenn Linksklick, kurz gefolgt von einem Rechtsklick als Doppelklick interpretiert wurde
  *
  * Revision 1.48  2011-04-29 07:41:59  willuhn

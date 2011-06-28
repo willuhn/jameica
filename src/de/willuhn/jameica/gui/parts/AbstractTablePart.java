@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.16 $
- * $Date: 2011/04/29 07:41:59 $
+ * $Revision: 1.17 $
+ * $Date: 2011/06/28 09:24:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -20,10 +20,14 @@ import java.util.Vector;
 
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Abstrakte Basis-Klasse von Tabellen-aehnlichen Parts.
@@ -42,7 +46,17 @@ public abstract class AbstractTablePart implements Part
   protected boolean checkable              = false;
   
   protected List<Listener> selectionListeners = new ArrayList();
+  protected Action action                  = null;
 
+  /**
+   * ct.
+   * @param action die Default-Action.
+   */
+  public AbstractTablePart(Action action)
+  {
+    this.action = action;
+  }
+  
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
    * @param title Name der Spaltenueberschrift.
@@ -213,6 +227,25 @@ public abstract class AbstractTablePart implements Part
   {
     select(new Object[]{o});
   }
+  
+  /**
+   * Oeffnet das uebergebene Element ueber die Default-Action.
+   * @param o das zu oeffnende Element. 
+   */
+  void open(Object o)
+  {
+    if (action == null || o == null)
+      return;
+
+    try
+    {
+      action.handleAction(o);
+    }
+    catch (ApplicationException ae)
+    {
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+    }
+  }
 
   /**
    * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
@@ -316,7 +349,10 @@ public abstract class AbstractTablePart implements Part
 
 /*********************************************************************
  * $Log: AbstractTablePart.java,v $
- * Revision 1.16  2011/04/29 07:41:59  willuhn
+ * Revision 1.17  2011/06/28 09:24:54  willuhn
+ * @N BUGZILLA 574
+ *
+ * Revision 1.16  2011-04-29 07:41:59  willuhn
  * @N BUGZILLA 781
  *
  * Revision 1.15  2010-10-12 21:50:17  willuhn

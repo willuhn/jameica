@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.108 $
- * $Date: 2011/05/04 09:26:23 $
+ * $Revision: 1.109 $
+ * $Date: 2011/06/28 09:24:54 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,6 +31,8 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -92,8 +94,7 @@ public class TablePart extends AbstractTablePart
   //////////////////////////////////////////////////////////
   // Listeners, Actions
   private de.willuhn.datasource.rmi.Listener deleteListener = new DeleteListener();
-  private ArrayList changeListeners     = new ArrayList();
-  private Action action                 = null;
+  private List<TableChangeListener> changeListeners     = new ArrayList<TableChangeListener>();
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -162,7 +163,7 @@ public class TablePart extends AbstractTablePart
    */
   public TablePart(List list, Action action)
   {
-    this.action = action;
+    super(action);
 
     // Wir nehmen eine Kopie der Liste, damit sie uns niemand manipulieren kann
     this.temp = new ArrayList();
@@ -620,7 +621,16 @@ public class TablePart extends AbstractTablePart
     }
     /////////////////////////////////////////////////////////////////
 
-    // table.addListener(SWT.DefaultSelection,open); // BUGZILLA 574 Deaktiviert - weil noch nicht hinreichend getestet
+    // BUGZILLA 574
+    table.addTraverseListener(new TraverseListener() {
+      public void keyTraversed(TraverseEvent e)
+      {
+        if (e.detail != SWT.TRAVERSE_RETURN || !table.isFocusControl())
+          return;
+        e.doit = false; // wir haben das Event verarbeitet - soll kein anderer mehr behandeln
+        open(getSelection());
+      }
+    });
 
     // Listener fuer die Maus.
     table.addMouseListener(new MouseAdapter() {
@@ -629,17 +639,7 @@ public class TablePart extends AbstractTablePart
         if (action == null || e.button != 1)
           return;
 
-        Object o = getSelection();
-        if (o == null) return;
-
-        try
-        {
-          action.handleAction(o);
-        }
-        catch (ApplicationException ae)
-        {
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-        }
+        open(getSelection());
       }
 
       public void mouseDown(MouseEvent e)
@@ -780,9 +780,8 @@ public class TablePart extends AbstractTablePart
 
                 item.setText(index,newValue);
                 
-                for (int i=0;i<changeListeners.size();++i)
+                for (TableChangeListener l:changeListeners)
                 {
-                  TableChangeListener l = (TableChangeListener) changeListeners.get(i);
                   try
                   {
                     l.itemChanged(item.getData(),col.getColumnId(),newValue);
@@ -1390,7 +1389,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.108  2011/05/04 09:26:23  willuhn
+ * Revision 1.109  2011/06/28 09:24:54  willuhn
+ * @N BUGZILLA 574
+ *
+ * Revision 1.108  2011-05-04 09:26:23  willuhn
  * @N Doppelklick nur beachten, wenn die linke Maustaste verwendet wurde - das bisherige Verhalten konnte unter OS X nervig sein, wenn Linksklick, kurz gefolgt von einem Rechtsklick als Doppelklick interpretiert wurde
  *
  * Revision 1.107  2011-05-03 13:29:56  willuhn
