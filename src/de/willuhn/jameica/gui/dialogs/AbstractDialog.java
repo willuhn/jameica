@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.60 $
- * $Date: 2011/06/29 08:12:31 $
+ * $Revision: 1.61 $
+ * $Date: 2011/06/29 08:25:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -539,8 +539,8 @@ public abstract class AbstractDialog
 
 					// a) Zentriert (default)
           Rectangle shellRect = shell.getBounds();
-					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2);
-					int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);
+					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2); // das "displayRect.x" ist wegen Dualhead (die Offset-Position des Monitors)
+					int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);  // das "displayRect.y" ist wegen Dualhead
 					
 					Point size = shell.getSize();
 					
@@ -552,15 +552,15 @@ public abstract class AbstractDialog
 					}
 					
 					// BUGZILLA 1087 Out-of-Range-Check (eigentlich nur unter Windows noetig, schaded bei den anderen aber nicht)
-          if ((x + size.x) > displayRect.width)
+          if ((x + size.x) > (displayRect.x + displayRect.width))
           {
             // Fenster wuerde ueber den rechten Rand hinausgehen
-            x = displayRect.width - size.x - 4; // 4 Pixel Puffer zum Rand
+            x = displayRect.x + displayRect.width - size.x - 4; // 4 Pixel Puffer zum Rand
           }
-          if ((y + size.y) > displayRect.height)
+          if ((y + size.y) > (displayRect.y + displayRect.height))
           {
             // Fenster wuerde ueber den unteren Rand hinausgehen
-            y = displayRect.height - size.y - 4; // 4 Pixel Puffer zum Rand
+            y = displayRect.y + displayRect.height - size.y - 4; // 4 Pixel Puffer zum Rand
           }
 					
 					shell.setLocation(x, y);
@@ -650,7 +650,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.60  2011/06/29 08:12:31  willuhn
+ * Revision 1.61  2011/06/29 08:25:03  willuhn
+ * @B BUGZILLA 1087
+ *
+ * Revision 1.60  2011-06-29 08:12:31  willuhn
  * @B BUGZILLA 1087
  *
  * Revision 1.59  2011-05-30 10:16:54  willuhn
