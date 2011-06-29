@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/LogService.java,v $
- * $Revision: 1.3 $
- * $Date: 2010/05/26 09:43:54 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/29 15:12:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -93,6 +93,16 @@ public class LogService implements Bootable
     {
       Logger.error("failed");
     }
+    
+    // Wir biegen noch das Java-Logging zu uns um
+    try
+    {
+      Class.forName("de.willuhn.logging.JavaLoggingHandler");    
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to redirect java logging",e);
+    }
   }
 
   /**
@@ -107,6 +117,9 @@ public class LogService implements Bootable
 
 /**********************************************************************
  * $Log: LogService.java,v $
+ * Revision 1.4  2011/06/29 15:12:24  willuhn
+ * @N Java-Logging per Default in Jameica-Log umbiegen
+ *
  * Revision 1.3  2010/05/26 09:43:54  willuhn
  * @N Logging nach STDOUT im Nicht-interaktiven Mode deaktivieren
  *
