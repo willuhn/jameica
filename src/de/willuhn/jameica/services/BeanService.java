@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BeanService.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/29 11:49:33 $
+ * $Revision: 1.4 $
+ * $Date: 2011/06/29 11:50:13 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -193,7 +193,8 @@ public class BeanService implements Bootable
           Logger.debug("  inject service " + rname + " into " + name);
           
           // Plugin ermitteln und Service von dort laden
-          AbstractPlugin plugin = Application.getPluginLoader().findByClass(c);
+          // Wenn der Typ der Resource angegeben ist, suchen wir nach dessen Plugin, sonst nach dem Plugin der Bean
+          AbstractPlugin plugin = Application.getPluginLoader().findByClass(c != null ? c : bean.getClass());
           if (plugin != null)
             dep = Application.getServiceFactory().lookup(plugin.getClass(),rname);
           else
@@ -291,7 +292,10 @@ public class BeanService implements Bootable
 
 /**********************************************************************
  * $Log: BeanService.java,v $
- * Revision 1.3  2011/06/29 11:49:33  willuhn
+ * Revision 1.4  2011/06/29 11:50:13  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.3  2011-06-29 11:49:33  willuhn
  * @N In der Resource-Annotation kann jetzt auch das Attribut "name" angegeben werden - dann wird der gleichnamige Service gefunden
  *
  * Revision 1.2  2011-06-28 12:28:07  willuhn
