@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.57 $
- * $Date: 2011/06/19 12:09:54 $
+ * $Revision: 1.58 $
+ * $Date: 2011/06/29 09:08:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -462,17 +462,17 @@ public final class PluginLoader
 
   /**
    * Liefert die Instanz des Plugins mit der angegebenen Klasse.
-   * 
+   * @param <T> der Typ des Plugins.
    * @param plugin Klasse des Plugins.
    * @return Instanz des Plugins oder <code>null</code> wenn es nicht
    *         installiert ist.
    */
-  public AbstractPlugin getPlugin(Class plugin)
+  public <T extends AbstractPlugin> T getPlugin(Class<? extends AbstractPlugin> plugin)
   {
     if (plugin == null)
       return null;
 
-    return getPlugin(plugin.getName());
+    return (T) getPlugin(plugin.getName());
   }
 
   /**
@@ -916,7 +916,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.57  2011/06/19 12:09:54  willuhn
+ * Revision 1.58  2011/06/29 09:08:32  willuhn
+ * @N getPlugin ist getypt - damit ist das manuelle Cast nicht mehr noetig
+ *
+ * Revision 1.57  2011-06-19 12:09:54  willuhn
  * @B registrierte Versionsnummer nur dann loeschen, wenn auch die Benutzerdaten mit geloescht wurden.
  *
  * Revision 1.56  2011-06-19 11:15:46  willuhn
