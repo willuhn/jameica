@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BeanService.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/06/28 12:28:07 $
+ * $Revision: 1.3 $
+ * $Date: 2011/06/29 11:49:33 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -30,6 +30,7 @@ import de.willuhn.annotation.Lifecycle.Type;
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -181,13 +182,36 @@ public class BeanService implements Bootable
       public void inject(Object bean, AccessibleObject field, Annotation annotation) throws Exception
       {
         Resource r = (Resource) annotation;
-        Class c = r.type(); // Das ist die Abhaengigkeit, die geladen werden soll
-        if (c == null)
-          return; // dann halt nicht.
+        
+        String rname = r.name();
+        Class c      = r.type();
+        Object dep   = null;
 
-        Logger.debug("  inject " + c.getSimpleName() + " into " + name);
+        // Anhand des Namens suchen
+        if (rname != null && rname.length() > 0)
+        {
+          Logger.debug("  inject service " + rname + " into " + name);
+          
+          // Plugin ermitteln und Service von dort laden
+          AbstractPlugin plugin = Application.getPluginLoader().findByClass(c);
+          if (plugin != null)
+            dep = Application.getServiceFactory().lookup(plugin.getClass(),rname);
+          else
+            Logger.debug("  no plugin found for service " + rname);
+        }
 
-        Object dep = get(c); // die loesen wir ebenfalls auf
+        // Anhand des Typs suchen
+        if (dep != null && c != null)
+        {
+          Logger.debug("  inject bean " + c.getSimpleName() + " into " + name);
+          dep = get(c); // aufloesen
+        }
+        
+        if (dep == null) // nichts gefunden
+        {
+          Logger.debug("  resource [name: " + rname + ", type: " + c + "] not found");
+          return;
+        }
         
         field.setAccessible(true);
         
@@ -267,7 +291,10 @@ public class BeanService implements Bootable
 
 /**********************************************************************
  * $Log: BeanService.java,v $
- * Revision 1.2  2011/06/28 12:28:07  willuhn
+ * Revision 1.3  2011/06/29 11:49:33  willuhn
+ * @N In der Resource-Annotation kann jetzt auch das Attribut "name" angegeben werden - dann wird der gleichnamige Service gefunden
+ *
+ * Revision 1.2  2011-06-28 12:28:07  willuhn
  * @N Neuer BeanService als Dependency-Injection-Tool - yeah cool ;)
  *
  * Revision 1.1  2011-06-28 09:57:39  willuhn
