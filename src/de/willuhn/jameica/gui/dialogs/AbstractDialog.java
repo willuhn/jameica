@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.59 $
- * $Date: 2011/05/30 10:16:54 $
+ * $Revision: 1.60 $
+ * $Date: 2011/06/29 08:12:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -537,17 +537,32 @@ public abstract class AbstractDialog
           else
             displayRect = display.getPrimaryMonitor().getBounds(); // Primaer-Monitor
 
-					// Per Default POSITION_CENTER
+					// a) Zentriert (default)
           Rectangle shellRect = shell.getBounds();
 					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2);
 					int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);
+					
+					Point size = shell.getSize();
+					
+					// b) Maus-Position
 					if (pos == POSITION_MOUSE && cursor != null)
 					{
-						x = cursor.x - (shell.getSize().x / 2);
-						y = cursor.y - (shell.getSize().y / 2);
-						// Das Checken, ob das Fenster das Display ueberragt, muessen wir
-						// nicht mehr selbst machen. Das uebernimmt SWT bzw. der Windows-Manager bereits
+						x = cursor.x - (size.x / 2);
+						y = cursor.y - (size.y / 2);
 					}
+					
+					// BUGZILLA 1087 Out-of-Range-Check (eigentlich nur unter Windows noetig, schaded bei den anderen aber nicht)
+          if ((x + size.x) > displayRect.width)
+          {
+            // Fenster wuerde ueber den rechten Rand hinausgehen
+            x = displayRect.width - size.x - 4; // 4 Pixel Puffer zum Rand
+          }
+          if ((y + size.y) > displayRect.height)
+          {
+            // Fenster wuerde ueber den unteren Rand hinausgehen
+            y = displayRect.height - size.y - 4; // 4 Pixel Puffer zum Rand
+          }
+					
 					shell.setLocation(x, y);
 	
 					shell.open();
@@ -635,7 +650,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.59  2011/05/30 10:16:54  willuhn
+ * Revision 1.60  2011/06/29 08:12:31  willuhn
+ * @B BUGZILLA 1087
+ *
+ * Revision 1.59  2011-05-30 10:16:54  willuhn
  * @N Image auch aktualisieren, wenn der Dialog schon angezeigt wird
  *
  * Revision 1.58  2011-05-11 10:45:27  willuhn
