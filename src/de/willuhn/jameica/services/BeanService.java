@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BeanService.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/06/29 11:50:13 $
+ * $Revision: 1.5 $
+ * $Date: 2011/06/29 16:56:36 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -186,6 +186,9 @@ public class BeanService implements Bootable
         String rname = r.name();
         Class c      = r.type();
         Object dep   = null;
+        
+        if (c == Object.class) // Das ist der Default-Wert der Annotation
+          c = null;
 
         // Anhand des Namens suchen
         if (rname != null && rname.length() > 0)
@@ -292,7 +295,10 @@ public class BeanService implements Bootable
 
 /**********************************************************************
  * $Log: BeanService.java,v $
- * Revision 1.4  2011/06/29 11:50:13  willuhn
+ * Revision 1.5  2011/06/29 16:56:36  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.4  2011-06-29 11:50:13  willuhn
  * *** empty log message ***
  *
  * Revision 1.3  2011-06-29 11:49:33  willuhn
