@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.35 $
- * $Date: 2011/05/31 16:39:05 $
+ * $Revision: 1.36 $
+ * $Date: 2011/06/30 15:53:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -313,13 +313,18 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
             close();
           }
         },null,false,"process-stop.png");
-        getShell().setMinimumSize(getShell().computeSize(300,SWT.DEFAULT));
+        getShell().setSize(getShell().computeSize(300,SWT.DEFAULT));
       }
     };
     d.setTitle(Application.getI18n().tr("Frage"));
     try
     {
       return ((Boolean)d.open()).booleanValue();
+    }
+    catch (OperationCanceledException oce)
+    {
+      Logger.info("operation cancelled");
+      return false;
     }
     catch (Exception e)
     {
@@ -449,7 +454,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.35  2011/05/31 16:39:05  willuhn
+ * Revision 1.36  2011/06/30 15:53:32  willuhn
+ * @C tiny gui improvements
+ *
+ * Revision 1.35  2011-05-31 16:39:05  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  * Revision 1.34  2011-04-29 17:02:39  willuhn
