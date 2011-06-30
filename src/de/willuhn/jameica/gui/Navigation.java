@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.48 $
- * $Date: 2011/04/26 12:20:24 $
+ * $Revision: 1.49 $
+ * $Date: 2011/06/30 16:29:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,8 +13,8 @@
 package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -47,6 +47,10 @@ import de.willuhn.util.ApplicationException;
  */
 public class Navigation implements Part
 {
+  /**
+   * Der Key, unter dem sich im TreeItem das Navigation-Objekt befindet.
+   */
+  private final static String KEY_NAVIGATION = "jameica.item.navigation";
 
   private Listener action       = new MyActionListener();
   private DisposeListener dsl   = new MyDisposeListener();
@@ -57,7 +61,7 @@ public class Navigation implements Part
 	// TreeItem, unterhalb dessen die Plugins eingehaengt werden. 
   private TreeItem pluginTree		= null;
   
-  private Hashtable itemLookup  = new Hashtable();
+  private Map<String,TreeItem> itemLookup  = new HashMap<String,TreeItem>();
   
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -138,7 +142,7 @@ public class Navigation implements Part
 
     item.setFont(Font.DEFAULT.getSWTFont());
     item.addDisposeListener(this.dsl);
-    item.setData(element);
+    item.setData(KEY_NAVIGATION,element);
 		item.setText(name == null ? "" : name);
     expand(item);
     
@@ -180,7 +184,7 @@ public class Navigation implements Part
 		{
       try
       {
-        NavigationItem ni = (NavigationItem) item.getData();
+        NavigationItem ni = (NavigationItem) item.getData(KEY_NAVIGATION);
 
         boolean expanded = settings.getBoolean(ni.getID() + ".expanded",ni.isExpanded());
         item.setExpanded(expanded);
@@ -232,7 +236,6 @@ public class Navigation implements Part
 		load(navi,this.pluginTree);
 	}
 
-  
 
   /**
    * Aktualisiert einen Teil des Navigationsbaumes.
@@ -244,26 +247,50 @@ public class Navigation implements Part
     if (item == null)
       return;
 
-    TreeItem ti = null;
-    Iterator i = this.itemLookup.values().iterator();
-    while (i.hasNext())
-    {
-      TreeItem test = (TreeItem) i.next();
-      if (test == null || test.isDisposed())
-        continue;
-      
-      Object data = test.getData();
-      if (data == null || !data.equals(item))
-        continue;
-      ti = test;
-      break;
-    }
-    if (ti == null)
+    TreeItem ti = this.itemLookup.get(item.getID());
+    if (ti == null || ti.isDisposed())
       return;
     
     ti.setGrayed(!item.isEnabled());
     ti.setForeground(item.isEnabled() ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
     ti.setText(item.getName());
+    ti.setData(KEY_NAVIGATION,item);
+  }
+
+  /**
+   * Ergaenzt ein Navigationselement um eine "Ungelesen"-Markierung wie in der
+   * Ordner-Ansicht eines Mailprogramms.
+   * @param id die ID des Navigationselementes.
+   * @param unread Anzahl der ungelesenen Elemente.
+   * Wird ein Wert groesser "0" uebergeben, wird das Navigationselement fett gedruckt
+   * und die Anzahl der ungelesenen Elemente in Klammern dahinter angezeigt. Andernfalls
+   * wird der Fettdruck aufgehoben und die Anzahl entfernt.
+   */
+  public void setUnreadCount(String id, int unread)
+  {
+    TreeItem ti = this.itemLookup.get(id);
+    if (ti == null || ti.isDisposed())
+      return;
+
+    // Wir merken uns den originalen Titel
+    String title   = (String) ti.getData("jameica.item.title");
+    String current = ti.getText();
+    if (title == null)
+    {
+      ti.setData("jameica.item.title",current);
+      title = current;
+    }
+    
+    if (unread > 0)
+    {
+      ti.setFont(Font.BOLD.getSWTFont());
+      ti.setText(title + " (" + Integer.toString(unread) + ")");
+    }
+    else
+    {
+      ti.setFont(Font.DEFAULT.getSWTFont());
+      ti.setText(title);
+    }
   }
 
   /**
@@ -312,7 +339,7 @@ public class Navigation implements Part
         return;
 
       TreeItem item = (TreeItem) widget;
-      NavigationItem ni = (NavigationItem) item.getData();
+      NavigationItem ni = (NavigationItem) item.getData(KEY_NAVIGATION);
 
       if (ni == null)
         return;
@@ -364,7 +391,7 @@ public class Navigation implements Part
           return;
 
         TreeItem item       = (TreeItem) e.widget;
-        NavigationItem data = (NavigationItem) e.widget.getData();
+        NavigationItem data = (NavigationItem) e.widget.getData(KEY_NAVIGATION);
         if (data == null)
           return;
 
@@ -383,7 +410,10 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
- * Revision 1.48  2011/04/26 12:20:24  willuhn
+ * Revision 1.49  2011/06/30 16:29:23  willuhn
+ * @N setUnreadCount() - damit kann man den Look'n'Feel von Mailprogrammen (Fettdruck + Anzahl ungelesener Elemente) nachbauen ;)
+ *
+ * Revision 1.48  2011-04-26 12:20:24  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.47  2010-10-07 21:52:35  willuhn
