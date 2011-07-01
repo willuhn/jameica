@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ZippedPlugin.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/06/01 15:18:42 $
+ * $Revision: 1.5 $
+ * $Date: 2011/07/01 11:33:45 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -138,6 +138,8 @@ public class ZippedPlugin
       }
 
       this.manifest = new Manifest(is);
+      if (this.manifest.isSystemManifest())
+        throw new ApplicationException(i18n.tr("Die Datei enthält kein Plugin sondern Jameica selbst"));
       //
       ////////////////////////////////////////////////////////////////////////////
 
@@ -199,7 +201,10 @@ public class ZippedPlugin
 
 /**********************************************************************
  * $Log: ZippedPlugin.java,v $
- * Revision 1.4  2011/06/01 15:18:42  willuhn
+ * Revision 1.5  2011/07/01 11:33:45  willuhn
+ * @N Fuer die ganz bekloppten, die versuchen, Jameica als Plugin innerhalb von Jameica zu installieren (ja, die gibt es wirklich) noch eine extra Pruefung m(
+ *
+ * Revision 1.4  2011-06-01 15:18:42  willuhn
  * @N Die Deploy-Funktion kriegt jetzt direkt ein ZippedPlugin - das erspart das extra "canDeploy()"
  *
  * Revision 1.3  2011-06-01 13:45:43  willuhn

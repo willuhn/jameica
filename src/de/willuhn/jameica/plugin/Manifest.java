@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.34 $
- * $Date: 2011/06/19 11:15:46 $
+ * $Revision: 1.35 $
+ * $Date: 2011/07/01 11:33:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -212,6 +212,16 @@ public class Manifest implements Comparable
   public boolean isShared()
   {
     return "true".equalsIgnoreCase(this.root.getAttribute("shared","true"));
+  }
+  
+  /**
+   * Liefert true, wenn es kein gewoehnliches Plugin-Manifest ist sondern das Manifest von Jameica selbst.
+   * @return true, wenn es kein gewoehnliches Plugin-Manifest ist sondern das Manifest von Jameica selbst.
+   */
+  public boolean isSystemManifest()
+  {
+    String name = this.root.getName();
+    return name != null && name.equals("system");
   }
   
   /**
@@ -706,7 +716,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.34  2011/06/19 11:15:46  willuhn
+ * Revision 1.35  2011/07/01 11:33:45  willuhn
+ * @N Fuer die ganz bekloppten, die versuchen, Jameica als Plugin innerhalb von Jameica zu installieren (ja, die gibt es wirklich) noch eine extra Pruefung m(
+ *
+ * Revision 1.34  2011-06-19 11:15:46  willuhn
  * @B BUGZILLA 1073
  *
  * Revision 1.33  2011-06-17 15:55:18  willuhn
