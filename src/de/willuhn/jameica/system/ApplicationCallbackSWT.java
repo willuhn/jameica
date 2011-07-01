@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.36 $
- * $Date: 2011/06/30 15:53:32 $
+ * $Revision: 1.37 $
+ * $Date: 2011/07/01 12:03:56 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -313,7 +313,8 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
             close();
           }
         },null,false,"process-stop.png");
-        getShell().setSize(getShell().computeSize(300,SWT.DEFAULT));
+        getShell().setSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
+        getShell().setMinimumSize(300,getShell().getSize().y);
       }
     };
     d.setTitle(Application.getI18n().tr("Frage"));
@@ -454,7 +455,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.36  2011/06/30 15:53:32  willuhn
+ * Revision 1.37  2011/07/01 12:03:56  willuhn
+ * @N so, ich hoffe, jetzt hat der Dialog immer eine brauchbare Groesse ;)
+ *
+ * Revision 1.36  2011-06-30 15:53:32  willuhn
  * @C tiny gui improvements
  *
  * Revision 1.35  2011-05-31 16:39:05  willuhn
