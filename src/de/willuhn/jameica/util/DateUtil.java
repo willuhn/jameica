@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/util/DateUtil.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/01/20 17:13:24 $
+ * $Revision: 1.2 $
+ * $Date: 2011/07/04 09:22:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ public class DateUtil
 {
   /**
    * Das Default-Dateformat von Jameica.
+   * Abhaengig vom Locale.
    */
   public final static DateFormat DEFAULT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,Application.getConfig().getLocale());
 
@@ -43,6 +44,10 @@ public class DateUtil
     int tag = 0;
     int monat = 0;
     
+    // Eventuell mit Uhrzeit eingegeben. Wir lassen die Finger davon
+    if (text.length() > 10)
+      return text;
+
     // Datum im Format dd eingegeben. Wir vervollstaendigen mit aktuellem Monat und Jahr
     if (text.length() <= 2)
     {
@@ -185,7 +190,10 @@ public class DateUtil
 
 /**********************************************************************
  * $Log: DateUtil.java,v $
- * Revision 1.1  2011/01/20 17:13:24  willuhn
+ * Revision 1.2  2011/07/04 09:22:25  willuhn
+ * @B Bei Datumseingaben mit Uhrzeit wurde die Uhrzeit abgeschnitten
+ *
+ * Revision 1.1  2011-01-20 17:13:24  willuhn
  * @C HBCIProperties#startOfDay und HBCIProperties#endOfDay nach Jameica in DateUtil verschoben
  *
  * Revision 1.2  2011-01-06 23:18:33  willuhn
