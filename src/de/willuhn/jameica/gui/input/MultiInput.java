@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/MultiInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/05/11 08:42:07 $
+ * $Revision: 1.6 $
+ * $Date: 2011/07/05 17:35:38 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -33,6 +33,11 @@ import de.willuhn.jameica.gui.util.Color;
  */
 public class MultiInput implements Input
 {
+  /**
+   * Context-Parameter fuer die Wichtung der Breite.
+   */
+  public final static String DATA_WEIGHT = "jameica.multiinput.weight";
+  
   private Map<String,Object> data = new HashMap<String,Object>();
 
   private List<Input> inputs = new ArrayList<Input>();
@@ -210,19 +215,26 @@ public class MultiInput implements Input
     layout.verticalSpacing = 0;
     this.composite.setLayout(layout);
     GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-    gd.widthHint = width / size;
+    gd.widthHint = width;
     this.composite.setLayoutData(gd);
 
     for (Input i:this.inputs) {
       String name = i.getName();
-      if (name != null)
+      if (name != null && !(i instanceof CheckboxInput))
       {
         Label l = GUI.getStyleFactory().createLabel(this.composite,SWT.NONE);
         l.setText(name);
         l.setAlignment(SWT.RIGHT);
         l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER));
       }
-      i.paint(this.composite,width / size);
+      
+      // Checken, ob wir einen Breiten-Hint haben
+      Number weightHint = (Number) i.getData(DATA_WEIGHT);
+      int len = (width / size) + 2; // 2 Pixel noch extra, damit das rechts besser abschliesst
+      if (weightHint != null)
+        i.paint(this.composite,(int) (len * weightHint.doubleValue()));
+      else
+        i.paint(this.composite,len);
     }
     
     // den Kommentar hinten dran fuegen
@@ -338,7 +350,10 @@ public class MultiInput implements Input
 
 /**********************************************************************
  * $Log: MultiInput.java,v $
- * Revision 1.5  2011/05/11 08:42:07  willuhn
+ * Revision 1.6  2011/07/05 17:35:38  willuhn
+ * @N Support fuer unterschiedlich breite Eingabefelder im MultiInput
+ *
+ * Revision 1.5  2011-05-11 08:42:07  willuhn
  * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
  *
  * Revision 1.4  2011-05-03 10:13:11  willuhn
