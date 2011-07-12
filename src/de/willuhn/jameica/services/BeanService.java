@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BeanService.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/06/29 16:56:36 $
+ * $Revision: 1.6 $
+ * $Date: 2011/07/12 15:21:30 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -32,8 +32,8 @@ import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.JameicaException;
 import de.willuhn.logging.Logger;
-import de.willuhn.util.ApplicationException;
 import de.willuhn.util.Session;
 
 /**
@@ -88,9 +88,8 @@ public class BeanService implements Bootable
    * @return die Instanz der Bean.
    * Wenn die Bean mit der {@link Lifecycle} Annotation versehen ist, wird
    * diese beruecksichtigt.
-   * @throws ApplicationException
    */
-  public <T> T get(Class<T> type) throws ApplicationException
+  public <T> T get(Class<T> type)
   {
     if (type == null)
       return null;
@@ -161,7 +160,7 @@ public class BeanService implements Bootable
     catch (Exception e)
     {
       Logger.error("unable to create instance of " + type,e);
-      throw new ApplicationException(Application.getI18n().tr("{0} kann nicht erstellt werden: {1}",type.getSimpleName(),e.getMessage()));
+      throw new JameicaException(Application.getI18n().tr("{0} kann nicht erstellt werden: {1}",type.getSimpleName(),e.getMessage()));
     }
   }
   
@@ -295,7 +294,10 @@ public class BeanService implements Bootable
 
 /**********************************************************************
  * $Log: BeanService.java,v $
- * Revision 1.5  2011/06/29 16:56:36  willuhn
+ * Revision 1.6  2011/07/12 15:21:30  willuhn
+ * @N JameicaException
+ *
+ * Revision 1.5  2011-06-29 16:56:36  willuhn
  * *** empty log message ***
  *
  * Revision 1.4  2011-06-29 11:50:13  willuhn

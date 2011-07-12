@@ -152,6 +152,8 @@ public class Sleak
       string += gcs + " GC(s)\n";
     if (images != 0)
       string += images + " Image(s)\n";
+    if (regions != 0)
+      string += regions + " Region(s)\n";
     /* Currently regions are not counted. */
     // if (regions != 0) string += regions + " Region(s)\n";
     if (string.length() != 0)

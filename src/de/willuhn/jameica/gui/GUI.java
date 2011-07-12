@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.143 $
- * $Date: 2011/05/03 16:46:08 $
+ * $Revision: 1.144 $
+ * $Date: 2011/07/12 15:21:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -51,6 +51,7 @@ import de.willuhn.jameica.system.ApplicationCallbackSWT;
 import de.willuhn.jameica.system.ApplicationController;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.Customizing;
+import de.willuhn.jameica.system.JameicaException;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
@@ -622,6 +623,18 @@ public class GUI implements ApplicationController
           loadHelp(gui.currentView);
 
         }
+        catch (JameicaException je)
+        {
+          try
+          {
+            Application.getCallback().notifyUser(je.getMessage());
+          }
+          catch (Exception e)
+          {
+            Logger.error(je.getMessage());
+            Logger.error("additional: ",e);
+          }
+        }
         catch (ApplicationException ae)
         {
           try
@@ -977,7 +990,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.143  2011/05/03 16:46:08  willuhn
+ * Revision 1.144  2011/07/12 15:21:30  willuhn
+ * @N JameicaException
+ *
+ * Revision 1.143  2011-05-03 16:46:08  willuhn
  * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
  * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
  *
@@ -992,70 +1008,4 @@ public class GUI implements ApplicationController
  *
  * Revision 1.139  2011-04-06 16:13:16  willuhn
  * @N BUGZILLA 631
- *
- * Revision 1.138  2010-12-07 10:04:17  willuhn
- * @N Netbook-Mode jetzt auch zwangsweise via application.scrollview.force aktivierbar (siehe Mail von Markus vom 06.12.2010)
- *
- * Revision 1.137  2010-11-11 10:59:12  willuhn
- * @N Platform in SWT-Version mit anzeigen
- *
- * Revision 1.136  2010-10-21 10:04:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.135  2010-10-21 10:04:08  willuhn
- * *** empty log message ***
- *
- * Revision 1.134  2010-10-19 15:33:21  willuhn
- * @N Statusbar via Customizing anpassbar
- *
- * Revision 1.133  2010-10-06 15:48:18  willuhn
- * @N Heiners Patch vom 06.10.2010 fuer Hilfetexte zur Laufzeit
- *
- * Revision 1.132  2010-10-04 15:12:14  willuhn
- * @R bringt nichts, weil die Widgets da schon disposed sind
- *
- * Revision 1.130  2010-10-04 08:22:28  willuhn
- * @N Message schicken, wenn fuer eine View kein Hilfetext gefunden wurde. Siehe Heiners Anfrage in hibiscus-devel am 03.10.2010
- *
- * Revision 1.129  2010-09-02 22:33:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.128  2010-09-01 15:52:28  willuhn
- * @N GUI speichert beim Beenden die Breite der Navi und die Hoehe des Hilfe-Fensters und stellt die Groessen beim naechsten Start automatisch wieder her
- *
- * Revision 1.127  2010-08-23 11:03:10  willuhn
- * @N Automatische Aktivierung des Netbook-Modes auf kleinen Displays
- *
- * Revision 1.126  2010-04-12 16:26:23  willuhn
- * @N SWT-Version beim Start in Log schreiben
- *
- * Revision 1.125  2010/03/18 09:33:09  willuhn
- * *** empty log message ***
- *
- * Revision 1.124  2010/03/17 22:19:18  willuhn
- * @C Negative x/y-Werte bei Fenster-Position nicht beruecksichtigen
- *
- * Revision 1.123  2009/12/16 00:11:59  willuhn
- * @N Scroll-Support fuer Views - nochmal ueberarbeitet und jetzt via Customizing konfigurierbar
- *
- * Revision 1.122  2009/09/20 22:28:40  willuhn
- * @B Endlosschleife verhindern
- *
- * Revision 1.121  2009/06/04 10:35:32  willuhn
- * @N Customizing-Parameter zum Ausblenden von Navigation und Hilfe-Box
- *
- * Revision 1.120  2009/05/27 12:56:45  willuhn
- * @B BUGZILLA 183
- *
- * Revision 1.119  2009/04/16 12:58:39  willuhn
- * @N BUGZILLA 722
- *
- * Revision 1.118  2009/03/29 22:28:01  willuhn
- * @N Text der OperationCancelledException anzeigen
- *
- * Revision 1.117  2009/03/29 21:43:42  willuhn
- * @N Neue startView()-Funktion, mit der AbstractView-Objekte direkt uebergeben werden koennen
- *
- * Revision 1.116  2009/01/18 01:43:07  willuhn
- * @N Fehlermeldung in Progress-View anzeigen
  **********************************************************************/

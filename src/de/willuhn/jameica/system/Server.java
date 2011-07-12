@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.16 $
- * $Date: 2011/04/26 12:09:18 $
+ * $Revision: 1.17 $
+ * $Date: 2011/07/12 15:21:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -71,6 +71,8 @@ public class Server implements ApplicationController
         Logger.error("unable to detach terminal",e);
       }
     }
+    
+    // TODO: JameicaException muesste hier mal noch behandelt werden
   }
 
   /**
@@ -174,60 +176,9 @@ public class Server implements ApplicationController
 
 /*********************************************************************
  * $Log: Server.java,v $
- * Revision 1.16  2011/04/26 12:09:18  willuhn
+ * Revision 1.17  2011/07/12 15:21:30  willuhn
+ * @N JameicaException
+ *
+ * Revision 1.16  2011-04-26 12:09:18  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.15  2010/05/19 14:51:53  willuhn
- * @N Ausfall von STDOUT tolerieren
- * @N STDOUT, STDERR und STDIN beim Start mit dem Parameter "-n" (Noninteractive mode) schliessen
- *
- * Revision 1.14  2008/03/07 16:31:48  willuhn
- * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
- *
- * Revision 1.13  2007/04/09 23:26:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.12  2007/01/31 13:07:52  willuhn
- * @N Login-Dialog
- * @N SystemMessage
- *
- * Revision 1.11  2006/01/18 18:40:21  web0
- * @N Redesign des Background-Task-Handlings
- *
- * Revision 1.10  2005/07/14 22:58:36  web0
- * *** empty log message ***
- *
- * Revision 1.9  2005/06/28 21:13:41  web0
- * *** empty log message ***
- *
- * Revision 1.8  2005/04/21 17:14:14  web0
- * @B fixed shutdown behaviour
- *
- * Revision 1.7  2005/01/30 20:47:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2005/01/12 00:59:38  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2005/01/03 23:04:54  willuhn
- * @N separater StartupError Handler
- *
- * Revision 1.4  2004/11/12 18:23:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2004/08/11 00:39:25  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/07/27 19:17:07  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/07/21 20:08:45  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.2  2004/06/30 20:58:39  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2003/12/12 01:28:05  willuhn
- * *** empty log message ***
- *
  **********************************************************************/
