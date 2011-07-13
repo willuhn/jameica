@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.58 $
- * $Date: 2011/06/29 09:08:32 $
+ * $Revision: 1.59 $
+ * $Date: 2011/07/13 14:04:28 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,8 +45,6 @@ import de.willuhn.util.ProgressMonitor;
 
 /**
  * Kontrolliert alle installierten Plugins.
- * 
- * @author willuhn
  */
 public final class PluginLoader
 {
@@ -187,7 +185,6 @@ public final class PluginLoader
 
   /**
    * Laedt das Plugin.
-   * 
    * @param manifest
    * @return der Classloader des Plugins
    * @throws Exception wenn das Laden des Plugins fehlschlug.
@@ -229,7 +226,6 @@ public final class PluginLoader
 
   /**
    * Instanziiert das Plugin.
-   * 
    * @param manifest
    * @param loader der Classloader fuer das Plugin.
    * @throws Exception wenn das Initialisieren des Plugins fehlschlug.
@@ -356,9 +352,7 @@ public final class PluginLoader
 
   /**
    * Liefert eine Liste mit allen installierten Plugins.
-   * 
-   * @return Liste aller installierten Plugins. Die Elemente sind vom Typ
-   *         <code>AbstractPlugin</code>.
+   * @return Liste aller installierten Plugins. Die Elemente sind vom Typ <code>AbstractPlugin</code>.
    */
   public List<AbstractPlugin> getInstalledPlugins()
   {
@@ -375,7 +369,6 @@ public final class PluginLoader
 
   /**
    * Liefert eine Liste mit den Manifesten der installierten Plugins.
-   * 
    * @return Liste der installierten Manifeste.
    */
   public List<Manifest> getInstalledManifests()
@@ -393,18 +386,15 @@ public final class PluginLoader
 
   /**
    * Liefert eine Liste mit allen gefundenen Manifesten.
-   * 
-   * @return Liste aller Manifeste (unabhaengig ob erfolgreich installiert oder
-   *         nicht).
+   * @return Liste aller Manifeste (unabhaengig ob erfolgreich installiert oder nicht).
    */
-  List<Manifest> getManifests()
+  public List<Manifest> getManifests()
   {
     return this.plugins;
   }
 
   /**
    * Liefert das Manifest der angegebenen Plugin-Klasse.
-   * 
    * @param plugin Klasse des Plugins.
    * @return das Manifest.
    */
@@ -418,7 +408,6 @@ public final class PluginLoader
 
   /**
    * Liefert das Manifest der angegebenen Plugin-Klasse.
-   * 
    * @param pluginClass Klasse des Plugins.
    * @return das Manifest.
    */
@@ -440,7 +429,6 @@ public final class PluginLoader
 
   /**
    * Liefert das Manifest anhand des Plugin-Namens.
-   * 
    * @param name Name des Plugins.
    * @return das Manifest.
    */
@@ -477,7 +465,6 @@ public final class PluginLoader
 
   /**
    * Liefert die Instanz des Plugins mit der angegebenen Klassennamen.
-   * 
    * @param pluginClass Klassenname des Plugins.
    * @return Instanz des Plugins oder <code>null</code> wenn es nicht
    *         installiert ist.
@@ -496,11 +483,9 @@ public final class PluginLoader
    * Falls die Klasse in mehreren Plugins enthalten ist und diese Plugins einen
    * gemeinsamen Classloader nutzen (was bei den bisherigen und meisten Plugins
    * meist der Fall ist), kann das Ergebnis durchaus variieren.
-   * 
    * @param c die zu testende Klasse.
    * @return das Plugin oder <code>null</code>, wenn es nicht ermittelbar ist
-   *         oder zu einem Fehler fuehrte. Der Fehler wird im Jameica-Log
-   *         protokolliert.
+   *         oder zu einem Fehler fuehrte. Der Fehler wird im Jameica-Log protokolliert.
    */
   public AbstractPlugin findByClass(Class c)
   {
@@ -549,17 +534,12 @@ public final class PluginLoader
   /**
    * Prueft, ob das angegebene Plugin installiert ist <b>und</b> erfolgreich
    * initialisiert ist.
-   * 
-   * @param pluginClass vollstaeniger Klassenname des Plugins. Warum hier nicht
-   *          ein Class-Objekt uebergeben wird? Wuerde das Plugin mittels
-   *          <code>PluginLoader.isInstalled(NeededPlugin.class)</code>
-   *          pruefen wollen, ob das benoetigte Plugin installiert ist, dann
-   *          wuerde bereits das <code>NeededPlugin.class</code> vom
-   *          SystemClassLoader der JVM mit einer ClassNotFoundException
-   *          aufgeben. Da wir es hier mit dynamisch geladenen Klassen zu tun
-   *          haben, sind die dem SystemClassLoader nicht bekannt sondern nur
-   *          unserem eigenen, der via <code>Application.getClassLoder()</code>
-   *          bezogen werden kann.
+   * @param pluginClass vollstaeniger Klassenname des Plugins. Warum hier nicht ein
+   * Class-Objekt uebergeben wird? Wuerde das Plugin mittels <code>PluginLoader.isInstalled(NeededPlugin.class)</code>
+   * pruefen wollen, ob das benoetigte Plugin installiert ist, dann wuerde bereits das <code>NeededPlugin.class</code>
+   * vom SystemClassLoader der JVM mit einer ClassNotFoundException aufgeben. Da wir es hier mit
+   * dynamisch geladenen Klassen zu tun haben, sind die dem SystemClassLoader nicht bekannt sondern nur
+   * unserem eigenen, der via <code>Application.getClassLoder()</code> bezogen werden kann.
    * @return true, wenn es installiert <b>und</b> aktiv ist.
    */
   public boolean isInstalled(String pluginClass)
@@ -916,7 +896,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.58  2011/06/29 09:08:32  willuhn
+ * Revision 1.59  2011/07/13 14:04:28  willuhn
+ * @C Auch inaktive Plugins anzeigen - dann koennen sie wenigstens deinstalliert werden
+ *
+ * Revision 1.58  2011-06-29 09:08:32  willuhn
  * @N getPlugin ist getypt - damit ist das manuelle Cast nicht mehr noetig
  *
  * Revision 1.57  2011-06-19 12:09:54  willuhn

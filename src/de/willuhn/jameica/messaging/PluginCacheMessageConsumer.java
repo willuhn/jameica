@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/PluginCacheMessageConsumer.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/02 13:02:26 $
+ * $Revision: 1.2 $
+ * $Date: 2011/07/13 14:04:28 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -88,7 +88,7 @@ public class PluginCacheMessageConsumer implements MessageConsumer
     if (cache == null)
     {
       cache = new LinkedHashMap<String,Manifest>();
-      List<Manifest> mfs = Application.getPluginLoader().getInstalledManifests();
+      List<Manifest> mfs = Application.getPluginLoader().getManifests();
       for (Manifest m:mfs)
       {
         cache.put(m.getName(),m);
@@ -102,7 +102,10 @@ public class PluginCacheMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: PluginCacheMessageConsumer.java,v $
- * Revision 1.1  2011/06/02 13:02:26  willuhn
+ * Revision 1.2  2011/07/13 14:04:28  willuhn
+ * @C Auch inaktive Plugins anzeigen - dann koennen sie wenigstens deinstalliert werden
+ *
+ * Revision 1.1  2011-06-02 13:02:26  willuhn
  * @N MessageConsumer fuer die Plugin-Install-Benachrichtigungen ausgelagert, damit die Messages auch von jameica.update empfangen werden koennen
  *
  **********************************************************************/
