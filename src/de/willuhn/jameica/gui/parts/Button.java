@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/07/14 16:13:26 $
+ * $Revision: 1.12 $
+ * $Date: 2011/07/14 16:15:26 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -106,6 +106,20 @@ public class Button implements Part
   }
   
   /**
+   * Speichert den Text auf dem Button.
+   * @param text der anzuzeigende Text.
+   */
+  public void setText(String text)
+  {
+    if (text == null)
+      return;
+    
+    this.title = text;
+    if (this.button != null && !this.button.isDisposed())
+      this.button.setText(this.title);
+  }
+  
+  /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent) throws RemoteException
@@ -166,8 +180,8 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
- * Revision 1.11  2011/07/14 16:13:26  willuhn
- * @R UNDO - doch nicht noetig
+ * Revision 1.12  2011/07/14 16:15:26  willuhn
+ * @R REDO ;)
  *
  * Revision 1.10  2011-07-14 16:12:49  willuhn
  * @N Aendern des Textes von bereits gerenderten Buttons
