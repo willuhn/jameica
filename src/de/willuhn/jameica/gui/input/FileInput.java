@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/FileInput.java,v $
- * $Revision: 1.18 $
- * $Date: 2011/01/20 17:10:39 $
+ * $Revision: 1.19 $
+ * $Date: 2011/07/15 15:44:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,9 +73,12 @@ public class FileInput extends ButtonInput
 
         try
         {
-          File f = new File(value);
-          dialog.setFileName(f.getName());
-          dialog.setFilterPath(f.getParent());
+          if (value != null)
+          {
+            File f = new File(value);
+            dialog.setFileName(f.getName());
+            dialog.setFilterPath(f.getParent());
+          }
         }
         catch (Exception e)
         {
@@ -146,7 +149,10 @@ public class FileInput extends ButtonInput
 
 /*********************************************************************
  * $Log: FileInput.java,v $
- * Revision 1.18  2011/01/20 17:10:39  willuhn
+ * Revision 1.19  2011/07/15 15:44:12  willuhn
+ * @B NPE
+ *
+ * Revision 1.18  2011-01-20 17:10:39  willuhn
  * @B Dateiname und Pfad getrennt dem Dialog uebergeben. Sonst kann man keine sauberen Datei->Speichern-Dialoge machen
  *
  * Revision 1.17  2010-12-31 01:01:05  willuhn
