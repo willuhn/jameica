@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.109 $
- * $Date: 2011/06/28 09:24:54 $
+ * $Revision: 1.110 $
+ * $Date: 2011/07/18 12:20:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -703,11 +703,6 @@ public class TablePart extends AbstractTablePart
       table.addListener(SWT.MouseDown, new Listener() {
         public void handleEvent(Event e) {
 
-          // Das alte Text-Feld ggf. disposen
-          Control oldText = editor.getEditor();
-          if (oldText != null && !oldText.isDisposed())
-            oldText.dispose();
-          
           TableItem current     = null;
           int row               = -1;
           int cols              = table.getColumnCount();
@@ -751,7 +746,7 @@ public class TablePart extends AbstractTablePart
 
           final String oldValue = item.getText(index);
 
-          Control editorControl = getEditorControl(row, item, oldValue);
+          final Control editorControl = getEditorControl(row, item, oldValue);
           editor.setEditor(editorControl, item, index);
 
           // Wir deaktivieren den Default-Button fuer den Zeitraum der Bearbeitung
@@ -765,14 +760,33 @@ public class TablePart extends AbstractTablePart
           else
             enabled = false;
 
-          editorControl.addFocusListener(new FocusAdapter()
-          {
-            public void focusLost(FocusEvent e)
+          //////////////////////////////////////////////////////////////////////
+          // Beendet das Editieren
+          final Runnable done = new Runnable() {
+            public void run()
+            {
+              if (editorControl != null && !editorControl.isDisposed())
+                editorControl.dispose();
+              
+              Button b = GUI.getShell().getDefaultButton();
+              if (b != null && !b.isDisposed())
+                b.setEnabled(enabled);
+              
+              // Aktuelle Zeile markieren
+              select(item.getData());
+            }
+          };
+          //
+          //////////////////////////////////////////////////////////////////////
+
+          //////////////////////////////////////////////////////////////////////
+          // Uebernimmt die Aenderungen
+          final Runnable commit = new Runnable() {
+            public void run()
             {
               try
               {
-                Control control = editor.getEditor();
-                String newValue = getControlValue(control);
+                String newValue = getControlValue(editorControl);
                 if (oldValue == null && newValue == null)
                   return; // nothing changed
                 if (oldValue != null && oldValue.equals(newValue))
@@ -785,12 +799,8 @@ public class TablePart extends AbstractTablePart
                   try
                   {
                     l.itemChanged(item.getData(),col.getColumnId(),newValue);
-                    
-                    if (color == null)
-                      item.setForeground(index,Color.COMMENT.getSWTColor());
-                    else
+                    if (color != null)
                       item.setForeground(index,color);
-
                   }
                   catch (ApplicationException ae)
                   {
@@ -805,8 +815,8 @@ public class TablePart extends AbstractTablePart
                     break;
                   }
                 }
-                
-                //allow formatter to format the new values
+
+                // Zeile neu formatieren
                 if (tableFormatter != null)
                   tableFormatter.format(item);
 
@@ -817,10 +827,39 @@ public class TablePart extends AbstractTablePart
               }
               finally
               {
-                Button b = GUI.getShell().getDefaultButton();
-                if (b != null && !b.isDisposed())
-                  b.setEnabled(enabled);
+                done.run();
               }
+            }
+          };
+          //
+          //////////////////////////////////////////////////////////////////////
+          
+          
+          // Listener fuer Tastatur
+          editorControl.addTraverseListener(new TraverseListener() {
+            public void keyTraversed(TraverseEvent e)
+            {
+              if (!editorControl.isFocusControl())
+                return;
+              
+              if (e.detail == SWT.TRAVERSE_RETURN)
+              {
+                e.doit = false;
+                commit.run();
+              }
+              else if (e.detail == SWT.TRAVERSE_ESCAPE)
+              {
+                e.doit = false;
+                done.run();
+              }
+            }
+          });
+          // Listener fuer Maus
+          editorControl.addFocusListener(new FocusAdapter()
+          {
+            public void focusLost(FocusEvent e)
+            {
+              commit.run();
             }
           });
         }
@@ -1389,7 +1428,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.109  2011/06/28 09:24:54  willuhn
+ * Revision 1.110  2011/07/18 12:20:55  willuhn
+ * @N Komfortableres Inline-Editing - mit Support fuer RETURN+ESC
+ *
+ * Revision 1.109  2011-06-28 09:24:54  willuhn
  * @N BUGZILLA 574
  *
  * Revision 1.108  2011-05-04 09:26:23  willuhn
