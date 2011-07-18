@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ClassService.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.8 $
+ * $Date: 2011/07/18 16:31:00 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -116,6 +116,7 @@ public class ClassService implements Bootable
       Logger.info("using private classloader for plugin " + manifest.getName());
       // Eigenen Classloader fuer das Plugin erstellen
       mycl = new MultipleClassLoader();
+      mycl.setName("loader." + manifest.getName());
       Logger.info("  adding system classloader");
       mycl.addClassloader(Application.getClassLoader());
       
@@ -153,7 +154,13 @@ public class ClassService implements Bootable
 
     // Wir fuegen das Verzeichnis zum ClassLoader hinzu. (auch fuer die Ressourcen)
     mycl.add(dir);
-    mycl.add(new File(dir,"bin")); // Fuer den Start in Eclipse bzw. entpackte Classen
+    
+    File bin = new File(dir,"bin");
+    if (bin.exists())
+    {
+      Logger.info(mycl.getName() + ": added dir " + bin);
+      mycl.add(bin); // Fuer den Start in Eclipse bzw. entpackte Classen
+    }
     Application.getCallback().getStartupMonitor().addPercentComplete(2);
 
     // Und jetzt noch alle darin befindlichen Jars
@@ -163,7 +170,7 @@ public class ClassService implements Bootable
       Arrays.sort(jars); // Das machen wir nur der Optik wegen. Dann kann man das im Log besser lesen
       for (int i=0;i<jars.length;++i)
       {
-        Logger.info("loaded jar " + jars[i].getAbsolutePath());
+        Logger.info(mycl.getName() + ": loaded jar " + jars[i].getAbsolutePath());
       }
       
     }
@@ -285,7 +292,10 @@ public class ClassService implements Bootable
 
 /**********************************************************************
  * $Log: ClassService.java,v $
- * Revision 1.7  2011/05/31 16:39:04  willuhn
+ * Revision 1.8  2011/07/18 16:31:00  willuhn
+ * @N Name fuer den Classloader vergebbar
+ *
+ * Revision 1.7  2011-05-31 16:39:04  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  * Revision 1.6  2010-09-10 11:34:52  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Application.java,v $
- * $Revision: 1.86 $
- * $Date: 2011/01/25 23:33:54 $
+ * $Revision: 1.87 $
+ * $Date: 2011/07/18 16:30:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -73,6 +73,7 @@ public final class Application {
 
     // Wir nehmen grundsaetzlich unseren eigenen Classloader.
     MultipleClassLoader cl = new MultipleClassLoader();
+    cl.setName("loader.jameica");
     cl.addClassloader(Application.class.getClassLoader());
 
     // Wir machen unseren Classloader zum Context-Classloader fuer diesen Thread
@@ -511,7 +512,10 @@ public final class Application {
 
 /*********************************************************************
  * $Log: Application.java,v $
- * Revision 1.86  2011/01/25 23:33:54  willuhn
+ * Revision 1.87  2011/07/18 16:30:59  willuhn
+ * @N Name fuer den Classloader vergebbar
+ *
+ * Revision 1.86  2011-01-25 23:33:54  willuhn
  * *** empty log message ***
  *
  * Revision 1.85  2011-01-25 23:32:26  willuhn
