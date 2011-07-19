@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.38 $
- * $Date: 2011/04/27 10:27:10 $
+ * $Revision: 1.39 $
+ * $Date: 2011/07/19 15:24:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,7 @@ package de.willuhn.jameica.system;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -90,6 +91,8 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public String createPassword() throws Exception
   {
+    I18N i18n = Application.getI18n();
+    
     this.username = Application.getStartupParams().getUsername();
     String s = Customizing.SETTINGS.getString("application.firststart.username",null);
     if (s != null && s.length() > 0)
@@ -97,8 +100,8 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       // Wir sollen nach einem Usernamen fragen
       if (Application.inNonInteractiveMode())
       {
-        Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und kein Benutzername via Kommandozeile übergeben"));
-        throw new ApplicationException(Application.getI18n().tr("Username kann nicht abgefragt werden"));
+        Logger.error(i18n.tr("Jameica läuft im nicht-interaktiven Modus und kein Benutzername via Kommandozeile übergeben"));
+        throw new ApplicationException(i18n.tr("Username kann nicht abgefragt werden"));
       }
       flush();
       System.out.print(s);
@@ -117,19 +120,55 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 		{
       if (Application.inNonInteractiveMode())
       {
-        Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und kein Passwort via Kommandozeile übergeben"));
-        throw new ApplicationException(Application.getI18n().tr("Passwort kann nicht abgefragt werden"));
+        Logger.error(i18n.tr("Jameica läuft im nicht-interaktiven Modus und kein Passwort via Kommandozeile übergeben"));
+        throw new ApplicationException(i18n.tr("Passwort kann nicht abgefragt werden"));
       }
 
       flush();
-      System.out.print(Application.getI18n().tr("Sie starten Jameica zum ersten Mal.\nBitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
-			InputStreamReader isr = new InputStreamReader(System.in);
-			BufferedReader keyboard = new BufferedReader(isr);
-			this.password = keyboard.readLine();
+      System.out.println("");
+      System.out.println(i18n.tr("Sie starten Jameica zum ersten Mal.\nBitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
+      this.password = promptPassword();
 		}
 
 		this.setChecksum(this.password);
 		return this.password;
+  }
+  
+  /**
+   * Liest das Passwort von der Konsole.
+   * @return das Passwort.
+   * @throws Exception
+   */
+  private String promptPassword() throws Exception
+  {
+    String label = Application.getI18n().tr("Passwort") + ": ";
+    Console console = System.console();
+    
+    // 10 Versuche
+    for (int i=0;i<10;++i)
+    {
+      String s = null;
+      
+      if (console != null)
+      {
+        // wir haben eine Konsole
+        s = new String(console.readPassword(label));
+      }
+      else
+      {
+        // Keine Konsole, dann im Klartext.
+        System.out.print(label);
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader keyboard = new BufferedReader(isr);
+        s = keyboard.readLine();
+      }
+      
+      if (s != null && s.length() > 0)
+        return s;
+    }
+    
+    Logger.error("no password, giving up");
+    throw new ApplicationException(Application.getI18n().tr("Kein Passwort eingegeben"));
   }
 
   /**
@@ -137,6 +176,8 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public String getPassword() throws Exception
   {
+    I18N i18n = Application.getI18n();
+    
     // Machen wir hier gleich mit, weil das bei allen Folgestarts aufgerufen wird
     if (this.username == null)
       this.username = Application.getStartupParams().getUsername();
@@ -150,8 +191,8 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       // Wir sollen nach einem Usernamen fragen
       if (Application.inNonInteractiveMode())
       {
-        Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und kein Benutzername via Kommandozeile übergeben"));
-        throw new ApplicationException(Application.getI18n().tr("Username kann nicht abgefragt werden"));
+        Logger.error(i18n.tr("Jameica läuft im nicht-interaktiven Modus und kein Benutzername via Kommandozeile übergeben"));
+        throw new ApplicationException(i18n.tr("Username kann nicht abgefragt werden"));
       }
       flush();
       System.out.print(s);
@@ -174,20 +215,19 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
     if (Application.inNonInteractiveMode())
     {
-      Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus und kein Passwort via Kommandozeile übergeben"));
-      throw new ApplicationException(Application.getI18n().tr("Passwort kann nicht abgefragt werden"));
+      Logger.error(i18n.tr("Jameica läuft im nicht-interaktiven Modus und kein Passwort via Kommandozeile übergeben"));
+      throw new ApplicationException(i18n.tr("Passwort kann nicht abgefragt werden"));
     }
 
     flush();
-		System.out.println(Application.getI18n().tr("Bitte geben Sie das Jameica Master-Passwort ein:"));
-		InputStreamReader isr = new InputStreamReader(System.in);
-		BufferedReader keyboard = new BufferedReader(isr);
+    System.out.println("");
+		System.out.println(i18n.tr("Bitte geben Sie das Jameica Master-Passwort ein:"));
 		for (int i=0;i<3;++i)
 		{
-			this.password = keyboard.readLine();
+      this.password = promptPassword();
 			if (this.validateChecksum(this.password))
 				return this.password;
-			System.out.println(Application.getI18n().tr("Passwort falsch. Bitte versuchen Sie es erneut:"));
+			System.out.println(i18n.tr("Passwort falsch. Bitte versuchen Sie es erneut:"));
 		}
 		throw new Exception("Wrong jameica keystore password");
   }
@@ -540,7 +580,13 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
- * Revision 1.38  2011/04/27 10:27:10  willuhn
+ * Revision 1.39  2011/07/19 15:24:01  willuhn
+ * @B Die Properties-Datei des Pluginloaders muss auch dann erstellt werden, wenn keine Plugins installiert sind, da sie vom Backup-Service gebraucht wird
+ * @N Verdeckte Abfrage des Masterpasswortes an der Konsole
+ * @C Leeres Masterpasswort auch an Konsole nicht mehr erlauben
+ * @N Wiederholte Abfrage des Passwortes, wenn nichts eingegeben wurde
+ *
+ * Revision 1.38  2011-04-27 10:27:10  willuhn
  * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
  *
  * Revision 1.37  2010-11-22 11:32:04  willuhn

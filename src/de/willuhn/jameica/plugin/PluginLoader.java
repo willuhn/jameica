@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.59 $
- * $Date: 2011/07/13 14:04:28 $
+ * $Revision: 1.60 $
+ * $Date: 2011/07/19 15:24:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -63,6 +63,10 @@ public final class PluginLoader
   public synchronized void init()
   {
     updateChecker = new Settings(PluginLoader.class);
+    
+    // Das triggert das Erstellen der Config-Datei. Sie wird vom Backup-Service
+    // gebraucht und sollte auch dann existieren, wenn keine Plugins installiert sind.
+    updateChecker.setAttribute("jameica",Application.getManifest().getVersion().toString());
 
     Application.getCallback().getStartupMonitor().setStatusText("init plugins");
     Logger.info("init plugins");
@@ -896,7 +900,13 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.59  2011/07/13 14:04:28  willuhn
+ * Revision 1.60  2011/07/19 15:24:01  willuhn
+ * @B Die Properties-Datei des Pluginloaders muss auch dann erstellt werden, wenn keine Plugins installiert sind, da sie vom Backup-Service gebraucht wird
+ * @N Verdeckte Abfrage des Masterpasswortes an der Konsole
+ * @C Leeres Masterpasswort auch an Konsole nicht mehr erlauben
+ * @N Wiederholte Abfrage des Passwortes, wenn nichts eingegeben wurde
+ *
+ * Revision 1.59  2011-07-13 14:04:28  willuhn
  * @C Auch inaktive Plugins anzeigen - dann koennen sie wenigstens deinstalliert werden
  *
  * Revision 1.58  2011-06-29 09:08:32  willuhn

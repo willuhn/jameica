@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/AbstractApplicationCallback.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/04/27 10:27:10 $
+ * $Revision: 1.8 $
+ * $Date: 2011/07/19 15:24:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -146,7 +146,7 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
       return true;
     }
     
-    Logger.info("checksum found, testing");
+    Logger.debug("checksum found, testing");
     String expected = calculateChecksum(password,salt);
     if (expected.equals(checksum))
     {
@@ -212,7 +212,13 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
 
 /*********************************************************************
  * $Log: AbstractApplicationCallback.java,v $
- * Revision 1.7  2011/04/27 10:27:10  willuhn
+ * Revision 1.8  2011/07/19 15:24:01  willuhn
+ * @B Die Properties-Datei des Pluginloaders muss auch dann erstellt werden, wenn keine Plugins installiert sind, da sie vom Backup-Service gebraucht wird
+ * @N Verdeckte Abfrage des Masterpasswortes an der Konsole
+ * @C Leeres Masterpasswort auch an Konsole nicht mehr erlauben
+ * @N Wiederholte Abfrage des Passwortes, wenn nichts eingegeben wurde
+ *
+ * Revision 1.7  2011-04-27 10:27:10  willuhn
  * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
  *
  * Revision 1.6  2009/09/09 09:16:19  willuhn
