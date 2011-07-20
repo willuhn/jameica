@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/WaitDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2007/03/21 13:48:52 $
+ * $Revision: 1.2 $
+ * $Date: 2011/07/20 08:46:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -44,9 +44,8 @@ import de.willuhn.util.ApplicationException;
  */
 public abstract class WaitDialog extends AbstractDialog
 {
-  private long intervall = 1000l;
-  private long timeout   = 60 * intervall;
-  private long current   = 0;
+  private long timeout   = 60000L; // per Default 1 Minute
+  private int steps      = 1000; // Anzahl der Schritte im Wartedialog
   private Thread t       = null;
 
   /**
@@ -61,13 +60,13 @@ public abstract class WaitDialog extends AbstractDialog
   /**
    * ct.
    * @param timeout Timeout in Millisekunden, nach deren Ablauf der Dialog mit einer
-   * OperationCancelledException abbrechen soll.
+   * OperationCancelledException abbrechen soll. Muss mindestens 5000 (5 Sekunden) sein.
    * @param pos die Position des Dialogs.
    */
   public WaitDialog(long timeout, int pos)
   {
     super(pos);
-    if (timeout > intervall) // Nur uebernehmen, wenn eine gewisse Mindestgroesse uebergeben
+    if (timeout >= 5000L)
       this.timeout = timeout;
 
     super.addCloseListener(new Listener() {
@@ -127,35 +126,36 @@ public abstract class WaitDialog extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception
   {
+
+    Container container = new SimpleContainer(parent);
+    
     String text = getText();
     if (text != null && text.length() > 0)
-    {
-      Container container = new SimpleContainer(parent);
       container.addText(text,true);
-    }
 
-    final ProgressBar bar = new org.eclipse.swt.widgets.ProgressBar(parent, SWT.SMOOTH);
+    final ProgressBar bar = new org.eclipse.swt.widgets.ProgressBar(container.getComposite(), SWT.SMOOTH);
     GridData g = new GridData(GridData.FILL_HORIZONTAL);
     g.horizontalSpan = 2;
     bar.setLayoutData(g);
-    bar.setMaximum((int)(timeout / 1000));
+    bar.setMaximum(this.steps);
     bar.setSelection(0);
 
-
-    ButtonArea buttons = new ButtonArea(parent,2);
+    ButtonArea buttons = new ButtonArea();
     buttons.addButton("  " + i18n.tr("OK") + "  ",new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         close();
       }
     
-    },null,true);
+    },null,true,"ok.png");
     buttons.addButton(i18n.tr("Abbrechen"),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
         throw new OperationCanceledException("operation cancelled");
       }
-    });
+    },null,false,"process-stop.png");
+    container.addButtonArea(buttons);
+    
 
     t = new Thread() {
     
@@ -163,7 +163,13 @@ public abstract class WaitDialog extends AbstractDialog
       {
         try
         {
-          while (current < timeout)
+          long end  = System.currentTimeMillis() + timeout;
+
+          final long wait   = 200L; // 5 mal pro Sekunde aktualisieren
+          final long chunks = timeout / wait; // Anzahl der Schritte
+          final int step    = (int) (steps / chunks); // Selection um diesen Wert pro Schritt erhoehen
+          
+          while (System.currentTimeMillis() < end)
           {
             if (check())
             {
@@ -171,17 +177,18 @@ public abstract class WaitDialog extends AbstractDialog
               return;
             }
            
-            current += intervall;
-
             GUI.getDisplay().syncExec(new Runnable()
             {
               public void run()
               {
                 if (bar != null && !bar.isDisposed())
-                  bar.setSelection((int)(current / 1000));
+                {
+                  int pos = bar.getSelection() + step;
+                  bar.setSelection(pos);
+                }
               }
             });
-            sleep(intervall);
+            sleep(wait);
           }
           throw new OperationCanceledException("operation cancelled/timed out");
         }
@@ -199,6 +206,9 @@ public abstract class WaitDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: WaitDialog.java,v $
+ * Revision 1.2  2011/07/20 08:46:15  willuhn
+ * @N GUI poliert
+ *
  * Revision 1.1  2007/03/21 13:48:52  willuhn
  * @N new abstract "WaitDialog"
  * @N force redraw in backgroundtask monitor/statusbar
