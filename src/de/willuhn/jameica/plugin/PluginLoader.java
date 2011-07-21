@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.60 $
- * $Date: 2011/07/19 15:24:01 $
+ * $Revision: 1.61 $
+ * $Date: 2011/07/21 14:39:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,6 +34,7 @@ import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.services.ClassService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
@@ -171,6 +172,10 @@ public final class PluginLoader
       try
       {
         initPlugin(mf, loader);
+      }
+      catch (OperationCanceledException oce)
+      {
+        Logger.debug("plugin skipped: " + name);
       }
       catch (ApplicationException ae)
       {
@@ -900,7 +905,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.60  2011/07/19 15:24:01  willuhn
+ * Revision 1.61  2011/07/21 14:39:47  willuhn
+ * @N Mit einer OperationCancelledException in AbstractPlugin#init() kann ein Plugin jetzt fehlerfrei geskippt werden
+ *
+ * Revision 1.60  2011-07-19 15:24:01  willuhn
  * @B Die Properties-Datei des Pluginloaders muss auch dann erstellt werden, wenn keine Plugins installiert sind, da sie vom Backup-Service gebraucht wird
  * @N Verdeckte Abfrage des Masterpasswortes an der Konsole
  * @C Leeres Masterpasswort auch an Konsole nicht mehr erlauben
