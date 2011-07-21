@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SpinnerInput.java,v $
- * $Revision: 1.1 $
- * $Date: 2009/10/28 17:00:12 $
+ * $Revision: 1.2 $
+ * $Date: 2011/07/21 12:00:45 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -78,9 +78,9 @@ public class SpinnerInput extends AbstractInput
       return this.spinner;
     
     this.spinner = new Spinner(this.getParent(),SWT.BORDER);
-    this.spinner.setSelection(this.value);
     this.spinner.setMinimum(this.min);
     this.spinner.setMaximum(this.max);
+    this.spinner.setSelection(this.value);
     this.spinner.setIncrement(1);
     this.spinner.setEnabled(this.enabled);
     
@@ -138,6 +138,9 @@ public class SpinnerInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SpinnerInput.java,v $
+ * Revision 1.2  2011/07/21 12:00:45  willuhn
+ * @B Bevor der Wert einegetragen werden kann, muessen erst Minimum und Maximum angegeben sein - sonst geht value nur bis 100
+ *
  * Revision 1.1  2009/10/28 17:00:12  willuhn
  * @N Settings#getLong()
  * @N SpinnerInput
