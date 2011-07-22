@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/BackgroundTaskDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/06/02 10:55:32 $
+ * $Revision: 1.4 $
+ * $Date: 2011/07/22 09:11:27 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -14,8 +14,13 @@ package de.willuhn.jameica.gui.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.parts.Button;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.ProgressBar;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
@@ -38,7 +43,9 @@ import de.willuhn.util.ProgressMonitor;
 public class BackgroundTaskDialog extends AbstractDialog
 {
   private final static int WINDOW_WIDTH = 500;
-  private BackgroundTask task = null;
+  private BackgroundTask task           = null;
+  private boolean interruptible         = false;
+  private Button cancel                 = null;
   
   /**
    * ct.
@@ -50,6 +57,16 @@ public class BackgroundTaskDialog extends AbstractDialog
     super(position);
     this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
     this.task = task;
+  }
+  
+  /**
+   * Legt fest, ob der Task vom User abgebrochen werden koennen soll.
+   * @param b true, wenn er abbrechbar sein soll.
+   * Per Default ist er es nicht.
+   */
+  public void setInterruptible(boolean b)
+  {
+    this.interruptible = b;
   }
 
   /**
@@ -72,7 +89,7 @@ public class BackgroundTaskDialog extends AbstractDialog
     monitor.showLogs(false);    // Log brauchen wir hier nicht.
     monitor.paint(parent);
     
-    final Thread t = new Thread()
+    final Thread t = new Thread("[Jameica Backgroundtask] " + task.getClass().getName())
     {
       public void run()
       {
@@ -119,6 +136,103 @@ public class BackgroundTaskDialog extends AbstractDialog
         }
       }
     };
+    
+    if (this.interruptible)
+    {
+      ButtonArea buttons = new ButtonArea();
+      this.cancel = new Button(Application.getI18n().tr("Abbrechen"),new Action() {
+        public void handleAction(Object context) throws ApplicationException
+        {
+          // GUI Bescheid geben
+          GUI.getDisplay().syncExec(new Runnable() {
+            public void run()
+            {
+              // Button deaktivieren, damit der User nicht mehrfach draufklickt.
+              cancel.setEnabled(false);
+
+              monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
+              monitor.setStatusText(Application.getI18n().tr("Breche ab ..."));
+            }
+          });
+          
+          // Das muessen wir in einem extra Thread machen, weil wir weder den Worker-Thread
+          // noch den GUI-Thread blockieren wollen
+          Thread shutdown = new Thread("[Shutdown Backgroundtask] " + task.getClass().getName())
+          {
+            public void run()
+            {
+              try
+              {
+                Logger.info("interrupting background task");
+                
+                
+                ////////////////////////////////////////////////////////////////
+                // 1. Task beenden
+                // Wir markieren den Task erst als abgebrochen.
+                task.interrupt();
+                
+                // Wir geben dem Task jetzt 60 Sekunden Zeit, aufzuraeumen
+                Logger.info("waiting for task to finish");
+                long timeout = System.currentTimeMillis() + (60 * 1000L);
+                while (!task.isInterrupted() && (System.currentTimeMillis() < timeout))
+                {
+                  try
+                  {
+                    Thread.sleep(1000L);
+                  }
+                  catch (Exception e)
+                  {
+                    Logger.error("error while waiting for task",e);
+                    break;
+                  }
+                }
+                //
+                ////////////////////////////////////////////////////////////////
+                
+                ////////////////////////////////////////////////////////////////
+                // 2. Thread beenden
+                //
+                // OK, der Task muss jetzt fertig sein. Wir geben dem Thread Bescheid,
+                // dass Feierabend ist. Ist aber nur noetig, wenn er wirklich noch laeuft.
+                if (t.isAlive() && !t.isInterrupted())
+                {
+                  Logger.info("interrupting thread");
+                  try
+                  {
+                    t.interrupt();
+                  }
+                  catch (Exception e)
+                  {
+                    Logger.error("unable to interrupt thread",e);
+                  }
+
+                  // Wir geben dem Thread jetzt auch nochmal ne Minute Zeit.
+                  Logger.info("waiting for thread to finish");
+                  t.join(60 * 1000L);
+                }
+                //
+                ////////////////////////////////////////////////////////////////
+              }
+              catch (Exception e)
+              {
+                Logger.error("unable to stop background task",e);
+              }
+              finally
+              {
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Abgebrochen"),StatusBarMessage.TYPE_ERROR));
+              }
+            }
+          };
+          shutdown.start();
+          
+        }
+      },null,false,"process-stop.png");
+      buttons.addButton(this.cancel);
+      Container c = new SimpleContainer(parent);
+      c.addButtonArea(buttons);
+    }
+    
+    
     getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,SWT.DEFAULT));
 
     Runnable job = new Runnable() {
@@ -136,7 +250,10 @@ public class BackgroundTaskDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: BackgroundTaskDialog.java,v $
- * Revision 1.3  2011/06/02 10:55:32  willuhn
+ * Revision 1.4  2011/07/22 09:11:27  willuhn
+ * @N Support zum Abbrechen von Background-Tasks
+ *
+ * Revision 1.3  2011-06-02 10:55:32  willuhn
  * @R Die nicht mehr noetige Mac-Sonderbehandlung entfernt (in GUI ist es auch nicht mehr drin)
  *
  * Revision 1.2  2011-03-17 11:01:13  willuhn
