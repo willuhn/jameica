@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/MessageCollector.java,v $
- * $Revision: 1.1 $
- * $Date: 2009/07/17 10:13:03 $
+ * $Revision: 1.2 $
+ * $Date: 2011/07/22 11:21:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -64,7 +64,7 @@ public class MessageCollector implements MessageConsumer
   }
   
   /**
-   * Liefert die letzte Statusbar-Meldung und loescht sie
+   * Liefert die letzte Message und loescht sie
    * automatisch aus der Queue. Wird die Funktion nochmal
    * aufgerufen, wird dann also nicht mehr diese sondern
    * die vorherige Nachricht geliefert.
@@ -89,6 +89,9 @@ public class MessageCollector implements MessageConsumer
 
 /**********************************************************************
  * $Log: MessageCollector.java,v $
+ * Revision 1.2  2011/07/22 11:21:23  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.1  2009/07/17 10:13:03  willuhn
  * @N MessagingQueue#flush()
  * @N MessageCollector zum Sammeln von Nachrichten
