@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.20 $
- * $Date: 2011/05/03 10:13:10 $
+ * $Revision: 1.21 $
+ * $Date: 2011/07/22 07:49:52 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,7 +34,7 @@ public class ProgressBar implements ProgressMonitor, Part
 	private int status	= STATUS_NONE;
 
   private boolean showLogs = true;
-  private boolean showPercent = true;
+  private boolean showPercent = false;
 
 	private TextPart log																= null;
 	private Composite parent														= null;
@@ -238,7 +238,10 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
- * Revision 1.20  2011/05/03 10:13:10  willuhn
+ * Revision 1.21  2011/07/22 07:49:52  willuhn
+ * @C Prozent-Anzeige per Default nicht mehr anzeigen - braucht eigentlich kein Schwein - der Balken ist ja aussagekraeftig genug
+ *
+ * Revision 1.20  2011-05-03 10:13:10  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.19  2010-10-21 10:48:45  willuhn
