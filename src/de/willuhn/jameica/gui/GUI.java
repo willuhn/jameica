@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.144 $
- * $Date: 2011/07/12 15:21:30 $
+ * $Revision: 1.145 $
+ * $Date: 2011/07/22 09:08:20 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -919,7 +919,7 @@ public class GUI implements ApplicationController
     if (getDisplay() == null || getDisplay().isDisposed()) return;
 
     // Das Konstrukt sieht merkwuerdig aus - ich weiss. Muss aber so ;)
-    final Thread t = new Thread()
+    final Thread t = new Thread("[Jameica Backgroundtask] " + task.getClass().getName())
     {
       public void run()
       {
@@ -990,7 +990,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.144  2011/07/12 15:21:30  willuhn
+ * Revision 1.145  2011/07/22 09:08:20  willuhn
+ * @N Background-Threads via Name in Prozessliste kenntlich machen
+ *
+ * Revision 1.144  2011-07-12 15:21:30  willuhn
  * @N JameicaException
  *
  * Revision 1.143  2011-05-03 16:46:08  willuhn
