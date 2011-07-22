@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/ProgressBar.java,v $
- * $Revision: 1.21 $
- * $Date: 2011/07/22 07:49:52 $
+ * $Revision: 1.22 $
+ * $Date: 2011/07/22 09:11:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,7 +33,7 @@ public class ProgressBar implements ProgressMonitor, Part
 {
 	private int status	= STATUS_NONE;
 
-  private boolean showLogs = true;
+  private boolean showLogs    = true;
   private boolean showPercent = false;
 
 	private TextPart log																= null;
@@ -153,47 +153,88 @@ public class ProgressBar implements ProgressMonitor, Part
   public void paint(Composite parent) throws RemoteException
   {
   	this.parent = new Composite(parent,SWT.NONE);
-  	this.parent.setLayout(new GridLayout(3,false));
+  	this.parent.setLayout(new GridLayout(showLogs ? 3 : 2,false));
   	this.parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		bar = new org.eclipse.swt.widgets.ProgressBar(this.parent, SWT.SMOOTH);
-		GridData g = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		g.widthHint = showLogs ? 100 : 300;
-		bar.setLayoutData(g);
-		bar.setMaximum(100);
-		bar.setSelection(0);
+  	// Wenn wir keine Logs haben, zeichnen wir den Statustext ueber
+  	// dem Progress-Balken. Das sieht schoener aus. Wenn wir aber Logs
+  	// haben, zeichnen wir es rechts neben den Balken, um Platz zu sparen.
+  	if (showLogs)
+  	{
+    	{
+        bar = new org.eclipse.swt.widgets.ProgressBar(this.parent, SWT.SMOOTH);
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        gd.widthHint = showPercent ? 100 : 150;
+        bar.setLayoutData(gd);
+        bar.setMaximum(100);
+        bar.setSelection(0);
+    	}
+  
+  		if (showPercent)
+  		{
+  	    percentLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
+  	    GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+  	    gd.widthHint = 50;
+  	    percentLabel.setLayoutData(gd);
+  	    percentLabel.setText(" [0 %]");
+  		}
+  		
+  		{
+  	    barLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
+  	    GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+  	    gd.horizontalSpan = showPercent ? 1 : 2;
+  	    barLabel.setLayoutData(gd);
+  	    barLabel.setText("");
+  		}
+  
+      {
+    		Composite comp = new Composite(this.parent,SWT.BORDER);
+    		GridLayout gl = new GridLayout(2,false);
+    		gl.marginHeight = 0;
+    		gl.marginWidth = 0;
+    		gl.horizontalSpacing = 0;
+    		gl.verticalSpacing = 0;
+    		comp.setLayout(gl);
+    		GridData gd = new GridData(GridData.FILL_BOTH);
+    		gd.horizontalSpan = 3;
+    		comp.setLayoutData(gd);
+    		
+    		log = new TextPart();
+    		log.setAutoscroll(true);
+    		log.setWordWrap(false);
+    		log.paint(comp);
+      }
+  	}
+  	else
+  	{
+      {
+        barLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 2;
+        gd.horizontalIndent = 2;
+        barLabel.setLayoutData(gd);
+        barLabel.setText("");
+      }
 
-		if (showPercent)
-		{
-	    percentLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
-	    GridData gd1 = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-	    gd1.widthHint = 50;
-	    percentLabel.setLayoutData(gd1);
-	    percentLabel.setText(" [0 %]");
-		}
-		
-    barLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
-		barLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    barLabel.setText("");
-
-    if (!showLogs)
-      return;
-    
-		Composite comp = new Composite(this.parent,SWT.BORDER);
-		GridLayout gl = new GridLayout(2,false);
-		gl.marginHeight = 0;
-		gl.marginWidth = 0;
-		gl.horizontalSpacing = 0;
-		gl.verticalSpacing = 0;
-		comp.setLayout(gl);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
-		comp.setLayoutData(gd);
-		
-		log = new TextPart();
-		log.setAutoscroll(true);
-		log.setWordWrap(false);
-		log.paint(comp);
+  	  {
+        bar = new org.eclipse.swt.widgets.ProgressBar(this.parent, SWT.SMOOTH);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = showPercent ? 1 : 2;
+        bar.setLayoutData(gd);
+        bar.setMaximum(100);
+        bar.setSelection(0);
+      }
+  
+      if (showPercent)
+      {
+        percentLabel = GUI.getStyleFactory().createLabel(this.parent,SWT.NONE);
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        gd.widthHint = 50;
+        percentLabel.setLayoutData(gd);
+        percentLabel.setText(" [0 %]");
+      }
+      
+  	}
   }
 
   /**
@@ -238,7 +279,10 @@ public class ProgressBar implements ProgressMonitor, Part
 
 /**********************************************************************
  * $Log: ProgressBar.java,v $
- * Revision 1.21  2011/07/22 07:49:52  willuhn
+ * Revision 1.22  2011/07/22 09:11:13  willuhn
+ * @N Dual-Layout. Wenn keine Logs angezeigt werden, wir der Statustext jetzt ueber dem Progressbar und nicht mehr rechts daneben angezeigt - sieht schoener aus
+ *
+ * Revision 1.21  2011-07-22 07:49:52  willuhn
  * @C Prozent-Anzeige per Default nicht mehr anzeigen - braucht eigentlich kein Schwein - der Balken ist ja aussagekraeftig genug
  *
  * Revision 1.20  2011-05-03 10:13:10  willuhn
