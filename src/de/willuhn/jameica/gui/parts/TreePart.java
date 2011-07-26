@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.50 $
- * $Date: 2011/06/28 09:24:54 $
+ * $Revision: 1.51 $
+ * $Date: 2011/07/26 11:49:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -315,6 +315,7 @@ public class TreePart extends AbstractTablePart
       {
         Column col = (Column) this.columns.get(i);
         final TreeColumn tc = new TreeColumn(this.tree,SWT.LEFT);
+        col.setColumn(tc);
         tc.setMoveable(true);
         tc.setText(col.getName() == null ? "" : col.getName());
 
@@ -894,7 +895,11 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.50  2011/06/28 09:24:54  willuhn
+ * Revision 1.51  2011/07/26 11:49:01  willuhn
+ * @C SelectionListener wurde doppelt ausgeloest, wenn die Tabelle checkable ist und eine Checkbox angeklickt wurde (einmal durch Selektion der Zeile und dann nochmal durch Aktivierung/Deaktivierung der Checkbox). Wenn eine Tabelle checkable ist, wird der SelectionListener jetzt nur noch beim Klick auf die Checkbox ausgeloest, nicht mehr mehr Selektieren der Zeile.
+ * @N Column.setName zum Aendern des Spalten-Namens on-the-fly
+ *
+ * Revision 1.50  2011-06-28 09:24:54  willuhn
  * @N BUGZILLA 574
  *
  * Revision 1.49  2011-05-04 09:20:58  willuhn

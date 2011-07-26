@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Column.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/05/06 16:26:26 $
+ * $Revision: 1.4 $
+ * $Date: 2011/07/26 11:49:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ package de.willuhn.jameica.gui.parts;
 import java.io.Serializable;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Item;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.jameica.gui.formatter.Formatter;
@@ -69,7 +70,9 @@ public class Column implements Serializable
   private boolean canChange   = false;
   private int align           = ALIGN_AUTO;
   private int sort            = SORT_DEFAULT;
-    
+  
+  private transient Item column = null;
+  
   /**
    * ct.
    * @param id Feldbezeichnung des zugehoerigen Fachobjektes.
@@ -184,6 +187,17 @@ public class Column implements Serializable
   }
   
   /**
+   * Speichert den Namen der Spalte.
+   * @param name Name der Spalte.
+   */
+  public void setName(String name)
+  {
+    this.name = name;
+    if (this.column != null && !this.column.isDisposed())
+      this.column.setText(name != null ? name : "");
+  }
+  
+  /**
    * Liefert die Sortier-Variante der Spalte.
    * @return Sortier-Variante.
    * @see Column#SORT_BY_DISPLAY
@@ -231,11 +245,24 @@ public class Column implements Serializable
     }
     return display != null ? display : "";
   }
+  
+  /**
+   * Speichert das SWT-Objekt der Spalte.
+   * @param i das SWT-Objekt.
+   */
+  void setColumn(Item i)
+  {
+    this.column = i;
+  }
 }
 
 
 /**********************************************************************
  * $Log: Column.java,v $
+ * Revision 1.4  2011/07/26 11:49:01  willuhn
+ * @C SelectionListener wurde doppelt ausgeloest, wenn die Tabelle checkable ist und eine Checkbox angeklickt wurde (einmal durch Selektion der Zeile und dann nochmal durch Aktivierung/Deaktivierung der Checkbox). Wenn eine Tabelle checkable ist, wird der SelectionListener jetzt nur noch beim Klick auf die Checkbox ausgeloest, nicht mehr mehr Selektieren der Zeile.
+ * @N Column.setName zum Aendern des Spalten-Namens on-the-fly
+ *
  * Revision 1.3  2009/05/06 16:26:26  willuhn
  * @N BUGZILLA 721
  *

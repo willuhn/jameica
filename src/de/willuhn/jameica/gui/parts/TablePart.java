@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.110 $
- * $Date: 2011/07/18 12:20:55 $
+ * $Revision: 1.111 $
+ * $Date: 2011/07/26 11:49:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -549,6 +549,7 @@ public class TablePart extends AbstractTablePart
     {
       Column column = (Column) this.columns.get(i);
       final TableColumn col = new TableColumn(table, SWT.NONE);
+      column.setColumn(col);
       col.setMoveable(true);
 			col.setText(column.getName() == null ? "" : column.getName());
 
@@ -675,7 +676,15 @@ public class TablePart extends AbstractTablePart
       {
         if (selectionListeners.size() == 0)
           return;
-        
+
+        // Wenn die Tabelle checkable ist, loesen wir das Event
+        // nur dann aus, wenn der User auf die Checkbox geklickt hat.
+        // Es wuerde sonst doppelt ausgeloest werden, einmal mit event.detail=0
+        // (Markierung der Zeile) und dann nochmal mit event.detail=SWT.CHECK
+        // Status-Aenderung der Checkbox:
+        if (checkable && event.detail != SWT.CHECK)
+          return;
+
         event.data = getSelection();
         // Noch die Selection-Listeners
         for (int i=0;i<selectionListeners.size();++i)
@@ -1428,7 +1437,11 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.110  2011/07/18 12:20:55  willuhn
+ * Revision 1.111  2011/07/26 11:49:01  willuhn
+ * @C SelectionListener wurde doppelt ausgeloest, wenn die Tabelle checkable ist und eine Checkbox angeklickt wurde (einmal durch Selektion der Zeile und dann nochmal durch Aktivierung/Deaktivierung der Checkbox). Wenn eine Tabelle checkable ist, wird der SelectionListener jetzt nur noch beim Klick auf die Checkbox ausgeloest, nicht mehr mehr Selektieren der Zeile.
+ * @N Column.setName zum Aendern des Spalten-Namens on-the-fly
+ *
+ * Revision 1.110  2011-07-18 12:20:55  willuhn
  * @N Komfortableres Inline-Editing - mit Support fuer RETURN+ESC
  *
  * Revision 1.109  2011-06-28 09:24:54  willuhn
