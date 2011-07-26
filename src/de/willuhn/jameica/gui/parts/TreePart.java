@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.51 $
- * $Date: 2011/07/26 11:49:01 $
+ * $Revision: 1.52 $
+ * $Date: 2011/07/26 16:47:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -128,7 +128,7 @@ public class TreePart extends AbstractTablePart
 
     try
     {
-      this.list = PseudoIterator.fromArray(new GenericObject[]{node});
+      this.list = node != null ? PseudoIterator.fromArray(new GenericObject[]{node}) : null;
       this.loadData();
     }
     catch (RemoteException re)
@@ -895,7 +895,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.51  2011/07/26 11:49:01  willuhn
+ * Revision 1.52  2011/07/26 16:47:06  willuhn
+ * @N Null-Support
+ *
+ * Revision 1.51  2011-07-26 11:49:01  willuhn
  * @C SelectionListener wurde doppelt ausgeloest, wenn die Tabelle checkable ist und eine Checkbox angeklickt wurde (einmal durch Selektion der Zeile und dann nochmal durch Aktivierung/Deaktivierung der Checkbox). Wenn eine Tabelle checkable ist, wird der SelectionListener jetzt nur noch beim Klick auf die Checkbox ausgeloest, nicht mehr mehr Selektieren der Zeile.
  * @N Column.setName zum Aendern des Spalten-Namens on-the-fly
  *
