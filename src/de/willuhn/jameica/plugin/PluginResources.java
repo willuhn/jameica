@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.19 $
- * $Date: 2011/07/28 13:57:26 $
+ * $Revision: 1.20 $
+ * $Date: 2011/07/28 14:42:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -102,7 +102,11 @@ public final class PluginResources {
     // Name des Plugin-Verzeichnisses
     File pluginPath = new File(this.plugin.getManifest().getPluginDir());
 		
-    workPath += File.separator + pluginPath.getName();
+    String name = pluginPath.getName();
+    String check = this.plugin.getManifest().getName();
+    if (!name.equals(check))
+      Logger.error("pluginname (" + check + ") and workdir (" + name + ") differs, this may cause problems!");
+    workPath += File.separator + name;
 
 		File f = new File(workPath);
 		if (!f.exists() && !f.mkdirs())
@@ -146,7 +150,10 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
- * Revision 1.19  2011/07/28 13:57:26  willuhn
+ * Revision 1.20  2011/07/28 14:42:27  willuhn
+ * @N Warnmeldung loggen, wenn sich Plugin-Name und Plugin-Verzeichnis unterscheiden
+ *
+ * Revision 1.19  2011-07-28 13:57:26  willuhn
  * @R tag entfernt
  *
  * Revision 1.18  2011-07-28 11:43:21  willuhn
