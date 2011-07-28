@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/LockService.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/07/28 09:15:29 $
+ * $Revision: 1.6 $
+ * $Date: 2011/07/28 10:53:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -67,7 +67,7 @@ public class LockService implements Bootable
       }
       else
       {
-        Logger.info("lockfile " + file + " exists, checking if locked");
+        Logger.info("lockfile " + file + " exists, checking");
       }
 
       // Beim Beenden loeschen wir die Datei grundsaetzlich, auch wenn wir
@@ -87,11 +87,11 @@ public class LockService implements Bootable
         if (this.lock == null)
           throw new OverlappingFileLockException();
         
-        Logger.info(file + " locked");
+        Logger.info(file + " successfully locked");
       }
       catch (OverlappingFileLockException e)
       {
-        Logger.error(file + " is locked - asking user, what to do");
+        Logger.error(file + " is allready locked - asking user, what to do");
         if (!Application.getCallback().lockExists(file.getAbsolutePath()))
           System.exit(1); // OK, der User will beenden
       }
@@ -127,7 +127,10 @@ public class LockService implements Bootable
 
 /**********************************************************************
  * $Log: LockService.java,v $
- * Revision 1.5  2011/07/28 09:15:29  willuhn
+ * Revision 1.6  2011/07/28 10:53:50  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.5  2011-07-28 09:15:29  willuhn
  * @C Locking geaendert
  *
  * Revision 1.4  2011-05-24 12:28:36  willuhn
