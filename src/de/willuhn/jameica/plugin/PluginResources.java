@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.17 $
- * $Date: 2009/03/11 23:11:33 $
+ * $Revision: 1.18 $
+ * $Date: 2011/07/28 11:43:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -102,7 +102,11 @@ public final class PluginResources {
     // Name des Plugin-Verzeichnisses
     File pluginPath = new File(this.plugin.getManifest().getPluginDir());
 		
-		workPath += File.separator + pluginPath.getName();
+    String name = pluginPath.getName();
+    
+    // name = this.plugin.getManifest().getName(); // TODO: Das sollte eigentlich verwendet werden.
+    
+    workPath += File.separator + name;
 
 		File f = new File(workPath);
 		if (!f.exists() && !f.mkdirs())
@@ -146,6 +150,9 @@ public final class PluginResources {
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.18  2011/07/28 11:43:21  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.17  2009/03/11 23:11:33  willuhn
  * *** empty log message ***
  *
