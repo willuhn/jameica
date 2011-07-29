@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.145 $
- * $Date: 2011/07/22 09:08:20 $
+ * $Revision: 1.146 $
+ * $Date: 2011/07/29 11:43:21 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -529,9 +529,14 @@ public class GUI implements ApplicationController
             Logger.debug("dispose finished");
 
           }
+          catch (OperationCanceledException oce)
+          {
+            Logger.debug("unbind() cancelled");
+            return;
+          }
           catch (ApplicationException e)
           {
-            Logger.debug("cancel sent from dialog (in unbind())");
+            Logger.debug("message from unbind: " + e.getMessage());
             SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
             d.setTitle(Application.getI18n().tr("Fehler"));
             d.setText(e.getMessage());
@@ -990,7 +995,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.145  2011/07/22 09:08:20  willuhn
+ * Revision 1.146  2011/07/29 11:43:21  willuhn
+ * @N OperationCanceledException in unbind() behandeln
+ *
+ * Revision 1.145  2011-07-22 09:08:20  willuhn
  * @N Background-Threads via Name in Prozessliste kenntlich machen
  *
  * Revision 1.144  2011-07-12 15:21:30  willuhn
