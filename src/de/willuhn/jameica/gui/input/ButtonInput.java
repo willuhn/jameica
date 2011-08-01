@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.20 $
- * $Date: 2011/05/03 16:46:08 $
+ * $Revision: 1.21 $
+ * $Date: 2011/08/01 12:09:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -62,6 +62,8 @@ public abstract class ButtonInput extends AbstractInput
    */
   public final Control getControl()
   {
+    if (comp != null && !comp.isDisposed())
+      return comp;
 
 		comp = new Composite(getParent(),SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
@@ -292,7 +294,10 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
- * Revision 1.20  2011/05/03 16:46:08  willuhn
+ * Revision 1.21  2011/08/01 12:09:31  willuhn
+ * @C Existierendes Control zurueckliefern, falls bereits vorhanden
+ *
+ * Revision 1.20  2011-05-03 16:46:08  willuhn
  * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
  * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
  *

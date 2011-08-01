@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DirectoryInput.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/03/04 16:30:51 $
+ * $Revision: 1.3 $
+ * $Date: 2011/08/01 12:09:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -91,6 +91,8 @@ public class DirectoryInput extends ButtonInput
 	 * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
 	 */
   public Control getClientControl(Composite parent) {
+    if (text != null && !text.isDisposed())
+      return text;
     text = GUI.getStyleFactory().createText(parent);
   	text.setText(this.value == null ? "" : this.value);
   	return text;
@@ -100,7 +102,10 @@ public class DirectoryInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DirectoryInput.java,v $
- * Revision 1.2  2011/03/04 16:30:51  willuhn
+ * Revision 1.3  2011/08/01 12:09:31  willuhn
+ * @C Existierendes Control zurueckliefern, falls bereits vorhanden
+ *
+ * Revision 1.2  2011-03-04 16:30:51  willuhn
  * @C Folder-Icon statt "..."
  *
  * Revision 1.1  2008/02/29 01:12:30  willuhn
