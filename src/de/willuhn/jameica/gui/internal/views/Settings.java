@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.39 $
- * $Date: 2011/08/02 08:22:57 $
+ * $Revision: 1.40 $
+ * $Date: 2011/08/02 08:23:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -145,6 +145,8 @@ public class Settings extends AbstractView implements Extendable
     },null,false,"document-save.png");
     buttons.paint(getParent());
     
+    // geht leider nicht anders, weil das Tab "Updates" erst gezeichnet wird,
+    // nach dem bind() bereits verlassen wurde (ist ja eine Extension)
     getParent().addControlListener(new ControlAdapter() {
       public void controlResized(ControlEvent e)
       {
@@ -213,7 +215,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.39  2011/08/02 08:22:57  willuhn
+ * Revision 1.40  2011/08/02 08:23:29  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.39  2011-08-02 08:22:57  willuhn
  * @B BUGZILLA 1112
  *
  * Revision 1.38  2011-06-27 17:51:43  willuhn
