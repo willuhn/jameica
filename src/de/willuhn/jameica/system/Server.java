@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Server.java,v $
- * $Revision: 1.17 $
- * $Date: 2011/07/12 15:21:30 $
+ * $Revision: 1.18 $
+ * $Date: 2011/08/02 15:06:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -124,59 +124,14 @@ public class Server implements ApplicationController
     };
     t.start();
   }
-
-  /**
-   * @author willuhn
-   */
-  private class ConsoleMonitor implements ProgressMonitor
-  {
-    /**
-     * @see de.willuhn.util.ProgressMonitor#setPercentComplete(int)
-     */
-    public void setPercentComplete(int percent)
-    {
-      Logger.debug("startup completed: " + percent + " %");
-    }
-    
-    /**
-     * @see de.willuhn.util.ProgressMonitor#addPercentComplete(int)
-     */
-    public void addPercentComplete(int percent)
-    {
-      if (percent < 1)
-        return;
-      setPercentComplete(getPercentComplete() + percent);
-    }
-
-    /**
-     * @see de.willuhn.util.ProgressMonitor#getPercentComplete()
-     */
-    public int getPercentComplete() {return 0;}
-
-    /**
-     * @see de.willuhn.util.ProgressMonitor#setStatus(int)
-     */
-    public void setStatus(int status) {}
-    
-    /**
-     * @see de.willuhn.util.ProgressMonitor#setStatusText(java.lang.String)
-     */
-    public void setStatusText(String text) {
-      Logger.info(text);
-    }
-    
-    /**
-     * @see de.willuhn.util.ProgressMonitor#log(java.lang.String)
-     */
-    public void log(String msg) {
-      Logger.info(msg);
-    }
-  }
 }
 
 /*********************************************************************
  * $Log: Server.java,v $
- * Revision 1.17  2011/07/12 15:21:30  willuhn
+ * Revision 1.18  2011/08/02 15:06:47  willuhn
+ * @N ConsoleMonitor in extra Klasse ausgelagert
+ *
+ * Revision 1.17  2011-07-12 15:21:30  willuhn
  * @N JameicaException
  *
  * Revision 1.16  2011-04-26 12:09:18  willuhn
