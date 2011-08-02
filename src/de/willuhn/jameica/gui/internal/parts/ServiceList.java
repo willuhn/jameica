@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/05/31 16:39:04 $
+ * $Revision: 1.14 $
+ * $Date: 2011/08/02 12:18:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -166,7 +166,7 @@ public class ServiceList extends TablePart
               if (service != null)
               {
                 service.start();
-                GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
+                GUI.startView(GUI.getCurrentView().getClass().getName(),plugin.getManifest());
                 Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestartet."),StatusBarMessage.TYPE_SUCCESS));
               }
             }
@@ -467,7 +467,10 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
- * Revision 1.13  2011/05/31 16:39:04  willuhn
+ * Revision 1.14  2011/08/02 12:18:39  willuhn
+ * @B ClasscastException in PluginControl#getManifest
+ *
+ * Revision 1.13  2011-05-31 16:39:04  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  * Revision 1.12  2011-05-11 10:27:24  willuhn
