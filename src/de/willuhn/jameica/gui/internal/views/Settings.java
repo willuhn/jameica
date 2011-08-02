@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.38 $
- * $Date: 2011/06/27 17:51:43 $
+ * $Revision: 1.39 $
+ * $Date: 2011/08/02 08:22:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,8 @@ package de.willuhn.jameica.gui.internal.views;
 import java.io.File;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.TabFolder;
 
@@ -126,19 +128,6 @@ public class Settings extends AbstractView implements Extendable
     //
 		/////////////////////////////////////////////////////////////////
 
-    /////////////////////////////////////////////////////////////////
-		// Mal checken, ob ein konkretes Tab angegeben ist.
-    Integer activeTab = lastActiveTab;
-
-    Object context = this.getCurrentObject();
-    if (context instanceof Integer)
-      activeTab = (Integer) context;
-    
-    if (activeTab != null)
-      getTabFolder().setSelection(activeTab);
-    /////////////////////////////////////////////////////////////////
-
-    
     ButtonArea buttons = new ButtonArea();
     buttons.addButton(i18n.tr("Zurücksetzen"),new Action()
     {
@@ -155,6 +144,36 @@ public class Settings extends AbstractView implements Extendable
       }
     },null,false,"document-save.png");
     buttons.paint(getParent());
+    
+    getParent().addControlListener(new ControlAdapter() {
+      public void controlResized(ControlEvent e)
+      {
+        focus();
+      }
+    });
+    focus();
+  }
+  
+  /**
+   * Fokussiert das aktive Tab.
+   */
+  private void focus()
+  {
+    TabFolder folder = this.getTabFolder();
+    if (folder == null || folder.isDisposed())
+      return;
+    
+    /////////////////////////////////////////////////////////////////
+    // Mal checken, ob ein konkretes Tab angegeben ist.
+    Integer activeTab = lastActiveTab;
+
+    Object context = this.getCurrentObject();
+    if (context instanceof Integer)
+      activeTab = (Integer) context;
+    
+    if (activeTab != null)
+      folder.setSelection(activeTab);
+    /////////////////////////////////////////////////////////////////
   }
   
   /**
@@ -194,7 +213,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.38  2011/06/27 17:51:43  willuhn
+ * Revision 1.39  2011/08/02 08:22:57  willuhn
+ * @B BUGZILLA 1112
+ *
+ * Revision 1.38  2011-06-27 17:51:43  willuhn
  * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
  * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
  *
