@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginDetailPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/02 12:15:16 $
+ * $Revision: 1.2 $
+ * $Date: 2011/08/03 11:58:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -112,7 +112,10 @@ public class PluginDetailPart implements Part
         if (!manifest.isInstalled())
         {
           title.setForeground(comment);
-          text = i18n.tr("{0} (Neustart erforderlich)",text);
+          
+          // Checken, ob wir eine Fehlermeldung haben
+          Throwable t = Application.getPluginLoader().getInitError(manifest);
+          text = i18n.tr("{0} ({1})",text, (t != null ? t.getMessage() : i18n.tr("Neustart erforderlich")));
         }
         title.setText(text);
       }
@@ -215,7 +218,10 @@ public class PluginDetailPart implements Part
 
 /**********************************************************************
  * $Log: PluginDetailPart.java,v $
- * Revision 1.1  2011/06/02 12:15:16  willuhn
+ * Revision 1.2  2011/08/03 11:58:06  willuhn
+ * @N PluginLoader#getInitError
+ *
+ * Revision 1.1  2011-06-02 12:15:16  willuhn
  * @B Das Handling beim Update war noch nicht sauber
  *
  * Revision 1.2  2011-06-01 21:20:02  willuhn

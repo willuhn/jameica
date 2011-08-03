@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.61 $
- * $Date: 2011/07/21 14:39:47 $
+ * $Revision: 1.62 $
+ * $Date: 2011/08/03 11:58:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,6 +53,9 @@ public final class PluginLoader
   // Liste mit allen gefundenen Plugins.
   // Die Reihenfolge aus de.willuhn.jameica.system.Config.properties bleibt
   private List<Manifest> plugins = new ArrayList<Manifest>();
+
+  // Initialisierungsmeldungen von Plugins.
+  private Map<Manifest,Throwable> initErrors = new HashMap<Manifest,Throwable>();
 
   // Den brauchen wir, damit wir Updates an Plugins triggern und deren
   // Update-Methode aufrufen koennen.
@@ -142,18 +145,20 @@ public final class PluginLoader
     // Plugins laden
     for (Manifest mf:this.plugins)
     {
+      String name = mf.getName();
+
       try
       {
         loaders.put(mf, loadPlugin(mf));
       }
-      catch (ApplicationException ae)
-      {
-        Application.addWelcomeMessage(ae.getMessage());
-      }
       catch (Throwable t)
       {
-        String name = mf.getName();
-        Logger.error("unable to load plugin  " + name, t);
+        if (t instanceof ApplicationException)
+          Logger.error("unable to load plugin " + name + ": " + t.getMessage()); // hier brauchen wir keinen Stacktrace
+        else
+          Logger.error("unable to load plugin  " + name, t);
+        
+        this.initErrors.put(mf,t);
         Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht geladen werden. {1}",name, t.getMessage()));
       }
     }
@@ -169,23 +174,23 @@ public final class PluginLoader
         continue; // Bereits das Laden der Klassen ging schief
 
       String name = mf.getName();
+      
       try
       {
         initPlugin(mf, loader);
       }
-      catch (OperationCanceledException oce)
-      {
-        Logger.debug("plugin skipped: " + name);
-      }
-      catch (ApplicationException ae)
-      {
-        Logger.error("unable to init plugin " + name, ae);
-        Application.addWelcomeMessage(ae.getMessage());
-      }
       catch (Throwable t)
       {
-        Logger.error("unable to init plugin " + name, t);
-        Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",name, t.getMessage()));
+        if ((t instanceof ApplicationException))
+          Logger.error("unable to init plugin " + name + ": " + t.getMessage()); // hier brauchen wir keinen Stacktrace
+        else if ((t instanceof OperationCanceledException))
+          Logger.info("plugin " + name + " skipped: " + t.getMessage());
+        else
+          Logger.error("unable to init plugin " + name, t);
+        
+        this.initErrors.put(mf,t);
+        if (!(t instanceof OperationCanceledException)) // nur anzeigen, wenn es kein Abbruch durch das Plugin selbst war
+          Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",name, t.getMessage()));
       }
     }
     //
@@ -759,6 +764,16 @@ public final class PluginLoader
   }
   
   /**
+   * Liefert den ggf beim Laden/Initialisieren des Plugins aufgetretenen Fehler.
+   * @param manifest das Manifest, fuer das 
+   * @return der aufgetretene Fehler oder NULL, wenn das Plugin fehlerfrei geladen und initialisiert werden konnte.
+   */
+  public Throwable getInitError(Manifest manifest)
+  {
+    return this.initErrors.get(manifest);
+  }
+  
+  /**
    * Deinstalliert ein Plugin nicht sofort sondern markiert es nur zur Loeschung.
    * Das eigentliche Loeschen geschieht dann erst beim naechsten Start.
    * @param manifest das Plugin, welches zur Loeschung vorgemerkt wird.
@@ -905,7 +920,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.61  2011/07/21 14:39:47  willuhn
+ * Revision 1.62  2011/08/03 11:58:06  willuhn
+ * @N PluginLoader#getInitError
+ *
+ * Revision 1.61  2011-07-21 14:39:47  willuhn
  * @N Mit einer OperationCancelledException in AbstractPlugin#init() kann ein Plugin jetzt fehlerfrei geskippt werden
  *
  * Revision 1.60  2011-07-19 15:24:01  willuhn
