@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.49 $
- * $Date: 2011/06/30 16:29:23 $
+ * $Revision: 1.50 $
+ * $Date: 2011/08/03 12:17:13 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -90,14 +91,17 @@ public class Navigation implements Part
     this.mainTree.addListener(SWT.Collapse,  action);
     this.mainTree.addListener(SWT.Selection, action);
 
-    try
+    if (!Customizing.SETTINGS.getBoolean("application.navigation.hideroot",false))
     {
-      // System-Navigation laden
-      load(Application.getManifest().getNavigation(),null);
-    }
-    catch (Exception e)
-    {
-      throw new RemoteException("error while loading navigation",e);
+      try
+      {
+        // System-Navigation laden
+        load(Application.getManifest().getNavigation(),null);
+      }
+      catch (Exception e)
+      {
+        throw new RemoteException("error while loading navigation",e);
+      }
     }
 
     Label sep = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -410,7 +414,10 @@ public class Navigation implements Part
 
 /*********************************************************************
  * $Log: Navigation.java,v $
- * Revision 1.49  2011/06/30 16:29:23  willuhn
+ * Revision 1.50  2011/08/03 12:17:13  willuhn
+ * @N Root-Element per Customizing ausblendbar
+ *
+ * Revision 1.49  2011-06-30 16:29:23  willuhn
  * @N setUnreadCount() - damit kann man den Look'n'Feel von Mailprogrammen (Fettdruck + Anzahl ungelesener Elemente) nachbauen ;)
  *
  * Revision 1.48  2011-04-26 12:20:24  willuhn
