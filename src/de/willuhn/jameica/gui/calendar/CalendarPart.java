@@ -1,14 +1,15 @@
-package de.willuhn.jameica.gui.calendar;
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/01/17 17:31:08 $
+ * $Revision: 1.11 $
+ * $Date: 2011/08/04 14:59:17 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
  * All rights reserved
  *
  **********************************************************************/
+
+package de.willuhn.jameica.gui.calendar;
 
 import java.rmi.RemoteException;
 import java.text.DateFormat;
@@ -350,7 +351,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.10  2011/01/17 17:31:08  willuhn
+ * Revision 1.11  2011/08/04 14:59:17  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.10  2011-01-17 17:31:08  willuhn
  * @C Reminder-Zeug
  *
  * Revision 1.9  2010-11-21 23:56:47  willuhn
