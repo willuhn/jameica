@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.21 $
- * $Date: 2009/02/18 00:43:21 $
+ * $Revision: 1.22 $
+ * $Date: 2011/08/05 11:21:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
@@ -88,7 +89,7 @@ public class TextInput extends AbstractInput
     if (maxLength > 0)
       text.setTextLimit(maxLength);
 
-		text.setEnabled(enabled);
+    this.setEnabledInternal(enabled);
     text.setText((value == null ? "" : value));
     if (this.focus)
       text.setFocus();
@@ -163,14 +164,35 @@ public class TextInput extends AbstractInput
     this.enabled = enabled;
     if (this.text != null && !this.text.isDisposed())
     {
-      this.text.setEnabled(enabled);
+      this.setEnabledInternal(enabled);
       this.update();
     }
+  }
+  
+  /**
+   * Markiert das Control als editierbar oder nicht.
+   * @param enabled true, wenn 
+   */
+  private void setEnabledInternal(boolean enabled)
+  {
+    // Wenn das Control Scrollbalken enthaelt, duerfen
+    // wir nicht "setEnabled" verwenden, weil man dann nicht
+    // mehr scrollen koennte. Bei einzeiligen Eingabefeldern
+    // sieht "setEnabled(false)" aber besser aus, weil da der
+    // Hintergrund grau gefaerbt wird.
+    int style = this.text.getStyle();
+    if ((style & SWT.V_SCROLL) != 0 || (style & SWT.H_SCROLL) != 0)
+      this.text.setEditable(enabled);
+    else
+      this.text.setEnabled(enabled);
   }
 }
 
 /*********************************************************************
  * $Log: TextInput.java,v $
+ * Revision 1.22  2011/08/05 11:21:12  willuhn
+ * @B Wenn das Eingabefeld Scrollbalken hat (beim abgeleiteten TextAreaInput z.Bsp.) darf nicht "setEnabled(false)" verwendet werden sondern "setEditable(false)", weil sonst auch das Scrollen nicht mehr moeglich ist
+ *
  * Revision 1.21  2009/02/18 00:43:21  willuhn
  * @N maxlength live aktualisieren, wenn Control bereits gezeichnet ist
  *
