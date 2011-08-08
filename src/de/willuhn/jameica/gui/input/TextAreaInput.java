@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextAreaInput.java,v $
- * $Revision: 1.3 $
- * $Date: 2006/08/05 20:44:59 $
+ * $Revision: 1.4 $
+ * $Date: 2011/08/08 11:32:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,7 +55,7 @@ public class TextAreaInput extends TextInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#getStyleBits()
    */
-  protected int getStyleBits()
+  public int getStyleBits()
   {
     return GridData.FILL_BOTH;
   }
@@ -65,6 +65,10 @@ public class TextAreaInput extends TextInput
 
 /*********************************************************************
  * $Log: TextAreaInput.java,v $
+ * Revision 1.4  2011/08/08 11:32:29  willuhn
+ * @C AbstractInput#getStyleBits() public weil ...
+ * @C ...vertikale Ausrichtung des Labels im Container nicht mehr hart mit "instanceof TextAreaInput" sondern anhand des Stylebits festlegen
+ *
  * Revision 1.3  2006/08/05 20:44:59  willuhn
  * @B Bug 256
  *

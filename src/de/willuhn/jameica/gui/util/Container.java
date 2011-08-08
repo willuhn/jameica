@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.19 $
- * $Date: 2011/05/11 08:42:08 $
+ * $Revision: 1.20 $
+ * $Date: 2011/08/08 11:32:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Label;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.input.AbstractInput;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.Input;
-import de.willuhn.jameica.gui.input.TextAreaInput;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
@@ -79,10 +79,17 @@ public abstract class Container
     // Label
     int align = Customizing.SETTINGS.getBoolean("application.view.labels.alignleft",false) ? GridData.HORIZONTAL_ALIGN_BEGINNING : GridData.HORIZONTAL_ALIGN_END;
     final GridData labelGrid = new GridData(align);
-    if (input instanceof TextAreaInput)
-      labelGrid.verticalAlignment = GridData.BEGINNING;
-    else
-      labelGrid.verticalAlignment = GridData.CENTER;
+    
+    labelGrid.verticalAlignment = GridData.CENTER;
+    
+    // Wenn das Eingabefeld auf volle Hoehe gemalt wird, richten wir das Label oben aus
+    if (input instanceof AbstractInput)
+    {
+      int style = ((AbstractInput)input).getStyleBits();
+      if ((style & GridData.FILL_BOTH) == GridData.FILL_BOTH)
+        labelGrid.verticalAlignment = GridData.BEGINNING;
+    }
+    
     final Label label = GUI.getStyleFactory().createLabel(getComposite(),SWT.NONE);
     label.setText(name);
     if (input.isMandatory() && Application.getConfig().getMandatoryLabel())
@@ -294,7 +301,11 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.19  2011/05/11 08:42:08  willuhn
+ * Revision 1.20  2011/08/08 11:32:29  willuhn
+ * @C AbstractInput#getStyleBits() public weil ...
+ * @C ...vertikale Ausrichtung des Labels im Container nicht mehr hart mit "instanceof TextAreaInput" sondern anhand des Stylebits festlegen
+ *
+ * Revision 1.19  2011-05-11 08:42:08  willuhn
  * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
  *
  * Revision 1.18  2011-05-03 10:13:11  willuhn

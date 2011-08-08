@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.28 $
- * $Date: 2011/08/08 10:45:05 $
+ * $Revision: 1.29 $
+ * $Date: 2011/08/08 11:32:29 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -75,7 +75,7 @@ public abstract class AbstractInput implements Input
    * verwendet werden.
    * @return die Style.Bits.
    */
-  protected int getStyleBits()
+  public int getStyleBits()
   {
     return GridData.FILL_HORIZONTAL;
   }
@@ -413,7 +413,11 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
- * Revision 1.28  2011/08/08 10:45:05  willuhn
+ * Revision 1.29  2011/08/08 11:32:29  willuhn
+ * @C AbstractInput#getStyleBits() public weil ...
+ * @C ...vertikale Ausrichtung des Labels im Container nicht mehr hart mit "instanceof TextAreaInput" sondern anhand des Stylebits festlegen
+ *
+ * Revision 1.28  2011-08-08 10:45:05  willuhn
  * @C AbstractInput#update() ist jetzt "protected" (war package-private)
  *
  * Revision 1.27  2011-05-11 08:42:07  willuhn
