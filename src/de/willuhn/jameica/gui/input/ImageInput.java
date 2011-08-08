@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ImageInput.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/05/03 11:56:48 $
+ * $Revision: 1.6 $
+ * $Date: 2011/08/08 10:45:05 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -246,7 +246,7 @@ public class ImageInput extends AbstractInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update()
+  protected void update()
   {
     // Wir wollen nicht, dass die Hintergrund-Farbe geaendert wird
   }
@@ -380,7 +380,10 @@ public class ImageInput extends AbstractInput
 
 /**********************************************************************
  * $Log: ImageInput.java,v $
- * Revision 1.5  2011/05/03 11:56:48  willuhn
+ * Revision 1.6  2011/08/08 10:45:05  willuhn
+ * @C AbstractInput#update() ist jetzt "protected" (war package-private)
+ *
+ * Revision 1.5  2011-05-03 11:56:48  willuhn
  * @B GC wurde nicht korrekt disposed - siehe http://www.eclipse.org/forums/index.php?t=msg&goto=528906
  *
  * Revision 1.4  2011-04-26 12:01:42  willuhn

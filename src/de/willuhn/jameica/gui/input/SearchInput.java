@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.25 $
- * $Date: 2011/06/09 10:59:15 $
+ * $Revision: 1.26 $
+ * $Date: 2011/08/08 10:45:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -515,7 +515,7 @@ public class SearchInput extends AbstractInput
    * BUGZILLA 743
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update() throws OperationCanceledException
+  protected void update() throws OperationCanceledException
   {
     super.update();
 
@@ -540,7 +540,10 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
- * Revision 1.25  2011/06/09 10:59:15  willuhn
+ * Revision 1.26  2011/08/08 10:45:05  willuhn
+ * @C AbstractInput#update() ist jetzt "protected" (war package-private)
+ *
+ * Revision 1.25  2011-06-09 10:59:15  willuhn
  * @B Musste leider einen Fork vom SWT-Custom-Widget PopupList machen - siehe Kommentar-Text im Fork
  *
  * Revision 1.24  2011-05-13 14:18:19  willuhn

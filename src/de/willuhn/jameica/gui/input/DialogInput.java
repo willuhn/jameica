@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/DialogInput.java,v $
- * $Revision: 1.26 $
- * $Date: 2011/05/03 16:46:08 $
+ * $Revision: 1.27 $
+ * $Date: 2011/08/08 10:45:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -189,7 +189,7 @@ public class DialogInput extends ButtonInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update() throws OperationCanceledException
+  protected void update() throws OperationCanceledException
   {
     super.update();
 
@@ -235,7 +235,10 @@ public class DialogInput extends ButtonInput
 
 /*********************************************************************
  * $Log: DialogInput.java,v $
- * Revision 1.26  2011/05/03 16:46:08  willuhn
+ * Revision 1.27  2011/08/08 10:45:05  willuhn
+ * @C AbstractInput#update() ist jetzt "protected" (war package-private)
+ *
+ * Revision 1.26  2011-05-03 16:46:08  willuhn
  * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
  * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
  *

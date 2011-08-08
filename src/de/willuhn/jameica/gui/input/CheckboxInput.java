@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2011/05/11 08:42:07 $
+ * $Revision: 1.17 $
+ * $Date: 2011/08/08 10:45:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -153,7 +153,7 @@ public class CheckboxInput extends AbstractInput
    * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update() throws OperationCanceledException
+  protected void update() throws OperationCanceledException
   {
   }
   
@@ -162,7 +162,10 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
- * Revision 1.16  2011/05/11 08:42:07  willuhn
+ * Revision 1.17  2011/08/08 10:45:05  willuhn
+ * @C AbstractInput#update() ist jetzt "protected" (war package-private)
+ *
+ * Revision 1.16  2011-05-11 08:42:07  willuhn
  * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
  *
  * Revision 1.15  2011-05-03 10:13:11  willuhn

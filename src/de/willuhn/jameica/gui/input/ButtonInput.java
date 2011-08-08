@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ButtonInput.java,v $
- * $Revision: 1.21 $
- * $Date: 2011/08/01 12:09:31 $
+ * $Revision: 1.22 $
+ * $Date: 2011/08/08 10:45:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -260,7 +260,7 @@ public abstract class ButtonInput extends AbstractInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update() throws OperationCanceledException
+  protected void update() throws OperationCanceledException
   {
     if (inUpdate)
       throw new OperationCanceledException();
@@ -294,7 +294,10 @@ public abstract class ButtonInput extends AbstractInput
 
 /*********************************************************************
  * $Log: ButtonInput.java,v $
- * Revision 1.21  2011/08/01 12:09:31  willuhn
+ * Revision 1.22  2011/08/08 10:45:05  willuhn
+ * @C AbstractInput#update() ist jetzt "protected" (war package-private)
+ *
+ * Revision 1.21  2011-08-01 12:09:31  willuhn
  * @C Existierendes Control zurueckliefern, falls bereits vorhanden
  *
  * Revision 1.20  2011-05-03 16:46:08  willuhn

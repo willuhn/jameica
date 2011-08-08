@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.27 $
- * $Date: 2011/05/11 08:42:07 $
+ * $Revision: 1.28 $
+ * $Date: 2011/08/08 10:45:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -288,7 +288,7 @@ public abstract class AbstractInput implements Input
    * geprueft werden, ob der Inhalt des Feldes korrekt ist
    * und ggf. die Hintergrund-Farbe angepasst werden.
    */
-  void update() throws OperationCanceledException
+  protected void update() throws OperationCanceledException
   {
     if (inUpdate)
       throw new OperationCanceledException();
@@ -413,7 +413,10 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
- * Revision 1.27  2011/05/11 08:42:07  willuhn
+ * Revision 1.28  2011/08/08 10:45:05  willuhn
+ * @C AbstractInput#update() ist jetzt "protected" (war package-private)
+ *
+ * Revision 1.27  2011-05-11 08:42:07  willuhn
  * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
  *
  * Revision 1.26  2011-05-03 10:13:11  willuhn

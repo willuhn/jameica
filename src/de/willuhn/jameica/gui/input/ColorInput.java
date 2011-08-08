@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ColorInput.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/05/03 16:46:08 $
+ * $Revision: 1.16 $
+ * $Date: 2011/08/08 10:45:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -122,7 +122,7 @@ public class ColorInput extends ButtonInput
    * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update() throws OperationCanceledException
+  protected void update() throws OperationCanceledException
   {
   }
 
@@ -130,7 +130,10 @@ public class ColorInput extends ButtonInput
 
 /*********************************************************************
  * $Log: ColorInput.java,v $
- * Revision 1.15  2011/05/03 16:46:08  willuhn
+ * Revision 1.16  2011/08/08 10:45:05  willuhn
+ * @C AbstractInput#update() ist jetzt "protected" (war package-private)
+ *
+ * Revision 1.15  2011-05-03 16:46:08  willuhn
  * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
  * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
  *

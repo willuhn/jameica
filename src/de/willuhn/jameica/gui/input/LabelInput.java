@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/LabelInput.java,v $
- * $Revision: 1.16 $
- * $Date: 2008/06/27 11:16:19 $
+ * $Revision: 1.17 $
+ * $Date: 2011/08/08 10:45:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -130,7 +130,7 @@ public class LabelInput extends AbstractInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
-  void update() throws OperationCanceledException
+  protected void update() throws OperationCanceledException
   {
     // Wir machen hier nichts
   }
@@ -140,6 +140,9 @@ public class LabelInput extends AbstractInput
 
 /*********************************************************************
  * $Log: LabelInput.java,v $
+ * Revision 1.17  2011/08/08 10:45:05  willuhn
+ * @C AbstractInput#update() ist jetzt "protected" (war package-private)
+ *
  * Revision 1.16  2008/06/27 11:16:19  willuhn
  * @B Bug 604
  *
