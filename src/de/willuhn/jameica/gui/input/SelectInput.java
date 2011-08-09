@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.43 $
- * $Date: 2011/08/08 10:45:05 $
+ * $Revision: 1.44 $
+ * $Date: 2011/08/09 16:04:50 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -100,19 +100,20 @@ public class SelectInput extends AbstractInput
     if (this.preselected == null)
       this.combo.select(0);
 
+    boolean havePleaseChoose = this.pleaseChoose != null && this.pleaseChoose.length() > 0;
     int size = this.list.size();
     for (int i=0;i<size;++i)
     {
-      Object value = this.combo.getData(Integer.toString(i));
+      int pos = havePleaseChoose ? (i+1) : i;
+      Object value = this.combo.getData(Integer.toString(pos));
       if (value == null) // Fuer den Fall, dass die equals-Methode von preselected nicht mit null umgehen kann
         continue;
-
 
       try
       {
         if (BeanUtil.equals(preselected,value))
         {
-          this.combo.select(i);
+          this.combo.select(pos);
           return;
         }
       }
@@ -257,6 +258,9 @@ public class SelectInput extends AbstractInput
       return this.combo.getText();
     
     int selected = this.combo.getSelectionIndex();
+    if (selected == -1)
+      return null;
+    
     return this.combo.getData(Integer.toString(selected));
   }
 
@@ -353,7 +357,10 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
- * Revision 1.43  2011/08/08 10:45:05  willuhn
+ * Revision 1.44  2011/08/09 16:04:50  willuhn
+ * @B Offset bei Vorhandensein eines "Bitte wahlen..."-Textes wurde nicht in setValue() beachtet
+ *
+ * Revision 1.43  2011-08-08 10:45:05  willuhn
  * @C AbstractInput#update() ist jetzt "protected" (war package-private)
  *
  * Revision 1.42  2011-05-03 16:46:08  willuhn
