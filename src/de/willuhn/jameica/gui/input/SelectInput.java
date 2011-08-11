@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SelectInput.java,v $
- * $Revision: 1.44 $
- * $Date: 2011/08/09 16:04:50 $
+ * $Revision: 1.45 $
+ * $Date: 2011/08/11 10:36:53 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -61,9 +61,19 @@ public class SelectInput extends AbstractInput
    */
   public SelectInput(GenericIterator list, GenericObject preselected) throws RemoteException
   {
-    this(PseudoIterator.asList(list),preselected);
+    this((List)(list != null ? PseudoIterator.asList(list) : null),preselected);
   }
   
+  /**
+   * Erzeugt die Combox-Box mit Beans oder Strings.
+   * @param list Liste der Objekte.
+   * @param preselected das vorausgewaehlte Objekt.
+   */
+  public SelectInput(Object[] list, Object preselected)
+  {
+    this((List) (list != null ? Arrays.asList(list) : null),preselected);
+  }
+
   /**
    * Erzeugt die Combox-Box mit Beans oder Strings.
    * @param list Liste der Objekte.
@@ -77,16 +87,6 @@ public class SelectInput extends AbstractInput
   }
 
 	/**
-   * Erzeugt die Combox-Box mit Beans oder Strings.
-   * @param list Liste der Objekte.
-   * @param preselected das vorausgewaehlte Objekt.
-   */
-  public SelectInput(Object[] list, Object preselected)
-  {
-    this(Arrays.asList(list),preselected);
-  }
-
-	/**
 	 * Aendert nachtraeglich das vorausgewaehlte Element.
    * @param preselected neues vorausgewaehltes Element.
    */
@@ -94,7 +94,7 @@ public class SelectInput extends AbstractInput
   {
     this.preselected = preselected;
     
-    if (this.combo == null || this.combo.isDisposed())
+    if (this.combo == null || this.combo.isDisposed() || this.list == null)
       return;
     
     if (this.preselected == null)
@@ -158,7 +158,26 @@ public class SelectInput extends AbstractInput
       return this.combo;
 
     this.combo = GUI.getStyleFactory().createCombo(getParent(),this.editable ? SWT.NONE : SWT.READ_ONLY);
+    this.combo.setVisibleItemCount(15); // Patch von Heiner
+    this.combo.setEnabled(enabled);
+
+    // Daten in die Liste uebernehmen
+    applyList();
     
+    return this.combo;
+  }
+  
+  /**
+   * Uebernimmt die Liste mit den Daten in das Control
+   */
+  private void applyList()
+  {
+    if (this.combo == null || this.combo.isDisposed())
+      return;
+
+    // Erstmal alles aus der Liste entfernen
+    this.combo.removeAll();
+
     int selected             = -1;
     boolean havePleaseChoose = false;
 
@@ -169,55 +188,61 @@ public class SelectInput extends AbstractInput
       havePleaseChoose = true;
     }
 
-    try
+    if (this.list != null)
     {
-      int size = this.list.size();
-      for (int i=0;i<size;++i)
+      try
       {
-        Object object = this.list.get(i);
-
-        if (object == null)
-          continue;
-
-        // Anzuzeigenden Text ermitteln
-        String text = format(object);
-        if (text == null)
-          continue;
-        this.combo.add(text);
-        this.combo.setData(Integer.toString(havePleaseChoose ? i+1 : i),object);
-        
-        // Wenn unser Objekt dem vorausgewaehlten entspricht, und wir noch
-        // keines ausgewaehlt haben merken wir uns dessen Index
-        if (selected == -1 && this.preselected != null)
+        int size = this.list.size();
+        for (int i=0;i<size;++i)
         {
-          if (BeanUtil.equals(object,this.preselected))
+          Object object = this.list.get(i);
+
+          if (object == null)
+            continue;
+
+          // Anzuzeigenden Text ermitteln
+          String text = format(object);
+          if (text == null)
+            continue;
+          this.combo.add(text);
+          this.combo.setData(Integer.toString(havePleaseChoose ? i+1 : i),object);
+          
+          // Wenn unser Objekt dem vorausgewaehlten entspricht, und wir noch
+          // keines ausgewaehlt haben merken wir uns dessen Index
+          if (selected == -1 && this.preselected != null)
           {
-            selected = i;
-            if (havePleaseChoose)
-              selected++;
+            if (BeanUtil.equals(object,this.preselected))
+            {
+              selected = i;
+              if (havePleaseChoose)
+                selected++;
+            }
           }
         }
       }
-    }
-    catch (RemoteException e)
-    {
-      this.combo.removeAll();
-      this.combo.add(Application.getI18n().tr("Fehler beim Laden der Daten..."));
-    	Logger.error("unable to create combo box",e);
+      catch (RemoteException e)
+      {
+        this.combo.removeAll();
+        this.combo.add(Application.getI18n().tr("Fehler beim Laden der Daten..."));
+        Logger.error("unable to create combo box",e);
+      }
     }
 
     this.combo.select(selected > -1 ? selected : 0);
-    
-    
-    // Patch von Heiner
-    this.combo.setVisibleItemCount(15);
-    this.combo.setEnabled(enabled);
 
     // BUGZILLA 550
     if (this.editable && this.preselected != null && !this.list.contains(this.preselected) && (this.preselected instanceof String))
       this.combo.setText((String)this.preselected);
-
-    return this.combo;
+  }
+  
+  /**
+   * Ersetzt den Inhalt der Selectbox komplett gegen die angegebene Liste.
+   * @param list die neue Liste der Daten.
+   */
+  public void setList(List list)
+  {
+    this.list = list;
+    this.applyList();
   }
 
   /**
@@ -357,7 +382,11 @@ public class SelectInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SelectInput.java,v $
- * Revision 1.44  2011/08/09 16:04:50  willuhn
+ * Revision 1.45  2011/08/11 10:36:53  willuhn
+ * @N PluginInput - Selectbox zur Auswahl eines Plugins
+ * @N SelectInput#setList, um den Inhalt der Liste zur Laufzeit zu aendern
+ *
+ * Revision 1.44  2011-08-09 16:04:50  willuhn
  * @B Offset bei Vorhandensein eines "Bitte wahlen..."-Textes wurde nicht in setValue() beachtet
  *
  * Revision 1.43  2011-08-08 10:45:05  willuhn
