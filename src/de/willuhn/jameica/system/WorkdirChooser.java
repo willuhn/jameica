@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/04/07 08:04:05 $
+ * $Revision: 1.6 $
+ * $Date: 2011/08/17 08:21:32 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -85,7 +85,7 @@ public class WorkdirChooser
     
     // OK, wir fragen den User
     this.display = Display.getDefault();
-    this.shell = new Shell(display,SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL);
+    this.shell = new Shell(display,SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 
     this.shell.setText("Benutzer-Ordner"); // I18n gibts hier noch nicht
     this.shell.setSize(WINDOW_WIDTH,SWT.DEFAULT);
@@ -470,7 +470,10 @@ public class WorkdirChooser
 
 /**********************************************************************
  * $Log: WorkdirChooser.java,v $
- * Revision 1.5  2011/04/07 08:04:05  willuhn
+ * Revision 1.6  2011/08/17 08:21:32  willuhn
+ * @N BUGZILLA 937
+ *
+ * Revision 1.5  2011-04-07 08:04:05  willuhn
  * @B da fehlte ein Leerzeichen
  *
  * Revision 1.4  2011-03-08 14:53:25  willuhn

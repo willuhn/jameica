@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.61 $
- * $Date: 2011/06/29 08:25:03 $
+ * $Revision: 1.62 $
+ * $Date: 2011/08/17 08:21:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -179,15 +179,22 @@ public abstract class AbstractDialog
       {
         // "PRIMARY_MODAL" untersagt Eingaben im Parent (also im Hauptfenster)
         // Das funktioniert, weil die Shell dieses Dialogs hier als Parent
-        // das Hauptfenster hat. "APPLICATION_MODAL" wurde frueher verwendet,
-        // das untersagt aber Eingaben an ALLEN anderen Stellen des Displays.
-        // Und damit z.Bsp. auch in einer CCombo, die in diesem Dialog angezeigt
-        // wird (da CCombo intern eine borderless Shell fuer die Liste nutzt).
-        int flags = SWT.DIALOG_TRIM | SWT.PRIMARY_MODAL;
+        // das Hauptfenster hat. "APPLICATION_MODAL" untersagt Eingaben an
+        // ALLEN anderen Stellen des Displays.
+        //
+        // BUGZILLA 937 Solange die System-Shell noch nicht da ist, nehmen
+        //              wir APPLICATION_MODAL, damit sichergestellt ist, dass
+        //              der Login-Screen VOR dem Splash-Screen erscheint.
+        //              Danach verwenden wir nur noch PRIMARY_MODAL
+        Shell rootShell = GUI.getShell();
+        int modalType = (rootShell.getData("systemshell") == null) ? SWT.APPLICATION_MODAL : SWT.PRIMARY_MODAL;
+        Logger.debug("modal type: " + (modalType == SWT.APPLICATION_MODAL ? "application" : "primary"));
+        
+        int flags = SWT.DIALOG_TRIM | modalType;
         if (resizable)
           flags |= SWT.RESIZE;
 
-        shell = new Shell(GUI.getShell(),flags);
+        shell = new Shell(rootShell,flags);
         shell.addListener(SWT.Traverse, new Listener() {
           public void handleEvent(Event e) {
             if (e.detail == SWT.TRAVERSE_ESCAPE) {
@@ -650,7 +657,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.61  2011/06/29 08:25:03  willuhn
+ * Revision 1.62  2011/08/17 08:21:32  willuhn
+ * @N BUGZILLA 937
+ *
+ * Revision 1.61  2011-06-29 08:25:03  willuhn
  * @B BUGZILLA 1087
  *
  * Revision 1.60  2011-06-29 08:12:31  willuhn

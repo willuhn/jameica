@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.146 $
- * $Date: 2011/07/29 11:43:21 $
+ * $Revision: 1.147 $
+ * $Date: 2011/08/17 08:21:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -139,6 +139,7 @@ public class GUI implements ApplicationController
       ////////////////////////////////////////////////////////////////////////
       // init shell
       String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
+      getShell().setData("systemshell",Boolean.TRUE); // BUGZILLA 937
       getShell().setLayout(SWTUtil.createGrid(1, false));
       getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
       getShell().setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon","hibiscus-icon-64x64.png")));
@@ -995,7 +996,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.146  2011/07/29 11:43:21  willuhn
+ * Revision 1.147  2011/08/17 08:21:32  willuhn
+ * @N BUGZILLA 937
+ *
+ * Revision 1.146  2011-07-29 11:43:21  willuhn
  * @N OperationCanceledException in unbind() behandeln
  *
  * Revision 1.145  2011-07-22 09:08:20  willuhn
