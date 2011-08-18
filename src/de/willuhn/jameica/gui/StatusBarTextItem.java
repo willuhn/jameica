@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarTextItem.java,v $
- * $Revision: 1.8 $
- * $Date: 2010/11/02 22:33:07 $
+ * $Revision: 1.9 $
+ * $Date: 2011/08/18 16:38:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -29,8 +29,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.gui.internal.action.LogExport;
 import de.willuhn.jameica.gui.internal.parts.LogList;
 import de.willuhn.jameica.gui.parts.Panel;
+import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.Message;
@@ -39,6 +41,7 @@ import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Ein Statusbar-Element, welches einen Status-Text anzeigt.
@@ -115,15 +118,16 @@ public class StatusBarTextItem implements StatusBarItem
           try
           {
             Panel panel = new Panel(Application.getI18n().tr("System-Meldungen"),new LogList(),false);
-            panel.addMinimizeListener(new Listener() {
-              public void handleEvent(Event event)
+            panel.addButton(new PanelButton("minimize.png",new Action() {
+              public void handleAction(Object context) throws ApplicationException
               {
                 if (GUI.getView().snappedIn())
                   GUI.getView().snapOut();
                 snapIn = false;
                 c.redraw();
               }
-            });
+            },"Minimieren"));
+            panel.addButton(new PanelButton("document-save.png",new LogExport(),"Log-Ausgaben in Datei speichern"));
             panel.paint(GUI.getView().getSnapin());
             GUI.getView().snapIn();
             snapIn = true;
@@ -230,7 +234,11 @@ public class StatusBarTextItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarTextItem.java,v $
- * Revision 1.8  2010/11/02 22:33:07  willuhn
+ * Revision 1.9  2011/08/18 16:38:08  willuhn
+ * @B Minimize-Button nur einmal hinzufuegen
+ * @N Speichern-Button im Syslog via neuem Panel-Button
+ *
+ * Revision 1.8  2010-11-02 22:33:07  willuhn
  * @B Kann beim Shutdown eine Racecondition mit "SWTException: Invalid thread access" ausloesen - stoert zwar nicht, sieht aber unschoen im Log aus
  *
  * Revision 1.7  2010-10-19 15:33:21  willuhn

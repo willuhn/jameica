@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/LogList.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.8 $
+ * $Date: 2011/08/18 16:38:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,36 +13,29 @@
 
 package de.willuhn.jameica.gui.internal.parts;
 
-import java.io.File;
 import java.rmi.RemoteException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
-import de.willuhn.io.FileCopy;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
+import de.willuhn.jameica.gui.internal.action.LogExport;
 import de.willuhn.jameica.gui.internal.dialogs.LogDetailDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Level;
@@ -107,7 +100,7 @@ public class LogList extends TablePart
     
     ContextMenu menu = new ContextMenu();
     menu.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Öffnen"),new DetailAction()));
-    menu.addItem(new ContextMenuItem(Application.getI18n().tr("Speichern unter..."), new ExportAction()));
+    menu.addItem(new ContextMenuItem(Application.getI18n().tr("Speichern unter..."), new LogExport()));
     this.setContextMenu(menu);
   }
 
@@ -180,63 +173,6 @@ public class LogList extends TablePart
     
   }
 
-
-  /**
-   * Aktion, die die Log-Datzei exportieren kann.
-   * @author willuhn
-   */
-  private static class ExportAction implements Action
-  {
-
-    /**
-     * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
-     */
-    public void handleAction(Object context) throws ApplicationException
-    {
-      try
-      {
-        DateFormat format = new SimpleDateFormat("yyyyMMdd");
-        FileDialog dialog = new FileDialog(GUI.getShell(), SWT.SAVE);
-        dialog.setText(Application.getI18n().tr("Bitte wählen Sie Verzeichnis und Datei aus, in dem die Log-Datei gespeichert werden soll."));
-        dialog.setFileName("jameica-" + format.format(new Date()) + ".log");
-        dialog.setFilterPath(System.getProperty("user.home"));
-        String file = dialog.open();
-        if (file == null || file.length() == 0)
-          return;
-        
-        File f = new File(file);
-        if (f.exists())
-        {
-          YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
-          d.setTitle(Application.getI18n().tr("Datei existiert bereits"));
-          d.setText(Application.getI18n().tr("Die Datei {0} existiert bereits. Überschreiben?",f.getAbsolutePath()));
-          try
-          {
-            if (!((Boolean) d.open()).booleanValue())
-              return;
-          }
-          catch (OperationCanceledException e)
-          {
-            return;
-          }
-        }
-        
-        FileCopy.copy(new File(Application.getConfig().getLogFile()),f,true);
-        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Log-Datei gespeichert."),StatusBarMessage.TYPE_SUCCESS));
-      }
-      catch (ApplicationException ae)
-      {
-        throw ae;
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to export log file",e);
-        throw new ApplicationException(Application.getI18n().tr("Fehler beim Speichern der Log-Datei"));
-      }
-    }
-    
-  }
-  
   /**
    * Kleines Hilfsobjekt zum Anzeigen der Log-Meldungen in einer Tabelle.
    */
@@ -354,7 +290,11 @@ public class LogList extends TablePart
 
 /*********************************************************************
  * $Log: LogList.java,v $
- * Revision 1.7  2011/05/03 10:13:11  willuhn
+ * Revision 1.8  2011/08/18 16:38:08  willuhn
+ * @B Minimize-Button nur einmal hinzufuegen
+ * @N Speichern-Button im Syslog via neuem Panel-Button
+ *
+ * Revision 1.7  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.6  2011-04-26 12:20:23  willuhn

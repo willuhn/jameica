@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.17 $
- * $Date: 2011/08/18 16:28:22 $
+ * $Revision: 1.18 $
+ * $Date: 2011/08/18 16:38:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,6 +14,8 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -31,8 +33,10 @@ import de.willuhn.util.ApplicationException;
  */
 public class Panel implements Part
 {
-  private Part child = null;
-  private TitlePart title = null;
+  private Part child               = null;
+  private TitlePart title          = null;
+  private List<Listener> listeners = new LinkedList<Listener>();
+  private PanelButton minimize     = null;
   
   /**
    * ct.
@@ -64,15 +68,23 @@ public class Panel implements Part
    */
   public void addMinimizeListener(final Listener l)
   {
-    PanelButton button = new PanelButton("minimize.png",new Action() {
-      public void handleAction(Object context) throws ApplicationException
-      {
-        Event e = new Event();
-        e.data = context;
-        l.handleEvent(e);
-      }
-    },Application.getI18n().tr("Minimieren"));
-    this.addButton(button);
+    // Den Button duerfen wir ja nur einmal hinzufuegen
+    if (this.minimize == null)
+    {
+      this.minimize = new PanelButton("minimize.png",new Action() {
+        public void handleAction(Object context) throws ApplicationException
+        {
+          Event e = new Event();
+          e.data = context;
+          
+          // Einmal fuer jeden Listener ausloesen
+          for (Listener l:listeners)
+            l.handleEvent(e);
+        }
+      },Application.getI18n().tr("Minimieren"));
+      this.addButton(this.minimize);
+    }
+    this.listeners.add(l);
   }
 
   /**
@@ -108,7 +120,11 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
- * Revision 1.17  2011/08/18 16:28:22  willuhn
+ * Revision 1.18  2011/08/18 16:38:08  willuhn
+ * @B Minimize-Button nur einmal hinzufuegen
+ * @N Speichern-Button im Syslog via neuem Panel-Button
+ *
+ * Revision 1.17  2011-08-18 16:28:22  willuhn
  * @N Neue Funktion zum Hinzufuegen eines frei definierbaren Buttons
  *
  * Revision 1.16  2011-08-18 16:03:38  willuhn
