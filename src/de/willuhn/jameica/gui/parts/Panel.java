@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.16 $
- * $Date: 2011/08/18 16:03:38 $
+ * $Revision: 1.17 $
+ * $Date: 2011/08/18 16:28:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -72,7 +72,16 @@ public class Panel implements Part
         l.handleEvent(e);
       }
     },Application.getI18n().tr("Minimieren"));
-    this.title.addButton(button);
+    this.addButton(button);
+  }
+
+  /**
+   * Fuegt einen Panel-Button hinzu.
+   * @param b der Panel-Button.
+   */
+  public void addButton(PanelButton b)
+  {
+    this.title.addButton(b);
   }
 
   /**
@@ -99,7 +108,10 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
- * Revision 1.16  2011/08/18 16:03:38  willuhn
+ * Revision 1.17  2011/08/18 16:28:22  willuhn
+ * @N Neue Funktion zum Hinzufuegen eines frei definierbaren Buttons
+ *
+ * Revision 1.16  2011-08-18 16:03:38  willuhn
  * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
  *
  * Revision 1.15  2011-08-18 09:17:10  willuhn
