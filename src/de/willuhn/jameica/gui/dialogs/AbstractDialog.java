@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.62 $
- * $Date: 2011/08/17 08:21:32 $
+ * $Revision: 1.63 $
+ * $Date: 2011/08/18 16:03:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,13 +18,11 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -33,8 +31,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.gui.parts.TitlePart;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -128,7 +125,7 @@ public abstract class AbstractDialog
   private Display display;
 
   private Composite parent;
-  private Canvas panel;
+  private TitlePart title;
 
   private Label imageLabel;
   private Image sideImage;
@@ -195,6 +192,7 @@ public abstract class AbstractDialog
           flags |= SWT.RESIZE;
 
         shell = new Shell(rootShell,flags);
+        shell.setLayout(SWTUtil.createGrid(1,false));
         shell.addListener(SWT.Traverse, new Listener() {
           public void handleEvent(Event e) {
             if (e.detail == SWT.TRAVERSE_ESCAPE) {
@@ -232,56 +230,12 @@ public abstract class AbstractDialog
         if (pos == POSITION_MOUSE)
           cursor = display.getCursorLocation();
         
-				GridLayout shellLayout = new GridLayout();
-				shellLayout.horizontalSpacing = 0;
-				shellLayout.verticalSpacing = 0;
-				shellLayout.marginHeight = 0;
-				shellLayout.marginWidth = 0;
-				shell.setLayout(shellLayout);
+        title = new TitlePart(panelText != null ? panelText : titleText);
+        title.paint(shell);
 
-				Composite comp = new Composite(shell,SWT.NONE);
-				GridLayout compLayout = new GridLayout();
-				compLayout.horizontalSpacing = 0;
-				compLayout.verticalSpacing = 0;
-				compLayout.marginHeight = 0;
-				compLayout.marginWidth = 0;
-				comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-				comp.setLayout(compLayout);
-				comp.setBackground(Color.WIDGET_BG.getSWTColor());
-		
-        ///////////////////////////////
-        // Der Titel selbst
-        panel = SWTUtil.getCanvas(comp,SWTUtil.getImage("panelbar.png"), SWT.TOP | SWT.RIGHT);
-        GridLayout layout2 = new GridLayout();
-        layout2.marginHeight = 0;
-        layout2.marginWidth = 0;
-        layout2.horizontalSpacing = 0;
-        layout2.verticalSpacing = 0;
-        panel.setLayout(layout2);
-
-        panel.addListener(SWT.Paint,new Listener()
-        {
-          public void handleEvent(Event event)
-          {
-            GC gc = event.gc;
-            gc.setFont(Font.H2.getSWTFont());
-            String s = panelText != null ? panelText : titleText;
-            gc.drawText(s == null ? "" : s,8,3,true);
-          }
-        });
-        //
-        ///////////////////////////////
-        Label sep = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
-        sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-				Composite c = new Composite(shell,SWT.NONE);
-				GridLayout cl = new GridLayout(2,false);
-				cl.horizontalSpacing = 0;
-				cl.verticalSpacing = 0;
-				cl.marginHeight = 0;
-				cl.marginWidth = 0;
+				Composite c = new Composite(title.getComposite(),SWT.NONE);
 				c.setLayoutData(new GridData(GridData.FILL_BOTH));
-				c.setLayout(cl);
+				c.setLayout(SWTUtil.createGrid(2,false));
 
 				if (sideImage != null)
 				{
@@ -370,24 +324,14 @@ public abstract class AbstractDialog
     if (this.shell != null && !this.shell.isDisposed())
     {
       GUI.getDisplay().syncExec(new Runnable() {
-        
         public void run()
         {
           shell.setText(titleText);
         }
       });
     }
-    
-    // Panel muss auch neu gezeichnet werden
-    if (this.panel != null && !this.panel.isDisposed())
-    {
-      GUI.getDisplay().syncExec(new Runnable() {
-        public void run()
-        {
-          AbstractDialog.this.panel.redraw();
-        }
-      });
-    }
+    // Panel auch aktualisieren
+    this.setPanelText(this.panelText);
   }
   
   /**
@@ -398,15 +342,9 @@ public abstract class AbstractDialog
   public void setPanelText(String text)
   {
     this.panelText = text;
-    if (this.panel != null && !this.panel.isDisposed())
-    {
-      GUI.getDisplay().syncExec(new Runnable() {
-        public void run()
-        {
-          AbstractDialog.this.panel.redraw();
-        }
-      });
-    }
+    
+    if (this.title != null)
+      this.title.setTitle(this.panelText != null ? this.panelText : this.titleText);
   }
   
   /**
@@ -657,7 +595,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.62  2011/08/17 08:21:32  willuhn
+ * Revision 1.63  2011/08/18 16:03:38  willuhn
+ * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
+ *
+ * Revision 1.62  2011-08-17 08:21:32  willuhn
  * @N BUGZILLA 937
  *
  * Revision 1.61  2011-06-29 08:25:03  willuhn

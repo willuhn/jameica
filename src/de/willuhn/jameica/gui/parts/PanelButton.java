@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/PanelButton.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/05/03 11:56:48 $
+ * $Revision: 1.7 $
+ * $Date: 2011/08/18 16:03:38 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -41,20 +41,31 @@ import de.willuhn.util.ApplicationException;
  */
 public class PanelButton implements Part
 {
-  private final static int POS_X = 12;
-  private final static int POS_Y = 2;
+  // Die Icons muessen 16x16 Pixel gross sein.
+  private final static int ICON_WIDTH  = 16;
+  private final static int ICON_HEIGHT = 16;
   
   private final static int ALPHA_DEFAULT  = 150;
   private final static int ALPHA_DISABLED =  50;
   private final static int ALPHA_NONE     = 255;
   
-  private final static String BG_DEFAULT   = "panelbar-button-default.png";
-  private final static String BG_HOVER     = "panelbar-button-hover.png";
+  /**
+   * Dateiname des Hintergrund-Bildes
+   */
+  public final static String BG_DEFAULT   = "panelbar-button-default.png";
+  
+  /**
+   * Dateiname des Hintergrund-Bildes fuer den Hover-Effekt.
+   */
+  public final static String BG_HOVER     = "panelbar-button-hover.png";
 
   private Canvas canvas  = null;
   private String icon    = null;
   private Action action  = null;
   private String tooltip = null;
+  
+  private int height     = 0;
+  private int width      = 0;
   
   private boolean enabled = true;
   
@@ -76,27 +87,37 @@ public class PanelButton implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
-    final Image bgDefault = SWTUtil.getImage(BG_DEFAULT);
+    // Hoehe und Breite festlegen
+    Rectangle bounds = SWTUtil.getImage(BG_DEFAULT).getBounds();
+    try
+    {
+      this.height = ((GridData)parent.getLayoutData()).heightHint;
+    }
+    catch (Exception e)
+    {
+      // Fallback: hatte wohl kein Grid-Layout. Dann nehmen wir die Hoehe des Images
+      this.height = bounds.height;
+    }
+    this.width  = bounds.width; // So breit wie das Hintergrund-Bild
     
+    GridData gd   = new GridData();
+    gd.widthHint  = this.width;
+    gd.heightHint = this.height;
     this.canvas = new Canvas(parent,SWT.NONE);
-
-    GridData gd = new GridData();
-    gd.widthHint = bgDefault.getBounds().width;
     this.canvas.setLayoutData(gd);
 
     if (this.tooltip != null)
       this.canvas.setToolTipText(this.tooltip);
-    
     
     // Default
     this.canvas.addPaintListener(new PaintListener() {
       public void paintControl(PaintEvent e)
       {
         e.gc.setAlpha(ALPHA_NONE);
-        e.gc.drawImage(bgDefault,0,0);
+        drawBackground(e.gc,BG_DEFAULT);
 
         e.gc.setAlpha(isEnabled() ? ALPHA_DEFAULT : ALPHA_DISABLED);
-        e.gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y);
+        drawIcon(e.gc,false);
       }
     });
 
@@ -112,8 +133,8 @@ public class PanelButton implements Part
         GC gc = new GC(canvas);
 
         gc.setAlpha(ALPHA_NONE);
-        gc.drawImage(SWTUtil.getImage(BG_HOVER),0,0);
-        gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y + 1);  // 1 Pixel weiter unten - gibt den Effekt des Reindrueckens
+        drawBackground(gc,BG_HOVER);
+        drawIcon(gc,true);
         gc.dispose();
       }
 
@@ -131,10 +152,10 @@ public class PanelButton implements Part
         if (e.x < 0 || e.y < 0)
           return; // oben oder links raus bewegt
         
-        final Image bgDefault = SWTUtil.getImage(BG_DEFAULT);
-
-        Rectangle rect = bgDefault.getBounds();
-        if (e.x > rect.width || e.y > rect.height)
+        // Innerhalb des Hintergrundes?
+        final Image background = SWTUtil.getImage(BG_DEFAULT);
+        Rectangle rect = background.getBounds();
+        if (e.x > rect.width || e.y > height)
           return;
 
         // Eigentlich waere es optisch schoener, wenn wir das Zuruecksetzen der Icons
@@ -144,8 +165,8 @@ public class PanelButton implements Part
         GC gc = new GC(canvas);
 
         gc.setAlpha(ALPHA_NONE);
-        gc.drawImage(bgDefault,0,0);
-        gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y);
+        drawBackground(gc,BG_DEFAULT);
+        drawIcon(gc,false);
         gc.dispose();
 
         handleClick();
@@ -158,10 +179,10 @@ public class PanelButton implements Part
         GC gc = new GC(canvas);
 
         gc.setAlpha(ALPHA_NONE);
-        gc.drawImage(SWTUtil.getImage(BG_DEFAULT),0,0);
+        drawBackground(gc,BG_DEFAULT);
 
         gc.setAlpha(isEnabled() ? ALPHA_DEFAULT : ALPHA_DISABLED);
-        gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y);
+        drawIcon(gc,false);
         gc.dispose();
       }
       
@@ -172,14 +193,41 @@ public class PanelButton implements Part
         GC gc = new GC(canvas);
 
         gc.setAlpha(ALPHA_NONE);
-        gc.drawImage(SWTUtil.getImage(BG_DEFAULT),0,0);
+        drawBackground(gc,BG_DEFAULT);
 
         gc.setAlpha(isEnabled() ? ALPHA_NONE : ALPHA_DISABLED);
-        gc.drawImage(SWTUtil.getImage(icon),POS_X,POS_Y);
+        drawIcon(gc,false);
         gc.dispose();
       }
     });
   }
+  
+  /**
+   * Malt den angegebenen Hintergrund auf den GC.
+   * @param gc der Graphics-Context.
+   * @param imageName Name der Bild-Datei.
+   */
+  private void drawBackground(GC gc, String imageName)
+  {
+    Image image = SWTUtil.getImage(imageName);
+    Rectangle size = image.getBounds();
+    gc.drawImage(image,0,0,size.width,size.height,0,0,this.width,this.height);
+  }
+  
+  /**
+   * Malt das Icon auf den GC.
+   * @param gc der Graphics-Context.
+   * @param pressed true, wenn das Icon angeklickt gezeichnet werden soll.
+   */
+  private void drawIcon(GC gc, boolean pressed)
+  {
+    // im gedrueckten Zustand ein Pixel weiter unten - das gibt den Effekt des Reindrueckens
+    int y = (this.height - ICON_HEIGHT) / 2;
+    if (pressed) y++;
+    gc.drawImage(SWTUtil.getImage(this.icon),(this.width - ICON_WIDTH) / 2,y);
+  }
+  
+  
   
   /**
    * Liefert das Control des Buttons.
@@ -238,7 +286,10 @@ public class PanelButton implements Part
 
 /**********************************************************************
  * $Log: PanelButton.java,v $
- * Revision 1.6  2011/05/03 11:56:48  willuhn
+ * Revision 1.7  2011/08/18 16:03:38  willuhn
+ * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
+ *
+ * Revision 1.6  2011-05-03 11:56:48  willuhn
  * @B GC wurde nicht korrekt disposed - siehe http://www.eclipse.org/forums/index.php?t=msg&goto=528906
  *
  * Revision 1.5  2011-04-14 16:58:48  willuhn

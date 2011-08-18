@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/08/18 09:17:10 $
+ * $Revision: 1.16 $
+ * $Date: 2011/08/18 16:03:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,25 +14,15 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
-import java.util.Vector;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.Part;
-import de.willuhn.jameica.gui.util.Font;
-import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Das ist ein Container, der weitere Parts aufnehmen kann, jedoch
@@ -41,22 +31,9 @@ import de.willuhn.jameica.gui.util.SWTUtil;
  */
 public class Panel implements Part
 {
-  private final static Font FONT = Font.H2;
-  private final static int TITLE_OFFSET_X = 8;
-  private final static int TITLE_OFFSET_Y = 3;
+  private Part child = null;
+  private TitlePart title = null;
   
-  
-  private String titleText = "";
-  private Part child       = null;
-  
-  private Composite myParent;
-  private boolean border = true;
-  
-  private Vector minimizeListeners = new Vector();
-  private int offset = 20;
-  
-  private Canvas title;
-
   /**
    * ct.
    * @param title anzuzeigender Titel.
@@ -75,10 +52,8 @@ public class Panel implements Part
    */
   public Panel(String title, Part child, boolean border)
   {
-    if (title != null)
-      this.titleText = title;
+    this.title = new TitlePart(title,border);
     this.child = child;
-    this.border = border;
   }
 
   /**
@@ -87,11 +62,17 @@ public class Panel implements Part
    * Minimieren angezeigt, der sonst ausgeblendet ist.
    * @param l der auszuloesende Listener.
    */
-  public void addMinimizeListener(Listener l)
+  public void addMinimizeListener(final Listener l)
   {
-    if (l == null)
-      return;
-    this.minimizeListeners.add(l);
+    PanelButton button = new PanelButton("minimize.png",new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        Event e = new Event();
+        e.data = context;
+        l.handleEvent(e);
+      }
+    },Application.getI18n().tr("Minimieren"));
+    this.title.addButton(button);
   }
 
   /**
@@ -102,9 +83,7 @@ public class Panel implements Part
    */
   public void setTitle(String title)
   {
-    this.titleText = title == null ? "" : title;
-    if (this.title != null && !this.title.isDisposed())
-        this.title.redraw();
+    this.title.setTitle(title);
   }
 
   /**
@@ -112,101 +91,18 @@ public class Panel implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
-    // BUGZILLA 286 Wenn die Ueberschriftengroesse hoeher als die Bild-Groesse ist, dann strecken
-    Image image = SWTUtil.getImage("panelbar.png");
-    int imageHeight = image.getBounds().height;
-    int fontHeight  = Font.getHeight(FONT) + (2 * TITLE_OFFSET_Y); // Abstand oben und unten brauchen wir auch etwas
-    int height      = fontHeight > imageHeight ? fontHeight : imageHeight;
-    
-    ///////////////////////////////
-    // Eigenes Parent, damit wir ein GridLayout verwenden koennen
-    myParent = new Composite(parent,this.border ? SWT.BORDER : SWT.NONE);
-    myParent.setLayout(SWTUtil.createGrid(1,false));
-    myParent.setLayoutData(new GridData(GridData.FILL_BOTH));
-    //
-    ///////////////////////////////
-    
-      ///////////////////////////////
-      // Titelleiste
-      Composite head = new Composite(myParent,SWT.NONE);
-      head.setLayout(SWTUtil.createGrid(1,false));
-      {
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.heightHint = height;
-        head.setLayoutData(gd);
-      }
-
-      //
-      ///////////////////////////////
-      
-
-      ///////////////////////////////
-      // Der Titel selbst
-      title = SWTUtil.getCanvas(head,image, SWT.TOP | SWT.BOTTOM);
-      title.setLayout(SWTUtil.createGrid(1,false));
-      {
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.heightHint = height;
-        title.setLayoutData(gd);
-      }
-
-      final boolean mExists = minimizeListeners.size() > 0;
-
-      
-      if (mExists)
-      {
-        title.addMouseListener(new MouseAdapter()
-        {
-          public void mouseUp(MouseEvent e)
-          {
-            Rectangle size = title.getBounds();
-            size.x += (size.width - offset);
-            size.width = offset;
-            if (size.contains(new Point(e.x,e.y)))
-            {
-              Event e1 = new Event();
-              e1.data = e;
-              for (int i=0;i<minimizeListeners.size();++i)
-              {
-                ((Listener)minimizeListeners.get(i)).handleEvent(e1);
-              }
-            }
-          }
-        });
-      }
-      
-      title.addListener(SWT.Paint,new Listener()
-      {
-        public void handleEvent(Event event)
-        {
-          GC gc = event.gc;
-          gc.setFont(FONT.getSWTFont());
-          gc.drawText(titleText == null ? "" : titleText,TITLE_OFFSET_X,TITLE_OFFSET_Y,true);
-          if (mExists)
-          {
-            Rectangle size = title.getBounds();
-            gc.drawImage(SWTUtil.getImage("minimize.png"),size.width - 20,0);
-          }
-        }
-      });
-      //
-      ///////////////////////////////
-  
-      ///////////////////////////////
-      // Separator
-      Label sep = new Label(myParent,SWT.SEPARATOR | SWT.HORIZONTAL);
-      sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      //
-      ///////////////////////////////
-
-      child.paint(myParent);
+    this.title.paint(parent);
+    this.child.paint(this.title.getComposite());
   }
 }
 
 
 /*********************************************************************
  * $Log: Panel.java,v $
- * Revision 1.15  2011/08/18 09:17:10  willuhn
+ * Revision 1.16  2011/08/18 16:03:38  willuhn
+ * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
+ *
+ * Revision 1.15  2011-08-18 09:17:10  willuhn
  * @N BUGZILLA 286 - Testcode
  *
  * Revision 1.14  2011-05-03 10:13:10  willuhn

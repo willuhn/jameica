@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.51 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.52 $
+ * $Date: 2011/08/18 16:03:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,6 @@ package de.willuhn.jameica.gui;
 
 
 import java.rmi.RemoteException;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -35,11 +33,11 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.internal.parts.PanelButtonBack;
 import de.willuhn.jameica.gui.parts.PanelButton;
+import de.willuhn.jameica.gui.parts.TitlePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Customizing;
-import de.willuhn.logging.Logger;
 
 /**
  * Bildet das Content-Frame ab.
@@ -60,13 +58,11 @@ public class View implements Part
 	private CLabel messages;
   
   private Canvas logoBg;
-  private Canvas panelBg;
-  private Composite panelButtons;
-  private List<PanelButton> buttons = new LinkedList<PanelButton>();
-	
 
   private String title;
   private String logotext;
+  
+  private TitlePart titlePart;
 
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -133,31 +129,11 @@ public class View implements Part
       ////////////////////////////////////////////////////////////////////////////
       //
       Composite comp = new Composite(view,SWT.NONE);
-      comp.setLayout(SWTUtil.createGrid(2,false));
-      GridData gd1 = new GridData(GridData.FILL_HORIZONTAL);
-      gd1.heightHint = 20; // panelbar.png ist 20 Pixel hoch
-      comp.setLayoutData(gd1);
-
-      panelBg = SWTUtil.getCanvas(comp,SWTUtil.getImage("panelbar.png"), SWT.TOP | SWT.LEFT);
-      panelBg.setLayout(SWTUtil.createGrid(1,false));
-      panelBg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-      panelBg.addListener(SWT.Paint,new Listener()
-      {
-        public void handleEvent(Event event)
-        {
-          GC gc = event.gc;
-          gc.setFont(Font.H2.getSWTFont());
-          gc.drawText(title == null ? "" : title,8,3,true);
-        }
-      });
-      this.panelButtons = new Composite(comp,SWT.NONE);
-      this.panelButtons.setLayoutData(new GridData());
-      
-      Label sep2 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-      sep2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-      ////////////////////////////////////////////////////////////////////////////
+      comp.setLayout(SWTUtil.createGrid(1,false));
+      comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      this.titlePart = new TitlePart(title,false);
+      this.titlePart.addButton(new PanelButtonBack()); // Zurueckbutton ist immer dabei
+      this.titlePart.paint(comp);
     }
 
     if (!Customizing.SETTINGS.getBoolean("application.view.hidemessages",false))
@@ -211,10 +187,10 @@ public class View implements Part
 		l.marginWidth = 6;
 		content.setLayout(l);
 
-		if (this.panelButtons != null)
+		if (this.titlePart != null)
 		{
-		  this.buttons.clear();
-		  this.addPanelButton(new PanelButtonBack()); // Zurueckbutton ist immer dabei
+		  this.titlePart.clearButtons();
+		  this.titlePart.addButton(new PanelButtonBack()); // Zurueckbutton ist immer dabei
 		}
 		
     setErrorText(null);
@@ -227,51 +203,8 @@ public class View implements Part
    */
   public void addPanelButton(PanelButton b)
   {
-    if (panelButtons == null)
-      return;
-
-    // Button zur Liste hinzufuegen
-    this.buttons.add(b);
-    
-    GUI.getDisplay().syncExec(new Runnable() {
-      public void run()
-      {
-        if (panelButtons.isDisposed())
-          return;
-        
-        try
-        {
-          // Kurz ausblenden - sieht beim Aufbau der View sauberer aus
-          panelButtons.setVisible(false);
-
-          int size = buttons.size();
-          // Damit der Zurueckbutton immer ganz links steht, werfen
-          // wir alle raus und zeichnen sie neu - von rechts nach links
-          SWTUtil.disposeChildren(panelButtons);
-          panelButtons.setLayout(SWTUtil.createGrid(size,false)); // Neues Layout anlegen
-
-          // Alle Buttons zeichnen
-          for (int i=size-1;i>=0;i--)
-          {
-            buttons.get(i).paint(panelButtons);
-          }
-          
-          // Das Neuberechnen des Parent fuehrt dazu, dass wir mehr Breite fuer die neuen Buttons kriegen
-          panelButtons.getParent().layout(); 
-          
-          // Und wir zeichnen uns selbst neu
-          panelButtons.layout();
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to paint panel buttons",e);
-        }
-        finally
-        {
-          panelButtons.setVisible(true);
-        }
-      }
-    });
+    if (this.titlePart != null)
+      this.titlePart.addButton(b);
   }
 
 	/**
@@ -346,16 +279,9 @@ public class View implements Part
    */
   public void setTitle(String text)
 	{
-    this.title = text == null ? "" : text;
-    if (this.panelBg != null && !this.panelBg.isDisposed())
-    {
-      GUI.getDisplay().syncExec(new Runnable() {
-        public void run()
-        {
-          panelBg.redraw();
-        }
-      });
-    }
+    this.title = text;
+    if (this.titlePart != null)
+      this.titlePart.setTitle(this.title);
 	}
 
   /**
@@ -448,7 +374,10 @@ public class View implements Part
 
 /***************************************************************************
  * $Log: View.java,v $
- * Revision 1.51  2011/05/03 10:13:11  willuhn
+ * Revision 1.52  2011/08/18 16:03:38  willuhn
+ * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
+ *
+ * Revision 1.51  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.50  2011-04-06 16:13:16  willuhn
