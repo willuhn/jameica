@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.147 $
- * $Date: 2011/08/17 08:21:32 $
+ * $Revision: 1.148 $
+ * $Date: 2011/08/18 16:55:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -930,7 +930,7 @@ public class GUI implements ApplicationController
       public void run()
       {
         getStatusBar().startProgress();
-        ProgressMonitor monitor = new BackgroundTaskMonitor();
+        ProgressMonitor monitor = new BackgroundTaskMonitor(task);
         try
         {
           task.run(monitor);
@@ -996,7 +996,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.147  2011/08/17 08:21:32  willuhn
+ * Revision 1.148  2011/08/18 16:55:24  willuhn
+ * @N Button zum Abbrechen von Background-Tasks. Ob die den Request dann auch beachten, ist aber deren Sache ;)
+ *
+ * Revision 1.147  2011-08-17 08:21:32  willuhn
  * @N BUGZILLA 937
  *
  * Revision 1.146  2011-07-29 11:43:21  willuhn

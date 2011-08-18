@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.8 $
- * $Date: 2009/03/11 23:09:56 $
+ * $Revision: 1.9 $
+ * $Date: 2011/08/18 16:55:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,13 +21,17 @@ import java.util.Date;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.View;
 import de.willuhn.jameica.gui.parts.Panel;
+import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.gui.parts.ProgressBar;
 import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
@@ -42,6 +46,27 @@ public class BackgroundTaskMonitor extends ProgressBar
 
   private static DelayedListener delay = null;
   private boolean started              = false;
+  
+  private BackgroundTask task          = null;
+  private PanelButton cancel           = null;
+  
+  /**
+   * ct.
+   */
+  public BackgroundTaskMonitor()
+  {
+    this(null);
+  }
+  
+  /**
+   * ct.
+   * @param task der auszufuehrende Task.
+   * Kann hier uebergeben werden, um den Task abbrechen zu koennen.
+   */
+  public BackgroundTaskMonitor(BackgroundTask task)
+  {
+    this.task = task;
+  }
   
   /**
    * Aktualisiert den Status.
@@ -102,15 +127,19 @@ public class BackgroundTaskMonitor extends ProgressBar
         {
           I18N i18n = Application.getI18n();
           Panel panel = new Panel(i18n.tr("Status"), BackgroundTaskMonitor.this, false);
-          panel.addMinimizeListener(new Listener()
-          {
-            public void handleEvent(Event event)
+          panel.addButton(new PanelButton("minimize.png",new Action() {
+            public void handleAction(Object context) throws ApplicationException
             {
               Logger.info("closing background task monitor snapin");
               view.snapOut();
               started = false;
             }
-          });
+          },Application.getI18n().tr("Minimieren")));
+          
+          // Abbrechen-Button einblenden, wenn wir einen Task haben
+          if (task != null)
+            panel.addButton(getCancelButton());
+          
           panel.paint(view.getSnapin());
           Logger.info("activating progress monitor");
           view.snapIn();
@@ -122,6 +151,30 @@ public class BackgroundTaskMonitor extends ProgressBar
         }
       }
     });
+  }
+  
+  /**
+   * Liefert einen Button zum Abbrechen.
+   * @return Button zum Abbrechen.
+   */
+  private PanelButton getCancelButton()
+  {
+    if (this.cancel != null)
+      return this.cancel;
+
+    this.cancel = new PanelButton("process-stop.png",new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        if (task == null || task.isInterrupted())
+          return;
+        
+        Logger.info("cancel background task");
+        task.interrupt();
+        cancel.setEnabled(false); // nur einmal erlauben
+      }
+    },Application.getI18n().tr("Abbrechen"));
+    this.cancel.setEnabled(this.task != null && !this.task.isInterrupted());
+    return this.cancel;
   }
   
   /**
@@ -191,6 +244,9 @@ public class BackgroundTaskMonitor extends ProgressBar
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
+ * Revision 1.9  2011/08/18 16:55:24  willuhn
+ * @N Button zum Abbrechen von Background-Tasks. Ob die den Request dann auch beachten, ist aber deren Sache ;)
+ *
  * Revision 1.8  2009/03/11 23:09:56  willuhn
  * @C unnuetzes Ueberschreiben der paint()-Methode
  *

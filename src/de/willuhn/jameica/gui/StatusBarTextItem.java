@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarTextItem.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/08/18 16:38:08 $
+ * $Revision: 1.10 $
+ * $Date: 2011/08/18 16:55:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -126,8 +126,8 @@ public class StatusBarTextItem implements StatusBarItem
                 snapIn = false;
                 c.redraw();
               }
-            },"Minimieren"));
-            panel.addButton(new PanelButton("document-save.png",new LogExport(),"Log-Ausgaben in Datei speichern"));
+            },Application.getI18n().tr("Minimieren")));
+            panel.addButton(new PanelButton("document-save.png",new LogExport(),Application.getI18n().tr("Log-Ausgaben in Datei speichern")));
             panel.paint(GUI.getView().getSnapin());
             GUI.getView().snapIn();
             snapIn = true;
@@ -234,7 +234,10 @@ public class StatusBarTextItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarTextItem.java,v $
- * Revision 1.9  2011/08/18 16:38:08  willuhn
+ * Revision 1.10  2011/08/18 16:55:24  willuhn
+ * @N Button zum Abbrechen von Background-Tasks. Ob die den Request dann auch beachten, ist aber deren Sache ;)
+ *
+ * Revision 1.9  2011-08-18 16:38:08  willuhn
  * @B Minimize-Button nur einmal hinzufuegen
  * @N Speichern-Button im Syslog via neuem Panel-Button
  *
