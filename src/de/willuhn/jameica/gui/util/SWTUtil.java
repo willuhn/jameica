@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.25 $
- * $Date: 2011/05/30 10:17:11 $
+ * $Revision: 1.26 $
+ * $Date: 2011/08/18 09:17:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -191,6 +191,7 @@ public class SWTUtil {
 	 * Hinweis: Das Composite muss ein GridLayout haben.
 	 * @param image anzuzeigendes Hintergrundbild.
 	 * @param align logische Kombinationen aus SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT.
+	 * Wenn sowohl SWT.TOP als auch SWT.BOTTOM angegeben sind, wird das Bild vertikal gestreckt.
 	 * @return das erzeugte Canvas.
 	 */
 	public static Canvas getCanvas(final Composite parent, final Image image, final int align)
@@ -209,8 +210,11 @@ public class SWTUtil {
 				
 				if ((align & SWT.BOTTOM) != 0) y = r.height - i.height;
 				if ((align & SWT.RIGHT) != 0) x = r.width - i.width;
-
-				e.gc.drawImage(image,x,y);
+				
+				if ((align & SWT.TOP) != 0 && (align & SWT.BOTTOM) != 0) // BUGZILLA 286 stretch vertically
+				  e.gc.drawImage(image,0,0, r.width, i.height, 0, 0, r.width, r.height);
+				else
+          e.gc.drawImage(image,x,y);
 			}
 		});
 		return canvas;
@@ -316,7 +320,10 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
- * Revision 1.25  2011/05/30 10:17:11  willuhn
+ * Revision 1.26  2011/08/18 09:17:09  willuhn
+ * @N BUGZILLA 286 - Testcode
+ *
+ * Revision 1.25  2011-05-30 10:17:11  willuhn
  * @N Funktion zum Umrechnen von mm in px
  *
  * Revision 1.24  2011-04-06 16:13:16  willuhn

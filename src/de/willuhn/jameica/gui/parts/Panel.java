@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Panel.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/05/03 10:13:10 $
+ * $Revision: 1.15 $
+ * $Date: 2011/08/18 09:17:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,19 +19,17 @@ import java.util.Vector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
@@ -43,7 +41,11 @@ import de.willuhn.jameica.gui.util.SWTUtil;
  */
 public class Panel implements Part
 {
-
+  private final static Font FONT = Font.H2;
+  private final static int TITLE_OFFSET_X = 8;
+  private final static int TITLE_OFFSET_Y = 3;
+  
+  
   private String titleText = "";
   private Part child       = null;
   
@@ -110,16 +112,16 @@ public class Panel implements Part
    */
   public void paint(Composite parent) throws RemoteException
   {
-
+    // BUGZILLA 286 Wenn die Ueberschriftengroesse hoeher als die Bild-Groesse ist, dann strecken
+    Image image = SWTUtil.getImage("panelbar.png");
+    int imageHeight = image.getBounds().height;
+    int fontHeight  = Font.getHeight(FONT) + (2 * TITLE_OFFSET_Y); // Abstand oben und unten brauchen wir auch etwas
+    int height      = fontHeight > imageHeight ? fontHeight : imageHeight;
+    
     ///////////////////////////////
     // Eigenes Parent, damit wir ein GridLayout verwenden koennen
     myParent = new Composite(parent,this.border ? SWT.BORDER : SWT.NONE);
-    GridLayout myLayout = new GridLayout();
-    myLayout.horizontalSpacing = 0;
-    myLayout.verticalSpacing = 0;
-    myLayout.marginHeight = 0;
-    myLayout.marginWidth = 0;
-    myParent.setLayout(myLayout);
+    myParent.setLayout(SWTUtil.createGrid(1,false));
     myParent.setLayoutData(new GridData(GridData.FILL_BOTH));
     //
     ///////////////////////////////
@@ -127,14 +129,12 @@ public class Panel implements Part
       ///////////////////////////////
       // Titelleiste
       Composite head = new Composite(myParent,SWT.NONE);
-      GridLayout headLayout = new GridLayout();
-      headLayout.horizontalSpacing = 0;
-      headLayout.verticalSpacing = 0;
-      headLayout.marginHeight = 0;
-      headLayout.marginWidth = 0;
-      head.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      head.setLayout(headLayout);
-      head.setBackground(new Color(GUI.getDisplay(),255,255,255));
+      head.setLayout(SWTUtil.createGrid(1,false));
+      {
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.heightHint = height;
+        head.setLayoutData(gd);
+      }
 
       //
       ///////////////////////////////
@@ -142,13 +142,13 @@ public class Panel implements Part
 
       ///////////////////////////////
       // Der Titel selbst
-      title = SWTUtil.getCanvas(head,SWTUtil.getImage("panelbar.png"), SWT.TOP | SWT.RIGHT);
-      GridLayout layout2 = new GridLayout();
-      layout2.marginHeight = 0;
-      layout2.marginWidth = 0;
-      layout2.horizontalSpacing = 0;
-      layout2.verticalSpacing = 0;
-      title.setLayout(layout2);
+      title = SWTUtil.getCanvas(head,image, SWT.TOP | SWT.BOTTOM);
+      title.setLayout(SWTUtil.createGrid(1,false));
+      {
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.heightHint = height;
+        title.setLayoutData(gd);
+      }
 
       final boolean mExists = minimizeListeners.size() > 0;
 
@@ -180,8 +180,8 @@ public class Panel implements Part
         public void handleEvent(Event event)
         {
           GC gc = event.gc;
-          gc.setFont(Font.H2.getSWTFont());
-          gc.drawText(titleText == null ? "" : titleText,8,3,true);
+          gc.setFont(FONT.getSWTFont());
+          gc.drawText(titleText == null ? "" : titleText,TITLE_OFFSET_X,TITLE_OFFSET_Y,true);
           if (mExists)
           {
             Rectangle size = title.getBounds();
@@ -206,43 +206,12 @@ public class Panel implements Part
 
 /*********************************************************************
  * $Log: Panel.java,v $
- * Revision 1.14  2011/05/03 10:13:10  willuhn
+ * Revision 1.15  2011/08/18 09:17:10  willuhn
+ * @N BUGZILLA 286 - Testcode
+ *
+ * Revision 1.14  2011-05-03 10:13:10  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.13  2011-04-06 16:13:16  willuhn
  * @N BUGZILLA 631
- *
- * Revision 1.12  2008/01/07 22:19:55  willuhn
- * @R DnD-Code wieder entfernt
- *
- * Revision 1.10  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.9  2005/08/18 21:40:53  web0
- * @B layout bug wegen MacOS-Umstellung
- *
- * Revision 1.8  2005/07/29 15:10:16  web0
- * @N minimize/maximize icons
- *
- * Revision 1.7  2005/07/26 22:58:34  web0
- * @N background task refactoring
- *
- * Revision 1.6  2005/06/13 23:18:18  web0
- * *** empty log message ***
- *
- * Revision 1.5  2005/06/13 22:05:32  web0
- * *** empty log message ***
- *
- * Revision 1.4  2005/03/31 22:35:37  web0
- * @N flexible Actions fuer FormTexte
- *
- * Revision 1.3  2005/03/05 19:11:03  web0
- * *** empty log message ***
- *
- * Revision 1.2  2004/11/10 17:48:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/11/10 15:53:23  willuhn
- * @N Panel
- *
  **********************************************************************/

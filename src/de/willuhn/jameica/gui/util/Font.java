@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.13 $
- * $Date: 2010/07/16 13:11:31 $
+ * $Revision: 1.14 $
+ * $Date: 2011/08/18 09:17:09 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -139,13 +139,27 @@ public class Font {
     if (f != null && !f.isDisposed())
       f.dispose();
 	}
+	
+	/**
+	 * Liefert die Hoehe der Schriftart in Pixeln.
+	 * @param font die Schriftart.
+	 * @return Hoehe in Pixel (nicht Punkt).
+	 */
+	public static int getHeight(Font font)
+	{
+	  FontData fd = font.getSWTFont().getFontData()[0];
+	  return SWTUtil.pt2px(fd.getHeight());
+	}
 
 }
 
 
 /**********************************************************************
  * $Log: Font.java,v $
- * Revision 1.13  2010/07/16 13:11:31  willuhn
+ * Revision 1.14  2011/08/18 09:17:09  willuhn
+ * @N BUGZILLA 286 - Testcode
+ *
+ * Revision 1.13  2010-07-16 13:11:31  willuhn
  * @N Config-Dateien nicht mehr automatisch anlegen
  *
  * Revision 1.12  2008/07/04 16:02:11  willuhn
