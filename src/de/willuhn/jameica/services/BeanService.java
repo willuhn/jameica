@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BeanService.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/07/12 15:21:30 $
+ * $Revision: 1.7 $
+ * $Date: 2011/08/29 16:45:59 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -203,8 +203,8 @@ public class BeanService implements Bootable
             Logger.debug("  no plugin found for service " + rname);
         }
 
-        // Anhand des Typs suchen
-        if (dep != null && c != null)
+        // Anhand des Typs suchen - aber nur, wenn wir die Abhaengigkeit nicht schon haben
+        if (dep == null && c != null)
         {
           Logger.debug("  inject bean " + c.getSimpleName() + " into " + name);
           dep = get(c); // aufloesen
@@ -294,7 +294,10 @@ public class BeanService implements Bootable
 
 /**********************************************************************
  * $Log: BeanService.java,v $
- * Revision 1.6  2011/07/12 15:21:30  willuhn
+ * Revision 1.7  2011/08/29 16:45:59  willuhn
+ * @B via "type" angegebene Abhaengkeit wurde nicht aufgeloest
+ *
+ * Revision 1.6  2011-07-12 15:21:30  willuhn
  * @N JameicaException
  *
  * Revision 1.5  2011-06-29 16:56:36  willuhn
