@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/06/08 13:22:22 $
+ * $Revision: 1.15 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -214,7 +214,9 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
       {
         delete(r); // Wir loeschen den Reminder VOR der Ausfuehrung der Action, da wir nicht wissen, wie lange die Anwendung dort stehen bleiben wird
         Logger.debug("executing reminder action " + action);
-        Action a = (Action) Application.getClassLoader().load(action).newInstance();
+        Class c = Application.getClassLoader().load(action);
+        BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+        Action a = (Action) beanService.get(c);
         a.handleAction(r);
         Application.getMessagingFactory().getMessagingQueue("jameica.reminder.executed").sendMessage(r);
       }
@@ -322,7 +324,10 @@ public class ReminderService extends TimerTask implements Bootable, MessageConsu
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
- * Revision 1.14  2011/06/08 13:22:22  willuhn
+ * Revision 1.15  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
+ * Revision 1.14  2011-06-08 13:22:22  willuhn
  * @N Neuer First-Start-Assistent, der zum Installieren eines neuen Plugins auffordert
  *
  * Revision 1.13  2011-01-17 17:31:09  willuhn

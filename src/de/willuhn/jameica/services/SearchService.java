@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SearchService.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/11/03 15:28:31 $
+ * $Revision: 1.8 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,12 +53,13 @@ public class SearchService implements Bootable
     {
       Logger.info("looking for search providers");
       Class[] providers = Application.getClassLoader().getClassFinder().findImplementors(SearchProvider.class);
+      BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
       int count = 0;
       for (int i=0;i<providers.length;++i)
       {
         try
         {
-          SearchProvider p = (SearchProvider) providers[i].newInstance();
+          SearchProvider p = (SearchProvider) beanService.get(providers[i]);
           Logger.debug("  " + p.getName());
           this.providers.add(p);
           count++;
@@ -154,7 +155,10 @@ public class SearchService implements Bootable
 
 /**********************************************************************
  * $Log: SearchService.java,v $
- * Revision 1.7  2010/11/03 15:28:31  willuhn
+ * Revision 1.8  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
+ * Revision 1.7  2010-11-03 15:28:31  willuhn
  * @N Ergebnisliste getypt
  *
  * Revision 1.6  2008/09/03 23:32:14  willuhn

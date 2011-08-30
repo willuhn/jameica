@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.11 $
- * $Date: 2006/06/27 23:14:11 $
+ * $Revision: 1.12 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,6 +21,7 @@ import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
@@ -98,7 +99,8 @@ public abstract class AbstractItemXml implements Item
 		try
 		{
 			Class c = Application.getClassLoader().load(s);
-			action = (Action) c.newInstance();
+	    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+	    action = beanService.get(c);
 			return action;
 		}
 		catch (Exception e)
@@ -216,6 +218,9 @@ public abstract class AbstractItemXml implements Item
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
+ * Revision 1.12  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
  * Revision 1.11  2006/06/27 23:14:11  willuhn
  * @N neue Attribute "expanded" und "enabled" fuer Element "item" in plugin.xml
  *

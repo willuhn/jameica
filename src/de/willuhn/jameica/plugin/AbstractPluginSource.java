@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPluginSource.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/01 12:35:57 $
+ * $Revision: 1.2 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -14,6 +14,7 @@ package de.willuhn.jameica.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.MultipleClassLoader;
@@ -60,12 +61,13 @@ public abstract class AbstractPluginSource implements PluginSource
       try
       {
         MultipleClassLoader loader = Application.getClassLoader();
+        BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
         Class<PluginSource>[] classes = loader.getClassFinder().findImplementors(PluginSource.class);
         for (Class<PluginSource> c:classes)
         {
           try
           {
-            sources.add(c.newInstance());
+            sources.add(beanService.get(c));
           }
           catch (Exception e)
           {
@@ -87,7 +89,10 @@ public abstract class AbstractPluginSource implements PluginSource
 
 /**********************************************************************
  * $Log: AbstractPluginSource.java,v $
- * Revision 1.1  2011/06/01 12:35:57  willuhn
+ * Revision 1.2  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
+ * Revision 1.1  2011-06-01 12:35:57  willuhn
  * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
  *
  **********************************************************************/

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/FormTextPart.java,v $
- * $Revision: 1.18 $
- * $Date: 2011/05/03 10:13:10 $
+ * $Revision: 1.19 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -37,6 +37,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -211,8 +212,9 @@ public class FormTextPart implements Part {
         try
         {
           Logger.debug("trying to load class " + action);
-          Class c = Application.getClassLoader().load(action);
-          Action a = (Action) c.newInstance();
+          Class<Action> c = Application.getClassLoader().load(action);
+          BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+          Action a = beanService.get(c);
           a.handleAction(e);
           return;
         }
@@ -240,7 +242,10 @@ public class FormTextPart implements Part {
 
 /**********************************************************************
  * $Log: FormTextPart.java,v $
- * Revision 1.18  2011/05/03 10:13:10  willuhn
+ * Revision 1.19  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
+ * Revision 1.18  2011-05-03 10:13:10  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.17  2011-04-26 12:09:17  willuhn

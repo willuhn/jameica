@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.58 $
- * $Date: 2011/05/31 16:39:05 $
+ * $Revision: 1.59 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,7 +14,6 @@
 package de.willuhn.jameica.system;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.HashMap;
@@ -26,6 +25,7 @@ import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
 import de.willuhn.jameica.security.SSLRMIClientSocketFactory;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.services.RegistryService;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -203,10 +203,8 @@ public final class ServiceFactory
     if (impl == null)
       impl = serviceClass;
 
-    Constructor ct = impl.getConstructor();
-    ct.setAccessible(true);
-    Service s = (Service) ct.newInstance();
-    return s;
+    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+    return beanService.get(impl);
   }
 
   /**
@@ -418,7 +416,10 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
- * Revision 1.58  2011/05/31 16:39:05  willuhn
+ * Revision 1.59  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
+ * Revision 1.58  2011-05-31 16:39:05  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  * Revision 1.57  2011-01-26 12:53:26  willuhn

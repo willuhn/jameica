@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.148 $
- * $Date: 2011/08/18 16:55:24 $
+ * $Revision: 1.149 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -45,6 +45,7 @@ import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.ApplicationCallbackSWT;
@@ -448,7 +449,8 @@ public class GUI implements ApplicationController
     
     try
     {
-      startView((AbstractView)clazz.newInstance(),o);
+      BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+      startView((AbstractView)beanService.get(clazz),o);
     }
     catch (Throwable t)
     {
@@ -996,7 +998,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.148  2011/08/18 16:55:24  willuhn
+ * Revision 1.149  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
+ * Revision 1.148  2011-08-18 16:55:24  willuhn
  * @N Button zum Abbrechen von Background-Tasks. Ob die den Request dann auch beachten, ist aber deren Sache ;)
  *
  * Revision 1.147  2011-08-17 08:21:32  willuhn

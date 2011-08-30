@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.62 $
- * $Date: 2011/08/03 11:58:06 $
+ * $Revision: 1.63 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.PluginSource.Type;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.services.ClassService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -267,7 +268,8 @@ public final class PluginLoader
     // zugehoerigen Classloader
     Class clazz = loader.load(pluginClass);
 
-    AbstractPlugin plugin = (AbstractPlugin) clazz.newInstance();
+    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+    AbstractPlugin plugin = (AbstractPlugin) beanService.get(clazz);
     plugin.getResources().setClassLoader(loader);
     manifest.setPluginInstance(plugin);
 
@@ -349,7 +351,7 @@ public final class PluginLoader
         try
         {
           Class c = loader.load(ext[i].getClassname());
-          ExtensionRegistry.register((Extension) c.newInstance(), ext[i].getExtendableIDs());
+          ExtensionRegistry.register((Extension) beanService.get(c), ext[i].getExtendableIDs());
           Logger.info("  register " + c.getName());
         }
         catch (Exception e)
@@ -920,7 +922,10 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.62  2011/08/03 11:58:06  willuhn
+ * Revision 1.63  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
+ * Revision 1.62  2011-08-03 11:58:06  willuhn
  * @N PluginLoader#getInitError
  *
  * Revision 1.61  2011-07-21 14:39:47  willuhn

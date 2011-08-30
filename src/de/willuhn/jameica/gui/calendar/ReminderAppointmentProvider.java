@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointmentProvider.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/01/20 17:12:10 $
+ * $Revision: 1.4 $
+ * $Date: 2011/08/30 16:02:23 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.RGB;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.reminder.Reminder;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -88,7 +89,9 @@ public class ReminderAppointmentProvider implements AppointmentProvider
       
       try
       {
-        Action a = (Action) Application.getClassLoader().load(s).newInstance();
+        BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+        Class c = Application.getClassLoader().load(s);
+        Action a = (Action) beanService.get(c);
         a.handleAction(this.r);
       }
       catch (ApplicationException ae)
@@ -151,7 +154,10 @@ public class ReminderAppointmentProvider implements AppointmentProvider
 
 /**********************************************************************
  * $Log: ReminderAppointmentProvider.java,v $
- * Revision 1.3  2011/01/20 17:12:10  willuhn
+ * Revision 1.4  2011/08/30 16:02:23  willuhn
+ * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
+ *
+ * Revision 1.3  2011-01-20 17:12:10  willuhn
  * @N Appointment-Interface erweitert. Damit man nicht bei jeder kuenftigen neuen Methode einen Compile-Fehler im eigenen Code kriegt, ist es besser, nicht direkt das Interface "Appointment" zu implementieren sondern stattdessen von AbstractAppointment abzuleiten. Dort sind dann bereits Dummy-Implementierungen der relevanten Methoden enthalten.
  *
  * Revision 1.2  2011-01-17 17:31:08  willuhn
