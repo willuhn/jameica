@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/AutoRegisterMessageConsumer.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/07 11:08:55 $
+ * $Revision: 1.2 $
+ * $Date: 2011/08/30 15:51:11 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -11,8 +11,7 @@
 
 package de.willuhn.jameica.messaging;
 
-import java.lang.reflect.Constructor;
-
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -57,6 +56,8 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
     
     Logger.info("searching for auto-registered message consumers");
     MessagingFactory factory = Application.getMessagingFactory();
+    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+    
     Class<MessageConsumer>[] c = new Class[0];
     try
     {
@@ -68,25 +69,14 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
     }
     for (int i=0;i<c.length;++i)
     {
-      if (c[i].getName().indexOf('$') != -1)
-      {
-        Logger.debug(c[i].getName() + " is an inner class, skipping");
-        continue;
-      }
       try
       {
-        Constructor ct = c[i].getConstructor((Class[])null);
-        ct.setAccessible(true);
-        MessageConsumer mc = (MessageConsumer)(ct.newInstance((Object[])null));
+        MessageConsumer mc = beanService.get(c[i]);
         if (mc.autoRegister())
         {
           Logger.info("  " + c[i].getName());
           factory.registerMessageConsumer(mc);
         }
-      }
-      catch (NoSuchMethodException e)
-      {
-        Logger.warn("message consumer has no default constructor, skipping");
       }
       catch (Throwable t)
       {
@@ -109,7 +99,10 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: AutoRegisterMessageConsumer.java,v $
- * Revision 1.1  2011/06/07 11:08:55  willuhn
+ * Revision 1.2  2011/08/30 15:51:11  willuhn
+ * @N Message-Consumer via Bean-Service instanziieren, damit dort jetzt auch Dependency-Injection moeglich ist
+ *
+ * Revision 1.1  2011-06-07 11:08:55  willuhn
  * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
  *
  **********************************************************************/

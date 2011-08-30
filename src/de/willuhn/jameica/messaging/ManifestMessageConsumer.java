@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/ManifestMessageConsumer.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/06/17 16:06:17 $
+ * $Revision: 1.3 $
+ * $Date: 2011/08/30 15:51:11 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -11,12 +11,12 @@
 
 package de.willuhn.jameica.messaging;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 
 import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.ConsumerDescriptor;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.MultipleClassLoader;
@@ -52,6 +52,7 @@ public class ManifestMessageConsumer implements MessageConsumer
     
     Logger.info("searching for message consumers from manifests");
     MessagingFactory factory = Application.getMessagingFactory();
+    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
     
     List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
     for (Manifest mf:list)
@@ -82,9 +83,7 @@ public class ManifestMessageConsumer implements MessageConsumer
           MultipleClassLoader loader = plugin.getResources().getClassLoader();
 
           Class c = loader.load(classname);
-          Constructor ct = c.getConstructor((Class[])null);
-          ct.setAccessible(true);
-          MessageConsumer mc = (MessageConsumer)(ct.newInstance((Object[])null));
+          MessageConsumer mc = beanService.get(c);
           
           // Wir registrieren hier nur Consumer, die NICHT das autoRegister-Flag gesetzt
           // haben. Denn die werden ja bereits vom AutoRegisterMessageConsumer erfasst.
@@ -93,10 +92,6 @@ public class ManifestMessageConsumer implements MessageConsumer
           
           Logger.info("  " + queue + ": " + classname);
           factory.getMessagingQueue(queue).registerMessageConsumer(mc);
-        }
-        catch (NoSuchMethodException e)
-        {
-          Logger.warn("message consumer has no default constructor, skipping");
         }
         catch (Throwable t)
         {
@@ -121,7 +116,10 @@ public class ManifestMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: ManifestMessageConsumer.java,v $
- * Revision 1.2  2011/06/17 16:06:17  willuhn
+ * Revision 1.3  2011/08/30 15:51:11  willuhn
+ * @N Message-Consumer via Bean-Service instanziieren, damit dort jetzt auch Dependency-Injection moeglich ist
+ *
+ * Revision 1.2  2011-06-17 16:06:17  willuhn
  * @C Logging
  *
  * Revision 1.1  2011-06-17 15:55:18  willuhn
