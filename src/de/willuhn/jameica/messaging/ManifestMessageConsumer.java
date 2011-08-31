@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/ManifestMessageConsumer.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/08/30 15:51:11 $
+ * $Revision: 1.4 $
+ * $Date: 2011/08/31 07:46:41 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -83,7 +83,7 @@ public class ManifestMessageConsumer implements MessageConsumer
           MultipleClassLoader loader = plugin.getResources().getClassLoader();
 
           Class c = loader.load(classname);
-          MessageConsumer mc = beanService.get(c);
+          MessageConsumer mc = (MessageConsumer) beanService.get(c);
           
           // Wir registrieren hier nur Consumer, die NICHT das autoRegister-Flag gesetzt
           // haben. Denn die werden ja bereits vom AutoRegisterMessageConsumer erfasst.
@@ -116,7 +116,10 @@ public class ManifestMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: ManifestMessageConsumer.java,v $
- * Revision 1.3  2011/08/30 15:51:11  willuhn
+ * Revision 1.4  2011/08/31 07:46:41  willuhn
+ * @B Compile-Fixes
+ *
+ * Revision 1.3  2011-08-30 15:51:11  willuhn
  * @N Message-Consumer via Bean-Service instanziieren, damit dort jetzt auch Dependency-Injection moeglich ist
  *
  * Revision 1.2  2011-06-17 16:06:17  willuhn

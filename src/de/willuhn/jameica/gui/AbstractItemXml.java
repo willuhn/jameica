@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/AbstractItemXml.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/08/30 16:02:23 $
+ * $Revision: 1.13 $
+ * $Date: 2011/08/31 07:46:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -100,7 +100,7 @@ public abstract class AbstractItemXml implements Item
 		{
 			Class c = Application.getClassLoader().load(s);
 	    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-	    action = beanService.get(c);
+	    action = (Action) beanService.get(c);
 			return action;
 		}
 		catch (Exception e)
@@ -218,7 +218,10 @@ public abstract class AbstractItemXml implements Item
 
 /*********************************************************************
  * $Log: AbstractItemXml.java,v $
- * Revision 1.12  2011/08/30 16:02:23  willuhn
+ * Revision 1.13  2011/08/31 07:46:41  willuhn
+ * @B Compile-Fixes
+ *
+ * Revision 1.12  2011-08-30 16:02:23  willuhn
  * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
  *
  * Revision 1.11  2006/06/27 23:14:11  willuhn

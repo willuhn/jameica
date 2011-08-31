@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.59 $
- * $Date: 2011/08/30 16:02:23 $
+ * $Revision: 1.60 $
+ * $Date: 2011/08/31 07:46:41 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -204,7 +204,7 @@ public final class ServiceFactory
       impl = serviceClass;
 
     BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-    return beanService.get(impl);
+    return (Service) beanService.get(impl);
   }
 
   /**
@@ -416,7 +416,10 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
- * Revision 1.59  2011/08/30 16:02:23  willuhn
+ * Revision 1.60  2011/08/31 07:46:41  willuhn
+ * @B Compile-Fixes
+ *
+ * Revision 1.59  2011-08-30 16:02:23  willuhn
  * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
  *
  * Revision 1.58  2011-05-31 16:39:05  willuhn
