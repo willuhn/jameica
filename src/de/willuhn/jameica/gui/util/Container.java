@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.20 $
- * $Date: 2011/08/08 11:32:29 $
+ * $Revision: 1.21 $
+ * $Date: 2011/08/31 10:51:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.input.AbstractInput;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.Input;
+import de.willuhn.jameica.gui.input.RadioInput;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
@@ -109,8 +110,8 @@ public abstract class Container
    */
   public void addInput(Input input)
   {
-    if (input instanceof CheckboxInput)
-      addCheckbox((CheckboxInput)input,input.getName());
+    if ((input instanceof CheckboxInput) || (input instanceof RadioInput))
+      addCheckable(input,input.getName());
     else
       addLabelPair(input.getName(),input);
   }
@@ -133,8 +134,28 @@ public abstract class Container
    */
   public void addCheckbox(CheckboxInput checkbox, String text)
   {
-    if (text != null && checkbox.getName() == null)
-      checkbox.setName(text);
+    this.addCheckable(checkbox,text);
+  }
+
+  /**
+   * Fuegt einen Radiobutton mit Kommentar hinzu.
+   * @param radio das RadioInput.
+   * @param text Text dahinter.
+   */
+  public void addRadioInput(RadioInput radio, String text)
+  {
+    this.addCheckable(radio,text);
+  }
+  
+  /**
+   * Fuegt eine Checkbox oder ein RadioInput mit Kommentar hinzu.
+   * @param checkable Checkbox oder RadioInput.
+   * @param text Text dahinter.
+   */
+  private void addCheckable(Input checkable, String text)
+  {
+    if (text != null && checkable.getName() == null)
+      checkable.setName(text);
 
     final GridData labelGrid = new GridData(GridData.FILL_HORIZONTAL);
     labelGrid.horizontalSpan = 2;
@@ -145,7 +166,7 @@ public abstract class Container
     comp.setLayout(gl);
     comp.setLayoutData(labelGrid);
 
-    checkbox.paint(comp,40);
+    checkable.paint(comp,40);
   }
 
   /**
@@ -301,7 +322,10 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.20  2011/08/08 11:32:29  willuhn
+ * Revision 1.21  2011/08/31 10:51:37  willuhn
+ * @N Endlich hat Jameica ein RadioInput ;)
+ *
+ * Revision 1.20  2011-08-08 11:32:29  willuhn
  * @C AbstractInput#getStyleBits() public weil ...
  * @C ...vertikale Ausrichtung des Labels im Container nicht mehr hart mit "instanceof TextAreaInput" sondern anhand des Stylebits festlegen
  *
