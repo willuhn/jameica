@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/CheckboxInput.java,v $
- * $Revision: 1.17 $
- * $Date: 2011/08/08 10:45:05 $
+ * $Revision: 1.18 $
+ * $Date: 2011/08/31 08:38:59 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -30,6 +30,7 @@ public class CheckboxInput extends AbstractInput
   private Button button;
   private boolean value;
   private boolean enabled = true;
+  private boolean focus   = false;
   
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
@@ -55,6 +56,9 @@ public class CheckboxInput extends AbstractInput
     String name = this.getName();
     if (name != null)
       button.setText(name);
+
+    if (this.focus)
+      button.setFocus();
     
 		button.setEnabled(enabled);
 		
@@ -110,7 +114,9 @@ public class CheckboxInput extends AbstractInput
    */
   public void focus()
   {
-    button.setFocus();
+    this.focus = true;
+    if (this.button != null && !this.button.isDisposed())
+      button.setFocus();
   }
 
   /**
@@ -136,7 +142,7 @@ public class CheckboxInput extends AbstractInput
   {
     if (button == null || button.isDisposed())
       return enabled;
-    return button.getSelection();
+    return button.getEnabled();
   }
 
   /**
@@ -162,7 +168,10 @@ public class CheckboxInput extends AbstractInput
 
 /*********************************************************************
  * $Log: CheckboxInput.java,v $
- * Revision 1.17  2011/08/08 10:45:05  willuhn
+ * Revision 1.18  2011/08/31 08:38:59  willuhn
+ * @B diverse Bugs (u.a. lieferte isEnabled bisher immer den Wert von "button.getSelection" statt "button.getEnabled")
+ *
+ * Revision 1.17  2011-08-08 10:45:05  willuhn
  * @C AbstractInput#update() ist jetzt "protected" (war package-private)
  *
  * Revision 1.16  2011-05-11 08:42:07  willuhn
