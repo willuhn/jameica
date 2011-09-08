@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BeanService.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/08/29 16:45:59 $
+ * $Revision: 1.8 $
+ * $Date: 2011/09/08 11:11:55 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -152,10 +152,14 @@ public class BeanService implements Bootable
       // Abhaengigkeiten aufloesen
       // Das duerfen wir erst machen, NACHDEM wir sie registriert haben
       // Andernfalls koennte man durch zirkulaere Abhaengigkeit eine Endlosschleife ausloesen
-      resolve(bean);
+      this.resolve(bean);
       
       // Fertig
       return bean;
+    }
+    catch (JameicaException je)
+    {
+      throw je;
     }
     catch (Exception e)
     {
@@ -165,70 +169,16 @@ public class BeanService implements Bootable
   }
   
   /**
-   * Laedt die Abhaengigkeiten der Bean.
+   * Loest die Annotations auf.
    * @param bean die Bean.
+   * @throws Exception
    */
   private void resolve(Object bean) throws Exception
   {
+    this.inject(bean);
+    
     final String name = bean.getClass().getSimpleName();
-    
-    // Resource-Annotations anwenden
-    Inject.inject(bean,new Injector()
-    {
-      /**
-       * @see de.willuhn.annotation.Injector#inject(java.lang.Object, java.lang.reflect.AccessibleObject, java.lang.annotation.Annotation)
-       */
-      public void inject(Object bean, AccessibleObject field, Annotation annotation) throws Exception
-      {
-        Resource r = (Resource) annotation;
-        
-        String rname = r.name();
-        Class c      = r.type();
-        Object dep   = null;
-        
-        if (c == Object.class) // Das ist der Default-Wert der Annotation
-          c = null;
 
-        // Anhand des Namens suchen
-        if (rname != null && rname.length() > 0)
-        {
-          Logger.debug("  inject service " + rname + " into " + name);
-          
-          // Plugin ermitteln und Service von dort laden
-          // Wenn der Typ der Resource angegeben ist, suchen wir nach dessen Plugin, sonst nach dem Plugin der Bean
-          AbstractPlugin plugin = Application.getPluginLoader().findByClass(c != null ? c : bean.getClass());
-          if (plugin != null)
-            dep = Application.getServiceFactory().lookup(plugin.getClass(),rname);
-          else
-            Logger.debug("  no plugin found for service " + rname);
-        }
-
-        // Anhand des Typs suchen - aber nur, wenn wir die Abhaengigkeit nicht schon haben
-        if (dep == null && c != null)
-        {
-          Logger.debug("  inject bean " + c.getSimpleName() + " into " + name);
-          dep = get(c); // aufloesen
-        }
-        
-        if (dep == null) // nichts gefunden
-        {
-          Logger.debug("  resource [name: " + rname + ", type: " + c + "] not found");
-          return;
-        }
-        
-        field.setAccessible(true);
-        
-        if (field instanceof Method)
-        {
-          ((Method)field).invoke(bean,dep);
-        }
-        else if (field instanceof Field)
-        {
-          ((Field)field).set(bean,dep);
-        }
-      }
-    },Resource.class);
-    
     // PostConstruct anwenden
     Inject.inject(bean,new Injector()
     {
@@ -243,6 +193,85 @@ public class BeanService implements Bootable
         m.invoke(bean,(Object[]) null);
       }
     },PostConstruct.class);
+  }
+  
+  /**
+   * Injiziert die Abhaengigkeiten in die Bean.
+   * @param bean die Bean.
+   * @throws JameicaException wenn beim Injezieren der Dependencies etwas schief ging.
+   */
+  public void inject(Object bean) throws JameicaException
+  {
+    final String name = bean.getClass().getSimpleName();
+    
+    try
+    {
+      // Resource-Annotations anwenden
+      Inject.inject(bean,new Injector()
+      {
+        /**
+         * @see de.willuhn.annotation.Injector#inject(java.lang.Object, java.lang.reflect.AccessibleObject, java.lang.annotation.Annotation)
+         */
+        public void inject(Object bean, AccessibleObject field, Annotation annotation) throws Exception
+        {
+          Resource r = (Resource) annotation;
+          
+          String rname = r.name();
+          Class c      = r.type();
+          Object dep   = null;
+          
+          if (c == Object.class) // Das ist der Default-Wert der Annotation
+            c = null;
+
+          // Anhand des Namens suchen
+          if (rname != null && rname.length() > 0)
+          {
+            Logger.debug("  inject service " + rname + " into " + name);
+            
+            // Plugin ermitteln und Service von dort laden
+            // Wenn der Typ der Resource angegeben ist, suchen wir nach dessen Plugin, sonst nach dem Plugin der Bean
+            AbstractPlugin plugin = Application.getPluginLoader().findByClass(c != null ? c : bean.getClass());
+            if (plugin != null)
+              dep = Application.getServiceFactory().lookup(plugin.getClass(),rname);
+            else
+              Logger.debug("  no plugin found for service " + rname);
+          }
+
+          // Anhand des Typs suchen - aber nur, wenn wir die Abhaengigkeit nicht schon haben
+          if (dep == null && c != null)
+          {
+            Logger.debug("  inject bean " + c.getSimpleName() + " into " + name);
+            dep = get(c); // aufloesen
+          }
+          
+          if (dep == null) // nichts gefunden
+          {
+            Logger.debug("  resource [name: " + rname + ", type: " + c + "] not found");
+            return;
+          }
+          
+          field.setAccessible(true);
+          
+          if (field instanceof Method)
+          {
+            ((Method)field).invoke(bean,dep);
+          }
+          else if (field instanceof Field)
+          {
+            ((Field)field).set(bean,dep);
+          }
+        }
+      },Resource.class);
+    }
+    catch (JameicaException je)
+    {
+      throw je;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to inject dependencies into " + name,e);
+      throw new JameicaException(Application.getI18n().tr("Abhängigkeiten können nicht in {0} injiziert werden: {1}",name,e.getMessage()));
+    }
   }
 
   /**
@@ -294,7 +323,10 @@ public class BeanService implements Bootable
 
 /**********************************************************************
  * $Log: BeanService.java,v $
- * Revision 1.7  2011/08/29 16:45:59  willuhn
+ * Revision 1.8  2011/09/08 11:11:55  willuhn
+ * @N inject(Object) ist jetzt public und kann daher nun auch dann verwendet werden, wenn die Bean-Instanz schon vom Aufrufer erstellt wurde
+ *
+ * Revision 1.7  2011-08-29 16:45:59  willuhn
  * @B via "type" angegebene Abhaengkeit wurde nicht aufgeloest
  *
  * Revision 1.6  2011-07-12 15:21:30  willuhn
