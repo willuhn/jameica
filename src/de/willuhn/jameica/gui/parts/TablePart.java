@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.111 $
- * $Date: 2011/07/26 11:49:01 $
+ * $Revision: 1.112 $
+ * $Date: 2011/09/08 11:18:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1030,7 +1030,7 @@ public class TablePart extends AbstractTablePart
    */
   public void setChecked(Object[] objects, boolean checked)
   {
-    if (objects == null || objects.length == 0)
+    if (objects == null || objects.length == 0 || !this.checkable)
       return;
     
     if (table == null || table.isDisposed())
@@ -1437,7 +1437,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.111  2011/07/26 11:49:01  willuhn
+ * Revision 1.112  2011/09/08 11:18:10  willuhn
+ * @C setChecked-Aufruf ignorieren, wenn die Tabelle nicht als checkable markiert ist
+ *
+ * Revision 1.111  2011-07-26 11:49:01  willuhn
  * @C SelectionListener wurde doppelt ausgeloest, wenn die Tabelle checkable ist und eine Checkbox angeklickt wurde (einmal durch Selektion der Zeile und dann nochmal durch Aktivierung/Deaktivierung der Checkbox). Wenn eine Tabelle checkable ist, wird der SelectionListener jetzt nur noch beim Klick auf die Checkbox ausgeloest, nicht mehr mehr Selektieren der Zeile.
  * @N Column.setName zum Aendern des Spalten-Namens on-the-fly
  *
