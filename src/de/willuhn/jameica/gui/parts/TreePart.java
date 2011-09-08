@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TreePart.java,v $
- * $Revision: 1.52 $
- * $Date: 2011/07/26 16:47:06 $
+ * $Revision: 1.53 $
+ * $Date: 2011/09/08 11:18:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -834,7 +834,7 @@ public class TreePart extends AbstractTablePart
    */
   public void setChecked(Object[] objects, boolean checked)
   {
-    if (objects == null || objects.length == 0)
+    if (objects == null || objects.length == 0 || !this.checkable)
       return;
     
     if (this.tree == null || this.tree.isDisposed())
@@ -895,7 +895,10 @@ public class TreePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TreePart.java,v $
- * Revision 1.52  2011/07/26 16:47:06  willuhn
+ * Revision 1.53  2011/09/08 11:18:42  willuhn
+ * @C setChecked-Aufruf ignorieren, wenn die Tabelle nicht als checkable markiert ist
+ *
+ * Revision 1.52  2011-07-26 16:47:06  willuhn
  * @N Null-Support
  *
  * Revision 1.51  2011-07-26 11:49:01  willuhn
