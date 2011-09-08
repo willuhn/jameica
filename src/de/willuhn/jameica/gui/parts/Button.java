@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Button.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/07/14 16:15:26 $
+ * $Revision: 1.13 $
+ * $Date: 2011/09/08 12:06:39 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -120,6 +120,17 @@ public class Button implements Part
   }
   
   /**
+   * Setzt das Icon oder aendert es zur Laufzeit.
+   * @param icon das anzuzeigende Icon.
+   */
+  public void setIcon(String icon)
+  {
+    this.icon = icon;
+    if (this.button != null && !this.button.isDisposed())
+      button.setImage(this.icon != null ? SWTUtil.getImage(this.icon) : null);
+  }
+  
+  /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
   public void paint(Composite parent) throws RemoteException
@@ -180,7 +191,10 @@ public class Button implements Part
 
 /*********************************************************************
  * $Log: Button.java,v $
- * Revision 1.12  2011/07/14 16:15:26  willuhn
+ * Revision 1.13  2011/09/08 12:06:39  willuhn
+ * @N Icon zur Laufzeit aenderbar
+ *
+ * Revision 1.12  2011-07-14 16:15:26  willuhn
  * @R REDO ;)
  *
  * Revision 1.10  2011-07-14 16:12:49  willuhn
