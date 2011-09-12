@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.112 $
- * $Date: 2011/09/08 11:18:10 $
+ * $Revision: 1.113 $
+ * $Date: 2011/09/12 15:16:10 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1072,6 +1072,9 @@ public class TablePart extends AbstractTablePart
    */
   public Object getSelection()
   {
+    if (table == null) // wir wurden noch nicht gezeichnet
+      return null;
+    
     TableItem[] items = table.getSelection();
 
     if (items == null || items.length == 0)
@@ -1437,7 +1440,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.112  2011/09/08 11:18:10  willuhn
+ * Revision 1.113  2011/09/12 15:16:10  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.112  2011-09-08 11:18:10  willuhn
  * @C setChecked-Aufruf ignorieren, wenn die Tabelle nicht als checkable markiert ist
  *
  * Revision 1.111  2011-07-26 11:49:01  willuhn
