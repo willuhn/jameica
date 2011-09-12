@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PanelButtonBack.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/04/26 12:01:42 $
+ * $Revision: 1.3 $
+ * $Date: 2011/09/12 07:55:45 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -26,7 +26,7 @@ public class PanelButtonBack extends PanelButton
    */
   public PanelButtonBack()
   {
-    super("go-previous.png",new Back(),Application.getI18n().tr("Zurück"));
+    super("go-previous.png",new Back(),Application.getI18n().tr("Zurück (Alt+Pfeil links)"));
   }
   
   /**
@@ -43,7 +43,10 @@ public class PanelButtonBack extends PanelButton
 
 /**********************************************************************
  * $Log: PanelButtonBack.java,v $
- * Revision 1.2  2011/04/26 12:01:42  willuhn
+ * Revision 1.3  2011/09/12 07:55:45  willuhn
+ * @C BUGZILLA 811
+ *
+ * Revision 1.2  2011-04-26 12:01:42  willuhn
  * @D javadoc Fixes
  *
  * Revision 1.1  2011-04-06 16:13:16  willuhn
