@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackgroundTaskMonitor.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/08/18 16:55:24 $
+ * $Revision: 1.10 $
+ * $Date: 2011/09/12 15:27:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.ProgressMonitor;
 
 /**
  * Implementierung eines Progress-Monitors fuer Hintergrund-Jobs in Jameica.
@@ -210,6 +211,14 @@ public class BackgroundTaskMonitor extends ProgressBar
   public void setStatus(int status)
   {
     check();
+    
+    // Wenn wir in einem finalen Zustand sind, kann der Cancel-Button nicht mehr gedrueckt werden
+    boolean finalState = (status == ProgressMonitor.STATUS_CANCEL) ||
+                         (status == ProgressMonitor.STATUS_DONE) ||
+                         (status == ProgressMonitor.STATUS_ERROR);
+    if (finalState)
+      this.getCancelButton().setEnabled(false);
+    
     super.setStatus(status);
   }
 
@@ -244,7 +253,11 @@ public class BackgroundTaskMonitor extends ProgressBar
 
 /*********************************************************************
  * $Log: BackgroundTaskMonitor.java,v $
- * Revision 1.9  2011/08/18 16:55:24  willuhn
+ * Revision 1.10  2011/09/12 15:27:46  willuhn
+ * @N Hintergrund-Jobs koennen nur abgebrochen werden, wenn sie noch laufen
+ * @N Enabled-State live uebernehmen
+ *
+ * Revision 1.9  2011-08-18 16:55:24  willuhn
  * @N Button zum Abbrechen von Background-Tasks. Ob die den Request dann auch beachten, ist aber deren Sache ;)
  *
  * Revision 1.8  2009/03/11 23:09:56  willuhn

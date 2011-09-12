@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/PanelButton.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/09/12 15:09:58 $
+ * $Revision: 1.9 $
+ * $Date: 2011/09/12 15:27:46 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -46,7 +46,7 @@ public class PanelButton implements Part
   private final static int ICON_WIDTH  = 16;
   private final static int ICON_HEIGHT = 16;
   
-  private final static int ALPHA_DEFAULT  = 150;
+  private final static int ALPHA_DEFAULT  = 190;
   private final static int ALPHA_DISABLED =  50;
   private final static int ALPHA_NONE     = 255;
   
@@ -297,7 +297,11 @@ public class PanelButton implements Part
 
 /**********************************************************************
  * $Log: PanelButton.java,v $
- * Revision 1.8  2011/09/12 15:09:58  willuhn
+ * Revision 1.9  2011/09/12 15:27:46  willuhn
+ * @N Hintergrund-Jobs koennen nur abgebrochen werden, wenn sie noch laufen
+ * @N Enabled-State live uebernehmen
+ *
+ * Revision 1.8  2011-09-12 15:09:58  willuhn
  * @N Redraw ausloesen, wenn der Enabled-Status geaendert wird
  *
  * Revision 1.7  2011-08-18 16:03:38  willuhn
