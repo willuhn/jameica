@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/PanelButton.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/08/18 16:03:38 $
+ * $Revision: 1.8 $
+ * $Date: 2011/09/12 15:09:58 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -279,6 +280,16 @@ public class PanelButton implements Part
   public void setEnabled(boolean b)
   {
     this.enabled = b;
+    if (this.canvas != null)
+    {
+      GUI.getDisplay().asyncExec(new Runnable() {
+        public void run()
+        {
+          if (canvas != null && !canvas.isDisposed())
+            canvas.redraw();
+        }
+      });
+    }
   }
 }
 
@@ -286,7 +297,10 @@ public class PanelButton implements Part
 
 /**********************************************************************
  * $Log: PanelButton.java,v $
- * Revision 1.7  2011/08/18 16:03:38  willuhn
+ * Revision 1.8  2011/09/12 15:09:58  willuhn
+ * @N Redraw ausloesen, wenn der Enabled-Status geaendert wird
+ *
+ * Revision 1.7  2011-08-18 16:03:38  willuhn
  * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
  *
  * Revision 1.6  2011-05-03 11:56:48  willuhn
