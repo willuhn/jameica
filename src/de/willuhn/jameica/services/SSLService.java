@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/SSLService.java,v $
- * $Revision: 1.2 $
- * $Date: 2009/06/24 11:24:33 $
+ * $Revision: 1.3 $
+ * $Date: 2011/09/14 11:57:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -31,7 +31,10 @@ public class SSLService implements Bootable
    */
   public Class[] depends()
   {
-    return new Class[]{LogService.class, SecurityManagerService.class};
+    return new Class[]{LogService.class,
+                       SecurityManagerService.class,
+                       HostnameVerifierService.class
+                      };
   }
 
   /**
@@ -75,6 +78,10 @@ public class SSLService implements Bootable
 
 /**********************************************************************
  * $Log: SSLService.java,v $
+ * Revision 1.3  2011/09/14 11:57:14  willuhn
+ * @N HostnameVerifier in separate Klasse ausgelagert
+ * @C Beim Erstellen eines neuen Master-Passwortes dieses sofort ververwenden und nicht nochmal mit getPasswort erfragen
+ *
  * Revision 1.2  2009/06/24 11:24:33  willuhn
  * @N Security-Manager via Bootloader setzen
  *

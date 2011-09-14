@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.61 $
- * $Date: 2011/06/27 17:51:43 $
+ * $Revision: 1.62 $
+ * $Date: 2011/09/14 11:57:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,12 +36,9 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 
 import org.bouncycastle.asn1.x509.KeyUsage;
@@ -202,9 +199,9 @@ public class SSLFactory
 		Logger.info("  creating keystore");
     this.keystore = KeyStore.getInstance("JKS");
 
-		this.callback.createPassword();
+		String pw = this.callback.createPassword();
 
-		this.keystore.load(null,this.callback.getPassword().toCharArray());
+		this.keystore.load(null,pw.toCharArray());
 
 		Logger.info("  saving certificates");
 		this.keystore.setKeyEntry(SYSTEM_ALIAS,this.privateKey,
@@ -445,65 +442,8 @@ public class SSLFactory
 			this.keystore.load(is,this.callback.getPassword().toCharArray());
       Logger.info("keystore loaded successfully");
 
-      // Wir sagen der HttpsUrlConnection, dass sie unsere SocketFactory
-      // nutzen soll, damit es ueber unseren TrustManager geht
       Logger.info("applying jameica's ssl socket factory");
       HttpsURLConnection.setDefaultSSLSocketFactory(getSSLContext().getSocketFactory());
-
-      // Wir verwenden einen eigenen Hostname-Verifier und lassen
-      // dem User die Chance, bei nicht uebereinstimmenden Hosts
-      // selbst zu entscheiden.
-      final HostnameVerifier systemVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-      Logger.info("applying jameica's hostname verifier");
-      HostnameVerifier hostnameVerifier = new HostnameVerifier()
-      {
-        public boolean verify(String hostname, SSLSession session)
-        {
-          javax.security.cert.X509Certificate[] certs = new javax.security.cert.X509Certificate[0];
-          try
-          {
-            certs = session.getPeerCertificateChain();
-          }
-          catch (SSLPeerUnverifiedException e)
-          {
-            Logger.error("error while reading certificates from session",e);
-          }
-
-          boolean match = false;
-          for (int i=0;i<certs.length;++i)
-          {
-            Certificate c = new Certificate(certs[i]);
-            String h = c.getSubject().getAttribute(Principal.COMMON_NAME);
-            if (h == null || h.length() == 0)
-              continue;
-            Logger.debug("comparing hostname " + hostname + " with CN " + h);
-            if (h.equalsIgnoreCase(hostname))
-            {
-              Logger.debug("hostname matched");
-              match = true;
-              break;
-            }
-          }
-          
-          if (!match)
-          {
-            try
-            {
-              return Application.getCallback().checkHostname(hostname,certs);
-            }
-            catch (OperationCanceledException oce)
-            {
-              throw oce;
-            }
-            catch (Exception e)
-            {
-              Logger.error("error while asking user something",e);
-            }
-          }
-          return systemVerifier.verify(hostname, session); 
-        }
-      };
-      HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier); 
 
 			return this.keystore;
 		}
@@ -724,7 +664,11 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.61  2011/06/27 17:51:43  willuhn
+ * Revision 1.62  2011/09/14 11:57:15  willuhn
+ * @N HostnameVerifier in separate Klasse ausgelagert
+ * @C Beim Erstellen eines neuen Master-Passwortes dieses sofort ververwenden und nicht nochmal mit getPasswort erfragen
+ *
+ * Revision 1.61  2011-06-27 17:51:43  willuhn
  * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
  * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
  *
