@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.114 $
- * $Date: 2011/09/12 15:16:33 $
+ * $Revision: 1.115 $
+ * $Date: 2011/09/15 09:43:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -743,6 +743,13 @@ public class TablePart extends AbstractTablePart
           final int index = row;
           final TableItem item = current;
           
+          final String oldValue = item.getText(index);
+
+          final Control editorControl = getEditorControl(row, item, oldValue);
+          if (editorControl == null)
+            return;
+          editor.setEditor(editorControl, item, index);
+
           // Wir merken uns noch die letzte Farbe des Items.
           // Denn falls der User Unfug eingibt, faerben wir
           // sie rot. Allerdings wollen wir sie anschliessend
@@ -753,10 +760,6 @@ public class TablePart extends AbstractTablePart
             item.setData("color",item.getForeground()); // wir hatten den Wert noch nicht gespeichert
           final org.eclipse.swt.graphics.Color color = (org.eclipse.swt.graphics.Color) item.getData("color");
 
-          final String oldValue = item.getText(index);
-
-          final Control editorControl = getEditorControl(row, item, oldValue);
-          editor.setEditor(editorControl, item, index);
 
           // Wir deaktivieren den Default-Button fuer den Zeitraum der Bearbeitung
           Button b = GUI.getShell().getDefaultButton();
@@ -1292,7 +1295,7 @@ public class TablePart extends AbstractTablePart
    * @param row die Spalte.
    * @param item das Tabellen-Element.
    * @param oldValue der bisherige Wert.
-   * @return der Editor.
+   * @return der Editor oder NULL, wenn das Bearbeiten nicht erlaubt werden soll.
    */
   protected Control getEditorControl(int row, TableItem item, final String oldValue)
   {
@@ -1440,7 +1443,10 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
- * Revision 1.114  2011/09/12 15:16:33  willuhn
+ * Revision 1.115  2011/09/15 09:43:22  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.114  2011-09-12 15:16:33  willuhn
  * *** empty log message ***
  *
  * Revision 1.113  2011-09-12 15:16:10  willuhn
