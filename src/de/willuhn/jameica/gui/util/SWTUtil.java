@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.26 $
- * $Date: 2011/08/18 09:17:09 $
+ * $Revision: 1.27 $
+ * $Date: 2011/09/26 16:39:05 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.Session;
 
@@ -204,17 +205,24 @@ public class SWTUtil {
 		canvas.setLayoutData(gd);
 		canvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				Rectangle r = parent.getBounds();
-				int x = 0;
-				int y = 0;
-				
-				if ((align & SWT.BOTTOM) != 0) y = r.height - i.height;
-				if ((align & SWT.RIGHT) != 0) x = r.width - i.width;
-				
-				if ((align & SWT.TOP) != 0 && (align & SWT.BOTTOM) != 0) // BUGZILLA 286 stretch vertically
-				  e.gc.drawImage(image,0,0, r.width, i.height, 0, 0, r.width, r.height);
-				else
-          e.gc.drawImage(image,x,y);
+			  try
+			  {
+	        Rectangle r = parent.getBounds();
+	        int x = 0;
+	        int y = 0;
+	        
+	        if ((align & SWT.BOTTOM) != 0) y = r.height - i.height;
+	        if ((align & SWT.RIGHT) != 0) x = r.width - i.width;
+	        
+	        if ((align & SWT.TOP) != 0 && (align & SWT.BOTTOM) != 0) // BUGZILLA 286 stretch vertically
+	          e.gc.drawImage(image,0,0, r.width, i.height, 0, 0, r.width, r.height);
+	        else
+	          e.gc.drawImage(image,x,y);
+			  }
+			  catch (IllegalArgumentException ex)
+			  {
+			    Logger.write(Level.DEBUG,"unable to draw image " + image + " (" + i + ") on canvas",ex);
+			  }
 			}
 		});
 		return canvas;
@@ -320,7 +328,10 @@ public class SWTUtil {
 
 /**********************************************************************
  * $Log: SWTUtil.java,v $
- * Revision 1.26  2011/08/18 09:17:09  willuhn
+ * Revision 1.27  2011/09/26 16:39:05  willuhn
+ * @B Tolerieren, wenn die Grafik nicht geladen werden konnte - siehe Mail von Walter vom 26.09.2011
+ *
+ * Revision 1.26  2011-08-18 09:17:09  willuhn
  * @N BUGZILLA 286 - Testcode
  *
  * Revision 1.25  2011-05-30 10:17:11  willuhn
