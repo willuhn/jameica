@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/Init5.java,v $
- * $Revision: 1.6 $
- * $Date: 2009/06/24 11:24:33 $
+ * $Revision: 1.7 $
+ * $Date: 2011/09/26 11:43:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -42,6 +42,7 @@ public class Init5 implements Bootable
       RegistryService.class,
       ClassService.class,
       SSLService.class,
+      SSLSocketFactoryService.class,
       ReminderService.class,
       PluginService.class,
       PluginServiceService.class,
@@ -69,6 +70,10 @@ public class Init5 implements Bootable
 
 /**********************************************************************
  * $Log: Init5.java,v $
+ * Revision 1.7  2011/09/26 11:43:35  willuhn
+ * @C Setzen des SSL-Socketfactory in extra Service
+ * @C Log-Level in Bootloader
+ *
  * Revision 1.6  2009/06/24 11:24:33  willuhn
  * @N Security-Manager via Bootloader setzen
  *

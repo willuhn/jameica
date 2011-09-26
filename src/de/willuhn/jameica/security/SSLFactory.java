@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.62 $
- * $Date: 2011/09/14 11:57:15 $
+ * $Revision: 1.63 $
+ * $Date: 2011/09/26 11:43:35 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -36,7 +36,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -442,9 +441,6 @@ public class SSLFactory
 			this.keystore.load(is,this.callback.getPassword().toCharArray());
       Logger.info("keystore loaded successfully");
 
-      Logger.info("applying jameica's ssl socket factory");
-      HttpsURLConnection.setDefaultSSLSocketFactory(getSSLContext().getSocketFactory());
-
 			return this.keystore;
 		}
 		finally
@@ -664,7 +660,11 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.62  2011/09/14 11:57:15  willuhn
+ * Revision 1.63  2011/09/26 11:43:35  willuhn
+ * @C Setzen des SSL-Socketfactory in extra Service
+ * @C Log-Level in Bootloader
+ *
+ * Revision 1.62  2011-09-14 11:57:15  willuhn
  * @N HostnameVerifier in separate Klasse ausgelagert
  * @C Beim Erstellen eines neuen Master-Passwortes dieses sofort ververwenden und nicht nochmal mit getPasswort erfragen
  *
