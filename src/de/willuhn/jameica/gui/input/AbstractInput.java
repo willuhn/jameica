@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/AbstractInput.java,v $
- * $Revision: 1.29 $
- * $Date: 2011/08/08 11:32:29 $
+ * $Revision: 1.30 $
+ * $Date: 2011/09/26 11:18:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -211,10 +211,18 @@ public abstract class AbstractInput implements Input
 
     if ((validChars != null && validChars.length() > 0))
     {
+      final boolean single = ((control.getStyle() & SWT.SINGLE) != 0);
       control.addListener(SWT.Verify, new Listener()
       {
         public void handleEvent(Event e)
         {
+          // Bei Einzeiligen Eingabefeldern kann in der Zwischenablage
+          // ein Zeilenumbruch enthalten sein. Der darf zwar nicht im
+          // Eingabefeld landen, sollte das Copy'n'Paste aber auch nicht
+          // behindern - daher entfernen wir das
+          if (single)
+            e.text = e.text.replace("\n","").replace("\r","");
+          
           char[] chars = e.text.toCharArray();
           for (int i=0; i<chars.length; i++) {
             if (validChars.indexOf(chars[i]) == -1) // eingegebenes Zeichen nicht enthalten
@@ -413,7 +421,10 @@ public abstract class AbstractInput implements Input
 
 /*********************************************************************
  * $Log: AbstractInput.java,v $
- * Revision 1.29  2011/08/08 11:32:29  willuhn
+ * Revision 1.30  2011/09/26 11:18:42  willuhn
+ * Zeilenumbruch aus einzeiligen Eingabefeldern beim Copy'n'Paste entfernen - das behindert sonst das Paste - siehe http://www.onlinebanking-forum.de/phpBB2/viewtopic.php?p=78495#78495
+ *
+ * Revision 1.29  2011-08-08 11:32:29  willuhn
  * @C AbstractInput#getStyleBits() public weil ...
  * @C ...vertikale Ausrichtung des Labels im Container nicht mehr hart mit "instanceof TextAreaInput" sondern anhand des Stylebits festlegen
  *
