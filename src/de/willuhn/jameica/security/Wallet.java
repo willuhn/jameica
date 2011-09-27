@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.18 $
- * $Date: 2011/06/19 12:13:00 $
+ * $Revision: 1.19 $
+ * $Date: 2011/09/27 15:48:33 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -38,8 +38,9 @@ import de.willuhn.logging.Logger;
  * Liefert eine Art Brieftasche, ueber die andere Klassen Daten
  * verschluesselt abspeichern koennen.
  * 
- * HINWEIS: Das Wallet verwendet zum Verschluesseln den asymmetrischen
- * RSA-Algorithmus. Es ist also nicht fuer groessere Daten (Dateien, Streams, etc.)
+ * HINWEIS: Das Wallet verwendet zum Verschluesseln per Default den asymmetrischen
+ * RSA-Algorithmus (es sei denn, es wurde explizit eine andere Engine angegeben).
+ * Es ist im Default-Fall also nicht fuer groessere Daten (Dateien, Streams, etc.)
  * geeignet sondern typischerweise fuer Passwoerter.
  * 
  * Will zum Beispiel ein Plugin irgendwelche Passwort-Informationen
@@ -361,7 +362,10 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
- * Revision 1.18  2011/06/19 12:13:00  willuhn
+ * Revision 1.19  2011/09/27 15:48:33  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.18  2011-06-19 12:13:00  willuhn
  * @C Wallet-Datei loeschen, wenn nichts mehr drin steht
  *
  * Revision 1.17  2011-02-09 12:27:26  willuhn
