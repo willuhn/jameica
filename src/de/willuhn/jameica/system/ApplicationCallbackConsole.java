@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.39 $
- * $Date: 2011/07/19 15:24:01 $
+ * $Revision: 1.40 $
+ * $Date: 2011/09/27 12:01:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,10 +24,13 @@ import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
+import de.willuhn.jameica.security.LoginVerifier;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -93,9 +96,11 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
   {
     I18N i18n = Application.getI18n();
     
+    ////////////////////////////////////////////////////////////////////////////
+    // Username erfragen, falls noetig
     this.username = Application.getStartupParams().getUsername();
     String s = Customizing.SETTINGS.getString("application.firststart.username",null);
-    if (s != null && s.length() > 0)
+    if (StringUtils.trimToNull(this.username) == null && StringUtils.trimToNull(s) != null)
     {
       // Wir sollen nach einem Usernamen fragen
       if (Application.inNonInteractiveMode())
@@ -109,29 +114,34 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       BufferedReader keyboard = new BufferedReader(isr);
       this.username = keyboard.readLine();
     }
+    //
+    ////////////////////////////////////////////////////////////////////////////
       
       
+    ////////////////////////////////////////////////////////////////////////////
+    // Passwort
 		this.password = Application.getStartupParams().getPassword();
-		if (this.password != null)
+		if (StringUtils.trimToNull(this.password) != null)
 		{
 			Logger.debug("master password given via commandline");
+			return this.password;
 		}
-		else
-		{
-      if (Application.inNonInteractiveMode())
-      {
-        Logger.error(i18n.tr("Jameica läuft im nicht-interaktiven Modus und kein Passwort via Kommandozeile übergeben"));
-        throw new ApplicationException(i18n.tr("Passwort kann nicht abgefragt werden"));
-      }
+		
+		// Eingabe ueberhaupt moeglich?
+    if (Application.inNonInteractiveMode())
+    {
+      Logger.error(i18n.tr("Jameica läuft im nicht-interaktiven Modus und kein Passwort via Kommandozeile übergeben"));
+      throw new ApplicationException(i18n.tr("Passwort kann nicht abgefragt werden"));
+    }
 
-      flush();
-      System.out.println("");
-      System.out.println(i18n.tr("Sie starten Jameica zum ersten Mal.\nBitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
-      this.password = promptPassword();
-		}
-
-		this.setChecksum(this.password);
+    // Eingabe vornehmen
+    flush();
+    System.out.println("");
+    System.out.println(i18n.tr("Sie starten Jameica zum ersten Mal.\nBitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten:"));
+    this.password = promptPassword();
 		return this.password;
+		//
+    ////////////////////////////////////////////////////////////////////////////
   }
   
   /**
@@ -176,19 +186,30 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public String getPassword() throws Exception
   {
+    return this.getPassword(null);
+  }
+
+	/**
+   * @see de.willuhn.jameica.system.ApplicationCallback#getPassword(de.willuhn.jameica.security.LoginVerifier)
+   */
+  public String getPassword(LoginVerifier verifier) throws Exception
+  {
     I18N i18n = Application.getI18n();
     
     // Machen wir hier gleich mit, weil das bei allen Folgestarts aufgerufen wird
     if (this.username == null)
       this.username = Application.getStartupParams().getUsername();
 
+    // Haben wir das Passwort schon?
     if (this.password != null)
       return this.password;
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Username erfragen, falls noetig
+    // Soll der Username ueberhaupt erfragt werden?
     String s = Customizing.SETTINGS.getString("application.start.username",null);
-    if (s != null && s.length() > 0)
+    if (StringUtils.trimToNull(this.username) == null && StringUtils.trimToNull(s) != null) // nur erfragen, wenn wir ihn noch nicht haben
     {
-      // Wir sollen nach einem Usernamen fragen
       if (Application.inNonInteractiveMode())
       {
         Logger.error(i18n.tr("Jameica läuft im nicht-interaktiven Modus und kein Benutzername via Kommandozeile übergeben"));
@@ -200,18 +221,25 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       BufferedReader keyboard = new BufferedReader(isr);
       this.username = keyboard.readLine();
     }
+    //
+    ////////////////////////////////////////////////////////////////////////////
     
     
-  	this.password = Application.getStartupParams().getPassword();
+    ////////////////////////////////////////////////////////////////////////////
+    // Passwort via Kommandozeile angegeben?
+    this.password = Application.getStartupParams().getPassword();
 
-  	if (this.password != null)
-  	{
+    if (StringUtils.trimToNull(this.password) != null)
+    {
       Logger.info("master password given via commandline");
-      if (this.validateChecksum(this.password)) // Checken, ob das Passwort korrekt ist
-        return this.password;
+      if (verifier == null)
+        return this.password; // kein Verifier verfuegbar, wir muessen der Eingabe glauben
+      
+      if (verifier.verify(this.username,this.password.toCharArray()))
+        return this.password; // Passwort korrekt
 
-      Logger.info("checksum test failed, asking for password in interactive mode");
-  	}
+      Logger.info("commandline password wrong");
+    }
 
     if (Application.inNonInteractiveMode())
     {
@@ -221,18 +249,24 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
     flush();
     System.out.println("");
-		System.out.println(i18n.tr("Bitte geben Sie das Jameica Master-Passwort ein:"));
-		for (int i=0;i<3;++i)
-		{
+    System.out.println(i18n.tr("Bitte geben Sie das Jameica Master-Passwort ein:"));
+    for (int i=0;i<3;++i) // Maximal 3 Versuche
+    {
       this.password = promptPassword();
-			if (this.validateChecksum(this.password))
-				return this.password;
-			System.out.println(i18n.tr("Passwort falsch. Bitte versuchen Sie es erneut:"));
-		}
-		throw new Exception("Wrong jameica keystore password");
+      if (StringUtils.trimToNull(this.password) != null)
+      {
+        if (verifier == null)
+          return this.password; // Kein Verifier verfuegbar, wir muessen der Eingabe glauben
+        
+        if (verifier.verify(this.username,this.password.toCharArray()))
+          return this.password; // Paswort korrekt
+      }
+      System.out.println(i18n.tr("Passwort falsch. Bitte versuchen Sie es erneut:"));
+    }
+    throw new Exception("Wrong jameica keystore password");
   }
 
-	/**
+  /**
 	 * @see de.willuhn.jameica.system.ApplicationCallback#changePassword()
 	 */
 	public void changePassword() throws Exception
@@ -245,11 +279,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
     flush();
 		System.out.print(Application.getI18n().tr("Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\nEs wird anschließend bei jedem Start von Jameica benötigt:"));
-		InputStreamReader isr = new InputStreamReader(System.in);
-		BufferedReader keyboard = new BufferedReader(isr);
-		this.password = keyboard.readLine();
-
-		this.setChecksum(this.password);
+		this.password = promptPassword();
 	}
 
   /**
@@ -580,7 +610,10 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
- * Revision 1.39  2011/07/19 15:24:01  willuhn
+ * Revision 1.40  2011/09/27 12:01:15  willuhn
+ * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
+ *
+ * Revision 1.39  2011-07-19 15:24:01  willuhn
  * @B Die Properties-Datei des Pluginloaders muss auch dann erstellt werden, wenn keine Plugins installiert sind, da sie vom Backup-Service gebraucht wird
  * @N Verdeckte Abfrage des Masterpasswortes an der Konsole
  * @C Leeres Masterpasswort auch an Konsole nicht mehr erlauben

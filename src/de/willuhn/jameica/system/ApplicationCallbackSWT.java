@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.37 $
- * $Date: 2011/07/01 12:03:56 $
+ * $Revision: 1.38 $
+ * $Date: 2011/09/27 12:01:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,6 +15,7 @@ package de.willuhn.jameica.system;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,6 +44,7 @@ import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.CheckTrustMessage;
 import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
+import de.willuhn.jameica.security.LoginVerifier;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -73,37 +75,33 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   public String createPassword() throws Exception
   {
 		this.password = Application.getStartupParams().getPassword();
-		if (this.password != null)
+    if (StringUtils.trimToNull(this.password) != null)
 		{
 			Logger.info("master password given via commandline");
+			return this.password;
 		}
-		else
-		{
-	  	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
-	  	String text = Application.getI18n().tr("Sie starten die Anwendung zum ersten Mal.\n\n" +
-	                                           "Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten. " +
-	                                           "Es wird anschließend bei jedem Start des Programms benötigt.");
-	  	text = Customizing.SETTINGS.getString("application.firststart.text",text);
-	  	
-	  	p.setText(text);
-	  	p.setUsernameText(Customizing.SETTINGS.getString("application.firststart.username",null));
-			p.setTitle(Application.getI18n().tr("Master-Passwort"));
-			p.setMonitor(NewPasswordDialog.MONITOR_PRIMARY);
+			
+  	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
+  	String text = Application.getI18n().tr("Sie starten die Anwendung zum ersten Mal.\n\n" +
+                                           "Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten. " +
+                                           "Es wird anschließend bei jedem Start des Programms benötigt.");
+  	text = Customizing.SETTINGS.getString("application.firststart.text",text);
+  	
+  	p.setText(text);
+  	p.setUsernameText(Customizing.SETTINGS.getString("application.firststart.username",null));
+		p.setTitle(Application.getI18n().tr("Master-Passwort"));
+		p.setMonitor(NewPasswordDialog.MONITOR_PRIMARY);
 
-			try
-			{
-				this.password = (String) p.open();
-				this.username = p.getUsername();
-			}
-			catch (OperationCanceledException e)
-			{
-				throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
-			}
+		try
+		{
+			this.password = (String) p.open();
+			this.username = p.getUsername();
 		}
-		
-		// Wir speichern eine Checksumme des neuen Passwortes.
-		// Dann koennen wir spaeter checken, ob es ok ist.
-		this.setChecksum(this.password);
+		catch (OperationCanceledException e)
+		{
+		  // Koennten wir auch durchwerfen - aber das ist ein besser fuer den User lesbarer Text
+			throw new OperationCanceledException(Application.getI18n().tr("Passwort-Eingabe abgebrochen"),e);
+		}
 		return this.password;
   }
 
@@ -112,31 +110,43 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public String getPassword() throws Exception
   {
+    return this.getPassword(null);
+  }
+
+	/**
+   * @see de.willuhn.jameica.system.ApplicationCallback#getPassword(de.willuhn.jameica.security.LoginVerifier)
+   */
+  public String getPassword(LoginVerifier verifier) throws Exception
+  {
     // Machen wir hier gleich mit, weil das bei allen Folgestarts aufgerufen wird
     if (this.username == null)
       this.username = Application.getStartupParams().getUsername();
     
-  	if (this.password != null)
-  		return password;
+    // Haben wir das Passwort schon?
+    if (this.password != null)
+      return password;
 
-  	// Haben wir ein Passwort via Kommandozeilen-Parameter?
-		this.password = Application.getStartupParams().getPassword();
-		if (password != null)
-		{
-			Logger.info("master password given via commandline");
-			if (this.validateChecksum(this.password)) // Checken, ob das Passwort korrekt ist
-			  return this.password;
+    // Haben wir ein Passwort via Kommandozeilen-Parameter?
+    this.password = Application.getStartupParams().getPassword();
+    if (StringUtils.trimToNull(this.password) != null)
+    {
+      Logger.info("master password given via commandline");
+      if (verifier == null)
+        return this.password; // kein Verifier verfuegbar, wir muessen der Eingabe glauben
+      
+      if (verifier.verify(this.username,this.password.toCharArray()))
+        return this.password; // Passwort korrekt
 
-			Logger.info("checksum test failed, asking for password in interactive mode");
-		}
+      Logger.info("commandline password wrong, asking user");
+    }
 
-		PWD dialog = new PWD();
-  	this.password = (String) dialog.open();
-  	this.username = dialog.getUsername();
-		return this.password;
+    PWD dialog = new PWD(verifier);
+    this.password = (String) dialog.open();
+    this.username = dialog.getUsername();
+    return this.password;
   }
 
-	/**
+  /**
 	 * @see de.willuhn.jameica.system.ApplicationCallback#changePassword()
 	 */
 	public void changePassword() throws Exception
@@ -151,10 +161,6 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		p.setTitle(Application.getI18n().tr("Neues Master-Passwort"));
 
 		this.password = (String) p.open();
-		
-		// Wir speichern eine Checksumme des neuen Passwortes.
-		// Dann koennen wir spaeter checken, ob es ok ist.
-		this.setChecksum(this.password);
 	}
 
   /**
@@ -390,12 +396,16 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   private class PWD extends PasswordDialog
   {
+    private LoginVerifier verifier = null;
 
     /**
+     * ct.
+     * @param verifier optionaler Login-Verifier.
      */
-    public PWD()
+    public PWD(LoginVerifier verifier)
     {
       super(PWD.POSITION_CENTER);
+      this.verifier = verifier;
       this.setText(Application.getI18n().tr("Bitte geben Sie das Master-Passwort ein."));
       this.setUsernameText(Customizing.SETTINGS.getString("application.start.username",null));
       this.setTitle(Application.getI18n().tr("Master-Passwort"));
@@ -407,23 +417,22 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
      */
     protected boolean checkPassword(String password)
     {
-      if (password == null)
+      if (StringUtils.trimToNull(password) == null)
       {
         setErrorText(Application.getI18n().tr("Bitte geben Sie Ihr Master-Passwort ein.") + " " + getRetryString());
         return false;
       }
-      try
+      
+      if (this.verifier == null)
+        return true; // Keine Moeglichkeit zur Pruefung
+      
+      boolean b = this.verifier.verify(this.getUsername(),password.toCharArray());
+      if (!b)
       {
-        boolean b = validateChecksum(password);
-        if (!b)
-          setErrorText(Application.getI18n().tr("Passwort falsch.") + " " + getRetryString());
-        return b && super.checkPassword(password);
+        Logger.warn("master password wrong, remaining retries: " + this.getRemainingRetries());
+        setErrorText(Application.getI18n().tr("Passwort falsch.") + " " + getRetryString());
       }
-      catch (Exception e)
-      {
-        Logger.error("error while checking password",e);
-      }
-      return false;
+      return b && super.checkPassword(password);
     }
 
     /**
@@ -455,7 +464,10 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.37  2011/07/01 12:03:56  willuhn
+ * Revision 1.38  2011/09/27 12:01:15  willuhn
+ * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
+ *
+ * Revision 1.37  2011-07-01 12:03:56  willuhn
  * @N so, ich hoffe, jetzt hat der Dialog immer eine brauchbare Groesse ;)
  *
  * Revision 1.36  2011-06-30 15:53:32  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.63 $
- * $Date: 2011/09/26 11:43:35 $
+ * $Revision: 1.64 $
+ * $Date: 2011/09/27 12:01:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,9 +12,11 @@
  **********************************************************************/
 package de.willuhn.jameica.security;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -54,6 +56,7 @@ import de.willuhn.jameica.security.crypto.RSAEngine;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 /**
@@ -74,6 +77,7 @@ public class SSLFactory
   private final static String SYSTEM_ALIAS = "jameica";
 
   private CertificateFactory factory       = null;
+  private File keystoreFile                = null;
 	private KeyStore keystore							   = null;
 	private X509Certificate certificate 	   = null;
 	private PrivateKey privateKey 				   = null;
@@ -198,16 +202,14 @@ public class SSLFactory
 		Logger.info("  creating keystore");
     this.keystore = KeyStore.getInstance("JKS");
 
-		String pw = this.callback.createPassword();
+		char[] pw = this.callback.createPassword().toCharArray();
 
-		this.keystore.load(null,pw.toCharArray());
+		this.keystore.load(null,pw);
 
 		Logger.info("  saving certificates");
-		this.keystore.setKeyEntry(SYSTEM_ALIAS,this.privateKey,
-															this.callback.getPassword().toCharArray(),
-															new X509Certificate[]{this.certificate});
+		this.keystore.setKeyEntry(SYSTEM_ALIAS,this.privateKey,pw,new X509Certificate[]{this.certificate});
 
-		storeKeystore(true);
+		storeKeystore();
 		Application.getCallback().getStartupMonitor().addPercentComplete(10);
 		//
 		////////////////////////////////////////////////////////////////////////////
@@ -241,28 +243,28 @@ public class SSLFactory
 															new X509Certificate[]{cert});
 
 		Logger.warn("  saving changed keystore");
-		storeKeystore(false);		
+		storeKeystore();
 		Logger.warn("keystore password successfully changed");
 	}
 
 	/**
 	 * Speichert den Keystore.
-   * @param created true, wenn der Keystore frisch erstellt wurde.
    * @throws Exception
    */
-  private synchronized void storeKeystore(boolean created) throws Exception
+  private synchronized void storeKeystore() throws Exception
 	{
 		OutputStream os = null;
+		File target     = this.getKeyStoreFile();
+		boolean changed = target.exists();
 		try
 		{
-			Logger.info("storing keystore: " + getKeyStoreFile().getAbsolutePath());
-			os = new FileOutputStream(getKeyStoreFile());
+			Logger.info("storing keystore: " + target);
+			os = new FileOutputStream(target);
 			this.keystore.store(os,this.callback.getPassword().toCharArray());
 		}
 		finally
 		{
-      if (os != null)
-        os.close();
+		  IOUtil.close(os);
 
       // Force reload
       this.keystore    = null;
@@ -274,7 +276,10 @@ public class SSLFactory
       
       // Ist eigentlich nur fuer den allerersten Start von Jameica noetig,
       // weil die MessagingFactory sonst zu frueh initialisiert wird
-      if (!created)
+      // Die Message verschicken wir nur, wenn die Keystore-Datei bereits
+      // existiert. Andernfalls wuerde die MessagingFactory beim ersten
+      // Start von Jameica (wo der Keystore neu angelegt wird) zu frueh initialisiert
+      if (changed)
         Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
 		}
 	}
@@ -285,7 +290,9 @@ public class SSLFactory
 	 */
 	public File getKeyStoreFile()
 	{
-		return new File(Application.getConfig().getConfigDir() + File.separator + "jameica.keystore");
+	  if (this.keystoreFile == null)
+		  this.keystoreFile = new File(Application.getConfig().getConfigDir() + File.separator + "jameica.keystore");
+	  return this.keystoreFile;
 	}
 
   /**
@@ -427,26 +434,43 @@ public class SSLFactory
 		if (keystore != null)
 			return keystore;
 
-		InputStream is = null;
-		try
-		{
-			File f = getKeyStoreFile();
-			Logger.info("reading keystore from file " + f.getAbsolutePath());
-			is = new FileInputStream(f);
+		final File f = getKeyStoreFile();
+		if (!f.exists() || !f.isFile() || !f.canRead())
+		  throw new IOException("keystore " + f + " not found or not readable");
+		
+		Logger.info("init keystore " + f);
+    this.keystore = KeyStore.getInstance("JKS");
 
-			Logger.info("init keystore");
-      this.keystore = KeyStore.getInstance("JKS");
-
-			Logger.info("reading keys");
-			this.keystore.load(is,this.callback.getPassword().toCharArray());
-      Logger.info("keystore loaded successfully");
-
-			return this.keystore;
-		}
-		finally
-		{
-		  IOUtil.close(is);
-		}
+		LoginVerifier verifier = new LoginVerifier() {
+      public boolean verify(String username, char[] password)
+      {
+        InputStream is = null;
+        try
+        {
+          is = new BufferedInputStream(new FileInputStream(f));
+          keystore.load(is,password);
+          return true;
+        }
+        catch (IOException ioe)
+        {
+          Logger.write(Level.DEBUG,"master password seems to be wrong",ioe);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to unlock keystore",e);
+        }
+        finally
+        {
+          IOUtil.close(is);
+        }
+        return false;
+      }
+    };
+    Logger.info("trying to unlock keystore");
+    this.callback.getPassword(verifier); // Das Passwort selbst brauchen wir jetzt gar nicht mehr
+    
+    Logger.info("keystore loaded successfully");
+    return this.keystore;
 	}
 	
   /**
@@ -478,7 +502,7 @@ public class SSLFactory
       {
         Logger.warn("deleting certificate for alias " + alias);
         getKeyStore().deleteEntry(alias);
-        storeKeystore(false);
+        storeKeystore();
         return;
       }
     }
@@ -583,7 +607,7 @@ public class SSLFactory
 
     Logger.warn("adding certificate to keystore. alias: " + alias);
     getKeyStore().setCertificateEntry(alias,cert);
-    storeKeystore(false);
+    storeKeystore();
     return alias;
   } 
 
@@ -660,7 +684,10 @@ public class SSLFactory
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.63  2011/09/26 11:43:35  willuhn
+ * Revision 1.64  2011/09/27 12:01:15  willuhn
+ * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
+ *
+ * Revision 1.63  2011-09-26 11:43:35  willuhn
  * @C Setzen des SSL-Socketfactory in extra Service
  * @C Log-Level in Bootloader
  *

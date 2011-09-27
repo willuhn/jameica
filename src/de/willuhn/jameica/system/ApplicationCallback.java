@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallback.java,v $
- * $Revision: 1.15 $
- * $Date: 2010/11/22 11:32:04 $
+ * $Revision: 1.16 $
+ * $Date: 2011/09/27 12:01:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ import java.security.cert.X509Certificate;
 
 import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
+import de.willuhn.jameica.security.LoginVerifier;
 import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
 
@@ -52,8 +53,8 @@ public interface ApplicationCallback
   public String getUsername();
   
 	/**
-	 * Wird von der SSLFactory aufgerufen, wenn ein neuer Keystore
-	 * erstellt wird und hierzu ein neues Passwort benoetigt wird.
+	 * Wird beim ersten Start von Jameica aufgerufen, um ein
+	 * neues Master-Passwort festzulegen.
 	 * Es ist dabei der implementierenden Klasse ueberlassen, wie
 	 * diese Abfrage aussieht. Sprich: Ob sie nun nur ein Eingabefeld
 	 * zur Vergabe des Passwortes anzeigt oder zwei, wovon letzteres
@@ -65,28 +66,35 @@ public interface ApplicationCallback
 	public String createPassword() throws Exception;
 	
 	/**
-	 * Wird aufgerufen, wenn die SSLFactory das Passwort fuer den
-	 * existierenden Keystore benoetigt.
-	 * Sie fragt dies jedesmal, wenn das Passwort benoetigt wird.
-	 * Also beim Oeffnen des Keystores, beim Erzeugen eines SSLContextes
-	 * und beim Speichern des Keystores. Es ist daher der implementierenden
-	 * Klasse ueberlassen, das eingegebene Passwort ueber die Dauer
-	 * der aktuellen Jameica-Sitzung zu cachen, um den Benutzer nicht
-	 * dauernd mit der Neueingabe des Passwortes zu nerven.
+	 * Liefert das Master-Passwort der Jameica-Installation.
+	 * Es ist der implementierenden Klasse ueberlassen, das eingegebene
+	 * Passwort ueber die Dauer der aktuellen Jameica-Sitzung zu cachen, um den
+	 * Benutzer nicht dauernd mit der Neueingabe des Passwortes zu nerven.
 	 * @return das existierende Passwort.
 	 * @throws Exception
 	 */
 	public String getPassword() throws Exception;
 	
+  /**
+   * Liefert das Master-Passwort der Jameica-Installation.
+   * Es ist der implementierenden Klasse ueberlassen, das eingegebene
+   * Passwort ueber die Dauer der aktuellen Jameica-Sitzung zu cachen, um den
+   * Benutzer nicht dauernd mit der Neueingabe des Passwortes zu nerven.
+   * @param verifier optionaler Login-Verifier, der von der implementierenden Klasse
+   * verwendet werden kann, um das Passwort zu auf Korrektheit pruefen, bevor
+   * die Methode verlassen wird.
+   * @return das existierende Passwort.
+   * @throws Exception
+   */
+  public String getPassword(LoginVerifier verifier) throws Exception;
+
 	/**
 	 * Ueber diese Funktion kann das Passwort des Keystores geaendert werden.
 	 * Alles, was die implementierende Klasse zu tun hat, ist einen
 	 * Dialog zur Passwort-Aenderung anzuzeigen und von nun an
 	 * in der Funktion <code>getPassword()</code> das neue Passwort zu
-	 * liefern. Es ist Sache des Aufrufers, anschliessend, noch
-	 * <code>Application.getSSLFactory.storeKeyStore()</code> auszufuehren,
-	 * um die Aenderung dauerhaft zu speichern.
-	 * Nochmals: Es ist nicht Aufgabe des ApplicationCallbacks, das Passwort
+	 * liefern.
+	 * Nochmal: Es ist nicht Aufgabe des ApplicationCallbacks, das Passwort
 	 * im System zu aendern sondern lediglich das neue Passwort vom Benutzer
 	 * abzufragen und es anschliessend ueber <code>getPassword()</code>
 	 * zur Verfuegung zu stellen.
@@ -216,7 +224,10 @@ public interface ApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallback.java,v $
- * Revision 1.15  2010/11/22 11:32:04  willuhn
+ * Revision 1.16  2011/09/27 12:01:15  willuhn
+ * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
+ *
+ * Revision 1.15  2010-11-22 11:32:04  willuhn
  * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
  *
  * Revision 1.14  2010-08-16 10:44:21  willuhn

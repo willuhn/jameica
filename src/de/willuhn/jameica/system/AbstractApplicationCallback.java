@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/AbstractApplicationCallback.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/07/19 15:24:01 $
+ * $Revision: 1.9 $
+ * $Date: 2011/09/27 12:01:15 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -14,8 +14,6 @@
 package de.willuhn.jameica.system;
 
 import java.net.InetAddress;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
 
 import javax.security.cert.X509Certificate;
 
@@ -25,8 +23,6 @@ import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.logging.Logger;
-import de.willuhn.security.Checksum;
-import de.willuhn.util.Base64;
 
 /**
  * Abstrakte Basis-Implementierung des Application-Callback.
@@ -34,6 +30,20 @@ import de.willuhn.util.Base64;
 public abstract class AbstractApplicationCallback implements ApplicationCallback
 {
   Settings settings = new Settings(ApplicationCallback.class);
+  
+  /**
+   * ct.
+   */
+  public AbstractApplicationCallback()
+  {
+    // Migration: Loeschen der Checksummen - werden nicht mehr gebraucht
+    if (settings.getString("jameica.system.callback.checksum",null) != null)
+    {
+      Logger.info("removing obsolete checksums");
+      settings.setAttribute("jameica.system.callback.checksum",(String) null);
+      settings.setAttribute("jameica.system.callback.checksum.salt",(String) null);
+    }
+  }
 
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#getHostname()
@@ -122,97 +132,15 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
     
     return null; // keiner zustaendig. Dann soll es die konkrete Callback-Implementierung machen
   }
-  
-  /**
-   * Prueft, ob die gespeicherte Checksumme mit der des eingegebenen Passwort uebereinstimmt.
-   * @param password das zu pruefende Passwort.
-   * @return true, wenn die Checksumme des Passworts mit der gespeicherten Checksumme uebereinstimmt.
-   * @throws Exception
-   */
-  boolean validateChecksum(String password) throws Exception
-  {
-    if (password == null || password.length() == 0)
-    {
-      Logger.warn("no password given");
-      return false;
-    }
-    
-    String checksum = settings.getString("jameica.system.callback.checksum",null);
-    String salt     = settings.getString("jameica.system.callback.checksum.salt",null);
-    
-    if (checksum == null || checksum.length() == 0)
-    {
-      Logger.warn("no checksum found, unable to validate password");
-      return true;
-    }
-    
-    Logger.debug("checksum found, testing");
-    String expected = calculateChecksum(password,salt);
-    if (expected.equals(checksum))
-    {
-      // Checksumme ist korrekt. Wir migrieren die Checksumme bei Bedarf.
-      if (salt == null)
-      {
-        Logger.info("migrating checksum");
-        setChecksum(password);
-      }
-      return true;
-    }
-    return false;
-  }
-  
-  /**
-   * Berechnet die Checksumme fuer das Passwort.
-   * @param password das Passwort.
-   * @param salt das Salt.
-   * @return die Checksumme.
-   * @throws Exception
-   */
-  private String calculateChecksum(String password, String salt) throws Exception
-  {
-    // Wir haben kein Salt. Dann ist es noch die alte Checksumme.
-    if (salt == null)
-      return Checksum.md5(password.getBytes());
-    
-    // Wir haben ein Salt. Also berechnen wir die neue Checksumme.
-    MessageDigest digest = MessageDigest.getInstance(Checksum.SHA256);
-    digest.update(Base64.decode(salt)); // Salt hinzufuegen
-    byte[] input = digest.digest(password.getBytes("UTF-8")); // Passwort hinzufuegen
-
-    // und jetzt 1000 Iterationen davon
-    for (int i=0;i<1000;++i)
-    {
-      input = digest.digest(input);
-    }
-    return Base64.encode(input);
-  }
-  
-  /**
-   * Speichert eine Checksumme des Passwortes.
-   * @param password das Passwort.
-   * @throws Exception
-   */
-  void setChecksum(String password) throws Exception
-  {
-    // Wir erzeugen immer ein neues Salt
-    Logger.info("creating salt");
-    byte[] data = new byte[8];
-    SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-    random.nextBytes(data);
-    String salt = Base64.encode(data);
-    settings.setAttribute("jameica.system.callback.checksum.salt",salt);
-
-    // Checksum berechnen und speichern
-    String checksum = calculateChecksum(password,salt);
-    settings.setAttribute("jameica.system.callback.checksum",checksum);
-    Logger.info("checksum saved");
-  }
 }
 
 
 /*********************************************************************
  * $Log: AbstractApplicationCallback.java,v $
- * Revision 1.8  2011/07/19 15:24:01  willuhn
+ * Revision 1.9  2011/09/27 12:01:15  willuhn
+ * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
+ *
+ * Revision 1.8  2011-07-19 15:24:01  willuhn
  * @B Die Properties-Datei des Pluginloaders muss auch dann erstellt werden, wenn keine Plugins installiert sind, da sie vom Backup-Service gebraucht wird
  * @N Verdeckte Abfrage des Masterpasswortes an der Konsole
  * @C Leeres Masterpasswort auch an Konsole nicht mehr erlauben
