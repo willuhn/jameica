@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.64 $
- * $Date: 2011/09/27 12:01:15 $
+ * $Revision: 1.65 $
+ * $Date: 2011/09/27 12:20:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -142,9 +142,10 @@ public class SSLFactory
 		////////////////////////////////////////////////////////////////////////////
 		// Zertifikat erstellen
 		Logger.info("  generating selfsigned x.509 certificate");
+    String hostname = Application.getCallback().getHostname();
+    Logger.info("  using hostname: " + hostname);
+    
 		Hashtable attributes = new Hashtable();
-		String hostname = Application.getCallback().getHostname();
-		Logger.info("  using hostname: " + hostname);
 		attributes.put(X509Name.CN,hostname);
     attributes.put(X509Name.O,"Jameica Certificate");
 
@@ -163,9 +164,6 @@ public class SSLFactory
     }
 		X509Name user   = new X509Name(null,attributes); // Der erste Parameter ist ein Vector mit der Reihenfolge der Attribute. Brauchen wir aber nicht
     X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
-
-
-    Logger.info("  generating selfsigned x.509 certificate");
 
     byte[] serno = new byte[8];
     SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
@@ -201,12 +199,11 @@ public class SSLFactory
 		// Keystore erstellen
 		Logger.info("  creating keystore");
     this.keystore = KeyStore.getInstance("JKS");
-
 		char[] pw = this.callback.createPassword().toCharArray();
 
 		this.keystore.load(null,pw);
 
-		Logger.info("  saving certificates");
+		Logger.info("  saving system certificate");
 		this.keystore.setKeyEntry(SYSTEM_ALIAS,this.privateKey,pw,new X509Certificate[]{this.certificate});
 
 		storeKeystore();
@@ -273,12 +270,8 @@ public class SSLFactory
       this.publicKey   = null;
       this.sslContext  = null;
       getKeyStore();
-      
-      // Ist eigentlich nur fuer den allerersten Start von Jameica noetig,
-      // weil die MessagingFactory sonst zu frueh initialisiert wird
-      // Die Message verschicken wir nur, wenn die Keystore-Datei bereits
-      // existiert. Andernfalls wuerde die MessagingFactory beim ersten
-      // Start von Jameica (wo der Keystore neu angelegt wird) zu frueh initialisiert
+
+      // Nur bei Aenderungen schicken, nicht bei Neuanlage
       if (changed)
         Application.getMessagingFactory().sendMessage(new KeystoreChangedMessage());
 		}
@@ -440,34 +433,29 @@ public class SSLFactory
 		
 		Logger.info("init keystore " + f);
     this.keystore = KeyStore.getInstance("JKS");
+    KeystoreVerifier verifier = new KeystoreVerifier(this.keystore,f);
 
-		LoginVerifier verifier = new LoginVerifier() {
-      public boolean verify(String username, char[] password)
-      {
-        InputStream is = null;
-        try
-        {
-          is = new BufferedInputStream(new FileInputStream(f));
-          keystore.load(is,password);
-          return true;
-        }
-        catch (IOException ioe)
-        {
-          Logger.write(Level.DEBUG,"master password seems to be wrong",ioe);
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to unlock keystore",e);
-        }
-        finally
-        {
-          IOUtil.close(is);
-        }
-        return false;
-      }
-    };
     Logger.info("trying to unlock keystore");
-    this.callback.getPassword(verifier); // Das Passwort selbst brauchen wir jetzt gar nicht mehr
+    String password = this.callback.getPassword(verifier);
+    
+    // Wir pruefen jetzt noch, ob der Keystore bereits im Verifier geladen
+    // wurde. Falls der Callback den Verifier gar nicht genutzt hat, dann
+    // wurde auch der Keystore noch nicht geladen. In dem Fall tun wir
+    // das jetzt noch mit dem angegeben Passwort.
+    if (!verifier.verified)
+    {
+      InputStream is = null;
+      try
+      {
+        Logger.info("trying to read keystore");
+        is = new BufferedInputStream(new FileInputStream(f));
+        this.keystore.load(is,password.toCharArray());
+      }
+      finally
+      {
+        IOUtil.close(is);
+      }
+    }
     
     Logger.info("keystore loaded successfully");
     return this.keystore;
@@ -679,12 +667,61 @@ public class SSLFactory
     Engine e = new RSAEngine();
     e.decrypt(is,os);
   }
+  
+  /**
+   * Uebernimmt die Pruefung des Passwortes.
+   */
+  private class KeystoreVerifier implements LoginVerifier
+  {
+    private KeyStore keystore = null;
+    private File file         = null;
+    private boolean verified  = false;
+    
+    /**
+     * ct.
+     * @param keystore der Keystore.
+     * @param file die Datei mit dem Keystore.
+     */
+    private KeystoreVerifier(KeyStore keystore, File file)
+    {
+      this.keystore = keystore;
+      this.file     = file;
+    }
+      
+    public boolean verify(String username, char[] password)
+    {
+      InputStream is = null;
+      try
+      {
+        is = new BufferedInputStream(new FileInputStream(this.file));
+        this.keystore.load(is,password);
+        this.verified = true;
+        return true;
+      }
+      catch (IOException ioe)
+      {
+        Logger.write(Level.DEBUG,"master password seems to be wrong",ioe);
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to unlock keystore",e);
+      }
+      finally
+      {
+        IOUtil.close(is);
+      }
+      return false;
+    }
+  }
 }
 
 
 /**********************************************************************
  * $Log: SSLFactory.java,v $
- * Revision 1.64  2011/09/27 12:01:15  willuhn
+ * Revision 1.65  2011/09/27 12:20:01  willuhn
+ * @B Wenn der Verifier nicht angewendet wurde (weil der Callback das Passwort schon gecached hatte), wurde der Keystore nicht initialisiert
+ *
+ * Revision 1.64  2011-09-27 12:01:15  willuhn
  * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
  *
  * Revision 1.63  2011-09-26 11:43:35  willuhn
@@ -710,221 +747,4 @@ public class SSLFactory
  *
  * Revision 1.57  2011-02-08 18:27:53  willuhn
  * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
- *
- * Revision 1.56  2010-09-13 16:37:46  willuhn
- * @B race condition beim allerersten Start
- *
- * Revision 1.55  2010-08-06 09:26:28  willuhn
- * *** empty log message ***
- *
- * Revision 1.54  2010/06/14 11:30:49  willuhn
- * @N Aufruf indirekt via Reflection, da wir sonst eine Compile-Abhaengigkeit zu Java 1.6 haben
- *
- * Revision 1.53  2010/06/14 10:06:18  willuhn
- * @N BUGZILLA 872
- *
- * Revision 1.52  2010/04/14 11:06:42  willuhn
- * @C seed unnoetig kompliziert
- *
- * Revision 1.51  2010/03/11 09:45:20  willuhn
- * @B System-Properties entfernt - fuehrte dazu, dass auch der System-Truststore nur die Jameica-Zertifikate kannte.
- *
- * Revision 1.50  2009/10/06 13:36:26  willuhn
- * @N BouncyCastle auf 1.44 (vorher 1.24) aktualisiert. Wurde ja auch mal Zeit - die alte Version stammte noch von 2004! ;)
- * @C Der Private-Key des Jameica-Systemzertifikats wird jetzt mit 2048 Bit Schluessellaenge erstellt
- *
- * Revision 1.49  2009/01/18 15:20:31  willuhn
- * @C Wenn ein Zertifikat bereits installiert ist, dann nicht ueberschreiben (ist ja auch nicht noetig, da es sich gar nicht geaendert hat) sondern Import einfach ignorieren. Das sollte auch die nervigen immerwiederkehrenden "Ueberschreiben?"-Dialoge unter GCJ erledigen
- *
- * Revision 1.48  2009/01/18 00:03:46  willuhn
- * @N SSLFactory#addTrustedCertificate() liefert jetzt den erzeugten Alias-Namen des Keystore-Entries
- * @N SSLFactory#getTrustedCertificate(String) zum Abrufen eines konkreten Zertifikates
- *
- * Revision 1.47  2009/01/06 23:58:03  willuhn
- * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
- *
- * Revision 1.46  2008/12/17 11:50:32  willuhn
- * @N User muss jetzt nicht mehr die kompletten Zertifikatskette abnicken, es genuegt das Peer-Zertifikat. Verhalten jetzt so in Browsern typischerweise. Das CA-Zertifikat wird also nicht mehr implizit importiert
- *
- * Revision 1.45  2008/12/16 12:45:26  willuhn
- * @N Erweiterte Key-Usage
- *
- * Revision 1.44  2008/02/13 01:04:34  willuhn
- * @N Jameica auf neuen Bootloader umgestellt
- * @C Markus' Aenderungen RMI-Registrierung uebernommen
- *
- * Revision 1.43  2007/10/30 11:49:28  willuhn
- * @C RMI-SSL Zeug nochmal gemaess http://java.sun.com/j2se/1.4.2/docs/guide/rmi/socketfactory/index.html ueberarbeitet. Funktioniert aber trotzdem noch nicht
- *
- * Revision 1.42  2007/06/21 23:12:01  willuhn
- * @R Key usage entfernt
- *
- * Revision 1.41  2007/06/21 22:44:48  willuhn
- * @B Zert.-Laufzeit von 8 auf 10 Jahren zurueckgeaendert
- *
- * Revision 1.40  2007/06/21 22:27:54  willuhn
- * @C Nacharbeiten zu SSL-Fixes
- *
- * Revision 1.39  2007/06/21 18:34:24  willuhn
- * @B das uebliche Problem: "bad_certificate" bei Client-Server-Setup (RMI over SSL)
- *
- * Revision 1.38  2007/06/21 11:03:01  willuhn
- * @C ServiceSettings in ServiceFactory verschoben
- * @N Aenderungen an Service-Bindings sofort uebernehmen
- * @C Moeglichkeit, Service-Bindings wieder entfernen zu koennen
- *
- * Revision 1.37  2007/06/21 09:56:30  willuhn
- * @N Remote Service-Bindings nun auch in Standalone-Mode moeglich
- * @N Keine CertificateException mehr beim ersten Start im Server-Mode
- *
- * Revision 1.36  2007/04/18 14:37:29  willuhn
- * @N changed untrusted dir from "incoming" to "untrusted"
- *
- * Revision 1.35  2007/04/18 14:01:45  willuhn
- * @N method to list untrusted certs
- *
- * Revision 1.34  2007/03/17 16:41:22  willuhn
- * @C changed loglevel
- *
- * Revision 1.33  2007/02/26 10:20:33  willuhn
- * @N Pruefen, ob Keystore-File > 0
- *
- * Revision 1.32  2007/01/25 10:45:13  willuhn
- * *** empty log message ***
- *
- * Revision 1.31  2007/01/04 15:24:21  willuhn
- * @C certificate import handling
- * @B Bug 330
- *
- * Revision 1.30  2006/11/16 23:46:03  willuhn
- * @N launch type in cert creation
- * @N new row in cert list
- *
- * Revision 1.29  2006/11/15 00:30:44  willuhn
- * @C Bug 326
- *
- * Revision 1.28  2006/11/10 00:38:50  willuhn
- * @N notify when keystore changed
- *
- * Revision 1.27  2006/10/31 23:35:12  willuhn
- * @N Benachrichtigen der SSLRMISocketFactory wenn sich Keystore geaendert hat
- *
- * Revision 1.26  2006/10/28 01:05:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.25  2006/10/06 13:07:46  willuhn
- * @B Bug 185, 211
- *
- * Revision 1.24  2005/10/24 20:40:48  web0
- * @C rollback to 2004/06
- *
- * Revision 1.20  2005/06/27 21:53:51  web0
- * @N ability to import own certifcates
- *
- * Revision 1.19  2005/06/27 13:58:18  web0
- * @N auto answer in application callback
- *
- * Revision 1.18  2005/06/24 14:55:56  web0
- * *** empty log message ***
- *
- * Revision 1.17  2005/06/21 20:02:03  web0
- * @C cvs merge
- *
- * Revision 1.16  2005/06/15 16:10:57  web0
- * @B javadoc fixes
- *
- * Revision 1.15  2005/06/10 22:59:35  web0
- * @N Loeschen von Zertifikaten
- *
- * Revision 1.14  2005/06/10 22:13:09  web0
- * @N new TabGroup
- * @N extended Settings
- *
- * Revision 1.13  2005/06/10 10:12:26  web0
- * @N Zertifikats-Dialog ergonomischer gestaltet
- * @C TrustManager prueft nun zuerst im Java-eigenen Keystore
- *
- * Revision 1.12  2005/06/09 23:07:47  web0
- * @N certificate checking activated
- *
- * Revision 1.11  2005/04/20 07:02:07  web0
- * *** empty log message ***
- *
- * Revision 1.10  2005/03/17 22:52:34  web0
- * @B linewraps
- * @B removed testcode
- *
- * Revision 1.9  2005/03/17 22:44:10  web0
- * @N added fallback if system is not able to determine hostname
- *
- * Revision 1.8  2005/03/15 01:35:58  web0
- * @B SSL fixes
- *
- * Revision 1.7  2005/03/03 23:47:51  web0
- * @B Bugzilla http://www.willuhn.de/bugzilla/show_bug.cgi?id=17
- *
- * Revision 1.6  2005/03/01 22:56:48  web0
- * @N master password can now be changed
- *
- * Revision 1.5  2005/02/19 16:53:40  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2005/02/18 11:06:13  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2005/01/30 20:54:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2005/01/19 02:14:00  willuhn
- * @N Wallet zum Verschluesseln von Benutzerdaten
- *
- * Revision 1.16  2005/01/15 16:20:32  willuhn
- * *** empty log message ***
- *
- * Revision 1.15  2005/01/14 00:48:56  willuhn
- * *** empty log message ***
- *
- * Revision 1.14  2005/01/13 19:31:37  willuhn
- * @C SSLFactory geaendert
- * @N Settings auf property-Format umgestellt
- *
- * Revision 1.13  2005/01/12 14:04:36  willuhn
- * @N netscape key usage
- *
- * Revision 1.12  2005/01/12 11:32:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2005/01/12 01:44:57  willuhn
- * @N added test https server
- *
- * Revision 1.10  2005/01/12 00:59:38  willuhn
- * *** empty log message ***
- *
- * Revision 1.9  2005/01/12 00:17:17  willuhn
- * @N JameicaTrustManager
- *
- * Revision 1.8  2005/01/11 00:52:52  willuhn
- * @RMI over SSL works
- *
- * Revision 1.7  2005/01/11 00:00:52  willuhn
- * @N SSLFactory
- *
- * Revision 1.6  2005/01/07 19:01:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2005/01/07 18:08:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2004/11/12 18:23:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2004/11/04 22:41:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/11/04 19:29:22  willuhn
- * @N TextAreaInput
- *
- * Revision 1.1  2004/08/31 18:57:23  willuhn
- * *** empty log message ***
- *
  **********************************************************************/
