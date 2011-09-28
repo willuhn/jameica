@@ -1,7 +1,7 @@
 /*******************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.149 $
- * $Date: 2011/08/30 16:02:23 $
+ * $Revision: 1.150 $
+ * $Date: 2011/09/28 12:04:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,6 +55,7 @@ import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.JameicaException;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.system.Settings;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -871,6 +872,7 @@ public class GUI implements ApplicationController
       }
     }
 
+    gui.display.setWarnings(Logger.getLevel().getValue() == Level.DEBUG.getValue());
     return gui.display;
   }
 
@@ -998,7 +1000,10 @@ public class GUI implements ApplicationController
 
 /*********************************************************************
  * $Log: GUI.java,v $
- * Revision 1.149  2011/08/30 16:02:23  willuhn
+ * Revision 1.150  2011/09/28 12:04:38  willuhn
+ * @N Warnings des Widget-Toolkits auf der Console deaktivieren, wenn nicht im Debug-Mode
+ *
+ * Revision 1.149  2011-08-30 16:02:23  willuhn
  * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
  *
  * Revision 1.148  2011-08-18 16:55:24  willuhn
