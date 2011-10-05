@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/ManifestMessageConsumer.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/08/31 07:46:41 $
+ * $Revision: 1.5 $
+ * $Date: 2011/10/05 16:51:16 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -11,6 +11,7 @@
 
 package de.willuhn.jameica.messaging;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import de.willuhn.jameica.plugin.AbstractPlugin;
@@ -54,7 +55,9 @@ public class ManifestMessageConsumer implements MessageConsumer
     MessagingFactory factory = Application.getMessagingFactory();
     BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
     
-    List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
+    List<Manifest> list = new LinkedList<Manifest>();
+    list.addAll(Application.getPluginLoader().getInstalledManifests()); // die Plugins
+    list.add(Application.getManifest()); // Jameica selbst
     for (Manifest mf:list)
     {
       ConsumerDescriptor[] consumers = mf.getMessageConsumers();
@@ -78,11 +81,20 @@ public class ManifestMessageConsumer implements MessageConsumer
         
         try
         {
-          // Wir laden die Klasse ueber den Classloader des Plugins
-          AbstractPlugin plugin = Application.getPluginLoader().getPlugin(mf.getPluginClass());
-          MultipleClassLoader loader = plugin.getResources().getClassLoader();
-
-          Class c = loader.load(classname);
+          Class c = null;
+          
+          if (mf.isSystemManifest())
+          {
+            // ueber den System-Classloader laden
+            c = Application.getClassLoader().load(classname);
+          }
+          else
+          {
+            // Wir laden die Klasse ueber den Classloader des Plugins
+            AbstractPlugin plugin = Application.getPluginLoader().getPlugin(mf.getPluginClass());
+            MultipleClassLoader loader = plugin.getResources().getClassLoader();
+            c = loader.load(classname);
+          }
           MessageConsumer mc = (MessageConsumer) beanService.get(c);
           
           // Wir registrieren hier nur Consumer, die NICHT das autoRegister-Flag gesetzt
@@ -116,7 +128,10 @@ public class ManifestMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: ManifestMessageConsumer.java,v $
- * Revision 1.4  2011/08/31 07:46:41  willuhn
+ * Revision 1.5  2011/10/05 16:51:16  willuhn
+ * @N Auch MessageConsumer beruecksichtigen, die im System-Manifest von Jameica stehen
+ *
+ * Revision 1.4  2011-08-31 07:46:41  willuhn
  * @B Compile-Fixes
  *
  * Revision 1.3  2011-08-30 15:51:11  willuhn
