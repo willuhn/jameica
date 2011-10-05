@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/10/05 12:19:54 $
+ * $Revision: 1.12 $
+ * $Date: 2011/10/05 16:49:33 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -51,9 +51,10 @@ public class DayRendererImpl implements DayRenderer
   // Cache fuer die Farb-Ressourcen
   private Map<RGB,Color> colorMap = new HashMap<RGB,Color>();
   
-  private Composite comp    = null; // Unser Container-Composite
-  private Label day         = null; // Label mit dem Tag des Monats
-  private Composite content = null; // Das Composite fuer die Termine
+  private Composite comp           = null; // Unser Container-Composite
+  private Label day                = null; // Label mit dem Tag des Monats
+  private ScrolledComposite scroll = null; // Der Scroll-Container
+  private Composite content        = null; // Das Composite fuer die Termine
   
   
   /**
@@ -80,10 +81,10 @@ public class DayRendererImpl implements DayRenderer
     this.day = new Label(this.comp, SWT.RIGHT);
     this.day.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-    final ScrolledComposite scroll = new ScrolledComposite(this.comp,SWT.V_SCROLL);
-    scroll.setLayoutData(new GridData(GridData.FILL_BOTH));
-    scroll.setLayout(new GridLayout(1,false));
-    scroll.addListener(SWT.Resize, new Listener() {
+    this.scroll = new ScrolledComposite(this.comp,SWT.V_SCROLL);
+    this.scroll.setLayoutData(new GridData(GridData.FILL_BOTH));
+    this.scroll.setLayout(new GridLayout(1,false));
+    this.scroll.addListener(SWT.Resize, new Listener() {
       public void handleEvent(Event event) {
         content.setSize(content.computeSize(scroll.getClientArea().width,SWT.DEFAULT));
       }
@@ -92,7 +93,7 @@ public class DayRendererImpl implements DayRenderer
     this.content = new Composite(scroll,SWT.NONE);
     this.content.setLayoutData(new GridData(GridData.FILL_BOTH));
     this.content.setLayout(new GridLayout(1,false));
-    scroll.setContent(this.content);
+    this.scroll.setContent(this.content);
   }
   
   /**
@@ -167,6 +168,9 @@ public class DayRendererImpl implements DayRenderer
     {
       // Content noch neu zeichnen
       this.content.layout();
+      
+      // Scrolled-Composite neu resizen
+      this.content.setSize(this.content.computeSize(this.scroll.getClientArea().width,SWT.DEFAULT));
     }
   }
   
@@ -314,7 +318,10 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.11  2011/10/05 12:19:54  willuhn
+ * Revision 1.12  2011/10/05 16:49:33  willuhn
+ * @N Scroll-Support, wenn der Content nicht reinpasst
+ *
+ * Revision 1.11  2011-10-05 12:19:54  willuhn
  * @C Doppelklick zum Oeffnen verwenden
  *
  * Revision 1.10  2011-10-05 12:13:26  willuhn
