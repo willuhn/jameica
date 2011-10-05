@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/AbstractPasswordBasedEngine.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/05/10 18:00:17 $
+ * $Revision: 1.6 $
+ * $Date: 2011/10/05 16:54:42 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -40,7 +40,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
    */
   public void encrypt(InputStream is, OutputStream os) throws Exception
   {
-    Logger.info("encrypting data using " + getAlgorithm());
+    Logger.debug("encrypting data using " + getAlgorithm());
     Cipher cipher = createCipher(Cipher.ENCRYPT_MODE);
     CipherOutputStream cos = new CipherOutputStream(os,cipher);
     IOUtil.copy(is,cos);
@@ -55,7 +55,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
    */
   public void decrypt(InputStream is, OutputStream os) throws Exception
   {
-    Logger.info("decrypting data using " + getAlgorithm());
+    Logger.debug("decrypting data using " + getAlgorithm());
     Cipher cipher = createCipher(Cipher.DECRYPT_MODE);
     CipherInputStream cis = new CipherInputStream(is,cipher);
     IOUtil.copy(cis, os);
@@ -147,7 +147,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
     
     // Neu erstellen
     s = RandomStringUtils.randomAscii(len);
-    Logger.info("created random password, length: " + s.length());
+    Logger.debug("created random password, length: " + s.length());
     wallet.set("password." + len,s);
     return s.toCharArray();
   }
@@ -177,7 +177,10 @@ public abstract class AbstractPasswordBasedEngine implements Engine
 
 /**********************************************************************
  * $Log: AbstractPasswordBasedEngine.java,v $
- * Revision 1.5  2011/05/10 18:00:17  willuhn
+ * Revision 1.6  2011/10/05 16:54:42  willuhn
+ * @C Log-Level auf debug gestellt
+ *
+ * Revision 1.5  2011-05-10 18:00:17  willuhn
  * @C AES-Keysize gekuerzt - verursachte auf manchen Systemen eine "java.security.InvalidKeyException: Illegal key size". Die bereits existierenden Keys bleiben aber erhalten
  *
  * Revision 1.4  2011-04-06 08:49:56  willuhn
