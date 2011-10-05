@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.55 $
- * $Date: 2008/07/18 17:12:22 $
+ * $Revision: 1.56 $
+ * $Date: 2011/10/05 16:53:22 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -28,12 +26,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 
 import de.willuhn.jameica.gui.util.Font;
-import de.willuhn.jameica.gui.util.Popup;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.messaging.Message;
-import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.messaging.TextMessage;
 import de.willuhn.jameica.system.Application;
 
 /**
@@ -51,14 +45,6 @@ public class StatusBar implements Part
 		private Composite progressComp;
 		private ProgressBar progress;
 		private ProgressBar noProgress;
-  
-	/**
-	 * ct.
-	 */
-	public StatusBar()
-  {
-    Application.getMessagingFactory().getMessagingQueue("jameica.popup").registerMessageConsumer(new PopupMessageConsumer());
-  }
   
   /**
    * Fuegt der Statusbar ein neues Element hinzu.
@@ -173,7 +159,7 @@ public class StatusBar implements Part
       }
     });
 	}
-
+	
   /**
    * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
    * @param message anzuzeigender Text.
@@ -196,61 +182,15 @@ public class StatusBar implements Part
   {
     Application.getMessagingFactory().sendMessage(new StatusBarMessage(message,StatusBarMessage.TYPE_ERROR));
   }
-  
-  /**
-   * Zeigt Popup-Nachrichten an.
-   */
-  private class PopupMessageConsumer implements MessageConsumer
-  {
-
-    /**
-     * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
-     */
-    public boolean autoRegister()
-    {
-      return false;
-    }
-
-    /**
-     * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
-     */
-    public Class[] getExpectedMessageTypes()
-    {
-      return new Class[]{TextMessage.class};
-    }
-
-    /**
-     * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
-     */
-    public void handleMessage(final Message message) throws Exception
-    {
-      GUI.getDisplay().asyncExec(new Runnable() {
-      
-        public void run()
-        {
-          TextMessage msg = (TextMessage) message;
-          Point pos = null;
-          if (status != null && !status.isDisposed()) {
-            // An Statusbar ausrichten
-            Rectangle rect = status.getBounds();
-            pos = status.toDisplay(rect.x,rect.y);
-            pos.x += rect.width;
-          }
-          
-          Popup popup = new Popup(msg.getTitle(),msg.getText(),pos,SWT.BOTTOM | SWT.RIGHT);
-          popup.open();
-        }
-      });
-    }
-    
-  }
-
 }
 
 
 /*********************************************************************
  * $Log: StatusBar.java,v $
- * Revision 1.55  2008/07/18 17:12:22  willuhn
+ * Revision 1.56  2011/10/05 16:53:22  willuhn
+ * @C Messages an "jameica.popup" werden jetzt sowohl im GUI- als auch im Server-Mode vom gemeinsamen Consumer "PopupMessageConsumer" behandelt
+ *
+ * Revision 1.55  2008-07-18 17:12:22  willuhn
  * @N ReminderPopupAction zum Anzeigen von Remindern als Popup
  * @C TextMessage serialisierbar
  *
