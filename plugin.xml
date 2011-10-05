@@ -32,9 +32,17 @@
 	</menu>
 
 	<navigation>
-		<item id="jameica.start" name="Jameica" icon-close="computer.png" action="de.willuhn.jameica.gui.internal.action.Start" />
+		<item id="jameica.start"          name="Jameica" icon-close="computer.png"        action="de.willuhn.jameica.gui.internal.action.Start">
+      <item id="jameica.appointments" name="Termine" icon-close="office-calendar.png" action="de.willuhn.jameica.gui.internal.action.Appointments" />
+    </item>
 	</navigation>
 
 	<services/>
+  
+  <messaging>
+    <consumer queue="jameica.reminder.appointment" class="de.willuhn.jameica.messaging.ReminderAppointmentMessageConsumer" />
+    <consumer queue="jameica.popup"                class="de.willuhn.jameica.messaging.PopupMessageConsumer" />
+  </messaging>
+  
 </system>
 
