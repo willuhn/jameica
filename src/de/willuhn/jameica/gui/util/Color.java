@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Color.java,v $
- * $Revision: 1.13 $
- * $Date: 2010/07/16 13:11:31 $
+ * $Revision: 1.14 $
+ * $Date: 2011/10/05 11:24:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -77,7 +77,7 @@ public class Color {
   /**
    * Hintergrundfarbe von Pflichtfeldern.
    */
-  public final static Color MANDATORY_BG = new Color("color.mandatory.bg",  new RGB(255,212,141));
+  public final static Color MANDATORY_BG = new Color("color.mandatory.bg",  new RGB(255,240,220));
 
   private String name;
 	private RGB value;
@@ -86,11 +86,6 @@ public class Color {
   
   private static HashMap colorCache = new HashMap();
   
-  static
-  {
-    settings.setStoreWhenRead(false);
-  }
-
   /**
 	 * ct.
    * @param name Alias-Name der Farbe.
@@ -152,7 +147,10 @@ public class Color {
 
 /**********************************************************************
  * $Log: Color.java,v $
- * Revision 1.13  2010/07/16 13:11:31  willuhn
+ * Revision 1.14  2011/10/05 11:24:48  willuhn
+ * @C Farbe von Pflichtfeldern etwas dezenter
+ *
+ * Revision 1.13  2010-07-16 13:11:31  willuhn
  * @N Config-Dateien nicht mehr automatisch anlegen
  *
  * Revision 1.12  2008/09/23 14:02:10  willuhn
