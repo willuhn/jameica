@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/01/14 17:33:38 $
+ * $Revision: 1.10 $
+ * $Date: 2011/10/05 12:13:26 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -31,7 +32,9 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Font;
@@ -58,8 +61,12 @@ public class DayRendererImpl implements DayRenderer
    */
   public void paint(Composite parent) throws RemoteException
   {
+    // Alle Tage in gleicher Hoehe zeichnen
+    GridData gd = new GridData(GridData.FILL_BOTH);
+    gd.heightHint = parent.getBounds().height / 6;
+    
     this.comp = new Composite(parent,SWT.NONE);
-    this.comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+    this.comp.setLayoutData(gd);
     this.comp.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE));
     this.comp.setBackgroundMode(SWT.INHERIT_FORCE);
     this.comp.setLayout(SWTUtil.createGrid(1,false));
@@ -72,10 +79,20 @@ public class DayRendererImpl implements DayRenderer
     
     this.day = new Label(this.comp, SWT.RIGHT);
     this.day.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+    final ScrolledComposite scroll = new ScrolledComposite(this.comp,SWT.V_SCROLL);
+    scroll.setLayoutData(new GridData(GridData.FILL_BOTH));
+    scroll.setLayout(new GridLayout(1,false));
+    scroll.addListener(SWT.Resize, new Listener() {
+      public void handleEvent(Event event) {
+        content.setSize(content.computeSize(scroll.getClientArea().width,SWT.DEFAULT));
+      }
+    });
     
-    this.content = new Composite(this.comp,SWT.NONE);
+    this.content = new Composite(scroll,SWT.NONE);
     this.content.setLayoutData(new GridData(GridData.FILL_BOTH));
     this.content.setLayout(new GridLayout(1,false));
+    scroll.setContent(this.content);
   }
   
   /**
@@ -297,7 +314,11 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.9  2011/01/14 17:33:38  willuhn
+ * Revision 1.10  2011/10/05 12:13:26  willuhn
+ * @N Alle Tage in gleicher Hoehe zeichnen
+ * @N Scroll-Support, wenn der Content nicht reinpasst
+ *
+ * Revision 1.9  2011-01-14 17:33:38  willuhn
  * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
  *
  * Revision 1.8  2010-11-26 00:18:49  willuhn
