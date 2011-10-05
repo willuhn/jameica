@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/Wallet.java,v $
- * $Revision: 1.19 $
- * $Date: 2011/09/27 15:48:33 $
+ * $Revision: 1.20 $
+ * $Date: 2011/10/05 16:54:27 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -127,18 +127,20 @@ public final class Wallet
   /**
    * Loescht den genanten Alias.
    * @param alias Name des zu loeschenden Alias.
+   * @return der geloeschte Wert hinter dem Alias.
    * @throws Exception
    */
-  public void delete(String alias) throws Exception
+  public Serializable delete(String alias) throws Exception
   {
     if (alias == null)
     {
       Logger.warn("alias cannot be null");
-      return;
+      return null;
     }
     Logger.debug("removing key " + alias);
-    this.serialized.remove(alias);
+    Serializable s = (Serializable) this.serialized.remove(alias);
     write();
+    return s;
   }
 
   /**
@@ -254,7 +256,7 @@ public final class Wallet
 
     InputStream is = null;
 
-    Logger.info("reading wallet file " + f.getAbsolutePath() + " via " + this.engine.getClass().getSimpleName());
+    Logger.debug("reading wallet file " + f.getAbsolutePath() + " via " + this.engine.getClass().getSimpleName());
     try
     {
       is = new BufferedInputStream(new FileInputStream(f));
@@ -312,7 +314,7 @@ public final class Wallet
         return;
       }
       
-      Logger.info("writing wallet file " + getFilename() + " via " + this.engine.getClass().getSimpleName());
+      Logger.debug("writing wallet file " + getFilename() + " via " + this.engine.getClass().getSimpleName());
       // Wir schreiben die Daten erstmal in eine Temp-Datei
       // und kopieren sie danach.
       // BUGZILLA 25 http://www.willuhn.de/bugzilla/show_bug.cgi?id=25
@@ -321,7 +323,7 @@ public final class Wallet
       File tempfile   = File.createTempFile(prefix,"",directory);
 
       // Objekt serialisieren
-      ByteArrayOutputStream bos   = new ByteArrayOutputStream();
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
       Logger.debug("serializing wallet");
       
@@ -362,7 +364,11 @@ public final class Wallet
 
 /**********************************************************************
  * $Log: Wallet.java,v $
- * Revision 1.19  2011/09/27 15:48:33  willuhn
+ * Revision 1.20  2011/10/05 16:54:27  willuhn
+ * @N delete() liefert jetzt das geloeschte Element zurueck
+ * @C Log-Level auf debug gestellt
+ *
+ * Revision 1.19  2011-09-27 15:48:33  willuhn
  * *** empty log message ***
  *
  * Revision 1.18  2011-06-19 12:13:00  willuhn
