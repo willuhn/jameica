@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointmentProvider.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/08/30 16:02:23 $
+ * $Revision: 1.5 $
+ * $Date: 2011/10/05 16:57:03 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -12,19 +12,15 @@
 package de.willuhn.jameica.gui.calendar;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import org.eclipse.swt.graphics.RGB;
-
-import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.reminder.Reminder;
-import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Reminder;
 import de.willuhn.logging.Logger;
-import de.willuhn.util.ApplicationException;
 
 /**
  * Implementierung eines Termin-Providers fuer Jameica-Reminders.
@@ -39,12 +35,15 @@ public class ReminderAppointmentProvider implements AppointmentProvider
     try
     {
       ReminderService service = Application.getBootLoader().getBootable(ReminderService.class);
-      List<Reminder> list = service.getReminders(from,to);
+      Map<String,Reminder> reminders = service.getReminders(ReminderAppointment.QUEUE,from,to);
+      Iterator<String> uuids = reminders.keySet().iterator();
       
       List<Appointment> result = new LinkedList<Appointment>();
-      for (Reminder r:list)
-        result.add(new MyAppointment(r));
-      
+      while (uuids.hasNext())
+      {
+        String uuid = uuids.next();
+        result.add(new ReminderAppointment(uuid,reminders.get(uuid)));
+      }
       return result;
     }
     catch (Exception e)
@@ -61,100 +60,17 @@ public class ReminderAppointmentProvider implements AppointmentProvider
   {
     return Application.getI18n().tr("Erinnerungen");
   }
-  
-  /**
-   * Hilfsklasse zum Anzeigen und Oeffnen des Appointments.
-   */
-  private class MyAppointment extends AbstractAppointment
-  {
-    private Reminder r = null;
-    
-    /**
-     * ct.
-     * @param t der Jameica-Reminder.
-     */
-    private MyAppointment(Reminder r)
-    {
-      this.r = r;
-    }
-
-    /**
-     * @see de.willuhn.jameica.gui.calendar.AbstractAppointment#execute()
-     */
-    public void execute() throws ApplicationException
-    {
-      String s = this.r.getAction();
-      if (s == null || s.length() == 0)
-        return;
-      
-      try
-      {
-        BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-        Class c = Application.getClassLoader().load(s);
-        Action a = (Action) beanService.get(c);
-        a.handleAction(this.r);
-      }
-      catch (ApplicationException ae)
-      {
-        throw ae;
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to execute action " + s,e);
-        throw new ApplicationException(Application.getI18n().tr("Fehler beim Ausführen der Aktion: {0}",e.getMessage()));
-      }
-    }
-
-    /**
-     * @see de.willuhn.jameica.gui.calendar.Appointment#getDate()
-     */
-    public Date getDate()
-    {
-      return this.r.getDueDate();
-    }
-
-    /**
-     * @see de.willuhn.jameica.gui.calendar.AbstractAppointment#getDescription()
-     */
-    public String getDescription()
-    {
-      Object data = this.r.getData();
-      if (data != null && (data instanceof String))
-        return (String) data;
-      return null;
-    }
-
-    /**
-     * @see de.willuhn.jameica.gui.calendar.Appointment#getName()
-     */
-    public String getName()
-    {
-      return this.r.getName();
-    }
-
-    /**
-     * @see de.willuhn.jameica.gui.calendar.AbstractAppointment#getColor()
-     */
-    public RGB getColor()
-    {
-      Date due = this.r.getDueDate();
-      if (due == null)
-        return null;
-      
-      if (due.before(new Date()))
-        return Color.ERROR.getSWTColor().getRGB();
-      return null;
-    }
-    
-    
-  }
 }
 
 
 
 /**********************************************************************
  * $Log: ReminderAppointmentProvider.java,v $
- * Revision 1.4  2011/08/30 16:02:23  willuhn
+ * Revision 1.5  2011/10/05 16:57:03  willuhn
+ * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
+ * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
+ *
+ * Revision 1.4  2011-08-30 16:02:23  willuhn
  * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
  *
  * Revision 1.3  2011-01-20 17:12:10  willuhn

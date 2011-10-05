@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderCalendarPart.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/01/17 17:31:08 $
+ * $Revision: 1.2 $
+ * $Date: 2011/10/05 16:57:03 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
-import de.willuhn.jameica.reminder.Reminder;
+import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.system.Application;
 
 /**
@@ -46,12 +46,14 @@ public class ReminderCalendarPart extends CalendarPart
     
     final MessageConsumer mc = new MyMessageConsumer();
     Application.getMessagingFactory().getMessagingQueue("jameica.reminder.added").registerMessageConsumer(mc);
+    Application.getMessagingFactory().getMessagingQueue("jameica.reminder.updated").registerMessageConsumer(mc);
     Application.getMessagingFactory().getMessagingQueue("jameica.reminder.deleted").registerMessageConsumer(mc);
     
     parent.addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e)
       {
         Application.getMessagingFactory().getMessagingQueue("jameica.reminder.added").unRegisterMessageConsumer(mc);
+        Application.getMessagingFactory().getMessagingQueue("jameica.reminder.updated").unRegisterMessageConsumer(mc);
         Application.getMessagingFactory().getMessagingQueue("jameica.reminder.deleted").unRegisterMessageConsumer(mc);
       }
     });
@@ -76,7 +78,7 @@ public class ReminderCalendarPart extends CalendarPart
      */
     public Class[] getExpectedMessageTypes()
     {
-      return new Class[]{Reminder.class};
+      return new Class[]{QueryMessage.class};
     }
 
     /**
@@ -98,7 +100,11 @@ public class ReminderCalendarPart extends CalendarPart
 
 /**********************************************************************
  * $Log: ReminderCalendarPart.java,v $
- * Revision 1.1  2011/01/17 17:31:08  willuhn
+ * Revision 1.2  2011/10/05 16:57:03  willuhn
+ * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
+ * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
+ *
+ * Revision 1.1  2011-01-17 17:31:08  willuhn
  * @C Reminder-Zeug
  *
  **********************************************************************/
