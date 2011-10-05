@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Container.java,v $
- * $Revision: 1.21 $
- * $Date: 2011/08/31 10:51:37 $
+ * $Revision: 1.22 $
+ * $Date: 2011/10/05 11:24:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -92,7 +92,7 @@ public abstract class Container
     }
     
     final Label label = GUI.getStyleFactory().createLabel(getComposite(),SWT.NONE);
-    label.setText(name);
+    label.setText(name != null ? name : "");
     if (input.isMandatory() && Application.getConfig().getMandatoryLabel())
       label.setForeground(Color.ERROR.getSWTColor());
     label.setLayoutData(labelGrid);
@@ -322,7 +322,10 @@ public abstract class Container
 
 /*********************************************************************
  * $Log: Container.java,v $
- * Revision 1.21  2011/08/31 10:51:37  willuhn
+ * Revision 1.22  2011/10/05 11:24:32  willuhn
+ * @N fehlendes Label zulassen
+ *
+ * Revision 1.21  2011-08-31 10:51:37  willuhn
  * @N Endlich hat Jameica ein RadioInput ;)
  *
  * Revision 1.20  2011-08-08 11:32:29  willuhn
