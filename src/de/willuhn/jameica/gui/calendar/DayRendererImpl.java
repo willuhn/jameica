@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/DayRendererImpl.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/10/05 12:13:26 $
+ * $Revision: 1.11 $
+ * $Date: 2011/10/05 12:19:54 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -193,7 +193,7 @@ public class DayRendererImpl implements DayRenderer
   private MouseListener createListener(final Appointment a)
   {
     return new MouseAdapter() {
-      public void mouseUp(MouseEvent e)
+      public void mouseDoubleClick(MouseEvent e)
       {
         if (e.button != 1)
           return;
@@ -314,7 +314,10 @@ public class DayRendererImpl implements DayRenderer
 
 /**********************************************************************
  * $Log: DayRendererImpl.java,v $
- * Revision 1.10  2011/10/05 12:13:26  willuhn
+ * Revision 1.11  2011/10/05 12:19:54  willuhn
+ * @C Doppelklick zum Oeffnen verwenden
+ *
+ * Revision 1.10  2011-10-05 12:13:26  willuhn
  * @N Alle Tage in gleicher Hoehe zeichnen
  * @N Scroll-Support, wenn der Content nicht reinpasst
  *
