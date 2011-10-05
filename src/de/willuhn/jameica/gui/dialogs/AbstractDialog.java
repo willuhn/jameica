@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.63 $
- * $Date: 2011/08/18 16:03:38 $
+ * $Revision: 1.64 $
+ * $Date: 2011/10/05 16:49:57 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -83,8 +83,9 @@ import de.willuhn.util.I18N;
  * </code>
  * </p>
  * @author willuhn
+ * @param <T> Der Typ des Objektes.
  */
-public abstract class AbstractDialog
+public abstract class AbstractDialog<T>
 {
 
 	/**
@@ -403,7 +404,7 @@ public abstract class AbstractDialog
    * @return das ausgewaehlte Objekt.
    * @throws Exception
    */
-  protected abstract Object getData() throws Exception;
+  protected abstract T getData() throws Exception;
   
   /**
    * Kann ueberschrieben werden, um zu beeinflussen, was passieren soll, wenn
@@ -432,7 +433,7 @@ public abstract class AbstractDialog
    * @throws OperationCanceledException wenn der User den Dialog mit Escape abgebrochen hat.
    * @return das ausgewaehlte Objekt.
    */
-  public final Object open() throws Exception
+  public final T open() throws Exception
   {
 		try {
 
@@ -595,7 +596,10 @@ public abstract class AbstractDialog
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.63  2011/08/18 16:03:38  willuhn
+ * Revision 1.64  2011/10/05 16:49:57  willuhn
+ * @N AbstractDialog getypt
+ *
+ * Revision 1.63  2011-08-18 16:03:38  willuhn
  * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
  *
  * Revision 1.62  2011-08-17 08:21:32  willuhn
