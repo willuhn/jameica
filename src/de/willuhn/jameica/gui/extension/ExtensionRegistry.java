@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/extension/ExtensionRegistry.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/09/28 12:41:29 $
+ * $Revision: 1.10 $
+ * $Date: 2011/10/05 10:48:55 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.willuhn.jameica.messaging.QueryMessage;
-import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
 /**
@@ -46,9 +44,6 @@ public class ExtensionRegistry
     if (id == null)
       return;
     
-    // Extension per Messaging erlauben
-    Application.getMessagingFactory().getMessagingQueue("extension." + id).sendSyncMessage(new QueryMessage(extendable));
-
     List<Extension> v = extensions.get(id);
     if (v == null || v.size() == 0)
       return;
@@ -113,7 +108,10 @@ public class ExtensionRegistry
 
 /*********************************************************************
  * $Log: ExtensionRegistry.java,v $
- * Revision 1.9  2011/09/28 12:41:29  willuhn
+ * Revision 1.10  2011/10/05 10:48:55  willuhn
+ * @R Messaging wieder entfernt - erzeugt haufenweise Queues, die wir im Moment noch gar nicht nutzen
+ *
+ * Revision 1.9  2011-09-28 12:41:29  willuhn
  * @N Extensions koennen jetzt auch dynamisch via Messaging verwendet werden
  *
  * Revision 1.8  2010/06/03 17:06:51  willuhn
