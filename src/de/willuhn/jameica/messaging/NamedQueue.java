@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/06/17 16:06:17 $
+ * $Revision: 1.14 $
+ * $Date: 2011/10/05 10:49:11 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -293,6 +293,8 @@ public final class NamedQueue implements MessagingQueue
         // Alle Queues abarbeiten
         for (int i=0;i<this.queues.size();++i)
         {
+          if (quit)
+            break;
           NamedQueue queue = this.queues.get(i);
           while (queue.messages != null && queue.messages.size() > 0)
           {
@@ -318,7 +320,10 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
- * Revision 1.13  2011/06/17 16:06:17  willuhn
+ * Revision 1.14  2011/10/05 10:49:11  willuhn
+ * *** empty log message ***
+ *
+ * Revision 1.13  2011-06-17 16:06:17  willuhn
  * @C Logging
  *
  * Revision 1.12  2011-06-17 15:55:18  willuhn
