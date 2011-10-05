@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/TextInput.java,v $
- * $Revision: 1.22 $
- * $Date: 2011/08/05 11:21:12 $
+ * $Revision: 1.23 $
+ * $Date: 2011/10/05 16:50:31 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,10 +27,11 @@ public class TextInput extends AbstractInput
 
   protected Text text;
   private String value;
+  private String hint;
   private boolean enabled = true;
   private boolean focus = false;
 
-	private int maxLength = 0;
+  private int maxLength = 0;
 
   /**
    * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
@@ -41,27 +42,59 @@ public class TextInput extends AbstractInput
     this(value,0);
   }
 
-	/**
-	 * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
-	 * @param value anzuzeigender Wert.
-	 * @param maxLength maximale Anzahl von Zeichen.
-	 */
-	public TextInput(String value, int maxLength)
-	{
-		this.value = value;
-		this.maxLength = maxLength;
-	}
+  /**
+   * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+   * @param value anzuzeigender Wert.
+   * @param maxLength maximale Anzahl von Zeichen.
+   */
+  public TextInput(String value, int maxLength)
+  {
+    this(value,maxLength,null);
+  }
 
-	/**
-	 * Definiert die maximal eingebbare Menge von Zeichen.
+  /**
+   * Erzeugt ein neues Eingabefeld und schreib den uebergebenen Wert rein.
+   * @param value anzuzeigender Wert.
+   * @param maxLength maximale Anzahl von Zeichen.
+   * @param hint Hinweis-Text, der als Hint im Eingabefeld angezeigt werden soll.
+   */
+  public TextInput(String value, int maxLength, String hint)
+  {
+    this.value     = value;
+    this.maxLength = maxLength;
+    this.hint      = hint;
+  }
+
+  /**
+   * Definiert die maximal eingebbare Menge von Zeichen.
    * @param maxLength
    */
   public void setMaxLength(int maxLength)
-	{
-		this.maxLength = maxLength;
-		if (this.text != null && !this.text.isDisposed())
-		  this.text.setTextLimit(this.maxLength);
-	}
+  {
+    this.maxLength = maxLength;
+    if (this.text != null && !this.text.isDisposed())
+      this.text.setTextLimit(this.maxLength);
+  }
+  
+  /**
+   * Definiert einen Hinweis-Text, der als Hint im Eingabefeld angezeigt werden soll.
+   * @param hint der Hinweis-Text.
+   */
+  public void setHint(String hint)
+  {
+    this.hint = hint;
+    if (this.hint != null && this.text != null && !this.text.isDisposed())
+      this.text.setMessage(this.hint);
+  }
+  
+  /**
+   * Liefert einen Hinweis-Text, der als Hint im Eingabefeld angezeigt werden soll.
+   * @return der Hinweis-Text.
+   */
+  public String getHint()
+  {
+    return this.hint;
+  }
 
   /**
    * Erzeugt das Text-Widget.
@@ -88,6 +121,9 @@ public class TextInput extends AbstractInput
 
     if (maxLength > 0)
       text.setTextLimit(maxLength);
+    
+    if (this.hint != null)
+      text.setMessage(this.hint);
 
     this.setEnabledInternal(enabled);
     text.setText((value == null ? "" : value));
@@ -190,7 +226,10 @@ public class TextInput extends AbstractInput
 
 /*********************************************************************
  * $Log: TextInput.java,v $
- * Revision 1.22  2011/08/05 11:21:12  willuhn
+ * Revision 1.23  2011/10/05 16:50:31  willuhn
+ * @N Text-Hints in Eingabefeldern - funktioniert nur in einzeiligen Feldern
+ *
+ * Revision 1.22  2011-08-05 11:21:12  willuhn
  * @B Wenn das Eingabefeld Scrollbalken hat (beim abgeleiteten TextAreaInput z.Bsp.) darf nicht "setEnabled(false)" verwendet werden sondern "setEditable(false)", weil sonst auch das Scrollen nicht mehr moeglich ist
  *
  * Revision 1.21  2009/02/18 00:43:21  willuhn
