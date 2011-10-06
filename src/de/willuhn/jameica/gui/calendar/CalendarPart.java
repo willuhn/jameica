@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.12 $
- * $Date: 2011/10/06 10:49:08 $
+ * $Revision: 1.13 $
+ * $Date: 2011/10/06 11:05:21 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -39,6 +39,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
@@ -215,8 +216,8 @@ public class CalendarPart implements Part
   private Map<Date,List<Appointment>> getAppointments(Date start, Date end)
   {
     // Uhrzeiten auf 00:00 bzw 23:59 setzen
-    start = startOfDay(start);
-    end   = endOfDay(end);
+    start = DateUtil.startOfDay(start);
+    end   = DateUtil.endOfDay(end);
 
     Map<Date,List<Appointment>> dates = new HashMap<Date,List<Appointment>>();
     
@@ -240,7 +241,7 @@ public class CalendarPart implements Part
           if (d == null)
             continue;
           
-          d = startOfDay(d); // Uhrzeit nicht beruecksichtigen
+          d = DateUtil.startOfDay(d); // Uhrzeit nicht beruecksichtigen
 
           // Haben wir fuer den Tag schon Termine?
           List<Appointment> current = dates.get(d);
@@ -306,7 +307,7 @@ public class CalendarPart implements Part
 
         // aktuelle Position in Kalender uebernehmen und Day-Renderer aktualisieren
         now.set(Calendar.DAY_OF_MONTH,currentDay);
-        Date d = startOfDay(now.getTime());
+        Date d = DateUtil.startOfDay(now.getTime());
         day.update(status,d,appointments.get(d));
         currentDay++;
       }
@@ -332,43 +333,14 @@ public class CalendarPart implements Part
     b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     b.addSelectionListener(l);
   }
-  
-  /**
-   * Resettet die Uhrzeit eines Datums.
-   * @param date das Datum.
-   * @return das neue Datum.
-   */
-  public static Date startOfDay(Date date)
-  {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date == null ? new Date() : date);
-    cal.set(Calendar.HOUR_OF_DAY,0);
-    cal.set(Calendar.MINUTE,0);
-    cal.set(Calendar.SECOND,0);
-    cal.set(Calendar.MILLISECOND,0);
-    return cal.getTime();
-  }
-
-  /**
-   * Setzt die Uhrzeit eines Datums auf 23:59:59.999.
-   * @param date das Datum.
-   * @return das neue Datum.
-   */
-  public static Date endOfDay(Date date)
-  {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date == null ? new Date() : date);
-    cal.set(Calendar.HOUR_OF_DAY,23);
-    cal.set(Calendar.MINUTE,59);
-    cal.set(Calendar.SECOND,59);
-    cal.set(Calendar.MILLISECOND,999);
-    return cal.getTime();
-  }
 }
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.12  2011/10/06 10:49:08  willuhn
+ * Revision 1.13  2011/10/06 11:05:21  willuhn
+ * @R Den Code gibts in DateUtil
+ *
+ * Revision 1.12  2011-10-06 10:49:08  willuhn
  * @N Termin-Provider konfigurierbar
  *
  * Revision 1.11  2011-08-04 14:59:17  willuhn
@@ -376,33 +348,4 @@ public class CalendarPart implements Part
  *
  * Revision 1.10  2011-01-17 17:31:08  willuhn
  * @C Reminder-Zeug
- *
- * Revision 1.9  2010-11-21 23:56:47  willuhn
- * @N Schrift einen Tick kleiner - dann passt mehr rein
- * @C Hyperlink entfernt - man kann direkt auf das Label klicken
- *
- * Revision 1.8  2010-11-19 18:36:48  willuhn
- * @B Fehlerhafte Provider ueberspringen
- *
- * Revision 1.7  2010-11-19 16:09:39  willuhn
- * @B Content-Composite wurde beim Neuladen nicht leer gemacht
- *
- * Revision 1.6  2010-11-19 16:04:05  willuhn
- * @C honor style factory
- *
- * Revision 1.5  2010-11-19 15:52:06  willuhn
- * @N Funktion, zum Zurueckkehren zum aktuellen Monat
- *
- * Revision 1.4  2010-11-19 15:47:55  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2010-11-19 15:46:21  willuhn
- * @B minor fixes
- *
- * Revision 1.2  2010-11-19 13:44:15  willuhn
- * @N Appointment-API zum Anzeigen von Terminen im Kalender.
- *
- * Revision 1.1  2010-11-17 16:59:56  willuhn
- * @N Erster Code fuer eine Kalender-Komponente, ueber die man z.Bsp. kommende Termine anzeigen kann
- *
  **********************************************************************/
