@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/10/05 10:49:11 $
+ * $Revision: 1.15 $
+ * $Date: 2011/10/06 11:41:30 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -104,6 +104,7 @@ public final class NamedQueue implements MessagingQueue
    */
   public synchronized void close()
   {
+    this.flush();
     worker.unregister(this);
     this.consumers = null;
     this.messages = null;
@@ -320,7 +321,10 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
- * Revision 1.14  2011/10/05 10:49:11  willuhn
+ * Revision 1.15  2011/10/06 11:41:30  willuhn
+ * @B Noch ein Flush vor dem Schliessen der Queue machen
+ *
+ * Revision 1.14  2011-10-05 10:49:11  willuhn
  * *** empty log message ***
  *
  * Revision 1.13  2011-06-17 16:06:17  willuhn
