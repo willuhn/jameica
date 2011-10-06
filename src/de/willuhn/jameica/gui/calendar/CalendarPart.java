@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/08/04 14:59:17 $
+ * $Revision: 1.12 $
+ * $Date: 2011/10/06 10:49:08 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -95,6 +95,23 @@ public class CalendarPart implements Part
   public void addAppointmentProvider(AppointmentProvider provider)
   {
     this.providers.add(provider);
+  }
+  
+  /**
+   * Entfernt einen Termin-Provider.
+   * @param provider der Termin-Provider.
+   */
+  public void removeAppointmentProvider(AppointmentProvider provider)
+  {
+    this.providers.remove(provider);
+  }
+  
+  /**
+   * Entfernt alle Termin-Provider.
+   */
+  public void removeAll()
+  {
+    this.providers.clear();
   }
   
   /**
@@ -244,9 +261,9 @@ public class CalendarPart implements Part
   }
 
   /**
-   * Aktualisiert die GUI basierend auf dem aktuellen Datum.
+   * Laedt den Kalender neu.
    */
-  protected void refresh()
+  public void refresh()
   {
     // Label aktualisieren.
     text.setText(dateformat.format(currentDate));
@@ -351,7 +368,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.11  2011/08/04 14:59:17  willuhn
+ * Revision 1.12  2011/10/06 10:49:08  willuhn
+ * @N Termin-Provider konfigurierbar
+ *
+ * Revision 1.11  2011-08-04 14:59:17  willuhn
  * *** empty log message ***
  *
  * Revision 1.10  2011-01-17 17:31:08  willuhn

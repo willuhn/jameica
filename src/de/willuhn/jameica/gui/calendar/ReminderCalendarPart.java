@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderCalendarPart.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/10/05 16:57:03 $
+ * $Revision: 1.3 $
+ * $Date: 2011/10/06 10:49:08 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -28,12 +28,14 @@ import de.willuhn.jameica.system.Application;
  */
 public class ReminderCalendarPart extends CalendarPart
 {
+  private AppointmentProvider myProvider = new ReminderAppointmentProvider();
+  
   /**
    * ct.
    */
   public ReminderCalendarPart()
   {
-    this.addAppointmentProvider(new ReminderAppointmentProvider());
+    this.addAppointmentProvider(this.myProvider);
   }
   
   
@@ -57,6 +59,32 @@ public class ReminderCalendarPart extends CalendarPart
         Application.getMessagingFactory().getMessagingQueue("jameica.reminder.deleted").unRegisterMessageConsumer(mc);
       }
     });
+  }
+
+
+  /**
+   * @see de.willuhn.jameica.gui.calendar.CalendarPart#removeAppointmentProvider(de.willuhn.jameica.gui.calendar.AppointmentProvider)
+   * Ueberschrieben, weil der Provider fuer die Jameica-Reminder nicht mit entfernt werden soll.
+   */
+  public void removeAppointmentProvider(AppointmentProvider provider)
+  {
+    if (provider == null || provider.getClass().equals(this.myProvider.getClass()))
+      return;
+    
+    super.removeAppointmentProvider(provider);
+  }
+
+
+  /**
+   * @see de.willuhn.jameica.gui.calendar.CalendarPart#removeAll()
+   * Ueberschrieben, weil der Provider fuer die Jameica-Reminder nicht mit entfernt werden soll.
+   */
+  public void removeAll()
+  {
+    super.removeAll();
+    
+    // unseren wieder hinzufuegen
+    this.addAppointmentProvider(this.myProvider);
   }
 
 
@@ -100,7 +128,10 @@ public class ReminderCalendarPart extends CalendarPart
 
 /**********************************************************************
  * $Log: ReminderCalendarPart.java,v $
- * Revision 1.2  2011/10/05 16:57:03  willuhn
+ * Revision 1.3  2011/10/06 10:49:08  willuhn
+ * @N Termin-Provider konfigurierbar
+ *
+ * Revision 1.2  2011-10-05 16:57:03  willuhn
  * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
  * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
  *

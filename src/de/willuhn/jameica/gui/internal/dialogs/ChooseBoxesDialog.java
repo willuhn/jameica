@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/05/05 09:43:00 $
+ * $Revision: 1.15 $
+ * $Date: 2011/10/06 10:49:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,7 +16,6 @@ package de.willuhn.jameica.gui.internal.dialogs;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -36,6 +35,7 @@ import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -54,6 +54,7 @@ public class ChooseBoxesDialog extends AbstractDialog
   public ChooseBoxesDialog(int position)
   {
     super(position);
+    this.setSize(400,400);
     setTitle(i18n.tr("Auswahl der anzuzeigenden Elemente"));
   }
 
@@ -64,7 +65,7 @@ public class ChooseBoxesDialog extends AbstractDialog
   {
     List<Box> boxes = BoxRegistry.getBoxes();
     
-    Container c = new SimpleContainer(parent);
+    Container c = new SimpleContainer(parent,true);
     c.addText(i18n.tr("Wählen Sie die anzuzeigenden Elemente aus."),true);
 
     table = new TablePart(boxes,null);
@@ -72,7 +73,6 @@ public class ChooseBoxesDialog extends AbstractDialog
     table.setCheckable(true);
     table.setMulti(false);
     table.setSummary(false);
-    table.setRememberColWidths(true);
     table.setRememberOrder(false); // Die Reihenfolge wird ja durch die Indizes bestimmt
     
     table.setFormatter(new TableFormatter() {
@@ -200,12 +200,10 @@ public class ChooseBoxesDialog extends AbstractDialog
     buttons.addButton(i18n.tr("Abbrechen"), new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
-        close();
+        throw new OperationCanceledException();
       }
     },null,false,"process-stop.png");
     c.addButtonArea(buttons);
-    
-    getShell().setMinimumSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
   }
 
   /**
@@ -220,7 +218,10 @@ public class ChooseBoxesDialog extends AbstractDialog
 
 /*********************************************************************
  * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.14  2011/05/05 09:43:00  willuhn
+ * Revision 1.15  2011/10/06 10:49:08  willuhn
+ * @N Termin-Provider konfigurierbar
+ *
+ * Revision 1.14  2011-05-05 09:43:00  willuhn
  * @B Beim Umsortierungen ging der Checked-State verloren, wenn er noch nicht gespeichert war
  *
  * Revision 1.13  2011-05-05 09:36:25  willuhn

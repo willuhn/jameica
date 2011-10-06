@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.23 $
- * $Date: 2011/05/11 10:27:25 $
+ * $Revision: 1.24 $
+ * $Date: 2011/10/06 10:49:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -59,7 +59,6 @@ public class Start extends AbstractView implements Extendable
           }
           catch (OperationCanceledException oce)
           {
-            Logger.info(oce.getMessage());
             return;
           }
           catch (Exception e)
@@ -106,7 +105,10 @@ public class Start extends AbstractView implements Extendable
 
 /***************************************************************************
  * $Log: Start.java,v $
- * Revision 1.23  2011/05/11 10:27:25  willuhn
+ * Revision 1.24  2011/10/06 10:49:08  willuhn
+ * @N Termin-Provider konfigurierbar
+ *
+ * Revision 1.23  2011-05-11 10:27:25  willuhn
  * @N OCE fangen
  *
  * Revision 1.22  2011-05-03 12:57:00  willuhn
