@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Appointments.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/10/06 10:49:08 $
+ * $Revision: 1.3 $
+ * $Date: 2011/10/07 11:01:40 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -51,40 +51,12 @@ public class Appointments extends AbstractView
     I18N i18n = Application.getI18n();
     GUI.getView().setTitle(i18n.tr("Termine"));
     
+    final Action configure = new Configure();
+    
     this.calendar = new ReminderCalendarPart(); // hier sind schon die Jameica-Termine drin
     this.calendar.setCurrentDate(this.currentDate);
 
-    GUI.getView().addPanelButton(new PanelButton("document-properties.png",new Action() {
-      public void handleAction(Object context) throws ApplicationException
-      {
-        try
-        {
-          AppointmentProviderDialog d = new AppointmentProviderDialog(AppointmentProviderDialog.POSITION_CENTER);
-          List<AppointmentProvider> selected = d.open();
-          
-          // Kalender-Anzeige aktualisieren
-          calendar.removeAll();
-          for (AppointmentProvider p:selected)
-          {
-            calendar.addAppointmentProvider(p);
-          }
-          calendar.refresh();
-        }
-        catch (ApplicationException ae)
-        {
-          throw ae;
-        }
-        catch (OperationCanceledException oce)
-        {
-          // ignore
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to configure appointment providers",e);
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehlgeschlagen: {0}",e.getMessage()),StatusBarMessage.TYPE_ERROR));
-        }
-      }
-    },i18n.tr("Anzuzeigende Kalender auswählen")));
+    GUI.getView().addPanelButton(new PanelButton("document-properties.png",configure,i18n.tr("Anzuzeigende Kalender auswählen")));
     
     // Appointment-Provider der Plugins hinzufuegen 
     List<AbstractPlugin> plugins = Application.getPluginLoader().getInstalledPlugins();
@@ -103,7 +75,8 @@ public class Appointments extends AbstractView
 
     // Button zum Hinzufuegen eines Termins
     ButtonArea buttons = new ButtonArea();
-    buttons.addButton(i18n.tr("Neuer Termin..."),new ReminderAppointmentDetails(),null,false,"document-new.png");
+    buttons.addButton(i18n.tr("Neuer Termin..."),new ReminderAppointmentDetails(),null,true,"document-new.png");
+    buttons.addButton(i18n.tr("Kalender auswählen..."),configure,null,false,"document-properties.png");
     buttons.paint(this.getParent());
   }
 
@@ -115,13 +88,52 @@ public class Appointments extends AbstractView
     if (this.calendar != null)
       this.currentDate = this.calendar.getCurrentDate();
   }
+  
+  /**
+   * Aktion zum Konfigurieren der Kalender.
+   */
+  private class Configure implements Action
+  {
+    public void handleAction(Object context) throws ApplicationException
+    {
+      try
+      {
+        AppointmentProviderDialog d = new AppointmentProviderDialog(AppointmentProviderDialog.POSITION_CENTER);
+        List<AppointmentProvider> selected = d.open();
+        
+        // Kalender-Anzeige aktualisieren
+        calendar.removeAll();
+        for (AppointmentProvider p:selected)
+        {
+          calendar.addAppointmentProvider(p);
+        }
+        calendar.refresh();
+      }
+      catch (ApplicationException ae)
+      {
+        throw ae;
+      }
+      catch (OperationCanceledException oce)
+      {
+        // ignore
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to configure appointment providers",e);
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehlgeschlagen: {0}",e.getMessage()),StatusBarMessage.TYPE_ERROR));
+      }
+    }
+  }
 }
 
 
 
 /**********************************************************************
  * $Log: Appointments.java,v $
- * Revision 1.2  2011/10/06 10:49:08  willuhn
+ * Revision 1.3  2011/10/07 11:01:40  willuhn
+ * @N Zusaetzlicher Config-Button
+ *
+ * Revision 1.2  2011-10-06 10:49:08  willuhn
  * @N Termin-Provider konfigurierbar
  *
  * Revision 1.1  2011-10-05 16:57:04  willuhn
