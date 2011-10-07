@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointment.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/10/05 16:57:03 $
+ * $Revision: 1.2 $
+ * $Date: 2011/10/07 11:16:48 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -105,6 +105,12 @@ public class ReminderAppointment implements Appointment
    */
   public boolean hasAlarm()
   {
+    // Alarm nur ausloesen, wenn wir ihn nicht schon ausgeloest haben
+    // return (this.reminder.getData(Reminder.KEY_NOTIFIED) == null);
+    
+    // Wir loesen erstmal immer einen Alarm aus, weil die Kalender-Anwendung,
+    // in die jameica.ical die Termine exportiert, bessere Alarme machen
+    // kann. Koennte man spaeter vielleicht mal noch auf o.g. aendern
     return true;
   }
 
@@ -150,7 +156,10 @@ public class ReminderAppointment implements Appointment
 
 /**********************************************************************
  * $Log: ReminderAppointment.java,v $
- * Revision 1.1  2011/10/05 16:57:03  willuhn
+ * Revision 1.2  2011/10/07 11:16:48  willuhn
+ * @N Jameica-interne Reminder ebenfalls exportieren
+ *
+ * Revision 1.1  2011-10-05 16:57:03  willuhn
  * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
  * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderCalendarPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/10/06 10:49:08 $
+ * $Revision: 1.4 $
+ * $Date: 2011/10/07 11:16:48 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -21,6 +21,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 
 /**
@@ -28,13 +29,15 @@ import de.willuhn.jameica.system.Application;
  */
 public class ReminderCalendarPart extends CalendarPart
 {
-  private AppointmentProvider myProvider = new ReminderAppointmentProvider();
+  private AppointmentProvider myProvider = null;
   
   /**
    * ct.
    */
   public ReminderCalendarPart()
   {
+    BeanService service = Application.getBootLoader().getBootable(BeanService.class);
+    this.myProvider = service.get(ReminderAppointmentProvider.class);
     this.addAppointmentProvider(this.myProvider);
   }
   
@@ -128,7 +131,10 @@ public class ReminderCalendarPart extends CalendarPart
 
 /**********************************************************************
  * $Log: ReminderCalendarPart.java,v $
- * Revision 1.3  2011/10/06 10:49:08  willuhn
+ * Revision 1.4  2011/10/07 11:16:48  willuhn
+ * @N Jameica-interne Reminder ebenfalls exportieren
+ *
+ * Revision 1.3  2011-10-06 10:49:08  willuhn
  * @N Termin-Provider konfigurierbar
  *
  * Revision 1.2  2011-10-05 16:57:03  willuhn

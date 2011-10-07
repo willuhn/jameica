@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointmentProvider.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/10/05 16:57:03 $
+ * $Revision: 1.6 $
+ * $Date: 2011/10/07 11:16:48 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.willuhn.annotation.Lifecycle;
+import de.willuhn.annotation.Lifecycle.Type;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Reminder;
@@ -25,6 +27,7 @@ import de.willuhn.logging.Logger;
 /**
  * Implementierung eines Termin-Providers fuer Jameica-Reminders.
  */
+@Lifecycle(Type.CONTEXT)
 public class ReminderAppointmentProvider implements AppointmentProvider
 {
   /**
@@ -66,7 +69,10 @@ public class ReminderAppointmentProvider implements AppointmentProvider
 
 /**********************************************************************
  * $Log: ReminderAppointmentProvider.java,v $
- * Revision 1.5  2011/10/05 16:57:03  willuhn
+ * Revision 1.6  2011/10/07 11:16:48  willuhn
+ * @N Jameica-interne Reminder ebenfalls exportieren
+ *
+ * Revision 1.5  2011-10-05 16:57:03  willuhn
  * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
  * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
  *
