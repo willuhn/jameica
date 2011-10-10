@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.16 $
- * $Date: 2011/10/05 16:57:04 $
+ * $Revision: 1.17 $
+ * $Date: 2011/10/10 16:19:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -16,6 +16,7 @@ package de.willuhn.jameica.services;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,11 +28,13 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.messaging.QueryMessage;
+import de.willuhn.jameica.messaging.ReminderMessage;
 import de.willuhn.jameica.security.Wallet;
 import de.willuhn.jameica.security.crypto.AESEngine;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.JameicaException;
 import de.willuhn.jameica.system.Reminder;
+import de.willuhn.jameica.system.ReminderInterval;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -48,7 +51,7 @@ public class ReminderService extends TimerTask implements Bootable
 {
   private Timer timer   = null;
   private Wallet wallet = null;
-
+  
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
@@ -124,6 +127,22 @@ public class ReminderService extends TimerTask implements Bootable
   
   /**
    * Liefert eine Liste aller Reminder im angegebenen Zeitraum.
+   * Die Funktion findet auch wiederkehrende Reminder, insofern mindestens eine
+   * geplante Ausfuehrung im angegebenen Zeitraum liegt. Befinden sich in dem Zeitraum
+   * mehrere Termine fuer den Reminder, dann ist er in der Map dennoch nur einmal
+   * enthalten, da alle weiteren Termine dieses Reminders ja die selbe UUID haben und in
+   * der Map nur einmal auftreten koennen (weil Key=UUID).
+   * Es ist also Sache des Aufrufers, zu pruefen, ob unter den zurueckgelieferten Termine
+   * welche mit Wiederholungen enthalten sind und diese eventuell ebenfalls noch im
+   * Zeitfenster liegen. Das kann beispielsweise wie folgt geschehen:
+   * 
+   * <code>
+   * ReminderInterval ri = reminder.getReminderInterval();
+   * if (ri != null)
+   * {
+   *   List<Date> termine = ri.getDates(reminder.getDate(),from,to);
+   * }
+   * </code>
    * @param queue Angabe der Queue, in dem sich die Reminder befinden muessen (optional).
    * Ist keine Queue angegeben, werden die Reminder aller Queues geliefert.
    * @param from Start-Datum des Zeitraumes (optional).
@@ -133,7 +152,6 @@ public class ReminderService extends TimerTask implements Bootable
    */
   public Map<String,Reminder> getReminders(String queue, Date from, Date to) throws Exception
   {
-    Date now          = new Date();
     boolean haveQueue = StringUtils.trimToNull(queue) != null;
     
     Map<String,Reminder> map = new HashMap<String,Reminder>();
@@ -146,9 +164,30 @@ public class ReminderService extends TimerTask implements Bootable
         continue; // Queue explizit angegeben, die des Reminders passt aber nicht
       
       Date d = r.getDate();
-      if (d == null) // Reminder ohne Termin kriegen das aktuelle Datum
-        d = now;
+
+      //////////////////////////////////////////////////////////////////////////
+      // 1. Sich wiederholende Termine
       
+      // Wenn es ein sich wiederholender Termin ist, checken wir, ob er in
+      // den angegebenen Zeitraum faellt. Falls er mehrfach im Zeitraum liegt,
+      // ist es Aufgabe des Aufrufers, die Folge-Aufrufe (via ReminderInterval#getDates())
+      // selbst herauszufinden. Denn da wir eine Map mit UUID als Key zurueckgeben, koennen
+      // wir ohnehin nur den ersten Treffer liefern - alle Folgetreffer im Zeitraum wuerden
+      // ja den ersten ueberschreiben
+      ReminderInterval ri = r.getReminderInterval();
+      if (ri != null)
+      {
+        List<Date> dates = ri.getDates(d,from,to);
+        if (dates.size() > 0)
+          map.put(uuid,r); // OK, wir haben mindestens 1 Treffer
+        
+        continue; // weiter zum naechsten
+      }
+      //
+      //////////////////////////////////////////////////////////////////////////
+      
+      //////////////////////////////////////////////////////////////////////////
+      // 1. Einzel-Termine
       if (from != null && d.before(from))
         continue; // Liegt vorm gesuchten Zeitraum
       
@@ -156,6 +195,9 @@ public class ReminderService extends TimerTask implements Bootable
         continue; // Liegt nach gesuchtem Zeitraum.
 
       map.put(uuid,r);
+      //
+      //////////////////////////////////////////////////////////////////////////
+
     }
     return map;
   }
@@ -202,42 +244,63 @@ public class ReminderService extends TimerTask implements Bootable
   {
     try
     {
-      Map<String,Reminder> reminders = this.getReminders(null,null,new Date());
+      Date now = new Date();
+      
+      Map<String,Reminder> reminders = this.getReminders(null,null,now);
       Iterator<String> uuids = reminders.keySet().iterator();
       
-      Date now = new Date();
       long timeout = now.getTime() - (14 * 24 * 60 * 60 * 1000L); // 14 Tage
       
       while (uuids.hasNext())
       {
-        String uuid  = uuids.next();
-        Reminder r   = reminders.get(uuid);
+        String uuid         = uuids.next();
+        Reminder r          = reminders.get(uuid);
 
-        // Reminder aussieben, fuer die wir schon die Message gesendet haben
-        Date notified = (Date) r.getData(Reminder.KEY_NOTIFIED);
-        if (notified != null)
-        {
-          // Auto-Delete fuer Reminder, deren Termin 14 Tage zurueckliegt
-          if (notified.getTime() < timeout)
-          {
-            Logger.debug("deleting old reminder, message sent on: " + notified);
-            this.delete(uuid);
-          }
-          continue;
-        }
-        
-        // Queue ermitteln
-        String queue = StringUtils.trimToNull(r.getQueue());
-        if (queue == null)
-          queue = Reminder.QUEUE_DEFAULT;
-        
         try
         {
-          Logger.info("sending reminder message to " + queue);
-          Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new QueryMessage(r.getData()));
+          ReminderInterval ri = r.getReminderInterval();
+          Date date           = r.getDate();
+          Date last           = (Date) r.getData(Reminder.KEY_EXECUTED); // Datum der letzten Ausfuehrung
+
+          //////////////////////////////////////////////////////////////////////
+          // einmalige Reminder aussieben, die wir schon ausgefuehrt haben
+          if (last != null && ri == null)
+          {
+            // Auto-Delete fuer Reminder, deren Termin 14 Tage zurueckliegt
+            if (last.getTime() < timeout)
+            {
+              Logger.debug("deleting old reminder, message sent on: " + last);
+              this.delete(uuid);
+            }
+            continue;
+          }
+          //////////////////////////////////////////////////////////////////////
           
-          // Als gesendet markieren
-          r.setData(Reminder.KEY_NOTIFIED,now);
+          //////////////////////////////////////////////////////////////////////
+          // Queue ermitteln
+          String queue = StringUtils.trimToNull(r.getQueue());
+          if (queue == null)
+            queue = Reminder.QUEUE_DEFAULT;
+          //////////////////////////////////////////////////////////////////////
+
+
+          if (ri == null) // Einmalige Reminder
+          {
+            Logger.info("sending reminder message to " + queue + " - due to: " + date);
+            Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new ReminderMessage(date, r.getData()));
+          }
+          else // Wiederholender Reminder. Checken, ob seit der letzten Ausfuehrung ein neues Intervall faellig ist
+          {
+            List<Date> dates = ri.getDates(date,last,now);
+            for (Date d:dates)
+            {
+              Logger.info("sending reminder message to " + queue + " - due to: " + d);
+              Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new ReminderMessage(d, r.getData()));
+            }
+          }
+          
+          // Datum der Ausfuehrung speichern
+          r.setData(Reminder.KEY_EXECUTED,now);
           this.update(uuid,r);
         }
         catch (Exception e)
@@ -256,7 +319,10 @@ public class ReminderService extends TimerTask implements Bootable
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
- * Revision 1.16  2011/10/05 16:57:04  willuhn
+ * Revision 1.17  2011/10/10 16:19:17  willuhn
+ * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
+ *
+ * Revision 1.16  2011-10-05 16:57:04  willuhn
  * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
  * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Reminder.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/10/05 16:57:04 $
+ * $Revision: 1.2 $
+ * $Date: 2011/10/10 16:19:17 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -49,12 +49,13 @@ public final class Reminder implements Serializable
   public final static String QUEUE_DEFAULT = "jameica.reminder";
   
   /**
-   * Key, in dem der Reminder-Service das Datum speichert, an dem die Benachrichtigung gesendet wurde.
+   * Key, in dem der Reminder-Service das Datum speichert, an dem der Reminder ausgefuehrt wurde.
    */
-  public final static String KEY_NOTIFIED = "jameica.reminder.key.notified";
+  public final static String KEY_EXECUTED = "jameica.reminder.key.executed";
   
   private String queue                      = QUEUE_DEFAULT;
   private Date date                         = new Date();
+  private ReminderInterval interval         = null;
   private HashMap<String,Serializable> data = new HashMap<String,Serializable>();
 
   /**
@@ -90,7 +91,30 @@ public final class Reminder implements Serializable
    */
   public void setDate(Date due)
   {
+    if (due == null)
+      throw new IllegalArgumentException("date cannot be null");
     this.date = due;
+  }
+  
+  /**
+   * Optionale Angabe eines Intervalls, falls die Ausfuehrung zyklisch
+   * wiederholt werden soll.
+   * @return optionale Angabe eines Intervalls oder NULL, wenn der
+   * Reminder nur einmal ausgefuhert wird.
+   */
+  public ReminderInterval getReminderInterval()
+  {
+    return this.interval;
+  }
+  
+  /**
+   * Legt ein optionales Intervall fest, in dem der Reminder wiederholt werden soll.
+   * Ist keines angegeben, wird der Reminder nur einmal ausgefuehrt.
+   * @param interval das Intervall.
+   */
+  public void setReminderInterval(ReminderInterval interval)
+  {
+    this.interval = interval;
   }
   
   /**
@@ -137,7 +161,16 @@ public final class Reminder implements Serializable
   public String toString()
   {
     StringBuffer sb = new StringBuffer();
-    sb.append(this.data);
+    if (this.interval != null)
+    {
+      sb.append(this.interval);
+      sb.append(", starting at ");
+      sb.append(this.date);
+    }
+    else
+    {
+      sb.append(this.date);
+    }
     sb.append(": [");
     sb.append(this.queue);
     sb.append("] ");
@@ -149,7 +182,10 @@ public final class Reminder implements Serializable
 
 /**********************************************************************
  * $Log: Reminder.java,v $
- * Revision 1.1  2011/10/05 16:57:04  willuhn
+ * Revision 1.2  2011/10/10 16:19:17  willuhn
+ * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
+ *
+ * Revision 1.1  2011-10-05 16:57:04  willuhn
  * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
  * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
  *

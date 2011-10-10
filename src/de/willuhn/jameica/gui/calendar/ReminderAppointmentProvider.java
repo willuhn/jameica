@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointmentProvider.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/10/07 11:16:48 $
+ * $Revision: 1.7 $
+ * $Date: 2011/10/10 16:19:17 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -22,6 +22,7 @@ import de.willuhn.annotation.Lifecycle.Type;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Reminder;
+import de.willuhn.jameica.system.ReminderInterval;
 import de.willuhn.logging.Logger;
 
 /**
@@ -45,7 +46,25 @@ public class ReminderAppointmentProvider implements AppointmentProvider
       while (uuids.hasNext())
       {
         String uuid = uuids.next();
-        result.add(new ReminderAppointment(uuid,reminders.get(uuid)));
+        Reminder reminder   = reminders.get(uuid);
+        ReminderInterval ri = reminder.getReminderInterval();
+        if (ri == null)
+        {
+          // Termin mit einmaliger Ausfuehrung
+          result.add(new ReminderAppointment(uuid,reminder));
+        }
+        else
+        {
+          // Termin mit mehreren Ausfuehrungen. Wir fuegen alle Wiederholungen
+          // im angegebenen Zeitraum ein.
+          List<Date> dates = ri.getDates(reminder.getDate(),from,to);
+          for (Date d:dates)
+          {
+            // Datum explizit angeben
+            result.add(new ReminderAppointment(uuid,reminder,d));
+            
+          }
+        }
       }
       return result;
     }
@@ -69,7 +88,10 @@ public class ReminderAppointmentProvider implements AppointmentProvider
 
 /**********************************************************************
  * $Log: ReminderAppointmentProvider.java,v $
- * Revision 1.6  2011/10/07 11:16:48  willuhn
+ * Revision 1.7  2011/10/10 16:19:17  willuhn
+ * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
+ *
+ * Revision 1.6  2011-10-07 11:16:48  willuhn
  * @N Jameica-interne Reminder ebenfalls exportieren
  *
  * Revision 1.5  2011-10-05 16:57:03  willuhn
