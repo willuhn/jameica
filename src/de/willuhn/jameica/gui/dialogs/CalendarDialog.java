@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CalendarDialog.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.14 $
+ * $Date: 2011/10/13 13:07:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -53,6 +53,8 @@ public class CalendarDialog extends AbstractDialog
   public CalendarDialog(int position)
   {
     super(position);
+    this.setTitle(Application.getI18n().tr("Kalender"));
+    this.setPanelText("");
   }
 
   /**
@@ -149,7 +151,10 @@ public class CalendarDialog extends AbstractDialog
 
 /*******************************************************************************
  * $Log: CalendarDialog.java,v $
- * Revision 1.13  2011/05/03 10:13:11  willuhn
+ * Revision 1.14  2011/10/13 13:07:34  willuhn
+ * @N Beim Klick auf das Datum in der Statusleiste kuenftig die Kalender-View oeffnen statt dem Kalender-Dialog
+ *
+ * Revision 1.13  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.12  2011-01-14 17:33:39  willuhn

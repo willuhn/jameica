@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarCalendarItem.java,v $
- * $Revision: 1.6 $
- * $Date: 2010/10/19 15:33:21 $
+ * $Revision: 1.7 $
+ * $Date: 2011/10/13 13:07:34 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,11 +26,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-import de.willuhn.jameica.gui.dialogs.CalendarDialog;
-import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.internal.action.Appointments;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Statusbar-Item, welches einen Kalender anzeigt.
@@ -67,40 +67,16 @@ public class StatusBarCalendarItem implements StatusBarItem
     text.setText(df.format(new Date()));
     text.addMouseListener(new MouseAdapter()
     {
-      
-      /**
-       * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
-       */
-      public void mouseDown(MouseEvent e)
-      {
-        // wir heben den Text beim Klick hervor, damit man
-        // ein optisches Feedback beim Klick kriegt
-        text.setForeground(Color.WIDGET_BG.getSWTColor());
-      }
-
       public void mouseUp(MouseEvent e)
       {
-        text.setForeground(Color.WIDGET_FG.getSWTColor());
-        GUI.getDisplay().asyncExec(new Runnable()
+        try
         {
-          public void run()
-          {
-            try
-            {
-              CalendarDialog d = new CalendarDialog(CalendarDialog.POSITION_MOUSE);
-              d.setTitle(Application.getI18n().tr("Kalender"));
-              d.open();
-            }
-            catch (OperationCanceledException oce)
-            {
-              // ignore
-            }
-            catch (Exception ex)
-            {
-              Logger.error("unable to open calendar dialog",ex);
-            }
-          }
-        });
+          new Appointments().handleAction(null);
+        }
+        catch (ApplicationException ae)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+        }
       }
     });
   }
@@ -154,7 +130,10 @@ public class StatusBarCalendarItem implements StatusBarItem
 
 /*********************************************************************
  * $Log: StatusBarCalendarItem.java,v $
- * Revision 1.6  2010/10/19 15:33:21  willuhn
+ * Revision 1.7  2011/10/13 13:07:34  willuhn
+ * @N Beim Klick auf das Datum in der Statusleiste kuenftig die Kalender-View oeffnen statt dem Kalender-Dialog
+ *
+ * Revision 1.6  2010-10-19 15:33:21  willuhn
  * @N Statusbar via Customizing anpassbar
  *
  * Revision 1.5  2009/06/04 10:50:11  willuhn
