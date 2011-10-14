@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ReminderAppointmentDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/10/05 16:57:04 $
+ * $Revision: 1.2 $
+ * $Date: 2011/10/14 11:48:35 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -69,7 +69,7 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
   {
     return this.appointment;
   }
-
+  
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
@@ -77,6 +77,7 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
   {
     final I18N i18n         = Application.getI18n();
     final Reminder reminder = appointment.getReminder();
+    boolean canChange       = reminder.getReminderInterval() != null || reminder.getData(Reminder.KEY_EXECUTED) == null;
 
     ////////////////////////////////////////////////////////////////////////////
     // Datum
@@ -86,6 +87,7 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
     final SWTCalendar cal = new SWTCalendar(container1.getComposite(), SWT.FLAT | SWTCalendar.RED_WEEKEND);
     cal.setCalendar(c);
     cal.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    cal.setEnabled(canChange);
     //
     ////////////////////////////////////////////////////////////////////////////
 
@@ -96,6 +98,7 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
     final TextInput name = new TextInput((String) reminder.getData(ReminderAppointment.KEY_NAME));
     name.setName(i18n.tr("Text"));
     name.setMandatory(true);
+    name.setEnabled(canChange);
     container2.addInput(name);
     //
     ////////////////////////////////////////////////////////////////////////////
@@ -104,6 +107,7 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
     // Beschreibung
     final TextAreaInput desc = new TextAreaInput((String) reminder.getData(ReminderAppointment.KEY_DESCRIPTION));
     desc.setName(i18n.tr("Beschreibung"));
+    desc.setEnabled(canChange);
     container2.addInput(desc);
     //
     ////////////////////////////////////////////////////////////////////////////
@@ -118,7 +122,7 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
 
 
     ButtonArea buttons = new ButtonArea();
-    buttons.addButton(Application.getI18n().tr("Übernehmen"), new Action()
+    Button apply = new Button(Application.getI18n().tr("Übernehmen"), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
       {
@@ -136,6 +140,8 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
         close();
       }
     }, null, true,"ok.png");
+    apply.setEnabled(canChange);
+    buttons.addButton(apply);
     
     Button delete = new Button(Application.getI18n().tr("Termin löschen"), new Action()
     {
@@ -181,7 +187,10 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
 
 /**********************************************************************
  * $Log: ReminderAppointmentDialog.java,v $
- * Revision 1.1  2011/10/05 16:57:04  willuhn
+ * Revision 1.2  2011/10/14 11:48:35  willuhn
+ * @N Bei abgelaufenen Terminen wenigstens noch das Loeschen zulassen
+ *
+ * Revision 1.1  2011-10-05 16:57:04  willuhn
  * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
  * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
  *

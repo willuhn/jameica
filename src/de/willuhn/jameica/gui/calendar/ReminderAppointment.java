@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointment.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/10/10 16:19:17 $
+ * $Revision: 1.4 $
+ * $Date: 2011/10/14 11:48:35 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -99,11 +99,7 @@ public class ReminderAppointment implements Appointment
    */
   public void execute() throws ApplicationException
   {
-    // Bearbeiten ist erlaubt bei:
-    // a) sich wiederholenden Terminen
-    // b) bei einmaligen Terminen, die noch nicht ausgefuehrt wurden
-    if (this.reminder.getReminderInterval() != null || this.reminder.getData(Reminder.KEY_EXECUTED) == null)
-      new ReminderAppointmentDetails().handleAction(this);
+    new ReminderAppointmentDetails().handleAction(this);
   }
 
   /**
@@ -188,7 +184,10 @@ public class ReminderAppointment implements Appointment
 
 /**********************************************************************
  * $Log: ReminderAppointment.java,v $
- * Revision 1.3  2011/10/10 16:19:17  willuhn
+ * Revision 1.4  2011/10/14 11:48:35  willuhn
+ * @N Bei abgelaufenen Terminen wenigstens noch das Loeschen zulassen
+ *
+ * Revision 1.3  2011-10-10 16:19:17  willuhn
  * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
  *
  * Revision 1.2  2011-10-07 11:16:48  willuhn
