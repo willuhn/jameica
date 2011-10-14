@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.17 $
- * $Date: 2011/10/10 16:19:17 $
+ * $Revision: 1.18 $
+ * $Date: 2011/10/14 11:35:16 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -76,6 +76,20 @@ public class ReminderService extends TimerTask implements Bootable
     
     // Wir geben noch Bescheid, dass der Reminder geloescht wurde
     Application.getMessagingFactory().getMessagingQueue("jameica.reminder.deleted").sendMessage(new QueryMessage(r));
+  }
+  
+  /**
+   * Liefert den Reminder zur angegebenen UUID.
+   * @param uuid die UUID des Reminders.
+   * @return der Reminder oder NULL, wenn er nicht existiert.
+   * @throws Exception
+   */
+  public Reminder get(String uuid) throws Exception
+  {
+    if (StringUtils.trimToNull(uuid) == null)
+      throw new JameicaException("no uuid given");
+
+    return (Reminder) this.wallet.get(uuid);
   }
   
   /**
@@ -319,7 +333,10 @@ public class ReminderService extends TimerTask implements Bootable
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
- * Revision 1.17  2011/10/10 16:19:17  willuhn
+ * Revision 1.18  2011/10/14 11:35:16  willuhn
+ * @N get(String)
+ *
+ * Revision 1.17  2011-10-10 16:19:17  willuhn
  * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
  *
  * Revision 1.16  2011-10-05 16:57:04  willuhn
