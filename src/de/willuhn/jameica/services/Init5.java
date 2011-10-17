@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/Init5.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/09/26 11:43:35 $
+ * $Revision: 1.8 $
+ * $Date: 2011/10/17 10:07:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -43,10 +43,10 @@ public class Init5 implements Bootable
       ClassService.class,
       SSLService.class,
       SSLSocketFactoryService.class,
-      ReminderService.class,
       PluginService.class,
       PluginServiceService.class,
       SearchService.class,
+      ReminderService.class,
     };
   }
 
@@ -70,7 +70,10 @@ public class Init5 implements Bootable
 
 /**********************************************************************
  * $Log: Init5.java,v $
- * Revision 1.7  2011/09/26 11:43:35  willuhn
+ * Revision 1.8  2011/10/17 10:07:36  willuhn
+ * @N Reminder-Service erst zum Schluss laden
+ *
+ * Revision 1.7  2011-09-26 11:43:35  willuhn
  * @C Setzen des SSL-Socketfactory in extra Service
  * @C Log-Level in Bootloader
  *
