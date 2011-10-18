@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.18 $
- * $Date: 2011/10/14 11:35:16 $
+ * $Revision: 1.19 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@
 
 package de.willuhn.jameica.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,14 +30,15 @@ import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.ReminderMessage;
-import de.willuhn.jameica.security.Wallet;
-import de.willuhn.jameica.security.crypto.AESEngine;
+import de.willuhn.jameica.reminder.Reminder;
+import de.willuhn.jameica.reminder.ReminderInterval;
+import de.willuhn.jameica.reminder.ReminderStorageProvider;
+import de.willuhn.jameica.reminder.ReminderStorageProviderWallet;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.JameicaException;
-import de.willuhn.jameica.system.Reminder;
-import de.willuhn.jameica.system.ReminderInterval;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.MultipleClassLoader;
 
 
 /**
@@ -49,8 +51,9 @@ import de.willuhn.util.ApplicationException;
  */
 public class ReminderService extends TimerTask implements Bootable
 {
-  private Timer timer   = null;
-  private Wallet wallet = null;
+  private Timer timer                             = null;
+  private ReminderStorageProvider jameicaProvider = null;
+  private List<ReminderStorageProvider> providers = new ArrayList<ReminderStorageProvider>();
   
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -61,7 +64,7 @@ public class ReminderService extends TimerTask implements Bootable
   }
 
   /**
-   * Loescht einen Reminder.
+   * Loescht einen Reminder aus dem Jameica-internen Reminder-Storage.
    * @param uuid die UUID des Reminders.
    * @throws Exception
    */
@@ -70,7 +73,7 @@ public class ReminderService extends TimerTask implements Bootable
     if (StringUtils.trimToNull(uuid) == null)
       throw new JameicaException("no uuid given");
 
-    Reminder r = (Reminder) this.wallet.delete(uuid);
+    Reminder r = (Reminder) this.jameicaProvider.delete(uuid);
     if (r == null)
       return; // Nicht gefunden
     
@@ -80,6 +83,7 @@ public class ReminderService extends TimerTask implements Bootable
   
   /**
    * Liefert den Reminder zur angegebenen UUID.
+   * Hierbei werden alle Storage-Provider durchsucht.
    * @param uuid die UUID des Reminders.
    * @return der Reminder oder NULL, wenn er nicht existiert.
    * @throws Exception
@@ -89,11 +93,21 @@ public class ReminderService extends TimerTask implements Bootable
     if (StringUtils.trimToNull(uuid) == null)
       throw new JameicaException("no uuid given");
 
-    return (Reminder) this.wallet.get(uuid);
+    // Wir muessen nicht explizit in "this.jameicaProvider" suchen, weil
+    // der auch in "this.providers" enthalten ist.
+    for (ReminderStorageProvider p:this.providers)
+    {
+      Reminder r = p.get(uuid);
+      if (r != null)
+        return r;
+    }
+
+    // Nicht gefunden
+    return null;
   }
   
   /**
-   * Fuegt einen neuen Reminder hinzu.
+   * Fuegt einen neuen Reminder zum Jameica-internen Reminder-Storage hinzu.
    * @param reminder der zu speichernde Reminder.
    * @return die vergebene UUID fuer den Reminder.
    * @throws Exception
@@ -104,9 +118,7 @@ public class ReminderService extends TimerTask implements Bootable
       throw new ApplicationException(Application.getI18n().tr("Kein Reminder angegeben"));
 
     String uuid = UUID.randomUUID().toString();
-    
-    // Speichern
-    this.wallet.set(uuid,reminder);
+    this.jameicaProvider.set(uuid,reminder);
     
     // Per Messaging Bescheid geben
     Application.getMessagingFactory().getMessagingQueue("jameica.reminder.added").sendMessage(new QueryMessage(reminder));
@@ -116,7 +128,7 @@ public class ReminderService extends TimerTask implements Bootable
   }
   
   /**
-   * Aktualisiert einen Reminder.
+   * Aktualisiert einen Reminder im Jameica-internen Reminder-Storage.
    * @param uuid die UUID des Reminders.
    * @param reminder der Reminder.
    * @throws Exception
@@ -129,10 +141,10 @@ public class ReminderService extends TimerTask implements Bootable
     if (StringUtils.trimToNull(uuid) == null)
       throw new JameicaException("no uuid given");
 
-    if (this.wallet.get(uuid) == null)
+    if (this.jameicaProvider.get(uuid) == null)
       throw new JameicaException("reminder not found, uuid: " + uuid);
     
-    this.wallet.set(uuid,reminder);
+    this.jameicaProvider.set(uuid,reminder);
 
     // Per Messaging Bescheid geben
     Application.getMessagingFactory().getMessagingQueue("jameica.reminder.updated").sendMessage(new QueryMessage(reminder));
@@ -141,6 +153,7 @@ public class ReminderService extends TimerTask implements Bootable
   
   /**
    * Liefert eine Liste aller Reminder im angegebenen Zeitraum.
+   * Hierbei werden alle Storage-Provider durchsucht.
    * Die Funktion findet auch wiederkehrende Reminder, insofern mindestens eine
    * geplante Ausfuehrung im angegebenen Zeitraum liegt. Befinden sich in dem Zeitraum
    * mehrere Termine fuer den Reminder, dann ist er in der Map dennoch nur einmal
@@ -169,50 +182,55 @@ public class ReminderService extends TimerTask implements Bootable
     boolean haveQueue = StringUtils.trimToNull(queue) != null;
     
     Map<String,Reminder> map = new HashMap<String,Reminder>();
-    String[] uuids = this.wallet.getAll(null);
-    for (String uuid:uuids)
+
+    for (ReminderStorageProvider p:this.providers)
     {
-      Reminder r = (Reminder) this.wallet.get(uuid);
-      String rq = StringUtils.trimToEmpty(r.getQueue());
-      if (haveQueue && !queue.equals(rq))
-        continue; // Queue explizit angegeben, die des Reminders passt aber nicht
-      
-      Date d = r.getDate();
-
-      //////////////////////////////////////////////////////////////////////////
-      // 1. Sich wiederholende Termine
-      
-      // Wenn es ein sich wiederholender Termin ist, checken wir, ob er in
-      // den angegebenen Zeitraum faellt. Falls er mehrfach im Zeitraum liegt,
-      // ist es Aufgabe des Aufrufers, die Folge-Aufrufe (via ReminderInterval#getDates())
-      // selbst herauszufinden. Denn da wir eine Map mit UUID als Key zurueckgeben, koennen
-      // wir ohnehin nur den ersten Treffer liefern - alle Folgetreffer im Zeitraum wuerden
-      // ja den ersten ueberschreiben
-      ReminderInterval ri = r.getReminderInterval();
-      if (ri != null)
+      String[] uuids = p.getUUIDs();
+      for (String uuid:uuids)
       {
-        List<Date> dates = ri.getDates(d,from,to);
-        if (dates.size() > 0)
-          map.put(uuid,r); // OK, wir haben mindestens 1 Treffer
+        Reminder r = (Reminder) p.get(uuid);
+        String rq = StringUtils.trimToEmpty(r.getQueue());
+        if (haveQueue && !queue.equals(rq))
+          continue; // Queue explizit angegeben, die des Reminders passt aber nicht
         
-        continue; // weiter zum naechsten
+        Date d = r.getDate();
+
+        //////////////////////////////////////////////////////////////////////////
+        // 1. Sich wiederholende Termine
+        
+        // Wenn es ein sich wiederholender Termin ist, checken wir, ob er in
+        // den angegebenen Zeitraum faellt. Falls er mehrfach im Zeitraum liegt,
+        // ist es Aufgabe des Aufrufers, die Folge-Aufrufe (via ReminderInterval#getDates())
+        // selbst herauszufinden. Denn da wir eine Map mit UUID als Key zurueckgeben, koennen
+        // wir ohnehin nur den ersten Treffer liefern - alle Folgetreffer im Zeitraum wuerden
+        // ja den ersten ueberschreiben
+        ReminderInterval ri = r.getReminderInterval();
+        if (ri != null)
+        {
+          List<Date> dates = ri.getDates(d,from,to);
+          if (dates.size() > 0)
+            map.put(uuid,r); // OK, wir haben mindestens 1 Treffer
+          
+          continue; // weiter zum naechsten
+        }
+        //
+        //////////////////////////////////////////////////////////////////////////
+        
+        //////////////////////////////////////////////////////////////////////////
+        // 1. Einzel-Termine
+        if (from != null && d.before(from))
+          continue; // Liegt vorm gesuchten Zeitraum
+        
+        if (to != null && d.after(to))
+          continue; // Liegt nach gesuchtem Zeitraum.
+
+        map.put(uuid,r);
+        //
+        //////////////////////////////////////////////////////////////////////////
+
       }
-      //
-      //////////////////////////////////////////////////////////////////////////
-      
-      //////////////////////////////////////////////////////////////////////////
-      // 1. Einzel-Termine
-      if (from != null && d.before(from))
-        continue; // Liegt vorm gesuchten Zeitraum
-      
-      if (to != null && d.after(to))
-        continue; // Liegt nach gesuchtem Zeitraum.
-
-      map.put(uuid,r);
-      //
-      //////////////////////////////////////////////////////////////////////////
-
     }
+    
     return map;
   }
 
@@ -223,7 +241,26 @@ public class ReminderService extends TimerTask implements Bootable
   {
     try
     {
-      this.wallet = new Wallet(ReminderService.class,new AESEngine());
+      // 1. Unser eigener Storage-Provider:
+      BeanService service = Application.getBootLoader().getBootable(BeanService.class);
+      this.jameicaProvider = service.get(ReminderStorageProviderWallet.class);
+      
+      // 2. Die restlichen Storage-Provider laden
+      MultipleClassLoader cl = Application.getClassLoader();
+      Class<ReminderStorageProvider>[] classes = cl.getClassFinder().findImplementors(ReminderStorageProvider.class);
+      for (Class<ReminderStorageProvider> c:classes)
+      {
+        try
+        {
+          this.providers.add(service.get(c));
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to load reminder storage provider " + c,e);
+        }
+      }
+
+      // 3. Timer erzeugen
       this.timer = new Timer(true);
       this.timer.schedule(this,20 * 1000L,60 * 1000L); // alle 60 Sekunden, Start in 20 Sekunden
     }
@@ -248,6 +285,11 @@ public class ReminderService extends TimerTask implements Bootable
     catch (Exception e)
     {
       Logger.error("error while shutting down reminder service",e);
+    }
+    finally
+    {
+      this.jameicaProvider = null;
+      this.providers.clear();
     }
   }
 
@@ -333,6 +375,10 @@ public class ReminderService extends TimerTask implements Bootable
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.19  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
  * Revision 1.18  2011/10/14 11:35:16  willuhn
  * @N get(String)
  *

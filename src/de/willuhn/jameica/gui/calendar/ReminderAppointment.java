@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointment.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/10/14 11:48:35 $
+ * $Revision: 1.5 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -19,8 +19,8 @@ import org.eclipse.swt.graphics.RGB;
 
 import de.willuhn.jameica.gui.internal.action.ReminderAppointmentDetails;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.system.Reminder;
-import de.willuhn.jameica.system.ReminderInterval;
+import de.willuhn.jameica.reminder.Reminder;
+import de.willuhn.jameica.reminder.ReminderInterval;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -184,6 +184,10 @@ public class ReminderAppointment implements Appointment
 
 /**********************************************************************
  * $Log: ReminderAppointment.java,v $
+ * Revision 1.5  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
  * Revision 1.4  2011/10/14 11:48:35  willuhn
  * @N Bei abgelaufenen Terminen wenigstens noch das Loeschen zulassen
  *

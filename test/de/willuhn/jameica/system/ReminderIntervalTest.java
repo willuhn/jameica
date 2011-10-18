@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/test/de/willuhn/jameica/system/ReminderIntervalTest.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/10/10 16:19:17 $
+ * $Revision: 1.2 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -20,7 +20,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.willuhn.jameica.system.ReminderInterval.TimeUnit;
+import de.willuhn.jameica.reminder.ReminderInterval;
+import de.willuhn.jameica.reminder.ReminderInterval.TimeUnit;
 
 /**
  * Testet das Reminder-Intervall.
@@ -140,7 +141,11 @@ public class ReminderIntervalTest
 
 /**********************************************************************
  * $Log: ReminderIntervalTest.java,v $
- * Revision 1.1  2011/10/10 16:19:17  willuhn
+ * Revision 1.2  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
+ * Revision 1.1  2011-10-10 16:19:17  willuhn
  * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
  *
  **********************************************************************/

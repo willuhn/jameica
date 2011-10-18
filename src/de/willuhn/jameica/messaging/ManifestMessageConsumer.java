@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/ManifestMessageConsumer.java,v $
- * $Revision: 1.5 $
- * $Date: 2011/10/05 16:51:16 $
+ * $Revision: 1.6 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -51,13 +51,15 @@ public class ManifestMessageConsumer implements MessageConsumer
     if (msg.getStatusCode() != SystemMessage.SYSTEM_STARTED)
       return;
     
-    Logger.info("searching for message consumers from manifests");
+    Logger.debug("searching for message consumers from manifests");
     MessagingFactory factory = Application.getMessagingFactory();
     BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
     
     List<Manifest> list = new LinkedList<Manifest>();
     list.addAll(Application.getPluginLoader().getInstalledManifests()); // die Plugins
     list.add(Application.getManifest()); // Jameica selbst
+    
+    int count = 0;
     for (Manifest mf:list)
     {
       ConsumerDescriptor[] consumers = mf.getMessageConsumers();
@@ -102,8 +104,9 @@ public class ManifestMessageConsumer implements MessageConsumer
           if (mc.autoRegister())
             continue;
           
-          Logger.info("  " + queue + ": " + classname);
+          Logger.debug("  " + queue + ": " + classname);
           factory.getMessagingQueue(queue).registerMessageConsumer(mc);
+          count++;
         }
         catch (Throwable t)
         {
@@ -112,6 +115,7 @@ public class ManifestMessageConsumer implements MessageConsumer
         
       }
     }
+    Logger.info("message consumers from manifests: " + count);
   }
 
   /**
@@ -128,7 +132,11 @@ public class ManifestMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: ManifestMessageConsumer.java,v $
- * Revision 1.5  2011/10/05 16:51:16  willuhn
+ * Revision 1.6  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
+ * Revision 1.5  2011-10-05 16:51:16  willuhn
  * @N Auch MessageConsumer beruecksichtigen, die im System-Manifest von Jameica stehen
  *
  * Revision 1.4  2011-08-31 07:46:41  willuhn

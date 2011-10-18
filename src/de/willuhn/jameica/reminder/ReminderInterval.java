@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ReminderInterval.java,v $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/ReminderInterval.java,v $
  * $Revision: 1.1 $
- * $Date: 2011/10/10 16:19:17 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -9,7 +9,7 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.system;
+package de.willuhn.jameica.reminder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -199,7 +199,11 @@ public class ReminderInterval implements Serializable
 
 /**********************************************************************
  * $Log: ReminderInterval.java,v $
- * Revision 1.1  2011/10/10 16:19:17  willuhn
+ * Revision 1.1  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
+ * Revision 1.1  2011-10-10 16:19:17  willuhn
  * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
  *
  **********************************************************************/

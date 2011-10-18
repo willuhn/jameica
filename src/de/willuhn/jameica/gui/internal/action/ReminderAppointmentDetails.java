@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/ReminderAppointmentDetails.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/10/05 16:57:03 $
+ * $Revision: 1.2 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -14,10 +14,10 @@ package de.willuhn.jameica.gui.internal.action;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.calendar.ReminderAppointment;
 import de.willuhn.jameica.gui.internal.dialogs.ReminderAppointmentDialog;
+import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.system.Reminder;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -90,7 +90,11 @@ public class ReminderAppointmentDetails implements Action
 
 /**********************************************************************
  * $Log: ReminderAppointmentDetails.java,v $
- * Revision 1.1  2011/10/05 16:57:03  willuhn
+ * Revision 1.2  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
+ * Revision 1.1  2011-10-05 16:57:03  willuhn
  * @N Refactoring des Reminder-Frameworks. Hat jetzt eine brauchbare API und wird von den Freitext-Remindern von Jameica verwendet
  * @N Jameica besitzt jetzt einen integrierten Kalender, der die internen Freitext-Reminder anzeigt (dort koennen sie auch angelegt, geaendert und geloescht werden) sowie die Appointments aller Plugins
  *

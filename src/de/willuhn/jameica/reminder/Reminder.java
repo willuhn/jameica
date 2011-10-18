@@ -1,7 +1,7 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Reminder.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/10/10 16:19:17 $
+ * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Reminder.java,v $
+ * $Revision: 1.8 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -11,12 +11,13 @@
  *
  **********************************************************************/
 
-package de.willuhn.jameica.system;
+package de.willuhn.jameica.reminder;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 
 
 
@@ -182,7 +183,11 @@ public final class Reminder implements Serializable
 
 /**********************************************************************
  * $Log: Reminder.java,v $
- * Revision 1.2  2011/10/10 16:19:17  willuhn
+ * Revision 1.8  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
+ * Revision 1.2  2011-10-10 16:19:17  willuhn
  * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
  *
  * Revision 1.1  2011-10-05 16:57:04  willuhn

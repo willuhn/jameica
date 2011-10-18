@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/AutoRegisterMessageConsumer.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/08/30 15:51:11 $
+ * $Revision: 1.3 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -54,7 +54,7 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
     if (msg.getStatusCode() != SystemMessage.SYSTEM_STARTED)
       return;
     
-    Logger.info("searching for auto-registered message consumers");
+    Logger.debug("searching for auto-registered message consumers");
     MessagingFactory factory = Application.getMessagingFactory();
     BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
     
@@ -66,7 +66,10 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
     catch (ClassNotFoundException e)
     {
       Logger.info("  no messaging consumers found");
+      return;
     }
+    
+    int count = 0;
     for (int i=0;i<c.length;++i)
     {
       try
@@ -74,8 +77,9 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
         MessageConsumer mc = beanService.get(c[i]);
         if (mc.autoRegister())
         {
-          Logger.info("  " + c[i].getName());
+          Logger.debug("  " + c[i].getName());
           factory.registerMessageConsumer(mc);
+          count++;
         }
       }
       catch (Throwable t)
@@ -83,6 +87,7 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
         Logger.error("unable to register message consumer " + c[i].getName(),t);
       }
     }
+    Logger.info("auto-registered message consumers: " + count);
   }
 
   /**
@@ -99,7 +104,11 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: AutoRegisterMessageConsumer.java,v $
- * Revision 1.2  2011/08/30 15:51:11  willuhn
+ * Revision 1.3  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
+ * Revision 1.2  2011-08-30 15:51:11  willuhn
  * @N Message-Consumer via Bean-Service instanziieren, damit dort jetzt auch Dependency-Injection moeglich ist
  *
  * Revision 1.1  2011-06-07 11:08:55  willuhn

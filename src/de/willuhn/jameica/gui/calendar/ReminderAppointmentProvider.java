@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointmentProvider.java,v $
- * $Revision: 1.7 $
- * $Date: 2011/10/10 16:19:17 $
+ * $Revision: 1.8 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -19,10 +19,10 @@ import java.util.Map;
 
 import de.willuhn.annotation.Lifecycle;
 import de.willuhn.annotation.Lifecycle.Type;
+import de.willuhn.jameica.reminder.Reminder;
+import de.willuhn.jameica.reminder.ReminderInterval;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Reminder;
-import de.willuhn.jameica.system.ReminderInterval;
 import de.willuhn.logging.Logger;
 
 /**
@@ -88,7 +88,11 @@ public class ReminderAppointmentProvider implements AppointmentProvider
 
 /**********************************************************************
  * $Log: ReminderAppointmentProvider.java,v $
- * Revision 1.7  2011/10/10 16:19:17  willuhn
+ * Revision 1.8  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
+ * Revision 1.7  2011-10-10 16:19:17  willuhn
  * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
  *
  * Revision 1.6  2011-10-07 11:16:48  willuhn

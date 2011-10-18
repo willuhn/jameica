@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ReminderAppointmentDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/10/14 11:48:35 $
+ * $Revision: 1.3 $
+ * $Date: 2011/10/18 09:29:06 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -31,10 +31,10 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.system.Reminder;
 import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -187,6 +187,10 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
 
 /**********************************************************************
  * $Log: ReminderAppointmentDialog.java,v $
+ * Revision 1.3  2011/10/18 09:29:06  willuhn
+ * @N Reminder in eigenes Package verschoben
+ * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
+ *
  * Revision 1.2  2011/10/14 11:48:35  willuhn
  * @N Bei abgelaufenen Terminen wenigstens noch das Loeschen zulassen
  *
