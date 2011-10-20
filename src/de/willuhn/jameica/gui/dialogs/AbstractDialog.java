@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.64 $
- * $Date: 2011/10/05 16:49:57 $
+ * $Revision: 1.65 $
+ * $Date: 2011/10/20 09:19:51 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -437,7 +437,9 @@ public abstract class AbstractDialog<T>
   {
 		try {
 
-			init(); // Dialog wurde nochmal geoeffnet
+      this.closeState = SWT.OK; // Close-State resetten
+
+		  init(); // Dialog wurde nochmal geoeffnet
 
 			display.syncExec(new Runnable()
       {
@@ -596,7 +598,10 @@ public abstract class AbstractDialog<T>
 
 /*********************************************************************
  * $Log: AbstractDialog.java,v $
- * Revision 1.64  2011/10/05 16:49:57  willuhn
+ * Revision 1.65  2011/10/20 09:19:51  willuhn
+ * @B Close-State wurde wurde nicht resettet, wenn der Dialog erneut geoeffnet wird
+ *
+ * Revision 1.64  2011-10-05 16:49:57  willuhn
  * @N AbstractDialog getypt
  *
  * Revision 1.63  2011-08-18 16:03:38  willuhn
