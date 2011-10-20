@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/test/de/willuhn/jameica/system/ReminderIntervalTest.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/10/18 09:29:06 $
+ * $Revision: 1.3 $
+ * $Date: 2011/10/20 16:17:46 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -135,12 +135,35 @@ public class ReminderIntervalTest
     Assert.assertEquals(DF.parse("01.10.2012 12:00"),dates.get(12));
   }
 
+  /**
+   * Testet Wochen.
+   * @throws Exception
+   */
+  @Test
+  public void test006() throws Exception
+  {
+    ReminderInterval ri = new ReminderInterval();
+    ri.setInterval(1);
+    ri.setTimeUnit(TimeUnit.WEEKS);
+    
+    Date start = DF.parse("27.12.2011 12:00");
+    Date from  = DF.parse("27.12.2011 12:01");
+    Date to    = DF.parse("04.01.2012 12:00");
+    
+    List<Date> dates = ri.getDates(start,from,to);
+    Assert.assertEquals(1,dates.size());
+    Assert.assertEquals(DF.parse("03.01.2012 12:00"),dates.get(0));
+  }
+
 }
 
 
 
 /**********************************************************************
  * $Log: ReminderIntervalTest.java,v $
+ * Revision 1.3  2011/10/20 16:17:46  willuhn
+ * @N Refactoring der Reminder-API. Hinzufuegen/Aendern/Loeschen von Remindern geht jetzt nur noch ueber die Storage-Provider
+ *
  * Revision 1.2  2011/10/18 09:29:06  willuhn
  * @N Reminder in eigenes Package verschoben
  * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann

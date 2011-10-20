@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/ReminderAppointmentProvider.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/10/18 09:29:06 $
+ * $Revision: 1.9 $
+ * $Date: 2011/10/20 16:17:46 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -21,6 +21,7 @@ import de.willuhn.annotation.Lifecycle;
 import de.willuhn.annotation.Lifecycle.Type;
 import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.reminder.ReminderInterval;
+import de.willuhn.jameica.reminder.ReminderStorageProvider;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -39,7 +40,8 @@ public class ReminderAppointmentProvider implements AppointmentProvider
     try
     {
       ReminderService service = Application.getBootLoader().getBootable(ReminderService.class);
-      Map<String,Reminder> reminders = service.getReminders(ReminderAppointment.QUEUE,from,to);
+      ReminderStorageProvider provider = service.getDefaultProvider();
+      Map<String,Reminder> reminders = provider.find(ReminderAppointment.QUEUE,from,to);
       Iterator<String> uuids = reminders.keySet().iterator();
       
       List<Appointment> result = new LinkedList<Appointment>();
@@ -88,6 +90,9 @@ public class ReminderAppointmentProvider implements AppointmentProvider
 
 /**********************************************************************
  * $Log: ReminderAppointmentProvider.java,v $
+ * Revision 1.9  2011/10/20 16:17:46  willuhn
+ * @N Refactoring der Reminder-API. Hinzufuegen/Aendern/Loeschen von Remindern geht jetzt nur noch ueber die Storage-Provider
+ *
  * Revision 1.8  2011/10/18 09:29:06  willuhn
  * @N Reminder in eigenes Package verschoben
  * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann

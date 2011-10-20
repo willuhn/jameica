@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ReminderAppointmentDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/10/18 09:29:06 $
+ * $Revision: 1.4 $
+ * $Date: 2011/10/20 16:17:46 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -32,6 +32,7 @@ import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.reminder.Reminder;
+import de.willuhn.jameica.reminder.ReminderStorageProvider;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -153,7 +154,8 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
             return;
           
           ReminderService service = Application.getBootLoader().getBootable(ReminderService.class);
-          service.delete(appointment.getUid());
+          ReminderStorageProvider provider = service.getDefaultProvider();
+          provider.delete(appointment.getUid());
           appointment = null;
           close();
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Erinnerung gelöscht"),StatusBarMessage.TYPE_SUCCESS));
@@ -187,6 +189,9 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
 
 /**********************************************************************
  * $Log: ReminderAppointmentDialog.java,v $
+ * Revision 1.4  2011/10/20 16:17:46  willuhn
+ * @N Refactoring der Reminder-API. Hinzufuegen/Aendern/Loeschen von Remindern geht jetzt nur noch ueber die Storage-Provider
+ *
  * Revision 1.3  2011/10/18 09:29:06  willuhn
  * @N Reminder in eigenes Package verschoben
  * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann

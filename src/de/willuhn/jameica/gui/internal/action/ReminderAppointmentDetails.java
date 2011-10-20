@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/ReminderAppointmentDetails.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/10/18 09:29:06 $
+ * $Revision: 1.3 $
+ * $Date: 2011/10/20 16:17:46 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -15,6 +15,7 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.calendar.ReminderAppointment;
 import de.willuhn.jameica.gui.internal.dialogs.ReminderAppointmentDialog;
 import de.willuhn.jameica.reminder.Reminder;
+import de.willuhn.jameica.reminder.ReminderStorageProvider;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -55,18 +56,19 @@ public class ReminderAppointmentDetails implements Action
       
       // Aenderungen speichern
       ReminderService service = Application.getBootLoader().getBootable(ReminderService.class);
+      ReminderStorageProvider provider = service.getDefaultProvider();
 
       String uuid       = appointment.getUid();
       Reminder reminder = appointment.getReminder();
       
       if (uuid == null) // Create
       {
-        uuid = service.add(reminder);
+        uuid = provider.add(reminder);
         appointment.setUuid(uuid);
       }
       else // Update
       {
-        service.update(uuid,reminder);
+        provider.update(uuid,reminder);
       }
     }
     catch (OperationCanceledException oce)
@@ -90,6 +92,9 @@ public class ReminderAppointmentDetails implements Action
 
 /**********************************************************************
  * $Log: ReminderAppointmentDetails.java,v $
+ * Revision 1.3  2011/10/20 16:17:46  willuhn
+ * @N Refactoring der Reminder-API. Hinzufuegen/Aendern/Loeschen von Remindern geht jetzt nur noch ueber die Storage-Provider
+ *
  * Revision 1.2  2011/10/18 09:29:06  willuhn
  * @N Reminder in eigenes Package verschoben
  * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann

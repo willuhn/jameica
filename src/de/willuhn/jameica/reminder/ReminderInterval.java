@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/ReminderInterval.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/10/18 09:29:06 $
+ * $Revision: 1.2 $
+ * $Date: 2011/10/20 16:17:46 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -17,9 +17,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
+import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.I18N;
 
 /**
  * Enthaelt die Eckdaten fuer die zyklische Wiederholung eines Reminders.
@@ -72,6 +72,24 @@ public class ReminderInterval implements Serializable
   private int interval  = 1;
   
   /**
+   * Parameterloser Konstruktor fuer Bean-Spezifikation, 
+   */
+  public ReminderInterval()
+  {
+  }
+  
+  /**
+   * ct.
+   * @param unit Zeiteinheit.
+   * @param interval Intervall.
+   */
+  public ReminderInterval(TimeUnit unit, int interval)
+  {
+    this.unit     = unit;
+    this.interval = interval;
+  }
+  
+  /**
    * Liefert die Zeiteinheit fuer die Wiederholung.
    * @return die Zeiteinheit fuer die Wiederholung.
    */
@@ -121,6 +139,8 @@ public class ReminderInterval implements Serializable
    * Das Datum kann weggelassen werden. In dem Fall beginnt die Suche beim Datum der ersten
    * Ausfuehrung des Intervalls.
    * @param to Ende des Zeitfensters, in dem nach passenden Terminen gesucht wird.
+   * Das Darum kann weggelassen werden. In dem Fall verwendet sich Suche einen Zeitraum
+   * von einem Jahr, beginnend beim from-Datum.
    * @return Liste der gefundenen Termine oder eine leere Liste, wenn keine gefunden wurden.
    * Niemals NULL.
    */
@@ -182,8 +202,35 @@ public class ReminderInterval implements Serializable
    */
   public String toString()
   {
-    if (this.interval == 1)
-      return "every " + StringUtils.chop(this.unit.toString()).toLowerCase();
+    I18N i18n = Application.getI18n();
+    
+    int i = this.interval;
+    
+    if (this.unit == TimeUnit.HOURS)
+    {
+      if (i == 1)  return i18n.tr("stündlich");
+      if (i == 24) return i18n.tr("täglich");
+      return i18n.tr("alle {0} Stunden",Integer.toString(i));
+    }
+    if (this.unit == TimeUnit.DAYS)
+    {
+      if (i == 1) return i18n.tr("täglich");
+      if (i == 7) return i18n.tr("wöchentlich");
+      return i18n.tr("alle {0} Tage",Integer.toString(i));
+    }
+    if (this.unit == TimeUnit.WEEKS)
+    {
+      if (i == 1) return i18n.tr("wöchentlich");
+      return i18n.tr("alle {0} Wochen",Integer.toString(i));
+    }
+    if (this.unit == TimeUnit.MONTHS)
+    {
+      if (i == 1) return i18n.tr("monatlich");
+      if (i == 3) return i18n.tr("vierteljährlich");
+      if (i == 6) return i18n.tr("halbjährlich");
+      if (i == 12) return i18n.tr("jährlich");
+      return i18n.tr("alle {0} Monate",Integer.toString(i));
+    }
     
     StringBuffer sb = new StringBuffer();
     sb.append("every ");
@@ -192,13 +239,30 @@ public class ReminderInterval implements Serializable
     sb.append(this.unit.toString().toLowerCase());
     return sb.toString();
   }
-  
+
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object other)
+  {
+    if (this == other) return true;
+    if (other == null) return false;
+
+    if (getClass() != other.getClass())
+      return false;
+    
+    ReminderInterval ri = (ReminderInterval) other;
+    return (this.interval == ri.interval && this.unit == ri.unit);
+  }
 }
 
 
 
 /**********************************************************************
  * $Log: ReminderInterval.java,v $
+ * Revision 1.2  2011/10/20 16:17:46  willuhn
+ * @N Refactoring der Reminder-API. Hinzufuegen/Aendern/Loeschen von Remindern geht jetzt nur noch ueber die Storage-Provider
+ *
  * Revision 1.1  2011/10/18 09:29:06  willuhn
  * @N Reminder in eigenes Package verschoben
  * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
