@@ -2,7 +2,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>jameica-win64.jar</jar>
-  <outfile>/tmp/install/jameica-win64.exe</outfile>
+  <outfile>/work/willuhn/eclipse/build/jameica-win64.exe</outfile>
   <errTitle>Bitte installieren Sie Java.</errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -21,15 +21,15 @@
     <opt>-Xmx256m</opt>
   </jre>
   <versionInfo>
-    <fileVersion>1.10.0.0</fileVersion>
-    <txtFileVersion>1.10.0</txtFileVersion>
+    <fileVersion>2.1.0.0</fileVersion>
+    <txtFileVersion>2.1.0</txtFileVersion>
     <fileDescription>Jameica</fileDescription>
     <copyright>willuhn - software &amp; services</copyright>
-    <productVersion>1.10.0.0</productVersion>
-    <txtProductVersion>1.10.0</txtProductVersion>
+    <productVersion>2.1.0.0</productVersion>
+    <txtProductVersion>2.1.0</txtProductVersion>
     <productName>Jameica</productName>
     <companyName>willuhn - software &amp; services</companyName>
-    <internalName>jameica-win32</internalName>
-    <originalFilename>jameica-win32.exe</originalFilename>
+    <internalName>jameica-win64</internalName>
+    <originalFilename>jameica-win64.exe</originalFilename>
   </versionInfo>
 </launch4jConfig>
