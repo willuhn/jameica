@@ -2,7 +2,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>jameica-win64.jar</jar>
-  <outfile>/work/willuhn/eclipse/build/jameica-win64.exe</outfile>
+  <outfile>/work/willuhn/eclipse/jameica/build/jameica-win64.exe</outfile>
   <errTitle>Bitte installieren Sie Java.</errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
