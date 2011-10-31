@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/SearchInput.java,v $
- * $Revision: 1.26 $
- * $Date: 2011/08/08 10:45:05 $
+ * $Revision: 1.27 $
+ * $Date: 2011/10/31 13:52:47 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -297,7 +297,7 @@ public class SearchInput extends AbstractInput
     if (maxLength > 0)
       text.setTextLimit(maxLength);
 
-    this.text.addListener(SWT.FOCUSED,new Listener() {
+    final Listener focusIn = new Listener() {
       public void handleEvent(Event event)
       {
         if (text == null || text.isDisposed())
@@ -311,7 +311,9 @@ public class SearchInput extends AbstractInput
           text.setForeground(Color.WIDGET_FG.getSWTColor());
         }
       }
-    });
+    };
+    this.text.addListener(SWT.FOCUSED,focusIn);
+    this.text.addListener(SWT.FocusIn,focusIn);
     this.text.addListener(SWT.FocusOut,new Listener() {
       public void handleEvent(Event event)
       {
@@ -540,7 +542,10 @@ public class SearchInput extends AbstractInput
 
 /*********************************************************************
  * $Log: SearchInput.java,v $
- * Revision 1.26  2011/08/08 10:45:05  willuhn
+ * Revision 1.27  2011/10/31 13:52:47  willuhn
+ * @B SWT.FOCUSED wurde nur ausgeloest, wenn man mit der Maus in das Feld klickt, nicht aber bei TAB-Wechsel. Daher jetzt FOCUSED UND FocusIn
+ *
+ * Revision 1.26  2011-08-08 10:45:05  willuhn
  * @C AbstractInput#update() ist jetzt "protected" (war package-private)
  *
  * Revision 1.25  2011-06-09 10:59:15  willuhn
