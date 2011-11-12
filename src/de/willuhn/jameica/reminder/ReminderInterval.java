@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/ReminderInterval.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/10/20 16:17:46 $
+ * $Revision: 1.3 $
+ * $Date: 2011/11/12 16:05:25 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -139,7 +139,7 @@ public class ReminderInterval implements Serializable
    * Das Datum kann weggelassen werden. In dem Fall beginnt die Suche beim Datum der ersten
    * Ausfuehrung des Intervalls.
    * @param to Ende des Zeitfensters, in dem nach passenden Terminen gesucht wird.
-   * Das Darum kann weggelassen werden. In dem Fall verwendet sich Suche einen Zeitraum
+   * Das Darum kann weggelassen werden. In dem Fall verwendet die Suche einen Zeitraum
    * von einem Jahr, beginnend beim from-Datum.
    * @return Liste der gefundenen Termine oder eine leere Liste, wenn keine gefunden wurden.
    * Niemals NULL.
@@ -260,6 +260,9 @@ public class ReminderInterval implements Serializable
 
 /**********************************************************************
  * $Log: ReminderInterval.java,v $
+ * Revision 1.3  2011/11/12 16:05:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2011/10/20 16:17:46  willuhn
  * @N Refactoring der Reminder-API. Hinzufuegen/Aendern/Loeschen von Remindern geht jetzt nur noch ueber die Storage-Provider
  *
