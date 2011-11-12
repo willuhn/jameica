@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Reminder.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/10/18 09:29:06 $
+ * $Revision: 1.9 $
+ * $Date: 2011/11/12 16:04:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -35,7 +35,7 @@ import java.util.Map;
  *   Reminder reminder = new Reminder(channel,due,data);
  *   
  *   ReminderService service = (ReminderService) Application.getBootloader().getBootable(ReminderService.class);
- *   String uuid = service.add(reminder);
+ *   String uuid = service.getDefaultProvider().add(reminder);
  *   
  *   Die UUID kann verwendet werden, um den Reminder zu loeschen, bevor er ausgeloest wird.
  *   Bei Erreichen der Faelligkeit sendet der Reminder-Service eine QueryMessage
@@ -183,6 +183,9 @@ public final class Reminder implements Serializable
 
 /**********************************************************************
  * $Log: Reminder.java,v $
+ * Revision 1.9  2011/11/12 16:04:01  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.8  2011/10/18 09:29:06  willuhn
  * @N Reminder in eigenes Package verschoben
  * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann
