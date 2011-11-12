@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/reminder/Reminder.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/11/12 16:04:01 $
+ * $Revision: 1.10 $
+ * $Date: 2011/11/12 16:04:12 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,9 +17,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-
-
 
 /**
  * Ein einzelner Reminder.
@@ -183,6 +180,9 @@ public final class Reminder implements Serializable
 
 /**********************************************************************
  * $Log: Reminder.java,v $
+ * Revision 1.10  2011/11/12 16:04:12  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.9  2011/11/12 16:04:01  willuhn
  * *** empty log message ***
  *
