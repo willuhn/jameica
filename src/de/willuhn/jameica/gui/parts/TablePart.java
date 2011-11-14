@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.115 $
- * $Date: 2011/09/15 09:43:22 $
+ * $Revision: 1.116 $
+ * $Date: 2011/11/14 21:58:44 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -1256,6 +1256,9 @@ public class TablePart extends AbstractTablePart
 
     this.sortedBy = index; // merken
 
+    // Selektion merken
+    Object selection = this.getSelection();
+    
 		// Machen die Tabelle leer
 		table.removeAll();
 
@@ -1270,6 +1273,14 @@ public class TablePart extends AbstractTablePart
 			if (tableFormatter != null)
 				tableFormatter.format(item);
 		}
+		
+    if (selection != null)
+    {
+      if (selection instanceof Object[])
+        this.select((Object[])selection);
+      else
+        this.select(selection);
+    }
 	}
   
   /**
@@ -1443,6 +1454,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.116  2011/11/14 21:58:44  willuhn
+ * @N BUGZILLA 1145 - Selektion nach geaenderter Sortierung wiederherstellen
+ *
  * Revision 1.115  2011/09/15 09:43:22  willuhn
  * *** empty log message ***
  *
