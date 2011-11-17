@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/08/02 12:18:39 $
+ * $Revision: 1.15 $
+ * $Date: 2011/11/17 22:29:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -22,7 +22,6 @@ import de.willuhn.datasource.Service;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.internal.dialogs.ServiceBindingDialog;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
@@ -120,6 +119,10 @@ public class ServiceList extends TablePart
           GUI.startView(GUI.getCurrentView().getClass().getName(),plugin); // Tabelle aktualisieren
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Server-Verbindung getrennt."),StatusBarMessage.TYPE_SUCCESS));
         }
+        catch (OperationCanceledException oce)
+        {
+          return;
+        }
         catch (Exception e)
         {
           Logger.error("error while removing service bindings",e);
@@ -212,17 +215,43 @@ public class ServiceList extends TablePart
     {
       public void handleAction(final Object context) throws ApplicationException
       {
-        YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
-        d.setTitle(i18n.tr("Service stoppen"));
-        d.setText(i18n.tr("Sind Sie sicher, dass Sie den Service stoppen wollen?"));
-        boolean doIt = false;
         try
         {
-          doIt = ((Boolean) d.open()).booleanValue();
+          if (!Application.getCallback().askUser(Application.getI18n().tr("Sind Sie sicher, dass Sie Service stoppen wollen?")))
+            return;
+
+          GUI.startSync(new Runnable()
+          {
+            public void run()
+            {
+              try
+              {
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service wird gestoppt."),StatusBarMessage.TYPE_SUCCESS));
+                GUI.getStatusBar().startProgress();
+                ServiceObject so = (ServiceObject) context;
+                Service service = so.getService();
+                if (service != null)
+                {
+                  service.stop(true);
+                  GUI.startView(GUI.getCurrentView().getClass().getName(),plugin.getManifest());
+                  Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestoppt."),StatusBarMessage.TYPE_SUCCESS));
+                }
+              }
+              catch (Exception e)
+              {
+                Logger.error("Error while stopping service",e);
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Stoppen des Service."),StatusBarMessage.TYPE_ERROR));
+              }
+              finally
+              {
+                GUI.getStatusBar().stopProgress();
+              }
+            }
+          });
+        
         }
         catch (OperationCanceledException oce)
         {
-          Logger.info(oce.getMessage());
           return;
         }
         catch (Exception e)
@@ -230,36 +259,6 @@ public class ServiceList extends TablePart
           Logger.error("error while stopping service",e);
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Stoppen des Service."),StatusBarMessage.TYPE_ERROR));
         }
-        if (!doIt) return;
-
-        GUI.startSync(new Runnable()
-        {
-          public void run()
-          {
-            try
-            {
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service wird gestoppt."),StatusBarMessage.TYPE_SUCCESS));
-              GUI.getStatusBar().startProgress();
-              ServiceObject so = (ServiceObject) context;
-              Service service = so.getService();
-              if (service != null)
-              {
-                service.stop(true);
-                GUI.startView(GUI.getCurrentView().getClass().getName(),plugin);
-                Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Service gestoppt."),StatusBarMessage.TYPE_SUCCESS));
-              }
-            }
-            catch (Exception e)
-            {
-              Logger.error("Error while stopping service",e);
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Stoppen des Service."),StatusBarMessage.TYPE_ERROR));
-            }
-            finally
-            {
-              GUI.getStatusBar().stopProgress();
-            }
-          }
-        });
       }
     },"media-playback-stop.png")
     {
@@ -467,7 +466,10 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
- * Revision 1.14  2011/08/02 12:18:39  willuhn
+ * Revision 1.15  2011/11/17 22:29:36  willuhn
+ * @B ClasscastException in PluginControl#getManifest (beim Service-Stop)
+ *
+ * Revision 1.14  2011-08-02 12:18:39  willuhn
  * @B ClasscastException in PluginControl#getManifest
  *
  * Revision 1.13  2011-05-31 16:39:04  willuhn
