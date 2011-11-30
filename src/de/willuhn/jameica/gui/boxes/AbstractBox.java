@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/boxes/AbstractBox.java,v $
- * $Revision: 1.5 $
- * $Date: 2010/08/12 15:48:24 $
+ * $Revision: 1.6 $
+ * $Date: 2011/11/30 22:27:43 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,7 +95,16 @@ public abstract class AbstractBox implements Box
    */
   public int getHeight()
   {
-    return -1;
+    return settings.getInt(this.getClass().getName() + ".height",-1);
+  }
+  
+  /**
+   * Legt die Hoehe der Box fest.
+   * @param height die Hoehe der Box.
+   */
+  public void setHeight(int height)
+  {
+    settings.setAttribute(this.getClass().getName() + ".height",height > 0 ? height : -1);
   }
   
   
@@ -104,7 +113,10 @@ public abstract class AbstractBox implements Box
 
 /*********************************************************************
  * $Log: AbstractBox.java,v $
- * Revision 1.5  2010/08/12 15:48:24  willuhn
+ * Revision 1.6  2011/11/30 22:27:43  willuhn
+ * @N Hoehe via properties-Datei einstellbar (wenn es von der konkreten Box nicht ueberschrieben wurde)
+ *
+ * Revision 1.5  2010-08-12 15:48:24  willuhn
  * @R Unnoetigen Default-Konstruktor entfernt
  *
  * Revision 1.4  2008/08/29 13:15:42  willuhn
