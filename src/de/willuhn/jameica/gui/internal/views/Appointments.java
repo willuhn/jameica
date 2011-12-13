@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Appointments.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/10/07 11:01:40 $
+ * $Revision: 1.4 $
+ * $Date: 2011/12/13 23:09:13 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -14,8 +14,6 @@ package de.willuhn.jameica.gui.internal.views;
 import java.util.Date;
 import java.util.List;
 
-import de.willuhn.annotation.Lifecycle;
-import de.willuhn.annotation.Lifecycle.Type;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
@@ -37,10 +35,9 @@ import de.willuhn.util.I18N;
 /**
  * Zeigt die Termine an.
  */
-@Lifecycle(Type.CONTEXT)
 public class Appointments extends AbstractView
 {
-  private Date currentDate              = null;
+  private static Date currentDate       = null;
   private ReminderCalendarPart calendar = null;
   
   /**
@@ -49,12 +46,13 @@ public class Appointments extends AbstractView
   public void bind() throws Exception
   {
     I18N i18n = Application.getI18n();
+
     GUI.getView().setTitle(i18n.tr("Termine"));
     
     final Action configure = new Configure();
     
     this.calendar = new ReminderCalendarPart(); // hier sind schon die Jameica-Termine drin
-    this.calendar.setCurrentDate(this.currentDate);
+    this.calendar.setCurrentDate(currentDate);
 
     GUI.getView().addPanelButton(new PanelButton("document-properties.png",configure,i18n.tr("Anzuzeigende Kalender auswählen")));
     
@@ -86,7 +84,7 @@ public class Appointments extends AbstractView
   public void unbind() throws ApplicationException
   {
     if (this.calendar != null)
-      this.currentDate = this.calendar.getCurrentDate();
+      currentDate = this.calendar.getCurrentDate();
   }
   
   /**
@@ -130,7 +128,10 @@ public class Appointments extends AbstractView
 
 /**********************************************************************
  * $Log: Appointments.java,v $
- * Revision 1.3  2011/10/07 11:01:40  willuhn
+ * Revision 1.4  2011/12/13 23:09:13  willuhn
+ * @R Kein Context-Lifecycle - die Appointment-Provider werden sonst nicht mehr aktualisiert
+ *
+ * Revision 1.3  2011-10-07 11:01:40  willuhn
  * @N Zusaetzlicher Config-Button
  *
  * Revision 1.2  2011-10-06 10:49:08  willuhn
