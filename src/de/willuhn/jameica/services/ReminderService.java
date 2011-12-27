@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ReminderService.java,v $
- * $Revision: 1.20 $
- * $Date: 2011/10/20 16:17:46 $
+ * $Revision: 1.21 $
+ * $Date: 2011/12/27 22:54:38 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.datasource.rmi.ObjectNotFoundException;
 import de.willuhn.jameica.messaging.ReminderMessage;
 import de.willuhn.jameica.reminder.Reminder;
 import de.willuhn.jameica.reminder.ReminderInterval;
@@ -179,7 +180,7 @@ public class ReminderService extends TimerTask implements Bootable
             if (ri == null) // Einmalige Reminder
             {
               Logger.info("sending reminder message to " + queue + " - due to: " + date);
-              Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new ReminderMessage(date, r.getData()));
+              Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new ReminderMessage(date, uuid, r.getData()));
             }
             else // Wiederholender Reminder. Checken, ob seit der letzten Ausfuehrung ein neues Intervall faellig ist
             {
@@ -187,13 +188,17 @@ public class ReminderService extends TimerTask implements Bootable
               for (Date d:dates)
               {
                 Logger.info("sending reminder message to " + queue + " - due to: " + d);
-                Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new ReminderMessage(d, r.getData()));
+                Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new ReminderMessage(d, uuid, r.getData()));
               }
             }
             
             // Datum der Ausfuehrung speichern
             r.setData(Reminder.KEY_EXECUTED,now);
             provider.update(uuid,r);
+          }
+          catch (ObjectNotFoundException onf)
+          {
+            Logger.warn("reminder " + r + " has been deleted by message consumer");
           }
           catch (Exception e)
           {
@@ -212,6 +217,9 @@ public class ReminderService extends TimerTask implements Bootable
 
 /**********************************************************************
  * $Log: ReminderService.java,v $
+ * Revision 1.21  2011/12/27 22:54:38  willuhn
+ * @N UUID des Reminders mitschicken
+ *
  * Revision 1.20  2011/10/20 16:17:46  willuhn
  * @N Refactoring der Reminder-API. Hinzufuegen/Aendern/Loeschen von Remindern geht jetzt nur noch ueber die Storage-Provider
  *

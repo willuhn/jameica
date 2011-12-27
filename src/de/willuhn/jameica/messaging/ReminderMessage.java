@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/ReminderMessage.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/10/10 16:19:17 $
+ * $Revision: 1.4 $
+ * $Date: 2011/12/27 22:54:38 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -27,17 +27,20 @@ import java.util.Map;
  */
 public class ReminderMessage extends QueryMessage
 {
-  private Date date = null;
+  private Date date   = null;
+  private String uuid = null;
   
   /**
    * ct.
    * @param date das Datum, zu dem die Ausfuehrung eigentlich geplant war.
+   * @param uuid die UUID des zugehoerigen Reminders.
    * @param data die Nutzdaten.
    */
-  public ReminderMessage(Date date, Map<String,Serializable> data)
+  public ReminderMessage(Date date, String uuid, Map<String,Serializable> data)
   {
     super(data);
     this.date = date;
+    this.uuid = uuid;
   }
   
   /**
@@ -48,13 +51,25 @@ public class ReminderMessage extends QueryMessage
   {
     return this.date;
   }
+  
+  /**
+   * Liefert die zugehoerige UUID des Reminders.
+   * @return die UUID des Reminders.
+   */
+  public String getUUID()
+  {
+    return this.uuid;
+  }
 }
 
 
 
 /**********************************************************************
  * $Log: ReminderMessage.java,v $
- * Revision 1.3  2011/10/10 16:19:17  willuhn
+ * Revision 1.4  2011/12/27 22:54:38  willuhn
+ * @N UUID des Reminders mitschicken
+ *
+ * Revision 1.3  2011-10-10 16:19:17  willuhn
  * @N Unterstuetzung fuer intervall-basierte, sich wiederholende Reminder
  *
  **********************************************************************/
