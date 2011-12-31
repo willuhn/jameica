@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/CalendarPart.java,v $
- * $Revision: 1.13 $
- * $Date: 2011/10/06 11:05:21 $
+ * $Revision: 1.14 $
+ * $Date: 2011/12/31 12:49:29 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -272,9 +272,6 @@ public class CalendarPart implements Part
     Calendar now = Calendar.getInstance();
     now.setTime(currentDate);
     
-    // Der aktuelle Tag
-    int toDay   = now.get(Calendar.DAY_OF_MONTH);
-
     // Der Monatsletzte
     int lastDay = now.getActualMaximum(Calendar.DAY_OF_MONTH);
     now.set(Calendar.DAY_OF_MONTH,lastDay);
@@ -300,15 +297,10 @@ public class CalendarPart implements Part
     {
       if (pos >= startIndex && pos <= endIndex)
       {
-        DayRenderer.Status status = DayRenderer.Status.NORMAL;
-
-        if (currentDay == toDay)
-          status = DayRenderer.Status.CURRENT;
-
         // aktuelle Position in Kalender uebernehmen und Day-Renderer aktualisieren
         now.set(Calendar.DAY_OF_MONTH,currentDay);
         Date d = DateUtil.startOfDay(now.getTime());
-        day.update(status,d,appointments.get(d));
+        day.update(d.equals(DateUtil.startOfDay(new Date())) ? DayRenderer.Status.CURRENT : DayRenderer.Status.NORMAL,d,appointments.get(d));
         currentDay++;
       }
       else
@@ -337,7 +329,10 @@ public class CalendarPart implements Part
 
 /**********************************************************************
  * $Log: CalendarPart.java,v $
- * Revision 1.13  2011/10/06 11:05:21  willuhn
+ * Revision 1.14  2011/12/31 12:49:29  willuhn
+ * @B aktuellen Tag nur im tatsaechlich aktuellen Monat gelb hervorheben - wenn der heutige Tag ein 31. ist, kann der in Monaten mit weniger Tagen sonst eh nicht korrekt angezeigt werden und fuehrte zu Hervorhebung am falschen Tag
+ *
+ * Revision 1.13  2011-10-06 11:05:21  willuhn
  * @R Den Code gibts in DateUtil
  *
  * Revision 1.12  2011-10-06 10:49:08  willuhn
