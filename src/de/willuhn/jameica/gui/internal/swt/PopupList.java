@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/swt/PopupList.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/06/09 10:59:15 $
+ * $Revision: 1.2 $
+ * $Date: 2011/12/31 13:04:57 $
  * $Author: willuhn $
  **********************************************************************/
 
@@ -45,6 +45,8 @@ public class PopupList {
   Shell  shell;
   List   list;
   int    minimumWidth;
+  boolean cancel;
+  
 /** 
 * Creates a PopupList above the specified shell.
 * 
@@ -79,6 +81,14 @@ public PopupList(Shell parent, int style) {
     public void controlResized(ControlEvent e){
       Rectangle shellSize = shell.getClientArea();
       list.setSize(shellSize.width, shellSize.height);
+    }
+  });
+  
+  // mark popup as cancelled when ESC was pressed
+  shell.addTraverseListener(new TraverseListener() {
+    public void keyTraversed(TraverseEvent e)
+    {
+      cancel = (e.keyCode == SWT.ESC);
     }
   });
   
@@ -202,7 +212,7 @@ public int open (Rectangle rect) {
     pos = list.getSelectionIndex();
     shell.dispose();
   }
-  return pos;
+  return cancel ? -1 : pos;
 }
 /**
 * Selects an item with text that starts with specified String.
@@ -291,7 +301,10 @@ public void setMinimumWidth (int width) {
 
 /**********************************************************************
  * $Log: PopupList.java,v $
- * Revision 1.1  2011/06/09 10:59:15  willuhn
+ * Revision 1.2  2011/12/31 13:04:57  willuhn
+ * @B Das Popup lieferte auch dann eine Auswahl zurueck, wenn mit ESC abgebrochen wurde
+ *
+ * Revision 1.1  2011-06-09 10:59:15  willuhn
  * @B Musste leider einen Fork vom SWT-Custom-Widget PopupList machen - siehe Kommentar-Text im Fork
  *
  **********************************************************************/
