@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ImageInput.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/08/08 10:45:05 $
+ * $Revision: 1.7 $
+ * $Date: 2012/01/21 23:34:56 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -342,8 +342,8 @@ public class ImageInput extends AbstractInput
         gc.setInterpolation(SWT.HIGH);
         Rectangle source = image.getBounds();
         gc.drawImage(image, 0, 0, source.width, source.height, 0, 0, (int) w, (int) h);
-        this.button.setImage(scaled);
         gc.dispose();
+        this.button.setImage(scaled);
       }
       else
       {
@@ -380,7 +380,10 @@ public class ImageInput extends AbstractInput
 
 /**********************************************************************
  * $Log: ImageInput.java,v $
- * Revision 1.6  2011/08/08 10:45:05  willuhn
+ * Revision 1.7  2012/01/21 23:34:56  willuhn
+ * @B BUGZILLA 1177
+ *
+ * Revision 1.6  2011-08-08 10:45:05  willuhn
  * @C AbstractInput#update() ist jetzt "protected" (war package-private)
  *
  * Revision 1.5  2011-05-03 11:56:48  willuhn
