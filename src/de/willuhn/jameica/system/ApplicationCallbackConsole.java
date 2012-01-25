@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.40 $
- * $Date: 2011/09/27 12:01:15 $
+ * $Revision: 1.41 $
+ * $Date: 2012/01/25 21:36:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -481,7 +481,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     System.out.println((i18n.tr("MD5-Fingerabdruck:") + myCert.getMD5Fingerprint()));
 
     System.out.println("----------------------------------------------------------------------");
-    System.out.println(i18n.tr("Sie verbinden sich mit einem für Jameica unbekannten System. Möchten Sie diesem Zertifikat vertrauen? [J/N]"));
+    System.out.println(i18n.tr("Das Zertifikat des Systems konnte nicht verifiziert werden. Möchten Sie diesem Zertifikat vertrauen? [J/N]"));
 
     InputStreamReader isr = new InputStreamReader(System.in);
     BufferedReader keyboard = new BufferedReader(isr);
@@ -610,7 +610,10 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
- * Revision 1.40  2011/09/27 12:01:15  willuhn
+ * Revision 1.41  2012/01/25 21:36:24  willuhn
+ * @C BUGZILLA 1178 - geaenderter Text in Trust-Dialog
+ *
+ * Revision 1.40  2011-09-27 12:01:15  willuhn
  * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
  *
  * Revision 1.39  2011-07-19 15:24:01  willuhn

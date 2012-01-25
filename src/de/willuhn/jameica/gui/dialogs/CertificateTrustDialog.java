@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/CertificateTrustDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.4 $
+ * $Date: 2012/01/25 21:36:24 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -41,8 +41,8 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
     // Wir speichern vorab schonmal einen eigenen Text. Falls
     // der Benutzer "setText(String)" nicht aufruft, wird dann
     // dieser hier angezeigt.
-    setText(i18n.tr("Sie verbinden sich mit einem für Jameica unbekannten System.\n" +
-    "Bitte prüfen Sie die Eigenschaften des Zertifikats und entscheiden Sie,\nob Sie ihm " +
+    setText(i18n.tr("Das Zertifikat des Systems konnte nicht verifiziert werden.\n" +
+    "Bitte prüfen Sie die Eigenschaften des Zertifikates und entscheiden Sie,\nob Sie ihm " +
     "vertrauen möchten."));
   }
 
@@ -89,7 +89,10 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
 
 /**********************************************************************
  * $Log: CertificateTrustDialog.java,v $
- * Revision 1.3  2011/05/03 10:13:11  willuhn
+ * Revision 1.4  2012/01/25 21:36:24  willuhn
+ * @C BUGZILLA 1178 - geaenderter Text in Trust-Dialog
+ *
+ * Revision 1.3  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
  *
  * Revision 1.2  2007/01/04 15:34:26  willuhn
