@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractCertificateDialog.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/05/03 10:13:11 $
+ * $Revision: 1.9 $
+ * $Date: 2012/01/28 00:06:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,40 +13,171 @@
 
 package de.willuhn.jameica.gui.dialogs;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.input.TextAreaInput;
 import de.willuhn.jameica.gui.parts.ButtonArea;
-import de.willuhn.jameica.gui.parts.TextPart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.DateUtil;
 
 /**
  * Abstrakter Basis-Dialog zur Anzeige von X.509-Zertifikaten
  */
 public abstract class AbstractCertificateDialog extends AbstractDialog
 {
-
   private String text = null;
-
-  private X509Certificate cert = null;
+  private List<X509Certificate> certs = new LinkedList<X509Certificate>();
+  
+  private Input cnIssuer    = null;
+  private Input oIssuer     = null;
+  private Input ouIssuer    = null;
+  private Input cnSubject   = null;
+  private Input oSubject    = null;
+  private Input ouSubject   = null;
+  private Input validity    = null;
+  private Input serial      = null;
+  private Input fingerprint = null;
+  
+  private LabelInput warning = null;
 
   /**
    * ct.
-   * @param position
-   * @param cert
+   * @param position Position des Dialogs.
+   * @param cert Zertifikat.
    */
   public AbstractCertificateDialog(int position, X509Certificate cert)
   {
+    this(position,Arrays.asList(cert));
+  }
+  
+  /**
+   * ct.
+   * @param position Position des Dialogs.
+   * @param certs Liste der Zertifikate.
+   */
+  public AbstractCertificateDialog(int position, List<X509Certificate> certs)
+  {
     super(position);
-    this.cert = cert;
+    this.setSize(440,SWT.DEFAULT);
+    this.certs.addAll(certs);
+    
+    this.cnIssuer    = this.createLabel(i18n.tr("Common Name (CN)"));
+    this.oIssuer     = this.createLabel(i18n.tr("Organisation (O)"));
+    this.ouIssuer    = this.createLabel(i18n.tr("Abteilung (OU)"));
+    
+    this.cnSubject   = this.createLabel(i18n.tr("Common Name (CN)"));
+    this.oSubject    = this.createLabel(i18n.tr("Organisation (O)"));
+    this.ouSubject   = this.createLabel(i18n.tr("Abteilung (OU)"));
+    
+    this.validity    = this.createLabel(i18n.tr("Gültigkeit"));
+    this.serial      = this.createLabel(i18n.tr("Seriennummer"));
+    this.fingerprint = new TextAreaInput("");
+    this.fingerprint.setEnabled(false);
+    
+    this.warning     = this.createLabel("");
+    this.warning.setColor(Color.ERROR);
+  }
+  
+  /**
+   * Erzeugt ein neues Label mit dem angegebenen Namen.
+   * @param name der Name des Labels.
+   * @return das Label.
+   */
+  private LabelInput createLabel(String name)
+  {
+    LabelInput label = new LabelInput("");
+    label.setName(name);
+    return label;
+  }
+
+  /**
+   * Befuellt die Labels mit den Werten des Zertifikates.
+   * @param cert das Zertifikat.
+   * @throws NoSuchAlgorithmException 
+   * @throws CertificateEncodingException 
+   */
+  private void fill(X509Certificate cert) throws CertificateEncodingException, NoSuchAlgorithmException
+  {
+    Certificate myCert = new Certificate(cert);
+    
+    /////////////////////////////////////////////////////////////////////////////
+    // Aussteller
+    {
+      Principal p = myCert.getIssuer();
+
+      String cn = p.getAttribute(Principal.COMMON_NAME);
+      String o  = p.getAttribute(Principal.ORGANIZATION);
+      String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
+
+      this.cnIssuer.setValue(format(cn));
+      this.oIssuer.setValue(format(o));
+      this.ouIssuer.setValue(format(ou));
+    }
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    
+    /////////////////////////////////////////////////////////////////////////////
+    // Subject
+    {
+      Principal p = myCert.getSubject();
+
+      String cn = p.getAttribute(Principal.COMMON_NAME);
+      String o  = p.getAttribute(Principal.ORGANIZATION);
+      String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
+
+      this.cnSubject.setValue(format(cn));
+      this.oSubject.setValue(format(o));
+      this.ouSubject.setValue(format(ou));
+    }
+    //
+    /////////////////////////////////////////////////////////////////////////////
+    
+    /////////////////////////////////////////////////////////////////////////////
+    // Details
+    DateFormat df = DateUtil.DEFAULT_FORMAT;
+    this.validity.setValue(i18n.tr("{0} - {1}",df.format(cert.getNotBefore()),df.format(cert.getNotAfter())));
+    this.serial.setValue(cert.getSerialNumber().toString());
+    /////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Fingerprint
+    StringBuffer sb = new StringBuffer();
+    sb.append(i18n.tr("MD5: {0}",myCert.getMD5Fingerprint()));
+    sb.append("\n");
+    sb.append(i18n.tr("SHA1: {0}",myCert.getSHA1Fingerprint()));
+    this.fingerprint.setValue(sb.toString());
+    /////////////////////////////////////////////////////////////////////////////
+    
+    /////////////////////////////////////////////////////////////////////////////
+    // Ggf. Warnhinweis
+    try
+    {
+      cert.checkValidity();
+      this.warning.setValue("");
+    }
+    catch (CertificateException e)
+    {
+      this.warning.setValue(Application.getI18n().tr("Zertifikat abgelaufen oder noch nicht gültig!"));
+    }
+    //
+    /////////////////////////////////////////////////////////////////////////////
   }
 
   /**
@@ -54,9 +185,11 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception
   {
-    DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
+    // Per Default zeigen wir das erste Zertifikat an
+    X509Certificate cert = this.certs.get(0);
+    this.fill(cert);
 
-    Container group = new SimpleContainer(parent);
+    Container group = new SimpleContainer(parent,true);
     
     if (text != null && text.length() > 0)
       group.addText(text,true);
@@ -64,86 +197,60 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     /////////////////////////////////////////////////////////////////////////////
     // Aussteller
     group.addHeadline(Application.getI18n().tr("Ausgestellt von"));
-
-
-    Certificate myCert = new Certificate(cert);
-    Principal p = myCert.getIssuer();
-
-    String cn = p.getAttribute(Principal.COMMON_NAME);
-    String o  = p.getAttribute(Principal.ORGANIZATION);
-    String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
-
-    if (cn == null && o == null && ou == null)
-    {
-      String s = cert.getIssuerDN().getName();
-      group.addLabelPair(i18n.tr("Name"), new LabelInput(format(s)));
-    }
-
-    if (cn != null) group.addLabelPair(i18n.tr("Common Name (CN)"), new LabelInput(format(cn)));
-    if (o  != null) group.addLabelPair(i18n.tr("Organisation (O)"), new LabelInput(format(o)));
-    if (ou != null) group.addLabelPair(i18n.tr("Abteilung (OU)"), new LabelInput(format(ou)));
+    group.addInput(this.cnIssuer);
+    group.addInput(this.oIssuer);
+    group.addInput(this.ouIssuer);
     /////////////////////////////////////////////////////////////////////////////
-    
 
     /////////////////////////////////////////////////////////////////////////////
     // Subject
     group.addHeadline(Application.getI18n().tr("Ausgestellt für"));
-
-    p = myCert.getSubject();
-
-    cn = p.getAttribute(Principal.COMMON_NAME);
-    o  = p.getAttribute(Principal.ORGANIZATION);
-    ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
-
-    if (cn == null && o == null && ou == null)
-    {
-      String s = cert.getSubjectDN().getName();
-      group.addLabelPair(i18n.tr("Name"), new LabelInput(format(s)));
-    }
-
-    if (cn != null) group.addLabelPair(i18n.tr("Common Name (CN)"), new LabelInput(format(cn)));
-    if (o  != null) group.addLabelPair(i18n.tr("Organisation (O)"), new LabelInput(format(o)));
-    if (ou != null) group.addLabelPair(i18n.tr("Abteilung (OU)"), new LabelInput(format(ou)));
+    group.addInput(this.cnSubject);
+    group.addInput(this.oSubject);
+    group.addInput(this.ouSubject);
     /////////////////////////////////////////////////////////////////////////////
-
 
 
     /////////////////////////////////////////////////////////////////////////////
     // Details
     group.addHeadline(Application.getI18n().tr("Eigenschaften des Zertifikats"));
-
-    group.addLabelPair(i18n.tr("Gültigkeit"), new LabelInput(df.format(cert.getNotBefore()) + " - " + df.format(cert.getNotAfter())));
-    group.addLabelPair(i18n.tr("Seriennummer"), new LabelInput(cert.getSerialNumber().toString()));
+    group.addInput(this.validity);
+    group.addInput(this.serial);
     /////////////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////////
     // Fingerprint
-    TextPart fingerprints = new TextPart();
-    fingerprints.appendText(i18n.tr("MD5-Fingerabdruck:\n{0}",myCert.getMD5Fingerprint()));
-    fingerprints.appendText("\n");
-    fingerprints.appendText(i18n.tr("SHA1-Fingerabdruck:\n{0}",myCert.getSHA1Fingerprint()));
-    group.addPart(fingerprints);
+    group.addHeadline(Application.getI18n().tr("Fingerabdrücke"));
+    group.addPart(this.fingerprint);
     /////////////////////////////////////////////////////////////////////////////
 
-    try
-    {
-      cert.checkValidity();
-    }
-    catch (Exception e)
-    {
-      group.addHeadline(Application.getI18n().tr("WARNUNG"));
-      group.addText(Application.getI18n().tr("Zertifikat abgelaufen oder noch nicht gültig!"),true,Color.ERROR);
-    }
+    /////////////////////////////////////////////////////////////////////////////
+    // Warnung, falls abgelaufen
+    Container c = new SimpleContainer(parent,false,1);
+    this.warning.paint(c.getComposite());
+    // group.addInput(this.warning);
+    /////////////////////////////////////////////////////////////////////////////
 
+    Container cb = new SimpleContainer(parent);
     ButtonArea buttons = new ButtonArea();
     paintButtons(buttons);
-    group.addButtonArea(buttons);
+    cb.addButtonArea(buttons);
   }
 
+  /**
+   * Formatiert den Text.
+   * @param s
+   * @return
+   */
   private String format(String s)
   {
-    if (s == null || s.length() < 40)
+    if (s == null)
+      return "";
+    
+    if (s.length() < 40)
       return s;
+
+    // Am Komma umbrechen
     return s.replaceAll(",","\n");
   }
 
@@ -178,29 +285,9 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: AbstractCertificateDialog.java,v $
- * Revision 1.8  2011/05/03 10:13:11  willuhn
+ * Revision 1.9  2012/01/28 00:06:07  willuhn
+ * @N BUGZILLA 1179 - in progress
+ *
+ * Revision 1.8  2011-05-03 10:13:11  willuhn
  * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.7  2007/01/04 15:24:21  willuhn
- * @C certificate import handling
- * @B Bug 330
- *
- * Revision 1.6  2006/11/15 00:12:35  willuhn
- * @B Bug 329
- *
- * Revision 1.5  2005/11/22 07:38:32  web0
- * *** empty log message ***
- *
- * Revision 1.4  2005/11/22 00:47:23  web0
- * @B buttons not visible
- *
- * Revision 1.3  2005/07/20 16:23:10  web0
- * @B splitting x.500 name
- *
- * Revision 1.2  2005/06/15 17:51:31  web0
- * @N Code zum Konfigurieren der Service-Bindings
- *
- * Revision 1.1  2005/06/13 12:13:37  web0
- * @N Certificate-Code completed
- *
  **********************************************************************/
