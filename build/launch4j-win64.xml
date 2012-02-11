@@ -21,12 +21,12 @@
     <opt>-Xmx256m</opt>
   </jre>
   <versionInfo>
-    <fileVersion>2.1.0.0</fileVersion>
-    <txtFileVersion>2.1.0</txtFileVersion>
+    <fileVersion>2.2.0.0</fileVersion>
+    <txtFileVersion>2.2.0</txtFileVersion>
     <fileDescription>Jameica</fileDescription>
     <copyright>willuhn - software &amp; services</copyright>
-    <productVersion>2.1.0.0</productVersion>
-    <txtProductVersion>2.1.0</txtProductVersion>
+    <productVersion>2.2.0.0</productVersion>
+    <txtProductVersion>2.2.0</txtProductVersion>
     <productName>Jameica</productName>
     <companyName>willuhn - software &amp; services</companyName>
     <internalName>jameica-win64</internalName>
