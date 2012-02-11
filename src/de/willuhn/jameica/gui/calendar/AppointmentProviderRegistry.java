@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/AppointmentProviderRegistry.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/10/06 10:49:08 $
+ * $Revision: 1.4 $
+ * $Date: 2012/02/11 13:47:51 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -11,8 +11,8 @@
 
 package de.willuhn.jameica.gui.calendar;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ import de.willuhn.util.ClassFinder;
 public class AppointmentProviderRegistry
 {
   private final static Settings settings = new Settings(AppointmentProviderRegistry.class);
-  private final static Map<AbstractPlugin,List<AppointmentProvider>> cache = new HashMap<AbstractPlugin,List<AppointmentProvider>>();
+  private final static Map<AbstractPlugin,List<Class<AppointmentProvider>>> cache = new HashMap<AbstractPlugin,List<Class<AppointmentProvider>>>();
   
   /**
    * Liefert die Appointment-Provider.
@@ -39,49 +39,58 @@ public class AppointmentProviderRegistry
    */
   public final static List<AppointmentProvider> getAppointmentProviders(AbstractPlugin plugin)
   {
-    List<AppointmentProvider> list = cache.get(plugin);
-    if (list != null)
-      return list;
-        
-    list = new ArrayList<AppointmentProvider>();
-    cache.put(plugin,list);
-    
-    try
+    // Wir duerfen hier nicht die Instanzen selbst cachen sondern nur die gefundenen Klassen.
+    // Denn ueber den Lifecycle der Instanzen entscheidet der Bean-Service - den wuerden wir sonst umgehen 
+    // haben wir die schon im Cache?
+    List<Class<AppointmentProvider>> list = cache.get(plugin);
+    if (list == null) // Ne, dann suchen
     {
-      ClassFinder finder      = Application.getClassLoader().getClassFinder();
-      PluginLoader loader     = Application.getPluginLoader();
-      BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+      list = new LinkedList<Class<AppointmentProvider>>();
+      cache.put(plugin,list);
+
+      ClassFinder finder  = Application.getClassLoader().getClassFinder();
+      PluginLoader loader = Application.getPluginLoader();
       
       if (plugin != null)
         finder = plugin.getResources().getClassLoader().getClassFinder();
       
-      Class<AppointmentProvider>[] classes = finder.findImplementors(AppointmentProvider.class);
-      for (Class<AppointmentProvider> c:classes)
+      try
       {
-        // Wenn ein Plugin angegeben ist, dann muss der Provider von diesem stammen.
-        if (plugin != null)
+        Class<AppointmentProvider>[] classes = finder.findImplementors(AppointmentProvider.class);
+        for (Class<AppointmentProvider> c:classes)
         {
-          AbstractPlugin p = loader.findByClass(c);
-          if (p == null || p != plugin)
-            continue;
-        }
-        
-        try
-        {
-          list.add(beanService.get(c));
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to load appointment provider " + c +", skipping",e);
+          // Wenn ein Plugin angegeben ist, dann muss der Provider von diesem stammen.
+          if (plugin != null)
+          {
+            AbstractPlugin p = loader.findByClass(c);
+            if (p == null || p != plugin)
+              continue;
+          }
+          
+          try
+          {
+            list.add(c);
+          }
+          catch (Exception e)
+          {
+            Logger.error("unable to load appointment provider " + c +", skipping",e);
+          }
         }
       }
+      catch (ClassNotFoundException e)
+      {
+        Logger.debug("no appointment providers found");
+      }
     }
-    catch (ClassNotFoundException e)
+
+    // Instanzen vom Bean-Service holen
+    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+    List<AppointmentProvider> result = new LinkedList<AppointmentProvider>();
+    for (Class<AppointmentProvider> c:list)
     {
-      Logger.debug("no appointment providers found");
+      result.add(beanService.get(c));
     }
-    
-    return list;
+    return result;
   }
   
   /**
@@ -121,7 +130,10 @@ public class AppointmentProviderRegistry
 
 /**********************************************************************
  * $Log: AppointmentProviderRegistry.java,v $
- * Revision 1.3  2011/10/06 10:49:08  willuhn
+ * Revision 1.4  2012/02/11 13:47:51  willuhn
+ * @B Nicht mehr die Instanzen cachen sondern nur die Klassen. Das Cachen der Instanzen uebernimmt der BeanService (je nach Lifecycle der Bean)
+ *
+ * Revision 1.3  2011-10-06 10:49:08  willuhn
  * @N Termin-Provider konfigurierbar
  *
  * Revision 1.2  2011-08-30 16:02:23  willuhn
