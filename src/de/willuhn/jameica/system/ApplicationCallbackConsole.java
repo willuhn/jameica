@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.41 $
- * $Date: 2012/01/25 21:36:24 $
+ * $Revision: 1.42 $
+ * $Date: 2012/02/14 21:43:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import org.apache.commons.lang.StringUtils;
 
 import de.willuhn.jameica.messaging.CheckTrustMessage;
+import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
@@ -359,6 +360,17 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public String askUser(String question, String labeltext) throws Exception
   {
+    // Wir versuchen es erstmal uebers Messaging
+    QueryMessage msg = new QueryMessage(question,null);
+    Application.getMessagingFactory().getMessagingQueue("jameica.callback.ask.question").sendSyncMessage(msg);
+    Object data = msg.getData();
+    if (data != null)
+    {
+      Logger.debug("question " + question + " answered via messaging");
+      return data.toString();
+    }
+
+    // Ne, dann mal schauen, obs an der Konsole abgefragt werden darf.
     if (Application.inNonInteractiveMode())
     {
       Logger.error(Application.getI18n().tr("Jameica läuft im nicht-interaktiven Modus. Beantwortung der Frage \"{0}\" nicht möglich",question));
@@ -528,6 +540,17 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     String s = settings.getString(question,null);
     if (s != null)
       return s.equalsIgnoreCase("true");
+    
+    // Wir versuchens uebers Messaging
+    QueryMessage msg = new QueryMessage(question,null);
+    Application.getMessagingFactory().getMessagingQueue("jameica.callback.ask.question").sendSyncMessage(msg);
+    Object data = msg.getData();
+    if ((data instanceof Boolean))
+    {
+      Logger.debug("question " + question + " answered via messaging as: " + data);
+      return ((Boolean)data).booleanValue();
+    }
+    
 
     String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,(Object[])variables);
     if (Application.inNonInteractiveMode())
@@ -610,6 +633,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.42  2012/02/14 21:43:32  willuhn
+ * @N askUser via Messaging automatisierbar
+ *
  * Revision 1.41  2012/01/25 21:36:24  willuhn
  * @C BUGZILLA 1178 - geaenderter Text in Trust-Dialog
  *
