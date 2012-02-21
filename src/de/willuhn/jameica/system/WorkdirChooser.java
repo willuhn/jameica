@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/08/17 08:21:32 $
+ * $Revision: 1.7 $
+ * $Date: 2012/02/21 15:03:32 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -11,18 +11,9 @@
 
 package de.willuhn.jameica.system;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,7 +44,6 @@ public class WorkdirChooser
 {
   private final static int WINDOW_WIDTH = 450;
  
-  private Properties props = null;
   private Display display  = null;
   private Shell shell      = null;
   private Combo dir        = null;
@@ -68,12 +58,12 @@ public class WorkdirChooser
   {
     // Wenn der User die Auswahl gespeichert hat, fragen wir nicht mehr. Aber
     // nur, wenn wir auch wirklich was haben
-    String ask = getProps().getProperty("ask","true");
+    String ask = BootstrapSettings.getProperty("ask","true");
     if (ask != null && !Boolean.parseBoolean(ask.toLowerCase()))
     {
       // OK, der User hat die Auswahl mal gespeichert. Mal schauen,
       // ob er auch was eingegeben hatte
-      String dir = getProps().getProperty("dir",null);
+      String dir = BootstrapSettings.getProperty("dir",null);
       if (dir != null && dir.trim().length() > 0)
       {
         Logger.info("using last used workdir " + dir);
@@ -108,7 +98,7 @@ public class WorkdirChooser
 
     // Zeile 2
     {
-      String s = this.getProps().getProperty("dir",null);       // Prio 1: Das beim letzten Mal ausgewaehlte
+      String s = BootstrapSettings.getProperty("dir",null);     // Prio 1: Das beim letzten Mal ausgewaehlte
       if (s == null || s.trim().length() == 0)
         s = Application.getStartupParams().getWorkDir();        // Prio 2: Das explizit angegebene
       if (s == null || s.trim().length() == 0)
@@ -123,7 +113,7 @@ public class WorkdirChooser
       label.setLayoutData(new GridData(GridData.BEGINNING));
 
       this.dir = new Combo(this.shell,SWT.DROP_DOWN);
-      List<String> history = this.getHistory();
+      List<String> history = BootstrapSettings.getHistory();
       this.dir.setItems(history.toArray(new String[history.size()]));
       this.dir.setText(suggest);
       this.dir.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -225,7 +215,7 @@ public class WorkdirChooser
       if (!display.readAndDispatch()) display.sleep();
     }
     
-    return getProps().getProperty("dir",null);
+    return BootstrapSettings.getProperty("dir",null);
   }
   
   /**
@@ -278,42 +268,16 @@ public class WorkdirChooser
       return;
     }
     
-    // Scheint alles i.O.
-    // Wir speichern die Auswahl
-    Properties props = this.getProps();
+    // Wir speichern die aktuelle Auswahl
+    BootstrapSettings.setProperty("dir",dir);
     
-    props.setProperty("dir",dir);
-    
-    // Wir fuegen das Verzeichnis noch zur History hinzu
-    addHistory(dir);
-    
+    // und fuegen das Verzeichnis noch zur History hinzu
+    BootstrapSettings.addHistory(dir);
+
+    // Wir vermerken ausserdem, ob der User kuenftig noch gefragt werden moechte
     if (this.check != null && !this.check.isDisposed())
-      props.setProperty("ask",Boolean.toString(!this.check.getSelection()));
+      BootstrapSettings.setProperty("ask",Boolean.toString(!this.check.getSelection()));
     
-    // Datei abspeichern
-    OutputStream os = null;
-    File f = new File(System.getProperty("user.home"),".jameica.properties");
-    try
-    {
-      Logger.info("writing " + f);
-      os = new BufferedOutputStream(new FileOutputStream(f));
-      props.store(os,"created by " + System.getProperty("user.name"));
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to store " + f + " - ignoring",e);
-    }
-    finally
-    {
-      if (os != null)
-      {
-        try
-        {
-          os.close();
-        }
-        catch (Exception e) {/*ignore*/}
-      }
-    }
     close();
   }
   
@@ -348,129 +312,16 @@ public class WorkdirChooser
       }
     }
   }
-  
-  /**
-   * Fuegt ein Verzeichnis zur History hinzu.
-   * @param dir das hinzuzufuegende Verzeichnis
-   */
-  private void addHistory(String dir)
-  {
-    if (dir == null || dir.trim().length() == 0)
-      return;
-    
-    // Wir holen uns die aktuelle History und fuegen das neue Verzeichnis vorn dran
-    // Wir schreiben aber nur die letzten 5 Eintraege
-    List<String> history = this.getHistory();
-    
-    // Checken, ob wir es schon in der History haben. Wenn ja, loeschen wir
-    // es raus, damit es nicht doppelt drin erscheint
-    if (history.contains(dir))
-      history.remove(dir);
-    
-    history.add(0,dir);
-    
-    // Alte Verzeichnisse abschneiden
-    if (history.size() > 5)
-      history = history.subList(0,5);
-    
-    // Speichern
-    // Vorher muessen wir die alten loeschen
-    Properties props = this.getProps();
-    Enumeration e = props.propertyNames();
-    while (e.hasMoreElements())
-    {
-      String name = (String) e.nextElement();
-      if (name != null && name.startsWith("history."))
-        props.remove(name);
-    }
-    // Und jetzt die neuen speichern
-    for (int i=0;i<history.size();++i)
-    {
-      String s = history.get(i);
-      if (s == null || s.trim().length() == 0)
-        continue;
-      props.setProperty("history." + i,s);
-    }
-    
-  }
-  
-  /**
-   * Liefert die aktuelle History.
-   * @return die aktuelle History.
-   */
-  private List<String> getHistory()
-  {
-    Properties props = this.getProps();
-    List<String> list = new LinkedList<String>();
-    List<String> names = new LinkedList<String>();
-    
-    Enumeration e = props.propertyNames();
-    while (e.hasMoreElements())
-    {
-      String name = (String) e.nextElement();
-      if (name != null && name.startsWith("history."))
-        names.add(name);
-    }
-    
-    // Sortieren (damit die neuesten zuerst kommen)
-    Collections.sort(names);
-
-    for (String name:names)
-    {
-      String dir = props.getProperty(name);
-      if (dir == null || dir.trim().length() == 0)
-        continue;
-      list.add(dir);
-    }
-    
-    return list;
-  }
-  
-  /**
-   * Liefert die Properties-Datei, in der wir die Einstellungen speichern.
-   * @return die Properties-Datei.
-   */
-  private synchronized Properties getProps()
-  {
-    if (this.props == null)
-    {
-      this.props = new Properties();
-      File f = new File(System.getProperty("user.home"),".jameica.properties");
-      if (f.exists() && f.canRead() && f.isFile())
-      {
-        Logger.info("reading " + f);
-        InputStream is = null;
-        try
-        {
-          is = new BufferedInputStream(new FileInputStream(f));
-          this.props.load(is);
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to load " + f + " - ignoring file",e);
-        }
-        finally
-        {
-          if (is != null)
-          {
-            try
-            {
-              is.close();
-            }
-            catch (Exception e) {/*ignore*/}
-          }
-        }
-      }
-    }
-    return this.props;
-  }
 }
 
 
 
 /**********************************************************************
  * $Log: WorkdirChooser.java,v $
- * Revision 1.6  2011/08/17 08:21:32  willuhn
+ * Revision 1.7  2012/02/21 15:03:32  willuhn
+ * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
+ *
+ * Revision 1.6  2011-08-17 08:21:32  willuhn
  * @N BUGZILLA 937
  *
  * Revision 1.5  2011-04-07 08:04:05  willuhn

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Platform.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/03/08 13:43:46 $
+ * $Revision: 1.10 $
+ * $Date: 2012/02/21 15:03:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -95,19 +95,17 @@ public class Platform
     
     String dir = null;
     
-    // 1. User fragen, wenn aktiviert
-    if (Application.getStartupParams().isAskWorkDir())
-      dir = new WorkdirChooser().getWorkDir();
-    
-    // 2. Wenn wir nicht gefragt haben oder der User keines ausgewaehlt hat,
-    //    Start-Parameter checken
+    // 1. Checken, ob ein Pfad mittels "-f" angegeben ist
     if (dir == null || dir.length() == 0)
       dir = Application.getStartupParams().getWorkDir();
+
+    // 2. User fragen
+    if (dir == null || dir.length() == 0)
+      dir = new WorkdirChooser().getWorkDir();
     
     // 3. Wenn auch da nichts angegeben ist, nehmen wir das Default-Dir
     if (dir == null || dir.length() == 0)
       dir = this.getDefaultWorkdir();
-      
 
     this.workdir = new File(dir).getCanonicalFile();
     Logger.info("using workdir: " + this.workdir);
@@ -207,7 +205,10 @@ public class Platform
 
 /**********************************************************************
  * $Log: Platform.java,v $
- * Revision 1.9  2011/03/08 13:43:46  willuhn
+ * Revision 1.10  2012/02/21 15:03:32  willuhn
+ * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
+ *
+ * Revision 1.9  2011-03-08 13:43:46  willuhn
  * @B Debugging/Cleanup
  *
  * Revision 1.8  2011-03-07 12:52:11  willuhn

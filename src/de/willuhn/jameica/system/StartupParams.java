@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/04/26 12:09:18 $
+ * $Revision: 1.16 $
+ * $Date: 2012/02/21 15:03:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -55,7 +55,6 @@ public class StartupParams
 
   private boolean noninteractive = false;
   private boolean ignoreLockfile = false;
-  private boolean askWorkdir     = false;
   
   private String[] params   = null;
 
@@ -114,13 +113,6 @@ public class StartupParams
 			{
 				Logger.info("starting in STANDALONE mode");
 			}
-
-      if (this.mode != MODE_SERVER && line.hasOption("a"))
-      {
-        Logger.info("asking user for work dir");
-        this.askWorkdir = true;
-      }
-      
 
 			if (this.mode == MODE_SERVER && line.hasOption("n"))
       {
@@ -229,15 +221,6 @@ public class StartupParams
 	}
   
   /**
-   * Liefert true, wenn explizit nach dem Benutzer-Verzeichnis gefragt werden soll.
-   * @return true, wenn explizit nach dem Benutzer-Verzeichnis gefragt werden soll.
-   */
-  public boolean isAskWorkDir()
-  {
-    return this.askWorkdir;
-  }
-
-  /**
    * Liefert true, wenn Jameica im nichtinteraktiven Server-Mode
    * laeuft und damit keine direkte Interaktion mit dem Benutzer ueber
    * die Konsole moeglich ist.
@@ -270,7 +253,10 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
- * Revision 1.15  2011/04/26 12:09:18  willuhn
+ * Revision 1.16  2012/02/21 15:03:32  willuhn
+ * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
+ *
+ * Revision 1.15  2011-04-26 12:09:18  willuhn
  * @B Potentielle Bugs gemaess Code-Checker
  *
  * Revision 1.14  2011-03-04 18:13:38  willuhn
