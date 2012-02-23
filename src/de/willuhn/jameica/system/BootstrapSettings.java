@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/BootstrapSettings.java,v $
- * $Revision: 1.1 $
- * $Date: 2012/02/21 15:03:32 $
+ * $Revision: 1.2 $
+ * $Date: 2012/02/23 22:03:36 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -101,6 +101,25 @@ public class BootstrapSettings
   }
   
   /**
+   * Prueft, ob beim Start nach dem zu verwendenden Benutzerordner gefragt werden soll.
+   * @return true, wenn gefragt werden soll (default).
+   */
+  public static boolean getAskWorkdir()
+  {
+    return Boolean.parseBoolean(getProperty("ask","true"));
+  }
+  
+  /**
+   * Legt fest, ob beim Start nach dem zu verwendenden Benutzerordner gefragt werden soll.
+   * @param b true, wenn gefragt werden soll.
+   */
+  public static void setAskWorkdir(boolean b)
+  {
+    setProperty("ask",Boolean.toString(b));
+    store();
+  }
+  
+  /**
    * Liefert die Properties-Datei, in der wir die Einstellungen speichern.
    * @return die Properties-Datei.
    */
@@ -178,6 +197,9 @@ public class BootstrapSettings
 
 /**********************************************************************
  * $Log: BootstrapSettings.java,v $
+ * Revision 1.2  2012/02/23 22:03:36  willuhn
+ * @N wenn der User im Workdir-Chooser die Option "kuenftig nicht mehr anzeigen" aktiviert hat, kann er die Einstellung jetzt unter Datei->Einstellungen wieder rueckgaengig machen. Es gab sonst keine komfortable Moeglichkeit, den Dialog wieder "hervorzuholen"
+ *
  * Revision 1.1  2012/02/21 15:03:32  willuhn
  * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
  *

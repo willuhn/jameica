@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/SettingsControl.java,v $
- * $Revision: 1.38 $
- * $Date: 2011/06/27 17:51:43 $
+ * $Revision: 1.39 $
+ * $Date: 2012/02/23 22:03:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.SettingsChangedMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.BootstrapSettings;
 import de.willuhn.jameica.system.Config;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -42,12 +43,11 @@ import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
- * 
+ * Controller fuer die Einstellungen unter Datei->Einstellungen
  */
 public class SettingsControl extends AbstractControl
 {
-
-	private I18N i18n;
+	private final static I18N i18n = Application.getI18n();
 
   // System
   private Input logLevel;
@@ -56,6 +56,7 @@ public class SettingsControl extends AbstractControl
   private Input httpsProxyHost;
   private Input httpsProxyPort;
   private CheckboxInput systemProxy;
+  private CheckboxInput askWorkDir;
   
   private TablePart certs;
   private CheckboxInput trustJavaCerts;
@@ -78,7 +79,6 @@ public class SettingsControl extends AbstractControl
   public SettingsControl(AbstractView view)
   {
     super(view);
-    i18n = Application.getI18n();
   }
 
   /**
@@ -185,6 +185,24 @@ public class SettingsControl extends AbstractControl
       l.handleEvent(null);
     }
     return this.systemProxy;
+  }
+  
+  /**
+   * Liefert eine Checkbox, mit der eingestellt werden kann, ob beim Start nach dem
+   * Benutzer-Ordner gefragt werden soll. Die Option wird nur eingeblendet, wenn
+   * der User die Option "kuenftig nicht mehr fragen" im WorkdirChooser aktiviert hat,
+   * da er sonst keine komfortable Moeglichkeit mehr hat, die Auswahl rueckgaengig
+   * zu machen.
+   * @return die Checkbox.
+   */
+  public CheckboxInput getAskWorkdir()
+  {
+    if (this.askWorkDir == null)
+    {
+      this.askWorkDir = new CheckboxInput(BootstrapSettings.getAskWorkdir());
+      this.askWorkDir.setName(i18n.tr("Zu verwendenden Benutzer-Ordner bei Start auswählen"));
+    }
+    return this.askWorkDir;
   }
   /**
    * Liefert eine Tabelle mit den installierten Zertifikaten.
@@ -310,6 +328,8 @@ public class SettingsControl extends AbstractControl
 
       // System
       config.setLoglevel((String)getLogLevel().getValue());
+      
+      BootstrapSettings.setAskWorkdir(((Boolean)getAskWorkdir().getValue()).booleanValue());
 
       restartNeeded |= getProxyPort().hasChanged();
       Integer proxyPort = (Integer) getProxyPort().getValue();
@@ -402,7 +422,10 @@ public class SettingsControl extends AbstractControl
 
 /**********************************************************************
  * $Log: SettingsControl.java,v $
- * Revision 1.38  2011/06/27 17:51:43  willuhn
+ * Revision 1.39  2012/02/23 22:03:36  willuhn
+ * @N wenn der User im Workdir-Chooser die Option "kuenftig nicht mehr anzeigen" aktiviert hat, kann er die Einstellung jetzt unter Datei->Einstellungen wieder rueckgaengig machen. Es gab sonst keine komfortable Moeglichkeit, den Dialog wieder "hervorzuholen"
+ *
+ * Revision 1.38  2011-06-27 17:51:43  willuhn
  * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
  * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
  *

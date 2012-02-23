@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/StartupParams.java,v $
- * $Revision: 1.16 $
- * $Date: 2012/02/21 15:03:32 $
+ * $Revision: 1.17 $
+ * $Date: 2012/02/23 22:03:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -81,7 +81,6 @@ public class StartupParams
 
 		options.addOption("h","help",false,"Gibt diesen Hilfe-Text aus");
 		options.addOption("f","file",true,"Optionale Angabe des Benutzer-Verzeichnisses (Workdir)");
-    options.addOption("a","ask",false,"Fragt beim Start nach dem zu verwendenden Benutzer-Verzeichnis. Wird im Server-Mode ignoriert");
     options.addOption("u","username",true,"Optionale Angabe des Benutzernamens");
 		options.addOption("p","password",true,"Optionale Angabe des Master-Passworts");
     options.addOption("w","passwordfile",true,"Optionale Angabe des Master-Passworts, welches sich in der angegebenen Datei befindet");
@@ -253,6 +252,9 @@ public class StartupParams
 
 /**********************************************************************
  * $Log: StartupParams.java,v $
+ * Revision 1.17  2012/02/23 22:03:36  willuhn
+ * @N wenn der User im Workdir-Chooser die Option "kuenftig nicht mehr anzeigen" aktiviert hat, kann er die Einstellung jetzt unter Datei->Einstellungen wieder rueckgaengig machen. Es gab sonst keine komfortable Moeglichkeit, den Dialog wieder "hervorzuholen"
+ *
  * Revision 1.16  2012/02/21 15:03:32  willuhn
  * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
  *

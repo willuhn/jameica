@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
- * $Revision: 1.7 $
- * $Date: 2012/02/21 15:03:32 $
+ * $Revision: 1.8 $
+ * $Date: 2012/02/23 22:03:36 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -58,8 +58,7 @@ public class WorkdirChooser
   {
     // Wenn der User die Auswahl gespeichert hat, fragen wir nicht mehr. Aber
     // nur, wenn wir auch wirklich was haben
-    String ask = BootstrapSettings.getProperty("ask","true");
-    if (ask != null && !Boolean.parseBoolean(ask.toLowerCase()))
+    if (!BootstrapSettings.getAskWorkdir())
     {
       // OK, der User hat die Auswahl mal gespeichert. Mal schauen,
       // ob er auch was eingegeben hatte
@@ -276,7 +275,7 @@ public class WorkdirChooser
 
     // Wir vermerken ausserdem, ob der User kuenftig noch gefragt werden moechte
     if (this.check != null && !this.check.isDisposed())
-      BootstrapSettings.setProperty("ask",Boolean.toString(!this.check.getSelection()));
+      BootstrapSettings.setAskWorkdir(!this.check.getSelection());
     
     close();
   }
@@ -318,6 +317,9 @@ public class WorkdirChooser
 
 /**********************************************************************
  * $Log: WorkdirChooser.java,v $
+ * Revision 1.8  2012/02/23 22:03:36  willuhn
+ * @N wenn der User im Workdir-Chooser die Option "kuenftig nicht mehr anzeigen" aktiviert hat, kann er die Einstellung jetzt unter Datei->Einstellungen wieder rueckgaengig machen. Es gab sonst keine komfortable Moeglichkeit, den Dialog wieder "hervorzuholen"
+ *
  * Revision 1.7  2012/02/21 15:03:32  willuhn
  * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
  *

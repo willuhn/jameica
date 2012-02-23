@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Settings.java,v $
- * $Revision: 1.40 $
- * $Date: 2011/08/02 08:23:29 $
+ * $Revision: 1.41 $
+ * $Date: 2012/02/23 22:03:36 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -33,6 +33,7 @@ import de.willuhn.jameica.gui.util.ColumnLayout;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.gui.util.TabGroup;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.BootstrapSettings;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -69,6 +70,10 @@ public class Settings extends AbstractView implements Extendable
     
     system.addHeadline(i18n.tr("System-Einstellungen"));
     system.addLabelPair(i18n.tr("Log-Level"), control.getLogLevel());
+    
+    // Nur anzeigen, wenn der User die Option deaktiviert hat
+    if (!BootstrapSettings.getAskWorkdir())
+      system.addInput(control.getAskWorkdir());
 
     system.addHeadline(i18n.tr("Proxy-Einstellungen"));
     system.addCheckbox(control.getUseSystemProxy(),i18n.tr("System-Einstellungen verwenden"));
@@ -215,7 +220,10 @@ public class Settings extends AbstractView implements Extendable
 
 /**********************************************************************
  * $Log: Settings.java,v $
- * Revision 1.40  2011/08/02 08:23:29  willuhn
+ * Revision 1.41  2012/02/23 22:03:36  willuhn
+ * @N wenn der User im Workdir-Chooser die Option "kuenftig nicht mehr anzeigen" aktiviert hat, kann er die Einstellung jetzt unter Datei->Einstellungen wieder rueckgaengig machen. Es gab sonst keine komfortable Moeglichkeit, den Dialog wieder "hervorzuholen"
+ *
+ * Revision 1.40  2011-08-02 08:23:29  willuhn
  * *** empty log message ***
  *
  * Revision 1.39  2011-08-02 08:22:57  willuhn
