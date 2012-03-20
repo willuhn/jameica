@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/Settings.java,v $
- * $Revision: 1.8 $
- * $Date: 2007/06/21 09:03:31 $
+ * $Revision: 1.9 $
+ * $Date: 2012/03/20 23:28:01 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -32,9 +32,20 @@ public final class Settings extends de.willuhn.util.Settings
    */
   public Settings(Class clazz)
   {
-		super("cfg",Application.getConfig().getConfigDir(),clazz);
+		this(clazz,true);
   }
 
+  /**
+   * Erzeugt eine neue Instanz der Settings, die exclusiv
+   * nur fuer diese Klasse gelten. Existieren bereits Settings
+   * fuer die Klasse, werden sie gleich geladen.
+   * @param clazz Klasse, fuer die diese Settings gelten.
+   * @param overridable legt fest, ob die Settings durch den User ueberschrieben werden koennen. Default: true.
+   */
+  public Settings(Class clazz, boolean overridable)
+  {
+    super("cfg",overridable ? Application.getConfig().getConfigDir() : null,clazz);
+  }
 
 	/**
 	 * Liefert den Wert des Attributes als Farbe.
@@ -103,6 +114,9 @@ public final class Settings extends de.willuhn.util.Settings
 
 /*********************************************************************
  * $Log: Settings.java,v $
+ * Revision 1.9  2012/03/20 23:28:01  willuhn
+ * @N BUGZILLA 1209
+ *
  * Revision 1.8  2007/06/21 09:03:31  willuhn
  * @N System-Presets
  *

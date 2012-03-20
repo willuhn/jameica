@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/AbstractPluginSource.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/08/30 16:02:23 $
+ * $Revision: 1.3 $
+ * $Date: 2012/03/20 23:28:01 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -16,6 +16,7 @@ import java.util.List;
 
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.MultipleClassLoader;
 
@@ -25,6 +26,7 @@ import de.willuhn.util.MultipleClassLoader;
  */
 public abstract class AbstractPluginSource implements PluginSource
 {
+  private final static Settings settings = new Settings(PluginSource.class,false); // nicht vom User ueberschreibbar
   private static List<PluginSource> sources = null;
   
   /**
@@ -67,7 +69,15 @@ public abstract class AbstractPluginSource implements PluginSource
         {
           try
           {
-            sources.add(beanService.get(c));
+            PluginSource source = beanService.get(c);
+            
+            // Checken, ob der Typ erlaubt ist.
+            if (!settings.getBoolean(source.getType() + ".enabled",true))
+            {
+              Logger.info("plugin-source " + source.getType() + " disabled by admin-directive, skipping");
+              continue;
+            }
+            sources.add(source);
           }
           catch (Exception e)
           {
@@ -89,7 +99,10 @@ public abstract class AbstractPluginSource implements PluginSource
 
 /**********************************************************************
  * $Log: AbstractPluginSource.java,v $
- * Revision 1.2  2011/08/30 16:02:23  willuhn
+ * Revision 1.3  2012/03/20 23:28:01  willuhn
+ * @N BUGZILLA 1209
+ *
+ * Revision 1.2  2011-08-30 16:02:23  willuhn
  * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
  *
  * Revision 1.1  2011-06-01 12:35:57  willuhn
