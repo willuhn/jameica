@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.35 $
- * $Date: 2011/07/01 11:33:45 $
+ * $Revision: 1.36 $
+ * $Date: 2012/03/20 23:48:32 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -196,11 +196,11 @@ public class Manifest implements Comparable
 	
   /**
    * Liefert den Klassen-Name des Plugins.
-   * @return Klassen-Name des Plugins.
+   * @return Klassen-Name des Plugins oder das DefaultPlugin, wenn keines angegeben ist.
    */
   public String getPluginClass()
   {
-    return this.root.getAttribute("class",null);
+    return this.root.getAttribute("class",DefaultPlugin.class.getName());
   }
   
   /**
@@ -716,7 +716,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
- * Revision 1.35  2011/07/01 11:33:45  willuhn
+ * Revision 1.36  2012/03/20 23:48:32  willuhn
+ * @N BUGZILLA 1208: Erster Code fuer "Dummy-Plugins", die keinen eignen Java-Code mitbringen sondern z.Bsp. nur Jars oder Javascript-Dateien. Noch offen: "PluginLoader#getManifest(...)" wird nicht unterscheiden koennen, wenn mehrere solcher Dummy-Plugins installiert sind, da alle das gleiche "DefaultPlugin" verwenden. Muss ich mal noch evaluieren
+ *
+ * Revision 1.35  2011-07-01 11:33:45  willuhn
  * @N Fuer die ganz bekloppten, die versuchen, Jameica als Plugin innerhalb von Jameica zu installieren (ja, die gibt es wirklich) noch eine extra Pruefung m(
  *
  * Revision 1.34  2011-06-19 11:15:46  willuhn
