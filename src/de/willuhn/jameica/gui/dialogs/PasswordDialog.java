@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/PasswordDialog.java,v $
- * $Revision: 1.28 $
- * $Date: 2011/05/24 09:03:45 $
+ * $Revision: 1.29 $
+ * $Date: 2012/03/28 21:22:42 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -218,6 +218,7 @@ public class PasswordDialog extends AbstractDialog
         if (!checkPassword(p))
         {
           passwordInput.setValue("");
+          passwordInput.focus(); // BUGZILLA 1215
           if (retries >= MAX_RETRIES)
           {
             // maximale Anzahl der Fehlversuche erreicht.
@@ -340,7 +341,10 @@ public class PasswordDialog extends AbstractDialog
 
 /**********************************************************************
  * $Log: PasswordDialog.java,v $
- * Revision 1.28  2011/05/24 09:03:45  willuhn
+ * Revision 1.29  2012/03/28 21:22:42  willuhn
+ * @B BUGZILLA 1215
+ *
+ * Revision 1.28  2011-05-24 09:03:45  willuhn
  * @C Passwort-Dialoge koennen nicht mit Escape abgebrochen werden. Hier muss "Abbrechen" geklickt werden
  *
  * Revision 1.27  2010-11-22 11:32:03  willuhn
