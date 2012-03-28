@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.36 $
- * $Date: 2012/03/20 23:48:32 $
+ * $Revision: 1.37 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -34,6 +34,7 @@ import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Enthaelt die Manifest-Informationen des Plugins aus plugin.xml.
@@ -47,11 +48,11 @@ public class Manifest implements Comparable
   private NavigationItem navi           = null;
   private MenuItem menu                 = null;
   
-  private AbstractPlugin pluginInstance = null;
+  private Plugin pluginInstance         = null;
+  private MultipleClassLoader loader    = null;
   
   private Type source                   = null;
   
-  private boolean isLoaded              = false;
   private boolean isInstalled           = false;
   
   private String buildnumber            = "";
@@ -200,7 +201,21 @@ public class Manifest implements Comparable
    */
   public String getPluginClass()
   {
-    return this.root.getAttribute("class",DefaultPlugin.class.getName());
+    // Wenn das Plugin bereits geladen ist, nehmen wir dessen Klasse
+    if (this.pluginInstance != null)
+      return this.pluginInstance.getClass().getName();
+    
+    String className = this.root.getAttribute("class",null);
+    if (className == null)
+    {
+      // Das ist ein "Pseudo-Plugin" ohne eigene Plugin-Klasse. Wir laden das
+      // gleich hier, um den Namen der Klasse zu kriegen
+      this.pluginInstance = PlaceholderPlugin.createInstance(this);
+      return this.pluginInstance.getClass().getName();
+    }
+    
+    // normales Plugin
+    return className.trim();
   }
   
   /**
@@ -566,7 +581,7 @@ public class Manifest implements Comparable
    * Liefert die Instanz des Plugins.
    * @return die Instanz des Plugins
    */
-  AbstractPlugin getPluginInstance()
+  Plugin getPluginInstance()
   {
     return this.pluginInstance;
   }
@@ -575,9 +590,11 @@ public class Manifest implements Comparable
    * Speichert die Plugin-Instanz.
    * @param plugin die Plugin-Instanz.
    */
-  void setPluginInstance(AbstractPlugin plugin)
+  void setPluginInstance(Plugin plugin)
   {
-    this.pluginInstance = plugin;
+    // ignorieren, wenn wir die Instanz schon haben
+    if (this.pluginInstance == null)
+      this.pluginInstance = plugin;
   }
   
   /**
@@ -622,16 +639,25 @@ public class Manifest implements Comparable
    */
   public boolean isLoaded()
   {
-    return this.isLoaded;
+    return this.loader != null;
   }
   
   /**
-   * Legt fest, ob das Plugin als erfolgreich geladen gelten soll.
-   * @param b
+   * Liefert den Classloader, mit dem das Plugin geladen wurde.
+   * @return der Classloader des Plugins.
    */
-  public void setLoaded(boolean b)
+  public MultipleClassLoader getClassLoader()
   {
-    this.isLoaded = b;
+    return this.loader;
+  }
+  
+  /**
+   * Speichert den Classloader, mit dem das Plugin geladen wurde.
+   * @param loader der Classloader des Plugins.
+   */
+  void setClassLoader(MultipleClassLoader loader)
+  {
+    this.loader = loader;
   }
 
   /**
@@ -716,6 +742,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.37  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
  * Revision 1.36  2012/03/20 23:48:32  willuhn
  * @N BUGZILLA 1208: Erster Code fuer "Dummy-Plugins", die keinen eignen Java-Code mitbringen sondern z.Bsp. nur Jars oder Javascript-Dateien. Noch offen: "PluginLoader#getManifest(...)" wird nicht unterscheiden koennen, wenn mehrere solcher Dummy-Plugins installiert sind, da alle das gleiche "DefaultPlugin" verwenden. Muss ich mal noch evaluieren
  *

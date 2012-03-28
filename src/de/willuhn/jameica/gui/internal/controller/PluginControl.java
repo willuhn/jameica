@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/PluginControl.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/05/31 16:39:05 $
+ * $Revision: 1.4 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -19,8 +19,8 @@ import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.internal.parts.ServiceList;
 import de.willuhn.jameica.gui.parts.TablePart;
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.system.Application;
 
 /**
@@ -57,7 +57,7 @@ public class PluginControl extends AbstractControl
    * Liefert das gerade ausgewaehlte Plugin.
    * @return ausgewaehltes Plugin.
    */
-  private AbstractPlugin getPlugin()
+  private Plugin getPlugin()
 	{
 		return Application.getPluginLoader().getPlugin(getManifest().getPluginClass());
 	}
@@ -108,7 +108,7 @@ public class PluginControl extends AbstractControl
 			return workPath;
 		
 		String dir = Application.getI18n().tr("<noch nicht erstellt>");
-		AbstractPlugin p = getPlugin();
+		Plugin p = getPlugin();
 		if (p != null)
 		  dir = p.getResources().getWorkPath();
 		workPath = new LabelInput(dir);
@@ -155,7 +155,11 @@ public class PluginControl extends AbstractControl
 
 /**********************************************************************
  * $Log: PluginControl.java,v $
- * Revision 1.3  2011/05/31 16:39:05  willuhn
+ * Revision 1.4  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.3  2011-05-31 16:39:05  willuhn
  * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
  *
  * Revision 1.2  2009/03/10 23:51:28  willuhn

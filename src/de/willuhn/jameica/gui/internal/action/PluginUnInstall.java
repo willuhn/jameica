@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/action/PluginUnInstall.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/06/02 11:04:55 $
+ * $Revision: 1.5 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -15,8 +15,8 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.BackgroundTaskDialog;
 import de.willuhn.jameica.gui.internal.dialogs.PluginUnInstallDialog;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -44,8 +44,8 @@ public class PluginUnInstall implements Action
     Manifest mf = null;
     if (context instanceof Manifest)
       mf = (Manifest) context;
-    if (context instanceof AbstractPlugin)
-      mf = ((AbstractPlugin) context).getManifest();
+    if (context instanceof Plugin)
+      mf = ((Plugin) context).getManifest();
 
     if (mf == null)
       throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu deinstallierende Plugin aus"));
@@ -125,7 +125,11 @@ public class PluginUnInstall implements Action
 
 /**********************************************************************
  * $Log: PluginUnInstall.java,v $
- * Revision 1.4  2011/06/02 11:04:55  willuhn
+ * Revision 1.5  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.4  2011-06-02 11:04:55  willuhn
  * @N Noch ein Icon
  *
  * Revision 1.3  2011-06-02 11:01:57  willuhn

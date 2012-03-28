@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchResultPart.java,v $
- * $Revision: 1.4 $
- * $Date: 2010/11/03 17:37:18 $
+ * $Revision: 1.5 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -26,7 +26,6 @@ import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.parts.TreePart;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.search.Result;
 import de.willuhn.jameica.search.SearchResult;
 import de.willuhn.jameica.system.Application;
@@ -90,7 +89,7 @@ public class SearchResultPart extends TreePart
       SearchResult result = searchResult.get(i);
       
       // Plugin ermitteln
-      AbstractPlugin ap = Application.getPluginLoader().findByClass(result.getSearchProvider().getClass());
+      de.willuhn.jameica.plugin.Plugin ap = Application.getPluginLoader().findByClass(result.getSearchProvider().getClass());
       Plugin p = (Plugin) plugins.get(ap);
       if (p == null)
       {
@@ -520,7 +519,11 @@ public class SearchResultPart extends TreePart
 
 /**********************************************************************
  * $Log: SearchResultPart.java,v $
- * Revision 1.4  2010/11/03 17:37:18  willuhn
+ * Revision 1.5  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.4  2010-11-03 17:37:18  willuhn
  * @N Plugins via Customizing ausblendbar. Dann werden direkt die Ergebnisse der Provider-Gruppen angezeigt
  *
  * Revision 1.3  2010-11-03 15:28:10  willuhn

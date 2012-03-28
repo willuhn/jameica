@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/calendar/AppointmentProviderRegistry.java,v $
- * $Revision: 1.4 $
- * $Date: 2012/02/11 13:47:51 $
+ * $Revision: 1.5 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
@@ -30,14 +30,14 @@ import de.willuhn.util.ClassFinder;
 public class AppointmentProviderRegistry
 {
   private final static Settings settings = new Settings(AppointmentProviderRegistry.class);
-  private final static Map<AbstractPlugin,List<Class<AppointmentProvider>>> cache = new HashMap<AbstractPlugin,List<Class<AppointmentProvider>>>();
+  private final static Map<Plugin,List<Class<AppointmentProvider>>> cache = new HashMap<Plugin,List<Class<AppointmentProvider>>>();
   
   /**
    * Liefert die Appointment-Provider.
    * @param plugin optionale Angabe eines Plugins, wenn nur Provider dieses Plugins gefunden werden sollen.
    * @return Liste der gefundenen Provider. Unabhaengig davon, ob sie gerade aktiviert oder deaktiviert sind.
    */
-  public final static List<AppointmentProvider> getAppointmentProviders(AbstractPlugin plugin)
+  public final static List<AppointmentProvider> getAppointmentProviders(Plugin plugin)
   {
     // Wir duerfen hier nicht die Instanzen selbst cachen sondern nur die gefundenen Klassen.
     // Denn ueber den Lifecycle der Instanzen entscheidet der Bean-Service - den wuerden wir sonst umgehen 
@@ -52,7 +52,7 @@ public class AppointmentProviderRegistry
       PluginLoader loader = Application.getPluginLoader();
       
       if (plugin != null)
-        finder = plugin.getResources().getClassLoader().getClassFinder();
+        finder = plugin.getManifest().getClassLoader().getClassFinder();
       
       try
       {
@@ -62,7 +62,7 @@ public class AppointmentProviderRegistry
           // Wenn ein Plugin angegeben ist, dann muss der Provider von diesem stammen.
           if (plugin != null)
           {
-            AbstractPlugin p = loader.findByClass(c);
+            Plugin p = loader.findByClass(c);
             if (p == null || p != plugin)
               continue;
           }
@@ -130,6 +130,10 @@ public class AppointmentProviderRegistry
 
 /**********************************************************************
  * $Log: AppointmentProviderRegistry.java,v $
+ * Revision 1.5  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
  * Revision 1.4  2012/02/11 13:47:51  willuhn
  * @B Nicht mehr die Instanzen cachen sondern nur die Klassen. Das Cachen der Instanzen uebernimmt der BeanService (je nach Lifecycle der Bean)
  *

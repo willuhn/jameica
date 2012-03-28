@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginDetailPart.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/08/03 11:58:06 $
+ * $Revision: 1.3 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -34,7 +34,6 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
@@ -67,8 +66,6 @@ public class PluginDetailPart implements Part
     if (this.comp != null)
       return;
     
-    AbstractPlugin plugin = Application.getPluginLoader().getPlugin(this.manifest.getPluginClass());
-
     I18N i18n = Application.getI18n();
 
     org.eclipse.swt.graphics.Color white = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
@@ -94,8 +91,9 @@ public class PluginDetailPart implements Part
       icon.setLayoutData(gd);
       
       String name = manifest.getIcon();
-      if (name != null && name.length() > 0 && plugin != null)
-        icon.setImage(SWTUtil.getImage(name,plugin.getResources().getClassLoader()));
+      ClassLoader loader = manifest.getClassLoader();
+      if (name != null && name.length() > 0 && loader != null)
+        icon.setImage(SWTUtil.getImage(name,loader));
       else
         icon.setImage(SWTUtil.getImage("package-x-generic-medium.png"));
     }
@@ -218,7 +216,11 @@ public class PluginDetailPart implements Part
 
 /**********************************************************************
  * $Log: PluginDetailPart.java,v $
- * Revision 1.2  2011/08/03 11:58:06  willuhn
+ * Revision 1.3  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.2  2011-08-03 11:58:06  willuhn
  * @N PluginLoader#getInitError
  *
  * Revision 1.1  2011-06-02 12:15:16  willuhn

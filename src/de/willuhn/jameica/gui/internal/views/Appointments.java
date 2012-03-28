@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Appointments.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/12/13 23:09:13 $
+ * $Revision: 1.5 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -25,7 +25,7 @@ import de.willuhn.jameica.gui.internal.dialogs.AppointmentProviderDialog;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
@@ -57,8 +57,8 @@ public class Appointments extends AbstractView
     GUI.getView().addPanelButton(new PanelButton("document-properties.png",configure,i18n.tr("Anzuzeigende Kalender auswählen")));
     
     // Appointment-Provider der Plugins hinzufuegen 
-    List<AbstractPlugin> plugins = Application.getPluginLoader().getInstalledPlugins();
-    for (AbstractPlugin plugin:plugins)
+    List<Plugin> plugins = Application.getPluginLoader().getInstalledPlugins();
+    for (Plugin plugin:plugins)
     {
       List<AppointmentProvider> providers = AppointmentProviderRegistry.getAppointmentProviders(plugin);
       for (AppointmentProvider provider:providers)
@@ -128,6 +128,10 @@ public class Appointments extends AbstractView
 
 /**********************************************************************
  * $Log: Appointments.java,v $
+ * Revision 1.5  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
  * Revision 1.4  2011/12/13 23:09:13  willuhn
  * @R Kein Context-Lifecycle - die Appointment-Provider werden sonst nicht mehr aktualisiert
  *

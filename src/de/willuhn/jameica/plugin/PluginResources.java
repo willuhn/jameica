@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginResources.java,v $
- * $Revision: 1.20 $
- * $Date: 2011/07/28 14:42:27 $
+ * $Revision: 1.21 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -24,20 +24,20 @@ import de.willuhn.util.MultipleClassLoader;
 /**
  * Container, der zusaetzliche Informationen fuer das Plugin bereitstellt.
  */
-public final class PluginResources {
+public final class PluginResources
+{
 
-	private AbstractPlugin plugin  = null;
-	private I18N i18n              = null;
-	private String workPath        = null;
-  private MultipleClassLoader cl = null;
+	private Plugin plugin     = null;
+	private I18N i18n         = null;
+	private String workPath   = null;
   
-  private Settings settings      = null;
+  private Settings settings = null;
 
   /**
    * ct.
    * @param plugin Das Plugin-File oder Verzeichnis.
    */
-  protected PluginResources(AbstractPlugin plugin)
+  protected PluginResources(Plugin plugin)
   {
   	this.plugin = plugin;
 
@@ -60,12 +60,12 @@ public final class PluginResources {
     {
       try
       {
-        this.i18n = new I18N("lang/" + this.plugin.getManifest().getName().replaceAll("\\.","_") + "_messages",locale,this.getClassLoader());
+        this.i18n = new I18N("lang/" + this.plugin.getManifest().getName().replaceAll("\\.","_") + "_messages",locale,this.plugin.getManifest().getClassLoader());
       }
       catch (Exception e)
       {
         // Fallback
-        this.i18n = new I18N("lang/messages",locale,this.getClassLoader());
+        this.i18n = new I18N("lang/messages",locale,this.plugin.getManifest().getClassLoader());
       }
     }
     catch (Exception e)
@@ -75,16 +75,6 @@ public final class PluginResources {
     }
     
     return this.i18n;
-	}
-
-	/**
-	 * Liefert das Verzeichnis, in dem sich das Plugin gefindet.
-	 * @return Verzeichnis, in dem sich das Plugin befindet.
-	 * @deprecated Bitte stattdessen {@link Manifest#getPluginDir()} verwenden.
-	 */
-	public String getPath()
-	{
-    return this.plugin.getManifest().getPluginDir();
 	}
 
 	/**
@@ -131,25 +121,21 @@ public final class PluginResources {
   /**
    * Liefert einen Classloader, der nur dieses Plugin kennt.
    * @return der Classloader des Plugins.
+   * @deprecated Bitte kuenftig stattdessen {@link Manifest#getClassLoader()} verwenden.
    */
   public MultipleClassLoader getClassLoader()
   {
-    return this.cl;
-  }
-  
-  /**
-   * Speichert den Classloader des Plguins.
-   * @param cl
-   */
-  void setClassLoader(MultipleClassLoader cl)
-  {
-    this.cl = cl;
+    return this.plugin.getManifest().getClassLoader();
   }
 }
 
 
 /**********************************************************************
  * $Log: PluginResources.java,v $
+ * Revision 1.21  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
  * Revision 1.20  2011/07/28 14:42:27  willuhn
  * @N Warnmeldung loggen, wenn sich Plugin-Name und Plugin-Verzeichnis unterscheiden
  *

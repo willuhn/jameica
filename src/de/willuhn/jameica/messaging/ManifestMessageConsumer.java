@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/ManifestMessageConsumer.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/10/18 09:29:06 $
+ * $Revision: 1.7 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -14,7 +14,6 @@ package de.willuhn.jameica.messaging;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.ConsumerDescriptor;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.services.BeanService;
@@ -93,8 +92,7 @@ public class ManifestMessageConsumer implements MessageConsumer
           else
           {
             // Wir laden die Klasse ueber den Classloader des Plugins
-            AbstractPlugin plugin = Application.getPluginLoader().getPlugin(mf.getPluginClass());
-            MultipleClassLoader loader = plugin.getResources().getClassLoader();
+            MultipleClassLoader loader = mf.getClassLoader();
             c = loader.load(classname);
           }
           MessageConsumer mc = (MessageConsumer) beanService.get(c);
@@ -132,6 +130,10 @@ public class ManifestMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: ManifestMessageConsumer.java,v $
+ * Revision 1.7  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
  * Revision 1.6  2011/10/18 09:29:06  willuhn
  * @N Reminder in eigenes Package verschoben
  * @N ReminderStorageProvider, damit der ReminderService auch Reminder aus anderen Datenquellen verwenden kann

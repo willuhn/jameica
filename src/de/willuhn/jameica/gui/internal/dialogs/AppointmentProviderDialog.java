@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/AppointmentProviderDialog.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/10/06 10:49:08 $
+ * $Revision: 1.2 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -30,7 +30,7 @@ import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
@@ -76,7 +76,7 @@ public class AppointmentProviderDialog extends AbstractDialog<List<AppointmentPr
         try
         {
           AppointmentProvider provider = (AppointmentProvider) item.getData();
-          AbstractPlugin plugin = Application.getPluginLoader().findByClass(provider.getClass());
+          Plugin plugin = Application.getPluginLoader().findByClass(provider.getClass());
           String name = provider.getName();
           if (plugin != null)
             name = plugin.getManifest().getName() + ": " + name;
@@ -90,8 +90,8 @@ public class AppointmentProviderDialog extends AbstractDialog<List<AppointmentPr
     });
     c.addPart(table);
 
-    List<AbstractPlugin> plugins = Application.getPluginLoader().getInstalledPlugins();
-    for (AbstractPlugin plugin:plugins)
+    List<Plugin> plugins = Application.getPluginLoader().getInstalledPlugins();
+    for (Plugin plugin:plugins)
     {
       List<AppointmentProvider> providers = AppointmentProviderRegistry.getAppointmentProviders(plugin);
       Collections.sort(providers,new Comparator<AppointmentProvider>() {
@@ -154,7 +154,11 @@ public class AppointmentProviderDialog extends AbstractDialog<List<AppointmentPr
 
 /**********************************************************************
  * $Log: AppointmentProviderDialog.java,v $
- * Revision 1.1  2011/10/06 10:49:08  willuhn
+ * Revision 1.2  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.1  2011-10-06 10:49:08  willuhn
  * @N Termin-Provider konfigurierbar
  *
  **********************************************************************/

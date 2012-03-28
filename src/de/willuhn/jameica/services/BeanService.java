@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/BeanService.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/09/08 11:11:55 $
+ * $Revision: 1.9 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -30,7 +30,7 @@ import de.willuhn.annotation.Lifecycle.Type;
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
-import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.JameicaException;
 import de.willuhn.logging.Logger;
@@ -230,7 +230,7 @@ public class BeanService implements Bootable
             
             // Plugin ermitteln und Service von dort laden
             // Wenn der Typ der Resource angegeben ist, suchen wir nach dessen Plugin, sonst nach dem Plugin der Bean
-            AbstractPlugin plugin = Application.getPluginLoader().findByClass(c != null ? c : bean.getClass());
+            Plugin plugin = Application.getPluginLoader().findByClass(c != null ? c : bean.getClass());
             if (plugin != null)
               dep = Application.getServiceFactory().lookup(plugin.getClass(),rname);
             else
@@ -323,7 +323,11 @@ public class BeanService implements Bootable
 
 /**********************************************************************
  * $Log: BeanService.java,v $
- * Revision 1.8  2011/09/08 11:11:55  willuhn
+ * Revision 1.9  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.8  2011-09-08 11:11:55  willuhn
  * @N inject(Object) ist jetzt public und kann daher nun auch dann verwendet werden, wenn die Bean-Instanz schon vom Aufrufer erstellt wurde
  *
  * Revision 1.7  2011-08-29 16:45:59  willuhn

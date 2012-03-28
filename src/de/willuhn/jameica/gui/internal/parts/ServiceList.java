@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/11/17 22:29:36 $
+ * $Revision: 1.16 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -28,7 +28,7 @@ import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.AbstractPlugin;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -46,7 +46,7 @@ public class ServiceList extends TablePart
    * ct.
    * @param plugin
    */
-  public ServiceList(final AbstractPlugin plugin)
+  public ServiceList(final Plugin plugin)
   {
     super(init(plugin),new CustomAction());
 
@@ -314,7 +314,7 @@ public class ServiceList extends TablePart
    * @param plugin das Plugin.
    * @return Liste der Services.
    */
-  private static GenericIterator init(AbstractPlugin plugin)
+  private static GenericIterator init(Plugin plugin)
   {
     try
     {
@@ -345,14 +345,14 @@ public class ServiceList extends TablePart
   private static class ServiceObject implements GenericObject
   {
   
-    private AbstractPlugin plugin;
+    private Plugin plugin;
     private String serviceName;
     
     /**
      * @param p
      * @param service
      */
-    public ServiceObject(AbstractPlugin p, String service)
+    public ServiceObject(Plugin p, String service)
     {
       this.plugin  = p;
       this.serviceName = service;
@@ -466,6 +466,10 @@ public class ServiceList extends TablePart
 
 /*********************************************************************
  * $Log: ServiceList.java,v $
+ * Revision 1.16  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
  * Revision 1.15  2011/11/17 22:29:36  willuhn
  * @B ClasscastException in PluginControl#getManifest (beim Service-Stop)
  *

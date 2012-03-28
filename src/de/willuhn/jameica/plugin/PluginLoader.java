@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.63 $
- * $Date: 2011/08/30 16:02:23 $
+ * $Revision: 1.64 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -140,8 +140,6 @@ public final class PluginLoader
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    Map<Manifest,MultipleClassLoader> loaders = new HashMap<Manifest,MultipleClassLoader>();
-    
     ////////////////////////////////////////////////////////////////////////////
     // Plugins laden
     for (Manifest mf:this.plugins)
@@ -150,7 +148,7 @@ public final class PluginLoader
 
       try
       {
-        loaders.put(mf, loadPlugin(mf));
+        this.loadPlugin(mf);
       }
       catch (Throwable t)
       {
@@ -170,15 +168,14 @@ public final class PluginLoader
     // Plugins initialisieren
     for (Manifest mf:this.plugins)
     {
-      MultipleClassLoader loader = loaders.get(mf);
-      if (loader == null)
+      if (!mf.isLoaded())
         continue; // Bereits das Laden der Klassen ging schief
 
       String name = mf.getName();
       
       try
       {
-        initPlugin(mf, loader);
+        initPlugin(mf);
       }
       catch (Throwable t)
       {
@@ -201,15 +198,14 @@ public final class PluginLoader
   /**
    * Laedt das Plugin.
    * @param manifest
-   * @return der Classloader des Plugins
    * @throws Exception wenn das Laden des Plugins fehlschlug.
    */
-  private MultipleClassLoader loadPlugin(final Manifest manifest) throws Exception
+  private void loadPlugin(final Manifest manifest) throws Exception
   {
     if (manifest.isInstalled())
     {
       Logger.debug("plugin allready initialized, skipping");
-      return manifest.getPluginInstance().getResources().getClassLoader();
+      return;
     }
 
     Logger.info("loading plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
@@ -235,17 +231,15 @@ public final class PluginLoader
     // OK, jetzt laden wir die Klassen des Plugins.
     ClassService cs = (ClassService) Application.getBootLoader().getBootable(ClassService.class);
     MultipleClassLoader loader = cs.prepareClasses(manifest);
-    manifest.setLoaded(true);
-    return loader;
+    manifest.setClassLoader(loader); // und geben dem Manifest seinen Classloader.
   }
 
   /**
    * Instanziiert das Plugin.
-   * @param manifest
-   * @param loader der Classloader fuer das Plugin.
+   * @param manifest das Manifest des Plugins.
    * @throws Exception wenn das Initialisieren des Plugins fehlschlug.
    */
-  private void initPlugin(final Manifest manifest, final MultipleClassLoader loader) throws Exception
+  private void initPlugin(final Manifest manifest) throws Exception
   {
     if (manifest.isInstalled())
     {
@@ -257,29 +251,37 @@ public final class PluginLoader
     Logger.info("init plugin " + manifest.getName() + " [Version: " + manifest.getVersion() + "]");
 
     String pluginClass = manifest.getPluginClass();
-
     if (pluginClass == null || pluginClass.length() == 0)
       throw new ApplicationException(Application.getI18n().tr("Plugin {0} enthält keine gültige Plugin-Klasse (Attribut class in plugin.xml",manifest.getName()));
 
-    Logger.info("trying to initialize " + pluginClass);
+    Plugin plugin = manifest.getPluginInstance();
+    String versionKey = null;
+    if (plugin == null)
+    {
+      Logger.info("trying to initialize " + pluginClass);
 
-    // /////////////////////////////////////////////////////////////
-    // Klasse instanziieren. Wir laden die Klasse ueber den
-    // zugehoerigen Classloader
-    Class clazz = loader.load(pluginClass);
+      ///////////////////////////////////////////////////////////////
+      // Klasse instanziieren. Wir laden die Klasse ueber den
+      // zugehoerigen Classloader
+      Class<Plugin> clazz = manifest.getClassLoader().load(pluginClass);
 
-    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-    AbstractPlugin plugin = (AbstractPlugin) beanService.get(clazz);
-    plugin.getResources().setClassLoader(loader);
-    manifest.setPluginInstance(plugin);
-
-    //
-    // /////////////////////////////////////////////////////////////
+      BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+      plugin = beanService.get(clazz);
+      manifest.setPluginInstance(plugin);
+      versionKey = clazz.getName();
+      //
+      ///////////////////////////////////////////////////////////////
+    }
+    else
+    {
+      // Java-loses Plugin.
+      versionKey = manifest.getName();
+    }
 
     // Bevor wir das Plugin initialisieren, pruefen, ob vorher eine aeltere
     // Version des Plugins installiert war. Ist das der Fall rufen wir dessen
     // update() Methode vorher auf.
-    String s = updateChecker.getString(clazz.getName() + ".version",null);
+    String s = updateChecker.getString(versionKey + ".version",null);
     if (s == null)
     {
       // Plugin wurde zum ersten mal gestartet
@@ -309,11 +311,11 @@ public final class PluginLoader
     Application.getCallback().getStartupMonitor().setStatusText("initializing plugin " + manifest.getName());
 
     plugin.init();
-    Application.getServiceFactory().init(plugin);
+    Application.getServiceFactory().init(manifest);
     Application.getCallback().getStartupMonitor().addPercentComplete(10);
 
     // ok, wir haben alles durchlaufen, wir speichern die neue Version.
-    updateChecker.setAttribute(clazz.getName() + ".version", manifest.getVersion().toString());
+    updateChecker.setAttribute(versionKey + ".version", manifest.getVersion().toString());
 
     // Und jetzt muessen wir noch ggf. vorhandene Extensions registrieren
     Logger.info("register plugin extensions");
@@ -350,7 +352,8 @@ public final class PluginLoader
         
         try
         {
-          Class c = loader.load(ext[i].getClassname());
+          Class c = manifest.getClassLoader().load(ext[i].getClassname());
+          BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
           ExtensionRegistry.register((Extension) beanService.get(c), ext[i].getExtendableIDs());
           Logger.info("  register " + c.getName());
         }
@@ -370,9 +373,9 @@ public final class PluginLoader
    * Liefert eine Liste mit allen installierten Plugins.
    * @return Liste aller installierten Plugins. Die Elemente sind vom Typ <code>AbstractPlugin</code>.
    */
-  public List<AbstractPlugin> getInstalledPlugins()
+  public List<Plugin> getInstalledPlugins()
   {
-    List<AbstractPlugin> l = new ArrayList<AbstractPlugin>();
+    List<Plugin> l = new ArrayList<Plugin>();
     int size = plugins.size();
     for (int i = 0; i < size; ++i)
     {
@@ -471,7 +474,7 @@ public final class PluginLoader
    * @return Instanz des Plugins oder <code>null</code> wenn es nicht
    *         installiert ist.
    */
-  public <T extends AbstractPlugin> T getPlugin(Class<? extends AbstractPlugin> plugin)
+  public <T extends Plugin> T getPlugin(Class<? extends Plugin> plugin)
   {
     if (plugin == null)
       return null;
@@ -485,7 +488,7 @@ public final class PluginLoader
    * @return Instanz des Plugins oder <code>null</code> wenn es nicht
    *         installiert ist.
    */
-  public AbstractPlugin getPlugin(String pluginClass)
+  public Plugin getPlugin(String pluginClass)
   {
     if (pluginClass == null || pluginClass.length() == 0)
       return null;
@@ -503,7 +506,7 @@ public final class PluginLoader
    * @return das Plugin oder <code>null</code>, wenn es nicht ermittelbar ist
    *         oder zu einem Fehler fuehrte. Der Fehler wird im Jameica-Log protokolliert.
    */
-  public AbstractPlugin findByClass(Class c)
+  public Plugin findByClass(Class c)
   {
     try
     {
@@ -643,7 +646,7 @@ public final class PluginLoader
       Logger.warn("uninstalling plugin " + name);
 
       // "plugin" darf NULL sein - dann war es noch gar nicht aktiv und muss nur geloescht werden
-      AbstractPlugin plugin = getPlugin(mf.getPluginClass());
+      Plugin plugin = getPlugin(mf.getPluginClass());
       
       //////////////////////////////////////////////////////////////////////
       // 1. Menu- und Navi-Punkte im GUI-Modus deaktivieren
@@ -807,11 +810,11 @@ public final class PluginLoader
    * Loescht die Config-Dateien des Plugins.
    * @param plugin das Plugin.
    */
-  private void deleteConfigs(AbstractPlugin plugin)
+  private void deleteConfigs(Plugin plugin)
   {
     // Wir gehen im Config-Verzeichnis alle Dateien durch, laden zu jedem die Klasse
     // und checken, ob sie zu diesem Plugin gehoert.
-    ClassLoader loader  = plugin.getResources().getClassLoader();
+    ClassLoader loader = plugin.getManifest().getClassLoader();
 
     FileFinder finder = new FileFinder(new File(Application.getConfig().getConfigDir()));
     finder.extension(".properties");
@@ -827,7 +830,7 @@ public final class PluginLoader
       {
         // Checken, ob wir das als Klasse laden koennen
         Class c = loader.loadClass(name);
-        AbstractPlugin p = this.findByClass(c);
+        Plugin p = this.findByClass(c);
         if (p == null)
           continue; // kein Plugin gefunden
         
@@ -862,7 +865,7 @@ public final class PluginLoader
       if (!mf.isInstalled())
         continue; // nicht installierte Plugins muessen nicht runtergefahren
                   // werden
-      AbstractPlugin plugin = mf.getPluginInstance();
+      Plugin plugin = mf.getPluginInstance();
       Logger.debug(plugin.getClass().getName());
 
       try
@@ -922,7 +925,11 @@ public final class PluginLoader
 
 /*******************************************************************************
  * $Log: PluginLoader.java,v $
- * Revision 1.63  2011/08/30 16:02:23  willuhn
+ * Revision 1.64  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.63  2011-08-30 16:02:23  willuhn
  * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
  *
  * Revision 1.62  2011-08-03 11:58:06  willuhn

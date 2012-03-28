@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ServiceFactory.java,v $
- * $Revision: 1.60 $
- * $Date: 2011/08/31 07:46:41 $
+ * $Revision: 1.61 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import de.willuhn.datasource.Service;
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
 import de.willuhn.jameica.security.SSLRMIClientSocketFactory;
 import de.willuhn.jameica.services.BeanService;
@@ -45,21 +45,20 @@ public final class ServiceFactory
 
   /**
    * Initialisiert die Services eines Plugins.
-   * @param plugin das Plugin.
+   * @param manifest das Manifest des Plugins.
    * @throws ApplicationException
    */
-  public synchronized void init(AbstractPlugin plugin) throws ApplicationException
+  public synchronized void init(Manifest manifest) throws ApplicationException
   {
-    Manifest mf = plugin.getManifest();
-    ServiceDescriptor[] descriptors = mf.getServices();
+    ServiceDescriptor[] descriptors = manifest.getServices();
     if (descriptors == null || descriptors.length == 0)
       return;
 
-    Application.getCallback().getStartupMonitor().setStatusText("init services for plugin " + mf.getName() + " [version: " + mf.getVersion() +"]");
+    Application.getCallback().getStartupMonitor().setStatusText("init services for plugin " + manifest.getName() + " [version: " + manifest.getVersion() +"]");
 
     for (int i=0;i<descriptors.length;++i)
     {
-      String fullName = plugin.getClass().getName() + "." + descriptors[i].getName();
+      String fullName = manifest.getPluginClass() + "." + descriptors[i].getName();
       if (services.get(fullName) != null)
       {
         Logger.debug("service " + descriptors[i].getName() + " allready started, skipping");
@@ -69,9 +68,9 @@ public final class ServiceFactory
 
       try
       {
-        Application.getCallback().getStartupMonitor().setStatusText(mf.getName() + ": init service " + descriptors[i].getName());
+        Application.getCallback().getStartupMonitor().setStatusText(manifest.getName() + ": init service " + descriptors[i].getName());
         Application.getCallback().getStartupMonitor().addPercentComplete(10);
-        install(plugin,descriptors[i]);
+        install(manifest,descriptors[i]);
       }
       catch (Throwable t)
       {
@@ -79,7 +78,7 @@ public final class ServiceFactory
         String s = t.getMessage();
         if (s == null || s.length() == 0)
           s = t.getClass().getName();
-        throw new ApplicationException(Application.getI18n().tr("Plugin \"{0}\" wurde aufgrund eines Fehlers bei der Initialisierung deaktiviert.\nFehlermeldung: " + s,mf.getName()),t);
+        throw new ApplicationException(Application.getI18n().tr("Plugin \"{0}\" wurde aufgrund eines Fehlers bei der Initialisierung deaktiviert.\nFehlermeldung: " + s,manifest.getName()),t);
       }
     }
   }
@@ -88,17 +87,17 @@ public final class ServiceFactory
    * Installiert einen Service in Jameica. Laeuft die Anwendung
    * im Server-Mode und ist das Flag autostart des Services aktiv,
    * wird der Service im Netz freigegeben.
-   * @param plugin das Plugin, fuer welches dieser Service gebunden werden soll.
+   * @param manifest das Manifest des Plugins.
    * @param descriptor der Service-Deskriptor.
    * @throws RemoteException wenn das Binden fehlschlaegt.
    */
-  private void install(AbstractPlugin plugin, ServiceDescriptor descriptor) throws RemoteException
+  private void install(Manifest manifest, ServiceDescriptor descriptor) throws RemoteException
   {
     Application.getCallback().getStartupMonitor().setStatusText("install service " + descriptor.getName());
     Application.getCallback().getStartupMonitor().addPercentComplete(5);
 
     String name = descriptor.getName();
-    String fullName = plugin.getClass().getName() + "." + name;
+    String fullName = manifest.getPluginClass() + "." + name;
 
     if (services.get(fullName) != null)
     {
@@ -110,13 +109,13 @@ public final class ServiceFactory
       Logger.info("service: " + name);
 
       ServiceEntry entry = new ServiceEntry();
-      entry.serviceClass = plugin.getResources().getClassLoader().load(descriptor.getClassname());
+      entry.serviceClass = manifest.getClassLoader().load(descriptor.getClassname());
       this.services.put(fullName,entry);
 
       //////////////////////////////////////////////////////////////////////////
       // Abhaengigkeiten aufloesen
       String[] depends = descriptor.depends();
-      ServiceDescriptor[] deps = plugin.getManifest().getServices();
+      ServiceDescriptor[] deps = manifest.getServices();
       if (name != null && name.length() > 0 &&
           depends != null && depends.length > 0 &&
           deps != null && deps.length > 0)
@@ -132,7 +131,7 @@ public final class ServiceFactory
             }
             if (depends[j].equals(deps[i].getName()))
             {
-              install(plugin,deps[i]);
+              install(manifest,deps[i]);
             }
           }
         }
@@ -148,7 +147,7 @@ public final class ServiceFactory
       }
 
       // Service laden
-      entry.service = newInstance(plugin,entry.serviceClass);
+      entry.service = newInstance(manifest,entry.serviceClass);
 
       // Ggf. via RMI freigeben
       if (descriptor.share())
@@ -182,18 +181,18 @@ public final class ServiceFactory
 
   /**
    * Erstellt eine Instanz der angegebenen Service-Klasse.
-   * @param plugin das zugehoerige Plugin.
+   * @param manifest das Manifest des Plugins.
    * @param serviceClass zu instanziierende Klasse.
    * @return die erzeugte Instanz.
    * @throws Exception
    */
-  private Service newInstance(AbstractPlugin plugin, Class serviceClass) throws Exception
+  private Service newInstance(Manifest manifest, Class serviceClass) throws Exception
   {
     Class impl = null;
     try
     {
       // Wir nehmen die erste Implementierung, dir wir finden
-      impl = plugin.getResources().getClassLoader().getClassFinder().findImplementors(serviceClass)[0];
+      impl = manifest.getClassLoader().getClassFinder().findImplementors(serviceClass)[0];
     }
     catch (ClassNotFoundException e)
     {
@@ -262,7 +261,7 @@ public final class ServiceFactory
    * Faehrt die Services des angegebenen Plugins runter.
    * @param plugin das Plugin, fuer das die Services beendet werden sollen.
    */
-  public synchronized void shutDown(AbstractPlugin plugin)
+  public synchronized void shutDown(Plugin plugin)
   {
     // Wir haben keine lokalen Services
     if (Application.inClientMode())
@@ -416,7 +415,11 @@ public final class ServiceFactory
 
 /*********************************************************************
  * $Log: ServiceFactory.java,v $
- * Revision 1.60  2011/08/31 07:46:41  willuhn
+ * Revision 1.61  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.60  2011-08-31 07:46:41  willuhn
  * @B Compile-Fixes
  *
  * Revision 1.59  2011-08-30 16:02:23  willuhn

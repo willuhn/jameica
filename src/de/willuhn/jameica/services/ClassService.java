@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ClassService.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/07/18 16:31:00 $
+ * $Revision: 1.9 $
+ * $Date: 2012/03/28 22:28:07 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -25,7 +25,6 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.io.FileFinder;
-import de.willuhn.jameica.plugin.AbstractPlugin;
 import de.willuhn.jameica.plugin.Dependency;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
@@ -135,15 +134,14 @@ public class ClassService implements Bootable
         for (int i=0;i<plugins.size();++i)
         {
           Manifest mf = (Manifest) plugins.get(i);
-          if (mf == null || manifest.getName().equals(mf.getName()))
+          if (mf == null || manifest.getName().equals(mf.getName())) // sind wir selbst
             continue;
           for (int k=0;k<deps.length;++i)
           {
-            if (deps[k].getName().equals(mf.getName()))
+            if (deps[k].getName().equals(mf.getName()) && mf.isLoaded())
             {
               Logger.info("    " + mf.getName());
-              AbstractPlugin ap = Application.getPluginLoader().getPlugin(mf.getPluginClass());
-              mycl.addClassloader(ap.getResources().getClassLoader());
+              mycl.addClassloader(mf.getClassLoader());
               break;
             }
           }
@@ -198,6 +196,11 @@ public class ClassService implements Bootable
     
     // Include-Verzeichnisse aus Manifest uebernehmen
     String[] cfIncludes = manifest.getClassFinderIncludes();
+    if (cfIncludes.length == 0)
+    {
+      Logger.info("no classfinder includes for this plugin");
+      return;
+    }
     for (int i=0;i<cfIncludes.length;++i)
     {
       Logger.info("classfinder include: " + cfIncludes[i]);
@@ -292,7 +295,11 @@ public class ClassService implements Bootable
 
 /**********************************************************************
  * $Log: ClassService.java,v $
- * Revision 1.8  2011/07/18 16:31:00  willuhn
+ * Revision 1.9  2012/03/28 22:28:07  willuhn
+ * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
+ * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
+ *
+ * Revision 1.8  2011-07-18 16:31:00  willuhn
  * @N Name fuer den Classloader vergebbar
  *
  * Revision 1.7  2011-05-31 16:39:04  willuhn
