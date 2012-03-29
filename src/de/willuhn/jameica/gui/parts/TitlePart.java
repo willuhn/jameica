@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TitlePart.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/08/18 16:03:38 $
+ * $Revision: 1.2 $
+ * $Date: 2012/03/29 22:18:08 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -162,6 +162,7 @@ public class TitlePart implements Part
       {
         GC gc = event.gc;
         gc.setFont(FONT.getSWTFont());
+        gc.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_BLACK)); // Siehe Mail von Hermann vom 29.03.2012
         gc.drawText(titleText == null ? "" : titleText,TITLE_OFFSET_X,TITLE_OFFSET_Y,true);
       }
     });
@@ -261,7 +262,10 @@ public class TitlePart implements Part
 
 /*********************************************************************
  * $Log: TitlePart.java,v $
- * Revision 1.1  2011/08/18 16:03:38  willuhn
+ * Revision 1.2  2012/03/29 22:18:08  willuhn
+ * @C Titel grundsaetzlich schwarz zeichnen
+ *
+ * Revision 1.1  2011-08-18 16:03:38  willuhn
  * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
  *
  **********************************************************************/
