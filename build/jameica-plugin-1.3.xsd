@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
-  $Revision: 1.1 $
-  $Date: 2012/03/20 23:48:32 $
+  $Revision: 1.2 $
+  $Date: 2012/04/02 22:35:10 $
   $Author: willuhn $
  
   Copyright (c) by willuhn software & services
@@ -71,7 +71,6 @@
           <xsd:documentation>Optionaler Dateiname eines Icons in der Groesse 64x64 Pixel</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="requires"    type="tns:requiresType"    minOccurs="0" maxOccurs="1"/>
       <xsd:element name="requires"    type="tns:requiresType"    minOccurs="0" maxOccurs="1"/>
       <xsd:element name="classfinder" type="tns:classfinderType" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="menu"        type="tns:menuType"        minOccurs="0" maxOccurs="1"/>
@@ -335,6 +334,9 @@
         Hier koennen Message-Consumer definiert werden, die automatisch beim
         Start registriert werden sollen. Wer das Manifest von Android-Apps
         kennt: Sind das gleiche wie Broadcast-Receiver.
+        Ausserdem können von hier aus auch direkt Messages verschickt werden,
+        ohne extra Java-Code dafür schreiben zu muessen. Das wird z.Bsp. von
+        Scripting-Plugins verwendet, damit die ihre JS-Dateien registrieren können.
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
@@ -366,6 +368,25 @@
           </xsd:attribute>
         </xsd:complexType>
       </xsd:element>
+
+      <xsd:element name="message" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>Eine einzelne zu versendende Message</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:attribute name="queue" type="xsd:string" use="required">
+            <xsd:annotation>
+              <xsd:documentation>
+                Name der Queue, an die die Message geschickt werden soll.
+                Der eigentliche Payload - also der Message-Text wird in
+                den CDATA-Bereich (also den Body des XML-Elements "messages")
+                eingetragen.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+
     </xsd:sequence>
   </xsd:complexType>
 

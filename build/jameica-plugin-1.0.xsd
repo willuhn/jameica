@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 
 <!--
-  $Revision: 1.14 $
-  $Date: 2010/06/03 12:54:32 $
+  $Revision: 1.15 $
+  $Date: 2012/04/02 22:35:10 $
   $Author: willuhn $
  
   Copyright (c) by willuhn software & services
@@ -66,7 +66,6 @@
           <xsd:documentation>Bezeichnung der Lizenz. Z.Bsp. GPL</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
-      <xsd:element name="requires"    type="tns:requiresType"    minOccurs="0" maxOccurs="1"/>
       <xsd:element name="requires"    type="tns:requiresType"    minOccurs="0" maxOccurs="1"/>
       <xsd:element name="classfinder" type="tns:classfinderType" minOccurs="0" maxOccurs="1"/>
       <xsd:element name="menu"        type="tns:menuType"        minOccurs="0" maxOccurs="1"/>
