@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.37 $
- * $Date: 2012/03/28 22:28:07 $
+ * $Revision: 1.38 $
+ * $Date: 2012/04/04 20:43:37 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 import java.util.jar.JarFile;
@@ -362,7 +363,7 @@ public class Manifest implements Comparable
 		ServiceDescriptor[] s = new ServiceDescriptor[v.size()];
 		for (int i=0;i<v.size();++i)
 		{
-			s[i] = new ServiceDescriptorXml((IXMLElement)v.get(i));
+			s[i] = new ServiceDescriptor((IXMLElement)v.get(i));
 		}
 		return s;
 	}
@@ -401,12 +402,12 @@ public class Manifest implements Comparable
       return null;
 
     Vector v = extensions.getChildrenNamed("extension");
-    ExtensionDescriptor[] s = new ExtensionDescriptor[v.size()];
-    for (int i=0;i<v.size();++i)
+    List<ExtensionDescriptor> list = new LinkedList<ExtensionDescriptor>();
+    for (Object e:v)
     {
-      s[i] = new ExtensionDescriptorXml((IXMLElement)v.get(i));
+      list.add(new ExtensionDescriptor((IXMLElement)e));
     }
-    return s;
+    return list.toArray(new ExtensionDescriptor[list.size()]);
   }
   
   /**
@@ -416,15 +417,34 @@ public class Manifest implements Comparable
    */
   public ConsumerDescriptor[] getMessageConsumers()
   {
-    IXMLElement consumers = root.getFirstChildNamed("messaging");
-    if (consumers == null || !consumers.hasChildren())
+    IXMLElement messaging = root.getFirstChildNamed("messaging");
+    if (messaging == null || !messaging.hasChildren())
       return null;
 
-    Vector v = consumers.getChildrenNamed("consumer");
+    Vector v = messaging.getChildrenNamed("consumer");
     ConsumerDescriptor[] s = new ConsumerDescriptor[v.size()];
     for (int i=0;i<v.size();++i)
     {
-      s[i] = new ConsumerDescriptorXml((IXMLElement)v.get(i));
+      s[i] = new ConsumerDescriptor((IXMLElement)v.get(i));
+    }
+    return s;
+  }
+
+  /**
+   * Liefert eine Liste von Messages, die automatisch beim Start versendet werden sollen.
+   * @return Liste aller Messages oder <code>null</code> wenn keine definiert sind.
+   */
+  public MessageDescriptor[] getMessages()
+  {
+    IXMLElement messaging = root.getFirstChildNamed("messaging");
+    if (messaging == null || !messaging.hasChildren())
+      return null;
+
+    Vector v = messaging.getChildrenNamed("message");
+    MessageDescriptor[] s = new MessageDescriptor[v.size()];
+    for (int i=0;i<v.size();++i)
+    {
+      s[i] = new MessageDescriptor((IXMLElement)v.get(i));
     }
     return s;
   }
@@ -742,6 +762,10 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.38  2012/04/04 20:43:37  willuhn
+ * @R Ueberfluessige Interface+XMLImpl entfernt
+ * @N MessageDescriptor
+ *
  * Revision 1.37  2012/03/28 22:28:07  willuhn
  * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
  * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.

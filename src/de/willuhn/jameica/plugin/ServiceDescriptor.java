@@ -1,8 +1,8 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/ServiceDescriptor.java,v $
- * $Revision: 1.2 $
- * $Date: 2005/07/14 22:58:36 $
- * $Author: web0 $
+ * $Revision: 1.3 $
+ * $Date: 2012/04/04 20:43:37 $
+ * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
  *
@@ -11,6 +11,11 @@
  *
  **********************************************************************/
 package de.willuhn.jameica.plugin;
+
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+import net.n3.nanoxml.IXMLElement;
 
 /**
  * Ein Service-Deskriptor beschreibt Name und Klasse
@@ -25,50 +30,116 @@ package de.willuhn.jameica.plugin;
  *            autostart="false" />
  * </services>
  */
-public interface ServiceDescriptor
+public class ServiceDescriptor
 {
-	/**
-	 * Liefert den Namen des Services.
+
+	private IXMLElement root 	= null;
+	private String name 			= null;
+	private String className 	= null;
+	private String[] depends	= null;
+
+  /**
+   * ct.
+   * @param root
+   */
+  public ServiceDescriptor(IXMLElement root)
+  {
+  	this.root = root;
+  }
+
+  /**
+   * Liefert den Namen des Services.
    * @return Name des Services.
    */
-  public String getName();
+  public String getName()
+  {
+  	if (name != null)
+  		return name;
+    name = root.getAttribute("name",null);
+    return name;
+  }
 
-	/**
-	 * Liefert den Namen der Java-Klasse des Services.
+  /**
+   * Liefert den Namen der Java-Klasse des Services.
    * @return Name der Klasse.
    * Hier muss keine Implementierung angegeben werden. Ist ein
    * Interface eingetragen, sucht Jameica selbstaendig die
    * zugehoerige Implementierung.
    */
-  public String getClassname();
+  public String getClassname()
+  {
+  	if (className != null)
+  		return className;
+		className = root.getAttribute("class",null);
+		return className;
+  }
 
-	/**
-	 * Legt fest, ob der Service beim Starten von Jameica automatisch
-	 * gestartet werden soll.
+  /**
+   * Legt fest, ob der Service beim Starten von Jameica automatisch
+   * gestartet werden soll.
    * @return true, wenn er automatisch gestartet werden soll.
    */
-  public boolean autostart();
+  public boolean autostart()
+  {
+  	String s = root.getAttribute("autostart","true");
+  	return "true".equalsIgnoreCase(s);
+  }
 
-	/**
-	 * Liefert eine Liste von Service-Namen, von denen dieser Service
-	 * abhaengig ist.
+  /**
+   * Liefert eine Liste von Service-Namen, von denen dieser Service
+   * abhaengig ist.
    * @return Liste von Services, die vorher instanziiert werden muessen.
    * Kann <code>null</code> liefern, wenn der Service von keinen
    * anderen Services abhaengig ist.
    */
-  public String[] depends();
-  
+  public String[] depends()
+  {
+  	if (depends != null)
+  		return depends;
+
+		String s = root.getAttribute("depends",null);
+		if (s == null || s.length() == 0)
+			return new String[0];
+
+    s = s.replaceAll("\n|\r","");
+		StringTokenizer st = new StringTokenizer(s,",");
+    ArrayList l = new ArrayList();
+		while (st.hasMoreTokens())
+		{
+		  s = st.nextToken();
+      if (s == null || s.length() == 0)
+        continue;
+			l.add(s.trim());
+		}
+    this.depends = (String[]) l.toArray(new String[l.size()]);
+		return depends;
+  }
+
   /**
    * Legt fest, ob der Service im Netzwerk freigegeben werden soll.
    * @return true, wenn er freigegeben werden soll.
    */
-  public boolean share();
-  
+  public boolean share()
+  {
+    String s = root.getAttribute("share","true");
+    return "true".equalsIgnoreCase(s);
+  }
+
 }
 
 
 /**********************************************************************
  * $Log: ServiceDescriptor.java,v $
+ * Revision 1.3  2012/04/04 20:43:37  willuhn
+ * @R Ueberfluessige Interface+XMLImpl entfernt
+ * @N MessageDescriptor
+ *
+ * Revision 1.4  2007/04/16 13:19:33  willuhn
+ * @C return empty list instead of null
+ *
+ * Revision 1.3  2005/08/18 23:57:20  web0
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/07/14 22:58:36  web0
  * *** empty log message ***
  *
