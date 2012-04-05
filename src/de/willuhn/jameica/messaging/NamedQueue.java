@@ -1,7 +1,7 @@
 /*****************************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/NamedQueue.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/10/06 11:41:30 $
+ * $Revision: 1.16 $
+ * $Date: 2012/04/05 23:22:48 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,8 +15,11 @@ package de.willuhn.jameica.messaging;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.Queue;
 
 /**
@@ -275,6 +278,14 @@ public final class NamedQueue implements MessagingQueue
             if (send)
               consumer.handleMessage(msg);
           }
+          catch (ApplicationException ae)
+          {
+            Application.getMessagingFactory().sendSyncMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+          }
+          catch (OperationCanceledException oce)
+          {
+            Logger.debug("consumer " + consumer.getClass().getName() + " cancelled message " + msg);
+          }
           catch (Throwable t)
           {
             Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getClass().getName() + ": " + t + ") while consuming message " + msg);
@@ -321,6 +332,9 @@ public final class NamedQueue implements MessagingQueue
 
 /*****************************************************************************
  * $Log: NamedQueue.java,v $
+ * Revision 1.16  2012/04/05 23:22:48  willuhn
+ * @N ApplicationException und OperationCancelledException nicht als Error loggen
+ *
  * Revision 1.15  2011/10/06 11:41:30  willuhn
  * @B Noch ein Flush vor dem Schliessen der Queue machen
  *
