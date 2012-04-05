@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/MessageDescriptor.java,v $
- * $Revision: 1.2 $
- * $Date: 2012/04/05 23:25:46 $
+ * $Revision: 1.3 $
+ * $Date: 2012/04/05 23:30:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -66,23 +66,23 @@ public class MessageDescriptor
    */
   public String getData()
   {
-    if (this.data == null)
+    if (this.data != null)
+      return this.data;
+    
+    this.data = root.getContent();
+    if (this.data != null)
     {
-      this.data = root.getContent();
-      if (this.data != null)
+      this.data = this.data.trim();
+      try
       {
-        this.data = this.data.trim();
-        try
-        {
-          VelocityService s = Application.getBootLoader().getBootable(VelocityService.class);
-          Map<String,Object> ctx = new HashMap<String,Object>();
-          ctx.put("manifest",this.mf);
-          this.data = s.merge(this.data.trim(),ctx);
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to resolve " + this.data + " - leaving unchanged",e);
-        }
+        VelocityService s = Application.getBootLoader().getBootable(VelocityService.class);
+        Map<String,Object> ctx = new HashMap<String,Object>();
+        ctx.put("manifest",this.mf);
+        this.data = s.merge(this.data.trim(),ctx);
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to resolve " + this.data + " - leaving unchanged",e);
       }
     }
     return this.data;
@@ -91,6 +91,9 @@ public class MessageDescriptor
 
 /**********************************************************************
  * $Log: MessageDescriptor.java,v $
+ * Revision 1.3  2012/04/05 23:30:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.2  2012/04/05 23:25:46  willuhn
  * @N Support fuer das Senden von Messages direkt aus dem Manifest heraus (wurde zum Registrieren von Javascripts aus Java-losen Plugins heraus benoetigt)
  *
