@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/ManifestMessageConsumer.java,v $
- * $Revision: 1.7 $
- * $Date: 2012/03/28 22:28:07 $
+ * $Revision: 1.8 $
+ * $Date: 2012/04/05 23:25:46 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -16,6 +16,7 @@ import java.util.List;
 
 import de.willuhn.jameica.plugin.ConsumerDescriptor;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.MessageDescriptor;
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -23,7 +24,7 @@ import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Uebernimmt das Registrieren der im Plugin-Manifest definierten
- * Message-Consumer.
+ * Message-Consumer sowie das Versenden von Messages, die im Manifest definiert wurden.
  */
 public class ManifestMessageConsumer implements MessageConsumer
 {
@@ -50,6 +51,15 @@ public class ManifestMessageConsumer implements MessageConsumer
     if (msg.getStatusCode() != SystemMessage.SYSTEM_STARTED)
       return;
     
+    this.registerConsumers();
+    this.sendMessages();
+  }
+  
+  /**
+   * Registriert die Message-Consumer.
+   */
+  private void registerConsumers()
+  {
     Logger.debug("searching for message consumers from manifests");
     MessagingFactory factory = Application.getMessagingFactory();
     BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
@@ -117,6 +127,44 @@ public class ManifestMessageConsumer implements MessageConsumer
   }
 
   /**
+   * Sendet die Messages.
+   */
+  private void sendMessages()
+  {
+    Logger.debug("searching for messages from manifests");
+    MessagingFactory factory = Application.getMessagingFactory();
+    
+    List<Manifest> list = new LinkedList<Manifest>();
+    list.addAll(Application.getPluginLoader().getInstalledManifests()); // die Plugins
+    list.add(Application.getManifest()); // Jameica selbst
+    
+    int count = 0;
+    for (Manifest mf:list)
+    {
+      MessageDescriptor[] messages = mf.getMessages();
+      if (messages == null || messages.length == 0)
+        continue;
+      for (MessageDescriptor d:messages)
+      {
+        String queue = d.getQueue();
+        String data  = d.getData();
+        if (queue == null || queue.length() == 0)
+        {
+          Logger.warn("skipping message in manifest from " + mf.getName() + ", contains no queue name");
+          continue;
+        }
+        if (data == null || data.length() == 0)
+        {
+          Logger.warn("skipping message in manifest from " + mf.getName() + ", contains no data");
+          continue;
+        }
+        factory.getMessagingQueue(queue).sendMessage(new QueryMessage(data));
+      }
+    }
+    Logger.info("messages from manifests: " + count);
+  }
+
+  /**
    * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
    */
   public boolean autoRegister()
@@ -130,6 +178,9 @@ public class ManifestMessageConsumer implements MessageConsumer
 
 /**********************************************************************
  * $Log: ManifestMessageConsumer.java,v $
+ * Revision 1.8  2012/04/05 23:25:46  willuhn
+ * @N Support fuer das Senden von Messages direkt aus dem Manifest heraus (wurde zum Registrieren von Javascripts aus Java-losen Plugins heraus benoetigt)
+ *
  * Revision 1.7  2012/03/28 22:28:07  willuhn
  * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
  * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.

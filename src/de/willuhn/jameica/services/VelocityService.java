@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/VelocityService.java,v $
- * $Revision: 1.7 $
- * $Date: 2010/02/08 11:53:57 $
+ * $Revision: 1.8 $
+ * $Date: 2012/04/05 23:25:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,10 +13,13 @@
 package de.willuhn.jameica.services;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeServices;
@@ -67,7 +70,7 @@ public class VelocityService implements Bootable
       throw new SkipServiceException(this,"unable to init velocity engine",e);
     }
   }
-
+  
   /**
    * @see de.willuhn.boot.Bootable#shutdown()
    */
@@ -152,6 +155,27 @@ public class VelocityService implements Bootable
     }
     return this.defaultEngine;
   }
+  
+  /**
+   * Interpretiert das Velocity-Template im String "source" und nimmt
+   * alle Ersetzungen gemaess dem Context.
+   * Das ist eine bequeme "Convenience"-Funktion, um mal schnell was
+   * in einem String zu ersetzen, ohne erst manuell eine ganze VelocityEngine
+   * samt Readern und Writern programmieren zu muessen.
+   * @param source Der Text mit den Velocity-Platzhaltern.
+   * @param context Map mit den Velocity-Parametern.
+   * @return der verarbeitete Text.
+   * @throws IOException
+   */
+  public String merge(String source, Map<String,Object> context) throws IOException
+  {
+    // Wir nehmen hier immer die Default-Engine
+    VelocityContext vc = new VelocityContext(context);
+    StringWriter target = new StringWriter();
+    this.defaultEngine.evaluate(vc,target,"merge",source);
+    return target.toString();
+  }
+
 
   /**
    * Implementieren wir, um die Log-Ausgaben von Velocity zu uns umzuleiten.
@@ -210,6 +234,9 @@ public class VelocityService implements Bootable
 
 /**********************************************************************
  * $Log: VelocityService.java,v $
+ * Revision 1.8  2012/04/05 23:25:46  willuhn
+ * @N Support fuer das Senden von Messages direkt aus dem Manifest heraus (wurde zum Registrieren von Javascripts aus Java-losen Plugins heraus benoetigt)
+ *
  * Revision 1.7  2010/02/08 11:53:57  willuhn
  * *** empty log message ***
  *

@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/MessageDescriptor.java,v $
- * $Revision: 1.1 $
- * $Date: 2012/04/04 20:43:37 $
+ * $Revision: 1.2 $
+ * $Date: 2012/04/05 23:25:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -12,6 +12,12 @@
  **********************************************************************/
 package de.willuhn.jameica.plugin;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import de.willuhn.jameica.services.VelocityService;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import net.n3.nanoxml.IXMLElement;
 
 /**
@@ -23,20 +29,23 @@ import net.n3.nanoxml.IXMLElement;
  *     Text der Message
  *   </message>
  * </messaging>
-
+ * 
  */
 public class MessageDescriptor
 {
+  private Manifest mf       = null;
 	private IXMLElement root	= null;
 	private String data       = null;
 	private String queue      = null;
 
   /**
    * ct.
+   * @param mf
    * @param root
    */
-  public MessageDescriptor(IXMLElement root)
+  public MessageDescriptor(Manifest mf, IXMLElement root)
   {
+    this.mf = mf;
   	this.root = root;
   }
 
@@ -58,13 +67,33 @@ public class MessageDescriptor
   public String getData()
   {
     if (this.data == null)
+    {
       this.data = root.getContent();
+      if (this.data != null)
+      {
+        this.data = this.data.trim();
+        try
+        {
+          VelocityService s = Application.getBootLoader().getBootable(VelocityService.class);
+          Map<String,Object> ctx = new HashMap<String,Object>();
+          ctx.put("manifest",this.mf);
+          this.data = s.merge(this.data.trim(),ctx);
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to resolve " + this.data + " - leaving unchanged",e);
+        }
+      }
+    }
     return this.data;
   }
 }
 
 /**********************************************************************
  * $Log: MessageDescriptor.java,v $
+ * Revision 1.2  2012/04/05 23:25:46  willuhn
+ * @N Support fuer das Senden von Messages direkt aus dem Manifest heraus (wurde zum Registrieren von Javascripts aus Java-losen Plugins heraus benoetigt)
+ *
  * Revision 1.1  2012/04/04 20:43:37  willuhn
  * @R Ueberfluessige Interface+XMLImpl entfernt
  * @N MessageDescriptor

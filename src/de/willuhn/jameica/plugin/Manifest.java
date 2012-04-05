@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Manifest.java,v $
- * $Revision: 1.38 $
- * $Date: 2012/04/04 20:43:37 $
+ * $Revision: 1.39 $
+ * $Date: 2012/04/05 23:25:46 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -444,7 +444,7 @@ public class Manifest implements Comparable
     MessageDescriptor[] s = new MessageDescriptor[v.size()];
     for (int i=0;i<v.size();++i)
     {
-      s[i] = new MessageDescriptor((IXMLElement)v.get(i));
+      s[i] = new MessageDescriptor(this,(IXMLElement)v.get(i));
     }
     return s;
   }
@@ -762,6 +762,9 @@ public class Manifest implements Comparable
 
 /**********************************************************************
  * $Log: Manifest.java,v $
+ * Revision 1.39  2012/04/05 23:25:46  willuhn
+ * @N Support fuer das Senden von Messages direkt aus dem Manifest heraus (wurde zum Registrieren von Javascripts aus Java-losen Plugins heraus benoetigt)
+ *
  * Revision 1.38  2012/04/04 20:43:37  willuhn
  * @R Ueberfluessige Interface+XMLImpl entfernt
  * @N MessageDescriptor
