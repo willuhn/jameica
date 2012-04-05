@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/MessageDescriptor.java,v $
- * $Revision: 1.4 $
- * $Date: 2012/04/05 23:31:10 $
+ * $Revision: 1.5 $
+ * $Date: 2012/04/05 23:31:25 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -80,7 +80,7 @@ public class MessageDescriptor
       VelocityService s = Application.getBootLoader().getBootable(VelocityService.class);
       Map<String,Object> ctx = new HashMap<String,Object>();
       ctx.put("manifest",this.mf);
-      this.data = s.merge(this.data.trim(),ctx);
+      this.data = s.merge(this.data,ctx);
     }
     catch (Exception e)
     {
@@ -92,6 +92,9 @@ public class MessageDescriptor
 
 /**********************************************************************
  * $Log: MessageDescriptor.java,v $
+ * Revision 1.5  2012/04/05 23:31:25  willuhn
+ * *** empty log message ***
+ *
  * Revision 1.4  2012/04/05 23:31:10  willuhn
  * *** empty log message ***
  *
