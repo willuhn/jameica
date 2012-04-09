@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/TablePart.java,v $
- * $Revision: 1.116 $
- * $Date: 2011/11/14 21:58:44 $
+ * $Revision: 1.117 $
+ * $Date: 2012/04/09 11:44:03 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -13,6 +13,7 @@ package de.willuhn.jameica.gui.parts;
 
 import java.lang.reflect.Array;
 import java.rmi.RemoteException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -78,14 +79,14 @@ public class TablePart extends AbstractTablePart
 
   // Temporaere Liste der Objekte, falls Datensaetze hinzugefuegt werden
   // bevor die Tabelle gezeichnet wurde
-  private List temp					            = null;
+  private List temp                     = null;
 
   //////////////////////////////////////////////////////////
   // SWT
   private org.eclipse.swt.widgets.Table table = null;
   protected TableFormatter tableFormatter = null;
-	private Composite comp 								= null;
-	private Label summary									= null;
+  private Composite comp                = null;
+  private Label summary                 = null;
   private Image up                      = null;
   private Image down                    = null;
   private TableEditor editor            = null;
@@ -98,15 +99,15 @@ public class TablePart extends AbstractTablePart
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
-	// Sortierung
-	private Hashtable sortTable			  	  	= new Hashtable();
-	private Map<Object,String[]> textTable  = new HashMap<Object,String[]>();
-	private int sortedBy 							    	= -1; // Index der sortierten Spalte
-	private boolean direction						    = true; // Ausrichtung
+  // Sortierung
+  private Hashtable sortTable             = new Hashtable();
+  private Map<Object,String[]> textTable  = new HashMap<Object,String[]>();
+  private int sortedBy                    = -1; // Index der sortierten Spalte
+  private boolean direction               = true; // Ausrichtung
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
-	// Flags
+  // Flags
   private boolean enabled               = true;
   private boolean showSummary           = true;
   //////////////////////////////////////////////////////////
@@ -116,6 +117,7 @@ public class TablePart extends AbstractTablePart
   private static Session state = new Session();
   //////////////////////////////////////////////////////////
   
+  private Collator collator             = null;
 
   /**
    * Hilfsmethode, um die RemoteException im Konstruktor zu vermeiden.
@@ -201,9 +203,9 @@ public class TablePart extends AbstractTablePart
    * wenn sie nicht angezeigt werden soll.
    */
   public void setSummary(boolean show)
-	{ 
-		this.showSummary = show;
-	}
+  { 
+    this.showSummary = show;
+  }
   
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
@@ -272,18 +274,18 @@ public class TablePart extends AbstractTablePart
     refreshSummary();
   }
 
-	/**
-	 * Entfernt das genannte Element aus der Tabelle.
-	 * Wurde die Tabelle mit einer Liste von Objekten erzeugt, die von <code>DBObject</code>
-	 * abgeleitet sind, muss das Loeschen nicht manuell vorgenommen werden. Die Tabelle
-	 * fuegt in diesem Fall automatisch jedem Objekt einen Listener hinzu, der
-	 * beim Loeschen des Objektes benachrichtigt wird. Die Tabelle entfernt
-	 * das Element dann selbstaendig.
+  /**
+   * Entfernt das genannte Element aus der Tabelle.
+   * Wurde die Tabelle mit einer Liste von Objekten erzeugt, die von <code>DBObject</code>
+   * abgeleitet sind, muss das Loeschen nicht manuell vorgenommen werden. Die Tabelle
+   * fuegt in diesem Fall automatisch jedem Objekt einen Listener hinzu, der
+   * beim Loeschen des Objektes benachrichtigt wird. Die Tabelle entfernt
+   * das Element dann selbstaendig.
    * @param item zu entfernendes Element.
    * @return die Position des entfernten Objektes oder -1 wenn es nicht gefunden wurde.
    */
   public int removeItem(Object item)
-	{
+  {
     if (item == null)
       return -1;
     
@@ -320,11 +322,11 @@ public class TablePart extends AbstractTablePart
     // der Tabelle
     TableItem[] items = table.getItems();
     for (int i=0;i<items.length;++i)
-		{
-			try
-			{
-				o = items[i].getData();
-				if (BeanUtil.equals(o,item))
+    {
+      try
+      {
+        o = items[i].getData();
+        if (BeanUtil.equals(o,item))
         {
           // BUGZILLA 299
           if (Application.inStandaloneMode() && (o instanceof DBObject))
@@ -351,24 +353,24 @@ public class TablePart extends AbstractTablePart
           refreshSummary();
           return i;
         }
-			}
-			catch (Throwable t)
-			{
-				Logger.error("error while removing item",t);
-			}
-		}
+      }
+      catch (Throwable t)
+      {
+        Logger.error("error while removing item",t);
+      }
+    }
     return -1;
-	}
+  }
 
-	/**
-	 * Fuegt der Tabelle am Ende ein Element hinzu.
+  /**
+   * Fuegt der Tabelle am Ende ein Element hinzu.
    * @param object hinzuzufuegendes Element.
    * @throws RemoteException
    */
   public void addItem(Object object) throws RemoteException
-	{
-		addItem(object,size());
-	}
+  {
+    addItem(object,size());
+  }
 
   /**
    * Fuegt der Tabelle am Ende ein Element hinzu.
@@ -393,7 +395,7 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
-	 * Fuegt der Tabelle ein Element hinzu.
+   * Fuegt der Tabelle ein Element hinzu.
    * @param object hinzuzufuegendes Element.
    * @param index Position, an der es eingefuegt werden soll.
    * @param checked true, wenn die Tabelle checkable ist und das Objekt gecheckt sein soll.
@@ -410,13 +412,13 @@ public class TablePart extends AbstractTablePart
       return;
     }
     
-		final TableItem item = new TableItem(table, SWT.NONE,index);
+    final TableItem item = new TableItem(table, SWT.NONE,index);
     if (this.checkable) item.setChecked(checked);
 
-		// hihi, wenn es sich um ein DBObject handelt, haengen wir einen
-		// Listener dran, der uns ueber das Loeschen des Objektes
-		// benachrichtigt. Dann koennen wir es automatisch aus der
-		// Tabelle werfen.
+    // hihi, wenn es sich um ein DBObject handelt, haengen wir einen
+    // Listener dran, der uns ueber das Loeschen des Objektes
+    // benachrichtigt. Dann koennen wir es automatisch aus der
+    // Tabelle werfen.
 
     // BUGZILLA 299
     // Funktioniert eh nicht remote
@@ -434,58 +436,58 @@ public class TablePart extends AbstractTablePart
         // Im Netzwerkbetrieb kann das schiefgehen, da der Listener nicht serialisierbar ist
       }
     }
-		
-		item.setData(object);
-		String[] text = new String[this.columns.size()];
+    
+    item.setData(object);
+    String[] text = new String[this.columns.size()];
 
-		for (int i=0;i<this.columns.size();++i)
-		{
+    for (int i=0;i<this.columns.size();++i)
+    {
       Column col     = (Column) this.columns.get(i);
-			Item di        = new Item(object,col);
+      Item di        = new Item(object,col);
 
       String display = col.getFormattedValue(di.value,di.data);
 
-			item.setText(i,display);
-			text[i] = display;
+      item.setText(i,display);
+      text[i] = display;
 
-			////////////////////////////////////
-			// Sortierung
-			
-			// Mal schauen, ob wir fuer die Spalte schon eine Sortierung haben
-			List l = (List) sortTable.get(new Integer(i));
-			if (l == null)
-			{
-				// Ne, also erstellen wir eine
-				l = new LinkedList();
-				sortTable.put(new Integer(i),l);
-			}
+      ////////////////////////////////////
+      // Sortierung
+      
+      // Mal schauen, ob wir fuer die Spalte schon eine Sortierung haben
+      List l = (List) sortTable.get(new Integer(i));
+      if (l == null)
+      {
+        // Ne, also erstellen wir eine
+        l = new LinkedList();
+        sortTable.put(new Integer(i),l);
+      }
 
-			l.add(di);
-			//
-			////////////////////////////////////
-		}
-		textTable.put(object,text);
+      l.add(di);
+      //
+      ////////////////////////////////////
+    }
+    textTable.put(object,text);
 
 
-		// Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
-		// TableFormatter drueber
-		if (tableFormatter != null)
-			tableFormatter.format(item);
+    // Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
+    // TableFormatter drueber
+    if (tableFormatter != null)
+      tableFormatter.format(item);
 
-		// Tabellengroesse anpassen
+    // Tabellengroesse anpassen
     refreshSummary();
-	}
+  }
 
-	/**
-	 * Liefert die Anzahl der Elemente in dieser Tabelle.
+  /**
+   * Liefert die Anzahl der Elemente in dieser Tabelle.
    * @return Anzahl der Elemente.
    */
   public int size()
-	{
+  {
     if (this.table == null || this.table.isDisposed())
       return temp.size();
     return table.getItemCount();
-	}
+  }
 
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -493,19 +495,19 @@ public class TablePart extends AbstractTablePart
   public synchronized void paint(Composite parent) throws RemoteException
   {
 
-		if (comp != null && !comp.isDisposed())
-			comp.dispose();
+    if (comp != null && !comp.isDisposed())
+      comp.dispose();
 
-		comp = new Composite(parent,SWT.NONE);
-		GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
-		comp.setLayoutData(gridData);
+    comp = new Composite(parent,SWT.NONE);
+    GridData gridData = new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL);
+    comp.setLayoutData(gridData);
 
-		GridLayout layout = new GridLayout();
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		comp.setLayout(layout);
+    GridLayout layout = new GridLayout();
+    layout.horizontalSpacing = 0;
+    layout.verticalSpacing = 0;
+    layout.marginHeight = 0;
+    layout.marginWidth = 0;
+    comp.setLayout(layout);
 
     int flags = (this.multi ? SWT.MULTI : SWT.SINGLE) | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
     if (this.checkable)
@@ -541,9 +543,9 @@ public class TablePart extends AbstractTablePart
       });
     }
     
-		// Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
-		// Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
-		Object test = temp.size() > 0 ? temp.get(0) : null;
+    // Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
+    // Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
+    Object test = temp.size() > 0 ? temp.get(0) : null;
 
     for (int i=0;i<this.columns.size();++i)
     {
@@ -551,7 +553,7 @@ public class TablePart extends AbstractTablePart
       final TableColumn col = new TableColumn(table, SWT.NONE);
       column.setColumn(col);
       col.setMoveable(true);
-			col.setText(column.getName() == null ? "" : column.getName());
+      col.setText(column.getName() == null ? "" : column.getName());
 
       // Wenn wir uns die Spalten merken wollen, duerfen
       // wir den DisposeListener nicht an die Tabelle haengen
@@ -580,17 +582,17 @@ public class TablePart extends AbstractTablePart
       }
       
       
-			// Sortierung
-			final int p = i;
-			col.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event e)
+      // Sortierung
+      final int p = i;
+      col.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event e)
         {
           // Wenn wir vorher schonmal nach dieser Spalte
           // sortiert haben, kehren wir die Sortierung um
           direction = !(direction && p == sortedBy);
-					orderBy(p);
-				}
-			});
+          orderBy(p);
+        }
+      });
 
 
       // Wenn Ausrichtung explizit angegeben, dann nehmen wir die
@@ -651,10 +653,10 @@ public class TablePart extends AbstractTablePart
       }
       
     });
-		
-		if (this.rememberState)
-		{
-		  this.addSelectionListener(new Listener()
+    
+    if (this.rememberState)
+    {
+      this.addSelectionListener(new Listener()
       {
         public void handleEvent(Event event)
         {
@@ -669,7 +671,7 @@ public class TablePart extends AbstractTablePart
           }
         }
       });
-		}
+    }
     
     table.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event event)
@@ -702,7 +704,7 @@ public class TablePart extends AbstractTablePart
       }
     });
     
-		// Noch ein Listener fuer die editierbaren Felder
+    // Noch ein Listener fuer die editierbaren Felder
     if (this.changeable)
     {
       this.editor = new TableEditor(table);
@@ -880,8 +882,8 @@ public class TablePart extends AbstractTablePart
     
     // Und jetzt noch das ContextMenu malen
     if (menu != null)
-    	menu.paint(table);
-		
+      menu.paint(table);
+    
     // Jetzt tun wir noch die Spaltenbreiten neu berechnen.
     int cols = table.getColumnCount();
     for (int i=0;i<cols;++i)
@@ -916,8 +918,8 @@ public class TablePart extends AbstractTablePart
       this.summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       refreshSummary();
     }
-	
-		if (this.rememberOrder)
+  
+    if (this.rememberOrder)
     {
       try
       {
@@ -934,7 +936,7 @@ public class TablePart extends AbstractTablePart
         Logger.error("unable to restore last table order",e);
       }
     }
-		
+    
     restoreState();
 
     // wir wurden gezeichnet. Die temporaere Tabelle brauchen wir
@@ -1117,15 +1119,15 @@ public class TablePart extends AbstractTablePart
     }
   }
 
-	/**
+  /**
    * Aktualisiert die Summenzeile.
    */
   protected void refreshSummary()
-	{
-		if (!showSummary || summary == null || summary.isDisposed())
-			return;
+  {
+    if (!showSummary || summary == null || summary.isDisposed())
+      return;
     summary.setText(getSummary());
-	}
+  }
   
   /**
    * Liefert den anzuzeigenden Summen-Text.
@@ -1223,26 +1225,37 @@ public class TablePart extends AbstractTablePart
   {
     return this.enabled;
   }
+  
+  /**
+   * Liefert den Collator fuer die Sortierung.
+   * @return der Collator fuer die Sortierung.
+   */
+  protected Collator getCollator()
+  {
+    if (this.collator == null)
+      this.collator = Collator.getInstance(Application.getConfig().getLocale());
+    return this.collator;
+  }
 
   /**
-	 * Sortiert die Tabelle nach der angegebenen Spaltennummer.
+   * Sortiert die Tabelle nach der angegebenen Spaltennummer.
    * @param index Spaltennummer.
    */
   protected void orderBy(int index)
-	{
+  {
     if (table == null || table.isDisposed())
       return;
 
-		List l = (List) sortTable.get(new Integer(index));
-		if (l == null)
-			return; // nix zu sortieren.
+    List l = (List) sortTable.get(new Integer(index));
+    if (l == null)
+      return; // nix zu sortieren.
 
-		// Alte Bilder entfernen
-		for (int i=0;i<table.getColumnCount();++i)
-		{
-			table.getColumn(i).setImage(null);
-		}
-		TableColumn col = table.getColumn(index);
+    // Alte Bilder entfernen
+    for (int i=0;i<table.getColumnCount();++i)
+    {
+      table.getColumn(i).setImage(null);
+    }
+    TableColumn col = table.getColumn(index);
 
     // Auch wenn wir die Auswahl anschliessend
     // evtl. umkehren, muessen wir trotzdem erstmal
@@ -1259,21 +1272,21 @@ public class TablePart extends AbstractTablePart
     // Selektion merken
     Object selection = this.getSelection();
     
-		// Machen die Tabelle leer
-		table.removeAll();
+    // Machen die Tabelle leer
+    table.removeAll();
 
-		// Und schreiben sie sortiert neu
-		Item sort = null;
-		for (int i=0;i<l.size();++i)
-		{
-			sort = (Item) l.get(i);
-			final TableItem item = new TableItem(table,SWT.NONE,i);
-			item.setData(sort.data);
-			item.setText(textTable.get(sort.data));
-			if (tableFormatter != null)
-				tableFormatter.format(item);
-		}
-		
+    // Und schreiben sie sortiert neu
+    Item sort = null;
+    for (int i=0;i<l.size();++i)
+    {
+      sort = (Item) l.get(i);
+      final TableItem item = new TableItem(table,SWT.NONE,i);
+      item.setData(sort.data);
+      item.setText(textTable.get(sort.data));
+      if (tableFormatter != null)
+        tableFormatter.format(item);
+    }
+    
     if (selection != null)
     {
       if (selection instanceof Object[])
@@ -1281,7 +1294,7 @@ public class TablePart extends AbstractTablePart
       else
         this.select(selection);
     }
-	}
+  }
   
   /**
    * Liefert den Namen der Spalte, nach der gerade sortiert ist
@@ -1300,7 +1313,7 @@ public class TablePart extends AbstractTablePart
     }
     return null;
   }
-	
+  
   /**
    * Liefert das Editor-Control.
    * @param row die Spalte.
@@ -1332,17 +1345,17 @@ public class TablePart extends AbstractTablePart
 
 
   /**
-	 * Kleine Hilfs-Klasse fuer die Sortierung und Anzeige.
+   * Kleine Hilfs-Klasse fuer die Sortierung und Anzeige.
    */
-  private static class Item implements Comparable
-	{
-		private Object data;
+  private class Item implements Comparable
+  {
+    private Object data;
     private Object value;
     private Column column;
     private Comparable sortValue;
 
-		private Item(Object data, Column col)
-		{
+    private Item(Object data, Column col)
+    {
       this.data = data;
       
       if (col == null)
@@ -1351,7 +1364,7 @@ public class TablePart extends AbstractTablePart
       this.column = col;
 
       try
-			{
+      {
         this.value = BeanUtil.get(data,col.getColumnId());
         if (this.value instanceof Comparable)
           this.sortValue = (Comparable) this.value;
@@ -1359,13 +1372,15 @@ public class TablePart extends AbstractTablePart
           this.sortValue = BeanUtil.toString(this.value);
         
         // wir ignorieren Gross-Kleinschreibung bei Strings
+        // Der Collator ist noetig, damit Strings locale-spezifisch
+        // korrekt sortiert werden - siehe Mail von Heiner vom 09.04.2012
         if (this.sortValue instanceof String)
-          this.sortValue = ((String)this.sortValue).toLowerCase();
-			}
-			catch (Exception e)
-			{
-			}
-		}
+          this.sortValue = getCollator().getCollationKey(((String)this.sortValue).toLowerCase());
+      }
+      catch (Exception e)
+      {
+      }
+    }
     
     /**
      * @see java.lang.Object#equals(java.lang.Object)
@@ -1392,11 +1407,11 @@ public class TablePart extends AbstractTablePart
     public int compareTo(Object o)
     {
       // wir immer vorn
-			if (this.sortValue == null || !(o instanceof Item))
-				return -1;
+      if (this.sortValue == null || !(o instanceof Item))
+        return -1;
 
-    	try
-    	{
+      try
+      {
         Item other = (Item) o;
 
         if (other.sortValue == null)
@@ -1405,14 +1420,14 @@ public class TablePart extends AbstractTablePart
         if (this.column != null && this.column.getSortMode() == Column.SORT_BY_DISPLAY)
           return this.column.getFormattedValue(this.value,this.data).compareTo(other.column.getFormattedValue(other.value,other.data));
         
-				return this.sortValue.compareTo(other.sortValue);
-    	}
-    	catch (Exception e)
-    	{
-    		return 0;
-    	}
+        return this.sortValue.compareTo(other.sortValue);
+      }
+      catch (Exception e)
+      {
+        return 0;
+      }
     }
-	}
+  }
 
   /**
    * Der Listener ueberwacht das Loeschen von Objekten und entfernt die Objekte dann aus der Tabelle.
@@ -1454,6 +1469,9 @@ public class TablePart extends AbstractTablePart
 
 /*********************************************************************
  * $Log: TablePart.java,v $
+ * Revision 1.117  2012/04/09 11:44:03  willuhn
+ * @N Strings locale-spezifisch sortieren
+ *
  * Revision 1.116  2011/11/14 21:58:44  willuhn
  * @N BUGZILLA 1145 - Selektion nach geaenderter Sortierung wiederherstellen
  *
