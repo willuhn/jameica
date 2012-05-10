@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.38 $
- * $Date: 2011/09/27 12:01:15 $
+ * $Revision: 1.39 $
+ * $Date: 2012/05/10 13:47:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -15,7 +15,6 @@ package de.willuhn.jameica.system;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -75,7 +74,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   public String createPassword() throws Exception
   {
 		this.password = Application.getStartupParams().getPassword();
-    if (StringUtils.trimToNull(this.password) != null)
+    if (this.password != null && this.password.length() > 0)
 		{
 			Logger.info("master password given via commandline");
 			return this.password;
@@ -128,7 +127,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
     // Haben wir ein Passwort via Kommandozeilen-Parameter?
     this.password = Application.getStartupParams().getPassword();
-    if (StringUtils.trimToNull(this.password) != null)
+    if (this.password != null && this.password.length() > 0)
     {
       Logger.info("master password given via commandline");
       if (verifier == null)
@@ -417,7 +416,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
      */
     protected boolean checkPassword(String password)
     {
-      if (StringUtils.trimToNull(password) == null)
+      if (password == null || password.length() == 0)
       {
         setErrorText(Application.getI18n().tr("Bitte geben Sie Ihr Master-Passwort ein.") + " " + getRetryString());
         return false;
@@ -464,6 +463,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackSWT.java,v $
+ * Revision 1.39  2012/05/10 13:47:14  willuhn
+ * @B Master-Passwort nicht trimmen - ermoeglicht sonst keine Passwoerter mit Leerzeichen am Anfang oder Ende oder ein Leerzeichen als Passwort (siehe Mail von Kornelius vom 08.05.2012)
+ *
  * Revision 1.38  2011/09/27 12:01:15  willuhn
  * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
  *

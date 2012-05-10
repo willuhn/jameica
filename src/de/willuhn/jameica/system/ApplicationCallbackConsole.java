@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackConsole.java,v $
- * $Revision: 1.42 $
- * $Date: 2012/02/14 21:43:32 $
+ * $Revision: 1.43 $
+ * $Date: 2012/05/10 13:47:14 $
  * $Author: willuhn $
  * $Locker:  $
  * $State: Exp $
@@ -122,7 +122,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     ////////////////////////////////////////////////////////////////////////////
     // Passwort
 		this.password = Application.getStartupParams().getPassword();
-		if (StringUtils.trimToNull(this.password) != null)
+		if (this.password != null && this.password.length() > 0)
 		{
 			Logger.debug("master password given via commandline");
 			return this.password;
@@ -230,7 +230,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     // Passwort via Kommandozeile angegeben?
     this.password = Application.getStartupParams().getPassword();
 
-    if (StringUtils.trimToNull(this.password) != null)
+    if (this.password != null && this.password.length() > 0)
     {
       Logger.info("master password given via commandline");
       if (verifier == null)
@@ -254,7 +254,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     for (int i=0;i<3;++i) // Maximal 3 Versuche
     {
       this.password = promptPassword();
-      if (StringUtils.trimToNull(this.password) != null)
+      if (this.password != null && this.password.length() > 0)
       {
         if (verifier == null)
           return this.password; // Kein Verifier verfuegbar, wir muessen der Eingabe glauben
@@ -633,6 +633,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 
 /**********************************************************************
  * $Log: ApplicationCallbackConsole.java,v $
+ * Revision 1.43  2012/05/10 13:47:14  willuhn
+ * @B Master-Passwort nicht trimmen - ermoeglicht sonst keine Passwoerter mit Leerzeichen am Anfang oder Ende oder ein Leerzeichen als Passwort (siehe Mail von Kornelius vom 08.05.2012)
+ *
  * Revision 1.42  2012/02/14 21:43:32  willuhn
  * @N askUser via Messaging automatisierbar
  *
