@@ -1,7 +1,7 @@
 /**********************************************************************
  * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/ImageInput.java,v $
- * $Revision: 1.7 $
- * $Date: 2012/01/21 23:34:56 $
+ * $Revision: 1.8 $
+ * $Date: 2012/06/17 09:36:53 $
  * $Author: willuhn $
  *
  * Copyright (c) by willuhn - software & services
@@ -11,6 +11,12 @@
 
 package de.willuhn.jameica.gui.input;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +37,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -52,7 +59,8 @@ public class ImageInput extends AbstractInput
   private boolean hasComment = false;
   
   private Button button      = null;
-  private MenuItem menu      = null;
+  private MenuItem menudel   = null;
+  private MenuItem menucpy   = null;
   
   private int height         = 80;
   private int width          = 80;
@@ -200,23 +208,18 @@ public class ImageInput extends AbstractInput
         }
         finally
         {
-          if (is != null)
-          {
-            try {
-              is.close();
-            } catch (Exception ex) {/* ignore */}
-          }
+          IOUtil.close(is);
         }
       }
     });
 
     // Pop-Up-Menu zum Loeschen des Bildes
     Menu m = new Menu(getParent().getShell(), SWT.POP_UP);
-    this.menu = new MenuItem(m,SWT.CASCADE);
-    this.menu.setText(i18n.tr("Bild entfernen"));
-    this.menu.setEnabled(this.data != null);
-    this.menu.setImage(SWTUtil.getImage("user-trash-full.png"));
-    this.menu.addSelectionListener(new SelectionAdapter() {
+    this.menudel = new MenuItem(m,SWT.CASCADE);
+    this.menudel.setText(i18n.tr("Bild entfernen"));
+    this.menudel.setEnabled(this.data != null);
+    this.menudel.setImage(SWTUtil.getImage("user-trash-full.png"));
+    this.menudel.addSelectionListener(new SelectionAdapter() {
       /**
        * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
        */
@@ -226,6 +229,25 @@ public class ImageInput extends AbstractInput
         refreshImage();
       }
     });
+    
+    this.menucpy = new MenuItem(m,SWT.CASCADE);
+    this.menucpy.setText(i18n.tr("In Zwischenablage kopieren"));
+    this.menucpy.setEnabled(this.data != null);
+    this.menucpy.setImage(SWTUtil.getImage("edit-copy.png"));
+    this.menucpy.addSelectionListener(new SelectionAdapter() {
+      /**
+       * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+       */
+      public void widgetSelected(SelectionEvent e)
+      {
+        Clipboard clipboard =  Toolkit.getDefaultToolkit().getSystemClipboard();
+        ClipImage ci = new ClipImage(data);
+        clipboard.setContents(ci, null);
+        refreshImage();
+      }
+    });
+
+    
     this.button.setMenu(m);
     
     // Bild auf den Button laden
@@ -302,8 +324,10 @@ public class ImageInput extends AbstractInput
     if (this.button == null || this.button.isDisposed())
       return;
 
-    if (this.menu != null && !this.menu.isDisposed())
-      this.menu.setEnabled(this.data != null);
+    if (this.menudel != null && !this.menudel.isDisposed())
+      this.menudel.setEnabled(this.data != null);
+    if (this.menucpy != null && !this.menucpy.isDisposed())
+      this.menucpy.setEnabled(this.data != null);
 
     if (this.data == null)
     {
@@ -374,12 +398,69 @@ public class ImageInput extends AbstractInput
     }
   }
 
+  /**
+   * Uebernimmt das Kopieren des Bildes in die Zwischenablage.
+   */
+  private class ClipImage implements Transferable, ClipboardOwner
+  {
+    private byte[] image;
+
+    /**
+     * ct.
+     * @param im Byte-Array mit den Bild-Daten.
+     */
+    public ClipImage(byte[] im)
+    {
+      image = im;
+    }
+
+    /**
+     * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
+     */
+    public DataFlavor[] getTransferDataFlavors()
+    {
+      return new DataFlavor[]
+      {
+          DataFlavor.imageFlavor
+      };
+    }
+
+    /**
+     * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
+     */
+    public boolean isDataFlavorSupported(DataFlavor flavor)
+    {
+      return DataFlavor.imageFlavor.equals(flavor);
+    }
+
+    /**
+     * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
+     */
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException
+    {
+      if (!isDataFlavorSupported(flavor))
+        throw new UnsupportedFlavorException(flavor);
+      
+      return Toolkit.getDefaultToolkit().createImage(image);
+    }
+
+    /**
+     * @see java.awt.datatransfer.ClipboardOwner#lostOwnership(java.awt.datatransfer.Clipboard, java.awt.datatransfer.Transferable)
+     */
+    public void lostOwnership(Clipboard clip, Transferable tr)
+    {
+      return;
+    }
+  }
 }
 
 
 
 /**********************************************************************
  * $Log: ImageInput.java,v $
+ * Revision 1.8  2012/06/17 09:36:53  willuhn
+ * @N Heiner's Patch zum Kopieren des Bildes in die Zwischenablage
+ *
  * Revision 1.7  2012/01/21 23:34:56  willuhn
  * @B BUGZILLA 1177
  *
