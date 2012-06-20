@@ -46,6 +46,7 @@ public class Print implements Action
     PrintJob job = ((PrintSupport) context).print();
     
     PrintDialog dialog = new PrintDialog(GUI.getShell(), SWT.NONE);
+    dialog.setText(Application.getI18n().tr("Drucken"));
     PrinterData printerData = dialog.open();
     if (printerData == null)
     {
