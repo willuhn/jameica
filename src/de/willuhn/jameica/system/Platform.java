@@ -99,8 +99,8 @@ public class Platform
     if (dir == null || dir.length() == 0)
       dir = Application.getStartupParams().getWorkDir();
 
-    // 2. User fragen
-    if (dir == null || dir.length() == 0)
+    // 2. User fragen, aber nur, wenn wir eine GUI haben
+    if (!Application.inServerMode() && (dir == null || dir.length() == 0))
       dir = new WorkdirChooser().getWorkDir();
     
     // 3. Wenn auch da nichts angegeben ist, nehmen wir das Default-Dir
@@ -147,10 +147,13 @@ public class Platform
     String arch = System.getProperty("os.arch");
     Logger.debug("os.name: " + os);
     Logger.debug("os.arch: " + arch);
+    
+    os   = os.toLowerCase();
+    arch = arch.toLowerCase();
 
-    if (os.toLowerCase().indexOf("linux") != -1)
+    if (os.indexOf("linux") != -1)
     {
-      if (arch.toLowerCase().indexOf("64") != -1)
+      if (arch.indexOf("64") != -1)
       {
         Logger.debug("linux 64bit");
         this.os = OS_LINUX_64;
@@ -161,9 +164,9 @@ public class Platform
         this.os = OS_LINUX;
       }
     }
-    else if (os.toLowerCase().indexOf("windows") != -1)
+    else if (os.indexOf("windows") != -1)
     {
-      if (arch.toLowerCase().indexOf("64") != -1)
+      if (arch.indexOf("64") != -1)
       {
         Logger.debug("windows 64bit");
         this.os = OS_WINDOWS_64;
@@ -174,14 +177,14 @@ public class Platform
         this.os = OS_WINDOWS;
       }
     }
-    else if (os.toLowerCase().indexOf("mac") != -1)
+    else if (os.indexOf("mac") != -1)
     {
       Logger.debug("macos");
       this.os = OS_MAC;
     }
-    else if (os.toLowerCase().indexOf("freebsd") != -1)
+    else if (os.indexOf("freebsd") != -1)
     {
-      if (arch.toLowerCase().indexOf("64") != -1)
+      if (arch.indexOf("64") != -1)
       {
         Logger.debug("freebsd 64bit");
         this.os = OS_FREEBSD_64;
