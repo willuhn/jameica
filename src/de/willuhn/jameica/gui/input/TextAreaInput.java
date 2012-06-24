@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.OperationCanceledException;
 
 /**
  * Mehrzeiliges Text-Eingabe-Feld.
@@ -24,6 +25,7 @@ import de.willuhn.jameica.gui.GUI;
  */
 public class TextAreaInput extends TextInput
 {
+  private int height = -1;
 
   /**
    * ct.
@@ -58,6 +60,33 @@ public class TextAreaInput extends TextInput
   public int getStyleBits()
   {
     return GridData.FILL_BOTH;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+   */
+  protected void update() throws OperationCanceledException
+  {
+    super.update();
+    
+    if (this.height <= 0)
+      return;
+    
+    Object o = this.getControl().getLayoutData();
+    if (!(o instanceof GridData))
+      return;
+    
+    ((GridData)o).heightHint = this.height;
+    this.height = -1; // damit das nur beim ersten Mal ausgefuehrt wird.
+  }
+
+  /**
+   * Legt die Hoehe des Eingabe-Feldes als Layout-Hint fest.
+   * @param height die Hoehe.
+   */
+  public void setHeight(int height)
+  {
+    this.height = height;
   }
 
 }
