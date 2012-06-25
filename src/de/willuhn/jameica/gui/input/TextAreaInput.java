@@ -82,7 +82,7 @@ public class TextAreaInput extends TextInput
 
   /**
    * Legt die Hoehe des Eingabe-Feldes als Layout-Hint fest.
-   * @param height die Hoehe.
+   * @param height die Hoehe des Eingabe-Feldes in Pixeln.
    */
   public void setHeight(int height)
   {
