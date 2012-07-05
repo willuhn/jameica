@@ -118,7 +118,7 @@ public class View implements Part
 	        gc.setBackground(GUI.getDisplay().getSystemColor(SWT.TRANSPARENT));
 	        gc.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 	        gc.setAlpha(150);
-	        gc.drawText(logotext == null ? "" : logotext,8,12,true);
+	        gc.drawText(logotext == null ? "" : logotext,8,10,true);
 	      }
 	    });
 
