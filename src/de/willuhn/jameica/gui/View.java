@@ -97,10 +97,10 @@ public class View implements Part
 		{
 	    ////////////////////////////////////////////////////////////////////////////
 	    //
-	    final Image logo = SWTUtil.getImage(Customizing.SETTINGS.getString("application.view.logo","panel.bmp"));
+	    final Image logo = SWTUtil.getImage(Customizing.SETTINGS.getString("application.view.logo","panel.png"));
 	    final Rectangle imageSize = logo.getBounds();
 	    logoBg = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
-	    logoBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
+	    logoBg.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 	    logoBg.setLayout(SWTUtil.createGrid(1,false));
 
 	    logoBg.addListener(SWT.Paint, new Listener()
@@ -109,12 +109,16 @@ public class View implements Part
 	      {
 	        GC gc = event.gc;
 	        Rectangle size = logoBg.getBounds();
-	        gc.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
 	        gc.fillRectangle(size);
 	        gc.drawImage(logo,size.width - imageSize.width,0);
 	        gc.setFont(Font.SMALL.getSWTFont());
-	        gc.setForeground(Color.COMMENT.getSWTColor());
-	        gc.drawText(logotext == null ? "" : logotext,8,14,true);
+	        
+          // kein Hintergrund hinter dem Text malen
+	        // Ist zumindest unter Linux nicht noetig. Windows und OSX muesste man mal noch testen
+	        gc.setBackground(GUI.getDisplay().getSystemColor(SWT.TRANSPARENT));
+	        gc.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+	        gc.setAlpha(150);
+	        gc.drawText(logotext == null ? "" : logotext,8,12,true);
 	      }
 	    });
 
@@ -142,11 +146,7 @@ public class View implements Part
       //
   		messages = new CLabel(view,SWT.NONE);
   		messages.setFont(Font.H2.getSWTFont());
-      messages.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),255,255,255));
   		messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-  		Label sep3 = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-      sep3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       ////////////////////////////////////////////////////////////////////////////
     }
 	}

@@ -105,6 +105,7 @@ public class PanelButton implements Part
     gd.widthHint  = this.width;
     gd.heightHint = this.height;
     this.canvas = new Canvas(parent,SWT.NONE);
+    this.canvas.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
     this.canvas.setLayoutData(gd);
 
     if (this.tooltip != null)
@@ -212,7 +213,20 @@ public class PanelButton implements Part
   {
     Image image = SWTUtil.getImage(imageName);
     Rectangle size = image.getBounds();
-    gc.drawImage(image,0,0,size.width,size.height,0,0,this.width,this.height);
+
+    // Double-Buffering, damit der Hintergrund nicht durchflickert
+    Image tmp = new Image(GUI.getDisplay(),size);
+    GC buffer = new GC(tmp);
+    
+    // Einmal mit weiss dahinter malen, weil das Bild Transparenz besitzt
+    buffer.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+    buffer.fillRectangle(size);
+    
+    // das eigentliche Bild
+    buffer.drawImage(image,0,0,size.width,size.height,0,0,this.width,this.height);
+    
+    // Und jetzt in den eigentlichen GC kopieren
+    gc.drawImage(tmp,0,0,size.width,size.height,0,0,this.width,this.height);
   }
   
   /**

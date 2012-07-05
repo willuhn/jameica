@@ -150,6 +150,7 @@ public class TitlePart implements Part
     ///////////////////////////////
     // Der Titel selbst
     title = SWTUtil.getCanvas(head,image, SWT.TOP | SWT.BOTTOM);
+    title.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
     title.setLayout(SWTUtil.createGrid(1,false));
     {
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -162,7 +163,10 @@ public class TitlePart implements Part
       {
         GC gc = event.gc;
         gc.setFont(FONT.getSWTFont());
-        gc.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_BLACK)); // Siehe Mail von Hermann vom 29.03.2012
+        // kein Hintergrund hinter dem Text malen
+        // Ist zumindest unter Linux nicht noetig. Windows und OSX muesste man mal noch testen
+        gc.setBackground(GUI.getDisplay().getSystemColor(SWT.TRANSPARENT));
+        // gc.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_BLACK)); // Siehe Mail von Hermann vom 29.03.2012
         gc.drawText(titleText == null ? "" : titleText,TITLE_OFFSET_X,TITLE_OFFSET_Y,true);
       }
     });

@@ -68,7 +68,7 @@ public class PluginDetailPart implements Part
     
     I18N i18n = Application.getI18n();
 
-    org.eclipse.swt.graphics.Color white = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+    org.eclipse.swt.graphics.Color white = GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
     org.eclipse.swt.graphics.Color comment = Color.COMMENT.getSWTColor();
     
     // 2-spaltige Anzeige. Links das Icon, rechts Eigenschaften und Buttons
