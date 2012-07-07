@@ -379,6 +379,7 @@
         <include name=".classpath" />
         <include name="plugin.xml" />
         <include name="lib/**" />
+        <include name="test/**" />
         <include name="${src.dir}/**" />
         <include name="${build.dir}/**" />
         <exclude name="${build.dir}/BUILD" />
