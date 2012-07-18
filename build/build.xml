@@ -470,7 +470,7 @@
 
   <target depends="init,compile,jar,zip,src,clean" description="build inofficial release" name="fast" />
 
-  <target depends="init,update,compile,jar,zip,javadoc,src" description="build nightly build" name="nightly">
+  <target depends="init,compile,jar,zip,javadoc,src" description="build nightly build" name="nightly">
     <mkdir dir="${project.nightly}" />
 
     <copy file="${project.release}/${project.zipfilename}" tofile="${project.nightly}/${define.projectname}-${system.version}.zip" />
