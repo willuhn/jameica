@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -744,6 +746,16 @@ public final class Config
   public void setUseBackup(boolean enabled)
   {
     settings.setAttribute("jameica.system.backup.enabled",enabled);
+  }
+  
+  /**
+   * Liefert das Verzeichnis, in dem Strings gespeichert werden sollen,
+   * zu denen keine Uebersetzungen existieren.
+   * @return Der Ordner oder NULL, wenn nicht gespeichert werden soll.
+   */
+  public String getStoreUntranslatedDir()
+  {
+    return StringUtils.trimToNull(settings.getString("jameica.system.i18n.untranslated.dir",null));
   }
 }
 
