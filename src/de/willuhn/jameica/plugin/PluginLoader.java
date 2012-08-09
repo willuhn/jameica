@@ -186,6 +186,10 @@ public final class PluginLoader
         else
           Logger.error("unable to init plugin " + name, t);
         
+        // Das ist ein bisschen "best guess", um die Fehlermeldung bei inkompatiblen Plugins schoener aussehen zu lassen,
+        if (t instanceof NoSuchMethodError)
+          t = new ApplicationException(Application.getI18n().tr("Inkompatibel mit aktueller Jameica-Version"),t);
+        
         this.initErrors.put(mf,t);
         if (!(t instanceof OperationCanceledException)) // nur anzeigen, wenn es kein Abbruch durch das Plugin selbst war
           Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",name, t.getMessage()));

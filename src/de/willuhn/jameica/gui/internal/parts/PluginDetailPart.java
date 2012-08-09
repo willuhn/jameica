@@ -100,6 +100,8 @@ public class PluginDetailPart implements Part
     
     // Rechte Spalte mit den Eigenschaften
     {
+      Throwable error = Application.getPluginLoader().getInitError(manifest);
+      
       // Name
       {
         Label title = new Label(this.comp,SWT.NONE);
@@ -112,8 +114,7 @@ public class PluginDetailPart implements Part
           title.setForeground(comment);
           
           // Checken, ob wir eine Fehlermeldung haben
-          Throwable t = Application.getPluginLoader().getInitError(manifest);
-          text = i18n.tr("{0} ({1})",text, (t != null ? t.getMessage() : i18n.tr("Neustart erforderlich")));
+          text = i18n.tr("{0} ({1})",text, (error != null ? error.getMessage() : i18n.tr("Neustart erforderlich")));
         }
         title.setText(text);
       }
@@ -171,7 +172,7 @@ public class PluginDetailPart implements Part
 
       // Update und oeffnen gibt es nicht bei neuen Installationen
       open.setEnabled(manifest.isInstalled());
-      update.setEnabled(manifest.isInstalled());
+      update.setEnabled(manifest.isInstalled() || error != null); // Update auch bei Fehler erlauben
 
       // Checken, ob es installiert/deinstalliert werden kann
       try

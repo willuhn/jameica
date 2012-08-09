@@ -206,9 +206,9 @@ public class ReminderService extends TimerTask implements Bootable
           }
         }
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
-        Logger.error("unable to send reminder messages for provider " + provider.getClass().getName(),e);
+        Logger.error("unable to send reminder messages for provider " + provider.getClass().getName(),t);
       }
     }
   }

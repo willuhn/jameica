@@ -161,10 +161,10 @@ public class BeanService implements Bootable
     {
       throw je;
     }
-    catch (Exception e)
+    catch (Throwable t)
     {
-      Logger.error("unable to create instance of " + type,e);
-      throw new JameicaException(Application.getI18n().tr("{0} kann nicht erstellt werden: {1}",type.getSimpleName(),e.getMessage()));
+      Logger.error("unable to create instance of " + type,t);
+      throw new JameicaException(Application.getI18n().tr("{0} kann nicht erstellt werden: {1}",type.getSimpleName(),t.getMessage()));
     }
   }
   

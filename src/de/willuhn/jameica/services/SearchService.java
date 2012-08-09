@@ -64,9 +64,9 @@ public class SearchService implements Bootable
           this.providers.add(p);
           count++;
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
-          Logger.error("unable to load search provider " + providers[i].getName(),e);
+          Logger.error("unable to load search provider " + providers[i].getName(),t);
         }
       }
       Logger.info("loaded " + count + " search providers");
