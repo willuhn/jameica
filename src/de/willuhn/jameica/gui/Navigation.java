@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -86,10 +87,21 @@ public class Navigation implements Part
     // Tree erzeugen
     this.mainTree = new Tree(comp, SWT.NONE);
     this.mainTree.setLayoutData(new GridData(GridData.FILL_BOTH));
-    // Listener fuer "Folder auf/zu machen"
-    this.mainTree.addListener(SWT.Expand,    action);
-    this.mainTree.addListener(SWT.Collapse,  action);
-    this.mainTree.addListener(SWT.Selection, action);
+    
+    // Listener fuer alle Events
+    this.mainTree.addListener(SWT.Expand,           action); // Icon ersetzen
+    this.mainTree.addListener(SWT.Collapse,         action); // Icon ersetzen
+    this.mainTree.addListener(SWT.MouseUp,          action); // Single-Klick zum View starten
+    this.mainTree.addListener(SWT.DefaultSelection, action); // Fuer Enter und Doppelklick
+    
+    // Globaler Listener, um der Navi mittels ALT+N den Fokus zu geben
+    GUI.getDisplay().addFilter(SWT.KeyUp, new Listener() {
+      public void handleEvent(Event e)
+      {
+        if (e.stateMask == SWT.ALT && e.character == 'n')
+          mainTree.setFocus();
+      }
+    });
 
     if (!Customizing.SETTINGS.getBoolean("application.navigation.hideroot",false))
     {
@@ -305,27 +317,16 @@ public class Navigation implements Part
   {
     if (id == null)
       return;
-    
+
     TreeItem ti = (TreeItem) itemLookup.get(id);
     if (ti == null)
       return;
 
-    TreeItem[] selected = this.mainTree.getSelection();
-    if (selected != null && selected.length > 0)
-    {
-      // wir haben schon selektierte Elemente.
-      // Dann checken wir, ob das Element vielleicht
-      // schon selektiert ist
-      for (int i=0;i<selected.length;++i)
-      {
-        if (selected[i] == ti)
-          return; // jupp
-      }
-    }
+    // Element auswaehlen und starten
     Event event = new Event();
     event.item = ti;
-    event.type = SWT.Selection;
-    this.mainTree.notifyListeners(SWT.Selection,event);
+    event.type = SWT.DefaultSelection;
+    this.mainTree.notifyListeners(SWT.DefaultSelection,event);
   }
   
   /**
@@ -339,6 +340,11 @@ public class Navigation implements Part
     public void handleEvent(Event event)
     {
       Widget widget = event.item;
+      
+      if (widget == null) // Wurde mit der Maus ausgeloest?
+        widget = mainTree.getItem(new Point(event.x, event.y));
+      
+      // OK, wir haben wirklich kein Widget. Ignorieren.
       if (widget == null || !(widget instanceof TreeItem) || widget.isDisposed())
         return;
 
@@ -347,34 +353,81 @@ public class Navigation implements Part
 
       if (ni == null)
         return;
-
+      
       try
       {
-        if (event.type == SWT.Selection)
+        Action action    = ni.getAction();
+        boolean isFolder = ni.getChildren().size() > 0 && action == null;
+        boolean execute  = false;
+
+        switch (event.type)
         {
-          Action a = ni.getAction();
-          if (a == null || !ni.isEnabled())
+          // Aufklapp-Event: Nur Icon aendern
+          case SWT.Expand:
+          {
+            Image icon = ni.getIconOpen();
+            if (icon != null)
+              item.setImage(icon);
+            break;
+          }
+
+          // Zuklapp-Event: Nur Icon aendern
+          case SWT.Collapse:
+          {
+            Image icon = ni.getIconClose();
+            if (icon != null)
+              item.setImage(icon);
+            break;
+          }
+          
+          // Oeffnen einer View per Maus
+          case SWT.MouseUp:
+          {
+            execute = action != null;
+            break;
+          }
+
+          // Oeffnen per Tastatur
+          case SWT.DefaultSelection:
+          {
+            execute = action != null;
+            
+            // Wenns ein Ordner ist, klappen wir ihn ausserdem auf/zu
+            if (isFolder)
+            {
+              boolean expanded = item.getExpanded();
+              int type = expanded ? SWT.Collapse : SWT.Expand;
+              item.setExpanded(!expanded); // Aufklapp-Status umkehren
+              
+              Event e = new Event();
+              e.item   = item;
+              e.type   = type;
+              mainTree.notifyListeners(type,event);
+            }
+            break;
+          }
+        }
+
+        if (execute)
+        {
+          if (action == null || !ni.isEnabled())
             return;
           try
           {
             Logger.debug("executing navigation entry " + ni.getID() + " [" + ni.getName() + "]");
-            a.handleAction(event);
+            action.handleAction(event);
           }
           catch (ApplicationException e)
           {
             Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getLocalizedMessage(),StatusBarMessage.TYPE_ERROR));
           }
-          return;
         }
         
-        Image icon = event.type == SWT.Expand ? ni.getIconOpen() : ni.getIconClose();
-        if (icon != null)
-          item.setImage(icon);
       }
       catch (RemoteException re)
       {
         Logger.error("unable to handle navigation action",re);
-        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrags"),StatusBarMessage.TYPE_ERROR));
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrages"),StatusBarMessage.TYPE_ERROR));
       }
     }
   }
