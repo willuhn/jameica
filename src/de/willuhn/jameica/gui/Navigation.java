@@ -19,6 +19,8 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -56,6 +58,7 @@ public class Navigation implements Part
 
   private Listener action       = new MyActionListener();
   private DisposeListener dsl   = new MyDisposeListener();
+  private Listener start        = new MyStartListener();
   private Settings settings     = new Settings(Navigation.class);
   private Tree mainTree					= null;
   private SearchPart search     = null;
@@ -102,6 +105,33 @@ public class Navigation implements Part
           mainTree.setFocus();
       }
     });
+    
+    //////////////
+    // Globaler Listener, damit die Tastatur-Bedienung auch unter Windows funktioniert
+    // Den Listener haengen wir an den Fokus des Tree, damit er nur dann aktiv ist,
+    // wenn die Navi den Fokus hat
+    this.mainTree.addFocusListener(new FocusListener()
+    {
+      /**
+       * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+       */
+      public void focusLost(FocusEvent e)
+      {
+        GUI.getDisplay().removeFilter(SWT.KeyUp,start);
+      }
+      
+      /**
+       * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+       */
+      public void focusGained(FocusEvent e)
+      {
+        GUI.getDisplay().addFilter(SWT.KeyUp,start);
+      }
+    });
+    //
+    //////////////
+    
+    
 
     if (!Customizing.SETTINGS.getBoolean("application.navigation.hideroot",false))
     {
@@ -330,6 +360,38 @@ public class Navigation implements Part
   }
   
   /**
+   * Startet das angegebene Navi-Item.
+   * @param item das Navi-Item.
+   * @param event das zugehoerige SWT-Event. Optional.
+   */
+  private void start(NavigationItem item, Event event)
+  {
+    try
+    {
+      if (item == null || !item.isEnabled())
+        return;
+      
+      Action action = item.getAction();
+      
+      if (action == null)
+        return;
+
+      Logger.debug("executing navigation entry " + item.getID() + " [" + item.getName() + "]");
+      action.handleAction(event);
+    }
+    catch (ApplicationException e)
+    {
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getLocalizedMessage(),StatusBarMessage.TYPE_ERROR));
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to handle navigation action",re);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Ausführen des Menu-Eintrages"),StatusBarMessage.TYPE_ERROR));
+    }
+  }
+  
+  
+  /**
    * Wird beim Klick auf ein Element ausgeloest.
    */
   private class MyActionListener implements Listener
@@ -410,17 +472,7 @@ public class Navigation implements Part
 
         if (execute)
         {
-          if (action == null || !ni.isEnabled())
-            return;
-          try
-          {
-            Logger.debug("executing navigation entry " + ni.getID() + " [" + ni.getName() + "]");
-            action.handleAction(event);
-          }
-          catch (ApplicationException e)
-          {
-            Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getLocalizedMessage(),StatusBarMessage.TYPE_ERROR));
-          }
+          start(ni,event);
         }
         
       }
@@ -461,56 +513,21 @@ public class Navigation implements Part
     }
     
   }
+  
+  /**
+   * Wird u.a. fuer Windows gebraucht, weil dort die Leertaste kein Default-Selektion-Event
+   * ausloest und ein Navigieren mit der Tastatur nur unvollstaendig moeglich ist.
+   */
+  private class MyStartListener implements Listener
+  {
+    /**
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    public void handleEvent(Event e)
+    {
+      if (e.stateMask == SWT.NONE && e.character == ' ')
+        start((NavigationItem) e.widget.getData(KEY_NAVIGATION),e);
+    }
+  }
 
 }
-
-
-/*********************************************************************
- * $Log: Navigation.java,v $
- * Revision 1.50  2011/08/03 12:17:13  willuhn
- * @N Root-Element per Customizing ausblendbar
- *
- * Revision 1.49  2011-06-30 16:29:23  willuhn
- * @N setUnreadCount() - damit kann man den Look'n'Feel von Mailprogrammen (Fettdruck + Anzahl ungelesener Elemente) nachbauen ;)
- *
- * Revision 1.48  2011-04-26 12:20:24  willuhn
- * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.47  2010-10-07 21:52:35  willuhn
- * @B Moegliche SWTException beim Shutdown
- *
- * Revision 1.46  2009-04-14 07:50:07  willuhn
- * @N select(String) public gemacht (brauchte Stefan von der ETH)
- *
- * Revision 1.45  2008/11/03 23:07:47  willuhn
- * @C BUGZILLA 647
- *
- * Revision 1.44  2008/09/03 11:14:20  willuhn
- * @N Suchfeld anzeigen
- * @N Such-Optionen
- *
- * Revision 1.43  2008/08/31 23:07:10  willuhn
- * @N Erster GUI-Code fuer die Suche
- *
- * Revision 1.42  2008/05/23 08:29:25  willuhn
- * @C modifier geaendert
- *
- * Revision 1.41  2008/05/22 23:12:55  willuhn
- * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
- *
- * Revision 1.40  2008/05/22 22:39:16  willuhn
- * @N MACOS Explizites Selektieren des ersten Elements in der Navigation, damit die Startseite auch unter MacOS geoeffnet wird
- *
- * Revision 1.39  2007/07/16 12:51:28  willuhn
- * *** empty log message ***
- *
- * Revision 1.38  2007/05/14 11:18:09  willuhn
- * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
- * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
- *
- * Revision 1.37  2007/04/11 09:59:04  willuhn
- * @N Automatisches Speichern und Wiederherstellen des Aufklapp-Status der Navigations-Elemente
- *
- * Revision 1.36  2007/03/12 16:19:09  willuhn
- * @C disabled warnings if menu/navigation is empty
- **********************************************************************/
