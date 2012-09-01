@@ -377,6 +377,11 @@ public class Navigation implements Part
         return;
 
       Logger.debug("executing navigation entry " + item.getID() + " [" + item.getName() + "]");
+      
+      // Wir haben das Event behandelt - muss keiner weiter drauf reagieren
+      if (event != null)
+        event.doit = false;
+      
       action.handleAction(event);
     }
     catch (ApplicationException e)
@@ -526,7 +531,13 @@ public class Navigation implements Part
     public void handleEvent(Event e)
     {
       if (e.stateMask == SWT.NONE && e.character == ' ')
-        start((NavigationItem) e.widget.getData(KEY_NAVIGATION),e);
+      {
+        TreeItem[] items = mainTree.getSelection();
+        if (items == null || items.length != 1)
+          return;
+
+        start((NavigationItem) items[0].getData(KEY_NAVIGATION),e);
+      }
     }
   }
 
