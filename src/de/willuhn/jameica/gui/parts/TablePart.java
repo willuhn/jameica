@@ -1260,10 +1260,19 @@ public class TablePart extends AbstractTablePart
     // Auch wenn wir die Auswahl anschliessend
     // evtl. umkehren, muessen wir trotzdem erstmal
     // nach dieser Spalte sortieren
-    Collections.sort(l);
+    try
+    {
+      Collections.sort(l);
 
-    if (!direction)
-      Collections.reverse(l);
+      if (!direction)
+        Collections.reverse(l);
+    }
+    catch (IllegalArgumentException e)
+    {
+      // BUGZILLA 1267
+      Logger.error("unable to sort table",e);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Sortierung nach dieser Spalte nicht möglich"), StatusBarMessage.TYPE_ERROR));
+    }
 
     col.setImage(direction ? down : up);
 
