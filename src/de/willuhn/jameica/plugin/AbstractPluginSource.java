@@ -11,14 +11,6 @@
 
 package de.willuhn.jameica.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import de.willuhn.jameica.services.BeanService;
-import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Settings;
-import de.willuhn.logging.Logger;
-import de.willuhn.util.MultipleClassLoader;
 
 
 /**
@@ -26,9 +18,6 @@ import de.willuhn.util.MultipleClassLoader;
  */
 public abstract class AbstractPluginSource implements PluginSource
 {
-  private final static Settings settings = new Settings(PluginSource.class,false); // nicht vom User ueberschreibbar
-  private static List<PluginSource> sources = null;
-  
   /**
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    * Wir sortieren anhand der Ordinal-Zahl des Type-Enums.
@@ -48,50 +37,6 @@ public abstract class AbstractPluginSource implements PluginSource
 
     // Sortierung basierend auf der Ordinal-Zahl des Enums
     return myType.compareTo(otherType);
-  }
-  
-  /**
-   * Liefert die Liste der gefundenen Plugin-Quellen.
-   * @return die Liste der gefundenen Plugin-Quellen.
-   */
-  public static synchronized List<PluginSource> getSources()
-  {
-    if (sources == null)
-    {
-      sources = new ArrayList<PluginSource>();
-      
-      try
-      {
-        MultipleClassLoader loader = Application.getClassLoader();
-        BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-        Class<PluginSource>[] classes = loader.getClassFinder().findImplementors(PluginSource.class);
-        for (Class<PluginSource> c:classes)
-        {
-          try
-          {
-            PluginSource source = beanService.get(c);
-            
-            // Checken, ob der Typ erlaubt ist.
-            if (!settings.getBoolean(source.getType() + ".enabled",true))
-            {
-              Logger.info("plugin-source " + source.getType() + " disabled by admin-directive, skipping");
-              continue;
-            }
-            sources.add(source);
-          }
-          catch (Exception e)
-          {
-            Logger.error("unable to load plugin source " + c + " - skipping",e);
-          }
-        }
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to load plugin sources",e);
-      }
-    }
-    
-    return sources;
   }
 }
 

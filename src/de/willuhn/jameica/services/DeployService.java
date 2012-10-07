@@ -15,6 +15,8 @@ package de.willuhn.jameica.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.PrivilegedAction;
+import java.util.List;
 import java.util.zip.ZipFile;
 
 import de.willuhn.boot.BootLoader;
@@ -27,9 +29,11 @@ import de.willuhn.io.ZipExtractor;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.PluginSource;
 import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -40,12 +44,14 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class DeployService implements Bootable
 {
+  private Settings settings = new Settings(DeployService.class);
+  
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
   public Class[] depends()
   {
-    return new Class[]{LogService.class};
+    return new Class[]{LogService.class, PluginSourceService.class};
   }
 
   /**
@@ -56,40 +62,20 @@ public class DeployService implements Bootable
     ////////////////////////////////////////////////////////////////////////////
     // 1. Checken, ob wir Delete-Marker im User-Plugin-Dir haben. Das sind Reste von
     //    deinstallierten Plugins, die wir jetzt wegraeumen.
-    File dir = Application.getConfig().getUserPluginDir();
-    Logger.info("searching for uninstalled plugins in " + dir.getAbsolutePath());
-
-    File[] pluginDirs = new FileFinder(dir).findAll();
-    for (File pluginDir:pluginDirs)
+    Logger.info("searching for uninstallable plugins");
+    final PluginSourceService sources = loader.getBootable(PluginSourceService.class);
+    List<PluginSource> list = sources.getWritableSources();
+    for (PluginSource s:list)
     {
-      if (!pluginDir.canRead() || !pluginDir.isDirectory())
-      {
-        Logger.warn("  skipping " + pluginDir.getAbsolutePath() + " - no directory or not readable");
-        continue;
-      }
-      
-      // Checken, ob ein Delete-Marker drin liegt
-      File marker = new File(pluginDir,".deletemarker");
-      if (marker.exists() && marker.isFile())
-      {
-        Logger.info("  clean up " + pluginDir);
-        try
-        {
-          if (!FileUtil.deleteRecursive(pluginDir))
-            throw new IOException("unable to delete " + pluginDir);
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to cleanup uninstalled plugin in " + pluginDir);
-        }
-      }
+      this.cleanup(s);
     }
     //
     ////////////////////////////////////////////////////////////////////////////
     
     ////////////////////////////////////////////////////////////////////////////
-    // 2. Checken, ob Dateien zum Deployen vorliegen
-    FileFinder finder = new FileFinder(Application.getConfig().getUserDeployDir());
+    // 2. Checken, ob Updates zum Deployen vorliegen
+    Logger.info("searching for updatable plugins");
+    FileFinder finder = new FileFinder(Application.getConfig().getUpdateDir());
     finder.extension(".zip");
     File[] files = finder.find();
     if (files == null || files.length == 0)
@@ -100,7 +86,7 @@ public class DeployService implements Bootable
     // Wir nehmen hier einen Proxy, der nur die Status-Ausgaben uebernimmt
     // aber nicht den Fortschrittsbalken. Wir wuerden sonst bei 100 ankommen,
     // bevor irgendwas gestartet wurde.
-    ProgressMonitor proxy = new ProgressMonitor() {
+    final ProgressMonitor proxy = new ProgressMonitor() {
       public void setStatusText(String s) {
         monitor.setStatusText(s);
       }
@@ -122,10 +108,42 @@ public class DeployService implements Bootable
     
     for (File file:files)
     {
+      Logger.info("  " + file);
       try
       {
-        ZippedPlugin plugin = new ZippedPlugin(file);
-        deploy(plugin,proxy);
+        final ZippedPlugin plugin = new ZippedPlugin(file);
+        
+        // Plugin-Quelle ermitteln (wurde von update() gespeichert)
+        String s = this.settings.getString(file.getCanonicalPath(),null);
+        final Type type = s != null ? Type.valueOf(s) : null;
+          
+        SecurityManagerService service = Application.getBootLoader().getBootable(SecurityManagerService.class);
+
+        Exception e = service.getSecurityManager().doPrivileged(new PrivilegedAction<Exception>() {
+          public Exception run()
+          {
+            try
+            {
+              deploy(plugin,sources.getSource(type),proxy);
+              return null;
+            }
+            catch (Exception e)
+            {
+              return e;
+            }
+          }
+
+          public String toString()
+          {
+            return "deploy " + plugin.getFile();
+          }
+        });
+        
+        if (e != null)
+          throw e;
+
+        // Aus den Settings werfen
+        this.settings.setAttribute(file.getCanonicalPath(),(String) null);
       }
       catch (ApplicationException ae)
       {
@@ -148,6 +166,7 @@ public class DeployService implements Bootable
   
   /**
    * Aktualisiert ein bereits installiertes Plugin.
+   * Markiert das vorherige Plugin als geloescht und kopiert das neue Plugins ins update-Dir.
    * @param current das installierte Plugin.
    * @param plugin das zu aktualisierende Plugin.
    * @param monitor der Progressmonitor zur Anzeige des Fortschrittes.
@@ -177,9 +196,13 @@ public class DeployService implements Bootable
       //////////////////////////////////////////////////////////////////////
       // 1. Neue Version in das deploy-Verzeichnis kopieren, das Entpacken passiert beim naechsten Start
       File source = plugin.getFile();
-      File target = new File(Application.getConfig().getUserDeployDir(),source.getName());
-      if (!source.equals(target)) // Nur, wenn es nicht schon im Deploy-Verzeichnis liegt
+      File target = new File(Application.getConfig().getUpdateDir(),source.getName());
+      if (!source.equals(target)) // Nur, wenn es nicht schon im Deploy-Verzeichnis liegt. Das macht z.Bsp. jameica.update - das downloaded die Dateien direkt da rein
         FileCopy.copy(source,target,true);
+      
+      // Wir merken uns die Plugin-Quelle fuer den naechsten Start.
+      this.settings.setAttribute(target.getCanonicalPath(),current.getPluginSource().name());
+      
       monitor.addPercentComplete(50);
       //
       //////////////////////////////////////////////////////////////////////
@@ -219,11 +242,13 @@ public class DeployService implements Bootable
   }
   
   /**
-   * Deployed das Plugin im User-Plugin-Dir.
+   * Deployed das angegebene Plugin.
    * @param plugin das Plugin.
+   * @param source die Installations-Quelle, in der das Plugin entpackt werden soll.
+   * Wenn keine angegeben ist, wird im User-Plugin-Ordner deployed.
    * @param monitor der Progressmonitor zur Anzeige des Fortschrittes.
    */
-  public void deploy(ZippedPlugin plugin, ProgressMonitor monitor)
+  public void deploy(ZippedPlugin plugin, PluginSource source, ProgressMonitor monitor)
   {
     I18N i18n = Application.getI18n();
 
@@ -232,10 +257,18 @@ public class DeployService implements Bootable
       if (plugin == null)
         throw new ApplicationException(i18n.tr("Bitte wählen Sie das zu installierende Plugin"));
       
-      File zip = plugin.getFile();
+      if (source == null)
+      {
+        PluginSourceService sources = Application.getBootLoader().getBootable(PluginSourceService.class);
+        source = sources.getDefault();
+        Logger.info("no plugin source given, using default: " + source.getName());
+      }
       
-      // Ziel-Ordner
-      File pluginDir = Application.getConfig().getUserPluginDir();
+      if (!source.canWrite())
+        throw new ApplicationException(i18n.tr("Plugin-Ordner \"{0}\" nicht beschreibbar"));
+      
+      File zip       = plugin.getFile();
+      File pluginDir = source.getDir();
       
       // Vorherige Version loeschen, falls vorhanden
       File target = new File(pluginDir,plugin.getName());
@@ -253,7 +286,7 @@ public class DeployService implements Bootable
         
         // Wenn das nicht klappt, fehlte der Neustart dazwischen, der hier aufraeumt
         if (!FileUtil.deleteRecursive(target))
-          throw new ApplicationException(i18n.tr("Der ordner {0} konnte nicht gelöscht werden.",target.getAbsolutePath()));
+          throw new ApplicationException(i18n.tr("Der Ordner {0} konnte nicht gelöscht werden.",target.getAbsolutePath()));
       }
 
       // Entpacken
@@ -269,9 +302,9 @@ public class DeployService implements Bootable
       //
       ////////////////////////////////////////////////////////////////////////////
 
-      // Manifest neu laden. Das andere zeigt ja noch in das Deploy-Verzeichnis
+      // Manifest neu laden. Das andere zeigt ja noch in das update-Verzeichnis
       Manifest manifest = new Manifest(new File(target,"plugin.xml"));
-      manifest.setPluginSource(Type.USER);
+      manifest.setPluginSource(source.getType());
       Application.getMessagingFactory().sendMessage(new PluginMessage(manifest,PluginMessage.Event.INSTALLED));
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Plugin installiert, bitte starten Sie Jameica neu"),StatusBarMessage.TYPE_SUCCESS));
     }
@@ -296,6 +329,67 @@ public class DeployService implements Bootable
    */
   public void shutdown()
   {
+  }
+  
+  /**
+   * Loescht Plugins, die einen Delete-Marker besitzen. Das sind Reste
+   * von deinstallierten Plugins, dir wir beim naechsten Start wegraeumen.
+   * @param source das Verzeichnis, in dem nach den zu loeschenden Plugins gesucht wird.
+   */
+  private void cleanup(PluginSource source)
+  {
+    File dir = source.getDir();
+    
+    try
+    {
+      Logger.info("  " + dir);
+      
+      SecurityManagerService s = Application.getBootLoader().getBootable(SecurityManagerService.class);
+
+      File[] pluginDirs = new FileFinder(dir).findAll();
+      for (final File pluginDir:pluginDirs)
+      {
+        if (!pluginDir.canRead() || !pluginDir.isDirectory())
+        {
+          Logger.warn("  skipping " + pluginDir.getAbsolutePath() + " - no directory or not readable");
+          continue;
+        }
+        
+        // Checken, ob ein Delete-Marker drin liegt
+        File marker = new File(pluginDir,".deletemarker");
+        if (marker.exists() && marker.isFile())
+        {
+          Logger.info("  clean up " + pluginDir);
+
+          // Der Deploy-Service darf privilegiert
+          s.getSecurityManager().doPrivileged(new PrivilegedAction() {
+            public Object run()
+            {
+              try
+              {
+                if (!FileUtil.deleteRecursive(pluginDir))
+                  throw new IOException("unable to delete " + pluginDir);
+              }
+              catch (Exception e)
+              {
+                Logger.error("unable to cleanup uninstalled plugin in " + pluginDir);
+              }
+              
+              return null;
+            }
+            
+            public String toString()
+            {
+              return "delete " + pluginDir;
+            }
+          });
+        }
+      }
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to cleanup " + dir,e);
+    }
   }
 }
 

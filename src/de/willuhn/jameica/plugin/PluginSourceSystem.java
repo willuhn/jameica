@@ -12,10 +12,12 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.File;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.willuhn.io.FileFinder;
+import de.willuhn.jameica.services.SecurityManagerService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -27,6 +29,14 @@ public class PluginSourceSystem extends AbstractPluginSource
   private List<File> dirs = null;
   
   /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getType()
+   */
+  public Type getType()
+  {
+    return Type.SYSTEM;
+  }
+
+  /**
    * @see de.willuhn.jameica.plugin.PluginSource#find()
    */
   public synchronized List<File> find()
@@ -35,8 +45,8 @@ public class PluginSourceSystem extends AbstractPluginSource
       return this.dirs;
     
     this.dirs = new ArrayList<File>();
-    
-    File dir = Application.getConfig().getSystemPluginDir();
+
+    File dir = this.getDir();
     Logger.info("searching for " + getType() + " plugins in " + dir.getAbsolutePath());
 
     File[] pluginDirs = new FileFinder(dir).findAll();
@@ -55,11 +65,47 @@ public class PluginSourceSystem extends AbstractPluginSource
   }
 
   /**
-   * @see de.willuhn.jameica.plugin.PluginSource#getType()
+   * @see de.willuhn.jameica.plugin.PluginSource#canWrite()
    */
-  public Type getType()
+  public boolean canWrite()
   {
-    return Type.SYSTEM;
+    SecurityManagerService s = Application.getBootLoader().getBootable(SecurityManagerService.class);
+
+    final File dir = this.getDir();
+    Boolean b = s.getSecurityManager().doPrivileged(new PrivilegedAction<Boolean>() {
+      /**
+       * @see java.security.PrivilegedAction#run()
+       */
+      public Boolean run()
+      {
+        return dir.canWrite();
+      }
+      /**
+       * @see java.lang.Object#toString()
+       */
+      public String toString()
+      {
+        return "writable check for " + dir;
+      }
+    });
+    
+    return b;
+  }
+
+  /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getName()
+   */
+  public String getName()
+  {
+    return Application.getI18n().tr("Programm-Ordner (für alle Benutzer der Jameica-Installation)");
+  }
+
+  /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getDir()
+   */
+  public File getDir()
+  {
+    return Application.getConfig().getSystemPluginDir();
   }
 }
 

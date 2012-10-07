@@ -40,7 +40,7 @@ public class Init5 implements Bootable
       ProxyService.class,
       AuthenticateService.class,
       RegistryService.class,
-      ClassService.class,
+      DeployService.class,
       SSLService.class,
       SSLSocketFactoryService.class,
       PluginService.class,

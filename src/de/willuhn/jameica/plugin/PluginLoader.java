@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +30,9 @@ import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
-import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.services.ClassService;
+import de.willuhn.jameica.services.PluginSourceService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.system.Settings;
@@ -79,8 +78,8 @@ public final class PluginLoader
     
     ////////////////////////////////////////////////////////////////////////////
     // Liste der Manifeste laden
-    List<PluginSource> sources = AbstractPluginSource.getSources();
-    Collections.sort(sources); // Nach Prioritaet sortieren
+    PluginSourceService service = Application.getBootLoader().getBootable(PluginSourceService.class);
+    List<PluginSource> sources = service.getSources();
     
     Map<String,Manifest> cache = new HashMap<String,Manifest>();
 
@@ -589,10 +588,11 @@ public final class PluginLoader
     try
     {
       //////////////////////////////////////////////////////////////////////////
-      // 1. Wir unterstuetzen nur das Deinstallieren von Plugins aus dem User-Ordner
-      Type source = mf.getPluginSource();
-      if (source == null || source != Type.USER)
-        throw new ApplicationException(i18n.tr("Nur Plugins im Plugin-Ordner des Benutzers können deinstalliert werden"));
+      // 1. Checken, ob wir in der Plugin-Quelle Schreibzugriff haben
+      PluginSourceService sources = Application.getBootLoader().getBootable(PluginSourceService.class);
+      PluginSource source = sources.getSource(mf.getPluginSource());
+      if (source == null || !source.canWrite())
+        throw new ApplicationException(i18n.tr("Plugin kann wegen fehlenden Schreib-Rechten nicht deinstalliert werden."));
       //
       //////////////////////////////////////////////////////////////////////////
       
@@ -760,7 +760,11 @@ public final class PluginLoader
     {
       String msg = e.getMessage();
       
-      if (!(e instanceof ApplicationException))
+      if ((e instanceof ApplicationException) || e instanceof SecurityException)
+      {
+        msg = e.getMessage();
+      }
+      else
       {
         Logger.error("unable to uninstall plugin",e);
         msg = i18n.tr("Fehler beim Deinstallieren: {0}",msg);

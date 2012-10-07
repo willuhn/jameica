@@ -16,18 +16,30 @@ package de.willuhn.jameica.security;
 import java.io.File;
 import java.io.IOException;
 import java.security.Permission;
+import java.security.PrivilegedAction;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Security-Manager von Jameica.
  * Er verhindert unter anderem, dass im Programm-Verzeichnis
- * von Jameica Daten geaendert werden duerfen. 
+ * von Jameica Daten ohne Rueckfrage geaendert werden duerfen.
  * @author willuhn
  */
 public class JameicaSecurityManager extends SecurityManager
 {
-  private String jameicaPath       = null;
+  /**
+   * Anzahl der Milli-Sekunden, die eine Autorisierung fuer den Schreibzugriff gueltig ist
+   */
+  private final static long TIMEOUT = 5 * 60 * 1000L;
+  
+  private AtomicInteger privCount = new AtomicInteger();
+  private String jameicaPath      = null;
+  private long lastAsked          = 0L; // Der Zeitstempel, als wir das letzte Mal den User fragten
 
   /**
    * ct.
@@ -37,7 +49,7 @@ public class JameicaSecurityManager extends SecurityManager
     super();
     try
     {
-      jameicaPath = new File(".").getCanonicalPath() + File.separator; // current dir
+      this.jameicaPath = new File(".").getCanonicalPath() + File.separator; // current dir
       Logger.info("protecting program dir " + jameicaPath);
     }
     catch (IOException e)
@@ -69,21 +81,83 @@ public class JameicaSecurityManager extends SecurityManager
    * Interne Pruef-Funktion fuer die Schreibzugriffe.
    * @param path zu pruefender Pfad.
    */
-  private void checkFile(String path)
+  private synchronized void checkFile(String path)
   {
     if (path == null)
       return;
 
-    File check = new File(path);
+    if (this.privCount.get() > 0)
+    {
+      Logger.debug("[privcount: " + this.privCount.get() + "] in privileged mode - disabled check for " + path);
+      return;
+    }
+
     try
     {
+      // Der folgende Code kann weitere File-Checks triggern (insb. "pluginDir.canWrite()").
+      // Damit wir hier nicht in einer Endlos-Schleife landen, erhoehen wir den
+      // privCount fuer uns selbst auch um 1. Im finally machen wir das wieder
+      // rueckgaengig
+      this.privCount.incrementAndGet();
+      
+      File check = new File(path);
+
       String s = check.getCanonicalPath();
-      if (s.startsWith(jameicaPath))
-        throw new SecurityException("write access to \"" + s + "\" denied");
+      if (!s.startsWith(this.jameicaPath))
+        return; // Wir sind nicht im Jameica-Ordner. Nicht relevant
+      
+      File pluginDir    = Application.getConfig().getSystemPluginDir();
+      String pluginPath = pluginDir.getCanonicalPath();
+
+      // Wir sind nicht im Plugin-Ordner.
+      if (!s.startsWith(pluginPath))
+        throw new ApplicationException(Application.getI18n().tr("Schreibzugriff auf {0} verweigert",s));
+
+
+      // Sonder-Rolle System-Plugin-Ordner
+      if (pluginDir.canWrite())
+      {
+        Logger.debug("[privcount: " + this.privCount.get() + "] trying to write in system plugin dir for: " + path);
+        // Prinzipiell kann im System-Plugin-Ordner geschrieben werden. Aber wir
+        // muessen den user fragen
+        long now = System.currentTimeMillis();
+        if (this.lastAsked + TIMEOUT > now)
+        {
+          Logger.debug("[privcount: " + this.privCount.get() + "] write access to " + path + " allowed by user authorization");
+          return;
+        }
+        
+        // OK, wir muessen den User fragen
+        boolean b = Application.getCallback().askUser(Application.getI18n().tr("Schreibzugriff in System-Plugin-Ordner erlauben?\n\nOrdner: {0}", pluginPath));
+        Logger.info("[privcount: " + this.privCount.get() + "] write access to " + path + " authorized: " + b);
+        if (b)
+        {
+          lastAsked = System.currentTimeMillis();
+          return; // access granted
+        }
+      }
+      //
+      ///////////////////////////
+      
+      // Nicht erlaubt
+      throw new ApplicationException(Application.getI18n().tr("Schreibzugriff auf {0} verweigert",s));
     }
-    catch (IOException e)
+    catch (OperationCanceledException oce)
     {
-      throw new SecurityException("error while checking write permissions for \"" + path + "\"",e);
+      throw new SecurityException(Application.getI18n().tr("Vorgang abgebrochen"));
+    }
+    catch (ApplicationException ae)
+    {
+      throw new SecurityException(ae.getMessage(),ae);
+    }
+    catch (Exception e)
+    {
+      throw new SecurityException(Application.getI18n().tr("Prüfen der Schreib-Berechtigung auf {0} fehlgeschlagen",path),e);
+    }
+    finally
+    {
+      // Wir machen uns selbst wieder rueckgaengig
+      this.privCount.decrementAndGet();
     }
   }
 
@@ -109,6 +183,27 @@ public class JameicaSecurityManager extends SecurityManager
     // Heisst: Man koennte hier noch prima Berechtigungspruefungen
     // fuer Plugins durchfuehren. Allerdings sollten die auch Sinn
     // ergeben und das System nicht ausbremsen.
+  }
+  
+  /**
+   * Fuehrt eine privilegierte Aktion aus.
+   * @param <T> Typ der Action.
+   * @param action die auszufuehrende Aktion.
+   * @return der Ruckgabe-Wert der Funktion.
+   */
+  public <T> T doPrivileged(PrivilegedAction<T> action)
+  {
+    try
+    {
+      Logger.info("[privcount: " + this.privCount.get() + "] starting privileged action: " + action);
+      this.privCount.incrementAndGet();
+      return action.run();
+    }
+    finally
+    {
+      this.privCount.decrementAndGet();
+      Logger.info("[privcount: " + this.privCount.get() + "] finished privileged action: " + action);
+    }
   }
 }
 

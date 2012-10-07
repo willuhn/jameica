@@ -75,7 +75,7 @@ public class PluginUpdate implements Action
       public void run(ProgressMonitor monitor) throws ApplicationException
       {
         DeployService service = Application.getBootLoader().getBootable(DeployService.class);
-        service.update(installed, plugin,monitor);
+        service.update(installed,plugin,monitor);
       }
       public boolean isInterrupted()
       {

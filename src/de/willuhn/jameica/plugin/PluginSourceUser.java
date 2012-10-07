@@ -27,6 +27,14 @@ public class PluginSourceUser extends AbstractPluginSource
   private List<File> dirs = null;
   
   /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getType()
+   */
+  public Type getType()
+  {
+    return Type.USER;
+  }
+  
+  /**
    * @see de.willuhn.jameica.plugin.PluginSource#find()
    */
   public synchronized List<File> find()
@@ -36,7 +44,7 @@ public class PluginSourceUser extends AbstractPluginSource
     
     this.dirs = new ArrayList<File>();
 
-    File dir = Application.getConfig().getUserPluginDir();
+    File dir = this.getDir();
     Logger.info("searching for " + getType() + " plugins in " + dir.getAbsolutePath());
 
     File[] pluginDirs = new FileFinder(dir).findAll();
@@ -55,12 +63,30 @@ public class PluginSourceUser extends AbstractPluginSource
   }
 
   /**
-   * @see de.willuhn.jameica.plugin.PluginSource#getType()
+   * @see de.willuhn.jameica.plugin.PluginSource#canWrite()
    */
-  public Type getType()
+  public boolean canWrite()
   {
-    return Type.USER;
+    // Muss nicht priviligiert ausgefuehrt werden, weil das ausserhalb des Programm-Ordners liegt.
+    return this.getDir().canWrite();
   }
+  
+  /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getName()
+   */
+  public String getName()
+  {
+    return Application.getI18n().tr("Benutzer-Ordner (nur für aktuellen Benutzer)");
+  }
+
+  /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getDir()
+   */
+  public File getDir()
+  {
+    return Application.getConfig().getUserPluginDir();
+  }
+
 }
 
 

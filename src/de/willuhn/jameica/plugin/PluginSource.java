@@ -41,6 +41,13 @@ public interface PluginSource extends Comparable
      * Plugins im Ordner "plugins" innerhalb des Benutzer-Verzeichnisses ".jameica".
      */
     USER,
+
+    ;
+    
+    /**
+     * Die Default-Plugin-Quelle.
+     */
+    public final static Type DEFAULT = USER;
   }
   
   /**
@@ -54,6 +61,24 @@ public interface PluginSource extends Comparable
    * @return der Typ der Plugin-Quelle.
    */
   public Type getType();
+  
+  /**
+   * Prueft, ob die Plugin-Quelle beschreibbar ist.
+   * @return true, wenn die Plugin-Quelle grundsaetzlich beschreibbar ist.
+   */
+  public boolean canWrite();
+  
+  /**
+   * Liefert das Basis-Verzeichnis der Plugin-Quelle.
+   * @return das Basis-Verzeichnis der Plugin-Quelle.
+   */
+  public File getDir();
+  
+  /**
+   * Liefert einen lesbaren Namen der Pluginquelle.
+   * @return lesbarer Name der Pluginquelle.
+   */
+  public String getName();
 }
 
 

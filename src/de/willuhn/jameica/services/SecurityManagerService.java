@@ -24,6 +24,7 @@ import de.willuhn.logging.Logger;
  */
 public class SecurityManagerService implements Bootable
 {
+  private JameicaSecurityManager securityManager = null;
 
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -39,7 +40,17 @@ public class SecurityManagerService implements Bootable
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
     Logger.info("applying jameica security manager");
-    System.setSecurityManager(new JameicaSecurityManager());
+    this.securityManager = new JameicaSecurityManager();
+    System.setSecurityManager(this.securityManager);
+  }
+  
+  /**
+   * Liefert die Instanz des Security-Managers.
+   * @return die Instanz des Security-Managers.
+   */
+  public JameicaSecurityManager getSecurityManager()
+  {
+    return this.securityManager;
   }
 
   /**
@@ -47,6 +58,7 @@ public class SecurityManagerService implements Bootable
    */
   public void shutdown()
   {
+    this.securityManager = null;
   }
 
 }

@@ -283,9 +283,9 @@ public class BackupEngine
         if (!children[i].isDirectory())
           continue; // Wir sichern nur Unterverzeichnisse. Also keine Backups (rekursiv) und Logs
         
-        // Wir sichern die Verzeichnisse "plugins" und "deploy" nicht mit. Die koennen jederzeit
+        // Wir sichern die Verzeichnisse "plugins" und "updates" nicht mit. Die koennen jederzeit
         // neu installiert werden
-        if ("deploy".equals(children[i].getName()))
+        if ("updates".equals(children[i].getName()))
           continue;
         if ("plugins".equals(children[i].getName()))
           continue;

@@ -46,7 +46,7 @@ public final class Config
 
   private File systemPluginDir = null;
   private File userPluginDir   = null;
-  private File userDeployDir   = null;
+  private File updateDir   = null;
   private File[] pluginDirs    = null;
 
   /**
@@ -70,6 +70,15 @@ public final class Config
     if (this.workDir == null)
     {
       this.workDir = Application.getPlatform().getWorkdir();
+      
+      // Migration 2012-10-05 (2.2 -> 2.4)
+      // Deploy-Dir loeschen - wird inzwischen nicht mehr gebraucht
+      File deploy = new File(this.workDir,"deploy");
+      if (deploy.exists() && deploy.isDirectory() && deploy.canWrite())
+      {
+        Logger.info("migration: removing deprecated deploy dir: " + deploy);
+        deploy.delete(); // Wenn es nicht leer ist, wird es nicht geloescht - sicherheitshalber
+      }
     }
 
     if (this.settings == null)
@@ -505,32 +514,30 @@ public final class Config
   }
 
   /**
-   * Liefert das User-Deploy-Verzeichnis.
-   * Das ist jenes, welches sich im Work-Verzeichnis des Users befindet.
-   * In der Regel ist das ~/.jameica/deploy.
-   * @return das user-Deploy-Verzeichnis.
+   * Liefert das Verzeichnis, in dem Plugin-Updates gespeichert werden.
+   * Die werden beim naechsten Start entpackt und gegen das alte Plugin ersetzt.
+   * @return das Update-Verzeichnis.
    */
-  public File getUserDeployDir()
+  public File getUpdateDir()
   {
-    if (this.userDeployDir == null)
+    if (this.updateDir == null)
     {
-      // Wir erstellen noch ein userspezifisches Deploy-Verzeichnis
-      this.userDeployDir = new File(this.workDir,"deploy");
-      if (!userDeployDir.exists())
+      this.updateDir = new File(this.workDir,"updates");
+      if (!updateDir.exists())
       {
-        Logger.info("creating " + userDeployDir.getAbsolutePath());
-        userDeployDir.mkdirs();
+        Logger.info("creating " + updateDir.getAbsolutePath());
+        updateDir.mkdirs();
       }
       try
       {
-        this.userDeployDir = this.userDeployDir.getCanonicalFile();
+        this.updateDir = this.updateDir.getCanonicalFile();
       }
       catch (IOException e)
       {
-        Logger.warn("unable to convert " + this.userDeployDir.getAbsolutePath() + " into canonical path");
+        Logger.warn("unable to convert " + this.updateDir.getAbsolutePath() + " into canonical path");
       }
     }
-    return this.userDeployDir;
+    return this.updateDir;
   }
   
   /**

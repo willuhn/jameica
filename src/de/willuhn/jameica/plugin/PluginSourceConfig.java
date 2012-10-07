@@ -26,6 +26,14 @@ public class PluginSourceConfig extends AbstractPluginSource
   private List<File> dirs = null;
   
   /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getType()
+   */
+  public Type getType()
+  {
+    return Type.CONFIG;
+  }
+
+  /**
    * @see de.willuhn.jameica.plugin.PluginSource#find()
    */
   public synchronized List<File> find()
@@ -53,12 +61,32 @@ public class PluginSourceConfig extends AbstractPluginSource
   }
 
   /**
-   * @see de.willuhn.jameica.plugin.PluginSource#getType()
+   * @see de.willuhn.jameica.plugin.PluginSource#canWrite()
    */
-  public Type getType()
+  public boolean canWrite()
   {
-    return Type.CONFIG;
+    // unterstuetzen wir hier nicht, weil das abhaengig von den konfigurierten Ordnern ist.
+    return false;
   }
+
+  /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getName()
+   */
+  public String getName()
+  {
+    return Application.getI18n().tr("Konfigurierte Plugin-Ordner");
+  }
+
+  /**
+   * @see de.willuhn.jameica.plugin.PluginSource#getDir()
+   */
+  public File getDir()
+  {
+    // unterstuetzen wir hier nicht, weil das abhaengig von den konfigurierten Ordnern ist.
+    return null;
+  }
+  
+  
 }
 
 

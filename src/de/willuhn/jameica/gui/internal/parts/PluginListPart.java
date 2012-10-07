@@ -76,7 +76,7 @@ public class PluginListPart implements Part
     this.scrolled.update();
     
     Container container = new SimpleContainer(comp);
-    container.addText(i18n.tr("Nur Plugins im Benutzer-Ordner können aktualisiert oder deinstalliert werden.\n" +
+    container.addText(i18n.tr("Nur Plugins im Benutzer-Ordner (oder im System-Ordner, wenn er beschreibbar ist) können aktualisiert oder deinstalliert werden.\n" +
     		                      "Bitte starten Sie Jameica nach der Installation bzw. Deinstallation eines Plugins neu."),true,Color.COMMENT);
     
     ButtonArea buttons = new ButtonArea();

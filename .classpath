@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-jdk15-144.jar" sourcepath="lib.src/bouncycastle/bcprov-jdk15-144.src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/linux/swt.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.1.1.jar"/>

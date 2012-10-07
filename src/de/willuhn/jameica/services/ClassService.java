@@ -43,7 +43,7 @@ public class ClassService implements Bootable
    */
   public Class[] depends()
   {
-    return new Class[]{LogService.class, DeployService.class};
+    return new Class[]{LogService.class};
   }
 
   /**

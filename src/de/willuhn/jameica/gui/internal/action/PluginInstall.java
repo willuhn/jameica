@@ -12,6 +12,7 @@
 package de.willuhn.jameica.gui.internal.action;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
@@ -19,10 +20,13 @@ import org.eclipse.swt.widgets.FileDialog;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.BackgroundTaskDialog;
+import de.willuhn.jameica.gui.internal.dialogs.PluginSourceDialog;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.PluginSource;
 import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.services.DeployService;
+import de.willuhn.jameica.services.PluginSourceService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -45,52 +49,57 @@ public class PluginInstall implements Action
   public void handleAction(Object context) throws ApplicationException
   {
     I18N i18n = Application.getI18n();
-    FileDialog d = new FileDialog(GUI.getShell(),SWT.OPEN);
-    d.setText(i18n.tr("Bitte wählen Sie die ZIP-Datei mit dem zu installierenden Plugin aus."));
-    d.setFilterExtensions(new String[]{"*.zip"});
-    d.setFilterPath(settings.getString("lastdir",System.getProperty("user.home")));
-    
-    String file = d.open();
-    if (file == null)
-      return;
-    
-    final File f = new File(file);
-    if (!f.canRead() || !f.isFile())
-      throw new ApplicationException(i18n.tr("Die Datei {0} ist nicht lesbar",f.getName()));
-    
-    // Wir merken uns das Verzeichnis
-    settings.setAttribute("lastdir",f.getParent());
-
-    // Hier drin wird der korrekte Aufbau des Plugins gecheckt.
-    final ZippedPlugin plugin = new ZippedPlugin(f);
-    
-    // Checken, ob das Plugin schon installiert ist. Wenn ja, muss es erst deinstalliert werden.
-    Manifest mf = plugin.getManifest();
-    Manifest installed = Application.getPluginLoader().getManifestByName(mf.getName());
-    if (installed != null)
-      throw new ApplicationException(i18n.tr("Das Plugin ist bereits installiert."));
-    
-    // Und hier die Abhaengigkeiten, korrekten Versionsnummerm, etc.
-    mf.canDeploy();
-    
-    // Installation starten
-    BackgroundTask task = new BackgroundTask() {
-      public void run(ProgressMonitor monitor) throws ApplicationException
-      {
-        DeployService service = Application.getBootLoader().getBootable(DeployService.class);
-        service.deploy(plugin,monitor);
-      }
-      public boolean isInterrupted()
-      {
-        return false;
-      }
-      public void interrupt()
-      {
-      }
-    };
     
     try
     {
+      FileDialog d = new FileDialog(GUI.getShell(),SWT.OPEN);
+      d.setText(i18n.tr("Bitte wählen Sie die ZIP-Datei mit dem zu installierenden Plugin aus."));
+      d.setFilterExtensions(new String[]{"*.zip"});
+      d.setFilterPath(settings.getString("lastdir",System.getProperty("user.home")));
+      
+      String file = d.open();
+      if (file == null)
+        return;
+      
+      final File f = new File(file);
+      if (!f.canRead() || !f.isFile())
+        throw new ApplicationException(i18n.tr("Die Datei {0} ist nicht lesbar",f.getName()));
+      
+      // Wir merken uns das Verzeichnis
+      settings.setAttribute("lastdir",f.getParent());
+
+      // Hier drin wird der korrekte Aufbau des Plugins gecheckt.
+      final ZippedPlugin plugin = new ZippedPlugin(f);
+      
+      // Checken, ob das Plugin schon installiert ist. Wenn ja, muss es erst deinstalliert werden.
+      Manifest mf = plugin.getManifest();
+      Manifest installed = Application.getPluginLoader().getManifestByName(mf.getName());
+      if (installed != null)
+        throw new ApplicationException(i18n.tr("Das Plugin ist bereits installiert."));
+      
+      // Und hier die Abhaengigkeiten, korrekten Versionsnummerm, etc.
+      mf.canDeploy();
+      
+      // Zielverzeichnis fuer die Installation vom User erfragen. Aber nur, wenn mehrere zur Wahl stehen
+      final PluginSource source = this.getPluginSource(mf);
+      
+      // Installation starten
+      BackgroundTask task = new BackgroundTask() {
+        public void run(ProgressMonitor monitor) throws ApplicationException
+        {
+          DeployService service = Application.getBootLoader().getBootable(DeployService.class);
+          service.deploy(plugin,source,monitor);
+        }
+        public boolean isInterrupted()
+        {
+          return false;
+        }
+        public void interrupt()
+        {
+        }
+      };
+      
+      
       BackgroundTaskDialog bd = new BackgroundTaskDialog(BackgroundTaskDialog.POSITION_CENTER,task);
       bd.setTitle(i18n.tr("Installiere..."));
       bd.setSideImage(SWTUtil.getImage("emblem-package.png"));
@@ -111,32 +120,27 @@ public class PluginInstall implements Action
       throw new ApplicationException(i18n.tr("Installation fehlgeschlagen: {0}",e.getMessage()));
     }
   }
-
+  
+  /**
+   * Liefert die Plugin-Quelle, in der das Plugin installiert werden soll.
+   * @param mf das Manifest des Plugins.
+   * @return die Plugin-Quelle.
+   * @throws Exception
+   */
+  private PluginSource getPluginSource(Manifest mf) throws Exception
+  {
+    PluginSourceService service = Application.getBootLoader().getBootable(PluginSourceService.class);
+    List<PluginSource> sources = service.getWritableSources();
+    
+    if (sources.size() == 1)
+      return sources.get(0); // wenn wir eh nur die eine haben
+    
+    if (sources.size() > 1)
+    {
+      PluginSourceDialog psd = new PluginSourceDialog(PluginSourceDialog.POSITION_CENTER,mf);
+      return (PluginSource) psd.open();
+    }
+    
+    return null; // Dann nicht. Das soll der Deploy-Service entscheiden
+  }
 }
-
-
-
-/**********************************************************************
- * $Log: PluginInstall.java,v $
- * Revision 1.7  2011/06/02 12:15:16  willuhn
- * @B Das Handling beim Update war noch nicht sauber
- *
- * Revision 1.6  2011-06-02 11:04:55  willuhn
- * @N Noch ein Icon
- *
- * Revision 1.5  2011-06-02 11:01:57  willuhn
- * @C Installation/Deinstallation ueber neuen modalen Backgroundtask-Dialog
- *
- * Revision 1.4  2011-06-01 15:18:42  willuhn
- * @N Die Deploy-Funktion kriegt jetzt direkt ein ZippedPlugin - das erspart das extra "canDeploy()"
- *
- * Revision 1.3  2011-06-01 13:00:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2011-06-01 11:03:40  willuhn
- * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
- *
- * Revision 1.1  2011-05-31 16:39:04  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
- *
- **********************************************************************/

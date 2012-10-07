@@ -31,6 +31,7 @@ import de.willuhn.jameica.gui.MenuItemXml;
 import de.willuhn.jameica.gui.NavigationItem;
 import de.willuhn.jameica.gui.NavigationItemXml;
 import de.willuhn.jameica.plugin.PluginSource.Type;
+import de.willuhn.jameica.services.PluginSourceService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -584,13 +585,17 @@ public class Manifest implements Comparable
       }
     }
     
-    if (installed == null)
+    if (installed == null) // ist noch gar nicht installiert
       return;
 
     // 3a. Checken, ob es ueberschrieben werden kann.
-    Type source = installed.getPluginSource();
-    if (source == null || source != Type.USER)
-      throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da es sich im Plugin-Ordner des Systems befinden"));
+    PluginSourceService sources = Application.getBootLoader().getBootable(PluginSourceService.class);
+    PluginSource ps = sources.getSource(installed.getPluginSource());
+    if (ps == null)
+      throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da die Installationsquelle unbekannt ist"));
+    
+    if (!ps.canWrite())
+      throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da der Plugin-Ordner nicht beschrieben werden darf"));
 
     // 3b. Checken, ob die installierte Version eventuell aktueller ist
     if (installed.getVersion().compareTo(this.getVersion()) > 0)
