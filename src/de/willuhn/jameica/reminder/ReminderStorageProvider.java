@@ -70,6 +70,10 @@ public interface ReminderStorageProvider
    *   List<Date> termine = ri.getDates(reminder.getDate(),from,to);
    * }
    * </code>
+   * 
+   * Wiederkehrende Reminder mit Ende-Datum werden hier noch nicht beruecksichtigt.
+   * Sie werden also mit zurueckgeliefert, als wenn sie kein Ende-Datum haetten. Es
+   * ist dann Aufgabe des Aufrufers, diese rauszufischen, wenn das Ende-Datum ueberschritten ist. 
    * @param queue Angabe der Queue, in dem sich die Reminder befinden muessen (optional).
    * Ist keine Queue angegeben, werden die Reminder aller Queues geliefert.
    * @param from Start-Datum des Zeitraumes (optional).

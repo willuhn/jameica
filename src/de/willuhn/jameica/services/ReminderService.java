@@ -153,19 +153,42 @@ public class ReminderService extends TimerTask implements Bootable
           {
             ReminderInterval ri = r.getReminderInterval();
             Date date           = r.getDate();
+            Date end            = r.getEnd();
             Date last           = (Date) r.getData(Reminder.KEY_EXECUTED); // Datum der letzten Ausfuehrung
+            Date expired        = (Date) r.getData(Reminder.KEY_EXPIRED); // Datum der Expired-Markierung
+            
+            if (expired != null)
+              continue;
 
             //////////////////////////////////////////////////////////////////////
-            // einmalige Reminder aussieben, die wir schon ausgefuehrt haben
+            // Loeschen alter abgelaufener Termine:
+            // a) einmalige Reminder, die wir schon ausgefuehrt haben
             if (last != null && ri == null)
             {
               // Auto-Delete fuer Reminder, deren Termin 14 Tage zurueckliegt
               if (last.getTime() < timeout)
               {
-                Logger.debug("deleting old reminder, message sent on: " + last);
+                Logger.info("deleting old reminder " + uuid + ", message sent on: " + last);
                 provider.delete(uuid);
               }
               continue;
+            }
+            
+            // b) mehrmalige Reminder, deren End-Datum abgelaufen ist
+            //    Aber nur, wenn keine Wiederholungen mehr anstehen
+            if (end != null && end.before(now))
+            {
+              // Noch checken, ob wirklich keine Termine mehr vorliegen oder die letzte Ausfuehrung
+              // bereits hinter dem End-Datum liegt (dann koennen wir davon ausgehen, dass wir alle
+              // ausgeloest haben - auch rueckwirkend)
+              if ((last != null && last.after(end)) || ri.getDates(date,last,end).size() == 0)
+              {
+                // Jepp, kann wirklich geloescht werden
+                Logger.info("mark old recurring reminder " + uuid + " as expired, end date: " + end);
+                r.setData(Reminder.KEY_EXPIRED,now);
+                provider.update(uuid,r);
+                continue;
+              }
             }
             //////////////////////////////////////////////////////////////////////
             
@@ -179,7 +202,7 @@ public class ReminderService extends TimerTask implements Bootable
 
             if (ri == null) // Einmalige Reminder
             {
-              Logger.info("sending reminder message to " + queue + " - due to: " + date);
+              Logger.info("sending reminder message for " + uuid + " to " + queue + " - due to: " + date);
               Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new ReminderMessage(date, uuid, r.getData()));
             }
             else // Wiederholender Reminder. Checken, ob seit der letzten Ausfuehrung ein neues Intervall faellig ist
@@ -187,7 +210,9 @@ public class ReminderService extends TimerTask implements Bootable
               List<Date> dates = ri.getDates(date,last,now);
               for (Date d:dates)
               {
-                Logger.info("sending reminder message to " + queue + " - due to: " + d);
+                if (end != null && end.before(d)) // bereits abgelaufen
+                  continue;
+                Logger.info("sending reminder message for " + uuid + " to " + queue + " - due to: " + d);
                 Application.getMessagingFactory().getMessagingQueue(queue).sendMessage(new ReminderMessage(d, uuid, r.getData()));
               }
             }

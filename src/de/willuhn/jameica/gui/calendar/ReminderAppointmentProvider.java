@@ -59,9 +59,13 @@ public class ReminderAppointmentProvider implements AppointmentProvider
         {
           // Termin mit mehreren Ausfuehrungen. Wir fuegen alle Wiederholungen
           // im angegebenen Zeitraum ein.
+          Date end         = reminder.getEnd();
           List<Date> dates = ri.getDates(reminder.getDate(),from,to);
           for (Date d:dates)
           {
+            if (end != null && !end.after(to)) // bereits abgelaufen
+              continue;
+            
             // Datum explizit angeben
             result.add(new ReminderAppointment(uuid,reminder,d));
             

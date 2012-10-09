@@ -41,6 +41,14 @@ import java.util.Map;
  */
 public final class Reminder implements Serializable
 {
+  
+  // Niemals diesen Wert aendern!!
+  // erzeugt mit "$> serialver -classpath . de.willuhn.jameica.reminder.Reminder"
+  // Das war der Wert *vor* dem Einfuegen des Ende-Datums. Damit wir abwaertskompatibel
+  // bleiben, musste ich die serialVersionUID der alten Version manuell hier eintragen.
+  // Jetzt koennen wir neue Member hinzufuegen, ohne die serialVersionUID zu aendern.
+  static final long serialVersionUID = 2569493156799107871L;
+
   /**
    * Name der Default-Queue, die verwendet wird, wenn keine angegeben wurde.
    */
@@ -51,9 +59,16 @@ public final class Reminder implements Serializable
    */
   public final static String KEY_EXECUTED = "jameica.reminder.key.executed";
   
+  /**
+   * Key, in dem der Reminder-Service speichert, wann ein zyklischer Reminder als abgelaufen
+   * markiert wurde, weil er ein Ende-Datum besitzt und dieses ueberschritten ist.
+   */
+  public final static String KEY_EXPIRED  = "jameica.reminder.key.expired";
+  
   private String queue                      = QUEUE_DEFAULT;
   private Date date                         = new Date();
   private ReminderInterval interval         = null;
+  private Date end                          = null;
   private HashMap<String,Serializable> data = new HashMap<String,Serializable>();
 
   /**
@@ -116,6 +131,24 @@ public final class Reminder implements Serializable
   }
   
   /**
+   * Liefert ein optionales Ende-Datum bei sich wiederholenden Remindern.
+   * @return optionales Ende-Datum.
+   */
+  public Date getEnd()
+  {
+    return this.end;
+  }
+  
+  /**
+   * Speichert ein optionales Ende-Datum bei sich wiederholenden Remindern.
+   * @param end optionales Ende-Datum.
+   */
+  public void setEnd(Date end)
+  {
+    this.end = end;
+  }
+  
+  /**
    * Liefert die Nutzdaten zu dem angegebenen Schluessel.
    * @param key der Schluessel.
    * @return die Nutzdaten.
@@ -164,6 +197,12 @@ public final class Reminder implements Serializable
       sb.append(this.interval);
       sb.append(", starting at ");
       sb.append(this.date);
+      
+      if (this.end != null)
+      {
+        sb.append(", ending at ");
+        sb.append(this.date);
+      }
     }
     else
     {

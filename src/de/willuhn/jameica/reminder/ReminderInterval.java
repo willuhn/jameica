@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
@@ -168,7 +169,7 @@ public class ReminderInterval implements Serializable
     
     if (!to.after(from))
     {
-      Logger.warn("end-date not after from-date");
+      Logger.warn("end-date " + DateUtil.DEFAULT_FORMAT.format(to) + " not after from-date " + DateUtil.DEFAULT_FORMAT.format(from));
       return list;
     }
     
