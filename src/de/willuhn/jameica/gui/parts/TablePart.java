@@ -56,7 +56,10 @@ import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
+import de.willuhn.jameica.gui.parts.table.Feature;
+import de.willuhn.jameica.gui.parts.table.Feature.Context;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -95,7 +98,8 @@ public class TablePart extends AbstractTablePart
   //////////////////////////////////////////////////////////
   // Listeners, Actions
   private de.willuhn.datasource.rmi.Listener deleteListener = new DeleteListener();
-  private List<TableChangeListener> changeListeners     = new ArrayList<TableChangeListener>();
+  private List<TableChangeListener> changeListeners         = new ArrayList<TableChangeListener>();
+  private List<Feature> features                            = new ArrayList<Feature>();
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -175,6 +179,15 @@ public class TablePart extends AbstractTablePart
     this.i18n   = Application.getI18n();
     this.up     = SWTUtil.getImage("up.gif");
     this.down   = SWTUtil.getImage("down.gif");
+  }
+  
+  /**
+   * Fuegt ein Feature hinzu.
+   * @param feature das Feature.
+   */
+  public void addFeature(Feature feature)
+  {
+    this.features.add(feature);
   }
 
   /**
@@ -942,8 +955,10 @@ public class TablePart extends AbstractTablePart
     // wir wurden gezeichnet. Die temporaere Tabelle brauchen wir
     // nicht mehr
     this.temp.clear();
+    
+    this.featureEvent(Feature.Event.PAINT);
   }
-
+  
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getID()
    */
@@ -1126,8 +1141,17 @@ public class TablePart extends AbstractTablePart
   {
     if (!showSummary || summary == null || summary.isDisposed())
       return;
-    summary.setText(getSummary());
+    
+    // Machen wir verzoegert, weil das sonst bei Bulk-Updates unnoetig oft aufgerufen wird
+    delayedSummary.handleEvent(null);
   }
+  
+  private Listener delayedSummary = new DelayedListener(new Listener() {
+    public void handleEvent(Event event)
+    {
+      summary.setText(getSummary());
+    }
+  });
   
   /**
    * Liefert den anzuzeigenden Summen-Text.
@@ -1351,6 +1375,36 @@ public class TablePart extends AbstractTablePart
     else
       return "";
   }
+  
+  /**
+   * Loest ein Feature-Event aus.
+   * @param e das Event.
+   */
+  private void featureEvent(Feature.Event e)
+  {
+    if (this.features.size() == 0)
+      return;
+    
+    Context ctx = new Context();
+    ctx.control = this.table;
+    ctx.menu    = this.menu;
+    ctx.table   = this;
+    
+    for (Feature f:this.features)
+    {
+      if (f.onEvent(e))
+      {
+        try
+        {
+          f.handleEvent(e,ctx);
+        }
+        catch (Exception ex)
+        {
+          Logger.error("error while handling event " + e,ex);
+        }
+      }
+    }
+  }
 
 
   /**
@@ -1475,67 +1529,3 @@ public class TablePart extends AbstractTablePart
     }
   }
 }
-
-/*********************************************************************
- * $Log: TablePart.java,v $
- * Revision 1.117  2012/04/09 11:44:03  willuhn
- * @N Strings locale-spezifisch sortieren
- *
- * Revision 1.116  2011/11/14 21:58:44  willuhn
- * @N BUGZILLA 1145 - Selektion nach geaenderter Sortierung wiederherstellen
- *
- * Revision 1.115  2011/09/15 09:43:22  willuhn
- * *** empty log message ***
- *
- * Revision 1.114  2011-09-12 15:16:33  willuhn
- * *** empty log message ***
- *
- * Revision 1.113  2011-09-12 15:16:10  willuhn
- * *** empty log message ***
- *
- * Revision 1.112  2011-09-08 11:18:10  willuhn
- * @C setChecked-Aufruf ignorieren, wenn die Tabelle nicht als checkable markiert ist
- *
- * Revision 1.111  2011-07-26 11:49:01  willuhn
- * @C SelectionListener wurde doppelt ausgeloest, wenn die Tabelle checkable ist und eine Checkbox angeklickt wurde (einmal durch Selektion der Zeile und dann nochmal durch Aktivierung/Deaktivierung der Checkbox). Wenn eine Tabelle checkable ist, wird der SelectionListener jetzt nur noch beim Klick auf die Checkbox ausgeloest, nicht mehr mehr Selektieren der Zeile.
- * @N Column.setName zum Aendern des Spalten-Namens on-the-fly
- *
- * Revision 1.110  2011-07-18 12:20:55  willuhn
- * @N Komfortableres Inline-Editing - mit Support fuer RETURN+ESC
- *
- * Revision 1.109  2011-06-28 09:24:54  willuhn
- * @N BUGZILLA 574
- *
- * Revision 1.108  2011-05-04 09:26:23  willuhn
- * @N Doppelklick nur beachten, wenn die linke Maustaste verwendet wurde - das bisherige Verhalten konnte unter OS X nervig sein, wenn Linksklick, kurz gefolgt von einem Rechtsklick als Doppelklick interpretiert wurde
- *
- * Revision 1.107  2011-05-03 13:29:56  willuhn
- * @B das setFocus() ist noetig, weil die markierte Zeile nicht angezeigt wird, wenn sie keinen Focus hat
- *
- * Revision 1.106  2011-05-03 10:13:10  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.105  2011-05-02 10:47:16  willuhn
- * @N BUGZILLA 1033 - Patch von Jan
- *
- * Revision 1.104  2011-04-29 07:41:59  willuhn
- * @N BUGZILLA 781
- *
- * Revision 1.103  2011-04-26 16:15:49  willuhn
- * *** empty log message ***
- *
- * Revision 1.102  2011-04-26 16:13:57  willuhn
- * @B BUGZILLA 1025
- *
- * Revision 1.101  2011-04-26 12:20:24  willuhn
- * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.100  2011-04-26 12:09:17  willuhn
- * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.99  2011-04-26 12:01:42  willuhn
- * @D javadoc Fixes
- *
- * Revision 1.98  2011-03-17 09:49:17  willuhn
- * @N Disposed-Check
- **********************************************************************/

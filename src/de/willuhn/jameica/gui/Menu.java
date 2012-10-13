@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
@@ -117,28 +118,20 @@ public class Menu
     item.setData("item",element);
     item.setEnabled(element.isEnabled());
     
-      Image icon = element.getIcon();
-      if (icon != null)
-        item.setImage(icon);
+    Image icon = element.getIcon();
+    if (icon != null)
+      item.setImage(icon);
+    
     ////////////////////////////////////////////////////////////////////////////
     // Shortcut vorhanden?
-    String shortCut = element.getShortcut();
-    if (shortCut != null)
+    KeyStroke shortcut = SWTUtil.getKeyStroke(element.getShortcut());
+    if (shortcut != null)
     {
-      try {
-        KeyStroke stroke = KeyStroke.getInstance(shortCut);
-        if (stroke.isComplete())
-        {
-          item.setAccelerator(stroke.getModifierKeys() + stroke.getNaturalKey());
-          name += "\t" + stroke.format();
-        }
-      }
-      catch (Exception e)
-      {
-        Logger.error("error while creating menu element",e);
-      }
+      item.setAccelerator(shortcut.getModifierKeys() + shortcut.getNaturalKey());
+      name += "\t" + shortcut.format();
     }
     ////////////////////////////////////////////////////////////////////////////
+    
     item.setText(name);
 
 

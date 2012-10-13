@@ -27,6 +27,7 @@ public class ContextMenuItem
 	private String text       = null;
 	private Action action     = null;
 	private Image image       = null;
+	private String shortcut   = null;
 
 	/**
 	 * Menu-Item, welches als Separator verwendet werden kann.
@@ -151,6 +152,25 @@ public class ContextMenuItem
   {
     this.action = a;
   }
+  
+  /**
+   * Liefert eine optionale Tastenkombi fuer den Short-Cut.
+   * @return Tastenkombi.
+   */
+  public String getShortcut()
+  {
+    return this.shortcut;
+  }
+  
+  /**
+   * Speichert eine optionale Tastenkombi fuer den Short-Cut.
+   * @param shortcut
+   */
+  public void setShortcut(String shortcut)
+  {
+    this.shortcut = shortcut;
+  }
+
 
 
 	/**

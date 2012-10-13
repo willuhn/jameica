@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -322,94 +324,28 @@ public class SWTUtil {
     return text;
   }
 
+  /**
+   * Liefert das Shortcut-Objekt fuer die angegebene Tastenkombi.
+   * @param shortcut Tastenkombi - z.Bsp. "ALT+F".
+   * @return das Shortcut-Objekt oder NULL, wenn "shortcut" NULL war oder der Shortcut
+   * nicht geparst werden konnte. In letzterem Fall erscheint auch eine Warnung im Log.
+   */
+  public static KeyStroke getKeyStroke(String shortcut)
+  {
+    shortcut = StringUtils.trimToNull(shortcut);
+    if (shortcut == null)
+      return null;
 
+    try
+    {
+      KeyStroke stroke = KeyStroke.getInstance(shortcut);
+      return stroke.isComplete() ? stroke : null;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to parse shortcut " + shortcut,e);
+    }
+    
+    return null;
+  }
 }
-
-
-/**********************************************************************
- * $Log: SWTUtil.java,v $
- * Revision 1.27  2011/09/26 16:39:05  willuhn
- * @B Tolerieren, wenn die Grafik nicht geladen werden konnte - siehe Mail von Walter vom 26.09.2011
- *
- * Revision 1.26  2011-08-18 09:17:09  willuhn
- * @N BUGZILLA 286 - Testcode
- *
- * Revision 1.25  2011-05-30 10:17:11  willuhn
- * @N Funktion zum Umrechnen von mm in px
- *
- * Revision 1.24  2011-04-06 16:13:16  willuhn
- * @N BUGZILLA 631
- *
- * Revision 1.23  2010-07-27 11:54:43  willuhn
- * @N Fehlertoleranteres Laden von Bildern
- * @N Bilder koennen nun auch direkt im Filesystem liegen und koennen ueber den Pfad im Filesystem angegeben werden
- *
- * Revision 1.22  2009/11/03 01:19:33  willuhn
- * *** empty log message ***
- *
- * Revision 1.21  2008/11/13 18:43:21  willuhn
- * @B Children muessen nicht disposed werden, wenn das Parent schon disposed wurde
- *
- * Revision 1.20  2008/06/27 11:16:19  willuhn
- * @B Bug 604
- *
- * Revision 1.19  2007/11/13 00:45:18  willuhn
- * @N Classloader (privat/global) vom Plugin beeinflussbar (via "shared=true/false" in plugin.xml)
- *
- * Revision 1.18  2007/05/14 11:18:09  willuhn
- * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
- * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
- *
- * Revision 1.17  2006/04/20 08:49:41  web0
- * @C s/Childs/Children/
- *
- * Revision 1.16  2006/04/20 08:44:03  web0
- * @C s/Childs/Children/
- *
- * Revision 1.15  2005/08/15 13:15:32  web0
- * @C fillLayout removed
- *
- * Revision 1.14  2005/07/08 17:41:45  web0
- * *** empty log message ***
- *
- * Revision 1.13  2005/03/05 19:11:03  web0
- * *** empty log message ***
- *
- * Revision 1.12  2004/11/17 19:02:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2004/11/12 18:23:59  willuhn
- * *** empty log message ***
- *
- * Revision 1.10  2004/08/29 19:31:13  willuhn
- * *** empty log message ***
- *
- * Revision 1.9  2004/08/18 23:14:19  willuhn
- * @D Javadoc
- *
- * Revision 1.8  2004/07/21 23:54:54  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.7  2004/07/09 00:12:47  willuhn
- * @C Redesign
- *
- * Revision 1.6  2004/06/30 20:58:39  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2004/06/10 20:56:53  willuhn
- * @D javadoc comments fixed
- *
- * Revision 1.4  2004/05/27 23:38:25  willuhn
- * @B deadlock in swt event queue while startGUITimeout
- *
- * Revision 1.3  2004/05/26 23:23:23  willuhn
- * @N Timeout fuer Messages in Statusbars
- *
- * Revision 1.2  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.1  2004/04/29 23:05:54  willuhn
- * @N new snapin feature
- *
- **********************************************************************/

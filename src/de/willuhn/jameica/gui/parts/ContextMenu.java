@@ -14,7 +14,9 @@ package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -54,6 +56,16 @@ public class ContextMenu implements Part
 		if (item != null)
   		this.items.add(item);
 	}
+  
+  /**
+   * Liefert eine Liste aller Items.
+   * Die Items koennen vom Typ ContextMenuItem als auch vom Typ ContextMenu (bei Unter-Menus).
+   * @return Liste aller Items.
+   */
+  public List getItems()
+  {
+    return this.items;
+  }
   
   /**
    * Fuegt ein Sub-Menu hinzu.
@@ -155,6 +167,21 @@ public class ContextMenu implements Part
 			// Kein Separator und kein Text -> ignorieren wir
 			if (text == null || text.length() == 0)
 				continue;
+			
+			String shortcut = item.getShortcut();
+			if (shortcut != null)
+			{
+			  try
+			  {
+	        KeyStroke stroke = KeyStroke.getInstance(shortcut);
+	        if (stroke.isComplete())
+	          text += "\t" + stroke.format();
+			  }
+			  catch (Exception e)
+			  {
+			    Logger.error("unable to parse shortcut " + shortcut,e);
+			  }
+			}
 
 			final MenuItem mi = new MenuItem(this.menu, SWT.PUSH);
 			mi.setText(text);
