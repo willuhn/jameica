@@ -1149,7 +1149,8 @@ public class TablePart extends AbstractTablePart
   private Listener delayedSummary = new DelayedListener(new Listener() {
     public void handleEvent(Event event)
     {
-      summary.setText(getSummary());
+      if (summary != null && !summary.isDisposed())
+        summary.setText(getSummary());
     }
   });
   
