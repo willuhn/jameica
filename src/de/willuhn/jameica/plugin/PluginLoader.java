@@ -105,7 +105,33 @@ public final class PluginLoader
           Manifest first = cache.get(m.getName());
           if (first != null)
           {
-            Logger.error("found second plugin \"" + m.getName() + "\" in " + f + " (allready installed in " + first.getPluginDir() + ") skipping");
+            Logger.warn("found second plugin \"" + m.getName() + "\" in " + f + " (allready installed in " + first.getPluginDir() + ") ignoring the older one");
+            int compare = first.getVersion().compareTo(m.getVersion());
+            
+            // Mal schauen, welches von beiden neuer ist. Das nehmen wir dann.
+            String toDelete = null;
+            if (compare == 0)
+            {
+              // identische Versionsnumern. Wir warnen den User, dass er das zweite mal loeschen soll.
+              Logger.warn("have both the same version " + first.getVersion() + ", ignoring " + m.getPluginDir());
+              toDelete = m.getPluginDir();
+            }
+            else if (compare < 0)
+            {
+              Logger.warn(first.getPluginDir() + " (" + first.getVersion() + ") is newer than " + m.getPluginDir() + " (" + m.getVersion() + "), ignoring the older one");
+              toDelete = m.getPluginDir();
+            }
+            else
+            {
+              Logger.warn(m.getPluginDir() + " (" + m.getVersion() + ") is newer than " + first.getPluginDir() + " (" + first.getVersion() + "), ignoring the older one");
+              toDelete = first.getPluginDir();
+              
+              // wir ueberschreiben "first"
+              cache.put(m.getName(),m);
+              this.plugins.remove(first);
+              this.plugins.add(m);
+            }
+            Application.addWelcomeMessage(Application.getI18n().tr("Plugin doppelt installiert. Bitte lösche den Ordner {0}",toDelete));
             continue;
           }
           cache.put(m.getName(),m);
