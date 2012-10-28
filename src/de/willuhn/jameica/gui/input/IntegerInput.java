@@ -27,6 +27,16 @@ public class IntegerInput extends TextInput
 {
 
   /**
+   * ct.
+   * Parameterloser Konstruktor fuer ein Eingabefeld ohne Wert-Vorbelegung.
+   * BUGZILLA 1275
+   */
+  public IntegerInput()
+  {
+    super("");
+  }
+  
+  /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * @param value anzuzeigender Wert.
    */
