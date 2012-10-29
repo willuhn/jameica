@@ -31,6 +31,7 @@ import de.willuhn.jameica.gui.internal.parts.PluginListPart;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.SettingsChangedMessage;
+import de.willuhn.jameica.messaging.SettingsRestoredMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BootstrapSettings;
@@ -402,6 +403,7 @@ public class SettingsControl extends AbstractControl
       Application.getConfig().setProxyHost(null);
       Application.getConfig().setProxyPort(-1);
 
+      Application.getMessagingFactory().sendSyncMessage(new SettingsRestoredMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen zurückgesetzt."),StatusBarMessage.TYPE_SUCCESS));
 			new de.willuhn.jameica.gui.internal.action.Settings().handleAction(null);
   	}
