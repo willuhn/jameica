@@ -120,6 +120,13 @@ public class BackupVersionsList extends TablePart
     while (keys.hasMoreElements())
     {
       String pc = (String) keys.nextElement();
+      if (pc != null && pc.equals("jameica"))
+      {
+        // Das ist der Versionseintrag von Jameica selbst. Ignorieren wir.
+        // Das "if" koennten wir uns rein vom Programmablauf zwar auch
+        // sparen - es vermeidet aber die Warnmeldung im Log im folgenden "if"
+        continue;
+      }
       if (pc == null || !pc.endsWith(".version"))
       {
         Logger.warn("invalid plugin " + pc + " defined. backup: " + file.getFile().getAbsolutePath());
