@@ -58,6 +58,20 @@ public abstract class AbstractAppointment implements Appointment
   {
     return false;
   }
+  
+  /**
+   * Liefert den zeitlichen Offset für den Alarm. Standard-Wert ist 900 (15 Minuten vorher).
+   * Ueberschreibe die Methode, um andere Werte zu liefern.
+   * Hinweis: Die Methode waere natuerlich schoener im Interface "Appointment"
+   * aufgehoben. Dann waere aber die Rueckwaertskompatibilitaet zu anderen Plugins
+   * (wie JVerein) gebrochen. Sollte bei Gelegenheit aber mal noch verschoben
+   * werden. Am besten direkt nach einem koordinierten Release.
+   * @return das zeitliche Offset fuer den Alarm.
+   */
+  public int getAlarmTime()
+  {
+    return ALARMTIME_SECONDS;
+  }
 }
 
 

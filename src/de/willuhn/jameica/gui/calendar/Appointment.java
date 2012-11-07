@@ -23,6 +23,11 @@ import de.willuhn.util.ApplicationException;
 public interface Appointment
 {
   /**
+   * Default-Wert fuer die Alarm-Zeit.
+   */
+  public final static int ALARMTIME_SECONDS = 900;
+  
+  /**
    * Liefert das Datum des Termins.
    * @return das Datum des Termins.
    */
