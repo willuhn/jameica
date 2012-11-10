@@ -91,6 +91,28 @@ public class DateUtil
       }
     }
     
+    // [BUGZILLA 1281] Ist vermutlich ddmmyyyy
+    if (text.matches("^[0-9]{8}$"))
+    {
+      try
+      {
+        tag = Integer.parseInt(text.substring(0, 2));
+        monat = Integer.parseInt(text.substring(2));
+        int jahr = Integer.parseInt(text.substring(4,8));
+        checkDay(tag);
+        checkMonth(monat);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, tag);
+        cal.set(Calendar.MONTH, monat - 1);
+        cal.set(Calendar.YEAR, jahr);
+        return new DateFormatter(DEFAULT_FORMAT).format(cal.getTime());
+      }
+      catch (NumberFormatException e)
+      {
+        return text;
+      }
+    }
+    
     DateFormat df = DEFAULT_FORMAT;
     
     // dd.mm.yy
@@ -173,24 +195,3 @@ public class DateUtil
     return cal.getTime();
   }
 }
-
-
-/**********************************************************************
- * $Log: DateUtil.java,v $
- * Revision 1.3  2012/01/21 23:24:47  willuhn
- * @B BUGZILLA 1176
- *
- * Revision 1.2  2011-07-04 09:22:25  willuhn
- * @B Bei Datumseingaben mit Uhrzeit wurde die Uhrzeit abgeschnitten
- *
- * Revision 1.1  2011-01-20 17:13:24  willuhn
- * @C HBCIProperties#startOfDay und HBCIProperties#endOfDay nach Jameica in DateUtil verschoben
- *
- * Revision 1.2  2011-01-06 23:18:33  willuhn
- * @N Heiners Patch um auch zweistellige Jahres-Angaben in DateInput zu tolerieren. Wir "raten" hierbei das passende Jahrtausend nach Plausibilitaet
- *
- * Revision 1.1  2008-03-03 09:43:54  willuhn
- * @N DateUtil-Patch von Heiner
- * @N Weiterer Code fuer das Backup-System
- *
- **********************************************************************/
