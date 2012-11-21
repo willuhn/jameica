@@ -22,6 +22,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -100,7 +101,8 @@ public class View implements Part
 	    final Image logo = SWTUtil.getImage(Customizing.SETTINGS.getString("application.view.logo","panel.png"));
 	    final Rectangle imageSize = logo.getBounds();
 	    logoBg = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
-	    logoBg.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+	    RGB bg = Customizing.SETTINGS.getRGB("application.view.background",GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB());
+	    logoBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),bg));
 	    logoBg.setLayout(SWTUtil.createGrid(1,false));
 
 	    logoBg.addListener(SWT.Paint, new Listener()
