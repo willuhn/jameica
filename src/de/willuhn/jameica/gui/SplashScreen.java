@@ -46,6 +46,8 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class SplashScreen implements ProgressMonitor, Runnable
 {
+  private final static String SPLASH_DEFAULT = "/img/splash.png";
+  
   private String logo = null;
   
 	private Display display;
@@ -78,7 +80,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
       this.logo = randomSplash();
 
     if (this.logo == null)
-      this.logo = Customizing.SETTINGS.getString("application.splashscreen","/img/splash.png");
+      this.logo = Customizing.SETTINGS.getString("application.splashscreen",SPLASH_DEFAULT);
 
     this.disposeDisplay = disposeDisplay;
 		display = GUI.getDisplay();
@@ -158,6 +160,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
 		InputStream is = shell.getClass().getResourceAsStream(this.logo);
 		if (is == null)
 		{
+		  // Wir versuchen, den Splash als Bild direkt aus dem Filesystem zu laden.
       File f = new File(this.logo);
       if (f.exists() && f.isFile())
       {
@@ -167,10 +170,21 @@ public class SplashScreen implements ProgressMonitor, Runnable
         }
         catch (Exception e)
         {
-          // ignore
         }
       }
+      else
+      {
+        try
+        {
+          Logger.error("splashscreen file not found: " + f.getCanonicalPath());
+        }
+        catch (Exception e2) {/* useless */}
+      }
 		}
+		
+		// Fallback
+		if (is == null)
+	    is = shell.getClass().getResourceAsStream(SPLASH_DEFAULT);
     
 
     // Label erzeugen und Image drauf pappen
