@@ -17,6 +17,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -632,7 +633,7 @@ public class TreePart extends AbstractTablePart
 
     try
     {
-      List<TreeItem> selection = new ArrayList<TreeItem>();
+      List<TreeItem> selection = new LinkedList<TreeItem>();
       for (Object o:objects)
       {
         if (o == null)

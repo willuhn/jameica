@@ -1034,7 +1034,12 @@ public class TablePart extends AbstractTablePart
         try
         {
           if (BeanUtil.equals(objects[i],o))
+          {
             table.select(j);
+            // Zwar koennte das Objekt auch mehrmals in der Tabelle stehen,
+            // dann ist aber eigentlich was faul - daher machen wir das nicht
+            continue;
+          }
         }
         catch (RemoteException e)
         {
@@ -1042,6 +1047,9 @@ public class TablePart extends AbstractTablePart
         }
       }
     }
+    
+    // Das ist noetig, weil die markierten Zeilen nicht angezeigt werden,
+    // wenn sie keinen Fokus haben. Siehe commit vom 03.05.2011
     table.setFocus();
   }
 
