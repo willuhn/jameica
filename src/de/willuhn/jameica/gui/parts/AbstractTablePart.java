@@ -15,8 +15,8 @@ package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import org.eclipse.swt.widgets.Listener;
 
@@ -39,7 +39,7 @@ public abstract class AbstractTablePart implements Part
   protected boolean rememberColWidth       = false;
   protected boolean rememberOrder          = false;
   protected boolean rememberState          = false;
-  protected Vector columns                 = new Vector();
+  protected List<Column> columns           = new LinkedList<Column>();
   protected final static Settings settings = new Settings(AbstractTablePart.class);
 
   protected boolean multi                  = false; // Multiple Markierung

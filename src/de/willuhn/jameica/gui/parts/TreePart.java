@@ -177,7 +177,7 @@ public class TreePart extends AbstractTablePart
 
     for (int i=0;i<this.columns.size();++i)
     {
-      Column col = (Column) this.columns.get(i);
+      Column col = this.columns.get(i);
       sb.append(col.getColumnId());
     }
 
@@ -314,7 +314,7 @@ public class TreePart extends AbstractTablePart
 
       for (int i=0;i<this.columns.size();++i)
       {
-        Column col = (Column) this.columns.get(i);
+        Column col = this.columns.get(i);
         final TreeColumn tc = new TreeColumn(this.tree,SWT.LEFT);
         col.setColumn(tc);
         tc.setMoveable(true);
@@ -746,7 +746,7 @@ public class TreePart extends AbstractTablePart
       {
         for (int i=0;i<columns.size();++i)
         {
-          Column c = (Column) columns.get(i);
+          Column c = columns.get(i);
           Object value = BeanUtil.get(data,c.getColumnId());
           item.setText(i,c.getFormattedValue(value,data));
         }

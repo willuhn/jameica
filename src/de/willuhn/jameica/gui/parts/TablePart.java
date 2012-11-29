@@ -16,9 +16,8 @@ import java.rmi.RemoteException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -104,10 +103,10 @@ public class TablePart extends AbstractTablePart
 
   //////////////////////////////////////////////////////////
   // Sortierung
-  private Hashtable sortTable             = new Hashtable();
-  private Map<Object,String[]> textTable  = new HashMap<Object,String[]>();
-  private int sortedBy                    = -1; // Index der sortierten Spalte
-  private boolean direction               = true; // Ausrichtung
+  private Map<Integer,List<Item>> sortTable = new HashMap<Integer,List<Item>>();
+  private Map<Object,String[]> textTable    = new HashMap<Object,String[]>();
+  private int sortedBy                      = -1; // Index der sortierten Spalte
+  private boolean direction                 = true; // Ausrichtung
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -356,10 +355,10 @@ public class TablePart extends AbstractTablePart
           }
               
           // Muessen wir noch aus den Sortierungsspalten entfernen
-          Enumeration e = this.sortTable.elements();
-          while (e.hasMoreElements())
+          Iterator<List<Item>> it = this.sortTable.values().iterator();
+          while (it.hasNext())
           {
-            List l = (List) e.nextElement();
+            List<Item> l = it.next();
             l.remove(new Item(item,null));
           }
           table.remove(i);
@@ -405,6 +404,69 @@ public class TablePart extends AbstractTablePart
   public void addItem(final Object object, int index) throws RemoteException
   {
     addItem(object,index,true);
+  }
+  
+  /**
+   * Aktualisiert ein einzelnes Objekt in der Tabelle.
+   * @param oldVersion das alte Objekt.
+   * @param newVersion das neue Objekt, welches den Platz des vorherigen einnehmen soll.
+   * @throws RemoteException
+   */
+  public void updateItem(final Object oldVersion, final Object newVersion) throws RemoteException
+  {
+    if (this.table == null || this.table.isDisposed() || oldVersion == null || newVersion == null)
+      return;
+    
+    try
+    {
+      for (TableItem item:table.getItems())
+      {
+        Object current = item.getData();
+        if (BeanUtil.equals(current,oldVersion))
+        {
+          // 1) Neues Objekt in Item speichern
+          item.setData(newVersion);
+          
+          // 2) Anzuzeigende Strings fuer die Spalten erzeugen
+          String[] text = new String[this.columns.size()];
+
+          for (int i=0;i<this.columns.size();++i)
+          {
+            Column col   = this.columns.get(i);
+            List<Item> l = sortTable.get(new Integer(i));
+            int pos      = l.indexOf(new Item(oldVersion,null));
+            if (pos < 0)
+            {
+              Logger.warn("unable to find sort entry in table, skipping update");
+              return;
+            }
+            
+            Item di = l.get(pos);
+            di.data = newVersion;
+            di.update();
+
+            String display = col.getFormattedValue(di.value,di.data);
+
+            item.setText(i,display);
+            text[i] = display;
+          }
+          textTable.remove(oldVersion);
+          textTable.put(newVersion,text);
+
+
+          // Ganz zum Schluss schicken wir noch einen ggf. vorhandenen
+          // TableFormatter drueber
+          if (tableFormatter != null)
+            tableFormatter.format(item);
+
+          return;
+        }
+      }
+    }
+    catch (Exception e)
+    {
+      Logger.error("error updating item",e);
+    }
   }
 
   /**
@@ -455,7 +517,7 @@ public class TablePart extends AbstractTablePart
 
     for (int i=0;i<this.columns.size();++i)
     {
-      Column col     = (Column) this.columns.get(i);
+      Column col     = this.columns.get(i);
       Item di        = new Item(object,col);
 
       String display = col.getFormattedValue(di.value,di.data);
@@ -467,11 +529,11 @@ public class TablePart extends AbstractTablePart
       // Sortierung
       
       // Mal schauen, ob wir fuer die Spalte schon eine Sortierung haben
-      List l = (List) sortTable.get(new Integer(i));
+      List<Item> l = sortTable.get(new Integer(i));
       if (l == null)
       {
         // Ne, also erstellen wir eine
-        l = new LinkedList();
+        l = new LinkedList<Item>();
         sortTable.put(new Integer(i),l);
       }
 
@@ -562,7 +624,7 @@ public class TablePart extends AbstractTablePart
 
     for (int i=0;i<this.columns.size();++i)
     {
-      Column column = (Column) this.columns.get(i);
+      Column column = this.columns.get(i);
       final TableColumn col = new TableColumn(table, SWT.NONE);
       column.setColumn(col);
       col.setMoveable(true);
@@ -751,7 +813,7 @@ public class TablePart extends AbstractTablePart
             return;
 
           // Jetzt checken wir noch, ob die Spalte aenderbar ist
-          final Column col = (Column) columns.get(row);
+          final Column col = columns.get(row);
           if (!col.canChange())
             return;
 
@@ -989,7 +1051,7 @@ public class TablePart extends AbstractTablePart
 
     for (int i=0;i<this.columns.size();++i)
     {
-      Column col = (Column) this.columns.get(i);
+      Column col = this.columns.get(i);
       sb.append(col.getColumnId());
     }
 
@@ -1186,7 +1248,7 @@ public class TablePart extends AbstractTablePart
 
     for (int i=0;i<this.columns.size();++i)
     {
-      Column col = (Column) this.columns.get(i);
+      Column col = this.columns.get(i);
       if (col == null)
         return;
       String id = col.getColumnId();
@@ -1279,7 +1341,7 @@ public class TablePart extends AbstractTablePart
     if (table == null || table.isDisposed())
       return;
 
-    List l = (List) sortTable.get(new Integer(index));
+    List<Item> l = sortTable.get(new Integer(index));
     if (l == null)
       return; // nix zu sortieren.
 
@@ -1347,7 +1409,7 @@ public class TablePart extends AbstractTablePart
   {
     try
     {
-      Column c = (Column) this.columns.get(this.sortedBy);
+      Column c = this.columns.get(this.sortedBy);
       return c.getColumnId();
     }
     catch (Exception e)
@@ -1434,10 +1496,17 @@ public class TablePart extends AbstractTablePart
         return;
 
       this.column = col;
-
+      this.update();
+    }
+    
+    /**
+     * Aktualisiert value und sortValue.
+     */
+    private void update()
+    {
       try
       {
-        this.value = BeanUtil.get(data,col.getColumnId());
+        this.value = BeanUtil.get(this.data,this.column.getColumnId());
         if (this.value instanceof Comparable)
           this.sortValue = (Comparable) this.value;
         else
