@@ -2,7 +2,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>jameica-win64.jar</jar>
-  <outfile>/work/willuhn/eclipse/jameica/build/jameica-win64.exe</outfile>
+  <outfile>/work/willuhn/git/jameica/build/jameica-win64.exe</outfile>
   <errTitle>Bitte installieren Sie Java.</errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -12,7 +12,7 @@
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>/work/willuhn/eclipse/hibiscus/icons/hibiscus.ico</icon>
+  <icon>/work/willuhn/git/hibiscus/icons/hibiscus.ico</icon>
   <jre>
     <path></path>
     <minVersion>1.6.0</minVersion>
@@ -21,12 +21,12 @@
     <opt>-Xmx256m</opt>
   </jre>
   <versionInfo>
-    <fileVersion>2.2.0.0</fileVersion>
-    <txtFileVersion>2.2.0</txtFileVersion>
+    <fileVersion>2.4.0.0</fileVersion>
+    <txtFileVersion>2.4.0</txtFileVersion>
     <fileDescription>Jameica</fileDescription>
     <copyright>willuhn - software &amp; services</copyright>
-    <productVersion>2.2.0.0</productVersion>
-    <txtProductVersion>2.2.0</txtProductVersion>
+    <productVersion>2.4.0.0</productVersion>
+    <txtProductVersion>2.4.0</txtProductVersion>
     <productName>Jameica</productName>
     <companyName>willuhn - software &amp; services</companyName>
     <internalName>jameica-win64</internalName>
