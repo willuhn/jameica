@@ -57,6 +57,7 @@ public class PopupMessageConsumer implements MessageConsumer
         public void run()
         {
           Popup popup = new Popup(title,text);
+          popup.setTimeout(10);
           popup.open();
         }
       });

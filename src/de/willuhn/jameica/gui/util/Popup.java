@@ -36,11 +36,15 @@ import de.willuhn.logging.Logger;
  */
 public class Popup
 {
-  private final static int ALIGN_DEFAULT = SWT.BOTTOM | SWT.RIGHT; 
+  private final static int ALIGN_DEFAULT = SWT.BOTTOM | SWT.RIGHT;
+  private final static int ALPHA = 210;
+  
+  private Shell shell    = null;
   private String title   = null;
   private String text    = null;
   private Point location = null;
   private int align      = ALIGN_DEFAULT;
+  private int timeout    = -1;
   
   /**
    * ct
@@ -91,45 +95,49 @@ public class Popup
   }
 
   /**
+   * Legt ein Timeout in Sekunden fast, nachdem das Popup automatisch
+   * ausgeblendet werden soll.
+   * @param timeout Timeout in Sekunden.
+   */
+  public void setTimeout(int timeout)
+  {
+    this.timeout = timeout;
+  }
+  
+  /**
    * Oeffnet den Tooltip.
    */
   public void open()
   {
+    // Schliessen, wenn schon eines offen ist.
+    if (this.shell != null)
+      this.close();
+    
     Display display = GUI.getDisplay();
     
-    final Shell shell = new Shell(GUI.getShell(), SWT.ON_TOP | SWT.TOOL);
-    shell.setAlpha(210);
-    shell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+    this.shell = new Shell(GUI.getShell(), SWT.ON_TOP | SWT.TOOL);
+    this.shell.setAlpha(ALPHA);
+    this.shell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
   
     GridLayout gl = new GridLayout(2,false);
     gl.horizontalSpacing = 5;
     gl.verticalSpacing   = 5;
-    shell.setLayout(gl);
+    this.shell.setLayout(gl);
     
-    Composite comp = new Composite(shell,SWT.NONE);
+    Composite comp = new Composite(this.shell,SWT.NONE);
     comp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
     comp.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
     comp.setBackgroundMode(SWT.INHERIT_FORCE);
     paint(comp);
   
-    Button ok = new Button(shell,SWT.BORDER);
+    Button ok = new Button(this.shell,SWT.BORDER);
     ok.setLayoutData(new GridData(GridData.END));
     ok.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
     ok.setText("  OK  ");
     ok.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e)
       {
-        try
-        {
-          SWTUtil.disposeChildren(shell);
-          shell.close();
-          if (!shell.isDisposed())
-            shell.dispose();
-        }
-        catch (Exception e2)
-        {
-          Logger.error("error while disposing popup",e2);
-        }
+        close();
       }
     });
 
@@ -141,7 +149,7 @@ public class Popup
       this.align = SWT.RIGHT | SWT.BOTTOM;
     }
 
-    final Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+    final Point size = this.shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
     // Abhaengig von der Ausrichtung muessen wir die Groesse abziehen oder dazurechnen
     if ((this.align & SWT.RIGHT) != 0)
       this.location.x -= size.x;
@@ -149,8 +157,44 @@ public class Popup
     if ((this.align & SWT.BOTTOM) != 0)
       this.location.y -= size.y;
 
-    shell.setBounds(this.location.x,this.location.y,size.x,size.y);
-    shell.setVisible(true);
+    this.shell.setBounds(this.location.x,this.location.y,size.x,size.y);
+    this.shell.setVisible(true);
+    
+    if (this.timeout > 0)
+    {
+      display.timerExec(this.timeout * 1000, new Runnable()
+      {
+        public void run()
+        {
+          close();
+        }
+      });
+    }
+  }
+  
+  /**
+   * Schliesst das Popup.
+   * Muss normalerweise nicht manuell aufgerufen werden, weil
+   * das entweder der User durch Klick auf "OK" macht oder das
+   * Timeout (insofern eines definiert ist). Mit dieser Funktion
+   * hier kann es jedoch programmatisch geschlossen werden.
+   */
+  public void close()
+  {
+    try
+    {
+      if (this.shell == null || this.shell.isDisposed())
+        return;
+      
+      SWTUtil.disposeChildren(this.shell);
+      this.shell.close();
+      if (!this.shell.isDisposed())
+        this.shell.dispose();
+    }
+    catch (Exception e2)
+    {
+      Logger.error("error while disposing popup",e2);
+    }
   }
   
   /**
@@ -178,23 +222,3 @@ public class Popup
     label.setText(text == null ? "" : text);
   }
 }
-
-
-/*********************************************************************
- * $Log: Popup.java,v $
- * Revision 1.5  2011/01/14 17:33:39  willuhn
- * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
- *
- * Revision 1.4  2010/04/13 12:17:03  willuhn
- * @N Alpha-Blending in Splashscreen und Popup-Messages - seit SWT 3.4 moeglich
- *
- * Revision 1.3  2009/03/11 23:21:44  willuhn
- * @B falsche Parameter-Uebergabe in Konstruktor
- *
- * Revision 1.2  2008/12/17 22:26:49  willuhn
- * @R t o d o  tag entfernt
- *
- * Revision 1.1  2008/07/18 13:01:08  willuhn
- * @N Popup
- *
- **********************************************************************/
