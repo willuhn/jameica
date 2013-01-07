@@ -83,7 +83,7 @@ public class SearchResultPart extends TreePart
   private static GenericIterator init(List<SearchResult> searchResult) throws RemoteException, ApplicationException
   {
     // Wir muessen das Suchergebnis hier als Baum aufbereiten
-    HashMap plugins = new HashMap();
+    HashMap<de.willuhn.jameica.plugin.Plugin, Plugin> plugins = new HashMap<de.willuhn.jameica.plugin.Plugin, Plugin>();
     for (int i=0;i<searchResult.size();++i)
     {
       SearchResult result = searchResult.get(i);
@@ -100,7 +100,7 @@ public class SearchResultPart extends TreePart
     }
 
     // Wir uebernehmen nur die Plugins, die Ergebnisse geliefert haben
-    Iterator result = plugins.values().iterator();
+    Iterator<Plugin> result = plugins.values().iterator();
     List<Plugin> al = new ArrayList<Plugin>();
     while (result.hasNext())
     {
@@ -175,7 +175,7 @@ public class SearchResultPart extends TreePart
   private static class Plugin implements GenericObjectNode
   {
     private String name = null;
-    private ArrayList providers = new ArrayList();
+    private ArrayList<Provider> providers = new ArrayList<Provider>();
     
     /**
      * ct.

@@ -185,7 +185,7 @@ public class SearchInput extends AbstractInput
     try
     {
       // Liste von Strings fuer die Anzeige in der Popup-Box.
-      List items  = new ArrayList();
+      List<String> items  = new ArrayList<String>();
       List values = new ArrayList();
       
       for (Object object:list)

@@ -85,7 +85,7 @@ public class GUI implements ApplicationController
     private FormTextPart help            = null;
     private AbstractView currentView     = null;
     
-    private Stack history                = new Stack();
+    private Stack<HistoryEntry> history  = new Stack<HistoryEntry>();
     private boolean skipHistory          = false;
     private boolean stop                 = false;
 
@@ -258,7 +258,7 @@ public class GUI implements ApplicationController
 
       ////////////////////////////////////////////////////////////////////////
       // Fill menu + navigation
-      List list = Application.getPluginLoader().getInstalledManifests();
+      List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
       for (int i=0;i<list.size();++i)
       {
         Manifest mf = (Manifest) list.get(i);
@@ -399,7 +399,7 @@ public class GUI implements ApplicationController
       Logger.debug("unable to start previous view. you are allready at the first page in this session ;)");
       return;
     }
-    HistoryEntry entry = (HistoryEntry) gui.history.pop();
+    HistoryEntry entry = gui.history.pop();
     if (entry == null) return;
     gui.skipHistory = true;
     startView(entry.view.getClass(), entry.view.getCurrentObject());

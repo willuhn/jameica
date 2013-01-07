@@ -111,7 +111,7 @@ public abstract class AbstractDialog<T>
 	
   protected I18N i18n = Application.getI18n();
 
-  private List<Listener> listeners = new ArrayList();
+  private List<Listener> listeners = new ArrayList<Listener>();
 
   private int pos = POSITION_CENTER;
   private int height = SWT.DEFAULT;

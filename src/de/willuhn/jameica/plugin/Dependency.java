@@ -84,7 +84,7 @@ public class Dependency implements Serializable
     if (!this.isRequired())
       return true;
     
-    List all = Application.getPluginLoader().getManifests();
+    List<Manifest> all = Application.getPluginLoader().getManifests();
     for (int i=0;i<all.size();++i)
     {
       Manifest mf = (Manifest) all.get(i);

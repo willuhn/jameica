@@ -56,7 +56,7 @@ public class LogList extends TablePart
   private final static int L_WARN  = Level.WARN.getValue();
   private final static int L_ERR   = Level.ERROR.getValue();
 
-  private static LinkedList last = new LinkedList();
+  private static LinkedList<LogObject> last = new LinkedList<LogObject>();
   private LiveTarget target = null;
 
   /**

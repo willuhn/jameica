@@ -84,7 +84,7 @@ public class Color {
 	private RGB defaultValue;
 	private static Settings settings = new Settings(Color.class);
   
-  private static HashMap colorCache = new HashMap();
+  private static HashMap<String, org.eclipse.swt.graphics.Color> colorCache = new HashMap<String, org.eclipse.swt.graphics.Color>();
   
   /**
 	 * ct.

@@ -31,7 +31,7 @@ import de.willuhn.logging.Logger;
  */
 public class SearchService implements Bootable
 {
-  private ArrayList providers = null;
+  private ArrayList<SearchProvider> providers = null;
   private static Settings settings = new Settings(SearchService.class); 
 
   /**
@@ -47,7 +47,7 @@ public class SearchService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-    this.providers = new ArrayList();
+    this.providers = new ArrayList<SearchProvider>();
     
     try
     {

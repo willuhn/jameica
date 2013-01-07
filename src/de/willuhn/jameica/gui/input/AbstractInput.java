@@ -52,7 +52,7 @@ public abstract class AbstractInput implements Input
   private Label commentLabel = null;
 
   private Control control = null;
-	private ArrayList listeners = new ArrayList();
+	private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
   private String validChars = null;
   private String invalidChars = null;

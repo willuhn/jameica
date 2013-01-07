@@ -60,7 +60,7 @@ public final class Wallet
 {
 
 	private Class clazz 	       = null;
-	private Hashtable	serialized = new Hashtable();
+	private Hashtable<String, Serializable>	serialized = new Hashtable<String, Serializable>();
 	private Engine engine        = new RSAEngine();
   
   /**
@@ -138,7 +138,7 @@ public final class Wallet
       return null;
     }
     Logger.debug("removing key " + alias);
-    Serializable s = (Serializable) this.serialized.remove(alias);
+    Serializable s = this.serialized.remove(alias);
     write();
     return s;
   }
@@ -158,11 +158,11 @@ public final class Wallet
 		}
 		else
 		{
-	    Enumeration e = this.serialized.keys();
+	    Enumeration<String> e = this.serialized.keys();
 	    String s = null;
 	    while (e.hasMoreElements())
 	    {
-	      s = (String) e.nextElement();
+	      s = e.nextElement();
 	      if (s != null && s.startsWith(aliasPrefix))
 	      {
 	        Logger.debug("removing key " + s);
@@ -183,9 +183,9 @@ public final class Wallet
    */
   public synchronized String[] getAll(String aliasPrefix) throws Exception
   {
-    ArrayList keys = new ArrayList();
+    ArrayList<String> keys = new ArrayList<String>();
 
-    Enumeration e = this.serialized.keys();
+    Enumeration<String> e = this.serialized.keys();
     String s = null;
     while (e.hasMoreElements())
     {
@@ -205,7 +205,7 @@ public final class Wallet
    * Liefert eine Liste aller Aliases in diesem Wallet.
    * @return Liste der Aliases.
    */
-  public Enumeration getKeys()
+  public Enumeration<String> getKeys()
   {
     return this.serialized.keys();
   }
@@ -250,7 +250,7 @@ public final class Wallet
     if (!f.exists())
     {
       // Wallet existiert noch nicht. Dann erstellen wir ein neues
-      this.serialized = new Hashtable();
+      this.serialized = new Hashtable<String, Serializable>();
       return;
     }
 

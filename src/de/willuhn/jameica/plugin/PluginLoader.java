@@ -421,7 +421,7 @@ public final class PluginLoader
    */
   public List<Manifest> getInstalledManifests()
   {
-    List all = getManifests();
+    List<Manifest> all = getManifests();
     List<Manifest> installed = new ArrayList<Manifest>();
     for (int i = 0; i < all.size(); ++i)
     {
@@ -557,7 +557,7 @@ public final class PluginLoader
       // diese URL in einem der Basis-Verzeichnis der Plugins befindet
       File f = new File(url.toURI());
       String test = f.getCanonicalPath(); // Bereinigt den Pfad
-      List manifests = getManifests();
+      List<Manifest> manifests = getManifests();
       for (int i=0;i<manifests.size();++i)
       {
         Manifest mf = (Manifest) manifests.get(i);

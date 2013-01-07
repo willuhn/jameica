@@ -62,7 +62,7 @@ public class Principal
   private java.security.Principal p = null;
 
   // Hier drin speichern wir die Attribute.
-  private HashMap attributes = new HashMap();
+  private HashMap<String, String> attributes = new HashMap<String, String>();
 
   /**
    * ct.
