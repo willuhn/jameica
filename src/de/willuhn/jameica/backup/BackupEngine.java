@@ -65,7 +65,7 @@ public class BackupEngine
 
     // Nach Name sortieren
     Arrays.sort(found);
-    ArrayList backups = new ArrayList();
+    ArrayList<BackupFile> backups = new ArrayList<BackupFile>();
     for (int i=0;i<found.length;++i)
     {
       try
@@ -273,7 +273,7 @@ public class BackupEngine
       if (backup.exists())
         throw new ApplicationException(Application.getI18n().tr("Backup-Datei {0} existiert bereits",backup.getAbsolutePath()));
 
-      ArrayList content = new ArrayList();
+      ArrayList<File> content = new ArrayList<File>();
       monitor.setStatusText("creating backup " + backup.getAbsolutePath());
       zip = new ZipCreator(new BufferedOutputStream(new FileOutputStream(backup)));
       zip.setMonitor(monitor);

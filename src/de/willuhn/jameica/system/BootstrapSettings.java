@@ -72,7 +72,7 @@ public class BootstrapSettings
    */
   public static List<String> getHistory()
   {
-    List<String> result = new ArrayList();
+    List<String> result = new ArrayList<String>();
     result.addAll(Arrays.asList(getProperties().getList("history",new String[0])));
     return result;
   }

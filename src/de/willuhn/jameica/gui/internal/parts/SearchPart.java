@@ -35,6 +35,7 @@ import de.willuhn.jameica.gui.View;
 import de.willuhn.jameica.gui.internal.dialogs.SearchOptionsDialog;
 import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.search.SearchResult;
 import de.willuhn.jameica.services.SearchService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
@@ -174,7 +175,7 @@ public class SearchPart implements Part
       }
 
       SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
-      List result = service.search(text);
+      List<SearchResult> result = service.search(text);
 
       SearchResultPart part = new SearchResultPart(result);
       Panel panel = new Panel(Application.getI18n().tr("Suchergebnis"), part, false);

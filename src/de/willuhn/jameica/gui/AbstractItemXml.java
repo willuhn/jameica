@@ -35,7 +35,7 @@ public abstract class AbstractItemXml implements Item
   protected Item parent;
   protected IXMLElement path;
   protected I18N i18n = Application.getI18n();
-  protected ArrayList childs = new ArrayList();
+  protected ArrayList<Item> childs = new ArrayList<Item>();
 
 	private Action action = null;
   private boolean enabled = true;

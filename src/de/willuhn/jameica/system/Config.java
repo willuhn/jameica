@@ -408,7 +408,7 @@ public final class Config
     
     boolean found = false;
     
-    ArrayList l = new ArrayList();
+    ArrayList<File> l = new ArrayList<File>();
 
     String[] s = settings.getList("jameica.plugin.dir",null);
     if (s != null && s.length > 0)

@@ -46,7 +46,7 @@ public class Font {
 		}
 	}
   
-  private static HashMap fontCache = new HashMap();
+  private static HashMap<String, org.eclipse.swt.graphics.Font> fontCache = new HashMap<String, org.eclipse.swt.graphics.Font>();
 
 	/**
    * Schrift fuer Ueberschriften erster Ordnung.

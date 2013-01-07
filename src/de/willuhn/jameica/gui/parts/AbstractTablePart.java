@@ -45,7 +45,7 @@ public abstract class AbstractTablePart implements Part
   protected boolean multi                  = false; // Multiple Markierung
   protected boolean checkable              = false;
   
-  protected List<Listener> selectionListeners = new ArrayList();
+  protected List<Listener> selectionListeners = new ArrayList<Listener>();
   protected Action action                  = null;
 
   /**

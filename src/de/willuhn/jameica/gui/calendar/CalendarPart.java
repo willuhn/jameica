@@ -247,7 +247,7 @@ public class CalendarPart implements Part
           List<Appointment> current = dates.get(d);
           if (current == null)
           {
-            current = new LinkedList();
+            current = new LinkedList<Appointment>();
             dates.put(d,current);
           }
           current.add(a);

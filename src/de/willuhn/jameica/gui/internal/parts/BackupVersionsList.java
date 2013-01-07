@@ -78,10 +78,10 @@ public class BackupVersionsList extends TablePart
       }
     });
     
-    List data = init(backup);
+    List<Plugin> data = init(backup);
     for (int i=0;i<data.size();++i)
     {
-      Plugin p = (Plugin) data.get(i);
+      Plugin p = data.get(i);
       this.warning |= (p.versionMissmatch || p.noBackup);
       this.addItem(p);
     }
@@ -101,22 +101,22 @@ public class BackupVersionsList extends TablePart
    * @param file
    * @return Liste der Backup-Files.
    */
-  private List init(BackupFile file)
+  private List<Plugin> init(BackupFile file)
   {
     // Wir suchen auch noch den Plugins, die derzeit installiert
     // aber nicht im Backup enthalten sind. Deren Daten wuerden
     // nach dem Restore verloren gehen
-    List l = Application.getPluginLoader().getInstalledManifests();
-    Hashtable installed = new Hashtable();
+    List<Manifest> l = Application.getPluginLoader().getInstalledManifests();
+    Hashtable<String,Manifest> installed = new Hashtable<String, Manifest>();
     for (int i=0;i<l.size();++i)
     {
-      Manifest mf = (Manifest) l.get(i);
+      Manifest mf = l.get(i);
       installed.put(mf.getPluginClass(),mf);
     }
     
     Properties props = file.getProperties();
     Enumeration keys = props.keys();
-    ArrayList list = new ArrayList();
+    ArrayList<Plugin> list = new ArrayList<Plugin>();
     while (keys.hasMoreElements())
     {
       String pc = (String) keys.nextElement();
@@ -148,7 +148,7 @@ public class BackupVersionsList extends TablePart
     // Jetzt checken wir, ob in der "installed"-Liste noch
     // was drin steht. Das sind die, zu denen kein Backup
     // vorliegt
-    Enumeration missing = installed.keys();
+    Enumeration<String> missing = installed.keys();
     while (missing.hasMoreElements())
     {
       String pc = (String) missing.nextElement();

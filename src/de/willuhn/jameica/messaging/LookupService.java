@@ -28,7 +28,7 @@ import de.willuhn.net.MulticastClient;
  */
 public class LookupService implements MessageConsumer
 {
-  private static Hashtable lookup = new Hashtable();
+  private static Hashtable<String,String> lookup = new Hashtable<String, String>();
   private static Client client    = null;
   
   /**

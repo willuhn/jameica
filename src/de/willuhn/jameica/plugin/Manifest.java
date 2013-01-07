@@ -517,7 +517,7 @@ public class Manifest implements Comparable
       toCheck.add(d.getName());
     }
     
-    List all = Application.getPluginLoader().getManifests();
+    List<Manifest> all = Application.getPluginLoader().getManifests();
     for (int i=0;i<all.size();++i)
     {
       Manifest mf = (Manifest) all.get(i);

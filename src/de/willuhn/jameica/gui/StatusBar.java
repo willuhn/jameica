@@ -37,7 +37,7 @@ import de.willuhn.jameica.system.Application;
 public class StatusBar implements Part
 {
 
-  private ArrayList items = new ArrayList();
+  private ArrayList<StatusBarItem> items = new ArrayList<StatusBarItem>();
   
   private Composite status;
 

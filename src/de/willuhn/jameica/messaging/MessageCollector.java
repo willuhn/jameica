@@ -23,7 +23,7 @@ import de.willuhn.util.Queue;
  */
 public class MessageCollector implements MessageConsumer
 {
-  private List types = new ArrayList();
+  private List<Class> types = new ArrayList<Class>();
   
   // Wir merken uns nur die letzten 1000 Nachrichten
   private Queue messages = new Queue(1000);

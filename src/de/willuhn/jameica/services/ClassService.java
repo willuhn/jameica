@@ -130,7 +130,7 @@ public class ClassService implements Bootable
       if (deps != null && deps.length > 0)
       {
         Logger.info("  adding depending classloaders");
-        List plugins = Application.getPluginLoader().getInstalledManifests();
+        List<Manifest> plugins = Application.getPluginLoader().getInstalledManifests();
         for (int i=0;i<plugins.size();++i)
         {
           Manifest mf = (Manifest) plugins.get(i);
@@ -248,7 +248,7 @@ public class ClassService implements Bootable
         }
 
         // So, jetzt iterieren wir ueber alle Files in dem Jar
-        Enumeration jarEntries = jar.entries();
+        Enumeration<JarEntry> jarEntries = jar.entries();
         JarEntry entry = null;
   
         while (jarEntries.hasMoreElements())
@@ -256,7 +256,7 @@ public class ClassService implements Bootable
           if (++count % 75 == 0)
             Application.getCallback().getStartupMonitor().addPercentComplete(1);
           
-          entry = (JarEntry) jarEntries.nextElement();
+          entry = jarEntries.nextElement();
           String entryName = entry.getName();
 
           int idxClass = entryName.indexOf(".class");

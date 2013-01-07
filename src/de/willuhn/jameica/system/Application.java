@@ -59,7 +59,7 @@ public final class Application {
   private BootLoader          loader;
 
   private I18N                i18n;
-  private ArrayList           welcomeMessages = new ArrayList();
+  private ArrayList<String>   welcomeMessages = new ArrayList<String>();
   private Date                started = new Date();
 
   private ApplicationController controller;

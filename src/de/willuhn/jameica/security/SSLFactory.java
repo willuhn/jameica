@@ -42,6 +42,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
+import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.X509Extensions;
 import org.bouncycastle.asn1.x509.X509Name;
@@ -145,7 +146,7 @@ public class SSLFactory
     String hostname = Application.getCallback().getHostname();
     Logger.info("  using hostname: " + hostname);
     
-		Hashtable attributes = new Hashtable();
+		Hashtable<DERObjectIdentifier,String> attributes = new Hashtable<DERObjectIdentifier, String>();
 		attributes.put(X509Name.CN,hostname);
     attributes.put(X509Name.O,"Jameica Certificate");
 
@@ -336,8 +337,8 @@ public class SSLFactory
    */
   public synchronized X509Certificate[] getTrustedCertificates() throws Exception
   {
-    ArrayList list = new ArrayList();
-    Enumeration e = getKeyStore().aliases();
+    ArrayList<java.security.cert.Certificate> list = new ArrayList<java.security.cert.Certificate>();
+    Enumeration<String> e = getKeyStore().aliases();
     while (e.hasMoreElements())
     {
       String name = (String)e.nextElement();
@@ -386,7 +387,7 @@ public class SSLFactory
     if (certs == null || certs.length == 0)
       return new X509Certificate[0];
 
-    ArrayList list = new ArrayList();
+    ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
     for (int i=0;i<certs.length;++i)
     {
       InputStream is = null;
@@ -477,7 +478,7 @@ public class SSLFactory
     Logger.warn("removing certificate " + cert.getSubjectDN().getName() + " from keystore");
 
     Logger.info("searching for alias name");
-    Enumeration e = getKeyStore().aliases();
+    Enumeration<String> e = getKeyStore().aliases();
     while (e.hasMoreElements())
     {
       String alias = (String) e.nextElement();

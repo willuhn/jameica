@@ -47,7 +47,7 @@ public abstract class ButtonInput extends AbstractInput
 	private Button button;
 	private String buttonText;
 	private Image  buttonImage;
-	private ArrayList buttonListeners = new ArrayList();
+	private ArrayList<Listener> buttonListeners = new ArrayList<Listener>();
 	private boolean focus = false;
 
   /**
