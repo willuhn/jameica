@@ -180,7 +180,6 @@ public class PluginDetailPart implements Part
         Application.getPluginLoader().canUnInstall(this.manifest);
       }
       catch (ApplicationException ae) {
-        update.setEnabled(false);
         delete.setEnabled(false);
       }
       
