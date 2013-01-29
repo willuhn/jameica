@@ -81,6 +81,10 @@
       <arg line="tag -m ${tag} ${tag}" />
     </exec>
 
+    <exec executable="git" failonerror="true" dir="${basedir}">
+      <arg line="push origin ${tag}" />
+    </exec>
+
   </target>
 
 
