@@ -100,7 +100,8 @@ public class PluginDetailPart implements Part
     
     // Rechte Spalte mit den Eigenschaften
     {
-      Throwable error = Application.getPluginLoader().getInitError(manifest);
+      // Haben wir einen Init-Error bei dem Plugin?
+      Throwable error = Application.getPluginLoader().getInitErrors().get(manifest);
       
       // Name
       {

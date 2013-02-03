@@ -35,6 +35,7 @@ import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.PluginMessage.Event;
+import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Platform;
 import de.willuhn.util.I18N;
@@ -67,7 +68,9 @@ public class FirstStart extends AbstractBox
    */
   public boolean isEnabled()
   {
-    return Application.getPluginLoader().getInstalledPlugins().size() == 0;
+    // Nur anzeigen, wenn wirklich noch keine Plugins vorhanden sind.
+    PluginLoader loader = Application.getPluginLoader();
+    return loader.getInstalledPlugins().size() == 0 && loader.getInitErrors().size() == 0;
   }
 
   /**

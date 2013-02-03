@@ -216,7 +216,11 @@ public final class PluginLoader
           t = new ApplicationException(Application.getI18n().tr("Inkompatibel mit aktueller Jameica-Version"),t);
         
         this.initErrors.put(mf,t);
-        if (!(t instanceof OperationCanceledException)) // nur anzeigen, wenn es kein Abbruch durch das Plugin selbst war
+        
+        // nur anzeigen, wenn es kein Abbruch durch das Plugin selbst war und wenn wir
+        // nicht im GUI-Mode sind. Denn in dem uebernimmt die Box "PluginErrors" die Anzeige
+        // der fehlerhaften Plugins via initErrors
+        if (!(t instanceof OperationCanceledException) && !Application.inStandaloneMode() && !Application.inClientMode())
           Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",name, t.getMessage()));
       }
     }
@@ -803,13 +807,12 @@ public final class PluginLoader
   }
   
   /**
-   * Liefert den ggf beim Laden/Initialisieren des Plugins aufgetretenen Fehler.
-   * @param manifest das Manifest, fuer das 
-   * @return der aufgetretene Fehler oder NULL, wenn das Plugin fehlerfrei geladen und initialisiert werden konnte.
+   * Liefert die ggf. beim Laden/Initialisieren des Plugins aufgetretenen Fehler.
+   * @return die aufgetretenen Fehler.
    */
-  public Throwable getInitError(Manifest manifest)
+  public Map<Manifest,Throwable> getInitErrors()
   {
-    return this.initErrors.get(manifest);
+    return this.initErrors;
   }
   
   /**
