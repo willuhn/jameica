@@ -18,7 +18,7 @@
     <minVersion>1.6.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <opt>-Xmx256m</opt>
+    <opt>-Xmx256m -Djava.net.preferIPv4Stack=true</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.4.0.0</fileVersion>
