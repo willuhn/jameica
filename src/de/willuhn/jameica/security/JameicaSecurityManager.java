@@ -81,7 +81,7 @@ public class JameicaSecurityManager extends SecurityManager
    * Interne Pruef-Funktion fuer die Schreibzugriffe.
    * @param path zu pruefender Pfad.
    */
-  private synchronized void checkFile(String path)
+  private void checkFile(String path)
   {
     if (path == null)
       return;

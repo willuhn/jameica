@@ -78,6 +78,25 @@ public class PluginSourceSystem extends AbstractPluginSource
        */
       public Boolean run()
       {
+        if (!dir.exists())
+        {
+          Logger.warn("system plugin dir " + dir + " does not exist, try to create");
+          File parent = dir.getParentFile();
+          if (!parent.canWrite())
+          {
+            Logger.warn("unable to create - no write permissions in " + parent);
+            return false;
+          }
+          
+          if (!dir.mkdir())
+          {
+            Logger.warn("unable to create dir " + dir);
+            return false;
+          }
+          
+          Logger.info("created dir " + dir);
+          return true;
+        }
         return dir.canWrite();
       }
       /**
