@@ -36,7 +36,7 @@ public class SysinfoService implements Bootable
    */
   public Class[] depends()
   {
-    return new Class[]{LogService.class};
+    return new Class[]{LogService.class, SysPropertyService.class};
   }
 
   /**
@@ -105,27 +105,3 @@ public class SysinfoService implements Bootable
   }
 
 }
-
-
-/**********************************************************************
- * $Log: SysinfoService.java,v $
- * Revision 1.6  2011/02/09 11:24:45  willuhn
- * @N Sys-Charset mit ausgeben
- *
- * Revision 1.5  2011-02-08 15:08:17  willuhn
- * @N Verfuegbaren Speicher (-Xmx) mit ausgeben
- *
- * Revision 1.4  2010-12-03 15:57:40  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2008/12/11 21:10:47  willuhn
- * @N java.runtime.name und java.vm.name ausgeben, um OpenJDK zu detektieren
- *
- * Revision 1.2  2008/04/20 23:30:58  willuhn
- * @N MACOS Kommandozeilen-Parameter ausgeben
- *
- * Revision 1.1  2008/02/13 01:04:34  willuhn
- * @N Jameica auf neuen Bootloader umgestellt
- * @C Markus' Aenderungen RMI-Registrierung uebernommen
- *
- **********************************************************************/
