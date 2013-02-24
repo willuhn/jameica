@@ -556,7 +556,7 @@ public class SSLFactory
       {
         if (cert.equals(certs[i]))
         {
-          Logger.info("certificate " + dn + " allready installed, skipping");
+          Logger.info("certificate " + dn + " already installed, skipping");
           return alias;
         }
       }

@@ -105,7 +105,7 @@ public final class PluginLoader
           Manifest first = cache.get(m.getName());
           if (first != null)
           {
-            Logger.warn("found second plugin \"" + m.getName() + "\" in " + f + " (allready installed in " + first.getPluginDir() + ") ignoring the older one");
+            Logger.warn("found second plugin \"" + m.getName() + "\" in " + f + " (already installed in " + first.getPluginDir() + ") ignoring the older one");
             int compare = first.getVersion().compareTo(m.getVersion());
             
             // Mal schauen, welches von beiden neuer ist. Das nehmen wir dann.
@@ -237,7 +237,7 @@ public final class PluginLoader
   {
     if (manifest.isInstalled())
     {
-      Logger.debug("plugin allready initialized, skipping");
+      Logger.debug("plugin already initialized, skipping");
       return;
     }
 
@@ -276,7 +276,7 @@ public final class PluginLoader
   {
     if (manifest.isInstalled())
     {
-      Logger.debug("plugin allready initialized, skipping");
+      Logger.debug("plugin already initialized, skipping");
       return;
     }
 

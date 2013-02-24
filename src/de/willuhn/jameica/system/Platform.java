@@ -112,7 +112,7 @@ public class Platform
     
     // existiert bereits, ist aber eine Datei. FATAL!
     if (this.workdir.exists() && !this.workdir.isDirectory())
-      throw new Exception("File " + this.workdir + " allready exists.");
+      throw new Exception("File " + this.workdir + " already exists.");
     
     if (!this.workdir.exists())
     {

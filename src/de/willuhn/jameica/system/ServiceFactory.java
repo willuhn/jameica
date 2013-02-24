@@ -61,7 +61,7 @@ public final class ServiceFactory
       String fullName = manifest.getPluginClass() + "." + descriptors[i].getName();
       if (services.get(fullName) != null)
       {
-        Logger.debug("service " + descriptors[i].getName() + " allready started, skipping");
+        Logger.debug("service " + descriptors[i].getName() + " already started, skipping");
         // Den haben wir schon.
         continue;
       }
@@ -101,7 +101,7 @@ public final class ServiceFactory
 
     if (services.get(fullName) != null)
     {
-      Logger.debug("service " + name + " allready installed, skipping");
+      Logger.debug("service " + name + " already installed, skipping");
       return;
     }
     

@@ -241,7 +241,7 @@ public class WorkdirChooser
   {
     if (this.dir == null || this.dir.isDisposed())
     {
-      Logger.warn("dialog allready disposed");
+      Logger.warn("dialog already disposed");
       return;
     }
     

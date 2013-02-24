@@ -91,7 +91,7 @@ public final class NamedQueue implements MessagingQueue
   {
     if (consumers == null)
     {
-      Logger.info("queue allready shut down, skip unregistering");
+      Logger.info("queue already shut down, skip unregistering");
       return;
     }
 

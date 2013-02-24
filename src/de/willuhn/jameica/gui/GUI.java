@@ -396,7 +396,7 @@ public class GUI implements ApplicationController
     // BUGZILLA 247
     if (gui == null || gui.history == null || gui.history.size() == 0)
     {
-      Logger.debug("unable to start previous view. you are allready at the first page in this session ;)");
+      Logger.debug("unable to start previous view. you are already at the first page in this session ;)");
       return;
     }
     HistoryEntry entry = gui.history.pop();

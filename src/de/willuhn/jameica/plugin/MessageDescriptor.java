@@ -66,7 +66,7 @@ public class MessageDescriptor
    */
   public String getData()
   {
-    if (this.data != null) // allready loaded?
+    if (this.data != null) // already loaded?
       return this.data;
     
     this.data = root.getContent();
