@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ClassFinder;
 
@@ -27,6 +28,7 @@ import de.willuhn.util.ClassFinder;
  */
 public class BoxRegistry
 {
+  private static Settings settings = new Settings(Box.class);
   private static Class<Box>[] boxes = null;
   
   /**
@@ -80,16 +82,36 @@ public class BoxRegistry
     }
     return instances;
   }
+  
+  /**
+   * Liefert die Hoehe, in der die Box gezeichnet werden soll.
+   * @param box die Hoehe, zu der die Box ermittelt werden soll.
+   * @return die Hoehe der Box.
+   */
+  public static int getHeight(Box box)
+  {
+    if (box == null)
+      return Box.HEIGHT_DEFAULT;
+    int i = settings.getInt(box.getClass().getName() + ".height",box.getHeight());
+    return i > 0 ? i : Box.HEIGHT_DEFAULT;
+        
+  }
+  
+  /**
+   * Legt die Hoehe der Box fest.
+   * @param box die Box.
+   * @param height die Hoehe der Box.
+   */
+  public static void setHeight(Box box, int height)
+  {
+    if (box == null)
+      return;
+    
+    if (height < 0)
+      settings.setAttribute(box.getClass().getName() + ".height",(String) null); // Setting loeschen
+    else
+      settings.setAttribute(box.getClass().getName() + ".height",height);
+  }
+
 }
 
-
-/*********************************************************************
- * $Log: BoxRegistry.java,v $
- * Revision 1.7  2011/08/30 16:02:23  willuhn
- * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
- *
- * Revision 1.6  2011-05-03 12:57:00  willuhn
- * @B Das komplette Ausblenden nicht-aktiver Boxen fuehrte zu ziemlichem Durcheinander in dem Dialog
- * @C Aendern der Sortier-Reihenfolge vereinfacht. Sie wird jetzt nicht mehr live sondern erst nach Klick auf "Uebernehmen" gespeichert - was fachlich ja auch richtiger ist
- *
- **********************************************************************/

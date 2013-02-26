@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.ExpandItem;
 
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.boxes.Box;
+import de.willuhn.jameica.gui.boxes.BoxRegistry;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
@@ -66,7 +67,7 @@ public class ExpandPart implements Part
   {
     if (!box.isEnabled() || !box.isActive())
       return;
-    this.items.add(new Item(box.getName(),box,box.getHeight()));
+    this.items.add(new Item(box.getName(),box,BoxRegistry.getHeight(box)));
   }
   
   /**

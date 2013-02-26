@@ -25,6 +25,11 @@ import de.willuhn.jameica.gui.Part;
 public interface Box extends Part, Comparable
 {
   /**
+   * Platzhalter fuer Default-Hoehe.
+   */
+  public final static int HEIGHT_DEFAULT = -1;
+  
+  /**
    * Liefert den Namen der Box.
    * @return Name der Box.
    */

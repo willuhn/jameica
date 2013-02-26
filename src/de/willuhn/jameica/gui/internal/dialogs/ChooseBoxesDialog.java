@@ -16,7 +16,10 @@ package de.willuhn.jameica.gui.internal.dialogs;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
@@ -29,6 +32,8 @@ import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.Start;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.parts.Column;
+import de.willuhn.jameica.gui.parts.TableChangeListener;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
@@ -68,8 +73,35 @@ public class ChooseBoxesDialog extends AbstractDialog
     Container c = new SimpleContainer(parent,true);
     c.addText(i18n.tr("Wählen Sie die anzuzeigenden Elemente aus."),true);
 
-    table = new TablePart(boxes,null);
+    table = new TablePart(boxes,null)
+    {
+      /**
+       * @see de.willuhn.jameica.gui.parts.TablePart#getEditorControl(int, org.eclipse.swt.widgets.TableItem, java.lang.String)
+       * Ueberschrieben, um nur Ziffern bei der Hoehe zuzulassen.
+       */
+      protected Control getEditorControl(int row, TableItem item, String oldValue)
+      {
+        final String validChars = "0123456789";
+        Control c = super.getEditorControl(row, item, oldValue);
+        c.addListener(SWT.Verify, new Listener()
+        {
+          public void handleEvent(Event e)
+          {
+            char[] chars = e.text.toCharArray();
+            for (int i=0; i<chars.length; i++) {
+              if (validChars.indexOf(chars[i]) == -1)
+              {
+                e.doit = false;
+                return;
+              }
+            }
+          }
+        });
+        return c;
+      }
+    };
     table.addColumn(i18n.tr("Bezeichnung"),"name");
+    table.addColumn(i18n.tr("Höhe des Elements"),"height",null,true,Column.ALIGN_RIGHT);
     table.setCheckable(true);
     table.setMulti(false);
     table.setSummary(false);
@@ -82,6 +114,9 @@ public class ChooseBoxesDialog extends AbstractDialog
           return;
         Box box = (Box) item.getData();
         item.setChecked(box.isEnabled());
+        
+        int height = BoxRegistry.getHeight(box);
+        item.setText(1,height > 0 ? Integer.toString(height) : "");
         
         if (!box.isActive())
         {
@@ -105,6 +140,28 @@ public class ChooseBoxesDialog extends AbstractDialog
         boolean active = b.isActive();
         up.setEnabled(active);
         down.setEnabled(active);
+      }
+    });
+    
+    table.addChangeListener(new TableChangeListener()
+    {
+      public void itemChanged(Object object, String attribute, String newValue) throws ApplicationException
+      {
+        if (object == null)
+          return;
+        
+        int i = Box.HEIGHT_DEFAULT;
+        try
+        {
+          if (StringUtils.isNotEmpty(newValue))
+            i = Integer.parseInt(newValue);
+        }
+        catch (Exception e)
+        {
+          Logger.warn("invalid height given: " + newValue);
+          return;
+        }
+        BoxRegistry.setHeight((Box)object,i);
       }
     });
 
