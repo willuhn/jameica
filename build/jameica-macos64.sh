@@ -14,7 +14,7 @@ fi
 # Java 7 - siehe http://docs.oracle.com/javase/7/docs/webnotes/install/mac/mac-jre.html
 # BUGZILLA 1337 - Gott, deren Pfad-Angaben werden ja auch immer schlimmer
 if [ ! -x "$JAVACMD" ]; then
-  JAVACMD="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java"
+  JAVACMD="/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java"
 fi
 
 if [ ! -x "$JAVACMD" ]; then
