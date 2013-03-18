@@ -108,7 +108,7 @@ public class BackupService implements Bootable
    */
   private class Consumer implements MessageConsumer
   {
-    private List<Throwable> errors = new ArrayList<Throwable>();
+    private List<String> errors = new ArrayList<String>();
     
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
@@ -132,40 +132,11 @@ public class BackupService implements Bootable
     public void handleMessage(Message message) throws Exception
     {
       Object data = ((QueryMessage)message).getData();
-      if (!(data instanceof Throwable))
-        return;
       
-      Throwable t = (Throwable) data;
-      Logger.warn("detected error: " + t.getMessage());
-      this.errors.add(t);
+      String text = data != null ? data.toString() : "<unknown>";
+      
+      Logger.warn("detected error: " + text);
+      this.errors.add(text);
     }
   }
-
 }
-
-
-/**********************************************************************
- * $Log: BackupService.java,v $
- * Revision 1.7  2010/04/21 10:39:55  willuhn
- * @N Beim Shutdown kein Backup erstellen, wenn ein Plugin einen Fehler an den Channel "jameica.error" gemeldet hat. Das soll verhindern, dass die Backup-Rotation die letzten noch verbliebenen intakten Backups ueberschreibt
- *
- * Revision 1.6  2009/06/24 11:24:33  willuhn
- * @N Security-Manager via Bootloader setzen
- *
- * Revision 1.5  2008/03/11 00:13:08  willuhn
- * @N Backup scharf geschaltet
- *
- * Revision 1.4  2008/03/07 16:31:49  willuhn
- * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
- *
- * Revision 1.3  2008/03/07 01:36:26  willuhn
- * @N ZipCreator
- * @N Erster Code fuer Erstellung des Backups
- *
- * Revision 1.2  2008/03/04 00:51:25  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2008/03/04 00:49:25  willuhn
- * @N GUI fuer Backup fertig
- *
- **********************************************************************/

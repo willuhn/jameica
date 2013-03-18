@@ -29,6 +29,7 @@ import de.willuhn.jameica.gui.NavigationItemXml;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.messaging.PluginMessage;
+import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.services.ClassService;
@@ -226,6 +227,11 @@ public final class PluginLoader
     }
     //
     ////////////////////////////////////////////////////////////////////////////
+
+    // BUGZILLA 1341 Verhindert das Erstellen eines Backups wenn kein Plugin geladen werden konnte
+    if (this.getInstalledPlugins().size() == 0)
+      Application.getMessagingFactory().getMessagingQueue("jameica.error").sendMessage(new QueryMessage("no plugin could be loaded successfully"));
+      
   }
 
   /**
