@@ -223,7 +223,43 @@ public class BeanService implements Bootable
           if (c == Object.class) // Das ist der Default-Wert der Annotation
             c = null;
 
-          // Anhand des Namens suchen
+          //////////////////////////////////////////////////////////////////////
+          // Auto-Discovery
+          
+          // Type discovery
+          if (c == null)
+          {
+            if (field instanceof Field)
+            {
+              c = ((Field)field).getType();
+            }
+            else if (field instanceof Method)
+            {
+              Class[] params = ((Method)field).getParameterTypes();
+              if (params != null && params.length == 1) // lassen wir nur zu, wenn es nur einen Parameter gibt
+                c = params[0];
+            }
+          }
+          
+          // Name discovery
+          // Machen wir derzeit noch nicht, weil wir sonst immer beides haetten,
+          // Name rname UND c. Jameica wuerde dann immer nach einem Service suchen,
+          // wenn nichts angegeben ist. Normalerweise ist das aber nicht gewuenscht
+          // sondern stattdessen einfach eine Instanz der angegebenen Bean.
+          // Daher gibt es derzeit noch kein Auto-Discovery basierend auf dem Namen
+          // des Property sondern nur dann ein Lookup nach dem Service, wenn er per
+          // Name explizit angegeben ist.
+//          if (rname == null || rname.length() == 0)
+//          {
+//            if (field instanceof Field)
+//              rname = ((Field)field).getName();
+//            else if (field instanceof Method)
+//              rname = BeanUtil.toProperty(((Method)field).getName());
+//          }
+          //
+          //////////////////////////////////////////////////////////////////////
+          
+          // Anhand des Namens suchen.
           if (rname != null && rname.length() > 0)
           {
             Logger.debug("  inject service " + rname + " into " + name);
