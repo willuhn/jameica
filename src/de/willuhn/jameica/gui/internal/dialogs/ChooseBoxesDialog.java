@@ -59,7 +59,7 @@ public class ChooseBoxesDialog extends AbstractDialog
   public ChooseBoxesDialog(int position)
   {
     super(position);
-    this.setSize(400,400);
+    this.setSize(460,400);
     setTitle(i18n.tr("Auswahl der anzuzeigenden Elemente"));
   }
 
@@ -271,45 +271,3 @@ public class ChooseBoxesDialog extends AbstractDialog
     return null;
   }
 }
-
-
-/*********************************************************************
- * $Log: ChooseBoxesDialog.java,v $
- * Revision 1.15  2011/10/06 10:49:08  willuhn
- * @N Termin-Provider konfigurierbar
- *
- * Revision 1.14  2011-05-05 09:43:00  willuhn
- * @B Beim Umsortierungen ging der Checked-State verloren, wenn er noch nicht gespeichert war
- *
- * Revision 1.13  2011-05-05 09:36:25  willuhn
- * @C SearchOptionsDialog ueberarbeitet - beim Aendern der Sortierung gingen die Markierungen verloren
- *
- * Revision 1.12  2011-05-05 09:18:41  willuhn
- * @C Contextmenu ersetzt gegen anklickbare Zeilen. Erheblich ergonomischer
- *
- * Revision 1.11  2011-05-03 12:57:00  willuhn
- * @B Das komplette Ausblenden nicht-aktiver Boxen fuehrte zu ziemlichem Durcheinander in dem Dialog
- * @C Aendern der Sortier-Reihenfolge vereinfacht. Sie wird jetzt nicht mehr live sondern erst nach Klick auf "Uebernehmen" gespeichert - was fachlich ja auch richtiger ist
- *
- * Revision 1.10  2011-05-03 11:39:55  willuhn
- * *** empty log message ***
- *
- * Revision 1.9  2011-05-03 11:38:47  willuhn
- * @B daemliches OS X
- *
- * Revision 1.8  2011-05-03 11:33:57  willuhn
- * @N Button "Startseite anpassen" als Panel-Button
- * @B das Entfernen und Wiederhinzufuegen von Elementen im ChooseBoxDialog fuehrte unter OS X zu einer ArrayIndexOutOfBoundsException - warum auch immer
- *
- * Revision 1.7  2011-04-29 16:34:01  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2011-04-29 16:27:02  willuhn
- * @N MAC - Dialog war zu schmal
- *
- * Revision 1.5  2011-04-26 12:20:24  willuhn
- * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.4  2011-01-14 17:33:39  willuhn
- * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
- **********************************************************************/
