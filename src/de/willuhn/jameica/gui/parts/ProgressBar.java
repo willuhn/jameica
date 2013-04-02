@@ -129,10 +129,7 @@ public class ProgressBar implements ProgressMonitor, Part
 		{
 			public void run()
 			{
-        if (status == STATUS_ERROR)
-          log.appendText(msg, Color.ERROR);
-        else
-          log.appendText(msg);
+        log.appendText(msg);
 			}
 		});
   }
