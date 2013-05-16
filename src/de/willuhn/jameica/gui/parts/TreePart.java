@@ -267,10 +267,22 @@ public class TreePart extends AbstractTablePart
     this.tree.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event event)
       {
-        if (selectionListeners.size() == 0)
+        int listeners = selectionListeners.size();
+
+        // Weder Listener noch Menu. Nichts zu tun.
+        if (listeners == 0 && menu == null)
           return;
-        
+
+        // Aktuelle Auswahl ermitteln
         event.data = getSelection();
+
+        // Dem Menu Bescheid sagen, wenn ein oder mehrere Elemente markiert wurden
+        if (menu != null)
+          menu.setCurrentObject(event.data);
+
+        // Wenn wir keine Listener haben, koennen wir hier aufhoren
+        if (listeners == 0)
+          return;
 
         // Wir setzen noch ein Flag, in dem der Aufrufer erkennt,
         // ob die Checkbox gesetzt ist.
@@ -288,11 +300,10 @@ public class TreePart extends AbstractTablePart
         }
         
         // Noch die Selection-Listeners
-        for (int i=0;i<selectionListeners.size();++i)
+        for (Listener l:selectionListeners)
         {
           try
           {
-            Listener l = selectionListeners.get(i);
             l.handleEvent(event);
           }
           catch (Throwable t)
@@ -668,8 +679,6 @@ public class TreePart extends AbstractTablePart
    */
   protected void handleMouseDown(MouseEvent event)
   {
-    if (menu == null) return;
-    menu.setCurrentObject(getSelection());
   }
   
   /**

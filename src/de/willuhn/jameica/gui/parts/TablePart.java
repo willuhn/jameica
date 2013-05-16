@@ -719,14 +719,6 @@ public class TablePart extends AbstractTablePart
 
         open(getSelection());
       }
-
-      public void mouseDown(MouseEvent e)
-      {
-        // jetzt noch dem Menu Bescheid sagen, wenn ein Element markiert wurde
-        if (menu != null)
-          menu.setCurrentObject(getSelection());
-      }
-      
     });
     
     if (this.rememberState)
@@ -751,7 +743,21 @@ public class TablePart extends AbstractTablePart
     table.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event event)
       {
-        if (selectionListeners.size() == 0)
+        int listeners = selectionListeners.size();
+
+        // Weder Listener noch Menu. Nichts zu tun.
+        if (listeners == 0 && menu == null)
+          return;
+
+        // Aktuelle Auswahl ermitteln
+        event.data = getSelection();
+        
+        // Dem Menu Bescheid sagen, wenn ein oder mehrere Elemente markiert wurden
+        if (menu != null)
+          menu.setCurrentObject(event.data);
+
+        // Wenn wir keine Listener haben, koennen wir hier aufhoren
+        if (listeners == 0)
           return;
 
         // Wenn die Tabelle checkable ist, loesen wir das Event
@@ -762,13 +768,11 @@ public class TablePart extends AbstractTablePart
         if (checkable && event.detail != SWT.CHECK)
           return;
 
-        event.data = getSelection();
-        // Noch die Selection-Listeners
-        for (int i=0;i<selectionListeners.size();++i)
+        // Die Selection-Listeners ausfuehren
+        for (Listener l:selectionListeners)
         {
           try
           {
-            Listener l = selectionListeners.get(i);
             l.handleEvent(event);
           }
           catch (Throwable t)
