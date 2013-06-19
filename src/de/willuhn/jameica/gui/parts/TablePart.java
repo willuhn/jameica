@@ -719,6 +719,14 @@ public class TablePart extends AbstractTablePart
 
         open(getSelection());
       }
+
+      public void mouseDown(MouseEvent e)
+      {
+        // jetzt noch dem Menu Bescheid sagen, wenn ein Element markiert wurde
+        if (menu != null)
+          menu.setCurrentObject(getSelection());
+      }
+      
     });
     
     if (this.rememberState)
