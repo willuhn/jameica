@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -138,6 +139,7 @@ public class AppointmentProviderDialog extends AbstractDialog<List<AppointmentPr
       }
     },null,false,"process-stop.png");
     c.addButtonArea(buttons);
+    getShell().setMinimumSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
   }
 
   /**
