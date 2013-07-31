@@ -60,7 +60,7 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
     this.appointment = appointment;
     String title = this.appointment.getUid() == null ? "Erinnerung anlegen" : "Erinnerung bearbeiten";
     this.setTitle(Application.getI18n().tr(title));
-    this.setSize(300,400);
+    this.setSize(440,400);
   }
 
   /**
@@ -181,7 +181,9 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
         throw new OperationCanceledException();
       }
     },null,false,"process-stop.png");
-    buttons.paint(parent);
+    // buttons.paint(parent);
+    
+    container2.addButtonArea(buttons);
   }
 }
 

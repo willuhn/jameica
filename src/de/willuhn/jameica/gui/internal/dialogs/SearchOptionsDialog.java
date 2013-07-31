@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -55,6 +54,7 @@ public class SearchOptionsDialog extends AbstractDialog
   {
     super(position);
     this.setTitle(Application.getI18n().tr("Such-Optionen"));
+    this.setSize(400,380);
   }
 
   /**
@@ -72,7 +72,7 @@ public class SearchOptionsDialog extends AbstractDialog
   {
     final I18N i18n = Application.getI18n();
     
-    Container container = new SimpleContainer(parent);
+    Container container = new SimpleContainer(parent,true);
     container.addText(i18n.tr("Bitte wählen Sie die Themen, in denen gesucht werden soll:"),true);
     
     final SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
@@ -164,7 +164,6 @@ public class SearchOptionsDialog extends AbstractDialog
     },null,false,"process-stop.png");
 
     container.addButtonArea(buttons);
-    getShell().setMinimumSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
   }
   
   /**
