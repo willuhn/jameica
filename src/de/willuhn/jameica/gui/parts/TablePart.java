@@ -62,6 +62,7 @@ import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
@@ -1577,6 +1578,7 @@ public class TablePart extends AbstractTablePart
       }
       catch (Exception e)
       {
+        Logger.write(Level.INFO,"unable to compare values",e);
         return 0;
       }
     }
