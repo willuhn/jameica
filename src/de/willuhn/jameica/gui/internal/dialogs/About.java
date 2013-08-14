@@ -62,6 +62,7 @@ public class About extends AbstractDialog
       "<a href=\"http://www.jameica.org\">www.jameica.org</a></p>" +
       "<p>Version: " + Application.getManifest().getVersion() + "<br/>" +
       "SWT-Version: " + SWT.getVersion() + " / " + SWT.getPlatform() + "<br/>" +
+      "Java-Version: " + System.getProperty("java.version") + " / " + System.getProperty("os.name") + " " + System.getProperty("os.arch") + "<br/>" +
       "Build: " + Application.getBuildnumber() + " [Datum " + Application.getBuildDate() + "]</p>" +
       "<p>Benutzerverzeichnis: " + Application.getConfig().getWorkDir() + "</p>" +
       "</form>");
