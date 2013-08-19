@@ -232,40 +232,20 @@ public class ContextMenu implements Part
 				continue;
 			
 			if (o instanceof ContextMenu)
-			  ((ContextMenu)o).setCurrentObject(object);
+			{
+        ((ContextMenu)o).setCurrentObject(object);
+			}
 			else
-  			((MenuItem)mi).setEnabled(((ContextMenuItem)o).isEnabledFor(object));
+			{
+			  ContextMenuItem ci = (ContextMenuItem)o;
+			  MenuItem m = (MenuItem) mi;
+        m.setEnabled(ci.isEnabledFor(object));
+        
+        String textNew = ci.getText();
+        String textOld = m.getText();
+        if (textNew != null && !textNew.equals(textOld))
+          m.setText(textNew);
+			}
 		}
 	}
 }
-
-/**********************************************************************
- * $Log: ContextMenu.java,v $
- * Revision 1.9  2010/04/06 11:53:02  willuhn
- * *** empty log message ***
- *
- * Revision 1.8  2009/09/14 23:05:49  willuhn
- * @B setEnabled/isEnabledFor wurde nicht fuer Submenu-Elemente aufgerufen
- *
- * Revision 1.7  2009/07/16 10:25:27  willuhn
- * @N Support fuer Sub-Menus
- *
- * Revision 1.6  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.5  2006/01/02 17:37:48  web0
- * @N moved Velocity to Jameica
- *
- * Revision 1.4  2004/11/12 18:23:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2004/10/19 23:33:44  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/10/18 23:37:42  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/07/20 21:47:44  willuhn
- * @N ContextMenu
- *
- **********************************************************************/
