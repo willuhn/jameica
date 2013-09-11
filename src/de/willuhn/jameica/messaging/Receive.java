@@ -16,6 +16,11 @@ import java.lang.annotation.Target;
 /**
  * Damit koennen Methoden in Klassen annotiert werden, die
  * via Messaging aufgerufen werden koennen.
+ * 
+ * Beans, die diese Annotation verwenden, sollten zusaetzlich
+ * die Lifecycle-Annotation mit dem Type "CONTEXT" benutzen,
+ * um sicherzustellen, dass immer die selbe Instanz der Bean
+ * verwendet wird, um die Nachrichten zu erhalten.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
