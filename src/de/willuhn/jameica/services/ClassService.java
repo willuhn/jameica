@@ -203,7 +203,7 @@ public class ClassService implements Bootable
     }
     for (int i=0;i<cfIncludes.length;++i)
     {
-      Logger.info("classfinder include: " + cfIncludes[i]);
+      Logger.debug("classfinder include: " + cfIncludes[i]);
       ff.matches(cfIncludes[i]);
     }
 

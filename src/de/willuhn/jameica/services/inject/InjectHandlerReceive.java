@@ -48,7 +48,7 @@ public class InjectHandlerReceive implements InjectHandler
         final Method m = (Method) field;
         Receive r      = (Receive) annotation;
         String s       = StringUtils.trimToNull(r.queue());
-        Logger.debug("  applying message receiver for queue " + (s != null ? s : "[default]") + " to " + name + "." + m.getName());
+        Logger.trace("  applying message receiver for queue " + (s != null ? s : "[default]") + " to " + name + "." + m.getName());
         
         final MessagingQueue queue = (s != null ? Application.getMessagingFactory().getMessagingQueue(s) : Application.getMessagingFactory());
         

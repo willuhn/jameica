@@ -93,6 +93,7 @@ public class SettingsControl extends AbstractControl
 
     String[] levels = new String[]
     {
+      Level.TRACE.getName(),
       Level.DEBUG.getName(),
       Level.INFO.getName(),
       Level.WARN.getName(),

@@ -91,7 +91,7 @@ public class InjectHandlerResource implements InjectHandler
         // Anhand des Namens suchen.
         if (rname != null && rname.length() > 0)
         {
-          Logger.debug("  inject service " + rname + " into " + name);
+          Logger.trace("  inject service " + rname + " into " + name);
           
           // Plugin ermitteln und Service von dort laden
           // Wenn der Typ der Resource angegeben ist, suchen wir nach dessen Plugin, sonst nach dem Plugin der Bean
@@ -99,20 +99,20 @@ public class InjectHandlerResource implements InjectHandler
           if (plugin != null)
             dep = Application.getServiceFactory().lookup(plugin.getClass(),rname);
           else
-            Logger.debug("  no plugin found for service " + rname);
+            Logger.trace("  no plugin found for service " + rname);
         }
 
         // Anhand des Typs suchen - aber nur, wenn wir die Abhaengigkeit nicht schon haben
         if (dep == null && c != null)
         {
-          Logger.debug("  inject bean " + c.getSimpleName() + " into " + name);
+          Logger.trace("  inject bean " + c.getSimpleName() + " into " + name);
           BeanService service = Application.getBootLoader().getBootable(BeanService.class);
           dep = service.get(c); // aufloesen
         }
         
         if (dep == null) // nichts gefunden
         {
-          Logger.debug("  resource [name: " + rname + ", type: " + c + "] not found");
+          Logger.trace("  resource [name: " + rname + ", type: " + c + "] not found");
           return;
         }
         

@@ -247,7 +247,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
       {
         if (bar == null || bar.isDisposed() || display == null || display.isDisposed())
           return;
-        Logger.debug("startup completed: " + percentComplete + " %");
+        Logger.trace("startup completed: " + percentComplete + " %");
         bar.setSelection(percentComplete);
         bar.update();
 				display.readAndDispatch();
@@ -350,104 +350,3 @@ public class SplashScreen implements ProgressMonitor, Runnable
     return percentComplete;
   }
 }
-
-
-
-/***************************************************************************
- * $Log: SplashScreen.java,v $
- * Revision 1.39  2011/06/22 10:34:37  willuhn
- * @N Statusbalken und -text besser aktualisieren
- *
- * Revision 1.38  2010-11-04 10:31:13  willuhn
- * @N Checken, ob splash.jar existiert
- *
- * Revision 1.37  2010-11-04 01:11:20  willuhn
- * @N Random Splashscreen ;)
- *
- * Revision 1.36  2010-10-11 15:45:36  willuhn
- * @C Handling der Splash-Grafik vereinfacht
- *
- * Revision 1.35  2010/06/14 08:23:13  willuhn
- * @N Icon auch in Splashscreen verwenden
- *
- * Revision 1.34  2010/04/13 12:17:03  willuhn
- * @N Alpha-Blending in Splashscreen und Popup-Messages - seit SWT 3.4 moeglich
- *
- * Revision 1.33  2009/11/17 14:58:06  willuhn
- * @B Beim Beenden kann u.U. eine SWTException "Widget disposed" erscheinen
- *
- * Revision 1.32  2009/05/27 12:56:45  willuhn
- * @B BUGZILLA 183
- *
- * Revision 1.31  2009/04/16 12:58:39  willuhn
- * @N BUGZILLA 722
- *
- * Revision 1.30  2008/11/25 00:50:26  willuhn
- * @B "closed" wurde immer gesetzt - auch dann, wenn der Splashscreen noch gar nicht geschlossen werden sollte
- *
- * Revision 1.29  2008/09/15 10:44:00  willuhn
- * @B Keinen Fehler werfen, wenn Display bereits disposed wurde
- *
- * Revision 1.28  2008/03/07 17:30:14  willuhn
- * @N Splash-Screen-Ausgaben auch ins Log schreiben
- * @B Fehler im Dateformat des Backup (12- statt 24h-Uhr)
- *
- * Revision 1.27  2008/03/07 16:31:48  willuhn
- * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
- *
- * Revision 1.26  2008/02/06 12:13:46  willuhn
- * @C Weisse Hintergrundfarbe fuer Fortschrittsbalken - sieht unter Windows besser aus
- *
- * Revision 1.25  2008/01/05 00:25:56  willuhn
- * @C changed loglevel
- *
- * Revision 1.24  2007/12/18 17:10:14  willuhn
- * @N Neues ExpandPart
- * @N Boxen auf der Startseite koennen jetzt zusammengeklappt werden
- *
- * Revision 1.23  2007/12/18 14:12:21  willuhn
- * @N Neuer Splash-Screen - wurde ja auch mal Zeit ;)
- *
- * Revision 1.22  2007/04/19 17:02:35  willuhn
- * @N log splashscreen messages
- *
- * Revision 1.21  2006/11/12 23:34:28  willuhn
- * @B Bug 183 (thanks to Juergen)
- *
- * Revision 1.20  2006/01/16 00:53:00  web0
- * @N title in splashscreen
- *
- * Revision 1.19  2005/11/22 07:38:00  web0
- * @C splash screen in extra Thread ist Mist ;)
- *
- * Revision 1.16  2005/06/27 12:08:27  web0
- * *** empty log message ***
- *
- * Revision 1.15  2005/03/11 00:49:17  web0
- * *** empty log message ***
- *
- * Revision 1.14  2005/01/30 20:47:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2004/11/17 19:02:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.12  2004/11/12 18:23:58  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2004/11/04 22:41:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.10  2004/11/04 19:29:22  willuhn
- * @N TextAreaInput
- *
- * Revision 1.9  2004/07/21 23:54:54  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.8  2004/02/18 00:55:23  willuhn
- * @N added new splash screen
- *
- * Revision 1.7  2003/12/30 19:11:27  willuhn
- * @N new splashscreen
- *
- ***************************************************************************/

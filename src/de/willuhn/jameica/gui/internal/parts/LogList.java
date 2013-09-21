@@ -92,9 +92,9 @@ public class LogList extends TablePart
         int level = o.message.getLevel().getValue();
 
         if (level == L_INF0)           return;
-        else if (level == L_DEBUG)     item.setForeground(Color.COMMENT.getSWTColor());
+        else if (level <= L_DEBUG)     item.setForeground(Color.COMMENT.getSWTColor());
         else if (level == L_WARN)      item.setForeground(Color.LINK_ACTIVE.getSWTColor());
-        else if (level == L_ERR)       item.setForeground(Color.ERROR.getSWTColor());
+        else if (level >= L_ERR)       item.setForeground(Color.ERROR.getSWTColor());
       }
     });
     

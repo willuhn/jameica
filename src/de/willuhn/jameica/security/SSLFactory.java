@@ -107,8 +107,8 @@ public class SSLFactory
 		Logger.info("init ssl factory");
     Application.getCallback().getStartupMonitor().setStatusText("init ssl factory");
 
-//    if (Logger.getLevel().getValue() <= Level.DEBUG.getValue())
-//      System.setProperty("javax.net.debug","ssl handshake");
+    if (Logger.getLevel().getValue() == Level.TRACE.getValue())
+      System.setProperty("javax.net.debug","ssl handshake");
 
 		File keyStoreFile = getKeyStoreFile();
 

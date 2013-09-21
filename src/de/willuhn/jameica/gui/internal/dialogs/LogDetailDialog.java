@@ -63,9 +63,9 @@ public class LogDetailDialog extends AbstractDialog
     
     Level level = message.getLevel();
     LabelInput l = new LabelInput(level.getName());
-    if (level.getValue() == Level.DEBUG.getValue()) l.setColor(Color.COMMENT);
+    if (level.getValue() <= Level.DEBUG.getValue()) l.setColor(Color.COMMENT);
     else if (level.getValue() == Level.WARN.getValue()) l.setColor(Color.LINK_ACTIVE);
-    else if (level.getValue() == Level.ERROR.getValue()) l.setColor(Color.ERROR);
+    else if (level.getValue() >= Level.ERROR.getValue()) l.setColor(Color.ERROR);
 
     container.addLabelPair(Application.getI18n().tr("Priorität"), l);
     container.addLabelPair(Application.getI18n().tr("Quelle"), new LabelInput(message.getLoggingClass() + "." + message.getLoggingMethod()));

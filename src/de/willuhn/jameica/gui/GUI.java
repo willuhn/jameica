@@ -872,7 +872,7 @@ public class GUI implements ApplicationController
       }
     }
 
-    gui.display.setWarnings(Logger.getLevel().getValue() == Level.DEBUG.getValue());
+    gui.display.setWarnings(Logger.getLevel().getValue() <= Level.DEBUG.getValue());
     return gui.display;
   }
 

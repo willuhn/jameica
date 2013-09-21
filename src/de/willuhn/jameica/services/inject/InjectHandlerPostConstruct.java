@@ -39,7 +39,7 @@ public class InjectHandlerPostConstruct implements InjectHandler
       public void inject(Object bean, AccessibleObject field, Annotation annotation) throws Exception
       {
         Method m = (Method) field;
-        Logger.debug("  executing post-construct " + name + "." + m.getName());
+        Logger.trace("  executing post-construct " + name + "." + m.getName());
         m.setAccessible(true);
         m.invoke(bean,(Object[]) null);
       }

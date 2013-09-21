@@ -47,7 +47,7 @@ public final class NamedQueue implements MessagingQueue
     Logger.debug("creating message queue " + this.name);
     if (worker == null)
     {
-      Logger.info("starting messaging worker thread");
+      Logger.debug("starting messaging worker thread");
       worker = new Worker();
       worker.start();
     }
@@ -91,7 +91,7 @@ public final class NamedQueue implements MessagingQueue
   {
     if (consumers == null)
     {
-      Logger.info("queue already shut down, skip unregistering");
+      Logger.debug("queue already shut down, skip unregistering");
       return;
     }
 
@@ -208,7 +208,7 @@ public final class NamedQueue implements MessagingQueue
     private void unregister(NamedQueue queue)
     {
       wakeup(); // Noch offene Nachrichten zustellen
-      Logger.info("closing queue: " + queue.getName());
+      Logger.debug("closing queue: " + queue.getName());
       this.queues.remove(queue);
 
       if (queues.size() == 0)
@@ -217,7 +217,7 @@ public final class NamedQueue implements MessagingQueue
         this.quit = true;
         
         try {
-          Logger.info("shutting down messaging factory");
+          Logger.debug("shutting down messaging factory");
           wakeup();
           join(5 * 1000l); // wir warten, bis der Thread fertig ist.
         }
@@ -225,7 +225,7 @@ public final class NamedQueue implements MessagingQueue
         {
           Logger.error("error while waiting for worker shutdown",e);
         }
-        Logger.info("messaging factory shut down");
+        Logger.debug("messaging factory shut down");
       }
     }
     
@@ -307,10 +307,19 @@ public final class NamedQueue implements MessagingQueue
         {
           if (quit)
             break;
-          NamedQueue queue = this.queues.get(i);
-          while (queue.messages != null && queue.messages.size() > 0)
+          try
           {
-            send(queue.consumers, (Message) queue.messages.pop());
+            NamedQueue queue = this.queues.get(i);
+            while (queue.messages != null && queue.messages.size() > 0)
+            {
+              send(queue.consumers, (Message) queue.messages.pop());
+            }
+          }
+          catch (Exception e)
+          {
+            if (!quit) // Das kann passieren, wenn wir genau in dem Moment beendet wurden, als wir gerade in den Queues waren
+              Logger.write(Level.WARN,"error while processing messages",e);
+            return;
           }
         }
 
@@ -329,53 +338,3 @@ public final class NamedQueue implements MessagingQueue
     }
   }
 }
-
-/*****************************************************************************
- * $Log: NamedQueue.java,v $
- * Revision 1.16  2012/04/05 23:22:48  willuhn
- * @N ApplicationException und OperationCancelledException nicht als Error loggen
- *
- * Revision 1.15  2011/10/06 11:41:30  willuhn
- * @B Noch ein Flush vor dem Schliessen der Queue machen
- *
- * Revision 1.14  2011-10-05 10:49:11  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2011-06-17 16:06:17  willuhn
- * @C Logging
- *
- * Revision 1.12  2011-06-17 15:55:18  willuhn
- * @N Registrieren von Message-Consumern im Manifest
- *
- * Revision 1.11  2011-06-07 11:08:55  willuhn
- * @C Nach automatisch zu registrierenden Message-Consumern erst suchen, nachdem die SystemMessage.SYSTEM_STARTED geschickt wurde. Vorher geschah das bereits beim Senden der ersten Nachricht - was u.U. viel zu frueh ist (z.Bsp. im DeployService)
- *
- * Revision 1.10  2009/08/25 11:47:04  willuhn
- * @C auch wenn offensichtlich keine neuen Messages eingetroffen sind, alle 60 Sekunden mal nachschauen. Sicher ist sicher ;)
- *
- * Revision 1.9  2009/08/24 23:54:15  willuhn
- * @B deadlock
- *
- * Revision 1.7  2009/08/24 22:30:00  willuhn
- * @C Worker-Thread nicht mehr mit interrupt() sondern mit notify() aufwecken - unter Umstaenden wird sonst eine laufende Nachrichtenzustellung abgebrochen
- *
- * Revision 1.6  2009/07/17 10:13:03  willuhn
- * @N MessagingQueue#flush()
- * @N MessageCollector zum Sammeln von Nachrichten
- *
- * Revision 1.5  2008/10/08 23:22:14  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2008/05/21 14:23:00  willuhn
- * @B NPE beim Shutdown
- *
- * Revision 1.3  2007/11/23 00:51:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2007/06/05 11:47:16  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2007/06/05 11:45:09  willuhn
- * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
- *
-*****************************************************************************/

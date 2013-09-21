@@ -224,6 +224,9 @@ public class VelocityService implements Bootable
         case LogChute.DEBUG_ID:
           Logger.debug(msg);
           break;
+        case LogChute.TRACE_ID:
+          Logger.trace(msg);
+          break;
         default:
           Logger.debug(msg);
       }

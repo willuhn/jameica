@@ -69,7 +69,7 @@ public class SysinfoService implements Bootable
     else
     	Logger.info("  none");
     
-    if (Logger.getLevel().getValue() == Level.DEBUG.getValue())
+    if (Logger.getLevel().getValue() <= Level.DEBUG.getValue())
     {
       Properties p = System.getProperties();
       Enumeration e = p.keys();

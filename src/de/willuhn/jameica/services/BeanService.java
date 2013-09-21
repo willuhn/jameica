@@ -114,7 +114,7 @@ public class BeanService implements Bootable
       return null;
     
     String name = type.getSimpleName();
-    Logger.debug("searching for bean " + name);
+    Logger.trace("searching for bean " + name);
     
     T bean = null;
     
@@ -122,7 +122,7 @@ public class BeanService implements Bootable
     bean = (T) contextScope.get(type);
     if (bean != null)
     {
-      Logger.debug("  found in context scope");
+      Logger.trace("  found in context scope");
       return bean;
     }
     
@@ -130,14 +130,14 @@ public class BeanService implements Bootable
     bean = (T) sessionScope.get(type);
     if (bean != null)
     {
-      Logger.debug("  found in session scope");
+      Logger.trace("  found in session scope");
       return bean;
     }
 
     try
     {
       // 3. Bean erzeugen
-      Logger.debug("  creating new");
+      Logger.debug("  creating new " + type);
       bean = type.newInstance();
 
       // Lifecycle ermitteln
@@ -146,26 +146,26 @@ public class BeanService implements Bootable
 
       if (lct == null)
       {
-        Logger.debug("  no lifecycle -> request scope");
+        Logger.trace("  no lifecycle -> request scope");
       }
       else if (lct == Type.REQUEST)
       {
-        Logger.debug("  request scope");
+        Logger.trace("  request scope");
       }
       else if (lct == Type.CONTEXT)
       {
-        Logger.debug("  context scope");
+        Logger.trace("  context scope");
         contextScope.put(type,bean);
         contextOrder.add(bean);
       }
       else if (lct == Type.SESSION)
       {
-        Logger.debug("  session scope");
+        Logger.trace("  session scope");
         sessionScope.put(type,bean);
       }
       else
       {
-        Logger.debug("  unknown scope");
+        Logger.trace("  unknown scope");
       }
       
       // Abhaengigkeiten aufloesen
@@ -222,7 +222,7 @@ public class BeanService implements Bootable
   {
     try
     {
-      Logger.debug("invoking predestroy for context beans");
+      Logger.trace("invoking predestroy for context beans");
       // PostDestroy bei den Context-Beans aufrufen
       // Erfolgt in umgekehrter Lade-Reihenfolge
       while (!this.contextOrder.isEmpty())
@@ -238,7 +238,7 @@ public class BeanService implements Bootable
             public void inject(Object bean, AccessibleObject field, Annotation annotation) throws Exception
             {
               Method m = (Method) field;
-              Logger.debug("  " + bean.getClass().getSimpleName() + "." + m.getName());
+              Logger.trace("  " + bean.getClass().getSimpleName() + "." + m.getName());
               m.setAccessible(true);
               m.invoke(bean,(Object[]) null);
             }
