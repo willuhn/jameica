@@ -317,9 +317,8 @@ public final class NamedQueue implements MessagingQueue
           }
           catch (Exception e)
           {
-            if (!quit) // Das kann passieren, wenn wir genau in dem Moment beendet wurden, als wir gerade in den Queues waren
-              Logger.write(Level.WARN,"error while processing messages",e);
-            return;
+            // Das kann passieren, wenn wir genau in dem Moment beendet wurden, als wir gerade in den Queues waren
+            Logger.write(Level.DEBUG,"error while processing queue",e);
           }
         }
 
