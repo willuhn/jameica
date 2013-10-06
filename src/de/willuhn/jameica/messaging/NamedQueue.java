@@ -209,13 +209,15 @@ public final class NamedQueue implements MessagingQueue
     {
       wakeup(); // Noch offene Nachrichten zustellen
       Logger.debug("closing queue: " + queue.getName());
+      
+      // Letzter Queue entfernt. Wir beenden den Worker
+      if (this.queues.contains(queue) && this.queues.size() == 1)
+        this.quit = true;
+      
       this.queues.remove(queue);
 
-      if (queues.size() == 0)
+      if (this.quit)
       {
-        // Letzter Queue entfernt. Wir beenden den Worker
-        this.quit = true;
-        
         try {
           Logger.debug("shutting down messaging factory");
           wakeup();
@@ -318,7 +320,7 @@ public final class NamedQueue implements MessagingQueue
           catch (Exception e)
           {
             // Das kann passieren, wenn wir genau in dem Moment beendet wurden, als wir gerade in den Queues waren
-            Logger.write(Level.DEBUG,"error while processing queue",e);
+            Logger.write(Level.INFO,"error while processing queue",e);
           }
         }
 
