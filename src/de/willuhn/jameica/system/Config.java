@@ -548,6 +548,19 @@ public final class Config
   {
     return getWorkDir() + File.separator + "jameica.log";
   }
+  
+  /**
+   * Liefert die Dateigroesse nach der die Log-Datei rotiert und gezippt wird.
+   * @return die Dateigroesse des Logs in Bytes.
+   */
+  public long getLogSize()
+  {
+    int def = 1;
+    int i = settings.getInt("jameica.log.size.mb",def);
+    if (i < 1 || i > 50)
+      i = def;
+    return i * 1024L * 1024L;
+  }
 
   /**
    * Legt fest, ob Eingabe-Felder auf Pflichteingaben geprueft werden.

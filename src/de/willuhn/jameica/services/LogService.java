@@ -81,6 +81,9 @@ public class LogService implements Bootable
       try
       {
         LogrotateTarget t = new LogrotateTarget(logFile,true);
+        long size = Application.getConfig().getLogSize();
+        Logger.info("log size " + size + " bytes");
+        t.setMaxLength(size);
         Logger.addTarget(t);
       }
       catch (IOException e)
