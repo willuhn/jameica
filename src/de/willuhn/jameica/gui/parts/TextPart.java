@@ -139,7 +139,7 @@ public class TextPart implements Part
     scroll();
     // Farbe wieder zuruecksetzen
     if (color != null)
-      stext.setForeground(Color.WIDGET_FG.getSWTColor());
+      stext.setForeground(Color.FOREGROUND.getSWTColor());
   }
 
   /**

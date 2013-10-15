@@ -69,7 +69,6 @@ public class ColorInput extends ButtonInput
     if (forground)
     {
       label.setForeground(color);
-      label.setBackground(de.willuhn.jameica.gui.util.Color.WIDGET_BG.getSWTColor());
     }
     else
     {
@@ -109,7 +108,6 @@ public class ColorInput extends ButtonInput
     if (forground)
     {
       label.setForeground(color);
-      label.setBackground(de.willuhn.jameica.gui.util.Color.WIDGET_BG.getSWTColor());
     }
     else
     {

@@ -110,7 +110,7 @@ public class ReminderAppointment implements Appointment
     Date executed       = (Date) this.reminder.getData(Reminder.KEY_EXECUTED);
     ReminderInterval ri = this.reminder.getReminderInterval();
     
-    RGB black = Color.WIDGET_FG.getSWTColor().getRGB();
+    RGB black = Color.BLACK.getSWTColor().getRGB();
     RGB gray  = Color.COMMENT.getSWTColor().getRGB();
     
     // Wenn wir noch gar kein Ausfuehrungsdatum haben, dann schwarz

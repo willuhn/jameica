@@ -298,7 +298,7 @@ public class Navigation implements Part
       return;
     
     ti.setGrayed(!item.isEnabled());
-    ti.setForeground(item.isEnabled() ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
+    ti.setForeground(item.isEnabled() ? Color.FOREGROUND.getSWTColor() : Color.COMMENT.getSWTColor());
     ti.setText(item.getName());
     ti.setData(KEY_NAVIGATION,item);
   }

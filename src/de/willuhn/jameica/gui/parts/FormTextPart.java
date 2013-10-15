@@ -176,9 +176,9 @@ public class FormTextPart implements Part {
     
     // Daher machen wir das gleich als erstes. Sicher ist sicher.
     HyperlinkSettings hs = new HyperlinkSettings(GUI.getDisplay());
-    hs.setBackground(Color.WIDGET_BG.getSWTColor());
+    hs.setBackground(Color.BACKGROUND.getSWTColor());
     hs.setForeground(Color.LINK.getSWTColor());
-    hs.setActiveBackground(Color.WIDGET_BG.getSWTColor());
+    hs.setActiveBackground(Color.BACKGROUND.getSWTColor());
     hs.setActiveForeground(Color.LINK_ACTIVE.getSWTColor());
     text.setHyperlinkSettings(hs);
 

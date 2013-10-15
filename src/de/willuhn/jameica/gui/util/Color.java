@@ -29,13 +29,15 @@ public class Color {
 	
 	/**
 	 * Hintergrundfarbe von Widgets.
+	 * @deprecated Stattdessen sollte nur noch Color.BACKGROUND verwendet werden.
 	 */
-	public final static Color WIDGET_BG   = new Color("color.widgetbg",			new RGB(255,255,255));
+	public final static Color WIDGET_BG   = new Color(null,	                new RGB(255,255,255));
 
   /**
    * Vordergrundfarbe von Widgets.
+   * @deprecated Stattdessen sollte nur noch Color.FOREGROUND verwendet werden.
    */
-  public final static Color WIDGET_FG   = new Color("color.widgetfg",		  new RGB(0,0,0));
+  public final static Color WIDGET_FG   = new Color(null,           		  new RGB(0,0,0));
 
   /**
    * Hintergrundfarbe der Views.
@@ -43,6 +45,22 @@ public class Color {
    * von Widgets gibt, bei denen das ohnehin nicht funktioniert
    */
   public final static Color BACKGROUND 	= new Color(null,		              GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
+
+  /**
+   * Vordergrundfarbe der Views.
+   * Nicht konfigurierbar, damit das auch auf dunklen Themes funktioniert.
+   */
+  public final static Color FOREGROUND  = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND).getRGB());
+
+  /**
+   * Weiss.
+   */
+  public final static Color WHITE       = new Color(null,                 new RGB(255,255,255));
+
+  /**
+   * Schwarz.
+   */
+  public final static Color BLACK       = new Color(null,                 new RGB(0,0,0));
 
   /**
    * Rahmenfarbe von Elementen (zB Tabellen).

@@ -94,7 +94,7 @@ public class PluginList extends TablePart
       public void format(TableItem item)
       {
         Manifest mf = (Manifest) item.getData();
-        item.setForeground(mf.isInstalled() ? Color.WIDGET_FG.getSWTColor() : Color.COMMENT.getSWTColor());
+        item.setForeground(mf.isInstalled() ? Color.FOREGROUND.getSWTColor() : Color.COMMENT.getSWTColor());
       }
     });
     setMulti(false);

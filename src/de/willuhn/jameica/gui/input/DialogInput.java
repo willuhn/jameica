@@ -205,7 +205,7 @@ public class DialogInput extends ButtonInput
     if (isMandatory() && (s == null || s.length() == 0))
       color = Color.MANDATORY_BG.getSWTColor();
     else
-      color = Color.WIDGET_BG.getSWTColor();
+      color = Color.BACKGROUND.getSWTColor();
 
     text.setBackground(color);
   }

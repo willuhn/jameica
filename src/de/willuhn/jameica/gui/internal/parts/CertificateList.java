@@ -99,7 +99,7 @@ public class CertificateList extends TablePart
           if (Application.getSSLFactory().getSystemCertificate().equals(o.cert))
             item.setForeground(Color.COMMENT.getSWTColor());
           else
-            item.setForeground(Color.WIDGET_FG.getSWTColor());
+            item.setForeground(Color.FOREGROUND.getSWTColor());
         }
         catch (Exception e)
         {

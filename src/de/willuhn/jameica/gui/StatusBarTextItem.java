@@ -190,7 +190,7 @@ public class StatusBarTextItem implements StatusBarItem
                 color = Color.SUCCESS;
                 break;
               default:
-                color = Color.WIDGET_FG;
+                color = Color.FOREGROUND;
             }
             text.setForeground(color.getSWTColor());
             text.setText(m.getText() + " ");

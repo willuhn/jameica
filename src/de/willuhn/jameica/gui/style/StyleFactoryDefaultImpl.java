@@ -46,8 +46,8 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   {
     Text text = new Text(parent,SWT.BORDER | SWT.SINGLE);
     text.setFont(Font.DEFAULT.getSWTFont());
-    text.setForeground(Color.WIDGET_FG.getSWTColor());
-    text.setBackground(Color.WIDGET_BG.getSWTColor());
+    text.setForeground(Color.FOREGROUND.getSWTColor());
+    text.setBackground(Color.BACKGROUND.getSWTColor());
     return text;
   }
 
@@ -58,8 +58,8 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   {
     Text text = new Text(parent,SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
     text.setFont(Font.DEFAULT.getSWTFont());
-    text.setForeground(Color.WIDGET_FG.getSWTColor());
-    text.setBackground(Color.WIDGET_BG.getSWTColor());
+    text.setForeground(Color.FOREGROUND.getSWTColor());
+    text.setBackground(Color.BACKGROUND.getSWTColor());
     return text;
   }
 

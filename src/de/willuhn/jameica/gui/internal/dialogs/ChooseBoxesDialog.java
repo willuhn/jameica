@@ -125,7 +125,7 @@ public class ChooseBoxesDialog extends AbstractDialog
         }
         else
         {
-          item.setForeground(Color.WIDGET_FG.getSWTColor());
+          item.setForeground(Color.FOREGROUND.getSWTColor());
         }
       }
     });

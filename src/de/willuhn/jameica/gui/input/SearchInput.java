@@ -308,7 +308,7 @@ public class SearchInput extends AbstractInput
         if (s != null && s.equals(search))
         {
           text.setText("");
-          text.setForeground(Color.WIDGET_FG.getSWTColor());
+          text.setForeground(Color.FOREGROUND.getSWTColor());
         }
       }
     };
@@ -467,7 +467,7 @@ public class SearchInput extends AbstractInput
     {
       text.setEnabled(enabled);
       if (enabled)
-        text.setForeground(Color.WIDGET_FG.getSWTColor());
+        text.setForeground(Color.FOREGROUND.getSWTColor());
       else
         text.setForeground(Color.COMMENT.getSWTColor());
     }
@@ -490,7 +490,7 @@ public class SearchInput extends AbstractInput
       this.text.setText(s == null ? "" : s);
       
       if (s != null && !s.equals(this.search))
-        text.setForeground(Color.WIDGET_FG.getSWTColor());
+        text.setForeground(Color.FOREGROUND.getSWTColor());
 
       if (this.listeners.size() > 0)
       {
@@ -533,7 +533,7 @@ public class SearchInput extends AbstractInput
     if (isMandatory() && (s == null || s.length() == 0 || s.equals(this.search)))
       color = Color.MANDATORY_BG.getSWTColor();
     else
-      color = Color.WIDGET_BG.getSWTColor();
+      color = Color.BACKGROUND.getSWTColor();
 
     text.setBackground(color);
   }

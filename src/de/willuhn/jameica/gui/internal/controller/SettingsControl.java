@@ -66,7 +66,6 @@ public class SettingsControl extends AbstractControl
   private Part plugins;
 
   // Look & Feel
-	private Input colorWidgetBG;
 	private Input colorError;
 	private Input colorSuccess;
   private Input colorMandatoryBG;
@@ -244,18 +243,6 @@ public class SettingsControl extends AbstractControl
     return this.plugins;
   }
   
-	/**
-	 * Auswahlfeld.
-   * @return Auswahl-Feld.
-   */
-  public Input getColorWidgetBG()
-	{
-		if (colorWidgetBG != null)
-			return colorWidgetBG;
-		colorWidgetBG = new ColorInput(Color.WIDGET_BG.getSWTColor(),false);
-		return colorWidgetBG;
-	}
-
   /**
    * Auswahlfeld.
    * @return Auswahl-Feld.
@@ -356,7 +343,6 @@ public class SettingsControl extends AbstractControl
       // Look & Feel
       config.setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
       Customizing.SETTINGS.setAttribute("application.splashscreen.random",((Boolean)getRandomSplash().getValue()).booleanValue());
-    	Color.WIDGET_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorWidgetBG().getValue());
 			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
 			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
       Color.MANDATORY_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorMandatoryBG().getValue());
@@ -391,8 +377,6 @@ public class SettingsControl extends AbstractControl
   		if (!((Boolean) prompt.open()).booleanValue())
   			return;
 
-			Color.WIDGET_BG.reset();
-			Color.WIDGET_FG.reset();
 			Color.COMMENT.reset();
 			Color.ERROR.reset();
 			Color.SUCCESS.reset();

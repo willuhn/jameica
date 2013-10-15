@@ -106,7 +106,7 @@ public class ProgressBar implements ProgressMonitor, Part
 					else if (status == STATUS_ERROR || status == STATUS_CANCEL)
 						barLabel.setForeground(Color.ERROR.getSWTColor());
 					else
-						barLabel.setForeground(Color.WIDGET_FG.getSWTColor());
+						barLabel.setForeground(Color.FOREGROUND.getSWTColor());
           
           // Einige User berichteten, dass der Text nicht rechtzeitig
           // aktualisiert wird.

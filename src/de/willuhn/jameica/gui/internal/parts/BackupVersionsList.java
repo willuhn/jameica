@@ -74,7 +74,7 @@ public class BackupVersionsList extends TablePart
         else if (p.notInstalled)
           item.setForeground(Color.COMMENT.getSWTColor());
         else
-          item.setForeground(Color.WIDGET_FG.getSWTColor());
+          item.setForeground(Color.FOREGROUND.getSWTColor());
       }
     });
     

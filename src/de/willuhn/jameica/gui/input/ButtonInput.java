@@ -282,7 +282,7 @@ public abstract class ButtonInput extends AbstractInput
         this.clientControl.setBackground(Color.MANDATORY_BG.getSWTColor());
         return;
       }
-      this.clientControl.setBackground(Color.WIDGET_BG.getSWTColor());
+      this.clientControl.setBackground(Color.BACKGROUND.getSWTColor());
     }
     finally
     {

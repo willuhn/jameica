@@ -318,7 +318,7 @@ public abstract class AbstractInput implements Input
         this.control.setBackground(Color.MANDATORY_BG.getSWTColor());
         return;
       }
-      this.control.setBackground(Color.WIDGET_BG.getSWTColor());
+      this.control.setBackground(Color.BACKGROUND.getSWTColor());
     }
     finally
     {
