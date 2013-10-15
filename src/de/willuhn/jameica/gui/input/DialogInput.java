@@ -204,8 +204,6 @@ public class DialogInput extends ButtonInput
     
     if (isMandatory() && (s == null || s.length() == 0))
       color = Color.MANDATORY_BG.getSWTColor();
-    else
-      color = Color.BACKGROUND.getSWTColor();
 
     text.setBackground(color);
   }
@@ -232,19 +230,3 @@ public class DialogInput extends ButtonInput
     }
   }
 }
-
-/*********************************************************************
- * $Log: DialogInput.java,v $
- * Revision 1.28  2011/10/20 16:16:53  willuhn
- * @C Loglevel
- *
- * Revision 1.27  2011-08-08 10:45:05  willuhn
- * @C AbstractInput#update() ist jetzt "protected" (war package-private)
- *
- * Revision 1.26  2011-05-03 16:46:08  willuhn
- * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
- * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
- *
- * Revision 1.25  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- **********************************************************************/

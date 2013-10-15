@@ -282,7 +282,7 @@ public abstract class ButtonInput extends AbstractInput
         this.clientControl.setBackground(Color.MANDATORY_BG.getSWTColor());
         return;
       }
-      this.clientControl.setBackground(Color.BACKGROUND.getSWTColor());
+      this.clientControl.setBackground(null);
     }
     finally
     {
@@ -291,74 +291,3 @@ public abstract class ButtonInput extends AbstractInput
   }
 
 }
-
-/*********************************************************************
- * $Log: ButtonInput.java,v $
- * Revision 1.22  2011/08/08 10:45:05  willuhn
- * @C AbstractInput#update() ist jetzt "protected" (war package-private)
- *
- * Revision 1.21  2011-08-01 12:09:31  willuhn
- * @C Existierendes Control zurueckliefern, falls bereits vorhanden
- *
- * Revision 1.20  2011-05-03 16:46:08  willuhn
- * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
- * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
- *
- * Revision 1.19  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.18  2010/06/08 11:57:54  willuhn
- * @B Beim Aendern des Enabled-Status wurde die Hintergrundfarbe nicht sofort geaendert - da fehlte nur ein update()
- *
- * Revision 1.17  2009/09/22 11:14:51  willuhn
- * @B Hintergrundfarbe wurde im Composite nicht gesetzt - fuehrte zu einem grauen Rand
- *
- * Revision 1.16  2009/07/26 22:40:35  willuhn
- * @B BUGZILLA 744
- *
- * Revision 1.15  2008/05/30 10:16:25  willuhn
- * @N Text/Image des Button on-the-fly aktualisierbar
- *
- * Revision 1.14  2007/07/17 14:34:23  willuhn
- * @B Updates nichts bei Buttons und Checkboxen durchfuehren
- *
- * Revision 1.13  2007/04/26 13:27:24  willuhn
- * @R undo
- *
- * Revision 1.11  2007/01/05 10:36:49  willuhn
- * @C Farbhandling - Jetzt aber!
- *
- * Revision 1.10  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.9  2006/06/19 10:54:24  willuhn
- * @N neue Methode setEnabled(boolean) in Input
- * @N neue de_willuhn_util lib
- *
- * Revision 1.8  2005/08/22 13:31:52  web0
- * *** empty log message ***
- *
- * Revision 1.7  2004/09/15 22:31:53  willuhn
- * *** empty log message ***
- *
- * Revision 1.6  2004/07/27 23:41:30  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2004/07/09 00:12:47  willuhn
- * @C Redesign
- *
- * Revision 1.4  2004/06/10 20:56:53  willuhn
- * @D javadoc comments fixed
- *
- * Revision 1.3  2004/06/02 21:15:15  willuhn
- * @B win32 fixes in flat style
- * @C made ButtonInput more abstract
- *
- * Revision 1.2  2004/05/26 23:23:23  willuhn
- * @N Timeout fuer Messages in Statusbars
- *
- * Revision 1.1  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- **********************************************************************/

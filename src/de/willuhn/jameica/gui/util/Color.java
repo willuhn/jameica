@@ -55,12 +55,12 @@ public class Color {
   /**
    * Weiss.
    */
-  public final static Color WHITE       = new Color(null,                 new RGB(255,255,255));
+  public final static Color WHITE       = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE).getRGB());
 
   /**
    * Schwarz.
    */
-  public final static Color BLACK       = new Color(null,                 new RGB(0,0,0));
+  public final static Color BLACK       = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_BLACK).getRGB());
 
   /**
    * Rahmenfarbe von Elementen (zB Tabellen).
