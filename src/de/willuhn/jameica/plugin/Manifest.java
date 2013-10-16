@@ -562,6 +562,9 @@ public class Manifest implements Comparable
     if (!jd.check())
       throw new ApplicationException(Application.getI18n().tr("Plugin benötigt Jameica {0}",jd.getVersion()));
 
+    if (Application.getPluginLoader().isObsolete(this.getName()))
+      throw new ApplicationException(Application.getI18n().tr("Plugin ist jetzt Bestandteil von Jameica und muss daher nicht mehr installiert werden"));
+    
     // 2. Es reichen die direkten Abhaengigkeiten. Die indirekten werden ja
     //    von dem anderen Manifest geprueft
     Dependency[] deps = this.getDirectDependencies();

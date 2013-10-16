@@ -79,6 +79,10 @@ public class Dependency implements Serializable
     // Version von Jameica selbst.
     if (this.name.equalsIgnoreCase("jameica"))
       return compareVersion(Application.getManifest().getVersion());
+    
+    // Anforderung existiert nicht mehr
+    if (Application.getPluginLoader().isObsolete(this.name))
+      return true;
 
     // true liefern, wenn es keine Pflichtaebhaengigkeit ist
     if (!this.isRequired())
@@ -161,6 +165,8 @@ public class Dependency implements Serializable
    */
   public boolean isRequired()
   {
+    if (Application.getPluginLoader().isObsolete(this.name))
+      return false;
     return this.required;
   }
 

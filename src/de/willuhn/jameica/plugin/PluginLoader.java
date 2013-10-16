@@ -18,8 +18,10 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.io.FileUtil;
@@ -50,6 +52,11 @@ import de.willuhn.util.ProgressMonitor;
  */
 public final class PluginLoader
 {
+  // Liste von Plugins, die beim Laden ignoriert werden sollen, weil sie inzwischen Bestandteil von Jameica sind
+  private final static Set<String> obsoletePlugins = new HashSet<String>()
+  {{
+    add("jameica.scripting");
+  }};
 
   // Liste mit allen gefundenen Plugins.
   // Die Reihenfolge aus de.willuhn.jameica.system.Config.properties bleibt
@@ -102,6 +109,23 @@ public final class PluginLoader
             continue;
           }
           Manifest m = new Manifest(mf);
+          if (isObsolete(m.getName()))
+          {
+            Logger.info("found obsolete plugin " + m.getName() + " - skipping");
+            try
+            {
+              if (source.canWrite())
+                this.markForDelete(m);
+            }
+            catch (ApplicationException ae)
+            {
+              Logger.error("unable to uninstall obsolete plugin",ae);
+              Application.addWelcomeMessage(Application.getI18n().tr("Das Plugin {0} wird nicht mehr benötigt, " +
+              		"da es jetzt bereits in Jameica enthalten ist. Bitte deinstallieren Sie daher das Plugin.",m.getName()));
+            }
+            continue;
+          }
+          
           m.setPluginSource(source.getType());
           Manifest first = cache.get(m.getName());
           if (first != null)
@@ -406,6 +430,16 @@ public final class PluginLoader
     Application.getCallback().getStartupMonitor().addPercentComplete(5);
     manifest.setInstalled(true);
     Logger.info("plugin " + manifest.getName() + " initialized successfully");
+  }
+  
+  /**
+   * Prueft, ob das Plugin obsolet ist und daher ignoriert wird.
+   * @param name der Name des Plugins.
+   * @return true, wenn es obsolet ist.
+   */
+  public boolean isObsolete(String name)
+  {
+    return obsoletePlugins.contains(name);
   }
 
   /**
