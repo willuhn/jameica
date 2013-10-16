@@ -39,11 +39,6 @@
 
 	<services/>
   
-  <extensions>
-    <extension class="de.willuhn.jameica.scripting.ext.jameica.SettingsView"
-               extends="de.willuhn.jameica.gui.internal.views.Settings" />
-  </extensions>
-  
   <messaging>
     <consumer queue="jameica.reminder.appointment" class="de.willuhn.jameica.messaging.ReminderAppointmentMessageConsumer" />
     <consumer queue="jameica.popup"                class="de.willuhn.jameica.messaging.PopupMessageConsumer" />
