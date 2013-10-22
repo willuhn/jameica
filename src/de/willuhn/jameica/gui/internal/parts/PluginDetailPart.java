@@ -11,29 +11,15 @@
 
 package de.willuhn.jameica.gui.internal.parts;
 
-import java.rmi.RemoteException;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 
-import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.internal.action.PluginDetails;
 import de.willuhn.jameica.gui.internal.action.PluginUnInstall;
 import de.willuhn.jameica.gui.internal.action.PluginUpdate;
-import de.willuhn.jameica.gui.internal.action.Program;
 import de.willuhn.jameica.gui.parts.Button;
-import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.parts.InfoPanel;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
@@ -43,7 +29,7 @@ import de.willuhn.util.I18N;
  * Zeigt die Kurz-Infos eines Plugins inclusive Buttons fuer die Verwaltung
  * des Plugins an.
  */
-public class PluginDetailPart implements Part
+public class PluginDetailPart extends InfoPanel
 {
   private Manifest manifest = null;
   private Composite comp = null;
@@ -55,145 +41,56 @@ public class PluginDetailPart implements Part
   public PluginDetailPart(Manifest mf)
   {
     this.manifest = mf;
-  }
-
-  /**
-   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
-   */
-  public void paint(Composite parent) throws RemoteException
-  {
-    // Wir wurden schon gezeichnet.
-    if (this.comp != null)
-      return;
+    this.setUrl(this.manifest.getHomepage());
+    this.setIcon(this.manifest.getIcon());
+    this.setText(this.manifest.getDescription());
     
+    if (!this.manifest.isInstalled())
+      this.setForeground(Color.COMMENT);
+    
+    // Haben wir einen Init-Error bei dem Plugin?
+    Throwable error = Application.getPluginLoader().getInitErrors().get(manifest);
+
     I18N i18n = Application.getI18n();
 
-    org.eclipse.swt.graphics.Color white = GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-    org.eclipse.swt.graphics.Color comment = Color.COMMENT.getSWTColor();
-    
-    // 2-spaltige Anzeige. Links das Icon, rechts Eigenschaften und Buttons
-    this.comp = new Composite(parent,SWT.BORDER);
-    this.comp.setBackground(white);
-    this.comp.setBackgroundMode(SWT.INHERIT_FORCE);
-    this.comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    this.comp.setLayout(new GridLayout(2,false));
-    
-    final String link = this.manifest.getHomepage();
-    
-    // Linke Spalte mit dem Icon
+    String title = this.manifest.getName();
+    if (!manifest.isInstalled())
     {
-      int rows = 4;
-      if (link != null && link.length() > 0) rows++;
-      GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
-      gd.verticalSpan = rows;
-      Label icon = new Label(this.comp,SWT.NONE);
-      icon.setBackground(white);
-      icon.setLayoutData(gd);
-      
-      String name = manifest.getIcon();
-      ClassLoader loader = manifest.getClassLoader();
-      if (name != null && name.length() > 0 && loader != null)
-        icon.setImage(SWTUtil.getImage(name,loader));
-      else
-        icon.setImage(SWTUtil.getImage("package-x-generic-medium.png"));
+      // Checken, ob wir eine Fehlermeldung haben
+      title = i18n.tr("{0} ({1})",title, (error != null ? error.getMessage() : i18n.tr("Neustart erforderlich")));
     }
+    this.setTitle(title);
     
-    // Rechte Spalte mit den Eigenschaften
+    this.setComment(i18n.tr("Version {0}",this.manifest.getVersion().toString()));
+    
+    String builddate   = this.manifest.getBuildDate();
+    String buildnumber = this.manifest.getBuildnumber();
+    if (builddate != null && builddate.length() > 0 && buildnumber != null && buildnumber.length() > 0)
+      this.setTooltip(i18n.tr("Build-Datum {0}\nBuildnummer {1}",builddate,buildnumber));
+    
+    // Buttons zum Oeffnen, Deinstallieren, Aktualisieren
+    Button open   = new Button(i18n.tr("Öffnen..."),new PluginDetails(),this.manifest,false,"document-open.png");
+    Button update = new Button(i18n.tr("Plugin aktualisieren..."),new PluginUpdate(),this.manifest,false,"emblem-package.png");
+    Button delete = new Button(i18n.tr("Plugin löschen..."),new PluginUnInstall(),this.manifest,false,"user-trash-full.png");
+
+    // Update und oeffnen gibt es nicht bei neuen Installationen
+    open.setEnabled(manifest.isInstalled());
+    update.setEnabled(manifest.isInstalled() || error != null); // Update auch bei Fehler erlauben
+
+    // Checken, ob es installiert/deinstalliert werden kann
+    try
     {
-      // Haben wir einen Init-Error bei dem Plugin?
-      Throwable error = Application.getPluginLoader().getInitErrors().get(manifest);
-      
-      // Name
-      {
-        Label title = new Label(this.comp,SWT.NONE);
-        title.setBackground(white);
-        title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        title.setFont(Font.H2.getSWTFont());
-        String text = this.manifest.getName();
-        if (!manifest.isInstalled())
-        {
-          title.setForeground(comment);
-          
-          // Checken, ob wir eine Fehlermeldung haben
-          text = i18n.tr("{0} ({1})",text, (error != null ? error.getMessage() : i18n.tr("Neustart erforderlich")));
-        }
-        title.setText(text);
-      }
-      
-      // Beschreibung
-      {
-        Label desc = new Label(this.comp,SWT.NONE);
-        desc.setBackground(white);
-        if (!manifest.isInstalled()) desc.setForeground(comment);
-        desc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        desc.setText(this.manifest.getDescription());
-      }
-      
-      // Link
-      if (link != null && link.length() > 0)
-      {
-        Link l = new Link(this.comp,SWT.NONE);
-        l.setBackground(white);
-        l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        if (!manifest.isInstalled()) l.setForeground(comment);
-        l.setText("<A>" + link + "</A>");
-        l.addSelectionListener(new SelectionAdapter() {
-          public void widgetSelected(SelectionEvent e)
-          {
-            try
-            {
-              new Program().handleAction(link);
-            }
-            catch (ApplicationException ae)
-            {
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-            }
-          }
-        });
-      }
-
-      // Versionsnummer
-      {
-        Label version = new Label(this.comp,SWT.NONE);
-        version.setBackground(white);
-        version.setFont(Font.SMALL.getSWTFont());
-        version.setForeground(Color.COMMENT.getSWTColor());
-        version.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        version.setText(i18n.tr("Version {0}",this.manifest.getVersion().toString()));
-        String builddate   = this.manifest.getBuildDate();
-        String buildnumber = this.manifest.getBuildnumber();
-        if (builddate != null && builddate.length() > 0 && buildnumber != null && buildnumber.length() > 0)
-          version.setToolTipText(i18n.tr("Build-Datum {0}\nBuildnummer {1}",builddate,buildnumber));
-      }
-      
-      // Buttons zum Oeffnen, Deinstallieren, Aktualisieren
-      Button open   = new Button(i18n.tr("Öffnen..."),new PluginDetails(),this.manifest,false,"document-open.png");
-      Button update = new Button(i18n.tr("Plugin aktualisieren..."),new PluginUpdate(),this.manifest,false,"emblem-package.png");
-      Button delete = new Button(i18n.tr("Plugin löschen..."),new PluginUnInstall(),this.manifest,false,"user-trash-full.png");
-
-      // Update und oeffnen gibt es nicht bei neuen Installationen
-      open.setEnabled(manifest.isInstalled());
-      update.setEnabled(manifest.isInstalled() || error != null); // Update auch bei Fehler erlauben
-
-      // Checken, ob es installiert/deinstalliert werden kann
-      try
-      {
-        Application.getPluginLoader().canUnInstall(this.manifest);
-      }
-      catch (ApplicationException ae) {
-        delete.setEnabled(false);
-      }
-      
-      ButtonArea buttons = new ButtonArea();
-      buttons.addButton(open);
-      buttons.addButton(update);
-      buttons.addButton(delete);
-      
-      buttons.paint(this.comp);
-
+      Application.getPluginLoader().canUnInstall(this.manifest);
     }
+    catch (ApplicationException ae) {
+      delete.setEnabled(false);
+    }
+
+    this.addButton(open);
+    this.addButton(update);
+    this.addButton(delete);
   }
-  
+
   /**
    * Disposed das Part.
    */
