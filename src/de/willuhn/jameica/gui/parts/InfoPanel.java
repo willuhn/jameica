@@ -28,6 +28,7 @@ import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -130,11 +131,21 @@ public class InfoPanel implements Part
     if (this.comp != null)
       return;
     
-    org.eclipse.swt.graphics.Color white = GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+    // Wir unterscheiden hier beim Layout nach Windows/OSX und Rest.
+    // Unter Windows und OSX sieht es ohne Rahmen und ohne Hintergrund besser aus
+    org.eclipse.swt.graphics.Color bg = null;
+    int border = SWT.NONE;
     
+    int os = Application.getPlatform().getOS();
+    if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64 && os != Platform.OS_MAC)
+    {
+      bg = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+      border = SWT.BORDER;
+    }
+
     // 2-spaltige Anzeige. Links das Icon, rechts Eigenschaften und Buttons
-    this.comp = new Composite(parent,SWT.BORDER);
-    this.comp.setBackground(white);
+    this.comp = new Composite(parent,border);
+    this.comp.setBackground(bg);
     this.comp.setBackgroundMode(SWT.INHERIT_FORCE);
     this.comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     this.comp.setLayout(new GridLayout(2,false));
@@ -146,7 +157,7 @@ public class InfoPanel implements Part
       GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
       gd.verticalSpan = rows;
       Label icon = new Label(this.comp,SWT.NONE);
-      icon.setBackground(white);
+      icon.setBackground(bg);
       icon.setLayoutData(gd);
       icon.setImage(SWTUtil.getImage((this.icon != null && this.icon.length() > 0) ? this.icon : "package-x-generic-medium.png"));
     }
@@ -156,7 +167,7 @@ public class InfoPanel implements Part
       // Name
       {
         Label title = new Label(this.comp,SWT.NONE);
-        title.setBackground(white);
+        title.setBackground(bg);
         title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         title.setFont(Font.H2.getSWTFont());
         if (this.fgColor != null)
@@ -167,7 +178,7 @@ public class InfoPanel implements Part
       // Beschreibung
       {
         Label desc = new Label(this.comp,SWT.NONE);
-        desc.setBackground(white);
+        desc.setBackground(bg);
         
         if (this.fgColor != null)
           desc.setForeground(this.fgColor.getSWTColor());
@@ -180,7 +191,7 @@ public class InfoPanel implements Part
       if (this.url != null && this.url.length() > 0)
       {
         Link l = new Link(this.comp,SWT.NONE);
-        l.setBackground(white);
+        l.setBackground(bg);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
         if (this.fgColor != null)
@@ -205,7 +216,7 @@ public class InfoPanel implements Part
       // Versionsnummer
       {
         Label comment = new Label(this.comp,SWT.NONE);
-        comment.setBackground(white);
+        comment.setBackground(bg);
         comment.setFont(Font.SMALL.getSWTFont());
         comment.setForeground(Color.COMMENT.getSWTColor());
         comment.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
