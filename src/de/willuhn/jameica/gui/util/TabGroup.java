@@ -69,7 +69,13 @@ public class TabGroup extends Container
 
 		TabItem item = new TabItem(parent, SWT.NONE);
     if (name != null)
-  		item.setText(name);
+    {
+      item.setText(name);
+      
+      // wir registrieren das TabItem mit ihrem Namen im Folder.
+      // Dann erreichen wir es spaeter anhand des Alias-Namens
+      parent.setData(name,item);
+    }
 
     this.composite = new Composite(parent,SWT.NONE);
     this.composite.setFont(Font.H2.getSWTFont());

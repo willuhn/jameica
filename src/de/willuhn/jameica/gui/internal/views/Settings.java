@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
@@ -172,13 +173,29 @@ public class Settings extends AbstractView implements Extendable
     /////////////////////////////////////////////////////////////////
     // Mal checken, ob ein konkretes Tab angegeben ist.
     Integer activeTab = lastActiveTab;
-
     Object context = this.getCurrentObject();
-    if (context instanceof Integer)
-      activeTab = (Integer) context;
+
+    if (context != null)
+    {
+      // ist explizit eines angegeben?
+      if (context instanceof Integer)
+      {
+        activeTab = (Integer) context;
+      }
+      else if (context instanceof String)
+      {
+        Object o = folder.getData((String) context);
+        if (o instanceof TabItem)
+        {
+          folder.setSelection((TabItem)o);
+          return; // Auswahl getroffen
+        }
+      }
+    }
     
     if (activeTab != null)
       folder.setSelection(activeTab);
+    
     /////////////////////////////////////////////////////////////////
   }
   
@@ -215,87 +232,3 @@ public class Settings extends AbstractView implements Extendable
   }
 
 }
-
-
-/**********************************************************************
- * $Log: Settings.java,v $
- * Revision 1.41  2012/02/23 22:03:36  willuhn
- * @N wenn der User im Workdir-Chooser die Option "kuenftig nicht mehr anzeigen" aktiviert hat, kann er die Einstellung jetzt unter Datei->Einstellungen wieder rueckgaengig machen. Es gab sonst keine komfortable Moeglichkeit, den Dialog wieder "hervorzuholen"
- *
- * Revision 1.40  2011-08-02 08:23:29  willuhn
- * *** empty log message ***
- *
- * Revision 1.39  2011-08-02 08:22:57  willuhn
- * @B BUGZILLA 1112
- *
- * Revision 1.38  2011-06-27 17:51:43  willuhn
- * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
- * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
- *
- * Revision 1.37  2011-06-08 13:22:22  willuhn
- * @N Neuer First-Start-Assistent, der zum Installieren eines neuen Plugins auffordert
- *
- * Revision 1.36  2011-06-08 09:20:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.35  2011-05-31 16:39:04  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
- *
- * Revision 1.34  2011-05-03 16:45:20  willuhn
- * @R Locale nicht mehr ueber GUI aenderbar - hat eh keiner verwendet
- * @R Style nicht mehr aenderbar - der Flatstyle war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
- *
- * Revision 1.33  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.32  2011-04-26 11:38:16  willuhn
- * @R Back-Button entfernt
- * @N Icons auf Buttons
- *
- * Revision 1.31  2010-11-04 10:31:13  willuhn
- * @N Checken, ob splash.jar existiert
- *
- * Revision 1.30  2010-11-04 01:11:20  willuhn
- * @N Random Splashscreen ;)
- *
- * Revision 1.29  2010-10-10 21:20:55  willuhn
- * @R RMI-Einstellungen entfernt - braucht kein Schwein und irritiert nur
- *
- * Revision 1.28  2009-10-26 09:26:33  willuhn
- * @R Scroll-View-Parameter entfernt - verursachte Darstellungsfehler
- *
- * Revision 1.27  2009/03/20 16:38:09  willuhn
- * @N BUGZILLA 576
- *
- * Revision 1.26  2009/03/10 14:06:26  willuhn
- * @N Proxy-Server fuer HTTPS konfigurierbar
- *
- * Revision 1.25  2009/01/20 10:51:51  willuhn
- * @N Mehr Icons - fuer Buttons
- *
- * Revision 1.24  2008/08/29 13:15:42  willuhn
- * @C Java 1.4 Compatibility - wieso zur Hoelle sind die Fehler vorher nie aufgefallen? Ich compiliere immer gegen 1.4? Suspekt
- *
- * Revision 1.23  2008/07/22 22:30:08  willuhn
- * @C Zum Speichern des letzten aktiven Tabs braucht man gar keine Session sondern nur einen statischen Integer. Keine Ahnung, warum ich das mal so umstaendlich implementiert hatte ;)
- *
- * Revision 1.22  2007/12/18 17:50:12  willuhn
- * @R Background-Color nicht mehr aenderbar
- * @C Layout der Startseite
- *
- * Revision 1.21  2007/09/08 14:20:11  willuhn
- * @C Pflichtfelder nicht mehr via GUI deaktivierbar
- *
- * Revision 1.20  2007/09/06 22:21:55  willuhn
- * @N Hervorhebung von Pflichtfeldern konfigurierbar
- * @N Neustart-Hinweis nur bei Aenderungen, die dies wirklich erfordern
- *
- * Revision 1.19  2007/08/20 12:27:08  willuhn
- * @C Pfad zur Log-Datei nicht mehr aenderbar. verursachte nur sinnlose absolute Pfadangaben in der Config
- *
- * Revision 1.18  2007/06/21 18:33:25  willuhn
- * @B typo
- *
- * Revision 1.17  2007/04/02 23:01:43  willuhn
- * @N SelectInput auf BeanUtil umgestellt
- **********************************************************************/
