@@ -139,7 +139,7 @@ public class InfoPanel implements Part
     int os = Application.getPlatform().getOS();
     if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64 && os != Platform.OS_MAC)
     {
-      bg = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+      bg = GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
       border = SWT.BORDER;
     }
 
