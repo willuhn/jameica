@@ -53,7 +53,7 @@ public class NamedConcurrentQueue implements MessagingQueue
 
     Logger.info("creating thread pool");
     messages = new LinkedBlockingQueue<Runnable>(1000);
-    queue    = new LinkedBlockingQueue<Runnable>(100);
+    queue    = new LinkedBlockingQueue<Runnable>(500);
     pool     = new ThreadPoolExecutor(1,5,10L,TimeUnit.SECONDS,messages,new ThreadPoolExecutor.DiscardPolicy());
   }
 
