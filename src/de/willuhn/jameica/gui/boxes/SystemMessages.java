@@ -14,11 +14,17 @@
 package de.willuhn.jameica.gui.boxes;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.gui.parts.FormTextPart;
+import de.willuhn.boot.BootLoader;
+import de.willuhn.jameica.gui.parts.Button;
+import de.willuhn.jameica.gui.parts.InfoPanel;
+import de.willuhn.jameica.messaging.BootMessage;
+import de.willuhn.jameica.messaging.BootMessageConsumer;
+import de.willuhn.jameica.messaging.MessagingQueue;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 
 /**
@@ -40,8 +46,7 @@ public class SystemMessages extends AbstractBox
    */
   public boolean isActive()
   {
-    String[] messages = Application.getWelcomeMessages();
-    return super.isActive() && messages != null && messages.length > 0;
+    return super.isActive() && this.getMessages().size() > 0;
   }
 
   /**
@@ -49,8 +54,24 @@ public class SystemMessages extends AbstractBox
    */
   public boolean isEnabled()
   {
-    String[] messages = Application.getWelcomeMessages();
-    return messages != null && messages.length > 0;
+    return this.getMessages().size() > 0;
+  }
+  
+  /**
+   * Liefert die Liste der Boot-Meldungen.
+   * @return die Liste der Boot-Meldungen.
+   */
+  private List<BootMessage> getMessages()
+  {
+    BootLoader loader = Application.getBootLoader();
+
+    // flushen, um sicherzustellen, dass zugestellt wurde
+    MessagingQueue queue = Application.getMessagingFactory().getMessagingQueue("jameica.boot");
+    queue.flush();
+    
+    BeanService service          = loader.getBootable(BeanService.class);
+    BootMessageConsumer consumer = service.get(BootMessageConsumer.class);
+    return consumer.getMessages();
   }
 
   /**
@@ -67,7 +88,8 @@ public class SystemMessages extends AbstractBox
    */
   public int getHeight()
   {
-    return 250;
+    int size = this.getMessages().size();
+    return 120 * (size == 0 ? 1 : size);
   }
 
   /**
@@ -91,63 +113,21 @@ public class SystemMessages extends AbstractBox
    */
   public void paint(Composite parent) throws RemoteException
   {
-    String[] messages = Application.getWelcomeMessages();
-    if (messages == null || messages.length == 0)
-      return;
-    StringBuffer sb = new StringBuffer();
-    sb.append("<form>");
-    for (int i=0;i<messages.length;++i)
+    for (BootMessage msg:this.getMessages())
     {
-      if (messages[i] == null || messages[i].length() == 0)
-        continue;
+      InfoPanel panel = new InfoPanel();
+      panel.setTitle(msg.getTitle());
+      panel.setText(msg.getText());
+      panel.setComment(msg.getComment());
+      panel.setIcon(msg.getIcon());
+      panel.setUrl(msg.getUrl());
       
-      sb.append("<li>");
+      for (Button button:msg.getButtons())
+      {
+        panel.addButton(button);
+      }
       
-      String text = StringEscapeUtils.escapeXml(messages[i]);
-      text = text.replaceAll("\n","<br/>");
-      
-      // Wenn in dem Text die Begriffe "Error", "Fehler" oder "Exception" auftreten, markieren wir es gleich rot
-      if (text.toLowerCase().matches(".*(error|fehler|exception).*"))
-        sb.append("<span color=\"error\">" + Application.getI18n().tr("Fehler") + "</span><br/>");
-      sb.append(text);
-      sb.append("</li>");
+      panel.paint(parent);
     }
-    sb.append("</form>");
-    FormTextPart part = new FormTextPart(sb.toString());
-    part.paint(parent);
   }
-
 }
-
-
-/*********************************************************************
- * $Log: SystemMessages.java,v $
- * Revision 1.9  2011/06/08 12:53:13  willuhn
- * *** empty log message ***
- *
- * Revision 1.8  2010-03-18 11:38:03  willuhn
- * @N Ausfuehrlichere und hilfreichere Fehlermeldung, wenn Hibiscus-Datenbank defekt ist oder nicht geoeffnet werden konnte.
- *
- * Revision 1.7  2008/12/11 00:00:37  willuhn
- * @C Box wird sonst in voller verfuegbarer Hoehe angezeigt.
- *
- * Revision 1.6  2008/01/07 23:31:44  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2007/12/18 17:10:14  willuhn
- * @N Neues ExpandPart
- * @N Boxen auf der Startseite koennen jetzt zusammengeklappt werden
- *
- * Revision 1.4  2007/03/29 15:29:48  willuhn
- * @N Uebersichtlichere Darstellung der Systemstart-Meldungen
- *
- * Revision 1.3  2006/07/03 23:10:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2006/06/30 13:51:34  willuhn
- * @N Pluginloader Redesign in HEAD uebernommen
- *
- * Revision 1.1  2006/06/29 23:10:01  willuhn
- * @N Box-System aus Hibiscus in Jameica-Source verschoben
- *
- **********************************************************************/

@@ -33,6 +33,9 @@ import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.ext.SettingsView;
+import de.willuhn.jameica.gui.parts.Button;
+import de.willuhn.jameica.messaging.BootMessage;
+import de.willuhn.jameica.messaging.BootMessageConsumer;
 import de.willuhn.jameica.messaging.InvokeScriptMessageConsumer;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
@@ -41,6 +44,7 @@ import de.willuhn.jameica.system.Settings;
 import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
 
 /**
  * Interface fuer den Scripting-Service.
@@ -64,13 +68,18 @@ public class ScriptingService implements Bootable
   private List<File> files      = null;
   private Extension settingsExt = null;
   private Events events         = new Events();
+  
+  // Wir merken uns hier unsere Boot-Messages, damit wir die nicht bei jedem Service-Reload
+  // (was z.Bsp. beim Klick auf "Speichern" in den Settings passiert) immer wieder neu
+  // hinzufuegen.
+  private List<BootMessage> messages = new ArrayList<BootMessage>();
 
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
   public Class<Bootable>[] depends()
   {
-    return new Class[]{BeanService.class};
+    return new Class[]{BeanService.class,MessagingService.class};
   }
   
   /**
@@ -94,7 +103,7 @@ public class ScriptingService implements Bootable
     }
     this.engine.put("events",this.events);
 
-    // Settings-Extension registrieren
+    // 2. Settings-Extension registrieren
     if (this.settingsExt == null)
     {
       BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
@@ -102,14 +111,34 @@ public class ScriptingService implements Bootable
       ExtensionRegistry.register(this.settingsExt,de.willuhn.jameica.gui.internal.views.Settings.class.getName());
     }
 
-    // 3. Vom Benutzer registrierte Scripts ausfuehren.
+    // 3. Ggf. gespeicherte Fehlermeldungen wieder loeschen
+    if (this.messages.size() > 0)
+    {
+      BeanService service = Application.getBootLoader().getBootable(BeanService.class);
+      BootMessageConsumer consumer = service.get(BootMessageConsumer.class);
+      for (BootMessage msg:this.messages)
+      {
+        consumer.getMessages().remove(msg);
+      }
+      this.messages.clear();
+    }
+    
+    // 4. Vom Benutzer registrierte Scripts ausfuehren.
     
     this.files = this.getScripts();
     for (final File f:this.files)
     {
       if (!f.isFile() || !f.canRead())
       {
-        Application.addWelcomeMessage(Application.getI18n().tr("Script {0} nicht lesbar",f.getAbsolutePath()));
+        I18N i18n = Application.getI18n();
+        BootMessage msg = new BootMessage(i18n.tr("Script {0} nicht lesbar",f.getAbsolutePath()));
+        msg.setTitle(i18n.tr("Script nicht lesbar"));
+        msg.setIcon("dialog-warning-large.png");
+        msg.addButton(new Button(i18n.tr("Script konfigurieren..."),new de.willuhn.jameica.gui.internal.action.Settings(),Application.getI18n().tr("Scripting")));
+        Application.getMessagingFactory().getMessagingQueue("jameica.boot").queueMessage(msg); // muessen wir queuen, weil der Consumer noch nicht da ist
+        
+        this.messages.add(msg); // merken wir uns
+        
         continue;
       }
       eval(f);

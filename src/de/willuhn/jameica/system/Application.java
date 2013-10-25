@@ -14,17 +14,22 @@
 package de.willuhn.jameica.system;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.jar.JarFile;
 
 import de.willuhn.boot.BootLoader;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.messaging.BootMessage;
+import de.willuhn.jameica.messaging.BootMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
+import de.willuhn.jameica.messaging.MessagingQueue;
 import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginLoader;
 import de.willuhn.jameica.security.SSLFactory;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.services.Init5;
 import de.willuhn.jameica.services.MessagingService;
 import de.willuhn.jameica.services.PluginService;
@@ -59,7 +64,6 @@ public final class Application {
   private BootLoader          loader;
 
   private I18N                i18n;
-  private ArrayList<String>   welcomeMessages = new ArrayList<String>();
   private Date                started = new Date();
 
   private ApplicationController controller;
@@ -428,23 +432,38 @@ public final class Application {
    * Speichert waehrend des Bootens einen Text.
    * Dieser wird dem Benutzer angezeigt, sowie die Anwendung mit dem Startvorgang fertig ist.
    * @param message der anzuzeigende Text.
+   * @deprecated bitte kuenftig die Message-Queue "jameica.boot" verwenden.
    */
+  @Deprecated
   public static void addWelcomeMessage(String message)
   {
-    if (app == null || message == null || message.length() == 0)
+    if (message == null || message.length() == 0)
       return;
-    app.welcomeMessages.add(message);
+    
+    Application.getMessagingFactory().getMessagingQueue("jameica.boot").queueMessage(new BootMessage(message));
   }
 
   /**
    * Liefert eine Liste aller bis dato angefallenen Welcome-Messages.
    * @return String-Array mit den Meldungen.
+   * @deprecated Bitte kuenftig stattdessen den MessageConsumer "BootMessageConsumer" verwenden.
    */
+  @Deprecated
   public static String[] getWelcomeMessages()
   {
-    if (app == null)
-      return new String[] {};
-    return (String[]) app.welcomeMessages.toArray(new String[app.welcomeMessages.size()]);
+    // flushen, um sicherzustellen, dass zugestellt wurde
+    MessagingQueue queue = Application.getMessagingFactory().getMessagingQueue("jameica.boot");
+    queue.flush();
+
+    BeanService service = Application.getBootLoader().getBootable(BeanService.class);
+    BootMessageConsumer consumer = service.get(BootMessageConsumer.class);
+    
+    List<String> list = new LinkedList<String>();
+    for (BootMessage msg:consumer.getMessages())
+    {
+      list.add(msg.getText());
+    }
+    return list.toArray(new String[list.size()]);
   }
 
   /**

@@ -30,6 +30,9 @@ import de.willuhn.jameica.gui.MenuItemXml;
 import de.willuhn.jameica.gui.NavigationItemXml;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.gui.internal.action.PluginUnInstall;
+import de.willuhn.jameica.gui.parts.Button;
+import de.willuhn.jameica.messaging.BootMessage;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -109,6 +112,8 @@ public final class PluginLoader
             continue;
           }
           Manifest m = new Manifest(mf);
+          m.setPluginSource(source.getType());
+          
           if (isObsolete(m.getName()))
           {
             Logger.info("found obsolete plugin " + m.getName() + " - skipping");
@@ -117,16 +122,20 @@ public final class PluginLoader
               if (source.canWrite())
                 this.markForDelete(m);
             }
-            catch (ApplicationException ae)
+            catch (Exception e)
             {
-              Logger.error("unable to uninstall obsolete plugin",ae);
-              Application.addWelcomeMessage(Application.getI18n().tr("Das Plugin {0} wird nicht mehr benötigt, " +
-              		"da es jetzt bereits in Jameica enthalten ist. Bitte deinstallieren Sie daher das Plugin.",m.getName()));
+              Logger.error("unable to auto-uninstall obsolete plugin, notifying user",e);
+              I18N i18n = Application.getI18n();
+              BootMessage msg = new BootMessage(i18n.tr("Das Plugin \"{0}\" wird nicht mehr benötigt.",m.getName()));
+              msg.setTitle(i18n.tr("Plugin deinstallieren"));
+              msg.setIcon("user-trash-full.png");
+              msg.setComment(i18n.tr("Das Plugin \"{0}\" wird nicht mehr benötigt da es jetzt bereits in Jameica enthalten ist. Bitte deinstallieren Sie es.",m.getName()));
+              msg.addButton(new Button(i18n.tr("Plugin deinstallieren..."),new PluginUnInstall(),m));
+              Application.getMessagingFactory().getMessagingQueue("jameica.boot").queueMessage(msg); // muessen wir queuen, weil der Consumer noch nicht da ist
             }
             continue;
           }
           
-          m.setPluginSource(source.getType());
           Manifest first = cache.get(m.getName());
           if (first != null)
           {
@@ -156,7 +165,13 @@ public final class PluginLoader
               this.plugins.remove(first);
               this.plugins.add(m);
             }
-            Application.addWelcomeMessage(Application.getI18n().tr("Plugin doppelt installiert. Bitte lösche den Ordner {0}",toDelete));
+            
+            I18N i18n = Application.getI18n();
+            BootMessage msg = new BootMessage(i18n.tr("Das Plugin \"{0}\" wurde doppelt installiert.",m.getName()));
+            msg.setTitle(i18n.tr("Plugin doppelt installiert"));
+            msg.setIcon("dialog-warning-large.png");
+            msg.setComment(i18n.tr("Bitte löschen Sie den Ordner {0}",toDelete));
+            Application.getMessagingFactory().getMessagingQueue("jameica.boot").queueMessage(msg); // muessen wir queuen, weil der Consumer noch nicht da ist
             continue;
           }
           cache.put(m.getName(),m);
@@ -208,7 +223,6 @@ public final class PluginLoader
           Logger.error("unable to load plugin  " + name, t);
         
         this.initErrors.put(mf,t);
-        Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht geladen werden. {1}",name, t.getMessage()));
       }
     }
     //
@@ -246,7 +260,14 @@ public final class PluginLoader
         // nicht im GUI-Mode sind. Denn in dem uebernimmt die Box "PluginErrors" die Anzeige
         // der fehlerhaften Plugins via initErrors
         if (!(t instanceof OperationCanceledException) && !Application.inStandaloneMode() && !Application.inClientMode())
-          Application.addWelcomeMessage(Application.getI18n().tr("Plugin \"{0}\" kann nicht initialisiert werden. {1}",name, t.getMessage()));
+        {
+          I18N i18n = Application.getI18n();
+          BootMessage msg = new BootMessage(i18n.tr("Das Plugin \"{0}\" kann nicht initialisiert werden. {1}",name,t.getMessage()));
+          msg.setTitle(i18n.tr("Plugin-Fehler"));
+          msg.setIcon("dialog-warning-large.png");
+          msg.setComment(t.getMessage());
+          Application.getMessagingFactory().getMessagingQueue("jameica.boot").queueMessage(msg);
+        }
       }
     }
     //
@@ -879,7 +900,7 @@ public final class PluginLoader
     catch (IOException e)
     {
       Logger.error("unable to create delete marker " + deleteMarker,e);
-      throw new ApplicationException(Application.getI18n().tr("Löschen des Plugins {0} fehlgeschlagen",manifest.getName()));
+      throw new ApplicationException(Application.getI18n().tr("Löschen des Plugins {0} fehlgeschlagen: {1}",manifest.getName(),e.getMessage()));
     }
   }
   
