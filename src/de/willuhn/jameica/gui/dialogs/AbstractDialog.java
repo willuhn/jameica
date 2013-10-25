@@ -438,6 +438,7 @@ public abstract class AbstractDialog<T>
 		try {
 
       this.closeState = SWT.OK; // Close-State resetten
+      this.onEscapeException = null; // Escape Exception resetten (sonst geht der Dialog sofort wieder zu)
 
 		  init(); // Dialog wurde nochmal geoeffnet
 

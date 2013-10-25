@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.vafada.swtcalendar.SWTCalendar;
+import org.eclipse.swt.widgets.DateTime;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.calendar.ReminderAppointment;
@@ -36,7 +36,6 @@ import de.willuhn.jameica.reminder.ReminderStorageProvider;
 import de.willuhn.jameica.services.ReminderService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -85,8 +84,8 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
     Calendar c = Calendar.getInstance(Application.getConfig().getLocale());
     c.setTime(reminder.getDate());
     Container container1 = new SimpleContainer(parent,false,1);
-    final SWTCalendar cal = new SWTCalendar(container1.getComposite(), SWT.FLAT | SWTCalendar.RED_WEEKEND);
-    cal.setCalendar(c);
+    final DateTime cal = new DateTime(container1.getComposite(), SWT.CALENDAR | SWT.FLAT | SWT.CENTER);
+    cal.setDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
     cal.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     cal.setEnabled(canChange);
     //
@@ -135,7 +134,16 @@ public class ReminderAppointmentDialog extends AbstractDialog<ReminderAppointmen
         }
         
         // Daten uebernehmen
-        reminder.setDate(DateUtil.startOfDay(cal.getCalendar().getTime()));
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, cal.getYear());
+        c.set(Calendar.MONTH, cal.getMonth());
+        c.set(Calendar.DAY_OF_MONTH, cal.getDay());
+        c.set(Calendar.HOUR, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        
+        reminder.setDate(c.getTime());
         reminder.setData(ReminderAppointment.KEY_NAME,s);
         reminder.setData(ReminderAppointment.KEY_DESCRIPTION,(String) desc.getValue());
         close();
