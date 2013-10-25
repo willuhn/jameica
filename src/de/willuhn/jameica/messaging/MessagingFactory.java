@@ -36,7 +36,7 @@ public final class MessagingFactory implements MessagingQueue
    */
   private MessagingFactory()
   {
-    this.defaultQueue = new NamedQueue("[default]");
+    this.defaultQueue = new NamedConcurrentQueue("[default]");
     this.queues       = new HashMap<String, MessagingQueue>();
   }
   
@@ -73,7 +73,7 @@ public final class MessagingFactory implements MessagingQueue
     MessagingQueue queue = queues.get(name);
     if (queue == null)
     {
-      queue = new NamedQueue(name);
+      queue = new NamedConcurrentQueue(name);
       queues.put(name,queue);
     }
     return queue;
@@ -131,6 +131,14 @@ public final class MessagingFactory implements MessagingQueue
   public void sendSyncMessage(Message message)
   {
     this.defaultQueue.sendSyncMessage(message);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.messaging.MessagingQueue#queueMessage(de.willuhn.jameica.messaging.Message)
+   */
+  public void queueMessage(Message message)
+  {
+    this.defaultQueue.queueMessage(message);
   }
 
   /**

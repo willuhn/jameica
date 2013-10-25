@@ -35,6 +35,13 @@ public interface MessagingQueue
   public void sendSyncMessage(Message message);
   
   /**
+   * Stellt eine Nachricht in die Queue. Dort bleibt sie solange, bis ein Consumer
+   * dafuer vorhanden ist.
+   * @param message die zu versendende Nachricht.
+   */
+  public void queueMessage(Message message);
+  
+  /**
    * Liefert die aktuelle Anzahl noch zuzustellender Nachrichten.
    * @return aktuelle Queue-Groesse.
    */

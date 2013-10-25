@@ -97,9 +97,18 @@ public final class NamedQueue implements MessagingQueue
 
     if (consumer == null)
       return;
-
+    
     Logger.debug("queue " + this.name + ": unregistering message consumer " + consumer.getClass().getName());
     consumers.remove(consumer);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.messaging.MessagingQueue#queueMessage(de.willuhn.jameica.messaging.Message)
+   */
+  public void queueMessage(Message message)
+  {
+    Logger.warn("queueing not supported - delivering without queueing");
+    this.sendMessage(message);
   }
 
   /**
