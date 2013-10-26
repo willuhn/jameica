@@ -7,6 +7,7 @@
 
 package de.willuhn.jameica.messaging;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -25,11 +26,11 @@ import de.willuhn.util.ApplicationException;
  */
 public class NamedConcurrentQueue implements MessagingQueue
 {
-  private static LinkedBlockingQueue<Runnable> queue = null;
   private static LinkedBlockingQueue<Runnable> messages = null;
   private static ThreadPoolExecutor pool = null;
   
-  private List<MessageConsumer> consumers  = new LinkedList<MessageConsumer>();
+  private LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>(500);
+  private List<MessageConsumer> consumers     = new LinkedList<MessageConsumer>();
   private String name = null;
 
   /**
@@ -52,9 +53,11 @@ public class NamedConcurrentQueue implements MessagingQueue
       return;
 
     Logger.info("creating thread pool");
-    messages = new LinkedBlockingQueue<Runnable>(1000);
-    queue    = new LinkedBlockingQueue<Runnable>(500);
-    pool     = new ThreadPoolExecutor(1,5,10L,TimeUnit.SECONDS,messages,new ThreadPoolExecutor.DiscardPolicy());
+    messages = new LinkedBlockingQueue<Runnable>(2000);
+    
+    // Der Thread-Pool ist so konfiguriert, dass die Messages im Main-Thread zugestellt
+    // werden, wenn die Queue voll ist, damit dieser ausgebremst wird.
+    pool = new ThreadPoolExecutor(1,5,10L,TimeUnit.SECONDS,messages,new ThreadPoolExecutor.CallerRunsPolicy());
   }
 
   /**
@@ -65,7 +68,7 @@ public class NamedConcurrentQueue implements MessagingQueue
     if (message == null || pool.isTerminating() || pool.isTerminated())
       return;
 
-    if (consumers.size() == 0)
+    if (this.consumers.size() == 0)
     {
       // Das ist bewusst Debug-Level weil das durchaus vorkommen kann.
       Logger.debug("no message consumers found, ignoring message");
@@ -76,7 +79,7 @@ public class NamedConcurrentQueue implements MessagingQueue
     {
       public void run()
       {
-        send(consumers,message);
+        deliver(message);
       }
     });
   }
@@ -89,14 +92,14 @@ public class NamedConcurrentQueue implements MessagingQueue
     if (message == null || pool.isTerminating() || pool.isTerminated())
       return;
 
-    if (consumers.size() == 0)
+    if (this.consumers.size() == 0)
     {
       // Das ist bewusst Debug-Level weil das durchaus vorkommen kann.
       Logger.debug("no message consumers found, ignoring message");
       return;
     }
     
-    send(consumers,message);
+    deliver(message);
   }
 
   /**
@@ -108,18 +111,18 @@ public class NamedConcurrentQueue implements MessagingQueue
       return;
     
     // wir koennen direkt zustellen
-    if (consumers.size() > 0)
+    if (this.consumers.size() > 0)
     {
       this.sendMessage(message);
       return;
     }
 
     // Ansonsten queuen
-    boolean added = queue.offer(new Runnable()
+    boolean added = this.queue.offer(new Runnable()
     {
       public void run()
       {
-        send(consumers,message);
+        deliver(message);
       }
     });
     if (!added)
@@ -145,14 +148,14 @@ public class NamedConcurrentQueue implements MessagingQueue
       return;
     
     Logger.debug("queue " + this.name + ": registering message consumer " + consumer.getClass().getName());
-    consumers.add(consumer);
+    this.consumers.add(consumer);
 
     // Wir haben mindestens eine zwischengespeicherte Message und wenigstens einen Consumer - wir koennen die Queue jetzt leeren
-    int size = queue.size();
+    int size = this.queue.size();
     if (size > 0)
     {
       Logger.info("delivering " + size + " queued messages to queue: " + this.name);
-      queue.drainTo(messages);
+      this.queue.drainTo(messages);
     }
   }
 
@@ -164,14 +167,14 @@ public class NamedConcurrentQueue implements MessagingQueue
     if (consumer == null)
       return;
 
-    if (consumers.size() == 0)
+    if (this.consumers.size() == 0)
     {
       Logger.debug("queue contains no consumers, skip unregistering");
       return;
     }
 
     Logger.debug("queue " + this.name + ": unregistering message consumer " + consumer.getClass().getName());
-    consumers.remove(consumer);
+    this.consumers.remove(consumer);
   }
 
   /**
@@ -203,10 +206,11 @@ public class NamedConcurrentQueue implements MessagingQueue
   }
 
   /**
-   * Sendet die Nachricht an alle Consumer.
+   * Stellt die Nachricht an alle Consumer zu.
+   * @param consumers die Message-Consumer.
    * @param msg
    */
-  private void send(List<MessageConsumer> consumers, Message msg)
+  private void deliver(Message msg)
   {
     if (pool.isTerminating() || pool.isTerminated())
     {
@@ -214,45 +218,51 @@ public class NamedConcurrentQueue implements MessagingQueue
       return; // wir nehmen keine Nachrichten mehr entgegen.
     }
 
-    Logger.debug("sending message " + msg.toString());
-    MessageConsumer consumer = null;
-    synchronized (consumers)
+    Logger.debug("deliver message " + msg.toString());
+    
+    // Wir arbeiten nicht direkt auf der Liste sondern holen uns vorher
+    // einen Snapshot der Consumer. Dann muessen wir waehrend
+    // der Message-Zustellung nicht "this.consumers" synchronisieren
+    // und wenn waehrend der Zustellung Consumer hinzukommen oder
+    // entfernt werden, dann kollidiert das nicht mit uns
+    List<MessageConsumer> localConsumers = new ArrayList<MessageConsumer>(this.consumers.size());
+    synchronized (this.consumers)
     {
-
-      for (int i=0;i<consumers.size();++i)
+      localConsumers.addAll(this.consumers);
+    }
+    
+    for (MessageConsumer consumer:localConsumers)
+    {
+      Class[] expected = consumer.getExpectedMessageTypes();
+      boolean send = expected == null;
+      if (expected != null)
       {
-        consumer = consumers.get(i);
-        Class[] expected = consumer.getExpectedMessageTypes();
-        boolean send = expected == null;
-        if (expected != null)
+        for (int j=0;j<expected.length;++j)
         {
-          for (int j=0;j<expected.length;++j)
+          if (expected[j].isInstance(msg))
           {
-            if (expected[j].isInstance(msg))
-            {
-              send = true;
-              break;
-            }
+            send = true;
+            break;
           }
         }
-        try
-        {
-          if (send)
-            consumer.handleMessage(msg);
-        }
-        catch (ApplicationException ae)
-        {
-          Application.getMessagingFactory().sendSyncMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-        }
-        catch (OperationCanceledException oce)
-        {
-          Logger.debug("consumer " + consumer.getClass().getName() + " cancelled message " + msg);
-        }
-        catch (Throwable t)
-        {
-          Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getClass().getName() + ": " + t + ") while consuming message " + msg);
-          Logger.write(Level.INFO,"error while processing message",t);
-        }
+      }
+      try
+      {
+        if (send)
+          consumer.handleMessage(msg);
+      }
+      catch (ApplicationException ae)
+      {
+        Application.getMessagingFactory().sendSyncMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+      }
+      catch (OperationCanceledException oce)
+      {
+        Logger.debug("consumer " + consumer.getClass().getName() + " cancelled message " + msg);
+      }
+      catch (Throwable t)
+      {
+        Logger.error("consumer " + consumer.getClass().getName() + " produced an error (" + t.getClass().getName() + ": " + t + ") while consuming message " + msg);
+        Logger.write(Level.INFO,"error while processing message",t);
       }
     }
   }
