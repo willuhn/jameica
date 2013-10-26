@@ -26,9 +26,9 @@ import de.willuhn.util.ApplicationException;
  * Javascripts. Im Manifest dieser Plugins kann das Attribut "class"
  * des XML-Elements "plugin" dann einfach weggelassen werden.
  * Da diese Plugins dennoch eine Klasse bereitstellen muessen, die
- * von <code>AbstractPlugin</code> abgeleitet ist, wird dieses PlaceholderPlugin
+ * <code>Plugin</code> implementieren, wird dieses PlaceholderPlugin
  * verwendet. Es erzeugt via Reflection-Proxy dynamisch generierte
- * Klassen, die von AbstractPlugin ableiten.
+ * Klassen, die dieses Interface implementieren.
  */
 public class PlaceholderPlugin implements Plugin
 {
