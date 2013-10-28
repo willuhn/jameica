@@ -218,21 +218,16 @@ public class NamedConcurrentQueue implements MessagingQueue
       return; // wir nehmen keine Nachrichten mehr entgegen.
     }
 
+    // BUGZILLA 1413 Wir koennen leider doch nicht auf einer Kopie der Liste arbeiten, weil
+    // diese waehrend der Zustellung erweitert werden kann. Z.bsp. der "AutoRegisterMessageConsumer"
+    // erhaelt die SYSTEM_STARTED-Message und registriert daraufhin neue Consumer. Unter anderem
+    // den DeployMessageConsumer aus jameica.webadmin, der ebenfalls auf die SYSTEM_STARTED-Message
+    // lauscht.
     Logger.debug("deliver message " + msg.toString());
-    
-    // Wir arbeiten nicht direkt auf der Liste sondern holen uns vorher
-    // einen Snapshot der Consumer. Dann muessen wir waehrend
-    // der Message-Zustellung nicht "this.consumers" synchronisieren
-    // und wenn waehrend der Zustellung Consumer hinzukommen oder
-    // entfernt werden, dann kollidiert das nicht mit uns
-    List<MessageConsumer> localConsumers = new ArrayList<MessageConsumer>(this.consumers.size());
-    synchronized (this.consumers)
+    MessageConsumer consumer = null;
+    for (int i=0;i<this.consumers.size();++i)
     {
-      localConsumers.addAll(this.consumers);
-    }
-    
-    for (MessageConsumer consumer:localConsumers)
-    {
+      consumer = this.consumers.get(i);
       Class[] expected = consumer.getExpectedMessageTypes();
       boolean send = expected == null;
       if (expected != null)
