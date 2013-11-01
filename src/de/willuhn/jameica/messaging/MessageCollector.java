@@ -52,7 +52,7 @@ public class MessageCollector implements MessageConsumer
    */
   public Class[] getExpectedMessageTypes()
   {
-    return (Class[])types.toArray(new Class[this.types.size()]);
+    return types.toArray(new Class[this.types.size()]);
   }
 
   /**

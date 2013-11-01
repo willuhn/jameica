@@ -260,7 +260,7 @@ public class CertificateList extends TablePart
         al.add(new CertObject(Application.getSSLFactory().getSystemCertificate()));
       }
       Collections.sort(al);
-      return PseudoIterator.fromArray((CertObject[])al.toArray(new CertObject[al.size()]));
+      return PseudoIterator.fromArray(al.toArray(new CertObject[al.size()]));
     }
     catch (Exception e)
     {

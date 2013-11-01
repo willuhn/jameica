@@ -205,7 +205,7 @@ public class SearchInput extends AbstractInput
       Rectangle rect = this.text.getClientArea();
 
       PopupList popup = new PopupList(GUI.getShell());
-      popup.setItems((String[])items.toArray(new String[items.size()]));
+      popup.setItems(items.toArray(new String[items.size()]));
       popup.setMinimumWidth(this.minWidth);
       int selected = popup.open(new Rectangle(location.x, rect.y + location.y + rect.height, rect.width, 0));
 

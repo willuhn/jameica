@@ -520,7 +520,7 @@ public class Manifest implements Comparable
     List<Manifest> all = Application.getPluginLoader().getManifests();
     for (int i=0;i<all.size();++i)
     {
-      Manifest mf = (Manifest) all.get(i);
+      Manifest mf = all.get(i);
       String name = mf.getName();
       
       if (!toCheck.contains(name))
@@ -541,7 +541,7 @@ public class Manifest implements Comparable
         found.add(secondDeps[k]);
       }
     }
-    return (Dependency[]) found.toArray(new Dependency[found.size()]);
+    return found.toArray(new Dependency[found.size()]);
   }
   
   /**

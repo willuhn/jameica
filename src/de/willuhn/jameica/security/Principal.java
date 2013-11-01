@@ -109,7 +109,7 @@ public class Principal
    */
   public String getAttribute(String name)
   {
-    return (String) this.attributes.get(name);
+    return this.attributes.get(name);
   }
 }
 

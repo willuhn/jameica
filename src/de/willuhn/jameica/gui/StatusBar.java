@@ -115,7 +115,7 @@ public class StatusBar implements Part
     
     for (int i=0;i<size;++i)
     {
-      StatusBarItem item = (StatusBarItem) this.items.get(i);
+      StatusBarItem item = this.items.get(i);
       item.paint(tComp);
       if (i < (size - 1))
       {

@@ -341,7 +341,7 @@ public class SSLFactory
     Enumeration<String> e = getKeyStore().aliases();
     while (e.hasMoreElements())
     {
-      String name = (String)e.nextElement();
+      String name = e.nextElement();
       if (SYSTEM_ALIAS.equals(name))
         continue;
       java.security.cert.Certificate cert = getKeyStore().getCertificate(name);
@@ -350,7 +350,7 @@ public class SSLFactory
       
       list.add(cert);
     }
-    return (X509Certificate[]) list.toArray(new X509Certificate[list.size()]);
+    return list.toArray(new X509Certificate[list.size()]);
   }
   
   /**
@@ -415,7 +415,7 @@ public class SSLFactory
         }
       }
     }
-    return (X509Certificate[]) list.toArray(new X509Certificate[list.size()]);
+    return list.toArray(new X509Certificate[list.size()]);
   }
 
   /**
@@ -481,7 +481,7 @@ public class SSLFactory
     Enumeration<String> e = getKeyStore().aliases();
     while (e.hasMoreElements())
     {
-      String alias = (String) e.nextElement();
+      String alias = e.nextElement();
       if (SYSTEM_ALIAS.equals(alias))
         continue;
       X509Certificate c = (X509Certificate) getKeyStore().getCertificate(alias);

@@ -452,12 +452,12 @@ public final class Config
       String[] newList = new String[l.size()];
       for (int i=0;i<l.size();++i)
       {
-        newList[i] = ((File)l.get(i)).getAbsolutePath();
+        newList[i] = l.get(i).getAbsolutePath();
       }
       settings.setAttribute("jameica.plugin.dir",newList);
     }
     
-    this.pluginDirs = (File[]) l.toArray(new File[l.size()]);
+    this.pluginDirs = l.toArray(new File[l.size()]);
     return this.pluginDirs;
   }
   

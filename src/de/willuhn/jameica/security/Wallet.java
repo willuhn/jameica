@@ -189,7 +189,7 @@ public final class Wallet
     String s = null;
     while (e.hasMoreElements())
     {
-      s = (String) e.nextElement();
+      s = e.nextElement();
       if (s == null)
         continue;
       if (aliasPrefix == null || s.startsWith(aliasPrefix))
@@ -198,7 +198,7 @@ public final class Wallet
         keys.add(s);
       }
     }
-    return (String[]) keys.toArray(new String[keys.size()]);
+    return keys.toArray(new String[keys.size()]);
   }
 
   /**
@@ -223,7 +223,7 @@ public final class Wallet
 			return null;
 		}
 		Logger.debug("reading key " + alias);
-		return (Serializable) this.serialized.get(alias);
+		return this.serialized.get(alias);
 	}
 
   /**

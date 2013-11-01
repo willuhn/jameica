@@ -45,7 +45,7 @@ public abstract class AbstractReminderStorageProvider implements ReminderStorage
     String[] uuids = this.getUUIDs();
     for (String uuid:uuids)
     {
-      Reminder r = (Reminder) this.get(uuid);
+      Reminder r = this.get(uuid);
       String rq = StringUtils.trimToEmpty(r.getQueue());
       if (haveQueue && !queue.equals(rq))
         continue; // Queue explizit angegeben, die des Reminders passt aber nicht

@@ -155,7 +155,7 @@ public class LookupService implements MessageConsumer
         return; // nix sinnvolles
       }
       
-      String url = (String) lookup.get(s);
+      String url = lookup.get(s);
       if (url == null)
       {
         Logger.debug("service " + s + " not found on this system, ignoring");

@@ -115,7 +115,7 @@ public abstract class AbstractItemXml implements Item
    */
   public GenericIterator getChildren() throws RemoteException
   {
-    return PseudoIterator.fromArray((Item[])childs.toArray(new Item[childs.size()]));
+    return PseudoIterator.fromArray(childs.toArray(new Item[childs.size()]));
   }
 
   /**

@@ -151,7 +151,7 @@ public class BackupVersionsList extends TablePart
     Enumeration<String> missing = installed.keys();
     while (missing.hasMoreElements())
     {
-      String pc = (String) missing.nextElement();
+      String pc = missing.nextElement();
       list.add(new Plugin(pc,null));
     }
     return list;

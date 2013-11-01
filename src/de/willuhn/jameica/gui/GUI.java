@@ -270,7 +270,7 @@ public class GUI implements ApplicationController
       List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
       for (int i=0;i<list.size();++i)
       {
-        Manifest mf = (Manifest) list.get(i);
+        Manifest mf = list.get(i);
         if (!mf.isInstalled())
         {
           Logger.info("plugin " + mf.getName() + " is not installed, skipping");
