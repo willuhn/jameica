@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
@@ -25,6 +26,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -144,7 +146,14 @@ public class GUI implements ApplicationController
       getShell().setData("systemshell",Boolean.TRUE); // BUGZILLA 937
       getShell().setLayout(SWTUtil.createGrid(1, false));
       getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
-      getShell().setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon","hibiscus-icon-64x64.png")));
+      if (Arrays.asList(Customizing.SETTINGS.getAttributes()).contains("application.icon")) {
+        shell.setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon",null)));
+      } else {
+        shell.setImages(new Image[] {
+            SWTUtil.getImage("hibiscus-icon-64x64.png"),
+            SWTUtil.getImage("hibiscus-icon-128x128.png"),
+            SWTUtil.getImage("hibiscus-icon-256x256.png")});
+      }
       getShell().setText(name);
       //
       ////////////////////////////////////////////////////////////////////////
