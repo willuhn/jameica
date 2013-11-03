@@ -15,7 +15,6 @@ package de.willuhn.jameica.gui;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
@@ -146,13 +145,19 @@ public class GUI implements ApplicationController
       getShell().setData("systemshell",Boolean.TRUE); // BUGZILLA 937
       getShell().setLayout(SWTUtil.createGrid(1, false));
       getShell().setLayoutData(new GridData(GridData.FILL_BOTH));
-      if (Arrays.asList(Customizing.SETTINGS.getAttributes()).contains("application.icon")) {
-        shell.setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon",null)));
-      } else {
+      
+      String icon = Customizing.SETTINGS.getString("application.icon",null);
+      if (icon != null)
+      {
+        shell.setImage(SWTUtil.getImage(icon));
+      }
+      else
+      {
         shell.setImages(new Image[] {
             SWTUtil.getImage("hibiscus-icon-64x64.png"),
             SWTUtil.getImage("hibiscus-icon-128x128.png"),
-            SWTUtil.getImage("hibiscus-icon-256x256.png")});
+            SWTUtil.getImage("hibiscus-icon-256x256.png")
+        });
       }
       getShell().setText(name);
       //
