@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
@@ -86,7 +87,14 @@ public class SplashScreen implements ProgressMonitor, Runnable
 		display = GUI.getDisplay();
     
     shell = new Shell(display,SWT.NONE);
-    shell.setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon","hibiscus-icon-64x64.png")));
+    if (Arrays.asList(Customizing.SETTINGS.getAttributes()).contains("application.icon")) {
+      shell.setImage(SWTUtil.getImage(Customizing.SETTINGS.getString("application.icon",null)));
+    } else {
+      shell.setImages(new Image[] {
+          SWTUtil.getImage("hibiscus-icon-64x64.png"),
+          SWTUtil.getImage("hibiscus-icon-128x128.png"),
+          SWTUtil.getImage("hibiscus-icon-256x256.png")});
+    }
     shell.setAlpha(Customizing.SETTINGS.getInt("application.splashscreen.alpha",255));
     String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
     shell.setText(name);
