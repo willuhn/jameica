@@ -86,7 +86,7 @@ public class SearchOptionsDialog extends AbstractDialog
       ProviderObject o = new ProviderObject(providers[i]);
       String name      = (String) o.getAttribute("plugin");
 
-      List<ProviderObject> l = (List<ProviderObject>) plugins.get(name);
+      List<ProviderObject> l = plugins.get(name);
       if (l == null)
       {
         l = new ArrayList<ProviderObject>();

@@ -91,7 +91,7 @@ public class Dependency implements Serializable
     List<Manifest> all = Application.getPluginLoader().getManifests();
     for (int i=0;i<all.size();++i)
     {
-      Manifest mf = (Manifest) all.get(i);
+      Manifest mf = all.get(i);
       String n = mf.getName();
       if (n == null || !this.name.equals(n))
         continue;

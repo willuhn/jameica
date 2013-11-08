@@ -90,7 +90,7 @@ public class SearchResultPart extends TreePart
       
       // Plugin ermitteln
       de.willuhn.jameica.plugin.Plugin ap = Application.getPluginLoader().findByClass(result.getSearchProvider().getClass());
-      Plugin p = (Plugin) plugins.get(ap);
+      Plugin p = plugins.get(ap);
       if (p == null)
       {
         p = new Plugin(ap.getManifest().getName());
@@ -104,7 +104,7 @@ public class SearchResultPart extends TreePart
     List<Plugin> al = new ArrayList<Plugin>();
     while (result.hasNext())
     {
-      Plugin p = (Plugin) result.next();
+      Plugin p = result.next();
       if (p.providers.size() > 0)
         al.add(p);
     }
@@ -204,7 +204,7 @@ public class SearchResultPart extends TreePart
      */
     public GenericIterator getChildren() throws RemoteException
     {
-      return PseudoIterator.fromArray((Provider[])this.providers.toArray(new Provider[this.providers.size()]));
+      return PseudoIterator.fromArray(this.providers.toArray(new Provider[this.providers.size()]));
     }
 
     /**

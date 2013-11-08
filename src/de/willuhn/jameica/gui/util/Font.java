@@ -115,7 +115,7 @@ public class Font {
 		if (value == null)
       value = settings.getFontData(name,defaultValue);
 
-    org.eclipse.swt.graphics.Font f = (org.eclipse.swt.graphics.Font) fontCache.get(value.toString());
+    org.eclipse.swt.graphics.Font f = fontCache.get(value.toString());
     if (f != null && !f.isDisposed())
       return f;
 
@@ -135,7 +135,7 @@ public class Font {
 		value = newFont.getFontData()[0];
 		settings.setAttribute(name,value);
     
-    org.eclipse.swt.graphics.Font f = (org.eclipse.swt.graphics.Font) fontCache.remove(value.toString());
+    org.eclipse.swt.graphics.Font f = fontCache.remove(value.toString());
     if (f != null && !f.isDisposed())
       f.dispose();
 	}

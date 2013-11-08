@@ -124,7 +124,7 @@ public class Color {
 		if (value == null)
   		value = name != null ? settings.getRGB(name,defaultValue) : defaultValue;
       
-    org.eclipse.swt.graphics.Color c = (org.eclipse.swt.graphics.Color) colorCache.get(value.toString());
+    org.eclipse.swt.graphics.Color c = colorCache.get(value.toString());
     if (c != null && !c.isDisposed())
       return c;
     

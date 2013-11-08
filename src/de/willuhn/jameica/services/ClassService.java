@@ -133,7 +133,7 @@ public class ClassService implements Bootable
         List<Manifest> plugins = Application.getPluginLoader().getInstalledManifests();
         for (int i=0;i<plugins.size();++i)
         {
-          Manifest mf = (Manifest) plugins.get(i);
+          Manifest mf = plugins.get(i);
           if (mf == null || manifest.getName().equals(mf.getName())) // sind wir selbst
             continue;
           for (int k=0;k<deps.length;++i)

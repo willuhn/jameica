@@ -625,7 +625,7 @@ public final class PluginLoader
       List<Manifest> manifests = getManifests();
       for (int i=0;i<manifests.size();++i)
       {
-        Manifest mf = (Manifest) manifests.get(i);
+        Manifest mf = manifests.get(i);
         File dir = new File(mf.getPluginDir());
         if (!dir.exists())
           continue;
@@ -1002,7 +1002,7 @@ public final class PluginLoader
     {
       if (right > left)
       {
-        int index = left + (int) ((right - left) / 2);
+        int index = left + (right - left) / 2;
         Manifest pivot = (Manifest) list.get(index);
 
         swap(list, index, right);

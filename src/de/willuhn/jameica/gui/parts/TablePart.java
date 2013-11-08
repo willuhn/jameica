@@ -1396,7 +1396,7 @@ public class TablePart extends AbstractTablePart
     Item sort = null;
     for (int i=0;i<l.size();++i)
     {
-      sort = (Item) l.get(i);
+      sort = l.get(i);
       final TableItem item = new TableItem(table,SWT.NONE,i);
       item.setData(sort.data);
       item.setText(textTable.get(sort.data));

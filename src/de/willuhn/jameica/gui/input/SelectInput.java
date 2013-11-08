@@ -56,7 +56,7 @@ public class SelectInput extends AbstractInput
    */
   public SelectInput(GenericIterator list, GenericObject preselected) throws RemoteException
   {
-    this((List)(list != null ? PseudoIterator.asList(list) : null),preselected);
+    this(list != null ? PseudoIterator.asList(list) : null,preselected);
   }
   
   /**
@@ -66,7 +66,7 @@ public class SelectInput extends AbstractInput
    */
   public SelectInput(Object[] list, Object preselected)
   {
-    this((List) (list != null ? Arrays.asList(list) : null),preselected);
+    this(list != null ? Arrays.asList(list) : null,preselected);
   }
 
   /**

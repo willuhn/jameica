@@ -77,7 +77,7 @@ public class BackupEngine
         Logger.error("skipping invalid backup: " + found[i].getAbsolutePath() + ": " + e.getMessage());
       }
     }
-    return (BackupFile[])backups.toArray(new BackupFile[backups.size()]);
+    return backups.toArray(new BackupFile[backups.size()]);
   }
   
   /**
@@ -325,7 +325,7 @@ public class BackupEngine
       }
 
       monitor.setStatusText("backup created");
-      return (File[]) content.toArray(new File[content.size()]);
+      return content.toArray(new File[content.size()]);
     }
     catch (ApplicationException ae)
     {

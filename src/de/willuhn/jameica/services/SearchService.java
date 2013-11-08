@@ -104,7 +104,7 @@ public class SearchService implements Bootable
     Logger.debug("searching for " + text);
     for (int i=0;i<this.providers.size();++i)
     {
-      SearchProvider p = (SearchProvider) this.providers.get(i);
+      SearchProvider p = this.providers.get(i);
       
       // Checken, ob der SearchProvider von der Suche ausgeschlossen wurde
       if (!isEnabled(p))
@@ -125,7 +125,7 @@ public class SearchService implements Bootable
   {
     if (this.providers == null)
       return new SearchProvider[0];
-    return (SearchProvider[]) this.providers.toArray(new SearchProvider[this.providers.size()]);
+    return this.providers.toArray(new SearchProvider[this.providers.size()]);
   }
   
   /**

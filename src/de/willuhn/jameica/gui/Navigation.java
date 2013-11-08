@@ -348,7 +348,7 @@ public class Navigation implements Part
     if (id == null)
       return;
 
-    TreeItem ti = (TreeItem) itemLookup.get(id);
+    TreeItem ti = itemLookup.get(id);
     if (ti == null)
       return;
 

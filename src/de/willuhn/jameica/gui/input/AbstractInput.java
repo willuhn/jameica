@@ -151,7 +151,7 @@ public abstract class AbstractInput implements Input
     Listener l = null;
     for (int i=0;i<listeners.size();++i)
     {
-    	l = (Listener) listeners.get(i);
+    	l = listeners.get(i);
 			control.addListener(SWT.Selection,l);
 			control.addListener(SWT.FocusIn,l);
 			control.addListener(SWT.FocusOut,l);
@@ -168,7 +168,7 @@ public abstract class AbstractInput implements Input
 			{
         for (int i=0;i<listeners.size();++i)
         {
-          l = (Listener) listeners.get(i);
+          l = listeners.get(i);
           children[j].addListener(SWT.Selection,l);
           children[j].addListener(SWT.FocusIn,l);
           children[j].addListener(SWT.FocusOut,l);

@@ -141,7 +141,7 @@ public class BeanService implements Bootable
       bean = type.newInstance();
 
       // Lifecycle ermitteln
-      Lifecycle lc = (Lifecycle) type.getAnnotation(Lifecycle.class);
+      Lifecycle lc = type.getAnnotation(Lifecycle.class);
       Lifecycle.Type lct = lc != null ? lc.value() : null;
 
       if (lct == null)

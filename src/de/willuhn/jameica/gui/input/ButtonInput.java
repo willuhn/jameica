@@ -106,7 +106,7 @@ public abstract class ButtonInput extends AbstractInput
 				event.y = e.y;
 				for (int i=0;i<buttonListeners.size();++i)
 				{
-					((Listener)buttonListeners.get(i)).handleEvent(event);
+					buttonListeners.get(i).handleEvent(event);
 				}
       }
     });
