@@ -265,10 +265,10 @@ public class SWTUtil {
       // Ein Punkt ist 1/72 inch.
       // Also rechnen wir aus, wieviele Pixel auf 1/72 inch passen.
       // Und das sind genau die, die auf ein pt passen.
-      double i = pixel / 72d;
+      double i = (double) pixel / 72d;
       
       // Also multiplizieren wir noch mit den pt und haben die Pixel
-      return (int)(pt * i);
+      return (int)((double) pt * i);
     }
     catch (Throwable t)
     {

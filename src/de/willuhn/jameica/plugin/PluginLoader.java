@@ -1002,7 +1002,7 @@ public final class PluginLoader
     {
       if (right > left)
       {
-        int index = left + (right - left) / 2;
+        int index = left + (int) ((right - left) / 2);
         Manifest pivot = (Manifest) list.get(index);
 
         swap(list, index, right);
