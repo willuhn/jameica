@@ -50,7 +50,6 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.datasource.rmi.DBObject;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
@@ -123,26 +122,6 @@ public class TablePart extends AbstractTablePart
   
   private Collator collator             = null;
 
-  /**
-   * Hilfsmethode, um die RemoteException im Konstruktor zu vermeiden.
-   * @param iterator zu konvertierender Iterator.
-   * @return Liste mit den Objekten.
-   */
-  private static List asList(GenericIterator iterator)
-  {
-    if (iterator == null)
-      return null;
-    try
-    {
-      return PseudoIterator.asList(iterator);
-    }
-    catch (RemoteException re)
-    {
-      Logger.error("unable to init list",re);
-    }
-    return new ArrayList();
-  }
-  
   /**
    * Erzeugt eine neue leere Standard-Tabelle auf dem uebergebenen Composite.
    * @param action die beim Doppelklick auf ein Element ausgefuehrt wird.

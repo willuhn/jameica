@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.FileClose;
 import de.willuhn.jameica.gui.internal.action.PluginInstall;
+import de.willuhn.jameica.gui.internal.action.RepositoryOpen;
 import de.willuhn.jameica.gui.internal.views.Settings;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.InfoPanel;
@@ -31,6 +32,7 @@ import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.PluginMessage.Event;
 import de.willuhn.jameica.plugin.PluginLoader;
+import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
@@ -102,13 +104,29 @@ public class FirstStart extends AbstractBox
     boolean pending = PluginCacheMessageConsumer.getCache().size() > 0;
 
     InfoPanel panel = new InfoPanel();
-    panel.setTitle(i18n.tr(pending ? "Plugin noch nicht aktiviert" : "Noch keine Plugins installiert"));
-    panel.setText(i18n.tr(pending ? "Bitte starten Sie Jameica jetzt neu." : "Bitte klicken Sie auf \"Neues Plugin installieren...\", um ein neues Plugin hinzuzufügen."));
+    
+    String title = null;
+    String text = null;
+    
+    if (pending)
+    {
+      title = "Plugin noch nicht aktiviert";
+      text  = "Bitte starten Sie Jameica jetzt neu.";
+    }
+    else
+    {
+      title = "Noch keine Plugins installiert";
+      text  = "Bitte klicken Sie auf \"Plugin installieren...\", um ein bereits heruntergeladenes Plugin hinzuzufügen.\n" +
+      		    "Oder klicken Sie auf \"Plugins online suchen...\", um ein Plugin online herunterzuladen";
+    }
+    panel.setTitle(i18n.tr(title));
+    panel.setText(i18n.tr(text));
     
     if (pending)
       panel.addButton(new Button(i18n.tr("Jameica beenden"),new FileClose(),null,true,"window-close.png"));
     
-    panel.addButton(new Button(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),null,true,"emblem-package.png"));
+    panel.addButton(new Button(i18n.tr("Plugins online suchen..."),new RepositoryOpen(),RepositoryService.SYSTEM_REPOSITORY,false,"document-save.png"));
+    panel.addButton(new Button(i18n.tr("Plugin installieren..."),new PluginInstall(),null,true,"emblem-package.png"));
     panel.paint(parent);
     
     Application.getMessagingFactory().registerMessageConsumer(this.mc);

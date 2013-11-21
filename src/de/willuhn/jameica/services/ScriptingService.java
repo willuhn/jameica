@@ -32,7 +32,7 @@ import de.willuhn.io.FileWatch;
 import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
-import de.willuhn.jameica.gui.internal.ext.SettingsView;
+import de.willuhn.jameica.gui.internal.ext.ScriptingSettingsView;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.messaging.BootMessage;
 import de.willuhn.jameica.messaging.BootMessageConsumer;
@@ -107,7 +107,7 @@ public class ScriptingService implements Bootable
     if (this.settingsExt == null)
     {
       BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-      this.settingsExt = beanService.get(SettingsView.class);
+      this.settingsExt = beanService.get(ScriptingSettingsView.class);
       ExtensionRegistry.register(this.settingsExt,de.willuhn.jameica.gui.internal.views.Settings.class.getName());
     }
 

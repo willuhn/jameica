@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--
+  $Revision: 1.4 $
+  $Date: 2009/01/18 13:51:36 $
+  $Author: willuhn $
+ 
+  Copyright (c) by willuhn software & services
+  All rights reserved
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+-->
+
+<xsd:schema xml:lang="DE" elementFormDefault="qualified"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://www.willuhn.de/schema/jameica-repository"
+  xmlns:tns="http://www.willuhn.de/schema/jameica-repository">
+
+  <xsd:annotation>
+     <xsd:documentation>
+       XML-Spezifikation des XML-Formats fuer die "repository.xml"
+       von Update-Sites fuer Jameica.
+     </xsd:documentation>
+  </xsd:annotation>
+
+  <!-- Root-Element //-->
+  <xsd:element name="repository" type="tns:repositoryType" />
+
+  <!-- Element "repository" //-->
+  <xsd:complexType name="repositoryType">
+    <xsd:annotation>
+      <xsd:documentation>Root-Element einer repository.xml</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="plugins" type="tns:pluginsType" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+
+    <xsd:attribute name="name" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Bezeichnung des Repositories.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  
+  <!-- Element "plugins" //-->
+  <xsd:complexType name="pluginsType">
+    <xsd:annotation>
+      <xsd:documentation>Definition der Liste von Plugins in diesem Repository.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="plugin" minOccurs="1" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>Definition eines einzelnen Updates</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:attribute name="url" type="xsd:string" use="required">
+            <xsd:annotation>
+              <xsd:documentation>
+                URL des Repository
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Optionale Angabe eines Namens fuer die Gruppe von Plugins.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="certificate" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          Optionale Angabe der URL eines PEM/DER-codierten Aussteller-Zertifikates der Plugins.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+</xsd:schema>

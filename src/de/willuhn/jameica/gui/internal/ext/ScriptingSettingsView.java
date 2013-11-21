@@ -49,7 +49,7 @@ import de.willuhn.util.I18N;
  * Erweitert die View mit dem System-Einstellungen um die Scripting-Optionen.
  * @author willuhn
  */
-public class SettingsView implements Extension
+public class ScriptingSettingsView implements Extension
 {
   private final static I18N i18n = Application.getI18n();
   private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(ScriptingService.class);

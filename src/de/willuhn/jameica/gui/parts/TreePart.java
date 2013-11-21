@@ -15,6 +15,7 @@ package de.willuhn.jameica.gui.parts;
 import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -40,7 +41,6 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
-import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
@@ -54,18 +54,17 @@ import de.willuhn.util.Session;
 /**
  * Erzeugt einen Baum.
  * Dabei werden alle Kind-Objekte rekursiv dargestellt.
- * @author willuhn
  */
 public class TreePart extends AbstractTablePart
 {
 
   private TreeFormatter formatter   = null;
-  private GenericIterator list      = null;
+  private List list                 = null;
   private Tree tree                 = null;
   
   private String id                 = null;
   private boolean expanded          = true;
-  private Map<GenericObject,Item> itemLookup = new HashMap<GenericObject,Item>();
+  private Map<Object,Item> itemLookup    = new HashMap<Object,Item>();
   private Map<TreeItem,Boolean> autoimage = new HashMap<TreeItem,Boolean>();
 
   //////////////////////////////////////////////////////////
@@ -79,17 +78,15 @@ public class TreePart extends AbstractTablePart
    * @param action Action, die bei der Auswahl eines Elements
    * ausgeloest werden soll.
    */
-  public TreePart(GenericObjectNode object, Action action)
+  public TreePart(Object object, Action action)
 	{
     super(action);
-    setRootObject(object);
+    this.setRootObject(object);
 	}
 
   /**
    * Erzeugt einen neuen Tree basierend auf der uebergebenen Liste
-   * von Objekten des Typs GenericObjectNode. Enthaelt der
-   * Iterator Objekte, die <b>nicht</b> von GenericObjectNode
-   * abgeleitet sind, wird er eine ClassCastException werfen.
+   * von Objekten des Typs GenericObject/GenericObjectNode.
    * @param list Liste mit Objekten, fuer die der Baum erzeugt werden soll.
    * @param action Action, die bei der Auswahl eines Elements
    * ausgeloest werden soll.
@@ -97,14 +94,35 @@ public class TreePart extends AbstractTablePart
   public TreePart(GenericIterator list, Action action)
   {
     super(action);
-		setList(list);
+    this.setList(list);
+  }
+  
+  /**
+   * Erzeugt einen neuen Tree basierend auf der uebergebenen Liste.
+   * @param list Liste mit Objekten.
+   * @param action Action, die bei der Auswahl eines Elements
+   * ausgeloest werden soll.
+   */
+  public TreePart(List list, Action action)
+  {
+    super(action);
+    this.setList(list);
+  }
+
+  /**
+   * Speichert die Liste der anzuzeigenden Daten.
+   * @param list Liste der anzuzeigenden Daten.
+   */
+  public void setList(GenericIterator list)
+  {
+    this.setList(asList(list));
   }
   
   /**
    * Speichert die Liste der anzuzeigenden Daten.
    * @param list Liste der anzuzeigenden Daten.
    */
-  public void setList(GenericIterator list)
+  public void setList(List list)
   {
     this.removeAll();
 
@@ -118,24 +136,14 @@ public class TreePart extends AbstractTablePart
       Logger.error("unable to apply list",re);
     }
   }
-  
+
   /**
    * Alternativ zu setList: Speichert das Root-Element.
    * @param node das Root-Element.
    */
-  public void setRootObject(GenericObjectNode node)
+  public void setRootObject(Object node)
   {
-    this.removeAll();
-
-    try
-    {
-      this.list = node != null ? PseudoIterator.fromArray(new GenericObject[]{node}) : null;
-      this.loadData();
-    }
-    catch (RemoteException re)
-    {
-      Logger.error("unable to add item to table",re);
-    }
+    this.setList(node != null ? Arrays.asList(node) : null);
   }
 
   /**
@@ -167,12 +175,9 @@ public class TreePart extends AbstractTablePart
 
     StringBuffer sb = new StringBuffer();
 
-    if (this.list != null)
+    if (this.list != null && this.list.size() > 0)
     {
-      this.list.begin();
-      if (this.list.hasNext())
-        sb.append(this.list.next().getClass().getName());
-      this.list.begin();
+      sb.append(this.list.get(0).getClass().getName());
     }
 
     for (int i=0;i<this.columns.size();++i)
@@ -321,7 +326,7 @@ public class TreePart extends AbstractTablePart
       this.tree.setHeaderVisible(true);
       this.tree.setLinesVisible(true);
 
-      GenericObject test = this.list != null && this.list.hasNext() ? this.list.next() : null;
+      Object test = this.list != null && this.list.size() > 0 ? this.list.get(0) : null;
 
       for (int i=0;i<this.columns.size();++i)
       {
@@ -333,7 +338,9 @@ public class TreePart extends AbstractTablePart
 
         // Wenn Ausrichtung explizit angegeben, dann nehmen wir die
         if (col.getAlign() != Column.ALIGN_AUTO)
+        {
           tc.setAlignment(col.getAlign());
+        }
         else if (test != null)
         {
           // Ansonsten Testobjekt laden fuer automatische Ausrichtung von Spalten
@@ -489,10 +496,8 @@ public class TreePart extends AbstractTablePart
     if (this.list == null || this.tree == null || this.tree.isDisposed())
       return;
 
-    list.begin();
-    while (list.hasNext())
+    for (Object data : this.list)
     {
-      GenericObject data = list.next();
       Item i = new Item(null,data);
       itemLookup.put(data,i);
       setExpanded(data,this.expanded,true); // BUGZILLA 395
@@ -504,7 +509,7 @@ public class TreePart extends AbstractTablePart
    * @param object das Objekt.
    * @param expanded true, wenn es aufgeklappt sein soll, sonst false.
    */
-  public void setExpanded(GenericObject object, boolean expanded)
+  public void setExpanded(Object object, boolean expanded)
   {
     setExpanded(object,expanded,false);
   }
@@ -515,7 +520,7 @@ public class TreePart extends AbstractTablePart
    * @param expanded true, wenn es aufgeklappt sein soll, sonst false.
    * @param recursive true, wenn auch alle Kinder aufgeklappt werden sollen.
    */
-  public void setExpanded(GenericObject object, boolean expanded, boolean recursive)
+  public void setExpanded(Object object, boolean expanded, boolean recursive)
   {
     Item i = itemLookup.get(object);
     if (i == null)
@@ -650,10 +655,10 @@ public class TreePart extends AbstractTablePart
         if (o == null)
           continue;
         
-        Iterator<GenericObject> it = this.itemLookup.keySet().iterator();
+        Iterator it = this.itemLookup.keySet().iterator();
         while (it.hasNext())
         {
-          GenericObject go = it.next();
+          Object go = it.next();
           if (BeanUtil.equals(go,o))
           {
             Item item = this.itemLookup.get(go);
@@ -736,7 +741,7 @@ public class TreePart extends AbstractTablePart
      * @param data das Fachobjekt.
      * @throws RemoteException
      */
-    Item(TreeItem parent, GenericObject data) throws RemoteException
+    Item(TreeItem parent, Object data) throws RemoteException
 		{
       if (parent == null)
         this.item = new TreeItem(tree,SWT.NONE); // Root-Element
@@ -767,52 +772,73 @@ public class TreePart extends AbstractTablePart
         formatter.format(item);
 
       // Kinder laden
-      if (data instanceof GenericObjectNode)
+      List children = getChildren(data);
+
+      if (children != null)
       {
-        final GenericObjectNode node = (GenericObjectNode) data;
-        final GenericIterator children = node.getChildren();
-        
         // Nur dann, wenn der Formatter nicht schon ein Icon eingefuegt hat
         if (item.getImage() == null)
         {
-          // Nur als Ordner darstellen, wenn es Kinder hat
-          item.setImage(SWTUtil.getImage(children != null && children.size() > 0 ? (expanded ? "folder-open.png" : "folder.png") : "text-x-generic.png"));
+          item.setImage(SWTUtil.getImage(expanded ? "folder-open.png" : "folder.png"));
           autoimage.put(item,Boolean.TRUE);
         }
 
-        // load the children
-        if (children != null)
+        for (Object c:children)
         {
-          while(children.hasNext())
+          try
           {
-            try
-            {
-              GenericObject d = children.next();
-              Item i = new Item(this.item,d);
-              itemLookup.put(d,i);
-              setExpanded(d,expanded); // BUGZILLA 395
-            }
-            catch (Exception e)
-            {
-              Logger.error("error while expanding item",e);
-              break;
-            }
+            Item i = new Item(this.item,c);
+            itemLookup.put(c,i);
+            setExpanded(c,expanded); // BUGZILLA 395
+          }
+          catch (Exception e)
+          {
+            Logger.error("error while expanding item",e);
           }
         }
       }
-      else if (item.getImage() == null)
+
+      // Default-Icon
+      if (item.getImage() == null)
       {
         item.setImage(SWTUtil.getImage("text-x-generic.png"));
       }
 		}
   }
+  
+  /**
+   * Liefert die Kinder des angegebenen Fach-Objektes.
+   * Die Default-Implementierung prueft, ob das Objekt vom Typ
+   * GenericObjectNode ist und ruft dessen "getChildren"-Funktion auf.
+   * Andernfalls liefert die Funktion NULL.
+   * Will man also ein TreePart mit Objekten fuellen, die nicht
+   * vom Typ GenericObjectNode sind, dann kann man diese Methode hier
+   * ueberschreiben und selbst die Kind-Elemente laden.
+   * @param o das Element, zu dem die Kinder geladen werden sollen.
+   * @return die Liste der Kinder oder NULL.
+   */
+  protected List getChildren(Object o)
+  {
+    try
+    {
+      if (o instanceof GenericObjectNode)
+      {
+        GenericObjectNode node = (GenericObjectNode) o;
+        GenericIterator children = node.getChildren();
+        return children != null ? PseudoIterator.asList(children) : null;
+      }
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to load list of child objects",re);
+    }
+    
+    return null;
+  }
 
 
   /**
    * Liefert nur die Liste der Elemente der obersten Hirachie-Ebene.
-   * Wenn es sich um Objekte des Typs <code>GenericObjectNode</code>
-   * handelt, kann man sich die Kinder dann dort mit <code>getChildren</code>
-   * holen.
    * Falls der Tree mit Checkboxen versehen ist, wird eine Liste aller selektierten
    * Items zurueckgeliefert - diese enthaelt auch Kind-Objekte, insofern deren
    * Checkbox aktiviert ist.
@@ -823,11 +849,9 @@ public class TreePart extends AbstractTablePart
     if (this.list == null)
       return null;
 
-    this.list.begin();
-    
     // Tree existiert noch nicht, existiert nicht mehr, oder Checkbox-Support ist inaktiv -> alle Items
     if (this.tree == null || this.tree.isDisposed() || !this.checkable)
-      return PseudoIterator.asList(this.list);
+      return new ArrayList(this.list);
     
     List checkedList = new ArrayList();
     TreeItem[] items = this.tree.getItems();
@@ -901,92 +925,3 @@ public class TreePart extends AbstractTablePart
       this.tree.removeAll();
   }
 }
-
-
-/*********************************************************************
- * $Log: TreePart.java,v $
- * Revision 1.53  2011/09/08 11:18:42  willuhn
- * @C setChecked-Aufruf ignorieren, wenn die Tabelle nicht als checkable markiert ist
- *
- * Revision 1.52  2011-07-26 16:47:06  willuhn
- * @N Null-Support
- *
- * Revision 1.51  2011-07-26 11:49:01  willuhn
- * @C SelectionListener wurde doppelt ausgeloest, wenn die Tabelle checkable ist und eine Checkbox angeklickt wurde (einmal durch Selektion der Zeile und dann nochmal durch Aktivierung/Deaktivierung der Checkbox). Wenn eine Tabelle checkable ist, wird der SelectionListener jetzt nur noch beim Klick auf die Checkbox ausgeloest, nicht mehr mehr Selektieren der Zeile.
- * @N Column.setName zum Aendern des Spalten-Namens on-the-fly
- *
- * Revision 1.50  2011-06-28 09:24:54  willuhn
- * @N BUGZILLA 574
- *
- * Revision 1.49  2011-05-04 09:20:58  willuhn
- * @N Doppelklick nur beachten, wenn die linke Maustaste verwendet wurde - das bisherige Verhalten konnte unter OS X nervig sein, wenn Linksklick, kurz gefolgt von einem Rechtsklick als Doppelklick interpretiert wurde
- *
- * Revision 1.48  2011-04-29 07:41:59  willuhn
- * @N BUGZILLA 781
- *
- * Revision 1.47  2011-04-26 12:20:24  willuhn
- * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.46  2011-04-26 12:01:42  willuhn
- * @D javadoc Fixes
- *
- * Revision 1.45  2010-10-12 23:21:19  willuhn
- * @C GenericObject#equals beim Selektieren beachten
- *
- * Revision 1.44  2010-10-12 21:50:17  willuhn
- * @N select(Object) und select(Object[]) jetzt auch in TreePart
- *
- * Revision 1.43  2010-10-04 09:31:48  willuhn
- * @N Mouse-Events ueberschreibbar
- *
- * Revision 1.42  2010-09-03 00:02:31  willuhn
- * @B Ganze Zeile markieren - siehe http://www.jverein.de/forum/viewtopic.php?f=5&t=187&start=0. In TablePart war das schon drin
- *
- * Revision 1.41  2010/03/29 22:22:47  willuhn
- * *** empty log message ***
- *
- * Revision 1.40  2010/03/29 22:22:00  willuhn
- * *** empty log message ***
- *
- * Revision 1.39  2010/03/29 22:20:01  willuhn
- * @N Checked-Flag setzen
- *
- * Revision 1.38  2010/03/29 22:08:09  willuhn
- * @N addSelectionListener in Basis-Klasse verschoben, damit auch TreePart die Funktion nutzen kann
- *
- * Revision 1.37  2010/03/29 21:54:51  willuhn
- * @N setChecked-Support in TreePart
- *
- * Revision 1.36  2009/11/17 10:42:49  willuhn
- * @R vergessen, zu entfernen - steht in AbstractTablePart
- *
- * Revision 1.35  2009/11/16 10:44:31  willuhn
- * @N TreePart hat nun ebenfalls Checkbox-Support. Damit wandert setCheckable(boolean) in die gemeinsame Basis-Klasse AbstractTablePart
- *
- * Revision 1.34  2009/11/09 23:45:19  willuhn
- * @N removeAll() nun auch in TreePart zum Leeren des gesamten Baumes
- * @N setList() und setRootObject() koennen nun mehrfach aufgerufen werden. Wurde der Tree schon gezeichnet, wird er automatisch geleert und mit den neuen Objekten gefuellt
- *
- * Revision 1.33  2009/11/09 09:51:55  willuhn
- * @N Neue Standard-Icons
- * @N korrekte Initial-Icons fuer aufgeklappte Folder
- *
- * Revision 1.32  2009/11/03 01:21:28  willuhn
- * *** empty log message ***
- *
- * Revision 1.31  2009/10/15 17:04:35  willuhn
- * @N Auf- und Zuklappen jetzt auch rekursiv
- *
- * Revision 1.30  2009/10/15 16:01:11  willuhn
- * @N setList()/setRootObject() in TreePart
- * @C leere X.500-Attribute tolerieren
- *
- * Revision 1.29  2009/10/13 23:12:36  willuhn
- * @N Items im Treepart koennen (via TreeFormatter) mit eigenen Icons versehen werden
- *
- * Revision 1.28  2009/05/06 16:26:26  willuhn
- * @N BUGZILLA 721
- *
- * Revision 1.27  2009/03/11 23:19:29  willuhn
- * @R unbenutzten Parameter entfernt
- **********************************************************************/

@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/AbstractTablePart.java,v $
- * $Revision: 1.17 $
- * $Date: 2011/06/28 09:24:54 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -20,6 +14,8 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.datasource.GenericIterator;
+import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
@@ -343,65 +339,24 @@ public abstract class AbstractTablePart implements Part
    * Entfernt alle Elemente aus der Tabelle.
    */
   public abstract void removeAll();
-
+  
+  /**
+   * Hilfsmethode, um die RemoteException im Konstruktor zu vermeiden.
+   * @param iterator zu konvertierender Iterator.
+   * @return Liste mit den Objekten.
+   */
+  protected static List asList(GenericIterator iterator)
+  {
+    if (iterator == null)
+      return null;
+    try
+    {
+      return PseudoIterator.asList(iterator);
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to init list",re);
+    }
+    return new ArrayList();
+  }
 }
-
-
-/*********************************************************************
- * $Log: AbstractTablePart.java,v $
- * Revision 1.17  2011/06/28 09:24:54  willuhn
- * @N BUGZILLA 574
- *
- * Revision 1.16  2011-04-29 07:41:59  willuhn
- * @N BUGZILLA 781
- *
- * Revision 1.15  2010-10-12 21:50:17  willuhn
- * @N select(Object) und select(Object[]) jetzt auch in TreePart
- *
- * Revision 1.14  2010/03/29 22:08:08  willuhn
- * @N addSelectionListener in Basis-Klasse verschoben, damit auch TreePart die Funktion nutzen kann
- *
- * Revision 1.13  2010/03/29 21:54:51  willuhn
- * @N setChecked-Support in TreePart
- *
- * Revision 1.12  2009/11/16 10:44:31  willuhn
- * @N TreePart hat nun ebenfalls Checkbox-Support. Damit wandert setCheckable(boolean) in die gemeinsame Basis-Klasse AbstractTablePart
- *
- * Revision 1.11  2009/11/09 23:45:18  willuhn
- * @N removeAll() nun auch in TreePart zum Leeren des gesamten Baumes
- * @N setList() und setRootObject() koennen nun mehrfach aufgerufen werden. Wurde der Tree schon gezeichnet, wird er automatisch geleert und mit den neuen Objekten gefuellt
- *
- * Revision 1.10  2009/05/11 13:43:48  willuhn
- * @N setRememberState(boolean)
- *
- * Revision 1.9  2008/12/04 22:03:33  willuhn
- * @N BUGZILLA 665
- *
- * Revision 1.8  2008/09/30 21:30:03  willuhn
- * @N TablePart-internes "SortItem" umbenannt in "Item" - dient jetzt nicht mehr nur der Sortierung sondern auch zur Ausgabe/Formatierung des Attribut-Wertes (getFormattedValue())
- * @N Objekt "Column" um ein neues Attribut "sort" erweitert, mit dem festgelegt werden kann, ob die Spalte nach dem tatsaechlichen Wert (SORT_BY_VALUE) des Attributs sortiert werden soll oder nach dem angezeigten Wert (SORT_BY_DISPLAY). SORT_BY_VALUE ist (wie bisher) Default. Damit kann man z.Bsp. eine Spalte mit Integer-Wert auch alphanumerisch sortieren (nach "1" kommt dann "10" und nicht "2")
- *
- * Revision 1.7  2008/05/25 22:31:30  willuhn
- * @N Explizite Angabe der Spaltenausrichtung moeglich
- *
- * Revision 1.6  2007/11/01 21:07:35  willuhn
- * @N Spalten von Tabellen und mehrspaltigen Trees koennen mit mit Drag&Drop umsortiert werden. Die Sortier-Reihenfolge wird automatisch gespeichert und wiederhergestellt
- *
- * Revision 1.5  2007/04/15 21:31:33  willuhn
- * @N "getItems()" in TreePart
- *
- * Revision 1.4  2007/03/28 16:59:04  willuhn
- * @C Eine Settings-Instanz fuer alle TableParts/TreeParts
- *
- * Revision 1.3  2007/03/22 22:36:47  willuhn
- * @N Contextmenu in Trees
- * @C Kategorie-Baum in separates TreePart ausgelagert
- *
- * Revision 1.2  2007/03/21 18:42:16  willuhn
- * @N Formatter fuer TreePart
- * @C mehr gemeinsamer Code in AbstractTablePart
- *
- * Revision 1.1  2007/03/08 18:55:49  willuhn
- * @N Tree mit Unterstuetzung fuer Spalten
- *
- **********************************************************************/

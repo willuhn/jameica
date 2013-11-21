@@ -47,7 +47,8 @@ public class Init5 implements Bootable
       PluginServiceService.class,
       SearchService.class,
       ReminderService.class,
-      ScriptingService.class
+      ScriptingService.class,
+      UpdateService.class
     };
   }
 

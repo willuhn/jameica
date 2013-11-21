@@ -59,6 +59,7 @@ public final class PluginLoader
   private final static Set<String> obsoletePlugins = new HashSet<String>()
   {{
     add("jameica.scripting");
+    add("jameica.update");
   }};
 
   // Liste mit allen gefundenen Plugins.

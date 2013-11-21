@@ -273,8 +273,8 @@ public class JameicaTrustManager implements X509TrustManager
     }
     catch (OperationCanceledException oe)
     {
-      Logger.warn("operation cancelled: " + oe.getMessage());
-      throw new CertificateException(oe.getMessage());
+      Logger.warn("operation cancelled");
+      throw oe;
     }
     catch (Exception e)
     {
