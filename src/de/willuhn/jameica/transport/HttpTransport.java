@@ -18,6 +18,7 @@ import java.util.List;
 
 import de.willuhn.annotation.Lifecycle;
 import de.willuhn.annotation.Lifecycle.Type;
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -182,24 +183,7 @@ public class HttpTransport implements Transport
     }
     finally
     {
-      if (is != null)
-      {
-        try {
-          is.close();
-        }
-        catch (Exception e) {
-          Logger.error("unable to close inputstream",e);
-        }
-      }
-      if (os != null)
-      {
-        try {
-          os.close();
-        }
-        catch (Exception e) {
-          Logger.error("unable to close outputstream",e);
-        }
-      }
+      IOUtil.close(is,os);
     }
   }
 
