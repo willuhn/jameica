@@ -1,10 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/DummyEngine.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/02/09 16:20:10 $
- * $Author: willuhn $
  *
- * Copyright (c) by willuhn - software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -37,13 +33,20 @@ public class DummyEngine implements Engine
   {
     IOUtil.copy(is,os);
   }
+  
+  /**
+   * @see de.willuhn.jameica.security.crypto.Engine#decrypt(java.io.InputStream)
+   */
+  public InputStream decrypt(InputStream is) throws Exception
+  {
+    return is;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.security.crypto.Engine#encrypt(java.io.OutputStream)
+   */
+  public OutputStream encrypt(OutputStream os) throws Exception
+  {
+    return os;
+  }
 }
-
-
-
-/**********************************************************************
- * $Log: DummyEngine.java,v $
- * Revision 1.1  2011/02/09 16:20:10  willuhn
- * @N Dummy-Engine
- *
- **********************************************************************/

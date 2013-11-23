@@ -1,10 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/RSAEngine.java,v $
- * $Revision: 1.1 $
- * $Date: 2011/02/08 18:27:53 $
- * $Author: willuhn $
  *
- * Copyright (c) by willuhn - software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -15,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -76,14 +74,29 @@ public class RSAEngine implements Engine
     }
     while (read != -1);
   }
+  
+  /**
+   * @see de.willuhn.jameica.security.crypto.Engine#decrypt(java.io.InputStream)
+   */
+  public InputStream decrypt(InputStream is) throws Exception
+  {
+    Logger.debug("creating cipher");
+    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+    cipher.init(Cipher.ENCRYPT_MODE,Application.getSSLFactory().getPublicKey());
+    
+    return new CipherInputStream(is,cipher);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.security.crypto.Engine#encrypt(java.io.OutputStream)
+   */
+  public OutputStream encrypt(OutputStream os) throws Exception
+  {
+    Logger.debug("creating cipher");
+    Cipher cipher = Cipher.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);
+    cipher.init(Cipher.DECRYPT_MODE,Application.getSSLFactory().getPrivateKey());
+    
+    return new CipherOutputStream(os,cipher);
+  }
 
 }
-
-
-
-/**********************************************************************
- * $Log: RSAEngine.java,v $
- * Revision 1.1  2011/02/08 18:27:53  willuhn
- * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
- *
- **********************************************************************/

@@ -1,10 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/PBEWithMD5AndDESEngine.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/02/09 11:25:08 $
- * $Author: willuhn $
  *
- * Copyright (c) by willuhn - software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -49,15 +45,3 @@ public class PBEWithMD5AndDESEngine extends AbstractPasswordBasedEngine
     return f.generateSecret(spec);
   }
 }
-
-
-
-/**********************************************************************
- * $Log: PBEWithMD5AndDESEngine.java,v $
- * Revision 1.2  2011/02/09 11:25:08  willuhn
- * @C Code-Cleanup
- *
- * Revision 1.1  2011-02-08 18:27:53  willuhn
- * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
- *
- **********************************************************************/

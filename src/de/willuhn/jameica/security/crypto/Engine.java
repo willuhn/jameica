@@ -36,6 +36,24 @@ public interface Engine
    * @throws Exception
    */
   public void decrypt(InputStream is, OutputStream os) throws Exception;
+  
+  /**
+   * Verschluesselt die Daten.
+   * Die Streams muessen vom Aufrufer geschlossen werden.
+   * @param os OutputStream mit den unverschluesselten Daten.
+   * @return Outputstream mit den verschluesselten Daten.
+   * @throws Exception
+   */
+  public OutputStream encrypt(OutputStream os) throws Exception;
+
+  /**
+   * Entschluesselt die Daten.
+   * Die Streams muessen vom Aufrufer geschlossen werden.
+   * @param is Inputstream mit den verschluesselten Daten.
+   * @return InputStream mit den entschluesselten Daten.
+   * @throws Exception
+   */
+  public InputStream decrypt(InputStream is) throws Exception;
 }
 
 

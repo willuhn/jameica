@@ -1,10 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/crypto/AbstractPasswordBasedEngine.java,v $
- * $Revision: 1.6 $
- * $Date: 2011/10/05 16:54:42 $
- * $Author: willuhn $
  *
- * Copyright (c) by willuhn - software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -40,9 +36,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
    */
   public void encrypt(InputStream is, OutputStream os) throws Exception
   {
-    Logger.debug("encrypting data using " + getAlgorithm());
-    Cipher cipher = createCipher(Cipher.ENCRYPT_MODE);
-    CipherOutputStream cos = new CipherOutputStream(os,cipher);
+    OutputStream cos = this.encrypt(os);
     IOUtil.copy(is,cos);
     
     // Wir muessen den CipherOutputStream leider selbst schliessen, damit das doFinal intern gemacht wird
@@ -55,10 +49,28 @@ public abstract class AbstractPasswordBasedEngine implements Engine
    */
   public void decrypt(InputStream is, OutputStream os) throws Exception
   {
+    InputStream cis = this.decrypt(is);
+    IOUtil.copy(cis, os);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.security.crypto.Engine#encrypt(java.io.OutputStream)
+   */
+  public OutputStream encrypt(OutputStream os) throws Exception
+  {
+    Logger.debug("encrypting data using " + getAlgorithm());
+    Cipher cipher = createCipher(Cipher.ENCRYPT_MODE);
+    return new CipherOutputStream(os,cipher);
+  }
+
+  /**
+   * @see de.willuhn.jameica.security.crypto.Engine#decrypt(java.io.InputStream)
+   */
+  public InputStream decrypt(InputStream is) throws Exception
+  {
     Logger.debug("decrypting data using " + getAlgorithm());
     Cipher cipher = createCipher(Cipher.DECRYPT_MODE);
-    CipherInputStream cis = new CipherInputStream(is,cipher);
-    IOUtil.copy(cis, os);
+    return new CipherInputStream(is,cipher);
   }
 
   /**
@@ -172,27 +184,3 @@ public abstract class AbstractPasswordBasedEngine implements Engine
    */
   abstract Key getKey() throws Exception;
 }
-
-
-
-/**********************************************************************
- * $Log: AbstractPasswordBasedEngine.java,v $
- * Revision 1.6  2011/10/05 16:54:42  willuhn
- * @C Log-Level auf debug gestellt
- *
- * Revision 1.5  2011-05-10 18:00:17  willuhn
- * @C AES-Keysize gekuerzt - verursachte auf manchen Systemen eine "java.security.InvalidKeyException: Illegal key size". Die bereits existierenden Keys bleiben aber erhalten
- *
- * Revision 1.4  2011-04-06 08:49:56  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2011-02-09 12:26:51  willuhn
- * @C Salt und Passwort NICHT als char[]/byte[] im RSA-Wallet speichern. Der XML-Encoder verwendet fuer jedes char/byte ein XML-Element, was dazu fuehrt, dass das Wallet auf eine kritische Groesse aufgeblasen wird
- *
- * Revision 1.2  2011-02-09 11:25:23  willuhn
- * @R Debug-Ausgabe entfernt
- *
- * Revision 1.1  2011-02-09 11:25:08  willuhn
- * @C Code-Cleanup
- *
- **********************************************************************/
