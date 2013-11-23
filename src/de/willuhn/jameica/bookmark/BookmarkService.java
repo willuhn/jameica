@@ -134,7 +134,7 @@ public class BookmarkService
   private BeanContainer<Bookmark> getBeanContainer() throws ApplicationException
   {
     if (this.beans == null)
-      this.beans = this.store.load(Bookmark.class,false);
+      this.beans = this.store.load(Bookmark.class,true);
     
     return this.beans;
   }
