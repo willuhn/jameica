@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Start.java,v $
- * $Revision: 1.24 $
- * $Date: 2011/10/06 10:49:08 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -100,31 +94,12 @@ public class Start extends AbstractView implements Extendable
   {
     return this.getClass().getName();
   }
-
+  
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
+   */
+  public boolean canBookmark()
+  {
+    return false;
+  }
 }
-
-/***************************************************************************
- * $Log: Start.java,v $
- * Revision 1.24  2011/10/06 10:49:08  willuhn
- * @N Termin-Provider konfigurierbar
- *
- * Revision 1.23  2011-05-11 10:27:25  willuhn
- * @N OCE fangen
- *
- * Revision 1.22  2011-05-03 12:57:00  willuhn
- * @B Das komplette Ausblenden nicht-aktiver Boxen fuehrte zu ziemlichem Durcheinander in dem Dialog
- * @C Aendern der Sortier-Reihenfolge vereinfacht. Sie wird jetzt nicht mehr live sondern erst nach Klick auf "Uebernehmen" gespeichert - was fachlich ja auch richtiger ist
- *
- * Revision 1.21  2011-05-03 12:12:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.20  2011-05-03 11:33:57  willuhn
- * @N Button "Startseite anpassen" als Panel-Button
- * @B das Entfernen und Wiederhinzufuegen von Elementen im ChooseBoxDialog fuehrte unter OS X zu einer ArrayIndexOutOfBoundsException - warum auch immer
- *
- * Revision 1.19  2011-05-03 11:07:37  willuhn
- * @N Styling-Fixes fuer Windows (Background)
- *
- * Revision 1.18  2011-01-14 12:02:15  willuhn
- * @B Versehentlich Test-Code eingecheckt
- ***************************************************************************/

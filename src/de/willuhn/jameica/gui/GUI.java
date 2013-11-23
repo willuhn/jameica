@@ -612,6 +612,26 @@ public class GUI implements ApplicationController
         gui.currentView = view;
         gui.currentView.setParent(parent);
         gui.currentView.setCurrentObject(o);
+        
+//        if (gui.currentView.canBookmark())
+//        {
+//          // Checken, ob wir noch ein Lesezeichen fuer die aktuelle View haben
+//          BeanService service = Application.getBootLoader().getBootable(BeanService.class);
+//          BookmarkService bs = service.get(BookmarkService.class);
+//          
+//          Bookmark b = null;
+//          try
+//          {
+//            b = bs.find();
+//          }
+//          catch (ApplicationException ae)
+//          {
+//            Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+//          }
+//          
+//          PanelButtonBookmark button = new PanelButtonBookmark(b);
+//          gui.view.addPanelButton(button);
+//        }
 
         // Wir setzen den Focus erstmal auf das Parent der View. Die View
         // kann das dann bei Bedarf in bind() noch aendern. Wichtig ist,

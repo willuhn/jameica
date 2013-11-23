@@ -242,6 +242,45 @@ public class PanelButton implements Part
     gc.drawImage(SWTUtil.getImage(this.icon),(this.width - ICON_WIDTH) / 2,y);
   }
   
+  /**
+   * Speichert das Icon des Panel-Button.
+   * @param icon das Icon des Panel-Button.
+   */
+  public void setIcon(String icon)
+  {
+    if (icon == null)
+      return;
+    
+    this.icon = icon;
+    
+    if (this.canvas != null && !this.canvas.isDisposed())
+      this.canvas.redraw();
+  }
+  
+  /**
+   * Speichert einen Tooltip fuer den Panel-Button.
+   * @param tooltip der Tooltip.
+   */
+  public void setTooltip(String tooltip)
+  {
+    if (tooltip == null)
+      return;
+    
+    this.tooltip = tooltip;
+    
+    if (this.canvas != null && !this.canvas.isDisposed())
+      this.canvas.setToolTipText(this.tooltip);
+  }
+  
+  /**
+   * Speichert die auszufuehrende Action.
+   * @param a die auszufuehrende Action.
+   */
+  public void setAction(Action a)
+  {
+    this.action = a;
+  }
+  
   
   
   /**

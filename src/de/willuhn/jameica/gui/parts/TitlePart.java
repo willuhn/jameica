@@ -108,6 +108,19 @@ public class TitlePart implements Part
    */
   public void clearButtons()
   {
+    for (PanelButton b:this.buttons)
+    {
+      try
+      {
+        Composite c = (Composite) b.getControl();
+        SWTUtil.disposeChildren(c);
+        c.dispose();
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while disposing panel-button",e);
+      }
+    }
     this.buttons.clear();
   }
 

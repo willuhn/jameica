@@ -18,11 +18,11 @@ public class Bookmark implements Serializable
   // Niemals aendern, damit das auch serialisierbar bleibt, wenn Properties geaendert werden.
   static final long serialVersionUID = -112736636515580220L;
   
-  private String view    = null;
-  private String context = null;
-  private Date created   = null;
-  private String title   = null;
-  private String comment = null;
+  private String view     = null;
+  private Context context = null;
+  private Date created    = null;
+  private String title    = null;
+  private String comment  = null;
   
   /**
    * Liefert den Namen der Java-Klasse der gebookmarkten View.
@@ -47,7 +47,7 @@ public class Bookmark implements Serializable
    * View beim Start uebergeben werden soll.
    * @return die Context-Information in serialisierter Form.
    */
-  public String getContext()
+  public Context getContext()
   {
     return this.context;
   }
@@ -57,7 +57,7 @@ public class Bookmark implements Serializable
    * der View beim Start uebergeben werden soll.
    * @param context die Context-Information in serialisierter Form.
    */
-  public void setContext(String context)
+  public void setContext(Context context)
   {
     this.context = context;
   }

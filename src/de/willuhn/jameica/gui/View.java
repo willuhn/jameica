@@ -285,6 +285,15 @@ public class View implements Part
     if (this.titlePart != null)
       this.titlePart.setTitle(this.title);
 	}
+  
+  /**
+   * Liefert den aktuellen Titel der View.
+   * @return der aktuelle Titel der View.
+   */
+  public String getTitle()
+  {
+    return this.title;
+  }
 
   /**
    * Aktualisiert den Text neben dem Logo.

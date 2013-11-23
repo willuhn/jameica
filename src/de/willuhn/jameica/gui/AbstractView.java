@@ -105,6 +105,16 @@ public abstract class AbstractView
   {
     return null;
   }
+  
+  /**
+   * Liefert true, wenn die View gebookmarkt werden kann.
+   * Kann ueberschrieben werden, wenn nicht gewuenscht.
+   * @return true, wenn die View gebookmarkt werden kann. Default ist true.
+   */
+  public boolean canBookmark()
+  {
+    return true;
+  }
 }
 
 
