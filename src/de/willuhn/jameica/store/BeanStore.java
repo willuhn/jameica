@@ -85,17 +85,14 @@ public class BeanStore
       ////////////////
       
       is = new BufferedInputStream(new FileInputStream(file));
+      Logger.info("loading bean container from " + file);
       if (encrypted)
       {
-        Logger.info("loading encrypted bean container from " + file);
+        Logger.info("decrypting bean container");
         is = this.engine.decrypt(is);
       }
-      else
-      {
-        Logger.info("loading bean container from " + file);
-      }
       
-      BeanContainer<T> container = (BeanContainer<T>) u.unmarshal(file);
+      BeanContainer<T> container = (BeanContainer<T>) u.unmarshal(is);
       Logger.info("loaded " + container);
       return container;
     }
