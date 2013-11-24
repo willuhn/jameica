@@ -7,11 +7,13 @@
 
 package de.willuhn.jameica.bookmark;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import de.willuhn.annotation.Lifecycle;
@@ -110,6 +112,33 @@ public class BookmarkService
     }
     
     return null;
+  }
+  
+  /**
+   * Sucht nach Bookmarks, in denen der genannte Suchbegriff im Titel oder Kommentar vorkommt.
+   * @param s der Suchbegriff. Ohne Suchbegriff wird eine leere Liste zurueckgegeben.
+   * @return Liste der gefundenen Bookmarks.
+   * @throws ApplicationException
+   */
+  public List<Bookmark> search(String s) throws ApplicationException
+  {
+    List<Bookmark> result = new ArrayList<Bookmark>();
+    
+    String query = StringUtils.trimToNull(s);
+    if (query == null)
+      return result;
+    
+    query = query.toLowerCase();
+    
+    List<Bookmark> list = this.getBookmarks();
+    for (Bookmark b:list)
+    {
+      String title   = StringUtils.trimToEmpty(b.getTitle());
+      String comment = StringUtils.trimToEmpty(b.getComment());
+      if (comment.toLowerCase().contains(query) || title.toLowerCase().contains(query))
+        result.add(b);
+    }
+    return result;
   }
   
   /**

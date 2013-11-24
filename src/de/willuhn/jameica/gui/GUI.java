@@ -37,6 +37,7 @@ import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.parts.BackgroundTaskMonitor;
+import de.willuhn.jameica.gui.internal.parts.PanelButtonBookmark;
 import de.willuhn.jameica.gui.internal.views.FatalErrorView;
 import de.willuhn.jameica.gui.parts.FormTextPart;
 import de.willuhn.jameica.gui.parts.Panel;
@@ -613,25 +614,11 @@ public class GUI implements ApplicationController
         gui.currentView.setParent(parent);
         gui.currentView.setCurrentObject(o);
         
-//        if (gui.currentView.canBookmark())
-//        {
-//          // Checken, ob wir noch ein Lesezeichen fuer die aktuelle View haben
-//          BeanService service = Application.getBootLoader().getBootable(BeanService.class);
-//          BookmarkService bs = service.get(BookmarkService.class);
-//          
-//          Bookmark b = null;
-//          try
-//          {
-//            b = bs.find();
-//          }
-//          catch (ApplicationException ae)
-//          {
-//            Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-//          }
-//          
-//          PanelButtonBookmark button = new PanelButtonBookmark(b);
-//          gui.view.addPanelButton(button);
-//        }
+        if (gui.currentView.canBookmark())
+        {
+          PanelButtonBookmark button = new PanelButtonBookmark();
+          gui.view.addPanelButton(button);
+        }
 
         // Wir setzen den Focus erstmal auf das Parent der View. Die View
         // kann das dann bei Bedarf in bind() noch aendern. Wichtig ist,

@@ -84,17 +84,28 @@ public class SearchResultPart extends TreePart
   {
     // Wir muessen das Suchergebnis hier als Baum aufbereiten
     HashMap<de.willuhn.jameica.plugin.Plugin, Plugin> plugins = new HashMap<de.willuhn.jameica.plugin.Plugin, Plugin>();
+    Plugin system = new Plugin(Application.getManifest().getName());
+    
     for (int i=0;i<searchResult.size();++i)
     {
       SearchResult result = searchResult.get(i);
       
       // Plugin ermitteln
       de.willuhn.jameica.plugin.Plugin ap = Application.getPluginLoader().findByClass(result.getSearchProvider().getClass());
-      Plugin p = plugins.get(ap);
-      if (p == null)
+      
+      Plugin p = null;
+      if (ap == null) // Das kann nur Jameica selbst sein
       {
-        p = new Plugin(ap.getManifest().getName());
-        plugins.put(ap,p);
+        p = system;
+      }
+      else
+      {
+        p = plugins.get(ap);
+        if (p == null)
+        {
+          p = new Plugin(ap.getManifest().getName());
+          plugins.put(ap,p);
+        }
       }
       p.add(result);
     }
@@ -102,6 +113,11 @@ public class SearchResultPart extends TreePart
     // Wir uebernehmen nur die Plugins, die Ergebnisse geliefert haben
     Iterator<Plugin> result = plugins.values().iterator();
     List<Plugin> al = new ArrayList<Plugin>();
+
+    // Suchergebnisse von Jameica selbst hinzutun
+    if (system.providers.size() > 0)
+      al.add(system);
+    
     while (result.hasNext())
     {
       Plugin p = result.next();

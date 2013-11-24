@@ -27,7 +27,7 @@ public class PopupMessageConsumer implements MessageConsumer
    */
   public Class[] getExpectedMessageTypes()
   {
-    return new Class[]{TextMessage.class};
+    return new Class[]{TextMessage.class,QueryMessage.class};
   }
 
   /**
@@ -35,10 +35,24 @@ public class PopupMessageConsumer implements MessageConsumer
    */
   public void handleMessage(Message message) throws Exception
   {
-    final TextMessage msg = (TextMessage) message;
+    String s1 = null;
+    String s2 = null;
     
-    final String title = StringUtils.trimToEmpty(msg.getTitle());
-    final String text  = StringUtils.trimToEmpty(msg.getText());
+    if (message instanceof TextMessage)
+    {
+      TextMessage msg = (TextMessage) message;
+      s1 = msg.getTitle();
+      s2 = msg.getText();
+    }
+    else
+    {
+      QueryMessage msg = (QueryMessage) message;
+      s1 = msg.getName();
+      s2 = msg.getData() != null ? msg.getData().toString() : null;
+    }
+    
+    final String title = StringUtils.trimToEmpty(s1);
+    final String text  = StringUtils.trimToEmpty(s2);
     
 
     // Server Mode

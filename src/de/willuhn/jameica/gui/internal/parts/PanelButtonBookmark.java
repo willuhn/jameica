@@ -7,6 +7,7 @@
 
 package de.willuhn.jameica.gui.internal.parts;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
@@ -20,7 +21,10 @@ import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Vorkonfigurierter Panel-Button fuer Bookmarks.
@@ -37,13 +41,39 @@ public class PanelButtonBookmark extends PanelButton
       
   /**
    * ct.
-   * @param b optionale Angabe des ggf. vorhandenen Bookmakrs.
    */
-  public PanelButtonBookmark(Bookmark b)
+  public PanelButtonBookmark()
   {
-    super(b != null ? ICON_STARRED : ICON_NONSTARRED,
-          b != null ? new BookmarkDelete(b) : new BookmarkAdd(),
-          b != null ? b.getComment() + "\n" + TEXT_DELETE : TEXT_CREATE);
+    super(ICON_NONSTARRED,new BookmarkAdd(),TEXT_CREATE);
+    
+    // Checken, ob wir bereits ein Lesezeichen fuer die aktuelle View haben
+    BeanService service = Application.getBootLoader().getBootable(BeanService.class);
+    BookmarkService bs = service.get(BookmarkService.class);
+    
+    try
+    {
+      Bookmark b = bs.find();
+      if (b != null)
+      {
+        this.setIcon(ICON_STARRED);
+        this.setAction(new BookmarkDelete(b));
+        
+        String comment = StringUtils.trimToNull(b.getComment());
+        String tooltip = TEXT_DELETE;
+        if (comment != null)
+        {
+          tooltip = comment + "\n" + tooltip;
+          // Application.getMessagingFactory().getMessagingQueue("jameica.popup").sendMessage(new TextMessage(comment));
+        }
+          
+        this.setTooltip(tooltip);
+      }
+    }
+    catch (ApplicationException ae)
+    {
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+    }
+    
     Application.getMessagingFactory().getMessagingQueue(BookmarkService.QUEUE_CREATED).registerMessageConsumer(this.mcCreate);
     Application.getMessagingFactory().getMessagingQueue(BookmarkService.QUEUE_DELETED).registerMessageConsumer(this.mcDelete);
   }
