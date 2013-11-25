@@ -26,6 +26,13 @@ public class BookmarkDelete implements Action
   
   /**
    * ct.
+   */
+  public BookmarkDelete()
+  {
+  }
+  
+  /**
+   * ct.
    * @param bookmark das zu loeschende Bookmark.
    */
   public BookmarkDelete(Bookmark bookmark)
@@ -38,13 +45,16 @@ public class BookmarkDelete implements Action
    */
   public void handleAction(Object context) throws ApplicationException
   {
+    if (context instanceof Bookmark) // Context hat Vorrang
+      this.bookmark = (Bookmark) context;
+    
     if (this.bookmark == null)
       throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das zu löschende Lesezeichen"));
     
     try
     {
       if (!(Application.getCallback().askUser(Application.getI18n().tr("Lesezeichen löschen?"))))
-        return;
+        throw new OperationCanceledException();
       
       BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
       BookmarkService bs      = beanService.get(BookmarkService.class);

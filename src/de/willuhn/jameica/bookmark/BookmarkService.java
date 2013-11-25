@@ -155,6 +155,8 @@ public class BookmarkService
     Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Lesezeichen gelöscht"),StatusBarMessage.TYPE_SUCCESS));
   }
   
+  private Object mutex = new Object();
+  
   /**
    * Liefert den Bean-Container.
    * @return der Bean-Container.
@@ -163,7 +165,12 @@ public class BookmarkService
   private BeanContainer<Bookmark> getBeanContainer() throws ApplicationException
   {
     if (this.beans == null)
-      this.beans = this.store.load(Bookmark.class,true);
+    {
+      synchronized (mutex)
+      {
+        this.beans = this.store.load(Bookmark.class,true);
+      }
+    }
     
     return this.beans;
   }

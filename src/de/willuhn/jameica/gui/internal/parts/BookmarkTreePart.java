@@ -7,6 +7,8 @@
 
 package de.willuhn.jameica.gui.internal.parts;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,14 +19,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.swt.widgets.TreeItem;
 
 import de.willuhn.jameica.bookmark.Bookmark;
 import de.willuhn.jameica.bookmark.BookmarkService;
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.formatter.DateFormatter;
+import de.willuhn.jameica.gui.formatter.TreeFormatter;
+import de.willuhn.jameica.gui.internal.action.BookmarkDelete;
+import de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem;
+import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TreePart;
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.util.DateUtil;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -32,22 +42,61 @@ import de.willuhn.util.ApplicationException;
  */
 public class BookmarkTreePart extends TreePart
 {
+  private final static DateFormat DF  = new SimpleDateFormat("HH:mm");
   private Map<Date,List<Bookmark>> bookmarks = new HashMap<Date,List<Bookmark>>();
+  private String query = null;
   
   /**
    * ct.
+   * @param action die auszufuehrende Action.
    * @throws ApplicationException
    */
-  public BookmarkTreePart() throws ApplicationException
+  public BookmarkTreePart(final Action action) throws ApplicationException
   {
-    super((List)null,(Action)null);
-    this.update(null);
+    super((List)null,new Action() {
+      
+      public void handleAction(Object context) throws ApplicationException
+      {
+        if (!(context instanceof Bookmark)) // Das ist dann ein Date
+          return;
+        action.handleAction(context);
+      }
+    });
     
+    this.addColumn(Application.getI18n().tr("Datum"),"created",new DateFormatter(DF));
+    this.addColumn(Application.getI18n().tr("Titel"),"title");
     this.addColumn(Application.getI18n().tr("Notiz"),"comment");
+    
+    this.setFormatter(new TreeFormatter()
+    {
+      public void format(TreeItem item)
+      {
+        Object data = item.getData();
+        if (data == null)
+          return;
+        
+        if (data instanceof Date)
+        {
+          Date date = (Date) data;
+          item.setText(0,DateUtil.DEFAULT_FORMAT.format(date));
+        }
+      }
+    });
+
+    this.setContextMenu(new BookmarkTreeMenu());
+    this.setExpanded(true);
+    this.setRememberColWidths(true);
+    this.update(null);
   }
   
-  private void update(String query) throws ApplicationException
+  /**
+   * Aktualisiert den Tree basierend auf dem Suchbegriff.
+   * @param query der Suchbegriff.
+   * @throws ApplicationException
+   */
+  public void update(String query) throws ApplicationException
   {
+    this.query = query;
     this.removeAll();
     this.bookmarks.clear();
     
@@ -121,7 +170,61 @@ public class BookmarkTreePart extends TreePart
       return b2.getCreated().compareTo(b1.getCreated());
     }
   }
+  
 
+  /**
+   * Implementiert das Contextmenu des Tree.
+   */
+  private class BookmarkTreeMenu extends ContextMenu
+  {
+    /**
+     * ct.
+     */
+    public BookmarkTreeMenu()
+    {
+      addItem(new BookmarkMenuItem(Application.getI18n().tr("Öffnen"),action,"document-open.png"));
+      addItem(new BookmarkMenuItem(Application.getI18n().tr("Löschen..."),new BookmarkDelete() {
+        public void handleAction(Object context) throws ApplicationException
+        {
+          try
+          {
+            super.handleAction(context);
+            update(query); // Neu laden
+          }
+          catch (OperationCanceledException oce)
+          {
+            Logger.debug("operation cancelled");
+          }
+        }
+      },"user-trash-full.png"));
+    }
+    
+    /**
+     * Menuitem fuer den Bookmark-Tree.
+     */
+    private class BookmarkMenuItem extends CheckedSingleContextMenuItem
+    {
+      /**
+       * ct.
+       * @param text der Text des Items.
+       * @param action die auszufuehrende Action.
+       * @param icon das Icon.
+       */
+      public BookmarkMenuItem(String text, Action action, String icon)
+      {
+        super(text,action,icon);
+      }
+      
+      /**
+       * @see de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem#isEnabledFor(java.lang.Object)
+       */
+      public boolean isEnabledFor(Object o)
+      {
+        return (o instanceof Bookmark) && super.isEnabledFor(o);
+      }
+    }
+  }
+  
 }
 
 

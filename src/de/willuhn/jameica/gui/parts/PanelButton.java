@@ -304,7 +304,7 @@ public class PanelButton implements Part
     }
     catch (OperationCanceledException oce)
     {
-      Logger.info("operation cancelled");
+      Logger.debug("operation cancelled");
     }
     catch (ApplicationException ae)
     {
