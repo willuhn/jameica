@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/PluginDetails.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/05/31 16:39:04 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -50,24 +44,13 @@ public class PluginDetails extends AbstractView
 		container.addHeadline(i18n.tr("Services"));
 		container.addPart(control.getServiceList());
   }
+  
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
+   */
+  public boolean canBookmark()
+  {
+    return false;
+  }
 }
 
-
-/**********************************************************************
- * $Log: PluginDetails.java,v $
- * Revision 1.3  2011/05/31 16:39:04  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
- *
- * Revision 1.2  2011-04-26 11:54:51  willuhn
- * @R Back-Button entfernt
- *
- * Revision 1.1  2005/06/14 23:15:30  web0
- * @N added settings for plugins/services
- *
- * Revision 1.2  2004/12/17 01:10:39  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/09/13 23:27:07  willuhn
- * *** empty log message ***
- *
- **********************************************************************/

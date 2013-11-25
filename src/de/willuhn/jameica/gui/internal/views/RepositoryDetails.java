@@ -36,4 +36,12 @@ public class RepositoryDetails extends AbstractView
     group.addPart(control.getPlugins());
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
+   */
+  public boolean canBookmark()
+  {
+    return false;
+  }
+
 }

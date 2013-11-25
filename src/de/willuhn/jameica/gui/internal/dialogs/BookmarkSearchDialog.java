@@ -17,6 +17,7 @@ import de.willuhn.jameica.bookmark.Bookmark;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.input.TextInput;
+import de.willuhn.jameica.gui.internal.action.BookmarkDelete;
 import de.willuhn.jameica.gui.internal.buttons.Cancel;
 import de.willuhn.jameica.gui.internal.parts.BookmarkTreePart;
 import de.willuhn.jameica.gui.parts.Button;
@@ -95,16 +96,32 @@ public class BookmarkSearchDialog extends AbstractDialog
     },null,true,"ok.png");
     apply.setEnabled(false);
     
+    final Button delete = new Button(Application.getI18n().tr("Löschen..."),new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        Object sel = tree.getSelection();
+        if (!(sel instanceof Bookmark))
+          return;
+
+        new BookmarkDelete().handleAction(sel);
+        tree.update((String)search.getValue());
+      }
+    },null,true,"user-trash-full.png");
+    delete.setEnabled(false);
+
     this.tree.addSelectionListener(new Listener()
     {
       public void handleEvent(Event event)
       {
-        apply.setEnabled(event.data instanceof Bookmark);
+        boolean b = (event.data instanceof Bookmark);
+        apply.setEnabled(b);
+        delete.setEnabled(b);
       }
     });
     
     ButtonArea buttons = new ButtonArea();
     buttons.addButton(apply);
+    buttons.addButton(delete);
     buttons.addButton(new Cancel());
     container.addButtonArea(buttons);
     getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,400));

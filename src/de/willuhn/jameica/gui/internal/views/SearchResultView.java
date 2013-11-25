@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/SearchResultView.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/04/26 11:51:24 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -39,18 +33,12 @@ public class SearchResultView extends AbstractView
     part.paint(getParent());
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
+   */
+  public boolean canBookmark()
+  {
+    return false;
+  }
+
 }
-
-
-/**********************************************************************
- * $Log: SearchResultView.java,v $
- * Revision 1.3  2011/04/26 11:51:24  willuhn
- * @R Back-Button entfernt
- *
- * Revision 1.2  2008/09/03 00:21:07  willuhn
- * @C SearchResultPart in "internal"-Package verschoben (wo auch schon das SearchPart ist)
- *
- * Revision 1.1  2008/09/03 00:11:43  willuhn
- * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
- *
- **********************************************************************/

@@ -32,4 +32,13 @@ public class UpdatesView extends AbstractView
     Container container = new SimpleContainer(this.getParent(),true);
     new PluginTree((List<PluginData>)this.getCurrentObject()).paint(container.getComposite());
   }
+  
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
+   */
+  public boolean canBookmark()
+  {
+    return false;
+  }
+
 }

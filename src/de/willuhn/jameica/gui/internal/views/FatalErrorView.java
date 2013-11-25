@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/FatalErrorView.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/04/26 11:48:08 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -201,14 +195,11 @@ public class FatalErrorView extends AbstractView
     return sb.toString();
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
+   */
+  public boolean canBookmark()
+  {
+    return false;
+  }
 }
-
-/***************************************************************************
- * $Log: FatalErrorView.java,v $
- * Revision 1.10  2011/04/26 11:48:08  willuhn
- * @R Back-Button entfernt
- *
- * Revision 1.9  2010-11-25 11:34:08  willuhn
- * @N Error-View ueberarbeitet. Das System-Protokoll wird jetzt nicht mehr in die Zwischenablage kopiert sondern als Datei gespeichert. Das kann man als Attachment speichern und ist erheblich besser lesbar (keine Zeilenumbrueche in den Log-Ausgaben). Ausserdem enthaelt es jetzt auch noch Versionsinformationen zu OS, Java, Jameica und Plugins.
- *
- ***************************************************************************/
