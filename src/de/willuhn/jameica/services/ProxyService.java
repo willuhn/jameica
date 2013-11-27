@@ -1,22 +1,25 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/services/ProxyService.java,v $
- * $Revision: 1.3 $
- * $Date: 2009/06/24 11:24:33 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
 
 package de.willuhn.jameica.services;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.util.List;
+
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Config;
 import de.willuhn.logging.Logger;
 
 
@@ -39,15 +42,26 @@ public class ProxyService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
+    Config config = Application.getConfig();
+    
     if (Application.getConfig().getUseSystemProxy())
     {
       Logger.info("Using system proxy settings");
       System.setProperty("java.net.useSystemProxies","true");
+      
+      // Wir loggen die gefundenen Proxy-Einstellungen
+      Logger.info("Trying to determine system proxies");
+      InetSocketAddress http  = this.determineProxy("http://www.willuhn.de/");
+      InetSocketAddress https = this.determineProxy("https://www.willuhn.de/");
+      if (http != null)  Logger.info("  Found HTTP proxy: " + http);
+      if (https != null) Logger.info("  Found HTTPS proxy: " + https);
+      
       return;
     }
+
     
-    String proxyHost = Application.getConfig().getProxyHost();
-    int proxyPort    = Application.getConfig().getProxyPort();
+    String proxyHost = config.getProxyHost();
+    int proxyPort    = config.getProxyPort();
    
     if (proxyHost != null && proxyHost.length() > 0 && proxyPort > 0)
     {
@@ -56,8 +70,8 @@ public class ProxyService implements Bootable
       System.setProperty("http.proxyPort",""+proxyPort);
     }
 
-    proxyHost = Application.getConfig().getHttpsProxyHost();
-    proxyPort = Application.getConfig().getHttpsProxyPort();
+    proxyHost = config.getHttpsProxyHost();
+    proxyPort = config.getHttpsProxyPort();
    
     if (proxyHost != null && proxyHost.length() > 0 && proxyPort > 0)
     {
@@ -65,7 +79,6 @@ public class ProxyService implements Bootable
       System.setProperty("https.proxyHost",proxyHost);
       System.setProperty("https.proxyPort",""+proxyPort);
     }
-  
   }
 
   /**
@@ -74,20 +87,33 @@ public class ProxyService implements Bootable
   public void shutdown()
   {
   }
+  
+  /**
+   * Versucht herauszufinden, welcher Proxy fuer die angegebene URL verwendet werden soll.
+   * @param url die Test-URL.
+   * @return der Proxy oder NULL, wenn keiner verwendet wird.
+   */
+  private InetSocketAddress determineProxy(String url)
+  {
+    try
+    {
+      List<Proxy> proxies = ProxySelector.getDefault().select(new URI(url));
+      for (Proxy p : proxies)
+      {
+        Type type             = p.type();
+        SocketAddress address = p.address();
+        
+        if (type == null || address == null || type != Type.HTTP || !(address instanceof InetSocketAddress))
+          continue;
+        
+        return (InetSocketAddress) address;
+      }
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to determine proxy for " + url);
+    }
+    return null;
+  }
 
 }
-
-
-/**********************************************************************
- * $Log: ProxyService.java,v $
- * Revision 1.3  2009/06/24 11:24:33  willuhn
- * @N Security-Manager via Bootloader setzen
- *
- * Revision 1.2  2009/03/10 14:06:26  willuhn
- * @N Proxy-Server fuer HTTPS konfigurierbar
- *
- * Revision 1.1  2008/02/13 01:04:34  willuhn
- * @N Jameica auf neuen Bootloader umgestellt
- * @C Markus' Aenderungen RMI-Registrierung uebernommen
- *
- **********************************************************************/
