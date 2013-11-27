@@ -42,6 +42,7 @@ public class ProxyService implements Bootable
     if (Application.getConfig().getUseSystemProxy())
     {
       Logger.info("Using system proxy settings");
+      System.setProperty("java.net.useSystemProxies","true");
       return;
     }
     
