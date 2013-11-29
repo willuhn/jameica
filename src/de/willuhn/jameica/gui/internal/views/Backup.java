@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/views/Backup.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/04/26 11:48:45 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -65,28 +59,8 @@ public class Backup extends AbstractView
 
     ButtonArea buttons2 = new ButtonArea();
     buttons2.addButton(control.getRestoreButton());
+    buttons2.addButton(control.getSelectedRestoreButton());
     buttons2.paint(getParent());
   }
 
 }
-
-
-/**********************************************************************
- * $Log: Backup.java,v $
- * Revision 1.4  2011/04/26 11:48:45  willuhn
- * @R Back-Button entfernt
- * @C Restore-Button nur aktivieren, wenn ein Backup markiert ist
- * @C Layout geaendert
- *
- * Revision 1.3  2008/03/11 10:23:42  willuhn
- * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
- *
- * Revision 1.2  2008/03/04 00:49:25  willuhn
- * @N GUI fuer Backup fertig
- *
- * Revision 1.1  2008/02/29 01:12:30  willuhn
- * @N Erster Code fuer neues Backup-System
- * @N DirectoryInput
- * @B Fixes an FileInput, TextInput
- *
- **********************************************************************/

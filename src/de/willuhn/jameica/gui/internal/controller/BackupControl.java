@@ -13,9 +13,13 @@
 
 package de.willuhn.jameica.gui.internal.controller;
 
+import java.io.File;
 import java.rmi.RemoteException;
 
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.pseudo.PseudoIterator;
@@ -24,6 +28,7 @@ import de.willuhn.jameica.backup.BackupFile;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.formatter.CurrencyFormatter;
 import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.gui.formatter.Formatter;
@@ -50,11 +55,12 @@ import de.willuhn.util.ApplicationException;
  */
 public class BackupControl extends AbstractControl
 {
-  private CheckboxInput state = null;
-  private Input target        = null;
-  private SpinnerInput count  = null;
-  private TablePart backups   = null;
-  private Button restore      = null;
+  private CheckboxInput state    = null;
+  private Input target           = null;
+  private SpinnerInput count     = null;
+  private TablePart backups      = null;
+  private Button restore         = null;
+  private Button selectedRestore = null;
   
   /**
    * @param view
@@ -194,7 +200,7 @@ public class BackupControl extends AbstractControl
     this.backups.addSelectionListener(new Listener() {
       public void handleEvent(Event event)
       {
-        getRestoreButton().setEnabled(backups.getSelection() != null);
+        getSelectedRestoreButton().setEnabled(backups.getSelection() != null);
       }
     });
     
@@ -202,7 +208,7 @@ public class BackupControl extends AbstractControl
     ctx.addItem(new CheckedContextMenuItem(Application.getI18n().tr("Backup wiederherstellen..."),new Action() {
       public void handleAction(Object context) throws ApplicationException
       {
-        handleRestore();
+        handleSelectedRestore();
       }
     },"edit-undo.png"));
     this.backups.setContextMenu(ctx);
@@ -218,15 +224,47 @@ public class BackupControl extends AbstractControl
     if (this.restore != null)
       return this.restore;
     
-    this.restore = new Button(Application.getI18n().tr("Ausgewähltes Backup wiederherstellen..."),new Action() {
+    this.restore = new Button(Application.getI18n().tr("Anderes Backup wiederherstellen..."),new Action() {
       
       public void handleAction(Object context) throws ApplicationException
       {
-        handleRestore();
+        FileDialog dialog = new FileDialog(GUI.getShell(),SWT.OPEN);
+        dialog.setFilterExtensions(new String[]{"*.zip"});
+        dialog.setText(Application.getI18n().tr("Bitte wählen Sie die Datei aus"));
+
+        String f = dialog.open();
+        if (StringUtils.isEmpty(f))
+          return;
+        
+        File file = new File(f);
+        if (!file.exists() || !file.canRead() || !file.isFile())
+          throw new ApplicationException(Application.getI18n().tr("Backup-Datei nicht lesbar"));
+        
+        BackupFile bf = new BackupFile(file);
+        handleRestore(bf);
+      }
+    },null,false,"document-open.png");
+    return this.restore;
+  }
+
+  /**
+   * Liefert den Restore-Button fuer das gerade ausgewaehlte Backup.
+   * @return der Restore-Button.
+   */
+  public Button getSelectedRestoreButton()
+  {
+    if (this.selectedRestore != null)
+      return this.selectedRestore;
+    
+    this.selectedRestore = new Button(Application.getI18n().tr("Ausgewähltes Backup wiederherstellen..."),new Action() {
+      
+      public void handleAction(Object context) throws ApplicationException
+      {
+        handleSelectedRestore();
       }
     },null,false,"edit-undo.png");
-    this.restore.setEnabled(false); // initial deaktivieren
-    return this.restore;
+    this.selectedRestore.setEnabled(false); // initial deaktivieren
+    return this.selectedRestore;
   }
   
   /**
@@ -255,26 +293,47 @@ public class BackupControl extends AbstractControl
   }
   
   /**
-   * Markiert ein Backup fuer die Wiederherstellung.
+   * Markiert ein ausgewaehltes Backup fuer die Wiederherstellung.
    */
-  public void handleRestore()
+  public void handleSelectedRestore()
   {
     try
     {
-      BackupFile o = (BackupFile) getBackups().getSelection();
-      if (o == null)
-      {
-        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Bitte wählen Sie das wiederherzustellende Backup aus"), StatusBarMessage.TYPE_ERROR));
-        return;
-      }
+      this.handleRestore((BackupFile) getBackups().getSelection());
+    }
+    catch (ApplicationException ae)
+    {
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(), StatusBarMessage.TYPE_ERROR));
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to choose backup file",e);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Aktivieren der Backup-Datei"), StatusBarMessage.TYPE_ERROR));
+    }
+  }
 
-      BackupRestoreDialog d = new BackupRestoreDialog(BackupRestoreDialog.POSITION_CENTER,o);
+  /**
+   * Markiert das angegebene Backupfile fuer die Wiederherstellung.
+   * @param file das Backup-File.
+   */
+  public void handleRestore(BackupFile file)
+  {
+    if (file == null)
+    {
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Bitte wählen Sie das wiederherzustellende Backup aus"), StatusBarMessage.TYPE_ERROR));
+      return;
+    }
+    
+    try
+    {
+
+      BackupRestoreDialog d = new BackupRestoreDialog(BackupRestoreDialog.POSITION_CENTER,file);
       Boolean b = (Boolean) d.open();
       
       if (!b.booleanValue())
         return;
       
-      BackupEngine.markForRestore(o);
+      BackupEngine.markForRestore(file);
       new FileClose().handleAction(null);
     }
     catch (OperationCanceledException oce)
@@ -293,48 +352,3 @@ public class BackupControl extends AbstractControl
     }
   }
 }
-
-
-/**********************************************************************
- * $Log: BackupControl.java,v $
- * Revision 1.11  2011/06/08 09:22:44  willuhn
- * @C Spinner-Input fuer die Anzahl der Backups
- *
- * Revision 1.10  2011-05-11 10:27:25  willuhn
- * @N OCE fangen
- *
- * Revision 1.9  2011-04-26 11:48:45  willuhn
- * @R Back-Button entfernt
- * @C Restore-Button nur aktivieren, wenn ein Backup markiert ist
- * @C Layout geaendert
- *
- * Revision 1.8  2008/12/19 12:16:02  willuhn
- * @N Mehr Icons
- * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
- *
- * Revision 1.7  2008/03/11 10:23:42  willuhn
- * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
- *
- * Revision 1.6  2008/03/11 00:13:08  willuhn
- * @N Backup scharf geschaltet
- *
- * Revision 1.5  2008/03/07 01:36:27  willuhn
- * @N ZipCreator
- * @N Erster Code fuer Erstellung des Backups
- *
- * Revision 1.4  2008/03/04 00:49:25  willuhn
- * @N GUI fuer Backup fertig
- *
- * Revision 1.3  2008/03/03 09:43:54  willuhn
- * @N DateUtil-Patch von Heiner
- * @N Weiterer Code fuer das Backup-System
- *
- * Revision 1.2  2008/02/29 19:02:31  willuhn
- * @N Weiterer Code fuer Backup-System
- *
- * Revision 1.1  2008/02/29 01:12:30  willuhn
- * @N Erster Code fuer neues Backup-System
- * @N DirectoryInput
- * @B Fixes an FileInput, TextInput
- *
- **********************************************************************/
