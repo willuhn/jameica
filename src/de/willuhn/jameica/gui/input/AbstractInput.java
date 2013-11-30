@@ -209,20 +209,28 @@ public abstract class AbstractInput implements Input
     control.addListener(SWT.FocusOut,dl);
     control.addListener(SWT.Modify,dl);
 
-    if ((validChars != null && validChars.length() > 0))
+    // Bei Einzeiligen Eingabefeldern kann in der Zwischenablage
+    // ein Zeilenumbruch enthalten sein. Der darf zwar nicht im
+    // Eingabefeld landen, sollte das Copy'n'Paste aber auch nicht
+    // behindern - daher entfernen wir das
+    final boolean single = ((control.getStyle() & SWT.SINGLE) != 0);
+    if (single)
     {
-      final boolean single = ((control.getStyle() & SWT.SINGLE) != 0);
       control.addListener(SWT.Verify, new Listener()
       {
         public void handleEvent(Event e)
         {
-          // Bei Einzeiligen Eingabefeldern kann in der Zwischenablage
-          // ein Zeilenumbruch enthalten sein. Der darf zwar nicht im
-          // Eingabefeld landen, sollte das Copy'n'Paste aber auch nicht
-          // behindern - daher entfernen wir das
-          if (single)
-            e.text = e.text.replace("\n","").replace("\r","");
-          
+          e.text = e.text.replace("\n","").replace("\r","");
+        }
+      });
+    }
+    
+    if ((validChars != null && validChars.length() > 0))
+    {
+      control.addListener(SWT.Verify, new Listener()
+      {
+        public void handleEvent(Event e)
+        {
           char[] chars = e.text.toCharArray();
           for (int i=0; i<chars.length; i++) {
             if (validChars.indexOf(chars[i]) == -1) // eingegebenes Zeichen nicht enthalten
