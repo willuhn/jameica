@@ -9,6 +9,7 @@ package de.willuhn.jameica.services;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.ext.UpdateSettingsView;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.update.Repository;
+import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -33,6 +35,15 @@ public class RepositoryService implements Bootable
    * Die URL des System-Repository.
    */
   public final static String SYSTEM_REPOSITORY = "https://www.willuhn.de/products/jameica/updates";
+  
+  /**
+   * Liste von bekannten Repositories, die wir mit ausliefern, die der User aber wieder loeschen kann
+   */
+  public final static String[] WELL_KNOWN =
+  {
+    "http://www.jverein.de/updates",
+    "http://scripting-updates.derrichter.de"
+  };
 
   private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(RepositoryService.class);
 
@@ -51,12 +62,36 @@ public class RepositoryService implements Bootable
    */
   public void init(BootLoader arg0, Bootable arg1) throws SkipServiceException
   {
+    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+    
     // Settings-Extension registrieren
     if (this.settingsExt == null)
     {
-      BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
       this.settingsExt = beanService.get(UpdateSettingsView.class);
       ExtensionRegistry.register(this.settingsExt,de.willuhn.jameica.gui.internal.views.Settings.class.getName());
+    }
+    
+    if (settings.getString("wellknown.added",null) == null)
+    {
+      try
+      {
+        List<URL> list = this.getRepositories();
+        for (String s:WELL_KNOWN)
+        {
+          Logger.info("adding well-known additional repository " + s);
+          URL url = new URL(s);
+          if (!list.contains(url))
+            this.addRepository(url);
+        }
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while adding repository",e);
+      }
+      finally
+      {
+        settings.setAttribute("wellknown.added",DateUtil.DEFAULT_FORMAT.format(new Date()));
+      }
     }
   }
   
