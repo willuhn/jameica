@@ -63,8 +63,10 @@ public class PanelButtonBookmark extends PanelButton
         if (comment != null)
         {
           tooltip = comment + "\n" + tooltip;
-          // Application.getMessagingFactory().getMessagingQueue("jameica.popup").sendMessage(new TextMessage(comment));
         }
+        if (comment == null)
+          comment = Application.getI18n().tr("Lesezeichen");
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(comment,StatusBarMessage.TYPE_INFO));
           
         this.setTooltip(tooltip);
       }

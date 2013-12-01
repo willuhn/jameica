@@ -17,7 +17,6 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.messaging.AutoRegisterMessageConsumer;
-import de.willuhn.jameica.messaging.LogMessageConsumer;
 import de.willuhn.jameica.messaging.ManifestMessageConsumer;
 import de.willuhn.jameica.messaging.MessagingFactory;
 
@@ -44,7 +43,6 @@ public class MessagingService implements Bootable
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
     this.factory = MessagingFactory.getInstance();
-    this.factory.registerMessageConsumer(new LogMessageConsumer());
     this.factory.registerMessageConsumer(new AutoRegisterMessageConsumer());
     this.factory.registerMessageConsumer(new ManifestMessageConsumer());
   }

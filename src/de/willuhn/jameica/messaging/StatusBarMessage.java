@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/StatusBarMessage.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/07/17 10:13:03 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -32,6 +26,11 @@ public class StatusBarMessage extends TextMessage
    */
   public final static int TYPE_ERROR   = 1;
 
+  /**
+   * Definiert Info-Nachrichten.
+   */
+  public final static int TYPE_INFO    = 2;
+
   private int type    = TYPE_SUCCESS;
 
   /**
@@ -56,25 +55,3 @@ public class StatusBarMessage extends TextMessage
     return this.type;
   }
 }
-
-
-/*********************************************************************
- * $Log: StatusBarMessage.java,v $
- * Revision 1.5  2009/07/17 10:13:03  willuhn
- * @N MessagingQueue#flush()
- * @N MessageCollector zum Sammeln von Nachrichten
- *
- * Revision 1.4  2007/06/05 11:45:09  willuhn
- * @N Benamte Message-Queues. Ermoeglicht kaskadierende und getrennt voneinander arbeitende Queues sowie das Zustellen von Nachrichten, ohne den Nachrichtentyp zu kennen
- *
- * Revision 1.3  2007/05/22 15:51:04  willuhn
- * @N getQueueSize in MessagingFactory
- * @N getDate in StatusBarMessage
- *
- * Revision 1.2  2006/03/21 22:52:53  web0
- * *** empty log message ***
- *
- * Revision 1.1  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- *********************************************************************/

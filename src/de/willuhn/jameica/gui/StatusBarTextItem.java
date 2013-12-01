@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBarTextItem.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/08/18 16:55:24 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -45,7 +39,6 @@ import de.willuhn.util.ApplicationException;
 
 /**
  * Ein Statusbar-Element, welches einen Status-Text anzeigt.
- * @author willuhn
  */
 public class StatusBarTextItem implements StatusBarItem
 {
@@ -58,7 +51,7 @@ public class StatusBarTextItem implements StatusBarItem
    */
   public StatusBarTextItem()
   {
-    Application.getMessagingFactory().registerMessageConsumer(new StatusMessageConsumer());
+    Application.getMessagingFactory().getMessagingQueue("jameica.statusbar").registerMessageConsumer(new StatusMessageConsumer());
   }
 
   /**
@@ -148,11 +141,9 @@ public class StatusBarTextItem implements StatusBarItem
 
   /**
    * Message-Consumer, ueber den wir die Status-Nachrichten erhalten.
-   * @author willuhn
    */
   private class StatusMessageConsumer implements MessageConsumer
   {
-
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
@@ -230,39 +221,3 @@ public class StatusBarTextItem implements StatusBarItem
     }
   }
 }
-
-
-/*********************************************************************
- * $Log: StatusBarTextItem.java,v $
- * Revision 1.10  2011/08/18 16:55:24  willuhn
- * @N Button zum Abbrechen von Background-Tasks. Ob die den Request dann auch beachten, ist aber deren Sache ;)
- *
- * Revision 1.9  2011-08-18 16:38:08  willuhn
- * @B Minimize-Button nur einmal hinzufuegen
- * @N Speichern-Button im Syslog via neuem Panel-Button
- *
- * Revision 1.8  2010-11-02 22:33:07  willuhn
- * @B Kann beim Shutdown eine Racecondition mit "SWTException: Invalid thread access" ausloesen - stoert zwar nicht, sieht aber unschoen im Log aus
- *
- * Revision 1.7  2010-10-19 15:33:21  willuhn
- * @N Statusbar via Customizing anpassbar
- *
- * Revision 1.6  2007/11/02 01:19:38  willuhn
- * @N Vorbereitungen fuer Drag&Drop von Panels
- * @N besserer Klick-Indikator in Statusleiste fuer Oeffnen des Logs
- *
- * Revision 1.5  2007/05/14 11:18:09  willuhn
- * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
- * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
- *
- * Revision 1.4  2007/04/01 22:15:22  willuhn
- * @B Breite des Statusbarlabels
- * @B Redraw der Statusleiste
- *
- * Revision 1.2  2006/04/18 16:49:46  web0
- * @C redesign in MessagingFactory
- *
- * Revision 1.1  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- *********************************************************************/

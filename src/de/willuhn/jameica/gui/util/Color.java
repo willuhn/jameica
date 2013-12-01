@@ -109,7 +109,7 @@ public class Color {
    * @param name Alias-Name der Farbe.
    * @param defaultValue Default-Farbwert.
    */
-  private Color(String name,RGB defaultValue)
+  public Color(String name,RGB defaultValue)
 	{
 		this.name = name;
 		this.defaultValue = defaultValue;
@@ -161,54 +161,3 @@ public class Color {
     colorCache.remove(value.toString());
   }
 }
-
-
-/**********************************************************************
- * $Log: Color.java,v $
- * Revision 1.14  2011/10/05 11:24:48  willuhn
- * @C Farbe von Pflichtfeldern etwas dezenter
- *
- * Revision 1.13  2010-07-16 13:11:31  willuhn
- * @N Config-Dateien nicht mehr automatisch anlegen
- *
- * Revision 1.12  2008/09/23 14:02:10  willuhn
- * @B Wenn wir Farben aus dem Cache loeschen, duerfen wir sie nicht disposen, weil sie ggf. noch irgendwo verwendet werden
- *
- * Revision 1.11  2008/09/23 13:58:12  willuhn
- * @B dispose check
- *
- * Revision 1.10  2008/07/04 16:02:11  willuhn
- * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
- * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
- *
- * Revision 1.9  2007/12/18 17:50:12  willuhn
- * @R Background-Color nicht mehr aenderbar
- * @C Layout der Startseite
- *
- * Revision 1.8  2006/12/28 15:35:52  willuhn
- * @N Farbige Pflichtfelder
- *
- * Revision 1.7  2005/07/26 22:58:34  web0
- * @N background task refactoring
- *
- * Revision 1.6  2004/11/05 20:00:44  willuhn
- * @D javadoc fixes
- *
- * Revision 1.5  2004/07/21 23:54:54  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.4  2004/06/10 20:56:53  willuhn
- * @D javadoc comments fixed
- *
- * Revision 1.3  2004/06/02 21:15:15  willuhn
- * @B win32 fixes in flat style
- * @C made ButtonInput more abstract
- *
- * Revision 1.2  2004/05/23 16:34:18  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- **********************************************************************/

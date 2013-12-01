@@ -17,7 +17,6 @@ package de.willuhn.jameica.gui;
 import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.GC;
@@ -33,12 +32,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.internal.parts.PanelButtonBack;
+import de.willuhn.jameica.gui.parts.NotificationPanel;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.gui.parts.TitlePart;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
+import de.willuhn.logging.Logger;
 
 /**
  * Bildet das Content-Frame ab.
@@ -56,7 +58,7 @@ public class View implements Part
 
 
 	private Composite parent;
-	private CLabel messages;
+	private NotificationPanel notifications;
   
   private Canvas logoBg;
 
@@ -146,9 +148,15 @@ public class View implements Part
     {
       ////////////////////////////////////////////////////////////////////////////
       //
-  		messages = new CLabel(view,SWT.NONE);
-  		messages.setFont(Font.H2.getSWTFont());
-  		messages.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      try
+      {
+        notifications = new NotificationPanel();
+        notifications.paint(view);
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to paint notification panel",e);
+      }
       ////////////////////////////////////////////////////////////////////////////
     }
 	}
@@ -195,7 +203,7 @@ public class View implements Part
 		  this.titlePart.addButton(new PanelButtonBack()); // Zurueckbutton ist immer dabei
 		}
 		
-    setErrorText(null);
+    notifications.reset();
     setTitle(null);
 	}
   
@@ -321,38 +329,8 @@ public class View implements Part
    */
   public void setErrorText(final String text)
 	{
-    setStatusText(text,Color.ERROR);
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(text,StatusBarMessage.TYPE_ERROR));
 	}
-
-  /**
-   * Private Hilfs-Funktion, die den Text anzeigt.
-   * @param text anzuzeigender Text.
-   * @param color Farbe.
-   */
-  private void setStatusText(final String text, final Color color)
-  {
-    if (this.messages != null && !this.messages.isDisposed())
-    {
-      final long currentClick = System.currentTimeMillis();
-
-      GUI.getDisplay().asyncExec(new Runnable() {
-        public void run() {
-          messages.setText(text == null ? "" : " " + text);
-          messages.setForeground(color.getSWTColor());
-          lastClick = currentClick;
-        }
-      });
-      GUI.getDisplay().timerExec(10000,new Runnable()
-      {
-        public void run()
-        {
-          if (currentClick == lastClick && !messages.isDisposed()) // nur entfernen, wenn wir der letzte Klick waren
-            messages.setText("");
-        }
-      });
-    }
-  }
-	private long lastClick;
 
 	/**
 	 * Schreibt einen Erfolgstext oben in die View.
@@ -360,7 +338,16 @@ public class View implements Part
 	 */
 	public void setSuccessText(final String text)
 	{
-    setStatusText(text,Color.SUCCESS);
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(text,StatusBarMessage.TYPE_SUCCESS));
+	}
+	
+	/**
+	 * Liefert das Notification-Panel.
+	 * @return das Notification-Panel.
+	 */
+	public NotificationPanel getNotificationPanel()
+	{
+	  return this.notifications;
 	}
 
   /**

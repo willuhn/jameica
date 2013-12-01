@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/StatusBar.java,v $
- * $Revision: 1.56 $
- * $Date: 2011/10/05 16:53:22 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -161,10 +155,8 @@ public class StatusBar implements Part
 	}
 	
   /**
-   * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
+   * Zeigt die angegebene Nachricht als Erfolgsmeldung an.
    * @param message anzuzeigender Text.
-   * Nachrichten sollten direkt ueber die MessagingFactory mit
-   * dem Nachrichtentyp StatusBarMessage gesendet werden.
    */
   public void setSuccessText(final String message)
   {
@@ -172,36 +164,11 @@ public class StatusBar implements Part
   }
 
   /**
-   * Ersetzt den aktuellen Statustext rechts unten gegen den uebergebenen.
-   * Formatiert die Anzeige hierbei aber rot als Fehler.
+   * Zeigt die angegebene Nachricht als Fehlermeldung an.
    * @param message anzuzeigender Text.
-   * Nachrichten sollten direkt ueber die MessagingFactory mit
-   * dem Nachrichtentyp StatusBarMessage gesendet werden.
    */
   public void setErrorText(final String message)
   {
     Application.getMessagingFactory().sendMessage(new StatusBarMessage(message,StatusBarMessage.TYPE_ERROR));
   }
 }
-
-
-/*********************************************************************
- * $Log: StatusBar.java,v $
- * Revision 1.56  2011/10/05 16:53:22  willuhn
- * @C Messages an "jameica.popup" werden jetzt sowohl im GUI- als auch im Server-Mode vom gemeinsamen Consumer "PopupMessageConsumer" behandelt
- *
- * Revision 1.55  2008-07-18 17:12:22  willuhn
- * @N ReminderPopupAction zum Anzeigen von Remindern als Popup
- * @C TextMessage serialisierbar
- *
- * Revision 1.54  2008/07/18 13:01:08  willuhn
- * @N Popup
- *
- * Revision 1.53  2007/05/14 11:18:09  willuhn
- * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
- * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
- *
- * Revision 1.52  2007/04/01 22:15:22  willuhn
- * @B Breite des Statusbarlabels
- * @B Redraw der Statusleiste
- **********************************************************************/
