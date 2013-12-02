@@ -41,7 +41,7 @@ public class RepositoryService implements Bootable
    */
   public final static String[] WELL_KNOWN =
   {
-    "http://www.jverein.de/updates",
+    "http://netcologne.dl.sourceforge.net/project/jverein/updates/",
     "http://scripting-updates.derrichter.de"
   };
 
