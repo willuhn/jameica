@@ -14,14 +14,16 @@
 
 	<menu>
 		<item id="jameica.menu.file"             name="&amp;Datei">
-			<item id="jameica.menu.settings"       name="&amp;Einstellungen"     shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
-      <item id="jameica.menu.backups"        name="&amp;Backups verwalten" shortcut="CTRL+B"         icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
+      <item id="jameica.menu.search"         name="&amp;Suche..."                 shortcut="CTRL+^"         icon="system-search.png"       action="de.willuhn.jameica.gui.internal.action.Search" />
+      <item id="jameica.menu.bookmarks"      name="&amp;Lesezeichen..."           shortcut="CTRL+L"         icon="starred.png"             action="de.willuhn.jameica.gui.internal.action.BookmarkSearch" />
+      <item id="jameica.menu.back"           name="&amp;Zurück"                   shortcut="ALT+ARROW_LEFT" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
+      <item name="-" />
+			<item id="jameica.menu.settings"       name="&amp;Einstellungen"            shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
+      <item id="jameica.menu.backups"        name="&amp;Backups verwalten"                                  icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
+      <item id="jameica.menu.updates"        name="&amp;Plugins online suchen..."                           icon="emblem-package.png"      action="de.willuhn.jameica.gui.internal.action.RepositoryOpen" />
+      <item name="-" />
 			<item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	                     icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
 			<item name="-" />
-      <item id="jameica.menu.search"         name="&amp;Suche..."          shortcut="CTRL+^"         icon="system-search.png"       action="de.willuhn.jameica.gui.internal.action.Search" />
-      <item id="jameica.menu.bookmarks"      name="&amp;Lesezeichen..."    shortcut="CTRL+L"         icon="starred.png"             action="de.willuhn.jameica.gui.internal.action.BookmarkSearch" />
-      <item id="jameica.menu.back"           name="&amp;Zurück"            shortcut="ALT+ARROW_LEFT" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
-      <item name="-" />
 			<item id="jameica.menu.quit"           name="Beenden"                                          icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
 		</item>
 

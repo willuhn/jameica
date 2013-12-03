@@ -9,7 +9,9 @@ package de.willuhn.jameica.gui.internal.views;
 
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.internal.action.Settings;
 import de.willuhn.jameica.gui.internal.controller.RepositoryContol;
+import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
@@ -31,9 +33,12 @@ public class RepositoryDetails extends AbstractView
     GUI.getView().setTitle(i18n.tr("Repository: {0}",control.getRepository().getName()));
     
     SimpleContainer group = new SimpleContainer(getParent(),true);
-    
-    group.addHeadline(i18n.tr("Verfügbare Plugins"));
+    group.addInput(control.getRepositories());
     group.addPart(control.getPlugins());
+    
+    ButtonArea buttons = new ButtonArea();
+    buttons.addButton(i18n.tr("Plugin-Repositories verwalten"),new Settings(),i18n.tr("Updates"),false,"document-properties.png");
+    group.addButtonArea(buttons);
   }
 
   /**

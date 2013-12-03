@@ -13,12 +13,13 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.parts.RepositoryList;
 import de.willuhn.jameica.gui.internal.views.RepositoryDetails;
+import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
- * Oeffnet die Konfiguration eines Repository.
+ * Oeffnet die Liste der Plugins eines Repository.
  */
 public class RepositoryOpen implements Action
 {
@@ -43,9 +44,17 @@ public class RepositoryOpen implements Action
       }
     }
 
-    if (context == null || !(context instanceof URL))
+    if (!(context instanceof URL))
     {
-      throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie eine URL aus"));
+      try
+      {
+        context = new URL(RepositoryService.SYSTEM_REPOSITORY);
+      }
+      catch (Exception e)
+      {
+        Logger.error("invalid URL of system repository",e);
+        throw new ApplicationException(Application.getI18n().tr("Fehler beim Öffnen des Repository"));
+      }
     }
     
     GUI.startView(RepositoryDetails.class,context);

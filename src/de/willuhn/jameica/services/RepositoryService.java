@@ -41,8 +41,8 @@ public class RepositoryService implements Bootable
    */
   public final static String[] WELL_KNOWN =
   {
-    "http://netcologne.dl.sourceforge.net/project/jverein/updates/",
-    "http://scripting-updates.derrichter.de"
+    "http://master.dl.sourceforge.net/project/jverein/updates/",
+    "http://scripting-updates.derrichter.de/"
   };
 
   private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(RepositoryService.class);

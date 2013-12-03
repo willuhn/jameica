@@ -114,7 +114,7 @@ public class UpdateSettingsView implements Extension
         }
       
       });
-      tab.addHeadline(Application.getI18n().tr("Update-Repositories"));
+      tab.addHeadline(Application.getI18n().tr("Plugin-Repositories"));
       tab.addPart(new RepositoryList());
       
       tab.addHeadline(Application.getI18n().tr("Einstellungen"));

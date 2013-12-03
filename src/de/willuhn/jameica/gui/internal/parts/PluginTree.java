@@ -194,6 +194,11 @@ public class PluginTree extends TreePart
               if (item.isDisposed()) // nochmal zur Sicherheit, falls das inzwischen passiert ist
                 return;
               
+              if (size == -1) // Server hat keine Groesse geliefert 
+              {
+                item.setText(4,i18n.tr("n/a"));
+                return;
+              }
               double d = size / 1024d / 1024d;
               item.setText(4,i18n.tr("{0} MB",formatter.format(d)));
             }
