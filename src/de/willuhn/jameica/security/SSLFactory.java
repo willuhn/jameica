@@ -1,18 +1,13 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/security/SSLFactory.java,v $
- * $Revision: 1.65 $
- * $Date: 2011/09/27 12:20:01 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
 package de.willuhn.jameica.security;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -57,6 +52,8 @@ import de.willuhn.jameica.security.crypto.RSAEngine;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.ApplicationCallback;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.system.Settings;
+import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
@@ -65,6 +62,8 @@ import de.willuhn.logging.Logger;
  */
 public class SSLFactory
 {
+  private final static Settings settings = new Settings(SSLFactory.class);
+  
 	static
 	{
     if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null)
@@ -76,6 +75,38 @@ public class SSLFactory
 	}
 
   private final static String SYSTEM_ALIAS = "jameica";
+
+  /**
+   * Das Zertifikat, mit dem die Plugins im Jameica-eigenen Repository
+   * unter https://www.willuhn.de/products/jameica/updates signiert sind.
+   * 
+   * Siehe auch
+   * https://www.willuhn.de/products/jameica/updates/jameica.update-pem.crt
+   * 
+   */
+  private final static String CERT_UPDATES = 
+    "-----BEGIN CERTIFICATE-----\n" +
+    "MIIDdjCCAt+gAwIBAgIBTTANBgkqhkiG9w0BAQUFADCBqTELMAkGA1UEBhMCREUx\n" +
+    "DzANBgNVBAgTBlNheG9ueTEQMA4GA1UEBxMHTGVpcHppZzEkMCIGA1UEChQbd2ls\n" +
+    "bHVobiBzb2Z0d2FyZSAmIHNlcnZpY2VzMRIwEAYDVQQLEwlMaWNlbnNpbmcxHTAb\n" +
+    "BgNVBAMTFHdpbGx1aG4uY2EubGljZW5zaW5nMR4wHAYJKoZIhvcNAQkBFg9pbmZv\n" +
+    "QHdpbGx1aG4uZGUwHhcNMTMwODA5MjAzMzEyWhcNMTYwNTA1MjAzMzEyWjCBqTEL\n" +
+    "MAkGA1UEBhMCREUxDzANBgNVBAgTBlNheG9ueTEQMA4GA1UEBxMHTGVpcHppZzEk\n" +
+    "MCIGA1UEChQbd2lsbHVobiBzb2Z0d2FyZSAmIHNlcnZpY2VzMRgwFgYDVQQLEw9K\n" +
+    "YW1laWNhLVVwZGF0ZXMxFzAVBgNVBAMTDmphbWVpY2EudXBkYXRlMR4wHAYJKoZI\n" +
+    "hvcNAQkBFg9pbmZvQHdpbGx1aG4uZGUwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJ\n" +
+    "AoGBALhRYGFQHnN/5hxYPNJktKNOkzh++lH6KqCl/ReyTqXPj4DwZPHs04+i/yiE\n" +
+    "K7E9XnWO3G0MN4pdMGcRqKwh1p+nSKBfzYJOhYjnR6YkFNMMztX2ptJTqzNm+9Dk\n" +
+    "aJuHPaOoV1CZG5ZoXhzwfi4+N468u9KqnJaEVnlKKsnOLCUDAgMBAAGjgaswgagw\n" +
+    "GgYDVR0RBBMwEYEPaW5mb0B3aWxsdWhuLmRlMAwGA1UdEwQFMAMCAQAwRwYJYIZI\n" +
+    "AYb4QgENBDoWOGN1c3RvbSBzZXJ2ZXIgY2VydGlmaWNhdGUgYnkgd2lsbHVobiBz\n" +
+    "b2Z0d2FyZSAmIHNlcnZpY2VzMBEGCWCGSAGG+EIBAQQEAwIGQDAgBgNVHSUEGTAX\n" +
+    "BgorBgEEAYI3CgMDBglghkgBhvhCBAEwDQYJKoZIhvcNAQEFBQADgYEAHekUpx6R\n" +
+    "wk3qlS2bIa5W6YYu2JvTeJ5lzQEIetIehxFiqAtphRrZ5/D1bNPU+Q7bc+5o6c6Q\n" +
+    "9UtAQiKKX/RmlQZLAauKXoyryCvpjrTX+NRrMBjrV9NWfFgm8L8FrzIT6SaCsEn/\n" +
+    "slSjwfp3thRCvIoZe6jM95auQDGm4DRtwCk=\n" +
+    "-----END CERTIFICATE-----\n";
+  
 
   private CertificateFactory factory       = null;
   private File keystoreFile                = null;
@@ -327,8 +358,58 @@ public class SSLFactory
 			return this.certificate;
 
 		this.certificate = (X509Certificate) getKeyStore().getCertificate(SYSTEM_ALIAS);
+		this.importUpdaterCertificate();
 		return this.certificate;
 	}
+  
+  /**
+   * Importiert das Zertifikat fuer die Online-Updates, wenn es noch nicht vorhanden ist.
+   */
+  private void importUpdaterCertificate()
+  {
+    try
+    {
+      X509Certificate updates = this.loadCertificate(new ByteArrayInputStream(CERT_UPDATES.getBytes("ISO-8859-1")));
+      String alias            = this.createAlias(updates);
+      X509Certificate cert    = this.getTrustedCertificate(alias);
+      
+      // Ist installiert
+      if (cert != null)
+      {
+        // Ist es auch korrekt?
+        if (cert.equals(updates))
+        {
+          Logger.info("jameica.update certificate correctly installed");
+          return;
+        }
+        
+        // Das darf eigentlich nicht sein. Im Alias steht die Seriennummer mit drin.
+        // Wir ueberschreiben das Zertifikat
+        Logger.error("found unknown jameica.update certificate, overwriting");
+        Logger.info("old certificate was: " + cert);
+      }
+      
+      if (cert == null) // existiert noch nicht, neu importieren
+      {
+        // Bevor wir es pauschal neu importieren, schauen wir, ob wir das schonmal gemacht haben
+        if (settings.getString("jameica.update.cert.added",null) != null)
+        {
+          Logger.info("jameica.update certificate has been deleted by user, will not be imported again");
+          return;
+        }
+        settings.setAttribute("jameica.update.cert.added",DateUtil.DEFAULT_FORMAT.format(new Date()));
+        Logger.info("importing built-in certificate for jameica updates");
+      }
+      
+      this.getKeyStore().setCertificateEntry(alias,updates);
+      this.storeKeystore();
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to import built-in update certificate",e);
+    }
+    
+  }
   
   /**
    * Liefert eine Liste aller installierten Zertifikate <b>ausser</b> dem Jameica-eigenen System-Zertifikat.
@@ -530,6 +611,18 @@ public class SSLFactory
       this.factory = CertificateFactory.getInstance("X.509",BouncyCastleProvider.PROVIDER_NAME);
     return this.factory;
   }
+  
+  /**
+   * Erzeugt den Keystore-Alias fuer das angegebene Zertifikat.
+   * @param cert das Zertifikat.
+   * @return der Alias fuer den Keystore.
+   */
+  private String createAlias(X509Certificate cert)
+  {
+    String dn    = cert.getSubjectDN().getName();
+    String alias = dn + "-" + cert.getSerialNumber().toString();
+    return alias;
+  }
 	
   /**
    * Fuegt dem Keystore ein Zertifikat hinzu und uebernimmt dabei auch alle noetigen Sicherheitsabfragen.
@@ -540,8 +633,7 @@ public class SSLFactory
    */
   public synchronized String addTrustedCertificate(X509Certificate cert) throws Exception
   {
-    String dn = cert.getSubjectDN().getName();
-    String alias = dn + "-" + cert.getSerialNumber().toString();
+    String alias = this.createAlias(cert);
     
     // Pruefen, dass nicht das System-Zertifikat ueberschrieben wird.
     if (getSystemCertificate().equals(cert))
@@ -556,7 +648,7 @@ public class SSLFactory
       {
         if (cert.equals(certs[i]))
         {
-          Logger.info("certificate " + dn + " already installed, skipping");
+          Logger.info("certificate " + alias + " already installed, skipping");
           return alias;
         }
       }
@@ -590,7 +682,7 @@ public class SSLFactory
     Logger.info("checking trust of certificate");
     if (!Application.getCallback().checkTrust(cert))
     {
-      Logger.warn("import of certificate " + dn + " cancelled by user, NOT trusted");
+      Logger.warn("import of certificate " + alias + " cancelled by user, NOT trusted");
       throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
     }
 
@@ -715,37 +807,3 @@ public class SSLFactory
     }
   }
 }
-
-
-/**********************************************************************
- * $Log: SSLFactory.java,v $
- * Revision 1.65  2011/09/27 12:20:01  willuhn
- * @B Wenn der Verifier nicht angewendet wurde (weil der Callback das Passwort schon gecached hatte), wurde der Keystore nicht initialisiert
- *
- * Revision 1.64  2011-09-27 12:01:15  willuhn
- * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
- *
- * Revision 1.63  2011-09-26 11:43:35  willuhn
- * @C Setzen des SSL-Socketfactory in extra Service
- * @C Log-Level in Bootloader
- *
- * Revision 1.62  2011-09-14 11:57:15  willuhn
- * @N HostnameVerifier in separate Klasse ausgelagert
- * @C Beim Erstellen eines neuen Master-Passwortes dieses sofort ververwenden und nicht nochmal mit getPasswort erfragen
- *
- * Revision 1.61  2011-06-27 17:51:43  willuhn
- * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
- * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
- *
- * Revision 1.60  2011-06-27 16:41:33  willuhn
- * @R Abwaertskompatibilitaet zu Java 1.5 entfernt
- *
- * Revision 1.59  2011-04-27 10:27:10  willuhn
- * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
- *
- * Revision 1.58  2011-04-26 12:09:18  willuhn
- * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.57  2011-02-08 18:27:53  willuhn
- * @N Code zum Ver- und Entschluesseln in neue Crypto-Engines ausgelagert und neben der bisherigen RSAEngine eine AES- und eine PBEWithMD5AndDES-Engine implementiert
- **********************************************************************/
