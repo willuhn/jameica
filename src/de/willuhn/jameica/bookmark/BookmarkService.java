@@ -81,7 +81,7 @@ public class BookmarkService
     this.getBookmarks().add(b); // hinzufuegen
     this.store(); // und speichern
 
-    Application.getMessagingFactory().getMessagingQueue(QUEUE_CREATED).sendSyncMessage(new QueryMessage(b));
+    Application.getMessagingFactory().getMessagingQueue(QUEUE_CREATED).sendMessage(new QueryMessage(b));
     Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Lesezeichen erstellt"),StatusBarMessage.TYPE_SUCCESS));
 
     return b;
@@ -151,7 +151,7 @@ public class BookmarkService
     this.getBookmarks().remove(bookmark);
     this.store();
     
-    Application.getMessagingFactory().getMessagingQueue(QUEUE_DELETED).sendSyncMessage(new QueryMessage(bookmark));
+    Application.getMessagingFactory().getMessagingQueue(QUEUE_DELETED).sendMessage(new QueryMessage(bookmark));
     Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Lesezeichen gelöscht"),StatusBarMessage.TYPE_SUCCESS));
   }
   
