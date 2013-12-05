@@ -301,7 +301,7 @@ public class SSLFactory
       this.privateKey  = null;
       this.publicKey   = null;
       this.sslContext  = null;
-      getKeyStore();
+      getSystemCertificate(); // triggert den Reload
 
       // Nur bei Aenderungen schicken, nicht bei Neuanlage
       if (changed)
