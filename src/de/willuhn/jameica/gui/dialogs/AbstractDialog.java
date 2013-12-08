@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/AbstractDialog.java,v $
- * $Revision: 1.65 $
- * $Date: 2011/10/20 09:19:51 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -138,7 +132,7 @@ public abstract class AbstractDialog<T>
 	private int closeState = SWT.OK;
 	
 	private Exception onEscapeException = null;
-
+	
   /**
    * Erzeugt einen neuen Dialog.
    * Er ist nicht groessenaenderbar.
@@ -163,6 +157,17 @@ public abstract class AbstractDialog<T>
     this.pos       = position;
     this.resizable = resizable;
   }
+  
+  /**
+   * Durch Ueberschreiben dieser Funktion und zurueckliefern von "true" kann man
+   * einen Dialog nicht-modal machen, sodass man im Hauptfenster weiterhin Eingaben
+   * vornehmen kann, waehrend der Dialog offen ist.
+   * Default ist "false".
+   */
+  protected boolean isModeless()
+  {
+    return false;
+  }
 
   /**
    * Initialisiert alle Elemente.
@@ -185,8 +190,14 @@ public abstract class AbstractDialog<T>
         //              der Login-Screen VOR dem Splash-Screen erscheint.
         //              Danach verwenden wir nur noch PRIMARY_MODAL
         Shell rootShell = GUI.getShell();
-        int modalType = (rootShell.getData("systemshell") == null) ? SWT.APPLICATION_MODAL : SWT.PRIMARY_MODAL;
-        Logger.debug("modal type: " + (modalType == SWT.APPLICATION_MODAL ? "application" : "primary"));
+        
+        int modalType = SWT.PRIMARY_MODAL; // Default PRIMARY_MODAL
+        if (rootShell.getData("systemshell") == null) // Ausser beim Bootvorgang - da ist das Property nicht gesetzt
+          modalType = SWT.APPLICATION_MODAL;
+        if (isModeless()) // Es sei denn, es ist explizit ausgeschaltet.
+          modalType = SWT.MODELESS;
+        
+        Logger.debug("modal type: " + (modalType == SWT.APPLICATION_MODAL ? "application" : (modalType == SWT.PRIMARY_MODAL ? "primary" : "modeless")));
         
         int flags = SWT.DIALOG_TRIM | modalType;
         if (resizable)
@@ -596,54 +607,3 @@ public abstract class AbstractDialog<T>
     }
 	}
 }
-
-/*********************************************************************
- * $Log: AbstractDialog.java,v $
- * Revision 1.65  2011/10/20 09:19:51  willuhn
- * @B Close-State wurde wurde nicht resettet, wenn der Dialog erneut geoeffnet wird
- *
- * Revision 1.64  2011-10-05 16:49:57  willuhn
- * @N AbstractDialog getypt
- *
- * Revision 1.63  2011-08-18 16:03:38  willuhn
- * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
- *
- * Revision 1.62  2011-08-17 08:21:32  willuhn
- * @N BUGZILLA 937
- *
- * Revision 1.61  2011-06-29 08:25:03  willuhn
- * @B BUGZILLA 1087
- *
- * Revision 1.60  2011-06-29 08:12:31  willuhn
- * @B BUGZILLA 1087
- *
- * Revision 1.59  2011-05-30 10:16:54  willuhn
- * @N Image auch aktualisieren, wenn der Dialog schon angezeigt wird
- *
- * Revision 1.58  2011-05-11 10:45:27  willuhn
- * @B Das Werfen einer Exception direkt im TraverseListener kann SWT - und damit die ganze JVM - zum Absturz bringen. Wir fangen die OCE daher und beenden den Display-Loop sauber, bevor wir die Exception weiterwerfen
- *
- * Revision 1.57  2011-05-09 15:39:37  willuhn
- * @R UNDO BUGZILLA 1041
- *
- * Revision 1.56  2011-05-06 13:41:54  willuhn
- * @B BUGZILLA 1041
- *
- * Revision 1.55  2011-05-06 12:34:50  willuhn
- * @C Irgendwann hat sich in SWT das Verhalten bei Escape geaendert. Frueher liessen sich Dialoge damit nicht schliessen, sodass man das manuell mit einem KeyListener implementieren musste. Zumindest unter Gnome und XP beendet SWT aber neuerdings Dialog einfach beim Druck auf Escape. Aber natuerlich nicht mit einer Exception. Stattdessen wird die open()-Methode einfach fehlerfrei durchlaufen. Sie liefert dann aber u.U. unerwartete Ergebnisse (z.Bsp. NULL) an den Aufrufer zurueck, da der Dialog ja einfach abgebrochen wurde. Daher die neue Funktion onEscape() - siehe Kommentare im Quelltext zum Verhalten
- *
- * Revision 1.54  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.53  2011-04-06 16:13:16  willuhn
- * @N BUGZILLA 631
- *
- * Revision 1.52  2010-10-29 09:17:54  willuhn
- * @N Abweichender Panel-Text konfigurierbar
- *
- * Revision 1.51  2010-07-13 10:52:59  willuhn
- * @N OperationCancelledException auch aus SWTException herausfischen - wird z.Bsp. dann gebraucht, wenn der Vorgang in einem separaten Thread laeuft
- *
- * Revision 1.50  2010/04/13 10:50:41  willuhn
- * @B AbstractDialog hatte das falsche Parent und den falschen MODAL-Typ (APPLICATION_MODAL statt PRIMARY_MODAL)
- **********************************************************************/
