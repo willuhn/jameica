@@ -64,11 +64,11 @@ public class DependencyDialog extends AbstractDialog
   protected void paint(Composite parent) throws Exception
   {
     SimpleContainer container = new SimpleContainer(parent);
-    container.addText(i18n.tr("Das Plugin \"{0}\" kann nicht installiert werden, da es von anderen Plugins abhängt,\n" +
-    		                      "die entweder nicht oder nicht in einer kompatiblen Version installiert sind.\n" +
-    		                      "Eventuell ist das Plugin auch bereits im System-Ordner von Jameica installiert" +
-    		                      "und Sie besitzen dort keine Schreibrechte.\n\n" +
-    		                      "Bitte installieren Sie zunächst die abhängigen (und nicht als optional gekennzeichneten)" +
+    container.addText(i18n.tr("Das Plugin \"{0}\" kann nicht installiert werden, da es noch weitere Plugins benötigt,\n" +
+    		                      "die noch nicht (oder nicht in der passenden Version) installiert sind. Eventuell ist\n" +
+    		                      "das Plugin auch bereits im Programm-Ordner von Jameica installiert und Sie besitzen dort\n" +
+    		                      "keine Schreibrechte.\n\n" +
+    		                      "Bitte installieren Sie zunächst die abhängigen (und nicht als optional gekennzeichneten)\n" +
     		                      "Plugins und versuchen Sie es dann erneut.",this.data.getName()),true);
     
     TablePart deps = new TablePart(Arrays.asList(data.getDependencies()),null);
