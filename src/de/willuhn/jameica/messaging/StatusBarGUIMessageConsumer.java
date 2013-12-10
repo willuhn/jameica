@@ -21,12 +21,7 @@ import de.willuhn.jameica.system.Application;
 public class StatusBarGUIMessageConsumer implements MessageConsumer
 {
   // Mappt die Status-Codes auf die Enums des Notification-Panel.
-  private final static Map<Integer,Type> typeMap = new HashMap<Integer,Type>()
-  {{
-    put(StatusBarMessage.TYPE_ERROR,  Type.ERROR);
-    put(StatusBarMessage.TYPE_SUCCESS,Type.SUCCESS);
-    put(StatusBarMessage.TYPE_INFO,   Type.INFO);
-  }};
+  private Map<Integer,Type> typeMap = null;
 
   /**
    * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
@@ -43,6 +38,14 @@ public class StatusBarGUIMessageConsumer implements MessageConsumer
   {
     if (message == null)
       return;
+    
+    if (typeMap == null)
+    {
+      this.typeMap = new HashMap<Integer,Type>();
+      this.typeMap.put(StatusBarMessage.TYPE_ERROR,  Type.ERROR);
+      this.typeMap.put(StatusBarMessage.TYPE_SUCCESS,Type.SUCCESS);
+      this.typeMap.put(StatusBarMessage.TYPE_INFO,   Type.INFO);
+    }
 
     StatusBarMessage m = (StatusBarMessage) message;
     NotificationPanel panel = GUI.getView().getNotificationPanel();
