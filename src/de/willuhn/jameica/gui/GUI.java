@@ -44,6 +44,7 @@ import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.plugin.Manifest;
@@ -540,6 +541,7 @@ public class GUI implements ApplicationController
         {
           try
           {
+            Application.getMessagingFactory().getMessagingQueue("jameica.gui.view.unbind").sendSyncMessage(new QueryMessage(gui.currentView));
             gui.currentView.unbind();
 
             // dispose all childs
@@ -633,6 +635,7 @@ public class GUI implements ApplicationController
 
         try
         {
+          Application.getMessagingFactory().getMessagingQueue("jameica.gui.view.bind").sendSyncMessage(new QueryMessage(gui.currentView));
           gui.currentView.bind();
 
           if (gui.currentView instanceof Extendable)
