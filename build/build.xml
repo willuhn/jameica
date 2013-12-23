@@ -173,17 +173,14 @@
     <copy file="plugin.xml" todir="${project.zipdir}" />
 
     <!-- ZIP-File fuer Linux -->
-    <zip destfile="${project.release}/${project.zipfilename.linux}">
-      <zipfileset dir="${project.release}" filemode="755">
+    <zip destfile="${project.release}/${project.zipfilename.linux}" duplicate="fail">
+      <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
         <include name="${define.projectname}/plugin.xml" />
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.linux}" />
         <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
-        <include name="${define.projectname}/jameica.sh" />
-        <include name="${define.projectname}/jameicaserver.sh" />
-        <include name="${define.projectname}/rcjameica" />
         <include name="${define.projectname}/.jameica" />
         <include name="${define.projectname}/jameica-icon.png" />
         <include name="${define.projectname}/plugins" />
@@ -195,20 +192,22 @@
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}/jameica.sh" />
+        <include name="${define.projectname}/jameicaserver.sh" />
+        <include name="${define.projectname}/rcjameica" />
+      </zipfileset>
     </zip>
 
     <!-- ZIP-File fuer Linux64 -->
-    <zip destfile="${project.release}/${project.zipfilename.linux64}">
-      <zipfileset dir="${project.release}" filemode="755">
+    <zip destfile="${project.release}/${project.zipfilename.linux64}" duplicate="fail">
+      <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
         <include name="${define.projectname}/plugin.xml" />
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.linux64}" />
         <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
-        <include name="${define.projectname}/jameica.sh" />
-        <include name="${define.projectname}/jameicaserver.sh" />
-        <include name="${define.projectname}/rcjameica" />
         <include name="${define.projectname}/.jameica" />
         <include name="${define.projectname}/jameica-icon.png" />
         <include name="${define.projectname}/plugins" />
@@ -220,11 +219,16 @@
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}/jameica.sh" />
+        <include name="${define.projectname}/jameicaserver.sh" />
+        <include name="${define.projectname}/rcjameica" />
+      </zipfileset>
     </zip>
 
     <!-- ZIP-File fuer Win32 -->
     <zip destfile="${project.release}/${project.zipfilename.win32}">
-      <zipfileset dir="${project.release}" filemode="755">
+      <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
         <include name="${define.projectname}/plugin.xml" />
         <include name="${define.projectname}/${define.jarfilename}" />
@@ -245,7 +249,7 @@
 
     <!-- ZIP-File fuer Win64 -->
     <zip destfile="${project.release}/${project.zipfilename.win64}">
-      <zipfileset dir="${project.release}" filemode="755">
+      <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
         <include name="${define.projectname}/plugin.xml" />
         <include name="${define.projectname}/${define.jarfilename}" />
@@ -319,15 +323,14 @@
     </zip>
 
     <!-- ZIP-File fuer OpenBSD -->
-    <zip destfile="${project.release}/${project.zipfilename.openbsd}">
-      <zipfileset dir="${project.release}" filemode="755">
+    <zip destfile="${project.release}/${project.zipfilename.openbsd}" duplicate="fail">
+      <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
         <include name="${define.projectname}/plugin.xml" />
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.openbsd}" />
         <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
-        <include name="${define.projectname}/jameica-openbsd.sh" />
         <include name="${define.projectname}/jameica-icon.png" />
         <include name="${define.projectname}/plugins" />
         <include name="${define.projectname}/lib/**" />
@@ -338,18 +341,20 @@
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}/jameica-openbsd.sh" />
+      </zipfileset>
     </zip>
 
     <!-- ZIP-File fuer OpenSolaris -->
-    <zip destfile="${project.release}/${project.zipfilename.osol}">
-      <zipfileset dir="${project.release}" filemode="755">
+    <zip destfile="${project.release}/${project.zipfilename.osol}" duplicate="fail">
+      <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
         <include name="${define.projectname}/plugin.xml" />
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.osol}" />
         <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
-        <include name="${define.projectname}/jameica-osol.sh" />
         <include name="${define.projectname}/jameica-icon.png" />
         <include name="${define.projectname}/plugins" />
         <include name="${define.projectname}/lib/**" />
@@ -360,13 +365,22 @@
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}/jameica-osol.sh" />
+      </zipfileset>
     </zip>
 
     <!-- ZIP-File mit allen Betriebssystemen -->
-    <zip destfile="${project.release}/${project.zipfilename}">
-      <zipfileset dir="${project.release}" filemode="755">
+    <zip destfile="${project.release}/${project.zipfilename}" duplicate="fail">
+      <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
         <include name="${define.projectname}/**" />
+        <exclude name="${define.projectname}/*.sh" />
+        <exclude name="${define.projectname}/rcjameica" />
+      </zipfileset>
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}/*.sh" />
+        <include name="${define.projectname}/rcjameica" />
       </zipfileset>
     </zip>
 
