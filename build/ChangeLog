@@ -1,0 +1,6 @@
+HEAD 2.7 (nightly)
+
+  * CHG: 0002 System-Property "java.net.useSystemProxies" nicht mehr per Default setzen
+  * CHG: 0001 System-Properties für PCSC aus jameica.sh wieder entfernt - siehe https://www.willuhn.de/blog/index.php?/archives/654-Hibiscus-Experimenteller-PCSC-Support!.html#c1958
+
+  

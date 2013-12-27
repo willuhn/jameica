@@ -81,11 +81,11 @@ public class Settings extends AbstractView implements Extendable
     ColumnLayout cl = new ColumnLayout(system.getComposite(),2);
 
     SimpleContainer left = new SimpleContainer(cl.getComposite());
-    left.addLabelPair(i18n.tr("HTTP Proxy"), control.getProxyHost());
-    left.addLabelPair(i18n.tr("HTTPS Proxy"), control.getHttpsProxyHost());
+    left.addInput(control.getProxyHost());
+    left.addInput(control.getHttpsProxyHost());
     SimpleContainer right = new SimpleContainer(cl.getComposite());
-    right.addLabelPair(i18n.tr("Port"), control.getProxyPort());
-    right.addLabelPair(i18n.tr("Port"), control.getHttpsProxyPort());
+    right.addInput(control.getProxyPort());
+    right.addInput(control.getHttpsProxyPort());
 
     system.addHeadline(i18n.tr("Installierte SSL-Zertifikate"));
     system.addPart(control.getCertificates());

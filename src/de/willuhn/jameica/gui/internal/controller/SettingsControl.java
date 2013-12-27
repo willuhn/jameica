@@ -52,10 +52,10 @@ public class SettingsControl extends AbstractControl
 
   // System
   private Input logLevel;
-  private Input proxyHost;
-  private Input proxyPort;
-  private Input httpsProxyHost;
-  private Input httpsProxyPort;
+  private TextInput proxyHost;
+  private TextInput httpsProxyHost;
+  private IntegerInput proxyPort;
+  private IntegerInput httpsProxyPort;
   private CheckboxInput systemProxy;
   private CheckboxInput askWorkDir;
   
@@ -110,7 +110,10 @@ public class SettingsControl extends AbstractControl
   {
     if (this.proxyHost != null)
       return this.proxyHost;
+    
     this.proxyHost = new TextInput(Application.getConfig().getProxyHost());
+    this.proxyHost.setName(i18n.tr("HTTP-Proxy"));
+    this.proxyHost.setHint("<" + i18n.tr("Hostname") + ">");
     return this.proxyHost;
   }
 
@@ -118,11 +121,15 @@ public class SettingsControl extends AbstractControl
    * Liefert ein Eingabefeld fuer die TCP-Portnummer des Proxys.
    * @return Eingabefeld fuer die Proxy-Portnummer.
    */
-  public Input getProxyPort()
+  public IntegerInput getProxyPort()
   {
     if (this.proxyPort != null)
       return this.proxyPort;
+    
     this.proxyPort = new IntegerInput(Application.getConfig().getProxyPort());
+    this.proxyPort.setMaxLength(5);
+    this.proxyPort.setName("");
+    this.proxyPort.setHint("<" + i18n.tr("TCP-Port") + ">");
     this.proxyPort.setComment(Application.getI18n().tr("freilassen, wenn nicht gewünscht"));
     return this.proxyPort;
   }
@@ -131,11 +138,14 @@ public class SettingsControl extends AbstractControl
    * Liefert ein Eingabefeld fuer die Definition des HTTPS-Proxy-Hosts.
    * @return Eingabefeld fuer den HTTPS-Proxy.
    */
-  public Input getHttpsProxyHost()
+  public TextInput getHttpsProxyHost()
   {
     if (this.httpsProxyHost != null)
       return this.httpsProxyHost;
+    
     this.httpsProxyHost = new TextInput(Application.getConfig().getHttpsProxyHost());
+    this.httpsProxyHost.setName(i18n.tr("HTTPS-Proxy"));
+    this.httpsProxyHost.setHint("<" + i18n.tr("Hostname") + ">");
     return this.httpsProxyHost;
   }
 
@@ -143,11 +153,15 @@ public class SettingsControl extends AbstractControl
    * Liefert ein Eingabefeld fuer die TCP-Portnummer des HTTPS-Proxys.
    * @return Eingabefeld fuer die Proxy-Portnummer des HTTPS-Proxy.
    */
-  public Input getHttpsProxyPort()
+  public IntegerInput getHttpsProxyPort()
   {
     if (this.httpsProxyPort != null)
       return this.httpsProxyPort;
+    
     this.httpsProxyPort = new IntegerInput(Application.getConfig().getHttpsProxyPort());
+    this.httpsProxyPort.setMaxLength(5);
+    this.httpsProxyPort.setName("");
+    this.httpsProxyPort.setHint("<" + i18n.tr("TCP-Port") + ">");
     this.httpsProxyPort.setComment(Application.getI18n().tr("freilassen, wenn nicht gewünscht"));
     return this.httpsProxyPort;
   }

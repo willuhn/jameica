@@ -267,7 +267,7 @@ public final class Config
    */
   public boolean getUseSystemProxy()
   {
-    return settings.getBoolean("jameica.system.proxy.usesystem",true);
+    return settings.getBoolean("jameica.system.proxy.usesystem",false);
   }
   
   /**
