@@ -19,8 +19,6 @@ import de.willuhn.jameica.gui.internal.action.PluginDownload;
 import de.willuhn.jameica.gui.internal.parts.PluginTree;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
-import de.willuhn.jameica.gui.util.Container;
-import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.update.PluginData;
 import de.willuhn.util.ApplicationException;
@@ -49,8 +47,7 @@ public class UpdatesView extends AbstractView
     },null,false,"document-save.png");
     button.setEnabled(false);
 
-    Container container = new SimpleContainer(this.getParent(),true);
-    tree.paint(container.getComposite());
+    tree.paint(getParent());
     tree.addSelectionListener(new Listener()
     {
       public void handleEvent(Event event)
@@ -60,9 +57,8 @@ public class UpdatesView extends AbstractView
     });
     
     ButtonArea buttons = new ButtonArea();
-    
     buttons.addButton(button);
-    buttons.paint(container.getComposite());
+    buttons.paint(getParent());
   }
   
   /**
