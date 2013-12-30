@@ -195,6 +195,7 @@ public class PluginData
     }
     catch (ApplicationException ae)
     {
+      Logger.info(ae.getMessage());
       return false;
     }
   }
