@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * CHG: 0005 Ins Log schreiben, warum ein Plugin nicht installiert werden kann
+  * BUG: 0004 Layout-Fix in der Darstellung der verfügbaren Updates (Button sollte unter und nicht neben der Liste der Updates angezeigt werden)
   * BUG: 0003 BUGZILLA 1447 Foreign-Key-Properties in DBObject wurden in hasChanged(String) fälschlicherweise als geändert angesehen 
   * CHG: 0002 System-Property "java.net.useSystemProxies" nicht mehr per Default setzen
   * CHG: 0001 System-Properties für PCSC aus jameica.sh wieder entfernt - siehe https://www.willuhn.de/blog/index.php?/archives/654-Hibiscus-Experimenteller-PCSC-Support!.html#c1958
