@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.willuhn.jameica.messaging.MessageBus;
 import de.willuhn.logging.Logger;
 
 /**
@@ -44,20 +45,25 @@ public class ExtensionRegistry
     if (id == null)
       return;
     
+    int count = 0;
+    
     List<Extension> v = extensions.get(id);
-    if (v == null || v.size() == 0)
-      return;
-    for (Extension e:v)
+    if (v != null)
     {
-      try
+      for (Extension e:v)
       {
-        e.extend(extendable);
-      }
-      catch (Throwable t)
-      {
-        Logger.error("error while extending " + id,t);
+        try
+        {
+          e.extend(extendable);
+          count++;
+        }
+        catch (Throwable t)
+        {
+          Logger.error("error while extending " + id,t);
+        }
       }
     }
+    MessageBus.sendSync(id,count);
   }
 
   /**

@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0006 ungewollte Tab-Wechsel unter Datei->Einstellungen
   * CHG: 0005 Ins Log schreiben, warum ein Plugin nicht installiert werden kann
   * BUG: 0004 Layout-Fix in der Darstellung der verfügbaren Updates (Button sollte unter und nicht neben der Liste der Updates angezeigt werden)
   * BUG: 0003 BUGZILLA 1447 Foreign-Key-Properties in DBObject wurden in hasChanged(String) fälschlicherweise als geändert angesehen 

@@ -16,8 +16,6 @@ package de.willuhn.jameica.gui.internal.views;
 import java.io.File;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -33,6 +31,9 @@ import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.ColumnLayout;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.gui.util.TabGroup;
+import de.willuhn.jameica.messaging.Message;
+import de.willuhn.jameica.messaging.MessageConsumer;
+import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BootstrapSettings;
 import de.willuhn.util.ApplicationException;
@@ -43,6 +44,7 @@ import de.willuhn.util.I18N;
  */
 public class Settings extends AbstractView implements Extendable
 {
+  private MessageConsumer mc = new MyMessageConsumer();
 
   /**
    * Wir merken uns das letzte aktive Tab
@@ -150,15 +152,8 @@ public class Settings extends AbstractView implements Extendable
     },null,false,"document-save.png");
     buttons.paint(getParent());
     
-    // geht leider nicht anders, weil das Tab "Updates" erst gezeichnet wird,
-    // nach dem bind() bereits verlassen wurde (ist ja eine Extension)
-    getParent().addControlListener(new ControlAdapter() {
-      public void controlResized(ControlEvent e)
-      {
-        focus();
-      }
-    });
-    focus();
+    // Damit wir benachrichtigt werden, wenn die Extensions mit dem Rendern fertig sind und wir dann erst das focus() machen
+    Application.getMessagingFactory().getMessagingQueue(this.getExtendableID()).registerMessageConsumer(this.mc);
   }
   
   /**
@@ -219,6 +214,8 @@ public class Settings extends AbstractView implements Extendable
    */
   public void unbind() throws ApplicationException
   {
+    Application.getMessagingFactory().getMessagingQueue(this.getExtendableID()).unRegisterMessageConsumer(this.mc);
+    
     // Wir merken uns das aktive Tab
     lastActiveTab = new Integer(getTabFolder().getSelectionIndex());
   }
@@ -231,4 +228,39 @@ public class Settings extends AbstractView implements Extendable
     return this.getClass().getName();
   }
 
+  /**
+   * Wird beanchtrichtigt, wenn die Extensions ihre Tabs gezeichnet haben.
+   */
+  private class MyMessageConsumer implements MessageConsumer
+  {
+    
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+     */
+    public boolean autoRegister()
+    {
+      return false;
+    }
+    
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+     */
+    public Class[] getExpectedMessageTypes()
+    {
+      return new Class[]{QueryMessage.class};
+    }
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+     */
+    public void handleMessage(Message message) throws Exception
+    {
+      GUI.getDisplay().syncExec(new Runnable()
+      {
+        public void run()
+        {
+          focus();
+        }
+      });
+    }
+  }
 }
