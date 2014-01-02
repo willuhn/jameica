@@ -37,8 +37,10 @@ import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.messaging.BootMessage;
 import de.willuhn.jameica.messaging.BootMessageConsumer;
 import de.willuhn.jameica.messaging.InvokeScriptMessageConsumer;
+import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
+import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.jameica.util.DateUtil;
@@ -63,11 +65,11 @@ public class ScriptingService implements Bootable
   
   private Settings settings = new Settings(ScriptingService.class);
   
-  private ScriptEngine engine   = null;
-  private MessageConsumer mc    = null;
-  private List<File> files      = null;
-  private Extension settingsExt = null;
-  private Events events         = new Events();
+  private ScriptEngine engine      = null;
+  private MessageConsumer mcInvoke = null;
+  private List<File> files         = null;
+  private Extension settingsExt    = null;
+  private Events events            = new Events();
   
   // Wir merken uns hier unsere Boot-Messages, damit wir die nicht bei jedem Service-Reload
   // (was z.Bsp. beim Klick auf "Speichern" in den Settings passiert) immer wieder neu
@@ -86,6 +88,14 @@ public class ScriptingService implements Bootable
    * @see de.willuhn.boot.Bootable#init(de.willuhn.boot.BootLoader, de.willuhn.boot.Bootable)
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
+  {
+    Application.getMessagingFactory().registerMessageConsumer(new InitMessageConsumer());
+  }
+  
+  /**
+   * Initialisiert den Scripting-Service.
+   */
+  private void init()
   {
     this.migrate();
     this.events.clear();
@@ -152,8 +162,8 @@ public class ScriptingService implements Bootable
     }
     
     // 3. Message-Consumer fuer Invoke-Aufrufe
-    this.mc = new InvokeScriptMessageConsumer();
-    Application.getMessagingFactory().getMessagingQueue("jameica.scripting").registerMessageConsumer(this.mc);
+    this.mcInvoke = new InvokeScriptMessageConsumer();
+    Application.getMessagingFactory().getMessagingQueue("jameica.scripting").registerMessageConsumer(this.mcInvoke);
   }
   
   /**
@@ -205,7 +215,7 @@ public class ScriptingService implements Bootable
     {
       this.engine = null;
       this.files = null;
-      Application.getMessagingFactory().getMessagingQueue("jameica.scripting").unRegisterMessageConsumer(this.mc);
+      Application.getMessagingFactory().getMessagingQueue("jameica.scripting").unRegisterMessageConsumer(this.mcInvoke);
     }
   }
   
@@ -218,7 +228,7 @@ public class ScriptingService implements Bootable
     {
       Logger.info("restarting scripting service");
       this.shutdown();
-      this.init(null,null);
+      this.init();
     }
     catch (Exception e)
     {
@@ -445,6 +455,39 @@ public class ScriptingService implements Bootable
     public void clear()
     {
       this.mapping.clear();
+    }
+  }
+  
+  /**
+   * Fuehrt die Initialisierung des Scripting-Service aus, wenn das System gebootet wurde.
+   */
+  private class InitMessageConsumer implements MessageConsumer
+  {
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+     */
+    public boolean autoRegister()
+    {
+      return false;
+    }
+    
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+     */
+    public Class[] getExpectedMessageTypes()
+    {
+      return new Class[]{SystemMessage.class};
+    }
+    
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+     */
+    public void handleMessage(Message message) throws Exception
+    {
+      SystemMessage msg = (SystemMessage) message;
+      
+      if (msg.getStatusCode() == SystemMessage.SYSTEM_STARTED)
+        init();
     }
   }
 
