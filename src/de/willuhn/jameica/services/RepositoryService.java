@@ -75,12 +75,11 @@ public class RepositoryService implements Bootable
     {
       try
       {
-        List<URL> list = this.getRepositories();
         for (String s:WELL_KNOWN)
         {
           Logger.info("adding well-known additional repository " + s);
           URL url = new URL(s);
-          if (!list.contains(url))
+          if (!this.contains(url))
             this.addRepository(url);
         }
       }
@@ -157,6 +156,9 @@ public class RepositoryService implements Bootable
     if (url == null)
       throw new ApplicationException(Application.getI18n().tr("Keine Repository-URL angegeben"));
 
+    if (this.contains(url))
+      throw new ApplicationException(Application.getI18n().tr("Repository-URL {0} existiert bereits",url.toString()));
+    
     List<URL> list = getRepositories();
     list.add(url);
     this.setRepositories(list);
@@ -173,16 +175,42 @@ public class RepositoryService implements Bootable
     if (url == null)
       throw new ApplicationException(Application.getI18n().tr("Keine Repository-URL angegeben"));
 
-    List<URL> list = getRepositories();
-    if (!list.contains(url))
+    if (!this.contains(url))
     {
       Logger.warn("repository " + url + " does not exist");
       return;
     }
     
+    List<URL> list = getRepositories();
     list.remove(url);
     this.setRepositories(list);
     Logger.info("repository " + url + " removed");
+  }
+  
+  /**
+   * Prueft, ob die angegebene URL als Repository hinterlegt ist.
+   * @param url die zu pruefende URL
+   * @return true, wenn die URL bereits hinterlegt ist.
+   */
+  public boolean contains(URL url)
+  {
+    // Wir koennen hier nicht direkt die equals-Funktion von URL verwenden,
+    // weil die u.U. zwei URLs als identisch ansieht, wenn der Host auf die
+    // selbe IP aufloest (und der Hostname der einzige sonstige Unterschied ist)
+    // Siehe javadoc von URL#equals. Daher machen wir stattdessen einen direkten
+    // String-Vergleich.
+    if (url == null)
+      return false;
+
+    String s = url.toString();
+    List<URL> list = getRepositories();
+    for (URL u:list)
+    {
+      if (u.toString().equals(s))
+        return true;
+    }
+    
+    return false;
   }
   
   /**
@@ -191,7 +219,7 @@ public class RepositoryService implements Bootable
    */
   private void setRepositories(List<URL> list)
   {
-    Map<URL,URL> duplicates = new Hashtable<URL,URL>();
+    Map<String,URL> duplicates = new Hashtable<String,URL>();
     
     List<String> urls = new ArrayList<String>();
     if (list != null && list.size() > 0)
@@ -203,7 +231,7 @@ public class RepositoryService implements Bootable
           Logger.warn("found duplicate repository " + u + ", skipping");
           continue;
         }
-        duplicates.put(u,u);
+        duplicates.put(u.toString(),u);
         String s = u.toString();
         if (s == null || s.length() == 0 || s.equalsIgnoreCase(SYSTEM_REPOSITORY))
           continue;

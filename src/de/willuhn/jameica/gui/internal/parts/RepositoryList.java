@@ -173,7 +173,7 @@ public class RepositoryList extends TablePart
             List<UrlObject> items = RepositoryList.this.getItems();
             for (UrlObject u:items)
             {
-              if (u.url.equals(url))
+              if (u.url.toString().equals(url.toString()))
                 RepositoryList.this.removeItem(u);
             }
           }

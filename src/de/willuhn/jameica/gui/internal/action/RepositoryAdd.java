@@ -9,7 +9,6 @@ package de.willuhn.jameica.gui.internal.action;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.messaging.QueryMessage;
@@ -45,12 +44,8 @@ public class RepositoryAdd implements Action
       URL u = new URL(url);
 
       RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
-
-      List<URL> list = service.getRepositories();
-      if (list.contains(u))
-        throw new ApplicationException(i18n.tr("Repository-URL {0} existiert bereits",url));
-      
       service.addRepository(u);
+      
       Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.add").sendMessage(new QueryMessage(u));
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Repository-URL hinzugefügt"),StatusBarMessage.TYPE_SUCCESS));
 

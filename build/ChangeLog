@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0008 "equals"-Funktion von URL nicht verwenden, da die true fuer vHosts mit gleicher IP liefern kann
   * CHG: 0007 Scripts erst initialisieren, wenn das GUI-Fenster da ist (per SystemMessage)
   * BUG: 0006 ungewollte Tab-Wechsel unter Datei->Einstellungen
   * CHG: 0005 Ins Log schreiben, warum ein Plugin nicht installiert werden kann
