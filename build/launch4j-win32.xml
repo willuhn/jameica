@@ -21,14 +21,14 @@
     <opt>-Xmx256m</opt>
   </jre>
   <versionInfo>
-    <fileVersion>2.4.0.0</fileVersion>
-    <txtFileVersion>2.4.0</txtFileVersion>
+    <fileVersion>2.6.0.0</fileVersion>
+    <txtFileVersion>2.6.0</txtFileVersion>
     <fileDescription>Jameica</fileDescription>
-    <copyright>willuhn - software &amp; services</copyright>
-    <productVersion>2.4.0.0</productVersion>
-    <txtProductVersion>2.4.0</txtProductVersion>
+    <copyright>Olaf Willuhn</copyright>
+    <productVersion>2.6.0.0</productVersion>
+    <txtProductVersion>2.6.0</txtProductVersion>
     <productName>Jameica</productName>
-    <companyName>willuhn - software &amp; services</companyName>
+    <companyName>Olaf Willuhn</companyName>
     <internalName>jameica-win32</internalName>
     <originalFilename>jameica-win32.exe</originalFilename>
   </versionInfo>

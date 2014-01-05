@@ -31,7 +31,11 @@ public class SysPropertyService implements Bootable
   
   private final static Map<String,String> presets = new HashMap<String,String>()
   {{
-    put("java.net.preferIPv4Stack","true");
+    // Musste ich wieder in jameica.sh / jameica.exe uebernehmen. Siehe
+    // http://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html
+    // Das Property wird nur initial beim Starten der JVM von Java ausgewertet.
+    // Das Setzen zur Laufzeit hat daher keine Wirkung.
+    // put("java.net.preferIPv4Stack","true");
   }};
 
   /**

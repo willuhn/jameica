@@ -38,7 +38,7 @@ case "$1" in
       mkdir -p $WORKDIR
       cd $BASEDIR
       echo -n "Starting Jameica "
-      echo $PASSWORD | $JAVA -Xmx256m -jar jameica-linux.jar -d -f $WORKDIR > /dev/null & PID=$!
+      echo $PASSWORD | $JAVA -Djava.net.preferIPv4Stack=true -Xmx256m -jar jameica-linux.jar -d -f $WORKDIR > /dev/null & PID=$!
       rc_status -v
       echo $PID > $PIDFILE
     ;;
