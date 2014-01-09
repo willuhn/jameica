@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+2014-01-09 Version 2.6.1
+
   * BUG: 0008 "equals"-Funktion von URL nicht verwenden, da die true fuer vHosts mit gleicher IP liefern kann
   * CHG: 0007 Scripts erst initialisieren, wenn das GUI-Fenster da ist (per SystemMessage)
   * BUG: 0006 ungewollte Tab-Wechsel unter Datei->Einstellungen
