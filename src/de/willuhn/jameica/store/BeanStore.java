@@ -125,7 +125,7 @@ public class BeanStore
       JAXBContext ctx = JAXBContext.newInstance(BeanContainer.class,container.type);
       Marshaller m = ctx.createMarshaller();
       m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
       
       OutputStream os = new BufferedOutputStream(new FileOutputStream(tmp));
       if (container.encrypted)
