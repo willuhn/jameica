@@ -560,7 +560,7 @@ public class Manifest implements Comparable
     // 1. Benoetigte Jameica-Version.
     Dependency jd = this.getJameicaDependency();
     if (!jd.check())
-      throw new ApplicationException(Application.getI18n().tr("Plugin benötigt Jameica {0}",jd.getVersion()));
+      throw new ApplicationException(Application.getI18n().tr("Plugin {0} benötigt Jameica {1}",this.getName(), jd.getVersion()));
 
     if (Application.getPluginLoader().isObsolete(this.getName()))
       throw new ApplicationException(Application.getI18n().tr("Plugin ist jetzt Bestandteil von Jameica und muss daher nicht mehr installiert werden"));
@@ -571,7 +571,7 @@ public class Manifest implements Comparable
     for (Dependency d:deps)
     {
       if (!d.check())
-        throw new ApplicationException(Application.getI18n().tr("Plugin benötigt {0}, welches aber nicht (oder in der falschen Version) installiert ist",d.getName()));
+        throw new ApplicationException(Application.getI18n().tr("Plugin {0} benötigt {1}, welches aber nicht (oder in der falschen Version) installiert ist",this.getName(),d.getName()));
     }
 
     Manifest installed = null;
