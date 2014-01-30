@@ -595,14 +595,14 @@ public class Manifest implements Comparable
     PluginSourceService sources = Application.getBootLoader().getBootable(PluginSourceService.class);
     PluginSource ps = sources.getSource(installed.getPluginSource());
     if (ps == null)
-      throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da die Installationsquelle unbekannt ist"));
+      throw new ApplicationException(Application.getI18n().tr("Plugin {0} kann nicht aktualisiert werden, da die Installationsquelle unbekannt ist",this.getName()));
     
     if (!ps.canWrite())
-      throw new ApplicationException(Application.getI18n().tr("Plugin kann nicht aktualisiert werden, da der Plugin-Ordner nicht beschrieben werden darf"));
+      throw new ApplicationException(Application.getI18n().tr("Plugin {0} kann nicht aktualisiert werden, da der Plugin-Ordner nicht beschrieben werden darf",this.getName()));
 
     // 3b. Checken, ob die installierte Version eventuell aktueller ist
     if (installed.getVersion().compareTo(this.getVersion()) > 0)
-      throw new ApplicationException(Application.getI18n().tr("Plugin ist bereits in einer aktuelleren Version installiert"));
+      throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist bereits in einer aktuelleren Version installiert", this.getName()));
   }
   
   /**

@@ -46,7 +46,7 @@ public class PluginData
     if (!s.endsWith("/")) s += "/";
 
     URL plugin = new URL(s + "plugin.xml");
-    Logger.info("reading " + plugin);
+    Logger.debug("reading " + plugin);
 
     TransportService service = Application.getBootLoader().getBootable(TransportService.class);
     Transport t = service.getTransport(plugin);

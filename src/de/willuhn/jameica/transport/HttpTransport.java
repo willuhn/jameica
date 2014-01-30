@@ -159,10 +159,10 @@ public class HttpTransport implements Transport
       if (used > 0)
       {
         long kbps = used == 0 ? count : (count / used);
-        Logger.info("download finished. " + kbps + " Kb/sek");
+        Logger.debug("download finished. " + kbps + " Kb/sek");
       }
       else
-        Logger.info("download finished in less than a second");
+        Logger.debug("download finished in less than a second");
 
       if (monitor != null)
       {
