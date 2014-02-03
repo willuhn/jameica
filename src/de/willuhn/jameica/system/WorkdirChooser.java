@@ -118,7 +118,8 @@ public class WorkdirChooser
       this.dir.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       
       final DirectoryDialog dialog = new DirectoryDialog(shell);
-      dialog.setText("Bitte wählen Sie den Ordner aus.");
+      dialog.setText("Benutzer-Ordner");
+      dialog.setMessage("Bitte wählen Sie den Ordner, in dem die Benutzerdaten gespeichert werden sollen.");
       dialog.setFilterPath(suggest);
 
       final Button button = new Button(this.shell,SWT.PUSH);
