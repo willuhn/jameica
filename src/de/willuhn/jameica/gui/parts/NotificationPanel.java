@@ -20,6 +20,8 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.logging.Logger;
 
 /**
  * Kapselt eine einzeilige Meldung (Erfolg, Fehler, Hinweis), die farblich
@@ -143,35 +145,43 @@ public class NotificationPanel implements Part
     
     final long currentUpdate = System.currentTimeMillis();
 
-    GUI.getDisplay().asyncExec(new Runnable() {
-      public void run()
-      {
-        if (label.isDisposed())
-          return;
-        
-        label.setImage(type.icon != null ? SWTUtil.getImage(type.icon) : null);
-        label.setForeground(type.fg.getSWTColor());
-        label.setText(text);
-        label.setBackground(type.bg.getSWTColor());
-        comp.setBackground(type.fg.getSWTColor());
-        lastUpdate = currentUpdate;
-        
-        if (autoHide)
+    try
+    {
+      
+      GUI.getDisplay().asyncExec(new Runnable() {
+        public void run()
         {
-          GUI.getDisplay().timerExec(7000,new Runnable()
+          if (label.isDisposed())
+            return;
+          
+          label.setImage(type.icon != null ? SWTUtil.getImage(type.icon) : null);
+          label.setForeground(type.fg.getSWTColor());
+          label.setText(text);
+          label.setBackground(type.bg.getSWTColor());
+          comp.setBackground(type.fg.getSWTColor());
+          lastUpdate = currentUpdate;
+          
+          if (autoHide)
           {
-            public void run()
+            GUI.getDisplay().timerExec(7000,new Runnable()
             {
-              // nur entfernen, wenn wir der letzte Klick waren
-              if (currentUpdate == lastUpdate)
+              public void run()
               {
-                reset();
+                // nur entfernen, wenn wir der letzte Klick waren
+                if (currentUpdate == lastUpdate)
+                {
+                  reset();
+                }
               }
-            }
-          });
+            });
+          }
         }
-      }
-    });
+      });
+    }
+    catch (OperationCanceledException oce) // passiert, wenn die GUI beendet wird (siehe GUI.getDisplay)
+    {
+      Logger.debug(oce.getMessage());
+    }
   }
   
   /**

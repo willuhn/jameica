@@ -876,9 +876,14 @@ public class GUI implements ApplicationController
       if (gui.display == null || gui.display.isDisposed())
         gui.display = Display.getCurrent();
       
-      // Also ein neues
+      // Also ein neues - aber nur, wenn wir nicht im Shutdown sind
       if (gui.display == null || gui.display.isDisposed())
+      {
+        if (gui.stop)
+          throw new OperationCanceledException("display unavailable, shutdown in progress");
+        
         gui.display = Display.getDefault();
+      }
 
       if (gui.display == null || gui.display.isDisposed())
         gui.display = new Display();
@@ -896,7 +901,7 @@ public class GUI implements ApplicationController
       }
     }
 
-    gui.display.setWarnings(Logger.getLevel().getValue() <= Level.DEBUG.getValue());
+    gui.display.setWarnings(Logger.isLogging(Level.DEBUG));
     return gui.display;
   }
 
