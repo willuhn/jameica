@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0009 Support für Rekursion in BeanUtil.get()
+  
 2014-01-09 Version 2.6.1
 
   * BUG: 0008 "equals"-Funktion von URL nicht verwenden, da die true fuer vHosts mit gleicher IP liefern kann
