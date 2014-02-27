@@ -168,23 +168,8 @@ public class ContextMenu implements Part
 			if (text == null || text.length() == 0)
 				continue;
 			
-			String shortcut = item.getShortcut();
-			if (shortcut != null)
-			{
-			  try
-			  {
-	        KeyStroke stroke = KeyStroke.getInstance(shortcut);
-	        if (stroke.isComplete())
-	          text += "\t" + stroke.format();
-			  }
-			  catch (Exception e)
-			  {
-			    Logger.error("unable to parse shortcut " + shortcut,e);
-			  }
-			}
-
 			final MenuItem mi = new MenuItem(this.menu, SWT.PUSH);
-			mi.setText(text);
+      this.updateText(item,mi);
 
 			Image image = item.getImage();
 			if (image != null) mi.setImage(image);
@@ -240,12 +225,41 @@ public class ContextMenu implements Part
 			  ContextMenuItem ci = (ContextMenuItem)o;
 			  MenuItem m = (MenuItem) mi;
         m.setEnabled(ci.isEnabledFor(object));
-        
-        String textNew = ci.getText();
-        String textOld = m.getText();
-        if (textNew != null && !textNew.equals(textOld))
-          m.setText(textNew);
+        this.updateText(ci,m);
 			}
 		}
 	}
+  
+  /**
+   * Uebernimmt Text und Shortcut aus dem Jameica-ContextMenuItem in das SWT-MenuItem.
+   * @param ci das Jameica-ContextMenuItem.
+   * @param mi das SWT-MenuItem.
+   */
+  private void updateText(ContextMenuItem ci, MenuItem mi)
+  {
+    if (ci == null || ci.isSeparator() || mi == null || mi.isDisposed())
+      return;
+    
+    String text = ci.getText();
+
+    if (text == null || text.length() == 0)
+      return;
+    
+    String shortcut = ci.getShortcut();
+    if (shortcut != null)
+    {
+      try
+      {
+        KeyStroke stroke = KeyStroke.getInstance(shortcut);
+        if (stroke.isComplete())
+          text += "\t" + stroke.format();
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to parse shortcut " + shortcut,e);
+      }
+    }
+
+    mi.setText(text);
+  }
 }
