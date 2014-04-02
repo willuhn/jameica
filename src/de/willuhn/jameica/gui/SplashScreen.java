@@ -323,19 +323,22 @@ public class SplashScreen implements ProgressMonitor, Runnable
     if (Application.inServerMode() || closed)
       return;
 
-    display.syncExec(new Runnable()
+    if (display != null && !display.isDisposed())
     {
-      public void run()
+      display.syncExec(new Runnable()
       {
-        if (textLabel == null || textLabel.isDisposed() || display == null || display.isDisposed())
-          return;
-        String s = " " + text + " ...";
-        Logger.info(s);
-        textLabel.setText(s);
-        textLabel.update();
-				display.readAndDispatch();
-      }
-    });
+        public void run()
+        {
+          if (textLabel == null || textLabel.isDisposed() || display == null || display.isDisposed())
+            return;
+          String s = " " + text + " ...";
+          Logger.info(s);
+          textLabel.setText(s);
+          textLabel.update();
+          display.readAndDispatch();
+        }
+      });
+    }
   }
 
   /**
