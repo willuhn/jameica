@@ -35,6 +35,8 @@ public class LockService implements Bootable
 {
   private FileChannel channel = null;
   private FileLock lock       = null;
+  
+  private boolean unclean     = false;
 
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -57,8 +59,10 @@ public class LockService implements Bootable
     
     try
     {
+      boolean lockFound = file.exists();
+      
       // Lockfile neu anlegen, wenn es noch nicht existiert
-      if (!file.exists())
+      if (!lockFound)
       {
         Logger.info("creating lockfile " + file);
         if (!file.createNewFile())
@@ -86,6 +90,16 @@ public class LockService implements Bootable
         // In dem Fall werfen wir die Exception selbst
         if (this.lock == null)
           throw new OverlappingFileLockException();
+        
+        // Wenn hier "lockFound" auf "true" steht, deutet das auf einen
+        // unsauberen Shutdown hin. Denn die Datei existiert, ist aber
+        // nicht von einer anderen Instanz gelockt. Also ist sie wohl
+        // vom letzten unsauberen Shutdown uebrig
+        if (lockFound)
+        {
+          this.unclean = true;
+          Logger.warn("detected unclean shutdown from previous run");
+        }
         
         Logger.info(file + " successfully locked");
       }
@@ -121,6 +135,15 @@ public class LockService implements Bootable
     {
       IOUtil.close(this.channel);
     }
+  }
+  
+  /**
+   * Liefert true, wenn der vorherige Shutdown nicht sauber durch lief.
+   * @return true, wenn der vorherige Shutdown nicht sauber durch lief.
+   */
+  public boolean foundUncleanShutdown()
+  {
+    return this.unclean;
   }
 
 }
