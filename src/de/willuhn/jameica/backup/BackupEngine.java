@@ -198,15 +198,24 @@ public class BackupEngine
       throw new ApplicationException(Application.getI18n().tr("Wiederherzustellendes Backup nicht gefunden"));
     }
     
+    boolean enabled = Application.getConfig().getUseBackup();
+
     try
     {
       // Restore-Marker loeschen. Muessen wir vor der Erstellung des Backups machen
       BackupEngine.undoRestoreMark();
 
+      if (!enabled)
+      {
+        monitor.log("temporarily activating creation of backup to make one before doing the restore");
+        Application.getConfig().setUseBackup(true);
+      }
+
       // Wir machen nochmal ein frisches Backup
       // Aber ohne alte Backups zu rotieren, das wuerde ggf. das wiederherzustellende
       // Backup loeschen
       monitor.setStatusText("creating backup");
+      
       File[] content = BackupEngine.doBackup(monitor, false);
 
       // Jetzt loeschen wir die gerade gesicherten Daten
@@ -237,6 +246,14 @@ public class BackupEngine
     {
       Logger.error("unable to restore backup",e);
       throw new ApplicationException(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups: " + e.getMessage()));
+    }
+    finally
+    {
+      if (!enabled)
+      {
+        monitor.log("switching backup support off again");
+        Application.getConfig().setUseBackup(false);
+      }
     }
   }
   

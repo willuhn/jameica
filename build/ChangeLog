@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0012 Bei deaktiviertem Backup-Support war auch kein Restore möglich 
   * NEW: 0011 System-Property "java.net.preferIPv4Stack" auch in SysPropertyService setzen
   * NEW: 0010 BUGZILLA 1479 - Shortcuts wurden unter Windows nicht angezeigt
   * NEW: 0009 Support für Rekursion in BeanUtil.get()
