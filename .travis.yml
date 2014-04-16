@@ -1,4 +1,5 @@
 language: java
+script: cd build && ant nightly
 
 jdk:
   - openjdk7
