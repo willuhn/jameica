@@ -1,3 +1,20 @@
+######
+## Coverity
+env:
+  global:
+   - secure: "igJFcRLkGu5hbNWav8FE3tDtDw8OFPDWhyw0rgo4V41O29V7vn+Oo1iczgHSci61ZXmnxPOh4C4PUNP/81d6qRvNrpr+Atl4+SH/zBCMvCokv8POGxQwwgB3wkXDI44zhJeBIlQUk6ZeX9SDQQiVibm9BbUQm5bn5H8Sd2Ek39c="
+
+addons:
+  coverity_scan:
+    project:
+      name: "willuhn/jameica"
+      description: "Jameica is an Application-Platform written in Java containing a SWT-UI"
+      build_command: "cd build && ant nightly"
+      branch_pattern: master
+##
+######
+
+
 language: java
 script: cd build && ant nightly
 
@@ -5,3 +22,4 @@ jdk:
   - openjdk7
   - oraclejdk7
   - oraclejdk8
+
