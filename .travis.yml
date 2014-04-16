@@ -1,5 +1,4 @@
 language: java
-script: ant nightly
 
 jdk:
   - openjdk7
