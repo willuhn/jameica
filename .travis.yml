@@ -9,14 +9,14 @@ addons:
     project:
       name: "willuhn/jameica"
       description: "Jameica is an Application-Platform written in Java containing a SWT-UI"
-      build_command: "cd build && ant nightly"
+      build_command: "ant -f build/build.xml nightly"
       branch_pattern: master
 ##
 ######
 
 
 language: java
-script: cd build && ant nightly
+script: "ant -f build/build.xml nightly"
 
 jdk:
   - openjdk7
