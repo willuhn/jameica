@@ -18,7 +18,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +36,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.CertificateDetailDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
+import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.CertificateImport;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
@@ -77,12 +77,13 @@ public class CertificateList extends TablePart
   public CertificateList(X509TrustManager trustManager, final boolean changable)
   {
     super(init(trustManager),new Open());
+    
     addColumn(Application.getI18n().tr("Ausgestellt für"),"name");
     addColumn(Application.getI18n().tr("Organisation"),"organization");
     addColumn(Application.getI18n().tr("OU"),"ou");
     addColumn(Application.getI18n().tr("Aussteller"),"issuer");
-    addColumn(Application.getI18n().tr("Gültig von"),"datefrom");
-    addColumn(Application.getI18n().tr("Gültig bis"),"dateto");
+    addColumn(Application.getI18n().tr("Gültig von"),"datefrom",new DateFormatter());
+    addColumn(Application.getI18n().tr("Gültig bis"),"dateto",new DateFormatter());
     addColumn(Application.getI18n().tr("Seriennummer"),"serial");
     this.setMulti(false);
     this.setSummary(false);
@@ -283,8 +284,6 @@ public class CertificateList extends TablePart
     private X509Certificate cert = null;
     private Certificate myCert = null;
     
-    private DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT,Application.getConfig().getLocale());
-
     private CertObject(X509Certificate cert)
     {
       this.cert = cert;
@@ -328,9 +327,9 @@ public class CertificateList extends TablePart
       if ("ou".equals(arg0))
         return myCert.getSubject().getAttribute(Principal.ORGANIZATIONAL_UNIT);
       if ("datefrom".equals(arg0))
-        return df.format(cert.getNotBefore());
+        return cert.getNotBefore();
       if ("dateto".equals(arg0))
-        return df.format(cert.getNotAfter());
+        return cert.getNotAfter();
       if ("fingerprint".equals(arg0))
       {
         try
