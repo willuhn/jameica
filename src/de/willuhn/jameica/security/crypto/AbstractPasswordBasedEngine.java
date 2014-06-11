@@ -132,7 +132,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
     SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
     random.setSeed(System.nanoTime());
     random.nextBytes(salt);
-    wallet.set("salt",Base64.encode(salt));
+    wallet.set("salt." + len,Base64.encode(salt));
     return salt;
   }
   
