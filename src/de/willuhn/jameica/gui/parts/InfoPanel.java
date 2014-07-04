@@ -177,7 +177,7 @@ public class InfoPanel implements Part
       
       // Beschreibung
       {
-        Label desc = new Label(this.comp,SWT.NONE);
+        Label desc = new Label(this.comp,SWT.WRAP);
         desc.setBackground(bg);
         
         if (this.fgColor != null)
