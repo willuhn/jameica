@@ -43,7 +43,8 @@ public class RepositoryService implements Bootable
   {
     "https://www.willuhn.de/products/jameica/updates/extensions",
     "http://www.jverein.de/updates/",
-    "http://scripting-updates.derrichter.de/"
+    "http://scripting-updates.derrichter.de/",
+    "http://www.open4me.de/hibiscus/"
   };
 
   private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(RepositoryService.class);
