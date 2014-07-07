@@ -197,8 +197,13 @@ public class UpdateService implements Bootable
     List<UpdateStatus> states = this.findUpdateStates(monitor);
     List<PluginData> plugins = new ArrayList<PluginData>();
 
-    for (UpdateStatus status:states)
-      plugins.add(status.plugin);
+    if (states != null)
+    {
+      for (UpdateStatus status:states)
+      {
+        plugins.add(status.plugin);
+      }
+    }
     
     return plugins;
   }
@@ -206,7 +211,7 @@ public class UpdateService implements Bootable
   /**
    * Sammelt die Status-Infos zu aktualisierbaren Plugins.
    * @param monitor optionaler Status-Monitor.
-   * @return Liste der gefundenen Updates.
+   * @return Liste der gefundenen Updates oder null wenn gar keine Plugins installiert sind.
    * @throws ApplicationException
    */
   private List<UpdateStatus> findUpdateStates(ProgressMonitor monitor) throws ApplicationException
@@ -215,16 +220,29 @@ public class UpdateService implements Bootable
     // laeuft. Damit kann man manuell nach Updates suchen - auch wenn automatische
     // Updates deaktiviert sind.
     // Wir sammeln alle Updates und fuehren es dann am Stueck durch.
-    
     I18N i18n = Application.getI18n();
+    Logger.info("checking for updates");
+    if (monitor != null) monitor.setStatusText(i18n.tr("Suche nach Updates"));
 
     try
     {
-      List<UpdateStatus> updates = new ArrayList<UpdateStatus>();
-
-      Logger.info("checking for updates");
-      if (monitor != null) monitor.setStatusText(i18n.tr("Suche nach Updates"));
+      //////////////////////
+      // Haben wir ueberhaupt Plugins installiert?
+      if (Application.getPluginLoader().getInstalledPlugins().size() == 0)
+      {
+        Logger.info("no plugins installed");
+        if (monitor != null)
+        {
+          monitor.setStatus(ProgressMonitor.STATUS_DONE);
+          monitor.setPercentComplete(100);
+          monitor.setStatusText(i18n.tr("Derzeit sind keine Plugins installier"));
+        }
+        return null;
+      }
+      //
+      //////////////////////
       
+      List<UpdateStatus> updates = new ArrayList<UpdateStatus>();
       RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
       List<URL> urls = service.getRepositories();
       
@@ -318,22 +336,30 @@ public class UpdateService implements Bootable
         Logger.info("no, last check: " + new Date(lastRun) + ", next check: " + new Date(nextRun));
         return;
       }
-      Logger.info("last check was on " + new Date(lastRun));
-
+      Logger.info("last check was " + (lastRun == 0L ? "<never>" : "on " + new Date(lastRun)));
+      
       try
       {
+        if (Application.getPluginLoader().getInstalledPlugins().size() == 0)
+        {
+          Logger.info("no plugins installed, no need to check for updates");
+          return;
+        }
+
         if (!Application.inServerMode())
           GUI.getStatusBar().startProgress();
         
-        Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Suche nach Updates"),StatusBarMessage.TYPE_SUCCESS));
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Suche nach Updates"),StatusBarMessage.TYPE_INFO));
 
         // Wir sammeln alle Updates und fuehren es dann am Stueck durch.
         List<UpdateStatus> states = findUpdateStates(null);
+        if (states == null)
+          return;
         
         // Haben wir Updates gefunden?
         if (states.size() == 0)
         {
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Keine Updates gefunden."),StatusBarMessage.TYPE_SUCCESS));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Keine Updates gefunden."),StatusBarMessage.TYPE_INFO));
           return;
         }
 

@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0015 Nach neuen Updates nur suchen, wenn auch wirklich Plugins installiert sind
   * MIN: 0014 BUGZILLA 1509 SSL-Zertifikate unter Datei->Einstellungen liessen sich nicht nach Datum sortieren
   * NEW: 0013 Regelmässige Prüfung nach Updates per Default aktiv
   * NEW: 0012 Bei deaktiviertem Backup-Support war auch kein Restore möglich 
