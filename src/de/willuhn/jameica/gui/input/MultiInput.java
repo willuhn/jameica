@@ -25,13 +25,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.util.Color;
 
 /**
  * Erlaubt die Anzeige mehrerer Eingabefelder hinter einem Label.
  */
-public class MultiInput implements Input
+public class MultiInput implements Input<Object>
 {
   /**
    * Context-Parameter fuer die Wichtung der Breite.

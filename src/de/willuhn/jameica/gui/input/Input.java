@@ -22,20 +22,20 @@ import de.willuhn.jameica.gui.Part;
 /**
  * Basis-Interface fuer alle Eingabefelder in Jameica.
  */
-public interface Input extends Part
+public interface Input<T> extends Part
 {
 
   /**
    * Liefert den Wert des Eingabefelds.
    * @return Wert des Feldes.
    */
-  public Object getValue();
+  public T getValue();
 
   /**
    * Schreibt einen neuen Wert in das Eingabefeld.
    * @param value der neu anzuzeigende Wert.
    */
-  public void setValue(Object value);
+  public void setValue(T value);
   
   /**
    * Prueft, ob sich der Wert von <code>getValue()</code> seit dem
@@ -147,14 +147,14 @@ public interface Input extends Part
    * @param key freier Schluessel.
    * @param data beliebige Nutzdaten.
    */
-  public void setData(String key, Object data);
+  public void setData(String key, T data);
   
   /**
    * Liefert die Context-Daten.
    * @param key der Schluessel.
    * @return die Contextdaten.
    */
-  public Object getData(String key);
+  public T getData(String key);
 }
 
 /**********************************************************************

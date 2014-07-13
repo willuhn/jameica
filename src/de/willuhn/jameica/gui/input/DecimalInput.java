@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
 
 /**
  * @author willuhn
@@ -192,27 +191,9 @@ public class DecimalInput extends TextInput
    * Erwartet ein Objekt des Typs java.lang.Double.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
-  public void setValue(Object value)
+  public void setValue(Double value)
   {
-    if (value instanceof Number)
-    {
-      this.value = (Number) value;
-    }
-    else if (value instanceof String)
-    {
-      try
-      {
-        this.value = this.format.parse((String)value);
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to parse " + value);
-      }
-    }
-    else
-    {
-      this.value = null; // kein gueltiger Wert oder NULL
-    }
+    this.value = (Number) value;
     format();
   }
   

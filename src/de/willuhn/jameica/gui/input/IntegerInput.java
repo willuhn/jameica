@@ -89,15 +89,14 @@ public class IntegerInput extends TextInput
    * Erwartet ein Objekt des Typs <code>java.lang.Integer</code>.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
-  public void setValue(Object value)
+  public void setValue(Integer value)
   {
     if (value == null)
-      return;
-    if (!(value instanceof Integer))
       return;
 
     super.setValue(value);
   }
+  
 }
 
 /*********************************************************************

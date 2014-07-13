@@ -37,11 +37,11 @@ import de.willuhn.util.I18N;
  * Basisklasse fuer Eingabefelder.
  * @author willuhn
  */
-public abstract class AbstractInput implements Input
+public abstract class AbstractInput<T> implements Input<T>
 {
   final static I18N i18n = Application.getI18n();
 
-  private Map<String,Object> data = new HashMap<String,Object>();
+  private Map<String,T> data = new HashMap<String,T>();
   
   private final static Object PLACEHOLDER = new Object();
 
@@ -411,7 +411,7 @@ public abstract class AbstractInput implements Input
   /**
    * @see de.willuhn.jameica.gui.input.Input#setData(java.lang.String, java.lang.Object)
    */
-  public void setData(String key, Object data)
+  public void setData(String key, T data)
   {
     this.data.put(key,data);
   }
@@ -419,7 +419,7 @@ public abstract class AbstractInput implements Input
   /**
    * @see de.willuhn.jameica.gui.input.Input#getData(java.lang.String)
    */
-  public Object getData(String key)
+  public T getData(String key)
   {
     return this.data.get(key);
   }

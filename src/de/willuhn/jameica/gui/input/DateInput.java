@@ -35,7 +35,7 @@ import de.willuhn.logging.Logger;
  * Das ist ein Meta-Input-Feld, welches sich unter der Haube aus einem
  * DialogInput und einem CalendarDialog zusammensetzt.
  */
-public class DateInput implements Input
+public class DateInput implements Input<Object>
 {
   private Map<String,Object> data = new HashMap<String,Object>();
 
