@@ -91,9 +91,6 @@ public class IntegerInput extends TextInput
    */
   public void setValue(Integer value)
   {
-    if (value == null)
-      return;
-
     super.setValue(value);
   }
   
