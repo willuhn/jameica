@@ -22,7 +22,7 @@ import de.willuhn.jameica.gui.GUI;
  * Ist zustaendig fuer Standard-Eingabefelder.
  * @author willuhn
  */
-public class TextInput extends AbstractInput
+public class TextInput extends AbstractInput<Object>
 {
 
   protected Text text;
