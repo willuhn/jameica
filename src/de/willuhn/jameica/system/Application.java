@@ -169,17 +169,18 @@ public final class Application {
 
       for (int i=0;i<20;++i) // maximal 20 Schritte nach oben
       {
-        Throwable current = cause.getCause();
+        sb.append(cause.getMessage());
+        sb.append("\n");
 
-        if (current == null)
+        Throwable next = cause.getCause();
+
+        if (next == null)
           break; // Ende, hier kommt nichts mehr
 
-        if (current == cause) // Wir wiederholen uns
+        if (next == cause) // Wir wiederholen uns
           break;
 
-        sb.append(current.getMessage());
-        sb.append("\n");
-        cause = current;
+        cause = next;
       }
 
       String msg = sb.toString();

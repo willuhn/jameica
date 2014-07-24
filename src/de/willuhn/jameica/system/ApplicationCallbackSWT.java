@@ -12,6 +12,8 @@
  **********************************************************************/
 package de.willuhn.jameica.system;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.SplashScreen;
@@ -197,11 +200,24 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		if (d == null)
 			d = new Display();
 		final Shell s = new Shell(d);
+		s.setSize(500,400);
 		s.setLayout(new GridLayout());
-		s.setText(Application.getI18n().tr("Fehler beim Start von Jameica."));
+		s.setText(Application.getI18n().tr("Fataler Fehler beim Start von Jameica."));
 		Label l = new Label(s,SWT.NONE);
+		l.setForeground(d.getSystemColor(SWT.COLOR_RED));
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		l.setText(Application.getI18n().tr("Beim Start von Jameica ist ein Fehler aufgetreten:\n") + errorMessage);
+		l.setText(errorMessage);
+		
+    StringWriter w = new StringWriter();
+    PrintWriter pw = new PrintWriter(w);
+    t.printStackTrace(pw);
+    pw.flush();
+
+		Text trace = new Text(s,SWT.BORDER | SWT.MULTI);
+		trace.setEditable(false);
+		trace.setBackground(d.getSystemColor(SWT.COLOR_WHITE));
+		trace.setText(w.toString());
+    trace.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Button b = new Button(s,SWT.BORDER);
 		b.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -213,7 +229,6 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 				s.close();
 			}
 		});
-		s.pack();
 		s.open();
 		while (!s.isDisposed()) {
 			if (!d.readAndDispatch()) d.sleep();

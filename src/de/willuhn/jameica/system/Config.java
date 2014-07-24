@@ -69,7 +69,23 @@ public final class Config
     // aufruft, um an das Work-Dir zu kommen ;)
     if (this.workDir == null)
     {
-      this.workDir = Application.getPlatform().getWorkdir();
+      try
+      {
+        this.workDir = Application.getPlatform().getWorkdir();
+      }
+      catch (Exception e)
+      {
+        // Wenn in der .jameica.properties ein Workdir angegeben ist, auf
+        // dem wir keine Rechte haben, dann fliegt oben eine Exception.
+        // "this.workdir" bleibt in dem Fall NULL. Das verursacht anschliessend
+        // beim Anzeigen der Fehlermeldung, dass das Workdir nicht lesbar ist
+        // aber eine NPE, was zur Folge hat, dass die Fehlermeldung selbst auch
+        // nicht angezeigt wird. Jedenfalls nicht per GUI. Daher hier der Workaround
+        // um zumindest die Fehlermeldung anzeigen zu koennen
+        this.workDir = new File(Application.getPlatform().getDefaultWorkdir());
+        Logger.error("unable to determine workdir, fallback to default workdir " + this.workDir,e);
+        throw e;
+      }
       
       // Migration 2012-10-05 (2.2 -> 2.4)
       // Deploy-Dir loeschen - wird inzwischen nicht mehr gebraucht

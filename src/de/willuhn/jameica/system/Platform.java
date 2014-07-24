@@ -16,6 +16,7 @@ package de.willuhn.jameica.system;
 import java.io.File;
 
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 
 /**
@@ -93,35 +94,44 @@ public class Platform
     if (this.workdir != null)
       return this.workdir;
     
-    String dir = null;
-    
-    // 1. Checken, ob ein Pfad mittels "-f" angegeben ist
-    if (dir == null || dir.length() == 0)
-      dir = Application.getStartupParams().getWorkDir();
-
-    // 2. User fragen, aber nur, wenn wir eine GUI haben
-    if (!Application.inServerMode() && (dir == null || dir.length() == 0))
-      dir = new WorkdirChooser().getWorkDir();
-    
-    // 3. Wenn auch da nichts angegeben ist, nehmen wir das Default-Dir
-    if (dir == null || dir.length() == 0)
-      dir = this.getDefaultWorkdir();
-
-    this.workdir = new File(dir).getCanonicalFile();
-    Logger.info("using workdir: " + this.workdir);
-    
-    // existiert bereits, ist aber eine Datei. FATAL!
-    if (this.workdir.exists() && !this.workdir.isDirectory())
-      throw new Exception("File " + this.workdir + " already exists.");
-    
-    if (!this.workdir.exists())
+    try
     {
-      Logger.info("creating " + this.workdir);
-      if (!this.workdir.mkdir())
-        throw new Exception("creating of " + this.workdir + " failed");    
+      String dir = null;
+      
+      // 1. Checken, ob ein Pfad mittels "-f" angegeben ist
+      if (dir == null || dir.length() == 0)
+        dir = Application.getStartupParams().getWorkDir();
+
+      // 2. User fragen, aber nur, wenn wir eine GUI haben
+      if (!Application.inServerMode() && (dir == null || dir.length() == 0))
+        dir = new WorkdirChooser().getWorkDir();
+      
+      // 3. Wenn auch da nichts angegeben ist, nehmen wir das Default-Dir
+      if (dir == null || dir.length() == 0)
+        dir = this.getDefaultWorkdir();
+
+      this.workdir = new File(dir).getCanonicalFile();
+      Logger.info("using workdir: " + this.workdir);
+      
+      // existiert bereits, ist aber eine Datei. FATAL!
+      if (this.workdir.exists() && !this.workdir.isDirectory())
+        throw new ApplicationException("Benutzerordner " + this.workdir + " kann nicht erstellt werden. Er existiert bereits als Datei.");
+      
+      if (!this.workdir.exists())
+      {
+        Logger.info("creating " + this.workdir);
+        if (!this.workdir.mkdir())
+          throw new Exception("Der Benutzerordner " + this.workdir + " konnte nicht erstellt werden.");    
+      }
+      return this.workdir;
+    }
+    catch (Exception e)
+    {
+      Logger.warn("resetting \"ask\" flag in .jameica.properties");
+      BootstrapSettings.setAskWorkdir(true);
+      throw new ApplicationException("Bitte versuchen Sie, Jameica erneut zu starten und wählen Sie einen anderen Benuzterordner.",e);
     }
     
-    return this.workdir;
   }
   
   /**
