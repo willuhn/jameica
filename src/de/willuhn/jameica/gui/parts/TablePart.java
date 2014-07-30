@@ -564,7 +564,7 @@ public class TablePart extends AbstractTablePart
     layout.marginWidth = 0;
     comp.setLayout(layout);
 
-    int flags = (this.multi ? SWT.MULTI : SWT.SINGLE) | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
+    int flags = (this.multi ? SWT.MULTI : SWT.SINGLE) | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION;
     if (this.checkable)
       flags |= SWT.CHECK;
 
