@@ -12,13 +12,13 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -177,7 +177,7 @@ public class DialogInput extends ButtonInput
    * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
    */
   public Control getClientControl(Composite parent) {
-    text = new Text(parent,SWT.BORDER | SWT.SINGLE);
+    text = GUI.getStyleFactory().createText(parent);
   	if (value != null)
   		text.setText(value);
     if (this.maxlength > 0)

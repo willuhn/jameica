@@ -170,7 +170,8 @@ public class DayRendererImpl implements DayRenderer
       this.content.layout();
       
       // Scrolled-Composite neu resizen
-      this.content.setSize(this.content.computeSize(this.scroll.getClientArea().width,SWT.DEFAULT));
+      this.content.setSize(this.content.computeSize(SWT.DEFAULT,SWT.DEFAULT));
+      
     }
   }
   
@@ -313,47 +314,3 @@ public class DayRendererImpl implements DayRenderer
     }
   }
 }
-
-
-
-/**********************************************************************
- * $Log: DayRendererImpl.java,v $
- * Revision 1.12  2011/10/05 16:49:33  willuhn
- * @N Scroll-Support, wenn der Content nicht reinpasst
- *
- * Revision 1.11  2011-10-05 12:19:54  willuhn
- * @C Doppelklick zum Oeffnen verwenden
- *
- * Revision 1.10  2011-10-05 12:13:26  willuhn
- * @N Alle Tage in gleicher Hoehe zeichnen
- * @N Scroll-Support, wenn der Content nicht reinpasst
- *
- * Revision 1.9  2011-01-14 17:33:38  willuhn
- * @N Erster Code fuer benutzerdefinierte Erinnerungen via Reminder-Framework
- *
- * Revision 1.8  2010-11-26 00:18:49  willuhn
- * @C Code-Cleanup
- *
- * Revision 1.7  2010-11-22 00:17:16  willuhn
- * @N Nur noch auf Mouse-Button 1 reagieren
- *
- * Revision 1.6  2010-11-21 23:56:47  willuhn
- * @N Schrift einen Tick kleiner - dann passt mehr rein
- * @C Hyperlink entfernt - man kann direkt auf das Label klicken
- *
- * Revision 1.5  2010-11-19 17:00:31  willuhn
- * @C Farben fuer einzelne Termine
- *
- * Revision 1.4  2010-11-19 16:09:39  willuhn
- * @B Content-Composite wurde beim Neuladen nicht leer gemacht
- *
- * Revision 1.3  2010-11-19 15:46:21  willuhn
- * @B minor fixes
- *
- * Revision 1.2  2010-11-19 13:44:15  willuhn
- * @N Appointment-API zum Anzeigen von Terminen im Kalender.
- *
- * Revision 1.1  2010-11-17 16:59:56  willuhn
- * @N Erster Code fuer eine Kalender-Komponente, ueber die man z.Bsp. kommende Termine anzeigen kann
- *
- **********************************************************************/

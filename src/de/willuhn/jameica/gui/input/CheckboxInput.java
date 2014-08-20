@@ -12,10 +12,10 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -50,7 +50,7 @@ public class CheckboxInput extends AbstractInput
 		if (button != null)
 			return button;
 		
-    button = new Button(getParent(), SWT.CHECK);
+    button = GUI.getStyleFactory().createCheckbox(this.getParent());
     button.setSelection(value);
     
     String name = this.getName();

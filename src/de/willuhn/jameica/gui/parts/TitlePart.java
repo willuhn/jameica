@@ -113,6 +113,8 @@ public class TitlePart implements Part
       try
       {
         Composite c = (Composite) b.getControl();
+        if (c == null || c.isDisposed())
+          return;
         SWTUtil.disposeChildren(c);
         c.dispose();
       }
@@ -162,7 +164,7 @@ public class TitlePart implements Part
 
     ///////////////////////////////
     // Der Titel selbst
-    title = SWTUtil.getCanvas(head,image, SWT.TOP | SWT.BOTTOM);
+    title = SWTUtil.getCanvas(head,image, SWT.BOTTOM | SWT.RIGHT);
     title.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
     title.setLayout(SWTUtil.createGrid(1,false));
     {
@@ -217,7 +219,7 @@ public class TitlePart implements Part
     if (panelButtons == null || panelButtons.isDisposed())
       return;
 
-    GUI.getDisplay().syncExec(new Runnable() {
+    GUI.getDisplay().asyncExec(new Runnable() {
       public void run()
       {
         if (panelButtons.isDisposed())
@@ -276,13 +278,3 @@ public class TitlePart implements Part
     return this.myParent;
   }
 } 
-
-/*********************************************************************
- * $Log: TitlePart.java,v $
- * Revision 1.2  2012/03/29 22:18:08  willuhn
- * @C Titel grundsaetzlich schwarz zeichnen
- *
- * Revision 1.1  2011-08-18 16:03:38  willuhn
- * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
- *
- **********************************************************************/

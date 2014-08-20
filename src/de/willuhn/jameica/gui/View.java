@@ -74,7 +74,6 @@ public class View implements Part
   {
     this.parent = parent;
     init();
-    cleanContent();
   }
   
   /**
@@ -140,7 +139,6 @@ public class View implements Part
       comp.setLayout(SWTUtil.createGrid(1,false));
       comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
       this.titlePart = new TitlePart(title,false);
-      this.titlePart.addButton(new PanelButtonBack()); // Zurueckbutton ist immer dabei
       this.titlePart.paint(comp);
     }
 

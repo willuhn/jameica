@@ -34,6 +34,13 @@ public interface StyleFactory
   public Button createButton(Composite parent);
   
   /**
+   * Erzeugt eine Checkbox.
+   * @param parent Parent.
+   * @return Button.
+   */
+  public Button createCheckbox(Composite parent);
+
+  /**
    * Erzeugt einen Text.
    * @param parent
    * @return Text.
