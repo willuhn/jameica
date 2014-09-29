@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.Session;
@@ -247,6 +248,25 @@ public class SWTUtil {
   }
   
   /**
+   * Liefert die DPI-Zahl des Bildschirms.
+   * Im Standard-Fall wird hier einfach Display#getDPI aufgerufen.
+   * Falls das System jedoch einen ungueltigen DPI-Wert zurueckliefert,
+   * kann er hier per Config-Parameter ueberschrieben werden um fuer eine
+   * korrekte Skalierung zu sorgen - auch dann, wenn das System falsche
+   * DPI-Werte meldet.
+   * @return die zu verwendende DPI-Zahl oder -1, wenn kein DPI-Wert
+   * ermittelt werden konnte.
+   */
+  public final static int getDPI()
+  {
+    // Wir gehen von quadratischen Pixeln aus. Daher reicht uns eine
+    // Koordinate - y.
+    Point dpi = GUI.getDisplay().getDPI();
+    int pixel = dpi != null ? dpi.y : -1;
+    return Customizing.SETTINGS.getInt("application.dpi",pixel);
+  }
+  
+  /**
    * Rechnet eine Angabe von pt (Point) entsprechend der DPI-Anzahl des Displays in Pixel um.
    * @param pt Points.
    * @return Anzahl der Pixel oder -1 wenn es zu einem Fehler kam.
@@ -255,20 +275,17 @@ public class SWTUtil {
   {
     try
     {
-      Point dpi = GUI.getDisplay().getDPI();
-      if (dpi == null)
+      int pixel = getDPI();
+      if (pixel == -1)
         return -1;
-      
-      // Das sind die Pixel pro Inch.
-      int pixel = dpi.y;
 
       // Ein Punkt ist 1/72 inch.
       // Also rechnen wir aus, wieviele Pixel auf 1/72 inch passen.
       // Und das sind genau die, die auf ein pt passen.
-      double i = (double) pixel / 72d;
+      double i = pixel / 72d;
       
       // Also multiplizieren wir noch mit den pt und haben die Pixel
-      return (int)((double) pt * i);
+      return (int)(pt * i);
     }
     catch (Throwable t)
     {
@@ -285,12 +302,9 @@ public class SWTUtil {
   {
     try
     {
-      Point dpi = GUI.getDisplay().getDPI();
-      if (dpi == null)
+      int pixel = getDPI();
+      if (pixel == -1)
         return -1;
-      
-      // Das sind die Pixel pro Inch.
-      int pixel = dpi.y;
       
       // Anzahl der Millimeter pro Inch
       double millis = 25.4d;

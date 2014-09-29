@@ -112,6 +112,8 @@ public class GUI implements ApplicationController
     {
       Logger.info("startup GUI");
       Logger.info("SWT version: " + SWT.getVersion() + "/" + SWT.getPlatform());
+      Point dpi = GUI.getDisplay().getDPI();
+      Logger.info("Pixel density of screen (DPI): " + (dpi != null ? dpi.y : "n/a") + ", configured: " + SWTUtil.getDPI());
 
       ////////////////////////////////////////////////////////////////////////
       // Netbook-Mode
