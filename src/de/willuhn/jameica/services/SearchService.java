@@ -14,6 +14,8 @@
 package de.willuhn.jameica.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.willuhn.boot.BootLoader;
@@ -69,6 +71,16 @@ public class SearchService implements Bootable
           Logger.error("unable to load search provider " + providers[i].getName(),t);
         }
       }
+      
+      Collections.sort(this.providers,new Comparator<SearchProvider>() {
+        /**
+         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+         */
+        public int compare(SearchProvider o1, SearchProvider o2)
+        {
+          return o1.getName().compareTo(o2.getName());
+        }
+      });
       Logger.info("loaded " + count + " search providers");
     }
     catch (ClassNotFoundException ne)
