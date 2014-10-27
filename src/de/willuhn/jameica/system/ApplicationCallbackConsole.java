@@ -381,7 +381,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     if (labeltext != null && labeltext.length() > 0)
     {
       System.out.println(question);
-      System.out.print(labeltext);
+      System.out.print(labeltext + ": ");
     }
     else
       System.out.print(question);

@@ -17,11 +17,14 @@ import java.net.InetAddress;
 
 import javax.security.cert.X509Certificate;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.JameicaAuthenticator;
 import de.willuhn.jameica.security.Login;
 import de.willuhn.jameica.security.Principal;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 /**
@@ -30,6 +33,7 @@ import de.willuhn.logging.Logger;
 public abstract class AbstractApplicationCallback implements ApplicationCallback
 {
   Settings settings = new Settings(ApplicationCallback.class);
+  private String hostname = null;
   
   /**
    * ct.
@@ -50,6 +54,36 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
    */
   public String getHostname() throws Exception
   {
+    if (StringUtils.trimToNull(this.hostname) != null)
+      return this.hostname;
+    
+    try
+    {
+      InetAddress a = InetAddress.getLocalHost();
+
+      this.hostname = a.getCanonicalHostName();
+
+      if (this.hostname == null || this.hostname.length() == 0)
+        this.hostname = a.getHostName();
+
+      if (this.hostname == null || this.hostname.length() == 0)
+        this.hostname = a.getHostAddress();
+
+      if (this.hostname != null && this.hostname.length() > 0 && !this.hostname.equals("127.0.0.1"))
+        return this.hostname;
+      
+    }
+    catch (Exception e)
+    {
+      Logger.warn("unable to determine hostname, asking user: " + e.toString());
+      Logger.write(Level.DEBUG,"stacktrace for debugging purpose",e);
+    }
+    
+    // Checken, ob wir einen gespeicherten Hostnamen haben
+    this.hostname = this.settings.getString("jameica.hostname",null);
+    if (this.hostname != null && this.hostname.length() > 0)
+      return this.hostname;
+    
     // BUGZILLA 26 http://www.willuhn.de/bugzilla/show_bug.cgi?id=26
     String question =
       Application.getI18n().tr("Der Hostname Ihres Computers konnte nicht ermittelt werden.\n" +
@@ -57,29 +91,14 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
                                "dann wählen Sie einen beliebigen Namen. Verwenden Sie bitte\n" +
                                "ausschliesslich Buchstaben oder Zahlen und ggf. \".\" oder \"-\"");
     String label = Application.getI18n().tr("Hostname Ihres Computers");
-    try
-    {
-      InetAddress a = InetAddress.getLocalHost();
-
-      String host = a.getCanonicalHostName();
-
-      if (host == null || host.length() == 0)
-        host = a.getHostName();
-
-      if (host == null || host.length() == 0)
-        host = a.getHostAddress();
-
-      if (host != null && host.length() > 0 && !host.equals("127.0.0.1"))
-        return host;
-      
-      return Application.getCallback().askUser(question,label);
-      
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to determine hostname, asking user",e);
-      return Application.getCallback().askUser(question,label);
-    }
+    this.hostname = Application.getCallback().askUser(question,label);
+    
+    // Wenn wir den User nach dem Hostnamen fragen mussten, speichern wir ihn
+    // ab. Andernfalls muesste der User das ja bei jedem Start der Anwendung
+    // erneut eingeben.
+    this.settings.setAttribute("jameica.hostname",this.hostname);
+    
+    return this.hostname;
   }
 
   /**
@@ -133,38 +152,3 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
     return null; // keiner zustaendig. Dann soll es die konkrete Callback-Implementierung machen
   }
 }
-
-
-/*********************************************************************
- * $Log: AbstractApplicationCallback.java,v $
- * Revision 1.9  2011/09/27 12:01:15  willuhn
- * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
- *
- * Revision 1.8  2011-07-19 15:24:01  willuhn
- * @B Die Properties-Datei des Pluginloaders muss auch dann erstellt werden, wenn keine Plugins installiert sind, da sie vom Backup-Service gebraucht wird
- * @N Verdeckte Abfrage des Masterpasswortes an der Konsole
- * @C Leeres Masterpasswort auch an Konsole nicht mehr erlauben
- * @N Wiederholte Abfrage des Passwortes, wenn nichts eingegeben wurde
- *
- * Revision 1.7  2011-04-27 10:27:10  willuhn
- * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
- *
- * Revision 1.6  2009/09/09 09:16:19  willuhn
- * @N HTP-Auth via Messaging delegierbar
- *
- * Revision 1.5  2009/01/07 00:24:13  willuhn
- * @C log level doch wieder auf DEBUG - muellt in der Tat das Log voll
- *
- * Revision 1.4  2009/01/07 00:09:49  willuhn
- * @R UNDO
- *
- * Revision 1.3  2009/01/07 00:09:03  willuhn
- * @C changed log level
- *
- * Revision 1.2  2009/01/06 23:58:03  willuhn
- * @N Hostname-Check (falls CN aus SSL-Zertifikat von Hostname abweicht) via ApplicationCallback#checkHostname (statt direkt in SSLFactory). Ausserdem wird vorher eine QueryMessage an den Channel "jameica.trust.hostname" gesendet, damit die Sicherheitsabfrage ggf auch via Messaging beantwortet werden kann
- *
- * Revision 1.1  2006/10/28 01:05:21  willuhn
- * *** empty log message ***
- *
- **********************************************************************/
