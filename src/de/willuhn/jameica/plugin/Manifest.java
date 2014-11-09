@@ -26,6 +26,7 @@ import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
 import net.n3.nanoxml.XMLParserFactory;
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.MenuItem;
 import de.willuhn.jameica.gui.MenuItemXml;
 import de.willuhn.jameica.gui.NavigationItem;
@@ -79,10 +80,11 @@ public class Manifest implements Comparable
     Logger.info(getName() + " " + this.getVersion());
     Logger.info("  Directory  : " + this.getPluginDir());
 
+    JarFile jar = null;
     try
     {
       // Das ist nur geraten und eher fuer Debugging-Zwecke ;)
-      JarFile jar = new JarFile(getPluginDir() + File.separator + getName() + ".jar");
+      jar = new JarFile(getPluginDir() + File.separator + getName() + ".jar");
       java.util.jar.Manifest mf = jar.getManifest();
 
       this.buildnumber = mf.getMainAttributes().getValue("Implementation-Buildnumber");
@@ -93,6 +95,10 @@ public class Manifest implements Comparable
     catch (Exception e)
     {
       Logger.debug("unable to read jar manifest, running uncompressed within debugger?");
+    }
+    finally
+    {
+      IOUtil.close(jar);
     }
   }
 

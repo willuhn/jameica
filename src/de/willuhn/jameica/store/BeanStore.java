@@ -59,6 +59,7 @@ public class BeanStore
     }
 
     InputStream is = null;
+    InputStream is2 = null;
     
     try
     {
@@ -89,10 +90,10 @@ public class BeanStore
       if (encrypted)
       {
         Logger.info("decrypting bean container");
-        is = this.engine.decrypt(is);
+        is2 = this.engine.decrypt(is);
       }
       
-      BeanContainer<T> container = (BeanContainer<T>) u.unmarshal(is);
+      BeanContainer<T> container = (BeanContainer<T>) u.unmarshal(is2);
       Logger.info("loaded " + container);
       return container;
     }
@@ -103,7 +104,7 @@ public class BeanStore
     }
     finally
     {
-      IOUtil.close(is);
+      IOUtil.close(is,is2);
     }
   }
   

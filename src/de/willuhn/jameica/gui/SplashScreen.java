@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
@@ -115,6 +116,8 @@ public class SplashScreen implements ProgressMonitor, Runnable
     if (!Customizing.SETTINGS.getBoolean("application.splashscreen.random",false))
       return null;
 
+    JarFile jar = null;
+    
     try
     {
       File f = new File("lib/splash.jar");
@@ -123,7 +126,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
         Logger.warn(f.getCanonicalPath() + " not found or not readable, skipping random splashscreen");
         return null;
       }
-      JarFile jar = new JarFile(f);
+      jar = new JarFile(f);
       List<String> names = new ArrayList<String>();
       Enumeration<JarEntry> entries = jar.entries();
       while (entries.hasMoreElements())
@@ -144,6 +147,10 @@ public class SplashScreen implements ProgressMonitor, Runnable
     catch (Exception e)
     {
       Logger.error("unable to get splash",e);
+    }
+    finally
+    {
+      IOUtil.close(jar);
     }
     return null;
   }

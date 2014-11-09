@@ -25,6 +25,7 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.io.FileFinder;
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.plugin.Dependency;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
@@ -239,37 +240,45 @@ public class ClassService implements Bootable
         Logger.info("inspecting " + name);
 
         JarFile jar = null;
-        try {
-          jar = new JarFile(child[i]);
-        }
-        catch (IOException ioe) {
-          Logger.error("unable to load " + name + ", skipping",ioe);
-          continue; // skip
-        }
-
-        // So, jetzt iterieren wir ueber alle Files in dem Jar
-        Enumeration<JarEntry> jarEntries = jar.entries();
-        JarEntry entry = null;
-  
-        while (jarEntries.hasMoreElements())
+        try
         {
-          if (++count % 75 == 0)
-            Application.getCallback().getStartupMonitor().addPercentComplete(1);
-          
-          entry = jarEntries.nextElement();
-          String entryName = entry.getName();
+          try {
+            jar = new JarFile(child[i]);
+          }
+          catch (IOException ioe) {
+            Logger.error("unable to load " + name + ", skipping",ioe);
+            IOUtil.close(jar);
+            continue; // skip
+          }
 
-          int idxClass = entryName.indexOf(".class");
+          // So, jetzt iterieren wir ueber alle Files in dem Jar
+          Enumeration<JarEntry> jarEntries = jar.entries();
+          JarEntry entry = null;
+    
+          while (jarEntries.hasMoreElements())
+          {
+            if (++count % 75 == 0)
+              Application.getCallback().getStartupMonitor().addPercentComplete(1);
+            
+            entry = jarEntries.nextElement();
+            String entryName = entry.getName();
 
-          // alles, was nicht mit ".class" aufhoert, koennen wir jetzt ignorieren
-          if (idxClass == -1)
-            continue;
-  
-          // wir machen einen Klassen-Namen draus
-          entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
+            int idxClass = entryName.indexOf(".class");
 
-          // In ClassFinder uebernehmen
-          load(mycl,entryName);
+            // alles, was nicht mit ".class" aufhoert, koennen wir jetzt ignorieren
+            if (idxClass == -1)
+              continue;
+    
+            // wir machen einen Klassen-Namen draus
+            entryName = entryName.substring(0, idxClass).replace('/', '.').replace('\\', '.');
+
+            // In ClassFinder uebernehmen
+            load(mycl,entryName);
+          }
+        }
+        finally
+        {
+          IOUtil.close(jar);
         }
       }
     }
