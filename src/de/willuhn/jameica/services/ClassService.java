@@ -25,7 +25,6 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.io.FileFinder;
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.plugin.Dependency;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
@@ -247,7 +246,6 @@ public class ClassService implements Bootable
           }
           catch (IOException ioe) {
             Logger.error("unable to load " + name + ", skipping",ioe);
-            IOUtil.close(jar);
             continue; // skip
           }
 
@@ -278,7 +276,17 @@ public class ClassService implements Bootable
         }
         finally
         {
-          IOUtil.close(jar);
+          if (jar != null)
+          {
+            try
+            {
+              jar.close();
+            }
+            catch (Exception e)
+            {
+              Logger.error("unable to close jar file",e);
+            }
+          }
         }
       }
     }

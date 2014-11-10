@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
@@ -150,7 +149,17 @@ public class SplashScreen implements ProgressMonitor, Runnable
     }
     finally
     {
-      IOUtil.close(jar);
+      if (jar != null)
+      {
+        try
+        {
+          jar.close();
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to close jar file",e);
+        }
+      }
     }
     return null;
   }
