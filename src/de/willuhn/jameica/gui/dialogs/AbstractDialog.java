@@ -28,6 +28,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.TitlePart;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
@@ -381,8 +382,19 @@ public abstract class AbstractDialog<T>
    */
   public final void setSize(int width, int height)
 	{
-		this.width = width;
-		this.height = height;
+    // Checken, ob die High-DPI-Mode aktiv ist
+    if (Customizing.SETTINGS.getBoolean("application.highdpi",true))
+    {
+      if (width > 0)
+        this.width = SWTUtil.scaledPx(width);
+      if (height > 0)
+        this.height = SWTUtil.scaledPx(height);
+    }
+    else
+    {
+      this.width = width;
+      this.height = height;
+    }
 	}
 
 	/**

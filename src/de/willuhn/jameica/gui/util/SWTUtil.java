@@ -294,6 +294,29 @@ public class SWTUtil {
   }
   
   /**
+   * Skaliert eine Pixel-Angabe passend fuer die DPI-Zahl des Monitors.
+   * Hintergrund: Viele Pixel-basierte Angaben (z.Bsp. hart codierte Groessen-Angaben
+   * von Dialogen) wurden basierend auf einer ungefaehren DPI-Zahl von 90 DPI
+   * festgelegt. Auf neuartigen Monitoren mit hohen DPI-Zahlen wuerden all
+   * diese Dialoge dann sehr klein dargestellt werden. Aufgabe dieser Funktion
+   * ist es also, pixel-basierte Angaben so zu skalieren, dass sie im Verhaeltnis
+   * zum Rest basierend auf der DPI-Zahl des Display in einer angemessenen Groesse erscheinen. 
+   * @param px die Pixel-Zahl.
+   * @return die skalierte Pixel-Zahl.
+   */
+  public final static int scaledPx(int px)
+  {
+    int dpi = getDPI();
+    if (dpi == -1)
+      return px; // Wir haben keine brauchbare DPI-Zahl. Dann koennen wir nicht umrechnen
+    
+    if (dpi == 90)
+      return px; // Keine Umrechnung noetig.
+
+    return px / 90 * dpi;
+  }
+  
+  /**
    * Rechnet eine Angabe von mm (Millimeter) entsprechend der DPI-Anzahl des Displays in Pixel um.
    * @param mm die Millimeter.
    * @return Anzahl der Pixel oder -1 wenn es zu einem Fehler kam.

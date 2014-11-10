@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0018 BUGZILLA 1577 - Skalierung aller Dialoge mit fester Höhe/Breite passend für die DPI-Zahl (HighDPI-Support)
   * BUG: 0017 Da wurden ein paar Datei-Handles nicht korrekt geschlossen
   * NEW: 0016 BUGZILLA 1565 DPI-Zahl jetzt per Customizing konfigurierbar
   * NEW: 0015 Nach neuen Updates nur suchen, wenn auch wirklich Plugins installiert sind
