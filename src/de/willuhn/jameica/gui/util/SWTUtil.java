@@ -313,7 +313,7 @@ public class SWTUtil {
     if (dpi == 90)
       return px; // Keine Umrechnung noetig.
 
-    return px / 90 * dpi;
+    return px * dpi / 90;
   }
   
   /**
