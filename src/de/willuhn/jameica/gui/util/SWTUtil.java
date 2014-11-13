@@ -16,6 +16,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -261,9 +262,18 @@ public class SWTUtil {
   {
     // Wir gehen von quadratischen Pixeln aus. Daher reicht uns eine
     // Koordinate - y.
-    Point dpi = GUI.getDisplay().getDPI();
-    int pixel = dpi != null ? dpi.y : -1;
-    return Customizing.SETTINGS.getInt("application.dpi",pixel);
+    
+    final AtomicInteger ai = new AtomicInteger();
+    GUI.getDisplay().syncExec(new Runnable() {
+          public void run()
+          {
+              Point dpi = GUI.getDisplay().getDPI();
+              int pixel = dpi != null ? dpi.y : -1;
+              ai.set(pixel);
+          }
+        });
+   
+    return Customizing.SETTINGS.getInt("application.dpi", ai.get());
   }
   
   /**
