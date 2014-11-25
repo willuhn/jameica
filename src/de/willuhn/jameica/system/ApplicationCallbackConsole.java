@@ -484,13 +484,14 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     System.out.println("----------------------------------------------------------------------");
     System.out.println(i18n.tr("Eigenschaften des Zertifikats"));
 
-    System.out.println((i18n.tr("Ausgestellt von:  ") + cert.getIssuerDN().getName()));
-    System.out.println((i18n.tr("Ausgestellt für:  ") + cert.getSubjectDN().getName()));
-    System.out.println((i18n.tr("Gültig von:       ") + df.format(cert.getNotBefore())));
-    System.out.println((i18n.tr("Gültig bis:       ") + df.format(cert.getNotAfter())));
-    System.out.println((i18n.tr("Seriennummer:     ") + cert.getSerialNumber().toString()));
-    System.out.println((i18n.tr("Typ:              ") + cert.getType()));
-    System.out.println((i18n.tr("MD5-Fingerabdruck:") + myCert.getMD5Fingerprint()));
+    System.out.println((i18n.tr("Ausgestellt von:      ") + cert.getIssuerDN().getName()));
+    System.out.println((i18n.tr("Ausgestellt für:      ") + cert.getSubjectDN().getName()));
+    System.out.println((i18n.tr("Gültig von:           ") + df.format(cert.getNotBefore())));
+    System.out.println((i18n.tr("Gültig bis:           ") + df.format(cert.getNotAfter())));
+    System.out.println((i18n.tr("Seriennummer:         ") + cert.getSerialNumber().toString()));
+    System.out.println((i18n.tr("Typ:                  ") + cert.getType()));
+    System.out.println((i18n.tr("SHA1-Fingerabdruck:   ") + myCert.getSHA1Fingerprint()));
+    System.out.println((i18n.tr("SHA256-Fingerabdruck: ") + myCert.getSHA256Fingerprint()));
 
     System.out.println("----------------------------------------------------------------------");
     System.out.println(i18n.tr("Das Zertifikat des Systems konnte nicht verifiziert werden. Möchten Sie diesem Zertifikat vertrauen? [J/N]"));

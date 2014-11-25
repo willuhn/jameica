@@ -15,7 +15,8 @@ package de.willuhn.jameica.gui.dialogs;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -45,18 +46,16 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   private String text = null;
   private List<X509Certificate> certs = new LinkedList<X509Certificate>();
   
-  private Input cnIssuer    = null;
-  private Input oIssuer     = null;
-  private Input ouIssuer    = null;
-  private Input cnSubject   = null;
-  private Input oSubject    = null;
-  private Input ouSubject   = null;
-  private Input validity    = null;
-  private Input serial      = null;
-  private Input fingerprint = null;
+  private Input cnIssuer      = null;
+  private Input oIssuer       = null;
+  private Input ouIssuer      = null;
+  private Input cnSubject     = null;
+  private Input oSubject      = null;
+  private Input ouSubject     = null;
+  private LabelInput validity = null;
+  private Input serial        = null;
+  private Input fingerprint   = null;
   
-  private LabelInput warning = null;
-
   /**
    * ct.
    * @param position Position des Dialogs.
@@ -90,9 +89,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     this.serial      = this.createLabel(i18n.tr("Seriennummer"));
     this.fingerprint = new TextAreaInput("");
     this.fingerprint.setEnabled(false);
-    
-    this.warning     = this.createLabel("");
-    this.warning.setColor(Color.ERROR);
   }
   
   /**
@@ -159,10 +155,11 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     /////////////////////////////////////////////////////////////////////////////
     // Fingerprint
     StringBuffer sb = new StringBuffer();
-    sb.append(i18n.tr("MD5: {0}",myCert.getMD5Fingerprint()));
-    sb.append("\n");
-    sb.append(i18n.tr("SHA1: {0}",myCert.getSHA1Fingerprint()));
+    sb.append(i18n.tr("SHA256:\n{0}",myCert.getSHA256Fingerprint().replaceAll("(.{48})","$1\n")));
+    sb.append("\n\n");
+    sb.append(i18n.tr("SHA1:\n{0}",myCert.getSHA1Fingerprint()));
     this.fingerprint.setValue(sb.toString());
+    
     /////////////////////////////////////////////////////////////////////////////
     
     /////////////////////////////////////////////////////////////////////////////
@@ -170,16 +167,21 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     try
     {
       cert.checkValidity();
-      this.warning.setValue("");
     }
-    catch (CertificateException e)
+    catch (CertificateExpiredException expired)
     {
-      this.warning.setValue(Application.getI18n().tr("Zertifikat abgelaufen oder noch nicht gültig!"));
+      this.validity.setComment(Application.getI18n().tr("Zertifikat abgelaufen"));
+      this.validity.setColor(Color.ERROR);
+    }
+    catch (CertificateNotYetValidException notyet)
+    {
+      this.validity.setComment(Application.getI18n().tr("Noch nicht gültig"));
+      this.validity.setColor(Color.ERROR);
     }
     //
     /////////////////////////////////////////////////////////////////////////////
   }
-
+  
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
@@ -222,13 +224,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     // Fingerprint
     group.addHeadline(Application.getI18n().tr("Fingerabdrücke"));
     group.addPart(this.fingerprint);
-    /////////////////////////////////////////////////////////////////////////////
-
-    /////////////////////////////////////////////////////////////////////////////
-    // Warnung, falls abgelaufen
-    Container c = new SimpleContainer(parent,false,1);
-    this.warning.paint(c.getComposite());
-    // group.addInput(this.warning);
     /////////////////////////////////////////////////////////////////////////////
 
     Container cb = new SimpleContainer(parent);

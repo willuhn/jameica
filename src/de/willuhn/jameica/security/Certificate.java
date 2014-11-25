@@ -47,17 +47,6 @@ public class Certificate
   }
 
   /**
-   * Liefert den MD5-Fingerabdruck des Zertifikats.
-   * @return der MD5-Fingerabdruck des Zertifikats.
-   * @throws CertificateEncodingException
-   * @throws NoSuchAlgorithmException
-   */
-  public String getMD5Fingerprint() throws CertificateEncodingException, NoSuchAlgorithmException
-  {
-    return getFingerprint(Checksum.MD5);
-  }
-
-  /**
    * Liefert den SHA1-Fingerabdruck des Zertifikats.
    * @return der SHA1-Fingerabdruck des Zertifikats.
    * @throws CertificateEncodingException
@@ -66,6 +55,17 @@ public class Certificate
   public String getSHA1Fingerprint() throws CertificateEncodingException, NoSuchAlgorithmException
   {
     return getFingerprint(Checksum.SHA1);
+  }
+
+  /**
+   * Liefert den SHA256-Fingerabdruck des Zertifikats.
+   * @return der SHA256-Fingerabdruck des Zertifikats.
+   * @throws CertificateEncodingException
+   * @throws NoSuchAlgorithmException
+   */
+  public String getSHA256Fingerprint() throws CertificateEncodingException, NoSuchAlgorithmException
+  {
+    return getFingerprint(Checksum.SHA256);
   }
 
   /**

@@ -312,6 +312,8 @@ public class CertificateList extends TablePart
       {
         String s = myCert.getIssuer().getAttribute(Principal.COMMON_NAME);
         if (s == null || s.length() == 0)
+          s = myCert.getIssuer().getAttribute(Principal.ORGANIZATION);
+        if (s == null || s.length() == 0)
         {
           s = this.cert.getIssuerDN().getName();
           if (s != null && s.length() > 40)
@@ -330,18 +332,6 @@ public class CertificateList extends TablePart
         return cert.getNotBefore();
       if ("dateto".equals(arg0))
         return cert.getNotAfter();
-      if ("fingerprint".equals(arg0))
-      {
-        try
-        {
-          return myCert.getMD5Fingerprint();
-        }
-        catch (Exception e)
-        {
-          Logger.error("error while reading certificate fingerprint from certficate " + cert.getSubjectDN().getName());
-          return Application.getI18n().tr("MD5-Fingerprint nicht lesbar");
-        }
-      }
 
       return null;
     }
@@ -358,7 +348,6 @@ public class CertificateList extends TablePart
         "serial",
         "datefrom",
         "dateto",
-        "fingerprint",
         "organization",
         "ou"
       };
