@@ -887,6 +887,8 @@ public class GUI implements ApplicationController
         if (gui.stop)
           throw new OperationCanceledException("display unavailable, shutdown in progress");
         
+        String name = Application.getI18n().tr(Customizing.SETTINGS.getString("application.name","Jameica {0}"),Application.getManifest().getVersion().toString());
+        Display.setAppName(name);
         gui.display = Display.getDefault();
       }
 
