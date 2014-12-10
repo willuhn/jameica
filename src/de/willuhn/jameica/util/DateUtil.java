@@ -170,6 +170,9 @@ public class DateUtil
    */
   public static Date startOfDay(Date date)
   {
+    if (date == null)
+      return null;
+    
     Calendar cal = Calendar.getInstance();
     cal.setTime(date == null ? new Date() : date);
     cal.set(Calendar.HOUR_OF_DAY,0);
@@ -186,6 +189,9 @@ public class DateUtil
    */
   public static Date endOfDay(Date date)
   {
+    if (date == null)
+      return null;
+    
     Calendar cal = Calendar.getInstance();
     cal.setTime(date == null ? new Date() : date);
     cal.set(Calendar.HOUR_OF_DAY,23);
