@@ -10,18 +10,16 @@ package de.willuhn.jameica.gui.internal.action;
 import java.net.URL;
 
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
- * Aktion zum Loeschen eines Repository.
+ * Abstrakte Basis-Klasse fuer Actions zum Aktivieren/Deaktivieren eine Repository.
  */
-public class RepositoryRemove implements Action
+public abstract class AbstractRepositoryChangeState implements Action
 {
 
   /**
@@ -37,7 +35,7 @@ public class RepositoryRemove implements Action
     String s = context.toString();
     
     if (RepositoryService.SYSTEM_REPOSITORY.equalsIgnoreCase(s))
-      throw new ApplicationException(i18n.tr("System-Repository darf nicht gelöscht werden"));
+      throw new ApplicationException(i18n.tr("Status des System-Repository darf nicht geändert werden"));
     
     URL url = null;
     try
@@ -50,28 +48,13 @@ public class RepositoryRemove implements Action
       throw new ApplicationException(i18n.tr("Keine gültige Repository-URL angegeben"));
     }
     
-    String q = i18n.tr("Sind Sie sicher, daß Sie diese URL löschen möchten?\n\n{0}",url.toString());
-    
-    try
-    {
-      if (!Application.getCallback().askUser(q))
-        return;
-
-      RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
-      service.removeRepository(url);
-    }
-    catch (OperationCanceledException oce)
-    {
-      // ignore
-    }
-    catch (ApplicationException ae)
-    {
-      throw ae;
-    }
-    catch (Exception e)
-    {
-      Logger.error("error while deleting url " + context,e);
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Fehler beim Löschen der Repository-URL"),StatusBarMessage.TYPE_ERROR));
-    }
+    RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
+    service.setEnabled(url,this.getEnabled());
   }
+  
+  /**
+   * Liefert den neuen Status des Repository.
+   * @return der neue Status des Repository.
+   */
+  abstract boolean getEnabled();
 }

@@ -20,17 +20,22 @@ import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.ext.UpdateSettingsView;
+import de.willuhn.jameica.messaging.QueryMessage;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.update.Repository;
 import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
 
 /**
  * Dieser Service verwaltet den Zugriff auf Online-Repositories mit Jameica-Plugins.
  */
 public class RepositoryService implements Bootable
 {
+  private final static int ERRORCOUNT_MAX = 5;
+  
   /**
    * Die URL des System-Repository.
    */
@@ -105,9 +110,10 @@ public class RepositoryService implements Bootable
   
   /**
    * Liefert eine Liste mit URLs zu Online-Repositories mit Plugins.
+   * @param all true, wenn auch die inaktiven Repositories geliefert werden sollen.
    * @return Liste mit URLs zu Online-Repositories mit Plugins.
    */
-  public List<URL> getRepositories()
+  public List<URL> getRepositories(boolean all)
   {
     String[] urls = settings.getList("repository.url",new String[0]);
     List<URL> list = new ArrayList<URL>();
@@ -127,7 +133,10 @@ public class RepositoryService implements Bootable
         continue;
       try
       {
-        list.add(new URL(url));
+        URL u = new URL(url);
+        if (!all && !this.isEnabled(u))
+          continue;
+        list.add(u);
       }
       catch (Exception e)
       {
@@ -138,6 +147,15 @@ public class RepositoryService implements Bootable
   }
   
   /**
+   * Liefert eine Liste mit URLs zu aktiven Online-Repositories mit Plugins.
+   * @return Liste mit URLs zu den aktiven Online-Repositories mit Plugins.
+   */
+  public List<URL> getRepositories()
+  {
+    return this.getRepositories(false);
+  }
+  
+  /**
    * Oeffnet ein Repository.
    * @param url URL zum Repository.
    * @return das Repository.
@@ -145,9 +163,103 @@ public class RepositoryService implements Bootable
    */
   public Repository open(URL url) throws ApplicationException
   {
-    return new Repository(url);
+    ApplicationException e = null;
+    
+    try
+    {
+      return new Repository(url);
+    }
+    catch (ApplicationException ae)
+    {
+      e = ae;
+      throw ae;
+    }
+    finally
+    {
+      this.updateRepositoryState(url,e);
+    }
   }
-
+  
+  /**
+   * Liefert true, wenn das Repository aktiv ist und verwendet werden soll.
+   * @param url die URL.
+   * @return true, wenn die URL verwendet werden soll.
+   */
+  public boolean isEnabled(URL url)
+  {
+    return settings.getBoolean(url.toString() + ".enabled",true);
+  }
+  
+  /**
+   * Markiert ein Repository als aktiv/inaktiv.
+   * @param url die URL.
+   * @param enabled true, wenn das Repository verwendet werden soll.
+   */
+  public void setEnabled(URL url,boolean enabled)
+  {
+    if (this.isEnabled(url) == enabled) // keine Status-Aenderung
+    {
+      Logger.debug("repository " + url + " no state change: " + enabled);
+      return;
+    }
+    
+    Logger.info("repository " + url + " enabled: " + enabled);
+    settings.setAttribute(url.toString() + ".enabled",enabled);
+    
+    I18N i18n = Application.getI18n();
+    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository." + (enabled ? "enabled" : "disabled")).sendMessage(new QueryMessage(url));
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr(enabled ? "Repository-URL aktiviert" : "Repository-URL deaktiviert"),StatusBarMessage.TYPE_SUCCESS));
+  }
+  
+  /**
+   * Aktualisiert den Fehler-Counter fuer die URL.
+   * @param url die URL.
+   * @param ae die Exception, die aufgetreten war.
+   */
+  private void updateRepositoryState(URL url, ApplicationException ae)
+  {
+    try
+    {
+      // Aktuellen Wert ermitteln
+      int current = settings.getInt(url.toString() + ".errorcount",0);
+      
+      // Wenn wir keinen aktuellen Fehler haben und auch keinen Counter, dann haben wir nichts zu tun
+      if (current == 0 && ae == null)
+        return;
+      
+      // Wenn wir einen Counter haben aber keine Exception, dann koennen wir den Fehler-Counter
+      // wieder zuruecksetzen
+      if (ae == null)
+      {
+        Logger.info("reset error count for repository " + url);
+        settings.setAttribute(url.toString() + ".errorcount",0);
+        return;
+      }
+      
+      // Ansonsten erhoehen
+      int i = current + 1;
+      Logger.warn("increasing error count for repository " + url + " to " + i);
+      settings.setAttribute(url.toString() + ".errorcount",i);
+      
+      // Wenn wir den Maximal-Wert ueberschritten haben, deaktivieren wir das Repository automatisch
+      if (i >= ERRORCOUNT_MAX)
+      {
+        Logger.error("maximum error count (" + ERRORCOUNT_MAX + ") reached for repository, will be disabled");
+        this.setEnabled(url,false);
+        
+        // Da wir jetzt basierend auf dem Counter umgeschaltet haben auf aktiv/inaktiv, muessen wir
+        // den Counter jetzt noch resetten. Andernfalls wuerde der Counter immer noch bei 5 stehen,
+        // wenn der User das Repository manuell wieder aktiviert. Beim naechsten Start wuerde es sich
+        // dann sofort wieder deaktivieren
+        settings.setAttribute(url.toString() + ".errorcount",0);
+      }
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to update repository state",e);
+    }
+  }
+  
   /**
    * Fuegt ein neues Online-Repository hinzu.
    * @param url URL des Online-Repositories.
@@ -161,10 +273,13 @@ public class RepositoryService implements Bootable
     if (this.contains(url))
       throw new ApplicationException(Application.getI18n().tr("Repository-URL {0} existiert bereits",url.toString()));
     
-    List<URL> list = getRepositories();
+    List<URL> list = getRepositories(true);
     list.add(url);
     this.setRepositories(list);
     Logger.info("repository " + url + " added");
+    
+    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.add").sendMessage(new QueryMessage(url));
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Repository-URL hinzugefügt"),StatusBarMessage.TYPE_SUCCESS));
   }
 
   /**
@@ -183,10 +298,19 @@ public class RepositoryService implements Bootable
       return;
     }
     
-    List<URL> list = getRepositories();
+    List<URL> list = getRepositories(true);
     list.remove(url);
     this.setRepositories(list);
+    
+    // Properties loeschen
+    String s = url.toString();
+    settings.setAttribute(s + ".enabled",(String) null);
+    settings.setAttribute(s + ".errorcount",(String) null);
+    
     Logger.info("repository " + url + " removed");
+
+    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.remove").sendMessage(new QueryMessage(url));
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Repository-URL gelöscht"),StatusBarMessage.TYPE_SUCCESS));
   }
   
   /**
@@ -205,7 +329,7 @@ public class RepositoryService implements Bootable
       return false;
 
     String s = url.toString();
-    List<URL> list = getRepositories();
+    List<URL> list = getRepositories(true);
     for (URL u:list)
     {
       if (u.toString().equals(s))

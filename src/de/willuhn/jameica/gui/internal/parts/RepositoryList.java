@@ -15,14 +15,17 @@ import java.util.List;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.RepositoryAdd;
 import de.willuhn.jameica.gui.internal.action.RepositoryOpen;
 import de.willuhn.jameica.gui.internal.action.UpdatesSearch;
 import de.willuhn.jameica.gui.internal.menus.RepositoryListMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
@@ -37,10 +40,13 @@ import de.willuhn.util.I18N;
  */
 public class RepositoryList extends TablePart
 {
-  private static I18N i18n       = Application.getI18n();
-  private MessageConsumer add    = new AddMessageConsumer();
-  private MessageConsumer remove = new RemoveMessageConsumer();
-
+  private final static I18N i18n       = Application.getI18n();
+  private final static RepositoryService repoService = Application.getBootLoader().getBootable(RepositoryService.class);
+  
+  private MessageConsumer add     = new AddMessageConsumer();
+  private MessageConsumer remove  = new RemoveMessageConsumer();
+  private MessageConsumer status  = new StatusMessageConsumer();
+  
   /**
    * ct.
    * @throws Exception
@@ -48,12 +54,33 @@ public class RepositoryList extends TablePart
   public RepositoryList() throws Exception
   {
     super(init(),new RepositoryOpen());
-    addColumn(i18n.tr("URL"),"url");
-    setContextMenu(new RepositoryListMenu());
-    setMulti(false);
-    setRememberColWidths(true);
-    setRememberOrder(true);
-    setSummary(false);
+    this.addColumn(i18n.tr("URL"),"url");
+    this.setContextMenu(new RepositoryListMenu());
+    this.setMulti(false);
+    this.setRememberColWidths(true);
+    this.setRememberOrder(true);
+    this.setSummary(false);
+    
+    this.setFormatter(new TableFormatter()
+    {
+      public void format(TableItem item)
+      {
+        try
+        {
+          UrlObject u = (UrlObject) item.getData();
+          if (u == null)
+            return;
+          
+          item.setForeground(u.enabled ? Color.FOREGROUND.getSWTColor() : Color.COMMENT.getSWTColor());
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to format url",e);
+        }
+      }
+    });
+    
+    
   }
   
   /**
@@ -63,6 +90,8 @@ public class RepositoryList extends TablePart
   {
     Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.add").registerMessageConsumer(this.add);
     Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.remove").registerMessageConsumer(this.remove);
+    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.enabled").registerMessageConsumer(this.status);
+    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.disabled").registerMessageConsumer(this.status);
     super.paint(parent);
     
     // Zum Entfernen der Message-Consumer
@@ -71,6 +100,8 @@ public class RepositoryList extends TablePart
       {
         Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.add").unRegisterMessageConsumer(add);
         Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.remove").unRegisterMessageConsumer(remove);
+        Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.enabled").unRegisterMessageConsumer(status);
+        Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.disabled").unRegisterMessageConsumer(status);
       }
     });
     
@@ -86,10 +117,8 @@ public class RepositoryList extends TablePart
    */
   private static List init() throws Exception
   {
-    RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
-
     List<UrlObject> urls = new ArrayList<UrlObject>();
-    List<URL> l = service.getRepositories();
+    List<URL> l = repoService.getRepositories(true);
 
     for (URL u:l)
       urls.add(new UrlObject(u));
@@ -103,6 +132,7 @@ public class RepositoryList extends TablePart
   public static class UrlObject
   {
     private URL url = null;
+    private boolean enabled = true;
     
     /**
      * ct.
@@ -111,6 +141,16 @@ public class RepositoryList extends TablePart
     private UrlObject(URL url)
     {
       this.url = url;
+      this.enabled = repoService.isEnabled(url);
+    }
+    
+    /**
+     * Liefert true, wenn das Repository aktiv ist.
+     * @return true, wenn das Repository aktiv ist.
+     */
+    public boolean isEnabled()
+    {
+      return this.enabled;
     }
     
     /**
@@ -240,4 +280,65 @@ public class RepositoryList extends TablePart
     
   }
 
+  
+  /**
+   * Verwenden wir, um ueber das Aktivieren/Deaktivieren von URLs benachrichtigt zu werden.
+   */
+  private class StatusMessageConsumer implements MessageConsumer
+  {
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+     */
+    public boolean autoRegister()
+    {
+      return false;
+    }
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+     */
+    public Class[] getExpectedMessageTypes()
+    {
+      return new Class[]{QueryMessage.class};
+    }
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+     */
+    public void handleMessage(final Message message) throws Exception
+    {
+      GUI.getDisplay().asyncExec(new Runnable() {
+      
+        public void run()
+        {
+          if (message == null)
+            return;
+          
+          try
+          {
+            URL url = (URL) ((QueryMessage) message).getData();
+            if (url== null)
+              return;
+            
+            List<UrlObject> items = RepositoryList.this.getItems();
+            for (UrlObject u:items)
+            {
+              if (u.url.toString().equals(url.toString()))
+              {
+                u.enabled = repoService.isEnabled(u.url);
+                RepositoryList.this.updateItem(u,u);
+              }
+            }
+          }
+          catch (Exception e)
+          {
+            Logger.error("unable to updating url status",e);
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Fehler beim Aktualisieren der der URL: {}",e.getMessage()),StatusBarMessage.TYPE_ERROR));
+          }
+        }
+      });
+    }
+  }
+
+  
 }

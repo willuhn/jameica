@@ -11,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.system.Application;
@@ -45,10 +44,6 @@ public class RepositoryAdd implements Action
 
       RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
       service.addRepository(u);
-      
-      Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.add").sendMessage(new QueryMessage(u));
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Repository-URL hinzugefügt"),StatusBarMessage.TYPE_SUCCESS));
-
     }
     catch (OperationCanceledException oce)
     {
