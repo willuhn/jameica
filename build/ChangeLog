@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0020 Eine Reihe UI-Tweaks für initiales Setup der Online-Updates
   * NEW: 0019 BUGZILLA 1586 - Repositories werden jetzt nach 5 Zugriffsfehlern automatisch deaktiviert und können auch vom User manuell deaktiviert werden
   * NEW: 0018 BUGZILLA 1577 - Skalierung aller Dialoge mit fester Höhe/Breite passend für die DPI-Zahl (HighDPI-Support)
   * BUG: 0017 Da wurden ein paar Datei-Handles nicht korrekt geschlossen

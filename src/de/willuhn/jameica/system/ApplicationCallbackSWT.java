@@ -376,13 +376,18 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public boolean checkTrust(X509Certificate cert) throws Exception
   {
-    // Wir senden die Trust-Abrfrage vorher noch per Message
+    // Wir senden die Trust-Abfrage vorher noch per Message
     CheckTrustMessage msg = new CheckTrustMessage(cert);
     Application.getMessagingFactory().sendSyncMessage(msg);
-    if (msg.isTrusted())
+    Exception ex = msg.getException();
+    if (ex != null)
+      throw ex;
+    
+    Boolean trust = msg.isTrusted();
+    if (trust != null)
     {
-      Logger.info("cert: " + cert.getSubjectDN().getName() + ", trusted by: " + msg.getTrustedBy());
-      return true;
+      Logger.info("cert: " + cert.getSubjectDN().getName() + "," + (trust.booleanValue() ? "" : " NOT ") + " trusted by: " + msg.getTrustedBy());
+      return trust.booleanValue();
     }
 
     CertificateTrustDialog d = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,cert);
@@ -397,6 +402,11 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public void notifyUser(String text) throws Exception
   {
+    if (text == null)
+    {
+      Logger.warn("no text to be displayed for user notification");
+      return;
+    }
     SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
     d.setTitle(Application.getI18n().tr("Information"));
     d.setText(text);

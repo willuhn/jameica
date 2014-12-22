@@ -41,9 +41,8 @@ public class CertificateTrustDialog extends AbstractCertificateDialog
     // Wir speichern vorab schonmal einen eigenen Text. Falls
     // der Benutzer "setText(String)" nicht aufruft, wird dann
     // dieser hier angezeigt.
-    setText(i18n.tr("Das Zertifikat des Systems konnte nicht verifiziert werden.\n" +
-    "Bitte prüfen Sie die Eigenschaften des Zertifikates und entscheiden Sie,\nob Sie ihm " +
-    "vertrauen möchten."));
+    setText(i18n.tr("Bitte prüfen Sie die Eigenschaften des Server-Zertifikates und " +
+                    "entscheiden Sie,\nob Sie ihm vertrauen möchten."));
   }
 
   /**

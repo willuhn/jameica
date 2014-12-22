@@ -13,6 +13,7 @@
 
 package de.willuhn.jameica.gui.dialogs;
 
+import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateExpiredException;
@@ -25,18 +26,26 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.input.LinkInput;
 import de.willuhn.jameica.gui.input.TextAreaInput;
+import de.willuhn.jameica.gui.internal.action.Program;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.security.Certificate;
 import de.willuhn.jameica.security.Principal;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.util.DateUtil;
+import de.willuhn.logging.Level;
+import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Abstrakter Basis-Dialog zur Anzeige von X.509-Zertifikaten
@@ -81,7 +90,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     this.oIssuer     = this.createLabel(i18n.tr("Organisation (O)"));
     this.ouIssuer    = this.createLabel(i18n.tr("Abteilung (OU)"));
     
-    this.cnSubject   = this.createLabel(i18n.tr("Common Name (CN)"));
+    this.cnSubject   = this.createLink(i18n.tr("Common Name (CN)"));
     this.oSubject    = this.createLabel(i18n.tr("Organisation (O)"));
     this.ouSubject   = this.createLabel(i18n.tr("Abteilung (OU)"));
     
@@ -101,6 +110,57 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     LabelInput label = new LabelInput("");
     label.setName(name);
     return label;
+  }
+
+  /**
+   * Erzeugt ein neues Label mit dem angegebenen Namen als anklickbarer Link.
+   * @param name der Name des Labels.
+   * @return das Label.
+   */
+  private LinkInput createLink(String name)
+  {
+    LinkInput link = new LinkInput("")
+    {
+      /**
+       * @see de.willuhn.jameica.gui.input.LinkInput#setValue(java.lang.Object)
+       */
+      @Override
+      public void setValue(Object value)
+      {
+        // Wenn es ein aufloesbarer Hostname ist, schreiben wir ein "https://" davor
+        // und machen einen Link draus
+        if (value != null)
+        {
+          try
+          {
+            InetAddress.getByName(value.toString());
+            super.setValue("<a>https://" + value + "</a>");
+            return;
+          }
+          catch (Exception e)
+          {
+            Logger.write(Level.DEBUG,"unable to resolve text as hostname: " + value,e);
+          }
+        }
+        super.setValue(value);
+      }
+    };
+    link.setName(name);
+    link.addListener(new Listener() {
+      
+      public void handleEvent(Event event)
+      {
+        try
+        {
+          new Program().handleAction(event.text);
+        }
+        catch (ApplicationException e)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getMessage(),StatusBarMessage.TYPE_ERROR));
+        }
+      }
+    });
+    return link;
   }
 
   /**

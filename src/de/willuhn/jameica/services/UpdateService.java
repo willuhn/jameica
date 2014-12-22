@@ -142,7 +142,7 @@ public class UpdateService implements Bootable
    */
   public boolean getUpdateCheck()
   {
-    return settings.getBoolean("update.check",!Application.inServerMode());
+    return settings.getBoolean("update.check",false);
   }
 
   /**

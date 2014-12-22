@@ -407,10 +407,15 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     // Wir senden die Trust-Abfrage vorher noch per Message
     CheckTrustMessage msg = new CheckTrustMessage(cert);
     Application.getMessagingFactory().sendSyncMessage(msg);
-    if (msg.isTrusted())
+    Exception ex = msg.getException();
+    if (ex != null)
+      throw ex;
+    
+    Boolean trust = msg.isTrusted();
+    if (trust != null)
     {
-      Logger.info("cert: " + cert.getSubjectDN().getName() + ", trusted by: " + msg.getTrustedBy());
-      return true;
+      Logger.info("cert: " + cert.getSubjectDN().getName() + "," + (trust.booleanValue() ? "" : " NOT ") + " trusted by: " + msg.getTrustedBy());
+      return trust.booleanValue();
     }
 
     // Im Nicht-interaktiven Mode speichern wir das Zertifikat nur in

@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/messaging/CheckTrustMessage.java,v $
- * $Revision: 1.2 $
- * $Date: 2007/08/31 13:34:12 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -23,8 +17,9 @@ import java.security.cert.X509Certificate;
 public class CheckTrustMessage implements Message
 {
   private X509Certificate cert = null;
-  private boolean isTrusted    = false;
+  private Boolean isTrusted    = null;
   private String by            = null;
+  private Exception exception  = null;
   
   /**
    * ct.
@@ -57,9 +52,10 @@ public class CheckTrustMessage implements Message
   
   /**
    * Prueft die Vertrauensstellung des Zertifikates.
-   * @return true, wenn es vertrauenswuerdig ist.
+   * @return true, wenn es vertrauenswuerdig ist, false wenn es nicht vertrauenswuerdig ist
+   * oder NULL, wenn keine Entscheidung getroffen wurde.
    */
-  public boolean isTrusted()
+  public Boolean isTrusted()
   {
     return this.isTrusted;
   }
@@ -72,16 +68,23 @@ public class CheckTrustMessage implements Message
   {
     return this.by;
   }
+  
+  /**
+   * Liefert eine ggf aufgetretene Exception.
+   * @return exception speichert eine ggf aufgetretene Exception.
+   */
+  public Exception getException()
+  {
+    return exception;
+  }
+  
+  /**
+   * Speichert eine ggf aufgetretene Exception.
+   * @param e ggf aufgetretene Exception.
+   */
+  public void setException(Exception e)
+  {
+    this.exception = e;
+  }
 
 }
-
-
-/*********************************************************************
- * $Log: CheckTrustMessage.java,v $
- * Revision 1.2  2007/08/31 13:34:12  willuhn
- * @B parameter not set
- *
- * Revision 1.1  2007/08/31 10:00:11  willuhn
- * @N CheckTrustMessage synchron versenden, wenn Vertrauensstellung abgefragt wird
- *
- **********************************************************************/

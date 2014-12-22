@@ -1,59 +1,46 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/TextDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/05/03 10:13:11 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.dialogs;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
-import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.input.TextInput;
+import de.willuhn.jameica.gui.internal.buttons.Cancel;
+import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog zur Eingabe eines kurzen Textes.
  */
-public class TextDialog extends SimpleDialog {
-
-	private Composite comp 	= null;
-	private Label label			= null;
-	private Label tLabel 		= null;
-	private Text text			 	= null;
-	private Button button 	= null;
-	private Button cancel 	= null;
-	
-	private String labelText = "";
-	
-	private String value		= null;
-	
+public class TextDialog extends SimpleDialog
+{
+  private final static int WINDOW_WIDTH = 500;
+  private TextInput input = null;
+  
 	/**
 	 * Erzeugt einen neuen Text-Dialog.
 	 * @param position Position des Dialogs.
 	 * @see AbstractDialog#POSITION_MOUSE
 	 * @see AbstractDialog#POSITION_CENTER
 	 */
-  public TextDialog(int position) {
+  public TextDialog(int position)
+  {
     super(position);
-    
-    this.labelText = Application.getI18n().tr("Ihre Eingabe");
+    this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
+    this.setSideImage(SWTUtil.getImage("dialog-question-large.png"));
+    this.input = new TextInput("");
+    this.input.setName(Application.getI18n().tr("Ihre Eingabe"));
   }
 
 	/**
@@ -64,9 +51,8 @@ public class TextDialog extends SimpleDialog {
    */
   public void setLabelText(String t)
 	{
-		labelText = t;
-		if (text != null && !text.isDisposed())
-			text.setText( labelText == null ? "" : labelText);
+    if (StringUtils.trimToNull(t) != null)
+      this.input.setName(t);
 	}
 
   /**
@@ -74,88 +60,34 @@ public class TextDialog extends SimpleDialog {
    */
   protected void paint(Composite parent) throws Exception
 	{
-		// Composite um alles drumrum.
-		comp = new Composite(parent,SWT.NONE);
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-		comp.setLayout(new GridLayout(3,false));
-		
-		// Text
-		label = GUI.getStyleFactory().createLabel(comp,SWT.WRAP);
-		label.setText(getText());
-		GridData grid = new GridData(GridData.FILL_HORIZONTAL);
-		grid.horizontalSpan = 3;
-		label.setLayoutData(grid);
-		
-		// Label vor Eingabefeld
-		tLabel = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-		tLabel.setText(labelText);
-		tLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-
-		text = GUI.getStyleFactory().createText(comp);
-		GridData grid3 = new GridData(GridData.FILL_HORIZONTAL);
-		grid3.horizontalSpan = 2;
-		text.setLayoutData(grid3);
-
-		// Dummy-Label damit die Buttons buendig unter dem Eingabefeld stehen
-		Label dummy = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-		dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		// OK-Button
-		button = GUI.getStyleFactory().createButton(comp);
-		button.setText("    " + i18n.tr("OK") + "    ");
-		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		getShell().setDefaultButton(button);
-		button.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				value = text.getText();
-				close();
-			}
-		});
-
-		// Abbrechen-Button
-		cancel = GUI.getStyleFactory().createButton(comp);
-		cancel.setText(i18n.tr("Abbrechen"));
-		cancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		cancel.addSelectionListener(new SelectionAdapter()
-		{
-			public void widgetSelected(SelectionEvent e)
-			{
-				throw new OperationCanceledException("Dialog abgebrochen");
+    Container c = new SimpleContainer(parent);
+    
+    String text = this.getText();
+    if (StringUtils.trimToNull(text) != null)
+      c.addText(text,true);
+    
+    c.addInput(this.input);
+    
+    
+    ButtonArea buttons = new ButtonArea();
+    buttons.addButton(Application.getI18n().tr("Übernehmen"),new Action() {
+      
+      public void handleAction(Object context) throws ApplicationException
+      {
+        close();
       }
-    });
-
-		// so und jetzt noch der Shell-Listener, damit beim
-		// Klick auf das Schliessen-Kreuz rechts oben eine
-		// OperationCancelledException ausgeloest wird.
-		addShellListener(new ShellListener() {
-			public void shellClosed(ShellEvent e) {
-				throw new OperationCanceledException("dialog cancelled via close button");
-			}
-      public void shellActivated(ShellEvent e) {}
-      public void shellDeactivated(ShellEvent e) {}
-      public void shellDeiconified(ShellEvent e) {}
-      public void shellIconified(ShellEvent e) {}
-    });
+    },null,true,"ok.png");
+    buttons.addButton(new Cancel());
+    
+    c.addButtonArea(buttons);
+    getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,SWT.DEFAULT));
 	}		
 
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
-  protected Object getData() throws Exception {
-    return value;
+  protected Object getData() throws Exception
+  {
+    return this.input.getValue();
   }
-
 }
-
-
-/**********************************************************************
- * $Log: TextDialog.java,v $
- * Revision 1.2  2011/05/03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.1  2005-03-17 22:44:10  web0
- * @N added fallback if system is not able to determine hostname
- *
- **********************************************************************/
