@@ -20,6 +20,7 @@ import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.internal.dialogs.ChooseBoxesDialog;
 import de.willuhn.jameica.gui.parts.ExpandPart;
 import de.willuhn.jameica.gui.parts.PanelButton;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -69,7 +70,18 @@ public class Start extends AbstractView implements Extendable
     layout.horizontalSpacing = 0;
     layout.marginHeight = 0;
     layout.marginWidth = 0;
-
+    this.paint(false);
+  }
+  
+  /**
+   * Zeichnet die Boxen.
+   * @param dispose true, wenn der aktuelle Inhalt vorher disposed werden soll.
+   * @throws Exception
+   */
+  private void paint(boolean dispose) throws Exception
+  {
+    if (dispose)
+      SWTUtil.disposeChildren(getParent());
     ExpandPart expand = new ExpandPart();
     List<Box> boxes = BoxRegistry.getBoxes();
     
@@ -85,7 +97,12 @@ public class Start extends AbstractView implements Extendable
       }
     }
     expand.paint(getParent());
-  }        
+    
+    if (dispose)
+    {
+      getParent().layout(true);
+    }
+  }
 
   /**
    * @see de.willuhn.jameica.gui.extension.Extendable#getExtendableID()
@@ -101,5 +118,27 @@ public class Start extends AbstractView implements Extendable
   public boolean canBookmark()
   {
     return false;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#reload()
+   */
+  @Override
+  public void reload() throws ApplicationException
+  {
+    try
+    {
+      this.paint(true);
+      super.reload();
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to reload view",e);
+      throw new ApplicationException(Application.getI18n().tr("Fehler beim Aktualisieren der Anzeig: {0}",e.getMessage()));
+    }
   }
 }
