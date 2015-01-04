@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0021 Neue Version des MySQL-Treibers 5.1.34
+
 2014-12-22 Version 2.6.2
 
   * NEW: 0020 Eine Reihe UI-Tweaks für initiales Setup der Online-Updates
