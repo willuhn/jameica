@@ -1,5 +1,9 @@
 HEAD 2.7 (nightly)
 
+2015-01-06 Version 2.6.2 (Bugfix 0022)
+
+  * BUG: 0022 Änderung 0020 verursachte den Fehler, dass im Dialog zum Hinzufügen eines neuen Repository die Eingabe nicht mehr
+              übernommen wurde. Andere Plugins, die den selben Dialog verwenden, waren ebenfalls betroffen.
   * NEW: 0021 Neue Version des MySQL-Treibers 5.1.34
 
 2014-12-22 Version 2.6.2

@@ -27,6 +27,7 @@ public class TextDialog extends SimpleDialog
 {
   private final static int WINDOW_WIDTH = 500;
   private TextInput input = null;
+  private Object value = null;
   
 	/**
 	 * Erzeugt einen neuen Text-Dialog.
@@ -74,6 +75,7 @@ public class TextDialog extends SimpleDialog
       
       public void handleAction(Object context) throws ApplicationException
       {
+        value = input.getValue();
         close();
       }
     },null,true,"ok.png");
@@ -88,6 +90,6 @@ public class TextDialog extends SimpleDialog
    */
   protected Object getData() throws Exception
   {
-    return this.input.getValue();
+    return this.value;
   }
 }
