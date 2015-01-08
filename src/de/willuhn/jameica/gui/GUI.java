@@ -14,11 +14,13 @@ package de.willuhn.jameica.gui;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
@@ -85,6 +87,7 @@ public class GUI implements ApplicationController
     private Menu menu                    = null;
     private View view                    = null;
     private StatusBar statusBar          = null;
+    private SashForm left                = null;
     private FormTextPart help            = null;
     private AbstractView currentView     = null;
     
@@ -190,9 +193,9 @@ public class GUI implements ApplicationController
       sash.setLayout(SWTUtil.createGrid(1,true));
       sash.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-      final SashForm left = new SashForm(sash, SWT.VERTICAL);
-      left.setLayout(SWTUtil.createGrid(1,true));
-      left.setLayoutData(new GridData(GridData.FILL_BOTH));
+      this.left = new SashForm(sash, SWT.VERTICAL);
+      this.left.setLayout(SWTUtil.createGrid(1,true));
+      this.left.setLayoutData(new GridData(GridData.FILL_BOTH));
       //
       ////////////////////////////////////////////////////////////////////////
 
@@ -216,7 +219,7 @@ public class GUI implements ApplicationController
       // init help
       help = new FormTextPart();
       Panel p = new Panel(Application.getI18n().tr("Hilfe"),help);
-      p.paint(left);
+      p.paint(this.left);
       //
       ////////////////////////////////////////////////////////////////////////
 
@@ -233,8 +236,8 @@ public class GUI implements ApplicationController
 
       ////////////////////////////////////////////////////////////////////////
       // init sashes
-      left.setWeights(new int[] {SETTINGS.getInt("navi.height.0",7), SETTINGS.getInt("navi.height.1",3)});
-      left.addDisposeListener(new DisposeListener() {
+      this.left.setWeights(new int[] {SETTINGS.getInt("navi.height.0",7), SETTINGS.getInt("navi.height.1",3)});
+      this.left.addDisposeListener(new DisposeListener() {
         public void widgetDisposed(DisposeEvent e)
         {
           if (left == null || left.isDisposed())
@@ -738,34 +741,60 @@ public class GUI implements ApplicationController
       path = "help/" + Locale.getDefault().toString().toLowerCase() + "/" + view.getClass().getName() + ".txt";
       is = Application.getClassLoader().getResourceAsStream(path);
     }
-
-    // Wir haben eine Hilfe in einer Textdatei gefunden, die nehmen wir
-    if (is != null)
+    
+    updateHelp(view,is);
+  }
+  
+  /**
+   * Aktualisiert die Hilfe.
+   * @param view die View.
+   * @param is InputStream mit der Datei.
+   */
+  private static void updateHelp(AbstractView view, InputStream is)
+  {
+    try
     {
-      try
+      Reader r = null;
+      
+      // Erst in der View selbst schauen - vielleicht liefert die selbst die Hilfe
+      String help = view.getHelp();
+      
+      if (StringUtils.trimToNull(help) != null)
       {
-        // BUGZILLA 4 http://www.willuhn.de/bugzilla/show_bug.cgi?id=4
-        gui.help.setText(new InputStreamReader(is,"ISO-8859-1"));
+        r = new StringReader(help);
       }
-      catch (Exception e)
+
+      // OK, die View hat nichts. Dann schauen, ob wir eine Hilfe-Datei haben
+      if (r == null && is != null)
       {
-        Logger.error("unable to display help",e);
+        try
+        {
+          r = new InputStreamReader(is,"ISO-8859-1");
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to read help",e);
+        }
       }
-      return;
+
+      // Hilfe anzeigen
+      if (r != null)
+      {
+        gui.help.setText(r);
+        
+        // Und das Sash bei Bedarf einblenden
+        if (gui.left.getMaximizedControl() != null)
+          gui.left.setMaximizedControl(null);  
+      }
+      else
+      {
+        // Ansonsten die Hilfe ausblenden
+        gui.left.setMaximizedControl(gui.left.getChildren()[0]);
+      }
     }
-
-    // Hat alternativ vielleicht die View selbst eine Hilfe?
-    String help = view.getHelp();
-    if (help != null)
+    catch (Exception e)
     {
-      try
-      {
-        gui.help.setText(new StringReader(help));
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to display help",e);
-      }
+      Logger.error("unable to display help",e);
     }
   }
 

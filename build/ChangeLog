@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0023 Hilfe-Box auf der linken Seite ausblenden, wenn die aktuelle View keine Hilfe mitbringt.
+  
 2015-01-06 Version 2.6.2 (Build 440)
 
   * BUG: 0022 Änderung 0020 verursachte den Fehler, dass im Dialog zum Hinzufügen eines neuen Repository die Eingabe nicht mehr
