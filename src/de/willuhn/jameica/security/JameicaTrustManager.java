@@ -250,13 +250,13 @@ public class JameicaTrustManager implements X509TrustManager
         }
         catch (CertificateExpiredException exp)
         {
-          Logger.debug("certificate expired: " + validFrom + " - " + validTo);
+          Logger.warn("certificate expired: " + validFrom + " - " + validTo);
           if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo})))
             return; // Abgelaufen, aber der User ist damit einverstanden
         }
         catch (CertificateNotYetValidException not)
         {
-          Logger.debug("certificate not yet valid: " + validFrom + " - " + validTo);
+          Logger.warn("certificate not yet valid: " + validFrom + " - " + validTo);
           if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo})))
             return; // Noch nicht gueltig, aber der User ist damit einverstanden
         }
@@ -266,7 +266,7 @@ public class JameicaTrustManager implements X509TrustManager
       // nicht vertrauenswuerdig, also importieren
       // Wir uebernehmen nur das direkte Peer-Zertifikat. Ggf.
       // drueber haengende CA-Zertifikate nicht
-      Logger.debug("import certificate: " + toString(cert));
+      Logger.warn("import certificate: " + toString(cert));
       factory.addTrustedCertificate(cert);
 
       
