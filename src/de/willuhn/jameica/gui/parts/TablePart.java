@@ -1540,13 +1540,22 @@ public class TablePart extends AbstractTablePart
     public int compareTo(Object o)
     {
       // wir immer vorn
-      if (this.sortValue == null || !(o instanceof Item))
+      if (!(o instanceof Item))
         return -1;
 
       try
       {
         Item other = (Item) o;
 
+        // Gleiche Reihenfolge - wenn beide NULL sind oder beide das selbe Objekt referenzieren
+        if (this.sortValue == other.sortValue)
+          return 0;
+        
+        // Wir vorn
+        if (this.sortValue == null)
+          return -1;
+
+        // das andere vorn
         if (other.sortValue == null)
           return 1;
         
