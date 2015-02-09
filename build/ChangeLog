@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * CHG: 0026 Such-Reihenfolge der Java-Version bei OSX geändert (siehe Mail von Volker vom 31.12.2014)
   * BUG: 0025 BUGZILLA 1607 - Moegliche Fehlerquelle "Comparison method violates its general contract!" beim Sortieren
   * NEW: 0024 Neue Datasource-Version https://github.com/willuhn/datasource/commit/2365a2185b6030121e5f9ce343e61f42f8586d8f
   * NEW: 0023 Hilfe-Box auf der linken Seite ausblenden, wenn die aktuelle View keine Hilfe mitbringt.

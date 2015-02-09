@@ -7,14 +7,15 @@ TERM="xterm"
 
 JAVACMD="/usr/libexec/java_home/../java"
 
-if [ ! -x "$JAVACMD" ]; then
-  JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/Current/Commands/java"
-fi
-
 # Java 7 - siehe http://docs.oracle.com/javase/7/docs/webnotes/install/mac/mac-jre.html
 # BUGZILLA 1337 - Gott, deren Pfad-Angaben werden ja auch immer schlimmer
 if [ ! -x "$JAVACMD" ]; then
   JAVACMD="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java"
+fi
+
+# Siehe Mail von Volker vom 31.12.2014
+if [ ! -x "$JAVACMD" ]; then
+  JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/Current/Commands/java"
 fi
 
 if [ ! -x "$JAVACMD" ]; then
