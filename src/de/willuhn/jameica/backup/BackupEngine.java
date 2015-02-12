@@ -222,6 +222,20 @@ public class BackupEngine
       if (content == null || content.length == 0)
         throw new ApplicationException(Application.getI18n().tr("Aktuelles Backup enthielt keine Daten. Wiederherstellung abgebrochen"));
 
+      // Wir checken sicherheitshalber, ob das wiederherzustellende Backup in der Liste der zu loeschenden
+      // Dateien enthalten ist. Falls der User manuell ein Backup fuer die Wiederherstellung ausgewaehlt hat,
+      // welches sich nicht in dem Standard-Backup-Ordner befindet, dann koennte es sein, dass wir das
+      // Backup, welches wir gleich wiederherstellen wollen, hier loeschen. Ist tatsaechlich bei einem User passiert.
+      // Backups wurden in den Default-Ordner ~/.jameica gesichert. Er hat sie jedoch MANUELL in den Unter-Ordner
+      // ~/.jameica/backups verschoben und wollte sie von dort wiederherstellen. Bei dem "doBackup()" oben wurden
+      // diese Backups nun nochmal gesichert und dann im "deleteRecursive" unten geloescht.
+      final String backupFile = backup.getFile().getCanonicalPath();
+      for (File dir:content)
+      {
+        if (backupFile.startsWith(dir.getCanonicalPath()))
+          throw new ApplicationException(Application.getI18n().tr("Wiederherzustellendes Backup befindet sich in einem Ordner, der beim Restore gelöscht werden würde. Wiederherstellung abgebrochen."));
+      }
+      
       // So, jetzt loeschen wir aber wirklich
       monitor.setStatusText("cleanup work dir");
       for (int i=0;i<content.length;++i)
