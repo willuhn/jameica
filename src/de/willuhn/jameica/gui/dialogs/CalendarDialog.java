@@ -19,14 +19,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.Action;
-import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.util.ButtonArea;
+import de.willuhn.jameica.gui.input.LinkInput;
+import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.util.Container;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.ApplicationException;
 
@@ -35,11 +37,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class CalendarDialog extends AbstractDialog
 {
-
-  private Composite comp = null;
-
   private Date date = null;
-
   private String text = null;
 
   /**
@@ -78,18 +76,12 @@ public class CalendarDialog extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception
   {
-    comp = new Composite(parent, SWT.NONE);
-    comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-    comp.setLayout(new GridLayout());
+    Container container = new SimpleContainer(parent);
 
     if (text != null && text.length() > 0)
-    {
-      Label l = GUI.getStyleFactory().createLabel(comp, SWT.WRAP);
-      l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      l.setText(text);
-    }
+      container.addText(text,true);
 
-    final DateTime cal = new DateTime(comp, SWT.CALENDAR | SWT.FLAT | SWT.CENTER);
+    final DateTime cal = new DateTime(container.getComposite(), SWT.CALENDAR | SWT.FLAT | SWT.CENTER);
     if (date != null)
     {
       Calendar c = Calendar.getInstance(Application.getConfig().getLocale());
@@ -106,9 +98,21 @@ public class CalendarDialog extends AbstractDialog
         close();
       }
     });
-
+    
+    final LinkInput link = new LinkInput(Application.getI18n().tr("Zum <a>aktuellen Datum</a> wechseln"));
+    link.setName("");
+    link.addListener(new Listener() {
+      public void handleEvent(Event event)
+      {
+        Calendar c = Calendar.getInstance(Application.getConfig().getLocale());
+        c.setTime(new Date());
+        cal.setDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+      }
+    });
+    container.addPart(link);
+    
     // BUGZILLA 201
-    ButtonArea buttons = new ButtonArea(comp, 2);
+    ButtonArea buttons = new ButtonArea();
     buttons.addButton(Application.getI18n().tr("Übernehmen"), new Action()
     {
       public void handleAction(Object context) throws ApplicationException
@@ -124,6 +128,7 @@ public class CalendarDialog extends AbstractDialog
         close();
       }
     },null,false,"process-stop.png");
+    container.addButtonArea(buttons);
   }
 
   /**
