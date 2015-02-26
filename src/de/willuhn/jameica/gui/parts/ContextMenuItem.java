@@ -16,6 +16,8 @@ import org.eclipse.swt.graphics.Image;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 import de.willuhn.logging.Logger;
 
 /**
@@ -168,6 +170,8 @@ public class ContextMenuItem
    */
   public void setShortcut(String shortcut)
   {
+    if (Application.getPlatform().getOS() == Platform.OS_MAC)
+      shortcut = shortcut.replace("ALT", "COMMAND");
     this.shortcut = shortcut;
   }
 
