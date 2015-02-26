@@ -6,10 +6,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-jdk15-144.jar" sourcepath="lib.src/bouncycastle/bcprov-jdk15-144.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.ui.forms_3.1.0.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.osgi_3.10.1.v20140909-1633.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.10.1.v20140813-1009.jar"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.ui.forms_3.6.100.v20140422-1825.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
 	<classpathentry kind="lib" path="lib/swtcalendar/swtcalendar.jar" sourcepath="lib.src/swtcalendar/swtcalendar.src.zip"/>
@@ -28,5 +28,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/paperclips/net.sf.paperclips.ui_1.0.4.jar" sourcepath="lib.src/paperclips/net.sf.paperclips_1.0.4.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-lang-2.6.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.core.commands_3.6.100.v20140528-1422.jar"/>
+	<classpathentry kind="lib" path="lib/swt/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
+	<classpathentry kind="lib" path="lib/swt/com.ibm.icu_52.1.0.v201404241930.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
