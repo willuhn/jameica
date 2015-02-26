@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -252,7 +253,7 @@ public class ContextMenu implements Part
       {
         KeyStroke stroke = KeyStroke.getInstance(shortcut);
         if (stroke.isComplete())
-          text += "\t" + stroke.format();
+          text += "\t" + SWTKeySupport.getKeyFormatterForPlatform().format(stroke);
       }
       catch (Exception e)
       {

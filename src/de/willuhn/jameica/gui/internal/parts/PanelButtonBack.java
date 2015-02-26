@@ -11,22 +11,30 @@
 
 package de.willuhn.jameica.gui.internal.parts;
 
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.swt.SWT;
+
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 
 /**
  * Vorkonfigurierter Panel-Button fuer Zurueck.
  */
 public class PanelButtonBack extends PanelButton
 {
+  private final static String backKeyStroke =
+      SWTKeySupport.getKeyFormatterForPlatform().format(KeyStroke.getInstance(Application.getPlatform().getOS() == Platform.OS_MAC?SWT.COMMAND:SWT.ALT, SWT.ARROW_LEFT));
+
   /**
    * ct.
    */
   public PanelButtonBack()
   {
-    super("go-previous.png",new Back(),Application.getI18n().tr("Zurück (Alt+Pfeil links)"));
+    super("go-previous.png",new Back(),Application.getI18n().tr("Zurück") + " (" + backKeyStroke + ")");
   }
   
   /**
