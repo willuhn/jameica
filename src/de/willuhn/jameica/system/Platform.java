@@ -212,41 +212,29 @@ public class Platform
     }
     return this.os;
   }
+  
+  /**
+   * Mappt OS-spezifisch einzelne Keys auf andere.
+   * In der Default-Implementierung wird hier 1:1 er Eingabewert zurueckgegeben.
+   * In PlatformMacOS aber wird zBsp SWT.ALT gegen SWT.COMMAND ersetzt.
+   * Siehe https://github.com/willuhn/jameica/pull/6
+   * @param key der Key.
+   * @return der gemappte Key.
+   */
+  public int mapSWTKey(int key)
+  {
+    return key;
+  }
+  
+  /**
+   * Wie oben. Jedoch fuer String-Repraesentationen von Shortcuts.
+   * Parameter ist z.Bsp. "ALT+S". Auf OS wird das auf "COMMAND+S" gemappt.
+   * @param shortcut der Shortcut.
+   * @return der gemappte Shortcut.
+   */
+  public String mapSWTShortcut(String shortcut)
+  {
+    return shortcut;
+  }
 
 }
-
-
-/**********************************************************************
- * $Log: Platform.java,v $
- * Revision 1.10  2012/02/21 15:03:32  willuhn
- * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
- *
- * Revision 1.9  2011-03-08 13:43:46  willuhn
- * @B Debugging/Cleanup
- *
- * Revision 1.8  2011-03-07 12:52:11  willuhn
- * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
- *
- * Revision 1.7  2010-11-04 15:35:03  willuhn
- * @B BUGZULLA 942
- *
- * Revision 1.6  2010-10-12 09:22:36  willuhn
- * @B Falsches if
- *
- * Revision 1.5  2010-10-07 22:28:31  willuhn
- * @N Platform cachen
- *
- * Revision 1.4  2010-07-23 22:19:42  willuhn
- * @B typo
- *
- * Revision 1.3  2010-07-22 21:20:39  willuhn
- * @N FreeBSD64-Support - siehe Mak's Mail vom 22.07.2010
- *
- * Revision 1.2  2008/11/17 23:22:19  willuhn
- * @N "getOS" zur Ermittlung des Betriebssystems
- *
- * Revision 1.1  2008/04/23 23:10:14  willuhn
- * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
- * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica
- *
- **********************************************************************/

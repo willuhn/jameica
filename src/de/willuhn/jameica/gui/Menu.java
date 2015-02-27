@@ -16,6 +16,7 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Decorations;
@@ -128,7 +129,7 @@ public class Menu
     if (shortcut != null)
     {
       item.setAccelerator(shortcut.getModifierKeys() + shortcut.getNaturalKey());
-      name += "\t" + shortcut.format();
+      name += "\t" + SWTKeySupport.getKeyFormatterForPlatform().format(shortcut);
     }
     ////////////////////////////////////////////////////////////////////////////
     

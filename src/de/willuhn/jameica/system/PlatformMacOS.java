@@ -15,6 +15,8 @@ package de.willuhn.jameica.system;
 
 import java.io.File;
 
+import org.eclipse.swt.SWT;
+
 
 /**
  * Ueberschrieben fuer MacOS-spezfisches Verhalten.
@@ -35,19 +37,28 @@ public class PlatformMacOS extends Platform
     // Existiert noch nicht. Dann nehmen wir den neuen Pfad.
     return System.getProperty("user.home") + File.separator + "Library" + File.separator + "jameica";
   }
+  
+  /**
+   * @see de.willuhn.jameica.system.Platform#mapSWTKey(int)
+   */
+  @Override
+  public int mapSWTKey(int key)
+  {
+    if (key == SWT.ALT)
+      return SWT.COMMAND;
+    
+    return super.mapSWTKey(key);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.system.Platform#mapSWTShortcut(java.lang.String)
+   */
+  @Override
+  public String mapSWTShortcut(String shortcut)
+  {
+    if (shortcut != null && shortcut.indexOf("ALT") != - 1)
+      return shortcut.replace("ALT", "COMMAND");
+    
+    return super.mapSWTShortcut(shortcut);
+  }
 }
-
-
-/**********************************************************************
- * $Log: PlatformMacOS.java,v $
- * Revision 1.3  2011/03/08 13:43:46  willuhn
- * @B Debugging/Cleanup
- *
- * Revision 1.2  2011-03-07 12:52:11  willuhn
- * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
- *
- * Revision 1.1  2008/04/23 23:10:14  willuhn
- * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
- * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica
- *
- **********************************************************************/

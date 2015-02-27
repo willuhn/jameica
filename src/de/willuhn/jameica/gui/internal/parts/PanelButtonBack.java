@@ -19,15 +19,13 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.Back;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Platform;
 
 /**
  * Vorkonfigurierter Panel-Button fuer Zurueck.
  */
 public class PanelButtonBack extends PanelButton
 {
-  private final static String backKeyStroke =
-      SWTKeySupport.getKeyFormatterForPlatform().format(KeyStroke.getInstance(Application.getPlatform().getOS() == Platform.OS_MAC?SWT.COMMAND:SWT.ALT, SWT.ARROW_LEFT));
+  private final static String backKeyStroke = SWTKeySupport.getKeyFormatterForPlatform().format(KeyStroke.getInstance(Application.getPlatform().mapSWTKey(SWT.ALT), SWT.ARROW_LEFT));
 
   /**
    * ct.
@@ -46,18 +44,3 @@ public class PanelButtonBack extends PanelButton
     return GUI.hasPreviousView();
   }
 }
-
-
-
-/**********************************************************************
- * $Log: PanelButtonBack.java,v $
- * Revision 1.3  2011/09/12 07:55:45  willuhn
- * @C BUGZILLA 811
- *
- * Revision 1.2  2011-04-26 12:01:42  willuhn
- * @D javadoc Fixes
- *
- * Revision 1.1  2011-04-06 16:13:16  willuhn
- * @N BUGZILLA 631
- *
- **********************************************************************/

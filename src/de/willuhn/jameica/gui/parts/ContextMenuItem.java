@@ -17,7 +17,6 @@ import org.eclipse.swt.graphics.Image;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Platform;
 import de.willuhn.logging.Logger;
 
 /**
@@ -170,9 +169,7 @@ public class ContextMenuItem
    */
   public void setShortcut(String shortcut)
   {
-    if (Application.getPlatform().getOS() == Platform.OS_MAC)
-      shortcut = shortcut.replace("ALT", "COMMAND");
-    this.shortcut = shortcut;
+    this.shortcut = Application.getPlatform().mapSWTShortcut(shortcut);
   }
 
 
@@ -196,20 +193,3 @@ public class ContextMenuItem
 		return true;
 	}
 }
-
-
-/**********************************************************************
- * $Log: ContextMenuItem.java,v $
- * Revision 1.4  2008/12/19 01:12:06  willuhn
- * @N Icons in Contextmenus
- *
- * Revision 1.3  2004/10/18 23:37:42  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/08/18 23:14:19  willuhn
- * @D Javadoc
- *
- * Revision 1.1  2004/07/20 21:47:44  willuhn
- * @N ContextMenu
- *
- **********************************************************************/

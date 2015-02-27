@@ -22,7 +22,6 @@ import org.eclipse.swt.graphics.Image;
 
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Platform;
 import de.willuhn.util.I18N;
 
 /**
@@ -53,8 +52,7 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
    */
   public String getShortcut() throws RemoteException
   {
-    final String shortcut = (String) getAttribute("shortcut");
-    return (shortcut==null || Application.getPlatform().getOS() != Platform.OS_MAC)?shortcut:shortcut.replace("ALT", "COMMAND");
+    return Application.getPlatform().mapSWTShortcut((String) getAttribute("shortcut"));
   }
 
   /**
