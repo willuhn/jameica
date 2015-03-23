@@ -214,6 +214,67 @@ public class Platform
   }
   
   /**
+   * Versucht, die Pfad- oder Datei-Angabe basierend auf dem Jameica-Benutzerverzeichnis zu relativieren.
+   * Falls es sich nicht um eine relative Pfadangabe innerhalb des Benutzerverzeichnisses handelt, wird
+   * der Pfad unveraendert zurueckgeliefert.
+   * @param path der Pfad oder die Datei.
+   * @return die relativierte Angabe oder der originale Pfad.
+   */
+  public String toRelative(String path)
+  {
+    try
+    {
+      String f    = new File(path).getCanonicalFile().getAbsolutePath();
+      String base = new File(Application.getConfig().getWorkDir()).getCanonicalFile().getAbsolutePath();
+      
+      if (f.startsWith(base))
+      {
+        String result = f.substring(base.length()+1).replace("\\","/"); // Die Slashes zum Egalisieren von Windows/Linux-Pfaden
+        Logger.info("to relative: " + path + " -> " + result);
+      }
+      
+      Logger.info("outside workdir: " + path);
+      return path;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to convert path to relative: " + path,e);
+      return path;
+    }
+  }
+  
+  /**
+   * Macht eine absolute Pfadangabe aus der Pfad- oder Datei basierend auf dem Jameica-Benutzerverzeichnis.
+   * Falls es sich bereits um eine absolute Pfadangabe handelt, wird der Pfad unveraendert zurueckgegeben.
+   * @param path er Pfad.
+   * @return die absolute Angabe oder der originale Pfad.
+   */
+  public String toAbsolute(String path)
+  {
+    try
+    {
+      // Nur, wenn es ein relativer Pfad ist
+      File f = new File(path);
+      if (!f.isAbsolute())
+      {
+        // OK, absoluten Pfad innerhalb des Work-Verzeichnisses machen
+        String base = new File(Application.getConfig().getWorkDir()).getCanonicalFile().getAbsolutePath();
+        String result = new File(base,path).getCanonicalFile().getAbsolutePath();
+        Logger.info("to absolute: " + path + " -> " + result);
+      }
+      
+      Logger.info("already absolute: " + path);
+      return path;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to convert path to absolute: " + path,e);
+      return path;
+    }
+  }
+
+  
+  /**
    * Mappt OS-spezifisch einzelne Keys auf andere.
    * In der Default-Implementierung wird hier 1:1 er Eingabewert zurueckgegeben.
    * In PlatformMacOS aber wird zBsp SWT.ALT gegen SWT.COMMAND ersetzt.

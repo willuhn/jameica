@@ -42,6 +42,7 @@ import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
@@ -296,13 +297,22 @@ public class ScriptingService implements Bootable
    */
   public List<File> getScripts()
   {
+    Platform platform = Application.getPlatform();
     String[] list = settings.getList("scripts",new String[0]);
     List<File> files = new ArrayList<File>();
     for (String s:list)
     {
       if (s == null || s.length() == 0)
         continue;
-      files.add(new File(s));
+      try
+      {
+        // Wir zeigen die Scripts mit absoluten Pfaden an - auch wenn sie nur relativ gespeichert sind
+        files.add(new File(platform.toAbsolute(s)));
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to determine canonical path of script " + s,e);
+      }
     }
     
     Collections.sort(files); // Sortiert sieht schoener aus
@@ -318,10 +328,13 @@ public class ScriptingService implements Bootable
    */
   public boolean contains(File file) throws IOException
   {
+    Platform platform = Application.getPlatform();
+    File test = new File(platform.toAbsolute(file.getAbsolutePath()));
+    
     List<File> existing = this.getScripts();
     for (File f:existing)
     {
-      if (f.getCanonicalPath().equals(file.getCanonicalPath()))
+      if (f.equals(test))
         return true;
     }
     
@@ -356,12 +369,13 @@ public class ScriptingService implements Bootable
     
     List<File> existing = getScripts();
     Logger.info("adding script " + file);
-    existing.add(file); // add to data
+    existing.add(file);
     
+    Platform platform = Application.getPlatform();
     List<String> list = new ArrayList<String>();
     for (File f:existing)
     {
-      list.add(f.getAbsolutePath()); // store
+      list.add(platform.toRelative(f.getAbsolutePath()));
     }
     settings.setAttribute("scripts",list.toArray(new String[list.size()]));
     

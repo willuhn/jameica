@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0031 Pfadangaben der Scripts als relative Pfade speichern, falls moeglich (besser portierbar bei Roaming-Workdir)
   * NEW: 0030 Noch zu Pull-Request #6 - BUGZILLA 1618 - da fehlten noch ein paar JARs fuer die neue JFace-Version im Classpath
   * NEW: 0029 Refactoring des CalendarDialogs, Option zum Wechsel auf heutiges Datum hinzugefügt
   * BUG: 0028 BUGZILLA 1613 - NPE beim Klicken auf [x] in der Kalenderauswahl statt auf "Abbrechen"
