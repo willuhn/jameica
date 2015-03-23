@@ -231,6 +231,7 @@ public class Platform
       {
         String result = f.substring(base.length()+1).replace("\\","/"); // Die Slashes zum Egalisieren von Windows/Linux-Pfaden
         Logger.info("to relative: " + path + " -> " + result);
+        return result;
       }
       
       Logger.info("outside workdir: " + path);
@@ -261,6 +262,7 @@ public class Platform
         String base = new File(Application.getConfig().getWorkDir()).getCanonicalFile().getAbsolutePath();
         String result = new File(base,path).getCanonicalFile().getAbsolutePath();
         Logger.info("to absolute: " + path + " -> " + result);
+        return result;
       }
       
       Logger.info("already absolute: " + path);
