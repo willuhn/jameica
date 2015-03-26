@@ -156,7 +156,11 @@ public class NotificationPanel implements Part
           
           label.setImage(type.icon != null ? SWTUtil.getImage(type.icon) : null);
           label.setForeground(type.fg.getSWTColor());
-          label.setText(text);
+          
+          // BUGZILLA 1623 - siehe auch
+          // http://help.eclipse.org/indigo/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Label.html
+          label.setText(text.replaceAll("&","&&"));
+          
           label.setBackground(type.bg.getSWTColor());
           comp.setBackground(type.fg.getSWTColor());
           lastUpdate = currentUpdate;
