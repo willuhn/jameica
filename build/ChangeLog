@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0033 BUGZILLA 1580 - neue SWT-Version 4.4.2, welche das OSX-Problem mit der unsichtbaren ersten Zeile lösen soll
+              (siehe auch https://bugs.eclipse.org/bugs/show_bug.cgi?id=446534)
   * NEW: 0032 BUGZILLA 1623 - Zeichen "&" in NotificationPanel escapen. Wird sonst als Unterstrich angezeigt
   * NEW: 0031 Pfadangaben der Scripts als relative Pfade speichern, falls moeglich (besser portierbar bei Roaming-Workdir)
   * NEW: 0030 Noch zu Pull-Request #6 - BUGZILLA 1618 - da fehlten noch ein paar JARs fuer die neue JFace-Version im Classpath
