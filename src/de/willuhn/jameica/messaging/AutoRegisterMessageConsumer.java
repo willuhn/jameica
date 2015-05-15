@@ -31,8 +31,6 @@ import de.willuhn.logging.Logger;
  */
 public class AutoRegisterMessageConsumer implements MessageConsumer
 {
-  private static boolean done = false;
-  
   /**
    * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
    */
@@ -46,9 +44,6 @@ public class AutoRegisterMessageConsumer implements MessageConsumer
    */
   public void handleMessage(Message message) throws Exception
   {
-    if (done)
-      return;
-    
     // Machen wir nur, wenn die "System-gestartet"-Meldung kommt.
     SystemMessage msg = (SystemMessage) message;
     if (msg.getStatusCode() != SystemMessage.SYSTEM_STARTED)
