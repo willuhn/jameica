@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -104,6 +105,11 @@ public class DecimalInput extends TextInput
 
 				// Wir lassen nur 0-9, Komma und Minus zu
         for (int i=0; i<chars.length; i++) {
+          
+          // BUGZILLA 1636 Whitespaces erstmal tolerieren, werden anschliessend wieder entfernt
+          if (Character.isWhitespace(chars[i]))
+            continue;
+          
           if ((chars[i] < '0' || chars[i] > '9') && chars[i] != '-' && chars[i] != komma && chars[i] != group)
           {
             e.doit = false;
@@ -156,6 +162,8 @@ public class DecimalInput extends TextInput
     if (s == null || s.length() == 0)
       return null;
     
+    s = StringUtils.deleteWhitespace(s);
+    
     try {
       // Der folgende Code soll verhindern, dass z.Bsp. "160.44" als "16.044,00"
       // geparst wird, wenn die Anzeige von Tausenderpunkten aktiviert ist.
@@ -182,8 +190,7 @@ public class DecimalInput extends TextInput
     }
     catch (Exception e)
     {
-      // ignore
-      e.printStackTrace();
+      Logger.error("unable to parse text as decimal number: " + s,e);
     }
     return null;
   }
@@ -202,7 +209,7 @@ public class DecimalInput extends TextInput
     {
       try
       {
-        this.value = this.format.parse((String)value);
+        this.value = this.format.parse(StringUtils.deleteWhitespace((String)value));
       }
       catch (Exception e)
       {
@@ -226,25 +233,9 @@ public class DecimalInput extends TextInput
     
     this.text.setText(""); // Strange. Mache ich das nicht vorher, meckert oben der Komma-Checker
     if (this.value != null)
+    {
       this.text.setText(format.format(this.value));
+    }
     this.text.redraw();
   }
 }
-
-/*********************************************************************
- * $Log: DecimalInput.java,v $
- * Revision 1.27  2011/04/08 17:35:26  willuhn
- * @B BUGZILLA 1014
- *
- * Revision 1.26  2011-04-07 17:56:14  willuhn
- * *** empty log message ***
- *
- * Revision 1.25  2011-04-07 17:52:09  willuhn
- * @N BUGZILLA 1014
- *
- * Revision 1.24  2011-03-22 09:28:50  willuhn
- * @B "100.00" konnte als "10.000,00" geparst werden, wenn die Anzeige von Tausender-Punkten aktiviert war
- *
- * Revision 1.23  2010-10-07 23:40:55  willuhn
- * @B setValue(null) ueberschrieb den Wert nicht
- **********************************************************************/
