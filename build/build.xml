@@ -195,7 +195,7 @@
       <zipfileset dir="${project.release}" filemode="755">
         <include name="${define.projectname}/jameica.sh" />
         <include name="${define.projectname}/jameicaserver.sh" />
-        <include name="${define.projectname}/rcjameica" />
+        <include name="${define.projectname}/rcjameica*" />
       </zipfileset>
     </zip>
 
@@ -222,7 +222,7 @@
       <zipfileset dir="${project.release}" filemode="755">
         <include name="${define.projectname}/jameica.sh" />
         <include name="${define.projectname}/jameicaserver.sh" />
-        <include name="${define.projectname}/rcjameica" />
+        <include name="${define.projectname}/rcjameica*" />
       </zipfileset>
     </zip>
 
@@ -380,7 +380,7 @@
       </zipfileset>
       <zipfileset dir="${project.release}" filemode="755">
         <include name="${define.projectname}/*.sh" />
-        <include name="${define.projectname}/rcjameica" />
+        <include name="${define.projectname}/rcjameica*" />
       </zipfileset>
     </zip>
 
