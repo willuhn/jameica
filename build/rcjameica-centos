@@ -1,0 +1,401 @@
+#!/bin/bash
+#
+# chkconfig : 35 70 30
+
+
+#
+# Name         : Jameica Server Daemon
+#
+# Version      : 1.0 (06.2015)
+#
+# 
+#
+# Prozess      : jameicad
+#
+# Beschreibung : Starten, beenden, neustarten und Statusabfrage für Jameica Server Daemon
+#              
+#                Der Jameica Server Daemon verwaltet die Jameica-Plattform von Olaf Willhun
+#                (https://www.willuhn.de/products/jameica/), eine freie Laufzeit-Umgebung
+#                für Java-Anwendungen, die in Form von Plugins implementiert werden können,
+#                als Server-Dienst im Hintergrund.
+#
+#                Das Jameica Server Daemon Script wurde für das Betriebssystem CentOS 6.x
+#                entwickelt und optimiert, und dient hier in erster Linie dem Betrieb eines
+#                dedizierten Hibiscus HBCI Payment Servers als Plugin der Jameica-Plattform.
+#
+# Autor        : Christian B. Caldarone
+#
+
+
+# ------------------------------------------------------
+# Einbindung und Definition von Funktionen und Variablen
+# ------------------------------------------------------
+
+ 
+# Einbindung der Funktionsbibliothek für das Init-System
+
+. /etc/rc.d/init.d/functions
+
+
+# Benutzer-Account unter welchem der Jameica Server ausgeführt wird.
+# Hier sollte ein unprivilegierter Benutzer verwendet werden und
+# keinesfalls 'root'.
+
+DAEMON_USER="jameica"
+
+
+# Vollständiger Pfad zum Shell Start-Script für den Jameica-Server
+
+JAMEICA_CMD="/opt/jameica/jameicaserver.sh"
+
+
+# Zeichenkette um den Jameica Server in der Liste laufender Prozesse identifizieren zu können,
+# verwendet für die Ermittlung der Process ID (PID) 
+
+JAMEICA="jameica-linux.jar"
+
+
+# Freundlicher Name, wird für Ausgabe-Meldungen dieses Scripts verwendet und hat rein beschreibenden Charakter 
+
+FRIENDLY_NAME="Jameica-Server"
+
+
+# Diese Zeichenfolge muss genau so lauten, wie der Dateiname dieses Scripts, wird verwendet um den Koventionen
+# des Init-Subsystems zu entsprechen 
+
+proc="jameicad"
+
+
+# Variable 'retval' dient zum Zwischenspreichern von Rückgabewerten ausgeführter Kommandozeilen-Befehle
+
+retval=0
+
+
+# Variable 'verbosity' steuert die Ausgabe dieses Scripts: 0 = keine Ausgabe, 1 = alles Ausgeben, kann auch
+# zusätzlich über den Parameter '-v' oder '--verbose' temporär beim Aufruf mit angegeben werden
+
+verbose=0
+
+
+# Vollständiger Pfad zum Lock-File und zum PID-File, verwendet vom Init-Subsystem
+
+lockfile="/var/lock/subsys/$proc"
+pidfile="/var/run/$proc.pid"
+
+
+# Ermitteln, ob der Jameica-Server bereits läuft und ggf. PID in Variable speichern
+
+JAMEICA_PID="$(pgrep -u $DAEMON_USER -f $JAMEICA 2>/dev/null)"
+
+#echo $JAMEICA_PID
+
+
+# ----------------------------------------------------
+# Unterprocramm für den Aufruf des Scripts mit "start"
+# ----------------------------------------------------
+
+start() { 
+  # Prüfen ob das Shell Start-Script für den Jameica-Server existiert und ausführbar ist, wenn nicht, direkt mit Fehler zurück
+
+  if [ ! -x $JAMEICA_CMD ]; then
+
+    verbosity "Datei '$JAMEICA_CMD' existiert nicht oder ist nicht ausführbar. Abbruch.\n"
+    return 1
+
+  fi
+
+  
+  # Nun prüfen ob Jameica schon ein PID hat, d.h. schon läuft
+
+  if [ "$JAMEICA_PID" == ""  ]; then # Der Jameica Server läuft noch nicht, also starten ...
+    
+    # Der Jameica Server wird als Daemon-Prozess im Hintergrund unter dem Benutzer aus '$DAEMON_USER' gestartet
+
+    verbosity "$FRIENDLY_NAME wird nun unter Benutzer '$DAEMON_USER' gestartet\n"
+
+    daemon --user $DAEMON_USER $JAMEICA_CMD >/dev/null 2>&1 &
+
+    # Rückgabewert des Starts des Daemon-Prozesses zwischenspeichern 
+
+    retval=$?
+    
+    # Maximale Wartezeit in Sekunden für den vollständigen Start des Jameica Servers festlegen 
+
+    waittime=30
+
+    # Anfangszähler auf Null setzen
+
+        count=0
+
+    # Warte nun bis der Jameica Server gestartet ist, oder die maximale Wartezeit erreicht ist
+
+    verbosity "Warten bis $FRIENDLY_NAME gestartet wurde...\n"
+
+    until [ ! "$JAMEICA_PID" == "" ] || [ $count -gt $waittime ]
+    
+    do
+
+      # Im Abstand einer Sekunde prüfen, ob der Jameica Server Prozess gestartet ist,
+      # d.h. ob der Prozess eine PID zurückgibt
+
+            JAMEICA_PID="$(pgrep -u $DAEMON_USER -f $JAMEICA 2>/dev/null)"
+      sleep 1
+            let count=$count+1
+
+        done
+ 
+    # Konnte der Prozess nicht erfolgreich innerhalb der max. Wartezeit gestartet werden,
+    # dann direkt mit Time-out Fehler beenden
+
+        if [ $count -gt $waittime ]; then
+
+      verbosity "Time out!\n"
+      verbosity "Der Prozess $FRIENDLY_NAME konnte nicht innerhalb von "$count"s gestartet werden\n"
+      return 1
+
+    fi
+            
+
+    # Wurde der Prozess erfolgreich gestartet, dann Lock-File und PID-File schreiben
+    
+    if [ $retval -eq 0 ]; then
+
+      touch $lockfile
+      verbosity "Erstellt: $lockfile\n"
+      echo "$(pgrep -u $DAEMON_USER -f $JAMEICA)" > $pidfile
+      verbosity "Erstellt: $pidfile\n"
+      verbosity "$FRIENDLY_NAME wurde innerhalb von "$count"s erfolgreich gestartet\n"
+      
+    fi
+
+  
+
+  else # Für den Fall, dass oben festgestellt wurde, dass Jameica schon ein PID hat, d.h. schon läuft
+
+    # ...ausgeben, mit welcher PID der Jameica Server läuft
+
+    verbosity "$FRIENDLY_NAME$(status -p $pidfile)\n"
+        
+
+  fi
+    
+  # Unterprogramm mit Rückgabewert beenden
+
+      return $retval
+}
+
+
+
+# ---------------------------------------------------
+# Unterprogramm für den Aufruf des Scripts mit "stop"
+# ---------------------------------------------------
+
+stop() {
+
+  # Prüfen anhand der PID, ob der Jameica Server überhaupt läuft
+
+  if [ "$JAMEICA_PID" == ""  ]; then # ...wenn nicht, direkt zurück, da er bereits gestoppt ist 
+      
+    verbosity "$FRIENDLY_NAME ist bereits beendet\n"
+    return 0
+
+  else # wenn doch, dann den Prozess beenden
+
+    
+    # Mit killproc über PID-File als präferierte Methode beenden
+
+    killproc -p $pidfile >/dev/null 2>&1
+    
+    retval=$?
+    
+    verbosity "$FRIENDLY_NAME wird nun beendet\n"
+
+    # Maximale Wartezeit in Sekunden für das vollständige Beenden des Jameica Servers festlegen
+
+    waittime=30
+
+    # Anfangszähler auf Null setzen
+
+        count=0
+
+    # Warte nun bis der Jameica Server beendet ist, oder die maximale Wartezeit erreicht ist 
+
+    verbosity "Warten bis $FRIENDLY_NAME beendet ist...\n"
+
+    until [ "$JAMEICA_PID" == "" ] || [ $count -gt $waittime ]
+    
+    do
+
+      # Im Abstand einer Sekunde prüfen, ob der Jameica Server Prozess noch läuft,
+      # d.h. ob der Prozess immer noch eine PID zurückgibt
+
+            JAMEICA_PID="$(pgrep -u $DAEMON_USER -f $JAMEICA 2>/dev/null)"
+      sleep 1
+            let count=$count+1;
+
+        done
+
+    # Konnte der Prozess nicht erfolgreich innerhalb der max. Wartezeit beendet werden,
+    # dann direkt mit Time-Out Fehler beenden
+ 
+        if [ $count -gt $waittime ]; then
+
+      retval=1
+      verbosity "Time out!\n"
+      verbosity "$FRIENDLY_NAME konnte nicht innerhalb von "$count"s beendet werden\n"
+      return 1
+
+    fi
+    
+    # Wurde der Prozess erfolgreich beendet, dann Lock-File und PID-File löschen
+
+    if [ $retval -eq 0 ]; then
+
+      rm -f $lockfile
+      verbosity "Gelöscht: $lockfile\n"
+      rm -f $pidfile
+      verbosity "Gelöscht: $pidfile\n"
+      verbosity "$FRIENDLY_NAME wurde innerhalb von "$count"s beendet\n"
+      
+    fi
+  
+    
+      fi
+
+  # Unterprogramm mit Rückgabewert beenden
+    
+      return $retval
+}
+
+
+# ------------------------------------------------------
+# Unterprogramm für den Aufruf des Scripts mit "restart"
+# ------------------------------------------------------
+
+restart() {
+
+    
+    stop
+    start
+
+}
+
+
+# -----------------------------------------------------
+# Unterprogramm für den Aufruf des Scripts mit "status"
+# -----------------------------------------------------
+
+get_status() {
+
+    verbosity "Prozessname   : $proc\n"
+    verbosity "Anzeigename   : $FRIENDLY_NAME\n"
+    verbosity "Benutzer      : $DAEMON_USER\n"
+    verbosity "Hauptprogramm : $JAMEICA_CMD\n"
+    
+    [ ! -e $lockfile ] || verbosity "Lockfile      : $lockfile\n"
+
+    [ ! -e $pidfile ] || verbosity "Pidfile       : $pidfile\n"
+    
+    verbosity "Status        : "
+
+    echo "$FRIENDLY_NAME" $(status -p $pidfile)
+    
+}
+
+
+# ------------------------------------------------------
+# Unterprogramm für die Ausgabe wenn "verbose" aktiviert
+# ------------------------------------------------------
+
+verbosity() {
+
+if [ $verbose -gt 0 ]; then
+
+  echo -ne "[$proc] $*"
+
+fi
+
+
+}
+
+
+# ----------------------------------------------------
+# Unterprogramm zur Überprüfung Existenz "DAEMON_USER"
+# ----------------------------------------------------
+
+check_user() {
+
+    DAEMON_USER_UID=$(id -u $DAEMON_USER 2>/dev/null)
+
+    [ $DAEMON_USER_UID ] || { verbosity "Benutzer '$DAEMON_USER' existiert nicht. Abbruch.\n" ; exit 1 ; }
+
+}
+
+
+# ---------------------------------------------------------------
+# Auswertung und Verzweigung bzw. Aufruf der entsprechenen Unter-
+# Programme nach den an dieses Script übergebenen Parametern
+#
+# Aktuell: start, stop, restart, status, bzw. zusätzlich mit -v
+# ---------------------------------------------------------------
+
+case "$2" in
+
+    -v|--verbose)
+      verbose=1
+      verbosity "Ausgabe aller Meldungen mit '-v' oder '--verbose' aktiviert.\n"
+    ;;
+
+esac
+
+case "$1" in
+    
+    start)
+      check_user
+      $1
+      retval=$?
+    ;;
+
+    stop)
+      check_user
+      $1
+      retval=$?
+    ;;
+    
+    restart)
+      check_user
+      $1
+      retval=$?
+    ;;
+    status)
+      check_user
+      get_status
+      exit 0
+    ;;
+
+    *)
+            echo $"Usage: $0 {start|stop|status|restart}"
+            exit 2
+
+esac
+
+
+# Ende des Init-Scripts mit Ausgabe [  OK  ] oder [FAILED] anhand Rückgabewert von 'retval'
+
+if [ "$retval" = "0" ] || [ "$retval" = "" ]; then
+
+  success
+  echo
+  exit 0
+
+else
+
+  failure
+  echo
+  exit 1
+
+fi
+
+
+exit
+
