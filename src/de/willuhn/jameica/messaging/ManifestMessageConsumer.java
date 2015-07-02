@@ -14,6 +14,8 @@ package de.willuhn.jameica.messaging;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.willuhn.jameica.plugin.ConsumerDescriptor;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.MessageDescriptor;
@@ -84,11 +86,6 @@ public class ManifestMessageConsumer implements MessageConsumer
           Logger.warn("skipping consumer declaration in manifest from " + mf.getName() + ", contains no class name");
           continue;
         }
-        if (queue == null || queue.length() == 0)
-        {
-          Logger.warn("skipping messageconsumer " + classname + " in manifest from " + mf.getName() + ", contains no queue name");
-          continue;
-        }
         
         try
         {
@@ -112,8 +109,16 @@ public class ManifestMessageConsumer implements MessageConsumer
           if (mc.autoRegister())
             continue;
           
-          Logger.debug("  " + queue + ": " + classname);
-          factory.getMessagingQueue(queue).registerMessageConsumer(mc);
+          if (StringUtils.trimToNull(queue) != null)
+          {
+            Logger.debug("  " + queue + ": " + classname);
+            factory.getMessagingQueue(queue).registerMessageConsumer(mc);
+          }
+          else
+          {
+            Logger.debug("  <default-queue>: " + classname);
+            factory.registerMessageConsumer(mc);
+          }
           count++;
         }
         catch (Throwable t)
