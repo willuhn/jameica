@@ -19,6 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -266,6 +268,19 @@ public class DateInput implements Input
   {
     this.input.setMandatory(this.isMandatory());
     this.input.paint(parent);
+    
+    this.input.getControl().addFocusListener(new FocusAdapter() {
+      /**
+       * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
+       */
+      @Override
+      public void focusLost(FocusEvent e)
+      {
+        //Automatische Formatierung bei Focus-Lost des Eingabefeldes
+        getValue();
+      }
+    });
+
   }
 
   /**
