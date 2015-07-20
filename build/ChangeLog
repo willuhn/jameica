@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0036 System-Property "javax.net.debug" im Loglevel TRACE nur dann setzen, wenn nicht bereits gesetzt
   * NEW: 0035 Message-Consumer per Manifest auch in Default-Queue registrierbar.
   * NEW: 0034 BUGZILLA 1636 - Whitespaces beim Einfügen in Dezimalzahlen erlauben aber automatisch entfernen
   * NEW: 0033 BUGZILLA 1580 - neue SWT-Version 4.4.2, welche das OSX-Problem mit der unsichtbaren ersten Zeile lösen soll
