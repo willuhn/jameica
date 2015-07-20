@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * DEL: 0037 Automatisches Setzen des System-Property "javax.net.debug" komplett entfernt 
   * NEW: 0036 System-Property "javax.net.debug" im Loglevel TRACE nur dann setzen, wenn nicht bereits gesetzt
   * NEW: 0035 Message-Consumer per Manifest auch in Default-Queue registrierbar.
   * NEW: 0034 BUGZILLA 1636 - Whitespaces beim Einfügen in Dezimalzahlen erlauben aber automatisch entfernen

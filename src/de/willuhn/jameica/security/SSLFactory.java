@@ -138,11 +138,6 @@ public class SSLFactory
 		Logger.info("init ssl factory");
     Application.getCallback().getStartupMonitor().setStatusText("init ssl factory");
 
-    // Property nur setzen, wenn es nicht bereits von aussen gesetzt wurde.
-    boolean set = System.getProperties().containsKey("javax.net.debug");
-    if (Logger.getLevel().getValue() == Level.TRACE.getValue() && !set)
-      System.setProperty("javax.net.debug","ssl handshake");
-
 		File keyStoreFile = getKeyStoreFile();
 
 		if (keyStoreFile.exists() && keyStoreFile.canRead() && keyStoreFile.length() > 0)
