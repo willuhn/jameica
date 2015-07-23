@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0038 Englisches Sprach-Bundle von Christian
   * DEL: 0037 Automatisches Setzen des System-Property "javax.net.debug" komplett entfernt 
   * NEW: 0036 System-Property "javax.net.debug" im Loglevel TRACE nur dann setzen, wenn nicht bereits gesetzt
   * NEW: 0035 Message-Consumer per Manifest auch in Default-Queue registrierbar.
