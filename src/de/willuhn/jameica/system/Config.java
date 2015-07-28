@@ -353,30 +353,26 @@ public final class Config
       return locale;
 
     try {
-      Locale l = Locale.GERMANY;
-      String lang = settings.getString("jameica.system.locale",l.getLanguage() + "_" + l.getCountry());
-      String country = "";
-      if (lang.indexOf("_") != -1)
+      
+      // Wenn ein Locale konfiguriert ist, nehmen wir das - insofern ex existiert
+      Locale l = findLocale(settings.getString("jameica.system.locale",null));
+      if (l == null)
+        l = Locale.getDefault();
+      
+      try
       {
-        int minus = lang.indexOf("_");
-        country   = lang.substring(minus+1);
-        lang      = lang.substring(0,minus);
+        Logger.info("checking resource bundle for language");
+        ResourceBundle.getBundle("lang/system_messages",l);
+      }
+      catch (Exception e)
+      {
+        Logger.warn("no resource bundle found for locale " + l);
+        l = Locale.GERMANY;
+        Logger.warn("fallback to system locale " + l);
       }
       
-      Logger.info("configured language: " + lang);
-      if (country.length() > 0)
-        Logger.info("configured country: " + country);
-
-      // Wir testen die Existenz der Bundles
-      if (country != null && country.length() > 0)
-        l = new Locale(lang,country);
-      else
-        l = new Locale(lang);
-
-      Logger.info("checking resource bundle for language");
-      ResourceBundle.getBundle("lang/system_messages",l);
       this.locale = l;
-      Logger.info("active language: " + this.locale.getDisplayName());
+      Logger.info("active language: " + this.locale);
       Locale.setDefault(this.locale);
       return this.locale;
     }
@@ -385,7 +381,37 @@ public final class Config
       Logger.info("not found. fallback to system default");
     }
     return Locale.getDefault();
+  }
+  
+  /**
+   * Versucht das Locale zum angegebenen Text zu ermitteln.
+   * @param s der Text.
+   * @return das Locale oder NULL, wenn es nicht existiert.
+   */
+  private static Locale findLocale(String s)
+  {
+    s = StringUtils.trimToNull(s);
+    
+    if (s == null)
+      return null;
 
+    Logger.info("configured language: " + s);
+
+    int minus = s.indexOf("_");
+    if (minus != -1)
+    {
+      String country = s.substring(minus+1);
+      s = s.substring(0,minus);
+
+      // Wir testen die Existenz der Bundles
+      if (country != null && country.length() > 0)
+      {
+        Logger.info("configured country: " + country);
+        return new Locale(s,country);
+      }
+    }
+
+    return new Locale(s);
   }
 
 	/**
