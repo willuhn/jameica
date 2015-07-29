@@ -169,6 +169,19 @@ public abstract class AbstractDialog<T>
   {
     return false;
   }
+  
+  /**
+   * Erzeugt die Shell des Dialogs.
+   * Kann von abgeleiteten Klassen ueberschrieben werden.
+   * Tu das aber bitte nur, wenn du genau weisst, was du tust.
+   * @param parent die Parent-Shell.
+   * @param flags die Flags.
+   * @return die Shell. 
+   */
+  protected Shell createShell(Shell parent, int flags)
+  {
+    return new Shell(parent,flags);
+  }
 
   /**
    * Initialisiert alle Elemente.
@@ -204,7 +217,7 @@ public abstract class AbstractDialog<T>
         if (resizable)
           flags |= SWT.RESIZE;
 
-        shell = new Shell(rootShell,flags);
+        shell = createShell(rootShell,flags);
         shell.setLayout(SWTUtil.createGrid(1,false));
         shell.addListener(SWT.Traverse, new Listener() {
           public void handleEvent(Event e) {
