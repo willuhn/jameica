@@ -123,7 +123,7 @@ public class SSLRMISocketFactory extends RMISocketFactory
    */
   private void log(Object socket) throws IOException
 	{
-    if (Logger.getLevel().getValue() > Level.DEBUG.getValue())
+    if (!Logger.isLogging(Level.DEBUG))
       return;
 
     String[] protos;
