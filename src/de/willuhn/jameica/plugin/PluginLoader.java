@@ -153,13 +153,13 @@ public final class PluginLoader
             }
             else if (compare < 0)
             {
-              Logger.warn(first.getPluginDir() + " (" + first.getVersion() + ") is newer than " + m.getPluginDir() + " (" + m.getVersion() + "), ignoring the older one");
-              toDelete = m.getPluginDir();
+              Logger.warn(m.getPluginDir() + " (" + m.getVersion() + ") is newer than " + first.getPluginDir() + " (" + first.getVersion() + "), ignoring the older one");
+              toDelete = first.getPluginDir();
             }
             else
             {
-              Logger.warn(m.getPluginDir() + " (" + m.getVersion() + ") is newer than " + first.getPluginDir() + " (" + first.getVersion() + "), ignoring the older one");
-              toDelete = first.getPluginDir();
+              Logger.warn(first.getPluginDir() + " (" + first.getVersion() + ") is newer than " + m.getPluginDir() + " (" + m.getVersion() + "), ignoring the older one");
+              toDelete = m.getPluginDir();
               
               // wir ueberschreiben "first"
               cache.put(m.getName(),m);
