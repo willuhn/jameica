@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0042 Aktualisiertes englisches Sprach-Bundle von Christian
   * NEW: 0041 Aktualisiertes englisches Sprach-Bundle von Christian und aktualisiertes Init-Script fuer CentOS
   * NEW: 0040 Support fuer Custom-Shell in AbstractDialog
   * NEW: 0039 Aktualisiertes englisches Sprach-Bundle von Christian, Jameica so umgebaut, dass das englische Sprachbundle
