@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0043 Option "Diese Frage künftig nicht mehr anzeigen" konfigurierbar.
   * NEW: 0042 Aktualisiertes englisches Sprach-Bundle von Christian
   * NEW: 0041 Aktualisiertes englisches Sprach-Bundle von Christian und aktualisiertes Init-Script fuer CentOS
   * NEW: 0040 Support fuer Custom-Shell in AbstractDialog

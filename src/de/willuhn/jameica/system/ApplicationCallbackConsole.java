@@ -536,16 +536,35 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
    */
   public boolean askUser(String question, String[] variables) throws Exception
   {
+    return askUser(question,variables,true);
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, boolean)
+   */
+  public boolean askUser(final String question, boolean storeAnswer) throws Exception
+  {
+    return askUser(question,(String[])null, storeAnswer);
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String[], boolean)
+   */
+  public boolean askUser(final String question, String[] variables, boolean storeAnswer) throws Exception
+  {
     if (question == null)
     {
       Logger.warn("<null> question!");
       return false;
     }
     
-    // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
-    String s = settings.getString(question,null);
-    if (s != null)
-      return s.equalsIgnoreCase("true");
+    if (storeAnswer)
+    {
+      // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
+      String s = settings.getString(question,null);
+      if (s != null)
+        return s.equalsIgnoreCase("true");
+    }
     
     // Wir versuchens uebers Messaging
     QueryMessage msg = new QueryMessage(question,null);
@@ -581,8 +600,11 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     }
     finally
     {
-      // Wir speichern die Antwort auf diese Frage, damit sie nicht immer wieder gestellt wird
-      settings.setAttribute(question,answer);
+      if (storeAnswer)
+      {
+        // Wir speichern die Antwort auf diese Frage, damit sie nicht immer wieder gestellt wird
+        settings.setAttribute(question,answer);
+      }
     }
     return answer;
   }

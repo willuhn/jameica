@@ -269,19 +269,35 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     d.setText(question);
     return (String) d.open();
   }
-
+  
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String)
    */
-  public boolean askUser(final String question) throws Exception
+  public boolean askUser(String question) throws Exception
   {
-    return askUser(question,(String[])null); 
+    return askUser(question,(String[])null);
   }
 
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String[])
    */
-  public boolean askUser(final String question, String[] variables) throws Exception
+  public boolean askUser(String question, String[] variables) throws Exception
+  {
+    return askUser(question,variables,true);
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, boolean)
+   */
+  public boolean askUser(final String question, boolean storeAnswer) throws Exception
+  {
+    return askUser(question,(String[])null, storeAnswer);
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String[], boolean)
+   */
+  public boolean askUser(final String question, String[] variables, final boolean storeAnswer) throws Exception
   {
     if (question == null)
     {
@@ -290,9 +306,12 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     }
 
     // Wir schauen mal, ob wir fuer diese Frage schon eine Antwort haben
-    String s = settings.getString(question,null);
-    if (s != null)
-      return s.equalsIgnoreCase("true");
+    if (storeAnswer)
+    {
+      String s = settings.getString(question,null);
+      if (s != null)
+        return s.equalsIgnoreCase("true");
+    }
     
     final String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,(Object[])variables);
 
@@ -313,12 +332,14 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
         else
           g.addText(text,true);
         
-        g.addCheckbox(check,Application.getI18n().tr("Diese Frage künftig nicht mehr anzeigen"));
+        if (storeAnswer)
+          g.addCheckbox(check,Application.getI18n().tr("Diese Frage künftig nicht mehr anzeigen"));
+        
         ButtonArea buttons = g.createButtonArea(2);
         buttons.addButton("   " + i18n.tr("Ja") + "   ", new Action() {
           public void handleAction(Object context) throws ApplicationException
           {
-            if (((Boolean)check.getValue()).booleanValue())
+            if (storeAnswer && ((Boolean)check.getValue()).booleanValue())
               settings.setAttribute(question,true);
             choice = Boolean.TRUE;
             close();
@@ -327,14 +348,14 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
         buttons.addButton("   " + i18n.tr("Nein") + "   ", new Action() {
           public void handleAction(Object context) throws ApplicationException
           {
-            if (((Boolean)check.getValue()).booleanValue())
+            if (storeAnswer && ((Boolean)check.getValue()).booleanValue())
               settings.setAttribute(question,false);
             choice = Boolean.FALSE;
             close();
           }
         },null,false,"process-stop.png");
         getShell().setSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
-        getShell().setMinimumSize(300,getShell().getSize().y);
+        getShell().setMinimumSize(350,getShell().getSize().y);
       }
     };
     d.setTitle(Application.getI18n().tr("Frage"));
@@ -484,56 +505,3 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     return (Login) d.open();
   }
 }
-
-
-/**********************************************************************
- * $Log: ApplicationCallbackSWT.java,v $
- * Revision 1.39  2012/05/10 13:47:14  willuhn
- * @B Master-Passwort nicht trimmen - ermoeglicht sonst keine Passwoerter mit Leerzeichen am Anfang oder Ende oder ein Leerzeichen als Passwort (siehe Mail von Kornelius vom 08.05.2012)
- *
- * Revision 1.38  2011/09/27 12:01:15  willuhn
- * @N Speicherung der Checksumme des Masterpasswortes nicht mehr noetig - jetzt wird schlicht geprueft, ob sich der Keystore mit dem eingegebenen Passwort oeffnen laesst
- *
- * Revision 1.37  2011-07-01 12:03:56  willuhn
- * @N so, ich hoffe, jetzt hat der Dialog immer eine brauchbare Groesse ;)
- *
- * Revision 1.36  2011-06-30 15:53:32  willuhn
- * @C tiny gui improvements
- *
- * Revision 1.35  2011-05-31 16:39:05  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
- *
- * Revision 1.34  2011-04-29 17:02:39  willuhn
- * @N GUI-Polish
- *
- * Revision 1.33  2011-04-27 10:27:10  willuhn
- * @N Migration der Passwort-Checksumme auf SHA-256/1000 Runden/Salt
- *
- * Revision 1.32  2011-02-23 15:08:38  willuhn
- * @C Text im Dialog "Master-Passwort" aendern customizable
- *
- * Revision 1.31  2010-11-22 11:32:04  willuhn
- * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
- *
- * Revision 1.30  2010-10-11 15:26:43  willuhn
- * @N Shutdown-Screen customizable
- *
- * Revision 1.29  2010-09-29 16:03:33  willuhn
- * *** empty log message ***
- *
- * Revision 1.28  2010-09-28 22:38:32  willuhn
- * @N Schreibzugriff auf Programmverzeichnis via Customizing aktivierbar
- * @C Master-Passwort-Abfrage allgemeiner formuliert
- *
- * Revision 1.27  2010-08-16 10:44:21  willuhn
- * @N Application-Callback hat jetzt auch eine Callback-Funktion zur Abfrage eines beliebigen Passwortes
- *
- * Revision 1.26  2010/04/13 10:42:16  willuhn
- * @
- *
- * Revision 1.25  2010/03/04 23:08:30  willuhn
- * @N Sauberes Programm-Ende, wenn der User den Startvorgang selbst abgebrochen hat
- *
- * Revision 1.24  2010/03/04 22:59:29  willuhn
- * @R redundantes try/catch
- **********************************************************************/
