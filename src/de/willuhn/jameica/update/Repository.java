@@ -203,7 +203,7 @@ public class Repository
           {
             String q = i18n.tr("Plugin wurde vom Herausgeber nicht signiert.\n" +
             		               "Möchten Sie es dennoch installieren?");
-            if (!Application.getCallback().askUser(q))
+            if (!Application.getCallback().askUser(q,false))
               throw new OperationCanceledException(i18n.tr("Vorgang abgebrochen"));
           }
           //////////////////////////////////////////////////////////////////////

@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0044 Abfrage "Plugin wurde vom Herausgeber nicht signiert." nicht mehr speicherbar (siehe Change 0043)
   * NEW: 0043 Option "Diese Frage künftig nicht mehr anzeigen" konfigurierbar.
   * NEW: 0042 Aktualisiertes englisches Sprach-Bundle von Christian
   * NEW: 0041 Aktualisiertes englisches Sprach-Bundle von Christian und aktualisiertes Init-Script fuer CentOS
