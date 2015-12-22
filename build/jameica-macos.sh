@@ -12,6 +12,11 @@ if [ ! -x $JAVACMD ] && [ -x /usr/libexec/java_home ] && /usr/libexec/java_home 
 	JAVACMD="`/usr/libexec/java_home 2> /dev/null`/bin/java"
 fi
 
+# try Oracle JRE (which now only is installed as internet plugin)
+if [ ! -x $JAVACMD ]; then
+	JAVACMD="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java"
+fi
+
 # Siehe Mail von Volker vom 31.12.2014
 if [ ! -x "$JAVACMD" ]; then
   JAVACMD="/System/Library/Frameworks/JavaVM.framework/Versions/Current/Commands/java"
@@ -20,11 +25,6 @@ fi
 # try old Apple Java
 if [ ! -x $JAVACMD ] && [ -h /Library/Java/Home ]; then
 	JAVACMD="/Library/Java/Home/bin/java"
-fi
-
-# try Oracle JRE (which now only is installed as internet plugin)
-if [ ! -x $JAVACMD ]; then
-	JAVACMD="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java"
 fi
 
 # last resort - does not really help on mac as java in $PATH is a wrapper
