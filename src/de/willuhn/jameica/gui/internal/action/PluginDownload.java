@@ -49,7 +49,7 @@ public class PluginDownload implements Action
         return;
       }
       
-      if (!Application.getCallback().askUser(i18n.tr("Sind Sie sicher, daß Sie das Plugin\nherunterladen und installieren möchten?")))
+      if (!Application.getCallback().askUser(i18n.tr("Sind Sie sicher, daß Sie das Plugin\nherunterladen und installieren möchten?"),false))
         return;
     }
     catch (OperationCanceledException oce)

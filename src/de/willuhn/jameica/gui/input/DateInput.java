@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -153,8 +154,13 @@ public class DateInput implements Input
       Date d = this.format.parse(text);
       
       // Bei der Gelegenheit schreiben wir auch gleich nochmal
-      // das Datum schoen formatiert rein
-      this.input.setText(this.format.format(d));
+      // das Datum schoen formatiert rein. Aber nur, wenn sich der
+      // Wert geaendert hat. Sonst springt der Cursor unnoetig
+      // an den Anfang des Eingabefeldes. Siehe BUGZILLA 1672
+      String newText = this.format.format(d);
+      if (!StringUtils.equals(text, newText))
+        this.input.setText(newText);
+      
       return d;
     }
     catch (ParseException e)

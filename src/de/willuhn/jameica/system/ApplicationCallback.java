@@ -171,6 +171,33 @@ public interface ApplicationCallback
   public boolean askUser(String question, String[] variables) throws Exception;
 
   /**
+   * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
+   * @param question Die anzuzeigende Frage.
+   * @param storeAnswer true, wenn die Option "Diese Frage künftig nicht mehr anzeigen" angezeigt werden soll.
+   * @return true fuer ja, false fuer nein.
+   * @throws Exception
+   */
+  public boolean askUser(String question, boolean storeAnswer) throws Exception;
+
+  /**
+   * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
+   * Hintergrund. Jameica speichert <code>question</code> als Key in einer Properties-Datei,
+   * falls der User die Option "Frage nicht mehr anzeigen" aktiviert hat. Enthaelt die
+   * Frage nun aber variablen Text, wuerde die selbe Frage immer wieder kommen - nur weil
+   * ein paar Variablen anders sind und somit der Key in der Properties-Datei nicht mehr
+   * uebereinstimmt. Daher kann man stattdessen diese Funktion hier verwenden. Im Text
+   * benutzt man (wie bei {@link I18N#tr(String, String[])}) die Platzhalter "{0}","{1}",...
+   * und uebergibt als String-Array die einzutragenden Variablen.
+   * @param question Die anzuzeigende Frage.
+   * @param variables mittels MessageFormat einzutragende Variablen.
+   * @param storeAnswer true, wenn die Option "Diese Frage künftig nicht mehr anzeigen" angezeigt werden soll.
+   * @return true fuer ja, false fuer nein.
+   * @throws Exception
+   */
+  public boolean askUser(String question, String[] variables, boolean storeAnswer) throws Exception;
+
+
+  /**
    * Kann benutzt werden, um z.Bsp. eine wichtig Fehlermeldung anzuzeigen.
    * @param text der anzuzeigende Text.
    * @throws Exception
