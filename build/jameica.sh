@@ -14,6 +14,6 @@ cd "$dir"
 
 bit=`uname -m |grep 64`
 if [ $? = 0 ]
- then LIBOVERLAY_SCROLLBAR=0 GDK_NATIVE_WINDOWS=1 SWT_GTK3=0 java -Djava.net.preferIPv4Stack=true -Xmx256m $_JCONSOLE -jar jameica-linux64.jar $@
- else LIBOVERLAY_SCROLLBAR=0 GDK_NATIVE_WINDOWS=1 SWT_GTK3=0 java -Djava.net.preferIPv4Stack=true -Xmx256m $_JCONSOLE -jar jameica-linux.jar $@
+ then LIBOVERLAY_SCROLLBAR=0 GDK_NATIVE_WINDOWS=1 SWT_GTK3=0 java -Djava.net.preferIPv4Stack=true -Xmx512m $_JCONSOLE -jar jameica-linux64.jar $@
+ else LIBOVERLAY_SCROLLBAR=0 GDK_NATIVE_WINDOWS=1 SWT_GTK3=0 java -Djava.net.preferIPv4Stack=true -Xmx512m $_JCONSOLE -jar jameica-linux.jar $@
 fi

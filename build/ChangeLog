@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0047 BUGZILLA 1679 - Xmx256m auf Xmx512m erhoeht
   * BUG: 0046 BUGZILLA 1679 - textTable wurde nicht geleert, Memory Leak
   * NEW: 0045 BUGZILLA 1672 - Cursor springt nach Datumsauswahl
   * NEW: 0044 Abfrage "Plugin wurde vom Herausgeber nicht signiert." nicht mehr speicherbar (siehe Change 0043)
