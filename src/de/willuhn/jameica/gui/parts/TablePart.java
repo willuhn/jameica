@@ -263,6 +263,8 @@ public class TablePart extends AbstractTablePart
 
     this.temp.clear();
     this.sortTable.clear();
+    this.textTable.clear();
+    
     refreshSummary();
   }
 
