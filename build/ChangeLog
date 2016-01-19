@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0048 Aktualisierte englische Sprach-Bundles von Christian
   * BUG: 0047 BUGZILLA 1679 - Xmx256m auf Xmx512m erhoeht
   * BUG: 0046 BUGZILLA 1679 - textTable wurde nicht geleert, Memory Leak
   * NEW: 0045 BUGZILLA 1672 - Cursor springt nach Datumsauswahl
