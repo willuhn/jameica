@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0049 BUGZILLA 1688 - Fehler-Handling bei Klick auf Zurück kürzte fälschlicherweise die History
   * NEW: 0048 Aktualisierte englische Sprach-Bundles von Christian
   * BUG: 0047 BUGZILLA 1679 - Xmx256m auf Xmx512m erhoeht
   * BUG: 0046 BUGZILLA 1679 - textTable wurde nicht geleert, Memory Leak

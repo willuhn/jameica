@@ -1,12 +1,6 @@
 /*******************************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/GUI.java,v $
- * $Revision: 1.150 $
- * $Date: 2011/09/28 12:04:38 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  * 
- * Copyright (c) by willuhn.webdesign 
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *  
  ******************************************************************************/
@@ -35,7 +29,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.parts.BackgroundTaskMonitor;
@@ -46,6 +39,9 @@ import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.style.StyleFactory;
 import de.willuhn.jameica.gui.style.StyleFactoryDefaultImpl;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.Message;
+import de.willuhn.jameica.messaging.MessageConsumer;
+import de.willuhn.jameica.messaging.MessagingQueue;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.SystemMessage;
@@ -76,6 +72,16 @@ public class GUI implements ApplicationController
   {
     SETTINGS.setStoreWhenRead(false);
   }
+  
+  /**
+   * Queue, die benachrichtigt wird, wenn das unbind fehlschlaegt.
+   */
+  private final static String QUEUE_UNBIND_FAIL = "jameica.gui.view.unbind.fail";
+  
+  /**
+   * Queue, die benachrichtigt wird, wenn das unbind ausgeloest wird.
+   */
+  private final static String QUEUE_UNBIND      = "jameica.gui.view.unbind";
 
   private static GUI gui = null;
     private Display display              = null;
@@ -423,10 +429,51 @@ public class GUI implements ApplicationController
       Logger.debug("unable to start previous view. you are already at the first page in this session ;)");
       return;
     }
-    HistoryEntry entry = gui.history.pop();
+    
+    final HistoryEntry entry = gui.history.pop();
     if (entry == null) return;
     gui.skipHistory = true;
-    startView(entry.view.getClass(), entry.view.getCurrentObject());
+    
+    final MessageConsumer mc = new MessageConsumer() {
+      
+      /**
+       * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+       */
+      public void handleMessage(Message message) throws Exception
+      {
+        // BUGZILLA 1688 - Unbind fehlgeschlagen. View wieder in History tun.
+        Logger.info("unbind() failed while trying to start previous view, restoring history entry");
+        gui.history.push(entry);
+      }
+      
+      /**
+       * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+       */
+      public Class[] getExpectedMessageTypes()
+      {
+        return new Class[]{QueryMessage.class};
+      }
+      
+      /**
+       * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+       */
+      public boolean autoRegister()
+      {
+        return false;
+      }
+    }; 
+    
+    final MessagingQueue queue = Application.getMessagingFactory().getMessagingQueue(QUEUE_UNBIND_FAIL);
+    
+    try
+    {
+      queue.registerMessageConsumer(mc);
+      startView(entry.view.getClass(), entry.view.getCurrentObject());
+    }
+    finally
+    {
+      queue.unRegisterMessageConsumer(mc);
+    }
   }
 
   /**
@@ -549,7 +596,7 @@ public class GUI implements ApplicationController
         {
           try
           {
-            Application.getMessagingFactory().getMessagingQueue("jameica.gui.view.unbind").sendSyncMessage(new QueryMessage(gui.currentView));
+            Application.getMessagingFactory().getMessagingQueue(QUEUE_UNBIND).sendSyncMessage(new QueryMessage(gui.currentView));
             gui.currentView.unbind();
 
             // dispose all childs
@@ -566,16 +613,21 @@ public class GUI implements ApplicationController
           catch (ApplicationException e)
           {
             Logger.debug("message from unbind: " + e.getMessage());
-            SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
-            d.setTitle(Application.getI18n().tr("Fehler"));
-            d.setText(e.getMessage());
-            try {
-              d.open();
-            }
-            catch (Exception e2)
+            QueryMessage msg = new QueryMessage(e.getMessage(),gui.currentView);
+            Application.getMessagingFactory().getMessagingQueue(QUEUE_UNBIND_FAIL).sendSyncMessage(msg);
+            
+            // Wenn die Message jetzt ein Boolean.TRUE enthaelt, gehen wir davon aus, dass die Exception bereits behandelt wurde.
+            // Andernfalls zeigen wir hier nochmal einen Hinweis an. Das ermoeglicht es Plugins, eigene Fehlermeldungen
+            // anzuzeigen.
+            Object response = msg.getData();
+            if ((response instanceof Boolean) && ((Boolean)response).booleanValue())
             {
-              Logger.error("error while showing unbind dialog",e2);
+              Logger.debug("already handled by messaging");
+              return;
             }
+
+            // Ansonsten zeigen wir eine Fehlermessage an
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getMessage(),StatusBarMessage.TYPE_ERROR));
             return;
           }
           catch (Throwable t)
@@ -1060,45 +1112,4 @@ public class GUI implements ApplicationController
       this.view = view;
     }
   }
-
 }
-
-/*********************************************************************
- * $Log: GUI.java,v $
- * Revision 1.150  2011/09/28 12:04:38  willuhn
- * @N Warnings des Widget-Toolkits auf der Console deaktivieren, wenn nicht im Debug-Mode
- *
- * Revision 1.149  2011-08-30 16:02:23  willuhn
- * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
- *
- * Revision 1.148  2011-08-18 16:55:24  willuhn
- * @N Button zum Abbrechen von Background-Tasks. Ob die den Request dann auch beachten, ist aber deren Sache ;)
- *
- * Revision 1.147  2011-08-17 08:21:32  willuhn
- * @N BUGZILLA 937
- *
- * Revision 1.146  2011-07-29 11:43:21  willuhn
- * @N OperationCanceledException in unbind() behandeln
- *
- * Revision 1.145  2011-07-22 09:08:20  willuhn
- * @N Background-Threads via Name in Prozessliste kenntlich machen
- *
- * Revision 1.144  2011-07-12 15:21:30  willuhn
- * @N JameicaException
- *
- * Revision 1.143  2011-05-03 16:46:08  willuhn
- * @R Flatstyle entfernt - war eh nicht mehr zeitgemaess und rendere auf aktuellen OS sowieso haesslich
- * @C SelectInput verwendet jetzt Combo statt CCombo - das sieht auf den verschiedenen OS besser aus
- *
- * Revision 1.142  2011-05-03 13:15:57  willuhn
- * @R BUGZILLA 359 - die Sonderbehandlung gibts nicht mehr. Inzwischen fuehrt die unter OSX genau zum Gegenteil. Naemlich dass Hibiscus beim Testen der PIN/TAN-Config haengen bleibt, und das Snapin mit dem Progress nie sauber eingeblendet wird. Offentlich galt das Problem nur bei alten OSX-Versionen
- *
- * Revision 1.141  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.140  2011-04-14 16:58:48  willuhn
- * @N Globaler Shortcut <CTRL><P> zum Drucken (falls PanelButtonPrint aktiv ist)
- *
- * Revision 1.139  2011-04-06 16:13:16  willuhn
- * @N BUGZILLA 631
- **********************************************************************/
