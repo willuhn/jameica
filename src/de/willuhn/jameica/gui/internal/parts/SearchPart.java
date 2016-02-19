@@ -109,6 +109,9 @@ public class SearchPart implements Part
         if (search == null || search.isDisposed() || !search.isFocusControl())
           return;
 
+        if (e.detail != SWT.TRAVERSE_RETURN)
+          return;
+        
         try
         {
           doSearch();
