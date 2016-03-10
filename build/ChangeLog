@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0052 Aktualisierte englische Sprach-Bundles von Christian
   * CHG: 0051 scripting-updates.derrichter.de aus der Liste der Repositories gelöscht, schon seit langem nicht mehr verfügbar
   * BUG: 0050 In der Suchbox links nur auf Enter reagieren (Feld liess sich mit Tab-Taste nicht verlassen)
   * BUG: 0049 BUGZILLA 1688 - Fehler-Handling bei Klick auf Zurück kürzte fälschlicherweise die History
