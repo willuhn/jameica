@@ -107,6 +107,42 @@ public class SSLFactory
     "slSjwfp3thRCvIoZe6jM95auQDGm4DRtwCk=\n" +
     "-----END CERTIFICATE-----\n";
   
+  /**
+   * Das neue CA-Zertifikat, mit dem die Zertifikate der eigentlichen Plugin-
+   * Repositories signiert sind. Das obige laeuft ohnehin am 05.05.2016 ab.
+   * Bei der Gelegenheit stellen wir das gleich so um, dass wir hier nicht
+   * das konkrete Repository-Zertifikat importieren sondern ein CA-Zertifikat.
+   * Dann koennen auch andere Plugin-Autoren Zertifikate kriegen, die mit
+   * Signaturen versehen sind, bei denen Jameica keinen Warnhinweis bringt.
+   * Z.Bsp. www.open4me.de/hibiscus/
+   * 
+   * Siehe
+   * https://www.willuhn.de/products/jameica/updates/jameica.update.ca1-pem.crt
+   */
+  private final static String CERT_UPDATE_CA = 
+    "-----BEGIN CERTIFICATE-----\n" +
+    "MIIDtjCCAp6gAwIBAgIIQdBXw3pRkF8wDQYJKoZIhvcNAQELBQAwTzETMBEGA1UE\n" +
+    "AwwKSmFtZWljYSBDQTEVMBMGA1UECgwMT2xhZiBXaWxsdWhuMRQwEgYDVQQLDAtq\n" +
+    "YW1laWNhLm9yZzELMAkGA1UEBhMCREUwHhcNMTYwMzE2MjMwMDAwWhcNMzYwMzE2\n" +
+    "MjMwMDAwWjBYMRwwGgYDVQQDDBNKYW1laWNhIFVwZGF0ZSBDQSAxMRUwEwYDVQQK\n" +
+    "DAxPbGFmIFdpbGx1aG4xFDASBgNVBAsMC2phbWVpY2Eub3JnMQswCQYDVQQGEwJE\n" +
+    "RTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALpjmkRam57evKzQKmIW\n" +
+    "0nUTns3SdqHuLDyNwS60JJJclxPOU3UylmXtcnPtK4DhkavCdU490yl++zHctVrG\n" +
+    "H8XBVMgIxZCprhlWRVFzfP6jnKFFpOD34ZCNMBhOeQ7Hz9mgI63QIYU3nVg3gajT\n" +
+    "t2X+f5FpXczKdjXRKuI0FZEE35q37kNXbUXp7nL1M99BK2yo+x8E7JBvzk6DkZfp\n" +
+    "PxZ31B3tuZhw99chNAQl764bLqMSsXzQQHAxJYUOrulFiHvISQmbqFryXW4LcYL+\n" +
+    "5Uc1qKMPMop86SlDIyH3IvSZLccJXq8flndd1hhf8mNjXb3+e1/dDRF6uw+dukeL\n" +
+    "r/cCAwEAAaOBjDCBiTAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBtjAT\n" +
+    "BgNVHSUEDDAKBggrBgEFBQcDATARBglghkgBhvhCAQEEBAMCAgQwHQYDVR0OBBYE\n" +
+    "FAxj0e2bVgGLUO63o6XwnNhmM9TbMB8GA1UdIwQYMBaAFPdfpjhnPl0DIx1ACh9P\n" +
+    "3EzUD75OMA0GCSqGSIb3DQEBCwUAA4IBAQBEJiPd2qCronyUokMRsY/6jK7K6be9\n" +
+    "LVyySybQf5jY4lvg0Fd3yHhVqPm/fVDjs6GYZGTop3w6uNGhBnWslspj37GgCQOS\n" +
+    "hca9eRAx7bHMc7rUGRVdCb3xvi9lZGQ563N55y0uoAmtdGca6ZKAJnouTjPbRfpY\n" +
+    "TnJuB3P0zKzKE4xUO5gudP1RtC0fw55GiEOsKMFekeOaJ6RvffycyMNxeSw+cOW1\n" +
+    "RulwCIbnHPpWQf25fpmKxOnxKm2gvkjnP25rDz1W4NpdY1rmajj5bjrztnOGeg9J\n" +
+    "98Lsboil4S42+SjPDdcT2Kucg9lc9SsMRYq/WTs2Oiu5IeI+1ErBC4Gl\n" +
+    "-----END CERTIFICATE-----\n";
+
 
   private CertificateFactory factory       = null;
   private File keystoreFile                = null;
@@ -355,55 +391,58 @@ public class SSLFactory
 			return this.certificate;
 
 		this.certificate = (X509Certificate) getKeyStore().getCertificate(SYSTEM_ALIAS);
-		this.importUpdaterCertificate();
+		this.importSystemCertificate(CERT_UPDATES,"jameica.update");
+    this.importSystemCertificate(CERT_UPDATE_CA,"jameica.update.ca1");
 		return this.certificate;
 	}
   
   /**
-   * Importiert das Zertifikat fuer die Online-Updates, wenn es noch nicht vorhanden ist.
+   * Import ein Jameica-eigenes Zertifikat.
+   * @param data die Base64-codierten Daten des Zertifikates.
+   * @param key der Key, unter dem der Import-Zustand in den Settings vermerkt wird.
    */
-  private void importUpdaterCertificate()
+  private void importSystemCertificate(final String data, final String key)
   {
     try
     {
-      X509Certificate updates = this.loadCertificate(new ByteArrayInputStream(CERT_UPDATES.getBytes("ISO-8859-1")));
-      String alias            = this.createAlias(updates);
-      X509Certificate cert    = this.getTrustedCertificate(alias);
+      X509Certificate cert     = this.loadCertificate(new ByteArrayInputStream(data.getBytes("ISO-8859-1")));
+      String alias             = this.createAlias(cert);
+      X509Certificate existing = this.getTrustedCertificate(alias);
       
       // Ist installiert
-      if (cert != null)
+      if (existing != null)
       {
         // Ist es auch korrekt?
-        if (cert.equals(updates))
+        if (existing.equals(cert))
         {
-          Logger.info("jameica.update certificate correctly installed");
+          Logger.info(key + " certificate correctly installed");
           return;
         }
         
         // Das darf eigentlich nicht sein. Im Alias steht die Seriennummer mit drin.
         // Wir ueberschreiben das Zertifikat
-        Logger.error("found unknown jameica.update certificate, overwriting");
-        Logger.info("old certificate was: " + cert);
+        Logger.error("found unknown " + key + " certificate, overwriting");
+        Logger.info("old certificate was: " + existing);
       }
       
-      if (cert == null) // existiert noch nicht, neu importieren
+      if (existing == null) // existiert noch nicht, neu importieren
       {
         // Bevor wir es pauschal neu importieren, schauen wir, ob wir das schonmal gemacht haben
-        if (settings.getString("jameica.update.cert.added",null) != null)
+        if (settings.getString(key + ".cert.added",null) != null)
         {
-          Logger.info("jameica.update certificate has been deleted by user, will not be imported again");
+          Logger.info(key + " certificate has been deleted by user, will not be imported again");
           return;
         }
-        settings.setAttribute("jameica.update.cert.added",DateUtil.DEFAULT_FORMAT.format(new Date()));
-        Logger.info("importing built-in certificate for jameica updates");
+        settings.setAttribute(key + ".cert.added",DateUtil.DEFAULT_FORMAT.format(new Date()));
+        Logger.info("importing built-in certificate " + key);
       }
       
-      this.getKeyStore().setCertificateEntry(alias,updates);
+      this.getKeyStore().setCertificateEntry(alias,cert);
       this.storeKeystore();
     }
     catch (Exception e)
     {
-      Logger.error("unable to import built-in update certificate",e);
+      Logger.error("unable to import built-in certificate " + key,e);
     }
     
   }

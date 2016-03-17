@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0053 Neues Jameica-eigenes System-Zertifikat, mit dem kuenftig die Zertifikate der Plugin-Repositories signiert sein werden
   * NEW: 0052 Aktualisierte englische Sprach-Bundles von Christian
   * CHG: 0051 scripting-updates.derrichter.de aus der Liste der Repositories gelöscht, schon seit langem nicht mehr verfügbar
   * BUG: 0050 In der Suchbox links nur auf Enter reagieren (Feld liess sich mit Tab-Taste nicht verlassen)
