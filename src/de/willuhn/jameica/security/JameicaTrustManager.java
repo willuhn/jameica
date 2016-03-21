@@ -30,6 +30,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Level;
@@ -53,7 +55,7 @@ public class JameicaTrustManager implements X509TrustManager
    */
   public JameicaTrustManager() throws KeyStoreException, Exception
   {
-    this.validator = CertPathValidator.getInstance("PKIX");
+    this.validator = CertPathValidator.getInstance("PKIX",BouncyCastleProvider.PROVIDER_NAME);
     
     if (Application.getConfig().getTrustJavaCerts())
     {

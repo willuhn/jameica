@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0054 Unterstützung für Zertifikatsketten bei Plugin-Repositories, Jameica-CA noch zu den Stammzertifikaten hinzugefügt -
+              wird für die Prüfung der gesamten Kette benötigt
   * NEW: 0053 Neues Jameica-eigenes System-Zertifikat, mit dem kuenftig die Zertifikate der Plugin-Repositories signiert sein werden
   * NEW: 0052 Aktualisierte englische Sprach-Bundles von Christian
   * CHG: 0051 scripting-updates.derrichter.de aus der Liste der Repositories gelöscht, schon seit langem nicht mehr verfügbar

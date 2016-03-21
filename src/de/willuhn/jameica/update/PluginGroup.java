@@ -10,29 +10,30 @@ package de.willuhn.jameica.update;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.security.cert.CertPath;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-import net.n3.nanoxml.IXMLElement;
 import de.willuhn.jameica.security.SSLFactory;
 import de.willuhn.jameica.services.TransportService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.system.Settings;
 import de.willuhn.jameica.transport.Transport;
 import de.willuhn.jameica.util.XPathEmu;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
-import de.willuhn.util.I18N;
+import net.n3.nanoxml.IXMLElement;
 
 /**
  * Eine Gruppe von Plugins.
  */
 public class PluginGroup
 {
-  private static Settings settings = new Settings(Repository.class);
   private Repository repository    = null;
+  private X509Certificate cert     = null;
   private String name              = null;
   private List<PluginData> plugins = new ArrayList<PluginData>();
 
@@ -48,9 +49,7 @@ public class PluginGroup
     
     this.name = root.getAttribute("name",null);
     
-    String cert = root.getAttribute("certificate",null);
-    if (cert != null)
-      importCertificate(cert);
+    this.initCertificate(root.getAttribute("certificate",null));
     
     XPathEmu xpath = new XPathEmu(root);
     IXMLElement[] list = xpath.getElements("plugin");
@@ -82,68 +81,40 @@ public class PluginGroup
   }
 
   /**
-   * Importiert das Zertifikat.
-   * @param cert das Zertifikat.
+   * Initialisiert das Zertifikat.
+   * @param certUrl URL mit dem dem Zertifikat.
    * @throws Exception
    */
-  private void importCertificate(String cert) throws Exception
+  private void initCertificate(String certUrl) throws Exception
   {
-    if (cert == null || cert.length() == 0)
+    if (certUrl == null || certUrl.length() == 0)
     {
       Logger.warn("no certificate given");
       return;
     }
     
-    I18N i18n = Application.getI18n();
-    
     SSLFactory factory = Application.getSSLFactory();
     
     // Zertifikat vom Server abrufen
     TransportService ts = Application.getBootLoader().getBootable(TransportService.class);
-    Transport t = ts.getTransport(new URL(cert));
+    Transport t = ts.getTransport(new URL(certUrl));
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     t.get(bos,null);
 
-    final X509Certificate newCert = factory.loadCertificate(new ByteArrayInputStream(bos.toByteArray()));
-    if (newCert == null)
-      throw new ApplicationException(i18n.tr("Zertifikat des Repositories nicht lesbar"));
+    // Fuer den Fall, das Intermediate-Zertifikate noetig sind, unterstuetzen wir hier auch eine komplette Chain
+    Collection<X509Certificate> chain = factory.loadCertificates(new ByteArrayInputStream(bos.toByteArray()));
     
-    X509Certificate oldCert = getCertificate();
+    if (chain == null || chain.size() == 0)
+      throw new ApplicationException(Application.getI18n().tr("Zertifikat des Repositories nicht lesbar"));
     
-    // Wir haben schon das Zertifikat. Wir pruefen, ob es noch stimmt.
-    if (oldCert != null)
-    {
-      // Wir kennen das Zertifikat und es ist noch korrekt.
-      if (oldCert.equals(newCert))
-      {
-        Logger.info("certificate verified");
-        return;
-      }
-
-      // Zertifikat hat sich geaendert!
-      Logger.warn("certificate has changed for repository: " + getKey());
-      String q = i18n.tr("Das Zertifikat des Repositories wurde geändert!\n" +
-                         "Möchten Sie den Vorgang dennoch fortsetzen und das neue Zertifikat importieren?");
-
-      
-      // User vertraut dem neuen Zertifikat nicht. Abbrechen
-      if (!Application.getCallback().askUser(q))
-        throw new OperationCanceledException(i18n.tr("Vorgang abgebrochen"));
-    }
-
-    // Zertifikat importieren
-    String alias = factory.addTrustedCertificate(newCert);
-    // Und zur Liste der bekannten Zertifikate hinzufuegen
-    settings.setAttribute(getKey(),alias);
-  }
-  
-  /**
-   * Liefert den Namen, unter dem der Alias des Zertifikats gespeichert ist.
-   * @return der Alias.
-   */
-  private String getKey()
-  {
-    return this.repository.getUrl().toString() + ":" + this.name;
+    // Checken, ob wir dem Zertifikat vertrauen. Wenn es nicht bereits vertrauenswuerdig ist, triggert die
+    // Funktion automatisch den Import
+    X509Certificate[] list = chain.toArray(new X509Certificate[chain.size()]);
+    factory.getTrustManager().checkServerTrusted(list,"RSA");
+    
+    // Wir merken uns jetzt das Zertifikat. Das ist das erste in der Kette
+    CertPath certPath = factory.getCertificateFactory().generateCertPath(Arrays.asList(list));
+    this.cert = (X509Certificate) certPath.getCertificates().get(0);
   }
   
   /**
@@ -176,26 +147,9 @@ public class PluginGroup
   /**
    * Liefert das Zertifikat der Plugin-Gruppe.
    * @return das Zertifikat oder NULL, wenn keines angegeben ist.
-   * @throws ApplicationException
    */
-  public X509Certificate getCertificate() throws ApplicationException
+  public X509Certificate getCertificate()
   {
-    String alias = settings.getString(getKey(),null);
-    if (alias == null)
-      return null; // Kein Alias bekannt. Also auch kein Zertifikat
-    
-    try
-    {
-      return Application.getSSLFactory().getTrustedCertificate(alias);
-    }
-    catch (ApplicationException ae)
-    {
-      throw ae;
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to load certificate",e);
-      throw new ApplicationException(Application.getI18n().tr("Zertifikat konnte nicht geladen werden: {0}",e.getMessage()));
-    }
+    return this.cert;
   }
 }

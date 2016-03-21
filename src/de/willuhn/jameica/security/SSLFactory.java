@@ -29,6 +29,7 @@ import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -119,7 +120,7 @@ public class SSLFactory
    * Siehe
    * https://www.willuhn.de/products/jameica/updates/jameica.update.ca1-pem.crt
    */
-  private final static String CERT_UPDATE_CA = 
+  private final static String CERT_JAMEICA_UPDATE_CA = 
     "-----BEGIN CERTIFICATE-----\n" +
     "MIIDtjCCAp6gAwIBAgIIQdBXw3pRkF8wDQYJKoZIhvcNAQELBQAwTzETMBEGA1UE\n" +
     "AwwKSmFtZWljYSBDQTEVMBMGA1UECgwMT2xhZiBXaWxsdWhuMRQwEgYDVQQLDAtq\n" +
@@ -142,6 +143,33 @@ public class SSLFactory
     "RulwCIbnHPpWQf25fpmKxOnxKm2gvkjnP25rDz1W4NpdY1rmajj5bjrztnOGeg9J\n" +
     "98Lsboil4S42+SjPDdcT2Kucg9lc9SsMRYq/WTs2Oiu5IeI+1ErBC4Gl\n" +
     "-----END CERTIFICATE-----\n";
+  
+  /**
+   * Das System-CA-Zertifikat von Jameica.
+   */
+  private final static String CERT_JAMEICA_CA =
+    "-----BEGIN CERTIFICATE-----\n" +
+    "MIIDijCCAnKgAwIBAgIIIDT28rTyXw4wDQYJKoZIhvcNAQELBQAwTzETMBEGA1UE\n" +
+    "AwwKSmFtZWljYSBDQTEVMBMGA1UECgwMT2xhZiBXaWxsdWhuMRQwEgYDVQQLDAtq\n" +
+    "YW1laWNhLm9yZzELMAkGA1UEBhMCREUwHhcNMTYwMzE2MjMwMDAwWhcNMzYwMzE2\n" +
+    "MjMwMDAwWjBPMRMwEQYDVQQDDApKYW1laWNhIENBMRUwEwYDVQQKDAxPbGFmIFdp\n" +
+    "bGx1aG4xFDASBgNVBAsMC2phbWVpY2Eub3JnMQswCQYDVQQGEwJERTCCASIwDQYJ\n" +
+    "KoZIhvcNAQEBBQADggEPADCCAQoCggEBAIxhMB2ORGh/H8Xfh7Kc0DElRo9JJgl0\n" +
+    "TO2TDOqBm6Bfy9822PthZ55Xs4hxCFjL9FIcAzlvNvHRaHEVbphUN/nI2jbeez+v\n" +
+    "eKU17U2O08V0qYymCgVFH2TpGzsJzmdq/XbXrP3wueaiJHni/BToMXLyUFggoVT2\n" +
+    "7lLDL5wgWDWezRCv9aQF5KfOuVSmBxRzF6PvePnHqAMlLXhBNehaq6UD1Kt2C+8X\n" +
+    "deENXpixXagLCehSp9DaF4yAlnnvmKct7pRLCMIBqMVINY+yH64HQFbX2f8ehwgY\n" +
+    "Qe8FgioOsp1GgrNRv376VYDaNMXGTPDwNKiGEK1Fo9PhtMx6+90wxA8CAwEAAaNq\n" +
+    "MGgwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMCAbYwEwYDVR0lBAwwCgYI\n" +
+    "KwYBBQUHAwEwEQYJYIZIAYb4QgEBBAQDAgIEMB0GA1UdDgQWBBT3X6Y4Zz5dAyMd\n" +
+    "QAofT9xM1A++TjANBgkqhkiG9w0BAQsFAAOCAQEAcrvxrbeLxa8iKlc/YoiVZbA/\n" +
+    "vj66K8Oipxq5I+WJDU+mUt1hC7QnRq74Tc8wwfJBH2DY+7IVk5Bv1wn51JEPaxI9\n" +
+    "KMg8O5dvl8phJGPTNlpjtuJtr/1mSfxbdzc07eIQYs/mZMlpLDazcXC1Q6fxclGh\n" +
+    "0XSnl3Ka1Qz3nS6qCFI4BuyA42RXo3YO7BfVCyoZKWg4J6OktoGw1cA+UhTSDgAl\n" +
+    "TLHvbP2BUKmbyKSvSQc5sYPHZ+WadMSvPMdpgiXUTZQMbK+I9UkZG7BiZlVIHbAc\n" +
+    "F4wFaeMMLiRmc6zT3wjquwMVzyeVlm7NUTcjQfVYz3fs+kaZa3p0q597clshAw==\n" +
+    "-----END CERTIFICATE-----\n";
+      
 
 
   private CertificateFactory factory       = null;
@@ -392,7 +420,8 @@ public class SSLFactory
 
 		this.certificate = (X509Certificate) getKeyStore().getCertificate(SYSTEM_ALIAS);
 		this.importSystemCertificate(CERT_UPDATES,"jameica.update");
-    this.importSystemCertificate(CERT_UPDATE_CA,"jameica.update.ca1");
+    this.importSystemCertificate(CERT_JAMEICA_CA,"jameica.ca");
+    this.importSystemCertificate(CERT_JAMEICA_UPDATE_CA,"jameica.update.ca1");
 		return this.certificate;
 	}
   
@@ -635,7 +664,28 @@ public class SSLFactory
       is.close();
     }
   }
-  
+
+  /**
+   * Laedt alle Zertifikate vom angegebenen InputStream und liefert sie zurueck.
+   * Sie werden hierbei weder zum Keystore hinzugefuegt, noch geloescht sondern lediglich
+   * geladen und zurueckgeliefert.
+   * @param is der InputStream.
+   * @return die geladenen Zertifikate. Es koennen mehrere sein.
+   * @throws Exception
+   */
+  public synchronized Collection<X509Certificate> loadCertificates(InputStream is) throws Exception
+  {
+    try
+    {
+      CertificateFactory cf = getCertificateFactory();
+      return (Collection<X509Certificate>) cf.generateCertificates(is);
+    }
+    finally
+    {
+      is.close();
+    }
+  }
+
   /**
    * Liefert die Certificate-Factory.
    * @return die Certificate-Factory.
