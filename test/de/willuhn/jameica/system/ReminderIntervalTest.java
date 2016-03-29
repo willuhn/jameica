@@ -1,10 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/test/de/willuhn/jameica/system/ReminderIntervalTest.java,v $
- * $Revision: 1.3 $
- * $Date: 2011/10/20 16:17:46 $
- * $Author: willuhn $
  *
- * Copyright (c) by willuhn - software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -16,8 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import de.willuhn.jameica.reminder.ReminderInterval;

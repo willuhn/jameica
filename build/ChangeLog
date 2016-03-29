@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0055 Neues datasource-Paket mit Support für Generics
   * NEW: 0054 Unterstützung für Zertifikatsketten bei Plugin-Repositories, Jameica-CA noch zu den Stammzertifikaten hinzugefügt -
               wird für die Prüfung der gesamten Kette benötigt
   * NEW: 0053 Neues Jameica-eigenes System-Zertifikat, mit dem kuenftig die Zertifikate der Plugin-Repositories signiert sein werden
