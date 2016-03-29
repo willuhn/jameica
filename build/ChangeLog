@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+2016-03-29 Version 2.6.3
+
   * NEW: 0056 BUGZILLA 1704 - Inline-Bearbeiten in Tabelle nur dann, wenn man mit der rechten Maustaste klickt
   * NEW: 0055 Neues datasource-Paket mit Support für Generics
   * NEW: 0054 Unterstützung für Zertifikatsketten bei Plugin-Repositories, Jameica-CA noch zu den Stammzertifikaten hinzugefügt -
