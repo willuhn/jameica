@@ -49,6 +49,9 @@ public class StatusBarGUIMessageConsumer implements MessageConsumer
 
     StatusBarMessage m = (StatusBarMessage) message;
     NotificationPanel panel = GUI.getView().getNotificationPanel();
+    if (panel == null)
+      return;
+    
     Type type = typeMap.get(m.getType());
     panel.setText(type,m.getText());
   }
