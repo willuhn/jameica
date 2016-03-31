@@ -201,7 +201,9 @@ public class View implements Part
 		  this.titlePart.addButton(new PanelButtonBack()); // Zurueckbutton ist immer dabei
 		}
 		
-    notifications.reset();
+		if (notifications != null)
+		  notifications.reset();
+		
     setTitle(null);
 	}
   
