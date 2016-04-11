@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0058 BUGZILLA 1576 - Update auf BouncyCastle 1.54
   * BUG: 0057 Der Fortschrittsbalken im Wartedialog ging nicht bis ganz auf 100% und schloss das Fenster nicht nach Ablauf 
 
 2016-03-29 Version 2.6.3

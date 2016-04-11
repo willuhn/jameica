@@ -4,7 +4,7 @@
 	<classpathentry kind="src" output="test-bin" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-jdk15-144.jar" sourcepath="lib.src/bouncycastle/bcprov-jdk15-144.src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-ext-jdk15on-154.jar" sourcepath="lib.src/bouncycastle/bcprov-ext-jdk15on-154.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.10.1.v20140909-1633.jar"/>
@@ -31,5 +31,6 @@
 	<classpathentry kind="lib" path="lib/swt/org.eclipse.core.commands_3.6.100.v20140528-1422.jar"/>
 	<classpathentry kind="lib" path="lib/swt/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
 	<classpathentry kind="lib" path="lib/swt/com.ibm.icu_52.1.0.v201404241930.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcpkix-jdk15on-154.jar" sourcepath="lib.src/bouncycastle/bcpkix-jdk15on-154.src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

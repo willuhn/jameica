@@ -32,18 +32,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.X509Extensions;
-import org.bouncycastle.asn1.x509.X509Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.io.IOUtil;
@@ -238,9 +244,9 @@ public class SSLFactory
     String hostname = Application.getCallback().getHostname();
     Logger.info("  using hostname: " + hostname);
     
-		Hashtable<DERObjectIdentifier,String> attributes = new Hashtable<DERObjectIdentifier, String>();
-		attributes.put(X509Name.CN,hostname);
-    attributes.put(X509Name.O,"Jameica Certificate");
+		X500NameBuilder nameBuilder = new X500NameBuilder();
+		nameBuilder.addRDN(BCStyle.CN,hostname);
+		nameBuilder.addRDN(BCStyle.O,"Jameica Certificate");
 
     // BUGZILLA 326
     String username = System.getProperty("user.name");
@@ -252,24 +258,25 @@ public class SSLFactory
       String prefix = "";
       if (Application.inClientMode()) prefix = "client.";
       else if (Application.inServerMode()) prefix = "server.";
-      attributes.put(X509Name.GIVENNAME,prefix + username);
-      attributes.put(X509Name.OU,prefix + username);
+      nameBuilder.addRDN(BCStyle.GIVENNAME,prefix + username);
+      nameBuilder.addRDN(BCStyle.OU,prefix + username);
     }
-		X509Name user   = new X509Name(null,attributes); // Der erste Parameter ist ein Vector mit der Reihenfolge der Attribute. Brauchen wir aber nicht
-    X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
-
+    
+    X500Name user = nameBuilder.build();
+    
     byte[] serno = new byte[8];
     SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
     random.setSeed(System.nanoTime());
     random.nextBytes(serno);
-    generator.setSerialNumber((new BigInteger(serno)).abs());
-
-    generator.setIssuerDN(user);
-		generator.setSubjectDN(user);
-		generator.setNotAfter(new Date(System.currentTimeMillis() + (1000l*60*60*24*365*10))); // 10 Jahre sollten reichen ;)
-    generator.setNotBefore(new Date());
+    BigInteger serial = new BigInteger(serno).abs();
     
-    generator.addExtension(X509Extensions.KeyUsage, true,
+    Date notBefore = new Date();
+    Date notAfter  = new Date(System.currentTimeMillis() + (1000l*60*60*24*365*20)); // 20 Jahre sollten reichen ;)
+
+    X509v3CertificateBuilder generator = new JcaX509v3CertificateBuilder(user,serial,notBefore,notAfter,user,this.getPublicKey());
+
+    generator.addExtension(Extension.basicConstraints, true, new BasicConstraints(false));
+    generator.addExtension(Extension.keyUsage, true,
         new KeyUsage(KeyUsage.digitalSignature |
                      KeyUsage.keyAgreement | 
                      KeyUsage.keyEncipherment | 
@@ -280,10 +287,9 @@ public class SSLFactory
                     )
     );
     
-    generator.setPublicKey(this.publicKey);
-    generator.setSignatureAlgorithm("SHA1withRSA");
-
-    this.certificate = generator.generate(this.privateKey);
+    ContentSigner signer = new JcaContentSignerBuilder("SHA256withRSA").build(this.getPrivateKey());
+    X509CertificateHolder holder = generator.build(signer);
+    this.certificate = new JcaX509CertificateConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME).getCertificate(holder);
 
     //
 		////////////////////////////////////////////////////////////////////////////
