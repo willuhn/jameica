@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0057 Der Fortschrittsbalken im Wartedialog ging nicht bis ganz auf 100% und schloss das Fenster nicht nach Ablauf 
+
 2016-03-29 Version 2.6.3
 
   * NEW: 0056 BUGZILLA 1704 - Inline-Bearbeiten in Tabelle nur dann, wenn man mit der rechten Maustaste klickt

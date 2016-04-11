@@ -1,17 +1,13 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/WaitDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2011/07/20 08:46:15 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
 
 package de.willuhn.jameica.gui.dialogs;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -163,13 +159,13 @@ public abstract class WaitDialog extends AbstractDialog
       {
         try
         {
-          long end  = System.currentTimeMillis() + timeout;
-
           final long wait   = 200L; // 5 mal pro Sekunde aktualisieren
           final long chunks = timeout / wait; // Anzahl der Schritte
           final int step    = (int) (steps / chunks); // Selection um diesen Wert pro Schritt erhoehen
           
-          while (System.currentTimeMillis() < end)
+          final AtomicInteger pos = new AtomicInteger(0);
+          
+          while (pos.intValue() <= steps)
           {
             if (check())
             {
@@ -183,14 +179,20 @@ public abstract class WaitDialog extends AbstractDialog
               {
                 if (bar != null && !bar.isDisposed())
                 {
-                  int pos = bar.getSelection() + step;
-                  bar.setSelection(pos);
+                  pos.set(bar.getSelection() + step);
+                  bar.setSelection(pos.get());
                 }
               }
             });
             sleep(wait);
           }
-          throw new OperationCanceledException("operation cancelled/timed out");
+          GUI.getDisplay().syncExec(new Runnable()
+          {
+            public void run()
+            {
+              throw new OperationCanceledException("operation cancelled/timed out");
+            }
+          });
         }
         catch (InterruptedException e)
         {
@@ -202,15 +204,3 @@ public abstract class WaitDialog extends AbstractDialog
   }
 
 }
-
-
-/*********************************************************************
- * $Log: WaitDialog.java,v $
- * Revision 1.2  2011/07/20 08:46:15  willuhn
- * @N GUI poliert
- *
- * Revision 1.1  2007/03/21 13:48:52  willuhn
- * @N new abstract "WaitDialog"
- * @N force redraw in backgroundtask monitor/statusbar
- *
- **********************************************************************/
