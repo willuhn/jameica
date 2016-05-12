@@ -40,4 +40,4 @@ fi
 BASEDIR=$(dirname "$0")
 cd "${BASEDIR}"
 
-exec "${JAVACMD}" -Xdock:name="Jameica" -Xmx256m -XstartOnFirstThread -jar "${BASEDIR}/jameica-macos64.jar" -o "$@"  >/dev/null
+exec "${JAVACMD}" -Xdock:name="Jameica" -Xmx512m -XstartOnFirstThread -jar "${BASEDIR}/jameica-macos64.jar" -o "$@"  >/dev/null

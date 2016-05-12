@@ -18,15 +18,15 @@
     <minVersion>1.6.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <opt>-Xmx256m -Djava.net.preferIPv4Stack=true</opt>
+    <opt>-Xmx512m -Djava.net.preferIPv4Stack=true</opt>
   </jre>
   <versionInfo>
-    <fileVersion>2.6.0.0</fileVersion>
-    <txtFileVersion>2.6.0</txtFileVersion>
+    <fileVersion>2.6.4.0</fileVersion>
+    <txtFileVersion>2.6.4</txtFileVersion>
     <fileDescription>Jameica</fileDescription>
     <copyright>Olaf Willuhn</copyright>
-    <productVersion>2.6.0.0</productVersion>
-    <txtProductVersion>2.6.0</txtProductVersion>
+    <productVersion>2.6.4.0</productVersion>
+    <txtProductVersion>2.6.4</txtProductVersion>
     <productName>Jameica</productName>
     <companyName>Olaf Willuhn</companyName>
     <internalName>jameica-win64</internalName>

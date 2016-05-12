@@ -7,4 +7,4 @@ link=$(readlink -f "$0")
 dir=$(dirname "$link")
 cd "$dir" 
 
-java -Xmx256m -Djava.library.path=/usr/lib/swt -jar jameica-osol.jar $@
+java -Xmx512m -Djava.library.path=/usr/lib/swt -jar jameica-osol.jar $@

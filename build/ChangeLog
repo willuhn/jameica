@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0059 Alle Start-Scripts auf 512MB umgestellt und EXE-Launcher für Windows neu generiert
+  
 2016-05-02 Version 2.6.4
 
   * NEW: 0058 BUGZILLA 1576 - Update auf BouncyCastle 1.54
