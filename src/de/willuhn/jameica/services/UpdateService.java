@@ -11,7 +11,9 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -393,12 +395,20 @@ public class UpdateService implements Bootable
           // nur benachrichtigen
           StringBuffer names = new StringBuffer();
           int count = 0;
+          Set<String> unique = new HashSet<String>();
           for (UpdateStatus status:states)
           {
             if (status.notified)
               continue; // ueber das Update haben wir den User schon benachrichtigt
             status.update();
-            names.append(status.plugin.getName());
+            
+            String s = status.plugin.getName();
+            if (unique.contains(s))
+              continue;
+            
+            unique.add(s);
+            
+            names.append(s);
             names.append("\n");
             count++;
           }
