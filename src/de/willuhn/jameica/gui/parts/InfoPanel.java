@@ -152,7 +152,7 @@ public class InfoPanel implements Part
     
     // Linke Spalte mit dem Icon
     {
-      int rows = 4;
+      int rows = 5;
       if (this.url != null && this.url.length() > 0) rows++;
       GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
       gd.verticalSpan = rows;
@@ -232,6 +232,15 @@ public class InfoPanel implements Part
       buttons.paint(this.comp);
 
     }
+  }
+  
+  /**
+   * Liefert das Composite zur weiteren Erweiterung.
+   * @return das Composite.
+   */
+  public Composite getComposite()
+  {
+    return this.comp;
   }
   
   /**
