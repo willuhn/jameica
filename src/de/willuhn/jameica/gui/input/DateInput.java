@@ -25,6 +25,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.dialogs.CalendarDialog;
@@ -352,6 +353,21 @@ public class DateInput implements Input
   public void setName(String name)
   {
     this.name = name;
+    
+    // Label bei Bedarf aktualisieren
+    if (this.name != null)
+    {
+      // Checken, ob wir ein Label haben
+      Object o = this.getData("jameica.label");
+      if (o == null || !(o instanceof Label))
+        return;
+      
+      Label label = (Label) o;
+      if (label.isDisposed())
+        return;
+      label.setText(this.name);
+    }
+
   }
 
   /**
