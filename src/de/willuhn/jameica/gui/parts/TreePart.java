@@ -669,6 +669,10 @@ public class TreePart extends AbstractTablePart
       }
       if (selection.size() > 0)
         tree.setSelection(selection.toArray(new TreeItem[selection.size()]));
+      
+      // Dem Menu Bescheid sagen, dass ein oder mehrere Elemente markiert wurden
+      if (menu != null)
+        menu.setCurrentObject(objects != null && objects.length == 1 ? objects[0] : objects);
     }
     catch (RemoteException e)
     {

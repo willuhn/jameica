@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0062 Current Object wurde im Contextmenu eines Tree nicht korrekt gesetzt, wenn dessen State restored wurde
   * NEW: 0061 Aktualisierte englische Sprach-Bundles von Christian
   * NEW: 0060 Label auch in DateInput zur Laufzeit ‰nderbar
   * NEW: 0059 Alle Start-Scripts auf 512MB umgestellt und EXE-Launcher f√ºr Windows neu generiert
