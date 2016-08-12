@@ -12,6 +12,12 @@
  **********************************************************************/
 package de.willuhn.jameica.system;
 
+import de.willuhn.logging.Level;
+import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
+
+import org.apache.commons.lang.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.BindException;
@@ -20,14 +26,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang.StringUtils;
-
-import de.willuhn.logging.Level;
-import de.willuhn.logging.Logger;
-import de.willuhn.util.ApplicationException;
-
 /**
- * Liest die System-Konfiguration aus config.xml. 
+ * Liest die System-Konfiguration aus config.xml.
+ *
  * @author willuhn
  */
 public final class Config
@@ -37,7 +38,7 @@ public final class Config
    */
   public final static int RMI_DEFAULT_PORT = 4840;
 
-	private File workDir   	     = null;
+  private File workDir   	     = null;
   private File configDir       = null;
 
   private Locale locale        = null;
@@ -51,6 +52,9 @@ public final class Config
 
   /**
    * ct.
+   *
+   * @throws Exception
+   *           on any error.
    */
   protected Config() throws Exception
   {
@@ -86,7 +90,7 @@ public final class Config
         Logger.error("unable to determine workdir, fallback to default workdir " + this.workDir,e);
         throw e;
       }
-      
+
       // Migration 2012-10-05 (2.2 -> 2.4)
       // Deploy-Dir loeschen - wird inzwischen nicht mehr gebraucht
       File deploy = new File(this.workDir,"deploy");
@@ -113,16 +117,18 @@ public final class Config
     return settings.getInt("jameica.system.rmi.serverport",RMI_DEFAULT_PORT);
   }
 
-	/**
-	 * Speichert den zu verwendenden TCP-Port fuer die lokale RMI-Registry.
+  /**
+   * Speichert den zu verwendenden TCP-Port fuer die lokale RMI-Registry.
    * @param port
    * @throws ApplicationException Wird geworfen, wenn die Port-Angabe ungueltig (kleiner 1 oder groesser 65535) ist
    * oder der Port bereits belegt.
    */
   public void setRmiPort(int port) throws ApplicationException
-	{
+  {
     if (port < 1 || port > 65535)
-      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Netzwerkbetrieb ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+      throw new ApplicationException(
+          Application.getI18n().tr("TCP-Portnummer für Netzwerkbetrieb ausserhalb des gültigen Bereichs von {0} bis {1}",
+              new String[] { "" + 1, "" + 65535 }));
 
     ServerSocket s = null;
     try
@@ -155,16 +161,16 @@ public final class Config
       }
     }
     settings.setAttribute("jameica.system.rmi.serverport",port);
-	}
+  }
 
-	/**
-	 * Prueft, ob die RMI-Verbindungen SSL-verschluesselt werden sollen.
+  /**
+   * Prueft, ob die RMI-Verbindungen SSL-verschluesselt werden sollen.
    * @return true, wenn die Verwendung von SSL aktiv ist.
    */
   public boolean getRmiSSL()
-	{
-		return settings.getBoolean("jameica.system.rmi.enablessl",true);
-	}
+  {
+    return settings.getBoolean("jameica.system.rmi.enablessl",true);
+  }
 
   /**
    * Prueft, ob bei SSL-verschluesselten RMI-Verbindungen Client-Authentifizierung verwendet werden soll.
@@ -206,7 +212,7 @@ public final class Config
       host = null;
     settings.setAttribute("jameica.system.proxy.host",host);
   }
-  
+
   /**
    * Speichert die TCP-Portnummer des Proxys.
    * @param port Port-Nummer.
@@ -222,7 +228,8 @@ public final class Config
     }
 
     if (port < 1 || port > 65535)
-      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Proxy ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+      throw new ApplicationException(Application.getI18n().tr(
+          "TCP-Portnummer für Proxy ausserhalb des gültigen Bereichs von {0} bis {1}", new String[] { "" + 1, "" + 65535 }));
 
     settings.setAttribute("jameica.system.proxy.port",port);
   }
@@ -256,7 +263,7 @@ public final class Config
       host = null;
     settings.setAttribute("jameica.system.proxy.https.host",host);
   }
-  
+
   /**
    * Speichert die TCP-Portnummer des HTTPS-Proxys.
    * @param port Port-Nummer.
@@ -272,11 +279,13 @@ public final class Config
     }
 
     if (port < 1 || port > 65535)
-      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für HTTPS-Proxy ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+      throw new ApplicationException(
+          Application.getI18n().tr("TCP-Portnummer für HTTPS-Proxy ausserhalb des gültigen Bereichs von {0} bis {1}",
+              new String[] { "" + 1, "" + 65535 }));
 
     settings.setAttribute("jameica.system.proxy.https.port",port);
   }
-  
+
   /**
    * Prueft, ob die Proxy-Einstellungen des Systems verwendet werden sollen.
    * @return true, wenn die Default-Systemeinstellungen verwendet werden sollen.
@@ -285,16 +294,18 @@ public final class Config
   {
     return settings.getBoolean("jameica.system.proxy.usesystem",false);
   }
-  
+
   /**
-   * Legt fest, ob die System-Einstellungen fuer den Proxy verwendet werden sollen. 
-   * @param b true, wenn die System-Einstellungen des Betriebssystems verwendet werden sollen.
+   * Legt fest, ob die System-Einstellungen fuer den Proxy verwendet werden sollen.
+   *
+   * @param b
+   *          true, wenn die System-Einstellungen des Betriebssystems verwendet werden sollen.
    */
   public void setUseSystemProxy(boolean b)
   {
     settings.setAttribute("jameica.system.proxy.usesystem",b);
   }
-  
+
   /**
    * Liefert true, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
    * @return true, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
@@ -335,13 +346,13 @@ public final class Config
   }
 
   /**
-	 * Aktiviert oder deaktiviert die Verwendung von SSL fuer die RMI-Verbindungen.
+   * Aktiviert oder deaktiviert die Verwendung von SSL fuer die RMI-Verbindungen.
    * @param b
    */
   public void setRmiSSL(boolean b)
-	{
-		settings.setAttribute("jameica.system.rmi.enablessl",b);
-	}
+  {
+    settings.setAttribute("jameica.system.rmi.enablessl",b);
+  }
 
   /**
    * Liefert das konfigurierte Locale (Sprach-Auswahl).
@@ -353,12 +364,12 @@ public final class Config
       return locale;
 
     try {
-      
+
       // Wenn ein Locale konfiguriert ist, nehmen wir das - insofern ex existiert
       Locale l = findLocale(settings.getString("jameica.system.locale",null));
       if (l == null)
         l = Locale.getDefault();
-      
+
       try
       {
         Logger.info("checking resource bundle for language");
@@ -370,7 +381,7 @@ public final class Config
         l = Locale.GERMANY;
         Logger.warn("fallback to system locale " + l);
       }
-      
+
       this.locale = l;
       Logger.info("active language: " + this.locale);
       Locale.setDefault(this.locale);
@@ -382,7 +393,7 @@ public final class Config
     }
     return Locale.getDefault();
   }
-  
+
   /**
    * Versucht das Locale zum angegebenen Text zu ermitteln.
    * @param s der Text.
@@ -391,7 +402,7 @@ public final class Config
   private static Locale findLocale(String s)
   {
     s = StringUtils.trimToNull(s);
-    
+
     if (s == null)
       return null;
 
@@ -414,14 +425,14 @@ public final class Config
     return new Locale(s);
   }
 
-	/**
-	 * Speichert das Locale (Sprach-Auswahl).
+  /**
+   * Speichert das Locale (Sprach-Auswahl).
    * @param l das zu verwendende Locale.
    */
   public void setLocale(Locale l)
-	{
-		if (l == null)
-			return;
+  {
+    if (l == null)
+      return;
     this.locale = l;
     String lang    = this.locale.getLanguage();
     String country = this.locale.getCountry();
@@ -429,7 +440,7 @@ public final class Config
       settings.setAttribute("jameica.system.locale",lang + "_" + country);
     else
       settings.setAttribute("jameica.system.locale",lang);
-	}
+  }
 
   /**
    * Liefert die in ~/.jameica/cfg/de.willuhn.jameica.system.Config.properties definierten
@@ -447,9 +458,9 @@ public final class Config
     // hier raus, falls sie auftauchen
     File sysPluginDir = getSystemPluginDir();
     File usrPluginDir = getUserPluginDir();
-    
+
     boolean found = false;
-    
+
     ArrayList<File> l = new ArrayList<File>();
 
     String[] s = settings.getList("jameica.plugin.dir",null);
@@ -468,25 +479,25 @@ public final class Config
         {
           Logger.warn("unable to convert " + f.getAbsolutePath() + " into canonical path");
         }
-        
+
         if (f.equals(sysPluginDir) || f.equals(usrPluginDir))
         {
           Logger.info("skipping system/user plugin dir in jameica.plugin.dir[" + i + "]");
           found = true;
           continue;
         }
-        
+
         if (!f.canRead() || !f.isDirectory())
         {
           Logger.warn(f.getAbsolutePath() + " is no valid plugin dir, skipping");
           continue;
         }
-        
+
         Logger.info("adding plugin dir " + f.getAbsolutePath());
         l.add(f);
       }
     }
-    
+
     // Migration: Wir schreiben die Liste der Plugin-Verzeichnisse neu,
     // damit System- und User-Verzeichnis rausfliegen.
     if (found)
@@ -498,11 +509,11 @@ public final class Config
       }
       settings.setAttribute("jameica.plugin.dir",newList);
     }
-    
+
     this.pluginDirs = l.toArray(new File[l.size()]);
     return this.pluginDirs;
   }
-  
+
   /**
    * Liefert das System-Plugin-Verzeichnis.
    * Das ist jenes, welches sich im Jameica-Verzeichnis befindet.
@@ -581,7 +592,7 @@ public final class Config
     }
     return this.updateDir;
   }
-  
+
   /**
    * Liefert Pfad und Dateiname des Log-Files.
    * @return Logfile.
@@ -590,7 +601,7 @@ public final class Config
   {
     return getWorkDir() + File.separator + "jameica.log";
   }
-  
+
   /**
    * Liefert die Dateigroesse nach der die Log-Datei rotiert und gezippt wird.
    * @return die Dateigroesse des Logs in Bytes.
@@ -649,16 +660,16 @@ public final class Config
     return settings.getString("jameica.system.log.level",Level.DEFAULT.getName());
   }
 
-	/**
-	 * Legt den Log-Level fest.
+  /**
+   * Legt den Log-Level fest.
    * @param name Name des Log-Levels.
    */
   public void setLoglevel(String name)
-	{
+  {
     settings.setAttribute("jameica.system.log.level",name);
     // Aenderungen sofort uebernehmen
     Logger.setLevel(Level.findByName(name));
-	}
+  }
 
   /**
    * Liefert den Pfad zum Config-Verzeichnis.
@@ -678,21 +689,21 @@ public final class Config
     return configDir.getAbsolutePath();
   }
 
-	/**
-	 * Liefert das Work-Verzeichnis von Jameica.
+  /**
+   * Liefert das Work-Verzeichnis von Jameica.
    * @return das Work-Verzeichnis von Jameica.
    */
   public String getWorkDir()
-	{
-		try {
-			return workDir.getCanonicalPath();
-		}
-		catch (IOException e)
-		{
-			return workDir.getAbsolutePath();
-		}
-	}
-  
+  {
+    try {
+      return workDir.getCanonicalPath();
+    }
+    catch (IOException e)
+    {
+      return workDir.getAbsolutePath();
+    }
+  }
+
   /**
    * Liefert das Backup-Verzeichnis.
    * @return Backup-Verzeichnis.
@@ -708,11 +719,11 @@ public final class Config
     String dir = settings.getString("jameica.system.backup.dir",null);
     if (dir == null)
       return defaultDir;
-    
+
     File f = new File(dir);
     if (f.exists() && f.isDirectory() && f.canWrite())
       return f.getAbsolutePath();
-    
+
     Logger.warn("invalid backup dir " + dir +", resetting to default: " + defaultDir);
     setBackupDir(null);
     return defaultDir;
@@ -734,7 +745,7 @@ public final class Config
       settings.setAttribute("jameica.system.backup.dir",(String)null);
       return;
     }
-    
+
     // Angegebenes Verzeichnis ist das Work-Dir.
     // Also resetten
     File f = new File(dir);
@@ -756,16 +767,16 @@ public final class Config
         return;
       }
     }
-    
+
     if (!f.isDirectory() || !f.exists())
       throw new ApplicationException(Application.getI18n().tr("Bitte geben Sie ein gültiges Verzeichnis an"));
-    
+
     if (!f.canWrite())
       throw new ApplicationException(Application.getI18n().tr("Sie besitzen keine Schreibrechte in diesem Verzeichnis"));
-    
+
     settings.setAttribute("jameica.system.backup.dir",f.getAbsolutePath());
   }
-  
+
   /**
    * Liefert die Anzahl zu erstellender Backups.
    * Default-Wert: 10.
@@ -781,7 +792,7 @@ public final class Config
     }
     return count;
   }
-  
+
   /**
    * Speichert die Anzahl zu erstellender Backups.
    * @param count Anzahl der Backups.
@@ -790,7 +801,7 @@ public final class Config
   {
     settings.setAttribute("jameica.system.backup.count",count < 1 ? 10 : count);
   }
-  
+
   /**
    * Prueft, ob ueberhaupt Backups erstellt werden sollen.
    * Default: true.
@@ -809,7 +820,7 @@ public final class Config
   {
     settings.setAttribute("jameica.system.backup.enabled",enabled);
   }
-  
+
   /**
    * Liefert das Verzeichnis, in dem Strings gespeichert werden sollen,
    * zu denen keine Uebersetzungen existieren.

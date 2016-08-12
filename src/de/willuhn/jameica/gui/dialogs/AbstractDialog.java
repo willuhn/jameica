@@ -87,23 +87,23 @@ public abstract class AbstractDialog<T>
 	 * Positioniert den Dialog an der aktuellen Maus-Position.
 	 */
 	public final static int POSITION_MOUSE = 0;
-	
+
 	/**
 	 * Positioniert den Dialog mittig auf dem Bildschirm.
 	 */
 	public final static int POSITION_CENTER = 1;
-	
+
 	/**
 	 * Positioniert den Dialog auf dem Primaer-Monitor.
 	 */
 	public final static int MONITOR_PRIMARY = 0;
-	
+
 	/**
 	 * Positioniert den Dialog auf dem Monitor, auf dem sich das Jameica-Fenster befindet.
 	 * Das ist der Default-Wert.
 	 */
 	public final static int MONITOR_CURRENT = 1;
-	
+
   protected I18N i18n = Application.getI18n();
 
   private List<Listener> listeners = new ArrayList<Listener>();
@@ -111,7 +111,7 @@ public abstract class AbstractDialog<T>
   private int pos = POSITION_CENTER;
   private int height = SWT.DEFAULT;
   private int width = SWT.DEFAULT;
-  
+
   private boolean resizable = false;
 
   private int monitor = MONITOR_CURRENT;
@@ -129,11 +129,11 @@ public abstract class AbstractDialog<T>
 
 	private String titleText;
   private String panelText;
-	
+
 	private int closeState = SWT.OK;
-	
+
 	private Exception onEscapeException = null;
-	
+
   /**
    * Erzeugt einen neuen Dialog.
    * Er ist nicht groessenaenderbar.
@@ -145,7 +145,7 @@ public abstract class AbstractDialog<T>
 	{
     this(position,true);
 	}
-	
+
   /**
    * Erzeugt einen neuen Dialog.
    * @param position Position des Dialogs.
@@ -158,25 +158,26 @@ public abstract class AbstractDialog<T>
     this.pos       = position;
     this.resizable = resizable;
   }
-  
+
   /**
    * Durch Ueberschreiben dieser Funktion und zurueckliefern von "true" kann man
    * einen Dialog nicht-modal machen, sodass man im Hauptfenster weiterhin Eingaben
    * vornehmen kann, waehrend der Dialog offen ist.
    * Default ist "false".
+   * @return false, wenn der Dialog modal ist (andere Fenster sperrt), andernfalls true.
    */
   protected boolean isModeless()
   {
     return false;
   }
-  
+
   /**
    * Erzeugt die Shell des Dialogs.
    * Kann von abgeleiteten Klassen ueberschrieben werden.
    * Tu das aber bitte nur, wenn du genau weisst, was du tust.
    * @param parent die Parent-Shell.
    * @param flags die Flags.
-   * @return die Shell. 
+   * @return die Shell.
    */
   protected Shell createShell(Shell parent, int flags)
   {
@@ -204,15 +205,15 @@ public abstract class AbstractDialog<T>
         //              der Login-Screen VOR dem Splash-Screen erscheint.
         //              Danach verwenden wir nur noch PRIMARY_MODAL
         Shell rootShell = GUI.getShell();
-        
+
         int modalType = SWT.PRIMARY_MODAL; // Default PRIMARY_MODAL
         if (rootShell.getData("systemshell") == null) // Ausser beim Bootvorgang - da ist das Property nicht gesetzt
           modalType = SWT.APPLICATION_MODAL;
         if (isModeless()) // Es sei denn, es ist explizit ausgeschaltet.
           modalType = SWT.MODELESS;
-        
+
         Logger.debug("modal type: " + (modalType == SWT.APPLICATION_MODAL ? "application" : (modalType == SWT.PRIMARY_MODAL ? "primary" : "modeless")));
-        
+
         int flags = SWT.DIALOG_TRIM | modalType;
         if (resizable)
           flags |= SWT.RESIZE;
@@ -229,10 +230,10 @@ public abstract class AbstractDialog<T>
               // (was dazu fuehren wuerde, dass die open()-Funktion fehlerfrei
               // durchlaeuft - sie aber vermutlich NULL zurueckgibt.
               e.doit = false;
-              
+
               // Wird hier die OperationCancelledException geworfen,
               // wird sie bis zum Aufrufer durchgereicht.
-              
+
               // Wir duerfen die Exception nicht direkt hier werfen. Das bringt
               // SWT/GTK - und damit die ganze JVM - zumindest auf meinem System
               // unter Umstaenden zum Absturz. Scheinbar immer dann, wenn im Dialog
@@ -252,10 +253,10 @@ public abstract class AbstractDialog<T>
           }
         });
 
-        
+
         if (pos == POSITION_MOUSE)
           cursor = display.getCursorLocation();
-        
+
         title = new TitlePart(panelText != null ? panelText : titleText);
         title.paint(shell);
 
@@ -284,7 +285,7 @@ public abstract class AbstractDialog<T>
       }
     });
 	}
-	
+
 	/**
 	 * Fuegt dem Dialog einen Shell-Listener hinzu.
 	 * Der wird u.a. aufgerufen, wenn der User versucht,
@@ -359,7 +360,7 @@ public abstract class AbstractDialog<T>
     // Panel auch aktualisieren
     this.setPanelText(this.panelText);
   }
-  
+
   /**
    * Legt einen abweichenden Text fuer das Panel direkt unter dem Titel fest.
    * Per Default wird dort nochmal der Text des Dialog-Titels angezeigt.
@@ -368,11 +369,11 @@ public abstract class AbstractDialog<T>
   public void setPanelText(String text)
   {
     this.panelText = text;
-    
+
     if (this.title != null)
       this.title.setTitle(this.panelText != null ? this.panelText : this.titleText);
   }
-  
+
   /**
    * Legt fest, auf welchem Monitor der Dialog angezeigt werden soll.
    * @param monitor der Monitor.
@@ -431,7 +432,7 @@ public abstract class AbstractDialog<T>
 	 * werden. Tut sie das, wird der Dialog nicht angezeigt.
    */
   protected abstract void paint(Composite parent) throws Exception;
-	
+
 	/**
 	 * Diese Funktion wird beim Schliessen des Dialogs in open()
 	 * aufgerufen und liefert die ausgewaehlten Daten zurueck.
@@ -441,7 +442,7 @@ public abstract class AbstractDialog<T>
    * @throws Exception
    */
   protected abstract T getData() throws Exception;
-  
+
   /**
    * Kann ueberschrieben werden, um zu beeinflussen, was passieren soll, wenn
    * der User versucht, den Dialog mit Escape zu beenden.
@@ -485,7 +486,7 @@ public abstract class AbstractDialog<T>
 					shell.setText(titleText == null ? "" : titleText);
           if (sideImage != null && !sideImage.isDisposed() && imageLabel != null && !imageLabel.isDisposed())
             imageLabel.setImage(sideImage);
-	
+
 					try
 					{
 						paint(parent);
@@ -503,18 +504,18 @@ public abstract class AbstractDialog<T>
             Logger.debug("using custom dialog size: " + width + "x" + height);
 
             shell.pack();
-            
+
             height = (height == SWT.DEFAULT ? shell.getBounds().height : height);
             width  = (width  == SWT.DEFAULT ? shell.getBounds().width  : width);
-            
+
             shell.setSize(width, height);
-            
+
           }
           else
           {
             shell.pack();
           }
-	
+
           // BUGZILLA 183
           Rectangle displayRect = null;
           if (monitor == AbstractDialog.MONITOR_CURRENT)
@@ -526,16 +527,16 @@ public abstract class AbstractDialog<T>
           Rectangle shellRect = shell.getBounds();
 					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2); // das "displayRect.x" ist wegen Dualhead (die Offset-Position des Monitors)
 					int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);  // das "displayRect.y" ist wegen Dualhead
-					
+
 					Point size = shell.getSize();
-					
+
 					// b) Maus-Position
 					if (pos == POSITION_MOUSE && cursor != null)
 					{
 						x = cursor.x - (size.x / 2);
 						y = cursor.y - (size.y / 2);
 					}
-					
+
 					// BUGZILLA 1087 Out-of-Range-Check (eigentlich nur unter Windows noetig, schaded bei den anderen aber nicht)
           if ((x + size.x) > (displayRect.x + displayRect.width))
           {
@@ -547,9 +548,9 @@ public abstract class AbstractDialog<T>
             // Fenster wuerde ueber den unteren Rand hinausgehen
             y = displayRect.y + displayRect.height - size.y - 4; // 4 Pixel Puffer zum Rand
           }
-					
+
 					shell.setLocation(x, y);
-	
+
 					shell.open();
           shell.forceActive();
 					while (shell != null && !shell.isDisposed() && onEscapeException == null) {
@@ -557,10 +558,10 @@ public abstract class AbstractDialog<T>
 					}
         }
       });
-			
+
 			if (onEscapeException != null)
 			  throw onEscapeException;
-			
+
 			return getData();
 		}
 		catch (OperationCanceledException oce)
@@ -615,13 +616,13 @@ public abstract class AbstractDialog<T>
       Logger.debug("notifying listeners");
 			Event e = new Event();
       e.detail = closeState;
-			
+
       // Wir geben die Daten nur weiter, wenn der Dialog nicht abgebrochen wurde
       // Andernfalls werden Daten vom Aufrufer versehentlich ausgewertet, obwohl
       // er das gar nicht wollte.
       if (e.detail != SWT.CANCEL)
   			e.data = getData();
-			
+
 			for (Listener l:this.listeners)
 			{
 				l.handleEvent(e);
