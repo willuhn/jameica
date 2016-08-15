@@ -266,7 +266,6 @@ public class SSLFactory
     
     byte[] serno = new byte[8];
     SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-    random.setSeed(System.nanoTime());
     random.nextBytes(serno);
     BigInteger serial = new BigInteger(serno).abs();
     
