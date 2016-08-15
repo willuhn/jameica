@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0063 Neue Util-Version https://github.com/willuhn/util/commit/ac2a759cc439d1a833ef104ad02270e73d1b3fa8
   * BUG: 0062 Current Object wurde im Contextmenu eines Tree nicht korrekt gesetzt, wenn dessen State restored wurde
   * NEW: 0061 Aktualisierte englische Sprach-Bundles von Christian
   * NEW: 0060 Label auch in DateInput zur Laufzeit änderbar
