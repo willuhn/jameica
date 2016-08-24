@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0064 In PopupList Element nur noch übernehmen, wenn explizit angeklickt oder ENTER gedrückt. Siehe http://www.onlinebanking-forum.de/forum/topic.php?p=127022#real127022
   * NEW: 0063 Neue Util-Version https://github.com/willuhn/util/commit/ac2a759cc439d1a833ef104ad02270e73d1b3fa8
   * BUG: 0062 Current Object wurde im Contextmenu eines Tree nicht korrekt gesetzt, wenn dessen State restored wurde
   * NEW: 0061 Aktualisierte englische Sprach-Bundles von Christian
