@@ -1046,7 +1046,7 @@ public class GUI implements ApplicationController
     if (getDisplay() == null || getDisplay().isDisposed()) return;
 
     // Das Konstrukt sieht merkwuerdig aus - ich weiss. Muss aber so ;)
-    final Thread t = new Thread("[Jameica Backgroundtask] " + task.getClass().getName())
+    final Thread t = new Thread("bg-task:" + task.getClass().getSimpleName())
     {
       public void run()
       {
