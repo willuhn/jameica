@@ -484,9 +484,9 @@
   </target>
 
 
-  <target depends="init,compile,tag,jar,zip,javadoc,src,sign,clean" description="build an official release" name="all" />
+  <target depends="init,compile,tag,jar,zip,javadoc,src,sign,lib,clean" description="build an official release" name="all" />
 
-  <target depends="init,compile,jar,zip,src,clean" description="build inofficial release" name="fast" />
+  <target depends="init,compile,jar,zip,src,lib,clean" description="build inofficial release" name="fast" />
 
   <target depends="init,compile,jar,zip,javadoc,src" description="build nightly build" name="nightly">
     <mkdir dir="${project.nightly}" />
@@ -503,11 +503,14 @@
 
 
     <copy file="${project.release}/${define.srcfilename}" tofile="${project.nightly}/${define.projectname}-${system.version}.src.zip" />
-
-    <!-- Die Datei brauchen die anderen Plugins zum Kompilieren //-->
-    <copy file="${project.zipdir}/${define.jarfilename}" tofile="releases/jameica-lib.jar" />
+    <antcall target="lib"/>
 
     <delete dir="${project.release}" />
+  </target>
+  
+  <target name="lib">
+    <!-- Die Datei brauchen die anderen Plugins zum Kompilieren //-->
+    <copy file="${project.zipdir}/${define.jarfilename}" tofile="releases/jameica-lib.jar" />
   </target>
 
 
