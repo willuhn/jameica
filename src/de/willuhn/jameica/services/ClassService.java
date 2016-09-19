@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
@@ -159,6 +160,16 @@ public class ClassService implements Bootable
       Logger.info(mycl.getName() + ": added dir " + bin);
       mycl.add(bin); // Fuer den Start in Eclipse bzw. entpackte Classen
     }
+    File target = new File(dir,"target");
+    if (target.exists())
+    {
+      File targetClasses = new File(target,"classes");
+      if (targetClasses.exists())
+      {
+        Logger.info(mycl.getName() + ": added dir " + targetClasses);
+        mycl.add(targetClasses); // Fuer den Start aus Eclipse im Maven-Projekt-Layout
+      }
+    }
     Application.getCallback().getStartupMonitor().addPercentComplete(2);
 
     // Und jetzt noch alle darin befindlichen Jars
@@ -211,7 +222,10 @@ public class ClassService implements Bootable
     
     String path = dir.getCanonicalPath();
     path = path.replaceAll("\\\\","/"); // Windows-Backslash gegen Linux-Slash ersetzen
-    
+
+    Pattern binDirPatter = Pattern.compile(path + "/bin/.*\\.class");
+    Pattern targetDirPatter = Pattern.compile(path + "/target/classes.*\\.class");
+
     // Wir iterieren ueber alle Dateien in dem Verzeichnis.
     for (int i=0;i<child.length;++i)
     {
@@ -221,11 +235,12 @@ public class ClassService implements Bootable
       String name = child[i].getCanonicalPath();
       name = name.replaceAll("\\\\","/"); // Windows-Backslash gegen Linux-Slash ersetzen
       
-      // Class-Files nur, wenn sie sich im bin-Verzeichnis befinden
-      if (name.matches(path + "/bin/.*\\.class"))
+      // Class-Files nur, wenn sie sich im bin- oder target/classes-Verzeichnis befinden
+      boolean binDir = binDirPatter.matcher(name).matches();
+      if (binDir || targetDirPatter.matcher(name).matches())
       {
         // Jetzt muessen wir vorn noch den Verzeichnisnamen abschneiden
-        name = name.substring(path.length() + 5); // fuehrenden Pfad abschneiden ("/bin" beachten)
+        name = name.substring(path.length() + (binDir?5:16)); // fuehrenden Pfad abschneiden ("/bin" bzw. "/target/classes" beachten)
         name = name.substring(0, name.indexOf(".class")).replace('/', '.'); // .class weg Trenner ersetzen
         if (name.startsWith("."))
           name = name.substring(1); // ggf. fuehrenden Punkt abschneiden
