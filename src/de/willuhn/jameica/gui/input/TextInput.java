@@ -127,6 +127,11 @@ public class TextInput extends AbstractInput
 
     this.setEnabledInternal(enabled);
     text.setText((value == null ? "" : value));
+    
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      text.setToolTipText(tooltip.toString());
+    
     if (this.focus)
       text.setFocus();
     return text;

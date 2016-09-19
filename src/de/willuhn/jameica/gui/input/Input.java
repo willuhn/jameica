@@ -1,15 +1,10 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/input/Input.java,v $
- * $Revision: 1.10 $
- * $Date: 2011/05/11 08:42:07 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
- * All rights reserved
+ * Copyright (c) 2016 Olaf Willuhn
+ * GNU GPLv2
  *
  **********************************************************************/
+
 package de.willuhn.jameica.gui.input;
 
 import org.eclipse.swt.widgets.Composite;
@@ -24,6 +19,10 @@ import de.willuhn.jameica.gui.Part;
  */
 public interface Input extends Part
 {
+  /**
+   * Key fuer die Context-Information mit dem Tooltip.
+   */
+  public final static String DATAKEY_TOOLTIP = "datakey.tooltip";
 
   /**
    * Liefert den Wert des Eingabefelds.
@@ -156,12 +155,3 @@ public interface Input extends Part
    */
   public Object getData(String key);
 }
-
-/**********************************************************************
- * $Log: Input.java,v $
- * Revision 1.10  2011/05/11 08:42:07  willuhn
- * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
- *
- * Revision 1.9  2008/12/17 22:45:03  willuhn
- * @R t o d o  tag entfernt
- **********************************************************************/

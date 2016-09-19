@@ -53,6 +53,10 @@ public class CheckboxInput extends AbstractInput
     button = GUI.getStyleFactory().createCheckbox(this.getParent());
     button.setSelection(value);
     
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.button.setToolTipText(tooltip.toString());
+    
     String name = this.getName();
     if (name != null)
       button.setText(name);

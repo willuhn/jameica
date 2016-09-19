@@ -145,6 +145,11 @@ public class ImageInput extends AbstractInput
       return this.button;
 
     this.button = GUI.getStyleFactory().createButton(getParent());
+    
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.button.setToolTipText(tooltip.toString());
+
     this.button.setEnabled(this.enabled);
     if (this.focus)
       this.button.setFocus();

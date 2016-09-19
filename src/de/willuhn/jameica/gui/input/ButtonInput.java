@@ -74,6 +74,11 @@ public abstract class ButtonInput extends AbstractInput
 		comp.setLayout(layout);
   
 		clientControl = getClientControl(comp);
+		
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      clientControl.setToolTipText(tooltip.toString());
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent = 1;
 		clientControl.setLayoutData(gd);

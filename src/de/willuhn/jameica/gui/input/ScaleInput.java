@@ -120,6 +120,11 @@ public class ScaleInput extends AbstractInput
     int os = Application.getPlatform().getOS();
     int style = (os == Platform.OS_WINDOWS || os == Platform.OS_WINDOWS_64) ? SWT.BORDER : SWT.NONE;
     this.scale = new Scale(this.getParent(),this.orientation | style);
+    
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.scale.setToolTipText(tooltip.toString());
+
     this.scale.setEnabled(this.enabled);
 
     this.scale.setMinimum(this.minimum);

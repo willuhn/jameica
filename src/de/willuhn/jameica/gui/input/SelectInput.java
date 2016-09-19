@@ -156,6 +156,10 @@ public class SelectInput extends AbstractInput
     this.combo.setVisibleItemCount(15); // Patch von Heiner
     this.combo.setEnabled(enabled);
 
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.combo.setToolTipText(tooltip.toString());
+
     // Daten in die Liste uebernehmen
     applyList();
     

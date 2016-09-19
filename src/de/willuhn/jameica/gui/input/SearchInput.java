@@ -276,6 +276,10 @@ public class SearchInput extends AbstractInput
 
     this.text = GUI.getStyleFactory().createText(getParent());
 
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.text.setToolTipText(tooltip.toString());
+
     String display = this.value == null ? null : format(this.value);
     if (display == null)
       display = this.search;

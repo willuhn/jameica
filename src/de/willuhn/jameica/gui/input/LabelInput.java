@@ -48,6 +48,11 @@ public class LabelInput extends AbstractInput
   public Control getControl()
   {
     label = GUI.getStyleFactory().createLabel(getParent(),SWT.NONE);
+    
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.label.setToolTipText(tooltip.toString());
+
     label.setText(value == null ? "" : SWTUtil.escapeLabel(value));
     if (this.color != null)
       this.label.setForeground(this.color.getSWTColor());

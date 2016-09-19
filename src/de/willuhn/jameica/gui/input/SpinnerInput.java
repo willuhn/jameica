@@ -84,6 +84,10 @@ public class SpinnerInput extends AbstractInput
     this.spinner.setIncrement(1);
     this.spinner.setEnabled(this.enabled);
     
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.spinner.setToolTipText(tooltip.toString());
+    
     if (this.focus)
       this.spinner.setFocus();
 

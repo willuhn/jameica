@@ -131,7 +131,11 @@ public class RadioInput extends AbstractInput
 			return button;
 		
     button = new Button(getParent(), SWT.RADIO);
-    
+
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.button.setToolTipText(tooltip.toString());
+
     // Der Listener uebernimmt das Deselektieren der anderen Radiobuttons
     button.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e)

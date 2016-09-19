@@ -53,6 +53,11 @@ public class LinkInput extends AbstractInput
       return this.link;
     
     this.link = new Link(this.getParent(),SWT.NONE);
+    
+    Object tooltip = this.getData(DATAKEY_TOOLTIP);
+    if (tooltip != null)
+      this.link.setToolTipText(tooltip.toString());
+
     this.link.setText(this.text == null ? "" : SWTUtil.escapeLabel(this.text));
     if (this.focus) this.link.setFocus();
     this.link.setEnabled(this.enabled);

@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0066 BUGZILLA 1765 - Unterstützung für Tooltips in Input-Feldern
   * NEW: 0065 Neue Util-Version https://github.com/willuhn/util/commit/1180b2c82dcdd9e3a2414f60730461b2d6a1818c
   * BUG: 0064 In PopupList Element nur noch übernehmen, wenn explizit angeklickt oder ENTER gedrückt. Siehe http://www.onlinebanking-forum.de/forum/topic.php?p=127022#real127022
   * NEW: 0063 Neue Util-Version https://github.com/willuhn/util/commit/ac2a759cc439d1a833ef104ad02270e73d1b3fa8
