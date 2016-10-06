@@ -115,7 +115,7 @@ public class FeatureShortcut implements Feature
                 c = Character.toLowerCase(c);
               if ((event.stateMask == shortcut.getModifierKeys()) && (event.keyCode == c))
               {
-                Object selection = ctx.table.getSelection();
+                Object selection = ctx.part.getSelection();
                 if (selection == null)
                   return;
                 if (i.isEnabledFor(selection))

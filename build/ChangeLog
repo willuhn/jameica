@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0068 Support für Table-Features in Basis-Klasse "AbstractTablePart" verschoben, damit es auch von TreePart genutzt werden kann
   * NEW: 0067 BUGZILLA 1766 - Bin-Ordner auch in "target/classes" unterstützen (Maven-Kompatibilität)
   * NEW: 0066 BUGZILLA 1765 - Unterstützung für Tooltips in Input-Feldern
   * NEW: 0065 Neue Util-Version https://github.com/willuhn/util/commit/1180b2c82dcdd9e3a2414f60730461b2d6a1818c

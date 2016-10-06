@@ -11,10 +11,10 @@
 
 package de.willuhn.jameica.gui.parts.table;
 
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Control;
 
+import de.willuhn.jameica.gui.parts.AbstractTablePart;
 import de.willuhn.jameica.gui.parts.ContextMenu;
-import de.willuhn.jameica.gui.parts.TablePart;
 
 /**
  * Gemeinsames Interface fuer Features, die zu einer Tabelle nachgeruestet werden koennen.
@@ -38,9 +38,9 @@ public interface Feature
   public class Context
   {
     /**
-     * Die SWT-Tabelle selbst.
+     * Die SWT-Control selbst.
      */
-    public Table control;
+    public Control control;
     
     /**
      * Das Context-Menu der Tabelle.
@@ -50,7 +50,7 @@ public interface Feature
     /**
      * Die Tabelle selbst.
      */
-    public TablePart table;
+    public AbstractTablePart part;
   }
   
   /**

@@ -45,6 +45,8 @@ import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.formatter.TreeFormatter;
+import de.willuhn.jameica.gui.parts.table.Feature;
+import de.willuhn.jameica.gui.parts.table.Feature.Context;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.logging.Logger;
@@ -107,6 +109,17 @@ public class TreePart extends AbstractTablePart
   {
     super(action);
     this.setList(list);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#createFeatureContext()
+   */
+  @Override
+  protected Context createFeatureContext()
+  {
+    Context ctx = super.createFeatureContext();
+    ctx.control = this.tree;
+    return ctx;
   }
 
   /**
@@ -460,6 +473,8 @@ public class TreePart extends AbstractTablePart
     }
 
     restoreState();
+    
+    this.featureEvent(Feature.Event.PAINT);
   }
   
   /**

@@ -98,7 +98,6 @@ public class TablePart extends AbstractTablePart
   // Listeners, Actions
   private de.willuhn.datasource.rmi.Listener deleteListener = new DeleteListener();
   private List<TableChangeListener> changeListeners         = new ArrayList<TableChangeListener>();
-  private List<Feature> features                            = new ArrayList<Feature>();
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -160,15 +159,6 @@ public class TablePart extends AbstractTablePart
     this.down   = SWTUtil.getImage("down.gif");
   }
   
-  /**
-   * Fuegt ein Feature hinzu.
-   * @param feature das Feature.
-   */
-  public void addFeature(Feature feature)
-  {
-    this.features.add(feature);
-  }
-
   /**
    * Definiert einen optionalen Formatierer, mit dem man SWT-maessig ganze Zeilen formatieren kann.
    * @param formatter Formatter.
@@ -1446,36 +1436,16 @@ public class TablePart extends AbstractTablePart
   }
   
   /**
-   * Loest ein Feature-Event aus.
-   * @param e das Event.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#createFeatureContext()
    */
-  private void featureEvent(Feature.Event e)
+  @Override
+  protected Context createFeatureContext()
   {
-    if (this.features.size() == 0)
-      return;
-    
-    Context ctx = new Context();
+    Context ctx = super.createFeatureContext();
     ctx.control = this.table;
-    ctx.menu    = this.menu;
-    ctx.table   = this;
-    
-    for (Feature f:this.features)
-    {
-      if (f.onEvent(e))
-      {
-        try
-        {
-          f.handleEvent(e,ctx);
-        }
-        catch (Exception ex)
-        {
-          Logger.error("error while handling event " + e,ex);
-        }
-      }
-    }
+    return ctx;
   }
-
-
+  
   /**
    * Kleine Hilfs-Klasse fuer die Sortierung und Anzeige.
    */

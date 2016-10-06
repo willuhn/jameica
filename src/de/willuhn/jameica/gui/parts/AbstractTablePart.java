@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.GenericIterator;
@@ -19,7 +20,10 @@ import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.jameica.gui.parts.table.Feature;
+import de.willuhn.jameica.gui.parts.table.Feature.Context;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
@@ -44,6 +48,8 @@ public abstract class AbstractTablePart implements Part
   protected List<Listener> selectionListeners = new ArrayList<Listener>();
   protected Action action                  = null;
 
+  private List<Feature> features           = new ArrayList<Feature>();
+
   /**
    * ct.
    * @param action die Default-Action.
@@ -52,7 +58,87 @@ public abstract class AbstractTablePart implements Part
   {
     this.action = action;
   }
+
+  /**
+   * Fuegt ein Feature hinzu.
+   * @param feature das Feature.
+   */
+  public void addFeature(Feature feature)
+  {
+    if (feature == null)
+    {
+      Logger.warn("no feature given");
+      return;
+    }
+    
+    this.features.add(feature);
+  }
+
+  /**
+   * Fuegt ein Feature anhand des Klassennamens hinzu.
+   * @param featureName der Klassen-Name des Features.
+   */
+  public void addFeature(String featureName)
+  {
+    featureName = StringUtils.trimToNull(featureName);
+    if (featureName == null)
+    {
+      Logger.warn("no feature name given");
+      return;
+    }
+    
+    // Wir versuchen, das Feature zu laden
+    try
+    {
+      Class<Feature> c = Application.getClassLoader().load(featureName);
+      BeanService bs = Application.getBootLoader().getBootable(BeanService.class);
+      this.features.add(bs.get(c));
+    }
+    catch (Exception e)
+    {
+      Logger.warn("feature not found: " + featureName);
+      return;
+    }
+  }
   
+  /**
+   * Loest ein Feature-Event aus.
+   * @param e das Event.
+   */
+  protected void featureEvent(Feature.Event e)
+  {
+    if (this.features.size() == 0)
+      return;
+    
+    Context ctx = this.createFeatureContext();
+    for (Feature f:this.features)
+    {
+      if (f.onEvent(e))
+      {
+        try
+        {
+          f.handleEvent(e,ctx);
+        }
+        catch (Exception ex)
+        {
+          Logger.error("error while handling event " + e,ex);
+        }
+      }
+    }
+  }
+  
+  /**
+   * Erzeugt den Feature-Context.
+   * @return der Feature-Context.
+   */
+  protected Context createFeatureContext()
+  {
+    Context ctx = new Context();
+    ctx.menu    = this.menu;
+    ctx.part    = this;
+    return ctx;
+  }
+
   /**
    * Fuegt der Tabelle eine neue Spalte hinzu.
    * @param title Name der Spaltenueberschrift.
