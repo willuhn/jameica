@@ -31,6 +31,7 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -71,7 +72,12 @@ public class TreePart extends AbstractTablePart
   // State
   private static Session state = new Session();
   //////////////////////////////////////////////////////////
-    
+
+  private TreePart(Action action){
+    super(action);
+    setSummary(false);
+  }
+  
 	/**
    * Erzeugt einen neuen Tree basierend auf dem uebergebenen Objekt.
    * @param object Das Objekt, fuer das der Baum erzeugt werden soll. 
@@ -80,7 +86,7 @@ public class TreePart extends AbstractTablePart
    */
   public TreePart(Object object, Action action)
 	{
-    super(action);
+    this(action);
     this.setRootObject(object);
 	}
 
@@ -93,7 +99,7 @@ public class TreePart extends AbstractTablePart
    */
   public TreePart(GenericIterator list, Action action)
   {
-    super(action);
+    this(action);
     this.setList(list);
   }
   
@@ -105,7 +111,7 @@ public class TreePart extends AbstractTablePart
    */
   public TreePart(List list, Action action)
   {
-    super(action);
+    this(action);
     this.setList(list);
   }
 
@@ -198,9 +204,22 @@ public class TreePart extends AbstractTablePart
    */
   public void paint(Composite parent) throws RemoteException
   {
+
+    Composite composite=parent;
+    if(showSummary()){
+      composite = new Composite(parent,SWT.NONE);
+      composite.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL));
+      GridLayout layout = new GridLayout();
+      layout.horizontalSpacing = 0;
+      layout.verticalSpacing = 0;
+      layout.marginHeight = 0;
+      layout.marginWidth = 0;
+      composite.setLayout(layout);
+    }
+
     /////////////////////////////////////////////////////////////////
     // Tree erzeugen
-    this.tree = new org.eclipse.swt.widgets.Tree(parent, SWT.BORDER | SWT.FULL_SELECTION | (this.multi ? SWT.MULTI : SWT.SINGLE) | (this.checkable ? SWT.CHECK : SWT.NONE));
+    this.tree = new org.eclipse.swt.widgets.Tree(composite, SWT.BORDER | SWT.FULL_SELECTION | (this.multi ? SWT.MULTI : SWT.SINGLE) | (this.checkable ? SWT.CHECK : SWT.NONE));
     this.tree.setFont(Font.DEFAULT.getSWTFont());
     final GridData gridData = new GridData(GridData.FILL_BOTH);
     this.tree.setLayoutData(gridData);
@@ -426,6 +445,7 @@ public class TreePart extends AbstractTablePart
     if (menu != null)
       menu.paint(this.tree);
 
+    initSummaryLabel(composite);
     
     /////////////////////////////////////////////////////////////////
     // Nutzdaten einfuegen
@@ -864,6 +884,7 @@ public class TreePart extends AbstractTablePart
     {
       add(item,checkedList);
     }
+    refreshSummary();
     return checkedList;
   }
   
@@ -927,5 +948,36 @@ public class TreePart extends AbstractTablePart
     
     if (this.tree != null && !this.tree.isDisposed())
       this.tree.removeAll();
+    refreshSummary();
+  }
+
+  /**
+   * Liefert die Anzahl der Blätter in diesem Baum.
+   * @return Anzahl der Blattelemente.
+   */
+  public int size()
+  {
+    if (this.tree == null || this.tree.isDisposed())
+      return list.size();
+    int count=0;
+    for (TreeItem item : tree.getItems())
+    {
+      count+=count(item, false);
+    }
+    return count;
+  }
+
+  private int count(TreeItem item, boolean includingCurrent){
+    int count=0;
+    if(item.getItems().length==0){
+      if(includingCurrent){
+        count++;
+      }
+    }else{
+      for (TreeItem child : item.getItems()){
+        count+=count(child, true);
+      }
+    }
+    return count;
   }
 }

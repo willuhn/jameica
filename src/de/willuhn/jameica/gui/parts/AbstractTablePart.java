@@ -12,24 +12,34 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
+import de.willuhn.util.I18N;
 
 /**
  * Abstrakte Basis-Klasse von Tabellen-aehnlichen Parts.
  */
 public abstract class AbstractTablePart implements Part
 {
+
+  private I18N i18n   = Application.getI18n();
   protected ContextMenu menu               = null;
   protected boolean changeable             = false;
   protected boolean rememberColWidth       = false;
@@ -44,6 +54,10 @@ public abstract class AbstractTablePart implements Part
   protected List<Listener> selectionListeners = new ArrayList<Listener>();
   protected Action action                  = null;
 
+  private boolean showSummary           = true;
+  private boolean canSetSummaryFlag     = true;
+  private Label summary                 = null;
+
   /**
    * ct.
    * @param action die Default-Action.
@@ -51,6 +65,13 @@ public abstract class AbstractTablePart implements Part
   public AbstractTablePart(Action action)
   {
     this.action = action;
+    this.addSelectionListener(new Listener()
+    {
+      public void handleEvent(Event event)
+      {
+        refreshSummary();
+      }
+    });
   }
   
   /**
@@ -359,4 +380,67 @@ public abstract class AbstractTablePart implements Part
     }
     return new ArrayList();
   }
+
+  /**
+   * Legt fest, ob eine Summenzeile am Ende angezeigt werden soll.
+   * @param show true, wenn die Summenzeile angezeigt werden soll (Default) oder false
+   * wenn sie nicht angezeigt werden soll.
+   */
+  public void setSummary(boolean show)
+  { 
+    if(canSetSummaryFlag){
+      this.showSummary = show;
+    }else{
+      throw new IllegalStateException("setSummary can be called only before the composite the label is initialized.");
+    }
+  }
+
+  protected boolean showSummary(){
+    return this.showSummary;
+  }
+
+  /**
+   * Aktualisiert die Summenzeile.
+   */
+  protected void refreshSummary()
+  {
+    if (!showSummary || summary == null || summary.isDisposed())
+      return;
+    
+    // Machen wir verzoegert, weil das sonst bei Bulk-Updates unnoetig oft aufgerufen wird
+    delayedSummary.handleEvent(null);
+  }
+  
+  private Listener delayedSummary = new DelayedListener(new Listener() {
+    public void handleEvent(Event event)
+    {
+      if (summary != null && !summary.isDisposed())
+        summary.setText(getSummary());
+    }
+  });
+
+  /**
+   * Liefert den anzuzeigenden Summen-Text.
+   * Kann von abgeleiteten Klassen ueberschrieben werde, um etwas anderes anzuzeigen.
+   * @return anzuzeigender Text oder null, wenn nichts angezeigt werden soll.
+   */
+  protected String getSummary()
+  {
+    int size = size();
+    if (size != 1)
+      return i18n.tr("{0} Datensätze",Integer.toString(size));
+    return i18n.tr("1 Datensatz");
+  }
+
+  protected void initSummaryLabel(Composite composite){
+    canSetSummaryFlag=false;
+    if (this.showSummary)
+    {
+      this.summary = GUI.getStyleFactory().createLabel(composite,SWT.NONE);
+      this.summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      refreshSummary();
+    }
+  }
+
+  protected abstract int size();
 }
