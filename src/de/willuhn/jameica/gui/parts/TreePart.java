@@ -884,6 +884,7 @@ public class TreePart extends AbstractTablePart
     {
       add(item,checkedList);
     }
+    refreshSummary();
     return checkedList;
   }
   
@@ -947,6 +948,7 @@ public class TreePart extends AbstractTablePart
     
     if (this.tree != null && !this.tree.isDisposed())
       this.tree.removeAll();
+    refreshSummary();
   }
 
   /**
@@ -960,18 +962,20 @@ public class TreePart extends AbstractTablePart
     int count=0;
     for (TreeItem item : tree.getItems())
     {
-      count+=count(item);
+      count+=count(item, false);
     }
     return count;
   }
 
-  private int count(TreeItem item){
+  private int count(TreeItem item, boolean includingCurrent){
     int count=0;
     if(item.getItems().length==0){
-      count++;
+      if(includingCurrent){
+        count++;
+      }
     }else{
       for (TreeItem child : item.getItems()){
-        count+=count(child);
+        count+=count(child, true);
       }
     }
     return count;
