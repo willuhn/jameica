@@ -9,8 +9,10 @@ package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.widgets.Listener;
@@ -48,7 +50,7 @@ public abstract class AbstractTablePart implements Part
   protected List<Listener> selectionListeners = new ArrayList<Listener>();
   protected Action action                  = null;
 
-  private List<Feature> features           = new ArrayList<Feature>();
+  private Map<Class,Feature> features      = new HashMap<Class,Feature>();
 
   /**
    * ct.
@@ -71,9 +73,9 @@ public abstract class AbstractTablePart implements Part
       return;
     }
     
-    this.features.add(feature);
+    this.features.put(feature.getClass(),feature);
   }
-
+  
   /**
    * Fuegt ein Feature anhand des Klassennamens hinzu.
    * @param featureName der Klassen-Name des Features.
@@ -92,7 +94,7 @@ public abstract class AbstractTablePart implements Part
     {
       Class<Feature> c = Application.getClassLoader().load(featureName);
       BeanService bs = Application.getBootLoader().getBootable(BeanService.class);
-      this.features.add(bs.get(c));
+      this.addFeature(bs.get(c));
     }
     catch (Exception e)
     {
@@ -100,7 +102,32 @@ public abstract class AbstractTablePart implements Part
       return;
     }
   }
+
+  /**
+   * Entfernt das Feature.
+   * @param type das zu entfernende Feature.
+   */
+  public void removeFeature(Class<? extends Feature> type)
+  {
+    if (type == null)
+      return;
+    
+    this.features.remove(type);
+  }
   
+  /**
+   * Liefert die Instanz des Features, insofern es hinzugefuegt wurde.
+   * @param type der Typ des Features.
+   * @return das Feature oder NULL, wenn es nicht existiert.
+   */
+  public <T> T getFeature(Class<? extends Feature> type)
+  {
+    if (type == null)
+      return null;
+    
+    return (T) this.features.get(type);
+  }
+
   /**
    * Loest ein Feature-Event aus.
    * @param e das Event.
@@ -111,7 +138,7 @@ public abstract class AbstractTablePart implements Part
       return;
     
     Context ctx = this.createFeatureContext();
-    for (Feature f:this.features)
+    for (Feature f:this.features.values())
     {
       if (f.onEvent(e))
       {

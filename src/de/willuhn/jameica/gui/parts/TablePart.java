@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -56,8 +55,8 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.parts.table.Feature;
 import de.willuhn.jameica.gui.parts.table.Feature.Context;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -88,7 +87,6 @@ public class TablePart extends AbstractTablePart
   private org.eclipse.swt.widgets.Table table = null;
   protected TableFormatter tableFormatter = null;
   private Composite comp                = null;
-  private Label summary                 = null;
   private Image up                      = null;
   private Image down                    = null;
   private TableEditor editor            = null;
@@ -111,7 +109,6 @@ public class TablePart extends AbstractTablePart
   //////////////////////////////////////////////////////////
   // Flags
   private boolean enabled               = true;
-  private boolean showSummary           = true;
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -148,6 +145,7 @@ public class TablePart extends AbstractTablePart
   public TablePart(List list, Action action)
   {
     super(action);
+    this.setSummary(true); // Per Default aktiv
 
     // Wir nehmen eine Kopie der Liste, damit sie uns niemand manipulieren kann
     this.temp = new ArrayList();
@@ -157,6 +155,7 @@ public class TablePart extends AbstractTablePart
     this.i18n   = Application.getI18n();
     this.up     = SWTUtil.getImage("up.gif");
     this.down   = SWTUtil.getImage("down.gif");
+    
   }
   
   /**
@@ -185,8 +184,11 @@ public class TablePart extends AbstractTablePart
    * wenn sie nicht angezeigt werden soll.
    */
   public void setSummary(boolean show)
-  { 
-    this.showSummary = show;
+  {
+    if (show)
+      this.addFeature(new FeatureSummary());
+    else
+      this.removeFeature(FeatureSummary.class);
   }
   
   /**
@@ -974,14 +976,6 @@ public class TablePart extends AbstractTablePart
       }
     }
 
-    
-    if (this.showSummary)
-    {
-      this.summary = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-      this.summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      refreshSummary();
-    }
-  
     if (this.rememberOrder)
     {
       try
@@ -1194,23 +1188,15 @@ public class TablePart extends AbstractTablePart
 
   /**
    * Aktualisiert die Summenzeile.
+   * @dep
    */
   protected void refreshSummary()
   {
-    if (!showSummary || summary == null || summary.isDisposed())
-      return;
-    
-    // Machen wir verzoegert, weil das sonst bei Bulk-Updates unnoetig oft aufgerufen wird
-    delayedSummary.handleEvent(null);
+    // Wir delegieren das an das Feature weiter, um die Methode zu erhalten
+    FeatureSummary fs = this.getFeature(FeatureSummary.class);
+    if (fs != null)
+      fs.refreshSummary(getSummary());
   }
-  
-  private Listener delayedSummary = new DelayedListener(new Listener() {
-    public void handleEvent(Event event)
-    {
-      if (summary != null && !summary.isDisposed())
-        summary.setText(getSummary());
-    }
-  });
   
   /**
    * Liefert den anzuzeigenden Summen-Text.
