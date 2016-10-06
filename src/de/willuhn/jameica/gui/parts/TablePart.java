@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -57,7 +56,6 @@ import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.parts.table.Feature;
 import de.willuhn.jameica.gui.parts.table.Feature.Context;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.DelayedListener;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -88,7 +86,6 @@ public class TablePart extends AbstractTablePart
   private org.eclipse.swt.widgets.Table table = null;
   protected TableFormatter tableFormatter = null;
   private Composite comp                = null;
-  private Label summary                 = null;
   private Image up                      = null;
   private Image down                    = null;
   private TableEditor editor            = null;
@@ -112,7 +109,6 @@ public class TablePart extends AbstractTablePart
   //////////////////////////////////////////////////////////
   // Flags
   private boolean enabled               = true;
-  private boolean showSummary           = true;
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -187,16 +183,6 @@ public class TablePart extends AbstractTablePart
   {
     if (l != null)
       this.changeListeners.add(l);
-  }
-  
-  /**
-   * Legt fest, ob eine Summenzeile am Ende angezeigt werden soll.
-   * @param show true, wenn die Summenzeile angezeigt werden soll (Default) oder false
-   * wenn sie nicht angezeigt werden soll.
-   */
-  public void setSummary(boolean show)
-  { 
-    this.showSummary = show;
   }
   
   /**
@@ -984,13 +970,8 @@ public class TablePart extends AbstractTablePart
       }
     }
 
-    
-    if (this.showSummary)
-    {
-      this.summary = GUI.getStyleFactory().createLabel(comp,SWT.NONE);
-      this.summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      refreshSummary();
-    }
+    initSummaryLabel(comp);
+
   
     if (this.rememberOrder)
     {
@@ -1200,39 +1181,6 @@ public class TablePart extends AbstractTablePart
       Logger.debug("unable to create type safe array, fallback to generic array");
       return data.toArray();
     }
-  }
-
-  /**
-   * Aktualisiert die Summenzeile.
-   */
-  protected void refreshSummary()
-  {
-    if (!showSummary || summary == null || summary.isDisposed())
-      return;
-    
-    // Machen wir verzoegert, weil das sonst bei Bulk-Updates unnoetig oft aufgerufen wird
-    delayedSummary.handleEvent(null);
-  }
-  
-  private Listener delayedSummary = new DelayedListener(new Listener() {
-    public void handleEvent(Event event)
-    {
-      if (summary != null && !summary.isDisposed())
-        summary.setText(getSummary());
-    }
-  });
-  
-  /**
-   * Liefert den anzuzeigenden Summen-Text.
-   * Kann von abgeleiteten Klassen ueberschrieben werde, um etwas anderes anzuzeigen.
-   * @return anzuzeigender Text oder null, wenn nichts angezeigt werden soll.
-   */
-  protected String getSummary()
-  {
-    int size = size();
-    if (size != 1)
-      return i18n.tr("{0} Datensätze",Integer.toString(size));
-    return i18n.tr("1 Datensatz");
   }
 
   /**
