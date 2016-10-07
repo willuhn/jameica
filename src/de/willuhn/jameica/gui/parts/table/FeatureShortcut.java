@@ -36,6 +36,7 @@ import de.willuhn.util.ApplicationException;
 public class FeatureShortcut implements Feature
 {
   private List<Listener> shortcuts = new ArrayList<Listener>();
+  private boolean applied = false;
   
   /**
    * @see de.willuhn.jameica.gui.parts.table.Feature#onEvent(de.willuhn.jameica.gui.parts.table.Feature.Event)
@@ -50,7 +51,15 @@ public class FeatureShortcut implements Feature
    */
   public void handleEvent(Event e, Context ctx)
   {
-    // wir haben uns nur fuer das eine Event registriert. Daher brauchen wir das jetzt nicht checken.
+    // Shortcuts wurden bereits registriert
+    if (this.applied)
+      return;
+    
+    // Die benoetigten Controls sind noch nicht da
+    if (ctx.control == null || ctx.menu == null)
+      return;
+    
+    this.applied = true;
     
     // Checken, ob wir ContextMenu-Elemente mit Shortcut haben
     this.applyShortcuts(ctx,ctx.menu.getItems());

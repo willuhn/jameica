@@ -127,17 +127,30 @@ public abstract class AbstractTablePart implements Part
     
     return (T) this.features.get(type);
   }
+  
+  /**
+   * Prueft, ob das angegebene Feature das Event behandelt.
+   * @param type das Feature.
+   * @param e das Event.
+   * @return true, wenn das Feature dieses Event behandelt.
+   */
+  public boolean hasEvent(Class<? extends Feature> type, Feature.Event e)
+  {
+    Feature f = this.getFeature(type);
+    return f != null && f.onEvent(e);
+  }
 
   /**
    * Loest ein Feature-Event aus.
    * @param e das Event.
+   * @param data optionale Angabe des Datensatzes, auf den sich das Event bezieht.
    */
-  protected void featureEvent(Feature.Event e)
+  public void featureEvent(Feature.Event e, Object data)
   {
     if (this.features.size() == 0)
       return;
     
-    Context ctx = this.createFeatureContext();
+    Context ctx = this.createFeatureEventContext(e, data);
     for (Feature f:this.features.values())
     {
       if (f.onEvent(e))
@@ -155,14 +168,18 @@ public abstract class AbstractTablePart implements Part
   }
   
   /**
-   * Erzeugt den Feature-Context.
+   * Erzeugt den Context fuer das Feature-Event.
+   * Kann von abgeleiteten Klassen ueberschrieben werden, um weitere Informationen zum Context hinzuzufuegen.
+   * @param e das Event.
+   * @param data optionale Angabe des Objektes, auf das sich das Event bezieht.
    * @return der Feature-Context.
    */
-  protected Context createFeatureContext()
+  protected Context createFeatureEventContext(Feature.Event e, Object data)
   {
     Context ctx = new Context();
-    ctx.menu    = this.menu;
     ctx.part    = this;
+    ctx.menu    = this.menu;
+    ctx.data    = data;
     return ctx;
   }
 

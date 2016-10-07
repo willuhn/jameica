@@ -112,13 +112,14 @@ public class TreePart extends AbstractTablePart
   }
   
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#createFeatureContext()
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#createFeatureEventContext(de.willuhn.jameica.gui.parts.table.Feature.Event, java.lang.Object)
    */
   @Override
-  protected Context createFeatureContext()
+  protected Context createFeatureEventContext(Feature.Event e, Object data)
   {
-    Context ctx = super.createFeatureContext();
+    Context ctx = super.createFeatureEventContext(e,data);
     ctx.control = this.tree;
+    
     return ctx;
   }
 
@@ -474,7 +475,7 @@ public class TreePart extends AbstractTablePart
 
     restoreState();
     
-    this.featureEvent(Feature.Event.PAINT);
+    this.featureEvent(Feature.Event.PAINT,null);
   }
   
   /**

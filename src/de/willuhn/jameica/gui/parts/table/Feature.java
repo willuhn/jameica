@@ -11,6 +11,9 @@
 
 package de.willuhn.jameica.gui.parts.table;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.swt.widgets.Control;
 
 import de.willuhn.jameica.gui.parts.AbstractTablePart;
@@ -30,6 +33,26 @@ public interface Feature
      * Wird ausgeloest, wenn die paint()-Funktion der Tabelle aufgerufen wird.
      */
     PAINT,
+    
+    /**
+     * Wird ausgeloest, wenn die Anzeige aktualisiert werden soll.
+     */
+    REFRESH,
+    
+    /**
+     * Wird ausgeloest, wenn ein Datensatz hinzugefuegt wurde.
+     */
+    ADDED,
+    
+    /**
+     * Wird ausgeloest, wenn ein Datensatz entfernt wurde.
+     */
+    REMOVED,
+    
+    /**
+     * Wird ausgeloest, wenn die komplette Tabelle geleert wurde.
+     */
+    REMOVED_ALL,
   }
   
   /**
@@ -51,6 +74,19 @@ public interface Feature
      * Die Tabelle selbst.
      */
     public AbstractTablePart part;
+    
+    /**
+     * Optionale Angabe des Datensatzes, auf den sich das Event bezieht.
+     * Ist nur bei einigen Events gesetzt - z.Bsp. ADDED, REMOVED.
+     */
+    public Object data;
+    
+    /**
+     * Generische Map, in der die von TablePart abgeleiteten Klassen beliebige
+     * weitere Daten hinzufuegen koennen, die an das Feature weitergereicht
+     * werden sollen.
+     */
+    public Map addon = new HashMap();
   }
   
   /**

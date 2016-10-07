@@ -7,12 +7,16 @@
 
 package de.willuhn.jameica.gui.parts.table;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.datasource.BeanUtil;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.DelayedListener;
 
@@ -21,15 +25,30 @@ import de.willuhn.jameica.gui.util.DelayedListener;
  */
 public class FeatureSummary implements Feature
 {
+  /**
+   * Context-Key fuer den anzuzeigenden Summen-Text.
+   */
+  public final static String CTX_KEY_TEXT = "summary.text";
+  
+  private final static Set<Event> EVENTS = Collections.unmodifiableSet(new HashSet<Event>(Arrays.asList(
+      Event.PAINT,
+      Event.ADDED,
+      Event.REFRESH,
+      Event.REMOVED,
+      Event.REMOVED_ALL
+  )));
+  
+  private Listener listener = new DelayedListener(new UpdateListener());
   private Label summary = null;
   private String text = "";
+  
 
   /**
    * @see de.willuhn.jameica.gui.parts.table.Feature#onEvent(de.willuhn.jameica.gui.parts.table.Feature.Event)
    */
   public boolean onEvent(Event e)
   {
-    return e == Event.PAINT;
+    return EVENTS.contains(e);
   }
 
   /**
@@ -37,48 +56,32 @@ public class FeatureSummary implements Feature
    */
   public void handleEvent(Event e, Context ctx)
   {
-    if (this.summary == null)
+    if (this.summary == null && ctx.control != null)
     {
       this.summary = GUI.getStyleFactory().createLabel(ctx.control.getParent(),SWT.NONE);
       this.summary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
     
-    // TODO: Die "getSummary()"-Funktion gibt es in TreePart nicht
-    // Hier fehlt noch eine schoenere Loesung fuer einen Callback an das Part
-    try
-    {
-      BeanUtil.invoke(ctx.part,"refreshSummary",null);
-    }
-    catch (Exception ex)
-    {
-      // ignorieren wir erstmal
-    }
+    this.text = (String) ctx.addon.get(CTX_KEY_TEXT);
     
-    refreshSummary(this.text);
-  }
-
-  /**
-   * Aktualisiert die Summenzeile.
-   * @param text der anzuzeigende Summen-Text.
-   */
-  public void refreshSummary(final String text)
-  {
-    this.text = text;
-
     // Machen wir verzoegert, weil das sonst bei Bulk-Updates unnoetig oft aufgerufen wird
-    delayedSummary.handleEvent(null);
+    this.listener.handleEvent(null);
   }
   
-  private Listener delayedSummary = new DelayedListener(new Listener() {
+  /**
+   * Implementierung des eigentlichen Update-Listeners.
+   */
+  private class UpdateListener implements Listener
+  {
     /**
      * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
      */
     public void handleEvent(org.eclipse.swt.widgets.Event event)
     {
       if (summary != null && !summary.isDisposed())
-        summary.setText(text);
+        summary.setText(text != null ? text : "");
     }
-  });
+  }
 }
 
 

@@ -145,7 +145,7 @@ public class TablePart extends AbstractTablePart
   public TablePart(List list, Action action)
   {
     super(action);
-    this.setSummary(true); // Per Default aktiv
+    this.addFeature(new FeatureSummary());  // Per Default aktiv
 
     // Wir nehmen eine Kopie der Liste, damit sie uns niemand manipulieren kann
     this.temp = new ArrayList();
@@ -182,7 +182,9 @@ public class TablePart extends AbstractTablePart
    * Legt fest, ob eine Summenzeile am Ende angezeigt werden soll.
    * @param show true, wenn die Summenzeile angezeigt werden soll (Default) oder false
    * wenn sie nicht angezeigt werden soll.
+   * @deprecated Bitte stattdessen {@link AbstractTablePart#addFeature(Feature)} verwenden.
    */
+  @Deprecated
   public void setSummary(boolean show)
   {
     if (show)
@@ -257,7 +259,7 @@ public class TablePart extends AbstractTablePart
     this.sortTable.clear();
     this.textTable.clear();
     
-    refreshSummary();
+    this.featureEvent(Feature.Event.REMOVED_ALL,null);
   }
 
   /**
@@ -336,7 +338,7 @@ public class TablePart extends AbstractTablePart
             l.remove(new Item(item,null));
           }
           table.remove(i);
-          refreshSummary();
+          this.featureEvent(Feature.Event.REMOVED,item);
           return i;
         }
       }
@@ -523,8 +525,7 @@ public class TablePart extends AbstractTablePart
     if (tableFormatter != null)
       tableFormatter.format(item);
 
-    // Tabellengroesse anpassen
-    refreshSummary();
+    this.featureEvent(Feature.Event.ADDED,object);
   }
 
   /**
@@ -1000,7 +1001,7 @@ public class TablePart extends AbstractTablePart
     // nicht mehr
     this.temp.clear();
     
-    this.featureEvent(Feature.Event.PAINT);
+    this.featureEvent(Feature.Event.PAINT,null);
   }
   
   /**
@@ -1188,21 +1189,33 @@ public class TablePart extends AbstractTablePart
 
   /**
    * Aktualisiert die Summenzeile.
-   * @dep
+   * @deprecated Bitte künftig {@link AbstractTablePart#featureEvent(de.willuhn.jameica.gui.parts.table.Feature.Event, Object)}
+   * mit dem Event "REFRESH" verwenden.
    */
+  @Deprecated
   protected void refreshSummary()
   {
-    // Wir delegieren das an das Feature weiter, um die Methode zu erhalten
-    FeatureSummary fs = this.getFeature(FeatureSummary.class);
-    if (fs != null)
-      fs.refreshSummary(getSummary());
+    this.featureEvent(Feature.Event.REFRESH,null);
   }
   
   /**
    * Liefert den anzuzeigenden Summen-Text.
    * Kann von abgeleiteten Klassen ueberschrieben werde, um etwas anderes anzuzeigen.
    * @return anzuzeigender Text oder null, wenn nichts angezeigt werden soll.
+   * @deprecated Bitte kuenftig stattdessen {@link AbstractTablePart#createFeatureEventContext(de.willuhn.jameica.gui.parts.table.Feature.Event, Object)}
+   * ueberschreiben und dort die addon-Daten passend fuer FeatureSummary belegen:
+   * 
+   * <code>
+   * protected Context createFeatureEventContext(Feature.Event e, Object data)
+   * {
+   *   Context ctx = super.createFeatureEventContext(e, data);
+   *   if (this.hasEvent(FeatureSummary.class,e))
+   *     ctx.addon.put(FeatureSummary.CTX_KEY_TEXT,"Anzuzeigender Summentext");
+   *   return ctx;
+   * }
+   * </code>
    */
+  @Deprecated
   protected String getSummary()
   {
     int size = size();
@@ -1210,7 +1223,7 @@ public class TablePart extends AbstractTablePart
       return i18n.tr("{0} Datensätze",Integer.toString(size));
     return i18n.tr("1 Datensatz");
   }
-
+  
   /**
    * Gibt an, nach welcher Spalte sortiert werden soll.
    * @param colName Name der Spalte
@@ -1422,13 +1435,17 @@ public class TablePart extends AbstractTablePart
   }
   
   /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#createFeatureContext()
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#createFeatureEventContext(de.willuhn.jameica.gui.parts.table.Feature.Event, java.lang.Object)
    */
   @Override
-  protected Context createFeatureContext()
+  protected Context createFeatureEventContext(Feature.Event e, Object data)
   {
-    Context ctx = super.createFeatureContext();
+    Context ctx = super.createFeatureEventContext(e,data);
     ctx.control = this.table;
+    
+    if (this.hasEvent(FeatureSummary.class,e))
+      ctx.addon.put(FeatureSummary.CTX_KEY_TEXT,this.getSummary());
+
     return ctx;
   }
   
