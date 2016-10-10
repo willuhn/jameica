@@ -529,8 +529,7 @@ public class TablePart extends AbstractTablePart
   }
 
   /**
-   * Liefert die Anzahl der Elemente in dieser Tabelle.
-   * @return Anzahl der Elemente.
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#size()
    */
   public int size()
   {

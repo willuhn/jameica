@@ -35,7 +35,7 @@ public interface Feature
     PAINT,
     
     /**
-     * Wird ausgeloest, wenn die Anzeige aktualisiert werden soll.
+     * Wird ausgeloest, wenn die Anzeige explizit aktualisiert werden soll.
      */
     REFRESH,
     

@@ -54,7 +54,7 @@ public class FeatureSummary implements Feature
   /**
    * @see de.willuhn.jameica.gui.parts.table.Feature#handleEvent(de.willuhn.jameica.gui.parts.table.Feature.Event, de.willuhn.jameica.gui.parts.table.Feature.Context)
    */
-  public void handleEvent(Event e, Context ctx)
+  public void handleEvent(Event e, final Context ctx)
   {
     if (this.summary == null && ctx.control != null)
     {

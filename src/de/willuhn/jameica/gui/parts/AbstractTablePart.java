@@ -168,6 +168,12 @@ public abstract class AbstractTablePart implements Part
   }
   
   /**
+   * Liefert die Anzahl der Elemente in dieser Tabelle.
+   * @return Anzahl der Elemente.
+   */
+  public abstract int size();
+  
+  /**
    * Erzeugt den Context fuer das Feature-Event.
    * Kann von abgeleiteten Klassen ueberschrieben werden, um weitere Informationen zum Context hinzuzufuegen.
    * @param e das Event.

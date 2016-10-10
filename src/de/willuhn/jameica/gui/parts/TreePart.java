@@ -943,5 +943,38 @@ public class TreePart extends AbstractTablePart
     
     if (this.tree != null && !this.tree.isDisposed())
       this.tree.removeAll();
+    
+    this.featureEvent(Feature.Event.REMOVED_ALL,null);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#size()
+   */
+  @Override
+  public int size()
+  {
+    if (this.tree == null || this.tree.isDisposed())
+      return list.size();
+    
+    return this.count(tree.getItems());
+  }
+  
+  /**
+   * Zaehlt rekursiv die Elemente.
+   * @param items die Elemente, die incl. Kindern gezaehlt werden sollen.
+   * @return die Anzahl der Elemente.
+   */
+  private int count(TreeItem[] items)
+  {
+    int count = 0;
+    for (TreeItem i:items)
+    {
+      // Das Element selbst
+      count++;
+      
+      // Und die Kinder
+      count += this.count(i.getItems());
+    }
+    return count;
   }
 }
