@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0071 Text-Farbe von Kommentaren aus Mittelwert von Vorder- und Hintergrund errechnen
   * NEW: 0070 Neue SWT-Version 4.6.1 (ausser macOS 32Bit, dafür gibt es keine aktuellen SWT-Versionen mehr)
   * NEW: 0069 Summary-Funktion in TablePart auf Feature-Basis umgestellt.
   * NEW: 0068 Support für Table-Features in Basis-Klasse "AbstractTablePart" verschoben, damit es auch von TreePart genutzt werden kann

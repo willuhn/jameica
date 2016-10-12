@@ -26,7 +26,9 @@ import de.willuhn.jameica.system.Settings;
  * in Properties-Dateien speichern koennen.
  */
 public class Color {
-	
+
+  private static HashMap<String, org.eclipse.swt.graphics.Color> colorCache = new HashMap<String, org.eclipse.swt.graphics.Color>();
+
 	/**
 	 * Hintergrundfarbe von Widgets.
 	 * @deprecated Stattdessen sollte nur noch Color.BACKGROUND verwendet werden.
@@ -70,7 +72,7 @@ public class Color {
   /**
    * Farbe von Kommentaren.
    */
-  public final static Color COMMENT 		= new Color("color.comment",			new RGB(140,140,140));
+  public final static Color COMMENT 		= new Color("color.comment",			getMiddle(BACKGROUND,FOREGROUND));
 
   /**
    * Farbe von Fehlertexten.
@@ -102,7 +104,31 @@ public class Color {
 	private RGB defaultValue;
 	private static Settings settings = new Settings(Color.class);
   
-  private static HashMap<String, org.eclipse.swt.graphics.Color> colorCache = new HashMap<String, org.eclipse.swt.graphics.Color>();
+  /**
+   * Errechnet einen Farbton, der sich genau zwischen beiden Farben befindet,
+   * Wird verwendet, um eine passende Text-Farbe fuer Kommentare zu errechnen, die genau zwischen
+   * Vorder- und Hintergrund ist. 
+   * @param c1 Farbe 1.
+   * @param c2 Farbe 2.
+   * @return die errechnete Farbe.
+   */
+  private static RGB getMiddle(Color c1, Color c2)
+  {
+    RGB r1 = c1.getSWTColor().getRGB();
+    RGB r2 = c2.getSWTColor().getRGB();
+    return new RGB(middle(r1.red,r2.red),middle(r1.green,r2.green),middle(r1.blue,r2.blue));
+  }
+  
+  /**
+   * Errechnet den Mittelwert.
+   * @param i1 Wert 1.
+   * @param i2 Wert 2.
+   * @return der Mittelwert.
+   */
+  private static int middle(int i1, int i2)
+  {
+    return (i1 + i2) / 2;
+  }
   
   /**
 	 * ct.
