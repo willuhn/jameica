@@ -47,6 +47,7 @@ public class BackgroundTaskMonitor extends ProgressBar
 
   private static DelayedListener delay = null;
   private boolean started              = false;
+  private boolean panelLocked          = false;
   
   private BackgroundTask task          = null;
   private PanelButton cancel           = null;
@@ -89,7 +90,7 @@ public class BackgroundTaskMonitor extends ProgressBar
             GUI.getDisplay().asyncExec(new Runnable() {
               public void run()
               {
-                if (!started || !GUI.getView().snappedIn())
+                if (!started || !GUI.getView().snappedIn() || panelLocked)
                   return;
                 try
                 {
@@ -136,6 +137,8 @@ public class BackgroundTaskMonitor extends ProgressBar
               started = false;
             }
           },Application.getI18n().tr("Minimieren")));
+         
+          panel.addButton(getLockButton());
           
           // Abbrechen-Button einblenden, wenn wir einen Task haben
           if (task != null)
@@ -152,6 +155,22 @@ public class BackgroundTaskMonitor extends ProgressBar
         }
       }
     });
+  }
+
+  private PanelButton getLockButton(){
+    final PanelButton lockButton=new PanelButton(getLockedIcon(), null, Application.getI18n().tr("Fixieren"));
+    lockButton.setAction(new Action() {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        panelLocked = !panelLocked;
+        lockButton.setIcon(getLockedIcon());
+      }
+    });
+    return lockButton;
+  }
+
+  private String getLockedIcon(){
+    return panelLocked?"locked.png":"unlocked.png";
   }
   
   /**
