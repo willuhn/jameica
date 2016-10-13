@@ -1062,7 +1062,8 @@ public class GUI implements ApplicationController
           {
             monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
             monitor.setPercentComplete(100);
-            monitor.setStatusText(oce.getMessage());
+            String msg = oce.getMessage();
+            monitor.setStatusText(msg != null ? msg : Application.getI18n().tr("Vorgang abgebrochen"));
           }
         }
         catch (ApplicationException ae)
