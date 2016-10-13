@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0072 Icon zum Fixieren des Task-Monitors, damit sich dieser nicht automatisch nach 30 Sekunden ausblendet
   * NEW: 0071 Text-Farbe von Kommentaren aus Mittelwert von Vorder- und Hintergrund errechnen
   * NEW: 0070 Neue SWT-Version 4.6.1 (ausser macOS 32Bit, dafür gibt es keine aktuellen SWT-Versionen mehr)
   * NEW: 0069 Summary-Funktion in TablePart auf Feature-Basis umgestellt.

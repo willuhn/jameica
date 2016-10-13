@@ -17,6 +17,7 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -45,9 +46,9 @@ public class BackgroundTaskMonitor extends ProgressBar
    */
   private final static DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-  private static DelayedListener delay = null;
-  private boolean started              = false;
-  private boolean panelLocked          = false;
+  private DelayedListener delay        = null;
+  private AtomicBoolean started        = new AtomicBoolean(false);
+  private AtomicBoolean panelLocked    = new AtomicBoolean(false);
   
   private BackgroundTask task          = null;
   private PanelButton cancel           = null;
@@ -81,16 +82,20 @@ public class BackgroundTaskMonitor extends ProgressBar
       delay = new DelayedListener(30 * 1000,new Listener() {
         public void handleEvent(Event event)
         {
+          // Egal, welche sonstigen Zustaende existieren. Wenn es gelockt ist, bleibt es offen
+          if (panelLocked.get())
+            return;
+          
           // Wenn wir hier sind, muss das timeout abgelaufen und niemand
           // sonst an dem Progress etwas aktualisiert haben
           // BUGZILLA 179 + 432
           int status = event.detail;
-          if (started && (status == STATUS_CANCEL || status == STATUS_DONE || status == STATUS_ERROR))
+          if (started.get() && (status == STATUS_CANCEL || status == STATUS_DONE || status == STATUS_ERROR))
           {
             GUI.getDisplay().asyncExec(new Runnable() {
               public void run()
               {
-                if (!started || !GUI.getView().snappedIn() || panelLocked)
+                if (!started.get() || !GUI.getView().snappedIn())
                   return;
                 try
                 {
@@ -99,7 +104,7 @@ public class BackgroundTaskMonitor extends ProgressBar
                 }
                 finally
                 {
-                  started = false;
+                  started.set(false);
                 }
               }
             });
@@ -114,7 +119,7 @@ public class BackgroundTaskMonitor extends ProgressBar
     delay.handleEvent(e);
 
     // Wird schon angezeigt.
-    if (started)
+    if (started.get())
       return;
 
     Logger.info("creating progress monitor for GUI");
@@ -134,7 +139,7 @@ public class BackgroundTaskMonitor extends ProgressBar
             {
               Logger.info("closing background task monitor snapin");
               view.snapOut();
-              started = false;
+              started.set(false);
             }
           },Application.getI18n().tr("Minimieren")));
          
@@ -147,7 +152,7 @@ public class BackgroundTaskMonitor extends ProgressBar
           panel.paint(view.getSnapin());
           Logger.info("activating progress monitor");
           view.snapIn();
-          started = true;
+          started.set(true);
         }
         catch (RemoteException e)
         {
@@ -157,20 +162,42 @@ public class BackgroundTaskMonitor extends ProgressBar
     });
   }
 
-  private PanelButton getLockButton(){
+  /**
+   * Erzeugt den Lock-Button.
+   * @return der Lock-Button.
+   */
+  private PanelButton getLockButton()
+  {
     final PanelButton lockButton=new PanelButton(getLockedIcon(), null, Application.getI18n().tr("Fixieren"));
-    lockButton.setAction(new Action() {
+    lockButton.setAction(new Action()
+    {
       public void handleAction(Object context) throws ApplicationException
       {
-        panelLocked = !panelLocked;
+        panelLocked.set(!panelLocked.get());
         lockButton.setIcon(getLockedIcon());
+        
+        // Wenn das Panel nicht mehr gesperrt ist, lassen wir den Timer neu loslaufen,
+        // damit es nach dem Timeout wieder von allein verschwinden kann
+        if (!panelLocked.get())
+        {
+          check();
+          Event e = new Event();
+          e.detail = STATUS_DONE;
+          delay.handleEvent(e);
+        }
+          
       }
     });
     return lockButton;
   }
 
-  private String getLockedIcon(){
-    return panelLocked?"locked.png":"unlocked.png";
+  /**
+   * Liefert das Lock-Icon.
+   * @return das Lock-Icon.
+   */
+  private String getLockedIcon()
+  {
+    return panelLocked.get() ? "locked.png" : "unlocked.png";
   }
   
   /**
@@ -268,49 +295,3 @@ public class BackgroundTaskMonitor extends ProgressBar
     super.clearLog();
   }
 }
-
-
-/*********************************************************************
- * $Log: BackgroundTaskMonitor.java,v $
- * Revision 1.10  2011/09/12 15:27:46  willuhn
- * @N Hintergrund-Jobs koennen nur abgebrochen werden, wenn sie noch laufen
- * @N Enabled-State live uebernehmen
- *
- * Revision 1.9  2011-08-18 16:55:24  willuhn
- * @N Button zum Abbrechen von Background-Tasks. Ob die den Request dann auch beachten, ist aber deren Sache ;)
- *
- * Revision 1.8  2009/03/11 23:09:56  willuhn
- * @C unnuetzes Ueberschreiben der paint()-Methode
- *
- * Revision 1.7  2008/04/23 11:43:40  willuhn
- * @B 432+179 Snapin nach 30 Sekunden automatisch ausblenden (jetzt einfacher via DelayedListener geloest)
- *
- * Revision 1.6  2006/06/19 11:50:39  willuhn
- * *** empty log message ***
- *
- * Revision 1.5  2006/06/08 17:40:17  willuhn
- * @C Ausblende-Timeout verlaengert
- *
- * Revision 1.4  2006/02/20 23:30:29  web0
- * *** empty log message ***
- *
- * Revision 1.3  2006/02/20 22:29:07  web0
- * @N longer timeout
- *
- * Revision 1.2  2006/02/06 17:15:49  web0
- * @B bug 179
- *
- * Revision 1.1  2006/01/18 18:40:21  web0
- * @N Redesign des Background-Task-Handlings
- *
- * Revision 1.3  2006/01/11 00:29:21  willuhn
- * @C HBCISynchronizer nach gui.action verschoben
- * @R undo bug 179 (blendet zu zeitig aus, wenn mehrere Jobs (Synchronize) laufen)
- *
- * Revision 1.2  2005/07/29 15:10:32  web0
- * @N minimize hbci progress dialog
- *
- * Revision 1.1  2005/07/26 23:00:03  web0
- * @N Multithreading-Support fuer HBCI-Jobs
- *
- **********************************************************************/
