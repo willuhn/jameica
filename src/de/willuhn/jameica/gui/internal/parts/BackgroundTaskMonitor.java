@@ -45,10 +45,12 @@ public class BackgroundTaskMonitor extends ProgressBar
    * Datums-Format dd.MM.yyyy HH:mm:ss.
    */
   private final static DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+  
+  private final static AtomicBoolean DEFAULT_LOCKED = new AtomicBoolean(false);
 
   private DelayedListener delay        = null;
   private AtomicBoolean started        = new AtomicBoolean(false);
-  private AtomicBoolean panelLocked    = new AtomicBoolean(false);
+  private AtomicBoolean panelLocked    = DEFAULT_LOCKED;
   
   private BackgroundTask task          = null;
   private PanelButton cancel           = null;
@@ -174,6 +176,7 @@ public class BackgroundTaskMonitor extends ProgressBar
       public void handleAction(Object context) throws ApplicationException
       {
         panelLocked.set(!panelLocked.get());
+        DEFAULT_LOCKED.set(panelLocked.get());
         lockButton.setIcon(getLockedIcon());
         
         // Wenn das Panel nicht mehr gesperrt ist, lassen wir den Timer neu loslaufen,
