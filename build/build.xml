@@ -58,7 +58,7 @@
 
     <mkdir dir="${class.dir}" />
 
-    <javac debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="1.7" target="1.7" encoding="${define.encoding}" deprecation="true" destdir="${class.dir}" srcdir="${src.dir}">
+    <javac debug="true" includeantruntime="false" debuglevel="lines,vars,source" source="${define.java.version}" target="${define.java.version}" encoding="${define.encoding}" deprecation="true" destdir="${class.dir}" srcdir="${src.dir}">
       <classpath refid="compilepath" />
     </javac>
 
@@ -414,7 +414,7 @@
 
     <mkdir dir="${project.javadoc}" />
 
-    <javadoc charset="${define.encoding}" docencoding="${define.encoding}" encoding="${define.encoding}" destdir="${project.javadoc}" packagenames="${define.package}.*">
+    <javadoc charset="${define.encoding}" docencoding="${define.encoding}" encoding="${define.encoding}" destdir="${project.javadoc}" packagenames="${define.package}.*" source="${define.java.version}">
       <classpath refid="compilepath" />
       <sourcepath>
         <pathelement location="${src.dir}" />
