@@ -259,8 +259,6 @@ public class BackgroundTaskMonitor extends ProgressBar
    */
   public void setStatus(int status)
   {
-    check();
-    
     // Wenn wir in einem finalen Zustand sind, kann der Cancel-Button nicht mehr gedrueckt werden
     boolean finalState = (status == ProgressMonitor.STATUS_CANCEL) ||
                          (status == ProgressMonitor.STATUS_DONE) ||
@@ -269,6 +267,7 @@ public class BackgroundTaskMonitor extends ProgressBar
       this.getCancelButton().setEnabled(false);
     
     super.setStatus(status);
+    check();
   }
 
   /**
