@@ -126,19 +126,20 @@ public class Start extends AbstractView implements Extendable
   @Override
   public void reload() throws ApplicationException
   {
-    try
-    {
-      this.paint(true);
-      super.reload();
-    }
-    catch (ApplicationException ae)
-    {
-      throw ae;
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to reload view",e);
-      throw new ApplicationException(Application.getI18n().tr("Fehler beim Aktualisieren der Anzeig: {0}",e.getMessage()));
-    }
+    GUI.getDisplay().asyncExec(new Runnable() {
+      
+      public void run()
+      {
+        try
+        {
+          paint(true);
+          Start.super.reload();
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to reload view",e);
+        }
+      }
+    });
   }
 }
