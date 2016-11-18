@@ -1,15 +1,10 @@
-/**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/ApplicationCallbackSWT.java,v $
- * $Revision: 1.39 $
- * $Date: 2012/05/10 13:47:14 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
- *
- * Copyright (c) by willuhn.webdesign
+/*******************************************************************************
+ * 
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
- *
- **********************************************************************/
+ *  
+ ******************************************************************************/
+
 package de.willuhn.jameica.system;
 
 import java.io.PrintWriter;
@@ -455,6 +450,20 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
       this.setUsernameText(Customizing.SETTINGS.getString("application.start.username",null));
       this.setTitle(Application.getI18n().tr("Master-Passwort"));
       this.setMonitor(PWD.MONITOR_PRIMARY);
+    }
+    
+    /**
+     * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#createShell(org.eclipse.swt.widgets.Shell, int)
+     */
+    @Override
+    protected Shell createShell(Shell parent, int flags)
+    {
+      // Wir verwenden beim Login-Dialog die Shell des Splash-Screens - wenn verfuegbar
+      Shell p = null;
+      if (startupMonitor != null)
+        p = startupMonitor.getShell();
+      
+      return super.createShell(p != null ? p : parent, flags);
     }
 
     /**

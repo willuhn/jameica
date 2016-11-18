@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0074 Unter Linux wurde auf manchen Systemen im Login-Dialog ein weiteres leeres Fenster angezeigt. Siehe http://www.onlinebanking-forum.de/forum/topic.php?t=20695
   * NEW: 0073 Letzten Fixierungsstatus des Task-Monitors merken
   * NEW: 0072 Icon zum Fixieren des Task-Monitors, damit sich dieser nicht automatisch nach 30 Sekunden ausblendet
   * NEW: 0071 Text-Farbe von Kommentaren aus Mittelwert von Vorder- und Hintergrund errechnen

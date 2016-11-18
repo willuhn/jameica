@@ -356,6 +356,15 @@ public class SplashScreen implements ProgressMonitor, Runnable
       });
     }
   }
+  
+  /**
+   * Liefert die Shell des Splash-Screens.
+   * @return die Shell des Splash-Screens.
+   */
+  public Shell getShell()
+  {
+    return this.shell;
+  }
 
   /**
    * @see de.willuhn.util.ProgressMonitor#log(java.lang.String)
