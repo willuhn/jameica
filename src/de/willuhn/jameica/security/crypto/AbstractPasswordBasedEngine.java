@@ -7,6 +7,13 @@
 
 package de.willuhn.jameica.security.crypto;
 
+import de.willuhn.io.IOUtil;
+import de.willuhn.jameica.security.Wallet;
+import de.willuhn.logging.Logger;
+
+import org.apache.commons.lang.RandomStringUtils;
+import org.bouncycastle.util.encoders.Base64;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
@@ -16,13 +23,6 @@ import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-
-import org.apache.commons.lang.RandomStringUtils;
-
-import de.willuhn.io.IOUtil;
-import de.willuhn.jameica.security.Wallet;
-import de.willuhn.logging.Logger;
-import de.willuhn.util.Base64;
 
 /**
  * Abstrakte Basis-Implementierung einer Passwort-basierten Crypto-Engine.
@@ -34,11 +34,12 @@ public abstract class AbstractPasswordBasedEngine implements Engine
   /**
    * @see de.willuhn.jameica.security.crypto.Engine#encrypt(java.io.InputStream, java.io.OutputStream)
    */
+  @Override
   public void encrypt(InputStream is, OutputStream os) throws Exception
   {
     OutputStream cos = this.encrypt(os);
     IOUtil.copy(is,cos);
-    
+
     // Wir muessen den CipherOutputStream leider selbst schliessen, damit das doFinal intern gemacht wird
     // Das schliesst zwar auch bereits "os" - aber das laesst sich nicht vermeiden.
     cos.close();
@@ -47,15 +48,17 @@ public abstract class AbstractPasswordBasedEngine implements Engine
   /**
    * @see de.willuhn.jameica.security.crypto.Engine#decrypt(java.io.InputStream, java.io.OutputStream)
    */
+  @Override
   public void decrypt(InputStream is, OutputStream os) throws Exception
   {
     InputStream cis = this.decrypt(is);
     IOUtil.copy(cis, os);
   }
-  
+
   /**
    * @see de.willuhn.jameica.security.crypto.Engine#encrypt(java.io.OutputStream)
    */
+  @Override
   public OutputStream encrypt(OutputStream os) throws Exception
   {
     Logger.debug("encrypting data using " + getAlgorithm());
@@ -66,6 +69,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
   /**
    * @see de.willuhn.jameica.security.crypto.Engine#decrypt(java.io.InputStream)
    */
+  @Override
   public InputStream decrypt(InputStream is) throws Exception
   {
     Logger.debug("decrypting data using " + getAlgorithm());
@@ -102,7 +106,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
       this.wallet = new Wallet(this.getClass(), new RSAEngine());
     return this.wallet;
   }
-  
+
   /**
    * Liefert das Salt fuer die Verschluesselung.
    * @param len Laenge in Bytes.
@@ -113,19 +117,18 @@ public abstract class AbstractPasswordBasedEngine implements Engine
   {
     if (len < 1)
       throw new Exception("invalid salt length: " + len);
-    
+
     // Checken, ob wir schon eins haben.
     Wallet wallet = this.getWallet();
-    
+
     // Migration. Wir hatten das anfangs falsch ohne Laenge gespeichert
     String s = (String) wallet.get("salt"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
     if (s == null)
       s = (String) wallet.get("salt." + len); // Das ist jetzt der neue Platz
-    if (s != null)
+    if (s != null) {
       return Base64.decode(s);
-    
-    
-      
+    }
+
     // Neu erstellen
     Logger.debug("creating new salt");
     byte[] salt = new byte[len];
@@ -134,7 +137,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
     wallet.set("salt." + len,Base64.encode(salt));
     return salt;
   }
-  
+
   /**
    * Liefert das Passwort fuer die Verschluesselung.
    * @param len Laenge in Zeichen.
@@ -148,34 +151,34 @@ public abstract class AbstractPasswordBasedEngine implements Engine
 
     // Checken, ob wir schon eins haben.
     Wallet wallet = this.getWallet();
-    
+
     // Migration. Wir hatten das anfangs falsch ohne Laenge gespeichert
     String s = (String) wallet.get("password"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
     if (s == null)
       s = (String) wallet.get("password." + len); // Das ist jetzt der neue Platz
     if (s != null)
       return s.toCharArray();
-    
+
     // Neu erstellen
     s = RandomStringUtils.randomAscii(len);
     Logger.debug("created random password, length: " + s.length());
     wallet.set("password." + len,s);
     return s.toCharArray();
   }
-  
+
   /**
    * Liefert die Parameter des Algorithmus.
    * @return die Parameter des Algorithmus.
    * @throws Exception
    */
   abstract AlgorithmParameterSpec getParameterSpec() throws Exception;
-  
+
   /**
    * Liefert den Namen des Algorithmus.
    * @return der Namen des Algorithmus.
    */
   abstract String getAlgorithm();
-  
+
   /**
    * Liefert den Schluessel.
    * @return der Schluessel.

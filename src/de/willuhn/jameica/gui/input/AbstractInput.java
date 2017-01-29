@@ -42,7 +42,7 @@ public abstract class AbstractInput implements Input
   final static I18N i18n = Application.getI18n();
 
   private Map<String,Object> data = new HashMap<String,Object>();
-  
+
   private final static Object PLACEHOLDER = new Object();
 
   private Composite parent = null;
@@ -56,9 +56,9 @@ public abstract class AbstractInput implements Input
 
   private String validChars = null;
   private String invalidChars = null;
-  
+
   private boolean mandatory = false;
-  
+
   private Object oldValue = PLACEHOLDER;
 
   /**
@@ -69,7 +69,7 @@ public abstract class AbstractInput implements Input
   {
     return this.parent;
   }
-  
+
   /**
    * Liefert die Stylebits (GridData-Settings), welche zum Erstellen des Widgets
    * verwendet werden.
@@ -129,7 +129,7 @@ public abstract class AbstractInput implements Input
 
     control = getControl();
     applyVerifier(control);
-    
+
     if (control.getLayoutData() == null)
     {
       final GridData inputGrid = new GridData(getStyleBits());
@@ -156,7 +156,7 @@ public abstract class AbstractInput implements Input
 			control.addListener(SWT.FocusIn,l);
 			control.addListener(SWT.FocusOut,l);
     }
-    
+
     // Es kann sein, dass das Control ein Composite ist (z.Bsp. bei DialogInput)
     // Wenn es also aus mehren Elementen besteht, dann muessen wir
 		// den Listener an alle haengen.
@@ -176,12 +176,12 @@ public abstract class AbstractInput implements Input
         applyVerifier(children[j]);
 			}
 		}
-    
+
     // Einmal manuell starten, damit es vor dem ersten
     // verify event ausgeloest wird
     update();
   }
-  
+
   /**
    * Fuegt die Verifier dem Control hinzu.
    * @param control
@@ -190,9 +190,9 @@ public abstract class AbstractInput implements Input
   {
     if (control == null || !(control instanceof Text))
       return;
-    
+
     Listener updateCheck = new Listener() {
-    
+
       public void handleEvent(Event event)
       {
         try
@@ -224,7 +224,7 @@ public abstract class AbstractInput implements Input
         }
       });
     }
-    
+
     if ((validChars != null && validChars.length() > 0))
     {
       control.addListener(SWT.Verify, new Listener()
@@ -269,7 +269,7 @@ public abstract class AbstractInput implements Input
    * Werden beide Funktionen <code>setValidChars</code> <b>und</b>
    * <code>setInvalidChars</code> benutzt, kann nur noch die verbleibende
    * Restmenge eingegeben werden. Das sind die Zeichen, die in validChars
-   * angegeben und in invalidChars nicht enthalten sind. 
+   * angegeben und in invalidChars nicht enthalten sind.
    * @param chars
    */
   public void setValidChars(String chars)
@@ -297,12 +297,13 @@ public abstract class AbstractInput implements Input
   }
 
   private boolean inUpdate = false;
-  
+
   /**
    * Wird immer dann aufgerufen, wenn eines der Controls des
    * Eingabe-Feldes aktualisiert wird. Hier kann dann z.Bsp.
    * geprueft werden, ob der Inhalt des Feldes korrekt ist
    * und ggf. die Hintergrund-Farbe angepasst werden.
+   * @throws OperationCanceledException der Vorgang wurde abgebrochen.
    */
   protected void update() throws OperationCanceledException
   {
@@ -318,7 +319,7 @@ public abstract class AbstractInput implements Input
 
       if (!isEnabled())
         return;
-      
+
       Object value = getValue();
 
       if (isMandatory() && (value == null || "".equals(value.toString())))
@@ -333,7 +334,7 @@ public abstract class AbstractInput implements Input
       inUpdate = false;
     }
   }
-  
+
   /**
    * @see de.willuhn.jameica.gui.input.Input#setMandatory(boolean)
    */
@@ -379,7 +380,7 @@ public abstract class AbstractInput implements Input
       Object o = this.getData("jameica.label");
       if (o == null || !(o instanceof Label))
         return;
-      
+
       Label label = (Label) o;
       if (label.isDisposed())
         return;
@@ -423,8 +424,8 @@ public abstract class AbstractInput implements Input
   {
     return this.data.get(key);
   }
-  
-  
+
+
 }
 
 /*********************************************************************
