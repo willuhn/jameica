@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/controller/BackupControl.java,v $
- * $Revision: 1.11 $
- * $Date: 2011/06/08 09:22:44 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -42,6 +38,7 @@ import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Config;
@@ -195,7 +192,7 @@ public class BackupControl extends AbstractControl
     this.backups.setMulti(false);
     this.backups.setRememberColWidths(true);
     this.backups.setRememberOrder(false);
-    this.backups.setSummary(false);
+    this.backups.removeFeature(FeatureSummary.class);
     
     this.backups.addSelectionListener(new Listener() {
       public void handleEvent(Event event)

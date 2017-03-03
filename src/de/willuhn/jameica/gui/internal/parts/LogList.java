@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/LogList.java,v $
- * $Revision: 1.8 $
- * $Date: 2011/08/18 16:38:08 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -35,6 +31,7 @@ import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
@@ -74,7 +71,7 @@ public class LogList extends TablePart
     this.addColumn(Application.getI18n().tr("Datum"),"date", new DateFormatter(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")));
     this.addColumn(Application.getI18n().tr("Text"),"text");
     this.setMulti(false);
-    this.setSummary(false);
+    this.removeFeature(FeatureSummary.class);
     this.setRememberOrder(false);
     this.setFormatter(new TableFormatter()
     {
@@ -286,34 +283,3 @@ public class LogList extends TablePart
   
   
 }
-
-
-/*********************************************************************
- * $Log: LogList.java,v $
- * Revision 1.8  2011/08/18 16:38:08  willuhn
- * @B Minimize-Button nur einmal hinzufuegen
- * @N Speichern-Button im Syslog via neuem Panel-Button
- *
- * Revision 1.7  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.6  2011-04-26 12:20:23  willuhn
- * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.5  2007/01/25 12:07:58  willuhn
- * @R removed debug output
- * @C dispose snapin content on snapout()
- *
- * Revision 1.4  2007/01/25 11:59:36  willuhn
- * @N Entfernen alter Elemente
- *
- * Revision 1.3  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.2  2006/03/07 22:38:02  web0
- * @N LogDetailView
- *
- * Revision 1.1  2006/03/07 18:24:04  web0
- * @N Statusbar and logview redesign
- *
- *********************************************************************/

@@ -21,6 +21,7 @@ import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.backup.BackupEngine;
 import de.willuhn.jameica.backup.BackupFile;
+import de.willuhn.jameica.messaging.BootMessage;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
@@ -62,12 +63,12 @@ public class BackupService implements Bootable
     }
     catch (ApplicationException ae)
     {
-      Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups: {0}",ae.getMessage()));
+      Application.getMessagingFactory().getMessagingQueue("jameica.boot").queueMessage(new BootMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups: {0}",ae.getMessage())));
     }
     catch (Exception e)
     {
       Logger.error("unable to restore backup",e);
-      Application.addWelcomeMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups. Bitte prüfen Sie das System-Log"));
+      Application.getMessagingFactory().getMessagingQueue("jameica.boot").queueMessage(new BootMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups. Bitte prüfen Sie das System-Log")));
     }
   }
 

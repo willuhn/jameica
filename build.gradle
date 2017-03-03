@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.7
 compileJava.options.encoding = 'ISO-8859-1'
 
 eclipse {
@@ -21,7 +21,7 @@ dependencies {
   compile 'com.h2database:h2:+'
   compile 'commons-cli:commons-cli:+'
   compile 'commons-lang:commons-lang:2.+'
-  compile 'org.apache.commons:commons-collections4:+'
+  compile 'commons-collections:commons-collections:3.+' // Version 3 brauchen wir noch wegen Velocity.
   compile 'commons-logging:commons-logging:1.+'
   compile 'com.mckoi:mckoisqldb:+'
   compile 'mysql:mysql-connector-java:+'

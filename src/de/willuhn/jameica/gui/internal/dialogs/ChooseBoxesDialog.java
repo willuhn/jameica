@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/ChooseBoxesDialog.java,v $
- * $Revision: 1.15 $
- * $Date: 2011/10/06 10:49:08 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -35,6 +31,7 @@ import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.Column;
 import de.willuhn.jameica.gui.parts.TableChangeListener;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
@@ -104,7 +101,7 @@ public class ChooseBoxesDialog extends AbstractDialog
     table.addColumn(i18n.tr("Höhe des Elements"),"height",null,true,Column.ALIGN_RIGHT);
     table.setCheckable(true);
     table.setMulti(false);
-    table.setSummary(false);
+    table.removeFeature(FeatureSummary.class);
     table.setRememberOrder(false); // Die Reihenfolge wird ja durch die Indizes bestimmt
     
     table.setFormatter(new TableFormatter() {

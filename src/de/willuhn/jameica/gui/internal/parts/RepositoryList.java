@@ -2,6 +2,8 @@
  *
  * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -24,6 +26,7 @@ import de.willuhn.jameica.gui.internal.action.RepositoryOpen;
 import de.willuhn.jameica.gui.internal.action.UpdatesSearch;
 import de.willuhn.jameica.gui.internal.menus.RepositoryListMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.Message;
@@ -59,7 +62,7 @@ public class RepositoryList extends TablePart
     this.setMulti(false);
     this.setRememberColWidths(true);
     this.setRememberOrder(true);
-    this.setSummary(false);
+    this.removeFeature(FeatureSummary.class);
     
     this.setFormatter(new TableFormatter()
     {

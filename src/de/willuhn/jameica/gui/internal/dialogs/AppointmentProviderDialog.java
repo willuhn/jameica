@@ -1,11 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/AppointmentProviderDialog.java,v $
- * $Revision: 1.2 $
- * $Date: 2012/03/28 22:28:07 $
- * $Author: willuhn $
  *
- * Copyright (c) by willuhn - software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -28,6 +26,7 @@ import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -69,7 +68,7 @@ public class AppointmentProviderDialog extends AbstractDialog<List<AppointmentPr
     this.table.addColumn(i18n.tr("Bezeichnung"),"name");
     this.table.setCheckable(true);
     this.table.setMulti(false);
-    this.table.setSummary(false);
+    this.table.removeFeature(FeatureSummary.class);
     this.table.setRememberOrder(false);
     this.table.setFormatter(new TableFormatter() {
       public void format(TableItem item)

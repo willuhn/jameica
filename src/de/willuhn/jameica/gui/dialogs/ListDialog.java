@@ -1,15 +1,12 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/dialogs/ListDialog.java,v $
- * $Revision: 1.12 $
- * $Date: 2010/09/06 23:49:39 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
+
 package de.willuhn.jameica.gui.dialogs;
 
 import java.util.ArrayList;
@@ -24,6 +21,7 @@ import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.Column;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.util.ApplicationException;
 
@@ -124,7 +122,7 @@ public class ListDialog extends AbstractDialog
     for (Column c:this.columns)
       table.addColumn(c);
 
-    table.setSummary(false);
+    table.removeFeature(FeatureSummary.class);
     table.setMulti(false);
     table.setRememberColWidths(true);
     table.setRememberOrder(true);
@@ -172,10 +170,3 @@ public class ListDialog extends AbstractDialog
     }
   }
 }
-
-/*********************************************************************
- * $Log: ListDialog.java,v $
- * Revision 1.12  2010/09/06 23:49:39  willuhn
- * *** empty log message ***
- *
- **********************************************************************/

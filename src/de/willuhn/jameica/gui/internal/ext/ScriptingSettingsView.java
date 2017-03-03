@@ -2,6 +2,8 @@
  *
  * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -30,6 +32,7 @@ import de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.TabGroup;
 import de.willuhn.jameica.messaging.Message;
@@ -169,7 +172,7 @@ public class ScriptingSettingsView implements Extension
     this.scripts.setMulti(false);
     this.scripts.setRememberColWidths(true);
     this.scripts.setRememberOrder(true);
-    this.scripts.setSummary(false);
+    this.scripts.removeFeature(FeatureSummary.class);
     this.scripts.addColumn(i18n.tr("Script-Datei"),"absolutePath");
     this.scripts.setFormatter(new TableFormatter() {
     

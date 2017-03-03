@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/dialogs/SearchOptionsDialog.java,v $
- * $Revision: 1.3 $
- * $Date: 2012/03/28 22:28:07 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -29,6 +25,7 @@ import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -106,7 +103,7 @@ public class SearchOptionsDialog extends AbstractDialog
     table.addColumn(i18n.tr("Bezeichnung"),"name");
     table.setCheckable(true);
     table.setMulti(false);
-    table.setSummary(false);
+    table.removeFeature(FeatureSummary.class);
     table.setRememberColWidths(true);
     table.setFormatter(new TableFormatter() {
       
@@ -235,19 +232,3 @@ public class SearchOptionsDialog extends AbstractDialog
     
   }
 }
-
-
-/*********************************************************************
- * $Log: SearchOptionsDialog.java,v $
- * Revision 1.3  2012/03/28 22:28:07  willuhn
- * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
- * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
- *
- * Revision 1.2  2011-05-05 09:36:25  willuhn
- * @C SearchOptionsDialog ueberarbeitet - beim Aendern der Sortierung gingen die Markierungen verloren
- *
- * Revision 1.1  2008/09/03 11:14:20  willuhn
- * @N Suchfeld anzeigen
- * @N Such-Optionen
- *
- **********************************************************************/

@@ -12,7 +12,13 @@
  **********************************************************************/
 package de.willuhn.jameica.system;
 
+import java.util.List;
+
+import de.willuhn.jameica.messaging.BootMessage;
+import de.willuhn.jameica.messaging.BootMessageConsumer;
+import de.willuhn.jameica.messaging.MessagingQueue;
 import de.willuhn.jameica.messaging.SystemMessage;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -32,8 +38,14 @@ public class Server implements ApplicationController
   {
     Application.getMessagingFactory().sendMessage(new SystemMessage(SystemMessage.SYSTEM_STARTED,"jameica up and running..."));
 
-		String[] welcome = Application.getWelcomeMessages();
-		if (welcome != null && welcome.length > 0)
+    // flushen, um sicherzustellen, dass zugestellt wurde
+    MessagingQueue queue = Application.getMessagingFactory().getMessagingQueue("jameica.boot");
+    queue.flush();
+    
+    BeanService service          = Application.getBootLoader().getBootable(BeanService.class);
+    List<BootMessage> messages   = service.get(BootMessageConsumer.class).getMessages();
+
+		if (messages != null && messages.size() > 0)
 		{
       try
       {
@@ -45,11 +57,20 @@ public class Server implements ApplicationController
       }
       Logger.info("----------------------------------------------------------------------");
       Logger.info(Application.getI18n().tr("Startup-Messages:"));
-			for (int i=0;i<welcome.length;++i)
+			for (BootMessage m:messages)
 			{
-        Logger.info("  " + welcome[i]); 
+        String text = m.getText();
+        if (text == null || text.length() == 0)
+          continue;
+        
+			  String title = m.getTitle();
+			  if (title != null && title.length() > 0)
+	        text = title + ": " + text;
+			  
+        Logger.info("  " + text); 
 			}
 		}
+		
     Logger.info("----------------------------------------------------------------------");
     if (!Application.inNonInteractiveMode())
       Logger.info(Application.getI18n().tr("press \"<CTRL><C>\" to shut down the server."));

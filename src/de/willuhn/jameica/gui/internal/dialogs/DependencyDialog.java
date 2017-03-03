@@ -2,6 +2,8 @@
  *
  * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -16,6 +18,7 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SimpleContainer;
@@ -105,7 +108,7 @@ public class DependencyDialog extends AbstractDialog
     deps.setMulti(false);
     deps.setRememberColWidths(false);
     deps.setRememberOrder(true);
-    deps.setSummary(false);
+    deps.removeFeature(FeatureSummary.class);
     
     container.addPart(deps);
     

@@ -33,10 +33,11 @@ import de.willuhn.logging.Logger;
  */
 public class LockService implements Bootable
 {
-  private FileChannel channel = null;
-  private FileLock lock       = null;
+  private RandomAccessFile raf = null;
+  private FileChannel channel  = null;
+  private FileLock lock        = null;
   
-  private boolean unclean     = false;
+  private boolean unclean      = false;
 
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -80,7 +81,8 @@ public class LockService implements Bootable
       file.deleteOnExit();
 
       // OK, wir haben die Datei. Jetzt locken wir sie
-      this.channel = new RandomAccessFile(file, "rw").getChannel();
+      this.raf     = new RandomAccessFile(file, "rw");
+      this.channel = this.raf.getChannel();
       try
       {
         // Wenn die Datei bereits innerhalb der VM gelockt ist, wirft die Funktion eine OverlappingFileLockException.
@@ -113,6 +115,7 @@ public class LockService implements Bootable
     catch (IOException e)
     {
       Logger.error("unable to create/lock " + file,e);
+      IOUtil.close(this.channel,this.raf);
       throw new JameicaException(e); // Hier koennen wir nichts mehr machen
     }
   }
@@ -133,7 +136,7 @@ public class LockService implements Bootable
     }
     finally
     {
-      IOUtil.close(this.channel);
+      IOUtil.close(this.channel,this.raf);
     }
   }
   

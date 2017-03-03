@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/CertificateList.java,v $
- * $Revision: 1.20 $
- * $Date: 2011/06/27 17:51:42 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -43,6 +39,7 @@ import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.security.Certificate;
@@ -86,7 +83,7 @@ public class CertificateList extends TablePart
     addColumn(Application.getI18n().tr("Gültig bis"),"dateto",new DateFormatter());
     addColumn(Application.getI18n().tr("Seriennummer"),"serial");
     this.setMulti(false);
-    this.setSummary(false);
+    this.removeFeature(FeatureSummary.class);
     
     setFormatter(new TableFormatter() {
       
@@ -432,73 +429,3 @@ public class CertificateList extends TablePart
     }
   }
 }
-
-
-/**********************************************************************
- * $Log: CertificateList.java,v $
- * Revision 1.20  2011/06/27 17:51:42  willuhn
- * @N Man kann sich jetzt die Liste der von Java bereits mitgelieferten Aussteller-Zertifikate unter Datei->Einstellungen anzeigen lassen - um mal einen Ueberblick zu kriegen, wem man so eigentlich alles blind vertraut ;)
- * @N Mit der neuen Option "Aussteller-Zertifikaten von Java vertrauen" kann man die Vertrauensstellung zu diesen Zertifikaten deaktivieren - dann muss der User jedes Zertifikate explizit bestaetigen - auch wenn Java die CA kennt
- *
- * Revision 1.19  2011-05-11 10:27:24  willuhn
- * @N OCE fangen
- *
- * Revision 1.18  2011-04-26 12:20:23  willuhn
- * @B Potentielle Bugs gemaess Code-Checker
- *
- * Revision 1.17  2008/12/19 12:16:02  willuhn
- * @N Mehr Icons
- * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
- *
- * Revision 1.16  2007/06/21 18:32:54  willuhn
- * @B ClassCastException
- *
- * Revision 1.15  2007/04/02 12:43:03  willuhn
- * @B CertificateList.settings hides TablePart.settings
- *
- * Revision 1.14  2006/11/16 23:46:03  willuhn
- * @N launch type in cert creation
- * @N new row in cert list
- *
- * Revision 1.13  2006/11/15 00:30:44  willuhn
- * @C Bug 326
- *
- * Revision 1.12  2006/11/13 00:40:24  willuhn
- * @N Anzeige des System-Zertifikates
- * @N Export von Zertifikaten
- *
- * Revision 1.11  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.10  2005/07/24 17:00:20  web0
- * *** empty log message ***
- *
- * Revision 1.9  2005/07/20 16:23:10  web0
- * @B splitting x.500 name
- *
- * Revision 1.8  2005/06/27 21:53:51  web0
- * @N ability to import own certifcates
- *
- * Revision 1.7  2005/06/27 15:35:51  web0
- * @N ability to store last table order
- *
- * Revision 1.6  2005/06/24 14:55:56  web0
- * *** empty log message ***
- *
- * Revision 1.5  2005/06/15 17:51:31  web0
- * @N Code zum Konfigurieren der Service-Bindings
- *
- * Revision 1.4  2005/06/15 16:10:57  web0
- * @B javadoc fixes
- *
- * Revision 1.3  2005/06/13 12:13:37  web0
- * @N Certificate-Code completed
- *
- * Revision 1.2  2005/06/10 22:59:35  web0
- * @N Loeschen von Zertifikaten
- *
- * Revision 1.1  2005/06/10 22:13:09  web0
- * @N new TabGroup
- * @N extended Settings
- *
- **********************************************************************/

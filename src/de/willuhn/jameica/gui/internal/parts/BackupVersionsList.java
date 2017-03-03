@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/BackupVersionsList.java,v $
- * $Revision: 1.7 $
- * $Date: 2012/03/28 22:28:07 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -26,6 +22,7 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.jameica.backup.BackupFile;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.Version;
@@ -52,7 +49,7 @@ public class BackupVersionsList extends TablePart
     this.setMulti(false);
     this.setRememberColWidths(true);
     this.setRememberOrder(true);
-    this.setSummary(false);
+    this.removeFeature(FeatureSummary.class);
     this.addColumn(Application.getI18n().tr("Plugin"),"name");
     this.addColumn(Application.getI18n().tr("Version des Backups"),"backupversion");
     this.addColumn(Application.getI18n().tr("Installierte Version"),"currentversion");
@@ -256,30 +253,3 @@ public class BackupVersionsList extends TablePart
   }
 
 }
-
-
-/**********************************************************************
- * $Log: BackupVersionsList.java,v $
- * Revision 1.7  2012/03/28 22:28:07  willuhn
- * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
- * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
- *
- * Revision 1.6  2010-09-21 10:14:59  willuhn
- * @C Keine Warnung mehr anzeigen, wenn die Benutzerdaten des Backups eine aeltere Version des Plugins enthalten. Die Daten werden dann ohnehin automatisch auf den aktuellen Stand gebracht. Der Warnhinweis verwirrte manche User unnoetig und sie glaubten, das Backup nicht einspielen zu koennen.
- *
- * Revision 1.5  2009/03/11 23:17:01  willuhn
- * @R unbenutzten Parameter aus Konstruktor entfernt
- *
- * Revision 1.4  2008/12/30 15:21:42  willuhn
- * @N Umstellung auf neue Versionierung
- *
- * Revision 1.3  2008/03/07 16:31:48  willuhn
- * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
- *
- * Revision 1.2  2008/03/05 23:58:36  willuhn
- * @N Backup: Warnhinweis, wenn ein Plugin zwar installiert, aber nicht im ausgewaehlten Backup enthalten ist
- *
- * Revision 1.1  2008/03/04 00:49:25  willuhn
- * @N GUI fuer Backup fertig
- *
- **********************************************************************/

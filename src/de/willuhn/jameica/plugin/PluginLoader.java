@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/PluginLoader.java,v $
- * $Revision: 1.64 $
- * $Date: 2012/03/28 22:28:07 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 package de.willuhn.jameica.plugin;
@@ -1003,7 +999,7 @@ public final class PluginLoader
     {
       if (right > left)
       {
-        int index = left + (int) ((right - left) / 2);
+        int index = left + ((right - left) / 2);
         Manifest pivot = (Manifest) list.get(index);
 
         swap(list, index, right);
@@ -1021,88 +1017,3 @@ public final class PluginLoader
     }
   }
 }
-
-/*******************************************************************************
- * $Log: PluginLoader.java,v $
- * Revision 1.64  2012/03/28 22:28:07  willuhn
- * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
- * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
- *
- * Revision 1.63  2011-08-30 16:02:23  willuhn
- * @N Alle restlichen Stellen, in denen Instanzen via Class#newInstance erzeugt wurden, gegen BeanService ersetzt. Damit kann jetzt quasi ueberall Dependency-Injection verwendet werden, wo Jameica selbst die Instanzen erzeugt
- *
- * Revision 1.62  2011-08-03 11:58:06  willuhn
- * @N PluginLoader#getInitError
- *
- * Revision 1.61  2011-07-21 14:39:47  willuhn
- * @N Mit einer OperationCancelledException in AbstractPlugin#init() kann ein Plugin jetzt fehlerfrei geskippt werden
- *
- * Revision 1.60  2011-07-19 15:24:01  willuhn
- * @B Die Properties-Datei des Pluginloaders muss auch dann erstellt werden, wenn keine Plugins installiert sind, da sie vom Backup-Service gebraucht wird
- * @N Verdeckte Abfrage des Masterpasswortes an der Konsole
- * @C Leeres Masterpasswort auch an Konsole nicht mehr erlauben
- * @N Wiederholte Abfrage des Passwortes, wenn nichts eingegeben wurde
- *
- * Revision 1.59  2011-07-13 14:04:28  willuhn
- * @C Auch inaktive Plugins anzeigen - dann koennen sie wenigstens deinstalliert werden
- *
- * Revision 1.58  2011-06-29 09:08:32  willuhn
- * @N getPlugin ist getypt - damit ist das manuelle Cast nicht mehr noetig
- *
- * Revision 1.57  2011-06-19 12:09:54  willuhn
- * @B registrierte Versionsnummer nur dann loeschen, wenn auch die Benutzerdaten mit geloescht wurden.
- *
- * Revision 1.56  2011-06-19 11:15:46  willuhn
- * @B BUGZILLA 1073
- *
- * Revision 1.55  2011-06-08 12:53:21  willuhn
- * *** empty log message ***
- *
- * Revision 1.54  2011-06-02 12:15:16  willuhn
- * @B Das Handling beim Update war noch nicht sauber
- *
- * Revision 1.53  2011-06-01 21:31:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.52  2011-06-01 21:26:48  willuhn
- * *** empty log message ***
- *
- * Revision 1.51  2011-06-01 21:20:02  willuhn
- * @N Beim Deinstallieren die Navi und Menupunkte des Plugins deaktivieren
- * @N Frisch installierte aber noch nicht aktive Plugins auch dann anzeigen, wenn die View verlassen wird
- *
- * Revision 1.50  2011-06-01 12:35:58  willuhn
- * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
- *
- * Revision 1.49  2011-06-01 11:03:40  willuhn
- * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
- *
- * Revision 1.48  2011-05-31 16:39:04  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
- *
- * Revision 1.47  2011-05-25 08:00:55  willuhn
- * @N Doppler-Check. Wenn ein gleichnamiges Plugin bereits geladen wurde, wird das zweite jetzt ignoriert. Konnte passieren, wenn ein User ein Plugin sowohl im System- als auch im User-Plugindir installiert hatte
- * @C Lade-Reihenfolge geaendert. Vorher 1. System, 2. User, 3. Config. Jetzt: 1. System, 2. Config, 3. User. Explizit in der Config angegebene Plugindirs haben also Vorrang vor ~/.jameica/plugins. Es bleibt weiterhin dabei, dass die Plugins im System-Dir Vorrang haben. Ist es dort bereits installiert, wird jetzt (dank Doppler-Check) das ggf. im User-Dir vorhandene ignoriert.
- *
- * Revision 1.46  2010/06/03 13:59:33  willuhn
- * *** empty log message ***
- *
- * Revision 1.45  2010/06/03 13:52:45  willuhn
- * @N Neues optionales Attribut "requires", damit Extensions nur dann registriert werden, wenn ein benoetigtes Plugin installiert ist
- *
- * Revision 1.44  2010/02/04 11:58:49  willuhn
- * @N Velocity on-demand initialisieren
- *
- * Revision 1.43  2009/08/24 11:53:08  willuhn
- * @C Der VelocityService besitzt jetzt keinen globalen Resource-Loader mehr. Stattdessen hat jedes Plugin einen eigenen. Damit das funktioniert, darf man Velocity aber nicht mehr mit der statischen Methode "Velocity.getTemplate()" nutzen sondern mit folgendem Code:
- *
- * VelocityService s = (VelocityService) Application.getBootLoader().getBootable(VelocityService.class);
- * VelocityEngine engine = service.getEngine(MeinPlugin.class.getName());
- * Template = engine.getTemplate(name);
- *
- * Revision 1.42  2009/03/10 23:51:28  willuhn
- * @C PluginResources#getPath als deprecated markiert - stattdessen sollte jetzt Manifest#getPluginDir() verwendet werden
- *
- * Revision 1.41  2009/01/07 16:19:49  willuhn
- * @R alter Konstruktor AbstractPlugin(file) entfernt (existierte nur noch aus Gruenden der Abwaertskompatibilitaet
- ******************************************************************************/

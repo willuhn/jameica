@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginList.java,v $
- * $Revision: 1.9 $
- * $Date: 2011/06/02 12:15:16 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -37,6 +33,7 @@ import de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
@@ -98,7 +95,7 @@ public class PluginList extends TablePart
       }
     });
     setMulti(false);
-    setSummary(false);
+    this.removeFeature(FeatureSummary.class);
   }
   
   /**
@@ -254,20 +251,3 @@ public class PluginList extends TablePart
   }
 
 }
-
-
-/*********************************************************************
- * $Log: PluginList.java,v $
- * Revision 1.9  2011/06/02 12:15:16  willuhn
- * @B Das Handling beim Update war noch nicht sauber
- *
- * Revision 1.8  2011-06-01 12:35:58  willuhn
- * @N Die Verzeichnisse, in denen sich Plugins befinden koennen, sind jetzt separate Klassen vom Typ PluginSource. Damit kann das kuenftig um weitere Plugin-Quellen erweitert werden und man muss nicht mehr die Pfade vergleichen, um herauszufinden, in welcher Art von Plugin-Quelle ein Plugin installiert ist
- *
- * Revision 1.7  2011-06-01 11:03:40  willuhn
- * @N ueberarbeiteter Install-Check - das Plugin muss jetzt nicht mehr temporaer entpackt werden - die Pruefung geschieht on-the-fly auf der ZIP-Datei
- *
- * Revision 1.6  2011-05-31 16:39:04  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
- *
- **********************************************************************/

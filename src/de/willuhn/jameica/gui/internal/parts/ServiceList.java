@@ -1,13 +1,9 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/ServiceList.java,v $
- * $Revision: 1.16 $
- * $Date: 2012/03/28 22:28:07 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * 
+ * GPLv2
  *
  **********************************************************************/
 
@@ -27,6 +23,7 @@ import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
+import de.willuhn.jameica.gui.parts.table.FeatureSummary;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.plugin.ServiceDescriptor;
@@ -292,7 +289,7 @@ public class ServiceList extends TablePart
     setMulti(false);
     setRememberColWidths(true);
     setRememberOrder(true);
-    setSummary(false);
+    removeFeature(FeatureSummary.class);
     addColumn(i18n.tr("Name"),"name");
     addColumn(i18n.tr("Beschreibung"),"description");
     addColumn(i18n.tr("Status"),"status");
@@ -462,61 +459,3 @@ public class ServiceList extends TablePart
     }
   }
 }
-
-
-/*********************************************************************
- * $Log: ServiceList.java,v $
- * Revision 1.16  2012/03/28 22:28:07  willuhn
- * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
- * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
- *
- * Revision 1.15  2011/11/17 22:29:36  willuhn
- * @B ClasscastException in PluginControl#getManifest (beim Service-Stop)
- *
- * Revision 1.14  2011-08-02 12:18:39  willuhn
- * @B ClasscastException in PluginControl#getManifest
- *
- * Revision 1.13  2011-05-31 16:39:04  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
- *
- * Revision 1.12  2011-05-11 10:27:24  willuhn
- * @N OCE fangen
- *
- * Revision 1.11  2011-04-26 11:55:16  willuhn
- * @R Summen-Zeile entfernt
- *
- * Revision 1.10  2008/12/19 12:16:02  willuhn
- * @N Mehr Icons
- * @C Reihenfolge der Contextmenu-Eintraege vereinheitlicht
- *
- * Revision 1.9  2007/06/21 11:03:01  willuhn
- * @C ServiceSettings in ServiceFactory verschoben
- * @N Aenderungen an Service-Bindings sofort uebernehmen
- * @C Moeglichkeit, Service-Bindings wieder entfernen zu koennen
- *
- * Revision 1.8  2007/06/21 09:59:22  willuhn
- * @C Keine Warnung anzeigen, wenn in Standalone-Mode keine Binding existiert
- *
- * Revision 1.7  2007/06/21 09:56:30  willuhn
- * @N Remote Service-Bindings nun auch in Standalone-Mode moeglich
- * @N Keine CertificateException mehr beim ersten Start im Server-Mode
- *
- * Revision 1.6  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.5  2005/07/14 22:58:36  web0
- * *** empty log message ***
- *
- * Revision 1.4  2005/06/16 13:29:20  web0
- * *** empty log message ***
- *
- * Revision 1.3  2005/06/15 17:51:31  web0
- * @N Code zum Konfigurieren der Service-Bindings
- *
- * Revision 1.2  2005/06/15 16:10:57  web0
- * @B javadoc fixes
- *
- * Revision 1.1  2005/06/14 23:15:30  web0
- * @N added settings for plugins/services
- *
- **********************************************************************/
