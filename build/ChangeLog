@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * CHG: 0075 Neue Datasource-Version https://github.com/willuhn/datasource/commit/a6c3c2d9e8a476258142d4c1f6ccc79f0a28e4f9
   * BUG: 0074 Unter Linux wurde auf manchen Systemen im Login-Dialog ein weiteres leeres Fenster angezeigt. Siehe http://www.onlinebanking-forum.de/forum/topic.php?t=20695
   * NEW: 0073 Letzten Fixierungsstatus des Task-Monitors merken
   * NEW: 0072 Icon zum Fixieren des Task-Monitors, damit sich dieser nicht automatisch nach 30 Sekunden ausblendet
