@@ -14,6 +14,7 @@
 package de.willuhn.jameica.system;
 
 import java.io.File;
+import java.io.IOException;
 
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -117,13 +118,32 @@ public class Platform
       if (this.workdir.exists() && !this.workdir.isDirectory())
         throw new ApplicationException("Benutzerordner " + this.workdir + " kann nicht erstellt werden. Er existiert bereits als Datei.");
       
+      // Checken, ob es sich ausserhalb des Programmordners befindet
+      try
+      {
+        String systemPath = new File(".").getCanonicalPath();
+        if (this.workdir.getCanonicalPath().startsWith(systemPath))
+          throw new ApplicationException("Bitte wählen Sie einen Benutzer-Ordner, der sich ausserhalb des Programm-Verzeichnisses befindet.");
+      }
+      catch (IOException ioe)
+      {
+        Logger.error("unable to check canonical path",ioe);
+        throw new ApplicationException("Benutzer-Ordner nicht auswählbar: " + ioe.getMessage());
+      }
+
       if (!this.workdir.exists())
       {
         Logger.info("creating " + this.workdir);
-        if (!this.workdir.mkdir())
+        if (!this.workdir.mkdirs())
           throw new Exception("Der Benutzerordner " + this.workdir + " konnte nicht erstellt werden.");    
       }
       return this.workdir;
+    }
+    catch (ApplicationException ae)
+    {
+      Logger.warn("resetting \"ask\" flag in .jameica.properties");
+      BootstrapSettings.setAskWorkdir(true);
+      throw ae;
     }
     catch (Exception e)
     {

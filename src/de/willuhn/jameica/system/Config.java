@@ -672,7 +672,7 @@ public final class Config
       if (!this.configDir.exists())
       {
         Logger.info("creating " + this.configDir.getAbsolutePath());
-        this.configDir.mkdir();
+        this.configDir.mkdirs();
       }
     }
     return configDir.getAbsolutePath();

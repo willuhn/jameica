@@ -1,11 +1,8 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/system/WorkdirChooser.java,v $
- * $Revision: 1.8 $
- * $Date: 2012/02/23 22:03:36 $
- * $Author: willuhn $
  *
- * Copyright (c) by willuhn - software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * GPLv2
  *
  **********************************************************************/
 
@@ -16,6 +13,8 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
@@ -44,6 +43,7 @@ public class WorkdirChooser
 {
   private final static int WINDOW_WIDTH = 450;
  
+  private Button apply     = null;
   private Display display  = null;
   private Shell shell      = null;
   private Combo dir        = null;
@@ -116,6 +116,12 @@ public class WorkdirChooser
       this.dir.setItems(history.toArray(new String[history.size()]));
       this.dir.setText(suggest);
       this.dir.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      this.dir.addModifyListener(new ModifyListener() {
+        public void modifyText(ModifyEvent e)
+        {
+          getDir(); // Anzeigen aktualisieren
+        }
+      });
       
       final DirectoryDialog dialog = new DirectoryDialog(shell);
       dialog.setText("Benutzer-Ordner");
@@ -148,6 +154,7 @@ public class WorkdirChooser
       this.error = new Label(this.shell,SWT.NONE);
       this.error.setForeground(new Color(this.display,250,10,10));
       this.error.setLayoutData(gd);
+      this.error.setText("\n");
     }
 
 
@@ -174,7 +181,8 @@ public class WorkdirChooser
       gl.marginWidth = 0;
       comp.setLayout(gl);
 
-      Button apply = new Button(comp,SWT.PUSH);
+      apply = new Button(comp,SWT.PUSH);
+      apply.setEnabled(false);
       apply.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
       apply.setImage(getImage("ok.png"));
       apply.setText("Übernehmen");
@@ -198,6 +206,9 @@ public class WorkdirChooser
         }
       });
     }
+    
+    // Einmal initial ausloesen
+    this.getDir();
 
     this.shell.pack();
     this.shell.setMinimumSize(this.shell.computeSize(WINDOW_WIDTH,SWT.DEFAULT));
@@ -236,37 +247,80 @@ public class WorkdirChooser
   }
   
   /**
-   * Uebernimmt die Daten.
+   * Liefert das ausgewaehle Benutzerverzeichnis.
+   * @return das Benutzer-Verzeichnis oder NULL, wenn ein ungueltiges Benutzerverzeichnis ausgewaehlt wurde.
    */
-  private void apply()
+  private String getDir()
   {
     if (this.dir == null || this.dir.isDisposed())
     {
       Logger.warn("dialog already disposed");
-      return;
+      return null;
     }
+    
+    if (this.apply != null && !this.apply.isDisposed())
+      this.apply.setEnabled(false);
     
     String dir = this.dir.getText();
     
     if (dir == null || dir.trim().length() == 0)
     {
       this.error.setText("Bitte wählen Sie einen Ordner aus.");
-      return;
+      return null;
     }
-    
+
+    String path = null;
+
     // Checken, ob das Verzeichnis existiert und ob wir darin schreiben koennen.
     File file = new File(dir);
-    if (!file.exists() && !file.mkdirs())
+    
+    // Checken, ob sich der Ordner innerhalb des Programmordners befindet
+    try
     {
-      this.error.setText("Der Ordner konnte nicht erstellt werden.");
-      return;
+      path = file.getCanonicalPath();
+      String systemPath = new File(".").getCanonicalPath();
+      if (path.startsWith(systemPath))
+      {
+        this.error.setText("Bitte wählen Sie einen Benutzer-Ordner, der sich\nausserhalb des Programm-Verzeichnisses befindet.");
+        return null;
+      }
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to check canonical path",e);
+      this.error.setText("Benutzer-Ordner nicht auswählbar: " + e.getMessage());
+      return null;
     }
     
-    if (!file.canWrite())
+    
+    if (file.exists() && !file.canWrite())
     {
       this.error.setText("Sie besitzen keinen Schreibzugriff in diesem Ordner.");
-      return;
+      return null;
     }
+    
+    if (!file.exists() && !file.getParentFile().canWrite())
+    {
+      this.error.setText("Sie besitzen keinen Schreibzugriff in diesem Ordner.");
+      return null;
+    }
+    
+    this.error.setText("\n");
+    
+    if (this.apply != null && !this.apply.isDisposed())
+      apply.setEnabled(true);
+    
+    return path;
+  }
+  
+  /**
+   * Uebernimmt die Daten.
+   */
+  private void apply()
+  {
+    String dir = this.getDir();
+    if (dir == null)
+      return;
     
     // Wir speichern die aktuelle Auswahl
     BootstrapSettings.setProperty("dir",dir);
@@ -313,36 +367,3 @@ public class WorkdirChooser
     }
   }
 }
-
-
-
-/**********************************************************************
- * $Log: WorkdirChooser.java,v $
- * Revision 1.8  2012/02/23 22:03:36  willuhn
- * @N wenn der User im Workdir-Chooser die Option "kuenftig nicht mehr anzeigen" aktiviert hat, kann er die Einstellung jetzt unter Datei->Einstellungen wieder rueckgaengig machen. Es gab sonst keine komfortable Moeglichkeit, den Dialog wieder "hervorzuholen"
- *
- * Revision 1.7  2012/02/21 15:03:32  willuhn
- * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
- *
- * Revision 1.6  2011-08-17 08:21:32  willuhn
- * @N BUGZILLA 937
- *
- * Revision 1.5  2011-04-07 08:04:05  willuhn
- * @B da fehlte ein Leerzeichen
- *
- * Revision 1.4  2011-03-08 14:53:25  willuhn
- * @B Achtung, NPE-Gefahr
- *
- * Revision 1.3  2011-03-08 14:49:04  willuhn
- * @N Liste der letzten 5 Verzeichnisse merken und als Auswahlbox anzeigen
- *
- * Revision 1.2  2011-03-08 13:43:46  willuhn
- * @B Debugging/Cleanup
- *
- * Revision 1.1  2011-03-07 12:52:11  willuhn
- * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
- *
- * Revision 1.1  2011-03-04 18:13:38  willuhn
- * @N Erster Code fuer einen Workdir-Chooser
- *
- **********************************************************************/
