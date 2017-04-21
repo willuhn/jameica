@@ -24,7 +24,7 @@ dependencies {
   compile 'commons-collections:commons-collections:3.+' // Version 3 brauchen wir noch wegen Velocity.
   compile 'commons-logging:commons-logging:1.+'
   compile 'com.mckoi:mckoisqldb:+'
-  compile 'mysql:mysql-connector-java:+'
+  compile 'mysql:mysql-connector-java:5.+'
   compile 'be.cyberelf.nanoxml:nanoxml:+'
   compile 'org.apache.velocity:velocity:+'
 }
