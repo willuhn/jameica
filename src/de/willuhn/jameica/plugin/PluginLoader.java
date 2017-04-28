@@ -147,7 +147,7 @@ public final class PluginLoader
               Logger.warn("have both the same version " + first.getVersion() + ", ignoring " + m.getPluginDir());
               toDelete = m.getPluginDir();
             }
-            else if (compare > 0)
+            else if (compare < 0)
             {
               Logger.warn(m.getPluginDir() + " (" + m.getVersion() + ") is newer than " + first.getPluginDir() + " (" + first.getVersion() + "), ignoring the older one");
               toDelete = first.getPluginDir();
