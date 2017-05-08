@@ -21,8 +21,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 
 /**
@@ -30,10 +32,7 @@ import de.willuhn.logging.Logger;
  */
 public class FeatureClipboard implements Feature
 {
-  private final static String NL    = System.getProperty("line.separator","\n");
-  private final static String SEP   = System.getProperty("col.separator",";");
-  private final static String QUOTE = System.getProperty("quote.separator","\"");
-  private final static KeyStroke SHORTCUT = KeyStroke.getInstance(SWT.CTRL,'c');
+  private final static Settings settings = new Settings(FeatureClipboard.class);
   private Listener listener = null;
   
   /**
@@ -75,11 +74,23 @@ public class FeatureClipboard implements Feature
    */
   protected void applyShortcut(final Context ctx)
   {
+    final String nl    = settings.getString("line.separator",System.getProperty("line.separator","\n"));
+    final String sep   = settings.getString("col.separator",";");
+    final String quote = settings.getString("quote.char","\"");
+
+    final KeyStroke shortcut = SWTUtil.getKeyStroke(settings.getString("shortcut","CTRL+C"));
+    if (shortcut == null)
+      return;
+
     this.listener = new Listener()
     {
       public void handleEvent(org.eclipse.swt.widgets.Event event)
       {
-        if ((event.stateMask == SHORTCUT.getModifierKeys()) && (event.keyCode == SHORTCUT.getNaturalKey()))
+        char c = (char) shortcut.getNaturalKey();
+        if (Character.isLetter(c))
+          c = Character.toLowerCase(c);
+
+        if ((event.stateMask == shortcut.getModifierKeys()) && (event.keyCode == c))
         {
           Object control = ctx.control;
           if (!(control instanceof Table) && !(control instanceof Tree))
@@ -105,13 +116,13 @@ public class FeatureClipboard implements Feature
               for (int i=0;i<colCount;++i)
               {
                 String s = row.getText(i);
-                sb.append(QUOTE);
+                sb.append(quote);
                 sb.append(s != null ? s : "");
-                sb.append(QUOTE);
+                sb.append(quote);
                 if (i+1 < colCount)
-                  sb.append(SEP);
+                  sb.append(sep);
               }
-              sb.append(NL);
+              sb.append(nl);
             }
           }
           else
@@ -129,13 +140,13 @@ public class FeatureClipboard implements Feature
               for (int i=0;i<colCount;++i)
               {
                 String s = row.getText(i);
-                sb.append(QUOTE);
+                sb.append(quote);
                 sb.append(s != null ? s : "");
-                sb.append(QUOTE);
+                sb.append(quote);
                 if (i+1 < colCount)
-                  sb.append(SEP);
+                  sb.append(sep);
               }
-              sb.append(NL);
+              sb.append(nl);
             }
           }
           
