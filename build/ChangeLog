@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0077 Generische Funktion zum Kopieren von Text aus Tabellen und Trees als CSV in Zwischenablage
   * NEW: 0076 Direkt bei der Auswahl des Benutzerordners auf falschen Ordner (innerhalb des Programmordners) hinweisen
   * CHG: 0075 Neue Datasource-Version https://github.com/willuhn/datasource/commit/a6c3c2d9e8a476258142d4c1f6ccc79f0a28e4f9
   * BUG: 0074 Unter Linux wurde auf manchen Systemen im Login-Dialog ein weiteres leeres Fenster angezeigt. Siehe http://www.onlinebanking-forum.de/forum/topic.php?t=20695

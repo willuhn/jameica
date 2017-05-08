@@ -24,6 +24,7 @@ import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.parts.table.Feature;
 import de.willuhn.jameica.gui.parts.table.Feature.Context;
+import de.willuhn.jameica.gui.parts.table.FeatureClipboard;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
@@ -59,6 +60,7 @@ public abstract class AbstractTablePart implements Part
   public AbstractTablePart(Action action)
   {
     this.action = action;
+    this.addFeature(new FeatureClipboard());
   }
 
   /**
