@@ -164,7 +164,7 @@ public class PasswordDialog extends AbstractDialog
     final TextInput username = (this.userText != null && this.userText.length() > 0) ? new TextInput(null) : null;
     if (username != null)
     {
-      username.setValue(Application.getStartupParams().getUsername());
+      username.setValue(this.enteredUsername != null ? this.enteredUsername : Application.getStartupParams().getUsername());
       username.setName(this.userText);
       username.setMandatory(true);
       username.focus();
@@ -336,20 +336,22 @@ public class PasswordDialog extends AbstractDialog
   {
     return this.enteredUsername;
   }
+  
+  /**
+   * Speichert den anzuzeigenden Vorgabe-Benutzernamen.
+   * @param username der Benutzername.
+   */
+  public void setUsername(String username)
+  {
+    this.enteredUsername = username;
+  }
+  
+  /**
+   * Speichert das anzuzeigende Vorgabe-Passwort.
+   * @param password das Passwort.
+   */
+  public void setPassword(String password)
+  {
+    this.enteredPassword = password;
+  }
 }
-
-
-/**********************************************************************
- * $Log: PasswordDialog.java,v $
- * Revision 1.29  2012/03/28 21:22:42  willuhn
- * @B BUGZILLA 1215
- *
- * Revision 1.28  2011-05-24 09:03:45  willuhn
- * @C Passwort-Dialoge koennen nicht mit Escape abgebrochen werden. Hier muss "Abbrechen" geklickt werden
- *
- * Revision 1.27  2010-11-22 11:32:03  willuhn
- * @N Beim Start von Jameica kann nun neben dem Masterpasswort optional auch ein Benutzername abgefragt werden. Dieser kann auch ueber den neuen Kommandozeilen-Parameter "-u" uebergeben werden.
- *
- * Revision 1.26  2010-03-04 22:54:06  willuhn
- * @N BUGZILLA 828
- **********************************************************************/
