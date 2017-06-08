@@ -54,7 +54,10 @@ public class PluginSourceDialog extends AbstractDialog
     this.manifest = mf;
 
     this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
-    this.setTitle(i18n.tr("Plugin \"{0}\" installieren in...",this.manifest.getName()));
+    if (this.manifest != null)
+      this.setTitle(i18n.tr("Plugin \"{0}\" installieren in...",this.manifest.getName()));
+    else
+      this.setTitle(i18n.tr("Plugins installieren in..."));
   }
 
   /**
@@ -63,7 +66,11 @@ public class PluginSourceDialog extends AbstractDialog
   protected void paint(Composite parent) throws Exception
   {
     Container c = new SimpleContainer(parent,true);
-    c.addText(i18n.tr("Bitte wählen Sie den Ordner, in dem das Plugin \"{0}\" installiert werden soll.",this.manifest.getName()),true);
+    
+    if (this.manifest != null)
+      c.addText(i18n.tr("Bitte wählen Sie den Ordner, in dem das Plugin \"{0}\" installiert werden soll.",this.manifest.getName()),true);
+    else
+      c.addText(i18n.tr("Bitte wählen Sie den Ordner, in dem die Plugins installiert werden sollen."),true);
 
     final LabelInput dir = new LabelInput("");
     dir.setColor(Color.COMMENT);

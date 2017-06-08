@@ -52,6 +52,59 @@ public class VersionTest
   {
     test("1.2.3-test",1,2,3,"test");
   }
+  
+  /**
+   * 
+   */
+  @Test
+  public void test005()
+  {
+    Version v = new Version("1.0.0-foobar");
+    Assert.assertTrue(v.compliesTo("1+"));
+    Assert.assertTrue(v.compliesTo("1.0+"));
+    Assert.assertTrue(v.compliesTo("1.0.0+"));
+    Assert.assertTrue(v.compliesTo("1-"));
+    Assert.assertTrue(v.compliesTo("1.0-"));
+    Assert.assertTrue(v.compliesTo("1.0.0-"));
+
+    Assert.assertTrue(v.compliesTo("1.0.0"));
+
+    Assert.assertFalse(v.compliesTo("1.0.1+"));
+    Assert.assertFalse(v.compliesTo("0.9-"));
+  }
+  
+  /**
+   * 
+   */
+  @Test
+  public void test006()
+  {
+    Version v1 = new Version("1.0.1-foo");
+    Version v2 = new Version("1.0.2-bar");
+    Assert.assertEquals(-1,v1.compareTo(v2));
+  }
+  
+  /**
+   * 
+   */
+  @Test
+  public void test007()
+  {
+    Version v1 = new Version("1.0.1-foo");
+    Version v2 = new Version("1.0.1-bar");
+    Assert.assertEquals(0,v1.compareTo(v2));
+  }
+  
+  /**
+   * 
+   */
+  @Test
+  public void test008()
+  {
+    Version v1 = new Version("1.0.2-foo");
+    Version v2 = new Version("1.0.1-bar");
+    Assert.assertEquals(1,v1.compareTo(v2));
+  }
 
   /**
    * Parst die Versionsnummer und vergleicht das Ergebnis mit der Erwartung.

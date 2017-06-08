@@ -7,27 +7,54 @@
 
 package de.willuhn.jameica.services;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.gui.internal.dialogs.PluginSourceDialog;
 import de.willuhn.jameica.gui.internal.ext.UpdateSettingsView;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.messaging.TextMessage;
+import de.willuhn.jameica.plugin.Dependency;
+import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.PluginSource;
+import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.BackgroundTask;
+import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.transport.Transport;
+import de.willuhn.jameica.update.PluginData;
+import de.willuhn.jameica.update.PluginGroup;
 import de.willuhn.jameica.update.Repository;
+import de.willuhn.jameica.update.ResolverResult;
 import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Logger;
+import de.willuhn.security.Signature;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.ProgressMonitor;
+import de.willuhn.util.Session;
 
 /**
  * Dieser Service verwaltet den Zugriff auf Online-Repositories mit Jameica-Plugins.
@@ -54,6 +81,7 @@ public class RepositoryService implements Bootable
 
   private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(RepositoryService.class);
 
+  private Session resolveCache = new Session(10 * 60 * 1000L); // Ergebnis 10 Minuten cachen 
   private Extension settingsExt = null;
   
   /**
@@ -153,6 +181,334 @@ public class RepositoryService implements Bootable
   public List<URL> getRepositories()
   {
     return this.getRepositories(false);
+  }
+  
+  /**
+   * Loest die zu installierenden Abhaengigkeiten fuer das Plugin auf.
+   * @param plugin das zu installierende Plugin.
+   * @return das Ergebnis der Aufloesung.
+   * @throws ApplicationException
+   */
+  public ResolverResult resolve(PluginData plugin) throws ApplicationException
+  {
+    if (plugin == null)
+      throw new ApplicationException(Application.getI18n().tr("Kein Plugin angegeben"));
+    
+    final String key = plugin.getName() + "." + plugin.getAvailableVersion().toString();
+    
+    // Session checken
+    ResolverResult result = (ResolverResult) this.resolveCache.get(key);
+    if (result != null)
+      return result;
+
+    // Neu aufloesen
+    result = new ResolverResult(plugin);
+    this.resolveCache.put(key,result);
+    
+    // Checken, ob die Version vielleicht schon installiert ist
+    if (plugin.isInstalledVersion())
+      return result; // Ist in der angegebenen Version bereits installiert. Nichts zu tun.
+    
+    // Jetzt die Abhaengigkeiten einsammeln
+    for (Dependency d:plugin.getManifest().getDirectDependencies())
+    {
+      // Checken, ob die Abhaengigkeit schon erfuellt oder optional ist
+      if (d.check())
+        continue;
+      
+      // Checken, ob wir das Plugin online haben
+      PluginData pd = this.search(d);
+      if (pd == null)
+      {
+        // Ist eine fehlende Abhaengigkeit
+        result.getMissing().add(d);
+        continue;
+      }
+      
+      // Wir haben die Abhaengigkeit in einem Repository gefunden
+      result.getResolved().add(pd);
+      
+      // Und jetzt noch die Rekursion
+      result.merge(this.resolve(pd));
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Laedt mehrere Plugins von ggf. unterschiedlichen Repositories in einem Rutsch herunter.
+   * Einen Nicht-interaktiven Modus gibt es hier nicht.
+   * @param plugins die Liste der Plugins.
+   * @throws ApplicationException 
+   */
+  public void downloadMulti(final PluginData... plugins) throws ApplicationException
+  {
+    final I18N i18n = Application.getI18n();
+    
+    if (plugins == null || plugins.length == 0)
+      throw new ApplicationException(i18n.tr("Keine zu installierenden Plugins angegeben"));
+    
+    final DeployService ds    = Application.getBootLoader().getBootable(DeployService.class);
+    final TransportService ts = Application.getBootLoader().getBootable(TransportService.class);
+
+    //////////////////////////////////////////////////////////////////////
+    // Wir checken erstmal, ob die Plugins alle eine Signatur haben. Wenn mindestens eine fehlt,
+    // fragen wir den User, ob er den Vorgang fortsetzen will.
+    try
+    {
+      List<String> missing = new ArrayList<String>();
+      for (PluginData data:plugins)
+      {
+        final String name = data.getName();
+        Logger.info("checking if plugin " + name + " is signed");
+        
+        Transport t = ts.getTransport(data.getSignatureUrl());
+        if (!t.exists())
+          missing.add(name);
+      }
+
+      if (missing.size() == 1)
+      {
+        String q = i18n.tr("Das Plugin \"{0}\" wurde vom Herausgeber nicht signiert.\n" +
+            "Möchten Sie es dennoch installieren?",missing.get(0));
+        if (!Application.getCallback().askUser(q,false))
+          throw new OperationCanceledException(i18n.tr("Vorgang abgebrochen"));
+      }
+
+      if (missing.size() > 1)
+      {
+        String q = i18n.tr("Die Plugins \"{0}\" wurden vom Herausgeber nicht signiert.\n" +
+            "Möchten Sie sie dennoch installieren?",StringUtils.join(missing,", "));
+        if (!Application.getCallback().askUser(q,false))
+        throw new OperationCanceledException(i18n.tr("Vorgang abgebrochen"));
+      }
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
+    }
+    catch (OperationCanceledException oce)
+    {
+      throw oce;
+    }
+    catch (Exception e)
+    {
+      Logger.error("error while checking signatures",e);
+      throw new ApplicationException(i18n.tr("Fehler beim Prüfen der Signaturen: {0}",e.getMessage()));
+    }
+    //
+    //////////////////////////////////////////////////////////////////////
+
+
+    
+    BackgroundTask t = new BackgroundTask() {
+      public void run(final ProgressMonitor monitor) throws ApplicationException
+      {
+        try
+        {
+          final File dir = Application.getConfig().getUpdateDir();
+          PluginSource source = null;
+
+          for (PluginData data:plugins)
+          {
+            final String name = data.getName();
+            
+            File archive       = null;
+            File sig           = null;
+            Transport t        = null;
+            boolean update     = false;
+            try
+            {
+              //////////////////////////////////////////////////////////////////////
+              // Signatur herunterladen
+              Logger.info("checking if plugin " + name + " is signed");
+              
+              t = ts.getTransport(data.getSignatureUrl());
+              if (t.exists())
+              {
+                sig = new File(dir,name + ".zip.sha1");
+                t.get(new BufferedOutputStream(new FileOutputStream(sig)),null);
+                Logger.info("created signature file " + sig);
+              }
+              //////////////////////////////////////////////////////////////////////
+
+              //////////////////////////////////////////////////////////////////////
+              //  Datei herunterladen
+              t = ts.getTransport(data.getDownloadUrl());
+              // Wir nehmen hier nicht den Dateinamen der URL sondern generieren selbst einen.
+              // Denn die Download-URL kann etwas dynamisches sein, was nicht auf ".zip" endet
+              archive = new File(dir,name + ".zip");
+              Logger.info("creating deploy file " + archive);
+              t.get(new BufferedOutputStream(new FileOutputStream(archive)),monitor);
+              //////////////////////////////////////////////////////////////////////
+
+
+              //////////////////////////////////////////////////////////////////////
+              // Signatur checken
+              if (sig != null)
+                checkSignature(data,archive,sig);
+              //////////////////////////////////////////////////////////////////////
+
+              //////////////////////////////////////////////////////////////////////
+              // Deployen
+              ZippedPlugin zp = new ZippedPlugin(archive);
+              
+              // Checken, ob wir Install oder Update machen muessen
+              Manifest mf        = zp.getManifest();
+              Manifest installed = Application.getPluginLoader().getManifestByName(mf.getName());
+              if (installed != null)
+              {
+                ds.update(installed,zp,monitor);
+                update = true;
+              }
+              else
+              {
+                // Nach der Plugin-Quelle koennen wir derzeit nur im Desktop-Mode fragen, da wir
+                // im Server-Mode noch keinen passenden Callback haben. In dem Fall ist "source" NULL,
+                // womit im User-Dir installiert wird.
+                if (!Application.inServerMode() && source == null)
+                {
+                  PluginSourceDialog d = new PluginSourceDialog(PluginSourceDialog.POSITION_CENTER,null);
+                  source = (PluginSource) d.open();
+                }
+                ds.deploy(zp,source,monitor);
+              }
+              //////////////////////////////////////////////////////////////////////
+            }
+            finally
+            {
+              // Kann geloescht werden - wurde ja schon deployed
+              // Aber nur, wenn es kein Update ist. Denn da findet das Deployment erst beim Neustart
+              // statt. Und dort brauchen wir ja die ZIP-Datei
+              if (!update && archive != null && archive.exists())
+              {
+                Logger.info("deleting " + archive);
+                archive.delete();
+              }
+              
+              if (sig != null && sig.exists())
+              {
+                Logger.info("delete signature " + sig);
+                sig.delete();
+              }
+            }
+          }
+          
+          TextMessage msg = new TextMessage(i18n.tr("{0} Plugins heruntergeladen",Integer.toString(plugins.length)),i18n.tr("Die Installation erfolgt beim nächsten Neustart von Jameica."));
+          Application.getMessagingFactory().getMessagingQueue("jameica.popup").sendMessage(msg);
+        }
+        catch (ApplicationException ae)
+        {
+          throw ae;
+        }
+        catch (OperationCanceledException oce)
+        {
+          throw new ApplicationException(oce.getMessage());
+        }
+        catch (Exception e)
+        {
+          Logger.error("error while downloading file",e);
+          throw new ApplicationException(i18n.tr("Fehler beim Herunterladen der Plugins: {0}",e.getMessage()));
+        }
+      }
+    
+      public boolean isInterrupted() {return false;}
+      public void interrupt(){}
+    };
+
+    Application.getController().start(t);
+  }
+  
+  /**
+   * Prueft die Signatur eines Plugins.
+   * @param plugin das Plugin.
+   * @param archive Datei, dessen Signatur gecheckt werden soll.
+   * @param sig die Signatur.
+   * @throws Exception
+   */
+  public void checkSignature(PluginData plugin, File archive, File sig) throws Exception
+  {
+    Logger.info("checking signature " + sig + " of file " + archive);
+
+    PluginGroup group = plugin.getPluginGroup();
+    X509Certificate cert = group.getCertificate();
+    
+    if (cert == null)
+    {
+      Logger.warn("plugin may be " + plugin.getName() + " signed, but no certificate found for verification in repository group " + group.getName() + " of " + group.getRepository().getUrl());
+      return;
+    }
+
+    InputStream is1 = null;
+    InputStream is2 = null;
+    try
+    {
+      // Signatur einlesen
+      is2 = new BufferedInputStream(new FileInputStream(sig));
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      byte[] buf = new byte[1024];
+      int read = 0;
+      while ((read = is2.read(buf)) != -1)
+        bos.write(buf,0,read);
+        
+      is1 = new BufferedInputStream(new FileInputStream(archive));
+      if (Signature.verifiy(is1,cert.getPublicKey(),bos.toByteArray()))
+      {
+        Logger.info("signature of plugin " + plugin.getName() + " OK");
+        return;
+      }
+      
+      // Signatur ungueltig!
+      throw new ApplicationException(Application.getI18n().tr("Signatur des Plugins \"{0}\" ungültig. Installation abgebrochen",plugin.getName()));
+    }
+    finally
+    {
+      IOUtil.close(is1,is2);
+    }
+  }
+  
+  /**
+   * Sucht Repository-uebergreifend nach der Abhaengigkeit.
+   * Die Funktion prueft NICHT, ob die Abhaengigkeit ueberhaupt benoetigt wird (z.Bsp. weil schon installiert).
+   * @param dep die gesuchte Abhaengigkeit.
+   * @return das PluginData-Objekt, falls die Abhaengigkeit gefunden wurde oder NULL, wenn sie nicht gefunden wurde.
+   * @throws ApplicationException
+   */
+  private PluginData search(Dependency dep) throws ApplicationException
+  {
+    if (dep == null)
+      throw new ApplicationException(Application.getI18n().tr("Keine Abhängigkeit angegeben"));
+
+    final String key = dep.getName() + "." + dep.getVersion();
+    
+    // Session checken
+    Object result = this.resolveCache.get(key);
+    if (result != null)
+      return (result instanceof PluginData) ? (PluginData) result : null;
+
+    // Neu suchen. Wir iterieren ueber alle Repositories und suchen dort die Abhaengigkeit.
+    for (URL u:this.getRepositories())
+    {
+      Repository r = this.open(u);
+      for (PluginData d:r.getPlugins())
+      {
+        // Passt der Name?
+        if (!ObjectUtils.equals(d.getName(),dep.getName()))
+          continue;
+
+        // Erfuellt die Version die Anforderung?
+        if (d.getAvailableVersion().compliesTo(dep.getVersion()))
+        {
+          // Gefunden.
+          this.resolveCache.put(key,d);
+          return d;
+        }
+      }
+    }
+    
+    // Dummy-Objekt cachen, damit wir auch bei NULL nicht dauernd neu suchen muessen
+    this.resolveCache.put(key,new Object());
+    return null;
   }
   
   /**

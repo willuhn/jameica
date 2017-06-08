@@ -159,6 +159,15 @@ public class PluginData
   }
   
   /**
+   * Liefert das Manifest.
+   * @return das Manifest.
+   */
+  public Manifest getManifest()
+  {
+    return this.manifest;
+  }
+  
+  /**
    * Prueft, ob die installierte Version identisch zur verfuegbaren ist.
    * @return true, wenn die Versionsnummern uebereinstimmen.
    */

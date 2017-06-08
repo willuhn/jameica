@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/plugin/Version.java,v $
- * $Revision: 1.5 $
- * $Date: 2009/10/28 17:54:50 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -31,6 +25,7 @@ public class Version implements Serializable, Comparable<Version>
    */
   public final static Version NONE = new Version();
 
+  private static final Pattern SINGLE  = Pattern.compile("^(\\d+)$");
   private static final Pattern OLD     = Pattern.compile("^(\\d+)\\.(\\d+)$");
   private static final Pattern PATTERN = Pattern.compile("^v?(\\d+)\\.(\\d+)\\.(\\d+)-?(.*)$");
 
@@ -56,8 +51,14 @@ public class Version implements Serializable, Comparable<Version>
   {
     if (v != null && v.length() > 0)
     {
+      final Matcher mSin = SINGLE.matcher(v);
       final Matcher mOld = OLD.matcher(v);
       final Matcher mNew = PATTERN.matcher(v);
+      if (mSin.matches())
+      {
+        this.oldVersion = true;
+        this.major = Integer.parseInt(mSin.group(1));
+      }
       if (mOld.matches())
       {
         this.oldVersion = true;
@@ -240,27 +241,45 @@ public class Version implements Serializable, Comparable<Version>
     }
     return sb.toString();
   }
-}
+  
+  /**
+   * Prueft, ob die Version die angegebene Versionsanforderung erfuellt.
+   * @param dependency die Anforderung.
+   * Sie kann beispielsweise als "1.1+" formuliert sein, um festzulegen, dass
+   * mindestens 1.1 aber auch eine hoehere Version erlaubt ist. In dem Fall
+   * liefert die Funktion true, wenn die Version in "this" 1.1 oder hoeher ist.
+   * Es ist auch moeglich, eine Hoechstversion mit "-" anzugeben.
+   * @return true, wenn diese Version die angegebene Anforderung erfuellt.
+   */
+  public boolean compliesTo(String dependency)
+  {
+    // Keine bestimmte Versionsnummer gefordert.
+    if (dependency == null || dependency.length() == 0)
+      return true;
+    
+    try
+    {
+      Version required = new Version(dependency.replaceAll("[+-]",""));
 
-/**********************************************************************
- * $Log: Version.java,v $
- * Revision 1.5  2009/10/28 17:54:50  willuhn
- * @N hasPatchLevel
- *
- * Revision 1.4  2008/12/30 22:44:36  willuhn
- * @B Heiners Patch um den Bindestrich in toString() nicht auszugeben, wenn kein Suffix angegeben ist
- *
- * Revision 1.3 2008/12/30 15:46:49 willuhn
- * 
- * @N Umstellung auf neue Versionierung
- * @N Umstellung auf Java 1.5!
- * @R rmic aus Build-Scripts entfernt
- * @N Nightly-Builds sind ab sofort in der Versionsnummer als solche markiert
- * 
- *    Revision 1.2 2008/12/30 15:21:42 willuhn
- * @N Umstellung auf neue Versionierung
- * 
- *    Revision 1.1 2008/12/30 14:43:20 willuhn
- * @N Versionsobjekt
- * 
- **********************************************************************/
+      int compare = this.compareTo(required);
+      
+      // Versionsnummer ist mit einem Minus angegeben.
+      // also darf hoechstens die angegebene Versionsnummer vorhanden sein
+      if (dependency.endsWith("-"))
+        return compare <= 0;
+      
+      // Versionsnummer mit Plus, also muss die vorhandene Version
+      // gleicher ODER groesser sein
+      if (dependency.endsWith("+"))
+        return compare >= 0;
+
+      // Kein Vorzeichen, dann muss die Versionsnummer exakt passen
+      return compare == 0;
+    }
+    catch (Exception e)
+    {
+      Logger.error("invalid version number: " + dependency + " - " + e.getMessage(),e);
+    }
+    return false;
+  }
+}

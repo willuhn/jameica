@@ -103,12 +103,8 @@ public class PluginTree extends TreePart
           
           if (pd.isInstalledVersion())
             item.setForeground(Color.SUCCESS.getSWTColor());
-          else if (pd.isInstallable())
-          {
-            item.setForeground(Color.FOREGROUND.getSWTColor());
-          }
           else
-            item.setForeground(Color.COMMENT.getSWTColor());
+            item.setForeground(Color.FOREGROUND.getSWTColor());
 
           fetchers.add(new SizeFetcher(pd,item));
         }

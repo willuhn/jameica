@@ -7,30 +7,22 @@
 
 package de.willuhn.jameica.update;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.n3.nanoxml.IXMLElement;
-import net.n3.nanoxml.IXMLParser;
-import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.internal.dialogs.PluginSourceDialog;
 import de.willuhn.jameica.messaging.TextMessage;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginSource;
 import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.services.DeployService;
+import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.services.TransportService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
@@ -39,10 +31,13 @@ import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.transport.Transport;
 import de.willuhn.jameica.util.XPathEmu;
 import de.willuhn.logging.Logger;
-import de.willuhn.security.Signature;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 import de.willuhn.util.ProgressMonitor;
+import net.n3.nanoxml.IXMLElement;
+import net.n3.nanoxml.IXMLParser;
+import net.n3.nanoxml.StdXMLReader;
+import net.n3.nanoxml.XMLParserFactory;
 
 /**
  * Container fuer ein einzelnes Repository.
@@ -164,7 +159,7 @@ public class Repository
   {
     return this.groups;
   }
-
+  
   /**
    * Laedt das angegebene Plugin herunter, sodass es beim naechsten Start installiert wird.
    * @param data das herunterzuladende Plugin.
@@ -178,7 +173,8 @@ public class Repository
     BackgroundTask t = new BackgroundTask() {
       public void run(ProgressMonitor monitor) throws ApplicationException
       {
-
+        final String name = data.getName();
+        
         File dir = Application.getConfig().getUpdateDir();
         File archive = null;
         File sig     = null;
@@ -189,20 +185,20 @@ public class Repository
         {
           //////////////////////////////////////////////////////////////////////
           // Signatur herunterladen
-          Logger.info("checking if plugin is signed");
+          Logger.info("checking if plugin " + name + " is signed");
           
           TransportService ts = Application.getBootLoader().getBootable(TransportService.class);
           t = ts.getTransport(data.getSignatureUrl());
           if (t.exists())
           {
-            sig = new File(dir,data.getName() + ".zip.sha1");
+            sig = new File(dir,name + ".zip.sha1");
             t.get(new BufferedOutputStream(new FileOutputStream(sig)),null);
             Logger.info("created signature file " + sig);
           }
           else if (interactive)
           {
-            String q = i18n.tr("Plugin wurde vom Herausgeber nicht signiert.\n" +
-            		               "Möchten Sie es dennoch installieren?");
+            String q = i18n.tr("Das Plugin \"{0}\" wurde vom Herausgeber nicht signiert.\n" +
+            		               "Möchten Sie es dennoch installieren?",name);
             if (!Application.getCallback().askUser(q,false))
               throw new OperationCanceledException(i18n.tr("Vorgang abgebrochen"));
           }
@@ -213,7 +209,7 @@ public class Repository
           t = ts.getTransport(data.getDownloadUrl());
           // Wir nehmen hier nicht den Dateinamen der URL sondern generieren selbst einen.
           // Denn die Download-URL kann etwas dynamisches sein, was nicht auf ".zip" endet
-          archive = new File(dir,data.getName() + ".zip");
+          archive = new File(dir,name + ".zip");
           Logger.info("creating deploy file " + archive);
           t.get(new BufferedOutputStream(new FileOutputStream(archive)),monitor);
           //////////////////////////////////////////////////////////////////////
@@ -223,7 +219,8 @@ public class Repository
           // Signatur checken
           if (sig != null)
           {
-            checkSignature(data.getPluginGroup().getCertificate(),archive,sig);
+            RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
+            service.checkSignature(data,archive,sig);
             sigchecked = true;
           }
           //////////////////////////////////////////////////////////////////////
@@ -258,11 +255,11 @@ public class Repository
 
           if (interactive)
           {
-            String text = sigchecked ? i18n.tr("Digitale Signatur des Plugins korrekt.") :
-                                       i18n.tr("Plugin enthielt keine digitale Signatur.");
+            String text = sigchecked ? i18n.tr("Digitale Signatur des Plugins \"{0}\" korrekt.",name) :
+                                       i18n.tr("Plugin \"{0}\" enthielt keine digitale Signatur.",name);
             
             text += "\n" + i18n.tr("Die Installation erfolgt beim nächsten Neustart von Jameica.");
-            TextMessage msg = new TextMessage(i18n.tr("Plugin heruntergeladen"),text);
+            TextMessage msg = new TextMessage(i18n.tr("Plugin \"{0}\" heruntergeladen",name),text);
             Application.getMessagingFactory().getMessagingQueue("jameica.popup").sendMessage(msg);
           }
         }
@@ -274,7 +271,7 @@ public class Repository
             throw new ApplicationException(e.getMessage());
           
           Logger.error("error while downloading file",e);
-          throw new ApplicationException(i18n.tr("Fehler beim Herunterladen des Plugins: {0}",e.getMessage()));
+          throw new ApplicationException(i18n.tr("Fehler beim Herunterladen des Plugins \"{0}\": {1}",name,e.getMessage()));
         }
         finally
         {
@@ -303,51 +300,5 @@ public class Repository
       Application.getController().start(t);
     else
       t.run(new ConsoleMonitor()); // BUGZILLA 1394
-  }
-  
-  /**
-   * Prueft die Signatur.
-   * @param cert das Zertifikat.
-   * @param archive Datei, dessen Signatur gecheckt werden soll.
-   * @param sig die Signatur.
-   * @throws Exception
-   */
-  private void checkSignature(X509Certificate cert, File archive, File sig) throws Exception
-  {
-    Logger.info("checking signature " + sig + " of file " + archive);
-
-    if (cert == null)
-    {
-      Logger.warn("plugin signed, but no certificate found");
-      return;
-    }
-
-    InputStream is1 = null;
-    InputStream is2 = null;
-    try
-    {
-      // Signatur einlesen
-      is2 = new BufferedInputStream(new FileInputStream(sig));
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      byte[] buf = new byte[1024];
-      int read = 0;
-      while ((read = is2.read(buf)) != -1)
-        bos.write(buf,0,read);
-        
-      is1 = new BufferedInputStream(new FileInputStream(archive));
-      if (Signature.verifiy(is1,cert.getPublicKey(),bos.toByteArray()))
-      {
-        Logger.info("signature OK");
-        return;
-      }
-      
-      // Signatur ungueltig!
-      throw new ApplicationException(Application.getI18n().tr("Signatur des Plugins ungültig. Installation abgebrochen"));
-    }
-    finally
-    {
-      IOUtil.close(is1,is2);
-    }
-    
   }
 }

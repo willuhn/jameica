@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
 
 
 /**
@@ -78,7 +77,7 @@ public class Dependency implements Serializable
   {
     // Version von Jameica selbst.
     if (this.name.equalsIgnoreCase("jameica"))
-      return compareVersion(Application.getManifest().getVersion());
+      return Application.getManifest().getVersion().compliesTo(this.version);
     
     // Anforderung existiert nicht mehr
     if (Application.getPluginLoader().isObsolete(this.name))
@@ -97,46 +96,10 @@ public class Dependency implements Serializable
         continue;
       
       // Plugin gefunden - schauen, ob die Versionsnummer passt und ob es geladen werden konnte
-      return mf.isLoaded() && compareVersion(mf.getVersion());
+      return mf.isLoaded() && mf.getVersion().compliesTo(this.version);
     }
     
     // Benoetigte Abhaengigkeit nicht installiert
-    return false;
-  }
-  
-  /**
-   * Prueft, ob die Versionsnummer passt.
-   * @param current die vorhandene Versionsnummer.
-   * @return true, wenn die Bedingung erfuellt ist, sonst false.
-   */
-  private boolean compareVersion(Version current)
-  {
-    // Keine bestimmte Versionsnummer gefordert.
-    if (this.version == null || this.version.length() == 0)
-      return true;
-    
-    Version required = new Version();
-    try
-    {
-      required = new Version(this.version.replaceAll("[+-]",""));
-
-      // Versionsnummer ist mit einem Minus angegeben.
-      // also darf hoechstens die angegebene Versionsnummer vorhanden sein
-      if (this.version.endsWith("-"))
-        return current.compareTo(required) < 0;
-      
-      // Versionsnummer mit Plus, also muss die vorhandene Version
-      // gleicher ODER groesser sein
-      if (this.version.endsWith("+"))
-        return current.compareTo(required) >= 0;
-
-      // Kein Vorzeichen, dann muss die Versionsnummer exakt passen
-      return current.compareTo(required) == 0;
-    }
-    catch (Exception e)
-    {
-      Logger.error("invalid version number: " + this.version + " - " + e.getMessage(),e);
-    }
     return false;
   }
   

@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0078 Support für automatische Mit-Installation abhängiger Plugins.
   * NEW: 0077 Generische Funktion zum Kopieren von Text aus Tabellen und Trees als CSV in Zwischenablage
   * NEW: 0076 Direkt bei der Auswahl des Benutzerordners auf falschen Ordner (innerhalb des Programmordners) hinweisen
   * CHG: 0075 Neue Datasource-Version https://github.com/willuhn/datasource/commit/a6c3c2d9e8a476258142d4c1f6ccc79f0a28e4f9

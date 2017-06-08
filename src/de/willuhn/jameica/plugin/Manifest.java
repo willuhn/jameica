@@ -22,10 +22,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.jar.JarFile;
 
-import net.n3.nanoxml.IXMLElement;
-import net.n3.nanoxml.IXMLParser;
-import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
 import de.willuhn.jameica.gui.MenuItem;
 import de.willuhn.jameica.gui.MenuItemXml;
 import de.willuhn.jameica.gui.NavigationItem;
@@ -37,6 +33,10 @@ import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 import de.willuhn.util.MultipleClassLoader;
+import net.n3.nanoxml.IXMLElement;
+import net.n3.nanoxml.IXMLParser;
+import net.n3.nanoxml.StdXMLReader;
+import net.n3.nanoxml.XMLParserFactory;
 
 /**
  * Enthaelt die Manifest-Informationen des Plugins aus plugin.xml.
@@ -538,8 +538,9 @@ public class Manifest implements Comparable
       Manifest mf = all.get(i);
       String name = mf.getName();
       
+      // Plugin ist installiert, aber nicht Teil der aktuell gesuchten Abhaengigkeiten
       if (!toCheck.contains(name))
-        continue; // interessiert uns nicht
+        continue;
       
       // Jepp, das Plugin ist in unserer Pruef-Liste enthalten.
       // Also brauchen wir auch dessen Abhaengigkeiten
@@ -558,7 +559,6 @@ public class Manifest implements Comparable
     }
     return found.toArray(new Dependency[found.size()]);
   }
-  
   /**
    * Prueft, ob das Plugin installiert werden kann.
    * Konkret wird hier geprueft:
@@ -572,6 +572,23 @@ public class Manifest implements Comparable
    */
   public void canDeploy() throws ApplicationException
   {
+    this.canDeploy(true);
+  }
+  
+  /**
+   * Prueft, ob das Plugin installiert werden kann.
+   * Konkret wird hier geprueft:
+   * 
+   *  1. Ist die richtige Jameica-Version installiert
+   *  2. Sind die Abhaengigkeiten zu anderen Plugins erfuellt.
+   *  3. Ist das Plugin ggf. schon installiert, wenn ja
+   *     - kann es ueberschrieben werden?
+   *     - ist die installierte Version nicht neuer als die zu installierende
+   * @param checkDeps true, wenn die Abhaengigkeiten zu anderen Plugins geprueft werden sollen.
+   * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
+   */
+  public void canDeploy(boolean checkDeps) throws ApplicationException
+  {
     // 1. Benoetigte Jameica-Version.
     Dependency jd = this.getJameicaDependency();
     if (!jd.check())
@@ -582,11 +599,14 @@ public class Manifest implements Comparable
     
     // 2. Es reichen die direkten Abhaengigkeiten. Die indirekten werden ja
     //    von dem anderen Manifest geprueft
-    Dependency[] deps = this.getDirectDependencies();
-    for (Dependency d:deps)
+    if (checkDeps)
     {
-      if (!d.check())
-        throw new ApplicationException(Application.getI18n().tr("Plugin {0} benötigt {1}, welches aber nicht (oder in der falschen Version) installiert ist",this.getName(),d.getName()));
+      Dependency[] deps = this.getDirectDependencies();
+      for (Dependency d:deps)
+      {
+        if (!d.check())
+          throw new ApplicationException(Application.getI18n().tr("Plugin {0} benötigt {1}, welches aber nicht (oder in der falschen Version) installiert ist",this.getName(),d.getName()));
+      }
     }
 
     Manifest installed = null;

@@ -115,6 +115,7 @@ public class UpdateSettingsView implements Extension
       
       });
       tab.addHeadline(Application.getI18n().tr("Plugin-Repositories"));
+      tab.addText(Application.getI18n().tr("Klicken Sie doppelt auf eine URL, um die dort verfügbaren Plugins anzuzeigen."),true);
       tab.addPart(new RepositoryList());
       
       tab.addHeadline(Application.getI18n().tr("Einstellungen"));
