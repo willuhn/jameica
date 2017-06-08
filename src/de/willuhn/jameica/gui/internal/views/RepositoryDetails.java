@@ -42,6 +42,7 @@ public class RepositoryDetails extends AbstractView
     GUI.getView().setTitle(i18n.tr("Repository: {0}",control.getRepository().getName()));
     
     SimpleContainer group = new SimpleContainer(getParent(),true);
+    group.addText(Application.getI18n().tr("Wählen Sie ein Plugin-Repository, um die dort verfügbaren Plugins anzuzeigen."),true);
     group.addInput(control.getRepositories());
 
     final PluginTree tree = control.getPlugins();
