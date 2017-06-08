@@ -194,16 +194,7 @@ public class RepositoryService implements Bootable
     if (plugin == null)
       throw new ApplicationException(Application.getI18n().tr("Kein Plugin angegeben"));
     
-    final String key = plugin.getName() + "." + plugin.getAvailableVersion().toString();
-    
-    // Session checken
-    ResolverResult result = (ResolverResult) this.resolveCache.get(key);
-    if (result != null)
-      return result;
-
-    // Neu aufloesen
-    result = new ResolverResult(plugin);
-    this.resolveCache.put(key,result);
+    ResolverResult result = new ResolverResult(plugin);
     
     // Checken, ob die Version vielleicht schon installiert ist
     if (plugin.isInstalledVersion())
