@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -49,6 +51,7 @@ import de.willuhn.jameica.update.PluginGroup;
 import de.willuhn.jameica.update.Repository;
 import de.willuhn.jameica.update.ResolverResult;
 import de.willuhn.jameica.util.DateUtil;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Signature;
 import de.willuhn.util.ApplicationException;
@@ -461,6 +464,7 @@ public class RepositoryService implements Bootable
   /**
    * Sucht Repository-uebergreifend nach der Abhaengigkeit.
    * Die Funktion prueft NICHT, ob die Abhaengigkeit ueberhaupt benoetigt wird (z.Bsp. weil schon installiert).
+   * Sie prueft allerdings, ob die Abhaengigkeit auf der aktuellen Jameica-Version ueberhaupt lauffaehig waere.
    * @param dep die gesuchte Abhaengigkeit.
    * @return das PluginData-Objekt, falls die Abhaengigkeit gefunden wurde oder NULL, wenn sie nicht gefunden wurde.
    * @throws ApplicationException
@@ -477,26 +481,64 @@ public class RepositoryService implements Bootable
     if (result != null)
       return (result instanceof PluginData) ? (PluginData) result : null;
 
+    List<PluginData> candidates = new ArrayList<PluginData>();
+    
     // Neu suchen. Wir iterieren ueber alle Repositories und suchen dort die Abhaengigkeit.
     for (URL u:this.getRepositories())
     {
-      Repository r = this.open(u);
-      for (PluginData d:r.getPlugins())
+      try
       {
-        // Passt der Name?
-        if (!ObjectUtils.equals(d.getName(),dep.getName()))
-          continue;
-
-        // Erfuellt die Version die Anforderung?
-        if (d.getAvailableVersion().compliesTo(dep.getVersion()))
+        Repository r = this.open(u);
+        for (PluginData d:r.getPlugins())
         {
-          // Gefunden.
-          this.resolveCache.put(key,d);
-          return d;
+          // Passt der Name?
+          if (!ObjectUtils.equals(d.getName(),dep.getName()))
+            continue;
+
+          // Erfuellt die Version die Anforderung?
+          if (d.getAvailableVersion().compliesTo(dep.getVersion()))
+          {
+            candidates.add(d);
+          }
         }
       }
+      catch (Exception e)
+      {
+        // Wahrscheinlich ein ungueltiges Repository oder eines mit ungueltigem Zertifikat
+        Logger.info("unable to open repository " + u + ": " + e.getMessage() + " skipping");
+        Logger.write(Level.DEBUG,"stacktrace for debugging purpose",e);
+      }
     }
+
+    // Checken, ob wir Kandiaten gefunden haben.
+    // Wir sortieren die Kandidaten nach Version. Die neueste zuerst
+    Collections.sort(candidates,new Comparator<PluginData>() {
+      /**
+       * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+       */
+      public int compare(PluginData o1, PluginData o2)
+      {
+        return o1.getAvailableVersion().compareTo(o2.getAvailableVersion());
+      }
+    });
+    Collections.reverse(candidates); // Groessere Versionen zuerst
     
+    for (PluginData d:candidates)
+    {
+      // Checken, ob die Version auf der Jameica-Version lauffaehig waere
+      Manifest mf = d.getManifest();
+      
+      // Das Plugin unterstuetzt unsere Jameica-Version nicht.
+      Dependency jd = mf.getJameicaDependency();
+      if (!jd.check())
+        continue;
+      
+      // Gefunden
+      this.resolveCache.put(key,d);
+      return d;
+    }
+
+    // Nichts gefunden
     // Dummy-Objekt cachen, damit wir auch bei NULL nicht dauernd neu suchen muessen
     this.resolveCache.put(key,new Object());
     return null;
