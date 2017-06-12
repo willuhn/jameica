@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.lang.StringUtils;
+
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
@@ -27,6 +29,7 @@ import de.willuhn.jameica.plugin.Version;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.update.PluginData;
 import de.willuhn.jameica.update.Repository;
+import de.willuhn.jameica.update.ResolverResult;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -481,13 +484,22 @@ public class UpdateService implements Bootable
         return;
       }
       
-      // wegen fehlenden Abhaengigkeiten ohnehin nicht installierbar
-      if (!plugin.isInstallable())
+      // Checken, ob die Abhaengigkeiten erfuellt sind
+      RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
+      try
       {
-        Logger.debug("not installable");
+        ResolverResult result = service.resolve(plugin);
+        if (result.getMissing().size() > 0)
+        {
+          Logger.warn("plugin " + plugin.getName() + " has missing dependencies: " + StringUtils.join(result.getMissing(),", "));
+          return;
+        }
+      }
+      catch (ApplicationException ae)
+      {
+        Logger.warn("unable to check update dependencies for plugin " + plugin.getName() + ": " + ae.getMessage());
         return;
       }
-
 
       // Verfuegbare Version, die dem User zuletzt gemeldet wurde.
       Version vn = new Version(settings.getString(plugin.getName(),vc.toString()));
