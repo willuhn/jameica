@@ -96,6 +96,13 @@ public class FeatureClipboard implements Feature
           if (!(control instanceof Table) && !(control instanceof Tree))
             return;
           
+          // BUGZILLA 1817 - wenn das Widget nicht Table/Tree ist (sondern Text)
+          // dann bearbeitet der User gerade einen Text. In dem Fall duerfen wir
+          // auch nicht reagieren, da der User den Text aus dem Edit-Feld kopieren will
+          Object widget = event.widget;
+          if (!(widget instanceof Table) && !(widget instanceof Tree))
+            return;
+          
           StringBuilder sb = new StringBuilder();
           
           int colCount = 0;
