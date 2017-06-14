@@ -8,6 +8,7 @@
 package de.willuhn.jameica.gui.internal.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Event;
@@ -69,21 +70,29 @@ public class RepositoryContol extends AbstractControl
     RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
     final List<URL> list = service.getRepositories();
     final URL current    = (URL) getCurrentObject();
-    this.repositories = new SelectInput(list,current);
+    
+    // Nicht mit den URL-Objekten arbeiten, da schlagen die equals-Vergleiche bei Virtual-Hosts fehl.
+    // Siehe https://www.willuhn.de/blog/index.php?/archives/709-Java-URLequals-ist-gefaehrlich.html
+    List<String> urls = new ArrayList<String>();
+    for (URL u:list)
+    {
+      urls.add(u.toString());
+    }
+    this.repositories = new SelectInput(urls,current != null ? current.toString() : null);
     this.repositories.setName(Application.getI18n().tr("Plugin-Repository"));
     this.repositories.addListener(new Listener() {
       public void handleEvent(Event event)
       {
-        URL u = (URL) repositories.getValue();
-        if (u == null)
+        String s = (String) repositories.getValue();
+        if (s == null)
           return;
         
-        if (current != null && u.equals(current)) // Nichts geaendert
+        if (current != null && s.equals(current.toString())) // Nichts geaendert
           return;
         
         try
         {
-          new RepositoryOpen().handleAction(u);
+          new RepositoryOpen().handleAction(s);
         }
         catch (ApplicationException ae)
         {
