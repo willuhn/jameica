@@ -189,7 +189,7 @@ public class DeployService implements Bootable
         throw new ApplicationException(i18n.tr("Die ZIP-Datei enthält nicht das zu aktualisierende Plugin"));
 
       // Checken, ob das neue prinzipiell installiert werden kann.
-      mf.canDeploy();
+      mf.canDeploy(false);
 
       monitor.setStatusText(i18n.tr("Aktualisiere Plugin {0}",current.getName()));
       
