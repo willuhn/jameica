@@ -240,7 +240,7 @@ public class UpdateService implements Bootable
         {
           monitor.setStatus(ProgressMonitor.STATUS_DONE);
           monitor.setPercentComplete(100);
-          monitor.setStatusText(i18n.tr("Derzeit sind keine Plugins installier"));
+          monitor.setStatusText(i18n.tr("Derzeit sind keine Plugins installiert"));
         }
         return null;
       }
