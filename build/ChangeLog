@@ -1,7 +1,8 @@
 HEAD 2.7 (nightly)
 
-2017-06-27 Version 2.6.5
+2017-06-30 Version 2.6.5
 
+  * BUG: 0079 Anzeige eines leeren Fensters beim ersten Programmstart (siehe 0074)
   * NEW: 0078 Support für automatische Mit-Installation abhängiger Plugins.
   * NEW: 0077 Generische Funktion zum Kopieren von Text aus Tabellen und Trees als CSV in Zwischenablage
   * NEW: 0076 Direkt bei der Auswahl des Benutzerordners auf falschen Ordner (innerhalb des Programmordners) hinweisen

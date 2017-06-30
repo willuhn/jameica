@@ -78,7 +78,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 			return this.password;
 		}
 			
-  	NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
+    NewPWD p = new NewPWD(NewPWD.POSITION_CENTER);
   	String text = Application.getI18n().tr("Sie starten die Anwendung zum ersten Mal.\n\n" +
                                            "Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten. " +
                                            "Es wird anschließend bei jedem Start des Programms benötigt.");
@@ -87,7 +87,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   	p.setText(text);
   	p.setUsernameText(Customizing.SETTINGS.getString("application.firststart.username",null));
 		p.setTitle(Application.getI18n().tr("Master-Passwort"));
-		p.setMonitor(NewPasswordDialog.MONITOR_PRIMARY);
+		p.setMonitor(NewPWD.MONITOR_PRIMARY);
 
 		try
 		{
@@ -429,7 +429,37 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     d.open();
   }
 
+  /**
+   * Ueberschrieben, um die Shell des Splashscreens nach Moeglichkeit
+   * wiederzuverwenden. Sonst wird beim ersten Start neben dem Fenster
+   * zur Vergabe des neuen Passwortes noch ein leeres Fenster extra
+   * angezeigt. Siehe auch Klasse PWD.
+   */
+  private class NewPWD extends NewPasswordDialog
+  {
+    /**
+     * ct.
+     * @param position
+     */
+    public NewPWD(int position)
+    {
+      super(position);
+    }
 
+    /**
+     * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#createShell(org.eclipse.swt.widgets.Shell, int)
+     */
+    @Override
+    protected Shell createShell(Shell parent, int flags)
+    {
+      // Wir verwenden beim Login-Dialog die Shell des Splash-Screens - wenn verfuegbar
+      Shell p = null;
+      if (startupMonitor != null)
+        p = startupMonitor.getShell();
+      
+      return super.createShell(p != null ? p : parent, flags);
+    }
+  }
 
   /**
    * Innere Klasse fuer die Passwort-Eingabe.
