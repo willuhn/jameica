@@ -25,6 +25,7 @@ import de.willuhn.boot.SkipServiceException;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.TextMessage;
+import de.willuhn.jameica.plugin.Dependency;
 import de.willuhn.jameica.plugin.Version;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.update.PluginData;
@@ -481,6 +482,14 @@ public class UpdateService implements Bootable
       if (va == null)
       {
         Logger.debug("no version available");
+        return;
+      }
+      
+      // Checken, ob die Jameica-Version passt
+      Dependency jd = plugin.getManifest().getJameicaDependency();
+      if (!jd.check())
+      {
+        Logger.debug("required jameica version not available. required: " + jd);
         return;
       }
       
