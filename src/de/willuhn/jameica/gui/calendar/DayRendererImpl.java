@@ -41,6 +41,8 @@ import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Level;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -230,7 +232,16 @@ public class DayRendererImpl implements DayRenderer
   {
     CLabel label = new CLabel(this.content,SWT.LEFT);
     label.setFont(Font.SMALL.getSWTFont());
-    label.setMargins(0,0,0,0);
+
+    try
+    {
+      label.setMargins(0,0,0,0);
+    }
+    catch (NoSuchMethodError e)
+    {
+      Logger.write(Level.DEBUG,"unable to set margins, SWT version probably too old",e);
+    }
+    
     label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     label.addMouseListener(createListener(a));
 
