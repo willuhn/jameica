@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * BUG: 0081 McKoi-Treiber fehlte im Boot-Classpath - siehe http://www.onlinebanking-forum.de/forum/topic.php?t=21320
+  
 2017-06-30 Version 2.6.5
 
   * BUG: 0080 Jameica bot Online-Updates fuer Plugins an, die die Jameica-Version gar nicht unterstützen (z.Bsp. Hibiscus 2.7.0-nightly)
