@@ -123,11 +123,8 @@ public class DecimalInput extends TextInput
             // Jepp, da ist schon ein Komma
             e.doit = false;
             boolean newInputIsCommaOnly=e.text.length()==1;
-            if(newInputIsCommaOnly && e.start<existingCommaIndex){
-              //Selektiere den Text zwischen aktueller Position und hinter bereits existierendem Komma.
-              //Dieser wird dann vom neuen Komma ersetzt, neue Cursorposition ist hinter dem Komma.
-              text.setSelection(e.start, existingCommaIndex+1);
-              e.doit=true;
+            if(newInputIsCommaOnly && text.getSelectionText().length()==0){
+              text.setSelection(existingCommaIndex+1);
             }
             return;
           }
