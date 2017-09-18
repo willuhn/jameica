@@ -17,6 +17,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.widgets.Listener;
 
+import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
@@ -496,5 +497,63 @@ public abstract class AbstractTablePart implements Part
       Logger.error("unable to init list",re);
     }
     return new ArrayList();
+  }
+  
+  /**
+   * Hilfsklasse zum Kapseln eines einzelnen Elements in der Tabelle.
+   */
+  public abstract class AbstractTableItem implements Comparable
+  {
+    /**
+     * Haelt Kontextdaten des Items.
+     */
+    public Object data;
+    
+    /**
+     * Enthaelt den rohen Wert der Spalte.
+     */
+    public Object value;
+    
+    /**
+     * Die Spalte selbst.
+     */
+    public Column column;
+    
+    /**
+     * Der Wert, welcher fuer die Sortierung verwendet werden soll.
+     */
+    public Comparable sortValue;
+    
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(Object o)
+    {
+      // wir immer vorn
+      if (!(o instanceof AbstractTableItem))
+        return -1;
+
+      AbstractTableItem other = (AbstractTableItem) o;
+      return this.column.compare(this,other);
+    }
+    
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj)
+    {
+      if (obj == null || !(obj instanceof AbstractTableItem))
+        return false;
+
+      try
+      {
+        return BeanUtil.equals(this.data,((AbstractTableItem) obj).data);
+      }
+      catch (RemoteException e)
+      {
+        Logger.error("error while comparing items",e);
+        return false;
+      }
+    }
   }
 }

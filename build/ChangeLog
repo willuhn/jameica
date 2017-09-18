@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0082 Überschreiben der Sortierung von Werten in abgeleiteten Klassen von "Column" erlauben
+  
 2017-07-11 Version 2.6.6
 
   * BUG: 0081 McKoi-Treiber fehlte im Boot-Classpath - siehe http://www.onlinebanking-forum.de/forum/topic.php?t=21320

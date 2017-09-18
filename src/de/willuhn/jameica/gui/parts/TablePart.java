@@ -60,7 +60,6 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.ApplicationException;
@@ -1451,13 +1450,8 @@ public class TablePart extends AbstractTablePart
   /**
    * Kleine Hilfs-Klasse fuer die Sortierung und Anzeige.
    */
-  private class Item implements Comparable
+  class Item extends AbstractTableItem
   {
-    private Object data;
-    private Object value;
-    private Column column;
-    private Comparable sortValue;
-
     private Item(Object data, Column col)
     {
       this.data = data;
@@ -1490,62 +1484,6 @@ public class TablePart extends AbstractTablePart
       }
       catch (Exception e)
       {
-      }
-    }
-    
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object obj)
-    {
-      if (obj == null || !(obj instanceof Item))
-        return false;
-
-      try
-      {
-        return BeanUtil.equals(this.data,((Item) obj).data);
-      }
-      catch (RemoteException e)
-      {
-        Logger.error("error while comparing items",e);
-        return false;
-      }
-    }
-    
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(Object o)
-    {
-      // wir immer vorn
-      if (!(o instanceof Item))
-        return -1;
-
-      try
-      {
-        Item other = (Item) o;
-
-        // Gleiche Reihenfolge - wenn beide NULL sind oder beide das selbe Objekt referenzieren
-        if (this.sortValue == other.sortValue)
-          return 0;
-        
-        // Wir vorn
-        if (this.sortValue == null)
-          return -1;
-
-        // das andere vorn
-        if (other.sortValue == null)
-          return 1;
-        
-        if (this.column != null && this.column.getSortMode() == Column.SORT_BY_DISPLAY)
-          return this.column.getFormattedValue(this.value,this.data).compareTo(other.column.getFormattedValue(other.value,other.data));
-        
-        return this.sortValue.compareTo(other.sortValue);
-      }
-      catch (Exception e)
-      {
-        Logger.write(Level.INFO,"unable to compare values",e);
-        return 0;
       }
     }
   }

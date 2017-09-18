@@ -1,12 +1,6 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/parts/Column.java,v $
- * $Revision: 1.4 $
- * $Date: 2011/07/26 11:49:01 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
  *
  **********************************************************************/
@@ -20,6 +14,8 @@ import org.eclipse.swt.widgets.Item;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.jameica.gui.formatter.Formatter;
+import de.willuhn.jameica.gui.parts.AbstractTablePart.AbstractTableItem;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 
@@ -254,23 +250,39 @@ public class Column implements Serializable
   {
     this.column = i;
   }
+  
+  /**
+   * Vergleicht zwei Werte dieser Spalte fuer die Ermittlung der Anzeige-Reihenfolge.
+   * @param i1 Wert 1.
+   * @param i2 Wert 2.
+   * @return Ein negativer Wert, wenn Wert 1 vorher angezeigt werden soll. 0, wenn beide Werte gleich sind.
+   * Ein positiver Wert, wenn Wert 2 vorher angezeigt werden soll.
+   */
+  public int compare(AbstractTableItem i1, AbstractTableItem i2)
+  {
+    try
+    {
+      // Gleiche Reihenfolge - wenn beide NULL sind oder beide das selbe Objekt referenzieren
+      if (i1.sortValue == i2.sortValue)
+        return 0;
+      
+      // Wir vorn
+      if (i1.sortValue == null)
+        return -1;
+
+      // das andere vorn
+      if (i2.sortValue == null)
+        return 1;
+      
+      if (this.getSortMode() == Column.SORT_BY_DISPLAY)
+        return i1.column.getFormattedValue(i1.value,i1.data).compareTo(i2.column.getFormattedValue(i2.value,i2.data));
+      
+      return i1.sortValue.compareTo(i2.sortValue);
+    }
+    catch (Exception e)
+    {
+      Logger.write(Level.INFO,"unable to compare values",e);
+      return 0;
+    }
+  }
 }
-
-
-/**********************************************************************
- * $Log: Column.java,v $
- * Revision 1.4  2011/07/26 11:49:01  willuhn
- * @C SelectionListener wurde doppelt ausgeloest, wenn die Tabelle checkable ist und eine Checkbox angeklickt wurde (einmal durch Selektion der Zeile und dann nochmal durch Aktivierung/Deaktivierung der Checkbox). Wenn eine Tabelle checkable ist, wird der SelectionListener jetzt nur noch beim Klick auf die Checkbox ausgeloest, nicht mehr mehr Selektieren der Zeile.
- * @N Column.setName zum Aendern des Spalten-Namens on-the-fly
- *
- * Revision 1.3  2009/05/06 16:26:26  willuhn
- * @N BUGZILLA 721
- *
- * Revision 1.2  2008/09/30 21:30:04  willuhn
- * @N TablePart-internes "SortItem" umbenannt in "Item" - dient jetzt nicht mehr nur der Sortierung sondern auch zur Ausgabe/Formatierung des Attribut-Wertes (getFormattedValue())
- * @N Objekt "Column" um ein neues Attribut "sort" erweitert, mit dem festgelegt werden kann, ob die Spalte nach dem tatsaechlichen Wert (SORT_BY_VALUE) des Attributs sortiert werden soll oder nach dem angezeigten Wert (SORT_BY_DISPLAY). SORT_BY_VALUE ist (wie bisher) Default. Damit kann man z.Bsp. eine Spalte mit Integer-Wert auch alphanumerisch sortieren (nach "1" kommt dann "10" und nicht "2")
- *
- * Revision 1.1  2008/05/25 22:31:30  willuhn
- * @N Explizite Angabe der Spaltenausrichtung moeglich
- *
- **********************************************************************/
