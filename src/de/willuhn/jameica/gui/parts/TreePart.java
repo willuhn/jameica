@@ -16,6 +16,8 @@ import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,6 +31,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -73,7 +76,15 @@ public class TreePart extends AbstractTablePart
   // State
   private static Session state = new Session();
   //////////////////////////////////////////////////////////
-    
+
+  //////////////////////////////////////////////////////////
+  // Sortierung
+  private Image up                      = SWTUtil.getImage("up.gif");
+  private Image down                    = SWTUtil.getImage("down.gif");
+  private int sortedBy                  = -1; // Index der sortierten Spalte
+  private boolean direction             = true; // Ausrichtung
+  //////////////////////////////////////////////////////////
+
 	/**
    * Erzeugt einen neuen Tree basierend auf dem uebergebenen Objekt.
    * @param object Das Objekt, fuer das der Baum erzeugt werden soll. 
@@ -388,6 +399,23 @@ public class TreePart extends AbstractTablePart
             }
           });
         }
+
+        // Sortierung
+        final int p = i;
+        //Wir nehmen an, dass die erste Spalte die Baumhierarchie widerspiegelt
+        //Diese Spalte soll nicht sortiert werden können
+        if(i!=0){
+          tc.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event e)
+            {
+              // Wenn wir vorher schonmal nach dieser Spalte
+              // sortiert haben, kehren wir die Sortierung um
+              direction = !(direction && p == sortedBy);
+              sortedBy=p;
+              orderBy(p);
+            }
+          });
+        }
       
       }
 
@@ -477,6 +505,52 @@ public class TreePart extends AbstractTablePart
     
     this.featureEvent(Feature.Event.PAINT,null);
   }
+
+  private void orderBy(int index){
+    tree.getColumn(index).setImage(direction ? down : up);
+    Column sortColumn = columns.get(index);
+    GenericTreeItemComparator comparator=new GenericTreeItemComparator(sortColumn, index);
+    TreeItem[] items = tree.getItems();
+    for (int i = 0; i <items.length; i++)
+    {
+      orderBy(items[i], comparator);
+    }
+  }
+
+  private void orderBy(TreeItem item, GenericTreeItemComparator comparator){
+    TreeItem[] children = item.getItems();
+    List<TreeItem> itemsToSort=new ArrayList<TreeItem>();
+    for (int i = 0; i <children.length; i++)
+    {
+      TreeItem child = children[i];
+      
+      //Wir sortieren nur die Blätter
+      if(child.getItemCount()>0){
+        orderBy(child, comparator);
+      }else{
+        itemsToSort.add(child);
+      }
+    }
+    itemsToSort.sort(comparator);
+    if(!direction){
+      Collections.reverse(itemsToSort);
+    }
+    //Eine Sortierung ist nur durch Entfernen und Neueinfügen möglich
+    for (TreeItem treeItemToReplace : itemsToSort)
+    {
+      Object data = treeItemToReplace.getData();
+      treeItemToReplace.dispose();
+      try
+      {
+        Item newItem = new Item(item, data);
+        itemLookup.put(data, newItem);
+      } catch (RemoteException e)
+      {
+        Logger.error("error while sorting tree", e);
+      }
+    }
+  }
+
   
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#restoreState()
@@ -825,7 +899,40 @@ public class TreePart extends AbstractTablePart
       }
 		}
   }
-  
+
+  //Zur Sortierung verwenden wir wenn möglich die zugrunde liegenden Daten
+  //Fallback ist der Spaltentext
+  private class GenericTreeItemComparator implements Comparator<TreeItem>{
+
+    private String columnId;
+    private int columnIndex;
+
+    public GenericTreeItemComparator(Column columnToCompare, int columnIndex)
+    {
+      this.columnId=columnToCompare.getColumnId();
+      this.columnIndex=columnIndex;
+    }
+
+    public int compare(TreeItem item1, TreeItem item2)
+    {
+      try{
+        Object colData1 = BeanUtil.get(item1.getData(), columnId);
+        Object colData2 = BeanUtil.get(item2.getData(), columnId);
+        if(colData1 instanceof Comparable<?>){
+          return ((Comparable) colData1).compareTo(colData2);
+        }
+      }catch(Exception e){
+        //ignore and use fallback
+      }
+      return getText(item1).compareTo(getText(item2));
+    }
+
+    private String getText(TreeItem item){
+      String result=item.getText(columnIndex);
+      return result==null?"":result;
+    }
+  }
+
   /**
    * Liefert die Kinder des angegebenen Fach-Objektes.
    * Die Default-Implementierung prueft, ob das Objekt vom Typ
