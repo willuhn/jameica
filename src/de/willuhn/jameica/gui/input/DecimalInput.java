@@ -117,10 +117,15 @@ public class DecimalInput extends TextInput
           }
           
           // Jetzt checken wir noch, ob schon ein Komma eingegeben wurde
-          if (chars[i] == komma && (text.getText()+"").indexOf(komma) != -1 && e.text.indexOf(komma) != -1)
+          int existingCommaIndex=(text.getText()+"").indexOf(komma);
+          if (chars[i] == komma && existingCommaIndex != -1)
           {
             // Jepp, da ist schon ein Komma
             e.doit = false;
+            boolean newInputIsCommaOnly=e.text.length()==1;
+            if(newInputIsCommaOnly && text.getSelectionText().length()==0){
+              text.setSelection(existingCommaIndex+1);
+            }
             return;
           }
 
