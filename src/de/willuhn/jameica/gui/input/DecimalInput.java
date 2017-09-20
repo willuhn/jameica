@@ -70,11 +70,17 @@ public class DecimalInput extends TextInput
         this.format.setParseBigDecimal(true);
     }
 
-    // BUGZILLA 1014 Der Code war vorher 1:1 in Hibiscus auch drin. Ich hoffe, der macht hier jetzt keine Probleme.
+    // BUGZILLA 1014 Der Code war vorher ähnlich in Hibiscus auch drin. Ich hoffe, der macht hier jetzt keine Probleme.
+    // Anpassung: setValue für erzwungene Formatierung nur beim Verlassen
+    // Neu: Selektion bei Focus
     this.addListener(new Listener() {
       public void handleEvent(Event event)
       {
-        setValue(getValue()); // forciert das Formatieren des Betrages
+         if(event.type==SWT.FocusIn) {
+          text.selectAll();
+        }else if(event.type==SWT.FocusOut){
+          setValue(getValue()); // forciert das Formatieren des Betrages
+        }
       }
     });
   }
