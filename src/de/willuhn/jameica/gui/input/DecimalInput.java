@@ -71,15 +71,19 @@ public class DecimalInput extends TextInput
     }
 
     // BUGZILLA 1014 Der Code war vorher ähnlich in Hibiscus auch drin. Ich hoffe, der macht hier jetzt keine Probleme.
-    // Anpassung: setValue für erzwungene Formatierung nur beim Verlassen
-    // Neu: Selektion bei Focus
     this.addListener(new Listener() {
       public void handleEvent(Event event)
       {
-         if(event.type==SWT.FocusIn) {
+        // https://github.com/willuhn/jameica/pull/22 - Selektion des Textes bei FocusIn
+        // Passiert unter Linux ohnehin automatisch. Bei Windows ist es manuell noetig
+        if(event.type == SWT.FocusIn)
+        {
           text.selectAll();
-        }else if(event.type==SWT.FocusOut){
-          setValue(getValue()); // forciert das Formatieren des Betrages
+        }
+        else if (event.type == SWT.FocusOut)
+        {
+          // Forciertes Formatieren des Betrages beim Verlassen des Feldes
+          setValue(getValue());
         }
       }
     });
