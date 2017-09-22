@@ -9,24 +9,24 @@
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
-  <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
   <icon>/work/willuhn/git/hibiscus/icons/hibiscus.ico</icon>
   <jre>
     <path></path>
-    <minVersion>1.6.0</minVersion>
+    <bundledJre64Bit>false</bundledJre64Bit>
+    <minVersion>1.8.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <opt>-Xmx512m -Djava.net.preferIPv4Stack=true</opt>
+    <opt>--add-modules=java.se.ee -Xmx512m -Djava.net.preferIPv4Stack=true</opt>
   </jre>
   <versionInfo>
-    <fileVersion>2.6.4.0</fileVersion>
-    <txtFileVersion>2.6.4</txtFileVersion>
+    <fileVersion>2.6.6.0</fileVersion>
+    <txtFileVersion>2.6.6</txtFileVersion>
     <fileDescription>Jameica</fileDescription>
     <copyright>Olaf Willuhn</copyright>
-    <productVersion>2.6.4.0</productVersion>
-    <txtProductVersion>2.6.4</txtProductVersion>
+    <productVersion>2.6.6.0</productVersion>
+    <txtProductVersion>2.6.6</txtProductVersion>
     <productName>Jameica</productName>
     <companyName>Olaf Willuhn</companyName>
     <internalName>jameica-win64</internalName>

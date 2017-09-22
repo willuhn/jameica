@@ -7,4 +7,4 @@ link=$(readlink -f "$0")
 dir=$(dirname "$link")
 cd "$dir" 
 
-java -Xmx512m -jar jameica-openbsd.jar $@
+java --add-modules=java.se.ee -Xmx512m -jar jameica-openbsd.jar $@
