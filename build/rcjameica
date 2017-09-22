@@ -19,6 +19,7 @@ link=${base#*[SK][0-9][0-9]}
 JAVA=`which java`
 BASEDIR=`dirname $0`
 
+export JDK_JAVA_OPTIONS='--add-modules=java.se.ee'
 
 ### Please do not edit anything below this line! ########################
 #                                                                       #
@@ -38,7 +39,7 @@ case "$1" in
       mkdir -p $WORKDIR
       cd $BASEDIR
       echo -n "Starting Jameica "
-      echo $PASSWORD | $JAVA --add-modules=java.se.ee -Djava.net.preferIPv4Stack=true -Xmx512m -jar jameica-linux.jar -d -f $WORKDIR > /dev/null & PID=$!
+      echo $PASSWORD | $JAVA -Djava.net.preferIPv4Stack=true -Xmx512m -jar jameica-linux.jar -d -f $WORKDIR > /dev/null & PID=$!
       rc_status -v
       echo $PID > $PIDFILE
     ;;

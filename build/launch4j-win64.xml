@@ -18,7 +18,7 @@
     <minVersion>1.8.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <opt>--add-modules=java.se.ee -Xmx512m -Djava.net.preferIPv4Stack=true</opt>
+    <opt>-Xmx512m -Djava.net.preferIPv4Stack=true --add-modules=java.se.ee</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.6.6.0</fileVersion>
