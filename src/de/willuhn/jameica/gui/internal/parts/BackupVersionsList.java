@@ -27,6 +27,7 @@ import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.Version;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 
 
@@ -183,7 +184,16 @@ public class BackupVersionsList extends TablePart
       this.noBackup      = this.backupVersion == null;
 
       // Checken, ob das Plugin installiert ist
-      de.willuhn.jameica.plugin.Plugin plugin = Application.getPluginLoader().getPlugin(this.pluginClass);
+      de.willuhn.jameica.plugin.Plugin plugin = null;
+      try
+      {
+        plugin = Application.getPluginLoader().getPlugin(this.pluginClass);
+      }
+      catch (Exception e)
+      {
+        Logger.warn("unable to find plugin, consider as not-installed: " + e.getMessage());
+        Logger.write(Level.DEBUG,"stacktrace for debugging purpose",e);
+      }
 
       this.notInstalled = plugin == null;
 
