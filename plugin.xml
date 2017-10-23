@@ -2,45 +2,44 @@
 
 <system name="Jameica" version="2.7.0-nightly">
 
-	<description>Jameica - Java based messages interchange</description>
-	<url>http://www.willuhn.de/products/jameica/releases/nightly/jameica-2.7.0-nightly.zip</url>
-	<homepage>http://www.willuhn.de/projects/jameica</homepage>
-	<license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
+  <description>Jameica - Java based messages interchange</description>
+  <url>http://www.willuhn.de/products/jameica/releases/nightly/jameica-2.7.0-nightly.zip</url>
+  <homepage>http://www.willuhn.de/projects/jameica</homepage>
+  <license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
 
   <classfinder>
     <include>jameica\.jar</include>
     <include>.*\.class</include>
   </classfinder>
 
-	<menu>
-		<item id="jameica.menu.file"             name="&amp;Datei">
+  <menu>
+    <item id="jameica.menu.file"             name="&amp;Datei">
       <item id="jameica.menu.search"         name="&amp;Suche..."                 shortcut="CTRL+^"         icon="system-search.png"       action="de.willuhn.jameica.gui.internal.action.Search" />
       <item id="jameica.menu.bookmarks"      name="&amp;Lesezeichen..."           shortcut="CTRL+L"         icon="starred.png"             action="de.willuhn.jameica.gui.internal.action.BookmarkSearch" />
       <item id="jameica.menu.back"           name="&amp;Zurück"                   shortcut="ALT+ARROW_LEFT" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
       <item name="-" />
-			<item id="jameica.menu.settings"       name="&amp;Einstellungen"            shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
+      <item id="jameica.menu.settings"       name="&amp;Einstellungen"            shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
       <item id="jameica.menu.backups"        name="&amp;Backups verwalten"                                  icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
       <item id="jameica.menu.updates"        name="&amp;Plugins online suchen..."                           icon="emblem-package.png"      action="de.willuhn.jameica.gui.internal.action.RepositoryOpen" />
       <item name="-" />
-			<item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	                     icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
-			<item name="-" />
-			<item id="jameica.menu.quit"           name="Beenden"                                          icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
-		</item>
-
-		<item name="Hilfe">
-			<item name="&amp;Über"                  icon="gtk-info.png"           action="de.willuhn.jameica.gui.internal.action.About" />
-			<item name="-" />
-		    <item name="Lizenzinformationen" icon="text-x-generic.png"     action="de.willuhn.jameica.gui.internal.action.License" />
-	  </item>
-	</menu>
-
-	<navigation>
-		<item id="jameica.start"          name="Start"   icon-close="computer.png"        action="de.willuhn.jameica.gui.internal.action.Start">
-      <item id="jameica.appointments" name="Termine" icon-close="office-calendar.png" action="de.willuhn.jameica.gui.internal.action.Appointments" />
+      <item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	                            icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
+      <item name="-" />
+      <item id="jameica.menu.quit"           name="Beenden"                                                 icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
     </item>
-	</navigation>
+    <item name="Hilfe">
+      <item name="&amp;Über"                                                                                icon="gtk-info.png"            action="de.willuhn.jameica.gui.internal.action.About" />
+      <item name="-" />
+      <item name="Lizenzinformationen" icon="text-x-generic.png"     action="de.willuhn.jameica.gui.internal.action.License" />
+    </item>
+  </menu>
 
-	<services/>
+  <navigation>
+    <item id="jameica.start"        name="Start"   icon-close="computer.png"        action="de.willuhn.jameica.gui.internal.action.Start">
+    <item id="jameica.appointments" name="Termine" icon-close="office-calendar.png" action="de.willuhn.jameica.gui.internal.action.Appointments" />
+    </item>
+  </navigation>
+
+  <services/>
   
   <messaging>
     <consumer queue="jameica.reminder.appointment" class="de.willuhn.jameica.messaging.ReminderAppointmentMessageConsumer" />
@@ -51,4 +50,3 @@
   </messaging>
 
 </system>
-
