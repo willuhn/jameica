@@ -402,21 +402,16 @@ public class TreePart extends AbstractTablePart
 
         // Sortierung
         final int p = i;
-        //Wir nehmen an, dass die erste Spalte die Baumhierarchie widerspiegelt
-        //Diese Spalte soll nicht sortiert werden können
-        if(i!=0){
-          tc.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e)
-            {
-              // Wenn wir vorher schonmal nach dieser Spalte
-              // sortiert haben, kehren wir die Sortierung um
-              direction = !(direction && p == sortedBy);
-              sortedBy=p;
-              orderBy(p);
-            }
-          });
-        }
-      
+        tc.addListener(SWT.Selection, new Listener() {
+          public void handleEvent(Event e)
+          {
+            // Wenn wir vorher schonmal nach dieser Spalte
+            // sortiert haben, kehren wir die Sortierung um
+            direction = !(direction && p == sortedBy);
+            sortedBy=p;
+            orderBy(p);
+          }
+        });
       }
 
       if (this.rememberOrder)
@@ -507,6 +502,9 @@ public class TreePart extends AbstractTablePart
   }
 
   private void orderBy(int index){
+    for (TreeColumn column: tree.getColumns()){
+      column.setImage(null);
+    }
     tree.getColumn(index).setImage(direction ? down : up);
     Column sortColumn = columns.get(index);
     GenericTreeItemComparator comparator=new GenericTreeItemComparator(sortColumn, index);
