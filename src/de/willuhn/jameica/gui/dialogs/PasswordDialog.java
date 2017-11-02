@@ -28,8 +28,10 @@ import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.gui.util.ScrolledContainer;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.util.ApplicationException;
 
@@ -62,6 +64,7 @@ public class PasswordDialog extends AbstractDialog
   private String enteredPassword      = null;
   
   private LabelInput error            = null;
+  private boolean smallDisplay        = false;
 
 	/**
 	 * Erzeugt einen neuen Passwort-Dialog.
@@ -75,6 +78,8 @@ public class PasswordDialog extends AbstractDialog
     this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
     this.setTitle(i18n.tr("Passwort"));
     this.setSideImage(SWTUtil.getImage("dialog-password.png"));
+    
+    this.smallDisplay = Customizing.SETTINGS.getBoolean("application.scrollview",false);
   }
 
   /**
@@ -155,12 +160,26 @@ public class PasswordDialog extends AbstractDialog
    */
   protected void paint(Composite parent) throws Exception
 	{
+    // Text
+    if (this.text != null && this.text.length() > 0)
+    {
+      Container tc = null;
+      if (this.smallDisplay && this.text.length() > 500)
+      {
+        // http://www.onlinebanking-forum.de/forum/topic.php?t=21572&highlight=&page=last#last_post
+        ScrolledContainer sc = new ScrolledContainer(parent);
+        tc = new SimpleContainer(sc.getComposite()); // Noch ein SimpleContainer, damit ein vernuenftiger Rand um den Text angezeigt wird
+        this.text += "\n"; // Wenn ich das nicht mache, ist sonst unten die letzte Zeile abgeschnitten
+      }
+      else
+      {
+        tc = new SimpleContainer(parent);
+      }
+      tc.addText(this.text,true);
+    }
+
     Container container = new SimpleContainer(parent);
 
-		// Text
-    if (this.text != null && this.text.length() > 0)
-      container.addText(this.text,true);
-		
     final TextInput username = (this.userText != null && this.userText.length() > 0) ? new TextInput(null) : null;
     if (username != null)
     {
