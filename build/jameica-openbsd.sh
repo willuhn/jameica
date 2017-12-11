@@ -8,4 +8,4 @@ dir=$(dirname "$link")
 cd "$dir" 
 
 export JDK_JAVA_OPTIONS='--add-modules=java.se.ee'
-java -Xmx512m -jar jameica-openbsd.jar $@
+java -Xmx512m -Xss64m -jar jameica-openbsd.jar $@

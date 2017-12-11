@@ -23,7 +23,7 @@
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
     <runtimeBits>64/32</runtimeBits>
-    <opt>-Xmx512m -Djava.net.preferIPv4Stack=true</opt>
+    <opt>-Xmx512m -Xss64m -Djava.net.preferIPv4Stack=true</opt>
   </jre>
   <versionInfo>
     <fileVersion>2.6.6.0</fileVersion>
