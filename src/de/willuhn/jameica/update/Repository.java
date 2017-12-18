@@ -22,6 +22,7 @@ import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.PluginSource;
 import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.services.DeployService;
+import de.willuhn.jameica.services.PluginSourceService;
 import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.services.TransportService;
 import de.willuhn.jameica.system.Application;
@@ -243,12 +244,7 @@ public class Repository
             // Nach der Plugin-Quelle koennen wir derzeit nur im Desktop-Mode fragen, da wir
             // im Server-Mode noch keinen passenden Callback haben. In dem Fall ist "source" NULL,
             // womit im User-Dir installiert wird.
-            PluginSource source = null;
-            if (!Application.inServerMode())
-            {
-              PluginSourceDialog d = new PluginSourceDialog(PluginSourceDialog.POSITION_CENTER,mf);
-              source = (PluginSource) d.open();
-            }
+            PluginSource source = Application.inServerMode() ? null : getPluginSource(mf);
             service.deploy(zp,source,monitor);
           }
           //////////////////////////////////////////////////////////////////////
@@ -301,4 +297,28 @@ public class Repository
     else
       t.run(new ConsoleMonitor()); // BUGZILLA 1394
   }
+  
+  /**
+   * Liefert die Plugin-Quelle, in der das Plugin installiert werden soll.
+   * @param mf das Manifest des Plugins.
+   * @return die Plugin-Quelle.
+   * @throws Exception
+   */
+  private PluginSource getPluginSource(Manifest mf) throws Exception
+  {
+    PluginSourceService service = Application.getBootLoader().getBootable(PluginSourceService.class);
+    List<PluginSource> sources = service.getWritableSources();
+    
+    if (sources.size() == 1)
+      return sources.get(0); // wenn wir eh nur die eine haben
+    
+    if (sources.size() > 1)
+    {
+      PluginSourceDialog psd = new PluginSourceDialog(PluginSourceDialog.POSITION_CENTER,mf);
+      return (PluginSource) psd.open();
+    }
+    
+    return null; // Dann nicht. Das soll der Deploy-Service entscheiden
+  }
+
 }

@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0085 Beim Installieren von Plugins per "Datei->Plugins online suchen..." nur dann nach Zielordner fragen, wenn mehrere zur Wahl stehen
   * NEW: 0084 Langen Text in Passwort-Dialog bei kleinen Displays scrollbar machen. Siehe http://www.onlinebanking-forum.de/forum/topic.php?t=21572&highlight=&page=last#last_post 
   * NEW: 0083 Support für Java 9
   * NEW: 0082 Überschreiben der Sortierung von Werten in abgeleiteten Klassen von "Column" erlauben
