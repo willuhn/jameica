@@ -240,7 +240,7 @@ public class DeployService implements Bootable
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(msg,StatusBarMessage.TYPE_ERROR));
     }
   }
-  
+
   /**
    * Deployed das angegebene Plugin.
    * @param plugin das Plugin.
@@ -249,6 +249,19 @@ public class DeployService implements Bootable
    * @param monitor der Progressmonitor zur Anzeige des Fortschrittes.
    */
   public void deploy(ZippedPlugin plugin, PluginSource source, ProgressMonitor monitor)
+  {
+    this.deploy(plugin,source,monitor,false);
+  }
+
+  /**
+   * Deployed das angegebene Plugin.
+   * @param plugin das Plugin.
+   * @param source die Installations-Quelle, in der das Plugin entpackt werden soll.
+   * Wenn keine angegeben ist, wird im User-Plugin-Ordner deployed.
+   * @param monitor der Progressmonitor zur Anzeige des Fortschrittes.
+   * @param multi true, wenn mehrere Plugins in Folge installiert werden.
+   */
+  public void deploy(ZippedPlugin plugin, PluginSource source, ProgressMonitor monitor, boolean multi)
   {
     I18N i18n = Application.getI18n();
 
@@ -296,8 +309,11 @@ public class DeployService implements Bootable
       extractor.setMonitor(monitor);
       extractor.extract(pluginDir);
 
-      monitor.setStatus(ProgressMonitor.STATUS_DONE);
-      monitor.setStatusText(i18n.tr("Plugin installiert, bitte starten Sie Jameica neu"));
+      if (!multi)
+      {
+        monitor.setStatus(ProgressMonitor.STATUS_DONE);
+        monitor.setStatusText(i18n.tr("Plugin installiert, bitte starten Sie Jameica neu"));
+      }
       Logger.info("plugin successfully deployed");
       //
       ////////////////////////////////////////////////////////////////////////////
@@ -306,7 +322,9 @@ public class DeployService implements Bootable
       Manifest manifest = new Manifest(new File(target,"plugin.xml"));
       manifest.setPluginSource(source.getType());
       Application.getMessagingFactory().sendMessage(new PluginMessage(manifest,PluginMessage.Event.INSTALLED));
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Plugin installiert, bitte starten Sie Jameica neu"),StatusBarMessage.TYPE_SUCCESS));
+      
+      if (!multi)
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Plugin installiert, bitte starten Sie Jameica neu"),StatusBarMessage.TYPE_SUCCESS));
     }
     catch (Exception e)
     {

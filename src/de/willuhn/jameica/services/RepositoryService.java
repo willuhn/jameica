@@ -365,7 +365,7 @@ public class RepositoryService implements Bootable
                   PluginSourceDialog d = new PluginSourceDialog(PluginSourceDialog.POSITION_CENTER,null);
                   source = (PluginSource) d.open();
                 }
-                ds.deploy(zp,source,monitor);
+                ds.deploy(zp,source,monitor,true);
               }
               //////////////////////////////////////////////////////////////////////
             }
@@ -387,7 +387,9 @@ public class RepositoryService implements Bootable
               }
             }
           }
-          
+
+          monitor.setStatus(ProgressMonitor.STATUS_DONE);
+
           TextMessage msg = new TextMessage(i18n.tr("{0} Plugins heruntergeladen",Integer.toString(plugins.length)),i18n.tr("Die Installation erfolgt beim nächsten Neustart von Jameica."));
           Application.getMessagingFactory().getMessagingQueue("jameica.popup").sendMessage(msg);
         }
