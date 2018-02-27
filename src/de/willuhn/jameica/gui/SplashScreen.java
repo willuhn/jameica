@@ -46,7 +46,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class SplashScreen implements ProgressMonitor, Runnable
 {
-  private final static String SPLASH_DEFAULT = "/img/splash.png";
+  private final static String SPLASH_DEFAULT = "img/splash.png";
   
   private String logo = null;
   
@@ -211,16 +211,24 @@ public class SplashScreen implements ProgressMonitor, Runnable
       }
 		}
 		
-		// Fallback
+    // Fallback 1
+    if (is == null)
+      is = shell.getClass().getResourceAsStream("/" + SPLASH_DEFAULT);
+
+		// Fallback 2
 		if (is == null)
 	    is = shell.getClass().getResourceAsStream(SPLASH_DEFAULT);
-    
+
 
     // Label erzeugen und Image drauf pappen
     label = new Label(shell, SWT.NONE);
     
-    Image image = new Image(display, is);
-    label.setImage(image);
+    Image image = null;
+    if (is != null)
+    {
+      image = new Image(display, is);
+      label.setImage(image);
+    }
     label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
     label.setBackground(new Color(display,0,0,0));
 
