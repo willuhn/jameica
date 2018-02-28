@@ -1,13 +1,7 @@
 /*****************************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/SplashScreen.java,v $
- * $Revision: 1.39 $
- * $Date: 2011/06/22 10:34:37 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
- * All rights reserved
+ * Copyright (c) by Olaf Willuhn
+ * GPLv2
  *
  ****************************************************************************/
 
@@ -46,24 +40,24 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class SplashScreen implements ProgressMonitor, Runnable
 {
-  private final static String SPLASH_DEFAULT = "img/splash.png";
+  private final static String SPLASH_DEFAULT = "/img/splash.png";
   
   private String logo = null;
   
-	private Display display;
-	private Shell shell;
+  private Display display;
+  private Shell shell;
 
-	private ProgressBar bar;
-	private Label label;
-	private Label textLabel;
+  private ProgressBar bar;
+  private Label label;
+  private Label textLabel;
   private String text;
   
   private int percentComplete = 0;
   
-	private boolean closed = false;
+  private boolean closed = false;
   private boolean disposeDisplay = false;
 
-	/**
+  /**
    * ct.
    * @param logo relativer Pfad zum Logo.
    * Zuerst wird versucht, das Bild direkt als Datei
@@ -71,7 +65,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
    * @param disposeDisplay true, wenn auch das Display disposed werden soll.
    */
   public SplashScreen(String logo, boolean disposeDisplay)
-	{
+  {
     Logger.debug("init splash screen");
 
     this.logo = logo;
@@ -83,7 +77,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
       this.logo = Customizing.SETTINGS.getString("application.splashscreen",SPLASH_DEFAULT);
 
     this.disposeDisplay = disposeDisplay;
-		display = GUI.getDisplay();
+    display = GUI.getDisplay();
     
     shell = new Shell(display,SWT.NONE);
     
@@ -164,13 +158,13 @@ public class SplashScreen implements ProgressMonitor, Runnable
     return null;
   }
   
-	/**
+  /**
    * Startet den Splash-Screen.
    */
   public synchronized void init()
-	{
-		display.syncExec(this);
-	}
+  {
+    display.syncExec(this);
+  }
 
   /**
    * @see java.lang.Runnable#run()
@@ -184,12 +178,12 @@ public class SplashScreen implements ProgressMonitor, Runnable
     l.marginHeight = 0;
     l.horizontalSpacing = 0;
     l.verticalSpacing = 0;
-		shell.setLayout(l);
+    shell.setLayout(l);
     
-		InputStream is = shell.getClass().getResourceAsStream(this.logo);
-		if (is == null)
-		{
-		  // Wir versuchen, den Splash als Bild direkt aus dem Filesystem zu laden.
+    InputStream is = shell.getClass().getResourceAsStream(this.logo);
+    if (is == null)
+    {
+      // Wir versuchen, den Splash als Bild direkt aus dem Filesystem zu laden.
       File f = new File(this.logo);
       if (f.exists() && f.isFile())
       {
@@ -209,26 +203,18 @@ public class SplashScreen implements ProgressMonitor, Runnable
         }
         catch (Exception e2) {/* useless */}
       }
-		}
-		
-    // Fallback 1
+    }
+    
+    // Fallback
     if (is == null)
-      is = shell.getClass().getResourceAsStream("/" + SPLASH_DEFAULT);
-
-		// Fallback 2
-		if (is == null)
-	    is = shell.getClass().getResourceAsStream(SPLASH_DEFAULT);
-
+      is = shell.getClass().getResourceAsStream(SPLASH_DEFAULT);
+    
 
     // Label erzeugen und Image drauf pappen
     label = new Label(shell, SWT.NONE);
     
-    Image image = null;
-    if (is != null)
-    {
-      image = new Image(display, is);
-      label.setImage(image);
-    }
+    Image image = new Image(display, is);
+    label.setImage(image);
     label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
     label.setBackground(new Color(display,0,0,0));
 
@@ -287,7 +273,7 @@ public class SplashScreen implements ProgressMonitor, Runnable
         Logger.trace("startup completed: " + percentComplete + " %");
         bar.setSelection(percentComplete);
         bar.update();
-				display.readAndDispatch();
+        display.readAndDispatch();
       }
     });
   }
@@ -312,11 +298,11 @@ public class SplashScreen implements ProgressMonitor, Runnable
           Logger.info("stopping splash screen");
           try
           {
-          	shell.dispose();
+            shell.dispose();
           }
           catch (Exception e)
           {
-          	// useless;
+            // useless;
           }
           if (disposeDisplay)
           {
@@ -386,9 +372,9 @@ public class SplashScreen implements ProgressMonitor, Runnable
    */
   public void addPercentComplete(int percent)
   {
-  	if (percent < 1)
-  		return;
-  	setPercentComplete(getPercentComplete() + percent);
+    if (percent < 1)
+      return;
+    setPercentComplete(getPercentComplete() + percent);
   }
 
   /**
