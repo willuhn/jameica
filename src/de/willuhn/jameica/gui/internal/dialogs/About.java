@@ -12,6 +12,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.internal.dialogs;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -64,7 +65,7 @@ public class About extends AbstractDialog
       "SWT-Version: " + SWT.getVersion() + " / " + SWT.getPlatform() + "<br/>" +
       "Java-Version: " + System.getProperty("java.version") + " / " + System.getProperty("os.name") + " " + System.getProperty("os.arch") + "<br/>" +
       "Build: " + Application.getBuildnumber() + " [Datum " + Application.getBuildDate() + "]</p>" +
-      "<p>Benutzerverzeichnis: " + Application.getConfig().getWorkDir() + "</p>" +
+      "<p>Benutzerverzeichnis: " + StringEscapeUtils.escapeHtml(Application.getConfig().getWorkDir()) + "</p>" +
       "</form>");
 
     container.addPart(text);
