@@ -774,7 +774,7 @@ public class TablePart extends AbstractTablePart
       table.addListener(SWT.MouseDown, new Listener() {
         public void handleEvent(Event e) {
           
-          // BUGZILLA 1704 - Bearbeiten nur dann, wenn man mit der rechten Maustaste klickt
+          // BUGZILLA 1704 - Bearbeiten nur dann, wenn man mit der linken Maustaste klickt
           if (e.button != 1)
             return;
 
