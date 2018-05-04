@@ -10,12 +10,16 @@ package de.willuhn.jameica.services;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -195,32 +199,39 @@ public class UpdateService implements Bootable
   /**
    * Sucht nach Updates fuer die installierten Plugins und liefert sie zurueck.
    * @param monitor optionale Angabe eines Progress-Monitor, in dem der Pruef-Fortschritt angezeigt wird.
-   * @return die gefundenen Updates.
+   * @return die gefundenen Updates oder NULL, wenn keine Updates gefunden wurden.
    * @throws ApplicationException
    */
-  public List<PluginData> findUpdates(ProgressMonitor monitor) throws ApplicationException
+  public TreeMap<String,List<PluginData>> findUpdates(ProgressMonitor monitor) throws ApplicationException
   {
-    List<UpdateStatus> states = this.findUpdateStates(monitor);
-    List<PluginData> plugins = new ArrayList<PluginData>();
+    TreeMap<String,List<UpdateStatus>> states = this.findUpdateStates(monitor);
 
-    if (states != null)
+    if (states == null)
+      return null;
+
+    TreeMap<String,List<PluginData>> result = new TreeMap<String,List<PluginData>>();
+    
+    for (Entry<String,List<UpdateStatus>> e:states.entrySet())
     {
-      for (UpdateStatus status:states)
+      List<PluginData> data = new ArrayList<PluginData>();
+      for (UpdateStatus s:e.getValue())
       {
-        plugins.add(status.plugin);
+        data.add(s.plugin);
       }
+      result.put(e.getKey(),data);
     }
     
-    return plugins;
+    return result;
   }
 
   /**
    * Sammelt die Status-Infos zu aktualisierbaren Plugins.
    * @param monitor optionaler Status-Monitor.
-   * @return Liste der gefundenen Updates oder null wenn gar keine Plugins installiert sind.
+   * @return Liste der gefundenen Updates oder null wenn keine Updates gefunden wurden.
+   * Die Updates sind nach Version sortiert. Die hoechsten Versionen zuerst.
    * @throws ApplicationException
    */
-  private List<UpdateStatus> findUpdateStates(ProgressMonitor monitor) throws ApplicationException
+  private TreeMap<String,List<UpdateStatus>> findUpdateStates(ProgressMonitor monitor) throws ApplicationException
   {
     // Der Aufruf dieser Funktion soll auch gehen, wenn der Worker-Thread nicht
     // laeuft. Damit kann man manuell nach Updates suchen - auch wenn automatische
@@ -247,8 +258,8 @@ public class UpdateService implements Bootable
       }
       //
       //////////////////////
-      
-      List<UpdateStatus> updates = new ArrayList<UpdateStatus>();
+
+      TreeMap<String,List<UpdateStatus>> updates = new TreeMap<String,List<UpdateStatus>>();
       RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
       List<URL> urls = service.getRepositories();
       
@@ -279,13 +290,34 @@ public class UpdateService implements Bootable
                 monitor.log("  " + i18n.tr("Update gefunden: {0}",plugin.getName()));
                 monitor.addPercentComplete(5);
               }
-              updates.add(status);
+              
+              List<UpdateStatus> list = updates.get(plugin.getName());
+              if (list == null)
+              {
+                list = new ArrayList<UpdateStatus>();
+                updates.put(plugin.getName(),list);
+              }
+              list.add(status);
             }
             catch (Exception e)
             {
               if (monitor != null) monitor.log("  " + i18n.tr("Fehler beim Prüfen des Plugins {0}: {1}",new String[]{plugin.getName(),e.getMessage()}));
               Logger.error("error while checking plugin " + plugin.getName(),e);
             }
+          }
+          
+          // Noch nach Version sortieren
+          for (List<UpdateStatus> list:updates.values())
+          {
+            Collections.sort(list,new Comparator<UpdateStatus>() {
+              /**
+               * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+               */
+              public int compare(UpdateStatus o1, UpdateStatus o2)
+              {
+                return o2.plugin.getAvailableVersion().compareTo(o1.plugin.getAvailableVersion());
+              }
+            });
           }
         }
         catch (Exception e)
@@ -301,7 +333,7 @@ public class UpdateService implements Bootable
         monitor.setPercentComplete(100);
         monitor.setStatusText(i18n.tr("Suche beendet. Gefundene Updates: {0}",String.valueOf(updates.size())));
       }
-      return updates;
+      return updates.size() > 0 ? updates : null;
     }
     catch (Exception e)
     {
@@ -358,23 +390,21 @@ public class UpdateService implements Bootable
         Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Suche nach Updates"),StatusBarMessage.TYPE_INFO));
 
         // Wir sammeln alle Updates und fuehren es dann am Stueck durch.
-        List<UpdateStatus> states = findUpdateStates(null);
-        if (states == null)
+        TreeMap<String,List<UpdateStatus>> states = findUpdateStates(null);
+        if (states == null || states.size() == 0)
           return;
-        
-        // Haben wir Updates gefunden?
-        if (states.size() == 0)
-        {
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Keine Updates gefunden."),StatusBarMessage.TYPE_INFO));
-          return;
-        }
 
         // Updates installieren
         if (getUpdateInstall())
         {
           StringBuffer names = new StringBuffer();
-          for (UpdateStatus status:states)
+          for (List<UpdateStatus> list:states.values())
           {
+            if (list.size() == 0)
+              continue;
+
+            // Die hoechste Version ist jeweils die erste
+            UpdateStatus status = list.get(0);
             try
             {
               PluginData pd = status.plugin;
@@ -400,8 +430,14 @@ public class UpdateService implements Bootable
           StringBuffer names = new StringBuffer();
           int count = 0;
           Set<String> unique = new HashSet<String>();
-          for (UpdateStatus status:states)
+          for (List<UpdateStatus> list:states.values())
           {
+            if (list.size() == 0)
+              continue;
+
+            // Die hoechste Version ist jeweils die erste
+            UpdateStatus status = list.get(0);
+
             if (status.notified)
               continue; // ueber das Update haben wir den User schon benachrichtigt
             status.update();
@@ -518,7 +554,7 @@ public class UpdateService implements Bootable
       // Wenn die verfuegbare Version hoeher als die installierte ist, ist grundsaetzlich ein Update verfuegbar
       this.available = (va.compareTo(vc) > 0);
       
-      // Die die zuletzt gepruefte Version groesser oder gleich der verfuegbaren ist, haben wir den User
+      // Da die zuletzt gepruefte Version groesser oder gleich der verfuegbaren ist, haben wir den User
       // schonmal ueber diese Version benachrichtigt
       this.notified = (vn.compareTo(va) >= 0);
 

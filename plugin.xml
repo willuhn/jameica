@@ -20,7 +20,7 @@
       <item name="-" />
       <item id="jameica.menu.settings"       name="&amp;Einstellungen"            shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
       <item id="jameica.menu.backups"        name="&amp;Backups verwalten"                                  icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
-      <item id="jameica.menu.updates"        name="&amp;Plugins online suchen..."                           icon="emblem-package.png"      action="de.willuhn.jameica.gui.internal.action.RepositoryOpen" />
+      <item id="jameica.menu.updates"        name="&amp;Plugins online suchen..."                           icon="emblem-package.png"      action="de.willuhn.jameica.gui.internal.action.PluginListOpen" />
       <item name="-" />
       <item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	                            icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
       <item name="-" />

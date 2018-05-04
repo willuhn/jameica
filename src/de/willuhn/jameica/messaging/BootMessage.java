@@ -23,7 +23,7 @@ public class BootMessage implements Message
   private String text    = null;
   private String comment = null;
   private String url     = null;
-  private String icon    = null;
+  private String icon    = "dialog-information-large.png";
   private List<Button> buttons = new LinkedList<Button>();
   
   /**

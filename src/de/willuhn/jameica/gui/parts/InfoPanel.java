@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -47,6 +48,27 @@ public class InfoPanel implements Part
   private Color fgColor    = null;
   private Composite comp   = null;
   private List<Button> buttons = new LinkedList<Button>();
+  
+  /**
+   * Enums fuer die verschiedenen Zustaende beim Zeichnen des Info-Panel.
+   * Kann fuer Erweiterungen genutzt werden.
+   */
+  @SuppressWarnings("javadoc")
+  public enum DrawState
+  {
+    ICON_BEFORE,
+    ICON_AFTER,
+    TITLE_BEFORE,
+    TITLE_AFTER,
+    TEXT_BEFORE,
+    TEXT_AFTER,
+    LINK_BEFORE,
+    LINK_AFTER,
+    COMMENT_BEFORE,
+    COMMENT_AFTER,
+    BUTTONS_BEFORE,
+    BUTTONS_AFTER
+  }
   
   /**
    * Legt das anzuzeigende Icon fest.
@@ -156,28 +178,35 @@ public class InfoPanel implements Part
       if (this.url != null && this.url.length() > 0) rows++;
       GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
       gd.verticalSpan = rows;
-      Label icon = new Label(this.comp,SWT.NONE);
+      Label icon = new Label(this.extend(DrawState.ICON_BEFORE,this.comp,null),SWT.NONE);
       icon.setBackground(bg);
       icon.setLayoutData(gd);
-      icon.setImage(SWTUtil.getImage((this.icon != null && this.icon.length() > 0) ? this.icon : "package-x-generic-medium.png"));
+      
+      if (this.icon != null && this.icon.length() > 0)
+      {
+        Image image = SWTUtil.getImage(this.icon);
+        icon.setImage(image);
+      }
+      this.extend(DrawState.ICON_AFTER,this.comp,icon);
     }
     
     // Rechte Spalte mit den Eigenschaften
     {
       // Name
       {
-        Label title = new Label(this.comp,SWT.NONE);
+        Label title = new Label(this.extend(DrawState.TITLE_BEFORE,this.comp,null),SWT.NONE);
         title.setBackground(bg);
         title.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         title.setFont(Font.H2.getSWTFont());
         if (this.fgColor != null)
           title.setForeground(this.fgColor.getSWTColor());
         title.setText(this.title != null ? this.title : "");
+        this.extend(DrawState.TITLE_AFTER,this.comp,title);
       }
       
       // Beschreibung
       {
-        Label desc = new Label(this.comp,SWT.WRAP);
+        Label desc = new Label(this.extend(DrawState.TEXT_BEFORE,this.comp,null),SWT.WRAP);
         desc.setBackground(bg);
         
         if (this.fgColor != null)
@@ -185,12 +214,13 @@ public class InfoPanel implements Part
         
         desc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         desc.setText(this.text != null ? this.text : "");
+        this.extend(DrawState.TEXT_AFTER,this.comp,desc);
       }
       
       // Link
       if (this.url != null && this.url.length() > 0)
       {
-        Link l = new Link(this.comp,SWT.NONE);
+        Link l = new Link(this.extend(DrawState.LINK_BEFORE,this.comp,null),SWT.NONE);
         l.setBackground(bg);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         
@@ -211,11 +241,12 @@ public class InfoPanel implements Part
             }
           }
         });
+        this.extend(DrawState.LINK_AFTER,this.comp,l);
       }
 
-      // Versionsnummer
+      // Kommentar
       {
-        Label comment = new Label(this.comp,SWT.NONE);
+        Label comment = new Label(this.extend(DrawState.COMMENT_BEFORE,this.comp,null),SWT.NONE);
         comment.setBackground(bg);
         comment.setFont(Font.SMALL.getSWTFont());
         comment.setForeground(Color.COMMENT.getSWTColor());
@@ -223,15 +254,31 @@ public class InfoPanel implements Part
         comment.setText(this.comment != null ? this.comment : "");
         if (this.tooltip != null)
           comment.setToolTipText(this.tooltip);
+        this.extend(DrawState.COMMENT_AFTER,this.comp,comment);
       }
       
+      Composite c = this.extend(DrawState.BUTTONS_BEFORE,this.comp,null);
       ButtonArea buttons = new ButtonArea();
       for (Button b:this.buttons)
         buttons.addButton(b);
 
-      buttons.paint(this.comp);
-
+      buttons.paint(c);
+      this.extend(DrawState.BUTTONS_AFTER,c,buttons);
     }
+  }
+  
+  /**
+   * Kann ueberschrieben werden, um das Info-Panel zu customizen.
+   * @param state der Status.
+   * @param comp das Composite, in dem das Control gezeichnet wird/wurde.
+   * @param context das aktuelle Control. Kann ein SWT-Control aber auch eine ButtonArea sein.
+   * Bei den "_BEFORE"-States ist es immer NULL, weil das Control zu dem Zeitpunkt ja noch nicht existiert.
+   * @return das Composite, in dem das Control gezeichnet wird.
+   * Ein abweichendes Composite macht nur bei den "_BEFORE"-States Sinn.
+   */
+  public Composite extend(DrawState state, Composite comp, Object context)
+  {
+    return comp;
   }
   
   /**

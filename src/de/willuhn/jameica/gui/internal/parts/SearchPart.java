@@ -19,19 +19,17 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.View;
+import de.willuhn.jameica.gui.input.QueryInput;
 import de.willuhn.jameica.gui.internal.dialogs.SearchOptionsDialog;
 import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -48,9 +46,9 @@ import de.willuhn.logging.Logger;
  */
 public class SearchPart implements Part
 {
-  private Composite comp  = null;
-  private Text search     = null;
-  private boolean started = false;
+  private Composite comp    = null;
+  private QueryInput search = null;
+  private boolean started   = false;
   
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -66,65 +64,16 @@ public class SearchPart implements Part
     layout.marginHeight = 3;
     layout.marginWidth  = 3;
     this.comp.setLayout(layout);
-      
-    this.search = new Text(this.comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
-    this.search.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    this.search.setMessage(Application.getI18n().tr("Suche..."));
-    
-    // Fuer den Search-Button
-    this.search.addSelectionListener(new SelectionAdapter()
-    {
-      /**
-       * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-       */
-      public void widgetDefaultSelected(SelectionEvent e)
-      {
-        if (search == null || search.isDisposed() || !search.isFocusControl())
-          return;
-        
-        try
-        {
-          if (e.detail == SWT.ICON_SEARCH)
-          {
-            // Wir reagieren nur, wenn wirklich das Icon angeklickt wurde.
-            doSearch();
-          }
-        }
-        finally
-        {
-          // bewirkt, dass das Event nicht noch von weiteren
-          // Listenern ausgewertet und die Suche u.U. ein
-          // zweites Mal ausloest.
-          e.doit = false;
-        }
-      }
-    });
-    this.search.addTraverseListener(new TraverseListener()
-    {
-      /**
-       * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
-       */
-      public void keyTraversed(TraverseEvent e)
-      {
-        if (search == null || search.isDisposed() || !search.isFocusControl())
-          return;
 
-        if (e.detail != SWT.TRAVERSE_RETURN)
-          return;
-        
-        try
-        {
-          doSearch();
-        }
-        finally
-        {
-          // bewirkt, dass das Event nicht noch von weiteren
-          // Listenern ausgewertet und die Suche u.U. ein
-          // zweites Mal ausloest.
-          e.doit = false;
-        }
+    this.search = new QueryInput() {
+      
+      @Override
+      public void doSearch(String query)
+      {
+        startSearch();
       }
-    });
+    };
+    this.search.paint(this.comp);
     
     if (!Customizing.SETTINGS.getBoolean("application.search.hideoptions",false))
     {
@@ -157,12 +106,12 @@ public class SearchPart implements Part
   /**
    * Fuehrt die Suche aus.
    */
-  private void doSearch()
+  private void startSearch()
   {
-    if (search == null || search.isDisposed())
+    if (search == null)
       return;
     
-    final String text = search.getText();
+    final String text = (String) search.getValue();
     if (text == null || text.length() < 3)
       return; // weniger als 3 Zeichen eingegeben
 

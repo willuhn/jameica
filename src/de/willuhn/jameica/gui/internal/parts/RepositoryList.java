@@ -21,16 +21,13 @@ import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
-import de.willuhn.jameica.gui.internal.action.RepositoryAdd;
-import de.willuhn.jameica.gui.internal.action.RepositoryOpen;
-import de.willuhn.jameica.gui.internal.action.UpdatesSearch;
 import de.willuhn.jameica.gui.internal.menus.RepositoryListMenu;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.parts.table.FeatureSummary;
-import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
+import de.willuhn.jameica.messaging.MessagingFactory;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.RepositoryService;
@@ -56,7 +53,7 @@ public class RepositoryList extends TablePart
    */
   public RepositoryList() throws Exception
   {
-    super(init(),new RepositoryOpen());
+    super(init(),null);
     this.addColumn(i18n.tr("URL"),"url");
     this.setContextMenu(new RepositoryListMenu());
     this.setMulti(false);
@@ -91,26 +88,24 @@ public class RepositoryList extends TablePart
    */
   public synchronized void paint(Composite parent) throws RemoteException
   {
-    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.add").registerMessageConsumer(this.add);
-    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.remove").registerMessageConsumer(this.remove);
-    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.enabled").registerMessageConsumer(this.status);
-    Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.disabled").registerMessageConsumer(this.status);
+    final MessagingFactory mf = Application.getMessagingFactory();
+    
+    mf.getMessagingQueue("jameica.update.repository.add").registerMessageConsumer(this.add);
+    mf.getMessagingQueue("jameica.update.repository.remove").registerMessageConsumer(this.remove);
+    mf.getMessagingQueue("jameica.update.repository.enabled").registerMessageConsumer(this.status);
+    mf.getMessagingQueue("jameica.update.repository.disabled").registerMessageConsumer(this.status);
     super.paint(parent);
     
     // Zum Entfernen der Message-Consumer
     parent.addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e)
       {
-        Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.add").unRegisterMessageConsumer(add);
-        Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.remove").unRegisterMessageConsumer(remove);
-        Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.enabled").unRegisterMessageConsumer(status);
-        Application.getMessagingFactory().getMessagingQueue("jameica.update.repository.disabled").unRegisterMessageConsumer(status);
+        mf.getMessagingQueue("jameica.update.repository.add").unRegisterMessageConsumer(add);
+        mf.getMessagingQueue("jameica.update.repository.remove").unRegisterMessageConsumer(remove);
+        mf.getMessagingQueue("jameica.update.repository.enabled").unRegisterMessageConsumer(status);
+        mf.getMessagingQueue("jameica.update.repository.disabled").unRegisterMessageConsumer(status);
       }
     });
-    
-    ButtonArea buttons = new ButtonArea(parent,2);
-    buttons.addButton(i18n.tr("Neues Repository hinzufügen..."),new RepositoryAdd(),null,false,"document-new.png");
-    buttons.addButton(i18n.tr("Jetzt nach Updates suchen..."),new UpdatesSearch(),null,false,"view-refresh.png");
   }
 
   /**

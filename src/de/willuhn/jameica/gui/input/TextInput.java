@@ -24,7 +24,6 @@ import de.willuhn.jameica.gui.GUI;
  */
 public class TextInput extends AbstractInput
 {
-
   protected Text text;
   private String value;
   private String hint;
@@ -102,7 +101,7 @@ public class TextInput extends AbstractInput
    * ueberschriebn werden kann.
    * @return das Text-Widget.
    */
-  Text getTextWidget()
+  protected Text getTextWidget()
   {
     if (text == null)
       text = GUI.getStyleFactory().createText(getParent());

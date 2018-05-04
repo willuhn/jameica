@@ -187,6 +187,7 @@ public class SWTUtil {
         Logger.error("unable to load image",t);
       }
     }
+    
     return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img" + "/empty.gif"));
   }
 

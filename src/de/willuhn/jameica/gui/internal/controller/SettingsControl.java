@@ -27,9 +27,11 @@ import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.input.TextInput;
 import de.willuhn.jameica.gui.internal.parts.CertificateList;
+import de.willuhn.jameica.gui.internal.parts.PluginDetailPart.Type;
 import de.willuhn.jameica.gui.internal.parts.PluginListPart;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.messaging.SettingsChangedMessage;
 import de.willuhn.jameica.messaging.SettingsRestoredMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -246,17 +248,18 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
-   * Liefert eine Tabelle mit den installierten Plugins.
+   * Liefert die Plugin-Verwaltung.
    * @return Liste der Plugins.
    */
   public Part getPlugins()
   {
     if (this.plugins != null)
       return this.plugins;
-     this.plugins = new PluginListPart();
+    Type t = PluginCacheMessageConsumer.getCache().size() > 0 ? Type.INSTALLED : Type.AVAILABLE;
+    this.plugins = new PluginListPart(t);
     return this.plugins;
   }
-  
+
   /**
    * Auswahlfeld.
    * @return Auswahl-Feld.

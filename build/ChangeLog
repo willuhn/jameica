@@ -1,5 +1,6 @@
 HEAD 2.7 (nightly)
 
+  * NEW: 0088 Komplettes Redesign der Dialoge für Plugins, Updates, Verwaltung der Repositories, usw.
   * CHG: 0087 JVM-Parameter "-Xss" in jameicaserver.sh wieder entfernt. Siehe http://www.onlinebanking-forum.de/forum/topic.php?p=136651#real136651
   * NEW: 0086 Beim Herunterladen mehrere abhängiger Plugins erst am Ende den Hinweis zum Neustart anzeigen
   * NEW: 0085 Beim Installieren von Plugins per "Datei->Plugins online suchen..." nur dann nach Zielordner fragen, wenn mehrere zur Wahl stehen

@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.action.FileClose;
 import de.willuhn.jameica.gui.internal.action.PluginInstall;
-import de.willuhn.jameica.gui.internal.action.RepositoryOpen;
+import de.willuhn.jameica.gui.internal.action.PluginListOpen;
 import de.willuhn.jameica.gui.internal.views.Settings;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.InfoPanel;
@@ -32,7 +32,6 @@ import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.messaging.PluginMessage;
 import de.willuhn.jameica.messaging.PluginMessage.Event;
 import de.willuhn.jameica.plugin.PluginLoader;
-import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
@@ -121,11 +120,12 @@ public class FirstStart extends AbstractBox
     }
     panel.setTitle(i18n.tr(title));
     panel.setText(i18n.tr(text));
+    panel.setIcon("package-x-generic-medium.png");
     
     if (pending)
       panel.addButton(new Button(i18n.tr("Jameica beenden"),new FileClose(),null,true,"window-close.png"));
     
-    panel.addButton(new Button(i18n.tr("Plugins online suchen..."),new RepositoryOpen(),RepositoryService.SYSTEM_REPOSITORY,false,"document-save.png"));
+    panel.addButton(new Button(i18n.tr("Plugins online suchen..."),new PluginListOpen(),null,false,"document-save.png"));
     panel.addButton(new Button(i18n.tr("Plugin installieren..."),new PluginInstall(),null,true,"emblem-package.png"));
     panel.paint(parent);
     

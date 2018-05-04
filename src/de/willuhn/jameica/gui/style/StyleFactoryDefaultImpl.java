@@ -1,13 +1,8 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/style/StyleFactoryDefaultImpl.java,v $
- * $Revision: 1.16 $
- * $Date: 2011/05/03 17:04:44 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * GPLv2
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.style;
@@ -55,8 +50,16 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   {
     Text text = new Text(parent,SWT.BORDER | SWT.SINGLE);
     text.setFont(Font.DEFAULT.getSWTFont());
-//    text.setForeground(Color.FOREGROUND.getSWTColor());
-//    text.setBackground(Color.BACKGROUND.getSWTColor());
+    return text;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.style.StyleFactory#createText(org.eclipse.swt.widgets.Composite, int)
+   */
+  public Text createText(Composite parent, int style)
+  {
+    Text text = new Text(parent,SWT.BORDER | style);
+    text.setFont(Font.DEFAULT.getSWTFont());
     return text;
   }
 
@@ -67,8 +70,6 @@ public class StyleFactoryDefaultImpl implements StyleFactory
   {
     Text text = new Text(parent,SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
     text.setFont(Font.DEFAULT.getSWTFont());
-//    text.setForeground(Color.FOREGROUND.getSWTColor());
-//    text.setBackground(Color.BACKGROUND.getSWTColor());
     return text;
   }
 

@@ -1,27 +1,38 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/PluginDetailPart.java,v $
- * $Revision: 1.3 $
- * $Date: 2012/03/28 22:28:07 $
- * $Author: willuhn $
  *
- * Copyright (c) by willuhn - software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * GPLv2
  *
  **********************************************************************/
 
 package de.willuhn.jameica.gui.internal.parts;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.internal.action.PluginDetails;
+import de.willuhn.jameica.gui.internal.action.PluginDownload;
 import de.willuhn.jameica.gui.internal.action.PluginUnInstall;
 import de.willuhn.jameica.gui.internal.action.PluginUpdate;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.InfoPanel;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.gui.util.SimpleContainer;
+import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.plugin.Manifest;
+import de.willuhn.jameica.plugin.Version;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.update.PluginData;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
@@ -31,37 +42,88 @@ import de.willuhn.util.I18N;
  */
 public class PluginDetailPart extends InfoPanel
 {
-  private Manifest manifest = null;
-  private Composite comp = null;
+  private final static I18N i18n = Application.getI18n();
   
+  /**
+   * Legt fest, um welche Art von Plugin-Info es sich handelt.
+   */
+  public enum Type
+  {
+    /**
+     * Installiertes Plugin.
+     */
+    INSTALLED,
+    
+    /**
+     * Verfuegbares Plugin.
+     */
+    AVAILABLE,
+    
+    /**
+     * Verfuegbares Update eines installierten Plugins.
+     */
+    UPDATE
+  }
+  
+  private SelectInput version = null;
+  private List<PluginData> plugins = null;
+  private Manifest manifest = null;
+  private Type type = null;
+
   /**
    * ct.
    * @param mf das Manifest des Plugins.
+   * @param type der Typ des Plugins.
    */
-  public PluginDetailPart(Manifest mf)
+  public PluginDetailPart(Manifest mf, Type type)
   {
+    this(mf,null,type);
+  }
+
+  /**
+   * ct.
+   * @param mf das Manifest des Plugins.
+   * @param plugins Liste der gefundenen Plugins.
+   * @param type der Typ des Plugins.
+   */
+  public PluginDetailPart(Manifest mf, List<PluginData> plugins, Type type)
+  {
+    this.plugins = plugins;
     this.manifest = mf;
+    this.type = type;
     this.setUrl(this.manifest.getHomepage());
-    this.setIcon(this.manifest.getIcon());
+    
+    String icon = this.manifest.getIcon();
+    if (icon == null || (type != null && type == Type.AVAILABLE))
+      icon = "package-x-generic-medium.png";
+    this.setIcon(icon);
     this.setText(this.manifest.getDescription());
     
-    if (!this.manifest.isInstalled())
-      this.setForeground(Color.COMMENT);
+    if (this.type == Type.INSTALLED)
+    {
+      if (!this.manifest.isInstalled())
+        this.setForeground(Color.COMMENT);
+    }
     
     // Haben wir einen Init-Error bei dem Plugin?
     Throwable error = Application.getPluginLoader().getInitErrors().get(manifest);
 
-    I18N i18n = Application.getI18n();
-
     String title = this.manifest.getName();
-    if (!manifest.isInstalled())
+    if (!manifest.isInstalled() && (this.type == Type.INSTALLED))
     {
-      // Checken, ob wir eine Fehlermeldung haben
-      title = i18n.tr("{0} ({1})",title, (error != null ? error.getMessage() : i18n.tr("Neustart erforderlich")));
+      String text = "";
+      if (error != null)
+        text = error.getMessage(); // Hat einen Initialisierungsfehler
+      else if (PluginCacheMessageConsumer.getCache().containsKey(mf.getName()))
+        text = i18n.tr("Neustart erforderlich"); // Ist im Cache und hat keinen Fehler. Dann wurde es gerade erst installiert
+      else
+        text = i18n.tr("Nicht installiert");
+      title = i18n.tr("{0} ({1})",title, text);
     }
     this.setTitle(title);
     
-    this.setComment(i18n.tr("Version {0}",this.manifest.getVersion().toString()));
+    if (this.type != Type.AVAILABLE || this.plugins == null || this.plugins.size() < 2)
+      this.setComment(i18n.tr("Version {0}",this.manifest.getVersion().toString()));
     
     String builddate   = this.manifest.getBuildDate();
     String buildnumber = this.manifest.getBuildnumber();
@@ -69,66 +131,126 @@ public class PluginDetailPart extends InfoPanel
       this.setTooltip(i18n.tr("Build-Datum {0}\nBuildnummer {1}",builddate,buildnumber));
     
     // Buttons zum Oeffnen, Deinstallieren, Aktualisieren
-    Button open   = new Button(i18n.tr("Öffnen..."),new PluginDetails(),this.manifest,false,"document-open.png");
-    Button update = new Button(i18n.tr("Plugin aktualisieren..."),new PluginUpdate(),this.manifest,false,"emblem-package.png");
-    Button delete = new Button(i18n.tr("Plugin löschen..."),new PluginUnInstall(),this.manifest,false,"user-trash-full.png");
-
-    // Update und oeffnen gibt es nicht bei neuen Installationen
-    open.setEnabled(manifest.isInstalled());
-    update.setEnabled(manifest.isInstalled() || error != null); // Update auch bei Fehler erlauben
-
+    
     // Checken, ob es installiert/deinstalliert werden kann
-    try
+    if (this.type == Type.INSTALLED)
     {
-      Application.getPluginLoader().canUnInstall(this.manifest);
-    }
-    catch (ApplicationException ae) {
-      delete.setEnabled(false);
-    }
+      Button open   = new Button(i18n.tr("Öffnen..."),new PluginDetails(),this.manifest,false,"document-open.png");
+      Button update = new Button(i18n.tr("Plugin aktualisieren..."),new PluginUpdate(),this.manifest,false,"emblem-package.png");
 
-    this.addButton(open);
-    this.addButton(update);
-    this.addButton(delete);
+      // Update und oeffnen gibt es nicht bei neuen Installationen
+      open.setEnabled(manifest.isInstalled());
+      update.setEnabled(manifest.isInstalled() || error != null); // Update auch bei Fehler erlauben
+      this.addButton(open);
+      this.addButton(update);
+
+      Button delete = new Button(i18n.tr("Plugin löschen..."),new PluginUnInstall(),this.manifest,false,"user-trash-full.png");
+      try
+      {
+        Application.getPluginLoader().canUnInstall(this.manifest);
+      }
+      catch (ApplicationException ae) {
+        delete.setEnabled(false);
+      }
+      this.addButton(delete);
+    }
+    else if (this.type == Type.AVAILABLE && this.plugins != null && this.plugins.size() > 0)
+    {
+      Action download = new PluginDownload(){
+        /**
+         * @see de.willuhn.jameica.gui.internal.action.PluginDownload#handleAction(java.lang.Object)
+         */
+        @Override
+        public void handleAction(Object context) throws ApplicationException
+        {
+          super.handleAction(getSelectedVersion());
+        }
+      };
+      Button install = new Button(i18n.tr("Installieren..."),download,null,false,"document-save.png");
+      this.addButton(install);
+    }
+    else if (this.type == Type.UPDATE && this.plugins != null && this.plugins.size() > 0)
+    {
+      Action download = new PluginDownload(){
+        /**
+         * @see de.willuhn.jameica.gui.internal.action.PluginDownload#handleAction(java.lang.Object)
+         */
+        @Override
+        public void handleAction(Object context) throws ApplicationException
+        {
+          super.handleAction(getSelectedVersion());
+        }
+      };
+      Button install = new Button(i18n.tr("Aktualisieren..."),download,null,false,"document-save.png");
+      this.addButton(install);
+    }
   }
-
+  
   /**
-   * Disposed das Part.
+   * Liefert die ausgewaehlte Plugin-Version.
+   * @return die ausgewaehlte Plugin-Version.
    */
-  public void dispose()
+  private PluginData getSelectedVersion()
   {
-    try
+    if (this.plugins == null || this.plugins.size() == 0)
+      return null;
+    
+    if (this.plugins.size() == 1)
+      return this.plugins.get(0);
+    
+    Version version = (Version) this.getVersion().getValue();
+    for (PluginData p:this.plugins)
     {
-      if (this.comp == null || this.comp.isDisposed())
-        return;
-      SWTUtil.disposeChildren(this.comp);
-      this.comp.dispose();
+      if (p.getAvailableVersion().equals(version))
+        return p;
     }
-    finally
+    
+    Logger.warn("unable to determine selected version, using first found");
+    return this.plugins.get(0);
+  }
+  
+  /**
+   * Liefert ein Auswahlfeld fuer die zu installierende Version.
+   * @return ein Auswahlfeld fuer die zu installierende Version.
+   */
+  private SelectInput getVersion()
+  {
+    if (this.version != null)
+      return this.version;
+    
+    List<Version> versions = new ArrayList<Version>();
+    if (this.plugins != null)
     {
-      this.comp = null;
+      for (PluginData plugin:plugins)
+      {
+        versions.add(plugin.getAvailableVersion());
+      }
     }
+    Collections.sort(versions);
+    Collections.reverse(versions); // Die neueste Version oben
+    this.version = new SelectInput(versions,null);
+    this.version.setName(i18n.tr("Zu installierende Version"));
+    return this.version;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.parts.InfoPanel#extend(de.willuhn.jameica.gui.parts.InfoPanel.DrawState, org.eclipse.swt.widgets.Composite, java.lang.Object)
+   */
+  @Override
+  public Composite extend(DrawState state, Composite comp, Object context)
+  {
+    if (state != null && state == DrawState.BUTTONS_BEFORE && this.plugins != null && this.plugins.size() > 1)
+    {
+      Composite newComp = new Composite(comp,SWT.NONE);
+      newComp.setBackground(comp.getBackground());
+      newComp.setBackgroundMode(SWT.INHERIT_FORCE);
+      newComp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+      newComp.setLayout(new GridLayout(2,false));
+      
+      SimpleContainer c = new SimpleContainer(newComp);
+      c.addInput(this.getVersion());
+      return newComp;
+    }
+    return super.extend(state, comp, context);
   }
 }
-
-
-
-/**********************************************************************
- * $Log: PluginDetailPart.java,v $
- * Revision 1.3  2012/03/28 22:28:07  willuhn
- * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
- * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
- *
- * Revision 1.2  2011-08-03 11:58:06  willuhn
- * @N PluginLoader#getInitError
- *
- * Revision 1.1  2011-06-02 12:15:16  willuhn
- * @B Das Handling beim Update war noch nicht sauber
- *
- * Revision 1.2  2011-06-01 21:20:02  willuhn
- * @N Beim Deinstallieren die Navi und Menupunkte des Plugins deaktivieren
- * @N Frisch installierte aber noch nicht aktive Plugins auch dann anzeigen, wenn die View verlassen wird
- *
- * Revision 1.1  2011-06-01 17:35:58  willuhn
- * @N Ergonomischere Verwaltung der Plugins
- *
- **********************************************************************/

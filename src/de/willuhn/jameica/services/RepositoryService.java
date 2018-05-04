@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -31,10 +32,7 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.io.IOUtil;
-import de.willuhn.jameica.gui.extension.Extension;
-import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.dialogs.PluginSourceDialog;
-import de.willuhn.jameica.gui.internal.ext.UpdateSettingsView;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.TextMessage;
@@ -49,6 +47,7 @@ import de.willuhn.jameica.transport.Transport;
 import de.willuhn.jameica.update.PluginData;
 import de.willuhn.jameica.update.PluginGroup;
 import de.willuhn.jameica.update.Repository;
+import de.willuhn.jameica.update.RepositorySearchResult;
 import de.willuhn.jameica.update.ResolverResult;
 import de.willuhn.jameica.util.DateUtil;
 import de.willuhn.logging.Level;
@@ -85,7 +84,6 @@ public class RepositoryService implements Bootable
   private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(RepositoryService.class);
 
   private Session resolveCache = new Session(10 * 60 * 1000L); // Ergebnis 10 Minuten cachen 
-  private Extension settingsExt = null;
   
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -100,15 +98,6 @@ public class RepositoryService implements Bootable
    */
   public void init(BootLoader arg0, Bootable arg1) throws SkipServiceException
   {
-    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-    
-    // Settings-Extension registrieren
-    if (this.settingsExt == null)
-    {
-      this.settingsExt = beanService.get(UpdateSettingsView.class);
-      ExtensionRegistry.register(this.settingsExt,de.willuhn.jameica.gui.internal.views.Settings.class.getName());
-    }
-    
     if (settings.getString("wellknown.added",null) == null)
     {
       try
@@ -464,6 +453,37 @@ public class RepositoryService implements Bootable
   }
   
   /**
+   * Sucht Plugins Repository-uebergreifend.
+   * @param query optionaler Suchbegriff.
+   * @param url optionale URL des Repository.
+   * @return Liste mit den Suchergebnissen.
+   * @throws ApplicationException
+   */
+  public List<RepositorySearchResult> search(URL url, String query) throws ApplicationException
+  {
+    List<RepositorySearchResult> result = new ArrayList<RepositorySearchResult>();
+
+    List<URL> repos = url != null ? Arrays.asList(url) : this.getRepositories();
+    
+    for (URL u:repos)
+    {
+      try
+      {
+        result.add(new RepositorySearchResult(this.open(u),query));
+      }
+      catch (ApplicationException e)
+      {
+        // Nur ueberspringen, wenn wir ueber mehrere Repos gesucht haben
+        if (repos.size() > 1)
+          Logger.error("skipping invalid repository",e);
+        else
+          throw e;
+      }
+    }
+    return result;
+  }
+  
+  /**
    * Sucht Repository-uebergreifend nach der Abhaengigkeit.
    * Die Funktion prueft NICHT, ob die Abhaengigkeit ueberhaupt benoetigt wird (z.Bsp. weil schon installiert).
    * Sie prueft allerdings, ob die Abhaengigkeit auf der aktuellen Jameica-Version ueberhaupt lauffaehig waere.
@@ -520,10 +540,9 @@ public class RepositoryService implements Bootable
        */
       public int compare(PluginData o1, PluginData o2)
       {
-        return o1.getAvailableVersion().compareTo(o2.getAvailableVersion());
+        return o2.getAvailableVersion().compareTo(o1.getAvailableVersion());
       }
     });
-    Collections.reverse(candidates); // Groessere Versionen zuerst
     
     for (PluginData d:candidates)
     {
@@ -743,7 +762,7 @@ public class RepositoryService implements Bootable
     {
       for (URL u:list)
       {
-        if (duplicates.get(u) != null)
+        if (duplicates.containsKey(u.toString()))
         {
           Logger.warn("found duplicate repository " + u + ", skipping");
           continue;

@@ -1,135 +1,89 @@
 /**********************************************************************
  *
- * Copyright (c) by Olaf Willuhn
- * All rights reserved
+ * Copyright (c) 2018 Olaf Willuhn
+ * GNU GPLv2
  *
  **********************************************************************/
 
-package de.willuhn.jameica.gui.internal.ext;
+package de.willuhn.jameica.gui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import de.willuhn.jameica.gui.extension.Extendable;
-import de.willuhn.jameica.gui.extension.Extension;
+import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.input.SpinnerInput;
-import de.willuhn.jameica.gui.internal.parts.RepositoryList;
-import de.willuhn.jameica.gui.internal.views.Settings;
-import de.willuhn.jameica.gui.util.TabGroup;
-import de.willuhn.jameica.messaging.Message;
-import de.willuhn.jameica.messaging.MessageConsumer;
-import de.willuhn.jameica.messaging.SettingsChangedMessage;
-import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.services.UpdateService;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
- * Erweitert die View mit dem System-Einstellungen um die Update-Optionen.
+ * Dialog zum Bearbeiten der Update-Einstellungen.
  */
-public class UpdateSettingsView implements Extension
+public class UpdateEditDialog extends AbstractDialog<Void>
 {
+  private final static int WINDOW_WIDTH = 460;
+
   private CheckboxInput updateCheck   = null;
   private SpinnerInput updateInterval = null;
   private SelectInput updateInstall   = null;
-  
-  private MessageConsumer mc = null;
-  
-  private UpdateService service = null;
+  private UpdateService service       = null;
   
   /**
-   * Liefert den Update-Service.
-   * @return der Update-Service.
+   * ct.
+   * @param position
    */
-  private UpdateService getUpdateService()
+  public UpdateEditDialog(int position)
   {
-    if (this.service == null)
-      this.service = Application.getBootLoader().getBootable(UpdateService.class);
-    
-    return this.service;
+    super(position);
+    this.setTitle(i18n.tr("Automatische Updates konfigurieren"));
+    this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
   }
-  
+
   /**
-   * @see de.willuhn.jameica.gui.extension.Extension#extend(de.willuhn.jameica.gui.extension.Extendable)
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
-  public void extend(Extendable extendable)
+  @Override
+  protected void paint(Composite parent) throws Exception
   {
-    if (extendable == null || !(extendable instanceof Settings))
-      return;
+    SimpleContainer c = new SimpleContainer(parent);
+    c.addText(i18n.tr("Aktivieren Sie die automatische Suche nach Updates, wenn Jameica regelmäßig prüfen soll, " +
+                      "ob zu den installierten Plugins neue Updates verfügbar sind."),true);
 
-    this.mc = new MessageConsumer() {
-
-      /**
-       * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
-       */
-      public void handleMessage(Message message) throws Exception
+    c.addInput(this.getUpdateCheck());
+    c.addInput(this.getUpdateInterval());
+    c.addInput(this.getUpdateInstall());
+    
+    ButtonArea buttons = new ButtonArea();
+    buttons.addButton(i18n.tr("Übernehmen"),new Action() {
+      
+      public void handleAction(Object context) throws ApplicationException
       {
         handleStore();
+        close();
       }
-
-      /**
-       * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
-       */
-      public Class[] getExpectedMessageTypes()
-      {
-        return new Class[]{SettingsChangedMessage.class};
-      }
-
-      /**
-       * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
-       */
-      public boolean autoRegister()
-      {
-        return false;
-      }
-    };
-    Application.getMessagingFactory().registerMessageConsumer(this.mc);
-
-    
-    Settings settings = (Settings) extendable;
-    
-    try
+    },null,false,"document-save.png");
+    buttons.addButton(i18n.tr("Schließen"), new Action()
     {
-      TabGroup tab = new TabGroup(settings.getTabFolder(),Application.getI18n().tr("Updates"),true);
-      
-      // Da wir keine echte View sind, haben wir auch kein unbind zum Aufraeumen.
-      // Damit wir unsere GUI-Elemente aber trotzdem disposen koennen, registrieren
-      // wir einen Dispose-Listener an der Tabgroup
-      tab.getComposite().addDisposeListener(new DisposeListener() {
-      
-        public void widgetDisposed(DisposeEvent e)
-        {
-          updateCheck = null;
-          updateInstall = null;
-          updateInterval = null;
-          Application.getMessagingFactory().unRegisterMessageConsumer(mc);
-        }
-      
-      });
-      tab.addHeadline(Application.getI18n().tr("Plugin-Repositories"));
-      tab.addText(Application.getI18n().tr("Klicken Sie doppelt auf eine URL, um die dort verfügbaren Plugins anzuzeigen."),true);
-      tab.addPart(new RepositoryList());
-      
-      tab.addHeadline(Application.getI18n().tr("Einstellungen"));
-      tab.addInput(this.getUpdateCheck());
-      tab.addInput(this.getUpdateInterval());
-      tab.addInput(this.getUpdateInstall());
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to extend settings",e);
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Anzeigen der Update-Einstellungen"), StatusBarMessage.TYPE_ERROR));
-    }
+      public void handleAction(Object context) throws ApplicationException
+      {
+        close();
+      }
+    },null,false,"window-close.png");
+    c.addButtonArea(buttons);
+    getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,SWT.DEFAULT));
   }
-  
+
   /**
    * Liefert eine Checkbox mit der Auswahl, ob automatisch nach Updates gesucht werden soll.
    * @return Checkbox.
@@ -192,10 +146,21 @@ public class UpdateSettingsView implements Extension
       
       this.updateInstall = new SelectInput(values,new Option(getUpdateService().getUpdateInstall(),null));
       this.updateInstall.setName(i18n.tr("Wenn Updates vorhanden sind"));
-      this.updateInstall.setComment("");
       this.updateInstall.setMandatory(true);
     }
     return this.updateInstall;
+  }
+  
+  /**
+   * Liefert den Update-Service.
+   * @return der Update-Service.
+   */
+  private UpdateService getUpdateService()
+  {
+    if (this.service == null)
+      this.service = Application.getBootLoader().getBootable(UpdateService.class);
+    
+    return this.service;
   }
   
   /**
@@ -210,7 +175,7 @@ public class UpdateSettingsView implements Extension
     Option action = (Option) this.getUpdateInstall().getValue();
     service.setUpdateInstall(action.value);
   }
-  
+
   /**
    * Hilfsklasse fuer die Auswahl der Aktionen.
    */
@@ -248,4 +213,17 @@ public class UpdateSettingsView implements Extension
       return this.value == ((Option)obj).value;
     }
   }
+
+
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
+   */
+  @Override
+  protected Void getData() throws Exception
+  {
+    return null;
+  }
+
 }
+
+

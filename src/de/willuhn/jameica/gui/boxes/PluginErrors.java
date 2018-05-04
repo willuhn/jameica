@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.internal.parts.PluginDetailPart;
+import de.willuhn.jameica.gui.internal.parts.PluginDetailPart.Type;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.system.Application;
 
@@ -88,7 +89,7 @@ public class PluginErrors extends AbstractBox
     while (i.hasNext())
     {
       Manifest mf = i.next();
-      PluginDetailPart detail = new PluginDetailPart(mf);
+      PluginDetailPart detail = new PluginDetailPart(mf, Type.INSTALLED);
       detail.paint(parent);
     }
   }

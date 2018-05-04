@@ -49,7 +49,7 @@ public class TextAreaInput extends TextInput
   /**
    * @see de.willuhn.jameica.gui.input.TextInput#getTextWidget()
    */
-  Text getTextWidget()
+  protected Text getTextWidget()
   {
     return GUI.getStyleFactory().createTextArea(getParent());
   }
