@@ -529,7 +529,7 @@ public class TreePart extends AbstractTablePart
         itemsToSort.add(child);
       }
     }
-    itemsToSort.sort(comparator);
+    Collections.sort(itemsToSort,comparator);
     if(!direction){
       Collections.reverse(itemsToSort);
     }
