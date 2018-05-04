@@ -317,6 +317,7 @@ public class PluginListPart implements Part
 
           for (RepositorySearchResult r:result)
           {
+            if (r.getGroups().size() > 0)
             {
               Composite parent = availableList.getComposite();
               SimpleContainer c = new SimpleContainer(parent);
