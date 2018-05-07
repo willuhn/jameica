@@ -17,6 +17,9 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 
+import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
+
 /**
  * Das Such-Ergebnis einer Repository-Suche.
  */
@@ -63,7 +66,21 @@ public class RepositorySearchResult
           matches = new ArrayList<PluginData>();
           groupMap.put(name,matches);
         }
-        matches.add(d);
+        
+        // Wir muessen noch checken, ob es installiert werden. Wir pruefen hier
+        // aber nur die Kompatibilitaet zu Jameica und ob die Version ueberhaupt
+        // installierbar ist (aktuellere Version bereits installiert, aeltere
+        // Version vorhanden, aber nicht ueberschreibbar, ...)
+        try
+        {
+          d.getManifest().canDeploy(false);
+          matches.add(d);
+        }
+        catch (ApplicationException ae)
+        {
+          Logger.debug("skipping plugin " + name + " " + d.getAvailableVersion() + ": " + ae.getMessage());
+        }
+        
       }
       
       // Wir sortieren die Plugins jeweils noch nach Versionsnummer absteigend
