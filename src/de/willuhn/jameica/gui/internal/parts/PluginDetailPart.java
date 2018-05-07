@@ -92,6 +92,7 @@ public class PluginDetailPart extends InfoPanel
     this.manifest = mf;
     this.type = type;
     this.setUrl(this.manifest.getHomepage());
+    this.setBorder(Boolean.TRUE);
     
     String icon = this.manifest.getIcon();
     if (icon == null || (type != null && type == Type.AVAILABLE))

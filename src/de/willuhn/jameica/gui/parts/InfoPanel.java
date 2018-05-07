@@ -39,6 +39,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class InfoPanel implements Part
 {
+  private Boolean border   = null;
   private String icon      = null;
   private String url       = null;
   private String title     = null;
@@ -117,6 +118,20 @@ public class InfoPanel implements Part
   }
   
   /**
+   * Legt fest, ob ein Rahmen um das Panel gezogen werden soll.
+   * @param b TRUE, wenn der Rahmen generell gezogen werden soll.
+   * FALSE, wenn er generell nicht gezogen werden soll.
+   * NULL, wenn die Entscheidung automatisch abhaengig vom Betriebssyytem getroffen werden soll.
+   * Wenn ein Info-Panel innerhalb eines ExpandParts angezeigt wird, sieht der Rahmen
+   * unter Windows und OSX optisch unschoen aus. Innerhalb eines ScrolledComposite
+   * sieht ein fehlender Rahmen jedoch merkwuerdig aus.
+   */
+  public void setBorder(Boolean b)
+  {
+    this.border = b;
+  }
+  
+  /**
    * Zeigt einen optionalen Tooltip an. 
    * @param tooltip optionaler Tooltip.
    */
@@ -153,13 +168,12 @@ public class InfoPanel implements Part
     if (this.comp != null)
       return;
     
-    // Wir unterscheiden hier beim Layout nach Windows/OSX und Rest.
-    // Unter Windows und OSX sieht es ohne Rahmen und ohne Hintergrund besser aus
     org.eclipse.swt.graphics.Color bg = null;
     int border = SWT.NONE;
     
     int os = Application.getPlatform().getOS();
-    if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64 && os != Platform.OS_MAC)
+    boolean borderlessOS = (os == Platform.OS_WINDOWS || os == Platform.OS_WINDOWS_64 || os == Platform.OS_MAC);
+    if ((this.border != null && this.border.booleanValue()) || (this.border == null && !borderlessOS))
     {
       bg = GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
       border = SWT.BORDER;
