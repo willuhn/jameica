@@ -57,7 +57,7 @@ public class About extends AbstractDialog
     
     FormTextPart text = new FormTextPart();
     text.setText("<form>" +
-      "<p><b>Jameica - Java based message interchange</b></p>" +
+      "<p><b>Jameica Application Platform</b></p>" +
       "<p>Lizenz: GPL [<a href=\"http://www.gnu.org/copyleft/gpl.html\">www.gnu.org/copyleft/gpl.html</a>]<br/>" +
       "Copyright by Olaf Willuhn [<a href=\"mailto:info@jameica.org\">info@jameica.org</a>]<br/>" +
       "<a href=\"http://www.jameica.org\">www.jameica.org</a></p>" +
