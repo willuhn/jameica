@@ -248,6 +248,11 @@ public class SplashScreen implements ProgressMonitor, Runnable
     // oeffnen
     shell.open();
     display.readAndDispatch();
+    
+    // Forciert die Anzeige der Splashscree-Grafik. Die braucht sonst manchmal
+    // etwas. Manchmal so lange, wie der ganze Splashscreen ueberhaupt angezeigt wird.
+    label.redraw();
+    label.update();
   }
   
   /**
