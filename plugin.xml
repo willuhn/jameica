@@ -14,7 +14,6 @@
 
   <menu>
     <item id="jameica.menu.file"             name="&amp;Datei">
-      <item id="jameica.menu.search"         name="&amp;Suche..."                 shortcut="CTRL+^"         icon="system-search.png"       action="de.willuhn.jameica.gui.internal.action.Search" />
       <item id="jameica.menu.bookmarks"      name="&amp;Lesezeichen..."           shortcut="CTRL+L"         icon="starred.png"             action="de.willuhn.jameica.gui.internal.action.BookmarkSearch" />
       <item id="jameica.menu.back"           name="&amp;Zurück"                   shortcut="ALT+ARROW_LEFT" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
       <item name="-" />

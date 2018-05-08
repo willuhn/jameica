@@ -1,13 +1,8 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/Navigation.java,v $
- * $Revision: 1.50 $
- * $Date: 2011/08/03 12:17:13 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * GPLv2
  *
  **********************************************************************/
 package de.willuhn.jameica.gui;
@@ -27,7 +22,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -35,7 +29,6 @@ import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
-import de.willuhn.jameica.gui.internal.parts.SearchPart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -61,7 +54,6 @@ public class Navigation implements Part
   private Listener start        = new MyStartListener();
   private Settings settings     = new Settings(Navigation.class);
   private Tree mainTree					= null;
-  private SearchPart search     = null;
   
 	// TreeItem, unterhalb dessen die Plugins eingehaengt werden. 
   private TreeItem pluginTree		= null;
@@ -130,8 +122,6 @@ public class Navigation implements Part
     });
     //
     //////////////
-    
-    
 
     if (!Customizing.SETTINGS.getBoolean("application.navigation.hideroot",false))
     {
@@ -145,12 +135,6 @@ public class Navigation implements Part
         throw new RemoteException("error while loading navigation",e);
       }
     }
-
-    Label sep = new Label(comp,SWT.SEPARATOR | SWT.HORIZONTAL);
-    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-    this.search = new SearchPart();
-    this.search.paint(comp);
   }
 
   /**

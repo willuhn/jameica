@@ -1,13 +1,8 @@
 /*****************************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/View.java,v $
- * $Revision: 1.52 $
- * $Date: 2011/08/18 16:03:38 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * GPLv2
  *
  ****************************************************************************/
 package de.willuhn.jameica.gui;
@@ -19,23 +14,16 @@ import java.rmi.RemoteException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.internal.parts.PanelButtonBack;
+import de.willuhn.jameica.gui.internal.parts.SearchPart;
 import de.willuhn.jameica.gui.parts.NotificationPanel;
+import de.willuhn.jameica.gui.parts.NotificationPanel.Type;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.gui.parts.TitlePart;
-import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -60,10 +48,7 @@ public class View implements Part
 	private Composite parent;
 	private NotificationPanel notifications;
   
-  private Canvas logoBg;
-
   private String title;
-  private String logotext;
   
   private TitlePart titlePart;
 
@@ -95,42 +80,6 @@ public class View implements Part
 		snapin.setLayout(SWTUtil.createGrid(1,true));
 		sash.setMaximizedControl(view);
 
-		if (!Customizing.SETTINGS.getBoolean("application.view.hidelogo",false))
-		{
-	    ////////////////////////////////////////////////////////////////////////////
-	    //
-	    final Image logo = SWTUtil.getImage(Customizing.SETTINGS.getString("application.view.logo","panel.png"));
-	    final Rectangle imageSize = logo.getBounds();
-	    logoBg = SWTUtil.getCanvas(view,logo, SWT.TOP | SWT.RIGHT);
-	    RGB bg = Customizing.SETTINGS.getRGB("application.view.background",GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB());
-	    logoBg.setBackground(new org.eclipse.swt.graphics.Color(GUI.getDisplay(),bg));
-	    logoBg.setLayout(SWTUtil.createGrid(1,false));
-
-	    logoBg.addListener(SWT.Paint, new Listener()
-	    {
-	      public void handleEvent(Event event)
-	      {
-	        GC gc = event.gc;
-	        Rectangle size = logoBg.getBounds();
-	        gc.fillRectangle(size);
-	        gc.drawImage(logo,size.width - imageSize.width,0);
-	        gc.setFont(Font.SMALL.getSWTFont());
-	        
-          // kein Hintergrund hinter dem Text malen
-	        // Ist zumindest unter Linux nicht noetig. Windows und OSX muesste man mal noch testen
-	        gc.setBackground(GUI.getDisplay().getSystemColor(SWT.TRANSPARENT));
-	        gc.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
-	        gc.setAlpha(150);
-	        gc.drawText(logotext == null ? "" : logotext,8,10,true);
-	      }
-	    });
-
-      Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-      sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-      ////////////////////////////////////////////////////////////////////////////
-		}
-
     if (!Customizing.SETTINGS.getBoolean("application.view.hidepanel",false))
     {
       ////////////////////////////////////////////////////////////////////////////
@@ -142,21 +91,52 @@ public class View implements Part
       this.titlePart.paint(comp);
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //
+	  Composite comp = new Composite(view,SWT.NONE);
+	  comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    final GridLayout l = new GridLayout(2,false);
+    l.marginLeft = 3;
+    l.marginRight = 3;
+	  comp.setLayout(l);
+
     if (!Customizing.SETTINGS.getBoolean("application.view.hidemessages",false))
     {
-      ////////////////////////////////////////////////////////////////////////////
-      //
       try
       {
         notifications = new NotificationPanel();
-        notifications.paint(view);
+        notifications.setBackground(false);
+        notifications.setBorder(0);
+        notifications.paint(comp);
       }
       catch (Exception e)
       {
         Logger.error("unable to paint notification panel",e);
       }
-      ////////////////////////////////////////////////////////////////////////////
     }
+
+    if (!Customizing.SETTINGS.getBoolean("application.view.hidesearch",false))
+    {
+      SearchPart search = new SearchPart();
+      try
+      {
+        Composite comp2 = new Composite(comp,SWT.NONE);
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+        gd.widthHint = 300;
+        comp2.setLayoutData(gd);
+        comp2.setLayout(SWTUtil.createGrid(1,false));
+        search.paint(comp2);
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to draw search part");
+      }
+    }
+
+//    Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
+//    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+    ////////////////////////////////////////////////////////////////////////////
 	}
 	
   /**
@@ -308,19 +288,12 @@ public class View implements Part
    * Normalerweise steht da nichts. Man kann
    * aber was hinschreiben.
    * @param text der text links neben dem Logo.
+   * @deprecated Ersatzlos gestrichen. Verwende eine StatusBarMessage mit dem Typ "TYPE_INFO".
    */
-  public void setLogoText(String text)
+  public void setLogoText(final String text)
   {
-    this.logotext = text == null ? "" : text;
-    if (this.logoBg != null && !this.logoBg.isDisposed())
-    {
-      GUI.getDisplay().asyncExec(new Runnable() {
-        public void run()
-        {
-          logoBg.redraw();
-        }
-      });
-    }
+    if (this.notifications != null)
+      this.notifications.setText(Type.INFO,text);
   }
 
   /**
@@ -367,32 +340,3 @@ public class View implements Part
 		return content;
 	}
 }
-
-
-
-/***************************************************************************
- * $Log: View.java,v $
- * Revision 1.52  2011/08/18 16:03:38  willuhn
- * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
- *
- * Revision 1.51  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.50  2011-04-06 16:13:16  willuhn
- * @N BUGZILLA 631
- *
- * Revision 1.49  2010-09-28 23:42:52  willuhn
- * @N Panel-Grafik customizable
- *
- * Revision 1.48  2009/12/16 00:11:59  willuhn
- * @N Scroll-Support fuer Views - nochmal ueberarbeitet und jetzt via Customizing konfigurierbar
- *
- * Revision 1.47  2009/10/12 08:55:36  willuhn
- * *** empty log message ***
- *
- * Revision 1.46  2009/06/04 10:36:01  willuhn
- * @N Customizing-Parameter zum Ausblenden von Logo-Bar, Message-Bar und Title-Panel
- *
- * Revision 1.45  2009/03/20 16:38:09  willuhn
- * @N BUGZILLA 576
- ***************************************************************************/

@@ -1,5 +1,7 @@
 HEAD 2.7 (nightly)
 
+  * DEL: 0090 Logo-Panel oben rechts entfernt - kostete nur Platz
+  * NEW: 0089 Globale Suche nach oben rechts verlegt und mit Notification-Panel zusammengefasst
   * NEW: 0088 Komplettes Redesign der Dialoge für Plugins, Updates, Verwaltung der Repositories, usw.
   * CHG: 0087 JVM-Parameter "-Xss" in jameicaserver.sh wieder entfernt. Siehe http://www.onlinebanking-forum.de/forum/topic.php?p=136651#real136651
   * NEW: 0086 Beim Herunterladen mehrere abhängiger Plugins erst am Ende den Hinweis zum Neustart anzeigen

@@ -1,13 +1,8 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/internal/parts/SearchResultPart.java,v $
- * $Revision: 1.5 $
- * $Date: 2012/03/28 22:28:07 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn software & services
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * GPLv2
  *
  **********************************************************************/
 
@@ -15,9 +10,12 @@ package de.willuhn.jameica.gui.internal.parts;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
@@ -25,6 +23,7 @@ import de.willuhn.datasource.GenericObjectNode;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.parts.TreePart;
+import de.willuhn.jameica.gui.parts.table.Feature;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.search.Result;
 import de.willuhn.jameica.search.SearchResult;
@@ -47,7 +46,7 @@ public class SearchResultPart extends TreePart
    */
   public SearchResultPart(List<SearchResult> searchResult) throws RemoteException, ApplicationException
   {
-    super(init(searchResult),new Action()
+    super((List)null,new Action()
     {
       /**
        * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
@@ -68,9 +67,51 @@ public class SearchResultPart extends TreePart
       }
     
     });
+    
+    List l = this.createList(searchResult);
+    final Object first = (l != null && l.size() > 0) ? l.get(0) : null;
+    
+    if (first != null)
+    {
+      this.addFeature(new Feature() {
+        /**
+         * @see de.willuhn.jameica.gui.parts.table.Feature#onEvent(de.willuhn.jameica.gui.parts.table.Feature.Event)
+         */
+        public boolean onEvent(Event e)
+        {
+          return e == Event.PAINT;
+        }
+        
+        /**
+         * @see de.willuhn.jameica.gui.parts.table.Feature#handleEvent(de.willuhn.jameica.gui.parts.table.Feature.Event, de.willuhn.jameica.gui.parts.table.Feature.Context)
+         */
+        public void handleEvent(Event e, Context ctx)
+        {
+          // Ersten Datensatz markieren und Fokus setzen
+          select(first);
+          ctx.control.forceFocus();
+        }
+      });
+    }
+
+    if (l.size() == 0)
+      l = Arrays.asList(new NotFound());
+
+    this.setList(l);
+
     this.addColumn(Application.getI18n().tr("Bezeichnung"),"name");
     this.setExpanded(true);
     this.setRememberColWidths(true);
+    
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.parts.TreePart#paint(org.eclipse.swt.widgets.Composite)
+   */
+  @Override
+  public void paint(Composite parent) throws RemoteException
+  {
+    super.paint(parent);
   }
   
   /**
@@ -80,7 +121,7 @@ public class SearchResultPart extends TreePart
    * @throws RemoteException
    * @throws ApplicationException
    */
-  private static GenericIterator init(List<SearchResult> searchResult) throws RemoteException, ApplicationException
+  private List createList(List<SearchResult> searchResult) throws RemoteException, ApplicationException
   {
     // Wir muessen das Suchergebnis hier als Baum aufbereiten
     HashMap<de.willuhn.jameica.plugin.Plugin, Plugin> plugins = new HashMap<de.willuhn.jameica.plugin.Plugin, Plugin>();
@@ -125,9 +166,6 @@ public class SearchResultPart extends TreePart
         al.add(p);
     }
     
-    if (al.size() == 0)
-      return PseudoIterator.fromArray(new GenericObject[]{new NotFound()});
-
     // Die Anzeige der Plugins als Root-Knoten kann via Customizing ausgeblendet
     // werden. In dem Fall werden direkt die Ergebnis-Gruppen angezeigt
     if (Customizing.SETTINGS.getBoolean("application.search.hideplugins",false))
@@ -135,10 +173,10 @@ public class SearchResultPart extends TreePart
       List<Provider> providers = new ArrayList<Provider>();
       for (Plugin p:al)
         providers.addAll(p.providers);
-      return PseudoIterator.fromArray(providers.toArray(new Provider[providers.size()]));
+      return providers;
     }
 
-    return PseudoIterator.fromArray(al.toArray(new Plugin[al.size()]));
+    return al;
   }
   
   /**
@@ -531,27 +569,3 @@ public class SearchResultPart extends TreePart
   }
 
 }
-
-
-/**********************************************************************
- * $Log: SearchResultPart.java,v $
- * Revision 1.5  2012/03/28 22:28:07  willuhn
- * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
- * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
- *
- * Revision 1.4  2010-11-03 17:37:18  willuhn
- * @N Plugins via Customizing ausblendbar. Dann werden direkt die Ergebnisse der Provider-Gruppen angezeigt
- *
- * Revision 1.3  2010-11-03 15:28:10  willuhn
- * @N Ergebnisliste getypt
- *
- * Revision 1.2  2008/09/03 23:41:30  willuhn
- * @N Anzeige eines Hinweistextes, wenn keine Treffer gefunden wurden
- *
- * Revision 1.1  2008/09/03 00:21:07  willuhn
- * @C SearchResultPart in "internal"-Package verschoben (wo auch schon das SearchPart ist)
- *
- * Revision 1.1  2008/09/03 00:11:43  willuhn
- * @N Erste Version eine funktionsfaehigen Suche - zur Zeit in Navigation.java deaktiviert
- *
- **********************************************************************/

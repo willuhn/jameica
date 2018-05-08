@@ -74,10 +74,12 @@ public class NotificationPanel implements Part
     }
   }
   
-  private Type type       = null;
-  private String text     = null;
-  private Composite comp  = null;
-  private CLabel label    = null;
+  private Type type          = null;
+  private String text        = null;
+  private Composite comp     = null;
+  private CLabel label       = null;
+  private int border         = 1;
+  private boolean background = true;
   private long lastUpdate = 0L;
   
   /**
@@ -96,6 +98,24 @@ public class NotificationPanel implements Part
   {
     this.setText(type,text,false);
   }
+  
+  /**
+   * Legt fest, ob der farbige Hintergrund gezeichnet werden soll.
+   * @param background true, wenn der farbige Hintergrund gezeichnet werden soll.
+   */
+  public void setBackground(boolean background)
+  {
+    this.background = background;
+  }
+  
+  /**
+   * Legt die Rahmendicke fest.
+   * @param border die Rahmendicke.
+   */
+  public void setBorder(int border)
+  {
+    this.border = border;
+  }
 
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -108,8 +128,8 @@ public class NotificationPanel implements Part
     this.comp = new Composite(parent,SWT.NONE);
     this.comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     GridLayout gl = new GridLayout();
-    gl.marginHeight = 1;
-    gl.marginWidth = 1;
+    gl.marginHeight = this.border;
+    gl.marginWidth = this.border;
     gl.horizontalSpacing = 3;
     gl.verticalSpacing = 3;
     this.comp.setLayout(gl);
@@ -160,9 +180,13 @@ public class NotificationPanel implements Part
           // BUGZILLA 1623 - siehe auch
           // http://help.eclipse.org/indigo/index.jsp?topic=/org.eclipse.platform.doc.isv/reference/api/org/eclipse/swt/widgets/Label.html
           label.setText(text.replaceAll("&","&&"));
+          label.setToolTipText(label.getText());
           
-          label.setBackground(type.bg.getSWTColor());
-          comp.setBackground(type.fg.getSWTColor());
+          if (background)
+          {
+            label.setBackground(type.bg.getSWTColor());
+            comp.setBackground(type.fg.getSWTColor());
+          }
           lastUpdate = currentUpdate;
           
           if (autoHide)
