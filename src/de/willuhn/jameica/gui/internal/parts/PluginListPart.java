@@ -328,19 +328,35 @@ public class PluginListPart implements Part
             
             for (PluginGroup group:r.getGroups())
             {
+              TreeMap<String,List<PluginData>> plugins = r.getResult(group);
+              
+              // Ueberspringen, wenn die Gruppe leer ist
+              int count = 0;
+              for (Entry<String,List<PluginData>> e:plugins.entrySet())
+              {
+                List<PluginData> list = e.getValue();
+                if (list.size() == 0)
+                  continue;
+                
+                count++;
+              }
+              
+              if (count == 0)
+                continue;
+              
               Composite parent = availableList.getComposite();
               SimpleContainer c = new SimpleContainer(parent);
               c.getComposite().setBackground(parent.getBackground());
               c.getComposite().setBackgroundMode(SWT.INHERIT_FORCE);
               c.addText(group.getName(),true);
        
-              TreeMap<String,List<PluginData>> plugins = r.getResult(group);
               for (Entry<String,List<PluginData>> e:plugins.entrySet())
               {
-                // Wir nehmen das Manifest des ersten
                 List<PluginData> list = e.getValue();
                 if (list.size() == 0)
                   continue;
+                
+                // Wir nehmen das Manifest des ersten
                 Manifest mf = list.get(0).getManifest();
                 PluginDetailPart part = new PluginDetailPart(mf, list, Type.AVAILABLE);
                 availableParts.put(e.getKey(),part);
