@@ -7106,13 +7106,13 @@
        height="116.75"
        x="41.11702"
        y="763.15662"
-       inkscape:export-filename="/work/willuhn/git/jameica/src/img/splash1.png"
-       inkscape:export-xdpi="95.290001"
-       inkscape:export-ydpi="95.290001" />
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-ydpi="95.279999" />
     <g
-       inkscape:export-ydpi="95.290001"
-       inkscape:export-xdpi="95.290001"
-       inkscape:export-filename="/work/willuhn/git/jameica/src/img/splash1.png"
+       inkscape:export-ydpi="95.279999"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
        id="g1904"
        transform="matrix(1.7577437,0,0,1.7577437,-365.26643,-499.79651)"
        style="opacity:0.56099997;fill:#0b0b0b;fill-opacity:1;filter:url(#filter5022)">
@@ -7139,9 +7139,9 @@
        style="opacity:1;fill:#ffffff;fill-opacity:1"
        transform="matrix(1.7577437,0,0,1.7577437,-365.26643,-499.79651)"
        id="g1912"
-       inkscape:export-filename="/work/willuhn/git/jameica/src/img/splash1.png"
-       inkscape:export-xdpi="95.290001"
-       inkscape:export-ydpi="95.290001">
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-ydpi="95.279999">
       <g
          id="g1910"
          transform="matrix(1.0509971,0,0,1.0509971,92.966277,106.23593)"
@@ -7162,9 +7162,9 @@
       </g>
     </g>
     <rect
-       inkscape:export-ydpi="95.290001"
-       inkscape:export-xdpi="95.290001"
-       inkscape:export-filename="/work/willuhn/git/jameica/src/img/splash1.png"
+       inkscape:export-ydpi="95.279999"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
        y="778.20178"
        x="204.95403"
        height="83.180321"
@@ -7176,36 +7176,54 @@
        id="circle1940"
        cx="221.56784"
        cy="817.29266"
-       r="2.8575251" />
+       r="2.8575251"
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-ydpi="95.279999" />
     <circle
        r="2.8575251"
        cy="817.29266"
        cx="238.80481"
        id="circle1951"
-       style="opacity:0.8;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.39264286;stroke-linecap:square;stroke-miterlimit:0.89999998;stroke-dasharray:none;stroke-opacity:1" />
+       style="opacity:0.8;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.39264286;stroke-linecap:square;stroke-miterlimit:0.89999998;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-ydpi="95.279999" />
     <circle
        r="2.8575251"
        cy="817.29266"
        cx="256.04178"
        id="circle1953"
-       style="opacity:0.6;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.39264286;stroke-linecap:square;stroke-miterlimit:0.89999998;stroke-dasharray:none;stroke-opacity:1" />
+       style="opacity:0.6;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.39264286;stroke-linecap:square;stroke-miterlimit:0.89999998;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-ydpi="95.279999" />
     <circle
        style="opacity:0.4;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.39264286;stroke-linecap:square;stroke-miterlimit:0.89999998;stroke-dasharray:none;stroke-opacity:1"
        id="circle1955"
        cx="273.27875"
        cy="817.29266"
-       r="2.8575251" />
+       r="2.8575251"
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-ydpi="95.279999" />
     <circle
        style="opacity:0.2;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.39264286;stroke-linecap:square;stroke-miterlimit:0.89999998;stroke-dasharray:none;stroke-opacity:1"
        id="circle1961"
        cx="290.49847"
        cy="817.29266"
-       r="2.8575251" />
+       r="2.8575251"
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-ydpi="95.279999" />
     <circle
        style="opacity:0.1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.39264286;stroke-linecap:square;stroke-miterlimit:0.89999998;stroke-dasharray:none;stroke-opacity:1"
        id="circle1963"
        cx="307.73544"
        cy="817.29266"
-       r="2.8575251" />
+       r="2.8575251"
+       inkscape:export-filename="/work/willuhn/git/jameica/src/img/shutdown.png"
+       inkscape:export-xdpi="95.279999"
+       inkscape:export-ydpi="95.279999" />
   </g>
 </svg>
