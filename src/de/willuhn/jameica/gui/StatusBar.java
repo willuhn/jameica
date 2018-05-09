@@ -119,7 +119,6 @@ public class StatusBar implements Part
         sep.setLayoutData(sepgd);
       }
     }
-
 	}
 	
 	/**

@@ -138,7 +138,7 @@ public class TitlePart implements Part
     Image image = SWTUtil.getImage("panelbar.png");
     int imageHeight = image.getBounds().height;
     int fontHeight  = Font.getHeight(FONT) + (2 * TITLE_OFFSET_Y); // Abstand oben und unten brauchen wir auch etwas
-    int height      = fontHeight > imageHeight ? fontHeight : imageHeight;
+    int height      = Math.max(imageHeight,fontHeight);
     
     ///////////////////////////////
     // Eigenes Parent, damit wir ein GridLayout verwenden koennen

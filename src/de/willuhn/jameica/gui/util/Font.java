@@ -1,13 +1,8 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/Font.java,v $
- * $Revision: 1.14 $
- * $Date: 2011/08/18 09:17:09 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * GPLv2
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
@@ -152,54 +147,3 @@ public class Font {
 	}
 
 }
-
-
-/**********************************************************************
- * $Log: Font.java,v $
- * Revision 1.14  2011/08/18 09:17:09  willuhn
- * @N BUGZILLA 286 - Testcode
- *
- * Revision 1.13  2010-07-16 13:11:31  willuhn
- * @N Config-Dateien nicht mehr automatisch anlegen
- *
- * Revision 1.12  2008/07/04 16:02:11  willuhn
- * @N Cachen von Farben und Fonts. Hier existierte bisher ein SWT-Resource-Leak, da die Farben und Fonts immer wieder neu erzeugt wurden
- * @N Sleak-Code zum Monitoren von SWT-Leaks. Hierzu muss lediglich das Plugin von http://www.eclipse.org/articles/swt-design-2/sleak.htm installiert und beim Start von Jameica der JVM-Parameter "-Dsleak=true" gesetzt werden.
- *
- * Revision 1.11  2007/08/09 12:04:41  willuhn
- * @N Bug 302
- *
- * Revision 1.10  2007/05/14 11:18:09  willuhn
- * @N Hoehe der Statusleiste abhaengig von DPI-Zahl und Schriftgroesse
- * @N Default-Schrift konfigurierbar und Beruecksichtigung dieser an mehr Stellen
- *
- * Revision 1.9  2006/06/20 23:26:52  willuhn
- * @N View#setLogoText
- *
- * Revision 1.8  2004/11/12 18:23:59  willuhn
- * *** empty log message ***
- *
- * Revision 1.7  2004/11/05 20:00:44  willuhn
- * @D javadoc fixes
- *
- * Revision 1.6  2004/07/21 23:54:54  willuhn
- * @C massive Refactoring ;)
- *
- * Revision 1.5  2004/06/30 20:58:40  willuhn
- * *** empty log message ***
- *
- * Revision 1.4  2004/06/14 22:05:06  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2004/06/10 20:56:53  willuhn
- * @D javadoc comments fixed
- *
- * Revision 1.2  2004/05/27 23:12:58  willuhn
- * @B NoSuchFieldError in Settings
- * @C s/java/javaw.exe in build/*.bat
- *
- * Revision 1.1  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- **********************************************************************/

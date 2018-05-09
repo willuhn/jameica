@@ -79,8 +79,8 @@ public class TreePart extends AbstractTablePart
 
   //////////////////////////////////////////////////////////
   // Sortierung
-  private Image up                      = SWTUtil.getImage("up.gif");
-  private Image down                    = SWTUtil.getImage("down.gif");
+  private Image up                      = SWTUtil.getImage("up.png");
+  private Image down                    = SWTUtil.getImage("down.png");
   private int sortedBy                  = -1; // Index der sortierten Spalte
   private boolean direction             = true; // Ausrichtung
   //////////////////////////////////////////////////////////

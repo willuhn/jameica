@@ -152,8 +152,8 @@ public class TablePart extends AbstractTablePart
       this.temp.addAll(list);
 
     this.i18n   = Application.getI18n();
-    this.up     = SWTUtil.getImage("up.gif");
-    this.down   = SWTUtil.getImage("down.gif");
+    this.up     = SWTUtil.getImage("up.png");
+    this.down   = SWTUtil.getImage("down.png");
     
   }
   

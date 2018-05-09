@@ -1,13 +1,8 @@
 /**********************************************************************
- * $Source: /cvsroot/jameica/jameica/src/de/willuhn/jameica/gui/util/SWTUtil.java,v $
- * $Revision: 1.27 $
- * $Date: 2011/09/26 16:39:05 $
- * $Author: willuhn $
- * $Locker:  $
- * $State: Exp $
  *
- * Copyright (c) by willuhn.webdesign
+ * Copyright (c) by Olaf Willuhn
  * All rights reserved
+ * GPLv2
  *
  **********************************************************************/
 package de.willuhn.jameica.gui.util;
@@ -45,6 +40,7 @@ import de.willuhn.util.Session;
  */
 public class SWTUtil {
 
+  private static Integer zoom = null;
 	private static Session imagecache = new Session();
 
 	/**
@@ -88,6 +84,30 @@ public class SWTUtil {
 	{
     return getImage(filename, Application.getClassLoader());
 	}
+	
+	/**
+	 * Liefert den Zoom-Wert.
+	 * @return der Zoom-Wert.
+	 */
+	private static int getDeviceZoom()
+	{
+	  if (zoom != null)
+	    return zoom.intValue();
+	  
+	  zoom = 100; // Default-Wert
+	  String value = null;
+	  try
+	  {
+	    value = System.getProperty("org.eclipse.swt.internal.deviceZoom",null);
+	    if (value != null)
+	      zoom = Integer.parseInt(value);
+	  }
+	  catch (Exception e)
+	  {
+	    Logger.error("invalid device zoom factor: " + value);
+	  }
+	  return zoom.intValue();
+	}
 
   /**
    * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
@@ -106,37 +126,12 @@ public class SWTUtil {
     InputStream is = null;
     try
     {
-      
-      // Wir versuchen erstmal, das Bild via Resource-Loader zu laden
-      try
-      {
-        is = cl.getResourceAsStream("img/" + filename);
-      }
-      catch (Exception e)
-      {
-        // tolerieren wir
-      }
-
-      // OK, dann via Filesystem
-      if (is == null)
-      {
-        try
-        {
-          File file = new File(filename);
-          if (file.isFile() && file.canRead())
-            is = new BufferedInputStream(new FileInputStream(file));
-        }
-        catch (Exception e2)
-        {
-          Logger.error("unable to load image from " + filename,e2);
-        }
-      }
+      is = getStream(filename,cl);
       image = getImage(is);
 
       if (image != null)
-      {
         imagecache.put(filename, image);
-      }
+      
       return image;
     }
     finally
@@ -153,6 +148,93 @@ public class SWTUtil {
         }
       }
     }
+  }
+  
+  /**
+   * Liefert den Inputstream mit den Bilddaten.
+   * @param filename der Name des Bildes.
+   * @param cl der Classloader.
+   * @return der Inputstream.
+   */
+  private static InputStream getStream(String filename, ClassLoader cl)
+  {
+    boolean b = Customizing.SETTINGS.getBoolean("application.zoom.enabled", false);
+    
+    if (b)
+    {
+      final int zoom = getDeviceZoom();
+      
+      
+      // Wir versuchen es erstmal in der angegebenen Zoom-Stufe.
+      InputStream is = getStream(filename,cl,zoom);
+      
+      // In der passenden Zoom-Stufe gefunden.
+      if (is != null)
+        return is;
+      
+      // Da wir nicht fuer alle Zoom-Stufen die korrekten Grafiken haben, versuchen
+      // wir wenigstens noch die, die wir haben
+      if (zoom > 150)
+      {
+        is = getStream(filename,cl,200);
+        
+        // In der passenden Zoom-Stufe gefunden.
+        if (is != null)
+          return is;
+      }
+      
+      if (zoom > 100)
+      {
+        is = getStream(filename,cl,150);
+        
+        // In der passenden Zoom-Stufe gefunden.
+        if (is != null)
+          return is;
+      }
+    }
+    
+    // Fallback ohne Zoom
+    return getStream(filename,cl,null);
+  }
+
+  /**
+   * Liefert den Inputstream mit den Bilddaten in der angegebenen Zoom-Stufe.
+   * @param filename der Name des Bildes.
+   * @param cl der Classloader.
+   * @param zoom Zoom-Stufe oder NULL, wenn keine angegeben ist.
+   * @return der Inputstream.
+   */
+  private static InputStream getStream(String filename, ClassLoader cl, Integer zoom)
+  {
+    InputStream is = null;
+    
+    // Wir versuchen erstmal, das Bild via Resource-Loader zu laden
+    try
+    {
+      String sub = zoom != null ? zoom.toString() + "/" : "";
+      is = cl.getResourceAsStream("img/" + sub + filename);
+    }
+    catch (Exception e)
+    {
+      // tolerieren wir
+    }
+
+    // OK, dann via Filesystem
+    if (is == null)
+    {
+      try
+      {
+        String sub = zoom != null ? zoom.toString() + File.separator : "";
+        File file = new File(sub + filename);
+        if (file.isFile() && file.canRead())
+          is = new BufferedInputStream(new FileInputStream(file));
+      }
+      catch (Exception e2)
+      {
+        Logger.error("unable to load image from " + filename,e2);
+      }
+    }
+    return is;
   }
 
   /**

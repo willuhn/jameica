@@ -90,7 +90,7 @@ public class StatusBarTextItem implements StatusBarItem
         {
           GC gc = event.gc;
           Rectangle size = c.getBounds();
-          gc.drawImage(SWTUtil.getImage(snapIn ? "minimize.png" : "maximize.png"),size.width - 20,0);
+          gc.drawImage(SWTUtil.getImage(snapIn ? "minimize.png" : "maximize.png"),size.width - 20,3);
         }
       });
 
