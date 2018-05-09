@@ -16,13 +16,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
+import de.willuhn.jameica.gui.input.ShortcutInput;
+import de.willuhn.jameica.gui.internal.parts.SearchPart;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.parts.table.FeatureSummary;
@@ -72,6 +76,10 @@ public class SearchOptionsDialog extends AbstractDialog
     Container container = new SimpleContainer(parent,true);
     container.addText(i18n.tr("Bitte wählen Sie die Themen, in denen gesucht werden soll:"),true);
     
+    final SearchPart searchPart = GUI.getView().getSearchPart();
+    final ShortcutInput shortcut = new ShortcutInput(searchPart.getShortcut());
+    shortcut.setName(Application.getI18n().tr("Tastenkürzel für das Eingabefeld der Suche"));
+    container.addInput(shortcut);
     final SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
     final SearchProvider[] providers = service.getSearchProviders();
 
@@ -141,6 +149,9 @@ public class SearchOptionsDialog extends AbstractDialog
               service.setEnabled(o.provider,true);
             }
           }
+
+          KeyStroke ks = (KeyStroke) shortcut.getValue();
+          searchPart.setShortcut(ks != null ? ks.format() : null);
         }
         catch (Exception e)
         {

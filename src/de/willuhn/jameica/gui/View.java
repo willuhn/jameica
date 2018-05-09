@@ -46,6 +46,7 @@ public class View implements Part
 
 
 	private Composite parent;
+	private SearchPart searchPart;
 	private NotificationPanel notifications;
   
   private String title;
@@ -117,7 +118,7 @@ public class View implements Part
 
     if (!Customizing.SETTINGS.getBoolean("application.view.hidesearch",false))
     {
-      SearchPart search = new SearchPart();
+      this.searchPart = new SearchPart();
       try
       {
         Composite comp2 = new Composite(comp,SWT.NONE);
@@ -125,16 +126,13 @@ public class View implements Part
         gd.widthHint = 300;
         comp2.setLayoutData(gd);
         comp2.setLayout(SWTUtil.createGrid(1,false));
-        search.paint(comp2);
+        this.searchPart.paint(comp2);
       }
       catch (Exception e)
       {
         Logger.error("unable to draw search part");
       }
     }
-
-//    Label sep = new Label(view,SWT.SEPARATOR | SWT.HORIZONTAL);
-//    sep.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
     ////////////////////////////////////////////////////////////////////////////
 	}
@@ -321,6 +319,15 @@ public class View implements Part
 	public NotificationPanel getNotificationPanel()
 	{
 	  return this.notifications;
+	}
+	
+	/**
+	 * Liefert die Suchleiste.
+	 * @return die Suchleiste.
+	 */
+	public SearchPart getSearchPart()
+	{
+	  return this.searchPart;
 	}
 
   /**
