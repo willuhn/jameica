@@ -78,7 +78,7 @@ public class SearchOptionsDialog extends AbstractDialog
     
     final SearchPart searchPart = GUI.getView().getSearchPart();
     final ShortcutInput shortcut = new ShortcutInput(searchPart.getShortcut());
-    shortcut.setName(Application.getI18n().tr("Tastenkürzel für das Eingabefeld der Suche"));
+    shortcut.setName(Application.getI18n().tr("Tastenkürzel für das Eingabefeld"));
     container.addInput(shortcut);
     final SearchService service = (SearchService) Application.getBootLoader().getBootable(SearchService.class);
     final SearchProvider[] providers = service.getSearchProviders();
