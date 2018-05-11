@@ -166,6 +166,7 @@
       </fileset>
       <fileset dir="${basedir}">
         <include name="LICENSE" />
+        <include name="COPYING" />
       </fileset>
     </copy>
     <copy file="plugin.xml" todir="${project.zipdir}" />
@@ -178,6 +179,7 @@
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.linux}" />
         <include name="${define.projectname}/LICENSE" />
+        <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
         <include name="${define.projectname}/.jameica" />
         <include name="${define.projectname}/jameica-icon.png" />
@@ -205,6 +207,7 @@
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.linux64}" />
         <include name="${define.projectname}/LICENSE" />
+        <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
         <include name="${define.projectname}/.jameica" />
         <include name="${define.projectname}/jameica-icon.png" />
@@ -232,6 +235,7 @@
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.win32}" />
         <include name="${define.projectname}/LICENSE" />
+        <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
         <include name="${define.projectname}/jameica-win32.exe" />
         <include name="${define.projectname}/plugins" />
@@ -253,6 +257,7 @@
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.win64}" />
         <include name="${define.projectname}/LICENSE" />
+        <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
         <include name="${define.projectname}/jameica-win64.exe" />
         <include name="${define.projectname}/plugins" />
@@ -274,6 +279,7 @@
         <include name="${define.jarfilename}" />
         <include name="${define.jarfilename.macos}" />
         <include name="LICENSE" />
+        <include name="COPYING" />
         <include name="README" />
         <include name="Info.plist" />
         <include name="jameica-macos.sh" />
@@ -301,6 +307,7 @@
         <include name="${define.jarfilename}" />
         <include name="${define.jarfilename.macos64}" />
         <include name="LICENSE" />
+        <include name="COPYING" />
         <include name="README" />
         <include name="Info64.plist" />
         <include name="jameica-macos64.sh" />
@@ -328,6 +335,7 @@
         <include name="${define.projectname}/${define.jarfilename}" />
         <include name="${define.projectname}/${define.jarfilename.openbsd}" />
         <include name="${define.projectname}/LICENSE" />
+        <include name="${define.projectname}/COPYING" />
         <include name="${define.projectname}/README" />
         <include name="${define.projectname}/jameica-icon.png" />
         <include name="${define.projectname}/plugins" />
@@ -371,6 +379,7 @@
         <include name=".classpath" />
         <include name="plugin.xml" />
         <include name="LICENSE" />
+        <include name="COPYING" />
         <include name="lib/**" />
         <include name="test/**" />
         <include name="${src.dir}/**" />
