@@ -71,6 +71,8 @@ public class StatusBar implements Part
       // ignore
     }
     
+    height = SWTUtil.scaledPx(height);
+    
 		this.status = new Composite(parent, SWT.NONE);
 		GridData data = new GridData();
 		data.grabExcessHorizontalSpace = true;

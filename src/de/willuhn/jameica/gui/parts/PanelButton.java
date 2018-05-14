@@ -41,10 +41,6 @@ import de.willuhn.util.ApplicationException;
  */
 public class PanelButton implements Part
 {
-  // Die Icons muessen 16x16 Pixel gross sein.
-  private final static int ICON_WIDTH  = 16;
-  private final static int ICON_HEIGHT = 16;
-  
   private final static int ALPHA_DEFAULT  = 190;
   private final static int ALPHA_DISABLED =  50;
   private final static int ALPHA_NONE     = 255;
@@ -227,10 +223,11 @@ public class PanelButton implements Part
    */
   private void drawIcon(GC gc, boolean pressed)
   {
+    int size = SWTUtil.scaledPx(16);
     // im gedrueckten Zustand ein Pixel weiter unten - das gibt den Effekt des Reindrueckens
-    int y = (this.height - ICON_HEIGHT) / 2;
+    int y = (this.height - size) / 2;
     if (pressed) y++;
-    gc.drawImage(SWTUtil.getImage(this.icon),(this.width - ICON_WIDTH) / 2,y);
+    gc.drawImage(SWTUtil.getImage(this.icon),(this.width - size) / 2,y);
   }
   
   /**
@@ -336,37 +333,3 @@ public class PanelButton implements Part
     }
   }
 }
-
-
-
-/**********************************************************************
- * $Log: PanelButton.java,v $
- * Revision 1.9  2011/09/12 15:27:46  willuhn
- * @N Hintergrund-Jobs koennen nur abgebrochen werden, wenn sie noch laufen
- * @N Enabled-State live uebernehmen
- *
- * Revision 1.8  2011-09-12 15:09:58  willuhn
- * @N Redraw ausloesen, wenn der Enabled-Status geaendert wird
- *
- * Revision 1.7  2011-08-18 16:03:38  willuhn
- * @N BUGZILLA 286 - Panel-Code komplett refactored und in eine gemeinsame neue Klasse "TitlePart" verschoben. Damit muss der Code (incl. Skalieren der Panel) nur noch an einer Stelle gewartet werden. Und wir haben automatisch Panelbutton-Support an allen Stellen - nicht nur in der View, sondern jetzt auch im Snapin, in der Navi und sogar in Dialogen ;)
- *
- * Revision 1.6  2011-05-03 11:56:48  willuhn
- * @B GC wurde nicht korrekt disposed - siehe http://www.eclipse.org/forums/index.php?t=msg&goto=528906
- *
- * Revision 1.5  2011-04-14 16:58:48  willuhn
- * @N Globaler Shortcut <CTRL><P> zum Drucken (falls PanelButtonPrint aktiv ist)
- *
- * Revision 1.4  2011-04-07 16:49:56  willuhn
- * @N Rudimentaere GUI-Klassen fuer die Druck-Anbindung
- *
- * Revision 1.3  2011-04-07 15:09:15  willuhn
- * @N Exception-Handling
- *
- * Revision 1.2  2011-04-07 08:31:01  willuhn
- * @N Setter zum Deaktivieren des Panel-Buttons
- *
- * Revision 1.1  2011-04-06 16:13:16  willuhn
- * @N BUGZILLA 631
- *
- **********************************************************************/

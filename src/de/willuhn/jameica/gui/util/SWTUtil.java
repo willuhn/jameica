@@ -100,14 +100,16 @@ public class SWTUtil {
 	  String value = null;
 	  try
 	  {
-	    value = System.getProperty("org.eclipse.swt.internal.deviceZoom",null);
-	    if (value != null)
+	    value = Customizing.SETTINGS.getString("application.zoom",System.getProperty("org.eclipse.swt.internal.deviceZoom"));
+	    if (value != null && value.length() > 0)
 	      zoom = Integer.parseInt(value);
 	  }
 	  catch (Exception e)
 	  {
 	    Logger.error("invalid device zoom factor: " + value);
 	  }
+	  
+	  Logger.info("application zoom: " + zoom);
 	  return zoom.intValue();
 	}
 
@@ -160,45 +162,54 @@ public class SWTUtil {
    */
   private static InputStream getStream(String filename, ClassLoader cl)
   {
-    boolean b = Customizing.SETTINGS.getBoolean("application.zoom.enabled", false);
+    boolean b = Customizing.SETTINGS.getBoolean("application.zoom.enabled", true);
     
-    if (b)
+    if (!b)
+      return getStream(filename,cl,null);
+
+    final int zoom = getDeviceZoom();
+    
+    
+    // Wir versuchen es erstmal in der angegebenen Zoom-Stufe.
+    InputStream is = getStream(filename,cl,zoom);
+    
+    // In der passenden Zoom-Stufe gefunden.
+    if (is != null)
+      return is;
+
+    // Da wir nicht fuer alle Zoom-Stufen die korrekten Grafiken haben, versuchen
+    // wir wenigstens noch die, die wir haben
+    if (zoom >= 250)
     {
-      final int zoom = getDeviceZoom();
-      
-      
-      // Wir versuchen es erstmal in der angegebenen Zoom-Stufe.
-      InputStream is = getStream(filename,cl,zoom);
+      is = getStream(filename,cl,300);
       
       // In der passenden Zoom-Stufe gefunden.
       if (is != null)
         return is;
+    }
+
+    if (zoom >= 175)
+    {
+      is = getStream(filename,cl,200);
       
-      // Da wir nicht fuer alle Zoom-Stufen die korrekten Grafiken haben, versuchen
-      // wir wenigstens noch die, die wir haben
-      if (zoom > 150)
-      {
-        is = getStream(filename,cl,200);
-        
-        // In der passenden Zoom-Stufe gefunden.
-        if (is != null)
-          return is;
-      }
+      // In der passenden Zoom-Stufe gefunden.
+      if (is != null)
+        return is;
+    }
+    
+    if (zoom >= 125)
+    {
+      is = getStream(filename,cl,150);
       
-      if (zoom > 100)
-      {
-        is = getStream(filename,cl,150);
-        
-        // In der passenden Zoom-Stufe gefunden.
-        if (is != null)
-          return is;
-      }
+      // In der passenden Zoom-Stufe gefunden.
+      if (is != null)
+        return is;
     }
     
     // Fallback ohne Zoom
     return getStream(filename,cl,null);
   }
-
+  
   /**
    * Liefert den Inputstream mit den Bilddaten in der angegebenen Zoom-Stufe.
    * @param filename der Name des Bildes.
@@ -393,28 +404,20 @@ public class SWTUtil {
       return -1;
     }
   }
-  
+
   /**
-   * Skaliert eine Pixel-Angabe passend fuer die DPI-Zahl des Monitors.
-   * Hintergrund: Viele Pixel-basierte Angaben (z.Bsp. hart codierte Groessen-Angaben
-   * von Dialogen) wurden basierend auf einer ungefaehren DPI-Zahl von 90 DPI
-   * festgelegt. Auf neuartigen Monitoren mit hohen DPI-Zahlen wuerden all
-   * diese Dialoge dann sehr klein dargestellt werden. Aufgabe dieser Funktion
-   * ist es also, pixel-basierte Angaben so zu skalieren, dass sie im Verhaeltnis
-   * zum Rest basierend auf der DPI-Zahl des Display in einer angemessenen Groesse erscheinen. 
-   * @param px die Pixel-Zahl.
-   * @return die skalierte Pixel-Zahl.
+   * Skaliert die Groessen-Angabe basierend auf dem Zoom-Faktor.
+   * @param px die Groesse.
+   * @return die gezoomte Groesse.
    */
   public final static int scaledPx(int px)
   {
-    int dpi = getDPI();
-    if (dpi == -1)
-      return px; // Wir haben keine brauchbare DPI-Zahl. Dann koennen wir nicht umrechnen
+    int zoom = getDeviceZoom();
+    if (zoom == 100)
+      return px;
     
-    if (dpi == 90)
-      return px; // Keine Umrechnung noetig.
-
-    return px * dpi / 90;
+    float   scale = zoom / 100f;
+    return Math.round(px * scale);
   }
   
   /**
