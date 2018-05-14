@@ -74,8 +74,8 @@ public class ScaleInput extends AbstractInput
     this.page      = pageIncrement;
     if (this.scale != null && !scale.isDisposed())
     {
-      this.scale.setMinimum(this.minimum);
       this.scale.setMaximum(this.maximum);
+      this.scale.setMinimum(this.minimum);
       this.scale.setIncrement(this.increment);
       this.scale.setPageIncrement(this.page);
     }
@@ -126,8 +126,8 @@ public class ScaleInput extends AbstractInput
 
     this.scale.setEnabled(this.enabled);
 
-    this.scale.setMinimum(this.minimum);
     this.scale.setMaximum(this.maximum);
+    this.scale.setMinimum(this.minimum);
     this.scale.setIncrement(this.increment);
     this.scale.setPageIncrement(this.page);
 
