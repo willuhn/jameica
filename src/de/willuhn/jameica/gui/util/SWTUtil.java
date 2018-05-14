@@ -44,6 +44,75 @@ public class SWTUtil {
 
   private static Integer zoom = null;
 	private static Session imagecache = new Session();
+	
+	/**
+	 * Die vordefinierten Zoomlevel.
+	 */
+	public enum ZoomLevel
+	{
+	  /**
+	   * Zoomlevel 300%.
+	   */
+	  ZOOM_300(300,250),
+	  
+	  /**
+	   * Zoomlevel 200%.
+	   */
+	  ZOOM_200(200,175),
+	  
+	  /**
+	   * Zoomlevel 150%.
+	   */
+	  ZOOM_150(150,125),
+	  
+	  /**
+	   * Zoomlevel 100%.
+	   */
+	  ZOOM_100(100,0),
+	  
+	  ;
+	  private int level;
+	  private int start;
+	  
+	  /**
+	   * ct.
+	   * @param level
+	   * @param start
+	   */
+	  private ZoomLevel(int level, int start)
+	  {
+	    this.level = level;
+	    this.start = start;
+	  }
+	  
+	  /**
+	   * Liefert true, wenn der Zoom zu diesem Zoomlevel passt.
+	   * @param zoom der Zoom-Level.
+	   * @return true, wenn er passt.
+	   */
+	  private boolean matches(int zoom)
+	  {
+	    return zoom >= this.start;
+	  }
+	  
+	  /**
+	   * Liefert das Zoom-Level.
+     * @return das Zoom-Level.
+     */
+    public int getLevel()
+    {
+      return this.level;
+    }
+    
+    /**
+     * Liefert das hoechste Zoom-Level.
+     * @return das hoechste Zoom-Level.
+     */
+    public static ZoomLevel max()
+    {
+      return ZoomLevel.values()[0];
+    }
+	}
 
 	/**
 	 * Disposed alle Kinder des Composites rekursiv jedoch nicht das Composite selbst.
@@ -91,7 +160,7 @@ public class SWTUtil {
 	 * Liefert den Zoom-Wert.
 	 * @return der Zoom-Wert.
 	 */
-	private static int getDeviceZoom()
+	public static int getDeviceZoom()
 	{
 	  if (zoom != null)
 	    return zoom.intValue();
@@ -179,33 +248,19 @@ public class SWTUtil {
 
     // Da wir nicht fuer alle Zoom-Stufen die korrekten Grafiken haben, versuchen
     // wir wenigstens noch die, die wir haben
-    if (zoom >= 250)
+
+    for (ZoomLevel l:ZoomLevel.values())
     {
-      is = getStream(filename,cl,300);
-      
-      // In der passenden Zoom-Stufe gefunden.
-      if (is != null)
-        return is;
+      if (l.matches(zoom))
+      {
+        is = getStream(filename,cl,l.getLevel());
+        
+        // In der passenden Zoom-Stufe gefunden.
+        if (is != null)
+          return is;
+      }
     }
 
-    if (zoom >= 175)
-    {
-      is = getStream(filename,cl,200);
-      
-      // In der passenden Zoom-Stufe gefunden.
-      if (is != null)
-        return is;
-    }
-    
-    if (zoom >= 125)
-    {
-      is = getStream(filename,cl,150);
-      
-      // In der passenden Zoom-Stufe gefunden.
-      if (is != null)
-        return is;
-    }
-    
     // Fallback ohne Zoom
     return getStream(filename,cl,null);
   }
