@@ -223,7 +223,7 @@ public class PanelButton implements Part
    */
   private void drawIcon(GC gc, boolean pressed)
   {
-    int size = SWTUtil.scaledPx(16);
+    int size = 16;
     // im gedrueckten Zustand ein Pixel weiter unten - das gibt den Effekt des Reindrueckens
     int y = (this.height - size) / 2;
     if (pressed) y++;

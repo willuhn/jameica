@@ -116,7 +116,6 @@ public class Settings extends AbstractView implements Extendable
 		// Farb-Einstellungen
 
     TabGroup lnfGroup = new TabGroup(getTabFolder(),i18n.tr("Look and Feel"));
-    lnfGroup.addInput(control.getZoom());
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Pflichtfeldern"),control.getColorMandatoryBG());
     lnfGroup.addCheckbox(control.getLabelMandatory(),i18n.tr("Auch den Text vor diesen Pflichtfeldern (Label) hervorheben"));
     lnfGroup.addSeparator();

@@ -44,9 +44,6 @@ public class SysPropertyService implements Bootable
     // der offiziellen API-Dokumentation. Dann halt doppelt. Einmal in jameica.sh/jameica.exe
     // und dann nochmal hier.
     put("java.net.preferIPv4Stack","true");
-    
-    // BUGZILLA 1731 - Autoscale-Verhalten konfigurierbar machen
-    put("swt.autoScale","false");
   }};
 
   /**

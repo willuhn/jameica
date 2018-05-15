@@ -21,7 +21,6 @@ import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.ColorInput;
 import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.input.IntegerInput;
-import de.willuhn.jameica.gui.input.ScaleInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.input.TextInput;
 import de.willuhn.jameica.gui.internal.parts.CertificateList;
@@ -29,8 +28,6 @@ import de.willuhn.jameica.gui.internal.parts.PluginDetailPart.Type;
 import de.willuhn.jameica.gui.internal.parts.PluginListPart;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
-import de.willuhn.jameica.gui.util.SWTUtil;
-import de.willuhn.jameica.gui.util.SWTUtil.ZoomLevel;
 import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.messaging.SettingsChangedMessage;
 import de.willuhn.jameica.messaging.SettingsRestoredMessage;
@@ -73,7 +70,6 @@ public class SettingsControl extends AbstractControl
   private Input colorMandatoryBG;
   private CheckboxInput mandatoryLabel;
   private CheckboxInput randomSplash;
-  private ScaleInput zoom;
 	
   /**
    * ct.
@@ -297,33 +293,6 @@ public class SettingsControl extends AbstractControl
 		return colorSuccess;
 	}
 	
-	/**
-	 * Liefert einen Schieberegler fuer den Zoom.
-	 * @return Schieberegler fuer den Zoom.
-	 */
-	public ScaleInput getZoom()
-	{
-	  if (this.zoom != null)
-	    return this.zoom;
-	  
-	  int i = SWTUtil.getDeviceZoom();
-	  this.zoom = new ScaleInput(i);
-	  this.zoom.setScaling(100,ZoomLevel.max().getLevel(),25,25);
-	  this.zoom.setName(i18n.tr("Zoom-Level"));
-	  
-	  final Listener l = new Listener() {
-      
-      public void handleEvent(Event event)
-      {
-        Integer i = (Integer) zoom.getValue();
-        zoom.setComment(i != null ? i18n.tr("{0} %",i.toString()) : "");
-      }
-    };
-    this.zoom.addListener(l);
-    l.handleEvent(null);
-	  return this.zoom;
-	}
-
   /**
    * Liefert eine Checkbox, mit der konfiguriert werden kann, ob auch die Labels vor Pflichtfeldern rot gefaerbt werden.
    * @return Checkbox.
@@ -385,9 +354,6 @@ public class SettingsControl extends AbstractControl
       restartNeeded |= getTrustJavaCerts().hasChanged();
       config.setTrustJavaCerts(((Boolean)getTrustJavaCerts().getValue()).booleanValue());
       
-      restartNeeded |= getZoom().hasChanged();
-      Customizing.SETTINGS.setAttribute("application.zoom",(Integer) getZoom().getValue());
-
       // Look & Feel
       config.setMandatoryLabel(((Boolean)getLabelMandatory().getValue()).booleanValue());
       Customizing.SETTINGS.setAttribute("application.splashscreen.random",((Boolean)getRandomSplash().getValue()).booleanValue());

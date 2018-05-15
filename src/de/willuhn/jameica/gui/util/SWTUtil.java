@@ -22,6 +22,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
@@ -53,37 +55,49 @@ public class SWTUtil {
 	  /**
 	   * Zoomlevel 300%.
 	   */
-	  ZOOM_300(300,250),
+	  ZOOM_300(300,250,"300"),
 	  
 	  /**
 	   * Zoomlevel 200%.
 	   */
-	  ZOOM_200(200,175),
+	  ZOOM_200(200,175,"200"),
 	  
 	  /**
 	   * Zoomlevel 150%.
 	   */
-	  ZOOM_150(150,125),
+	  ZOOM_150(150,125,"150"),
 	  
 	  /**
 	   * Zoomlevel 100%.
 	   */
-	  ZOOM_100(100,0),
+	  ZOOM_100(100,0,null),
 	  
 	  ;
+	  
 	  private int level;
 	  private int start;
+	  private String path;
 	  
 	  /**
 	   * ct.
 	   * @param level
 	   * @param start
+	   * @param path
 	   */
-	  private ZoomLevel(int level, int start)
+	  private ZoomLevel(int level, int start, String path)
 	  {
 	    this.level = level;
 	    this.start = start;
+	    this.path  = path;
 	  }
+	  
+	  /**
+     * @return path
+     */
+    public String getPath()
+    {
+      return path;
+    }
 	  
 	  /**
 	   * Liefert true, wenn der Zoom zu diesem Zoomlevel passt.
@@ -165,11 +179,12 @@ public class SWTUtil {
 	  if (zoom != null)
 	    return zoom.intValue();
 	  
+	  String swtZoom = System.getProperty("org.eclipse.swt.internal.deviceZoom");
 	  zoom = 100; // Default-Wert
 	  String value = null;
 	  try
 	  {
-	    value = Customizing.SETTINGS.getString("application.zoom",System.getProperty("org.eclipse.swt.internal.deviceZoom"));
+	    value = Customizing.SETTINGS.getString("application.zoom",swtZoom);
 	    if (value != null && value.length() > 0)
 	      zoom = Integer.parseInt(value);
 	  }
@@ -178,7 +193,7 @@ public class SWTUtil {
 	    Logger.error("invalid device zoom factor: " + value);
 	  }
 	  
-	  Logger.info("application zoom: " + zoom);
+	  Logger.info("application zoom: " + zoom + ", swt zoom: " + swtZoom);
 	  return zoom.intValue();
 	}
 
@@ -196,114 +211,73 @@ public class SWTUtil {
     if (image != null && !image.isDisposed())
       return image;
 
-    InputStream is = null;
-    try
-    {
-      is = getStream(filename,cl);
-      image = getImage(is);
+    image = getZoomedImage(filename,cl);
 
-      if (image != null)
-        imagecache.put(filename, image);
+    if (image != null)
+      imagecache.put(filename, image);
+    
+    return image;
+  }
+  
+  /**
+   * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
+   * Wenn die Datei nicht existiert, wird stattdessen ein 1x1 Pixel grosses
+   * und transparentes Dummy-Bild zurueckgeliefert.
+   * @param filename der Name des Bildes.
+   * @param cl der Classloader.
+   */
+  private static Image getZoomedImage(final String filename, final ClassLoader cl)
+  {
+    ImageDataProvider provider = new ImageDataProvider() {
       
-      return image;
-    }
-    finally
-    {
-      if (is != null)
+      public ImageData getImageData(int zoom)
       {
+        InputStream is = null;
+        
         try
         {
-          is.close();
+          if (!Customizing.SETTINGS.getBoolean("application.zoom.enabled", true))
+          {
+            is = getStream(filename,cl,null);
+          }
+          else
+          {
+            for (ZoomLevel l:ZoomLevel.values())
+            {
+              if (l.matches(zoom))
+              {
+                is = getStream(filename,cl,l);
+                
+                // In der passenden Zoom-Stufe gefunden.
+                if (is != null)
+                  break;
+              }
+            }
+          }
+          
+          if (is != null)
+            return new ImageData(is);
+          
+          return new ImageData(Application.getClassLoader().getResourceAsStream("img/empty.gif"));
         }
-        catch (Exception e)
+        finally
         {
-          // ignore
+          IOUtil.close(is);
         }
       }
-    }
-  }
-  
-  /**
-   * Liefert den Inputstream mit den Bilddaten.
-   * @param filename der Name des Bildes.
-   * @param cl der Classloader.
-   * @return der Inputstream.
-   */
-  private static InputStream getStream(String filename, ClassLoader cl)
-  {
-    boolean b = Customizing.SETTINGS.getBoolean("application.zoom.enabled", true);
+    };
     
-    if (!b)
-      return getStream(filename,cl,null);
-
-    final int zoom = getDeviceZoom();
-    
-    
-    // Wir versuchen es erstmal in der angegebenen Zoom-Stufe.
-    InputStream is = getStream(filename,cl,zoom);
-    
-    // In der passenden Zoom-Stufe gefunden.
-    if (is != null)
-      return is;
-
-    // Da wir nicht fuer alle Zoom-Stufen die korrekten Grafiken haben, versuchen
-    // wir wenigstens noch die, die wir haben
-
-    for (ZoomLevel l:ZoomLevel.values())
-    {
-      if (l.matches(zoom))
-      {
-        is = getStream(filename,cl,l.getLevel());
-        
-        // In der passenden Zoom-Stufe gefunden.
-        if (is != null)
-          return is;
-      }
-    }
-
-    // Fallback ohne Zoom
-    return getStream(filename,cl,null);
-  }
-  
-  /**
-   * Liefert den Inputstream mit den Bilddaten in der angegebenen Zoom-Stufe.
-   * @param filename der Name des Bildes.
-   * @param cl der Classloader.
-   * @param zoom Zoom-Stufe oder NULL, wenn keine angegeben ist.
-   * @return der Inputstream.
-   */
-  private static InputStream getStream(String filename, ClassLoader cl, Integer zoom)
-  {
-    InputStream is = null;
-    
-    // Wir versuchen erstmal, das Bild via Resource-Loader zu laden
     try
     {
-      String sub = zoom != null ? zoom.toString() + "/" : "";
-      is = cl.getResourceAsStream("img/" + sub + filename);
+      return new Image(GUI.getDisplay(), provider);
     }
-    catch (Exception e)
+    catch (Throwable t)
     {
-      // tolerieren wir
+      Logger.error("unable to load image",t);
     }
-
-    // OK, dann via Filesystem
-    if (is == null)
-    {
-      try
-      {
-        String sub = zoom != null ? zoom.toString() + File.separator : "";
-        File file = new File(sub + filename);
-        if (file.isFile() && file.canRead())
-          is = new BufferedInputStream(new FileInputStream(file));
-      }
-      catch (Exception e2)
-      {
-        Logger.error("unable to load image from " + filename,e2);
-      }
-    }
-    return is;
+    return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img/empty.gif"));
   }
+
 
   /**
    * Liefert ein SWT-Image basierend auf dem uebergebenen Dateinamen zurueck.
@@ -338,7 +312,49 @@ public class SWTUtil {
       }
     }
     
-    return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img" + "/empty.gif"));
+    return new Image(GUI.getDisplay(), Application.getClassLoader().getResourceAsStream("img/empty.gif"));
+  }
+  
+  /**
+   * Liefert den Inputstream mit den Bilddaten in der angegebenen Zoom-Stufe.
+   * @param filename der Name des Bildes.
+   * @param cl der Classloader.
+   * @param zoom Zoom-Stufe oder NULL, wenn keine angegeben ist.
+   * @return der Inputstream.
+   */
+  private static InputStream getStream(String filename, ClassLoader cl, ZoomLevel zoom)
+  {
+    InputStream is = null;
+    
+    String path = zoom != null ? zoom.getPath() : null;
+    
+    // Wir versuchen erstmal, das Bild via Resource-Loader zu laden
+    try
+    {
+      String sub = path != null ? path + "/" : "";
+      is = cl.getResourceAsStream("img/" + sub + filename);
+    }
+    catch (Exception e)
+    {
+      // tolerieren wir
+    }
+
+    // OK, dann via Filesystem
+    if (is == null)
+    {
+      try
+      {
+        String sub = path != null ? path + File.separator : "";
+        File file = new File(sub + filename);
+        if (file.isFile() && file.canRead())
+          is = new BufferedInputStream(new FileInputStream(file));
+      }
+      catch (Exception e2)
+      {
+        Logger.error("unable to load image from " + filename,e2);
+      }
+    }
+    return is;
   }
 
   /**

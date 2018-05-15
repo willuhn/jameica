@@ -402,9 +402,9 @@ public abstract class AbstractDialog<T>
     if (Customizing.SETTINGS.getBoolean("application.highdpi",true))
     {
       if (width > 0)
-        this.width = SWTUtil.scaledPx(width);
+        this.width = width;
       if (height > 0)
-        this.height = SWTUtil.scaledPx(height);
+        this.height = height;
     }
     else
     {

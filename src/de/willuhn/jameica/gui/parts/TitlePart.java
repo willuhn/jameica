@@ -134,7 +134,7 @@ public class TitlePart implements Part
     // BUGZILLA 286 Wenn die Ueberschriftengroesse hoeher als die Bild-Groesse ist, dann strecken
     Image image = SWTUtil.getImage("panelbar.png");
     int imageHeight = image.getBounds().height;
-    int fontHeight  = Font.getHeight(FONT) + (2 * SWTUtil.scaledPx(TITLE_OFFSET_Y)); // Abstand oben und unten brauchen wir auch etwas
+    int fontHeight  = Font.getHeight(FONT) + (2 * TITLE_OFFSET_Y); // Abstand oben und unten brauchen wir auch etwas
     int height      = Math.max(imageHeight,fontHeight);
     
     ///////////////////////////////
