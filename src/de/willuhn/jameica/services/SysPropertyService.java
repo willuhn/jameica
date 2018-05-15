@@ -11,8 +11,8 @@
 package de.willuhn.jameica.services;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
@@ -44,6 +44,9 @@ public class SysPropertyService implements Bootable
     // der offiziellen API-Dokumentation. Dann halt doppelt. Einmal in jameica.sh/jameica.exe
     // und dann nochmal hier.
     put("java.net.preferIPv4Stack","true");
+    
+    // BUGZILLA 1731 - Autoscale-Verhalten konfigurierbar machen
+    put("swt.autoScale","false");
   }};
 
   /**
@@ -60,11 +63,10 @@ public class SysPropertyService implements Bootable
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
     // Wir iterieren erst ueber die presets. Die werden auf jeden Fall gesetzt.
-    Iterator<String> it = presets.keySet().iterator();
-    while (it.hasNext())
+    for (Entry<String,String> e:presets.entrySet())
     {
-      String name  = it.next();
-      String value = settings.getString(name,presets.get(name));
+      String name  = e.getKey();
+      String value = settings.getString(name,e.getValue());
       Logger.info("setting sys property (from presets): " + name + ": " + value);
       System.setProperty(name,value);
     }
