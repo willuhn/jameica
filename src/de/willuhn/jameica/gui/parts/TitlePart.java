@@ -27,6 +27,8 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 import de.willuhn.logging.Logger;
 
 /**
@@ -178,8 +180,17 @@ public class TitlePart implements Part
         // kein Hintergrund hinter dem Text malen
         // Ist zumindest unter Linux nicht noetig. Windows und OSX muesste man mal noch testen
         gc.setBackground(GUI.getDisplay().getSystemColor(SWT.TRANSPARENT));
-        // gc.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_BLACK)); // Siehe Mail von Hermann vom 29.03.2012
-        gc.drawText(titleText == null ? "" : titleText,SWTUtil.scaledPx(TITLE_OFFSET_X),SWTUtil.scaledPx(TITLE_OFFSET_Y),true);
+        
+        // Das Skalieren ist unter Windows nicht noetig
+        int osx = TITLE_OFFSET_X;
+        int osy = TITLE_OFFSET_Y;
+        int os = Application.getPlatform().getOS();
+        if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64)
+        {
+          osx = SWTUtil.scaledPx(osx);
+          osy = SWTUtil.scaledPx(osy);
+        }
+        gc.drawText(titleText == null ? "" : titleText,osx,osy,true);
       }
     });
     //
