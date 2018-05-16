@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.SplashScreen;
+import de.willuhn.jameica.gui.SplashScreen.Mode;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.dialogs.HttpAuthDialog;
@@ -170,7 +171,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   {
   	if (startupMonitor != null)
   		return startupMonitor;
-  	startupMonitor = new SplashScreen(null,false);
+  	startupMonitor = new SplashScreen(Mode.Startup,false);
     startupMonitor.setStatusText(" starting...");
   	startupMonitor.init();
   	return startupMonitor;
@@ -184,7 +185,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     if (shutdownMonitor != null)
       return shutdownMonitor;
     
-    shutdownMonitor = new SplashScreen(Customizing.SETTINGS.getString("application.splashscreen.shutdown","/img/shutdown.png"),true);
+    shutdownMonitor = new SplashScreen(Mode.Shutdown,true);
     shutdownMonitor.init();
     return shutdownMonitor;
   }

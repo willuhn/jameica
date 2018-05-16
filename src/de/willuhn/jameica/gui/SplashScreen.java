@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ProgressMonitor;
 
@@ -43,7 +44,39 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class SplashScreen implements ProgressMonitor, Runnable
 {
-  private String logo = null;
+  /**
+   * Der Splashscreen-Modus.
+   */
+  public enum Mode
+  {
+    /**
+     * Start-Bildschirm.
+     */
+    Startup("application.splashscreen.startup","splash.png"),
+    
+    /**
+     * Shutdown-Bildschirm.
+     */
+    Shutdown("application.splashscreen.shutdown","shutdown.png"),
+    
+    ;
+
+    private String param = null;
+    private String image = null;
+    
+    /**
+     * ct.
+     * @param param
+     * @param image
+     */
+    private Mode(String param, String image)
+    {
+      this.param = param;
+      this.image = image;
+    }
+  }
+  
+  private Mode mode;
   
   private Display display;
   private Shell shell;
@@ -60,19 +93,19 @@ public class SplashScreen implements ProgressMonitor, Runnable
 
   /**
    * ct.
-   * @param logo relativer Pfad zum Logo.
+   * @param mode der Mode.
    * Zuerst wird versucht, das Bild direkt als Datei
    * zu laden. Wenn das fehlschlaegt, wird getResourceAsStream() versucht.
    * @param disposeDisplay true, wenn auch das Display disposed werden soll.
    */
-  public SplashScreen(String logo, boolean disposeDisplay)
+  public SplashScreen(Mode mode, boolean disposeDisplay)
   {
-    Logger.debug("init splash screen");
+    if (mode == null)
+      mode = Mode.Startup;
+    
+    Logger.debug("init splash screen: " + mode);
 
-    this.logo = logo;
-
-    if (this.logo == null)
-      this.logo = randomSplash();
+    this.mode = mode;
 
     this.disposeDisplay = disposeDisplay;
     display = GUI.getDisplay();
@@ -104,9 +137,6 @@ public class SplashScreen implements ProgressMonitor, Runnable
    */
   private String randomSplash()
   {
-    if (!Customizing.SETTINGS.getBoolean("application.splashscreen.random",false))
-      return null;
-
     JarFile jar = null;
     
     try
@@ -178,41 +208,35 @@ public class SplashScreen implements ProgressMonitor, Runnable
     l.verticalSpacing = 0;
     shell.setLayout(l);
     
+    String s = null;
+    if (Customizing.SETTINGS.getBoolean("application.splashscreen.random",false))
+      s = randomSplash();
+    
+    if (s == null)
+      s = Customizing.SETTINGS.getString(this.mode.param,this.mode.image);
+
     Image image = null;
     
-    if (this.logo != null)
+    try
     {
-      InputStream is = shell.getClass().getResourceAsStream(this.logo);
+      InputStream is = shell.getClass().getResourceAsStream(s);
       if (is == null)
       {
-        // Wir versuchen, den Splash als Bild direkt aus dem Filesystem zu laden.
-        File f = new File(this.logo);
-        if (f.exists() && f.isFile())
-        {
-          try
-          {
-            is = new FileInputStream(f);
-          }
-          catch (Exception e)
-          {
-          }
-        }
-        else
-        {
-          try
-          {
-            Logger.error("splashscreen file not found: " + f.getCanonicalPath());
-          }
-          catch (Exception e2) {/* useless */}
-        }
+        File f = new File(s);
+        if (f.exists() && f.isFile() && f.canRead())
+          is = new FileInputStream(f);
       }
       
       if (is != null)
         image = new Image(display, is);
     }
-    
+    catch (Exception e)
+    {
+      Logger.write(Level.INFO,"unable to load custom splashscreen: " + s,e);
+    }
+
     if (image == null)
-      image = SWTUtil.getImage("splash.png");
+      image = SWTUtil.getImage(s);
     
     // Label erzeugen und Image drauf pappen
     label = new Label(shell, SWT.NONE);

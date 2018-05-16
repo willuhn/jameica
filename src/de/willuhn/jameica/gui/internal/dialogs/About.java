@@ -74,7 +74,7 @@ public class About extends AbstractDialog
         close();
       }
     },null,true,"window-close.png");
-    setSize(SWT.DEFAULT,480);  // BUGZILLA 269
+    setSize(SWT.DEFAULT,530);  // BUGZILLA 269
   }
 
   /**
