@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -273,124 +274,156 @@ public class PluginListPart implements Part
     pl.paint(this.availableList.getComposite());
     availableList.update();
 
-    GUI.getDisplay().asyncExec(new Runnable() {
-      
+    String repo = (String) getRepositories().getValue();
+    URL u = null;
+    if (repo != null && repo.length() > 0)
+    {
+      try
+      {
+        u = new URL(repo);
+      }
+      catch (MalformedURLException e)
+      {
+        handleAvailableError(e);
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("URL ungültig: {0}",repo),StatusBarMessage.TYPE_ERROR));
+      }
+    }
+    
+    final URL url = u;
+    final String query = (String) this.getQuery().getValue();
+
+    final Thread t = new Thread("repo-fetch available") {
       public void run()
       {
         try
         {
-          String repo = (String) getRepositories().getValue();
-          URL url = null;
-          if (repo != null && repo.length() > 0)
-          {
-            try
-            {
-              url = new URL(repo);
-            }
-            catch (MalformedURLException e)
-            {
-              Logger.error("invalid repository url",e);
-              Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("URL ungültig: {0}",repo),StatusBarMessage.TYPE_ERROR));
-            }
-          }
-
           RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
-          List<RepositorySearchResult> result = service.search(url,(String)getQuery().getValue());
-          int found = 0;
+          final List<RepositorySearchResult> result = service.search(url,query);
+          final AtomicInteger found = new AtomicInteger(0);
           for (RepositorySearchResult r:result)
           {
-            found += r.size();
+            found.addAndGet(r.size());
           }
           
           Logger.info("search done, found " + result.size() + " plugins");
 
-          // Ladegrafik wieder ausblenden
-          dispose(availableList,null);
-          
-          if (found == 0)
-          {
-            Placeholder empty = new Placeholder(Style.EMPTY);
-            empty.setTitle(i18n.tr("Keine Plugins gefunden"));
-            empty.setText(i18n.tr("Ändern oder entfernen Sie ggf. den Suchbegriff"));
-            empty.paint(availableList.getComposite());
-            availableList.update();
-            return;
-          }
-
-          for (RepositorySearchResult r:result)
-          {
-            if (r.getGroups().size() > 0)
-            {
-              Composite parent = availableList.getComposite();
-              SimpleContainer c = new SimpleContainer(parent);
-              c.getComposite().setBackground(parent.getBackground());
-              c.getComposite().setBackgroundMode(SWT.INHERIT_FORCE);
-              c.addHeadline(r.getRepository().getName());
-            }
+          GUI.getDisplay().asyncExec(new Runnable() {
             
-            for (PluginGroup group:r.getGroups())
+            public void run()
             {
-              TreeMap<String,List<PluginData>> plugins = r.getResult(group);
-              
-              // Ueberspringen, wenn die Gruppe leer ist
-              int count = 0;
-              for (Entry<String,List<PluginData>> e:plugins.entrySet())
+              try
               {
-                List<PluginData> list = e.getValue();
-                if (list.size() == 0)
-                  continue;
+                // Ladegrafik wieder ausblenden
+                dispose(availableList,null);
                 
-                count++;
+                if (found.get() == 0)
+                {
+                  Placeholder empty = new Placeholder(Style.EMPTY);
+                  empty.setTitle(i18n.tr("Keine Plugins gefunden"));
+                  empty.setText(i18n.tr("Ändern oder entfernen Sie ggf. den Suchbegriff"));
+                  empty.paint(availableList.getComposite());
+                  availableList.update();
+                  return;
+                }
+
+                for (RepositorySearchResult r:result)
+                {
+                  if (r.getGroups().size() > 0)
+                  {
+                    Composite parent = availableList.getComposite();
+                    SimpleContainer c = new SimpleContainer(parent);
+                    c.getComposite().setBackground(parent.getBackground());
+                    c.getComposite().setBackgroundMode(SWT.INHERIT_FORCE);
+                    c.addHeadline(r.getRepository().getName());
+                  }
+                  
+                  for (PluginGroup group:r.getGroups())
+                  {
+                    TreeMap<String,List<PluginData>> plugins = r.getResult(group);
+                    
+                    // Ueberspringen, wenn die Gruppe leer ist
+                    int count = 0;
+                    for (Entry<String,List<PluginData>> e:plugins.entrySet())
+                    {
+                      List<PluginData> list = e.getValue();
+                      if (list.size() == 0)
+                        continue;
+                      
+                      count++;
+                    }
+                    
+                    if (count == 0)
+                      continue;
+                    
+                    Composite parent = availableList.getComposite();
+                    SimpleContainer c = new SimpleContainer(parent);
+                    c.getComposite().setBackground(parent.getBackground());
+                    c.getComposite().setBackgroundMode(SWT.INHERIT_FORCE);
+                    c.addText(group.getName(),true);
+             
+                    for (Entry<String,List<PluginData>> e:plugins.entrySet())
+                    {
+                      List<PluginData> list = e.getValue();
+                      if (list.size() == 0)
+                        continue;
+                      
+                      // Wir nehmen das Manifest des ersten
+                      Manifest mf = list.get(0).getManifest();
+                      PluginDetailPart part = new PluginDetailPart(mf, list, Type.AVAILABLE);
+                      availableParts.put(e.getKey(),part);
+                      part.paint(availableList.getComposite());
+                    }
+                  }
+                }
+                
+                availableList.update();
               }
-              
-              if (count == 0)
-                continue;
-              
-              Composite parent = availableList.getComposite();
-              SimpleContainer c = new SimpleContainer(parent);
-              c.getComposite().setBackground(parent.getBackground());
-              c.getComposite().setBackgroundMode(SWT.INHERIT_FORCE);
-              c.addText(group.getName(),true);
-       
-              for (Entry<String,List<PluginData>> e:plugins.entrySet())
+              catch (Exception e)
               {
-                List<PluginData> list = e.getValue();
-                if (list.size() == 0)
-                  continue;
-                
-                // Wir nehmen das Manifest des ersten
-                Manifest mf = list.get(0).getManifest();
-                PluginDetailPart part = new PluginDetailPart(mf, list, Type.AVAILABLE);
-                availableParts.put(e.getKey(),part);
-                part.paint(availableList.getComposite());
+                handleAvailableError(e);
               }
             }
-          }
-          
-          availableList.update();
+          });
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
-          SWTUtil.disposeChildren(availableList.getComposite());
-          Placeholder empty = new Placeholder(Style.ERROR);
-          empty.setTitle(i18n.tr("Repository nicht lesbar"));
-          empty.setText(i18n.tr("Bitte prüfen Sie die Adresse des Repository"));
-          
-          try
-          {
-            empty.paint(availableList.getComposite());
-          }
-          catch (RemoteException re)
-          {
-            Logger.error("unable to display error",re);
-          }
-          availableList.update();
-
-          Logger.error("error while loading repository",e);
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Repository nicht lesbar"),StatusBarMessage.TYPE_ERROR));
+          GUI.getDisplay().asyncExec(new Runnable() {
+            
+            public void run()
+            {
+              handleAvailableError(e);
+            }
+          });
         }
       }
-    });
+    };
+
+    t.start();
+  }
+  
+  private void handleAvailableError(Exception e)
+  {
+    String msg = i18n.tr("Repository nicht lesbar");
+    if (e instanceof ApplicationException)
+      msg = e.getMessage();
+    
+    Logger.error("error while loading repository",e);
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(msg,StatusBarMessage.TYPE_ERROR));
+    
+    dispose(availableList,null);
+    Placeholder empty = new Placeholder(Style.ERROR);
+    empty.setTitle(i18n.tr("Repository nicht lesbar"));
+    empty.setText(msg);
+    
+    try
+    {
+      empty.paint(availableList.getComposite());
+    }
+    catch (RemoteException re)
+    {
+      Logger.error("unable to display error",re);
+    }
+    availableList.update();
   }
     
   /**
@@ -410,44 +443,57 @@ public class PluginListPart implements Part
     pl.paint(this.updateList.getComposite());
     updateList.update();
 
-    GUI.getDisplay().asyncExec(new Runnable() {
+    final Thread t = new Thread("repo-fetch updates") {
       
       public void run()
       {
         UpdateService service = Application.getBootLoader().getBootable(UpdateService.class);
         try
         {
-          TreeMap<String,List<PluginData>> updates = service.findUpdates(null);
+          final TreeMap<String,List<PluginData>> updates = service.findUpdates(null);
           Logger.info("search done, found " + (updates != null ? updates.size() : "no") + " updates");
-          
-          // Wir gruppieren die noch nach Plugin
 
-          // Ladegrafik wieder ausblenden
-          dispose(updateList,null);
+          GUI.getDisplay().asyncExec(new Runnable() {
+            
+            public void run()
+            {
+              try
+              {
+                // Ladegrafik wieder ausblenden
+                dispose(updateList,null);
 
-          if (updates == null || updates.size() == 0)
-          {
-            Placeholder empty = new Placeholder(Style.DONE);
-            empty.setTitle(i18n.tr("Keine Updates gefunden"));
-            empty.setText(i18n.tr("Schauen Sie doch später mal wieder vorbei ;)"));
-            empty.paint(updateList.getComposite());
-            updateList.update();
-            return;
-          }
+                if (updates == null || updates.size() == 0)
+                {
+                  Placeholder empty = new Placeholder(Style.DONE);
+                  empty.setTitle(i18n.tr("Keine Updates gefunden"));
+                  empty.setText(i18n.tr("Schauen Sie doch später mal wieder vorbei ;)"));
+                  empty.paint(updateList.getComposite());
+                  updateList.update();
+                  return;
+                }
 
-          for (Entry<String,List<PluginData>> e:updates.entrySet())
-          {
-            // Wir nehmen das Manifest des ersten
-            List<PluginData> list = e.getValue();
-            if (list.size() == 0)
-              continue;
-            Manifest mf = list.get(0).getManifest();
-            PluginDetailPart part = new PluginDetailPart(mf,list,Type.UPDATE);
-            updateParts.put(e.getKey(),part);
-            part.paint(updateList.getComposite());
-          }
-          
-          updateList.update();
+                // Wir gruppieren die noch nach Plugin
+                for (Entry<String,List<PluginData>> e:updates.entrySet())
+                {
+                  // Wir nehmen das Manifest des ersten
+                  List<PluginData> list = e.getValue();
+                  if (list.size() == 0)
+                    continue;
+                  Manifest mf = list.get(0).getManifest();
+                  PluginDetailPart part = new PluginDetailPart(mf,list,Type.UPDATE);
+                  updateParts.put(e.getKey(),part);
+                  part.paint(updateList.getComposite());
+                }
+                
+                updateList.update();
+              }
+              catch (Exception e)
+              {
+                Logger.error("error while loading repository",e);
+                Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Fehler beim Suchen nach Updates: {0}", e.getMessage()),StatusBarMessage.TYPE_ERROR));
+              }
+            }
+          });
         }
         catch (ApplicationException ae)
         {
@@ -459,7 +505,9 @@ public class PluginListPart implements Part
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Fehler beim Suchen nach Updates: {0}", e.getMessage()),StatusBarMessage.TYPE_ERROR));
         }
       }
-    });
+    };
+
+    t.start();
   }
   
   /**
@@ -562,7 +610,7 @@ public class PluginListPart implements Part
   {
     if (PluginCacheMessageConsumer.getCache().size() == 0)
     {
-      SWTUtil.disposeChildren(installedList.getComposite());
+      dispose(installedList,null);
       Placeholder pl = new Placeholder(Style.EMPTY);
       pl.setTitle(i18n.tr("Noch keine Plugins installiert"));
       pl.setText(i18n.tr("Klicken Sie auf \"Verfügbare Plugins\", um Plugins zu installieren."));
@@ -639,7 +687,7 @@ public class PluginListPart implements Part
             // Wenn Bisher noch kein Plugin installiert war, muessen wir den Platzhalter
             // entfernen
             if (installedParts.size() == 0)
-              SWTUtil.disposeChildren(installedList.getComposite());
+              dispose(installedList,null);
             
             // Das Manifest vorher entfernen, falls es schon vorhanden ist.
             for (Entry<String,PluginDetailPart> e:installedParts.entrySet())
@@ -682,7 +730,7 @@ public class PluginListPart implements Part
    * @param c der Container.
    * @param map die zu leerende Map.
    */
-  private void dispose(ScrolledContainer c, Map<String,PluginDetailPart> map)
+  private void dispose(final ScrolledContainer c, final Map<String,PluginDetailPart> map)
   {
     try
     {

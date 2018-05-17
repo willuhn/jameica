@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.input.SelectInput;
-import de.willuhn.jameica.gui.internal.action.PluginDetails;
 import de.willuhn.jameica.gui.internal.action.PluginDownload;
 import de.willuhn.jameica.gui.internal.action.PluginUnInstall;
 import de.willuhn.jameica.gui.internal.action.PluginUpdate;
@@ -138,13 +137,10 @@ public class PluginDetailPart extends InfoPanel
     // Checken, ob es installiert/deinstalliert werden kann
     if (this.type == Type.INSTALLED)
     {
-      Button open   = new Button(i18n.tr("Öffnen..."),new PluginDetails(),this.manifest,false,"document-open.png");
       Button update = new Button(i18n.tr("Plugin aktualisieren..."),new PluginUpdate(),this.manifest,false,"emblem-package.png");
 
       // Update und oeffnen gibt es nicht bei neuen Installationen
-      open.setEnabled(manifest.isInstalled());
       update.setEnabled(manifest.isInstalled() || error != null); // Update auch bei Fehler erlauben
-      this.addButton(open);
       this.addButton(update);
 
       Button delete = new Button(i18n.tr("Plugin löschen..."),new PluginUnInstall(),this.manifest,false,"user-trash-full.png");
