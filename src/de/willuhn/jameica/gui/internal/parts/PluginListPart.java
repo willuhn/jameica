@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.swt.SWT;
@@ -27,6 +28,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
@@ -68,6 +71,7 @@ import de.willuhn.jameica.update.RepositorySearchResult;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
+import de.willuhn.util.Session;
 
 /**
  * Komponente, die die Plugins in einer huebsch formatierten Liste mit
@@ -76,6 +80,10 @@ import de.willuhn.util.I18N;
 public class PluginListPart implements Part
 {
   private final static I18N i18n = Application.getI18n();
+  
+  // Ergebnis 10 Minuten cachen
+  private final static Session availableCache = new Session(10 * 60 * 1000L);
+  private final static Session updateCache    = new Session(10 * 60 * 1000L);
   
   private MessageConsumer pluginNotify = new MyInstalledMessageConsumer();
   private MessageConsumer repoNotify   = new MyRepoMessageConsumer();
@@ -147,14 +155,14 @@ public class PluginListPart implements Part
     
     ////////////////////////////////////////////////////////////////////////////
     // Tab mit den verfuegbaren Plugins
+    final CTabItem itemAvailable = new CTabItem(folder, SWT.NONE);
     {
-      CTabItem item = new CTabItem(folder, SWT.NONE);
-      item.setShowClose(false);
-      item.setFont(Font.BOLD.getSWTFont());
-      item.setText(toTabLabel("Verfügbare Plugins"));
+      itemAvailable.setShowClose(false);
+      itemAvailable.setFont(Font.BOLD.getSWTFont());
+      itemAvailable.setText(toTabLabel("Verfügbare Plugins"));
 
       if (this.focus != null && this.focus == Type.AVAILABLE)
-        folder.setSelection(item);
+        folder.setSelection(itemAvailable);
 
       Composite c = new Composite(folder, SWT.NONE);
       c.setLayout(SWTUtil.createGrid(1,true));
@@ -175,8 +183,7 @@ public class PluginListPart implements Part
         this.availableList = new ScrolledContainer(container.getComposite(),1);
       }
       
-      item.setControl(c);
-      this.loadAvailable();
+      itemAvailable.setControl(c);
     }
     //
     ////////////////////////////////////////////////////////////////////////////
@@ -184,23 +191,54 @@ public class PluginListPart implements Part
     
     ////////////////////////////////////////////////////////////////////////////
     // Tab mit den verfuegbaren Updates
+    final CTabItem itemUpdates = new CTabItem(folder, SWT.NONE);
     {
-      CTabItem item = new CTabItem(folder, SWT.NONE);
-      item.setShowClose(false);
-      item.setFont(Font.BOLD.getSWTFont());
-      item.setText(toTabLabel("Updates"));
+      itemUpdates.setShowClose(false);
+      itemUpdates.setFont(Font.BOLD.getSWTFont());
+      itemUpdates.setText(toTabLabel("Updates"));
 
       if (this.focus != null && this.focus == Type.UPDATE)
-        folder.setSelection(item);
+        folder.setSelection(itemUpdates);
 
       SimpleContainer container = new SimpleContainer(folder,true,1);
       this.updateList = new ScrolledContainer(container.getComposite(),1);
-      item.setControl(container.getComposite());
-      this.loadUpdates();
+      itemUpdates.setControl(container.getComposite());
     }
     //
     ////////////////////////////////////////////////////////////////////////////
 
+    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Daten initial laden, wenn das Tab das erste mal geoeffnet wird
+    final AtomicBoolean loadedAvailable = new AtomicBoolean(false);
+    final AtomicBoolean loadedUpdates   = new AtomicBoolean(false);
+    folder.addSelectionListener(new SelectionAdapter() {
+      /**
+       * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+       */
+      @Override
+      public void widgetSelected(SelectionEvent e)
+      {
+        try
+        {
+          if (e.item == itemAvailable && !loadedAvailable.getAndSet(true))
+            loadAvailable();
+          if (e.item == itemUpdates && !loadedUpdates.getAndSet(true))
+            loadUpdates();
+        }
+        catch (RemoteException re)
+        {
+          Logger.error("unable to load available plugins",re);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Laden der verfügbaren Plugins fehlgeschlagen"),StatusBarMessage.TYPE_ERROR));
+        }
+      }
+    });
+    ////////////////////////////////////////////////////////////////////////////
+
+    
+    
+    
     {
       SimpleContainer c = new SimpleContainer(comp);
       c.addText("",true);
@@ -297,15 +335,33 @@ public class PluginListPart implements Part
       {
         try
         {
-          RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
-          final List<RepositorySearchResult> result = service.search(url,query);
+          // Wir cachen das Ergebnis
+          final String key = (url != null ? url.toString() : "<all>") + "." + query;
+          List<RepositorySearchResult> cachedResult = (List<RepositorySearchResult>) availableCache.get(key);
+          if (cachedResult != null)
+          {
+            Logger.info("using cached list for available plugins");
+          }
+          else
+          {
+            RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
+            cachedResult = service.search(url,query);
+
+            // Auch wenn es kein Ergebnis gab, cachen wir das
+            if (cachedResult == null)
+              cachedResult = new ArrayList<RepositorySearchResult>();
+            
+            availableCache.put(key,cachedResult);
+          }
+          final List<RepositorySearchResult> result = cachedResult;
+          
           final AtomicInteger found = new AtomicInteger(0);
           for (RepositorySearchResult r:result)
           {
             found.addAndGet(r.size());
           }
           
-          Logger.info("search done, found " + result.size() + " plugins");
+          Logger.info("search done, found " + found + " plugins/version");
 
           GUI.getDisplay().asyncExec(new Runnable() {
             
@@ -450,7 +506,25 @@ public class PluginListPart implements Part
         UpdateService service = Application.getBootLoader().getBootable(UpdateService.class);
         try
         {
-          final TreeMap<String,List<PluginData>> updates = service.findUpdates(null);
+          final String key = "updates";
+          TreeMap<String,List<PluginData>> cachedUpdates = (TreeMap<String,List<PluginData>>) updateCache.get(key);
+          if (cachedUpdates != null)
+          {
+            Logger.info("using cached list for updates");
+          }
+          else
+          {
+            cachedUpdates = service.findUpdates(null);
+            
+            // Auch wenn es kein Ergebnis gab, cachen wir das
+            if (cachedUpdates == null)
+              cachedUpdates = new TreeMap<String,List<PluginData>>();
+            
+            updateCache.put(key,cachedUpdates);
+          }
+          
+          final TreeMap<String,List<PluginData>> updates = cachedUpdates;
+          
           Logger.info("search done, found " + (updates != null ? updates.size() : "no") + " updates");
 
           GUI.getDisplay().asyncExec(new Runnable() {
