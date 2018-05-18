@@ -108,8 +108,8 @@ public class View implements Part
       try
       {
         notifications = new NotificationPanel();
-        notifications.setBackground(false);
-        notifications.setBorder(0);
+        notifications.setBackground(true);
+        notifications.setBorder(1);
         notifications.paint(comp);
       }
       catch (Exception e)
