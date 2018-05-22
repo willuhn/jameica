@@ -1,4 +1,6 @@
-HEAD 2.7 (nightly)
+HEAD 2.9 (nightly)
+
+2018-05-22 Version 2.8.0
 
   * NEW: 0091 BUGZILLA 1731 - Besserer Support für HiDPI-Monitore
   * DEL: 0090 Logo-Panel oben rechts entfernt - kostete nur Platz

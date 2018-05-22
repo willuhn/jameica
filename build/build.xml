@@ -471,17 +471,17 @@
   <target depends="init,compile,jar,zip,javadoc,src" description="build nightly build" name="nightly">
     <mkdir dir="${project.nightly}" />
 
-    <copy file="${project.release}/${project.zipfilename}" tofile="${project.nightly}/${define.projectname}-${system.version}.zip" />
-    <copy file="${project.release}/${project.zipfilename.linux}" tofile="${project.nightly}/${define.projectname}-${system.version}-linux.zip" />
-    <copy file="${project.release}/${project.zipfilename.linux64}" tofile="${project.nightly}/${define.projectname}-${system.version}-linux64.zip" />
-    <copy file="${project.release}/${project.zipfilename.macos}" tofile="${project.nightly}/${define.projectname}-${system.version}-macos.zip" />
-    <copy file="${project.release}/${project.zipfilename.macos64}" tofile="${project.nightly}/${define.projectname}-${system.version}-macos64.zip" />
-    <copy file="${project.release}/${project.zipfilename.win32}" tofile="${project.nightly}/${define.projectname}-${system.version}-win32.zip" />
-    <copy file="${project.release}/${project.zipfilename.win64}" tofile="${project.nightly}/${define.projectname}-${system.version}-win64.zip" />
-    <copy file="${project.release}/${project.zipfilename.openbsd}" tofile="${project.nightly}/${define.projectname}-${system.version}-openbsd.zip" />
+    <copy file="${project.release}/${project.zipfilename}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.linux}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.linux64}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.macos}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.macos64}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.win32}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.win64}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.openbsd}" todir="${project.nightly}" />
 
 
-    <copy file="${project.release}/${define.srcfilename}" tofile="${project.nightly}/${define.projectname}-${system.version}.src.zip" />
+    <copy file="${project.release}/${define.srcfilename}" todir="${project.nightly}" />
     <antcall target="lib"/>
 
     <delete dir="${project.release}" />
