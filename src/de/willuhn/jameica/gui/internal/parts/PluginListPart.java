@@ -234,6 +234,23 @@ public class PluginListPart implements Part
         }
       }
     });
+    
+    // Wenn noch gar kein Plugin installiert ist, ist das Tab mit den verfuegbaren Plugins
+    // initial ausgewaehlt. Daher wird in dem Fall das Selection-Event nicht ausgloest.
+    // Hier muessen wir also manuell laden
+    if (folder.getSelection() == itemAvailable)
+    {
+      try
+      {
+        loadAvailable();
+        loadedAvailable.set(true);
+      }
+      catch (RemoteException re)
+      {
+        Logger.error("unable to load available plugins",re);
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Laden der verfügbaren Plugins fehlgeschlagen"),StatusBarMessage.TYPE_ERROR));
+      }
+    }
     ////////////////////////////////////////////////////////////////////////////
 
     
