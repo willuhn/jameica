@@ -80,7 +80,7 @@ public class RepositoryService implements Bootable
   {
     "https://www.willuhn.de/products/jameica/updates/extensions",
     "http://www.jverein.de/updates/",
-    "http://scripting-updates.derrichter.de/",
+    "https://scripting-updates.derrichter.de/",
     "https://www.open4me.de/hibiscus/"
   };
 
