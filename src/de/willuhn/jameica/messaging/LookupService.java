@@ -16,6 +16,7 @@ import java.net.InetAddress;
 import java.util.Hashtable;
 
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
 import de.willuhn.net.MulticastClient;
 
@@ -208,7 +209,9 @@ public class LookupService implements MessageConsumer
     }
     catch (Exception e)
     {
-      Logger.error("error while performing lookup",e);
+      // Wenn das fehlschlaegt, kann der Lookup-Dienst halt nicht verwendet werden.
+      Logger.write(Level.DEBUG,"multicast lookup failed, stacktrace for debugging purpose",e);
+      Logger.info("multicast lookup not possible: " + e.getMessage());
     }
     finally
     {
