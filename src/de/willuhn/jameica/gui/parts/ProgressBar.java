@@ -126,7 +126,8 @@ public class ProgressBar implements ProgressMonitor, Part
 		{
 			public void run()
 			{
-        log.appendText(msg);
+			  if (log != null)
+			    log.appendText(msg);
 			}
 		});
   }

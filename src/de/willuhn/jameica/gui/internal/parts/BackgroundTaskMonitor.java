@@ -15,6 +15,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -42,15 +43,17 @@ public class BackgroundTaskMonitor extends ProgressBar
    * Datums-Format dd.MM.yyyy HH:mm:ss.
    */
   private final static DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-  
-  private final static AtomicBoolean DEFAULT_LOCKED = new AtomicBoolean(false);
 
-  private DelayedListener delay        = null;
-  private AtomicBoolean started        = new AtomicBoolean(false);
-  private AtomicBoolean panelLocked    = DEFAULT_LOCKED;
+  private final static AtomicBoolean DEFAULT_LOCKED = new AtomicBoolean(false);
+  private final static AtomicLong USAGES = new AtomicLong(0);
+
+  private DelayedListener delay     = null;
+  private AtomicBoolean started     = new AtomicBoolean(false);
+  private AtomicBoolean panelLocked = DEFAULT_LOCKED;
+  private AtomicLong usage          = new AtomicLong(USAGES.incrementAndGet());
   
-  private BackgroundTask task          = null;
-  private PanelButton cancel           = null;
+  private BackgroundTask task       = null;
+  private PanelButton cancel        = null;
   
   /**
    * ct.
@@ -88,13 +91,25 @@ public class BackgroundTaskMonitor extends ProgressBar
           // Wenn wir hier sind, muss das timeout abgelaufen und niemand
           // sonst an dem Progress etwas aktualisiert haben
           // BUGZILLA 179 + 432
-          int status = event.detail;
-          if (started.get() && (status == STATUS_CANCEL || status == STATUS_DONE || status == STATUS_ERROR))
+          if (started.get() && isFinalState(event.detail))
           {
             GUI.getDisplay().asyncExec(new Runnable() {
               public void run()
               {
-                if (!started.get() || !GUI.getView().snappedIn())
+                // Wir machen das Fenster nicht zu, wenn:
+                // a) wir wurden noch nicht gestartet
+                // b) es ist gar nicht offen
+                // c) wir waren nicht die letzte Instanz.
+                //    Das kann passieren, wenn das Snapin von einem Folgeprozess wiederverwendet wurde, bevor es
+                //    von unserer Instanz geschlossen wurde. Beispiel: User synchronisiert die Konten, wartet
+                //    nicht, bis das Snapin automatisch zugegangen ist und schliesst es auch nicht manuell. Dann
+                //    startet er eine erneute Synchronisation - noch bevor das vorherige Snapin geschlossen wurde.
+                //    Da der vorherige Monitor auf einen finalen State ging, wird der nach 30 Sekunden versuchen,
+                //    das Snapin zu schliessen. Das hierfuer gefeuerte Event laesst sich nachtraeglich auch nicht
+                //    mehr aufhalten. Es ist per Display#timerExec bereits an SWT uebergeben worden. Stattdessen
+                //    muessen wir hier bei der Ausfuehrung des Events erkennen, ob wir die letzten waren. Sind
+                //    wir es nicht mehr, ist der Nachfolger fuer das Schliessen zustaendig.
+                if (!started.get() || !GUI.getView().snappedIn() || usage.get() != USAGES.get())
                   return;
                 try
                 {
@@ -159,6 +174,18 @@ public class BackgroundTaskMonitor extends ProgressBar
         }
       }
     });
+  }
+  
+  /**
+   * Prueft, ob es sich um einen finalen Status handelt.
+   * @param state der Status.
+   * @return true, wenn es ein finaler Status ist.
+   */
+  private boolean isFinalState(int state)
+  {
+    return state == STATUS_CANCEL ||
+           state == STATUS_DONE ||
+           state == STATUS_ERROR;
   }
 
   /**

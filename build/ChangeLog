@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * BUG: 0094 Fortschrittsfenster mit Logausgaben wurde u.U. zu früh automatisch geschlossen, wenn mehrere Tasks direkt nacheinander ausgeführt werden
   * BUG: 0093 Bei der Frage "Jameica scheint bereits zu laufen..." wurde ein zusätzliches leeres Fenster angezeigt (siehe 0079 und 0074)
   * NEW: 0092 Default-Größe und Position des Hauptfensters optimiert
   
