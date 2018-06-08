@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.system.Platform;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -99,12 +100,13 @@ public class JameicaSecurityManager extends SecurityManager
       
       File check = new File(path);
 
-      String s = check.getCanonicalPath();
-      if (!s.startsWith(this.jameicaPath))
+      if (!Platform.inProgramDir(check))
         return; // Wir sind nicht im Jameica-Ordner. Nicht relevant
-      
+
+      final String s = check.getCanonicalPath();
+
       File pluginDir    = Application.getConfig().getSystemPluginDir();
-      String pluginPath = pluginDir.getCanonicalPath();
+      String pluginPath = pluginDir.getCanonicalPath() + File.separator;
 
       // Wir sind nicht im Plugin-Ordner.
       if (!s.startsWith(pluginPath))

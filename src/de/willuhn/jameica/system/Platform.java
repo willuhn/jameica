@@ -70,7 +70,7 @@ public class Platform
    * Liefert eine plattform-spezifische Instanz.
    * @return Instanz.
    */
-  public final static Platform getInstance()
+  public static Platform getInstance()
   {
     // Haette ich gern modularer, allerdings weiss
     // ich im Moment nicht, wie das sinnvoll gaenge.
@@ -78,6 +78,22 @@ public class Platform
     if (os != null && os.toLowerCase().startsWith("mac os"))
       return new PlatformMacOS();
     return new Platform();
+  }
+  
+  /**
+   * Prueft, ob sich der angegebene Ordner oder die Datei innerhalb des Programmordners befindet.
+   * @param f der zu pruefende Ordner oder die Datei. 
+   * @return true, wenn sich der Ordner oder die Datei im Programmordner befindet.
+   * @throws IOException
+   */
+  public static boolean inProgramDir(File f) throws IOException
+  {
+    if (f == null)
+      return false;
+
+    String test    = f.getCanonicalPath();
+    String program = new File(".").getCanonicalPath();
+    return test.startsWith(program + File.separator) || test.equals(program);
   }
   
   /**
@@ -118,9 +134,8 @@ public class Platform
       // Checken, ob es sich ausserhalb des Programmordners befindet
       try
       {
-        String systemPath = new File(".").getCanonicalPath();
-        if (this.workdir.getCanonicalPath().startsWith(systemPath))
-          throw new ApplicationException("Bitte w‰hlen Sie einen Benutzer-Ordner, der sich ausserhalb des Programm-Verzeichnisses befindet.");
+        if (inProgramDir(this.workdir))
+          throw new ApplicationException("Bitte w‰hlen Sie einen Benutzer-Ordner, der sich auﬂerhalb des Programm-Verzeichnisses befindet.");
       }
       catch (IOException ioe)
       {
@@ -148,7 +163,6 @@ public class Platform
       BootstrapSettings.setAskWorkdir(true);
       throw new ApplicationException("Bitte versuchen Sie, Jameica erneut zu starten und w‰hlen Sie einen anderen Benuzterordner.",e);
     }
-    
   }
   
   /**

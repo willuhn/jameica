@@ -279,11 +279,9 @@ public class WorkdirChooser
     // Checken, ob sich der Ordner innerhalb des Programmordners befindet
     try
     {
-      path = file.getCanonicalPath();
-      String systemPath = new File(".").getCanonicalPath();
-      if (path.startsWith(systemPath))
+      if (Platform.inProgramDir(file))
       {
-        this.error.setText("Bitte w‰hlen Sie einen Benutzer-Ordner, der sich\nausserhalb des Programm-Verzeichnisses befindet.");
+        this.error.setText("Bitte w‰hlen Sie einen Benutzer-Ordner, der sich\nauﬂerhalb des Programm-Verzeichnisses befindet.");
         return null;
       }
     }
