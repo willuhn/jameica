@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * NEW: 0096 BUGZILLA 1852 - Definition von der Versionsnummern von abhängigen Plugins erweitert. Wenn z.Bsp. "1.1.2+" definiert ist, erlaubt das nur noch "1.1.2" - "1.1.(x>2)". Vorher war z.Bsp. auch "1.2" erlaubt
   * BUG: 0095 Die Prüfung, ob sich der Benutzerordner innerhalb des Programmordners befindet, war zu streng (schlug auch an, wenn der Name des Benutzerordners mit dem Namen des Programmordners beginnt)
   * BUG: 0094 Fortschrittsfenster mit Logausgaben wurde u.U. zu früh automatisch geschlossen, wenn mehrere Tasks direkt nacheinander ausgeführt werden
   * BUG: 0093 Bei der Frage "Jameica scheint bereits zu laufen..." wurde ein zusätzliches leeres Fenster angezeigt (siehe 0079 und 0074)
