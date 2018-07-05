@@ -365,7 +365,7 @@ public class GUI implements ApplicationController
         // OK, es ist etwas angegeben. Checken, ob die Werte plausibel sind
         // Sonst koennte es passieren, dass das Fenster ausserhalb des sichtbaren
         // Bereiches landet
-        Rectangle rect = getDisplay().getPrimaryMonitor().getClientArea(); // getClientArea liefert die Groesse des gesamten virtuellen Screens
+        Rectangle rect = getDisplay().getClientArea(); // getClientArea liefert die Groesse des gesamten virtuellen Screens
         if ((x < (rect.width)) && (y < rect.height))
           getShell().setLocation(x,y);
       }
