@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * BUG: 0098 Button "Übernehmen" im Auswahlfenster für den Benutzerordner wurde nicht korrekt freigegeben
   * BUG: 0097 Jameica-Fenster wurde bei Dualscreen-Setup unter bestimmten Bedingungen nicht auf dem tatsächlichen sondern auf dem primären Monitor wiederhergestellt 
   * NEW: 0096 BUGZILLA 1852 - Definition von der Versionsnummern von abhängigen Plugins erweitert. Wenn z.Bsp. "1.1.2+" definiert ist, erlaubt das nur noch "1.1.2" - "1.1.(x>2)". Vorher war z.Bsp. auch "1.2" erlaubt
   * BUG: 0095 Die Prüfung, ob sich der Benutzerordner innerhalb des Programmordners befindet, war zu streng (schlug auch an, wenn der Name des Benutzerordners mit dem Namen des Programmordners beginnt)

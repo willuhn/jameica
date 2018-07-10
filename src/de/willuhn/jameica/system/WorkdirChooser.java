@@ -121,7 +121,7 @@ public class WorkdirChooser
       this.dir.addModifyListener(new ModifyListener() {
         public void modifyText(ModifyEvent e)
         {
-          getDir(); // Anzeigen aktualisieren
+          getDir(true); // Anzeigen aktualisieren
         }
       });
       
@@ -210,7 +210,7 @@ public class WorkdirChooser
     }
     
     // Einmal initial ausloesen
-    this.getDir();
+    this.getDir(true);
 
     this.shell.pack();
     this.shell.setMinimumSize(this.shell.computeSize(WINDOW_WIDTH,SWT.DEFAULT));
@@ -250,67 +250,70 @@ public class WorkdirChooser
   
   /**
    * Liefert das ausgewaehle Benutzerverzeichnis.
+   * @param lock true, wenn der Apply-Button waehrenddessen gesperrt werden soll.
    * @return das Benutzer-Verzeichnis oder NULL, wenn ein ungueltiges Benutzerverzeichnis ausgewaehlt wurde.
    */
-  private String getDir()
+  private String getDir(boolean lock)
   {
-    if (this.dir == null || this.dir.isDisposed())
-    {
-      Logger.warn("dialog already disposed");
-      return null;
-    }
-    
-    if (this.apply != null && !this.apply.isDisposed())
-      this.apply.setEnabled(false);
-    
-    String dir = this.dir.getText();
-    
-    if (dir == null || dir.trim().length() == 0)
-    {
-      this.error.setText("Bitte w‰hlen Sie einen Ordner aus.");
-      return null;
-    }
-
     String path = null;
-
-    // Checken, ob das Verzeichnis existiert und ob wir darin schreiben koennen.
-    File file = new File(dir);
     
-    // Checken, ob sich der Ordner innerhalb des Programmordners befindet
     try
     {
-      if (Platform.inProgramDir(file))
+      if (this.dir == null || this.dir.isDisposed())
       {
-        this.error.setText("Bitte w‰hlen Sie einen Benutzer-Ordner, der sich\nauﬂerhalb des Programm-Verzeichnisses befindet.");
+        Logger.warn("dialog already disposed");
         return null;
       }
+      
+      String dir = this.dir.getText();
+      
+      if (dir == null || dir.trim().length() == 0)
+      {
+        this.error.setText("Bitte w‰hlen Sie einen Ordner aus.");
+        return null;
+      }
+
+      // Checken, ob das Verzeichnis existiert und ob wir darin schreiben koennen.
+      File file = new File(dir);
+      
+      // Checken, ob sich der Ordner innerhalb des Programmordners befindet
+      try
+      {
+        if (Platform.inProgramDir(file))
+        {
+          this.error.setText("Bitte w‰hlen Sie einen Benutzer-Ordner, der sich\nauﬂerhalb des Programm-Verzeichnisses befindet.");
+          return null;
+        }
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to check canonical path",e);
+        this.error.setText("Benutzer-Ordner nicht ausw‰hlbar: " + e.getMessage());
+        return null;
+      }
+      
+      
+      if (file.exists() && !file.canWrite())
+      {
+        this.error.setText("Sie besitzen keinen Schreibzugriff in diesem Ordner.");
+        return null;
+      }
+      
+      if (!file.exists() && !file.getParentFile().canWrite())
+      {
+        this.error.setText("Sie besitzen keinen Schreibzugriff in diesem Ordner.");
+        return null;
+      }
+      
+      this.error.setText("\n");
+      path = file.getAbsolutePath();
+      return path;
     }
-    catch (Exception e)
+    finally
     {
-      Logger.error("unable to check canonical path",e);
-      this.error.setText("Benutzer-Ordner nicht ausw‰hlbar: " + e.getMessage());
-      return null;
+      if (this.apply != null && !this.apply.isDisposed())
+        this.apply.setEnabled(!lock || path != null);
     }
-    
-    
-    if (file.exists() && !file.canWrite())
-    {
-      this.error.setText("Sie besitzen keinen Schreibzugriff in diesem Ordner.");
-      return null;
-    }
-    
-    if (!file.exists() && !file.getParentFile().canWrite())
-    {
-      this.error.setText("Sie besitzen keinen Schreibzugriff in diesem Ordner.");
-      return null;
-    }
-    
-    this.error.setText("\n");
-    
-    if (this.apply != null && !this.apply.isDisposed())
-      apply.setEnabled(true);
-    
-    return path;
   }
   
   /**
@@ -318,7 +321,7 @@ public class WorkdirChooser
    */
   private void apply()
   {
-    String dir = this.getDir();
+    String dir = this.getDir(false);
     if (dir == null)
       return;
     
