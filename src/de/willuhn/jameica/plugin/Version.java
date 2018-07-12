@@ -262,36 +262,15 @@ public class Version implements Serializable, Comparable<Version>
     
     try
     {
+      String cleaned = dependency.replaceAll("[\\(\\)\\-\\+]","");
       // Beim Parsen der Version muessen wir das "+"/"-" am Ende entfernen
-      Version required = new Version(dependency.replaceAll("[+-]",""));
+      Version required = new Version(cleaned);
 
-      // Versionsnummer ist mit einem Minus angegeben.
-      // also darf hoechstens die angegebene Versionsnummer vorhanden sein
-      if (dependency.endsWith("-"))
-      {
-        // Format 1-
-        // Major-Version muss die Anforderung erfuellen
-        if (required.minor == null && required.patch == null)
-          return this.getMajor() <= required.getMajor();
-        
-        // Format 1.1-
-        // Major-Version muss identisch sein
-        // Minor-Version muss die Anforderung erfuellen
-        if (required.patch == null)
-          return this.getMajor() == required.getMajor() &&
-                 this.getMinor() <= required.getMinor();
-
-        // Format 1.1.1-
-        // Major- und Minor-Version muessen identisch sein
-        // Patch-Version muss die Anforderung erfuellen
-        return this.getMajor() == required.getMajor() &&
-               this.getMinor() == required.getMinor() &&
-               this.getPatch() <= required.getPatch();
-      }
       
-      // Versionsnummer mit Plus, also muss die vorhandene Version
-      // gleicher ODER groesser sein
-      if (dependency.endsWith("+"))
+      // Versionsnummer ist mit einem Plus in Klammern angegeben.
+      // Dann darf nur der letzte Teil der Versionsnummer, der sich vor dem "(+)"
+      // groesser sein.
+      if (dependency.endsWith("(+)"))
       {
         // Format 1+
         // Major-Version muss die Anforderung erfuellen
@@ -312,9 +291,46 @@ public class Version implements Serializable, Comparable<Version>
                this.getMinor() == required.getMinor() &&
                this.getPatch() >= required.getPatch();
       }
+      
+      // Versionsnummer ist mit einem Minus in Klammern angegeben.
+      // Dann darf nur der letzte Teil der Versionsnummer, der sich vor dem "(-)"
+      // groesser sein.
+      if (dependency.endsWith("(-)"))
+      {
+        // Format 1-
+        // Major-Version muss die Anforderung erfuellen
+        if (required.minor == null && required.patch == null)
+          return this.getMajor() <= required.getMajor();
+        
+        // Format 1.1-
+        // Major-Version muss identisch sein
+        // Minor-Version muss die Anforderung erfuellen
+        if (required.patch == null)
+          return this.getMajor() == required.getMajor() &&
+                 this.getMinor() <= required.getMinor();
 
+        // Format 1.1.1-
+        // Major- und Minor-Version muessen identisch sein
+        // Patch-Version muss die Anforderung erfuellen
+        return this.getMajor() == required.getMajor() &&
+               this.getMinor() == required.getMinor() &&
+               this.getPatch() <= required.getPatch();
+      }
+
+      int compare = this.compareTo(required);
+
+      // Versionsnummer ist mit einem Plus ohne Klammern angegeben
+      // Dann ist jede beliebige gleiche oder groessere Versionsnummer erlaubt.
+      if (dependency.endsWith("+"))
+        return compare >= 0;
+
+        // Versionsnummer ist mit einem Minus ohne Klammern angegeben
+        // Dann ist jede beliebige gleiche oder kleinere Versionsnummer erlaubt.
+      if (dependency.endsWith("-"))
+        return compare <= 0;
+      
       // Kein Vorzeichen, dann muss die Versionsnummer exakt passen
-      return this.compareTo(required) == 0;
+      return compare == 0;
     }
     catch (Exception e)
     {
