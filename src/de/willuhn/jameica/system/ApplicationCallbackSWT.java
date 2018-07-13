@@ -298,6 +298,20 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public boolean askUser(final String question, String[] variables, final boolean storeAnswer) throws Exception
   {
+    return this.askUser(null,question,variables,storeAnswer);
+  }
+
+  /**
+   * @see de.willuhn.jameica.system.ApplicationCallback#askUser(java.lang.String, java.lang.String[], boolean)
+   * @param shell
+   * @param question
+   * @param variables
+   * @param storeAnswer
+   * @return
+   * @throws Exception
+   */
+  private boolean askUser(final Shell shell, final String question, String[] variables, final boolean storeAnswer) throws Exception
+  {
     if (question == null)
     {
       Logger.warn("<null> question!");
@@ -321,6 +335,15 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
       protected Object getData() throws Exception
       {
         return choice;
+      }
+      
+      /**
+       * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#createShell(org.eclipse.swt.widgets.Shell, int)
+       */
+      @Override
+      protected Shell createShell(Shell parent, int flags)
+      {
+        return super.createShell(shell != null ? shell : parent, flags);
       }
 
       protected void paint(Composite parent) throws Exception
@@ -382,7 +405,8 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   {
     try
     {
-      return askUser(Application.getI18n().tr("Jameica scheint bereits zu laufen. Wollen Sie den Startvorgang wirklich fortsetzen?"));
+      Shell shell = this.startupMonitor != null ? startupMonitor.getShell() : null;
+      return askUser(shell,Application.getI18n().tr("Jameica scheint bereits zu laufen. Wollen Sie den Startvorgang wirklich fortsetzen?"),null,true);
     }
     catch (Exception e)
     {

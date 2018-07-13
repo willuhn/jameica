@@ -1,5 +1,14 @@
-HEAD 2.9 (nightly)
+2018-07-13 Version 2.8.1
 
+  * BUG: 0099 BUGZILLA 1856 - Änderung in Bug 1852 betraf zu viele Plugins, Interpretation der abhängigen Versionsnummern nochmal so angepasst, dass das neue Verhalten nur gilt, wenn das "+"/"-" in Klammern angegeben ist, ansonsten gilt wieder das vorherige Verhalten
+  * BUG: 0098 Button "Übernehmen" im Auswahlfenster für den Benutzerordner wurde nicht korrekt freigegeben
+  * BUG: 0097 Jameica-Fenster wurde bei Dualscreen-Setup unter bestimmten Bedingungen nicht auf dem tatsächlichen sondern auf dem primären Monitor wiederhergestellt 
+  * NEW: 0096 BUGZILLA 1852 - Definition von der Versionsnummern von abhängigen Plugins erweitert. Wenn z.Bsp. "1.1.2+" definiert ist, erlaubt das nur noch "1.1.2" - "1.1.(x>2)". Vorher war z.Bsp. auch "1.2" erlaubt
+  * BUG: 0095 Die Prüfung, ob sich der Benutzerordner innerhalb des Programmordners befindet, war zu streng (schlug auch an, wenn der Name des Benutzerordners mit dem Namen des Programmordners beginnt)
+  * BUG: 0094 Fortschrittsfenster mit Logausgaben wurde u.U. zu früh automatisch geschlossen, wenn mehrere Tasks direkt nacheinander ausgeführt werden
+  * BUG: 0093 Bei der Frage "Jameica scheint bereits zu laufen..." wurde ein zusätzliches leeres Fenster angezeigt (siehe 0079 und 0074)
+  * NEW: 0092 Default-Größe und Position des Hauptfensters optimiert
+  
 2018-05-22 Version 2.8.0
 
   * NEW: 0091 BUGZILLA 1731 - Besserer Support für HiDPI-Monitore

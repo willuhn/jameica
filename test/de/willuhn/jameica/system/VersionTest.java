@@ -26,7 +26,7 @@ public class VersionTest
   @Test
   public void test001()
   {
-    test("1.0.0",1,0,0,"");
+    test("1.0.0",1,0,0,null);
   }
   
   /**
@@ -35,7 +35,7 @@ public class VersionTest
   @Test
   public void test002()
   {
-    test("1.2.3",1,2,3,"");
+    test("1.2.3",1,2,3,null);
   }
 
   /**
@@ -63,6 +63,65 @@ public class VersionTest
   public void test005()
   {
     Version v = new Version("1.0.0-foobar");
+    Assert.assertTrue(v.compliesTo("1(+)"));
+    Assert.assertTrue(v.compliesTo("1.0(+)"));
+    Assert.assertTrue(v.compliesTo("1.0.0(+)"));
+    Assert.assertTrue(v.compliesTo("1(-)"));
+    Assert.assertTrue(v.compliesTo("1.0(-)"));
+    Assert.assertTrue(v.compliesTo("1.0.0(-)"));
+
+    Assert.assertTrue(v.compliesTo("1.0.0"));
+
+    Assert.assertFalse(v.compliesTo("1.0.1(+)"));
+    Assert.assertFalse(v.compliesTo("0.9(-)"));
+  }
+  
+  /**
+   * 
+   */
+  @Test
+  public void test006()
+  {
+    Version v = new Version("1.2.0-foobar");
+    Assert.assertTrue(v.compliesTo("1(+)"));
+    Assert.assertFalse(v.compliesTo("2(+)"));
+    
+    Assert.assertTrue(v.compliesTo("1.1(+)"));
+    Assert.assertTrue(v.compliesTo("1.2(+)"));
+    Assert.assertFalse(v.compliesTo("1.3(+)"));
+    
+    Assert.assertTrue(v.compliesTo("1.2.0(+)"));
+    Assert.assertFalse(v.compliesTo("1.1.0(+)"));
+    Assert.assertFalse(v.compliesTo("1.2.2(+)"));
+  }
+
+  /**
+   * 
+   */
+  @Test
+  public void test007()
+  {
+    Version v = new Version("2.2.0-foobar");
+    Assert.assertTrue(v.compliesTo("2(-)"));
+    Assert.assertFalse(v.compliesTo("1(-)"));
+    
+    Assert.assertTrue(v.compliesTo("2.2(-)"));
+    Assert.assertTrue(v.compliesTo("2.3(-)"));
+    Assert.assertFalse(v.compliesTo("2.1(-)"));
+    
+    Assert.assertTrue(v.compliesTo("2.2.0(-)"));
+    Assert.assertTrue(v.compliesTo("2.2.1(-)"));
+    Assert.assertFalse(v.compliesTo("2.1.0(-)"));
+    Assert.assertFalse(v.compliesTo("1.2.2(-)"));
+  }
+
+  /**
+   * 
+   */
+  @Test
+  public void test008()
+  {
+    Version v = new Version("1.0.0-foobar");
     Assert.assertTrue(v.compliesTo("1+"));
     Assert.assertTrue(v.compliesTo("1.0+"));
     Assert.assertTrue(v.compliesTo("1.0.0+"));
@@ -80,7 +139,60 @@ public class VersionTest
    * 
    */
   @Test
-  public void test006()
+  public void test009()
+  {
+    Version v = new Version("1.2.0-foobar");
+    Assert.assertTrue(v.compliesTo("1+"));
+    Assert.assertFalse(v.compliesTo("2+"));
+    
+    Assert.assertTrue(v.compliesTo("1.1+"));
+    Assert.assertTrue(v.compliesTo("1.2+"));
+    Assert.assertFalse(v.compliesTo("1.3+"));
+    
+    Assert.assertTrue(v.compliesTo("0.2.0+"));
+    Assert.assertTrue(v.compliesTo("1.2.0+"));
+    Assert.assertTrue(v.compliesTo("1.1.0+"));
+    Assert.assertFalse(v.compliesTo("1.2.2+"));
+  }
+
+  /**
+   * 
+   */
+  @Test
+  public void test010()
+  {
+    Version v = new Version("2.2.0-foobar");
+    Assert.assertFalse(v.compliesTo("2-"));
+    Assert.assertFalse(v.compliesTo("1-"));
+    
+    Assert.assertTrue(v.compliesTo("2.2-"));
+    Assert.assertTrue(v.compliesTo("2.3-"));
+    Assert.assertFalse(v.compliesTo("2.1-"));
+    
+    Assert.assertTrue(v.compliesTo("2.2.0-"));
+    Assert.assertTrue(v.compliesTo("2.2.1-"));
+    Assert.assertFalse(v.compliesTo("2.1.0-"));
+    Assert.assertFalse(v.compliesTo("1.2.2-"));
+  }
+
+
+  /**
+   * 
+   */
+  @Test
+  public void test011()
+  {
+    Version v = new Version("2.2.0-foobar");
+    Assert.assertTrue(v.compliesTo("2.2.0"));
+    Assert.assertFalse(v.compliesTo("2.2.1"));
+    Assert.assertFalse(v.compliesTo("2.1.0"));
+  }
+
+  /**
+   * 
+   */
+  @Test
+  public void test012()
   {
     Version v1 = new Version("1.0.1-foo");
     Version v2 = new Version("1.0.2-bar");
@@ -91,7 +203,7 @@ public class VersionTest
    * 
    */
   @Test
-  public void test007()
+  public void test013()
   {
     Version v1 = new Version("1.0.1-foo");
     Version v2 = new Version("1.0.1-bar");
@@ -102,7 +214,7 @@ public class VersionTest
    * 
    */
   @Test
-  public void test008()
+  public void test014()
   {
     Version v1 = new Version("1.0.2-foo");
     Version v2 = new Version("1.0.1-bar");

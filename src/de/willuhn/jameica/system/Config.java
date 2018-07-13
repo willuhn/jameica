@@ -119,7 +119,7 @@ public final class Config
   public void setRmiPort(int port) throws ApplicationException
 	{
     if (port < 1 || port > 65535)
-      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Netzwerkbetrieb ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Netzwerkbetrieb außerhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
 
     ServerSocket s = null;
     try
@@ -219,7 +219,7 @@ public final class Config
     }
 
     if (port < 1 || port > 65535)
-      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Proxy ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für Proxy außerhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
 
     settings.setAttribute("jameica.system.proxy.port",port);
   }
@@ -269,7 +269,7 @@ public final class Config
     }
 
     if (port < 1 || port > 65535)
-      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für HTTPS-Proxy ausserhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
+      throw new ApplicationException(Application.getI18n().tr("TCP-Portnummer für HTTPS-Proxy außerhalb des gültigen Bereichs von {0} bis {1}", new String[]{""+1,""+65535}));
 
     settings.setAttribute("jameica.system.proxy.https.port",port);
   }

@@ -11,8 +11,11 @@
 package de.willuhn.jameica.plugin;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import de.willuhn.logging.Logger;
 
@@ -28,15 +31,9 @@ public class Version implements Serializable, Comparable<Version>
    */
   public final static Version NONE = new Version();
 
-  private static final Pattern SINGLE  = Pattern.compile("^(\\d+)$");
-  private static final Pattern OLD     = Pattern.compile("^(\\d+)\\.(\\d+)$");
-  private static final Pattern PATTERN = Pattern.compile("^v?(\\d+)\\.(\\d+)\\.(\\d+)-?(.*)$");
-
-  boolean oldVersion = false;
-
-  private int major     = 0;
-  private int minor     = 0;
-  private int patch     = 0;
+  private Integer major = null;
+  private Integer minor = null;
+  private Integer patch = null;
   private String suffix = null;
 
   /**
@@ -52,33 +49,38 @@ public class Version implements Serializable, Comparable<Version>
    */
   public Version(String v)
   {
-    if (v != null && v.length() > 0)
+    v = StringUtils.trimToNull(v);
+    if (v == null)
+      return;
+
+    int spos = v.indexOf("-");
+    if (spos > 0)
     {
-      final Matcher mSin = SINGLE.matcher(v);
-      final Matcher mOld = OLD.matcher(v);
-      final Matcher mNew = PATTERN.matcher(v);
-      if (mSin.matches())
-      {
-        this.oldVersion = true;
-        this.major = Integer.parseInt(mSin.group(1));
-      }
-      if (mOld.matches())
-      {
-        this.oldVersion = true;
-        this.major = Integer.parseInt(mOld.group(1));
-        this.minor = Integer.parseInt(mOld.group(2));
-      }
-      else if (mNew.matches())
-      {
-        this.major = Integer.parseInt(mNew.group(1));
-        this.minor = Integer.parseInt(mNew.group(2));
-        this.patch = Integer.parseInt(mNew.group(3));
-        this.suffix = mNew.group(4);
-      }
-      else
-      {
-        Logger.warn("unparsable version number: " + v);
-      }
+      this.suffix = v.substring(spos+1);
+      v = v.substring(0,spos);
+    }
+
+    List<String> parts = new ArrayList(Arrays.asList(v.split("\\.")));
+    if (parts.size() > 0) this.major = this.parse(parts.remove(0));
+    if (parts.size() > 0) this.minor = this.parse(parts.remove(0));
+    if (parts.size() > 0) this.patch = this.parse(parts.remove(0));
+  }
+  
+  /**
+   * Parset den Versionsteil.
+   * @param part der Versionsteil.
+   * @return der Versionsteil oder NULL, wenn er nicht geparst werden konnte.
+   */
+  private Integer parse(String part)
+  {
+    try
+    {
+      return Integer.parseInt(part);
+    }
+    catch (Exception e)
+    {
+      Logger.error("unparsable version part: " + part,e);
+      return null;
     }
   }
 
@@ -88,7 +90,7 @@ public class Version implements Serializable, Comparable<Version>
    */
   public int getMajor()
   {
-    return this.major;
+    return this.major != null ? this.major.intValue() : 0;
   }
 
   /**
@@ -106,7 +108,7 @@ public class Version implements Serializable, Comparable<Version>
    */
   public int getMinor()
   {
-    return this.minor;
+    return this.minor != null ? this.minor.intValue() : 0;
   }
 
   /**
@@ -124,7 +126,7 @@ public class Version implements Serializable, Comparable<Version>
    */
   public int getPatch()
   {
-    return this.patch;
+    return this.patch != null ? this.patch.intValue() : 0;
   }
 
   /**
@@ -155,55 +157,56 @@ public class Version implements Serializable, Comparable<Version>
   }
   
   /**
-   * Liefert true, wenn es sich um eine 3-stellige Versionsnummer mit Patch-Level handelt.
-   * @return true, wenn es sich um eine 3-stellige Versionsnummer mit Patch-Level handelt.
-   */
-  public boolean hasPatchLevel()
-  {
-    return !this.oldVersion;
-  }
-
-  /**
    * @see java.lang.Object#hashCode()
-   * Generiert von Eclipse.
    */
+  @Override
   public int hashCode()
   {
     final int prime = 31;
     int result = 1;
-    result = prime * result + this.major;
-    result = prime * result + this.minor;
-    result = prime * result + this.patch;
-    result = prime * result
-        + ((this.suffix == null) ? 0 : this.suffix.hashCode());
+    result = prime * result + ((major == null) ? 0 : major.hashCode());
+    result = prime * result + ((minor == null) ? 0 : minor.hashCode());
+    result = prime * result + ((patch == null) ? 0 : patch.hashCode());
+    result = prime * result + ((suffix == null) ? 0 : suffix.hashCode());
     return result;
   }
 
   /**
    * @see java.lang.Object#equals(java.lang.Object)
-   * Generiert von Eclipse.
    */
+  @Override
   public boolean equals(Object obj)
   {
     if (this == obj)
       return true;
     if (obj == null)
       return false;
-    if (getClass() != obj.getClass())
+    if (!(obj instanceof Version))
       return false;
     Version other = (Version) obj;
-    if (this.major != other.major)
+    if (major == null)
+    {
+      if (other.major != null)
+        return false;
+    } else if (!major.equals(other.major))
       return false;
-    if (this.minor != other.minor)
+    if (minor == null)
+    {
+      if (other.minor != null)
+        return false;
+    } else if (!minor.equals(other.minor))
       return false;
-    if (this.patch != other.patch)
+    if (patch == null)
+    {
+      if (other.patch != null)
+        return false;
+    } else if (!patch.equals(other.patch))
       return false;
-    if (this.suffix == null)
+    if (suffix == null)
     {
       if (other.suffix != null)
         return false;
-    }
-    else if (!this.suffix.equals(other.suffix))
+    } else if (!suffix.equals(other.suffix))
       return false;
     return true;
   }
@@ -213,12 +216,12 @@ public class Version implements Serializable, Comparable<Version>
    */
   public int compareTo(Version v)
   {
-    int r = this.major - v.major;
+    int r = this.getMajor() - v.getMajor();
     if (r == 0)
     {
-      r = this.minor - v.minor;
+      r = this.getMinor() - v.getMinor();
       if (r == 0)
-        r = this.patch - v.patch;
+        r = this.getPatch() - v.getPatch();
     }
     return r;
   }
@@ -232,15 +235,12 @@ public class Version implements Serializable, Comparable<Version>
     sb.append(getMajor());
     sb.append(".");
     sb.append(getMinor());
-    if (!this.oldVersion)
+    sb.append(".");
+    sb.append(getPatch());
+    if (getSuffix() != null && getSuffix().length() > 0)
     {
-      sb.append(".");
-      sb.append(getPatch());
-      if (getSuffix() != null && getSuffix().length() > 0)
-      {
-        sb.append("-");
-        sb.append(getSuffix());
-      }
+      sb.append("-");
+      sb.append(getSuffix());
     }
     return sb.toString();
   }
@@ -262,20 +262,73 @@ public class Version implements Serializable, Comparable<Version>
     
     try
     {
-      Version required = new Version(dependency.replaceAll("[+-]",""));
+      String cleaned = dependency.replaceAll("[\\(\\)\\-\\+]","");
+      // Beim Parsen der Version muessen wir das "+"/"-" am Ende entfernen
+      Version required = new Version(cleaned);
+
+      
+      // Versionsnummer ist mit einem Plus in Klammern angegeben.
+      // Dann darf nur der letzte Teil der Versionsnummer, der sich vor dem "(+)"
+      // groesser sein.
+      if (dependency.endsWith("(+)"))
+      {
+        // Format 1+
+        // Major-Version muss die Anforderung erfuellen
+        if (required.minor == null && required.patch == null)
+          return this.getMajor() >= required.getMajor();
+        
+        // Format 1.1+
+        // Major-Version muss identisch sein
+        // Minor-Version muss die Anforderung erfuellen
+        if (required.patch == null)
+          return this.getMajor() == required.getMajor() &&
+                 this.getMinor() >= required.getMinor();
+
+        // Format 1.1.1+
+        // Major- und Minor-Version muessen identisch sein
+        // Patch-Version muss die Anforderung erfuellen
+        return this.getMajor() == required.getMajor() &&
+               this.getMinor() == required.getMinor() &&
+               this.getPatch() >= required.getPatch();
+      }
+      
+      // Versionsnummer ist mit einem Minus in Klammern angegeben.
+      // Dann darf nur der letzte Teil der Versionsnummer, der sich vor dem "(-)"
+      // groesser sein.
+      if (dependency.endsWith("(-)"))
+      {
+        // Format 1-
+        // Major-Version muss die Anforderung erfuellen
+        if (required.minor == null && required.patch == null)
+          return this.getMajor() <= required.getMajor();
+        
+        // Format 1.1-
+        // Major-Version muss identisch sein
+        // Minor-Version muss die Anforderung erfuellen
+        if (required.patch == null)
+          return this.getMajor() == required.getMajor() &&
+                 this.getMinor() <= required.getMinor();
+
+        // Format 1.1.1-
+        // Major- und Minor-Version muessen identisch sein
+        // Patch-Version muss die Anforderung erfuellen
+        return this.getMajor() == required.getMajor() &&
+               this.getMinor() == required.getMinor() &&
+               this.getPatch() <= required.getPatch();
+      }
 
       int compare = this.compareTo(required);
-      
-      // Versionsnummer ist mit einem Minus angegeben.
-      // also darf hoechstens die angegebene Versionsnummer vorhanden sein
-      if (dependency.endsWith("-"))
-        return compare <= 0;
-      
-      // Versionsnummer mit Plus, also muss die vorhandene Version
-      // gleicher ODER groesser sein
+
+      // Versionsnummer ist mit einem Plus ohne Klammern angegeben
+      // Dann ist jede beliebige gleiche oder groessere Versionsnummer erlaubt.
       if (dependency.endsWith("+"))
         return compare >= 0;
 
+        // Versionsnummer ist mit einem Minus ohne Klammern angegeben
+        // Dann ist jede beliebige gleiche oder kleinere Versionsnummer erlaubt.
+      if (dependency.endsWith("-"))
+        return compare <= 0;
+      
       // Kein Vorzeichen, dann muss die Versionsnummer exakt passen
       return compare == 0;
     }

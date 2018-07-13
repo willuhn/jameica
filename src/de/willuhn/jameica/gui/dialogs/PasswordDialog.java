@@ -51,7 +51,9 @@ public class PasswordDialog extends AbstractDialog
 
   private int retries                 = 0;
   private boolean showPassword        = false;
-  
+
+  private TextInput userInput         = null;
+  private PasswordInput passwordInput = null;
   private String text                 = null;
   private String userText             = null;
   private String labelText 					  = i18n.tr("Passwort");
@@ -177,22 +179,22 @@ public class PasswordDialog extends AbstractDialog
 
     Container container = new SimpleContainer(parent);
 
-    final TextInput username = (this.userText != null && this.userText.length() > 0) ? new TextInput(null) : null;
-    if (username != null)
+    this.userInput = (this.userText != null && this.userText.length() > 0) ? new TextInput(null) : null;
+    if (this.userInput != null)
     {
-      username.setValue(this.enteredUsername != null ? this.enteredUsername : Application.getStartupParams().getUsername());
-      username.setName(this.userText);
-      username.setMandatory(true);
-      username.focus();
-      container.addInput(username);
+      this.userInput.setValue(this.enteredUsername != null ? this.enteredUsername : Application.getStartupParams().getUsername());
+      this.userInput.setName(this.userText);
+      this.userInput.setMandatory(true);
+      this.userInput.focus();
+      container.addInput(this.userInput);
     }
 
     // das Passwort
-    final PasswordInput passwordInput = new PasswordInput(this.enteredPassword);
-    passwordInput.setName(this.labelText);
-    passwordInput.setShowPassword(this.showPassword);
-    if (username == null) passwordInput.focus();
-    container.addInput(passwordInput);
+    this.passwordInput = new PasswordInput(this.enteredPassword);
+    this.passwordInput.setName(this.labelText);
+    this.passwordInput.setShowPassword(this.showPassword);
+    if (this.userInput == null) this.passwordInput.focus();
+    container.addInput(this.passwordInput);
     
     // Fehlertext
     this.error = new LabelInput(this.errorText);
@@ -206,7 +208,7 @@ public class PasswordDialog extends AbstractDialog
 
     // Listener, welcher passwordModified() aufruft wenn sich das
     // passwort aendert (fuer Erweiterungen).
-    ((Text)passwordInput.getControl()).addModifyListener(
+    ((Text)this.passwordInput.getControl()).addModifyListener(
         new ModifyListener() {
           public void modifyText(ModifyEvent e)
           {
@@ -222,9 +224,9 @@ public class PasswordDialog extends AbstractDialog
       {
         retries++;
 
-        if (username != null)
+        if (userInput != null)
         {
-          String u = (String) username.getValue();
+          String u = (String) userInput.getValue();
           if (!checkUsername(u))
             return;
           enteredUsername = u;
@@ -350,7 +352,7 @@ public class PasswordDialog extends AbstractDialog
    */
   public String getUsername()
   {
-    return this.enteredUsername;
+    return this.userInput != null ? (String) this.userInput.getValue() : this.enteredUsername;
   }
   
   /**
@@ -360,6 +362,8 @@ public class PasswordDialog extends AbstractDialog
   public void setUsername(String username)
   {
     this.enteredUsername = username;
+    if (this.userInput != null)
+      this.userInput.setValue(this.enteredUsername);
   }
   
   /**
@@ -369,5 +373,7 @@ public class PasswordDialog extends AbstractDialog
   public void setPassword(String password)
   {
     this.enteredPassword = password;
+    if (this.passwordInput != null)
+      this.passwordInput.setValue(this.enteredPassword);
   }
 }

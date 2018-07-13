@@ -245,7 +245,7 @@ public class GUI implements ApplicationController
 
       ////////////////////////////////////////////////////////////////////////
       // init sashes
-      this.left.setWeights(new int[] {SETTINGS.getInt("navi.height.0",7), SETTINGS.getInt("navi.height.1",3)});
+      this.left.setWeights(new int[] {SETTINGS.getInt("navi.height.0",8), SETTINGS.getInt("navi.height.1",5)});
       this.left.addDisposeListener(new DisposeListener() {
         public void widgetDisposed(DisposeEvent e)
         {
@@ -340,10 +340,10 @@ public class GUI implements ApplicationController
   {
     ////////////////////////////
     // size and position restore
-    int x      = SETTINGS.getInt("window.x", 0);
-    int y      = SETTINGS.getInt("window.y", 0);
-    int width  = SETTINGS.getInt("window.width", 920);
-    int height = SETTINGS.getInt("window.height", 720);
+    int x      = SETTINGS.getInt("window.x", -1); // Position ueberlassen wir beim ersten Start dem Desktop
+    int y      = SETTINGS.getInt("window.y", -1);
+    int width  = SETTINGS.getInt("window.width", 1000);
+    int height = SETTINGS.getInt("window.height", 780);
 
     // BUGZILLA 194
     boolean maximized = SETTINGS.getBoolean("window.maximized", false);
@@ -365,7 +365,7 @@ public class GUI implements ApplicationController
         // OK, es ist etwas angegeben. Checken, ob die Werte plausibel sind
         // Sonst koennte es passieren, dass das Fenster ausserhalb des sichtbaren
         // Bereiches landet
-        Rectangle rect = getDisplay().getPrimaryMonitor().getClientArea(); // getClientArea liefert die Groesse des gesamten virtuellen Screens
+        Rectangle rect = getDisplay().getClientArea(); // getClientArea liefert die Groesse des gesamten virtuellen Screens
         if ((x < (rect.width)) && (y < rect.height))
           getShell().setLocation(x,y);
       }
