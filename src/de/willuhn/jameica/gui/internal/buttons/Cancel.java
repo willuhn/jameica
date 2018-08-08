@@ -34,17 +34,8 @@ public class Cancel extends Button
        */
       public void handleAction(Object context) throws ApplicationException
       {
-        throw new OperationCanceledException("operation cancelled");
+        throw new OperationCanceledException(Application.getI18n().tr("Vorgang abgebrochen"));
       }
     },null,false,"process-stop.png");
   }
 }
-
-
-/**********************************************************************
- * $Log: Cancel.java,v $
- * Revision 1.1  2009/10/15 11:50:13  willuhn
- * @N Neue Icons
- * @N Neue Default-Action "Cancel"
- *
- **********************************************************************/
