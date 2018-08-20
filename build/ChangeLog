@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * BUG: 0100 Aktualisierte H2-Version h2-1.4.197. Version 1.4.193 konnte beim Update auf Hibiscus 2.8.4 u.U. den Fehler "Concurrent update in table "SYS_ID": another transaction has updated or deleted the same row [90131-193]" auslösen.
   * BUG: 0099 BUGZILLA 1856 - Änderung in Bug 1852 betraf zu viele Plugins, Interpretation der abhängigen Versionsnummern nochmal so angepasst, dass das neue Verhalten nur gilt, wenn das "+"/"-" in Klammern angegeben ist, ansonsten gilt wieder das vorherige Verhalten
   * BUG: 0098 Button "Übernehmen" im Auswahlfenster für den Benutzerordner wurde nicht korrekt freigegeben
   * BUG: 0097 Jameica-Fenster wurde bei Dualscreen-Setup unter bestimmten Bedingungen nicht auf dem tatsächlichen sondern auf dem primären Monitor wiederhergestellt 
