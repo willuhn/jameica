@@ -40,5 +40,4 @@ fi
 BASEDIR=$(dirname "$0")
 cd "${BASEDIR}"
 
-export JDK_JAVA_OPTIONS='--add-modules=java.se.ee'
 exec "${JAVACMD}" -Xdock:name="Jameica" -Xmx512m -Xss64m -XstartOnFirstThread -jar "${BASEDIR}/jameica-macos64.jar" -o "$@"  >/dev/null

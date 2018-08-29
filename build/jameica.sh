@@ -18,5 +18,4 @@ else
 	archsuffix=""
 fi
 
-export JDK_JAVA_OPTIONS='--add-modules=java.se.ee'
 LIBOVERLAY_SCROLLBAR=0 GDK_NATIVE_WINDOWS=1 SWT_GTK3=0 exec java -Djava.net.preferIPv4Stack=true -Xmx512m -Xss64m $_JCONSOLE -jar jameica-linux${archsuffix}.jar $@

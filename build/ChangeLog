@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * NEW: 0101 Support für Java 11 (Umgebungsvariable "JDK_JAVA_OPTIONS='--add-modules=java.se.ee'" entfernt, Jameica liefert die nötigen JAR-Dateien in lib/java_ee jetzt selbst mit)
   * BUG: 0100 Aktualisierte H2-Version h2-1.4.197. Version 1.4.193 konnte beim Update auf Hibiscus 2.8.4 u.U. den Fehler "Concurrent update in table "SYS_ID": another transaction has updated or deleted the same row [90131-193]" auslösen.
   
 2018-07-13 Version 2.8.1

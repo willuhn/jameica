@@ -11,5 +11,4 @@ cd "$dir"
 
 # https://www.willuhn.de/bugzilla/show_bug.cgi?id=798
 
-export JDK_JAVA_OPTIONS='--add-modules=java.se.ee'
 java -Djava.net.preferIPv4Stack=true -Xmx512m $_JCONSOLE -jar jameica-linux.jar -d $@
