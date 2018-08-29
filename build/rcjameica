@@ -19,8 +19,6 @@ link=${base#*[SK][0-9][0-9]}
 JAVA=`which java`
 BASEDIR=`dirname $0`
 
-export JDK_JAVA_OPTIONS='--add-modules=java.se.ee'
-
 ### Please do not edit anything below this line! ########################
 #                                                                       #
 
