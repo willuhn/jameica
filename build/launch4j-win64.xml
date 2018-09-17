@@ -14,7 +14,6 @@
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <icon>/work/willuhn/git/hibiscus/icons/hibiscus.ico</icon>
-  <var>JDK_JAVA_OPTIONS=&apos;--add-modules=java.se.ee&apos;</var>
   <jre>
     <path></path>
     <bundledJre64Bit>false</bundledJre64Bit>
