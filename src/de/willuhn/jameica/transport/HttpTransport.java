@@ -11,17 +11,22 @@
 package de.willuhn.jameica.transport;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import de.willuhn.annotation.Lifecycle;
 import de.willuhn.annotation.Lifecycle.Type;
 import de.willuhn.io.IOUtil;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -43,6 +48,7 @@ public class HttpTransport implements Transport
   }
   
   private URL url = null;
+  private URL target = null;
   
   /**
    * @see de.willuhn.jameica.transport.Transport#init(java.net.URL)
@@ -66,7 +72,7 @@ public class HttpTransport implements Transport
         return file.exists();
       }
 
-      HttpURLConnection conn = (HttpURLConnection) this.url.openConnection();
+      HttpURLConnection conn = this.getConnection();
       conn.connect();
       return conn.getResponseCode() == HttpURLConnection.HTTP_OK;
     }
@@ -91,7 +97,7 @@ public class HttpTransport implements Transport
         return file.length();
       }
 
-      URLConnection conn = this.url.openConnection();
+      URLConnection conn = this.getConnection();
       conn.connect();
       return conn.getContentLength();
     }
@@ -114,7 +120,7 @@ public class HttpTransport implements Transport
     if (os == null)
       throw new ApplicationException(i18n.tr("Kein Download-Ziel angegeben"));
     
-    URLConnection conn = this.url.openConnection();
+    URLConnection conn = this.getConnection();
     conn.connect();
     
     if (monitor != null) monitor.setStatusText(i18n.tr("Download von {0}",this.url.toString()));
@@ -188,6 +194,67 @@ public class HttpTransport implements Transport
     {
       IOUtil.close(is,os);
     }
+  }
+  
+  /**
+   * Liefert die HTTP-Connection.
+   * @return die HTTP-Connection.
+   * @throws Exception
+   */
+  private HttpURLConnection getConnection() throws Exception
+  {
+    // Wir machen die URL-Aufloesung der Redirects nicht jedesmal neu.
+    if (this.target != null)
+      return (HttpURLConnection) this.target.openConnection();
+    
+    
+    URL curr = this.url;
+    
+    // BUGZILLA 1867 Maximal 10 Redirects
+    for (int i=0;i<10;++i)
+    {
+      HttpURLConnection conn = (HttpURLConnection) curr.openConnection();
+      conn.setInstanceFollowRedirects(false); // Wir machen die Redirects selbst
+
+      int code = conn.getResponseCode();
+       
+      if (code != HttpURLConnection.HTTP_MOVED_PERM && code != HttpURLConnection.HTTP_MOVED_TEMP)
+      {
+        // Wir haben eine finale URL
+        this.target = curr;
+        return conn;
+      }
+      
+      // Wir haben einen HTTP-Code fuer eine Umleitung. Checken, ob wir eine neue Redirect-Ziel haben
+      String loc = StringUtils.trimToNull(conn.getHeaderField("Location"));
+         
+      // Wir haben zwar einen HTTP-Code fuer eine Umleitung. Wir haben aber gar keine
+      // neue URL erhalten. Dann koennen wir auch nichts machen.
+      if (loc == null)
+      {
+        Logger.warn("got http status moved (" + code + ") but no location");
+        return conn;
+      }
+      
+      URL prev = curr;
+      loc = URLDecoder.decode(loc, "UTF-8");
+      curr = new URL(this.url, loc); // fuer relative Location-Header
+      
+      // Wir akzeptieren die Umleitung nur dann, wenn der Hostname identisch geblieben ist.
+      // Umleitungen auf andere Server akzeptieren wir aus Sicherheitsgruenden nicht
+      String s1 = this.url.getHost();
+      String s2 = curr.getHost();
+      if (!StringUtils.equalsIgnoreCase(s1,s2))
+      {
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Umleitung von {0} auf {1} aus Sicherheitsgründen nicht erlaubt",s1,s2),StatusBarMessage.TYPE_ERROR));
+        throw new SecurityException("got http redirect with change to another host, not permitted for security reasons [source: " + s1 + ", target: " + s2 + "]");
+      }
+      
+      // naechster Versuch.
+      Logger.info("got redirect from " + prev + " to " + curr);
+    }
+    
+    throw new IOException("too many redirects for url: " + this.url);
   }
 
   /**

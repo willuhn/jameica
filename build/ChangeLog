@@ -1,5 +1,7 @@
 HEAD 2.9 (nightly)
 
+  * NEW: 0102 BUGZILLA 1867 - HTTP-Redirects (für Wechsel von HTTP auf HTTPS) berücksichtigen
+
 2018-09-17 Version 2.8.2
 
   * NEW: 0101 Support für Java 11 (Umgebungsvariable "JDK_JAVA_OPTIONS='--add-modules=java.se.ee'" entfernt, Jameica liefert die nötigen JAR-Dateien in lib/java_ee jetzt selbst mit)
