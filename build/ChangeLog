@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * NEW: Annotation "@Resource" unterstützt jetzt auch Services des Typs "Bootable".
   * NEW: 0102 BUGZILLA 1867 - HTTP-Redirects (für Wechsel von HTTP auf HTTPS) berücksichtigen
 
 2018-09-17 Version 2.8.2

@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 
 import de.willuhn.annotation.Inject;
 import de.willuhn.annotation.Injector;
+import de.willuhn.boot.Bootable;
 import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
@@ -108,9 +109,17 @@ public class InjectHandlerResource implements InjectHandler
         // Anhand des Typs suchen - aber nur, wenn wir die Abhaengigkeit nicht schon haben
         if (dep == null && c != null)
         {
-          Logger.trace("  inject bean " + c.getSimpleName() + " into " + name);
-          BeanService service = Application.getBootLoader().getBootable(BeanService.class);
-          dep = service.get(c); // aufloesen
+          if (isBootable(c))
+          {
+            Logger.trace("  inject bootable " + c.getSimpleName() + " into " + name);
+            dep = Application.getBootLoader().getBootable(c); // direkt als Bootable laden
+          }
+          else
+          {
+            Logger.trace("  inject bean " + c.getSimpleName() + " into " + name);
+            BeanService service = Application.getBootLoader().getBootable(BeanService.class);
+            dep = service.get(c); // aufloesen per Beanservice
+          }
         }
         
         if (dep == null) // nichts gefunden
@@ -131,6 +140,27 @@ public class InjectHandlerResource implements InjectHandler
         }
       }
     },Resource.class);
+  }
+  
+  /**
+   * Prueft, ob die Klasse ein Bootable ist.
+   * Die Funktion sucht nur direkt in der Klasse. Nicht in den Elternklassen.
+   * @param type der Typ.
+   * @return true, wenn es ein Bootable ist.
+   */
+  private static boolean isBootable(Class type)
+  {
+    Class[] interfaces = type.getInterfaces();
+    if (interfaces == null || interfaces.length == 0)
+      return false;
+    
+    for (Class c:interfaces)
+    {
+      if (c.equals(Bootable.class))
+        return true;
+    }
+    
+    return false;
   }
 }
 
