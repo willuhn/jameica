@@ -21,6 +21,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -302,10 +303,19 @@ public class SplashScreen implements ProgressMonitor, Runnable
       {
         if (bar == null || bar.isDisposed() || display == null || display.isDisposed())
           return;
-        Logger.trace("startup completed: " + percentComplete + " %");
-        bar.setSelection(percentComplete);
-        bar.update();
-        display.readAndDispatch();
+        try
+        {
+          Logger.trace("startup completed: " + percentComplete + " %");
+          bar.setSelection(percentComplete);
+          bar.update();
+          display.readAndDispatch();
+        }
+        catch (SWTException e)
+        {
+          // Falls genau in dem Moment das Display disposed wird
+          // Siehe https://jverein-forum.de/viewtopic.php?f=5&t=4513
+          Logger.debug("display already disposed");
+        }
       }
     });
   }
