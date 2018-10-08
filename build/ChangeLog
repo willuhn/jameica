@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * NEW: MySQL-Treiber von 5.1.41 auf 5.1.47 aktualisiert
   * CHG: Settings nur noch maximal 1 mal pro Sekunde neu laden
   * NEW: Annotation "@Resource" unterstützt jetzt auch Services des Typs "Bootable".
   * NEW: 0102 BUGZILLA 1867 - HTTP-Redirects (für Wechsel von HTTP auf HTTPS) berücksichtigen
