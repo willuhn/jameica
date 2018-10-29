@@ -261,7 +261,7 @@ public class PluginListPart implements Part
       c.addText("",true);
     }
     ButtonArea buttons = new ButtonArea();
-    buttons.addButton(new Button(i18n.tr("Neues Plugin installieren..."),new PluginInstall(),null,false,"emblem-package.png"));
+    buttons.addButton(new Button(i18n.tr("Plugin manuell installieren..."),new PluginInstall(),null,false,"emblem-package.png"));
     buttons.addButton(new Button(i18n.tr("Repositories bearbeiten..."),new RepositoryEdit(),null,false,"document-properties.png"));
     buttons.addButton(new Button(i18n.tr("Automatische Updates konfigurieren..."),new UpdateEdit(),null,false,"view-refresh.png"));
     buttons.paint(comp);
