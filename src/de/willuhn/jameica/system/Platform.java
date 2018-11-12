@@ -161,7 +161,7 @@ public class Platform
     {
       Logger.warn("resetting \"ask\" flag in .jameica.properties");
       BootstrapSettings.setAskWorkdir(true);
-      throw new ApplicationException("Bitte versuchen Sie, Jameica erneut zu starten und wählen Sie einen anderen Benuzterordner.",e);
+      throw new ApplicationException("Bitte versuchen Sie, Jameica erneut zu starten und wählen Sie einen anderen Benutzerordner.",e);
     }
   }
   
