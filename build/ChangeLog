@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * BUG: Kleiner Darstellungsfehler: Beim mehrfachen Überfahren der Panelbuttons mit der Maus oben rechts wurde unter dem Button eine 1 Pixel schmale dunkle Linie angezeigt
   * BUG: Die Bibliothek "oro" fehlte im Ordner "lib/velocity". Dadurch kam es zu einer ClassNotFoundException in SynTAX beim Erstellen der IDEA-Auswertung
   * BUG: Zoom-Faktor bei HiDPI-Displays wurde beim Druck von Dokumenten via de.willuhn.jameica.gui.internal.action.Print nicht deaktiviert, sodass Dokumente zu gross gedruckt wurden
   * NEW: MySQL-Treiber von 5.1.41 auf 5.1.47 aktualisiert

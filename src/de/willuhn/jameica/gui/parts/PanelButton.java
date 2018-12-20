@@ -211,8 +211,7 @@ public class PanelButton implements Part
 
     // Einmal mit weiss dahinter malen, weil das Bild Transparenz besitzt
     gc.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-    gc.fillRectangle(size);
-    
+    gc.fillRectangle(0,0,this.width,this.height);
     gc.drawImage(image,0,0,size.width,size.height,0,0,this.width,this.height);
   }
   
