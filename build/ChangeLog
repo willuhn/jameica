@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * NEW: Update auf SWT 4.9 (in 4.10 gibt es keine 32Bit-Unterstützung mehr)
   * NEW: Hostname für das beim ersten Start zu erstellende System-Zertifikat kann jetzt per Konfigurationsdatei vorgegeben werden (Parameter "jameica.hostname" in "de.willuhn.jameica.system.ApplicationCallback.properties") - siehe https://homebanking-hilfe.de/forum/topic.php?p=141994#real141994
   * CHG: JVM-Parameter "-Dswt.autoScale=quarter" bei den Windows-Launchern hinzugefuegt - siehe https://github.com/willuhn/jameica/commit/82d253c0e1aec918b98eb378027ebf2d2e5fb411
   * BUG: Kleiner Darstellungsfehler: Beim mehrfachen Überfahren der Panelbuttons mit der Maus oben rechts wurde unter dem Button eine 1 Pixel schmale dunkle Linie angezeigt
