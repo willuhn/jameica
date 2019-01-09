@@ -33,27 +33,21 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
   private String hostname = null;
   
   /**
-   * ct.
-   */
-  public AbstractApplicationCallback()
-  {
-    // Migration: Loeschen der Checksummen - werden nicht mehr gebraucht
-    if (settings.getString("jameica.system.callback.checksum",null) != null)
-    {
-      Logger.info("removing obsolete checksums");
-      settings.setAttribute("jameica.system.callback.checksum",(String) null);
-      settings.setAttribute("jameica.system.callback.checksum.salt",(String) null);
-    }
-  }
-
-  /**
    * @see de.willuhn.jameica.system.ApplicationCallback#getHostname()
    */
   public String getHostname() throws Exception
   {
     if (StringUtils.trimToNull(this.hostname) != null)
       return this.hostname;
-    
+
+    // Checken, ob wir einen gespeicherten Hostnamen haben
+    this.hostname = this.settings.getString("jameica.hostname",null);
+    if (this.hostname != null && this.hostname.length() > 0)
+    {
+      Logger.info("using manually configured hostname: " + this.hostname);
+      return this.hostname;
+    }
+
     try
     {
       InetAddress a = InetAddress.getLocalHost();
@@ -75,11 +69,6 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
       Logger.warn("unable to determine hostname, asking user: " + e.toString());
       Logger.write(Level.DEBUG,"stacktrace for debugging purpose",e);
     }
-    
-    // Checken, ob wir einen gespeicherten Hostnamen haben
-    this.hostname = this.settings.getString("jameica.hostname",null);
-    if (this.hostname != null && this.hostname.length() > 0)
-      return this.hostname;
     
     // BUGZILLA 26 http://www.willuhn.de/bugzilla/show_bug.cgi?id=26
     String question =

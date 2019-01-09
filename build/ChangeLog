@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * NEW: Hostname für das beim ersten Start zu erstellende System-Zertifikat kann jetzt per Konfigurationsdatei vorgegeben werden (Parameter "jameica.hostname" in "de.willuhn.jameica.system.ApplicationCallback.properties") - siehe https://homebanking-hilfe.de/forum/topic.php?p=141994#real141994
   * CHG: JVM-Parameter "-Dswt.autoScale=quarter" bei den Windows-Launchern hinzugefuegt - siehe https://github.com/willuhn/jameica/commit/82d253c0e1aec918b98eb378027ebf2d2e5fb411
   * BUG: Kleiner Darstellungsfehler: Beim mehrfachen Überfahren der Panelbuttons mit der Maus oben rechts wurde unter dem Button eine 1 Pixel schmale dunkle Linie angezeigt
   * BUG: Die Bibliothek "oro" fehlte im Ordner "lib/velocity". Dadurch kam es zu einer ClassNotFoundException in SynTAX beim Erstellen der IDEA-Auswertung
