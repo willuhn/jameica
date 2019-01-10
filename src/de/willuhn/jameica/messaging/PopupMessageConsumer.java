@@ -43,11 +43,15 @@ public class PopupMessageConsumer implements MessageConsumer
       s1 = msg.getTitle();
       s2 = msg.getText();
     }
-    else
+    else if (message instanceof QueryMessage)
     {
       QueryMessage msg = (QueryMessage) message;
       s1 = msg.getName();
       s2 = msg.getData() != null ? msg.getData().toString() : null;
+    }
+    else
+    {
+      s2 = message.toString();
     }
     
     final String title = StringUtils.trimToEmpty(s1);

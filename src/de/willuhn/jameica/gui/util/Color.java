@@ -96,6 +96,11 @@ public class Color {
    */
   public final static Color MANDATORY_BG = new Color("color.mandatory.bg",  new RGB(255,240,220));
 
+  /**
+   * Hintergrundfarbe von eigenen Tooltips.
+   */
+  public final static Color TOOLTIP_BG = new Color("color.tooltip.bg", new RGB(239,230,159));
+
   private String name;
 	private RGB value;
 	private RGB defaultValue;

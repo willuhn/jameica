@@ -13,6 +13,7 @@ package de.willuhn.jameica.gui.util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -34,7 +35,7 @@ import de.willuhn.logging.Logger;
 public class Popup
 {
   private final static int ALIGN_DEFAULT = SWT.BOTTOM | SWT.RIGHT;
-  private final static int ALPHA = 210;
+  private final static int ALPHA = 180;
   
   private Shell shell    = null;
   private String title   = null;
@@ -42,6 +43,9 @@ public class Popup
   private Point location = null;
   private int align      = ALIGN_DEFAULT;
   private int timeout    = -1;
+  
+  private Color bg = null;
+  private Color fg = null;
   
   /**
    * ct
@@ -109,12 +113,24 @@ public class Popup
     // Schliessen, wenn schon eines offen ist.
     if (this.shell != null)
       this.close();
-    
-    Display display = GUI.getDisplay();
+
+    final Display display = GUI.getDisplay();
+
+    // Wenn die konfigurierten Vorder- und Hintergrundfarben fehlen oder identisch sind,
+    // verwenden wir eigene
+    this.bg = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+    this.fg = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+    if (this.bg == null || this.fg == null || this.bg.equals(this.fg))
+    {
+      this.bg = de.willuhn.jameica.gui.util.Color.TOOLTIP_BG.getSWTColor();
+      this.fg = de.willuhn.jameica.gui.util.Color.BLACK.getSWTColor();
+    }
     
     this.shell = new Shell(GUI.getShell(), SWT.ON_TOP | SWT.TOOL);
     this.shell.setAlpha(ALPHA);
-    this.shell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+    
+    if (this.bg != null)
+      this.shell.setBackground(this.bg);
   
     GridLayout gl = new GridLayout(2,false);
     gl.horizontalSpacing = 5;
@@ -123,13 +139,13 @@ public class Popup
     
     Composite comp = new Composite(this.shell,SWT.NONE);
     comp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-    comp.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+    if (this.bg != null) comp.setBackground(this.bg);
     comp.setBackgroundMode(SWT.INHERIT_FORCE);
     paint(comp);
   
     Button ok = new Button(this.shell,SWT.BORDER);
     ok.setLayoutData(new GridData(GridData.END));
-    ok.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+    if (this.bg != null) ok.setBackground(this.bg);
     ok.setText("  OK  ");
     ok.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e)
@@ -208,14 +224,14 @@ public class Popup
       Label label = new Label(comp, SWT.NONE);
       label.setLayoutData(new RowData());
       label.setFont(Font.BOLD.getSWTFont());
-      label.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-      label.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+      if (this.fg != null) label.setForeground(this.fg);
+      if (this.bg != null) label.setBackground(this.bg);
       label.setText(this.title);
     }
     Label label = new Label(comp, SWT.NONE);
     label.setLayoutData(new RowData());
-    label.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-    label.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+    if (this.fg != null) label.setForeground(this.fg);
+    if (this.bg != null) label.setBackground(this.bg);
     label.setText(text == null ? "" : text);
   }
 }
