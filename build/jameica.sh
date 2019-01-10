@@ -20,4 +20,4 @@ fi
 
 # Zur Anpassung der Skalierung auf HiDPI-Displays kann der Parameter "-Dswt.autoScale" verwendet werden.
 # Siehe https://www.willuhn.de/wiki/doku.php?id=develop:highdpi
-LIBOVERLAY_SCROLLBAR=0 GDK_NATIVE_WINDOWS=1 SWT_GTK3=0 exec java -Djava.net.preferIPv4Stack=true -Xmx512m -Xss64m $_JCONSOLE -jar jameica-linux${archsuffix}.jar $@
+LIBOVERLAY_SCROLLBAR=0 GDK_NATIVE_WINDOWS=1 SWT_GTK3=1 exec java -Djava.net.preferIPv4Stack=true -Xmx512m -Xss64m $_JCONSOLE -jar jameica-linux${archsuffix}.jar $@
