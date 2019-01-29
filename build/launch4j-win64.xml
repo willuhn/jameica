@@ -22,15 +22,15 @@
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
     <runtimeBits>64/32</runtimeBits>
-    <opt>-Xmx512m -Xss64m -Djava.net.preferIPv4Stack=true</opt>
+    <opt>-Xmx512m -Xss64m -Djava.net.preferIPv4Stack=true -Dswt.autoScale=quarter</opt>
   </jre>
   <versionInfo>
-    <fileVersion>2.6.6.0</fileVersion>
-    <txtFileVersion>2.6.6</txtFileVersion>
+    <fileVersion>2.8.2.0</fileVersion>
+    <txtFileVersion>2.8.2</txtFileVersion>
     <fileDescription>Jameica</fileDescription>
     <copyright>Olaf Willuhn</copyright>
-    <productVersion>2.6.6.0</productVersion>
-    <txtProductVersion>2.6.6</txtProductVersion>
+    <productVersion>2.8.2.0</productVersion>
+    <txtProductVersion>2.8.2</txtProductVersion>
     <productName>Jameica</productName>
     <companyName>Olaf Willuhn</companyName>
     <internalName>jameica-win64</internalName>

@@ -27,9 +27,11 @@ dependencies {
   compile 'mysql:mysql-connector-java:5.+'
   compile 'be.cyberelf.nanoxml:nanoxml:+'
   compile 'org.apache.velocity:velocity:+'
+  compile 'oro:oro:+'
+  
 }
 
 task download(type: Copy) {
-  into "lib"
+  into "lib/download"
   from configurations.runtime
 }

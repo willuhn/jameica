@@ -42,5 +42,6 @@
 	<classpathentry kind="lib" path="lib/java_ee/jaxb-runtime-2.4.0-b180725.0644.jar"/>
 	<classpathentry kind="lib" path="lib/java_ee/activation-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/java_ee/txw2-20110809.jar"/>
+	<classpathentry kind="lib" path="lib/velocity/oro-2.0.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,3 +1,18 @@
+2019-01-30 Version 2.8.3
+
+  * CHG: Popups verwenden jetzt als Fallback eigene Farben für Vorder- und Hintergrund, wenn keine Systemfarben vorgegeben sind oder Vorder- und Hintergrund identisch wären
+  * CHG: Jameica verwendet jetzt unter Linux per Default GTK3 (siehe "SWT_GTK3=1" in jameica.sh)
+  * NEW: Update auf SWT 4.9 (in 4.10 gibt es keine 32Bit-Unterstützung mehr)
+  * NEW: Hostname für das beim ersten Start zu erstellende System-Zertifikat kann jetzt per Konfigurationsdatei vorgegeben werden (Parameter "jameica.hostname" in "de.willuhn.jameica.system.ApplicationCallback.properties") - siehe https://homebanking-hilfe.de/forum/topic.php?p=141994#real141994
+  * CHG: JVM-Parameter "-Dswt.autoScale=quarter" bei den Windows-Launchern hinzugefuegt - siehe https://github.com/willuhn/jameica/commit/82d253c0e1aec918b98eb378027ebf2d2e5fb411
+  * BUG: Kleiner Darstellungsfehler: Beim mehrfachen Überfahren der Panelbuttons mit der Maus oben rechts wurde unter dem Button eine 1 Pixel schmale dunkle Linie angezeigt
+  * BUG: Die Bibliothek "oro" fehlte im Ordner "lib/velocity". Dadurch kam es zu einer ClassNotFoundException in SynTAX beim Erstellen der IDEA-Auswertung
+  * BUG: Zoom-Faktor bei HiDPI-Displays wurde beim Druck von Dokumenten via de.willuhn.jameica.gui.internal.action.Print nicht deaktiviert, sodass Dokumente zu gross gedruckt wurden
+  * NEW: MySQL-Treiber von 5.1.41 auf 5.1.47 aktualisiert
+  * CHG: Settings nur noch maximal 1 mal pro Sekunde neu laden
+  * NEW: Annotation "@Resource" unterstützt jetzt auch Services des Typs "Bootable".
+  * NEW: 0102 BUGZILLA 1867 - HTTP-Redirects (für Wechsel von HTTP auf HTTPS) berücksichtigen
+
 2018-09-17 Version 2.8.2
 
   * NEW: 0101 Support für Java 11 (Umgebungsvariable "JDK_JAVA_OPTIONS='--add-modules=java.se.ee'" entfernt, Jameica liefert die nötigen JAR-Dateien in lib/java_ee jetzt selbst mit)

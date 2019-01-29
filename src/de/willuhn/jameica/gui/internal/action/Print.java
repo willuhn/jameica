@@ -10,20 +10,20 @@
 
 package de.willuhn.jameica.gui.internal.action;
 
-import net.sf.paperclips.PaperClips;
-import net.sf.paperclips.PrintJob;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.PrinterData;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.print.PrintSupport;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
+import net.sf.paperclips.PaperClips;
+import net.sf.paperclips.PrintJob;
 
 /**
  * Aktion zum Drucken von Daten.
@@ -41,20 +41,33 @@ public class Print implements Action
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Bitte wählen Sie die zu druckenden Daten aus"),StatusBarMessage.TYPE_ERROR));
       return;
     }
-    
-    PrintJob job = ((PrintSupport) context).print();
-    
-    PrintDialog dialog = new PrintDialog(GUI.getShell(), SWT.NONE);
-    dialog.setText(Application.getI18n().tr("Drucken"));
-    PrinterData printerData = dialog.open();
-    if (printerData == null)
+
+    final String key = "swt.autoScale";
+    final String backup = System.getProperty(key);
+    final int zoom = SWTUtil.getDeviceZoom();
+    try
     {
-      Logger.info("no printer choosen");
-      return;
+      PrintJob job = ((PrintSupport) context).print();
+      
+      PrintDialog dialog = new PrintDialog(GUI.getShell(), SWT.NONE);
+      dialog.setText(Application.getI18n().tr("Drucken"));
+      PrinterData printerData = dialog.open();
+      if (printerData == null)
+      {
+        Logger.info("no printer choosen");
+        return;
+      }
+      
+      if (zoom > 100)
+        System.setProperty(key,"100"); // Scaling kurz auf 100% setzen
+      PaperClips.print(job, printerData);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Gedruckt an \"{0}\"",printerData.name),StatusBarMessage.TYPE_SUCCESS));
     }
-    
-    PaperClips.print(job, printerData);
-    Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Gedruckt an \"{0}\"",printerData.name),StatusBarMessage.TYPE_SUCCESS));
+    finally
+    {
+      if (zoom > 100 && backup != null)
+        System.setProperty(key,backup); // Jetzt wieder auf den vorherigen Wert setzen
+    }
   }
 }
 
