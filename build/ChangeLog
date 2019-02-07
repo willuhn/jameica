@@ -1,5 +1,9 @@
 HEAD 2.9 (nightly)
 
+  * BUG: In der Liste der verfügbaren Plugins kam es zu einem Fehler, wenn in der Liste der Plugins Scripting-Plugins enthalten waren - Proxy.newProxyInstance hat scheinbar in Java das Verhalten geändert, wenn der Classloader NULL ist
+  
+2019-01-29 Version 2.8.3
+
   * CHG: Popups verwenden jetzt als Fallback eigene Farben für Vorder- und Hintergrund, wenn keine Systemfarben vorgegeben sind oder Vorder- und Hintergrund identisch wären
   * CHG: Jameica verwendet jetzt unter Linux per Default GTK3 (siehe "SWT_GTK3=1" in jameica.sh)
   * NEW: Update auf SWT 4.9 (in 4.10 gibt es keine 32Bit-Unterstützung mehr)
