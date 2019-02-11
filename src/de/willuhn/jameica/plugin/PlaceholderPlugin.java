@@ -51,7 +51,8 @@ public class PlaceholderPlugin implements Plugin
   public static Plugin createInstance(Manifest manifest)
   {
     InvocationHandler handler = new PlaceholderInvocationHandler(new PlaceholderPlugin(manifest));
-    return (Plugin) Proxy.newProxyInstance(manifest.getClassLoader(),new Class[]{Plugin.class},handler);
+    final ClassLoader loader = manifest.getClassLoader();
+    return (Plugin) Proxy.newProxyInstance(loader != null ? loader : Application.getClassLoader(),new Class[]{Plugin.class},handler);
   }
   
   /**

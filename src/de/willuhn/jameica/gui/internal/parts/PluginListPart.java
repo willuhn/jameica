@@ -440,11 +440,18 @@ public class PluginListPart implements Part
                       if (list.size() == 0)
                         continue;
                       
-                      // Wir nehmen das Manifest des ersten
-                      Manifest mf = list.get(0).getManifest();
-                      PluginDetailPart part = new PluginDetailPart(mf, list, Type.AVAILABLE);
-                      availableParts.put(e.getKey(),part);
-                      part.paint(availableList.getComposite());
+                      try
+                      {
+                        // Wir nehmen das Manifest des ersten
+                        Manifest mf = list.get(0).getManifest();
+                        PluginDetailPart part = new PluginDetailPart(mf, list, Type.AVAILABLE);
+                        availableParts.put(e.getKey(),part);
+                        part.paint(availableList.getComposite());
+                      }
+                      catch (Exception ex)
+                      {
+                        Logger.error("unable to load plugin details, skipping",ex);
+                      }
                     }
                   }
                 }
