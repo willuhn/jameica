@@ -1,5 +1,7 @@
 HEAD 2.9 (nightly)
 
+  * CHG: Button-Beschriftung beim erneuten Installieren eines bereits installierten Plugins geändert von "Aktualisieren..." zu "Erneut installieren..."
+
 2019-02-11 Version 2.8.4
 
   * BUG: In der Liste der verfügbaren Plugins kam es zu einem Fehler, wenn in der Liste der Plugins Scripting-Plugins enthalten waren - Proxy.newProxyInstance hat scheinbar in Java das Verhalten geändert, wenn der Classloader NULL ist
