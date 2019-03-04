@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * BUG: Dialog "Über..." konnte u.U. wegen falschem XML-Escaping nicht angezeigt werden
   * CHG: Button-Beschriftung beim erneuten Installieren eines bereits installierten Plugins geändert von "Aktualisieren..." zu "Erneut installieren..."
 
 2019-02-11 Version 2.8.4
