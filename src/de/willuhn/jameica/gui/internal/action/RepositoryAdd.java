@@ -38,7 +38,7 @@ public class RepositoryAdd implements Action
     String url = null;
     try
     {
-      String s = i18n.tr("Bitte geben Sie die URL des Repository ein");
+      String s = i18n.tr("Bitte geben Sie die URL des Repository ein") + ":";
       url = Application.getCallback().askUser(s,i18n.tr("Neue URL"));
       if (url == null || url.length() == 0)
         return;
