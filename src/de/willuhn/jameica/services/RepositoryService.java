@@ -423,7 +423,7 @@ public class RepositoryService implements Bootable
     
     if (cert == null)
     {
-      Logger.warn("plugin may be " + plugin.getName() + " signed, but no certificate found for verification in repository group " + group.getName() + " of " + group.getRepository().getUrl());
+      Logger.warn("plugin " + plugin.getName() + " may be signed, but no certificate found for verification in repository group " + group.getName() + " of " + group.getRepository().getUrl());
       return;
     }
 
