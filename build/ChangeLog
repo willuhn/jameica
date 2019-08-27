@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * BUG: 0123 Fehler werfen, wenn ein Plugin zwar signiert ist, die zugehörige Plugin-Gruppe im Repository aber kein Zertifikat zur Validierung enthält
   * NEW: 0122 Shortcut "CTRL+Q" zum Beenden des Programms
   * NEW: 0121 Repository-URL von JVerein auf HTTPS umgestellt
   * CHG: 0120 Aktualisiere Windows-Launcher mit Launch4J 3.12 und optionaler Suche in "%JAVA_HOME%" (nötig für OpenJDK, weil das nicht installiert sondern nur entpackt wird und damit nicht in der Windows-Registry registriert wird)
