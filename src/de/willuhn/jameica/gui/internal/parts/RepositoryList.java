@@ -332,7 +332,7 @@ public class RepositoryList extends TablePart
           catch (Exception e)
           {
             Logger.error("unable to updating url status",e);
-            Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Fehler beim Aktualisieren der der URL: {}",e.getMessage()),StatusBarMessage.TYPE_ERROR));
+            Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Fehler beim Aktualisieren der der URL: {0}",e.getMessage()),StatusBarMessage.TYPE_ERROR));
           }
         }
       });
