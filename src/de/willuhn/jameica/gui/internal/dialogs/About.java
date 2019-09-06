@@ -62,7 +62,7 @@ public class About extends AbstractDialog
       "SWT-Version: " + SWT.getVersion() + " / " + SWT.getPlatform() + "<br/>" +
       "Java-Version: " + System.getProperty("java.version") + " / " + System.getProperty("os.name") + " " + System.getProperty("os.arch") + "<br/>" +
       "Build: " + Application.getBuildnumber() + " [Datum " + Application.getBuildDate() + "]</p>" +
-      "<p>Benutzerverzeichnis: " + StringEscapeUtils.escapeHtml(Application.getConfig().getWorkDir()) + "</p>" +
+      "<p>Benutzerverzeichnis: " + StringEscapeUtils.escapeXml(Application.getConfig().getWorkDir()) + "</p>" +
       "</form>");
 
     container.addPart(text);

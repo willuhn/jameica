@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.willuhn.datasource.BeanUtil;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.parts.BackgroundTaskMonitor;
@@ -650,8 +651,16 @@ public class GUI implements ApplicationController
             // Und nochwas: Wenn die neue Seite und und die aktuelle
             // sowie deren Objekte identisch sind, muessen wir sie
             // nicht der History hinzufuegen
-            if (gui.currentView.getCurrentObject() != o ||
-                !gui.currentView.getClass().getName().equals(view.getClass().getName()))
+            boolean same = false;
+            try
+            {
+              same = BeanUtil.equals(gui.currentView.getCurrentObject(),o);
+            }
+            catch (Exception e)
+            {
+              Logger.write(Level.TRACE,"unable to compare objects",e);
+            }
+            if (!same || !gui.currentView.getClass().getName().equals(view.getClass().getName()))
             {
               HistoryEntry entry = new HistoryEntry(gui.currentView);
               gui.history.push(entry);

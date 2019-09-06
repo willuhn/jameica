@@ -23,7 +23,7 @@
       <item name="-" />
       <item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	                            icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
       <item name="-" />
-      <item id="jameica.menu.quit"           name="Beenden"                                                 icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
+      <item id="jameica.menu.quit"           name="Beenden"                       shortcut="CTRL+Q"         icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
     </item>
     <item name="Hilfe">
       <item name="&amp;Über"                                                                                icon="gtk-info.png"            action="de.willuhn.jameica.gui.internal.action.About" />

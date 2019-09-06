@@ -79,7 +79,7 @@ public class RepositoryService implements Bootable
   public final static String[] WELL_KNOWN =
   {
     "https://www.willuhn.de/products/jameica/updates/extensions",
-    "http://www.jverein.de/updates/",
+    "https://www.jverein.de/updates/",
     "https://scripting-updates.derrichter.de/",
     "https://www.open4me.de/hibiscus/"
   };
@@ -423,8 +423,8 @@ public class RepositoryService implements Bootable
     
     if (cert == null)
     {
-      Logger.warn("plugin may be " + plugin.getName() + " signed, but no certificate found for verification in repository group " + group.getName() + " of " + group.getRepository().getUrl());
-      return;
+      Logger.error("plugin " + plugin.getName() + " may be signed, but no certificate found for verification in repository group " + group.getName() + " of " + group.getRepository().getUrl());
+      throw new ApplicationException(Application.getI18n().tr("Repository enthält kein gültiges Zertifikat \"{0}\". Installation abgebrochen",plugin.getName()));
     }
 
     InputStream is1 = null;

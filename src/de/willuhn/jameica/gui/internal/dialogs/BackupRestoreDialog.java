@@ -71,7 +71,7 @@ public class BackupRestoreDialog extends AbstractDialog
           "Unter Umständen werden nicht alle Daten aus dem Backup wiederhergestellt."),true,Color.ERROR);
     }
 
-    container.addHeadline(Application.getI18n().tr("Warnung"));
+    container.addHeadline(Application.getI18n().tr("Achtung"));
     container.addText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Backup wiederherstellen möchten?\n" +
           "Die Anwendung wird daraufhin beendet, die Wiederherstellung erfolgt automatisch beim nächsten Start."),true);
 
@@ -100,30 +100,3 @@ public class BackupRestoreDialog extends AbstractDialog
   }
 
 }
-
-
-/*********************************************************************
- * $Log: BackupRestoreDialog.java,v $
- * Revision 1.5  2011/04/26 11:50:41  willuhn
- * @C Dialog etwas hoeher
- *
- * Revision 1.4  2010-09-21 10:14:59  willuhn
- * @C Keine Warnung mehr anzeigen, wenn die Benutzerdaten des Backups eine aeltere Version des Plugins enthalten. Die Daten werden dann ohnehin automatisch auf den aktuellen Stand gebracht. Der Warnhinweis verwirrte manche User unnoetig und sie glaubten, das Backup nicht einspielen zu koennen.
- *
- * Revision 1.3  2008/03/11 10:23:42  willuhn
- * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
- *
- * Revision 1.2  2008/03/05 23:58:36  willuhn
- * @N Backup: Warnhinweis, wenn ein Plugin zwar installiert, aber nicht im ausgewaehlten Backup enthalten ist
- *
- * Revision 1.1  2008/03/04 00:49:25  willuhn
- * @N GUI fuer Backup fertig
- *
- * Revision 1.2  2008/03/03 09:43:54  willuhn
- * @N DateUtil-Patch von Heiner
- * @N Weiterer Code fuer das Backup-System
- *
- * Revision 1.1  2008/02/29 19:02:31  willuhn
- * @N Weiterer Code fuer Backup-System
- *
- **********************************************************************/

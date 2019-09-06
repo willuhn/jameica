@@ -1,20 +1,32 @@
+2019-09-06 Version 2.8.5
+
+  * BUG: 0123 Fehler werfen, wenn ein Plugin zwar signiert ist, die zugehörige Plugin-Gruppe im Repository aber kein Zertifikat zur Validierung enthält
+  * NEW: 0122 Shortcut "CTRL+Q" zum Beenden des Programms
+  * NEW: 0121 Repository-URL von JVerein auf HTTPS umgestellt
+  * CHG: 0120 Aktualisiere Windows-Launcher mit Launch4J 3.12 und optionaler Suche in "%JAVA_HOME%" (nötig für OpenJDK, weil das nicht installiert sondern nur entpackt wird und damit nicht in der Windows-Registry registriert wird)
+  * CHG: 0119 Button-Beschriftung beim erneuten Installieren nochmal angepasst. "Aktualisieren..." wenn die verfügbare Version neuer ist, sonst "Erneut installieren..."
+  * NEW: 0118 Aktualisierte H2-Version h2-1.4.199
+  * BUG: 0117 Dialog "Über..." konnte u.U. wegen falschem XML-Escaping nicht angezeigt werden
+  * CHG: 0116 Button-Beschriftung beim erneuten Installieren eines bereits installierten Plugins geändert von "Aktualisieren..." zu "Erneut installieren..."
+  * NEW: 0115 Aktualisierte H2-Version h2-1.4.198
+
 2019-02-11 Version 2.8.4
 
-  * BUG: In der Liste der verfügbaren Plugins kam es zu einem Fehler, wenn in der Liste der Plugins Scripting-Plugins enthalten waren - Proxy.newProxyInstance hat scheinbar in Java das Verhalten geändert, wenn der Classloader NULL ist
+  * BUG: 0114 In der Liste der verfügbaren Plugins kam es zu einem Fehler, wenn in der Liste der Plugins Scripting-Plugins enthalten waren - Proxy.newProxyInstance hat scheinbar in Java das Verhalten geändert, wenn der Classloader NULL ist
   
 2019-01-29 Version 2.8.3
 
-  * CHG: Popups verwenden jetzt als Fallback eigene Farben für Vorder- und Hintergrund, wenn keine Systemfarben vorgegeben sind oder Vorder- und Hintergrund identisch wären
-  * CHG: Jameica verwendet jetzt unter Linux per Default GTK3 (siehe "SWT_GTK3=1" in jameica.sh)
-  * NEW: Update auf SWT 4.9 (in 4.10 gibt es keine 32Bit-Unterstützung mehr)
-  * NEW: Hostname für das beim ersten Start zu erstellende System-Zertifikat kann jetzt per Konfigurationsdatei vorgegeben werden (Parameter "jameica.hostname" in "de.willuhn.jameica.system.ApplicationCallback.properties") - siehe https://homebanking-hilfe.de/forum/topic.php?p=141994#real141994
-  * CHG: JVM-Parameter "-Dswt.autoScale=quarter" bei den Windows-Launchern hinzugefuegt - siehe https://github.com/willuhn/jameica/commit/82d253c0e1aec918b98eb378027ebf2d2e5fb411
-  * BUG: Kleiner Darstellungsfehler: Beim mehrfachen Überfahren der Panelbuttons mit der Maus oben rechts wurde unter dem Button eine 1 Pixel schmale dunkle Linie angezeigt
-  * BUG: Die Bibliothek "oro" fehlte im Ordner "lib/velocity". Dadurch kam es zu einer ClassNotFoundException in SynTAX beim Erstellen der IDEA-Auswertung
-  * BUG: Zoom-Faktor bei HiDPI-Displays wurde beim Druck von Dokumenten via de.willuhn.jameica.gui.internal.action.Print nicht deaktiviert, sodass Dokumente zu gross gedruckt wurden
-  * NEW: MySQL-Treiber von 5.1.41 auf 5.1.47 aktualisiert
-  * CHG: Settings nur noch maximal 1 mal pro Sekunde neu laden
-  * NEW: Annotation "@Resource" unterstützt jetzt auch Services des Typs "Bootable".
+  * CHG: 0113 Popups verwenden jetzt als Fallback eigene Farben für Vorder- und Hintergrund, wenn keine Systemfarben vorgegeben sind oder Vorder- und Hintergrund identisch wären
+  * CHG: 0112 Jameica verwendet jetzt unter Linux per Default GTK3 (siehe "SWT_GTK3=1" in jameica.sh)
+  * NEW: 0111 Update auf SWT 4.9 (in 4.10 gibt es keine 32Bit-Unterstützung mehr)
+  * NEW: 0110 Hostname für das beim ersten Start zu erstellende System-Zertifikat kann jetzt per Konfigurationsdatei vorgegeben werden (Parameter "jameica.hostname" in "de.willuhn.jameica.system.ApplicationCallback.properties") - siehe https://homebanking-hilfe.de/forum/topic.php?p=141994#real141994
+  * CHG: 0109 JVM-Parameter "-Dswt.autoScale=quarter" bei den Windows-Launchern hinzugefuegt - siehe https://github.com/willuhn/jameica/commit/82d253c0e1aec918b98eb378027ebf2d2e5fb411
+  * BUG: 0108 Kleiner Darstellungsfehler: Beim mehrfachen Überfahren der Panelbuttons mit der Maus oben rechts wurde unter dem Button eine 1 Pixel schmale dunkle Linie angezeigt
+  * BUG: 0107 Die Bibliothek "oro" fehlte im Ordner "lib/velocity". Dadurch kam es zu einer ClassNotFoundException in SynTAX beim Erstellen der IDEA-Auswertung
+  * BUG: 0106 Zoom-Faktor bei HiDPI-Displays wurde beim Druck von Dokumenten via de.willuhn.jameica.gui.internal.action.Print nicht deaktiviert, sodass Dokumente zu gross gedruckt wurden
+  * NEW: 0105 MySQL-Treiber von 5.1.41 auf 5.1.47 aktualisiert
+  * CHG: 0104 Settings nur noch maximal 1 mal pro Sekunde neu laden
+  * NEW: 0103 Annotation "@Resource" unterstützt jetzt auch Services des Typs "Bootable".
   * NEW: 0102 BUGZILLA 1867 - HTTP-Redirects (für Wechsel von HTTP auf HTTPS) berücksichtigen
 
 2018-09-17 Version 2.8.2

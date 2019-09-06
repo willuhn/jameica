@@ -165,7 +165,20 @@ public class PluginDetailPart extends InfoPanel
           super.handleAction(getSelectedVersion());
         }
       };
-      Button install = new Button(i18n.tr(Application.getPluginLoader().getManifest(this.manifest.getPluginClass()) != null ? "Aktualisieren..." : "Installieren..."),download,null,false,"document-save.png");
+      
+      Manifest installed = Application.getPluginLoader().getManifest(this.manifest.getPluginClass());
+      String text = "Installieren...";
+      if (installed != null)
+      {
+        // Checken, ob die verfuegbare Version neuer ist
+        Version vi = installed.getVersion();
+        Version vn = this.manifest.getVersion();
+        text = "Erneut installieren...";
+        if (vi != null && vn != null && vn.compareTo(vi) > 0)
+          text = "Aktualisieren...";
+      }
+      
+      Button install = new Button(i18n.tr(text),download,null,false,"document-save.png");
       this.addButton(install);
     }
     else if (this.type == Type.UPDATE && this.plugins != null && this.plugins.size() > 0)
