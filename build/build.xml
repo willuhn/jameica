@@ -170,6 +170,20 @@
       </fileset>
     </copy>
     <copy file="plugin.xml" todir="${project.zipdir}" />
+    
+    <!-- Embedded JREs -->
+    <antcall target="sub_addjre_zip">
+      <param name="param.target" value="${project.zipdir}/jre-win64" />
+      <param name="param.source" value="${define.jre.win64}" />
+    </antcall>
+    <antcall target="sub_addjre_zip">
+      <param name="param.target" value="${project.zipdir}/jre-win32" />
+      <param name="param.source" value="${define.jre.win32}" />
+    </antcall>
+    <antcall target="sub_addjre_tar">
+      <param name="param.target" value="${project.zipdir}/jre-macos64" />
+      <param name="param.source" value="${define.jre.macos64}" />
+    </antcall>
 
     <!-- ZIP-File fuer Linux -->
     <zip destfile="${project.release}/${project.zipfilename.linux}" duplicate="fail">
@@ -227,7 +241,6 @@
       </zipfileset>
     </zip>
 
-    <!-- ZIP-File fuer Win32 -->
     <zip destfile="${project.release}/${project.zipfilename.win32}">
       <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
@@ -240,6 +253,7 @@
         <include name="${define.projectname}/jameica-win32.exe" />
         <include name="${define.projectname}/plugins" />
         <include name="${define.projectname}/lib/**" />
+        <include name="${define.projectname}/jre-win32/**" />
 
         <exclude name="${define.projectname}/lib/swt/win64/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
@@ -262,6 +276,7 @@
         <include name="${define.projectname}/jameica-win64.exe" />
         <include name="${define.projectname}/plugins" />
         <include name="${define.projectname}/lib/**" />
+        <include name="${define.projectname}/jre-win64/**" />
 
         <exclude name="${define.projectname}/lib/swt/win32/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
@@ -313,6 +328,7 @@
         <include name="jameica-macos64.sh" />
         <include name="jameica-icon.icns" />
         <include name="plugins" />
+        <include name="jre-macos64/**" />
         <include name="lib/**" />
         <exclude name="Info.plist" />
         <exclude name="lib/swt/win*/**" />
@@ -496,6 +512,32 @@
 
 
   <!-- Sub-Routinen -->
+
+  <!--
+    Fuegt das Embedded JRE aus einem ZIP hinzu
+    @param.target: Zielordner fuer das JRE
+    @param.source: Quelldatei mit dem ZIP des JRE
+  //-->
+  <target name="sub_addjre_zip" if="jre.embedd">
+    <echo message="embedding JRE ${param.source} to ${param.target}"></echo>
+    <mkdir dir="${param.target}" />
+    <unzip dest="${param.target}" src="${param.source}">
+      <cutdirsmapper dirs="1" />
+    </unzip>
+  </target>
+
+  <!--
+    Fuegt das Embedded JRE aus einem TAR.GZ hinzu
+    @param.target: Zielordner fuer das JRE
+    @param.source: Quelldatei mit dem TAR.GZ des JRE
+  //-->
+  <target name="sub_addjre_tar" if="jre.embedd">
+    <echo message="embedding JRE ${param.source} to ${param.target}"></echo>
+    <mkdir dir="${param.target}" />
+    <untar compression="gzip" dest="${param.target}" src="${param.source}">
+      <cutdirsmapper dirs="1" />
+    </untar>
+  </target>
 
   <!--
     Erzeugt die plattform-spezifische JAR-Datei

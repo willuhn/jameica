@@ -32,12 +32,12 @@ if [ ! -x "$JAVACMD" ]; then
   JAVACMD="`which java`"
 fi
 
-if [ ! -x "$JAVACMD" ]; then
-  echo Fehler: Java nicht gefunden.
-  exit 1
-fi
-
 BASEDIR=$(dirname "$0")
 cd "${BASEDIR}"
+
+if [ ! -x "$JAVACMD" ]; then
+  JAVACMD="${BASEDIR}/jre-macos64/Contents/Home/bin/java"
+fi
+
 
 exec "${JAVACMD}" -Xdock:name="Jameica" -Xmx512m -Xss64m -XstartOnFirstThread -jar "${BASEDIR}/jameica-macos64.jar" -o "$@"  >/dev/null
