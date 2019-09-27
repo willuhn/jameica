@@ -122,6 +122,10 @@
       <param name="param.classpath" value="${classpath.linux64}" />
     </antcall>
     <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.linuxarm64}" />
+      <param name="param.classpath" value="${classpath.linuxarm64}" />
+    </antcall>
+    <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.win32}" />
       <param name="param.classpath" value="${classpath.win32}" />
     </antcall>
@@ -203,6 +207,7 @@
         <exclude name="${define.projectname}/lib/swt/win*/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
         <exclude name="${define.projectname}/lib/swt/linux64/**" />
+        <exclude name="${define.projectname}/lib/swt/linux-arm64/**" />
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
@@ -231,6 +236,36 @@
         <exclude name="${define.projectname}/lib/swt/win*/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
         <exclude name="${define.projectname}/lib/swt/linux/**" />
+        <exclude name="${define.projectname}/lib/swt/linux-arm64/**" />
+        <exclude name="${define.projectname}/*.icns" />
+        <exclude name="${define.projectname}/*.plist" />
+      </zipfileset>
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}/jameica.sh" />
+        <include name="${define.projectname}/jameicaserver.sh" />
+        <include name="${define.projectname}/rcjameica*" />
+      </zipfileset>
+    </zip>
+
+    <!-- ZIP-File fuer Linux-ARM64 -->
+    <zip destfile="${project.release}/${project.zipfilename.linuxarm64}" duplicate="fail">
+      <zipfileset dir="${project.release}">
+        <include name="${define.projectname}" />
+        <include name="${define.projectname}/plugin.xml" />
+        <include name="${define.projectname}/${define.jarfilename}" />
+        <include name="${define.projectname}/${define.jarfilename.linuxarm64}" />
+        <include name="${define.projectname}/LICENSE" />
+        <include name="${define.projectname}/COPYING" />
+        <include name="${define.projectname}/README" />
+        <include name="${define.projectname}/.jameica" />
+        <include name="${define.projectname}/jameica-icon.png" />
+        <include name="${define.projectname}/plugins" />
+        <include name="${define.projectname}/lib/**" />
+
+        <exclude name="${define.projectname}/lib/swt/win*/**" />
+        <exclude name="${define.projectname}/lib/swt/macos*/**" />
+        <exclude name="${define.projectname}/lib/swt/linux/**" />
+        <exclude name="${define.projectname}/lib/swt/linux64/**" />
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
@@ -444,6 +479,7 @@
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.win64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux64}" />
+    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linuxarm64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.openbsd}" />
@@ -469,6 +505,9 @@
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux64}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linuxarm64}" />
+    </exec>
+    <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
@@ -490,6 +529,7 @@
     <copy file="${project.release}/${project.zipfilename}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linux}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linux64}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.linuxarm64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.macos}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.macos64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win32}" todir="${project.nightly}" />
