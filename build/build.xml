@@ -122,16 +122,16 @@
       <param name="param.classpath" value="${classpath.linux64}" />
     </antcall>
     <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.linuxarm64}" />
+      <param name="param.classpath" value="${classpath.linuxarm64}" />
+    </antcall>
+    <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.win32}" />
       <param name="param.classpath" value="${classpath.win32}" />
     </antcall>
     <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.win64}" />
       <param name="param.classpath" value="${classpath.win64}" />
-    </antcall>
-    <antcall target="sub_jar_create">
-      <param name="param.filename" value="${define.jarfilename.macos}" />
-      <param name="param.classpath" value="${classpath.macos}" />
     </antcall>
     <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.macos64}" />
@@ -162,7 +162,6 @@
         <include name="jameica-icon.icns" />
         <include name="README" />
         <include name="Info.plist" />
-        <include name="Info64.plist" />
       </fileset>
       <fileset dir="${basedir}">
         <include name="LICENSE" />
@@ -170,6 +169,20 @@
       </fileset>
     </copy>
     <copy file="plugin.xml" todir="${project.zipdir}" />
+    
+    <!-- Embedded JREs -->
+    <antcall target="sub_addjre_zip">
+      <param name="param.target" value="${project.zipdir}/jre-win64" />
+      <param name="param.source" value="${define.jre.win64}" />
+    </antcall>
+    <antcall target="sub_addjre_zip">
+      <param name="param.target" value="${project.zipdir}/jre-win32" />
+      <param name="param.source" value="${define.jre.win32}" />
+    </antcall>
+    <antcall target="sub_addjre_tar">
+      <param name="param.target" value="${project.zipdir}/jre-macos64" />
+      <param name="param.source" value="${define.jre.macos64}" />
+    </antcall>
 
     <!-- ZIP-File fuer Linux -->
     <zip destfile="${project.release}/${project.zipfilename.linux}" duplicate="fail">
@@ -189,6 +202,7 @@
         <exclude name="${define.projectname}/lib/swt/win*/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
         <exclude name="${define.projectname}/lib/swt/linux64/**" />
+        <exclude name="${define.projectname}/lib/swt/linux-arm64/**" />
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
@@ -217,6 +231,7 @@
         <exclude name="${define.projectname}/lib/swt/win*/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
         <exclude name="${define.projectname}/lib/swt/linux/**" />
+        <exclude name="${define.projectname}/lib/swt/linux-arm64/**" />
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
@@ -227,7 +242,35 @@
       </zipfileset>
     </zip>
 
-    <!-- ZIP-File fuer Win32 -->
+    <!-- ZIP-File fuer Linux-ARM64 -->
+    <zip destfile="${project.release}/${project.zipfilename.linuxarm64}" duplicate="fail">
+      <zipfileset dir="${project.release}">
+        <include name="${define.projectname}" />
+        <include name="${define.projectname}/plugin.xml" />
+        <include name="${define.projectname}/${define.jarfilename}" />
+        <include name="${define.projectname}/${define.jarfilename.linuxarm64}" />
+        <include name="${define.projectname}/LICENSE" />
+        <include name="${define.projectname}/COPYING" />
+        <include name="${define.projectname}/README" />
+        <include name="${define.projectname}/.jameica" />
+        <include name="${define.projectname}/jameica-icon.png" />
+        <include name="${define.projectname}/plugins" />
+        <include name="${define.projectname}/lib/**" />
+
+        <exclude name="${define.projectname}/lib/swt/win*/**" />
+        <exclude name="${define.projectname}/lib/swt/macos*/**" />
+        <exclude name="${define.projectname}/lib/swt/linux/**" />
+        <exclude name="${define.projectname}/lib/swt/linux64/**" />
+        <exclude name="${define.projectname}/*.icns" />
+        <exclude name="${define.projectname}/*.plist" />
+      </zipfileset>
+      <zipfileset dir="${project.release}" filemode="755">
+        <include name="${define.projectname}/jameica.sh" />
+        <include name="${define.projectname}/jameicaserver.sh" />
+        <include name="${define.projectname}/rcjameica*" />
+      </zipfileset>
+    </zip>
+
     <zip destfile="${project.release}/${project.zipfilename.win32}">
       <zipfileset dir="${project.release}">
         <include name="${define.projectname}" />
@@ -240,6 +283,7 @@
         <include name="${define.projectname}/jameica-win32.exe" />
         <include name="${define.projectname}/plugins" />
         <include name="${define.projectname}/lib/**" />
+        <include name="${define.projectname}/jre-win32/**" />
 
         <exclude name="${define.projectname}/lib/swt/win64/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
@@ -262,39 +306,13 @@
         <include name="${define.projectname}/jameica-win64.exe" />
         <include name="${define.projectname}/plugins" />
         <include name="${define.projectname}/lib/**" />
+        <include name="${define.projectname}/jre-win64/**" />
 
         <exclude name="${define.projectname}/lib/swt/win32/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
         <exclude name="${define.projectname}/lib/swt/linux*/**" />
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
-      </zipfileset>
-    </zip>
-
-    <!-- ZIP-File fuer MacOS -->
-    <mkdir dir="${project.tmp}/${define.projectname}.app" />
-    <copy todir="${project.tmp}/${define.projectname}.app">
-      <fileset dir="${project.release}/${define.projectname}">
-        <include name="plugin.xml" />
-        <include name="${define.jarfilename}" />
-        <include name="${define.jarfilename.macos}" />
-        <include name="LICENSE" />
-        <include name="COPYING" />
-        <include name="README" />
-        <include name="Info.plist" />
-        <include name="jameica-macos.sh" />
-        <include name="jameica-icon.icns" />
-        <include name="plugins" />
-        <include name="lib/**" />
-        <exclude name="Info64.plist" />
-        <exclude name="lib/swt/win*/**" />
-        <exclude name="lib/swt/linux*/**" />
-        <exclude name="lib/swt/macos64/**" />
-      </fileset>
-    </copy>
-    <zip destfile="${project.release}/${project.zipfilename.macos}">
-      <zipfileset dir="${project.tmp}" filemode="755">
-        <include name="${define.projectname}.app/**" />
       </zipfileset>
     </zip>
 
@@ -309,18 +327,17 @@
         <include name="LICENSE" />
         <include name="COPYING" />
         <include name="README" />
-        <include name="Info64.plist" />
+        <include name="Info.plist" />
         <include name="jameica-macos64.sh" />
         <include name="jameica-icon.icns" />
         <include name="plugins" />
+        <include name="jre-macos64/**" />
         <include name="lib/**" />
-        <exclude name="Info.plist" />
         <exclude name="lib/swt/win*/**" />
         <exclude name="lib/swt/linux*/**" />
         <exclude name="lib/swt/macos/**" />
       </fileset>
     </copy>
-    <move file="${project.tmp}/${define.projectname}.app/Info64.plist" tofile="${project.tmp}/${define.projectname}.app/Info.plist" />
     <zip destfile="${project.release}/${project.zipfilename.macos64}">
       <zipfileset dir="${project.tmp}" filemode="755">
         <include name="${define.projectname}.app/**" />
@@ -428,7 +445,7 @@
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.win64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux64}" />
-    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos}" />
+    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linuxarm64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.openbsd}" />
     <echo message="Creating PGP signatures" />
@@ -453,7 +470,7 @@
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux64}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
-      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos}" />
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linuxarm64}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos64}" />
@@ -474,7 +491,7 @@
     <copy file="${project.release}/${project.zipfilename}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linux}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linux64}" todir="${project.nightly}" />
-    <copy file="${project.release}/${project.zipfilename.macos}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.linuxarm64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.macos64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win32}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win64}" todir="${project.nightly}" />
@@ -496,6 +513,32 @@
 
 
   <!-- Sub-Routinen -->
+
+  <!--
+    Fuegt das Embedded JRE aus einem ZIP hinzu
+    @param.target: Zielordner fuer das JRE
+    @param.source: Quelldatei mit dem ZIP des JRE
+  //-->
+  <target name="sub_addjre_zip" if="jre.embedd">
+    <echo message="embedding JRE ${param.source} to ${param.target}"></echo>
+    <mkdir dir="${param.target}" />
+    <unzip dest="${param.target}" src="${param.source}">
+      <cutdirsmapper dirs="1" />
+    </unzip>
+  </target>
+
+  <!--
+    Fuegt das Embedded JRE aus einem TAR.GZ hinzu
+    @param.target: Zielordner fuer das JRE
+    @param.source: Quelldatei mit dem TAR.GZ des JRE
+  //-->
+  <target name="sub_addjre_tar" if="jre.embedd">
+    <echo message="embedding JRE ${param.source} to ${param.target}"></echo>
+    <mkdir dir="${param.target}" />
+    <untar compression="gzip" dest="${param.target}" src="${param.source}">
+      <cutdirsmapper dirs="1" />
+    </untar>
+  </target>
 
   <!--
     Erzeugt die plattform-spezifische JAR-Datei

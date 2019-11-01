@@ -1,5 +1,13 @@
 2019-09-06 Version 2.8.5
 
+2019-11-01 Version 2.8.6
+
+  * DEL: 0126 Support für 32Bit MacOS entfernt
+  * NEW: 0125 Unterstützung für Linux ARM64
+  * NEW: 0124 Bei Win32, Win64 und MacOS64 ist jetzt eine embedded JRE mit enthalten
+
+2019-09-06 Version 2.8.5
+
   * BUG: 0123 Fehler werfen, wenn ein Plugin zwar signiert ist, die zugehörige Plugin-Gruppe im Repository aber kein Zertifikat zur Validierung enthält
   * NEW: 0122 Shortcut "CTRL+Q" zum Beenden des Programms
   * NEW: 0121 Repository-URL von JVerein auf HTTPS umgestellt

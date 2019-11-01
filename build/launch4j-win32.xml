@@ -15,7 +15,7 @@
   <manifest></manifest>
   <icon>/work/willuhn/git/hibiscus/icons/hibiscus.ico</icon>
   <jre>
-    <path>%JAVA_HOME%</path>
+    <path>jre-win32</path>
     <bundledJre64Bit>false</bundledJre64Bit>
     <bundledJreAsFallback>true</bundledJreAsFallback>
     <minVersion></minVersion>
