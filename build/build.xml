@@ -134,10 +134,6 @@
       <param name="param.classpath" value="${classpath.win64}" />
     </antcall>
     <antcall target="sub_jar_create">
-      <param name="param.filename" value="${define.jarfilename.macos}" />
-      <param name="param.classpath" value="${classpath.macos}" />
-    </antcall>
-    <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.macos64}" />
       <param name="param.classpath" value="${classpath.macos64}" />
     </antcall>
@@ -166,7 +162,6 @@
         <include name="jameica-icon.icns" />
         <include name="README" />
         <include name="Info.plist" />
-        <include name="Info64.plist" />
       </fileset>
       <fileset dir="${basedir}">
         <include name="LICENSE" />
@@ -321,33 +316,6 @@
       </zipfileset>
     </zip>
 
-    <!-- ZIP-File fuer MacOS -->
-    <mkdir dir="${project.tmp}/${define.projectname}.app" />
-    <copy todir="${project.tmp}/${define.projectname}.app">
-      <fileset dir="${project.release}/${define.projectname}">
-        <include name="plugin.xml" />
-        <include name="${define.jarfilename}" />
-        <include name="${define.jarfilename.macos}" />
-        <include name="LICENSE" />
-        <include name="COPYING" />
-        <include name="README" />
-        <include name="Info.plist" />
-        <include name="jameica-macos.sh" />
-        <include name="jameica-icon.icns" />
-        <include name="plugins" />
-        <include name="lib/**" />
-        <exclude name="Info64.plist" />
-        <exclude name="lib/swt/win*/**" />
-        <exclude name="lib/swt/linux*/**" />
-        <exclude name="lib/swt/macos64/**" />
-      </fileset>
-    </copy>
-    <zip destfile="${project.release}/${project.zipfilename.macos}">
-      <zipfileset dir="${project.tmp}" filemode="755">
-        <include name="${define.projectname}.app/**" />
-      </zipfileset>
-    </zip>
-
     <!-- ZIP-File fuer MacOS64 -->
     <delete dir="${project.tmp}/${define.projectname}.app" />
     <mkdir dir="${project.tmp}/${define.projectname}.app" />
@@ -359,7 +327,7 @@
         <include name="LICENSE" />
         <include name="COPYING" />
         <include name="README" />
-        <include name="Info64.plist" />
+        <include name="Info.plist" />
         <include name="jameica-macos64.sh" />
         <include name="jameica-icon.icns" />
         <include name="plugins" />
@@ -371,7 +339,6 @@
         <exclude name="lib/swt/macos/**" />
       </fileset>
     </copy>
-    <move file="${project.tmp}/${define.projectname}.app/Info64.plist" tofile="${project.tmp}/${define.projectname}.app/Info.plist" />
     <zip destfile="${project.release}/${project.zipfilename.macos64}">
       <zipfileset dir="${project.tmp}" filemode="755">
         <include name="${define.projectname}.app/**" />
@@ -480,7 +447,6 @@
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linuxarm64}" />
-    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.openbsd}" />
     <echo message="Creating PGP signatures" />
@@ -508,9 +474,6 @@
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linuxarm64}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
-      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos}" />
-    </exec>
-    <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos64}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
@@ -530,7 +493,6 @@
     <copy file="${project.release}/${project.zipfilename.linux}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linux64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linuxarm64}" todir="${project.nightly}" />
-    <copy file="${project.release}/${project.zipfilename.macos}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.macos64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win32}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win64}" todir="${project.nightly}" />

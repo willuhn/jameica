@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleExecutable</key>
-		<string>jameica-macos.sh</string>
+		<string>jameica-macos64.sh</string>
 	<key>CFBundleGetInfoString</key>
-		<string>Jameica for Apple OS X</string>
+    <string>Jameica for Apple OS X</string>
 	<key>CFBundleIconFile</key>
-		<string>jameica-icon.icns</string>
+    <string>jameica-icon.icns</string>
 	<key>CFBundleIdentifier</key>
 		<string>de.willuhn.jameica</string>
 	<key>CFBundleInfoDictionaryVersion</key>

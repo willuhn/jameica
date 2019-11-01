@@ -1,5 +1,9 @@
 HEAD 2.9 (nightly)
 
+2019-11-01 Version 2.8.6
+
+  * DEL: 0126 Support für 32Bit MacOS entfernt
+  * NEW: 0125 Unterstützung für Linux ARM64
   * NEW: 0124 Bei Win32, Win64 und MacOS64 ist jetzt eine embedded JRE mit enthalten
 
 2019-09-06 Version 2.8.5
