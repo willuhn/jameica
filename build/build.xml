@@ -333,7 +333,6 @@
         <include name="plugins" />
         <include name="jre-macos64/**" />
         <include name="lib/**" />
-        <exclude name="Info.plist" />
         <exclude name="lib/swt/win*/**" />
         <exclude name="lib/swt/linux*/**" />
         <exclude name="lib/swt/macos/**" />
