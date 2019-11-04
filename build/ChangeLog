@@ -1,5 +1,7 @@
 HEAD 2.9 (nightly)
 
+  * NEW: 0127 Neues Plugin-Repository https://hibiscus.tvbrowser.org aufgenommen
+
 2019-11-01 Version 2.8.6
 
   * DEL: 0126 Support für 32Bit MacOS entfernt
