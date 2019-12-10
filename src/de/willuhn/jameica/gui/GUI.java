@@ -93,11 +93,13 @@ public class GUI implements ApplicationController
     private ApplicationCallback callback = null;
     private StyleFactory styleFactory    = null;
   
+    private SashForm sash                = null;
     private Navigation navi              = null;
     private Menu menu                    = null;
     private View view                    = null;
     private StatusBar statusBar          = null;
     private SashForm left                = null;
+    private Composite right              = null;
     private FormTextPart help            = null;
     private AbstractView currentView     = null;
     
@@ -177,6 +179,7 @@ public class GUI implements ApplicationController
             SWTUtil.getImage("hibiscus-icon-64x64.png"),
             SWTUtil.getImage("hibiscus-icon-128x128.png"),
             SWTUtil.getImage("hibiscus-icon-256x256.png")
+            
         });
       }
       getShell().setText(name);
@@ -199,11 +202,11 @@ public class GUI implements ApplicationController
 
       ////////////////////////////////////////////////////////////////////////
       // init Layout
-      final SashForm sash = new SashForm(getShell(), SWT.HORIZONTAL);
-      sash.setLayout(SWTUtil.createGrid(1,true));
-      sash.setLayoutData(new GridData(GridData.FILL_BOTH));
+      this.sash = new SashForm(getShell(), SWT.HORIZONTAL);
+      this.sash.setLayout(SWTUtil.createGrid(1,true));
+      this.sash.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-      this.left = new SashForm(sash, SWT.VERTICAL);
+      this.left = new SashForm(this.sash, SWT.VERTICAL);
       this.left.setLayout(SWTUtil.createGrid(1,true));
       this.left.setLayoutData(new GridData(GridData.FILL_BOTH));
       //
@@ -235,12 +238,12 @@ public class GUI implements ApplicationController
 
       ////////////////////////////////////////////////////////////////////////
       // init content view
-      Composite right = new Composite(sash, SWT.NONE);
-      right.setLayout(SWTUtil.createGrid(1,true));
-      right.setLayoutData(new GridData(GridData.FILL_BOTH));
+      this.right = new Composite(this.sash, SWT.NONE);
+      this.right.setLayout(SWTUtil.createGrid(1,true));
+      this.right.setLayoutData(new GridData(GridData.FILL_BOTH));
       Logger.info("adding content view");
       view = new View();
-      view.paint(right);
+      view.paint(this.right);
       //
       ////////////////////////////////////////////////////////////////////////
 
@@ -257,8 +260,8 @@ public class GUI implements ApplicationController
           SETTINGS.setAttribute("navi.height.1",i[1]);
         }
       });
-      sash.setWeights(new int[] {SETTINGS.getInt("main.width.0",1), SETTINGS.getInt("main.width.1",3)});
-      sash.addDisposeListener(new DisposeListener() {
+      this.sash.setWeights(new int[] {SETTINGS.getInt("main.width.0",1), SETTINGS.getInt("main.width.1",3)});
+      this.sash.addDisposeListener(new DisposeListener() {
         public void widgetDisposed(DisposeEvent e)
         {
           if (sash == null || sash.isDisposed())
@@ -268,8 +271,8 @@ public class GUI implements ApplicationController
           SETTINGS.setAttribute("main.width.1",i[1]);
         }
       });
-      if (Customizing.SETTINGS.getBoolean("application.hidenavigation",false))
-        sash.setMaximizedControl(right);
+      
+      toggleNavigation();
       //
       ////////////////////////////////////////////////////////////////////////
 
@@ -1048,6 +1051,15 @@ public class GUI implements ApplicationController
     if (gui.callback == null)
       gui.callback = new ApplicationCallbackSWT();
     return gui.callback;
+  }
+  
+  /**
+   * Blendet die Navigation ein oder aus.
+   */
+  public static void toggleNavigation()
+  {
+    final boolean hide = Customizing.SETTINGS.getBoolean("application.hidenavigation",false);
+    gui.sash.setMaximizedControl(hide ? gui.right : null);
   }
 
   /**

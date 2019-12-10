@@ -13,20 +13,21 @@
   </classfinder>
 
   <menu>
-    <item id="jameica.menu.file"             name="&amp;Datei">
-      <item id="jameica.menu.bookmarks"      name="&amp;Lesezeichen..."           shortcut="CTRL+L"         icon="starred.png"             action="de.willuhn.jameica.gui.internal.action.BookmarkSearch" />
-      <item id="jameica.menu.back"           name="&amp;Zurück"                   shortcut="ALT+ARROW_LEFT" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
+    <item id="jameica.menu.file"                name="&amp;Datei">
+      <item id="jameica.menu.bookmarks"         name="&amp;Lesezeichen..."             shortcut="CTRL+L"         icon="starred.png"             action="de.willuhn.jameica.gui.internal.action.BookmarkSearch" />
+      <item id="jameica.menu.back"              name="&amp;Zurück"                     shortcut="ALT+ARROW_LEFT" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
+      <item id="jameica.menu.navigation.toggle" name="&amp;Navigation ein-/ausblenden" shortcut="ALT+N"          icon="view-fullscreen.png"     action="de.willuhn.jameica.gui.internal.action.NavigationToggle" />
       <item name="-" />
-      <item id="jameica.menu.settings"       name="&amp;Einstellungen"            shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
-      <item id="jameica.menu.backups"        name="&amp;Backups verwalten"                                  icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
-      <item id="jameica.menu.updates"        name="&amp;Plugins online suchen..."                           icon="emblem-package.png"      action="de.willuhn.jameica.gui.internal.action.PluginListOpen" />
+      <item id="jameica.menu.settings"       name="&amp;Einstellungen"              shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
+      <item id="jameica.menu.backups"        name="&amp;Backups verwalten"                                    icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
+      <item id="jameica.menu.updates"        name="&amp;Plugins online suchen..."                             icon="emblem-package.png"      action="de.willuhn.jameica.gui.internal.action.PluginListOpen" />
       <item name="-" />
-      <item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	                            icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
+      <item id="jameica.menu.masterpassword" name="&amp;Master-Passwort ändern"	                              icon="stock_keyring.png"       action="de.willuhn.jameica.gui.internal.action.ChangePassword" />
       <item name="-" />
-      <item id="jameica.menu.quit"           name="Beenden"                       shortcut="CTRL+Q"         icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
+      <item id="jameica.menu.quit"           name="Beenden"                         shortcut="CTRL+Q"         icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
     </item>
     <item name="Hilfe">
-      <item name="&amp;Über"                                                                                icon="gtk-info.png"            action="de.willuhn.jameica.gui.internal.action.About" />
+      <item name="&amp;Über"                                                                                  icon="gtk-info.png"            action="de.willuhn.jameica.gui.internal.action.About" />
       <item name="-" />
       <item name="Lizenzinformationen" icon="text-x-generic.png"     action="de.willuhn.jameica.gui.internal.action.License" />
     </item>
