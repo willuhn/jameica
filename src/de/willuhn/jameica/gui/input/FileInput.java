@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 
@@ -125,6 +126,7 @@ public class FileInput extends ButtonInput
     if (this.text != null && !this.text.isDisposed())
     {
       this.text.setText((String) value);
+      checkValidity();
       this.text.redraw();
     }
   }
@@ -139,9 +141,30 @@ public class FileInput extends ButtonInput
     
     this.text = GUI.getStyleFactory().createText(parent);
     this.text.setText(this.value == null ? "" : this.value);
+    this.text.addListener(SWT.Modify, new Listener() {
+      @Override
+      public void handleEvent(Event event)
+      {
+        checkValidity();
+      }
+    });
+    checkValidity();
   	return this.text;
   }
 
+  /**
+   * Pruefen ob eingegebene Datei existiert.
+   * Wenn Datei nicht existiert Eingabe mit Fehlerfarbe markieren.
+   */
+  private void checkValidity() {
+    if(this.text == null || this.text.isDisposed())
+      return;
+    
+    if(this.text.getText().trim().isEmpty() || new File(this.text.getText()).isFile())
+      this.text.setForeground(Color.FOREGROUND.getSWTColor());
+    else
+      this.text.setForeground(Color.ERROR.getSWTColor());
+  }
 }
 
 /*********************************************************************

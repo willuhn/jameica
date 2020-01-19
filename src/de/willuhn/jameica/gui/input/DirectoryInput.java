@@ -9,6 +9,9 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
+import java.io.File;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -17,6 +20,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -80,6 +84,7 @@ public class DirectoryInput extends ButtonInput
     if (this.text != null && !this.text.isDisposed())
     {
       this.text.setText((String) value);
+      checkValidity();
       this.text.redraw();
     }
   }
@@ -92,9 +97,30 @@ public class DirectoryInput extends ButtonInput
       return text;
     text = GUI.getStyleFactory().createText(parent);
   	text.setText(this.value == null ? "" : this.value);
+  	text.addListener(SWT.Modify, new Listener() {
+      @Override
+      public void handleEvent(Event event)
+      {
+        checkValidity();
+      }
+    });
+  	checkValidity();
   	return text;
   }
 
+  /**
+   * Pruefen ob eingegebenes Verzeichnis existiert.
+   * Wenn Verzeichnis nicht existiert Eingabe mit Fehlerfarbe markieren.
+   */
+  private void checkValidity() {
+    if(this.text == null || this.text.isDisposed())
+      return;
+    
+    if(this.text.getText().trim().isEmpty() || new File(this.text.getText()).isDirectory())
+      this.text.setForeground(Color.FOREGROUND.getSWTColor());
+    else
+      this.text.setForeground(Color.ERROR.getSWTColor());
+  }
 }
 
 /*********************************************************************
