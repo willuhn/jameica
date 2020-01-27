@@ -66,7 +66,7 @@ public class Settings extends AbstractView implements Extendable
 
     /////////////////////////////////////////////////////////////////
     // System-Einstellungen
-    TabGroup system = new TabGroup(getTabFolder(),i18n.tr("System"));
+    TabGroup system = new TabGroup(getTabFolder(),i18n.tr("System"),true);
     
     system.addHeadline(i18n.tr("System-Einstellungen"));
     system.addLabelPair(i18n.tr("Log-Level"), control.getLogLevel());

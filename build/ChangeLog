@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * BUG: 0129 Fehlender Scrollbalken in der Liste der Zertifikate unter Datei->Einstellungen 
   * NEW: 0128 Funktion zum Ein-/Ausblenden der Navigation
   * NEW: 0127 Neues Plugin-Repository https://hibiscus.tvbrowser.org aufgenommen
 
