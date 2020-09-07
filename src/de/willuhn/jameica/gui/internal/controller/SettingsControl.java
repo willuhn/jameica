@@ -10,6 +10,10 @@
 
 package de.willuhn.jameica.gui.internal.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -57,6 +61,7 @@ public class SettingsControl extends AbstractControl
   private IntegerInput httpsProxyPort;
   private CheckboxInput systemProxy;
   private CheckboxInput askWorkDir;
+  private SelectInput locale;
   
   private TablePart certs;
   private CheckboxInput trustJavaCerts;
@@ -218,6 +223,26 @@ public class SettingsControl extends AbstractControl
     }
     return this.askWorkDir;
   }
+  
+  /**
+   * Liefert eine Auswahlbox fuer die Sprache.
+   * @return Auswahlbox fuer die Sprache.
+   */
+  public SelectInput getLocale()
+  {
+    if (this.locale != null)
+      return this.locale;
+    
+    final List<Locale> list = new ArrayList<Locale>();
+    list.add(Locale.GERMANY);
+    list.add(Locale.ENGLISH);
+    
+    this.locale = new SelectInput(list,Application.getConfig().getLocale());
+    this.locale.setAttribute("displayName");
+    
+    return this.locale;
+  }
+  
   /**
    * Liefert eine Tabelle mit den installierten Zertifikaten.
    * @return Tabelle mit einer Liste der installierten Zertifikate.
@@ -334,6 +359,10 @@ public class SettingsControl extends AbstractControl
       
       BootstrapSettings.setAskWorkdir(((Boolean)getAskWorkdir().getValue()).booleanValue());
 
+      final Locale l = (Locale) this.getLocale().getValue();
+      restartNeeded |= !Application.getConfig().getLocale().equals(l);
+      config.setLocale(l);
+      
       restartNeeded |= getProxyPort().hasChanged();
       Integer proxyPort = (Integer) getProxyPort().getValue();
       config.setProxyPort(proxyPort == null ? -1 : proxyPort.intValue());

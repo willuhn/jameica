@@ -69,6 +69,7 @@ public class Settings extends AbstractView implements Extendable
     TabGroup system = new TabGroup(getTabFolder(),i18n.tr("System"),true);
     
     system.addHeadline(i18n.tr("System-Einstellungen"));
+    system.addLabelPair(i18n.tr("Sprache"), control.getLocale());
     system.addLabelPair(i18n.tr("Log-Level"), control.getLogLevel());
     
     // Nur anzeigen, wenn der User die Option deaktiviert hat
