@@ -263,7 +263,7 @@ public class InfoPanel implements Part
 
       // Kommentar
       {
-        Label comment = new Label(this.extend(DrawState.COMMENT_BEFORE,this.comp,null),SWT.NONE);
+        Label comment = new Label(this.extend(DrawState.COMMENT_BEFORE,this.comp,null),SWT.WRAP);
         comment.setBackground(bg);
         comment.setFont(Font.SMALL.getSWTFont());
         comment.setForeground(Color.COMMENT.getSWTColor());
