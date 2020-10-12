@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * NEW: 0132 Fenster-Position auch im Maximiert-Zustand speichern - siehe https://homebanking-hilfe.de/forum/topic.php?p=157397#real157397
   * NEW: 0131 Sprache wieder per Datei->Einstellungen konfigurierbar
   * NEW: 0130 Update auf SWT 4.14 für linux64, win64 und macos64 - für die 32Bit-Plattformen gibt es keine neueren SWT-Versionen mehr (mit dieser Version werden in GTK3 auch endlich die Theme-Farben auf dem Plasma-Desktop korrekt berücksichtigt)
   * BUG: 0129 Fehlender Scrollbalken in der Liste der Zertifikate unter Datei->Einstellungen 

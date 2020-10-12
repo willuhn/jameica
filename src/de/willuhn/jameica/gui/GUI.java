@@ -355,7 +355,7 @@ public class GUI implements ApplicationController
     if (maximized)
     {
       Logger.info("window size: maximized");
-      getShell().setLocation(0,0);
+      getShell().setLocation(x,y); // Bei maximized ebenfalls die Position angeben - Anwendung kann sich ja auf dem zweiten Screen befunden haben
       getShell().setMaximized(true);
     }
     else
