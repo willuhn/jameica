@@ -135,10 +135,10 @@ public class GUI implements ApplicationController
 
       ////////////////////////////////////////////////////////////////////////
       // Netbook-Mode
-      // Wenn das Display weniger als 700 Pixel hoch ist, aktivieren wir
+      // Wenn das Display weniger als 800 Pixel hoch ist, aktivieren wir
       // automatisch den "Netbook"-Mode
       Rectangle r = GUI.getDisplay().getBounds();
-      if (r.height < 700)
+      if (r.height < 800)
       {
         Logger.info("display height smaller than 700px (" + r.width + "x" + r.width + ") - auto-activating netbook mode");
         Customizing.SETTINGS.setAttribute("application.scrollview",true);
