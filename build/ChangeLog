@@ -1,5 +1,6 @@
 HEAD 2.9 (nightly)
 
+  * NEW: 0134 Update auf SWT 4.17 für für linux64, linux-arm64 (jetzt offiziell von Eclipse untestützt), win64 und macos64
   * NEW: 0133 Parameter "-Dsun.security.smartcardio.library" zu jameica-macos64.sh hinzugefügt - für MacOS Big Sur nötig - siehe https://homebanking-hilfe.de/forum/topic.php?p=157884#real157884
   * NEW: 0132 Fenster-Position auch im Maximiert-Zustand speichern - siehe https://homebanking-hilfe.de/forum/topic.php?p=157397#real157397
   * NEW: 0131 Sprache wieder per Datei->Einstellungen konfigurierbar

@@ -8,7 +8,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux64/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.10.1.v20140909-1633.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.10.1.v20140813-1009.jar"/>
@@ -19,7 +19,7 @@
 	<classpathentry kind="lib" path="lib/splash.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/paperclips/net.sf.paperclips_1.0.4.jar" sourcepath="lib.src/paperclips/net.sf.paperclips_1.0.4.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/paperclips/net.sf.paperclips.ui_1.0.4.jar" sourcepath="lib.src/paperclips/net.sf.paperclips_1.0.4.src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-lang-2.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-lang-2.6.jar" sourcepath="/home/willuhn/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/swt/org.eclipse.core.commands_3.6.100.v20140528-1422.jar"/>
 	<classpathentry kind="lib" path="lib/swt/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
