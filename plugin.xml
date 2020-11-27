@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?> 
 
-<system name="Jameica" version="2.9.0-nightly">
+<system name="Jameica" version="2.11.0-nightly">
 
   <description>Jameica - Java based messages interchange</description>
-  <url>http://www.willuhn.de/products/jameica/releases/nightly/jameica-2.9.0-nightly.zip</url>
+  <url>http://www.willuhn.de/products/jameica/releases/nightly/jameica-2.11.0-nightly.zip</url>
   <homepage>http://www.willuhn.de/projects/jameica</homepage>
   <license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
 
