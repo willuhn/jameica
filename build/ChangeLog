@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0137 Update auf SWT 4.18 für für linux64, linux-arm64, win64 und macos64
+
 2020-11-27 Version 2.10
   
   * NEW: 0136 Neue Launcher für Windows mit aktualisierter Versionsnummer
