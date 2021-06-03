@@ -20,7 +20,7 @@ Hier eine Anleitung für alle, die direkt loslegen wollen.
 
 > :warning: Für Jameica muss [Java](https://adoptopenjdk.net/) installiert sein!
 > Die notwendige Minimalversion ist [hier](https://www.willuhn.de/wiki/doku.php?id=start#kompatibilitaetsmatrix) einsehbar.
-> Falls unsicher, überprüfe die Version auf Deinem Computer, indem Du `java --version` im Terminal/ der Kommandozeile ausführst.
+> Falls unsicher, überprüfe die Version auf Deinem Computer, indem Du `java -version` im Terminal/ der Kommandozeile ausführst.
 
 1. Lade das fertige Paket für Dein Betriebssystem.
 
