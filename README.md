@@ -7,7 +7,7 @@ Sie bietet die Basisfunktionalität und GUI-Komponenten, um Dir dabei zu helfen, 
 
 Es ist die Grundlage für Plugins wie [Hibiscus](https://github.com/willuhn/hibiscus) oder [JVerein](https://www.jverein.de/).
 
-![Screenshot](https://www.willuhn.de/wiki/lib/exe/fetch.php?media=develop:08.png)
+![Screenshot](https://www.willuhn.de/products/jameica/screenshots/04.png)
 
 Jameica nutzt SWT für die grafische Oberfläche und bietet als Plattform mehrere Services (GUI-Toolkit, Logging, Security, Backup, Lifecycle-Management, Message-Bus) für die installierten Plugins.
 Die flexible Plugin-Arbeitsweise ist angelehnt an [OSGi](https://de.wikipedia.org/wiki/OSGi).
