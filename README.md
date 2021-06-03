@@ -28,7 +28,7 @@ Hier eine Anleitung für alle, die direkt loslegen wollen.
     | ----- | ----- | ---------- |
     | [Linux](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica-linux64.zip) | [Linux (32bit)](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica-linux.zip) | [AUR, DEP, RPM, Launchpad, flatpak](https://www.willuhn.de/wiki/doku.php?id=support:bezugsquellen) |
     | [macOS](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica-macos64.zip) | [Mac OS X "Tiger" (10.4) - "Lion" (10.7))](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica-macos32.zip) | [Homebrew](http://brew.sh/): `brew cask install jameica` |
-    | [Windows](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica-win64.zip) | [Windows XP bis Windows 8](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica-win32.zip) | [Chocolatey](https://chocolatey.org/): `choco install jameica` |
+    | [Windows](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica-win64.zip) | [ab Windows 7](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica-win32.zip) | [Chocolatey](https://chocolatey.org/): `choco install jameica` |
 
     Es gibt auch eine [generische Version für weitere Betriebssysteme (OpenBSD, ...)](http://www.willuhn.de/products/jameica/releases/current/jameica/jameica.zip) zum Download.
 
