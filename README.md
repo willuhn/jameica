@@ -12,7 +12,7 @@ Es ist die Grundlage für Plugins wie [Hibiscus](https://github.com/willuhn/hibis
 Jameica nutzt SWT für die grafische Oberfläche und bietet als Plattform mehrere Services (GUI-Toolkit, Logging, Security, Backup, Lifecycle-Management, Message-Bus) für die installierten Plugins.
 Die flexible Plugin-Arbeitsweise ist angelehnt an [OSGi](https://de.wikipedia.org/wiki/OSGi).
 
-![Stack](https://www.willuhn.de/products/jameica/grafx/schema-3d-2.png)
+![Stack](https://www.willuhn.de/products/jameica/grafx/schema.png)
 
 Schnellstart
 ----------
