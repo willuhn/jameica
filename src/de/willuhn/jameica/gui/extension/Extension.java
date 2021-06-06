@@ -12,17 +12,18 @@ package de.willuhn.jameica.gui.extension;
 
 /**
  * Basis-Interface aller Extensions.
- * Jede Komponente, die in Jameica andere Komponenten (zB Context-Menus)
+ *
+ * <p>Jede Komponente, die in Jameica andere Komponenten (zB Context-Menus)
  * erweitern will, muss dieses Interface implementieren und einen
- * parameterlosen Konstruktor mit dem Modifier <code>public</code>
+ * parameterlosen Konstruktor mit dem Modifier {@code public}
  * besitzen, um korrekt registriert zu werden.
  */
 public interface Extension
 {
   /**
    * Diese Funktion wird von der ExtensionRegistry aufgerufen.
-   * Die Funktion erhaelt als Parameter die zu erweiternde Komponente.
-   * @param extendable
+   *
+   * @param extendable die zu erweiternde Komponente
    */
   public void extend(Extendable extendable);
 }

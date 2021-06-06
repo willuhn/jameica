@@ -171,7 +171,7 @@ public class LookupService implements MessageConsumer
   /**
    * Sucht im lokalen Netz nach einem Dienst mit dem angegeben Namen.
    * @param name Name des Dienstes.
-   * @return die URL des Dienstes oder <code>null</code>, wenn
+   * @return die URL des Dienstes oder {@code null}, wenn
    * er nicht gefunden wurde.
    */
   public static synchronized String lookup(String name)

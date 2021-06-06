@@ -151,7 +151,7 @@ public class Column implements Serializable
 
   /**
    * Prueft, ob die Spalte aenderbar ist.
-   * @return true, wenn sie aenderbar ist.
+   * @return {@code true}, wenn sie aenderbar ist.
    */
   public boolean canChange()
   {
@@ -169,7 +169,7 @@ public class Column implements Serializable
 
   /**
    * Liefert einen optionalen Formatter.
-   * @return ein Formatter oder <code>null</code>.
+   * @return ein Formatter oder {@code null}.
    */
   public Formatter getFormatter()
   {
@@ -209,17 +209,18 @@ public class Column implements Serializable
   
   /**
    * Liefert den Wert in der Form, wie er in der Tabelle angezeigt werden soll.
-   * Fuer die meisten Werte wird hier ein simples <code>value#toString</code>
+   * Fuer die meisten Werte wird hier ein simples {@code value#toString}
    * ausgefuehrt.
+   *
    * @param value Der Wert des Attributes der Bean.
    * @param context die Bean, aus der der Wert des Attributes stammt.
    * Die Bean wird fuer gewoehnlich nicht benoetigt, da der Attribut-Wert
-   * ja bereits in <code>value</code> vorliegt. Sie wird als Context-Information
+   * ja bereits in {@code value} vorliegt. Sie wird als Context-Information
    * dennoch uebergeben, damit eine ggf. von dieser Klasse abgeleitete Version
    * abhaengig von der Bean (und damit dem Context die Formatierung unterschiedlich
    * vornehmen kann.
    * @return der formatierte Wert des Attributes.
-   * Die Funktion sollte nie NULL zurueckliefern sondern hoechstens einen
+   * Die Funktion sollte nie {@code null} zurueckliefern sondern hoechstens einen
    * Leerstring, da der Wert 1:1 in die Tabelle uebernommen wird und es
    * dort unter Umstaenden zu einer NPE oder der Anzeige von "null" kommen koennte.
    * BUGZILLA 721

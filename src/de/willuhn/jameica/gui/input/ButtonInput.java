@@ -117,11 +117,14 @@ public abstract class ButtonInput extends AbstractInput
 
 	/**
 	 * Definiert den auf dem Button anzuzeigenden Text.
-	 * Leider kann auf dem Button nicht Image <b>und</b> Text
-	 * angezeigt werden. Wenn also sowohl <code>setButtonText</code> und
-	 * <code>setButtonImage</code> gesetzt werden, wird nur das Image
+   *
+   * <p>Leider kann auf dem Button nicht Image <b>und</b> Text
+   * angezeigt werden. Wenn also sowohl {@link #setButtonText(String)} und
+   * {@link #setButtonImage(Image)} gesetzt werden, wird nur das Image
 	 * angezeigt.
-	 * Wird nichts von beiden gesetzt, wird ein Image mit einer Lupe angezeigt.
+   *
+   * <p>Wird nichts von beiden gesetzt, wird ein Image mit einer Lupe angezeigt.
+   *
    * @param text auf dem Button anzuzeigender Text.
    */
   public final void setButtonText(String text)

@@ -63,8 +63,8 @@ public class IntegerInput extends TextInput
   }
 
   /**
-   * Die Funktion liefert ein Objekt des Typs <code>java.lang.Integer</code> zurueck
-   * oder <code>null</code> wenn nichts eingegeben wurde.
+   * Die Funktion liefert ein Objekt des Typs {@link java.lang.Integer} zurueck
+   * oder {@code null} wenn nichts eingegeben wurde.
    * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
@@ -83,7 +83,7 @@ public class IntegerInput extends TextInput
   }
 
   /**
-   * Erwartet ein Objekt des Typs <code>java.lang.Integer</code>.
+   * Erwartet ein Objekt des Typs {@link java.lang.Integer}.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)

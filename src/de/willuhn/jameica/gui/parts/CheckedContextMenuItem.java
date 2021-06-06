@@ -14,7 +14,7 @@ import de.willuhn.jameica.gui.Action;
 
 /**
  * ContextMenu-Element, dass immer genau dann automatisch
- * deaktiviert ist, wenn das aktuelle Objekt <code>null</code> ist.
+ * deaktiviert ist, wenn das aktuelle Objekt {@code null} ist.
  */
 public class CheckedContextMenuItem extends ContextMenuItem
 {

@@ -15,7 +15,7 @@ import de.willuhn.util.ProgressMonitor;
 /**
  * Klassen, die dieses Interface implementieren, koennen in
  * Jameica als Hintergrund-Task in einem separaten Thread ausgefuehrt werden.
- * Sie werden ueber die Funktion <code>Application.getController().start(BackgroundTask)</code> gestartet. 
+ * Sie werden ueber die Funktion {@code Application.getController().start(BackgroundTask)} gestartet.
  */
 public interface BackgroundTask
 {
@@ -36,7 +36,7 @@ public interface BackgroundTask
   
   /**
    * Prueft, ob der Task abgebrochen wurde.
-   * @return true, wenn er abgebrochen wurde.
+   * @return {@code true}, wenn er abgebrochen wurde.
    */
   public boolean isInterrupted();
 }

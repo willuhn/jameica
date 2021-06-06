@@ -92,7 +92,6 @@ public class SSLFactory
    * 
    * Siehe auch
    * https://www.willuhn.de/products/jameica/updates/jameica.update-pem.crt
-   * 
    */
   private final static String CERT_UPDATES = 
     "-----BEGIN CERTIFICATE-----\n" +
@@ -419,7 +418,8 @@ public class SSLFactory
   /**
 	 * Liefert das X.509-Zertifikat der Jameica-Installation.
    * @return X.509-Zertifikat.
-   * @throws Exception
+   * @throws java.security.KeyStoreException falls kein Zugriff auf Keystore
+   * @throws Exception siehe {@link #getKeyStore()}
    */
   public synchronized X509Certificate getSystemCertificate() throws Exception
 	{
@@ -487,7 +487,8 @@ public class SSLFactory
   /**
    * Liefert eine Liste aller installierten Zertifikate <b>ausser</b> dem Jameica-eigenen System-Zertifikat.
    * @return Liste der installieren Zertifikate.
-   * @throws Exception
+   * @throws java.security.KeyStoreException falls kein Zugriff auf Keystore
+   * @throws Exception siehe {@link #getKeyStore()}
    */
   public synchronized X509Certificate[] getTrustedCertificates() throws Exception
   {
@@ -513,7 +514,8 @@ public class SSLFactory
    * kann stattdessen {@link SSLFactory#getSystemCertificate()} verwendet werden.
    * @param alias Alias des Zertifikats.
    * @return das Zertifikat oder NULL, wenn es nicht gefunden wurde.
-   * @throws Exception
+   * @throws java.security.KeyStoreException falls kein Zugriff auf Keystore
+   * @throws Exception siehe {@link #getKeyStore()}
    */
   public X509Certificate getTrustedCertificate(String alias) throws Exception
   {
@@ -575,7 +577,11 @@ public class SSLFactory
   /**
 	 * Liefert den Keystore mit dem Zertifikat.
    * @return Keystore
-   * @throws Exception
+   * @throws IOException falls Keystore nicht existiert oder kein Zugriff
+   * @throws java.security.KeyStoreException siehe {@link KeyStore#getInstance(String)}
+   * @throws java.security.NoSuchAlgorithmException falls es Probleme beim Integritaetscheck gab
+   * @throws java.security.cert.CertificateException falls Zertifikate nicht aus dem Keystore geladen werden konnten
+   * @throws Exception falls falsches Passwort (siehe {@link ApplicationCallback#getPassword()})
    */
   public synchronized KeyStore getKeyStore() throws Exception
 	{
@@ -697,7 +703,8 @@ public class SSLFactory
   /**
    * Liefert die Certificate-Factory.
    * @return die Certificate-Factory.
-   * @throws Exception
+   * @throws java.security.cert.CertificateException falls Algorithmus nicht unterstützt wird (siehe {@link CertificateFactory})
+   * @throws java.security.NoSuchProviderException falls Provider nicht unterstützt wird (siehe {@link CertificateFactory})
    */
   public synchronized CertificateFactory getCertificateFactory() throws Exception
   {
@@ -722,7 +729,7 @@ public class SSLFactory
    * Fuegt dem Keystore ein Zertifikat hinzu und uebernimmt dabei auch alle noetigen Sicherheitsabfragen.
    * @param cert das Zertifikat.
    * @return der Alias-Name, unter dem das Zertifikat im Keystore abgelegt wurde.
-   * Die Funktion liefert NIE NULL sondern wirft stattdessen eine {@link OperationCanceledException}.
+   * Die Funktion liefert NIE {@code null} sondern wirft stattdessen eine {@link OperationCanceledException}.
    * @throws Exception
    */
   public synchronized String addTrustedCertificate(X509Certificate cert) throws Exception

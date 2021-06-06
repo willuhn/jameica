@@ -77,7 +77,8 @@ public class ColorInput extends ButtonInput
 
   /**
    * Liefert die aktuell ausgewaehlte Farbe.
-   * Rueckgabewert vom Typ <code>Color</code>.
+   *
+   * @return Rueckgabewert vom Typ {@link Color}.
    * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
@@ -86,7 +87,7 @@ public class ColorInput extends ButtonInput
   }
 
   /**
-   * Erwartet ein Objekt vom Typ <code>Color</code>.
+   * Erwartet ein Objekt vom Typ {@link Color}.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)

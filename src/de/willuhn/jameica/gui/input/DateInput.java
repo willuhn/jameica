@@ -134,7 +134,7 @@ public class DateInput implements Input
   }
 
   /**
-   * Liefert ein Objekt vom Typ <code>java.util.Date</code> oder null,
+   * Liefert ein Objekt vom Typ {@link Date} oder {@code null},
    * wenn das Datum nicht geparst werden konnte.
    * @see de.willuhn.jameica.gui.input.Input#getValue()
    */

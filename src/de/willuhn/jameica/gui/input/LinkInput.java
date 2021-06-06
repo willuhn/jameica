@@ -86,7 +86,7 @@ public class LinkInput extends AbstractInput
   }
 
   /**
-   * Erwartet ein Objekt des Typs <code>java.lang.String</code>.
+   * Erwartet ein Objekt des Typs {@link java.lang.String}.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)
@@ -131,9 +131,9 @@ public class LinkInput extends AbstractInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#addListener(org.eclipse.swt.widgets.Listener)
-   * Ueberschrieben, weil die Listener in AbstractInput sonst an zu vielen Stellen
-   * (auch bei Focus-Wechsel ausgeloest werden wuerden.
+   * Methode {@link AbstractInput#addListener(org.eclipse.swt.widgets.Listener)}
+   * ueberschrieben, weil die Listener sonst an zu vielen Stellen
+   * (auch bei Focus-Wechsel) ausgeloest werden wuerden.
    */
   public void addListener(Listener l)
   {

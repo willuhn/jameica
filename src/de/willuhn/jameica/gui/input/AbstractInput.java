@@ -68,7 +68,7 @@ public abstract class AbstractInput implements Input
   }
   
   /**
-   * Liefert die Stylebits (GridData-Settings), welche zum Erstellen des Widgets
+   * Liefert die Stylebits ({@link GridData}-Settings), welche zum Erstellen des Widgets
    * verwendet werden.
    * @return die Style.Bits.
    */
@@ -263,11 +263,13 @@ public abstract class AbstractInput implements Input
    * Definiert eine Liste von Zeichen, die eingegeben werden koennen.
    * Wird diese Funktion verwendet, dann duerfen nur noch die hier
    * angegebenen Zeichen eingegeben werden.
-   * Werden beide Funktionen <code>setValidChars</code> <b>und</b>
-   * <code>setInvalidChars</code> benutzt, kann nur noch die verbleibende
+   *
+   * <p>Werden beide Funktionen {@link #setValidChars(String)} <b>und</b>
+   * {@link #setInvalidChars(String)} benutzt, kann nur noch die verbleibende
    * Restmenge eingegeben werden. Das sind die Zeichen, die in validChars
-   * angegeben und in invalidChars nicht enthalten sind. 
-   * @param chars
+   * angegeben und in invalidChars nicht enthalten sind.
+   *
+   * @param chars erlaubte Zeichen
    */
   public void setValidChars(String chars)
   {
@@ -278,7 +280,9 @@ public abstract class AbstractInput implements Input
    * Definiert eine Liste von Zeichen, die nicht eingegeben werden koennen.
    * Wird diese Funktion verwendet, dann duerfen die angegebenen Zeichen nicht
    * mehr verwendet werden.
-   * @param chars
+   *
+   * @param chars nicht-erlaubte Zeichen
+   * @see #setValidChars(String)
    */
   public void setInvalidChars(String chars)
   {

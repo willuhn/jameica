@@ -19,7 +19,7 @@ import java.util.Map;
  * Ein einzelner Reminder.
  * Das Erstellen und Speichern des Reminders geschieht beispielhaft so:
  * 
- * <pre>
+ * <pre>{@code
  *   String channel = "mein.test.channel";
  *   Date due = new Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000L));
  *   Map<String,Serializable> data = new HashMap<String,Serializable>();
@@ -30,11 +30,11 @@ import java.util.Map;
  *   
  *   ReminderService service = (ReminderService) Application.getBootloader().getBootable(ReminderService.class);
  *   String uuid = service.getDefaultProvider().add(reminder);
- *   
- *   Die UUID kann verwendet werden, um den Reminder zu loeschen, bevor er ausgeloest wird.
- *   Bei Erreichen der Faelligkeit sendet der Reminder-Service eine QueryMessage
- *   mit den Nutzdaten an den angegebenen Channel.
- * </pre>
+ * }</pre>
+ *
+ * Die UUID kann verwendet werden, um den Reminder zu loeschen, bevor er ausgeloest wird.
+ * Bei Erreichen der Faelligkeit sendet der Reminder-Service eine QueryMessage
+ * mit den Nutzdaten an den angegebenen Channel.
  */
 public final class Reminder implements Serializable
 {

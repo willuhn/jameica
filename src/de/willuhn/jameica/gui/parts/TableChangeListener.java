@@ -10,13 +10,14 @@
 
 package de.willuhn.jameica.gui.parts;
 
+import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.util.ApplicationException;
 
 /**
- * Ein Listener, der an eine Tabelle via <code>addChangeListener()</code> gehaengt werden kann, wenn einzelne
- * Spalten direkt in der Tabelle aenderbar sein sollen. Die Spalten muessen
- * mit der Funktion <code>table.addColumn(String title, String field, Formatter f, boolean changeable)</code>
- * hinzugefuegt werden, wobei changeable=true sein muss um die Spalten als aenderbar
+ * Ein Listener, der an eine Tabelle via {@link TablePart#addChangeListener(TableChangeListener)} gehaengt werden kann,
+ * wenn einzelne Spalten direkt in der Tabelle aenderbar sein sollen. Die Spalten muessen
+ * mit der Funktion {@link TablePart#addColumn(String, String, Formatter, boolean)}
+ * hinzugefuegt werden, wobei {@code changeable=true} sein muss, um die Spalten als aenderbar
  * zu markieren. Sofern der Wert eines solchen Feldes vom Benutzer geaendert
  * wurde, werden alle registrieren TableChangeListener ueber die Aenderung
  * informiert. Es ist dann deren Aufgabe, den geaenderten Wert im Fachobjekt

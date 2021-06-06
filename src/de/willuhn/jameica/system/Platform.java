@@ -83,8 +83,8 @@ public class Platform
   /**
    * Prueft, ob sich der angegebene Ordner oder die Datei innerhalb des Programmordners befindet.
    * @param f der zu pruefende Ordner oder die Datei. 
-   * @return true, wenn sich der Ordner oder die Datei im Programmordner befindet.
-   * @throws IOException
+   * @return {@code true}, wenn sich der Ordner oder die Datei im Programmordner befindet.
+   * @throws IOException falls kein Zugriff auf das Dateiverzeichnis moeglich
    */
   public static boolean inProgramDir(File f) throws IOException
   {
@@ -100,7 +100,7 @@ public class Platform
    * Liefert das Benutzerverzeichnis, in dem Jameica alle Daten speichert.
    * Falls es noch nicht existiert, wird es automatisch angelegt.
    * @return Benutzerverzeichnis.
-   * @throws Exception wenn das Benutzerverzeichnis nicht lesbar ist oder
+   * @throws ApplicationException wenn das Benutzerverzeichnis nicht lesbar ist oder
    * nicht erstellt werden konnte.
    */
   public File getWorkdir() throws Exception
@@ -176,7 +176,7 @@ public class Platform
   
   /**
    * Liefert das Betriebssystem.
-   * Siehe dazu die Konstanten <code>OS_*</code>.
+   * Siehe dazu die Konstanten {@code Platform.OS_*}.
    * @return Betriebssystem.
    */
   public int getOS()
@@ -309,11 +309,13 @@ public class Platform
   
   /**
    * Mappt OS-spezifisch einzelne Keys auf andere.
-   * In der Default-Implementierung wird hier 1:1 er Eingabewert zurueckgegeben.
-   * In PlatformMacOS aber wird zBsp SWT.ALT gegen SWT.COMMAND ersetzt.
-   * Siehe https://github.com/willuhn/jameica/pull/6
+   *
+   * <p>In der Default-Implementierung wird hier 1:1 der Eingabewert zurueckgegeben.
+   * In {@link PlatformMacOS} aber wird z.B. <i>ALT</i> gegen <i>COMMAND</i> ersetzt.
+   *
    * @param key der Key.
    * @return der gemappte Key.
+   * @see <a href="https://github.com/willuhn/jameica/pull/6">willuhn/jameica#6</a>
    */
   public int mapSWTKey(int key)
   {
@@ -321,10 +323,11 @@ public class Platform
   }
   
   /**
-   * Wie oben. Jedoch fuer String-Repraesentationen von Shortcuts.
-   * Parameter ist z.Bsp. "ALT+S". Auf OS wird das auf "COMMAND+S" gemappt.
+   * Wie {@link #mapSWTKey(int)}, jedoch fuer String-Repraesentationen von Shortcuts.
+   * Parameter ist z.Bsp. "ALT+S". Auf macOS wird das auf "CMD+S" gemappt.
    * @param shortcut der Shortcut.
    * @return der gemappte Shortcut.
+   * @see #mapSWTKey(int)
    */
   public String mapSWTShortcut(String shortcut)
   {

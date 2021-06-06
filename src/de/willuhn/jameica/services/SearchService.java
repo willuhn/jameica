@@ -96,8 +96,10 @@ public class SearchService implements Bootable
   
   /**
    * Fuehrt eine Suche ueber die Such-Provider durch.
-   * Aus Perfomanz-Gruenden beginnt die Suche nicht sofort
+   *
+   * <p>Aus Perfomanz-Gruenden beginnt die Suche nicht sofort
    * sondern erst, wenn die SearchResults vom Aufrufer ausgewertet werden.
+   *
    * @param text der Suchbegriff.
    * @return das Suchergebnis.
    * Jedes SearchResult enthaelt die Suchergebnisse fuer einen Provider.
@@ -127,7 +129,7 @@ public class SearchService implements Bootable
   
   /**
    * Liefert eine Liste der SerchProvider.
-   * @return Liste der SearchProvider. Nie <code>null</code> sondern
+   * @return Liste der SearchProvider. Nie {@code null} sondern
    * hoechstens eine leere Liste.
    */
   public SearchProvider[] getSearchProviders()
@@ -140,7 +142,7 @@ public class SearchService implements Bootable
   /**
    * Aktiviert oder deaktiviert die Suche in einem einzelnen Searchprovider.
    * @param provider der Provider.
-   * @param enabled false, wenn die Suche in dem Provider deaktiviert werden soll, sonst true.
+   * @param enabled {@code false}, wenn die Suche in dem Provider deaktiviert werden soll, sonst {@code true}.
    */
   public void setEnabled(SearchProvider provider,boolean enabled)
   {
@@ -152,7 +154,7 @@ public class SearchService implements Bootable
   /**
    * Prueft, ob der angegebene Search-Provider aktiviert ist.
    * @param provider Search-Provider.
-   * @return true, wenn er aktiv ist, sonst false.
+   * @return {@code true}, wenn er aktiv ist, sonst {@code false}.
    */
   public boolean isEnabled(SearchProvider provider)
   {

@@ -53,7 +53,8 @@ public interface ReminderStorageProvider
   
   /**
    * Liefert eine Liste aller Reminder im angegebenen Zeitraum.
-   * Die Funktion findet auch wiederkehrende Reminder, insofern mindestens eine
+   *
+   * <p>Die Funktion findet auch wiederkehrende Reminder, insofern mindestens eine
    * geplante Ausfuehrung im angegebenen Zeitraum liegt. Befinden sich in dem Zeitraum
    * mehrere Termine fuer den Reminder, dann ist er in der Map dennoch nur einmal
    * enthalten, da alle weiteren Termine dieses Reminders ja die selbe UUID haben und in
@@ -61,18 +62,19 @@ public interface ReminderStorageProvider
    * Es ist also Sache des Aufrufers, zu pruefen, ob unter den zurueckgelieferten Termine
    * welche mit Wiederholungen enthalten sind und diese eventuell ebenfalls noch im
    * Zeitfenster liegen. Das kann beispielsweise wie folgt geschehen:
-   * 
-   * <code>
+   *
+   * <pre>{@code
    * ReminderInterval ri = reminder.getReminderInterval();
    * if (ri != null)
    * {
    *   List<Date> termine = ri.getDates(reminder.getDate(),from,to);
    * }
-   * </code>
-   * 
-   * Wiederkehrende Reminder mit Ende-Datum werden hier noch nicht beruecksichtigt.
+   * }</pre>
+   *
+   * <p>Wiederkehrende Reminder mit Ende-Datum werden hier noch nicht beruecksichtigt.
    * Sie werden also mit zurueckgeliefert, als wenn sie kein Ende-Datum haetten. Es
-   * ist dann Aufgabe des Aufrufers, diese rauszufischen, wenn das Ende-Datum ueberschritten ist. 
+   * ist dann Aufgabe des Aufrufers, diese rauszufischen, wenn das Ende-Datum ueberschritten ist.
+   *
    * @param queue Angabe der Queue, in dem sich die Reminder befinden muessen (optional).
    * Ist keine Queue angegeben, werden die Reminder aller Queues geliefert.
    * @param from Start-Datum des Zeitraumes (optional).

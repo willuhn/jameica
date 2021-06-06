@@ -104,7 +104,7 @@ public class FontInput extends ButtonInput
 
   /**
    * Liefert die aktuell ausgewaehlte Schriftart.
-   * Rueckgabewert vom Typ <code>org.eclipse.swt.graphics.Font</code>.
+   * Rueckgabewert vom Typ {@link org.eclipse.swt.graphics.Font}.
    * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
@@ -113,7 +113,7 @@ public class FontInput extends ButtonInput
   }
 
   /**
-   * Erwartet ein Object vom Typ <code>org.eclipse.swt.graphics.Font</code>.
+   * Erwartet ein Object vom Typ {@link org.eclipse.swt.graphics.Font}.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)

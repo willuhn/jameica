@@ -17,12 +17,15 @@ import net.n3.nanoxml.IXMLElement;
  * Ein Extension-Deskriptor beschreibt eine Extension, welche
  * bei einem Plugin beliegen kann, um die Funktionalitaet eines
  * anderen Plugins zu erweitern.
- * Diese finden sich in der plugin.xml eines Plugins.
- * Bsp.:
+ * Diese finden sich in der <i>plugin.xml</i> eines Plugins.
+ *
+ * <p>Bsp.:
+ * <pre>{@code
  * <extensions>
  *   <extension class="de.willuhn.jameica.plugin.Extension1" extends="id.extendable.1,id.extendable.2" />
  *   <extension class="de.willuhn.jameica.plugin.Extension2" extends="id.extendable.3" />
  * </extensions>
+ * }</pre>
  */
 public class ExtensionDescriptor
 {
@@ -58,7 +61,7 @@ public class ExtensionDescriptor
    * Liefert eine Liste von Extendable-IDs, welche diese Extension
    * erweitert.
    * @return Liste von Extendables.
-   * Die Funktion darf nie <code>null</code> liefern, da sie dann kein
+   * Die Funktion darf nie {@code null} liefern, da sie dann kein
    * Extendable erweitern wuerde. Die Extension waere damit nutzlos.
    */
   public String[] getExtendableIDs()
@@ -88,7 +91,7 @@ public class ExtensionDescriptor
    * Parst den Wert des genannten XML-Elements als Array aus einer
    * kommaseparierten Liste von Werten.
    * @param element Name des XML-Elements.
-   * @return Liste der Werte oder NULL.
+   * @return Liste der Werte oder {@code null}.
    */
   private String[] parseArray(String element)
   {

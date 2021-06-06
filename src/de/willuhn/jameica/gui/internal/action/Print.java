@@ -31,7 +31,7 @@ import net.sf.paperclips.PrintJob;
 public class Print implements Action
 {
   /**
-   * Erwartet ein Objekt vom Typ <code>PrintSupport</code>.
+   * Erwartet ein Objekt vom Typ {@code PrintSupport}.
    * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
    */
   public void handleAction(Object context) throws ApplicationException

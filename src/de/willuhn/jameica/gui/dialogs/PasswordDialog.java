@@ -34,10 +34,10 @@ import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog zu Passwort-Eingabe.
- * Hinweis: Diese Klasse hat einen internen Zaehler, der die Anzahl
- * der fehlgeschlagenen Aufrufe von <code>checkPassword(String)</code>
- * zaehlt. Nach 3 Versuchen wird die Funktion <code>cancel()</code>
- * aufgerufen und der Dialog geschlossen.
+ *
+ * <p>Hinweis: Diese Klasse hat einen internen Zaehler, der die Anzahl
+ * der fehlgeschlagenen Aufrufe von {@link #checkPassword(String)}
+ * zaehlt und nach {@link #MAX_RETRIES} Versuchen den Dialog schlieﬂt.
  */
 public class PasswordDialog extends AbstractDialog
 {
@@ -104,11 +104,13 @@ public class PasswordDialog extends AbstractDialog
    * Speichert ein optionales Label fuer die zusaetzliche Eingabe eines
    * Usernamens. Wird hier ein Wert uebergeben, zeigt der Dialog neben
    * den beiden Passwort-Feldern extra noch ein Feld fuer den Usernamen an.
-   * Der da eingegebene Wert kann nach dem Aufruf von <code>open()</code>
-   * mit <code>getUsername()</code> ermittelt werden.
-   * Wenn das Eingabefeld fuer den Usernamen angezeigt wird, ist es auch Pflicht.
+   * Der da eingegebene Wert kann nach dem Aufruf von {@code open()}
+   * mit {@link #getUsername()} ermittelt werden.
+   *
+   * <p>Wenn das Eingabefeld fuer den Usernamen angezeigt wird, ist es auch Pflicht.
    * Es gibt also entweder gar keinen Usernamen oder ein verpflichtetenden.
    * Jedoch keinen optionalen Usernamen.
+   *
    * @param text das anzuzeigende Label vor dem Eingabefeld, insofern
    * es angezeigt werden soll.
    */
@@ -131,7 +133,7 @@ public class PasswordDialog extends AbstractDialog
 
 	/**
 	 * Zeigt den uebergebenen Text rot markiert an.
-	 * Diese Funktion sollte aus <code>checkPassword(String)</code> heraus
+	 * Diese Funktion sollte aus {@link #checkPassword(String)} heraus
 	 * aufgerufen werden, um dem benutzer zu zeigen, <b>warum</b> seine
 	 * Passwort-Eingabe falsch war. 
    * @param text Der anzuzeigende Fehlertext.
@@ -292,9 +294,12 @@ public class PasswordDialog extends AbstractDialog
 
   /**
    * Prueft die Eingabe des Passwortes.
-   * Hinweis: Der Dialog wird erst geschlossen, wenn diese
-   * Funktion <code>true</code> zurueckliefert.
-   * Die Default-Implementierung liefert immer TRUE.
+   *
+   * <p>Hinweis: Der Dialog wird erst geschlossen, wenn diese
+   * Funktion {@code true} zurueckliefert.
+   *
+   * <p>Die Default-Implementierung liefert immer {@code true}.
+   *
    * @param password das gerade eingegebene Passwort.
    * @return true, wenn die Eingabe OK ist, andernfalls false.
    */

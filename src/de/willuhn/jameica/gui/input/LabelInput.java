@@ -74,7 +74,7 @@ public class LabelInput extends AbstractInput
   }
 
   /**
-   * Erwartet ein Objekt des Typs <code>java.lang.String</code>.
+   * Erwartet ein Objekt des Typs {@link java.lang.String}.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)

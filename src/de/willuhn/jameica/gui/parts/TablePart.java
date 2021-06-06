@@ -177,7 +177,7 @@ public class TablePart extends AbstractTablePart
   
   /**
    * Legt fest, ob eine Summenzeile am Ende angezeigt werden soll.
-   * @param show true, wenn die Summenzeile angezeigt werden soll (Default) oder false
+   * @param show {@code true}, wenn die Summenzeile angezeigt werden soll (Default) oder {@code false}
    * wenn sie nicht angezeigt werden soll.
    * @deprecated Bitte stattdessen {@link AbstractTablePart#addFeature(Feature)} verwenden.
    */
@@ -192,7 +192,6 @@ public class TablePart extends AbstractTablePart
   
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
-   * Entspricht <code>getItems(true)</code>
    */
   public List getItems() throws RemoteException
   {
@@ -201,7 +200,7 @@ public class TablePart extends AbstractTablePart
   
   /**
    * Liefert die Fach-Objekte der Tabelle.
-   * @param onlyChecked true, falls bei Aktivierung des Features <code>setCheckable(true)</code>
+   * @param onlyChecked {@code true}, falls bei Aktivierung des Features {@code setCheckable(true)}
    * nur genau die Objekte geliefert werden sollen, bei denen das Haekchen gesetzt ist.
    * Die Objekte werden genau in der angezeigten Reihenfolge zurueckgeliefert.
    * @return die Liste der Objekte.
@@ -261,7 +260,8 @@ public class TablePart extends AbstractTablePart
 
   /**
    * Entfernt das genannte Element aus der Tabelle.
-   * Wurde die Tabelle mit einer Liste von Objekten erzeugt, die von <code>DBObject</code>
+   *
+   * <p>Wurde die Tabelle mit einer Liste von Objekten erzeugt, die von {@link DBObject}
    * abgeleitet sind, muss das Loeschen nicht manuell vorgenommen werden. Die Tabelle
    * fuegt in diesem Fall automatisch jedem Objekt einen Listener hinzu, der
    * beim Loeschen des Objektes benachrichtigt wird. Die Tabelle entfernt
@@ -360,7 +360,7 @@ public class TablePart extends AbstractTablePart
   /**
    * Fuegt der Tabelle am Ende ein Element hinzu.
    * @param object hinzuzufuegendes Element.
-   * @param checked true, wenn die Tabelle checkable ist und das Objekt gecheckt sein soll.
+   * @param checked {@code true}, wenn die Tabelle checkable ist und das Objekt gecheckt sein soll.
    * @throws RemoteException
    */
   public void addItem(Object object, boolean checked) throws RemoteException
@@ -1185,8 +1185,8 @@ public class TablePart extends AbstractTablePart
 
   /**
    * Aktualisiert die Summenzeile.
-   * @deprecated Bitte künftig {@link AbstractTablePart#featureEvent(de.willuhn.jameica.gui.parts.table.Feature.Event, Object)}
-   * mit dem Event "REFRESH" verwenden.
+   * @deprecated Bitte künftig {@link AbstractTablePart#featureEvent(Feature.Event, Object)}
+   * mit dem Event {@link Feature.Event#REFRESH} verwenden.
    */
   @Deprecated
   protected void refreshSummary()
@@ -1200,8 +1200,7 @@ public class TablePart extends AbstractTablePart
    * @return anzuzeigender Text oder null, wenn nichts angezeigt werden soll.
    * @deprecated Bitte kuenftig stattdessen {@link AbstractTablePart#createFeatureEventContext(de.willuhn.jameica.gui.parts.table.Feature.Event, Object)}
    * ueberschreiben und dort die addon-Daten passend fuer FeatureSummary belegen:
-   * 
-   * <code>
+   * <pre>{@code
    * protected Context createFeatureEventContext(Feature.Event e, Object data)
    * {
    *   Context ctx = super.createFeatureEventContext(e, data);
@@ -1209,7 +1208,7 @@ public class TablePart extends AbstractTablePart
    *     ctx.addon.put(FeatureSummary.CTX_KEY_TEXT,"Anzuzeigender Summentext");
    *   return ctx;
    * }
-   * </code>
+   * }</pre>
    */
   @Deprecated
   protected String getSummary()
@@ -1286,7 +1285,7 @@ public class TablePart extends AbstractTablePart
 
   /**
    * Aktiviert oder deaktiviert die Tabelle.
-   * @param enabled true, wenn sie aktiv sein soll.
+   * @param enabled {@code true}, wenn sie aktiv sein soll.
    */
   public void setEnabled(boolean enabled)
   {
@@ -1297,7 +1296,7 @@ public class TablePart extends AbstractTablePart
   
   /**
    * Prueft, ob die Tabelle aktiv ist.
-   * @return true, wenn sie aktiv ist.
+   * @return {@code true}, wenn sie aktiv ist.
    */
   public boolean isEnabled()
   {
@@ -1386,7 +1385,7 @@ public class TablePart extends AbstractTablePart
   /**
    * Liefert den Namen der Spalte, nach der gerade sortiert ist
    * oder null, wenn die Tabelle nicht sortiert ist.
-   * @return name der Spalte oder null.
+   * @return name der Spalte oder {@code null}.
    */
   private String getOrderedBy()
   {
@@ -1406,7 +1405,7 @@ public class TablePart extends AbstractTablePart
    * @param row die Spalte.
    * @param item das Tabellen-Element.
    * @param oldValue der bisherige Wert.
-   * @return der Editor oder NULL, wenn das Bearbeiten nicht erlaubt werden soll.
+   * @return der Editor oder {@code null}, wenn das Bearbeiten nicht erlaubt werden soll.
    */
   protected Control getEditorControl(int row, TableItem item, final String oldValue)
   {

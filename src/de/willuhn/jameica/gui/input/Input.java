@@ -40,25 +40,28 @@ public interface Input extends Part
   public void setValue(Object value);
   
   /**
-   * Prueft, ob sich der Wert von <code>getValue()</code> seit dem
-   * letzten Aufruf von <code>hasChanged</code> geaendert hat.
-   * @return true, wenn sich der Wert geaendert hat, sonstfalse.
+   * Prueft, ob sich der Wert von {@link #getValue()} seit dem
+   * letzten Aufruf von {@code hasChanged()} geaendert hat.
+   * @return {@code true}, wenn sich der Wert geaendert hat, sonst {@code false}.
    */
   public boolean hasChanged();
 
   /**
    * Liefert das eigentliche Eingabecontrol. Es muss von jeder
    * abgeleiteten Klasse implementiert werden und das Eingabe-Feld
-   * zurueckliefern. Da der Implementierer das Composite benoetigt,
+   * zurueckliefern.
+   *
+   * <p>Da der Implementierer das Composite benoetigt,
    * in dem das Control positioniert werden soll, kann er sich
-   * der Methode getParent() in dieser Klasse bedienen.
+   * der Methode {@link AbstractInput#getParent()} in dieser Klasse bedienen.
+   *
    * @return das zu zeichnende Control.
    */
   public Control getControl();
 
   /**
    * Fuegt dem Eingabe-Feld einen Listener hinzu, der bei jedem Focus-Wechsel ausgeloest wird.
-   * Besteht das Eingabe-Feld aus mehreren Teilen (z.Bsp. bei SearchInput aus Eingabe-Feld
+   * Besteht das Eingabe-Feld aus mehreren Teilen (z.Bsp. bei {@link SearchInput} aus Eingabe-Feld
    * + Knopf dahinter) dann wird der Listener bei Focus-Wechsel jedes dieser
    * Teile ausgeloest.
    * @param l zu registrierender Listener.
@@ -68,10 +71,12 @@ public interface Input extends Part
   /**
    * Fuegt hinter das Eingabefeld noch einen Kommentar.
    * Existiert der Kommentar bereits, wird er gegen den neuen ersetzt.
-   * Hinweis: Wird die Funktion nicht aufgerufen, bevor das Eingabe-Feld
+   *
+   * <p>Hinweis: Wird die Funktion nicht aufgerufen, bevor das Eingabe-Feld
    * gemalt wird, dann wird es auch nicht angezeigt. Denn vorm Malen
    * muss bekannt sein, ob es angezeigt werden soll, damit der Platz
    * dafuer reserviert werden kann.
+   *
    * @param comment Kommentar.
    */
   public void setComment(String comment);

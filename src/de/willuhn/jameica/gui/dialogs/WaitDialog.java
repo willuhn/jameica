@@ -29,16 +29,18 @@ import de.willuhn.util.ApplicationException;
 
 /**
  * Warte-Dialog, der einen Text und einen Fortschrittsbalken fuer ein Timeout anzeigt.
- * Zwei Anwendungsbeispiele:
+ *
+ * <p>Zwei Anwendungsbeispiele:
  * <ul>
  *   <li>Der User soll einen USB-Stick mit einer Schluesseldatei einstecken. Waehrenddessen
  *       wird dieser Dialog anagezeigt.</li>
  *   <li>Der User soll eine PIN im Kartenleser eingeben.</li>
  * </ul>
- * Die Klasse ist abstrakt, damit in der abgeleiteten Klasse die Funktion <code>check()</code>
+ *
+ * <p>Die Klasse ist abstrakt, damit in der abgeleiteten Klasse die Funktion {@link #check()}
  * implementiert wird. Der Rueckgabe-Wert der Funktion entscheidet darueber, ob der Dialog
  * geschlossen werden soll oder weiter gewartet wird. Diese Funktion wird nach Ablauf jeder Sekunde
- * erneut aufgerufen. Solange, bis sie <code>true</code> zurueckliefert, oder das Timeout
+ * erneut aufgerufen. Solange, bis sie {@code true} zurueckliefert, oder das Timeout
  * abgelaufen ist.
  */
 public abstract class WaitDialog extends AbstractDialog
@@ -93,7 +95,7 @@ public abstract class WaitDialog extends AbstractDialog
   }
 
   /**
-   * Die Funktion liefert immer <code>null</code>.
+   * Die Funktion liefert immer {@code null}.
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
   protected Object getData() throws Exception

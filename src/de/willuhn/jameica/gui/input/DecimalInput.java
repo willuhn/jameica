@@ -144,8 +144,9 @@ public class DecimalInput extends TextInput
   }
 
   /**
-   * Die Funktion liefert ein Objekt des Typs java.lang.Double zurueck
-   * oder <code>null</code> wenn nicht eingegeben wurde.
+   * Die Funktion liefert ein Objekt des Typs {@link Double} zurueck
+   * oder {@code null}, wenn nichts eingegeben wurde.
+   *
    * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
   public Object getValue()
@@ -203,7 +204,7 @@ public class DecimalInput extends TextInput
   }
 
   /**
-   * Erwartet ein Objekt des Typs java.lang.Double.
+   * Erwartet ein Objekt des Typs {@link java.lang.Double}.
    * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
   public void setValue(Object value)

@@ -29,7 +29,8 @@ import de.willuhn.util.ApplicationException;
 
 /**
  * Dialog zur Neuvergabe von Passworten.
- * Die Klasse implementiert bereits die Funktion<code>checkPassword(String,String)</code>
+ *
+ * <p>Die Klasse implementiert bereits die Funktion {@link #checkPassword(String, String)}
  * und prueft dort, ob ueberhaupt Passworter eingegeben wurden und ob beide
  * uebereinstimmen. Sollen weitere Pruefungen vorgenommen werden, dann bitte
  * einfach diese Funktion ueberschreiben.
@@ -85,11 +86,14 @@ public class NewPasswordDialog extends AbstractDialog
    * Speichert ein optionales Label fuer die zusaetzliche Eingabe eines
    * Usernamens. Wird hier ein Wert uebergeben, zeigt der Dialog neben
    * den beiden Passwort-Feldern extra noch ein Feld fuer den Usernamen an.
-   * Der da eingegebene Wert kann nach dem Aufruf von <code>open()</code>
-   * mit <code>getUsername()</code> ermittelt werden.
-   * Wenn das Eingabefeld fuer den Usernamen angezeigt wird, ist es auch Pflicht.
+   *
+   * <p>Der eingegebene Wert kann nach dem Aufruf von {@code open()}
+   * mit {@link #getUsername()} ermittelt werden.
+   *
+   * <p>Wenn das Eingabefeld fuer den Usernamen angezeigt wird, ist es auch Pflicht.
    * Es gibt also entweder gar keinen Usernamen oder ein verpflichtetenden.
    * Jedoch keinen optionalen Usernamen.
+   *
    * @param text das anzuzeigende Label vor dem Eingabefeld, insofern
    * es angezeigt werden soll.
    */
@@ -124,8 +128,8 @@ public class NewPasswordDialog extends AbstractDialog
 
 	/**
 	 * Zeigt den uebergebenen Text rot markiert links neben dem OK-Button an.
-	 * Diese Funktion sollte aus <code>checkPassword(String)</code> heraus
-	 * aufgerufen werden, um dem benutzer zu zeigen, <b>warum</b> seine
+	 * Diese Funktion sollte aus {@link #checkPassword(String, String)} heraus
+	 * aufgerufen werden, um dem Benutzer zu zeigen, <b>warum</b> seine
 	 * Passwort-Eingabe falsch war. 
    * @param text Der anzuzeigende Fehlertext.
    */

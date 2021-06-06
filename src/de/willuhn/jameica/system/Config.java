@@ -24,7 +24,7 @@ import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
- * Liest die System-Konfiguration aus config.xml. 
+ * Liest die System-Konfiguration aus <i>config.xml</i>.
  * @author willuhn
  */
 public final class Config
@@ -55,7 +55,7 @@ public final class Config
 
   /**
    * Initialisiert die Konfiguration.
-   * @throws Exception
+   * @throws ApplicationException wenn das Benutzerverzeichnis nicht lesbar ist oder nicht erstellt werden konnte
    */
   protected synchronized void init() throws Exception
   {
@@ -177,7 +177,7 @@ public final class Config
   /**
    * Liefert einen ggf definierten Proxy, ueber den Jameica mit der Aussenwelt
    * kommunizieren soll.
-   * @return Hostname/IP des Proxy oder <code>null</code> wenn keiner definiert ist.
+   * @return Hostname/IP des Proxy oder {@code null} wenn keiner definiert ist.
    */
   public String getProxyHost()
   {
@@ -186,7 +186,7 @@ public final class Config
 
   /**
    * Liefert den TCP-Port des Proxys insofern einer definiert ist.
-   * @return TCP-Portnummer des Proxys oder -1,
+   * @return TCP-Portnummer des Proxys oder {@code -1},
    */
   public int getProxyPort()
   {
@@ -209,6 +209,7 @@ public final class Config
    * @param port Port-Nummer.
    * @throws ApplicationException Bei Angabe eines ungueltigen Ports (kleiner 1 oder groesser 65535).
    * Es sei denn, es wurde "-1" angegeben. Der Wert steht fuer "nicht verwenden".
+   * @see #getProxyPort()
    */
   public void setProxyPort(int port) throws ApplicationException
   {
@@ -227,7 +228,7 @@ public final class Config
   /**
    * Liefert einen ggf definierten HTTPS-Proxy, ueber den Jameica mit der Aussenwelt
    * kommunizieren soll.
-   * @return Hostname/IP des Proxy oder <code>null</code> wenn keiner definiert ist.
+   * @return Hostname/IP des Proxy oder {@code null} wenn keiner definiert ist.
    */
   public String getHttpsProxyHost()
   {
@@ -236,7 +237,7 @@ public final class Config
 
   /**
    * Liefert den TCP-Port des HTTPS-Proxys insofern einer definiert ist.
-   * @return TCP-Portnummer des Proxys oder -1,
+   * @return TCP-Portnummer des Proxys oder {@code -1},
    */
   public int getHttpsProxyPort()
   {
@@ -259,6 +260,7 @@ public final class Config
    * @param port Port-Nummer.
    * @throws ApplicationException Bei Angabe eines ungueltigen Ports (kleiner 1 oder groesser 65535).
    * Es sei denn, es wurde "-1" angegeben. Der Wert steht fuer "nicht verwenden".
+   * @see #getHttpsProxyPort()
    */
   public void setHttpsProxyPort(int port) throws ApplicationException
   {
@@ -276,7 +278,7 @@ public final class Config
   
   /**
    * Prueft, ob die Proxy-Einstellungen des Systems verwendet werden sollen.
-   * @return true, wenn die Default-Systemeinstellungen verwendet werden sollen.
+   * @return {@code true}, wenn die Default-Systemeinstellungen verwendet werden sollen.
    */
   public boolean getUseSystemProxy()
   {
@@ -285,7 +287,7 @@ public final class Config
   
   /**
    * Legt fest, ob die System-Einstellungen fuer den Proxy verwendet werden sollen. 
-   * @param b true, wenn die System-Einstellungen des Betriebssystems verwendet werden sollen.
+   * @param b {@code true}, wenn die System-Einstellungen des Betriebssystems verwendet werden sollen.
    */
   public void setUseSystemProxy(boolean b)
   {
@@ -293,8 +295,8 @@ public final class Config
   }
   
   /**
-   * Liefert true, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
-   * @return true, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
+   * Prueft, ob den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
+   * @return {@code true}, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
    * Liefert per Default true.
    */
   public boolean getTrustJavaCerts()
@@ -304,7 +306,7 @@ public final class Config
 
   /**
    * Legt fest, ob den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
-   * @param b true, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
+   * @param b {@code true}, wenn den Aussteller-Zertifikaten der Java-Installation vertraut werden soll.
    */
   public void setTrustJavaCerts(boolean b)
   {
@@ -314,7 +316,7 @@ public final class Config
   /**
    * Prueft, ob im Server-Mode die Dienste nach aussen freigegeben werden sollen.
    * Der Parameter wird nur im Server-Mode interpretiert.
-   * @return true, wenn die Dienste freigegeben werden.
+   * @return {@code true}, wenn die Dienste freigegeben werden.
    */
   public boolean getShareServices()
   {
@@ -324,7 +326,7 @@ public final class Config
   /**
    * Prueft, ob im Server-Mode die Dienste via Multicast-Lookup im LAN announced werden sollen.
    * Der Parameter wird nur im Server-Mode interpretiert.
-   * @return true, wenn die Dienste via Multicast-Lookup announced werden sollen.
+   * @return {@code true}, wenn die Dienste via Multicast-Lookup announced werden sollen.
    */
   public boolean getMulticastLookup()
   {
@@ -383,7 +385,7 @@ public final class Config
   /**
    * Versucht das Locale zum angegebenen Text zu ermitteln.
    * @param s der Text.
-   * @return das Locale oder NULL, wenn es nicht existiert.
+   * @return das Locale oder {@code null}, wenn es nicht existiert.
    */
   private static Locale findLocale(String s)
   {
@@ -429,7 +431,7 @@ public final class Config
 	}
 
   /**
-   * Liefert die in ~/.jameica/cfg/de.willuhn.jameica.system.Config.properties definierten
+   * Liefert die in <i>~/.jameica/cfg/de.willuhn.jameica.system.Config.properties</i> definierten
    * Pluginverzeichnisse.
    * @return Liste Plugin-Verzeichnisse.
    */
@@ -526,7 +528,7 @@ public final class Config
   /**
    * Liefert das User-Plugin-Verzeichnis.
    * Das ist jenes, welches sich im Work-Verzeichnis des Users befindet.
-   * In der Regel ist das ~/.jameica/plugins.
+   * In der Regel ist das <i>~/.jameica/plugins</i>.
    * @return das user-Plugin-Verzeichnis.
    */
   public File getUserPluginDir()
@@ -621,7 +623,7 @@ public final class Config
 
   /**
    * Legt fest, ob auch die Label vor Pflichtfeldern rot markiert werden sollen.
-   * @return true, wenn auch die Label rot markiert werden sollen.
+   * @return {@code true}, wenn auch die Label rot markiert werden sollen.
    */
   public boolean getMandatoryLabel()
   {
@@ -630,7 +632,7 @@ public final class Config
 
   /**
    * Legt fest, ob auch die Label vor Pflichtfeldern rot markiert werden sollen.
-   * @param check true, wenn auch die Label rot markiert werden sollen.
+   * @param check {@code true}, wenn auch die Label rot markiert werden sollen.
    */
   public void setMandatoryLabel(boolean check)
   {
@@ -765,7 +767,6 @@ public final class Config
   
   /**
    * Liefert die Anzahl zu erstellender Backups.
-   * Default-Wert: 10.
    * @return Anzahl der Backups.
    */
   public int getBackupCount()
@@ -778,9 +779,10 @@ public final class Config
     }
     return count;
   }
-  
+
   /**
    * Speichert die Anzahl zu erstellender Backups.
+   * <p>Default-Wert: 10.
    * @param count Anzahl der Backups.
    */
   public void setBackupCount(int count)
@@ -789,9 +791,8 @@ public final class Config
   }
   
   /**
-   * Prueft, ob ueberhaupt Backups erstellt werden sollen.
-   * Default: true.
-   * @return true, wenn Backups erstellt werden sollen.
+   * Prueft, ob Backups erstellt werden sollen.
+   * @return {@code true}, wenn Backups erstellt werden sollen.
    */
   public boolean getUseBackup()
   {
@@ -799,8 +800,9 @@ public final class Config
   }
 
   /**
-   * Speichert, ob ueberhaupt Backups erstellt werden sollen.
-   * @param enabled true, wenn Backups erstellt werden sollen.
+   * Speichert, ob Backups erstellt werden sollen.
+   * <p>Default: {@code true}.
+   * @param enabled {@code true}, wenn Backups erstellt werden sollen.
    */
   public void setUseBackup(boolean enabled)
   {
@@ -810,7 +812,7 @@ public final class Config
   /**
    * Liefert das Verzeichnis, in dem Strings gespeichert werden sollen,
    * zu denen keine Uebersetzungen existieren.
-   * @return Der Ordner oder NULL, wenn nicht gespeichert werden soll.
+   * @return Der Ordner oder {@code null}, wenn nicht gespeichert werden soll.
    */
   public String getStoreUntranslatedDir()
   {

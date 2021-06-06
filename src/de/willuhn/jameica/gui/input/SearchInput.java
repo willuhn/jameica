@@ -33,12 +33,13 @@ import de.willuhn.logging.Logger;
 
 /**
  * Erzeugt eine Such-Box, in der man Text eingaben kann.
- * Kann prima zur Erstellung eines Suchfeldes genutzt werden,
+ *
+ * <p>Kann prima zur Erstellung eines Suchfeldes genutzt werden,
  * welches bei jeder Eingabe eines Zeichens eine Liste mit
  * Vorschlaegen anzeigen kann.
  * 
- * Beispiel fuer die Verwendung:
- * 
+ * <p>Beispiel fuer die Verwendung:
+ * <pre>{@code
  * project = new SearchInput() {
  *   public List startSearch(String text) {
  *     try {
@@ -57,6 +58,7 @@ import de.willuhn.logging.Logger;
  *   }
  * };
  * project.setValue(getTask().getProject());
+ * }</pre>
  *
  * @author willuhn
  */
@@ -109,10 +111,12 @@ public class SearchInput extends AbstractInput
   /**
    * Legt den Namen des Attributes fest, welches von den Objekten angezeigt werden
    * soll. Bei herkoemmlichen Beans wird also ein Getter mit diesem Namen aufgerufen. 
-   * Wird kein Attribut angegeben, wird bei Objekten des Typs <code>GenericObject</code>
-   * der Wert des Primaer-Attributes angezeigt, andernfalls der Wert von <code>toString()</code>.
-   * @param name Name des anzuzeigenden Attributes (muss im GenericObject
-   * via getAttribute(String) abrufbar sein).
+   *
+   * <p>Wird kein Attribut angegeben, wird bei Objekten des Typs {@link de.willuhn.datasource.GenericObject}
+   * der Wert des Primaer-Attributes angezeigt, andernfalls der Wert von {@link #toString()}.
+   *
+   * @param name Name des anzuzeigenden Attributes (muss via
+   * {@link de.willuhn.datasource.GenericObject#getAttribute(String)} abrufbar sein).
    */
   public void setAttribute(String name)
 	{
@@ -122,7 +126,7 @@ public class SearchInput extends AbstractInput
   
   /**
    * Definiert die maximal eingebbare Menge von Zeichen.
-   * @param maxLength
+   * @param maxLength Anzahl
    */
   public void setMaxLength(int maxLength)
   {
@@ -134,7 +138,7 @@ public class SearchInput extends AbstractInput
   /**
    * Legt fest, ab wieviel eingegebenen Zeichen die Suche starten soll.
    * @param length Mindest-Anzahl von Zeichen, ab der die Suche starten soll.
-   * Werte <= 0 werden ignoriert.
+   * Werte &le; 0 werden ignoriert.
    * Default: 1.
    */
   public void setStartAt(int length)

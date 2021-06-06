@@ -50,10 +50,12 @@ public class Main {
    *     Wird kein Parameter angegeben, startet die Anwendung im Standalone-Mode.
    *   </li>
    * </ul>
-   * Parameter 2 (-f): Optionales Datenverzeichnis. Das ist bei Linux
+   *
+   * <p>Parameter 2 (-f): Optionales Datenverzeichnis. Das ist bei Linux
    * standardmaessig <b>~/.jameica</b> und bei Windows
    * <b>C:\dokumente und Einstellungen\benutzername\.jameica</b>.
-   * Parameter 3 (-p): Optionales Passwort fuer die SSLFactory. Jameica
+   *
+   * <p>Parameter 3 (-p): Optionales Passwort fuer die SSLFactory. Jameica
    * erzeugt beim ersten Start einen Keystore und speichert darin X.509-Zertifikate
    * fuer die Verschluesselung von Daten. Zum Schutz des Keystore wird ein
    * Passwort benoetigt. Wird dieses nicht als Kommandozeilen-Option
@@ -62,12 +64,13 @@ public class Main {
    * ueber die Kommando-Zeile abgefragt. Damit die Anwendung aber auch ohne
    * Benutzer-Interkation (z.Bsp. als Service) direkt beim Booten des
    * Betriebssystems startfaehig ist, kann das Passwort auch ueber diesen
-   * Parameter angegeben werden.<br/>
-   * Beispiele:<br/>
-   * <code>java de.willuhn.jameica.Main -server -f C:/jameica.work -p geheim</code><br/>
-   * <code>java de.willuhn.jameica.Main -client -f ~/.jameica.test</code><br/>
-   * <code>java de.willuhn.jameica.Main -standalone -f /tmp/jameicatest</code><br/>
-   * <code>java de.willuhn.jameica.Main</code>
+   * Parameter angegeben werden.
+   *
+   * <p>Beispiele:<br>
+   * {@code java de.willuhn.jameica.Main -server -f C:/jameica.work -p geheim}<br>
+   * {@code java de.willuhn.jameica.Main -client -f ~/.jameica.test}<br>
+   * {@code java de.willuhn.jameica.Main -standalone -f /tmp/jameicatest}<br>
+   * {@code java de.willuhn.jameica.Main}
    * @throws Throwable
    */
   public static void main(final String[] args) throws Throwable

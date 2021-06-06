@@ -35,15 +35,15 @@ import de.willuhn.logging.Logger;
  * Liefert eine Art Brieftasche, ueber die andere Klassen Daten
  * verschluesselt abspeichern koennen.
  * 
- * HINWEIS: Das Wallet verwendet zum Verschluesseln per Default den asymmetrischen
+ * <p><b>HINWEIS:</b> Das Wallet verwendet zum Verschluesseln per Default den asymmetrischen
  * RSA-Algorithmus (es sei denn, es wurde explizit eine andere Engine angegeben).
  * Es ist im Default-Fall also nicht fuer groessere Daten (Dateien, Streams, etc.)
  * geeignet sondern typischerweise fuer Passwoerter.
  * 
- * Will zum Beispiel ein Plugin irgendwelche Passwort-Informationen
+ * <p>Will zum Beispiel ein Plugin irgendwelche Passwort-Informationen
  * sicher speichern, dann kann es mittels folgenden Codes ein
  * Wallet erzeugen:
- * <code>
+ * <pre>{@code
  *   // erzeugt eine neue Wallet-Datei in ~/.jameica/cfg mit dem
  *   // Dateinamen "beliebige.Klasse.wallet2"
  *   Wallet wallet = new Wallet(beliebige.Klasse.class);
@@ -51,7 +51,7 @@ import de.willuhn.logging.Logger;
  *   wallet.set("passwort","geheim");
  *   // Auslesen des Passwortes "geheim".
  *   String password = wallet.getString("passwort");
- * </code>
+ * }</pre>
  */
 public final class Wallet
 {
@@ -98,7 +98,7 @@ public final class Wallet
 	 * Speichert einen Datensatz verschluesselt in dem Wallet.
    * @param alias Alias-Name.
    * @param data Nutzdaten, die verschluesselt gespeichert werden sollen
-   * oder <code>null</code> wenn der Wet geloescht werden soll.
+   * oder {@code null} wenn der Wert geloescht werden soll.
    * @throws Exception
    */
   public void set(String alias, Serializable data) throws Exception
@@ -142,7 +142,7 @@ public final class Wallet
 
   /**
 	 * Loescht alle Nutzdaten, deren Alias-Name mit dem angegebenen beginnt.
-	 * Wird als Prefix null oder ein Leerstring angegeben, wird das komplette
+	 * Wird als Prefix {@code null} oder ein Leerstring angegeben, wird das komplette
 	 * Wallet geleert.
    * @param aliasPrefix Alias-Prefix.
    * @throws Exception
@@ -172,10 +172,10 @@ public final class Wallet
   
   /**
    * Liefert alle Keys, deren Name mit dem Prefix beginnt.
-   * Wird null uebergeben, werden alle Keys zurueckgeliefert.
-   * Die Funktion liefert nie null sondern hoechstens ein leeres Array.
+   * Wird {@code null} uebergeben, werden alle Keys zurueckgeliefert.
    * @param aliasPrefix Alias-Prefix.
    * @return Liste der gefundenen Keys.
+   * Die Funktion liefert nie {@code null} sondern hoechstens ein leeres Array.
    * @throws Exception
    */
   public synchronized String[] getAll(String aliasPrefix) throws Exception
