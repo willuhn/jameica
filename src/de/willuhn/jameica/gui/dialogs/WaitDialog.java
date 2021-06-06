@@ -96,8 +96,8 @@ public abstract class WaitDialog extends AbstractDialog
 
   /**
    * Die Funktion liefert immer {@code null}.
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */
+  @Override
   protected Object getData() throws Exception
   {
     return null;
@@ -122,9 +122,7 @@ public abstract class WaitDialog extends AbstractDialog
    */
   protected abstract boolean check();
 
-  /**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   protected void paint(Composite parent) throws Exception
   {
 

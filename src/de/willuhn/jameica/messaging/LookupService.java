@@ -66,25 +66,19 @@ public class LookupService implements MessageConsumer
     return Application.inServerMode() && Application.getConfig().getMulticastLookup();
   }
 
-  /**
-   * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
-   */
+  @Override
   public boolean autoRegister()
   {
     return enabled();
   }
 
-  /**
-   * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
-   */
+  @Override
   public Class[] getExpectedMessageTypes()
   {
     return new Class[]{SystemMessage.class};
   }
 
-  /**
-   * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
-   */
+  @Override
   public void handleMessage(Message message) throws Exception
   {
     if (!enabled())
@@ -125,9 +119,7 @@ public class LookupService implements MessageConsumer
       super();
     }
 
-    /**
-     * @see de.willuhn.net.MulticastClient#received(java.net.DatagramPacket)
-     */
+    @Override
     public void received(DatagramPacket packet) throws IOException
     {
       InetAddress sender = packet.getAddress();
@@ -256,9 +248,7 @@ public class LookupService implements MessageConsumer
       super.send(name.getBytes());
     }
 
-    /**
-     * @see de.willuhn.net.MulticastClient#received(java.net.DatagramPacket)
-     */
+    @Override
     public void received(DatagramPacket packet) throws IOException
     {
       InetAddress sender = packet.getAddress();

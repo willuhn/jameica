@@ -41,9 +41,7 @@ public class LinkInput extends AbstractInput
     this.text = text;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public Control getControl()
   {
     if (this.link != null)
@@ -67,17 +65,15 @@ public class LinkInput extends AbstractInput
   }
 
   /**
-   * Liefert den angezeigten Text.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
+   * Liefert den angezeigten Text vom Typ {@link java.lang.String}.
    */
+  @Override
   public Object getValue()
   {
     return this.text;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#focus()
-   */
+  @Override
   public void focus()
   {
     this.focus = true;
@@ -87,8 +83,8 @@ public class LinkInput extends AbstractInput
 
   /**
    * Erwartet ein Objekt des Typs {@link java.lang.String}.
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
+  @Override
   public void setValue(Object value)
   {
     this.text = value != null ? value.toString() : "";
@@ -96,33 +92,25 @@ public class LinkInput extends AbstractInput
       this.link.setText(SWTUtil.escapeLabel(this.text));
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#disable()
-   */
+  @Override
   public void disable()
   {
     this.setEnabled(false);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#enable()
-   */
+  @Override
   public void enable()
   {
     this.setEnabled(true);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
-   */
+  @Override
   public boolean isEnabled()
   {
     return this.enabled;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
-   */
+  @Override
   public void setEnabled(boolean enabled)
   {
     this.enabled = enabled;
@@ -135,14 +123,13 @@ public class LinkInput extends AbstractInput
    * ueberschrieben, weil die Listener sonst an zu vielen Stellen
    * (auch bei Focus-Wechsel) ausgeloest werden wuerden.
    */
+  @Override
   public void addListener(Listener l)
   {
     this.listeners.add(l);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
-   */
+  @Override
   protected void update() throws OperationCanceledException
   {
     // Wir machen hier nichts

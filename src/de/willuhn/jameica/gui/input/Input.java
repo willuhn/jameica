@@ -87,6 +87,7 @@ public interface Input extends Part
    * @param parent Das Composite, in dem das Eingabefeld gemalt werden soll.
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
+  @Override
   public void paint(Composite parent);
 
   /**

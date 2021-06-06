@@ -54,9 +54,7 @@ public abstract class ButtonInput extends AbstractInput
    */
   public abstract Control getClientControl(Composite parent);
   
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public final Control getControl()
   {
     if (comp != null && !comp.isDisposed())
@@ -156,9 +154,7 @@ public abstract class ButtonInput extends AbstractInput
 		buttonListeners.add(l);
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#focus()
-   */
+  @Override
   public final void focus()
   {
     this.focus = true;
@@ -166,25 +162,19 @@ public abstract class ButtonInput extends AbstractInput
       clientControl.setFocus();
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#disable()
-   */
+  @Override
   public final void disable()
   {
     setEnabled(false);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#enable()
-   */
+  @Override
   public final void enable()
   {
     setEnabled(true);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
-   */
+  @Override
   public void setEnabled(boolean enabled)
   {
     if (enabled)
@@ -252,9 +242,7 @@ public abstract class ButtonInput extends AbstractInput
 		}
 	}
   
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
-   */
+  @Override
   public boolean isEnabled()
   {
     return buttonEnabled && clientControlEnabled;
@@ -262,9 +250,7 @@ public abstract class ButtonInput extends AbstractInput
   
   private boolean inUpdate = false;
 
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
-   */
+  @Override
   protected void update() throws OperationCanceledException
   {
     if (inUpdate)

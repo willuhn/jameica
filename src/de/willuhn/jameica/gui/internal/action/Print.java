@@ -32,8 +32,8 @@ public class Print implements Action
 {
   /**
    * Erwartet ein Objekt vom Typ {@code PrintSupport}.
-   * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
    */
+  @Override
   public void handleAction(Object context) throws ApplicationException
   {
     if (context == null || !(context instanceof PrintSupport))

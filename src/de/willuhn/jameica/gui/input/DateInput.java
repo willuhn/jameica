@@ -101,8 +101,8 @@ public class DateInput implements Input
 
   /**
    * Deaktiviert das komplette Control (Button und Text).
-   * @see de.willuhn.jameica.gui.input.Input#disable()
    */
+  @Override
   public void disable()
   {
     this.input.disable();
@@ -110,24 +110,20 @@ public class DateInput implements Input
 
   /**
    * Aktiviert das komplette Control (Button und Text).
-   * @see de.willuhn.jameica.gui.input.Input#enable()
    */
+  @Override
   public void enable()
   {
     this.input.enable();
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#focus()
-   */
+  @Override
   public void focus()
   {
     this.input.focus();
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public Control getControl()
   {
     return this.input.getControl();
@@ -136,8 +132,8 @@ public class DateInput implements Input
   /**
    * Liefert ein Objekt vom Typ {@link Date} oder {@code null},
    * wenn das Datum nicht geparst werden konnte.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
+  @Override
   public Object getValue()
   {
     // Wir liefern grundsaetzlich den Text aus dem Eingabe-Feld,
@@ -168,9 +164,7 @@ public class DateInput implements Input
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
-   */
+  @Override
   public boolean isEnabled()
   {
     return this.input.isEnabled();
@@ -178,8 +172,8 @@ public class DateInput implements Input
 
   /**
    * Aktiviert oder deaktiviert das komplette Control (Button und Text).
-   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
    */
+  @Override
   public void setEnabled(boolean enabled)
   {
     this.input.setEnabled(enabled);
@@ -201,9 +195,7 @@ public class DateInput implements Input
     this.input.disableClientControl();
   }
   
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
-   */
+  @Override
   public void setValue(Object value)
   {
     // Wenn nichts uebergeben wird, machen wir nur die Werte leer.
@@ -257,26 +249,19 @@ public class DateInput implements Input
     this.dialog.setTitle(title);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#addListener(org.eclipse.swt.widgets.Listener)
-   */
+  @Override
   public final void addListener(Listener l)
   {
     this.input.addListener(l);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#paint(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public final void paint(Composite parent)
   {
     this.input.setMandatory(this.isMandatory());
     this.input.paint(parent);
     
     this.input.getControl().addFocusListener(new FocusAdapter() {
-      /**
-       * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
-       */
       @Override
       public void focusLost(FocusEvent e)
       {
@@ -287,34 +272,26 @@ public class DateInput implements Input
 
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#paint(org.eclipse.swt.widgets.Composite, int)
-   */
+  @Override
   public final void paint(Composite parent, int width)
   {
     this.input.setMandatory(this.isMandatory());
     this.input.paint(parent,width);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setComment(java.lang.String)
-   */
+  @Override
   public void setComment(String comment)
   {
     this.input.setComment(comment);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isMandatory()
-   */
+  @Override
   public boolean isMandatory()
   {
     return this.mandatory;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setMandatory(boolean)
-   */
+  @Override
   public void setMandatory(boolean mandatory)
   {
     // Wenn das Control bereits gezeichnet wurde und
@@ -336,17 +313,13 @@ public class DateInput implements Input
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getName()
-   */
+  @Override
   public String getName()
   {
     return this.name;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setName(java.lang.String)
-   */
+  @Override
   public void setName(String name)
   {
     this.name = name;
@@ -367,9 +340,7 @@ public class DateInput implements Input
 
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
-   */
+  @Override
   public boolean hasChanged()
   {
     Object newValue = this.input.getText();
@@ -388,17 +359,13 @@ public class DateInput implements Input
     }
   }
   
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setData(java.lang.String, java.lang.Object)
-   */
+  @Override
   public void setData(String key, Object data)
   {
     this.data.put(key,data);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getData(java.lang.String)
-   */
+  @Override
   public Object getData(String key)
   {
     return this.data.get(key);

@@ -48,9 +48,7 @@ public class CheckedContextMenuItem extends ContextMenuItem
     super(text, a, icon);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.parts.ContextMenuItem#isEnabledFor(java.lang.Object)
-   */
+  @Override
   public boolean isEnabledFor(Object o)
   {
     return o != null;

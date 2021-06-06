@@ -77,17 +77,13 @@ public abstract class AbstractInput implements Input
     return GridData.FILL_HORIZONTAL;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#addListener(org.eclipse.swt.widgets.Listener)
-   */
+  @Override
   public void addListener(Listener l)
 	{
 		listeners.add(l);
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setComment(java.lang.String)
-   */
+  @Override
   public void setComment(String comment)
   {
     this.comment = comment;
@@ -98,17 +94,13 @@ public abstract class AbstractInput implements Input
 		}
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public final void paint(Composite parent)
   {
     paint(parent,240);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#paint(org.eclipse.swt.widgets.Composite, int)
-   */
+  @Override
   public final void paint(Composite parent,int width)
   {
 		boolean hasComment = this.comment != null;
@@ -289,9 +281,7 @@ public abstract class AbstractInput implements Input
     this.invalidChars = chars;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isMandatory()
-   */
+  @Override
   public boolean isMandatory()
   {
     return this.mandatory && Application.getConfig().getMandatoryCheck();
@@ -335,9 +325,7 @@ public abstract class AbstractInput implements Input
     }
   }
   
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setMandatory(boolean)
-   */
+  @Override
   public void setMandatory(boolean mandatory)
   {
     // Wenn das Control bereits gezeichnet wurde und
@@ -358,17 +346,13 @@ public abstract class AbstractInput implements Input
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getName()
-   */
+  @Override
   public String getName()
   {
     return this.name;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setName(java.lang.String)
-   */
+  @Override
   public void setName(String name)
   {
     this.name = name;
@@ -388,9 +372,7 @@ public abstract class AbstractInput implements Input
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
-   */
+  @Override
   public boolean hasChanged()
   {
     Object newValue = getValue();
@@ -409,23 +391,18 @@ public abstract class AbstractInput implements Input
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setData(java.lang.String, java.lang.Object)
-   */
+  @Override
   public void setData(String key, Object data)
   {
     this.data.put(key,data);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getData(java.lang.String)
-   */
+  @Override
   public Object getData(String key)
   {
     return this.data.get(key);
   }
-  
-  
+
 }
 
 /*********************************************************************

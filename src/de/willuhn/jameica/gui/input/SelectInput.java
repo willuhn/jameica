@@ -151,9 +151,7 @@ public class SelectInput extends AbstractInput
 			this.attribute = name;
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public Control getControl()
   {
     if (this.combo != null)
@@ -289,6 +287,7 @@ public class SelectInput extends AbstractInput
    * Folglich kann der Rueckgabewert direkt nach {@link GenericObject} gecastet werden.
    * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
+  @Override
   public Object getValue()
   {
     if (this.combo == null || this.combo.isDisposed())
@@ -315,9 +314,7 @@ public class SelectInput extends AbstractInput
 		return combo.getText();
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#focus()
-   */
+  @Override
   public void focus()
   {
     if (this.combo == null || this.combo.isDisposed())
@@ -326,26 +323,19 @@ public class SelectInput extends AbstractInput
     combo.setFocus();
   }
 
-
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#disable()
-   */
+  @Override
   public void disable()
   {
     setEnabled(false);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#enable()
-   */
+  @Override
   public void enable()
   {
     setEnabled(true);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
-   */
+  @Override
   public void setEnabled(boolean enabled)
   {
     this.enabled = enabled;
@@ -371,25 +361,19 @@ public class SelectInput extends AbstractInput
     this.editable = editable;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
-   */
+  @Override
   public void setValue(Object o)
   {
     this.setPreselected(o);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
-   */
+  @Override
   public boolean isEnabled()
   {
     return enabled;
   }
 
-	/**
-	 * @see de.willuhn.jameica.gui.input.AbstractInput#update()
-	 */
+  @Override
   protected void update() throws OperationCanceledException
   {
     // Wir machen hier nichts. 

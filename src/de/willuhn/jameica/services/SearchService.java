@@ -33,17 +33,13 @@ public class SearchService implements Bootable
   private ArrayList<SearchProvider> providers = null;
   private static Settings settings = new Settings(SearchService.class); 
 
-  /**
-   * @see de.willuhn.boot.Bootable#depends()
-   */
+  @Override
   public Class[] depends()
   {
     return new Class[]{PluginService.class};
   }
 
-  /**
-   * @see de.willuhn.boot.Bootable#init(de.willuhn.boot.BootLoader, de.willuhn.boot.Bootable)
-   */
+  @Override
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
     this.providers = new ArrayList<SearchProvider>();
@@ -86,9 +82,7 @@ public class SearchService implements Bootable
     }
   }
   
-  /**
-   * @see de.willuhn.boot.Bootable#shutdown()
-   */
+  @Override
   public void shutdown()
   {
     this.providers = null;

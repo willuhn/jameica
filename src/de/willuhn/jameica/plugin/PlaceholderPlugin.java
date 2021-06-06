@@ -55,57 +55,43 @@ public class PlaceholderPlugin implements Plugin
     return (Plugin) Proxy.newProxyInstance(loader != null ? loader : Application.getClassLoader(),new Class[]{Plugin.class},handler);
   }
   
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#getResources()
-   */
+  @Override
   public PluginResources getResources()
   {
     return this.res;
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#getManifest()
-   */
+  @Override
   public Manifest getManifest()
   {
     return this.manifest;
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#init()
-   */
+  @Override
   public void init() throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".init").sendSyncMessage(new QueryMessage(this));
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#install()
-   */
+  @Override
   public void install() throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".install").sendSyncMessage(new QueryMessage(this));
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#update(de.willuhn.jameica.plugin.Version)
-   */
+  @Override
   public void update(Version oldVersion) throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".update").sendSyncMessage(new QueryMessage(new Object[]{this,oldVersion}));
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#shutDown()
-   */
+  @Override
   public void shutDown()
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".shutdown").sendSyncMessage(new QueryMessage(this));
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#uninstall(boolean)
-   */
+  @Override
   public void uninstall(boolean deleteUserData) throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".uninstall").sendSyncMessage(new QueryMessage(new Object[]{this,deleteUserData}));
@@ -128,9 +114,7 @@ public class PlaceholderPlugin implements Plugin
       this.redirect = redirect;
     }
     
-    /**
-     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-     */
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
     {
       return BeanUtil.invoke(redirect,method.getName(),args);

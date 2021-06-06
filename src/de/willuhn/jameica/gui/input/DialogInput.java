@@ -106,8 +106,8 @@ public class DialogInput extends ButtonInput
   /**
    * Liefert das Objekt, welches in dem Dialog ausgewaehlt wurde.
    * Fuer gewoehnlich ist das ein Fach-Objekt.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
+  @Override
   public Object getValue()
   {
     return choosen;
@@ -168,14 +168,13 @@ public class DialogInput extends ButtonInput
    * <p>Soll der anzuzeigende Text geaendert werden, dann bitte die
    * Funktion {@link #setText(String)} verwenden.
    */
+  @Override
   public void setValue(Object value)
   {
   	this.choosen = value;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public Control getClientControl(Composite parent) {
     text = GUI.getStyleFactory().createText(parent);
   	if (value != null)
@@ -186,9 +185,7 @@ public class DialogInput extends ButtonInput
   	return text;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
-   */
+  @Override
   protected void update() throws OperationCanceledException
   {
     super.update();
@@ -208,10 +205,7 @@ public class DialogInput extends ButtonInput
     text.setBackground(color);
   }
 
-  /**
-   * Ueberschrieben, weil nur der angezeigte Text interessiert.
-   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
-   */
+  @Override
   public boolean hasChanged()
   {
     Object newValue = getText();

@@ -190,9 +190,7 @@ public class TablePart extends AbstractTablePart
       this.removeFeature(FeatureSummary.class);
   }
   
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getItems()
-   */
+  @Override
   public List getItems() throws RemoteException
   {
     return this.getItems(true);
@@ -243,9 +241,7 @@ public class TablePart extends AbstractTablePart
     table.setTopIndex(i);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#removeAll()
-   */
+  @Override
   public void removeAll()
   {
     if (table != null && !table.isDisposed())
@@ -525,9 +521,7 @@ public class TablePart extends AbstractTablePart
     this.featureEvent(Feature.Event.ADDED,object);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#size()
-   */
+  @Override
   public int size()
   {
     if (this.table == null || this.table.isDisposed())
@@ -535,9 +529,7 @@ public class TablePart extends AbstractTablePart
     return table.getItemCount();
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public synchronized void paint(Composite parent) throws RemoteException
   {
 
@@ -1000,9 +992,7 @@ public class TablePart extends AbstractTablePart
     this.featureEvent(Feature.Event.PAINT,null);
   }
   
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getID()
-   */
+  @Override
   String getID() throws Exception
   {
     if (this.id != null)
@@ -1041,9 +1031,7 @@ public class TablePart extends AbstractTablePart
     return this.id;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#select(java.lang.Object[])
-   */
+  @Override
   public void select(Object[] objects)
   {
     if (objects == null || objects.length == 0 || table == null)
@@ -1094,9 +1082,7 @@ public class TablePart extends AbstractTablePart
     table.setFocus();
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#setChecked(java.lang.Object[], boolean)
-   */
+  @Override
   public void setChecked(Object[] objects, boolean checked)
   {
     if (objects == null || objects.length == 0 || !this.checkable)
@@ -1136,9 +1122,7 @@ public class TablePart extends AbstractTablePart
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#getSelection()
-   */
+  @Override
   public Object getSelection()
   {
     if (table == null || table.isDisposed())
@@ -1255,9 +1239,7 @@ public class TablePart extends AbstractTablePart
     orderBy(this.sortedBy);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#restoreState()
-   */
+  @Override
   public void restoreState()
   {
     if (!this.rememberState)
@@ -1429,9 +1411,6 @@ public class TablePart extends AbstractTablePart
       return "";
   }
   
-  /**
-   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#createFeatureEventContext(de.willuhn.jameica.gui.parts.table.Feature.Event, java.lang.Object)
-   */
   @Override
   protected Context createFeatureEventContext(Feature.Event e, Object data)
   {
@@ -1491,9 +1470,7 @@ public class TablePart extends AbstractTablePart
   private class DeleteListener implements de.willuhn.datasource.rmi.Listener
   {
 
-    /**
-     * @see de.willuhn.datasource.rmi.Listener#handleEvent(de.willuhn.datasource.rmi.Event)
-     */
+    @Override
     public void handleEvent(final de.willuhn.datasource.rmi.Event e) throws RemoteException
     {
       try

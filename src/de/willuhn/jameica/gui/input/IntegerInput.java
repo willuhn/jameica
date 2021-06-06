@@ -42,9 +42,7 @@ public class IntegerInput extends TextInput
   	super(value < 0 ? "" : "" +value);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public Control getControl()
   {
 		Control c = super.getControl();
@@ -65,8 +63,8 @@ public class IntegerInput extends TextInput
   /**
    * Die Funktion liefert ein Objekt des Typs {@link java.lang.Integer} zurueck
    * oder {@code null} wenn nichts eingegeben wurde.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
+  @Override
   public Object getValue()
   {
     Object value = super.getValue();
@@ -84,8 +82,8 @@ public class IntegerInput extends TextInput
 
   /**
    * Erwartet ein Objekt des Typs {@link java.lang.Integer}.
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
    */
+  @Override
   public void setValue(Object value)
   {
     if (value == null)

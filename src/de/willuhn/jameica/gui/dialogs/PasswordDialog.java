@@ -81,9 +81,7 @@ public class PasswordDialog extends AbstractDialog
     this.smallDisplay = Customizing.SETTINGS.getBoolean("application.scrollview",false);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
-   */
+  @Override
   protected void onEscape()
   {
     // Gibts hier nicht. Der User soll explizit auf "Abbrechen" klicken
@@ -156,9 +154,7 @@ public class PasswordDialog extends AbstractDialog
     this.showPassword = show;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   protected void paint(Composite parent) throws Exception
 	{
     // Text
@@ -343,9 +339,7 @@ public class PasswordDialog extends AbstractDialog
 		return (MAX_RETRIES - retries);
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
-   */
+  @Override
   protected Object getData() throws Exception
   {
     return this.enteredPassword;

@@ -104,9 +104,7 @@ public class JameicaTrustManager implements X509TrustManager
     return this.systemTrustManager;
   }
   
-  /**
-   * @see javax.net.ssl.X509TrustManager#checkClientTrusted(java.security.cert.X509Certificate[], java.lang.String)
-   */
+  @Override
   public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException
   {
     if (this.parentTrustManager != null)
@@ -131,9 +129,7 @@ public class JameicaTrustManager implements X509TrustManager
     }
   }
 
-  /**
-   * @see javax.net.ssl.X509TrustManager#checkServerTrusted(java.security.cert.X509Certificate[], java.lang.String)
-   */
+  @Override
   public void checkServerTrusted(X509Certificate[] certificates, String authType) throws CertificateException
   {
     if (this.parentTrustManager != null)
@@ -282,9 +278,7 @@ public class JameicaTrustManager implements X509TrustManager
     }
   }
 
-  /**
-   * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
-   */
+  @Override
   public X509Certificate[] getAcceptedIssuers()
   {
     try
