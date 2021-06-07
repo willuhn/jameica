@@ -21,9 +21,12 @@ import de.willuhn.util.ProgressMonitor;
 /**
  * Dieses Interface beschreibt Funktionen, die von Jameica
  * aufgerufen werden, um mit dem Benutzer zu interagieren.
- * Dies betrifft Informationen, die den Jameica-Kern selbst
+ *
+ * <p>Dies betrifft Informationen, die den Jameica-Kern selbst
  * betreffen und daher sowohl im Server- als auch im GUI-
- * Mode abgefragt werden muessen. Klassisches Beispiel:
+ * Mode abgefragt werden muessen.
+ *
+ * <p>Klassisches Beispiel:
  * Jameica legt beim Start ein Lock-File an, um sicherzustellen,
  * dass die Anwendung nicht zweimal gleichzeitig gestartet wird.
  * Existiert das Lock-File bereits, fragt Jameica den Benutzer,
@@ -36,27 +39,28 @@ public interface ApplicationCallback
    * bereits existiert. Es ist Sache der Implementierung, dies
    * dem Benutzer darzulegen.
    * @param lockfile Pfad und Dateiname des Lockfiles.
-   * @return true, wenn der Start von Jameica dennoch forgesetzt
-   * werden soll. False, wenn der Start abgebrochen werden soll.
+   * @return {@code true}, wenn der Start von Jameica dennoch fortgesetzt
+   * werden soll. {@code false}, wenn der Start abgebrochen werden soll.
    */
   public boolean lockExists(String lockfile);
   
   /**
    * Liefert den eingegebenen Benutzernamen, insofern der Start im
    * Masterpasswort-Dialog mit Benutzername erfolgte.
-   * @return der eingegebene Username oder NULL.
-   * Oder Customizing liefert die Funktion immer NULL.
+   * @return der eingegebene Username oder {@code null}.
    */
   public String getUsername();
   
 	/**
 	 * Wird beim ersten Start von Jameica aufgerufen, um ein
 	 * neues Master-Passwort festzulegen.
-	 * Es ist dabei der implementierenden Klasse ueberlassen, wie
+	 *
+	 * <p>Es ist dabei der implementierenden Klasse ueberlassen, wie
 	 * diese Abfrage aussieht. Sprich: Ob sie nun nur ein Eingabefeld
 	 * zur Vergabe des Passwortes anzeigt oder zwei, wovon letzteres
-	 * zur Passwort-Wiederholung (Vermeidung von Tippfehlern), ist
+	 * zur Passwort-Wiederholung (Vermeidung von Tippfehlern) dient, ist
 	 * der Implementierung ueberlassen.
+	 *
 	 * @return das neu zu verwendende Passwort.
 	 * @throws Exception
 	 */
@@ -64,9 +68,11 @@ public interface ApplicationCallback
 	
 	/**
 	 * Liefert das Master-Passwort der Jameica-Installation.
-	 * Es ist der implementierenden Klasse ueberlassen, das eingegebene
+	 *
+	 * <p>Es ist der implementierenden Klasse ueberlassen, das eingegebene
 	 * Passwort ueber die Dauer der aktuellen Jameica-Sitzung zu cachen, um den
 	 * Benutzer nicht dauernd mit der Neueingabe des Passwortes zu nerven.
+	 *
 	 * @return das existierende Passwort.
 	 * @throws Exception
 	 */
@@ -74,9 +80,11 @@ public interface ApplicationCallback
 	
   /**
    * Liefert das Master-Passwort der Jameica-Installation.
-   * Es ist der implementierenden Klasse ueberlassen, das eingegebene
+   *
+   * <p>Es ist der implementierenden Klasse ueberlassen, das eingegebene
    * Passwort ueber die Dauer der aktuellen Jameica-Sitzung zu cachen, um den
    * Benutzer nicht dauernd mit der Neueingabe des Passwortes zu nerven.
+   *
    * @param verifier optionaler Login-Verifier, der von der implementierenden Klasse
    * verwendet werden kann, um das Passwort zu auf Korrektheit pruefen, bevor
    * die Methode verlassen wird.
@@ -87,15 +95,19 @@ public interface ApplicationCallback
 
 	/**
 	 * Ueber diese Funktion kann das Passwort des Keystores geaendert werden.
-	 * Alles, was die implementierende Klasse zu tun hat, ist einen
+	 *
+	 * <p>Alles, was die implementierende Klasse zu tun hat, ist einen
 	 * Dialog zur Passwort-Aenderung anzuzeigen und von nun an
-	 * in der Funktion <code>getPassword()</code> das neue Passwort zu
+	 * in der Funktion {@link #getPassword()} das neue Passwort zu
 	 * liefern.
-	 * Nochmal: Es ist nicht Aufgabe des ApplicationCallbacks, das Passwort
-	 * im System zu aendern sondern lediglich das neue Passwort vom Benutzer
-	 * abzufragen und es anschliessend ueber <code>getPassword()</code>
+	 *
+	 * <p>Nochmal: Es ist <b>nicht</b> Aufgabe des ApplicationCallbacks, das Passwort
+	 * im System zu aendern, sondern lediglich das neue Passwort vom Benutzer
+	 * abzufragen und es anschliessend ueber {@link #getPassword()}
 	 * zur Verfuegung zu stellen.
    * @throws Exception
+   * @see #getPassword()
+   * @see #getPassword(LoginVerifier)
    */
   public void changePassword() throws Exception;
 
@@ -146,23 +158,25 @@ public interface ApplicationCallback
   /**
    * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
    * @param question Die anzuzeigende Frage.
-   * @return true fuer ja, false fuer nein.
+   * @return {@code true} fuer ja, {@code false} fuer nein.
    * @throws Exception
    */
   public boolean askUser(String question) throws Exception;
 
   /**
    * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
-   * Hintergrund. Jameica speichert <code>question</code> als Key in einer Properties-Datei,
+   *
+   * <p>Hintergrund: Jameica speichert {@code question} als Key in einer Properties-Datei,
    * falls der User die Option "Frage nicht mehr anzeigen" aktiviert hat. Enthaelt die
    * Frage nun aber variablen Text, wuerde die selbe Frage immer wieder kommen - nur weil
    * ein paar Variablen anders sind und somit der Key in der Properties-Datei nicht mehr
    * uebereinstimmt. Daher kann man stattdessen diese Funktion hier verwenden. Im Text
    * benutzt man (wie bei {@link I18N#tr(String, String[])}) die Platzhalter "{0}","{1}",...
    * und uebergibt als String-Array die einzutragenden Variablen.
+   *
    * @param question Die anzuzeigende Frage.
    * @param variables mittels MessageFormat einzutragende Variablen.
-   * @return true fuer ja, false fuer nein.
+   * @return {@code true} fuer ja, {@code false} fuer nein.
    * @throws Exception
    */
   public boolean askUser(String question, String[] variables) throws Exception;
@@ -170,25 +184,27 @@ public interface ApplicationCallback
   /**
    * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
    * @param question Die anzuzeigende Frage.
-   * @param storeAnswer true, wenn die Option "Diese Frage künftig nicht mehr anzeigen" angezeigt werden soll.
-   * @return true fuer ja, false fuer nein.
+   * @param storeAnswer {@code true}, wenn die Option "Diese Frage künftig nicht mehr anzeigen" angezeigt werden soll.
+   * @return {@code true} fuer ja, {@code false} fuer nein.
    * @throws Exception
    */
   public boolean askUser(String question, boolean storeAnswer) throws Exception;
 
   /**
    * Wird von Jameica aufgerufen, wenn der Benutzer eine Frage mit Ja/Nein beantworten soll.
-   * Hintergrund. Jameica speichert <code>question</code> als Key in einer Properties-Datei,
+   *
+   * <p>Hintergrund. Jameica speichert {@code question} als Key in einer Properties-Datei,
    * falls der User die Option "Frage nicht mehr anzeigen" aktiviert hat. Enthaelt die
    * Frage nun aber variablen Text, wuerde die selbe Frage immer wieder kommen - nur weil
    * ein paar Variablen anders sind und somit der Key in der Properties-Datei nicht mehr
    * uebereinstimmt. Daher kann man stattdessen diese Funktion hier verwenden. Im Text
    * benutzt man (wie bei {@link I18N#tr(String, String[])}) die Platzhalter "{0}","{1}",...
    * und uebergibt als String-Array die einzutragenden Variablen.
+   *
    * @param question Die anzuzeigende Frage.
    * @param variables mittels MessageFormat einzutragende Variablen.
-   * @param storeAnswer true, wenn die Option "Diese Frage künftig nicht mehr anzeigen" angezeigt werden soll.
-   * @return true fuer ja, false fuer nein.
+   * @param storeAnswer {@code true}, wenn die Option "Diese Frage künftig nicht mehr anzeigen" angezeigt werden soll.
+   * @return {@code true} fuer ja, {@code false} fuer nein.
    * @throws Exception
    */
   public boolean askUser(String question, String[] variables, boolean storeAnswer) throws Exception;
@@ -206,8 +222,8 @@ public interface ApplicationCallback
    * dass er nicht in seinem Truststore hat. Der Benutzer soll dann entscheiden,
    * ob er dem Zertifikat vertraut.
    * @param cert das dem Benutzer anzuzeigende Zertifikat.
-   * @return true, wenn der TrustManager das Zertifikate akzeptieren und zum Truststore hinzufuegen soll.
-   * Andernfalls false.
+   * @return {@code true}, wenn der TrustManager das Zertifikate akzeptieren und zum Truststore hinzufuegen soll.
+   * Andernfalls {@code false}.
    * @throws Exception
    */
   public boolean checkTrust(X509Certificate cert) throws Exception;
@@ -219,16 +235,19 @@ public interface ApplicationCallback
    * ob der Hostname korrekt ist.
    * @param hostname der Hostname des Servers.
    * @param certs die Zertifikate des Servers.
-   * @return true, wenn der Hostname akzeptiert werden soll, andernfalls false.
+   * @return {@code true}, wenn der Hostname akzeptiert werden soll, andernfalls {@code false}.
    * @throws Exception
    */
   public boolean checkHostname(String hostname, javax.security.cert.X509Certificate[] certs) throws Exception;
 
   /**
    * Liefert den Hostnamen des Systems.
-   * Dieser wird fuer die Erstellung des X.509-Zertifikats benoetigt.
-   * Die Funktion wirft nur dann eine Exception, wenn alle Stricke
+   *
+   * <p>Dieser wird fuer die Erstellung des X.509-Zertifikats benoetigt.
+   *
+   * <p>Die Funktion wirft nur dann eine Exception, wenn alle Stricke
    * reissen - auch die manuelle Eingabe des Hostnamens durch den User.
+   *
    * @return Hostname.
    * @throws Exception
    */
@@ -237,7 +256,7 @@ public interface ApplicationCallback
   /**
    * Fragt vom User ein Login ab.
    * @param authenticator der Authenticator.
-   * Er liefert Context-Infos zum abgefragten Login.
+   *        Er liefert Context-Infos zum abgefragten Login.
    * @return das Login.
    * @throws Exception
    */

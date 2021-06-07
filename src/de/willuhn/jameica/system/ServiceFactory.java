@@ -82,7 +82,7 @@ public final class ServiceFactory
 
   /**
    * Installiert einen Service in Jameica. Laeuft die Anwendung
-   * im Server-Mode und ist das Flag autostart des Services aktiv,
+   * im Server-Mode und ist das Flag {@code autostart} des Services aktiv,
    * wird der Service im Netz freigegeben.
    * @param manifest das Manifest des Plugins.
    * @param descriptor der Service-Deskriptor.
@@ -205,13 +205,12 @@ public final class ServiceFactory
 
   /**
    * Liefert den genannten Service des uebergebenen Plugins.
-   * Die Funktion liefert niemals <code>null</code>. Entweder der
-   * Service wird gefunden und zurueckgeliefert oder es wird eine
-   * Exception geworfen.
+   *
    * @param pluginClass Klasse des Plugins, fuer welches der Service geladen werden soll.
    * @param serviceName Name des Service.
    * @return die Instanz des Services.
-   * @throws Exception
+   * @throws ApplicationException falls Service nicht gefunden werden konnte
+   * @throws RemoteException falls kein Zugriff auf Service via RMI moeglich
    */
   public Service lookup(Class pluginClass, String serviceName) throws Exception
   {
@@ -307,7 +306,8 @@ public final class ServiceFactory
 
   /**
    * Faehrt die Services runter.
-   * Beendet werden hierbei nur die lokal gestarteten Services, nicht remote verbundene.
+   *
+   * <p>Beendet werden hierbei <b>nur die lokal gestarteten</b> Services, nicht remote verbundene.
    */
   public synchronized void shutDown()
   {
@@ -369,7 +369,7 @@ public final class ServiceFactory
    * Liefert den Host, auf dem nach diesem Service gesucht werden soll.
    * @param pluginclass Klasse des Plugins.
    * @param serviceName Name des gesuchten Service.
-   * @return Hostname, auf dem sich der Service befindet oder <code>null</code> wenn nicht definiert.
+   * @return Hostname, auf dem sich der Service befindet oder {@code null} wenn nicht definiert.
    */
   public String getLookupHost(Class pluginclass, String serviceName)
   {
@@ -383,7 +383,7 @@ public final class ServiceFactory
    * Liefert den TCP-Port, auf dem nach diesem Service gesucht werden soll.
    * @param pluginclass Klasse des Plugins.
    * @param serviceName Name des gesuchten Service.
-   * @return TCP-Port, auf dem sich der Service befindet oder <code>-1</code> wenn nicht definiert.
+   * @return TCP-Port, auf dem sich der Service befindet oder {@code -1} wenn nicht definiert.
    */
   public int getLookupPort(Class pluginclass, String serviceName)
   {

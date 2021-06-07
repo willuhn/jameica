@@ -36,7 +36,7 @@
       keine eigene Navigation oder eigene Menus mitbringen
       sondern stattdessen die existierenden um Funktionen
       erweitern.
-      <br/>
+      <br>
       Genau für diesen Zweck existiert das Extension-System.
 	</p>
 	
@@ -48,28 +48,26 @@
       <code>Extension</code> implementieren), welche die
       Extendables um zusätzliche Funktionalität erweitern.
 	</p>
-      
+
+    <h3>Schritt 1 (Registrierung der Erweiterungen):</h3>
     <p>
-      <b>Schritt 1 (Registrierung der Erweiterungen):</b>
-	  <br/>
 	  Bevor eine erweiterbare Komponente (also ein Extendable) erweitert
 	  werden kann, muss Jameica herausfinden, welche Erweiterungen überhaupt
 	  existieren.
-	  <br/>
+	  <br>
 	  Bsp.: Bevor der Navigations-Baum (linkes Frame in Jameica)
 	  gezeichnet wird, prüft Jameica für jedes Element des Baumes, ob Erweiterungen
 	  vorliegen. Ist dies der Fall, wird jeweils deren Methode
 	  <code>extend(Extendable)</code> aufgerufen.
-	  <br/>
+	  <br>
 	  Eine Extension muss im System registriert sein, um angesprochen
 	  werden zu können. Dies geschieht wiederrum automatisch (durch Definition
 	  der Erweiterungen in der Manifest-Datei (plugin.xml)) oder manuell
 	  durch Aufruf von <code>ExtensionRegistry#register(Extension e, String[] extendableIDs)</code>).
-	  
-	  <p>
+      <br>
 	  Format der Registrierung in plugin.xml:
-	  
-<pre>
+    </p>
+<pre><code>
 &lt;plugin&gt;
   [...]
   <span class="unimportant">
@@ -91,21 +89,18 @@
   &lt;/extensions&gt;
   </span>
 &lt;/plugin&gt;
-</pre>
-	  </p>
-    </p>
-    
+    </code></pre>
 
+    <h3>Schritt 2 (Durchführung der Erweiterung):</h3>
 	<p>
-      <b>Schritt 2 (Durchführung der Erweiterung):</b>
-      <br/>
       Jedes Extendable besitzt eine ID (Funktion <code>getExtendableID()</code>),
       über die es in ganz Jameica eindeutig identifizierbar ist.
       Bevor die erweiterbare Komponente nun aktiviert wird (bei Context-Menus
       ist das z.Bsp. der Moment unmittelbar vor dem Zeichnen auf dem Bildschirm)
       muss sie der ExtensionRegistry Bescheid geben, dass sie nun noch erweitert
       werden kann. Bsp:
-      <pre>
+    </p>
+      <pre><code>
 public class AddressList extends ContextMenu implements Extendable
 {
   public AddressList()
@@ -120,8 +115,7 @@ public class AddressList extends ContextMenu implements Extendable
     <span class="important">ExtensionRegistry.extend(this);</span>
   }
 }       
-      </pre>
-    </p>
+      </code></pre>
 
   </body>
 </html>

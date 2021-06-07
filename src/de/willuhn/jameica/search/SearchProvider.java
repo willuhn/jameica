@@ -18,10 +18,12 @@ import de.willuhn.util.ApplicationException;
 
 /**
  * Interface fuer einen Provider, der von der Suchmaschine abgefragt wird.
- * Das Interface muss lediglich implementiert werden, um automatisch
+ *
+ * <p>Das Interface muss lediglich implementiert werden, um automatisch
  * in der Suchmaschine registriert zu werden.
- * Die Implementierungen muessen einen parameterlosen Konstruktor mit
- * dem Modifier "public" besitzen, um geladen werden zu koennen
+ *
+ * <p>Die Implementierungen muessen einen parameterlosen Konstruktor mit
+ * dem Modifier {@code public} besitzen, um geladen werden zu koennen
  * (Bean-Spezifikation).
  */
 public interface SearchProvider
@@ -35,7 +37,7 @@ public interface SearchProvider
   /**
    * Stellt eine Suchanfrage an den Provider.
    * @param search der Suchbegriff.
-   * @return Liste der Ergebnisse als Objekte vom Typ "Result" oder <code>null</code>, wenn nichts gefunden wurde.
+   * @return Liste der Ergebnisse als Objekte vom Typ {@link Result} oder {@code null}, wenn nichts gefunden wurde.
    * @throws RemoteException
    * @throws ApplicationException
    */

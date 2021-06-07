@@ -24,18 +24,19 @@ import de.willuhn.logging.Logger;
 /**
  * Eingabe-Feld, welches beim Klick auf den Button einen Dialog zur Auswahl
  * eines Objektes oeffnet.
- * Achtung: Der Dialog liefert beim Schliessen ein lapidares <code>Object</code>
+ *
+ * <p>Achtung: Der Dialog liefert beim Schliessen ein lapidares {@link Object}
  * zurueck. Da das Text-Eingabefeld natuerlich nicht wissen kann,
  * wie es das anzeigen soll, wird der Rueckgabewert des Dialogs
- * nicht ausgewertet. Stattdessen muss an den Dialog via <code>addCloseListener</code>
+ * nicht ausgewertet. Stattdessen muss an den Dialog via {@link #addListener(Listener)}
  * ein Listener angehangen werden, der beim Schliessen des Dialogs ausgeloest
- * wird. In dessen <code>event.data</code> befindet sich dann das jeweilige
- * Objekt. Das ist z.Bsp. bei <code>ListDialog</code> ein Fachobjekt aus der
- * Datenbank oder bei <code>CalendarDialog</code> ein <code>java.util.Date</code>-Objekt.
- * <p>
- * Hinweis: Der Listener darf nicht an das Input-Feld selbst angehangen werden,
+ * wird. In dessen {@code event.data} befindet sich dann das jeweilige
+ * Objekt. Das ist z.Bsp. bei {@link de.willuhn.jameica.gui.dialogs.ListDialog} ein Fachobjekt aus der
+ * Datenbank oder bei {@link de.willuhn.jameica.gui.dialogs.CalendarDialog} ein {@link java.util.Date}-Objekt.
+ *
+ * <p>Hinweis: Der Listener darf nicht an das Input-Feld selbst angehangen werden,
  * denn die werden bei jedem Focus-Wechsel ausgeloest.
- * </p>
+ *
  * @author willuhn
  */
 public class DialogInput extends ButtonInput
@@ -51,9 +52,10 @@ public class DialogInput extends ButtonInput
 
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
-   * Der dialog sollte anschliessend noch mittels setDialog() gesetzt werden.
+   * Der Dialog sollte anschliessend noch mittels {@link #setDialog(AbstractDialog)} gesetzt werden.
    * Dieser Konstruktor ist nur eine Convenience-Funktion, um den Dialog
    * auch nach der Erzeugung des Input-Objektes setzen zu koennen.
+   *
    * @param value der initial einzufuegende Wert fuer das Eingabefeld.
    */
   public DialogInput(String value)
@@ -104,8 +106,8 @@ public class DialogInput extends ButtonInput
   /**
    * Liefert das Objekt, welches in dem Dialog ausgewaehlt wurde.
    * Fuer gewoehnlich ist das ein Fach-Objekt.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
+  @Override
   public Object getValue()
   {
     return choosen;
@@ -158,21 +160,21 @@ public class DialogInput extends ButtonInput
   }
 
   /**
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
-   * Speichert jedoch nicht den anzuzeigenden Text sondern das FachObjekt.
+   * Wie {@link de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)},
+   * speichert jedoch nicht den anzuzeigenden Text sondern das FachObjekt.
    * Sprich: Das Objekt, welches auch geliefert wird, wenn der Dialog
    * zur Auswahl des Objektes verwendet werden wuerde.
-   * Soll der anzuzeigende Text geaendert werden, dann bitte die
-   * Funktion <code>setText(String)</code> verwenden.
+   *
+   * <p>Soll der anzuzeigende Text geaendert werden, dann bitte die
+   * Funktion {@link #setText(String)} verwenden.
    */
+  @Override
   public void setValue(Object value)
   {
   	this.choosen = value;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public Control getClientControl(Composite parent) {
     text = GUI.getStyleFactory().createText(parent);
   	if (value != null)
@@ -183,9 +185,7 @@ public class DialogInput extends ButtonInput
   	return text;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
-   */
+  @Override
   protected void update() throws OperationCanceledException
   {
     super.update();
@@ -205,10 +205,7 @@ public class DialogInput extends ButtonInput
     text.setBackground(color);
   }
 
-  /**
-   * Ueberschrieben, weil nur der angezeigte Text interessiert.
-   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
-   */
+  @Override
   public boolean hasChanged()
   {
     Object newValue = getText();

@@ -12,7 +12,8 @@ package de.willuhn.jameica.messaging;
 /**
  * Dieses Interface muss implementiert werden, wenn man die Nachrichten
  * des Messaging-Systems erhalten will.
- * WICHTIG: Alle Implementierungen dieses Interfaces muessen sich ueber
+ *
+ * <p><b>WICHTIG:</b> Alle Implementierungen dieses Interfaces muessen sich ueber
  * einen parameterlosen Konstruktor erzeugen lassen.
  * @author willuhn
  */
@@ -21,7 +22,7 @@ public interface MessageConsumer
   /**
    * Wenn der Message-Consumer nur ganz bestimmte Nachrichten
    * empfangen will, dann kann er hier die Liste der gewuenschten
-   * Arten angeben. Liefert die Funktion <code>null</code>,
+   * Arten angeben. Liefert die Funktion {@code null},
    * werden alle Nachrichten an den Consumer zugestellt.
    * @return Liste der gewuenschten Nachrichtenarten.
    */

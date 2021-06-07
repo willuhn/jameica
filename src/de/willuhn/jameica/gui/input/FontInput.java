@@ -57,9 +57,7 @@ public class FontInput extends ButtonInput
     });
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public Control getClientControl(Composite parent)
   {
     label = new CLabel(parent, SWT.NONE);
@@ -104,18 +102,18 @@ public class FontInput extends ButtonInput
 
   /**
    * Liefert die aktuell ausgewaehlte Schriftart.
-   * Rueckgabewert vom Typ <code>org.eclipse.swt.graphics.Font</code>.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
+   * Rueckgabewert vom Typ {@link org.eclipse.swt.graphics.Font}.
    */
+  @Override
   public Object getValue()
   {
     return font;
   }
 
   /**
-   * Erwartet ein Object vom Typ <code>org.eclipse.swt.graphics.Font</code>.
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
+   * Erwartet ein Object vom Typ {@link org.eclipse.swt.graphics.Font}.
    */
+  @Override
   public void setValue(Object value)
   {
     if (value == null)

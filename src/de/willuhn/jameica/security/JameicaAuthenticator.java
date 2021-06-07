@@ -89,14 +89,17 @@ public class JameicaAuthenticator extends Authenticator
   }
   
   /**
-   * Ueber diese Funktion koennen Properties des Authentifizierungs-Requqests
-   * abgefragt werden. Die unten aufgerufenen Funktionen sind leider alle
-   * protected final, sodass sie nur von abgeleiteten Klassen aufgerufen
+   * Ueber diese Funktion koennen Properties des Authentifizierungs-Requests
+   * abgefragt werden.
+   *
+   * <p>Die notwendigen Funktionen sind leider alle {@code protected final},
+   * sodass sie nur von abgeleiteten Klassen aufgerufen
    * werden koennen. Wir wollen den Authentifizierungsdialog aber nicht
    * direkt hier drin sondern im Jameica-Callback implementieren. Daher machen
    * wir sie mit folgender Funktion auch von aussen abrufbar.
+   *
    * @param param Name des Parameters.
-   * @return der Wert des Parameters oder NULL, wenn er nicht existiert oder keinen Wert hat.
+   * @return der Wert des Parameters oder {@code null}, wenn Parameter nicht existiert oder keinen Wert hat.
    */
   public Object getRequestParam(RequestParam param)
   {

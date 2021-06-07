@@ -29,8 +29,8 @@ import de.willuhn.logging.Logger;
 
 /**
  * Ist zustaendig fuer Eingabefelder des Typs "Select" aka "Combo".
- * Wird die Combo-Box mit einer Liste von GenericObjects erzeugt,
- * dann wird dasPrimaer-Attribut eines jeden Objektes angezeigt.
+ * Wird die Combo-Box mit einer Liste von {@link GenericObject}s erzeugt,
+ * dann wird das Primaerattribut eines jeden Objektes angezeigt.
  * @author willuhn
  */
 public class SelectInput extends AbstractInput
@@ -49,14 +49,16 @@ public class SelectInput extends AbstractInput
 
   /**
    * Erzeugt eine neue Combo-Box und schreibt die Werte der uebergebenen Liste rein.
-   * Um Jameica von spezifischem Code aus de.willuhn.datasource zu befreien,
-   * sollte kuenftig besser der generische Konstruktor <code>List</code>,<code>Object</code>
-   * verwendet werden. Damit kann die Anwendung spaeter auch auf ein anderes Persistierungsframework
-   * umgestellt werden.
+   *
    * @param list Liste von Objekten.
    * @param preselected das Object, welches vorselektiert sein soll. Optional.
    * @throws RemoteException
+   * @deprecated Um Jameica von spezifischem Code aus de.willuhn.datasource zu befreien,
+   *    sollte kuenftig besser {@link SelectInput#SelectInput(List, Object)}
+   *    verwendet werden. Damit kann die Anwendung spaeter auch auf ein anderes Persistierungsframework
+   *    umgestellt werden.
    */
+  @Deprecated
   public SelectInput(GenericIterator list, GenericObject preselected) throws RemoteException
   {
     this(list != null ? PseudoIterator.asList(list) : null,preselected);
@@ -125,7 +127,9 @@ public class SelectInput extends AbstractInput
 	
   /**
    * Optionale Angabe eines Textes, der an Position 1 angezeigt werden soll.
-   * Bei Auswahl dieses Elements, wird null zurueckgeliefert.
+   *
+   * <p>Als Default wird {@code null} zurueckgeliefert.
+   *
    * @param choose Anzuzeigender "Bitte wählen..."-Text.
    */
   public void setPleaseChoose(String choose)
@@ -136,10 +140,10 @@ public class SelectInput extends AbstractInput
   /**
    * Legt den Namen des Attributes fest, welches von den Objekten angezeigt werden
    * soll. Bei herkoemmlichen Beans wird also ein Getter mit diesem Namen aufgerufen. 
-   * Wird kein Attribut angegeben, wird bei Objekten des Typs <code>GenericObject</code>
-   * der Wert des Primaer-Attributes angezeigt, andernfalls der Wert von <code>toString()</code>.
-   * @param name Name des anzuzeigenden Attributes (muss im GenericObject
-   * via getAttribute(String) abrufbar sein).
+   * Wird kein Attribut angegeben, wird bei Objekten des Typs {@link GenericObject}
+   * der Wert des Primaer-Attributes angezeigt, andernfalls der Wert von {@link #toString()}.
+   * @param name Name des anzuzeigenden Attributes (muss via
+   *             {@link GenericObject#getAttribute(String)} abrufbar sein).
    */
   public void setAttribute(String name)
 	{
@@ -147,9 +151,7 @@ public class SelectInput extends AbstractInput
 			this.attribute = name;
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public Control getControl()
   {
     if (this.combo != null)
@@ -249,7 +251,7 @@ public class SelectInput extends AbstractInput
   
   /**
    * Liefert die komplette Liste der Fachobjekte in der Liste.
-   * @return die komplette Liste der Fachobjekte in der Liste.
+   * @return Liste der Fachobjekte.
    */
   public List getList()
   {
@@ -259,7 +261,7 @@ public class SelectInput extends AbstractInput
   /**
    * Formatiert die Bean passend fuer die Anzeige in der Combo-Box.
    * @param bean die Bean.
-   * @return String mit dem anzuzeigenden Wert.
+   * @return anzuzeigender Wert.
    */
   protected String format(Object bean)
   {
@@ -281,10 +283,11 @@ public class SelectInput extends AbstractInput
   }
 
   /**
-   * Liefert das ausgewaehlte GenericObject.
-   * Folglich kann der Rueckgabewert direkt nach GenericObject gecastet werden.
+   * Liefert das ausgewaehlte {@link GenericObject}.
+   * Folglich kann der Rueckgabewert direkt nach {@link GenericObject} gecastet werden.
    * @see de.willuhn.jameica.gui.input.Input#getValue()
    */
+  @Override
   public Object getValue()
   {
     if (this.combo == null || this.combo.isDisposed())
@@ -311,9 +314,7 @@ public class SelectInput extends AbstractInput
 		return combo.getText();
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#focus()
-   */
+  @Override
   public void focus()
   {
     if (this.combo == null || this.combo.isDisposed())
@@ -322,26 +323,19 @@ public class SelectInput extends AbstractInput
     combo.setFocus();
   }
 
-
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#disable()
-   */
+  @Override
   public void disable()
   {
     setEnabled(false);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#enable()
-   */
+  @Override
   public void enable()
   {
     setEnabled(true);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
-   */
+  @Override
   public void setEnabled(boolean enabled)
   {
     this.enabled = enabled;
@@ -350,8 +344,9 @@ public class SelectInput extends AbstractInput
   }
   
   /**
-   * Markiert die Combo-Box als editierbar. Wenn diese
-   * Option aktiviert ist, wird jedoch in <code>getValue()</code>
+   * Markiert die Combo-Box als editierbar.
+   *
+   * <p>Wenn diese Option aktiviert ist, wird jedoch in {@link #getValue()}
    * generell der angezeigte Text zurueckgeliefert statt des
    * Fachobjektes. Hintergrund: Normalerweise wird die Combo-Box
    * ja mit einer Liste von Fachobjekten/Beans gefuellt.
@@ -366,25 +361,19 @@ public class SelectInput extends AbstractInput
     this.editable = editable;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
-   */
+  @Override
   public void setValue(Object o)
   {
     this.setPreselected(o);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
-   */
+  @Override
   public boolean isEnabled()
   {
     return enabled;
   }
 
-	/**
-	 * @see de.willuhn.jameica.gui.input.AbstractInput#update()
-	 */
+  @Override
   protected void update() throws OperationCanceledException
   {
     // Wir machen hier nichts. 

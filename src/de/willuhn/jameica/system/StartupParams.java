@@ -84,7 +84,9 @@ public class StartupParams
     options.addOption("w","passwordfile",true,"Optionale Angabe des Master-Passworts, welches sich in der angegebenen Datei befindet");
     options.addOption("o","force-password",false,"Angabe des Master-Passworts via Kommandozeile ignorieren (für MacOS nötig)");
 
-    options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +      "Es findet keine Benutzer-Interaktion mehr statt. Die Option wird nur ausgewertet, wenn Jameica " +      "im Server-Mode läuft.");
+    options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +
+      "Es findet keine Benutzer-Interaktion mehr statt. Die Option wird nur ausgewertet, wenn Jameica " +
+      "im Server-Mode läuft.");
 
     options.addOption("l","ignore-lock",false,"Ignoriert eine ggf. vorhandene Lock-Datei");
 
@@ -182,7 +184,7 @@ public class StartupParams
 
 	/**
 	 * Liefert das ggf als Kommandozeilen-Parameter angegebene Master-Passwort.
-   * @return Master-Passwort oder <code>null</code>.
+   * @return Master-Passwort oder {@code null}.
    */
   public String getPassword()
 	{
@@ -191,7 +193,7 @@ public class StartupParams
   
   /**
    * Liefert den ggf als Kommandozeilen-Parameter angegebenen Usernamen.
-   * @return der Username oder <code>null</code>.
+   * @return der Username oder {@code null}.
    */
   public String getUsername()
   {
@@ -200,8 +202,10 @@ public class StartupParams
 	
 	/**
 	 * Liefert den Start-Modus von Jameica.
-	 * Zur Codierung sie Konstanten <code>MODE_*</code>.
    * @return Start-Modus.
+   * @see #MODE_STANDALONE
+   * @see #MODE_SERVER
+   * @see #MODE_CLIENT
    */
   public int getMode()
 	{
@@ -218,10 +222,10 @@ public class StartupParams
 	}
   
   /**
-   * Liefert true, wenn Jameica im nichtinteraktiven Server-Mode
+   * Prüfe, ob Jameica im nichtinteraktiven Server-Mode
    * laeuft und damit keine direkte Interaktion mit dem Benutzer ueber
    * die Konsole moeglich ist.
-   * @return liefert true, wenn sich die Anwendung im nicht-interaktiven Mode befindet.
+   * @return liefert {@code true}, wenn sich die Anwendung im nicht-interaktiven Mode befindet.
    */
   public boolean isNonInteractiveMode()
   {
@@ -229,8 +233,8 @@ public class StartupParams
   }
   
   /**
-   * Liefert true, wenn eine ggf vorhandene Lock-Datei ignoriert werden soll.
-   * @return true, wenn die Lock-Datei ignoriert werden soll.
+   * Prüfe, ob eine ggf vorhandene Lock-Datei ignoriert werden soll.
+   * @return {@code true}, wenn die Lock-Datei ignoriert werden soll.
    */
   public boolean isIgnoreLockfile()
   {

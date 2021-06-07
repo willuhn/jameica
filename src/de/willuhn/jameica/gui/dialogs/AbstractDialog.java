@@ -37,29 +37,35 @@ import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
 /**
- * <p>Das ist die Basisklasse fuer modalen Dialogfenster.</p>
+ * Das ist die Basisklasse fuer modalen Dialogfenster.
  * <p>Modal heisst: Ist das Dialogfenster einmal geoeffnet, kann die
  * restliche Anwendung solange nicht mehr bedient werden, bis dieses
- * Fenster geschlossen wurde.</p>
+ * Fenster geschlossen wurde.
+ *
  * <p>Diese abstrakte Implementierung schreibt keinen Inhalt in den Dialog
  * sondern stellt lediglich das Fenster mit einem definierten Design
  * zu Verfuegung, behandelt die Dispatch-Vorgaenge mit dem Benutzer
- * und definiert einen Fenster-Titel.</p>
- * <p>Der Dialog kann mittels der beiden Konstanten <code>POSITION_MOUSE</code>
- * und <code>POSITION_CENTER</code> im Konstruktor entweder mittig auf dem
- * Bildschirm oder an der momentanen Position der Mouse dargestellt werden.</p>
- * <p>Ableitende Klassen muessen die Methode <code>paint(Composite)</code>
- * implementieren und dort ihre darzustellenden Elemente reinmalen.</p>
- * <p>Der Dialog wird mittels <code>open()</code> geoeffnet. Beim Schliessen
- * des Dialogs wird die Methode <code>getData()</code> aufgerufen. Das ist
- * gleichzeitig der Rueckgabewert von <code>open()</code>.</p>
- * <p>Eine ableitende Klasse muss also z.Bsp. in <code>paint(Composite)</code>
+ * und definiert einen Fenster-Titel.
+ *
+ * <p>Der Dialog kann mittels der beiden Konstanten {@code POSITION_MOUSE}
+ * und {@code POSITION_CENTER} im Konstruktor entweder mittig auf dem
+ * Bildschirm oder an der momentanen Position der Mouse dargestellt werden.
+ *
+ * <p>Ableitende Klassen muessen die Methode {@code paint(Composite)}
+ * implementieren und dort ihre darzustellenden Elemente reinmalen.
+ *
+ * <p>Der Dialog wird mittels {@code open()} geoeffnet. Beim Schliessen
+ * des Dialogs wird die Methode {@code getData()} aufgerufen. Das ist
+ * gleichzeitig der Rueckgabewert von {@code open()}.
+ *
+ * <p>Eine ableitende Klasse muss also z.Bsp. in {@code paint(Composite)}
  * einen OK-Button erzeugen, einen Listener anhaengen, der auf Druecken
  * des Buttons reagiert, in der aufgerufenenen Methode des Listeners
- * den zu uebergebenden Wert als Member speichern und danach <code>close()</code>
- * aufrufen, um den Dialog zu schliessen.</p>
+ * den zu uebergebenden Wert als Member speichern und danach {@code close()}
+ * aufrufen, um den Dialog zu schliessen.
+ *
  * <p>Bsp.:
- * <code><pre>
+ * <pre>{@code
  * protected void paint(Composite parent) throws Exception
  * {
  *   // [...]
@@ -77,9 +83,8 @@ import de.willuhn.util.I18N;
  * {
  *   return this.enteredText;
  * }
- * </pre>
- * </code>
- * </p>
+ * }</pre>
+ *
  * @author willuhn
  * @param <T> Der Typ des Objektes.
  */
@@ -331,8 +336,8 @@ public abstract class AbstractDialog<T>
 	 * ausgeloest wird. Ob das Schliessen nun durch Klick auf
 	 * den Schliessen-Button oder z.Bsp. durch Auswahl eines
 	 * Elements im Dialog stattfindet, ist egal.
-	 * Dabei wird die Methode <code>handleEvent(Event)</code> des Listeners
-	 * aufgerufen. Das ausgewaehlte Objekt befindet sich dann im Member <code>data</code>
+	 * Dabei wird die Methode {@link Listener#handleEvent(Event)} des Listeners
+	 * aufgerufen. Das ausgewaehlte Objekt befindet sich dann im Member {@code data}
 	 * des Events.
 	 * @param l zu registrierender Listener.
 	 */
@@ -392,7 +397,7 @@ public abstract class AbstractDialog<T>
 	 * Wird die Funktion nicht aufgerufen, dann wird der Dialog genauso gross
 	 * gemalt, wie der Inhalt.
 	 * Wenn eine der beiden Groessen nicht bekannt ist oder nicht gesetzt werden
-	 * soll, kann man auch <code>SWT.DEFAULT</code> uebergeben.
+	 * soll, kann man auch {@link SWT#DEFAULT} uebergeben.
    * @param width gewuenschte Breite.
    * @param height gewuenschte Hoehe.
    */
@@ -429,7 +434,7 @@ public abstract class AbstractDialog<T>
 	 * In dieser Funktion soll er sich bitte malen.
 	 * Sie wird anschliessend von open() ausgefuehrt.
 	 * @param parent das Composite, in dem der Dialog gemalt werden soll.
-	 * Hinweis: Das Composite enthaelt bereits ein einspaltiges <code>GridLayout</code>.
+	 * Hinweis: Das Composite enthaelt bereits ein einspaltiges {@link GridLayout}.
 	 * @throws Exception Kann von der abgeleiteten Klasse geworfen
 	 * werden. Tut sie das, wird der Dialog nicht angezeigt.
    */

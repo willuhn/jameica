@@ -124,7 +124,7 @@ public abstract class AbstractTablePart implements Part
   /**
    * Liefert die Instanz des Features, insofern es hinzugefuegt wurde.
    * @param type der Typ des Features.
-   * @return das Feature oder NULL, wenn es nicht existiert.
+   * @return das Feature oder {@code null}, wenn es nicht existiert.
    */
   public <T> T getFeature(Class<? extends Feature> type)
   {
@@ -138,7 +138,7 @@ public abstract class AbstractTablePart implements Part
    * Prueft, ob das angegebene Feature das Event behandelt.
    * @param type das Feature.
    * @param e das Event.
-   * @return true, wenn das Feature dieses Event behandelt.
+   * @return {@code true}, wenn das Feature dieses Event behandelt.
    */
   public boolean hasEvent(Class<? extends Feature> type, Feature.Event e)
   {
@@ -222,7 +222,7 @@ public abstract class AbstractTablePart implements Part
    * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
    * @param f Formatter, der fuer die Anzeige des Wertes verwendet werden soll.
    * @param changeable legt fest, ob die Werte in dieser Spalte direkt editierbar sein sollen.
-   * Wenn der Parameter true ist, dann sollte der Tabelle via <code>addChangeListener</code>
+   * Wenn der Parameter {@code true} ist, dann sollte der Tabelle via {@link TablePart#addChangeListener(TableChangeListener)}
    * ein Listener hinzugefuegt werden, der benachrichtigt wird, wenn der Benutzer einen
    * Wert geaendert hat. Es ist anschliessend Aufgabe des Listeners, den geaenderten
    * Wert im Fachobjekt zu uebernehmen.
@@ -238,7 +238,7 @@ public abstract class AbstractTablePart implements Part
    * @param field Name des Feldes aus dem dbObject, der angezeigt werden soll.
    * @param f Formatter, der fuer die Anzeige des Wertes verwendet werden soll.
    * @param changeable legt fest, ob die Werte in dieser Spalte direkt editierbar sein sollen.
-   * Wenn der Parameter true ist, dann sollte der Tabelle via <code>addChangeListener</code>
+   * Wenn der Parameter {@code true} ist, dann sollte der Tabelle via {@link TablePart#addChangeListener(TableChangeListener)}
    * ein Listener hinzugefuegt werden, der benachrichtigt wird, wenn der Benutzer einen
    * Wert geaendert hat. Es ist anschliessend Aufgabe des Listeners, den geaenderten
    * Wert im Fachobjekt zu uebernehmen.
@@ -265,7 +265,7 @@ public abstract class AbstractTablePart implements Part
 
   /**
    * Liefert die Sortierreihenfolge der Spalten.
-   * @return Int-Array mit der Reihenfolge oder <code>null</code>.
+   * @return Int-Array mit der Reihenfolge oder {@code null}.
    */
   int[] getColumnOrder()
   {
@@ -346,7 +346,7 @@ public abstract class AbstractTablePart implements Part
 
   /**
    * Liefert die markierten Objekte.
-   * Die Funktion liefert je nach Markierung <code>Object</code> oder <code>Object[]</code>.
+   * Die Funktion liefert je nach Markierung {@link Object} oder {@link Object}[].
    * @return das/die markierten Objekte.
    */
   public abstract Object getSelection();
@@ -387,7 +387,7 @@ public abstract class AbstractTablePart implements Part
 
   /**
    * Legt fest, ob sich die Tabelle die Spaltenbreiten merken soll.
-   * @param remember true, wenn sie sich die Spaltenbreiten merken soll.
+   * @param remember {@code true}, wenn sie sich die Spaltenbreiten merken soll.
    */
   public void setRememberColWidths(boolean remember)
   {
@@ -396,7 +396,7 @@ public abstract class AbstractTablePart implements Part
   
   /**
    * Legt fest, ob sich die Tabelle die Sortierreihenfolge merken soll.
-   * @param remember true, wenn sie sich die Reihenfolge merken soll.
+   * @param remember {@code true}, wenn sie sich die Reihenfolge merken soll.
    */
   public void setRememberOrder(boolean remember)
   {
@@ -405,7 +405,7 @@ public abstract class AbstractTablePart implements Part
   
   /**
    * Legt fest, ob sich die Tabelle die zuletzt markierten Objekte samt der Scrollposition merken soll.
-   * @param remember true, wenn sich die Tabelle Selektion und Position merken soll.
+   * @param remember {@code true}, wenn sich die Tabelle Selektion und Position merken soll.
    */
   public void setRememberState(boolean remember)
   {
@@ -414,7 +414,7 @@ public abstract class AbstractTablePart implements Part
 
   /**
    * Stellt den Zustand wieder her (markierte Objekte und Scroll-Position).
-   * Geschieht jedoch nur, wenn das Feature mit setRememberState(true) aktiviert wurde.
+   * Geschieht jedoch nur, wenn das Feature mit {@code setRememberState(true)} aktiviert wurde.
    * Das ist eine Dummy-Implementierung, die in den abgeleiteten Klassen ueberschrieben werden kann.
    */
   public void restoreState()
@@ -433,7 +433,7 @@ public abstract class AbstractTablePart implements Part
   
   /**
    * Legt fest, ob jede Zeile der Tabelle mit einer Checkbox versehen werden soll.
-   * Ist dies der Fall, liefert <code>getItems</code> nur noch die aktiven
+   * Ist dies der Fall, liefert {@link #getItems()} nur noch die aktiven
    * Elemente zurueck.
    * Default: false
    * @param checkable
@@ -446,8 +446,10 @@ public abstract class AbstractTablePart implements Part
   /**
    * Wenn die Tabelle mit Checkboxen versehen ist, kann man damit bei einem Element 
    * das Haeckchen setzen oder entfernen.
-   * Hinweis: Dies hier ist eine leere Dummy-Implementierung. Sie muss von
+   *
+   * <p>Hinweis: Dies hier ist eine leere Dummy-Implementierung. Sie muss von
    * abgeleiteten Klassen ueberschrieben werden.
+   *
    * @param objects Liste der zu checkenden Objekte.
    * @param checked true, wenn das Haekchen gesetzt werden soll.
    */
@@ -483,7 +485,7 @@ public abstract class AbstractTablePart implements Part
   public abstract void removeAll();
   
   /**
-   * Hilfsmethode, um die RemoteException im Konstruktor zu vermeiden.
+   * Hilfsmethode, um die {@link RemoteException} im Konstruktor zu vermeiden.
    * @param iterator zu konvertierender Iterator.
    * @return Liste mit den Objekten.
    */

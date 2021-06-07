@@ -23,9 +23,9 @@ public class ChangePassword implements Action
 {
 
   /**
-   * Hier kann <code>null</code> uebergeben werden.
-   * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
+   * Hier kann {@code null} uebergeben werden.
    */
+  @Override
   public void handleAction(Object context) throws ApplicationException
   {
   	try

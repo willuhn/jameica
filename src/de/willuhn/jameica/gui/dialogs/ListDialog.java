@@ -29,7 +29,7 @@ import de.willuhn.util.ApplicationException;
 /**
  * Dialog, der eine Tabelle mit Daten aus einer Liste anzeigt.
  * Aus dieser Tabelle kann einer ausgewaehlt werden. Dieses Objekt
- * wird dann von <code>open()</code> zurueckgegeben.
+ * wird dann von {@code open()} zurueckgegeben.
  * @author willuhn
  */
 public class ListDialog extends AbstractDialog
