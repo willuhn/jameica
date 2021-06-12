@@ -134,7 +134,7 @@ public class ClassService implements Bootable
           Manifest mf = plugins.get(i);
           if (mf == null || manifest.getName().equals(mf.getName())) // sind wir selbst
             continue;
-          for (int k=0;k<deps.length;++i)
+          for (int k=0;k<deps.length;++k)
           {
             if (deps[k].getName().equals(mf.getName()) && mf.isLoaded())
             {
