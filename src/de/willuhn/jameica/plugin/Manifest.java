@@ -808,7 +808,7 @@ public class Manifest implements Comparable
     {
       if (deps[i] == null)
         continue; // ueberspringen
-      if (otherName.equals(deps[i]))
+      if (otherName.equals(deps[i].getName()))
       {
         Logger.debug("7: " + otherName + " > " + name);
         return 1; // Wir haengen von dem anderen Plugin ab. Dann muss das andere zuerst geladen werden
