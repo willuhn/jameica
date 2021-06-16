@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
 }
-apply from: "${rootProject.rootDir}/url_file.gradle"
+apply from: "${rootProject.rootDir}/gradle/url_file.gradle"
 
 group 'de.willuhn.jameica'
 version '2.8-SNAPSHOT'
