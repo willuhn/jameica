@@ -1,28 +1,22 @@
 plugins {
-    id 'java-library'
-    id 'eclipse'
-    id 'idea'
+    id 'my.java-application-conventions'
+    id 'my.java-oldschool-project-structure'
+    id 'my.encoding.8859-1'
 }
 apply from: "${rootProject.rootDir}/gradle/url_file.gradle"
 
 group 'de.willuhn.jameica'
 version '2.8-SNAPSHOT'
 
+application {
+    // Define the main class for the application.
+    mainClass = 'de.willuhn.jameica.Main'
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(8)
     }
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'ISO-8859-1'
-}
-tasks.withType(Javadoc) {
-    options.encoding = 'ISO-8859-1'
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
@@ -42,8 +36,6 @@ dependencies {
 
     // Printing plug-in for SWT. See <https://code.google.com/archive/p/swt-paperclips/> (last update: 2009-08-12)
     implementation urlFile('paperclips-1.0.4', 'https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/swt-paperclips/net.sf.paperclips_1.0.4.200908120926.jar')
-
-    testImplementation libs.junit
 }
 
 // solange noch die Logik des ANT-Builds benötigt wird, nutze einen Unterordner
@@ -52,32 +44,5 @@ jar {
     baseName "de_willuhn_${project.name}"
     manifest {
         attributes "Main-Class": "de.willuhn.jameica.Main"
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-    }
-
-    test {
-        java {
-            srcDirs = ['test']
-        }
-    }
-}
-
-eclipse {
-    classpath {
-        downloadJavadoc = true
-        downloadSources = false
-    }
-}
-idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = false
     }
 }
