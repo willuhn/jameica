@@ -49,24 +49,24 @@ public final class Reminder implements Serializable
   /**
    * Name der Default-Queue, die verwendet wird, wenn keine angegeben wurde.
    */
-  public final static String QUEUE_DEFAULT = "jameica.reminder";
+  public static final String QUEUE_DEFAULT = "jameica.reminder";
   
   /**
    * Key, in dem der Reminder-Service das Datum speichert, an dem der Reminder ausgefuehrt wurde.
    */
-  public final static String KEY_EXECUTED = "jameica.reminder.key.executed";
+  public static final String KEY_EXECUTED = "jameica.reminder.key.executed";
   
   /**
    * Key, in dem der Reminder-Service speichert, wann ein zyklischer Reminder als abgelaufen
    * markiert wurde, weil er ein Ende-Datum besitzt und dieses ueberschritten ist.
    */
-  public final static String KEY_EXPIRED  = "jameica.reminder.key.expired";
+  public static final String KEY_EXPIRED  = "jameica.reminder.key.expired";
   
   private String queue                      = QUEUE_DEFAULT;
   private Date date                         = new Date();
   private ReminderInterval interval         = null;
   private Date end                          = null;
-  private HashMap<String,Serializable> data = new HashMap<String,Serializable>();
+  private HashMap<String,Serializable> data = new HashMap<>();
 
   /**
    * Liefert die Queue, an die die Message geschickt werden soll.
@@ -188,7 +188,7 @@ public final class Reminder implements Serializable
    */
   public String toString()
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     if (this.interval != null)
     {
       sb.append(this.interval);

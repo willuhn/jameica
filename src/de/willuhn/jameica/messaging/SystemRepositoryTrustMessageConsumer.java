@@ -12,6 +12,7 @@ package de.willuhn.jameica.messaging;
 
 import java.net.URL;
 
+import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.system.Application;
@@ -77,7 +78,7 @@ public class SystemRepositoryTrustMessageConsumer implements MessageConsumer
     if (Application.inServerMode() || Application.inNonInteractiveMode())
       return;
     
-    CertificateTrustDialog d = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,msg.getCertificate());
+    CertificateTrustDialog d = new CertificateTrustDialog(AbstractDialog.POSITION_CENTER,msg.getCertificate());
     d.setText(Application.getI18n().tr("Bitte prüfen Sie, ob das angezeigte Zertifikat mit dem Server-Zertifikat des\n" +
                                        "Webservers www.willuhn.de übereinstimmt."));
 

@@ -41,7 +41,7 @@ public class SearchResult
    * @throws ApplicationException
    * @throws RemoteException
    */
-  public List getResult() throws RemoteException, ApplicationException
+  public List<Result> getResult() throws RemoteException, ApplicationException
   {
     return this.provider.search(this.text);
   }

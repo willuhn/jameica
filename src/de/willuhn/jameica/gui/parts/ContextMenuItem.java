@@ -30,7 +30,7 @@ public class ContextMenuItem
 	/**
 	 * Menu-Item, welches als Separator verwendet werden kann.
 	 */
-	public final static ContextMenuItem SEPARATOR = new ContextMenuItem();
+	public static final ContextMenuItem SEPARATOR = new ContextMenuItem();
 	
 	static
 	{

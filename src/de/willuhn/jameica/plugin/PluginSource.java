@@ -16,12 +16,12 @@ import java.util.List;
 /**
  * Definiert eine Quelle, in der sich Plugins befinden koennen.
  */
-public interface PluginSource extends Comparable
+public interface PluginSource extends Comparable<Object>
 {
   /**
    * Die verschiedenen Arten von Plugin-Quellen.
    */
-  public static enum Type
+  public enum Type
   {
     // Die hier angegebene Reihenfolge entspricht aufgrund der Ordinal-Zahl
     // der Enums auch deren Lade-Reihenfolge und Prioritaet.
@@ -46,7 +46,7 @@ public interface PluginSource extends Comparable
     /**
      * Die Default-Plugin-Quelle.
      */
-    public final static Type DEFAULT = USER;
+    public static final Type DEFAULT = USER;
   }
   
   /**

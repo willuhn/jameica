@@ -15,6 +15,7 @@ import java.util.List;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.internal.parts.SearchResultPart;
+import de.willuhn.jameica.search.SearchResult;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
 
@@ -32,13 +33,14 @@ public class SearchResultView extends AbstractView
     I18N i18n = Application.getI18n();
     GUI.getView().setTitle(i18n.tr("Suchergebnis"));
     
-    SearchResultPart part = new SearchResultPart((List)getCurrentObject());
+    SearchResultPart part = new SearchResultPart((List<SearchResult>)getCurrentObject());
     part.paint(getParent());
   }
 
   /**
    * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
    */
+  @Override
   public boolean canBookmark()
   {
     return false;

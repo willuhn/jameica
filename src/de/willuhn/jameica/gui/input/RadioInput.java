@@ -34,14 +34,14 @@ import de.willuhn.logging.Logger;
  */
 public class RadioInput extends AbstractInput
 {
-  private final static Map<String,List<RadioInput>> groups = new HashMap<String,List<RadioInput>>();
-  
+  private static final Map<String,List<RadioInput>> groups = new HashMap<>();
+
   private String groupId  = null;
   private boolean focus   = false;
   private Button button   = null;
   private Object value    = null;
   private boolean enabled = true;
-  
+
   /**
    * Erzeugt ein neues Eingabefeld und schreibt den uebergebenen Wert rein.
    * 
@@ -62,12 +62,12 @@ public class RadioInput extends AbstractInput
   {
     this.groupId = groupId;
     this.value   = value;
-    
+
     // Zur Gruppe hinzutun
     List<RadioInput> group = groups.get(this.groupId);
     if (group == null)
     {
-      group = new LinkedList<RadioInput>();
+      group = new LinkedList<>();
       groups.put(this.groupId,group);
     }
     group.add(this);
@@ -135,6 +135,7 @@ public class RadioInput extends AbstractInput
 
     // Der Listener uebernimmt das Deselektieren der anderen Radiobuttons
     button.addSelectionListener(new SelectionAdapter() {
+      @Override
       public void widgetSelected(SelectionEvent e)
       {
         e.doit = false; // Rekursion vermeiden
@@ -169,6 +170,7 @@ public class RadioInput extends AbstractInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#setName(java.lang.String)
    */
+  @Override
   public void setName(String name)
   {
     super.setName(name);
@@ -243,6 +245,7 @@ public class RadioInput extends AbstractInput
    * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
+  @Override
   protected void update() throws OperationCanceledException
   {
   }

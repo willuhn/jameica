@@ -12,12 +12,11 @@ package de.willuhn.jameica.gui;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 
-import net.n3.nanoxml.IXMLElement;
-
 import org.eclipse.swt.graphics.Image;
 
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.util.I18N;
+import net.n3.nanoxml.IXMLElement;
 
 /**
  * XML-Implementierung eines Navigations-Elements.
@@ -35,7 +34,7 @@ public class NavigationItemXml extends AbstractItemXml implements NavigationItem
   {
     super(parent,path,i18n);
 
-		Enumeration e  = this.path.enumerateChildren();
+		Enumeration<?> e  = this.path.enumerateChildren();
 		while (e.hasMoreElements())
 		{
 			IXMLElement childPath = (IXMLElement) e.nextElement();
@@ -79,6 +78,7 @@ public class NavigationItemXml extends AbstractItemXml implements NavigationItem
    * Ueberschrieben, um dabei auch links die Navigation anzupassen.
    * @see de.willuhn.jameica.gui.Item#setEnabled(boolean, boolean)
    */
+  @Override
   public void setEnabled(boolean enabled, boolean recursive)
       throws RemoteException
   {

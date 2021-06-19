@@ -45,7 +45,7 @@ import de.willuhn.util.I18N;
 /**
  * Dialog zum Konfigurieren der Such-Optionen.
  */
-public class SearchOptionsDialog extends AbstractDialog
+public class SearchOptionsDialog extends AbstractDialog<Object>
 {
 
   /**
@@ -86,7 +86,7 @@ public class SearchOptionsDialog extends AbstractDialog
 
     ////////////////////////////////////////////////////////////////////////////
     // Wir muessen die SearchProvider noch nach Plugin gruppieren
-    Map<String,List<ProviderObject>> plugins = new HashMap<String,List<ProviderObject>>();
+    Map<String,List<ProviderObject>> plugins = new HashMap<>();
     for (int i=0;i<providers.length;++i)
     {
       ProviderObject o = new ProviderObject(providers[i]);
@@ -95,12 +95,12 @@ public class SearchOptionsDialog extends AbstractDialog
       List<ProviderObject> l = plugins.get(name);
       if (l == null)
       {
-        l = new ArrayList<ProviderObject>();
+        l = new ArrayList<>();
         plugins.put(name,l);
       }
       l.add(o);
     }
-    List<ProviderObject> list = new ArrayList<ProviderObject>();
+    List<ProviderObject> list = new ArrayList<>();
     Iterator<List<ProviderObject>> it = plugins.values().iterator();
     while (it.hasNext())
     {
@@ -141,7 +141,7 @@ public class SearchOptionsDialog extends AbstractDialog
             service.setEnabled(providers[i],false);
 
           // Jetzt aktivieren wir die, welche selektiert sind
-          List selected = table.getItems();
+          List<?> selected = table.getItems();
           if (selected != null)
           {
             for (int i=0;i<selected.size();++i)
@@ -196,8 +196,9 @@ public class SearchOptionsDialog extends AbstractDialog
      */
     public boolean equals(GenericObject other) throws RemoteException
     {
-      if (other == null || !(other instanceof ProviderObject))
+      if (!(other instanceof ProviderObject)) {
         return false;
+      }
       return this.getID().equals(other.getID());
     }
 

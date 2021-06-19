@@ -36,8 +36,8 @@ import de.willuhn.util.ApplicationException;
 public class ContextMenu implements Part
 {
 
-	private ArrayList items    = new ArrayList();
-	private ArrayList swtItems = new ArrayList();
+	private ArrayList<Object> items    = new ArrayList<>();
+	private ArrayList<Object> swtItems = new ArrayList<>();
 
 	private Object currentObject	= null;
 	private ContextMenu parent    = null;
@@ -60,7 +60,7 @@ public class ContextMenu implements Part
    * Die Items koennen vom Typ ContextMenuItem als auch vom Typ ContextMenu (bei Unter-Menus).
    * @return Liste aller Items.
    */
-  public List getItems()
+  public List<Object> getItems()
   {
     return this.items;
   }
@@ -106,8 +106,9 @@ public class ContextMenu implements Part
    */
   public synchronized void paint(Composite parent) throws RemoteException
   {
-  	if (swtItems.size() > 0)
+  	if (!swtItems.isEmpty()) {
   		return; // wir wurden schonmal gemalt.
+  	}
 
   	if (this.parent != null)
   	{
@@ -169,8 +170,8 @@ public class ContextMenu implements Part
 			final MenuItem mi = new MenuItem(this.menu, SWT.PUSH);
       this.updateText(item,mi);
 
-			Image image = item.getImage();
-			if (image != null) mi.setImage(image);
+			Image image2 = item.getImage();
+			if (image2 != null) mi.setImage(image2);
 
 			mi.addListener(SWT.Selection,new Listener()
       {

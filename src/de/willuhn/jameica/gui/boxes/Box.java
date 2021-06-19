@@ -19,12 +19,12 @@ import de.willuhn.jameica.gui.Part;
  * mit dem Modifier <b>public</b> besitzen, damit sie vom Classloader
  * zur Laufzeit geladen werden koennen.
  */
-public interface Box extends Part, Comparable
+public interface Box extends Part, Comparable<Object>
 {
   /**
    * Platzhalter fuer Default-Hoehe.
    */
-  public final static int HEIGHT_DEFAULT = -1;
+  public static final int HEIGHT_DEFAULT = -1;
   
   /**
    * Liefert den Namen der Box.

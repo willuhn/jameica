@@ -11,6 +11,7 @@ package de.willuhn.jameica.gui.input;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -68,7 +69,7 @@ public class SearchInput extends AbstractInput
    * Das Default-Delay nach dessen Ablauf das Widget mit der Suche beginnen soll.
    * Angabe in Millisekunden.
    */
-  public final static int DEFAULT_DELAY = 1000;
+  public static final int DEFAULT_DELAY = 1000;
   
   // Fachdaten
   private String attribute    = null;
@@ -83,7 +84,7 @@ public class SearchInput extends AbstractInput
   private int startAt         = 1;
   private int minWidth        = 0;
   
-  private List<Listener> listeners = new ArrayList<Listener>();
+  private List<Listener> listeners = new ArrayList<>();
   
   private int delay           = DEFAULT_DELAY;
 
@@ -174,31 +175,33 @@ public class SearchInput extends AbstractInput
    * Ersetzt alle Elemente der Selectbox gegen die aus der uebergebenen Liste.
    * @param list
    */
-  private void setList(List list)
+  private void setList(List<?> list)
   {
     if (inSearch || this.text == null || this.text.isDisposed())
       return;
 
     // Nichts gefunden
-    if (list == null || list.size() == 0)
+    if (list.isEmpty())
       return;
 
     try
     {
       // Liste von Strings fuer die Anzeige in der Popup-Box.
-      List<String> items  = new ArrayList<String>();
-      List values = new ArrayList();
+      List<String> items  = new ArrayList<>();
+      List<Object> values = new ArrayList<>();
       
       for (Object object:list)
       {
-        if (object == null)
+        if (object == null) {
           continue;
+        }
 
         // Anzuzeigenden Text ermitteln
-        String text = format(object);
-        if (text == null)
+        String text2 = format(object);
+        if (text2 == null) {
           continue;
-        items.add(text);
+        }
+        items.add(text2);
         values.add(object);
       }
 
@@ -234,8 +237,8 @@ public class SearchInput extends AbstractInput
       if (this.attribute == null || this.attribute.length() == 0)
         return BeanUtil.toString(bean);
 
-      Object value = BeanUtil.get(bean,this.attribute);
-      return value == null ? null : value.toString();
+      Object value2 = BeanUtil.get(bean,this.attribute);
+      return value2 == null ? null : value2.toString();
     }
     catch (RemoteException re)
     {
@@ -254,11 +257,14 @@ public class SearchInput extends AbstractInput
    * Die Funktion kann sowohl null als auch eine leere Liste zurueckgeben,
    * wenn nichts gefunden wurde.
    */
-  public List startSearch(String text)
+  public List<?> startSearch(String text)
   {
-    return null;
+    return Collections.emptyList();
   }
   
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#addListener(org.eclipse.swt.widgets.Listener)
+   */
   @Override
   public void addListener(Listener l)
   {
@@ -280,18 +286,18 @@ public class SearchInput extends AbstractInput
     String display = this.value == null ? null : format(this.value);
     if (display == null)
       display = this.search;
-    
+
     // Wenn wir bereits den Focus haben, darf das "Suche..." nicht
     // mehr drin stehen
     if (this.value == null && this.focus)
       display = "";
-    
+
     this.text.setText(display);
 
     // "Suche..." grau einfaerben - aber nur, wenn wir keinen Focus haben
     if ((!this.focus && this.value == null) || !enabled)
       this.text.setForeground(Color.COMMENT.getSWTColor());
-    
+
     this.text.setEnabled(enabled);
     this.text.setEditable(enabled);
 
@@ -364,7 +370,7 @@ public class SearchInput extends AbstractInput
         if (newText.equals(search))
           return; // Nach "Suche..." suchen wir nicht
 
-        List newList = startSearch(newText);
+        List<?> newList = startSearch(newText);
         setList(newList);
       }
     
@@ -481,7 +487,7 @@ public class SearchInput extends AbstractInput
       if (s != null && !s.equals(this.search))
         text.setForeground(Color.FOREGROUND.getSWTColor());
 
-      if (this.listeners.size() > 0)
+      if (this.listeners.isEmpty())
       {
         Event e = new Event();
         e.data = this.value;

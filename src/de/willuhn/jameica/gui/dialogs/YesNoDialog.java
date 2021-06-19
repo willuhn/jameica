@@ -20,7 +20,7 @@ import de.willuhn.util.ApplicationException;
 /**
  * Dialog, der nur einen Text und einen Ja/Nein-Button enthaelt.
  */
-public class YesNoDialog extends AbstractDialog
+public class YesNoDialog extends AbstractDialog<Object>
 {
 	private String text    = null;
 	private boolean choice = false;
@@ -56,6 +56,7 @@ public class YesNoDialog extends AbstractDialog
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
    */
+  @Override
   protected void onEscape()
   {
     // Bei Druck auf ESC interpretieren wir das als NEIN und schliessen

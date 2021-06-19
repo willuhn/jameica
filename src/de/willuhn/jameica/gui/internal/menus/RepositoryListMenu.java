@@ -28,7 +28,7 @@ import de.willuhn.util.I18N;
  */
 public class RepositoryListMenu extends ContextMenu
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
 
   /**
    * ct.

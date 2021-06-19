@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipFile;
 
 import de.willuhn.io.FileFinder;
@@ -40,9 +41,9 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class BackupEngine
 {
-  private final static DateFormat format = new SimpleDateFormat("yyyyMMdd__HH_mm_ss");
-  private final static String PREFIX = "jameica-backup-";
-  private final static String MARKER = ".restore";
+  private static final DateFormat format = new SimpleDateFormat("yyyyMMdd__HH_mm_ss");
+  private static final String PREFIX = "jameica-backup-";
+  private static final String MARKER = ".restore";
   
   /**
    * Liefert eine Liste der bisher erstellten Backups.
@@ -62,7 +63,7 @@ public class BackupEngine
 
     // Nach Name sortieren
     Arrays.sort(found);
-    ArrayList<BackupFile> backups = new ArrayList<BackupFile>();
+    ArrayList<BackupFile> backups = new ArrayList<>();
     for (int i=0;i<found.length;++i)
     {
       try
@@ -83,8 +84,9 @@ public class BackupEngine
   public static synchronized void undoRestoreMark()
   {
     File marker = new File(Application.getConfig().getWorkDir(),MARKER);
-    if (marker.exists())
+    if (marker.exists()) {
       marker.delete();
+    }
   }
 
   /**
@@ -105,10 +107,8 @@ public class BackupEngine
     
     Logger.warn("activating backup for restore: " + file.getAbsolutePath());
     File marker = new File(Application.getConfig().getWorkDir(),MARKER);
-    Writer writer = null;
-    try
+    try(Writer writer = new BufferedWriter(new FileWriter(marker)))
     {
-      writer = new BufferedWriter(new FileWriter(marker));
       writer.write(file.getAbsolutePath());
       writer.flush();
     }
@@ -116,21 +116,6 @@ public class BackupEngine
     {
       Logger.error("unable to store marker file",e);
       throw new ApplicationException(Application.getI18n().tr("Fehler beim Aktivieren der Backup-Datei. Prüfen Sie bitte das System-Log"));
-    }
-    finally
-    {
-      if (writer != null)
-      {
-        try
-        {
-          writer.close();
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to close marker file",e);
-          throw new ApplicationException(Application.getI18n().tr("Fehler beim Aktivieren der Backup-Datei. Prüfen Sie bitte das System-Log"));
-        }
-      }
     }
   }
 
@@ -145,10 +130,8 @@ public class BackupEngine
     if (!marker.exists() || !marker.canRead())
       return null;
 
-    BufferedReader reader = null;
-    try
+    try(BufferedReader reader = new BufferedReader(new FileReader(marker)))
     {
-      reader = new BufferedReader(new FileReader(marker));
       File f = new File(reader.readLine());
       if (f.canRead() && f.isFile())
         return new BackupFile(f);
@@ -161,20 +144,6 @@ public class BackupEngine
     catch (Exception e)
     {
       Logger.error("unable to read marker file",e);
-    }
-    finally
-    {
-      if (reader != null)
-      {
-        try
-        {
-          reader.close();
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to close marker file",e);
-        }
-      }
     }
     return null;
   }
@@ -244,9 +213,11 @@ public class BackupEngine
       // Und sichern das Backup zurueck
       monitor.setStatusText("restoring backup " + backup.getFile().getAbsolutePath());
       File workdir = new File(Application.getConfig().getWorkDir());
-      ZipExtractor ext = new ZipExtractor(new ZipFile(backup.getFile()));
-      ext.setMonitor(monitor);
-      ext.extract(workdir);
+      try (ZipFile zipFile = new ZipFile(backup.getFile())) {
+        ZipExtractor ext = new ZipExtractor(zipFile);
+        ext.setMonitor(monitor);
+        ext.extract(workdir);
+      }
       monitor.setStatusText("restore completed");
     }
     catch (ApplicationException ae)
@@ -281,48 +252,45 @@ public class BackupEngine
     if (!Application.getConfig().getUseBackup())
       return null;
     
+    File workdir    = new File(Application.getConfig().getWorkDir());
+    File dir        = new File(Application.getConfig().getBackupDir());
+    File backup     = new File(dir, PREFIX + format.format(new Date()) + ".zip");
+    
     // Backup erzeugen
     ZipCreator zip  = null;
-    Exception error = null;
+    boolean error   = false;
     
-    try
+    if (getCurrentRestore() != null)
     {
-      if (getCurrentRestore() != null)
-      {
-        monitor.setStatusText("restore marker found, skipping current backup");
-        return null;
-      }
-
-      File workdir    = new File(Application.getConfig().getWorkDir());
-      String filename = PREFIX + format.format(new Date()) + ".zip";
-      File dir        = new File(Application.getConfig().getBackupDir());
-      File backup     = new File(dir,filename);
-
-      if (backup.exists())
-        throw new ApplicationException(Application.getI18n().tr("Backup-Datei {0} existiert bereits",backup.getAbsolutePath()));
-
-      ArrayList<File> content = new ArrayList<File>();
+      monitor.setStatusText("restore marker found, skipping current backup");
+      return null;
+    }
+    
+    if (backup.exists())
+      throw new ApplicationException(Application.getI18n().tr("Backup-Datei {0} existiert bereits",backup.getAbsolutePath()));
+    
+    try(BufferedOutputStream zipOutputStream = new BufferedOutputStream(new FileOutputStream(backup)))
+    {
+      ArrayList<File> content = new ArrayList<>();
       monitor.setStatusText("creating backup " + backup.getAbsolutePath());
-      zip = new ZipCreator(new BufferedOutputStream(new FileOutputStream(backup)));
+      zip = new ZipCreator(zipOutputStream);
       zip.setMonitor(monitor);
-      File[] children = workdir.listFiles();
-      for (int i=0;i<children.length;++i)
+      for (File children : workdir.listFiles())
       {
-        if (!children[i].isDirectory())
-          continue; // Wir sichern nur Unterverzeichnisse. Also keine Backups (rekursiv) und Logs
+        if (
+          // Wir sichern nur Unterverzeichnisse. Also keine Backups (rekursiv) und Logs
+          !children.isDirectory() ||
+          // Wir sichern die Verzeichnisse "plugins" und "updates" nicht mit. Die koennen jederzeit
+          // neu installiert werden
+          Arrays.asList("updates", "plugins", "lost+found").contains(children.getName()) ||
+          // Das Backup-Verzeichnis selbst ist ein Unterverzeichnis. Nicht sichern wegen Rekursion
+          children.getCanonicalFile().equals(dir.getCanonicalFile())
+        ) {
+          continue;
+        }
         
-        // Wir sichern die Verzeichnisse "plugins" und "updates" nicht mit. Die koennen jederzeit
-        // neu installiert werden
-        if ("updates".equals(children[i].getName()))
-          continue;
-        if ("plugins".equals(children[i].getName()))
-          continue;
-        if ("lost+found".equals(children[i].getName()))
-          continue;
-        if (children[i].getCanonicalFile().equals(dir.getCanonicalFile()))
-          continue; // Das Backup-Verzeichnis selbst ist ein Unterverzeichnis. Nicht sichern wegen Rekursion
-        zip.add(children[i]);
-        content.add(children[i]);
+        zip.add(children);
+        content.add(children);
       }
       // Muessen wir vorher schliessen, weil das anschliessende getBackups()
       // sonst ein "java.util.zip.ZipException: error in opening zip file" wirft.
@@ -332,23 +300,21 @@ public class BackupEngine
       if (rotate)
       {
         int maxCount = Application.getConfig().getBackupCount();
-        BackupFile[] old = getBackups(Application.getConfig().getBackupDir());
-        File[] toDelete = new File[old.length];
-        for (int i=0;i<old.length;++i)
-          toDelete[i] = old[i].getFile();
+        BackupFile[] oldBackupFiles = getBackups(Application.getConfig().getBackupDir());
+        List<File> toDelete = new ArrayList<>();
+        for (BackupFile old : oldBackupFiles) {
+          toDelete.add(old.getFile());
+        }
 
-        // Sortieren
-        Arrays.sort(toDelete);
+        java.util.Collections.sort(toDelete);
         
-        // Von oben mit dem Loeschen anfangen
         // Und solange loeschen wie:
         // Urspruengliche Anzahl - geloeschte > maximale Anzahl
-        for (int pos=0;(toDelete.length - pos) > maxCount;++pos)
+        for (int pos=0;(toDelete.size() - pos) > maxCount;++pos)
         {
-          File current = toDelete[pos];
+          File current = toDelete.get(pos);
           monitor.setStatusText("delete old backup " + current.getAbsolutePath());
           current.delete();
-          pos++;
         }
       }
 
@@ -357,12 +323,12 @@ public class BackupEngine
     }
     catch (ApplicationException ae)
     {
-      error = ae;
+      error = true;
       throw ae;
     }
     catch (Exception e)
     {
-      error = e;
+      error = true;
       Logger.error("unable to create backup",e);
       throw new ApplicationException(Application.getI18n().tr("Fehler beim Erstellen des Backups: " + e.getMessage()));
     }
@@ -379,7 +345,7 @@ public class BackupEngine
           // Nur werfen, wenn es kein Folgefehler ist
           // Ansonsten interessiert es uns nicht mehr
           // weil die ZIP-Datei eh im Eimer ist
-          if (error == null)
+          if (error)
           {
             Logger.error("unable to close backup",e);
             throw new ApplicationException(Application.getI18n().tr("Fehler beim Erstellen des Backups: " + e.getMessage()));

@@ -24,9 +24,9 @@ import de.willuhn.util.ApplicationException;
 /**
  * Dialog zum Erstellen eines Bookmarks.
  */
-public class BookmarkAddDialog extends AbstractDialog
+public class BookmarkAddDialog extends AbstractDialog<Object>
 {
-  private final static int WINDOW_WIDTH = 450;
+  private static final int WINDOW_WIDTH = 450;
   private String comment = null;
   
   /**
@@ -34,7 +34,7 @@ public class BookmarkAddDialog extends AbstractDialog
    */
   public BookmarkAddDialog()
   {
-    super(BookmarkAddDialog.POSITION_CENTER);
+    super(de.willuhn.jameica.gui.dialogs.AbstractDialog.POSITION_CENTER);
     this.setSize(WINDOW_WIDTH,200);
     this.setTitle(Application.getI18n().tr("Lesezeichen erstellen"));
   }

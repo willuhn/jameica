@@ -20,6 +20,11 @@ import java.util.Locale;
 public class CurrencyFormatter implements Formatter
 {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -1026202689239773206L;
+
   private String curr = "";
 
   private DecimalFormat formatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());

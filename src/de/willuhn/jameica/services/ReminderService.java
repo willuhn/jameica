@@ -46,12 +46,12 @@ public class ReminderService extends TimerTask implements Bootable
 {
   private Timer timer                             = null;
   private ReminderStorageProvider jameicaProvider = null;
-  private List<ReminderStorageProvider> providers = new ArrayList<ReminderStorageProvider>();
+  private List<ReminderStorageProvider> providers = new ArrayList<>();
   
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
-  public Class[] depends()
+  public Class<Bootable>[] depends()
   {
     return new Class[]{MessagingService.class};
   }
@@ -79,12 +79,12 @@ public class ReminderService extends TimerTask implements Bootable
       
       // 2. Die restlichen Storage-Provider laden
       MultipleClassLoader cl = Application.getClassLoader();
-      Class<ReminderStorageProvider>[] classes = cl.getClassFinder().findImplementors(ReminderStorageProvider.class);
-      for (Class<ReminderStorageProvider> c:classes)
+      Class<?>[] classes = cl.getClassFinder().findImplementors(ReminderStorageProvider.class);
+      for (Class<?> c: classes)
       {
         try
         {
-          this.providers.add(service.get(c));
+          this.providers.add((ReminderStorageProvider) service.get(c));
         }
         catch (Exception e)
         {
@@ -173,19 +173,18 @@ public class ReminderService extends TimerTask implements Bootable
             
             // b) mehrmalige Reminder, deren End-Datum abgelaufen ist
             //    Aber nur, wenn keine Wiederholungen mehr anstehen
-            if (end != null && end.before(now))
-            {
+            if (
+              end != null && end.before(now) &&
               // Noch checken, ob wirklich keine Termine mehr vorliegen oder die letzte Ausfuehrung
               // bereits hinter dem End-Datum liegt (dann koennen wir davon ausgehen, dass wir alle
               // ausgeloest haben - auch rueckwirkend)
-              if ((last != null && last.after(end)) || ri.getDates(date,last,end).size() == 0)
-              {
-                // Jepp, kann wirklich geloescht werden
-                Logger.info("mark old recurring reminder " + uuid + " as expired, end date: " + end);
-                r.setData(Reminder.KEY_EXPIRED,now);
-                provider.update(uuid,r);
-                continue;
-              }
+              ((last != null && last.after(end)) || ri.getDates(date,last,end).isEmpty())
+            ) {
+              // Jepp, kann wirklich geloescht werden
+              Logger.info("mark old recurring reminder " + uuid + " as expired, end date: " + end);
+              r.setData(Reminder.KEY_EXPIRED,now);
+              provider.update(uuid,r);
+              continue;
             }
             //////////////////////////////////////////////////////////////////////
             

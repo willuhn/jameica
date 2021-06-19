@@ -10,6 +10,8 @@
 
 package de.willuhn.jameica.security;
 
+import java.security.cert.X509Certificate;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -40,10 +42,10 @@ public class JameicaHostnameVerifier implements HostnameVerifier
    */
   public boolean verify(String hostname, SSLSession session)
   {
-    javax.security.cert.X509Certificate[] certs = new javax.security.cert.X509Certificate[0];
+    X509Certificate[] certs = new X509Certificate[0];
     try
     {
-      certs = session.getPeerCertificateChain();
+      certs = (X509Certificate[]) session.getPeerCertificates();
     }
     catch (SSLPeerUnverifiedException e)
     {
@@ -52,9 +54,9 @@ public class JameicaHostnameVerifier implements HostnameVerifier
     }
 
     boolean match = false;
-    for (int i=0;i<certs.length;++i)
+    for (X509Certificate cert:certs)
     {
-      Certificate c = new Certificate(certs[i]);
+      Certificate c = new Certificate(cert);
       String h = c.getSubject().getAttribute(Principal.COMMON_NAME);
       if (h == null || h.length() == 0)
         continue;

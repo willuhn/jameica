@@ -25,7 +25,7 @@ public interface Input extends Part
   /**
    * Key fuer die Context-Information mit dem Tooltip.
    */
-  public final static String DATAKEY_TOOLTIP = "datakey.tooltip";
+  public static final String DATAKEY_TOOLTIP = "datakey.tooltip";
 
   /**
    * Liefert den Wert des Eingabefelds.

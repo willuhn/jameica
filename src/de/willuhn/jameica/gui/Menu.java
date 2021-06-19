@@ -10,7 +10,7 @@
 package de.willuhn.jameica.gui;
 
 import java.rmi.RemoteException;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
@@ -42,7 +42,7 @@ public class Menu
 
 	private Decorations parent;
 
-  private Hashtable itemLookup = new Hashtable();
+  private HashMap<MenuItem, org.eclipse.swt.widgets.MenuItem> itemLookup = new HashMap<>();
   
   /**
    * Erzeugt eine neue Instanz des Dropdown-Menus.
@@ -55,8 +55,9 @@ public class Menu
 		this.parent = parent;
 
     mainMenu = new org.eclipse.swt.widgets.Menu(parent,SWT.BAR);
-    if (!Customizing.SETTINGS.getBoolean("application.hidemenu",false))
+    if (!Customizing.SETTINGS.getBoolean("application.hidemenu",false)) {
   		parent.setMenuBar(mainMenu);
+    }
 
 		// System-Menu laden
 		load(Application.getManifest().getMenu(),mainMenu);
@@ -133,7 +134,7 @@ public class Menu
     item.setText(name);
 
 
-    GenericIterator i = element.getChildren();
+    GenericIterator<?> i = element.getChildren();
     int numChilds = i != null ? i.size() : 0;
 
     if (element.getAction() != null)
@@ -153,7 +154,7 @@ public class Menu
           public void handleEvent(Event event)
           {
             Widget widget = event.widget;
-            if (widget == null || !(widget instanceof org.eclipse.swt.widgets.MenuItem) || widget.isDisposed())
+            if (!(widget instanceof org.eclipse.swt.widgets.MenuItem) || widget.isDisposed())
               return;
 
             org.eclipse.swt.widgets.MenuItem item = (org.eclipse.swt.widgets.MenuItem) widget;
@@ -216,7 +217,7 @@ public class Menu
   private void loadChildren(final MenuItem element, org.eclipse.swt.widgets.Menu menu) throws Exception
 	{
 		// add elements
-		GenericIterator childs = element.getChildren();
+		GenericIterator<?> childs = element.getChildren();
 		if (childs == null || childs.size() == 0)
 			return;
 		while (childs.hasNext())
@@ -232,7 +233,7 @@ public class Menu
    */
   public void update(MenuItem item) throws RemoteException
   {
-    org.eclipse.swt.widgets.MenuItem mi = (org.eclipse.swt.widgets.MenuItem) itemLookup.get(item);
+    org.eclipse.swt.widgets.MenuItem mi = itemLookup.get(item);
     if (mi != null && !mi.isDisposed())
       mi.setEnabled(item.isEnabled());
   }

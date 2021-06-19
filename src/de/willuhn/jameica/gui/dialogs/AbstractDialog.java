@@ -91,30 +91,30 @@ import de.willuhn.util.I18N;
 public abstract class AbstractDialog<T>
 {
 
-	/**
-	 * Positioniert den Dialog an der aktuellen Maus-Position.
-	 */
-	public final static int POSITION_MOUSE = 0;
-	
-	/**
-	 * Positioniert den Dialog mittig auf dem Bildschirm.
-	 */
-	public final static int POSITION_CENTER = 1;
-	
-	/**
-	 * Positioniert den Dialog auf dem Primaer-Monitor.
-	 */
-	public final static int MONITOR_PRIMARY = 0;
-	
-	/**
-	 * Positioniert den Dialog auf dem Monitor, auf dem sich das Jameica-Fenster befindet.
-	 * Das ist der Default-Wert.
-	 */
-	public final static int MONITOR_CURRENT = 1;
-	
-  protected I18N i18n = Application.getI18n();
+  /**
+   * Positioniert den Dialog an der aktuellen Maus-Position.
+   */
+  public static final int POSITION_MOUSE = 0;
+  
+  /**
+   * Positioniert den Dialog mittig auf dem Bildschirm.
+   */
+  public static final int POSITION_CENTER = 1;
+  
+  /**
+   * Positioniert den Dialog auf dem Primaer-Monitor.
+   */
+  public static final int MONITOR_PRIMARY = 0;
+  
+  /**
+   * Positioniert den Dialog auf dem Monitor, auf dem sich das Jameica-Fenster befindet.
+   * Das ist der Default-Wert.
+   */
+  public static final int MONITOR_CURRENT = 1;
+  
+  protected I18N  i18n = Application.getI18n();
 
-  private List<Listener> listeners = new ArrayList<Listener>();
+  private List<Listener> listeners = new ArrayList<>();
 
   private int pos = POSITION_CENTER;
   private int height = SWT.DEFAULT;
@@ -135,25 +135,25 @@ public abstract class AbstractDialog<T>
   private Image sideImage;
 
 
-	private String titleText;
+  private String titleText;
   private String panelText;
-	
-	private int closeState = SWT.OK;
-	
-	private Exception onEscapeException = null;
-	
+  
+  private int closeState = SWT.OK;
+  
+  private Exception onEscapeException = null;
+  
   /**
    * Erzeugt einen neuen Dialog.
    * Er ist nicht groessenaenderbar.
    * @param position Position des Dialogs.
-	 * @see AbstractDialog#POSITION_MOUSE
-	 * @see AbstractDialog#POSITION_CENTER
+   * @see AbstractDialog#POSITION_MOUSE
+   * @see AbstractDialog#POSITION_CENTER
    */
-  public AbstractDialog(int position)
-	{
+  protected AbstractDialog(int position)
+  {
     this(position,true);
-	}
-	
+  }
+  
   /**
    * Erzeugt einen neuen Dialog.
    * @param position Position des Dialogs.
@@ -161,7 +161,7 @@ public abstract class AbstractDialog<T>
    * @see AbstractDialog#POSITION_MOUSE
    * @see AbstractDialog#POSITION_CENTER
    */
-  public AbstractDialog(int position, boolean resizable)
+  protected AbstractDialog(int position, boolean resizable)
   {
     this.pos       = position;
     this.resizable = resizable;
@@ -195,10 +195,10 @@ public abstract class AbstractDialog<T>
    * Initialisiert alle Elemente.
    */
   private void init()
-	{
-		display = GUI.getDisplay();
+  {
+    display = GUI.getDisplay();
 
-		display.syncExec(new Runnable()
+    display.syncExec(new Runnable()
     {
       public void run()
       {
@@ -267,84 +267,84 @@ public abstract class AbstractDialog<T>
         title = new TitlePart(panelText != null ? panelText : titleText);
         title.paint(shell);
 
-				Composite c = new Composite(title.getComposite(),SWT.NONE);
-				c.setLayoutData(new GridData(GridData.FILL_BOTH));
-				c.setLayout(SWTUtil.createGrid(2,false));
+        Composite c = new Composite(title.getComposite(),SWT.NONE);
+        c.setLayoutData(new GridData(GridData.FILL_BOTH));
+        c.setLayout(SWTUtil.createGrid(2,false));
 
-				if (sideImage != null)
-				{
-	        Composite cp = new Composite(c,SWT.NONE);
-	        cp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-	        GridLayout gl1 = new GridLayout();
-	        gl1.marginHeight = 8;
-	        gl1.marginWidth = 8;
-	        cp.setLayout(gl1);
-	        imageLabel = new Label(cp,SWT.NONE);
-	        imageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-				}
+        if (sideImage != null)
+        {
+          Composite cp = new Composite(c,SWT.NONE);
+          cp.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+          GridLayout gl1 = new GridLayout();
+          gl1.marginHeight = 8;
+          gl1.marginWidth = 8;
+          cp.setLayout(gl1);
+          imageLabel = new Label(cp,SWT.NONE);
+          imageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+        }
 
-				parent = new Composite(c,SWT.NONE);
-				GridLayout parentLayout = new GridLayout();
-				parentLayout.marginHeight = 2;
-				parentLayout.marginWidth = 2;
-				parent.setLayout(parentLayout);
-				parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+        parent = new Composite(c,SWT.NONE);
+        GridLayout parentLayout = new GridLayout();
+        parentLayout.marginHeight = 2;
+        parentLayout.marginWidth = 2;
+        parent.setLayout(parentLayout);
+        parent.setLayoutData(new GridData(GridData.FILL_BOTH));
       }
     });
-	}
-	
-	/**
-	 * Fuegt dem Dialog einen Shell-Listener hinzu.
-	 * Der wird u.a. aufgerufen, wenn der User versucht,
-	 * den Dialog ueber den Schliessen-Knopf im Fenster-Rahmen
-	 * zu beenden. Gerade bei Passwort-Eingaben ist es sinnvoll,
-	 * dies zu verhindern, damit sichergestellt ist, dass auf
-	 * jeden Fall ein Passwort eingegeben wurde.
+  }
+
+  /**
+   * Fuegt dem Dialog einen Shell-Listener hinzu.
+   * Der wird u.a. aufgerufen, wenn der User versucht,
+   * den Dialog ueber den Schliessen-Knopf im Fenster-Rahmen
+   * zu beenden. Gerade bei Passwort-Eingaben ist es sinnvoll,
+   * dies zu verhindern, damit sichergestellt ist, dass auf
+   * jeden Fall ein Passwort eingegeben wurde.
    * @param l der ShellListener.
    */
   protected final void addShellListener(final ShellListener l)
-	{
-		display.syncExec(new Runnable()
+  {
+    display.syncExec(new Runnable()
     {
       public void run()
       {
-				shell.addShellListener(l);
+        shell.addShellListener(l);
       }
     });
-	}
+  }
 
-	/**
-	 * Liefert das Display des Dialogs.
+  /**
+   * Liefert das Display des Dialogs.
    * @return Display.
    */
   protected final Display getDisplay()
-	{
-		return display;
-	}
+  {
+    return display;
+  }
 
-	/**
-	 * Liefert die Shell des Dialogs.
+  /**
+   * Liefert die Shell des Dialogs.
    * @return Shell.
    */
   protected final Shell getShell()
-	{
-		return shell;
-	}
+  {
+    return shell;
+  }
 
-	/**
-	 * Fuegt einen Listener hinzu, der beim Schliessen des Fensters
-	 * ausgeloest wird. Ob das Schliessen nun durch Klick auf
-	 * den Schliessen-Button oder z.Bsp. durch Auswahl eines
-	 * Elements im Dialog stattfindet, ist egal.
-	 * Dabei wird die Methode {@link Listener#handleEvent(Event)} des Listeners
-	 * aufgerufen. Das ausgewaehlte Objekt befindet sich dann im Member {@code data}
-	 * des Events.
-	 * @param l zu registrierender Listener.
-	 */
-	public void addCloseListener(Listener l)
-	{
-		listeners.add(l);
-	}
+  /**
+   * Fuegt einen Listener hinzu, der beim Schliessen des Fensters
+   * ausgeloest wird. Ob das Schliessen nun durch Klick auf
+   * den Schliessen-Button oder z.Bsp. durch Auswahl eines
+   * Elements im Dialog stattfindet, ist egal.
+   * Dabei wird die Methode {@link Listener#handleEvent(Event)} des Listeners
+   * aufgerufen. Das ausgewaehlte Objekt befindet sich dann im Member {@code data}
+   * des Events.
+   * @param l zu registrierender Listener.
+   */
+  public void addCloseListener(Listener l)
+  {
+    listeners.add(l);
+  }
 
   /**
    * Setzt den anzuzeigenden Titel.
@@ -392,17 +392,17 @@ public abstract class AbstractDialog<T>
     this.monitor = monitor;
   }
 
-	/**
-	 * Legt Breite und Hoehe des Dialogs fest.
-	 * Wird die Funktion nicht aufgerufen, dann wird der Dialog genauso gross
-	 * gemalt, wie der Inhalt.
-	 * Wenn eine der beiden Groessen nicht bekannt ist oder nicht gesetzt werden
-	 * soll, kann man auch {@link SWT#DEFAULT} uebergeben.
+  /**
+   * Legt Breite und Hoehe des Dialogs fest.
+   * Wird die Funktion nicht aufgerufen, dann wird der Dialog genauso gross
+   * gemalt, wie der Inhalt.
+   * Wenn eine der beiden Groessen nicht bekannt ist oder nicht gesetzt werden
+   * soll, kann man auch {@link SWT#DEFAULT} uebergeben.
    * @param width gewuenschte Breite.
    * @param height gewuenschte Hoehe.
    */
   public final void setSize(int width, int height)
-	{
+  {
     // Checken, ob die High-DPI-Mode aktiv ist
     if (Customizing.SETTINGS.getBoolean("application.highdpi",true))
     {
@@ -416,35 +416,35 @@ public abstract class AbstractDialog<T>
       this.width = width;
       this.height = height;
     }
-	}
+  }
 
-	/**
-	 * Fuegt dem Dialog links ein Bild hinzu.
+  /**
+   * Fuegt dem Dialog links ein Bild hinzu.
    * @param image Side-Image.
    */
   public final void setSideImage(Image image)
-	{
-		this.sideImage = image;
-		if (this.imageLabel != null && !this.imageLabel.isDisposed())
-		  this.imageLabel.setImage(image);
-	}
+  {
+    this.sideImage = image;
+    if (this.imageLabel != null && !this.imageLabel.isDisposed())
+      this.imageLabel.setImage(image);
+  }
 
-	/**
-	 * Muss vom abgeleiteten Dialog ueberschrieben werden.
-	 * In dieser Funktion soll er sich bitte malen.
-	 * Sie wird anschliessend von open() ausgefuehrt.
-	 * @param parent das Composite, in dem der Dialog gemalt werden soll.
-	 * Hinweis: Das Composite enthaelt bereits ein einspaltiges {@link GridLayout}.
-	 * @throws Exception Kann von der abgeleiteten Klasse geworfen
-	 * werden. Tut sie das, wird der Dialog nicht angezeigt.
+  /**
+   * Muss vom abgeleiteten Dialog ueberschrieben werden.
+   * In dieser Funktion soll er sich bitte malen.
+   * Sie wird anschliessend von open() ausgefuehrt.
+   * @param parent das Composite, in dem der Dialog gemalt werden soll.
+   * Hinweis: Das Composite enthaelt bereits ein einspaltiges {@link GridLayout}.
+   * @throws Exception Kann von der abgeleiteten Klasse geworfen
+   * werden. Tut sie das, wird der Dialog nicht angezeigt.
    */
   protected abstract void paint(Composite parent) throws Exception;
-	
-	/**
-	 * Diese Funktion wird beim Schliessen des Dialogs in open()
-	 * aufgerufen und liefert die ausgewaehlten Daten zurueck.
-	 * Die ableitende Klasse sollte hier also die Informationen
-	 * rein tuen, die sie dem Aufrufer gern geben moechte.
+
+  /**
+   * Diese Funktion wird beim Schliessen des Dialogs in open()
+   * aufgerufen und liefert die ausgewaehlten Daten zurueck.
+   * Die ableitende Klasse sollte hier also die Informationen
+   * rein tuen, die sie dem Aufrufer gern geben moechte.
    * @return das ausgewaehlte Objekt.
    * @throws Exception
    */
@@ -479,30 +479,30 @@ public abstract class AbstractDialog<T>
    */
   public final T open() throws Exception
   {
-		try {
+    try {
 
       this.closeState = SWT.OK; // Close-State resetten
       this.onEscapeException = null; // Escape Exception resetten (sonst geht der Dialog sofort wieder zu)
 
-		  init(); // Dialog wurde nochmal geoeffnet
+      init(); // Dialog wurde nochmal geoeffnet
 
-			display.syncExec(new Runnable()
+      display.syncExec(new Runnable()
       {
         public void run()
         {
-					shell.setText(titleText == null ? "" : titleText);
+          shell.setText(titleText == null ? "" : titleText);
           if (sideImage != null && !sideImage.isDisposed() && imageLabel != null && !imageLabel.isDisposed())
             imageLabel.setImage(sideImage);
-	
-					try
-					{
-						paint(parent);
-					}
-					catch (Throwable t)
-					{
-						Logger.error("error while painting dialog",t);
-						throw new RuntimeException(t);
-					}
+
+          try
+          {
+            paint(parent);
+          }
+          catch (Throwable t)
+          {
+            Logger.error("error while painting dialog",t);
+            throw new RuntimeException(t);
+          }
 
           if (height != SWT.DEFAULT || width != SWT.DEFAULT)
           {
@@ -522,7 +522,7 @@ public abstract class AbstractDialog<T>
           {
             shell.pack();
           }
-	
+
           // BUGZILLA 183
           Rectangle displayRect = null;
           if (monitor == AbstractDialog.MONITOR_CURRENT)
@@ -530,21 +530,21 @@ public abstract class AbstractDialog<T>
           else
             displayRect = display.getPrimaryMonitor().getBounds(); // Primaer-Monitor
 
-					// a) Zentriert (default)
+          // a) Zentriert (default)
           Rectangle shellRect = shell.getBounds();
-					int x = displayRect.x + ((displayRect.width - shellRect.width) / 2); // das "displayRect.x" ist wegen Dualhead (die Offset-Position des Monitors)
-					int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);  // das "displayRect.y" ist wegen Dualhead
-					
-					Point size = shell.getSize();
-					
-					// b) Maus-Position
-					if (pos == POSITION_MOUSE && cursor != null)
-					{
-						x = cursor.x - (size.x / 2);
-						y = cursor.y - (size.y / 2);
-					}
-					
-					// BUGZILLA 1087 Out-of-Range-Check (eigentlich nur unter Windows noetig, schaded bei den anderen aber nicht)
+          int x = displayRect.x + ((displayRect.width - shellRect.width) / 2); // das "displayRect.x" ist wegen Dualhead (die Offset-Position des Monitors)
+          int y = displayRect.y + ((displayRect.height - shellRect.height) / 2);  // das "displayRect.y" ist wegen Dualhead
+
+          Point size = shell.getSize();
+
+          // b) Maus-Position
+          if (pos == POSITION_MOUSE && cursor != null)
+          {
+            x = cursor.x - (size.x / 2);
+            y = cursor.y - (size.y / 2);
+          }
+
+          // BUGZILLA 1087 Out-of-Range-Check (eigentlich nur unter Windows noetig, schaded bei den anderen aber nicht)
           if ((x + size.x) > (displayRect.x + displayRect.width))
           {
             // Fenster wuerde ueber den rechten Rand hinausgehen
@@ -555,48 +555,48 @@ public abstract class AbstractDialog<T>
             // Fenster wuerde ueber den unteren Rand hinausgehen
             y = displayRect.y + displayRect.height - size.y - 4; // 4 Pixel Puffer zum Rand
           }
-					
-					shell.setLocation(x, y);
-	
-					shell.open();
+
+          shell.setLocation(x, y);
+
+          shell.open();
           shell.forceActive();
-					while (shell != null && !shell.isDisposed() && onEscapeException == null) {
-						if (!display.readAndDispatch()) display.sleep();
-					}
+          while (shell != null && !shell.isDisposed() && onEscapeException == null) {
+            if (!display.readAndDispatch()) display.sleep();
+          }
         }
       });
-			
-			if (onEscapeException != null)
-			  throw onEscapeException;
-			
-			return getData();
-		}
-		catch (OperationCanceledException oce)
-		{
-		  this.closeState = SWT.CANCEL;
-		  throw oce;
-		}
-		catch (SWTException e)
-		{
-		  Throwable t = e.getCause();
-		  if (t instanceof OperationCanceledException)
-		  {
-		    this.closeState = SWT.CANCEL;
-		    throw (OperationCanceledException) t;
-		  }
-		  throw e;
-		}
-		finally
-		{
-			close();
-		}
+
+      if (onEscapeException != null)
+        throw onEscapeException;
+
+      return getData();
+    }
+    catch (OperationCanceledException oce)
+    {
+      this.closeState = SWT.CANCEL;
+      throw oce;
+    }
+    catch (SWTException e)
+    {
+      Throwable t = e.getCause();
+      if (t instanceof OperationCanceledException)
+      {
+        this.closeState = SWT.CANCEL;
+        throw (OperationCanceledException) t;
+      }
+      throw e;
+    }
+    finally
+    {
+      close();
+    }
   }
 
-	/**
+  /**
    * Schliesst den Dialog.
    */
   public final void close()
-	{
+  {
     if (shell == null || shell.isDisposed())
       return;
 
@@ -619,24 +619,25 @@ public abstract class AbstractDialog<T>
       }
     });
 
-		try {
+    try {
       Logger.debug("notifying listeners");
-			Event e = new Event();
+      Event e = new Event();
       e.detail = closeState;
-			
+
       // Wir geben die Daten nur weiter, wenn der Dialog nicht abgebrochen wurde
       // Andernfalls werden Daten vom Aufrufer versehentlich ausgewertet, obwohl
       // er das gar nicht wollte.
-      if (e.detail != SWT.CANCEL)
-  			e.data = getData();
-			
-			for (Listener l:this.listeners)
-			{
-				l.handleEvent(e);
-			}
-		}
-		catch (Exception e) {
+      if (e.detail != SWT.CANCEL) {
+        e.data = getData();
+      }
+
+      for (Listener l:this.listeners)
+      {
+        l.handleEvent(e);
+      }
+    }
+    catch (Exception e) {
       Logger.error("error while notifying listeners",e);
     }
-	}
+  }
 }

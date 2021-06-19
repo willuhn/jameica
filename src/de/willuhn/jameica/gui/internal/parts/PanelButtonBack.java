@@ -24,7 +24,7 @@ import de.willuhn.jameica.system.Application;
  */
 public class PanelButtonBack extends PanelButton
 {
-  private final static String backKeyStroke = SWTKeySupport.getKeyFormatterForPlatform().format(KeyStroke.getInstance(Application.getPlatform().mapSWTKey(SWT.ALT), SWT.ARROW_LEFT));
+  private static final String backKeyStroke = SWTKeySupport.getKeyFormatterForPlatform().format(KeyStroke.getInstance(Application.getPlatform().mapSWTKey(SWT.ALT), SWT.ARROW_LEFT));
 
   /**
    * ct.
@@ -38,6 +38,7 @@ public class PanelButtonBack extends PanelButton
    * Wir liefern nur dann true, wenn eine vorherige Seite existiert.
    * @see de.willuhn.jameica.gui.parts.PanelButton#isEnabled()
    */
+  @Override
   public boolean isEnabled()
   {
     return GUI.hasPreviousView();

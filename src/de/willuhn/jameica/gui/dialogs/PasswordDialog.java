@@ -39,15 +39,15 @@ import de.willuhn.util.ApplicationException;
  * der fehlgeschlagenen Aufrufe von {@link #checkPassword(String)}
  * zaehlt und nach {@link #MAX_RETRIES} Versuchen den Dialog schlieﬂt.
  */
-public class PasswordDialog extends AbstractDialog
+public class PasswordDialog extends AbstractDialog<Object>
 {
 
-  private final static int WINDOW_WIDTH = 420;
+  private static final int WINDOW_WIDTH = 420;
   
 	/**
 	 * Maximale Anzahl von Fehlversuchen.
 	 */
-	public final static int MAX_RETRIES = 3;
+	public static final int MAX_RETRIES = 3;
 
   private int retries                 = 0;
   private boolean showPassword        = false;
@@ -81,6 +81,9 @@ public class PasswordDialog extends AbstractDialog
     this.smallDisplay = Customizing.SETTINGS.getBoolean("application.scrollview",false);
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
+   */
   @Override
   protected void onEscape()
   {

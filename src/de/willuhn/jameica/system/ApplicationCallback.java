@@ -238,7 +238,7 @@ public interface ApplicationCallback
    * @return {@code true}, wenn der Hostname akzeptiert werden soll, andernfalls {@code false}.
    * @throws Exception
    */
-  public boolean checkHostname(String hostname, javax.security.cert.X509Certificate[] certs) throws Exception;
+  public boolean checkHostname(String hostname, java.security.cert.X509Extension[] certs) throws Exception;
 
   /**
    * Liefert den Hostnamen des Systems.

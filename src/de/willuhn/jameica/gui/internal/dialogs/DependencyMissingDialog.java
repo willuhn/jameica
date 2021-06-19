@@ -28,9 +28,9 @@ import de.willuhn.util.I18N;
 /**
  * Dialog, der fehlende Plugin-Abhaengigkeiten anzeigt.
  */
-public class DependencyMissingDialog extends AbstractDialog
+public class DependencyMissingDialog extends AbstractDialog<Object>
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
   private List<Dependency> missing = null;
 
   /**

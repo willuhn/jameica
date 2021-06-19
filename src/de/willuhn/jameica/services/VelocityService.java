@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.log.LogChute;
 
@@ -36,13 +36,13 @@ public class VelocityService implements Bootable
 {
 
   private VelocityLogger logger                = null;
-  private Map<Manifest,VelocityEngine> engines = new HashMap<Manifest,VelocityEngine>();
+  private Map<Manifest,VelocityEngine> engines = new HashMap<>();
   private VelocityEngine defaultEngine         = null;
   
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
-  public Class[] depends()
+  public Class<Bootable>[] depends()
   {
     return new Class[]{LogService.class};
   }
@@ -59,7 +59,7 @@ public class VelocityService implements Bootable
 
       // Unkonfigurierte Default-Engine
       this.defaultEngine = new VelocityEngine();
-      this.defaultEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM,this.logger);
+      this.defaultEngine.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM,this.logger);
       this.defaultEngine.init();
     }
     catch (Exception e)
@@ -108,8 +108,8 @@ public class VelocityService implements Bootable
       Logger.debug("init velocity engine for plugin " + mf.getName());
 
       e = new VelocityEngine();
-      e.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM,this.logger);
-      e.setProperty(VelocityEngine.FILE_RESOURCE_LOADER_PATH,templates.getAbsolutePath());
+      e.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM,this.logger);
+      e.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH,templates.getAbsolutePath());
       e.init();
 
       // Wir merken uns die Engine

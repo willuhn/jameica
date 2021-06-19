@@ -35,9 +35,9 @@ import de.willuhn.util.ApplicationException;
  * uebereinstimmen. Sollen weitere Pruefungen vorgenommen werden, dann bitte
  * einfach diese Funktion ueberschreiben.
  */
-public class NewPasswordDialog extends AbstractDialog
+public class NewPasswordDialog extends AbstractDialog<Object>
 {
-  private final static int WINDOW_WIDTH = 460;
+  private static final int WINDOW_WIDTH = 460;
 
   private String text               = null;
   private String userText           = null;
@@ -77,6 +77,7 @@ public class NewPasswordDialog extends AbstractDialog
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
    */
+  @Override
   protected void onEscape()
   {
     // Kein Escape hier. Der User soll explizit auf "Abbrechen" klicken
@@ -273,7 +274,7 @@ public class NewPasswordDialog extends AbstractDialog
       return false;
     }
 
-    if (password != null && !password.equals(password2))
+    if (!password.equals(password2))
     {
       setErrorText(i18n.tr("Die eingegebenen Passworte stimmen nicht überein."));
       return false;

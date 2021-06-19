@@ -50,6 +50,7 @@ public class FirstStart extends AbstractBox
   /**
    * @see de.willuhn.jameica.gui.boxes.AbstractBox#isActive()
    */
+  @Override
   public boolean isActive()
   {
     return isEnabled();
@@ -58,16 +59,18 @@ public class FirstStart extends AbstractBox
   /**
    * @see de.willuhn.jameica.gui.boxes.AbstractBox#isEnabled()
    */
+  @Override
   public boolean isEnabled()
   {
     // Nur anzeigen, wenn wirklich noch keine Plugins vorhanden sind.
     PluginLoader loader = Application.getPluginLoader();
-    return loader.getInstalledPlugins().size() == 0 && loader.getInitErrors().size() == 0;
+    return loader.getInstalledPlugins().isEmpty() && loader.getInitErrors().size() == 0;
   }
 
   /**
    * @see de.willuhn.jameica.gui.boxes.Box#setEnabled(boolean)
    */
+  @Override
   public void setEnabled(boolean enabled)
   {
     // Das darf der User nicht.
@@ -113,7 +116,7 @@ public class FirstStart extends AbstractBox
     {
       title = "Noch keine Plugins installiert";
       text  = "Bitte klicken Sie auf \"Plugin installieren...\", um ein bereits heruntergeladenes Plugin hinzuzufügen.\n" +
-      		    "Oder klicken Sie auf \"Plugins online suchen...\", um ein Plugin online herunterzuladen";
+              "Oder klicken Sie auf \"Plugins online suchen...\", um ein Plugin online herunterzuladen";
     }
     panel.setTitle(i18n.tr(title));
     panel.setText(i18n.tr(text));
@@ -143,7 +146,7 @@ public class FirstStart extends AbstractBox
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{PluginMessage.class};
     }

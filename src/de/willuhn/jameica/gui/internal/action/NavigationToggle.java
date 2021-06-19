@@ -23,8 +23,8 @@ import de.willuhn.util.I18N;
  */
 public class NavigationToggle implements Action
 {
-  private final static I18N i18n = Application.getI18n();
-  
+  private static final I18N i18n = Application.getI18n();
+
   /**
    * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
    */

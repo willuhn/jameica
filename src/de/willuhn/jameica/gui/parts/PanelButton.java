@@ -41,19 +41,19 @@ import de.willuhn.util.ApplicationException;
  */
 public class PanelButton implements Part
 {
-  private final static int ALPHA_DEFAULT  = 190;
-  private final static int ALPHA_DISABLED =  50;
-  private final static int ALPHA_NONE     = 255;
+  private static final int ALPHA_DEFAULT  = 190;
+  private static final int ALPHA_DISABLED =  50;
+  private static final int ALPHA_NONE     = 255;
   
   /**
    * Dateiname des Hintergrund-Bildes
    */
-  public final static String BG_DEFAULT   = "panelbar-button-default.png";
+  public static final String BG_DEFAULT   = "panelbar-button-default.png";
   
   /**
    * Dateiname des Hintergrund-Bildes fuer den Hover-Effekt.
    */
-  public final static String BG_HOVER     = "panelbar-button-hover.png";
+  public static final String BG_HOVER     = "panelbar-button-hover.png";
 
   private Canvas canvas  = null;
   private String icon    = null;

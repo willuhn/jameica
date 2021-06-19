@@ -25,42 +25,42 @@ public class Platform
   /**
    * Konstante fuer: Betriebssystem unbekannt.
    */
-  public final static int OS_UNKNOWN    = 0;
+  public static final int OS_UNKNOWN    = 0;
   
   /**
    * Konstante fuer: Linux.
    */
-  public final static int OS_LINUX      = 1;
+  public static final int OS_LINUX      = 1;
 
   /**
    * Konstante fuer: Windows.
    */
-  public final static int OS_WINDOWS    = 2;
+  public static final int OS_WINDOWS    = 2;
   
   /**
    * Konstante fuer: Mac OS.
    */
-  public final static int OS_MAC        = 3;
+  public static final int OS_MAC        = 3;
   
   /**
    * Konstante fuer: Linux 64Bit
    */
-  public final static int OS_LINUX_64   = 4;
+  public static final int OS_LINUX_64   = 4;
 
   /**
    * Konstante fuer: Windows 64Bit.
    */
-  public final static int OS_WINDOWS_64 = 5;
+  public static final int OS_WINDOWS_64 = 5;
   
   /**
    * Konstante fuer: FreeBSD
    */
-  public final static int OS_FREEBSD    = 6;
+  public static final int OS_FREEBSD    = 6;
   
   /**
    * Konstante fuer: FreeBSD 64Bit.
    */
-  public final static int OS_FREEBSD_64 = 7;
+  public static final int OS_FREEBSD_64 = 7;
 
 
   protected File workdir = null;

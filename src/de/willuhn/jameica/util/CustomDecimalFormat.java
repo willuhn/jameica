@@ -21,6 +21,8 @@ import de.willuhn.jameica.system.Application;
  */
 public class CustomDecimalFormat extends DecimalFormat
 {
+  private static final long serialVersionUID = -4248632217565997648L;
+
   /**
    * ct.
    */
@@ -35,6 +37,7 @@ public class CustomDecimalFormat extends DecimalFormat
    * @see java.text.DecimalFormat#format(double, java.lang.StringBuffer,
    *      java.text.FieldPosition)
    */
+  @Override
   public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition)
   {
     StringBuffer sb = super.format(number, result, fieldPosition);

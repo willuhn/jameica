@@ -18,6 +18,7 @@ import java.util.Date;
  */
 public class TextMessage implements Message, Serializable
 {
+  private static final long serialVersionUID = -1067208320850706789L;
   private Date date    = new Date();
   private String text  = null;
   private String title = null;

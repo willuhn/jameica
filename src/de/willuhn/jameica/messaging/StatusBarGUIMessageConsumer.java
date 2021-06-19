@@ -44,7 +44,7 @@ public class StatusBarGUIMessageConsumer implements MessageConsumer
     
     if (typeMap == null)
     {
-      this.typeMap = new HashMap<Integer,Type>();
+      this.typeMap = new HashMap<>();
       this.typeMap.put(StatusBarMessage.TYPE_ERROR,  Type.ERROR);
       this.typeMap.put(StatusBarMessage.TYPE_SUCCESS,Type.SUCCESS);
       this.typeMap.put(StatusBarMessage.TYPE_INFO,   Type.INFO);

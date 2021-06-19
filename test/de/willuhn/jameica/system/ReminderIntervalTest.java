@@ -26,7 +26,7 @@ import de.willuhn.jameica.reminder.ReminderInterval.TimeUnit;
  */
 public class ReminderIntervalTest
 {
-  private final static DateFormat DF = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+  private static final DateFormat DF = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
   /**
    * Regulaerer Test.

@@ -34,7 +34,10 @@ public class SearchService implements Bootable
   private static Settings settings = new Settings(SearchService.class); 
 
   @Override
-  public Class[] depends()
+  /**
+   * @see de.willuhn.boot.Bootable#depends()
+   */
+  public Class<Bootable>[] depends()
   {
     return new Class[]{PluginService.class};
   }
@@ -42,26 +45,26 @@ public class SearchService implements Bootable
   @Override
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-    this.providers = new ArrayList<SearchProvider>();
+    this.providers = new ArrayList<>();
     
     try
     {
       Logger.info("looking for search providers");
-      Class[] providers = Application.getClassLoader().getClassFinder().findImplementors(SearchProvider.class);
+      Class<?>[] providers2 = Application.getClassLoader().getClassFinder().findImplementors(SearchProvider.class);
       BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
       int count = 0;
-      for (int i=0;i<providers.length;++i)
+      for (int i=0;i<providers2.length;++i)
       {
         try
         {
-          SearchProvider p = (SearchProvider) beanService.get(providers[i]);
+          SearchProvider p = (SearchProvider) beanService.get(providers2[i]);
           Logger.debug("  " + p.getName());
           this.providers.add(p);
           count++;
         }
         catch (Throwable t)
         {
-          Logger.error("unable to load search provider " + providers[i].getName(),t);
+          Logger.error("unable to load search provider " + providers2[i].getName(),t);
         }
       }
       
@@ -100,7 +103,7 @@ public class SearchService implements Bootable
    */
   public List<SearchResult> search(String text)
   {
-    List<SearchResult> result = new ArrayList<SearchResult>();
+    List<SearchResult> result = new ArrayList<>();
     
     // Suche ohne Suchbegriff gibts nicht
     if (text == null || text.length() == 0)

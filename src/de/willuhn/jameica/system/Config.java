@@ -32,7 +32,7 @@ public final class Config
   /**
    * Definition des Default-Ports fuer die RMI-Kommunikation.
    */
-  public final static int RMI_DEFAULT_PORT = 4840;
+  public static final int RMI_DEFAULT_PORT = 4840;
 
 	private File workDir   	     = null;
   private File configDir       = null;

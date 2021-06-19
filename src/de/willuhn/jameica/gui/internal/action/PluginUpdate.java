@@ -36,7 +36,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class PluginUpdate implements Action
 {
-  private final static Settings settings = new Settings(PluginUpdate.class);
+  private static final Settings settings = new Settings(PluginUpdate.class);
   
   /**
    * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)

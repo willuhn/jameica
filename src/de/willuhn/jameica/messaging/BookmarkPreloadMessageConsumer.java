@@ -49,6 +49,7 @@ public class BookmarkPreloadMessageConsumer implements MessageConsumer
     // Machen wir im Hintergrund, dann blockiert es die UI nicht.
     Thread t = new Thread("bookmark-preload")
     {
+      @Override
       public void run()
       {
         try

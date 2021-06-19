@@ -28,7 +28,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class TextDialog extends SimpleDialog
 {
-  private final static int WINDOW_WIDTH = 500;
+  private static final int WINDOW_WIDTH = 500;
   private TextInput input = null;
   private Object value = null;
   
@@ -62,6 +62,7 @@ public class TextDialog extends SimpleDialog
   /**
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#paint(org.eclipse.swt.widgets.Composite)
    */
+  @Override
   protected void paint(Composite parent) throws Exception
 	{
     Container c = new SimpleContainer(parent);

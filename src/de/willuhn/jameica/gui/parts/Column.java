@@ -27,40 +27,42 @@ import de.willuhn.logging.Logger;
  */
 public class Column implements Serializable
 {
+  private static final long serialVersionUID = -1997360881396264795L;
+
   /**
    * Konstante fuer linksbuendige Ausrichtung.
    */
-  public final static int ALIGN_LEFT   = SWT.LEFT;
+  public static final int ALIGN_LEFT   = SWT.LEFT;
   
   /**
    * Konstante fuer zentrierte Ausrichtung.
    */
-  public final static int ALIGN_CENTER = SWT.CENTER;
+  public static final int ALIGN_CENTER = SWT.CENTER;
   
   /**
    * Konstante fuer rechtsbuendige Ausrichtung.
    */
-  public final static int ALIGN_RIGHT  = SWT.RIGHT;
+  public static final int ALIGN_RIGHT  = SWT.RIGHT;
 
   /**
    * Konstante fuer automatische Ausrichtung.
    */
-  public final static int ALIGN_AUTO   = -1;
+  public static final int ALIGN_AUTO   = -1;
   
   /**
    * Konstante, die festlegt, dass die Spalte nach dem Wert des zugehoerigen Bean-Attributes sortiert wird.
    */
-  public final static int SORT_BY_VALUE = 1;
+  public static final int SORT_BY_VALUE = 1;
   
   /**
    * Konstante, die festlegt, dass die Spalte nach dem angezeigten (ggf formatierten) Wert sortiert wird.
    */
-  public final static int SORT_BY_DISPLAY = 2;
+  public static final int SORT_BY_DISPLAY = 2;
   
   /**
    * Default-Sortierung (SORT_BY_VALUE).
    */
-  public final static int SORT_DEFAULT = SORT_BY_VALUE;
+  public static final int SORT_DEFAULT = SORT_BY_VALUE;
 
 
   private String columnId     = null;

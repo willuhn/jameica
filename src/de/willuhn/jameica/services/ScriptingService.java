@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -32,7 +33,6 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.io.FileWatch;
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.extension.Extension;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.ext.ScriptingSettingsView;
@@ -60,12 +60,12 @@ public class ScriptingService implements Bootable
   /**
    * Die Queue, die nach dem Hinzufuegen eines Scripts benachrichtigt wird.
    */
-  public final static String QUEUE_ADDED   = "jameica.scripting.added";
+  public static final String QUEUE_ADDED   = "jameica.scripting.added";
   
   /**
    * Die Queue, die nach dem Entfernen eines Scripts benachrichtigt wird.
    */
-  public final static String QUEUE_REMOVED = "jameica.scripting.removed";
+  public static final String QUEUE_REMOVED = "jameica.scripting.removed";
   
   private Settings settings = new Settings(ScriptingService.class);
   
@@ -78,7 +78,7 @@ public class ScriptingService implements Bootable
   // Wir merken uns hier unsere Boot-Messages, damit wir die nicht bei jedem Service-Reload
   // (was z.Bsp. beim Klick auf "Speichern" in den Settings passiert) immer wieder neu
   // hinzufuegen.
-  private List<BootMessage> messages = new ArrayList<BootMessage>();
+  private List<BootMessage> messages = new ArrayList<>();
 
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -126,7 +126,7 @@ public class ScriptingService implements Bootable
     }
 
     // 3. Ggf. gespeicherte Fehlermeldungen wieder loeschen
-    if (this.messages.size() > 0)
+    if (!this.messages.isEmpty())
     {
       BeanService service = Application.getBootLoader().getBootable(BeanService.class);
       BootMessageConsumer consumer = service.get(BootMessageConsumer.class);
@@ -254,23 +254,21 @@ public class ScriptingService implements Bootable
       Logger.warn("  not found or not readable, skipping");
       return;
     }
-    Reader r = null;
-    try
+
+    Charset encoding = null;
+    try {
+      encoding = Charset.forName(settings.getString("script.encoding",null));
+    } catch (IllegalArgumentException e) {
+      // Wenn Charset nicht verfügbar ist oder "null" ist, auf den default zurückfallen.
+      encoding = Charset.defaultCharset();
+    }
+    try (Reader r = new BufferedReader(new InputStreamReader(new FileInputStream(f),encoding)))
     {
-      String encoding = settings.getString("script.encoding",null);
-      if (encoding != null)
-        r = new BufferedReader(new InputStreamReader(new FileInputStream(f),encoding));
-      else
-        r = new BufferedReader(new InputStreamReader(new FileInputStream(f))); // Der Reader wirft leider eine NPE, wenn man ihm NULL als charset gibt
       this.getEngine().eval(r);
     }
     catch (Exception e)
     {
       Logger.error("error while loading script",e);
-    }
-    finally
-    {
-      IOUtil.close(r);
     }
   }
 
@@ -302,7 +300,7 @@ public class ScriptingService implements Bootable
   {
     Platform platform = Application.getPlatform();
     String[] list = settings.getList("scripts",new String[0]);
-    List<File> files = new ArrayList<File>();
+    List<File> files2 = new ArrayList<>();
     for (String s:list)
     {
       if (s == null || s.length() == 0)
@@ -310,7 +308,7 @@ public class ScriptingService implements Bootable
       try
       {
         // Wir zeigen die Scripts mit absoluten Pfaden an - auch wenn sie nur relativ gespeichert sind
-        files.add(new File(platform.toAbsolute(s)));
+        files2.add(new File(platform.toAbsolute(s)));
       }
       catch (Exception e)
       {
@@ -318,9 +316,9 @@ public class ScriptingService implements Bootable
       }
     }
     
-    Collections.sort(files); // Sortiert sieht schoener aus
+    Collections.sort(files2); // Sortiert sieht schoener aus
     
-    return files;
+    return files2;
   }
   
   /**
@@ -367,7 +365,7 @@ public class ScriptingService implements Bootable
     catch (Exception e)
     {
       Logger.error("unable to convert path " + file + " to canonical form",e);
-      throw new ApplicationException(Application.getI18n().tr("Fehler beim Import der Script-Datei {0}: {1}",new String[]{file.getAbsolutePath(),e.getMessage()}));
+      throw new ApplicationException(Application.getI18n().tr("Fehler beim Import der Script-Datei {0}: {1}", file.getAbsolutePath(), e.getMessage()));
     }
     
     List<File> existing = getScripts();
@@ -375,7 +373,7 @@ public class ScriptingService implements Bootable
     existing.add(file);
     
     Platform platform = Application.getPlatform();
-    List<String> list = new ArrayList<String>();
+    List<String> list = new ArrayList<>();
     for (File f:existing)
     {
       list.add(platform.toRelative(f.getAbsolutePath()));
@@ -398,7 +396,7 @@ public class ScriptingService implements Bootable
       return;
     
     List<File> existing = this.getScripts();
-    List<String> newList  = new ArrayList<String>();
+    List<String> newList  = new ArrayList<>();
 
     for (File f:existing)
     {
@@ -431,7 +429,7 @@ public class ScriptingService implements Bootable
    */
   public class Events
   {
-    private Map<String,List<String>> mapping = new HashMap<String,List<String>>();
+    private Map<String,List<String>> mapping = new HashMap<>();
     
     /**
      * Liefert eine Liste der JS-Funktionen fuer das Event.
@@ -453,7 +451,7 @@ public class ScriptingService implements Bootable
       List<String> functions = get(event);
       if (functions == null)
       {
-        functions = new ArrayList<String>();
+        functions = new ArrayList<>();
         this.mapping.put(event,functions);
       }
       

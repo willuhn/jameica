@@ -27,7 +27,7 @@ public final class Settings extends de.willuhn.util.Settings
    * fuer die Klasse, werden sie gleich geladen.
    * @param clazz Klasse, fuer die diese Settings gelten.
    */
-  public Settings(Class clazz)
+  public Settings(Class<?> clazz)
   {
 		this(clazz,true);
   }
@@ -39,7 +39,7 @@ public final class Settings extends de.willuhn.util.Settings
    * @param clazz Klasse, fuer die diese Settings gelten.
    * @param overridable legt fest, ob die Settings durch den User ueberschrieben werden koennen. Default: true.
    */
-  public Settings(Class clazz, boolean overridable)
+  public Settings(Class<?> clazz, boolean overridable)
   {
     super("cfg",overridable ? Application.getConfig().getConfigDir() : null,clazz);
   }

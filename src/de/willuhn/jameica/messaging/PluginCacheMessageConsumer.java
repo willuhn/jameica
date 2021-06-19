@@ -86,7 +86,7 @@ public class PluginCacheMessageConsumer implements MessageConsumer
     // initial fuellen. Alles andere sind dann nur noch Updates
     if (cache == null)
     {
-      cache = new LinkedHashMap<String,Manifest>();
+      cache = new LinkedHashMap<>();
       List<Manifest> mfs = Application.getPluginLoader().getManifests();
       for (Manifest m:mfs)
       {

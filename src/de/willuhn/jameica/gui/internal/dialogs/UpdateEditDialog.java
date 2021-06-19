@@ -35,7 +35,7 @@ import de.willuhn.util.I18N;
  */
 public class UpdateEditDialog extends AbstractDialog<Void>
 {
-  private final static int WINDOW_WIDTH = 460;
+  private static final int WINDOW_WIDTH = 460;
 
   private CheckboxInput updateCheck   = null;
   private SpinnerInput updateInterval = null;

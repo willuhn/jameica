@@ -64,8 +64,8 @@ import de.willuhn.util.Session;
  */
 public class BeanService implements Bootable
 {
-  private List<InjectHandler> injectHandlers = new LinkedList<InjectHandler>();
-  private Map<Class,Object> contextScope     = new HashMap<Class,Object>();
+  private List<InjectHandler> injectHandlers = new LinkedList<>();
+  private Map<Class<?>,Object> contextScope  = new HashMap<>();
   private Stack contextOrder                 = new Stack();
   private Session sessionScope               = new Session();
 
@@ -137,7 +137,7 @@ public class BeanService implements Bootable
     {
       // 3. Bean erzeugen
       Logger.debug("  creating new " + type);
-      bean = type.newInstance();
+      bean = type.getDeclaredConstructor().newInstance();
 
       // Lifecycle ermitteln
       Lifecycle lc = type.getAnnotation(Lifecycle.class);

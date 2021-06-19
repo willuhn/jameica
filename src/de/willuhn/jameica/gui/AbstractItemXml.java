@@ -13,7 +13,6 @@ package de.willuhn.jameica.gui;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-import net.n3.nanoxml.IXMLElement;
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
@@ -22,6 +21,7 @@ import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
+import net.n3.nanoxml.IXMLElement;
 
 /**
  * @author willuhn
@@ -32,7 +32,7 @@ public abstract class AbstractItemXml implements Item
   protected Item parent;
   protected IXMLElement path;
   protected I18N i18n = Application.getI18n();
-  protected ArrayList<Item> childs = new ArrayList<Item>();
+  protected ArrayList<Item> childs = new ArrayList<>();
 
 	private Action action = null;
   private boolean enabled = true;
@@ -95,7 +95,7 @@ public abstract class AbstractItemXml implements Item
 
 		try
 		{
-			Class c = Application.getClassLoader().load(s);
+			Class<?> c = Application.getClassLoader().load(s);
 	    BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
 	    action = (Action) beanService.get(c);
 			return action;
@@ -110,7 +110,7 @@ public abstract class AbstractItemXml implements Item
   /**
    * @see de.willuhn.datasource.GenericObjectNode#getChildren()
    */
-  public GenericIterator getChildren() throws RemoteException
+  public GenericIterator<?> getChildren() throws RemoteException
   {
     return PseudoIterator.fromArray(childs.toArray(new Item[childs.size()]));
   }
@@ -134,7 +134,7 @@ public abstract class AbstractItemXml implements Item
   /**
    * @see de.willuhn.datasource.GenericObjectNode#getPossibleParents()
    */
-  public GenericIterator getPossibleParents() throws RemoteException
+  public GenericIterator<?> getPossibleParents() throws RemoteException
   {
     throw new UnsupportedOperationException("not implemented");
   }
@@ -142,7 +142,7 @@ public abstract class AbstractItemXml implements Item
   /**
    * @see de.willuhn.datasource.GenericObjectNode#getPath()
    */
-  public GenericIterator getPath() throws RemoteException
+  public GenericIterator<?> getPath() throws RemoteException
   {
     throw new UnsupportedOperationException("not implemented");
   }

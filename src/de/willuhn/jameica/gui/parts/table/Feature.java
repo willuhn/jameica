@@ -85,7 +85,7 @@ public interface Feature
      * weitere Daten hinzufuegen koennen, die an das Feature weitergereicht
      * werden sollen.
      */
-    public Map addon = new HashMap();
+    public Map<Object, Object> addon = new HashMap<>();
   }
   
   /**

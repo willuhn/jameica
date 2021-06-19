@@ -71,7 +71,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class GUI implements ApplicationController
 {
-  final static Settings SETTINGS = new Settings(GUI.class);
+  static final Settings SETTINGS = new Settings(GUI.class);
   static
   {
     SETTINGS.setStoreWhenRead(false);
@@ -80,32 +80,32 @@ public class GUI implements ApplicationController
   /**
    * Queue, die benachrichtigt wird, wenn das unbind fehlschlaegt.
    */
-  private final static String QUEUE_UNBIND_FAIL = "jameica.gui.view.unbind.fail";
+  private static final String QUEUE_UNBIND_FAIL = "jameica.gui.view.unbind.fail";
   
   /**
    * Queue, die benachrichtigt wird, wenn das unbind ausgeloest wird.
    */
-  private final static String QUEUE_UNBIND      = "jameica.gui.view.unbind";
+  private static final String QUEUE_UNBIND      = "jameica.gui.view.unbind";
 
-  private static GUI gui = null;
-    private Display display              = null;
-    private Shell shell                  = null;
-    private ApplicationCallback callback = null;
-    private StyleFactory styleFactory    = null;
+  private static GUI gui               = null;
+  private Display display              = null;
+  private Shell shell                  = null;
+  private ApplicationCallback callback = null;
+  private StyleFactory styleFactory    = null;
+
+  private SashForm sash                = null;
+  private Navigation navi              = null;
+  private Menu menu                    = null;
+  private View view                    = null;
+  private StatusBar statusBar          = null;
+  private SashForm left                = null;
+  private Composite right              = null;
+  private FormTextPart help            = null;
+  private AbstractView currentView     = null;
   
-    private SashForm sash                = null;
-    private Navigation navi              = null;
-    private Menu menu                    = null;
-    private View view                    = null;
-    private StatusBar statusBar          = null;
-    private SashForm left                = null;
-    private Composite right              = null;
-    private FormTextPart help            = null;
-    private AbstractView currentView     = null;
-    
-    private Stack<HistoryEntry> history  = new Stack<HistoryEntry>();
-    private boolean skipHistory          = false;
-    private boolean stop                 = false;
+  private Stack<HistoryEntry> history  = new Stack<>();
+  private boolean skipHistory          = false;
+  private boolean stop                 = false;
 
 
   /**
@@ -113,8 +113,9 @@ public class GUI implements ApplicationController
    */
   public GUI()
   {
-    if (gui != null)
+    if (gui != null) {
       throw new RuntimeException("unable to start second gui");
+    }
     gui = this;
   }
 
@@ -249,7 +250,7 @@ public class GUI implements ApplicationController
 
       ////////////////////////////////////////////////////////////////////////
       // init sashes
-      this.left.setWeights(new int[] {SETTINGS.getInt("navi.height.0",8), SETTINGS.getInt("navi.height.1",5)});
+      this.left.setWeights(SETTINGS.getInt("navi.height.0",8), SETTINGS.getInt("navi.height.1",5));
       this.left.addDisposeListener(new DisposeListener() {
         public void widgetDisposed(DisposeEvent e)
         {
@@ -260,7 +261,7 @@ public class GUI implements ApplicationController
           SETTINGS.setAttribute("navi.height.1",i[1]);
         }
       });
-      this.sash.setWeights(new int[] {SETTINGS.getInt("main.width.0",1), SETTINGS.getInt("main.width.1",3)});
+      this.sash.setWeights(SETTINGS.getInt("main.width.0",1), SETTINGS.getInt("main.width.1",3));
       this.sash.addDisposeListener(new DisposeListener() {
         public void widgetDisposed(DisposeEvent e)
         {
@@ -381,11 +382,11 @@ public class GUI implements ApplicationController
         try
         {
           // BUGZILLA 194
-          Shell shell = (Shell) e.widget;
+          Shell shell2 = (Shell) e.widget;
           
-          boolean maximized = shell.getMaximized();
-          Point size        = shell.getSize();
-          Point loc         = shell.toDisplay(0,0); // Nicht fragen, warum. Ist so ;)
+          boolean maximized = shell2.getMaximized();
+          Point size        = shell2.getSize();
+          Point loc         = shell2.toDisplay(0,0); // Nicht fragen, warum. Ist so ;)
           
           Logger.info("saving window maximized flag: " + maximized);
           SETTINGS.setAttribute("window.maximized", maximized);
@@ -421,7 +422,7 @@ public class GUI implements ApplicationController
    */
   public static boolean hasPreviousView()
   {
-    return (gui != null && gui.history != null && gui.history.size() > 0);
+    return (gui != null && gui.history != null && !gui.history.isEmpty());
   }
 
   /**
@@ -431,7 +432,7 @@ public class GUI implements ApplicationController
   public static void startPreviousView()
   {
     // BUGZILLA 247
-    if (gui == null || gui.history == null || gui.history.size() == 0)
+    if (gui == null || gui.history == null || gui.history.isEmpty())
     {
       Logger.debug("unable to start previous view. you are already at the first page in this session ;)");
       return;
@@ -456,7 +457,7 @@ public class GUI implements ApplicationController
       /**
        * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
        */
-      public Class[] getExpectedMessageTypes()
+      public Class<?>[] getExpectedMessageTypes()
       {
         return new Class[]{QueryMessage.class};
       }
@@ -518,7 +519,7 @@ public class GUI implements ApplicationController
    * @param clazz
    * @param o
    */
-  public static void startView(Class clazz, final Object o)
+  public static void startView(Class<?> clazz, final Object o)
   {
     if (clazz == null)
     {
@@ -836,7 +837,7 @@ public class GUI implements ApplicationController
       {
         try
         {
-          r = new InputStreamReader(is,"ISO-8859-1");
+          r = new InputStreamReader(is,java.nio.charset.StandardCharsets.ISO_8859_1);
         }
         catch (Exception e)
         {
@@ -934,7 +935,7 @@ public class GUI implements ApplicationController
       catch (Throwable t)
       {
         Throwable cause = t.getCause();
-        if (cause == null || !(cause instanceof OperationCanceledException))
+        if (!(cause instanceof OperationCanceledException))
         {
           Logger.error("main loop crashed, retry", t);
           retry++;
@@ -970,7 +971,7 @@ public class GUI implements ApplicationController
     // Hat der Thread schon eins
     gui.display = Display.findDisplay(Thread.currentThread());
 
-    boolean sleak = Boolean.valueOf(System.getProperty("sleak","false")).booleanValue();
+    boolean sleak = Boolean.parseBoolean(System.getProperty("sleak","false"));
     if (!sleak)
     {
       // Gibts ueberhaupt eins?
@@ -1082,31 +1083,22 @@ public class GUI implements ApplicationController
         }
         catch (OperationCanceledException oce)
         {
-          if (monitor != null) 
-          {
-            monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
-            monitor.setPercentComplete(100);
-            String msg = oce.getMessage();
-            monitor.setStatusText(msg != null ? msg : Application.getI18n().tr("Vorgang abgebrochen"));
-          }
+          monitor.setStatus(ProgressMonitor.STATUS_CANCEL);
+          monitor.setPercentComplete(100);
+          String msg = oce.getMessage();
+          monitor.setStatusText(msg != null ? msg : Application.getI18n().tr("Vorgang abgebrochen"));
         }
         catch (ApplicationException ae)
         {
-          if (monitor != null) 
-          {
-            monitor.setStatus(ProgressMonitor.STATUS_ERROR);
-            monitor.setPercentComplete(100);
-            monitor.setStatusText(ae.getMessage());
-          }
+          monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+          monitor.setPercentComplete(100);
+          monitor.setStatusText(ae.getMessage());
         }
         catch (Throwable t)
         {
           Logger.error("error while executing background task",t);
-          if (monitor != null) 
-          {
-            monitor.setStatus(ProgressMonitor.STATUS_ERROR);
-            monitor.setPercentComplete(100);
-          }
+          monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+          monitor.setPercentComplete(100);
         }
         finally
         {

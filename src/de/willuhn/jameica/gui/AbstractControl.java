@@ -31,7 +31,7 @@ public abstract class AbstractControl
    * Erzeugt einen neuen AbstractControl der fuer die angegebene View.
    * @param view die View, fuer die dieser AbstractControl zustaendig ist.
    */
-  public AbstractControl(AbstractView view)
+  protected AbstractControl(AbstractView view)
   {
     this.view = view;
   }

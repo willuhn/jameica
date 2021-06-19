@@ -20,7 +20,7 @@ import de.willuhn.util.Queue;
  */
 public class MessageCollector implements MessageConsumer
 {
-  private List<Class> types = new ArrayList<Class>();
+  private List<Class<?>> types = new ArrayList<>();
   
   // Wir merken uns nur die letzten 1000 Nachrichten
   private Queue messages = new Queue(1000);
@@ -29,7 +29,7 @@ public class MessageCollector implements MessageConsumer
    * Legt fest, welcher Nachrichten-Typ mitgeschnitten werden soll.
    * @param type der Nachrichten-Typ.
    */
-  public void collect(Class type)
+  public void collect(Class<?> type)
   {
     if (type != null)
       this.types.add(type);

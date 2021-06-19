@@ -40,7 +40,7 @@ public class DateInput implements Input
 {
   private Map<String,Object> data = new HashMap<String,Object>();
 
-  private final static Object PLACEHOLDER = new Object();
+  private static final Object PLACEHOLDER = new Object();
   
   private DateFormat format = DateUtil.DEFAULT_FORMAT;
   

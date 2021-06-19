@@ -26,7 +26,7 @@ import de.willuhn.util.ApplicationException;
  * Dialog zum Anzeigen der Eigenschaften eines Backups.
  * Der Dialog enthaelt ausserdem eine Abfrage, ob das Backup wiederhergestellt werden soll.
  */
-public class BackupRestoreDialog extends AbstractDialog
+public class BackupRestoreDialog extends AbstractDialog<Object>
 {
   private BackupFile backup = null;
   private Boolean choice    = Boolean.FALSE;

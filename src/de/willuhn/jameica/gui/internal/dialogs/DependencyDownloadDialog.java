@@ -31,9 +31,9 @@ import de.willuhn.util.I18N;
 /**
  * Dialog, der die Plugin-Abhaengigkeiten anzeigt, die mit heruntergeladen werden koennen.
  */
-public class DependencyDownloadDialog extends AbstractDialog
+public class DependencyDownloadDialog extends AbstractDialog<Object>
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
   private List<PluginData> data;
 
   /**
@@ -70,6 +70,8 @@ public class DependencyDownloadDialog extends AbstractDialog
     deps.addColumn(i18n.tr("Name des Plugins"), "name");
     deps.addColumn(i18n.tr("Version"),"availableVersion");
     deps.addColumn(i18n.tr("Installation von"),"pluginGroup",new Formatter() {
+      private static final long serialVersionUID = 968216114721601752L;
+
       public String format(Object o)
       {
         if (!(o instanceof PluginGroup))

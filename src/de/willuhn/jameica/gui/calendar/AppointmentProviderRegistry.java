@@ -28,15 +28,19 @@ import de.willuhn.util.ClassFinder;
  */
 public class AppointmentProviderRegistry
 {
-  private final static Settings settings = new Settings(AppointmentProviderRegistry.class);
-  private final static Map<Plugin,List<Class<AppointmentProvider>>> cache = new HashMap<Plugin,List<Class<AppointmentProvider>>>();
+  private AppointmentProviderRegistry() {
+    throw new IllegalStateException("Utility class");
+  }
+  private static final Settings settings = new Settings(AppointmentProviderRegistry.class);
+  private static final Map<Plugin,List<Class<AppointmentProvider>>> cache = new HashMap<>();
   
   /**
    * Liefert die Appointment-Provider.
    * @param plugin optionale Angabe eines Plugins, wenn nur Provider dieses Plugins gefunden werden sollen.
    * @return Liste der gefundenen Provider. Unabhaengig davon, ob sie gerade aktiviert oder deaktiviert sind.
    */
-  public final static List<AppointmentProvider> getAppointmentProviders(Plugin plugin)
+  
+  public static final List<AppointmentProvider> getAppointmentProviders(Plugin plugin)
   {
     // Wir duerfen hier nicht die Instanzen selbst cachen sondern nur die gefundenen Klassen.
     // Denn ueber den Lifecycle der Instanzen entscheidet der Bean-Service - den wuerden wir sonst umgehen 
@@ -44,7 +48,7 @@ public class AppointmentProviderRegistry
     List<Class<AppointmentProvider>> list = cache.get(plugin);
     if (list == null) // Ne, dann suchen
     {
-      list = new LinkedList<Class<AppointmentProvider>>();
+      list = new LinkedList<>();
       cache.put(plugin,list);
 
       ClassFinder finder  = Application.getClassLoader().getClassFinder();
@@ -84,7 +88,7 @@ public class AppointmentProviderRegistry
 
     // Instanzen vom Bean-Service holen
     BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-    List<AppointmentProvider> result = new LinkedList<AppointmentProvider>();
+    List<AppointmentProvider> result = new LinkedList<>();
     for (Class<AppointmentProvider> c:list)
     {
       result.add(beanService.get(c));

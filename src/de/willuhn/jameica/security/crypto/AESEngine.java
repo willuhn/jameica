@@ -10,6 +10,7 @@
 
 package de.willuhn.jameica.security.crypto;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
 
@@ -42,7 +43,7 @@ public class AESEngine extends AbstractPasswordBasedEngine
    */
   Key getKey() throws Exception
   {
-    byte[] password = new String(getPassword(16)).getBytes("ISO-8859-1");
+    byte[] password = new String(getPassword(16)).getBytes(StandardCharsets.ISO_8859_1);
     return new SecretKeySpec(password,"AES");
   }
 

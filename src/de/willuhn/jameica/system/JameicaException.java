@@ -18,6 +18,8 @@ package de.willuhn.jameica.system;
  */
 public class JameicaException extends RuntimeException
 {
+  private static final long serialVersionUID = 3309176051506686355L;
+
   /**
    * ct.
    */

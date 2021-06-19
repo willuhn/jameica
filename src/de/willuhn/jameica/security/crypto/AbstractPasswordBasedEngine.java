@@ -118,12 +118,12 @@ public abstract class AbstractPasswordBasedEngine implements Engine
       throw new Exception("invalid salt length: " + len);
     
     // Checken, ob wir schon eins haben.
-    Wallet wallet = this.getWallet();
+    Wallet wallet2 = this.getWallet();
     
     // Migration. Wir hatten das anfangs falsch ohne Laenge gespeichert
-    String s = (String) wallet.get("salt"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
+    String s = (String) wallet2.get("salt"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
     if (s == null)
-      s = (String) wallet.get("salt." + len); // Das ist jetzt der neue Platz
+      s = (String) wallet2.get("salt." + len); // Das ist jetzt der neue Platz
     if (s != null)
       return Base64.decode(s);
     
@@ -134,7 +134,7 @@ public abstract class AbstractPasswordBasedEngine implements Engine
     byte[] salt = new byte[len];
     SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
     random.nextBytes(salt);
-    wallet.set("salt." + len,Base64.encode(salt));
+    wallet2.set("salt." + len,Base64.encode(salt));
     return salt;
   }
   
@@ -150,19 +150,19 @@ public abstract class AbstractPasswordBasedEngine implements Engine
       throw new Exception("invalid password length: " + len);
 
     // Checken, ob wir schon eins haben.
-    Wallet wallet = this.getWallet();
+    Wallet wallet2 = this.getWallet();
     
     // Migration. Wir hatten das anfangs falsch ohne Laenge gespeichert
-    String s = (String) wallet.get("password"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
+    String s = (String) wallet2.get("password"); // wir speichern nicht direkt das Array, weil das das Wallet aufblaest
     if (s == null)
-      s = (String) wallet.get("password." + len); // Das ist jetzt der neue Platz
+      s = (String) wallet2.get("password." + len); // Das ist jetzt der neue Platz
     if (s != null)
       return s.toCharArray();
     
     // Neu erstellen
     s = RandomStringUtils.randomAscii(len);
     Logger.debug("created random password, length: " + s.length());
-    wallet.set("password." + len,s);
+    wallet2.set("password." + len,s);
     return s.toCharArray();
   }
   

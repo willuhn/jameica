@@ -30,76 +30,76 @@ public class Color {
 	 * Hintergrundfarbe von Widgets.
 	 * @deprecated Stattdessen sollte nur noch Color.BACKGROUND verwendet werden.
 	 */
-	public final static Color WIDGET_BG   = new Color(null,	                new RGB(255,255,255));
+	public static final Color WIDGET_BG   = new Color(null,	                new RGB(255,255,255));
 
   /**
    * Vordergrundfarbe von Widgets.
    * @deprecated Stattdessen sollte nur noch Color.FOREGROUND verwendet werden.
    */
-  public final static Color WIDGET_FG   = new Color(null,           		  new RGB(0,0,0));
+  public static final Color WIDGET_FG   = new Color(null,           		  new RGB(0,0,0));
 
   /**
    * Hintergrundfarbe der Views.
    * Nicht mehr konfigurierbar, weil es eine Reihe
    * von Widgets gibt, bei denen das ohnehin nicht funktioniert
    */
-  public final static Color BACKGROUND 	= new Color(null,		              GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
+  public static final Color BACKGROUND 	= new Color(null,		              GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).getRGB());
 
   /**
    * Vordergrundfarbe der Views.
    * Nicht konfigurierbar, damit das auch auf dunklen Themes funktioniert.
    */
-  public final static Color FOREGROUND  = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND).getRGB());
+  public static final Color FOREGROUND  = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND).getRGB());
 
   /**
    * Weiss.
    */
-  public final static Color WHITE       = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE).getRGB());
+  public static final Color WHITE       = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE).getRGB());
 
   /**
    * Schwarz.
    */
-  public final static Color BLACK       = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_BLACK).getRGB());
+  public static final Color BLACK       = new Color(null,                 GUI.getDisplay().getSystemColor(SWT.COLOR_BLACK).getRGB());
 
   /**
    * Rahmenfarbe von Elementen (zB Tabellen).
    */
-  public final static Color BORDER 			= new Color("color.border",				new RGB(0,0,0));
+  public static final Color BORDER 			= new Color("color.border",				new RGB(0,0,0));
 
   /**
    * Farbe von Kommentaren.
    */
-  public final static Color COMMENT 		= new Color("color.comment",			getMiddle(BACKGROUND,FOREGROUND));
+  public static final Color COMMENT 		= new Color("color.comment",			getMiddle(BACKGROUND,FOREGROUND));
 
   /**
    * Farbe von Fehlertexten.
    */
-  public final static Color ERROR				= new Color("color.error",				new RGB(250,10,10));
+  public static final Color ERROR				= new Color("color.error",				new RGB(250,10,10));
 
   /**
    * Farbe von Erfolgsmeldungen.
    */
-  public final static Color SUCCESS			= new Color("color.success",			new RGB(0,130,32));
+  public static final Color SUCCESS			= new Color("color.success",			new RGB(0,130,32));
 
   /**
    * Farbe von Links.
    */
-  public final static Color LINK				= new Color("color.link",					new RGB(0,0,100));
+  public static final Color LINK				= new Color("color.link",					new RGB(0,0,100));
 
   /**
    * Farbe von aktiven Links.
    */
-  public final static Color LINK_ACTIVE	= new Color("color.link.active",	new RGB(0,0,200));
+  public static final Color LINK_ACTIVE	= new Color("color.link.active",	new RGB(0,0,200));
 
   /**
    * Hintergrundfarbe von Pflichtfeldern.
    */
-  public final static Color MANDATORY_BG = new Color("color.mandatory.bg",  new RGB(255,240,220));
+  public static final Color MANDATORY_BG = new Color("color.mandatory.bg",  new RGB(255,240,220));
 
   /**
    * Hintergrundfarbe von eigenen Tooltips.
    */
-  public final static Color TOOLTIP_BG = new Color("color.tooltip.bg", new RGB(239,230,159));
+  public static final Color TOOLTIP_BG = new Color("color.tooltip.bg", new RGB(239,230,159));
 
   private String name;
 	private RGB value;

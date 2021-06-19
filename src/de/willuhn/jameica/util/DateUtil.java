@@ -26,13 +26,13 @@ public class DateUtil
    * Das Default-Dateformat von Jameica (dd.mm.yyyy).
    * Abhaengig vom Locale.
    */
-  public final static DateFormat DEFAULT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,Application.getConfig().getLocale());
+  public static final DateFormat DEFAULT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,Application.getConfig().getLocale());
   
   /**
    * Das Kurz-Dateformat von Jameica (dd.mm.yy).
    * Abhaengig vom Locale.
    */
-  public final static DateFormat SHORT_FORMAT   = SimpleDateFormat.getDateInstance(DateFormat.SHORT,Application.getConfig().getLocale());
+  public static final DateFormat SHORT_FORMAT   = SimpleDateFormat.getDateInstance(DateFormat.SHORT,Application.getConfig().getLocale());
 
   /**
    * Eingabehilfe für Datumsfelder. Eine 1-2stellige Zahl wird als Tag des
@@ -169,9 +169,9 @@ public class DateUtil
   {
     if (date == null)
       return null;
-    
+
     Calendar cal = Calendar.getInstance();
-    cal.setTime(date == null ? new Date() : date);
+    cal.setTime(date);
     cal.set(Calendar.HOUR_OF_DAY,0);
     cal.set(Calendar.MINUTE,0);
     cal.set(Calendar.SECOND,0);
@@ -188,9 +188,9 @@ public class DateUtil
   {
     if (date == null)
       return null;
-    
+
     Calendar cal = Calendar.getInstance();
-    cal.setTime(date == null ? new Date() : date);
+    cal.setTime(date);
     cal.set(Calendar.HOUR_OF_DAY,23);
     cal.set(Calendar.MINUTE,59);
     cal.set(Calendar.SECOND,59);

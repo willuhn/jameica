@@ -31,7 +31,7 @@ public class SysinfoService implements Bootable
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
-  public Class[] depends()
+  public Class<Bootable>[] depends()
   {
     return new Class[]{LogService.class, SysPropertyService.class};
   }
@@ -69,7 +69,7 @@ public class SysinfoService implements Bootable
     if (Logger.isLogging(Level.DEBUG))
     {
       Properties p = System.getProperties();
-      Enumeration e = p.keys();
+      Enumeration<?> e = p.keys();
       while (e.hasMoreElements())
       {
         String key = (String) e.nextElement();

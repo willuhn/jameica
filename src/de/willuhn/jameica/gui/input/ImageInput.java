@@ -50,7 +50,7 @@ import de.willuhn.logging.Logger;
  */
 public class ImageInput extends AbstractInput
 {
-  private final static Settings settings = new Settings(ImageInput.class);
+  private static final Settings settings = new Settings(ImageInput.class);
   
   private byte[] data        = null;
   private boolean focus      = false;
@@ -164,6 +164,7 @@ public class ImageInput extends AbstractInput
       /**
        * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
        */
+      @Override
       public void widgetSelected(SelectionEvent e)
       {
         FileDialog dialog = new FileDialog(GUI.getShell(), SWT.OPEN);
@@ -172,11 +173,11 @@ public class ImageInput extends AbstractInput
         String lastDir = settings.getString("lastdir",System.getProperty("user.home"));
         if (lastDir != null)
           dialog.setFilterPath(lastDir);
-        
+
         String s = dialog.open();
         if (s == null)
           return; // Vorgang abgebrochen
-          
+
         File file = new File(s);
         if (!file.exists() || !file.canRead())
         {
@@ -184,17 +185,17 @@ public class ImageInput extends AbstractInput
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Datei {0} nicht lesbar",file.getName()),StatusBarMessage.TYPE_ERROR));
           return;
         }
-        
+
         settings.setAttribute("lastdir",file.getParent());
-        
+
         // Bild aus der Datei lesen
         int count = 0;
         byte[] buf = new byte[4096];
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        InputStream is = null;
-        try
-        {
-          is = new BufferedInputStream(new FileInputStream(file));
+        
+        try(
+          InputStream is = new BufferedInputStream(new FileInputStream(file));
+          ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ) {
           while ((count = is.read(buf)) != -1)
           {
             if (count > 0)
@@ -210,10 +211,6 @@ public class ImageInput extends AbstractInput
           Logger.error("error while reading image",ex);
           Application.getMessagingFactory().sendMessage(new StatusBarMessage(i18n.tr("Datei {0} nicht lesbar: {1}",new String[]{file.getName(),ex.getMessage()}),StatusBarMessage.TYPE_ERROR));
         }
-        finally
-        {
-          IOUtil.close(is);
-        }
       }
     });
 
@@ -227,6 +224,7 @@ public class ImageInput extends AbstractInput
       /**
        * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
        */
+      @Override
       public void widgetSelected(SelectionEvent e)
       {
         data = null;
@@ -242,6 +240,7 @@ public class ImageInput extends AbstractInput
       /**
        * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
        */
+      @Override
       public void widgetSelected(SelectionEvent e)
       {
         Clipboard clipboard =  Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -263,6 +262,7 @@ public class ImageInput extends AbstractInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#setComment(java.lang.String)
    */
+  @Override
   public void setComment(String comment)
   {
     super.setComment(comment);
@@ -272,6 +272,7 @@ public class ImageInput extends AbstractInput
   /**
    * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
+  @Override
   protected void update()
   {
     // Wir wollen nicht, dass die Hintergrund-Farbe geaendert wird

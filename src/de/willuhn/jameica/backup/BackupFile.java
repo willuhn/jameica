@@ -11,7 +11,6 @@
 package de.willuhn.jameica.backup;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -78,21 +77,19 @@ public class BackupFile implements GenericObject
     // Wir checken, ob in dem Backup eine Datei
     // cfg/de.willuhn.jameica.plugin.PluginLoader.properties
     // enthalten ist. In der stehen die Versionsnummern der Plugins.
-    ZipFile zip    = null;
-    InputStream is = null;
-    try
+    try(ZipFile zip = new ZipFile(this.file))
     {
-      zip = new ZipFile(this.file);
       ZipEntry entry = zip.getEntry("cfg/de.willuhn.jameica.plugin.PluginLoader.properties");
       if (entry == null)
-        throw new ApplicationException(Application.getI18n().tr("Backup enthält keine Plugin-Daten"));
+        throw new ApplicationException(Application.getI18n().tr("Backup enthï¿½lt keine Plugin-Daten"));
       
-      is = zip.getInputStream(entry);
-      if (is == null)
-        throw new ApplicationException(Application.getI18n().tr("Ungültiges Backup-Format"));
+      try (InputStream is = zip.getInputStream(entry)) {
+        if (is == null)
+          throw new ApplicationException(Application.getI18n().tr("Ungï¿½ltiges Backup-Format"));
 
-      this.props = new Properties();
-      this.props.load(is);
+        this.props = new Properties();
+        this.props.load(is);
+      }
     }
     catch (ApplicationException ae)
     {
@@ -103,26 +100,6 @@ public class BackupFile implements GenericObject
       Logger.error("unable to read backup " + this.file.getAbsolutePath(),e);
       throw new ApplicationException(Application.getI18n().tr("Backup nicht lesbar"));
     }
-    finally
-    {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (IOException e) {
-          Logger.error("unable to close backup " + this.file.getAbsolutePath(),e);
-          throw new ApplicationException(Application.getI18n().tr("Backup nicht lesbar"));
-        }
-      }
-
-      if (zip != null) {
-        try {
-          zip.close();
-        } catch (IOException e) {
-          Logger.error("unable to close backup " + this.file.getAbsolutePath(),e);
-          throw new ApplicationException(Application.getI18n().tr("Backup nicht lesbar"));
-        }
-      }
-    }
   }
 
   /**
@@ -130,8 +107,9 @@ public class BackupFile implements GenericObject
    */
   public boolean equals(GenericObject other) throws RemoteException
   {
-    if (other == null || !(other instanceof BackupFile))
-    return false;
+    if (!(other instanceof BackupFile)) {
+      return false;
+    }
     return this.file.equals(((BackupFile)other).file);
   }
 
@@ -143,7 +121,7 @@ public class BackupFile implements GenericObject
     if ("created".equals(name))
       return new Date(this.file.lastModified());
     if ("size".equals(name))
-      return new Long(this.file.length());
+      return Long.valueOf(this.file.length());
     return BeanUtil.get(this.file,name);
   }
 

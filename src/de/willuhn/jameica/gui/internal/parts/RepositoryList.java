@@ -41,8 +41,8 @@ import de.willuhn.util.I18N;
  */
 public class RepositoryList extends TablePart
 {
-  private final static I18N i18n       = Application.getI18n();
-  private final static RepositoryService repoService = Application.getBootLoader().getBootable(RepositoryService.class);
+  private static final I18N i18n       = Application.getI18n();
+  private static final RepositoryService repoService = Application.getBootLoader().getBootable(RepositoryService.class);
   
   private MessageConsumer add     = new AddMessageConsumer();
   private MessageConsumer remove  = new RemoveMessageConsumer();
@@ -87,6 +87,7 @@ public class RepositoryList extends TablePart
   /**
    * @see de.willuhn.jameica.gui.parts.TablePart#paint(org.eclipse.swt.widgets.Composite)
    */
+  @Override
   public synchronized void paint(Composite parent) throws RemoteException
   {
     final MessagingFactory mf = Application.getMessagingFactory();
@@ -114,9 +115,9 @@ public class RepositoryList extends TablePart
    * @return Liste der URLs.
    * @throws Exception
    */
-  private static List init() throws Exception
+  private static List<UrlObject> init() throws Exception
   {
-    List<UrlObject> urls = new ArrayList<UrlObject>();
+    List<UrlObject> urls = new ArrayList<>();
     List<URL> l = repoService.getRepositories(true);
 
     for (URL u:l)
@@ -186,7 +187,7 @@ public class RepositoryList extends TablePart
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }
@@ -242,7 +243,7 @@ public class RepositoryList extends TablePart
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }
@@ -296,7 +297,7 @@ public class RepositoryList extends TablePart
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }

@@ -38,7 +38,7 @@ import net.n3.nanoxml.XMLParserFactory;
 /**
  * Enthaelt die Manifest-Informationen des Plugins aus plugin.xml.
  */
-public class Manifest implements Comparable
+public class Manifest implements Comparable<Object>
 {
   private File manifest                 = null;
 
@@ -65,7 +65,7 @@ public class Manifest implements Comparable
   public Manifest(File manifest) throws Exception
   {
     if (manifest == null)
-    throw new IOException("no manifest (plugin.xml) given");
+      throw new IOException("no manifest (plugin.xml) given");
 
     if (!manifest.exists() || !manifest.canRead())
       throw new IOException("manifest " + manifest.getAbsolutePath() + " not readable");
@@ -76,11 +76,9 @@ public class Manifest implements Comparable
     Logger.info(getName() + " " + this.getVersion());
     Logger.info("  Directory  : " + this.getPluginDir());
 
-    JarFile jar = null;
-    try
+    try(JarFile jar = new JarFile(getPluginDir() + File.separator + getName() + ".jar"))
     {
       // Das ist nur geraten und eher fuer Debugging-Zwecke ;)
-      jar = new JarFile(getPluginDir() + File.separator + getName() + ".jar");
       java.util.jar.Manifest mf = jar.getManifest();
 
       this.buildnumber = mf.getMainAttributes().getValue("Implementation-Buildnumber");
@@ -91,20 +89,6 @@ public class Manifest implements Comparable
     catch (Exception e)
     {
       Logger.debug("unable to read jar manifest, running uncompressed within debugger?");
-    }
-    finally
-    {
-      if (jar != null)
-      {
-        try
-        {
-          jar.close();
-        }
-        catch (Exception e)
-        {
-          Logger.error("unable to close jar file",e);
-        }
-      }
     }
   }
 
@@ -376,7 +360,7 @@ public class Manifest implements Comparable
 		if (services == null || !services.hasChildren())
 			return new ServiceDescriptor[0]; // BUGZILLA 531
 
-		Vector v = services.getChildrenNamed("service");
+		Vector<?> v = services.getChildrenNamed("service");
 		ServiceDescriptor[] s = new ServiceDescriptor[v.size()];
 		for (int i=0;i<v.size();++i)
 		{
@@ -398,7 +382,7 @@ public class Manifest implements Comparable
     if (finder == null || !finder.hasChildren())
       return new String[0];
 
-    Vector v = finder.getChildrenNamed("include");
+    Vector<?> v = finder.getChildrenNamed("include");
     this.cfInclude = new String[v.size()];
     for (int i=0;i<v.size();++i)
     {
@@ -418,8 +402,8 @@ public class Manifest implements Comparable
     if (extensions == null || !extensions.hasChildren())
       return null;
 
-    Vector v = extensions.getChildrenNamed("extension");
-    List<ExtensionDescriptor> list = new LinkedList<ExtensionDescriptor>();
+    Vector<?> v = extensions.getChildrenNamed("extension");
+    List<ExtensionDescriptor> list = new LinkedList<>();
     for (Object e:v)
     {
       list.add(new ExtensionDescriptor((IXMLElement)e));
@@ -438,7 +422,7 @@ public class Manifest implements Comparable
     if (messaging == null || !messaging.hasChildren())
       return null;
 
-    Vector v = messaging.getChildrenNamed("consumer");
+    Vector<?> v = messaging.getChildrenNamed("consumer");
     ConsumerDescriptor[] s = new ConsumerDescriptor[v.size()];
     for (int i=0;i<v.size();++i)
     {
@@ -457,7 +441,7 @@ public class Manifest implements Comparable
     if (messaging == null || !messaging.hasChildren())
       return null;
 
-    Vector v = messaging.getChildrenNamed("message");
+    Vector<?> v = messaging.getChildrenNamed("message");
     MessageDescriptor[] s = new MessageDescriptor[v.size()];
     for (int i=0;i<v.size();++i)
     {
@@ -494,9 +478,9 @@ public class Manifest implements Comparable
     if (deps == null || !deps.hasChildren())
       return new Dependency[0];
 
-    List<Dependency> found = new ArrayList<Dependency>();
+    List<Dependency> found = new ArrayList<>();
     
-    Vector v = deps.getChildrenNamed("import");
+    Vector<?> v = deps.getChildrenNamed("import");
     for (int i=0;i<v.size();++i)
     {
       IXMLElement plugin = (IXMLElement) v.get(i);
@@ -504,7 +488,7 @@ public class Manifest implements Comparable
       if (name == null || name.length() == 0)
         continue;
 
-      boolean required = Boolean.valueOf(plugin.getAttribute("required","true")).booleanValue();
+      boolean required = Boolean.parseBoolean(plugin.getAttribute("required","true"));
       Dependency dep = new Dependency(name,plugin.getAttribute("version",null),required);
       found.add(dep);
     }
@@ -528,8 +512,8 @@ public class Manifest implements Comparable
     if (direct.length == 0)
       return direct; // Keine direkten Abhaengigkeiten. Also auch keine indirekten
     
-    List<Dependency> found = new ArrayList<Dependency>();
-    List<String> toCheck = new ArrayList<String>();
+    List<Dependency> found = new ArrayList<>();
+    List<String> toCheck = new ArrayList<>();
     
     for (Dependency d:direct)
     {
@@ -757,7 +741,7 @@ public class Manifest implements Comparable
       return -1; // wir haben keine Namen. Dann lassen wir uns sicherheitshalber zuerst laden
     }
 
-    if (o == null || !(o instanceof Manifest))
+    if (!(o instanceof Manifest))
     {
       Logger.debug("2: " + name + " > <unknown>");
       return -1; // Wir zuerst.

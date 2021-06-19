@@ -45,8 +45,9 @@ import de.willuhn.util.ApplicationException;
  */
 public class BookmarkTreePart extends TreePart
 {
-  private final static DateFormat DF  = new SimpleDateFormat("HH:mm");
-  private Map<Date,List<Bookmark>> bookmarks = new HashMap<Date,List<Bookmark>>();
+  // Not thread safe, therefore not marked as static
+  private final DateFormat DF  = new SimpleDateFormat("HH:mm");
+  private Map<Date,List<Bookmark>> bookmarks = new HashMap<>();
   private String query = null;
   
   /**
@@ -56,7 +57,7 @@ public class BookmarkTreePart extends TreePart
    */
   public BookmarkTreePart(final Action action) throws ApplicationException
   {
-    super((List)null,new Action() {
+    super((List<?>)null,new Action() {
       
       public void handleAction(Object context) throws ApplicationException
       {
@@ -118,7 +119,7 @@ public class BookmarkTreePart extends TreePart
       List<Bookmark> onDay = this.bookmarks.get(date);
       if (onDay == null)
       {
-        onDay = new ArrayList<Bookmark>();
+        onDay = new ArrayList<>();
         this.bookmarks.put(date,onDay);
       }
       
@@ -126,7 +127,7 @@ public class BookmarkTreePart extends TreePart
     }
     
     // Jetzt noch die Listen innerhalb jedes Tages chronologisch sortieren
-    Comparator c = new BookmarkComparator();
+    Comparator<Bookmark> c = new BookmarkComparator();
     Collection<List<Bookmark>> days = this.bookmarks.values();
     for (List<Bookmark> day:days)
     {
@@ -135,7 +136,7 @@ public class BookmarkTreePart extends TreePart
     
     
     // Wir uebergeben die Tage an den Tree, die Children kommen dann per "getChildren".
-    List<Date> root = new ArrayList<Date>();
+    List<Date> root = new ArrayList<>();
     root.addAll(this.bookmarks.keySet());
     Collections.sort(root,new Comparator<Date>() {
       public int compare(Date d1, Date d2)
@@ -151,10 +152,11 @@ public class BookmarkTreePart extends TreePart
   /**
    * @see de.willuhn.jameica.gui.parts.TreePart#getChildren(java.lang.Object)
    */
-  protected List getChildren(Object o)
+  @Override
+  protected List<?> getChildren(Object o)
   {
     if (!(o instanceof Date))
-      return null;
+      return Collections.emptyList();
     
     return this.bookmarks.get(o);
   }
@@ -187,6 +189,7 @@ public class BookmarkTreePart extends TreePart
     {
       addItem(new BookmarkMenuItem(Application.getI18n().tr("Öffnen"),action,"document-open.png"));
       addItem(new BookmarkMenuItem(Application.getI18n().tr("Löschen..."),new BookmarkDelete() {
+        @Override
         public void handleAction(Object context) throws ApplicationException
         {
           try
@@ -221,6 +224,7 @@ public class BookmarkTreePart extends TreePart
       /**
        * @see de.willuhn.jameica.gui.parts.CheckedSingleContextMenuItem#isEnabledFor(java.lang.Object)
        */
+      @Override
       public boolean isEnabledFor(Object o)
       {
         return (o instanceof Bookmark) && super.isEnabledFor(o);

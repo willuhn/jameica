@@ -37,7 +37,7 @@ public class BackupService implements Bootable
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
-  public Class[] depends()
+  public Class<Bootable>[] depends()
   {
     return new Class[]{LogService.class};
   }
@@ -76,7 +76,7 @@ public class BackupService implements Bootable
   {
     try
     {
-      if (this.mc.errors.size() > 0)
+      if (!this.mc.errors.isEmpty())
       {
         String text = this.mc.errors.size() + " error(s) occured in current jameica session, skipping backup";
         Application.getCallback().getShutdownMonitor().setStatusText(text);
@@ -106,7 +106,7 @@ public class BackupService implements Bootable
    */
   private class Consumer implements MessageConsumer
   {
-    private List<String> errors = new ArrayList<String>();
+    private List<String> errors = new ArrayList<>();
     
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()

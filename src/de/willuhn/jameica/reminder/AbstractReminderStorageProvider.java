@@ -39,7 +39,7 @@ public abstract class AbstractReminderStorageProvider implements ReminderStorage
   {
     boolean haveQueue = StringUtils.trimToNull(queue) != null;
     
-    Map<String,Reminder> map = new HashMap<String,Reminder>();
+    Map<String,Reminder> map = new HashMap<>();
 
     String[] uuids = this.getUUIDs();
     for (String uuid:uuids)
@@ -74,7 +74,7 @@ public abstract class AbstractReminderStorageProvider implements ReminderStorage
       // UUID als Key zurueckgeben, koennen wir ohnehin nur den ersten Treffer
       // liefern - alle Folgetreffer im Zeitraum wuerden ja den ersten ueberschreiben
       List<Date> dates = ri.getDates(d,from,to);
-      if (dates.size() > 0)
+      if (!dates.isEmpty())
         map.put(uuid,r); // OK, wir haben mindestens 1 Treffer
     }
     return map;

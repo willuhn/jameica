@@ -24,10 +24,10 @@ import de.willuhn.util.ApplicationException;
 /**
  * Dialog zum Anzeigen der System-Zertifikate.
  */
-public class SystemCertificatesDialog extends AbstractDialog
+public class SystemCertificatesDialog extends AbstractDialog<Object>
 {
-  private final static int WINDOW_WIDTH  = 600;
-  private final static int WINDOW_HEIGHT = 500;
+  private static final int WINDOW_WIDTH  = 600;
+  private static final int WINDOW_HEIGHT = 500;
   
   /**
    * ct.

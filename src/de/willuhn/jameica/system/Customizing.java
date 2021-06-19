@@ -19,7 +19,7 @@ public class Customizing
   /**
    * Die Customizing-Settings.
    */
-  public final static Settings SETTINGS = new Settings(Customizing.class);
+  public static final Settings SETTINGS = new Settings(Customizing.class);
   
   static
   {

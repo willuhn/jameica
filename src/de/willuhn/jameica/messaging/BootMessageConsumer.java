@@ -22,7 +22,7 @@ import de.willuhn.annotation.Lifecycle.Type;
 @Lifecycle(Type.CONTEXT)
 public class BootMessageConsumer implements MessageConsumer
 {
-  private List<BootMessage> messages = new LinkedList<BootMessage>();
+  private List<BootMessage> messages = new LinkedList<>();
 
   /**
    * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()

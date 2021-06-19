@@ -24,42 +24,42 @@ public class Principal
   /**
    * Attribut DN.
    */
-  public final static String DISTINGUISHED_NAME  = "DN";
+  public static final String DISTINGUISHED_NAME  = "DN";
   
   /**
    * Attribut CN.
    */
-  public final static String COMMON_NAME         = "CN";
+  public static final String COMMON_NAME         = "CN";
   
   /**
    * Attribut O.
    */
-  public final static String ORGANIZATION        = "O";
+  public static final String ORGANIZATION        = "O";
 
   /**
    * Attribut OU.
    */
-  public final static String ORGANIZATIONAL_UNIT = "OU";
+  public static final String ORGANIZATIONAL_UNIT = "OU";
   
   /**
    * Attribut L.
    */
-  public final static String LOCALITY            = "L";
+  public static final String LOCALITY            = "L";
   
   /**
    * Attribut ST.
    */
-  public final static String STATE               = "ST";
+  public static final String STATE               = "ST";
   
   /**
    * Attribut C.
    */
-  public final static String COUNTRY             = "C";
+  public static final String COUNTRY             = "C";
 
   private java.security.Principal p = null;
 
   // Hier drin speichern wir die Attribute.
-  private HashMap<String, String> attributes = new HashMap<String, String>();
+  private HashMap<String, String> attributes = new HashMap<>();
 
   /**
    * ct.

@@ -48,7 +48,7 @@ public abstract class AbstractBox implements Box
   public int getIndex()
   {
     if (this.index == null)
-      this.index = new Integer(settings.getInt(this.getClass().getName() + ".index",getDefaultIndex()));
+      this.index = Integer.valueOf(settings.getInt(this.getClass().getName() + ".index",getDefaultIndex()));
     return this.index.intValue();
   }
 
@@ -57,7 +57,7 @@ public abstract class AbstractBox implements Box
    */
   public void setIndex(int index)
   {
-    this.index = new Integer(index);
+    this.index = Integer.valueOf(index);
     settings.setAttribute(this.getClass().getName() + ".index",index);
   }
 
@@ -66,16 +66,16 @@ public abstract class AbstractBox implements Box
    */
   public int compareTo(Object arg0)
   {
-    if (arg0 == null || !(arg0 instanceof Box))
+    if (!(arg0 instanceof Box))
       return 1;
     Box other = (Box) arg0;
     
-    int index = getIndex();
+    int gindex = getIndex();
     int oindex = other.getIndex();
-    if (index == oindex)
+    if (gindex == oindex)
       return 0;
     
-    return index > oindex ? 1 : -1;
+    return gindex > oindex ? 1 : -1;
   }
 
   /**

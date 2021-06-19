@@ -55,8 +55,8 @@ import de.willuhn.util.I18N;
  */
 public class ScriptingSettingsView implements Extension
 {
-  private final static I18N i18n = Application.getI18n();
-  private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(ScriptingService.class);
+  private static final I18N i18n = Application.getI18n();
+  private static final de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(ScriptingService.class);
 
   private ScriptingService service   = null;
   private TablePart scripts          = null;
@@ -80,8 +80,9 @@ public class ScriptingSettingsView implements Extension
    */
   public void extend(Extendable extendable)
   {
-    if (extendable == null || !(extendable instanceof Settings))
+    if (!(extendable instanceof Settings)) {
       return;
+    }
 
     final MessagingFactory mf = Application.getMessagingFactory();
     mf.registerMessageConsumer(this.mcJameica);
@@ -90,8 +91,7 @@ public class ScriptingSettingsView implements Extension
     
     try
     {
-      Settings settings = (Settings) extendable;
-      TabGroup tab = new TabGroup(settings.getTabFolder(),i18n.tr("Scripting"),true);
+      TabGroup tab = new TabGroup(((Settings) extendable).getTabFolder(),i18n.tr("Scripting"),true);
       tab.addText(i18n.tr("Die registrierten Script-Dateien werden beim Start von Jameica " +
       		                "automatisch ausgeführt. Sie können Funktionen enthalten, die " +
       		                "beim Eintreffen bestimmter Ereignisse von Plugins ausgeführt werden."),true);
@@ -271,8 +271,9 @@ public class ScriptingSettingsView implements Extension
      */
     public void handleAction(Object context) throws ApplicationException
     {
-      if (context == null || !(context instanceof File))
+      if (!(context instanceof File)) {
         return;
+      }
 
       try
       {
@@ -309,7 +310,7 @@ public class ScriptingSettingsView implements Extension
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{SettingsChangedMessage.class};
     }
@@ -331,7 +332,7 @@ public class ScriptingSettingsView implements Extension
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }
@@ -379,7 +380,7 @@ public class ScriptingSettingsView implements Extension
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }

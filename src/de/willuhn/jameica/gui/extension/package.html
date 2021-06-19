@@ -1,27 +1,26 @@
 <html>
 
-  <style>
-    pre
-    {
-      border:1px solid 909090;
-      background:#f9f9f9;
-    }
-    
-    .unimportant
-    {
-      color: #808080;
-    }
-    .important
-    {
-      color: #f00000;
-    }
-  </style>
+<style>
+pre {
+	border: 1px solid 909090;
+	background: #f9f9f9;
+}
 
-  <head></head>
+.unimportant {
+	color: #808080;
+}
 
-  <body>
-    <h2>Extension-System von Jameica.</h2>
+.important {
+	color: #f00000;
+}
+</style>
 
+<head></head>
+
+<body>
+	<h2>Extension-System von Jameica.</h2>
+
+<<<<<<< Updated upstream
     <p>
       Jameica kann zwar beliebig mit Plugins erweitert werden.
       Diese Plugins teilen auch einen ClassPath und können
@@ -38,17 +37,34 @@
       erweitern.
       <br>
       Genau für diesen Zweck existiert das Extension-System.
-	</p>
-	
+=======
 	<p>
-      Auf der einen Seite befinden sich Komponenten, die
-      sich erweitern lassen (werden durch das Interface
-      <code>Extandable</code> repräsentiert). Auf der anderen
-      Seite existieren Erweiterungen (müssen das Interface
-      <code>Extension</code> implementieren), welche die
-      Extendables um zusätzliche Funktionalität erweitern.
+		Jameica kann zwar beliebig mit Plugins erweitert werden. Diese Plugins
+		teilen auch einen ClassPath und können über die ServiceFactory sowie
+		das Messaging-System miteinander kommunizieren. Sie können jedoch
+		nicht die GUI eines anderen Plugins ändern. So kann z.Bsp. Plugin A
+		nicht die Context-Menus von Plugin B ändern oder die Navigation eines
+		anderen Plugins erweitern. Dies ist jedoch sinnvoll, wenn ein Plugin
+		durch ein weiteres möglichst nahtlos um Funktionalität erweitert
+		werden soll. Sprich: Das erweiternde Plugin soll keine eigene
+		Navigation oder eigene Menus mitbringen sondern stattdessen die
+		existierenden um Funktionen erweitern. <br /> Genau für diesen Zweck
+		existiert das Extension-System.
+>>>>>>> Stashed changes
 	</p>
 
+	<p>
+		Auf der einen Seite befinden sich Komponenten, die sich erweitern
+		lassen (werden durch das Interface
+		<code>Extandable</code>
+		repräsentiert). Auf der anderen Seite existieren Erweiterungen (müssen
+		das Interface
+		<code>Extension</code>
+		implementieren), welche die Extendables um zusätzliche Funktionalität
+		erweitern.
+	</p>
+
+<<<<<<< Updated upstream
     <h3>Schritt 1 (Registrierung der Erweiterungen):</h3>
     <p>
 	  Bevor eine erweiterbare Komponente (also ein Extendable) erweitert
@@ -68,6 +84,25 @@
 	  Format der Registrierung in plugin.xml:
     </p>
 <pre><code>
+=======
+	<p>
+		<b>Schritt 1 (Registrierung der Erweiterungen):</b> <br /> Bevor eine
+		erweiterbare Komponente (also ein Extendable) erweitert werden kann,
+		muss Jameica herausfinden, welche Erweiterungen überhaupt existieren.
+		<br /> Bsp.: Bevor der Navigations-Baum (linkes Frame in Jameica)
+		gezeichnet wird, prüft Jameica für jedes Element des Baumes, ob
+		Erweiterungen vorliegen. Ist dies der Fall, wird jeweils deren Methode
+		<code>extend(Extendable)</code>
+		aufgerufen. <br /> Eine Extension muss im System registriert sein, um
+		angesprochen werden zu können. Dies geschieht wiederrum automatisch
+		(durch Definition der Erweiterungen in der Manifest-Datei
+		(plugin.xml)) oder manuell durch Aufruf von
+		<code>ExtensionRegistry#register(Extension e, String[]
+			extendableIDs)</code>
+		).
+	<p>Format der Registrierung in plugin.xml:
+	<pre>
+>>>>>>> Stashed changes
 &lt;plugin&gt;
   [...]
   <span class="unimportant">
@@ -89,10 +124,18 @@
   &lt;/extensions&gt;
   </span>
 &lt;/plugin&gt;
+<<<<<<< Updated upstream
     </code></pre>
+=======
+</pre>
+	</p>
+	</p>
+
+>>>>>>> Stashed changes
 
     <h3>Schritt 2 (Durchführung der Erweiterung):</h3>
 	<p>
+<<<<<<< Updated upstream
       Jedes Extendable besitzt eine ID (Funktion <code>getExtendableID()</code>),
       über die es in ganz Jameica eindeutig identifizierbar ist.
       Bevor die erweiterbare Komponente nun aktiviert wird (bei Context-Menus
@@ -101,6 +144,17 @@
       werden kann. Bsp:
     </p>
       <pre><code>
+=======
+		<b>Schritt 2 (Durchführung der Erweiterung):</b> <br /> Jedes
+		Extendable besitzt eine ID (Funktion
+		<code>getExtendableID()</code>
+		), über die es in ganz Jameica eindeutig identifizierbar ist. Bevor
+		die erweiterbare Komponente nun aktiviert wird (bei Context-Menus ist
+		das z.Bsp. der Moment unmittelbar vor dem Zeichnen auf dem Bildschirm)
+		muss sie der ExtensionRegistry Bescheid geben, dass sie nun noch
+		erweitert werden kann. Bsp:
+	<pre>
+>>>>>>> Stashed changes
 public class AddressList extends ContextMenu implements Extendable
 {
   public AddressList()
@@ -115,7 +169,12 @@ public class AddressList extends ContextMenu implements Extendable
     <span class="important">ExtensionRegistry.extend(this);</span>
   }
 }       
+<<<<<<< Updated upstream
       </code></pre>
+=======
+      </pre>
+	</p>
+>>>>>>> Stashed changes
 
-  </body>
+</body>
 </html>

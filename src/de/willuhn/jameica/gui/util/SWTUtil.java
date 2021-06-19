@@ -425,7 +425,7 @@ public class SWTUtil {
    * @return die zu verwendende DPI-Zahl oder -1, wenn kein DPI-Wert
    * ermittelt werden konnte.
    */
-  public final static int getDPI()
+  public static final int getDPI()
   {
     // Wir gehen von quadratischen Pixeln aus. Daher reicht uns eine
     // Koordinate - y.
@@ -454,7 +454,7 @@ public class SWTUtil {
    * @param pt Points.
    * @return Anzahl der Pixel oder -1 wenn es zu einem Fehler kam.
    */
-  public final static int pt2px(int pt)
+  public static final int pt2px(int pt)
   {
     try
     {
@@ -481,7 +481,7 @@ public class SWTUtil {
    * @param px die Groesse.
    * @return die gezoomte Groesse.
    */
-  public final static int scaledPx(int px)
+  public static final int scaledPx(int px)
   {
     int zoom = getDeviceZoom();
     if (zoom == 100)
@@ -496,7 +496,7 @@ public class SWTUtil {
    * @param mm die Millimeter.
    * @return Anzahl der Pixel oder -1 wenn es zu einem Fehler kam.
    */
-  public final static int mm2px(int mm)
+  public static final int mm2px(int mm)
   {
     try
     {
@@ -525,7 +525,7 @@ public class SWTUtil {
    * @return ersetzter Text.
    * BNUGZILLA 604 https://www.willuhn.de/bugzilla/show_bug.cgi?id=604
    */
-  public final static String escapeLabel(String text)
+  public static final String escapeLabel(String text)
   {
     if (text == null || text.length() == 0)
       return text;

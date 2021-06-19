@@ -43,8 +43,8 @@ import de.willuhn.logging.Logger;
  */
 public class WorkdirChooser
 {
-  private final static int WINDOW_WIDTH = 450;
- 
+  private static final int WINDOW_WIDTH = 450;
+
   private Button apply     = null;
   private Display display  = null;
   private Shell shell      = null;

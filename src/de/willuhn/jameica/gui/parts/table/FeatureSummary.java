@@ -31,9 +31,9 @@ public class FeatureSummary implements Feature
   /**
    * Context-Key fuer den anzuzeigenden Summen-Text.
    */
-  public final static String CTX_KEY_TEXT = "summary.text";
+  public static final String CTX_KEY_TEXT = "summary.text";
   
-  private final static Set<Event> EVENTS = Collections.unmodifiableSet(new HashSet<Event>(Arrays.asList(
+  private static final Set<Event> EVENTS = Collections.unmodifiableSet(new HashSet<Event>(Arrays.asList(
       Event.PAINT,
       Event.ADDED,
       Event.REFRESH,

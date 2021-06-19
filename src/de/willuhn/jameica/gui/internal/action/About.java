@@ -27,7 +27,7 @@ public class About implements Action
    */
   public void handleAction(Object context) throws ApplicationException
   {
-    de.willuhn.jameica.gui.internal.dialogs.About a = new de.willuhn.jameica.gui.internal.dialogs.About(de.willuhn.jameica.gui.internal.dialogs.About.POSITION_CENTER);
+    de.willuhn.jameica.gui.internal.dialogs.About a = new de.willuhn.jameica.gui.internal.dialogs.About(de.willuhn.jameica.gui.dialogs.AbstractDialog.POSITION_CENTER);
     try
     {
       a.open();
@@ -35,7 +35,6 @@ public class About implements Action
     catch (OperationCanceledException oce)
     {
       Logger.info(oce.getMessage());
-      return;
     }
     catch (Exception e)
     {
@@ -43,7 +42,6 @@ public class About implements Action
       throw new ApplicationException(Application.getI18n().tr("Fehler beim Anzeigen des Dialogs"),e);
     }
   }
-
 }
 
 

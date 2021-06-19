@@ -45,7 +45,7 @@ import de.willuhn.util.ApplicationException;
 /**
  * Dialog zum Konfigurieren der Boxen.
  */
-public class ChooseBoxesDialog extends AbstractDialog
+public class ChooseBoxesDialog extends AbstractDialog<Object>
 {
   private TablePart table = null;
   private Button down     = null;
@@ -77,6 +77,7 @@ public class ChooseBoxesDialog extends AbstractDialog
        * @see de.willuhn.jameica.gui.parts.TablePart#getEditorControl(int, org.eclipse.swt.widgets.TableItem, java.lang.String)
        * Ueberschrieben, um nur Ziffern bei der Hoehe zuzulassen.
        */
+      @Override
       protected Control getEditorControl(int row, TableItem item, String oldValue)
       {
         final String validChars = "0123456789";
@@ -176,7 +177,7 @@ public class ChooseBoxesDialog extends AbstractDialog
 
         try
         {
-          List checked = table.getItems(true);
+          List<Box> checked = table.getItems(true);
           
           // Entfernen und eins weiter oben wieder einfuegen
           int index = table.removeItem(box);
@@ -202,7 +203,7 @@ public class ChooseBoxesDialog extends AbstractDialog
         
         try
         {
-          List checked = table.getItems(true);
+          List<Box> checked = table.getItems(true);
 
           int index = table.removeItem(box);
           if (index == -1)

@@ -34,11 +34,11 @@ import de.willuhn.util.I18N;
  */
 public class OnlineUpdates extends AbstractBox
 {
-  private final static I18N i18n = Application.getI18n();
-  private final static Settings settings = new Settings(OnlineUpdates.class);
+  private static final I18N i18n = Application.getI18n();
+  private static final Settings settings = new Settings(OnlineUpdates.class);
   private SystemRepositoryTrustMessageConsumer mc = new SystemRepositoryTrustMessageConsumer();
   
-  private List<Button> buttons = new ArrayList<Button>();
+  private List<Button> buttons = new ArrayList<>();
 
   /**
    * @see de.willuhn.jameica.gui.boxes.Box#getName()
@@ -51,6 +51,7 @@ public class OnlineUpdates extends AbstractBox
   /**
    * @see de.willuhn.jameica.gui.boxes.AbstractBox#isActive()
    */
+  @Override
   public boolean isActive()
   {
     return isEnabled();
@@ -59,6 +60,7 @@ public class OnlineUpdates extends AbstractBox
   /**
    * @see de.willuhn.jameica.gui.boxes.AbstractBox#isEnabled()
    */
+  @Override
   public boolean isEnabled()
   {
     // Zeigen wir nur an, wenn die Online-Updates noch deaktiviert sind und der Dialog noch nie angezeigt wurde.
@@ -69,6 +71,7 @@ public class OnlineUpdates extends AbstractBox
   /**
    * @see de.willuhn.jameica.gui.boxes.Box#setEnabled(boolean)
    */
+  @Override
   public void setEnabled(boolean enabled)
   {
     // Das darf der User nicht.

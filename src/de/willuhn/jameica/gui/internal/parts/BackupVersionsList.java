@@ -13,7 +13,8 @@ package de.willuhn.jameica.gui.internal.parts;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -64,8 +65,9 @@ public class BackupVersionsList extends TablePart
       public void format(TableItem item)
       {
         Object data = item.getData();
-        if (data == null || !(data instanceof Plugin))
+        if (!(data instanceof Plugin)) {
           return;
+        }
         Plugin p = (Plugin) data;
         
         if (p.versionMissmatch || p.noBackup)
@@ -106,7 +108,7 @@ public class BackupVersionsList extends TablePart
     // aber nicht im Backup enthalten sind. Deren Daten wuerden
     // nach dem Restore verloren gehen
     List<Manifest> l = Application.getPluginLoader().getInstalledManifests();
-    Hashtable<String,Manifest> installed = new Hashtable<String, Manifest>();
+    HashMap<String,Manifest> installed = new HashMap<>();
     for (int i=0;i<l.size();++i)
     {
       Manifest mf = l.get(i);
@@ -114,8 +116,8 @@ public class BackupVersionsList extends TablePart
     }
     
     Properties props = file.getProperties();
-    Enumeration keys = props.keys();
-    ArrayList<Plugin> list = new ArrayList<Plugin>();
+    Enumeration<Object> keys = props.keys();
+    ArrayList<Plugin> list = new ArrayList<>();
     while (keys.hasMoreElements())
     {
       String pc = (String) keys.nextElement();
@@ -147,10 +149,10 @@ public class BackupVersionsList extends TablePart
     // Jetzt checken wir, ob in der "installed"-Liste noch
     // was drin steht. Das sind die, zu denen kein Backup
     // vorliegt
-    Enumeration<String> missing = installed.keys();
-    while (missing.hasMoreElements())
+    Iterator<String> missing = installed.keySet().iterator();
+    while (missing.hasNext())
     {
-      String pc = missing.nextElement();
+      String pc = missing.next();
       list.add(new Plugin(pc,null));
     }
     return list;
@@ -217,8 +219,9 @@ public class BackupVersionsList extends TablePart
      */
     public boolean equals(GenericObject other) throws RemoteException
     {
-      if (other == null || !(other instanceof Plugin))
+      if (!(other instanceof Plugin)) {
         return false;
+      }
       return this.getID().equals(other.getID());
     }
 

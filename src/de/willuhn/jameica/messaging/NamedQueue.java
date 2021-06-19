@@ -26,11 +26,11 @@ import de.willuhn.util.Queue;
 public final class NamedQueue implements MessagingQueue
 {
   // Maximal-Zahl gleichzeitiger Nachrichten.
-  private final static int MAX_MESSAGES = 1000;
+  private static final int MAX_MESSAGES = 1000;
 
-  private static Worker worker = null;
+  private static Worker worker = new Worker();
 
-  private List<MessageConsumer> consumers  = new LinkedList<MessageConsumer>();
+  private List<MessageConsumer> consumers  = new LinkedList<>();
   private Queue messages                   = new Queue(MAX_MESSAGES);
   private String name                      = null;
 
@@ -42,12 +42,10 @@ public final class NamedQueue implements MessagingQueue
   {
     this.name = name;
     Logger.debug("creating message queue " + this.name);
-    if (worker == null)
-    {
-      Logger.debug("starting messaging worker thread");
-      worker = new Worker();
+    Logger.debug("starting messaging worker thread");
+    try {
       worker.start();
-    }
+    } catch (IllegalThreadStateException e) {}
     worker.register(this);
   }
   
@@ -144,7 +142,7 @@ public final class NamedQueue implements MessagingQueue
     if (message == null)
       return;
 
-    if (consumers.size() == 0)
+    if (consumers.isEmpty())
     {
       // Das ist bewusst Debug-Level weil das durchaus vorkommen kann.
       Logger.debug("no message consumers defined, ignoring message");
@@ -170,7 +168,7 @@ public final class NamedQueue implements MessagingQueue
     if (message == null)
       return;
 
-    if (consumers.size() == 0)
+    if (consumers.isEmpty())
     {
       // Das ist bewusst Debug-Level weil das durchaus vorkommen kann.
       Logger.debug("no message consumers defined, ignoring message");
@@ -187,7 +185,7 @@ public final class NamedQueue implements MessagingQueue
   private static class Worker extends Thread
   {
     private Object lock = new Object();
-    private List<NamedQueue> queues = new LinkedList<NamedQueue>();
+    private List<NamedQueue> queues = new LinkedList<>();
     private boolean quit = false;
 
     /**
@@ -306,6 +304,7 @@ public final class NamedQueue implements MessagingQueue
     /**
      * @see java.lang.Runnable#run()
      */
+    @Override
     public void run()
     {
       while(!quit)

@@ -31,7 +31,7 @@ import de.willuhn.util.ApplicationException;
 /**
  * Ein Dialog, der die Details einer Log-Nachricht anzeigen kann.
  */
-public class LogDetailDialog extends AbstractDialog
+public class LogDetailDialog extends AbstractDialog<Object>
 {
   private Message message = null;
 

@@ -14,7 +14,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
-import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 
 /**
@@ -23,7 +22,6 @@ import de.willuhn.security.Checksum;
 public class Certificate
 {
   private X509Certificate cert = null;
-  private javax.security.cert.X509Certificate cert2 = null;
 
   /**
    * ct.
@@ -32,15 +30,6 @@ public class Certificate
   public Certificate(X509Certificate cert)
   {
     this.cert = cert;
-  }
-
-  /**
-   * ct.
-   * @param cert
-   */
-  public Certificate(javax.security.cert.X509Certificate cert)
-  {
-    this.cert2 = cert;
   }
 
   /**
@@ -86,23 +75,10 @@ public class Certificate
   private String getFingerprint(String algorithm) throws CertificateEncodingException, NoSuchAlgorithmException
   {
     byte[] sig = null;
-    if (this.cert != null)
-      sig = cert.getEncoded();
-    else
-    {
-      try
-      {
-        sig = cert2.getEncoded();
-      }
-      catch (javax.security.cert.CertificateEncodingException e)
-      {
-        Logger.error("error while encoding certificate",e);
-        throw new CertificateEncodingException(e.getMessage());
-      }
-    }
+    sig = cert.getEncoded();
     
     byte[] digest = Checksum.checksum(sig,algorithm);
-    StringBuffer sb = new StringBuffer(2 * digest.length);
+    StringBuilder sb = new StringBuilder(2 * digest.length);
     for (int i = 0; i < digest.length; ++i) {
       int k = digest[i] & 0xFF;
       if (k < 0x10) {
@@ -122,10 +98,7 @@ public class Certificate
    */
   public Principal getSubject()
   {
-    if (this.cert != null)
-      return new Principal(cert.getSubjectDN());
-
-    return new Principal(cert2.getSubjectDN());
+    return new Principal(cert.getSubjectX500Principal());
   }
   
   /**
@@ -134,10 +107,7 @@ public class Certificate
    */
   public Principal getIssuer()
   {
-    if (this.cert != null)
-      return new Principal(cert.getIssuerDN());
-
-    return new Principal(cert2.getIssuerDN());
+    return new Principal(cert.getIssuerX500Principal());
   }
 }
 

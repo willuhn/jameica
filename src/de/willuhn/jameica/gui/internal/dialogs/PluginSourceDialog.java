@@ -33,9 +33,9 @@ import de.willuhn.util.ApplicationException;
 /**
  * Dialog zur Auswahl einer Plugin-Quelle.
  */
-public class PluginSourceDialog extends AbstractDialog
+public class PluginSourceDialog extends AbstractDialog<Object>
 {
-  private final static int WINDOW_WIDTH = 450;
+  private static final int WINDOW_WIDTH = 450;
   
   private Manifest manifest = null;
   private PluginSource choosen = null;

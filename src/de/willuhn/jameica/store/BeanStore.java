@@ -25,7 +25,6 @@ import javax.xml.bind.Unmarshaller;
 
 import de.willuhn.annotation.Lifecycle;
 import de.willuhn.annotation.Lifecycle.Type;
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.security.crypto.AESEngine;
 import de.willuhn.jameica.security.crypto.Engine;
 import de.willuhn.jameica.services.BeanService;
@@ -56,16 +55,15 @@ public class BeanStore
     // Ne, dann neu erstellen
     if (!file.exists())
     {
-      BeanContainer<T> container = new BeanContainer<T>(type,encrypted);
+      BeanContainer<T> container = new BeanContainer<>(type,encrypted);
       Logger.info("created new " + container);
       return container;
     }
 
-    InputStream is = null;
-    InputStream is2 = null;
     
-    try
-    {
+    try(
+        InputStream is2 = this.engine.decrypt(new BufferedInputStream(new FileInputStream(file)));
+    ) {
       // Ja, dann laden
       JAXBContext ctx = JAXBContext.newInstance(BeanContainer.class,type);
       Unmarshaller u = ctx.createUnmarshaller();
@@ -88,15 +86,14 @@ public class BeanStore
       //
       ////////////////
       
-      is = new BufferedInputStream(new FileInputStream(file));
+      BeanContainer<T> container = (BeanContainer<T>) u.unmarshal(is2);
       Logger.info("loading bean container from " + file);
-      if (encrypted)
+      if (!encrypted)
       {
-        Logger.info("decrypting bean container");
-        is2 = this.engine.decrypt(is);
+        Logger.info("bean container encryption is disabled");
+        container = (BeanContainer<T>) u.unmarshal((InputStream)null);
       }
       
-      BeanContainer<T> container = (BeanContainer<T>) u.unmarshal(is2);
       Logger.info("loaded " + container);
       return container;
     }
@@ -105,10 +102,6 @@ public class BeanStore
       Logger.error("unable to load bean-container",e);
       throw new ApplicationException(Application.getI18n().tr("Laden des Bean-Container fehlgeschlagen: {0}",e.getMessage()));
     }
-    finally
-    {
-      IOUtil.close(is,is2);
-    }
   }
   
   /**
@@ -116,7 +109,7 @@ public class BeanStore
    * @param container der zu speichernde Container.
    * @throws ApplicationException
    */
-  public void store(BeanContainer container) throws ApplicationException
+  public void store(BeanContainer<?> container) throws ApplicationException
   {
     File tmp = null;
     try
@@ -130,18 +123,19 @@ public class BeanStore
       Marshaller m = ctx.createMarshaller();
       m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
       m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
-      
-      OutputStream os = new BufferedOutputStream(new FileOutputStream(tmp));
-      if (container.encrypted)
-        os = this.engine.encrypt(os);
-      
-      m.marshal(container,os);
-      
-      // Wir koennen das Flushen und Schliessen nicht im finally() machen,
-      // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
-      // Das Umbenennen wuerde sonst _vorher_ passieren.
-      os.flush();
-      os.close();
+
+      try (OutputStream os = new BufferedOutputStream(new FileOutputStream(tmp))) {
+        if (container.encrypted) {
+          m.marshal(container,this.engine.encrypt(os));
+        } else {
+          m.marshal(container,os);
+        }
+
+        // Wir koennen das Flushen und Schliessen nicht im finally() machen,
+        // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
+        // Das Umbenennen wuerde sonst _vorher_ passieren.
+        os.flush();
+      }
       
       if (!tmp.exists())
         throw new IOException("stored file does not exist");
@@ -173,7 +167,7 @@ public class BeanStore
    * @param encrypted true, wenn der Beanstore verschluesselt speichern soll.
    * @return der Ablage-Ort.
    */
-  private File getFile(Class type, boolean encrypted)
+  private File getFile(Class<?> type, boolean encrypted)
   {
     String dir  = Application.getConfig().getConfigDir();
     String name = type.getName();

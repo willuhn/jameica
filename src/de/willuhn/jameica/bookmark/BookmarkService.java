@@ -40,12 +40,12 @@ public class BookmarkService
   /**
    * Queue, an die Messages geschickt werden, wenn ein Bookmark erstellt wurde.
    */
-  public final static String QUEUE_CREATED = "jameica.bookmark.created";
+  public static final String QUEUE_CREATED = "jameica.bookmark.created";
   
   /**
    * Queue, an die Messages geschickt werden, wenn ein Bookmark geloescht wurde.
    */
-  public final static String QUEUE_DELETED = "jameica.bookmark.deleted";
+  public static final String QUEUE_DELETED = "jameica.bookmark.deleted";
 
   @Resource private BeanStore store;
   @Resource private ContextSerializer serializer;
@@ -125,7 +125,7 @@ public class BookmarkService
    */
   public List<Bookmark> search(String s) throws ApplicationException
   {
-    List<Bookmark> result = new ArrayList<Bookmark>();
+    List<Bookmark> result = new ArrayList<>();
     
     String query = StringUtils.trimToNull(s);
     if (query == null)

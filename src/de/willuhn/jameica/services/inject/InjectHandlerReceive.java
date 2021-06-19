@@ -57,7 +57,7 @@ public class InjectHandlerReceive implements InjectHandler
         
         MessageConsumer consumer = new MessageConsumer()
         {
-          private WeakReference ref = new WeakReference(bean);
+          private WeakReference<Object> ref = new WeakReference<>(bean);
           
           public void handleMessage(Message message) throws Exception
           {
@@ -70,15 +70,16 @@ public class InjectHandlerReceive implements InjectHandler
             }
             
             QueryMessage msg = (QueryMessage) message;
-            if (!m.isAccessible())
+            if (!m.canAccess(o)) {
               m.setAccessible(true);
+            }
             m.invoke(o,msg.getData());
           }
           
           /**
            * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
            */
-          public Class[] getExpectedMessageTypes()
+          public Class<Message>[] getExpectedMessageTypes()
           {
             return new Class[]{QueryMessage.class};
           }

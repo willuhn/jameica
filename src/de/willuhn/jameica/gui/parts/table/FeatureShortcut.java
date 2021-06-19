@@ -34,7 +34,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class FeatureShortcut implements Feature
 {
-  private List<Listener> shortcuts = new ArrayList<Listener>();
+  private List<Listener> shortcuts = new ArrayList<>();
   private boolean applied = false;
   
   /**
@@ -86,7 +86,7 @@ public class FeatureShortcut implements Feature
    * @param ctx der Context.
    * @param items Liste der Items.
    */
-  private void applyShortcuts(final Context ctx, List items)
+  private void applyShortcuts(final Context ctx, List<?> items)
   {
     for (Object o:items)
     {
@@ -94,7 +94,6 @@ public class FeatureShortcut implements Feature
       {
         // Rekursion
         this.applyShortcuts(ctx,((ContextMenu)o).getItems());
-        continue;
       }
       else if (o instanceof ContextMenuItem)
       {

@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,8 +48,8 @@ import de.willuhn.util.I18N;
  */
 public class FatalErrorView extends AbstractView
 {
-  private final static DateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd");
-  private final static I18N i18n             = Application.getI18n();
+  private static final DateFormat DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd");
+  private static final I18N i18n             = Application.getI18n();
 
   /**
    * @see de.willuhn.jameica.gui.AbstractView#bind()
@@ -63,7 +64,10 @@ public class FatalErrorView extends AbstractView
 	    Container group = new SimpleContainer(getParent());
 	    group.addHeadline(i18n.tr("Unerwarteter Fehler"));
 	    group.addText(i18n.tr("Es ist ein unerwarteter Fehler aufgetreten."),true,Color.ERROR);
-	    group.addText(i18n.tr("Wenn Sie sich aktiv an der Verbesserung dieser Software beteiligen möchten, " +                    	      "dann klicken Sie einfach auf \"Diagnose-Protokoll speichern\" und senden " +                    	      "Sie die Datei zusammen mit einer kurzen Beschreibung per Mail an den Autor des Plugins.\n\n" +                    	      "Vielen Dank."),true);
+	    group.addText(i18n.tr("Wenn Sie sich aktiv an der Verbesserung dieser Software beteiligen möchten, " +
+                    	      "dann klicken Sie einfach auf \"Diagnose-Protokoll speichern\" und senden " +
+                    	      "Sie die Datei zusammen mit einer kurzen Beschreibung per Mail an den Autor des Plugins.\n\n" +
+                    	      "Vielen Dank."),true);
 	
 	    final String s = toString(t);
 
@@ -91,10 +95,8 @@ public class FatalErrorView extends AbstractView
           if (f == null || f.length() == 0)
             return;
           
-          Writer writer = null;
-          try
+          try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(f)),StandardCharsets.ISO_8859_1)))
           {
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(f)),"iso-8859-1"));
 
             writer.write("*** " + i18n.tr("System-Informationen") + " ***\n\n");
             writer.write(getSystemStats() + "\n\n");
@@ -106,25 +108,13 @@ public class FatalErrorView extends AbstractView
             writer.write("*** " + i18n.tr("Systemprotokoll") + " ***\n\n");
             for (Message m:Logger.getLastLines())
               writer.write(m + "\n");
-            
-            writer.close();
-            writer = null;
-            
+
             Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Diagnose-Protokoll gespeichert"),StatusBarMessage.TYPE_SUCCESS));
           }
           catch (Exception e)
           {
             Logger.error("error while writing diagnostic file",e);
             Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Speichern: {0}",e.getMessage()),StatusBarMessage.TYPE_ERROR));
-          }
-          finally
-          {
-            if (writer != null)
-            {
-              try {
-                writer.close();
-              } catch (Exception e) {/* useless */}
-            }
           }
         }
       },null,false,"document-save.png");
@@ -155,7 +145,7 @@ public class FatalErrorView extends AbstractView
     if (t == null)
       return "";
     
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
 
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     t.printStackTrace(new PrintStream(bos));
@@ -169,7 +159,7 @@ public class FatalErrorView extends AbstractView
    */
   private String getSystemStats()
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     
     sb.append("Jameica: " + Application.getManifest().getVersion() + " (build date: " + Application.getManifest().getBuildDate() + ")\n\n");
     sb.append("Plugins:\n");
@@ -201,6 +191,7 @@ public class FatalErrorView extends AbstractView
   /**
    * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
    */
+  @Override
   public boolean canBookmark()
   {
     return false;

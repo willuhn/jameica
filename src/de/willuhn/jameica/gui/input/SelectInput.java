@@ -36,7 +36,7 @@ import de.willuhn.logging.Logger;
 public class SelectInput extends AbstractInput
 {
   // Fachdaten
-  private List list           = null;
+  private List<?> list        = null;
   private Object preselected  = null;
   private String attribute    = null;
   
@@ -59,7 +59,7 @@ public class SelectInput extends AbstractInput
    *    umgestellt werden.
    */
   @Deprecated
-  public SelectInput(GenericIterator list, GenericObject preselected) throws RemoteException
+  public SelectInput(GenericIterator<?> list, GenericObject preselected) throws RemoteException
   {
     this(list != null ? PseudoIterator.asList(list) : null,preselected);
   }
@@ -79,7 +79,7 @@ public class SelectInput extends AbstractInput
    * @param list Liste der Objekte.
    * @param preselected das vorausgewaehlte Objekt.
    */
-  public SelectInput(List list, Object preselected)
+  public SelectInput(List<?> list, Object preselected)
   {
     super();
     this.list        = list;
@@ -201,8 +201,9 @@ public class SelectInput extends AbstractInput
         {
           Object object = this.list.get(i);
 
-          if (object == null)
+          if (object == null) {
             continue;
+          }
 
           // Anzuzeigenden Text ermitteln
           String text = format(object);
@@ -213,14 +214,11 @@ public class SelectInput extends AbstractInput
           
           // Wenn unser Objekt dem vorausgewaehlten entspricht, und wir noch
           // keines ausgewaehlt haben merken wir uns dessen Index
-          if (selected == -1 && this.preselected != null)
-          {
-            if (BeanUtil.equals(object,this.preselected))
-            {
+          if (selected == -1 && this.preselected != null && BeanUtil.equals(object,this.preselected)) {
               selected = i;
-              if (havePleaseChoose)
+              if (havePleaseChoose) {
                 selected++;
-            }
+              }
           }
         }
       }
@@ -235,7 +233,7 @@ public class SelectInput extends AbstractInput
     this.combo.select(selected > -1 ? selected : 0);
 
     // BUGZILLA 550
-    if (this.editable && this.preselected != null && !this.list.contains(this.preselected) && (this.preselected instanceof String))
+    if (this.editable && this.preselected != null && this.list != null && !this.list.contains(this.preselected) && (this.preselected instanceof String))
       this.combo.setText((String)this.preselected);
   }
   
@@ -243,7 +241,7 @@ public class SelectInput extends AbstractInput
    * Ersetzt den Inhalt der Selectbox komplett gegen die angegebene Liste.
    * @param list die neue Liste der Daten.
    */
-  public void setList(List list)
+  public void setList(List<?> list)
   {
     this.list = list;
     this.applyList();
@@ -253,7 +251,7 @@ public class SelectInput extends AbstractInput
    * Liefert die komplette Liste der Fachobjekte in der Liste.
    * @return Liste der Fachobjekte.
    */
-  public List getList()
+  public List<?> getList()
   {
     return this.list;
   }
@@ -373,6 +371,9 @@ public class SelectInput extends AbstractInput
     return enabled;
   }
 
+	/**
+	 * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+	 */
   @Override
   protected void update() throws OperationCanceledException
   {

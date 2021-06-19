@@ -28,6 +28,8 @@ public class SSLRMIClientSocketFactory implements Serializable,
     RMIClientSocketFactory
 {
 
+  private static final long serialVersionUID = 5971693750839330147L;
+
   /**
    * @see java.rmi.server.RMIClientSocketFactory#createSocket(java.lang.String, int)
    */

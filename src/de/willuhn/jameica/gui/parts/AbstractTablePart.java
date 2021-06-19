@@ -46,22 +46,22 @@ public abstract class AbstractTablePart implements Part
   protected boolean rememberColWidth       = false;
   protected boolean rememberOrder          = false;
   protected boolean rememberState          = false;
-  protected List<Column> columns           = new LinkedList<Column>();
-  protected final static Settings settings = new Settings(AbstractTablePart.class);
+  protected List<Column> columns           = new LinkedList<>();
+  protected static final Settings settings = new Settings(AbstractTablePart.class);
 
   protected boolean multi                  = false; // Multiple Markierung
   protected boolean checkable              = false;
   
-  protected List<Listener> selectionListeners = new ArrayList<Listener>();
-  protected Action action                  = null;
+  protected List<Listener> selectionListeners = new ArrayList<>();
+  protected Action action                     = null;
 
-  private Map<Class,Feature> features      = new HashMap<Class,Feature>();
+  private Map<Class<? extends Feature>,Feature> features = new HashMap<>();
 
   /**
    * ct.
    * @param action die Default-Action.
    */
-  public AbstractTablePart(Action action)
+  protected AbstractTablePart(Action action)
   {
     this.action = action;
     this.addFeature(new FeatureClipboard());
@@ -105,7 +105,6 @@ public abstract class AbstractTablePart implements Part
     catch (Exception e)
     {
       Logger.warn("feature not found: " + featureName);
-      return;
     }
   }
 
@@ -303,17 +302,17 @@ public abstract class AbstractTablePart implements Part
   {
     try
     {
-      String s = "";
+      StringBuilder s = new StringBuilder();
       if (cols != null && cols.length > 0)
       {
         for (int i=0;i<cols.length;++i)
         {
-          s += Integer.toString(cols[i]);
+          s.append(Integer.toString(cols[i]));
           if (i+1<cols.length)
-            s += ",";
+            s.append(",");
         }
       }
-      settings.setAttribute("column.order." + getID(),s.length() == 0 ? null : s);
+      settings.setAttribute("column.order." + getID(),s.length() == 0 ? null : s.toString());
     }
     catch (Exception e)
     {
@@ -342,7 +341,7 @@ public abstract class AbstractTablePart implements Part
    * @return Liste der Fachobjekte.
    * @throws RemoteException
    */
-  public abstract List getItems() throws RemoteException;
+  public abstract List<?> getItems() throws RemoteException;
 
   /**
    * Liefert die markierten Objekte.
@@ -489,10 +488,10 @@ public abstract class AbstractTablePart implements Part
    * @param iterator zu konvertierender Iterator.
    * @return Liste mit den Objekten.
    */
-  protected static List asList(GenericIterator iterator)
+  protected static List<?> asList(GenericIterator<?> iterator)
   {
     if (iterator == null)
-      return null;
+      return new ArrayList<>();
     try
     {
       return PseudoIterator.asList(iterator);
@@ -501,13 +500,13 @@ public abstract class AbstractTablePart implements Part
     {
       Logger.error("unable to init list",re);
     }
-    return new ArrayList();
+    return new ArrayList<>();
   }
   
   /**
    * Hilfsklasse zum Kapseln eines einzelnen Elements in der Tabelle.
    */
-  public abstract class AbstractTableItem implements Comparable
+  public abstract class AbstractTableItem implements Comparable<Object>
   {
     /**
      * Haelt Kontextdaten des Items.
@@ -547,7 +546,7 @@ public abstract class AbstractTablePart implements Part
      */
     public boolean equals(Object obj)
     {
-      if (obj == null || !(obj instanceof AbstractTableItem))
+      if (!(obj instanceof AbstractTableItem))
         return false;
 
       try

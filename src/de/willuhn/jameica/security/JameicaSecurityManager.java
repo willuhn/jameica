@@ -33,7 +33,7 @@ public class JameicaSecurityManager extends SecurityManager
   /**
    * Anzahl der Milli-Sekunden, die eine Autorisierung fuer den Schreibzugriff gueltig ist
    */
-  private final static long TIMEOUT = 5 * 60 * 1000L;
+  private static final long TIMEOUT = 5 * 60 * 1000L;
   
   private AtomicInteger privCount = new AtomicInteger();
   private String jameicaPath      = null;
@@ -60,6 +60,7 @@ public class JameicaSecurityManager extends SecurityManager
   /**
    * @see java.lang.SecurityManager#checkDelete(java.lang.String)
    */
+  @Override
   public void checkDelete(String file)
   {
     checkFile(file);
@@ -69,6 +70,7 @@ public class JameicaSecurityManager extends SecurityManager
   /**
    * @see java.lang.SecurityManager#checkWrite(java.lang.String)
    */
+  @Override
   public void checkWrite(String file)
   {
     checkFile(file); 
@@ -163,6 +165,7 @@ public class JameicaSecurityManager extends SecurityManager
   /**
    * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
    */
+  @Override
   public void checkPermission(Permission perm)
   {
     checkPermission(perm,getSecurityContext());
@@ -172,6 +175,7 @@ public class JameicaSecurityManager extends SecurityManager
   /**
    * @see java.lang.SecurityManager#checkPermission(java.security.Permission, java.lang.Object)
    */
+  @Override
   public void checkPermission(Permission perm, Object context)
   {
     // Zur Zeit laesst der Security-Manager alles bis auf Schreib-Zugriff

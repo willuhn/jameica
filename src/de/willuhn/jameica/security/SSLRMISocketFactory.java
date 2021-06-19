@@ -141,7 +141,7 @@ public class SSLRMISocketFactory extends RMISocketFactory
       cipher = s.getEnabledCipherSuites();
       Logger.debug(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
     }
-    StringBuffer sb = new StringBuffer("enabled protocols for " + socketType + " socket: ");
+    StringBuilder sb = new StringBuilder("enabled protocols for " + socketType + " socket: ");
     for (int i=0;i<protos.length;++i) 
     {
       sb.append(protos[i]);
@@ -149,7 +149,7 @@ public class SSLRMISocketFactory extends RMISocketFactory
     } 
     Logger.debug(sb.toString());
 
-    sb = new StringBuffer("enabled cipher suites for " + socketType + " socket: ");
+    sb = new StringBuilder("enabled cipher suites for " + socketType + " socket: ");
     for (int i=0;i<cipher.length;++i) 
     {
       sb.append(cipher[i]);

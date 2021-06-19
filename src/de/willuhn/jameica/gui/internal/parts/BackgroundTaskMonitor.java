@@ -42,10 +42,11 @@ public class BackgroundTaskMonitor extends ProgressBar
   /**
    * Datums-Format dd.MM.yyyy HH:mm:ss.
    */
-  private final static DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+  // Not thread safe therefore not marked as static
+  private final DateFormat DF  = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
-  private final static AtomicBoolean DEFAULT_LOCKED = new AtomicBoolean(false);
-  private final static AtomicLong USAGES = new AtomicLong(0);
+  private static final AtomicBoolean DEFAULT_LOCKED = new AtomicBoolean(false);
+  private static final AtomicLong USAGES = new AtomicLong(0);
 
   private DelayedListener delay     = null;
   private AtomicBoolean started     = new AtomicBoolean(false);
@@ -254,6 +255,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   /**
    * @see de.willuhn.util.ProgressMonitor#setPercentComplete(int)
    */
+  @Override
   public void setPercentComplete(int arg0)
   {
     check();
@@ -263,6 +265,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   /**
    * @see de.willuhn.util.ProgressMonitor#addPercentComplete(int)
    */
+  @Override
   public void addPercentComplete(int arg0)
   {
     check();
@@ -272,6 +275,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   /**
    * @see de.willuhn.util.ProgressMonitor#getPercentComplete()
    */
+  @Override
   public int getPercentComplete()
   {
     check();
@@ -281,6 +285,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   /**
    * @see de.willuhn.util.ProgressMonitor#setStatus(int)
    */
+  @Override
   public void setStatus(int status)
   {
     // Wenn wir in einem finalen Zustand sind, kann der Cancel-Button nicht mehr gedrueckt werden
@@ -297,6 +302,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   /**
    * @see de.willuhn.util.ProgressMonitor#setStatusText(java.lang.String)
    */
+  @Override
   public void setStatusText(String arg0)
   {
     check();
@@ -306,6 +312,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   /**
    * @see de.willuhn.util.ProgressMonitor#log(java.lang.String)
    */
+  @Override
   public void log(String arg0)
   {
     check();
@@ -315,6 +322,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   /**
    * @see de.willuhn.jameica.gui.parts.ProgressBar#clearLog()
    */
+  @Override
   public void clearLog()
   {
     check();

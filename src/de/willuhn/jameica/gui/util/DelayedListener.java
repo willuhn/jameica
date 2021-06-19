@@ -40,7 +40,7 @@ public class DelayedListener implements Listener
   /**
    * Das Default-Timeout.
    */
-  public final static int TIMEOUT_DEFAULT = 300;
+  public static final int TIMEOUT_DEFAULT = 300;
 
   private long count         = 0;
   private int timeout        = TIMEOUT_DEFAULT;

@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.internal.dialogs.PluginSourceDialog;
 import de.willuhn.jameica.messaging.TextMessage;
 import de.willuhn.jameica.plugin.Manifest;
@@ -196,7 +197,9 @@ public class Repository
           if (t.exists())
           {
             sig = new File(dir,name + ".zip.sha1");
-            t.get(new BufferedOutputStream(new FileOutputStream(sig)),null);
+            try(BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(sig))) {
+              t.get(stream,null);
+            }
             Logger.info("created signature file " + sig);
           }
           else if (interactive)
@@ -215,7 +218,9 @@ public class Repository
           // Denn die Download-URL kann etwas dynamisches sein, was nicht auf ".zip" endet
           archive = new File(dir,name + ".zip");
           Logger.info("creating deploy file " + archive);
-          t.get(new BufferedOutputStream(new FileOutputStream(archive)),monitor);
+          try(BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(archive))) {
+            t.get(stream,monitor);
+          }
           //////////////////////////////////////////////////////////////////////
 
 
@@ -317,7 +322,7 @@ public class Repository
     
     if (sources.size() > 1)
     {
-      PluginSourceDialog psd = new PluginSourceDialog(PluginSourceDialog.POSITION_CENTER,mf);
+      PluginSourceDialog psd = new PluginSourceDialog(AbstractDialog.POSITION_CENTER,mf);
       return (PluginSource) psd.open();
     }
     

@@ -31,7 +31,7 @@ import de.willuhn.util.ApplicationException;
 /**
  * Ein vorkonfigurierter Login-Dialog zur Abfrage von Username und Passwort.
  */
-public class LoginDialog extends AbstractDialog
+public class LoginDialog extends AbstractDialog<Object>
 {
   private Login login = null;
   

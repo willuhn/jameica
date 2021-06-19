@@ -92,13 +92,13 @@ public class TablePart extends AbstractTablePart
   //////////////////////////////////////////////////////////
   // Listeners, Actions
   private de.willuhn.datasource.rmi.Listener deleteListener = new DeleteListener();
-  private List<TableChangeListener> changeListeners         = new ArrayList<TableChangeListener>();
+  private List<TableChangeListener> changeListeners         = new ArrayList<>();
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
   // Sortierung
-  private Map<Integer,List<Item>> sortTable = new HashMap<Integer,List<Item>>();
-  private Map<Object,String[]> textTable    = new HashMap<Object,String[]>();
+  private Map<Integer,List<Item>> sortTable = new HashMap<>();
+  private Map<Object,String[]> textTable    = new HashMap<>();
   private int sortedBy                      = -1; // Index der sortierten Spalte
   private boolean direction                 = true; // Ausrichtung
   //////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ public class TablePart extends AbstractTablePart
    */
   public TablePart(Action action)
   {
-    this((List) null,action);
+    this((List<?>) null,action);
   }
 
   /**
@@ -129,7 +129,7 @@ public class TablePart extends AbstractTablePart
    * @param list Liste mit Objekten, die angezeigt werden soll.
    * @param action die beim Doppelklick auf ein Element ausgefuehrt wird.
    */
-  public TablePart(GenericIterator list, Action action)
+  public TablePart(GenericIterator<?> list, Action action)
   {
     this(asList(list),action);
   }
@@ -139,15 +139,16 @@ public class TablePart extends AbstractTablePart
    * @param list Liste mit Objekten, die angezeigt werden soll.
    * @param action die beim Doppelklick auf ein Element ausgefuehrt wird.
    */
-  public TablePart(List list, Action action)
+  public TablePart(List<?> list, Action action)
   {
     super(action);
     this.addFeature(new FeatureSummary());  // Per Default aktiv
 
     // Wir nehmen eine Kopie der Liste, damit sie uns niemand manipulieren kann
-    this.temp = new ArrayList();
-    if (list != null)
+    this.temp = new ArrayList<Object>();
+    if (!list.isEmpty()) {
       this.temp.addAll(list);
+    }
 
     this.i18n   = Application.getI18n();
     this.up     = SWTUtil.getImage("up.png");
@@ -206,7 +207,7 @@ public class TablePart extends AbstractTablePart
    */
   public List getItems(boolean onlyChecked) throws RemoteException
   {
-    ArrayList l = new ArrayList();
+    ArrayList<Object> l = new ArrayList<>();
 
     // Wenn die SWT-Tabelle noch nicht existiert oder disposed wurde,
     // liefern wir alle Elemente aus der temporaeren Liste
@@ -402,7 +403,7 @@ public class TablePart extends AbstractTablePart
           for (int i=0;i<this.columns.size();++i)
           {
             Column col   = this.columns.get(i);
-            List<Item> l = sortTable.get(new Integer(i));
+            List<Item> l = sortTable.get(Integer.valueOf(i));
             int pos      = l.indexOf(new Item(oldVersion,null));
             if (pos < 0)
             {
@@ -498,12 +499,12 @@ public class TablePart extends AbstractTablePart
       // Sortierung
       
       // Mal schauen, ob wir fuer die Spalte schon eine Sortierung haben
-      List<Item> l = sortTable.get(new Integer(i));
+      List<Item> l = sortTable.get(Integer.valueOf(i));
       if (l == null)
       {
         // Ne, also erstellen wir eine
-        l = new LinkedList<Item>();
-        sortTable.put(new Integer(i),l);
+        l = new LinkedList<>();
+        sortTable.put(Integer.valueOf(i),l);
       }
 
       l.add(di);
@@ -583,7 +584,7 @@ public class TablePart extends AbstractTablePart
     
     // Beim Schreiben der Titles schauen wir uns auch mal das erste Objekt an. 
     // Vielleicht sind ja welche dabei, die man rechtsbuendig ausrichten kann.
-    Object test = temp.size() > 0 ? temp.get(0) : null;
+    Object test = !temp.isEmpty() ? temp.get(0) : null;
 
     for (int i=0;i<this.columns.size();++i)
     {
@@ -675,6 +676,7 @@ public class TablePart extends AbstractTablePart
 
     // Listener fuer die Maus.
     table.addMouseListener(new MouseAdapter() {
+      @Override
       public void mouseDoubleClick(MouseEvent e)
       {
         if (action == null || e.button != 1)
@@ -683,6 +685,7 @@ public class TablePart extends AbstractTablePart
         open(getSelection());
       }
 
+      @Override
       public void mouseDown(MouseEvent e)
       {
         // jetzt noch dem Menu Bescheid sagen, wenn ein Element markiert wurde
@@ -701,7 +704,7 @@ public class TablePart extends AbstractTablePart
           try
           {
             state.put(getID() + ".object",event.data);
-            state.put(getID() + ".index",new Integer(table.getTopIndex()));
+            state.put(getID() + ".index",Integer.valueOf(table.getTopIndex()));
           }
           catch (Exception e)
           {
@@ -819,14 +822,14 @@ public class TablePart extends AbstractTablePart
 
           // Wir deaktivieren den Default-Button fuer den Zeitraum der Bearbeitung
           Button b = GUI.getShell().getDefaultButton();
-          final boolean enabled;
+          final boolean enabled2;
           if (b != null && !b.isDisposed() && b.isEnabled())
           {
-            enabled = b.getEnabled();
+            enabled2 = b.getEnabled();
             b.setEnabled(false);
           }
           else
-            enabled = false;
+            enabled2 = false;
 
           //////////////////////////////////////////////////////////////////////
           // Beendet das Editieren
@@ -838,7 +841,7 @@ public class TablePart extends AbstractTablePart
               
               Button b = GUI.getShell().getDefaultButton();
               if (b != null && !b.isDisposed())
-                b.setEnabled(enabled);
+                b.setEnabled(enabled2);
               
               // Aktuelle Zeile markieren
               select(item.getData());
@@ -925,6 +928,7 @@ public class TablePart extends AbstractTablePart
           // Listener fuer Maus
           editorControl.addFocusListener(new FocusAdapter()
           {
+            @Override
             public void focusLost(FocusEvent e)
             {
               commit.run();
@@ -998,7 +1002,7 @@ public class TablePart extends AbstractTablePart
     if (this.id != null)
       return id;
 
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     if (this.size() > 0)
     {
       // Wenn wir Daten in der Tabelle haben,
@@ -1067,7 +1071,6 @@ public class TablePart extends AbstractTablePart
             table.select(j);
             // Zwar koennte das Objekt auch mehrmals in der Tabelle stehen,
             // dann ist aber eigentlich was faul - daher machen wir das nicht
-            continue;
           }
         }
         catch (RemoteException e)
@@ -1082,6 +1085,9 @@ public class TablePart extends AbstractTablePart
     table.setFocus();
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#setChecked(java.lang.Object[], boolean)
+   */
   @Override
   public void setChecked(Object[] objects, boolean checked)
   {
@@ -1137,8 +1143,8 @@ public class TablePart extends AbstractTablePart
       return items[0].getData(); // genau ein Element markiert, also brauchen wir kein Array
 
     // mehrere Elemente markiert. Also Array
-    Class type = null;
-    ArrayList data = new ArrayList();
+    Class<? extends Object> type = null;
+    ArrayList<Object> data = new ArrayList<>();
     for (int i=0;i<items.length;++i)
     {
       Object elem = items[i].getData();
@@ -1217,10 +1223,10 @@ public class TablePart extends AbstractTablePart
       Column col = this.columns.get(i);
       if (col == null)
         return;
-      String id = col.getColumnId();
-      if (id == null)
+      String id2 = col.getColumnId();
+      if (id2 == null)
         continue; // HU? Ignorieren
-      if (id.equals(colName))
+      if (id2.equals(colName))
       {
         Logger.debug("table ordered by " + colName);
         orderBy(i);
@@ -1234,11 +1240,14 @@ public class TablePart extends AbstractTablePart
    */
   public void sort()
   {
-    // Falsch: Beim erneuten Aufruf von Sort darf nicht andersrum sortiert werden
-    // this.direction = !this.direction;
+    // Beim erneuten Aufruf von Sort darf nicht andersrum sortiert werden
+    // Die Funktion muss Idempotent sein
     orderBy(this.sortedBy);
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#restoreState()
+   */
   @Override
   public void restoreState()
   {
@@ -1305,7 +1314,7 @@ public class TablePart extends AbstractTablePart
     if (table == null || table.isDisposed())
       return;
 
-    List<Item> l = sortTable.get(new Integer(index));
+    List<Item> l = sortTable.get(Integer.valueOf(index));
     if (l == null)
       return; // nix zu sortieren.
 
@@ -1448,7 +1457,7 @@ public class TablePart extends AbstractTablePart
       {
         this.value = BeanUtil.get(this.data,this.column.getColumnId());
         if (this.value instanceof Comparable)
-          this.sortValue = (Comparable) this.value;
+          this.sortValue = (Comparable<?>) this.value;
         else
           this.sortValue = BeanUtil.toString(this.value);
         

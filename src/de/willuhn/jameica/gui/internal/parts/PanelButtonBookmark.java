@@ -37,10 +37,10 @@ public class PanelButtonBookmark extends PanelButton
   private MessageConsumer mcCreate = new MyCreateMessageConsumer();
   private MessageConsumer mcDelete = new MyDeleteMessageConsumer();
   
-  private final static String ICON_STARRED    = "starred.png";
-  private final static String ICON_NONSTARRED = "non-starred.png";
-  private final static String TEXT_CREATE     = Application.getI18n().tr("Lesezeichen erstellen");
-  private final static String TEXT_DELETE     = Application.getI18n().tr("(Zum Löschen erneut klicken)");
+  private static final String ICON_STARRED    = "starred.png";
+  private static final String ICON_NONSTARRED = "non-starred.png";
+  private static final String TEXT_CREATE     = Application.getI18n().tr("Lesezeichen erstellen");
+  private static final String TEXT_DELETE     = Application.getI18n().tr("(Zum Löschen erneut klicken)");
       
   /**
    * ct.
@@ -86,6 +86,7 @@ public class PanelButtonBookmark extends PanelButton
   /**
    * @see de.willuhn.jameica.gui.parts.PanelButton#getControl()
    */
+  @Override
   protected Control getControl()
   {
     Control c = super.getControl();
@@ -104,6 +105,7 @@ public class PanelButtonBookmark extends PanelButton
    * Wir liefern nur dann true, wenn die View Bookmarks erlaubt.
    * @see de.willuhn.jameica.gui.parts.PanelButton#isEnabled()
    */
+  @Override
   public boolean isEnabled()
   {
     return GUI.getCurrentView().canBookmark();
@@ -125,7 +127,7 @@ public class PanelButtonBookmark extends PanelButton
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }
@@ -167,7 +169,7 @@ public class PanelButtonBookmark extends PanelButton
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }

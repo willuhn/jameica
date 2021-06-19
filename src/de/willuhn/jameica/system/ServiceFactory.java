@@ -38,7 +38,7 @@ public final class ServiceFactory
 {
   private Settings settings = new Settings(ServiceFactory.class);
 
-  private Map<String,ServiceEntry> services = new HashMap<String,ServiceEntry>();
+  private Map<String,ServiceEntry> services = new HashMap<>();
 
   /**
    * Initialisiert die Services eines Plugins.
@@ -183,9 +183,9 @@ public final class ServiceFactory
    * @return die erzeugte Instanz.
    * @throws Exception
    */
-  private Service newInstance(Manifest manifest, Class serviceClass) throws Exception
+  private Service newInstance(Manifest manifest, Class<?> serviceClass) throws Exception
   {
-    Class impl = null;
+    Class<?> impl = null;
     try
     {
       // Wir nehmen die erste Implementierung, dir wir finden
@@ -212,7 +212,7 @@ public final class ServiceFactory
    * @throws ApplicationException falls Service nicht gefunden werden konnte
    * @throws RemoteException falls kein Zugriff auf Service via RMI moeglich
    */
-  public Service lookup(Class pluginClass, String serviceName) throws Exception
+  public Service lookup(Class<?> pluginClass, String serviceName) throws Exception
   {
     if (serviceName == null || pluginClass == null)
       return null;
@@ -264,11 +264,11 @@ public final class ServiceFactory
       return;
     
     Logger.info("shutting down local services");
-    ServiceDescriptor[] services = plugin.getManifest().getServices();
-    if (services == null || services.length == 0)
+    ServiceDescriptor[] services2 = plugin.getManifest().getServices();
+    if (services2 == null || services2.length == 0)
       return;
     
-    for (ServiceDescriptor s:services)
+    for (ServiceDescriptor s:services2)
     {
       String fullName = plugin.getClass().getName() + "." + s.getName();
       ServiceEntry entry = this.services.get(fullName);
@@ -350,7 +350,7 @@ public final class ServiceFactory
    * @param host Host (IP oder Hostname).
    * @param port TCP-Port.
    */
-  public void setLookup(Class pluginclass, String serviceName, String host, int port)
+  public void setLookup(Class<?> pluginclass, String serviceName, String host, int port)
   {
     String longName = pluginclass.getName() + "." + serviceName;
     if (host == null || host.length() == 0 || port == -1)
@@ -371,7 +371,7 @@ public final class ServiceFactory
    * @param serviceName Name des gesuchten Service.
    * @return Hostname, auf dem sich der Service befindet oder {@code null} wenn nicht definiert.
    */
-  public String getLookupHost(Class pluginclass, String serviceName)
+  public String getLookupHost(Class<?> pluginclass, String serviceName)
   {
     String value = settings.getString(pluginclass.getName() + "." + serviceName,null);
     if (value == null)
@@ -385,7 +385,7 @@ public final class ServiceFactory
    * @param serviceName Name des gesuchten Service.
    * @return TCP-Port, auf dem sich der Service befindet oder {@code -1} wenn nicht definiert.
    */
-  public int getLookupPort(Class pluginclass, String serviceName)
+  public int getLookupPort(Class<?> pluginclass, String serviceName)
   {
     String value = settings.getString(pluginclass.getName() + "." + serviceName,null);
     if (value == null)
@@ -405,7 +405,7 @@ public final class ServiceFactory
   private class ServiceEntry
   {
     private Service service    = null;
-    private Class serviceClass = null;
+    private Class<?> serviceClass = null;
     private boolean remote     = false;
   }
 }

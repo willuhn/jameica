@@ -19,6 +19,8 @@ package de.willuhn.jameica.system;
 public class OperationCanceledException extends RuntimeException
 {
 
+  private static final long serialVersionUID = 245212333678410413L;
+
   /**
    * ct.
    */

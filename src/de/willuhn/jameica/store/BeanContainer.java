@@ -31,7 +31,7 @@ public class BeanContainer<T> implements Serializable
   // Niemals aendern, damit das auch serialisierbar bleibt, wenn Properties geaendert werden.
   static final long serialVersionUID = -3158681266553988208L;
 
-  private List<T> beans = new ArrayList<T>();
+  private List<T> beans = new ArrayList<>();
   
   @XmlAttribute(name="type",required=true)
   Class<T> type;

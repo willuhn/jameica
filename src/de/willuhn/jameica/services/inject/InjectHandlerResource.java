@@ -50,7 +50,7 @@ public class InjectHandlerResource implements InjectHandler
         Resource r = (Resource) annotation;
         
         String rname = r.name();
-        Class c      = r.type();
+        Class<?> c      = r.type();
         Object dep   = null;
         
         if (c == Object.class) // Das ist der Default-Wert der Annotation
@@ -68,7 +68,7 @@ public class InjectHandlerResource implements InjectHandler
           }
           else if (field instanceof Method)
           {
-            Class[] params = ((Method)field).getParameterTypes();
+            Class<?>[] params = ((Method)field).getParameterTypes();
             if (params != null && params.length == 1) // lassen wir nur zu, wenn es nur einen Parameter gibt
               c = params[0];
           }
@@ -109,15 +109,16 @@ public class InjectHandlerResource implements InjectHandler
         // Anhand des Typs suchen - aber nur, wenn wir die Abhaengigkeit nicht schon haben
         if (dep == null && c != null)
         {
+          de.willuhn.boot.BootLoader bootloader = Application.getBootLoader();
           if (isBootable(c))
           {
             Logger.trace("  inject bootable " + c.getSimpleName() + " into " + name);
-            dep = Application.getBootLoader().getBootable(c); // direkt als Bootable laden
+            dep = bootloader.getBootable((Class<Bootable>) c); // direkt als Bootable laden
           }
           else
           {
             Logger.trace("  inject bean " + c.getSimpleName() + " into " + name);
-            BeanService service = Application.getBootLoader().getBootable(BeanService.class);
+            BeanService service = bootloader.getBootable(BeanService.class);
             dep = service.get(c); // aufloesen per Beanservice
           }
         }
@@ -148,13 +149,13 @@ public class InjectHandlerResource implements InjectHandler
    * @param type der Typ.
    * @return true, wenn es ein Bootable ist.
    */
-  private static boolean isBootable(Class type)
+  private static boolean isBootable(Class<?> type)
   {
-    Class[] interfaces = type.getInterfaces();
+    Class<?>[] interfaces = type.getInterfaces();
     if (interfaces == null || interfaces.length == 0)
       return false;
     
-    for (Class c:interfaces)
+    for (Class<?> c:interfaces)
     {
       if (c.equals(Bootable.class))
         return true;
@@ -163,5 +164,3 @@ public class InjectHandlerResource implements InjectHandler
     return false;
   }
 }
-
-

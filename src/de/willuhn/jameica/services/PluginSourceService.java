@@ -30,13 +30,13 @@ import de.willuhn.util.MultipleClassLoader;
  */
 public class PluginSourceService implements Bootable
 {
-  private final static Settings settings = new Settings(PluginSource.class,false); // nicht vom User ueberschreibbar
+  private static final Settings settings = new Settings(PluginSource.class,false); // nicht vom User ueberschreibbar
   private List<PluginSource> sources = null;
   
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
-  public Class[] depends()
+  public Class<Bootable>[] depends()
   {
     return new Class[]{LogService.class, ClassService.class};
   }
@@ -77,8 +77,8 @@ public class PluginSourceService implements Bootable
       return null;
     }
     
-    List<PluginSource> sources = getSources();
-    for (PluginSource s:sources)
+    List<PluginSource> sources2 = getSources();
+    for (PluginSource s:sources2)
     {
       if (s.getType() == type)
         return s;
@@ -93,13 +93,13 @@ public class PluginSourceService implements Bootable
    */
   public List<PluginSource> getWritableSources()
   {
-    List<PluginSource> sources = new LinkedList<PluginSource>();
-    for (PluginSource source:this.getSources())
+    List<PluginSource> sources2 = new LinkedList<>();
+    for (PluginSource source2:this.getSources())
     {
-      if (source.canWrite())
-        sources.add(source);
+      if (source2.canWrite())
+        sources2.add(source2);
     }
-    return sources;
+    return sources2;
   }
   
   /**
@@ -111,18 +111,18 @@ public class PluginSourceService implements Bootable
     if (this.sources != null)
       return this.sources;
     
-    this.sources = new LinkedList<PluginSource>();
+    this.sources = new LinkedList<>();
       
     try
     {
       MultipleClassLoader loader = Application.getClassLoader();
       BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-      Class<PluginSource>[] classes = loader.getClassFinder().findImplementors(PluginSource.class);
-      for (Class<PluginSource> c:classes)
+      Class<?>[] classes = loader.getClassFinder().findImplementors(PluginSource.class);
+      for (Class<?> c:classes)
       {
         try
         {
-          PluginSource source = beanService.get(c);
+          PluginSource source = (PluginSource) beanService.get(c);
           
           // Checken, ob der Typ erlaubt ist.
           if (!settings.getBoolean(source.getType() + ".enabled",true))

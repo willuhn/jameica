@@ -37,9 +37,9 @@ import de.willuhn.logging.Logger;
  */
 public class TitlePart implements Part
 {
-  private final static Font FONT          = Font.H2;
-  private final static int TITLE_OFFSET_X = 8;
-  private final static int TITLE_OFFSET_Y = 3;
+  private static final Font FONT          = Font.H2;
+  private static final int TITLE_OFFSET_X = 8;
+  private static final int TITLE_OFFSET_Y = 3;
   
   private Composite myParent  = null;
   private Canvas title        = null;

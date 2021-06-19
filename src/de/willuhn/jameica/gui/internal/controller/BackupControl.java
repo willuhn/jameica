@@ -176,17 +176,21 @@ public class BackupControl extends AbstractControl
     this.backups.addColumn(Application.getI18n().tr("Erstellt am"),"created", new DateFormatter(null));
     this.backups.addColumn(Application.getI18n().tr("Größe"),"size", new Formatter() {
 
+      private static final long serialVersionUID = -4392921172623535240L;
+
       /**
        * @see de.willuhn.jameica.gui.formatter.Formatter#format(java.lang.Object)
        */
       public String format(Object o)
       {
-        if (o == null || !(o instanceof Number))
+        if (!(o instanceof Number)) {
           return "-";
+        }
         long size = ((Number) o).longValue();
-        if (size == 0)
+        if (size == 0) {
           return "-";
-        return format.format(new Double(size / 1024d /1024d));
+        }
+        return format.format(Double.valueOf(size / 1024d /1024d));
       }
     
     });
@@ -276,7 +280,7 @@ public class BackupControl extends AbstractControl
     {
       Integer i = (Integer) getCount().getValue();
       config.setBackupCount(i == null ? -1 : i.intValue());
-      getCount().setValue(new Integer(config.getBackupCount())); // Reset, falls der User Unsinn eingegeben hat
+      getCount().setValue(Integer.valueOf(config.getBackupCount())); // Reset, falls der User Unsinn eingegeben hat
 
       config.setBackupDir((String)getTarget().getValue());
       getTarget().setValue(config.getBackupDir()); // Reset, falls der User Unsinn eingegeben hat
@@ -325,7 +329,7 @@ public class BackupControl extends AbstractControl
     try
     {
 
-      BackupRestoreDialog d = new BackupRestoreDialog(BackupRestoreDialog.POSITION_CENTER,file);
+      BackupRestoreDialog d = new BackupRestoreDialog(de.willuhn.jameica.gui.dialogs.AbstractDialog.POSITION_CENTER,file);
       Boolean b = (Boolean) d.open();
       
       if (!b.booleanValue())
@@ -337,7 +341,6 @@ public class BackupControl extends AbstractControl
     catch (OperationCanceledException oce)
     {
       Logger.info(oce.getMessage());
-      return;
     }
     catch (ApplicationException ae)
     {

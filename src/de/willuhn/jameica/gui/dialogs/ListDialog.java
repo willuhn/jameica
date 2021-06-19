@@ -32,12 +32,12 @@ import de.willuhn.util.ApplicationException;
  * wird dann von {@code open()} zurueckgegeben.
  * @author willuhn
  */
-public class ListDialog extends AbstractDialog
+public class ListDialog extends AbstractDialog<Object>
 {
-  private Object object            = null;
-  private GenericIterator iterator = null;
-  private List list                = null;
-  private List<Column> columns     = new ArrayList<Column>();
+  private Object object               = null;
+  private GenericIterator<?> iterator = null;
+  private List<?> list                = null;
+  private List<Column> columns        = new ArrayList<>();
 
   /**
    * ct.
@@ -46,7 +46,7 @@ public class ListDialog extends AbstractDialog
    * @see AbstractDialog#POSITION_CENTER
    * @see AbstractDialog#POSITION_MOUSE
    */
-  public ListDialog(GenericIterator list, int position)
+  public ListDialog(GenericIterator<?> list, int position)
   {
     this(position);
     this.iterator = list;
@@ -59,7 +59,7 @@ public class ListDialog extends AbstractDialog
    * @see AbstractDialog#POSITION_CENTER
    * @see AbstractDialog#POSITION_MOUSE
    */
-  public ListDialog(List list, int position)
+  public ListDialog(List<?> list, int position)
   {
     this(position);
     this.list = list;

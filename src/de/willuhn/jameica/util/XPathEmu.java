@@ -122,10 +122,10 @@ public class XPathEmu
     String[] names = path.split("/");
     for (int i=0;i<names.length;++i)
     {
-      Vector v = elements[0].getChildrenNamed(names[i]);
-      if (v == null || v.size() == 0)
+      Vector<?> v = elements[0].getChildrenNamed(names[i]);
+      if (v.isEmpty())
         return new IXMLElement[0];
-      elements = (IXMLElement[]) v.toArray(new IXMLElement[v.size()]);
+      elements = v.toArray(new IXMLElement[v.size()]);
     }
     return elements;
     ////////////////////////////////////////////////////////////////

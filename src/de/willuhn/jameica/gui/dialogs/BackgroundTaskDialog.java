@@ -39,9 +39,9 @@ import de.willuhn.util.ProgressMonitor;
  * Dialog verwendet werden.
  * Der Task wird gestartet, sowie der Dialog geoeffnet wird.
  */
-public class BackgroundTaskDialog extends AbstractDialog
+public class BackgroundTaskDialog extends AbstractDialog<Object>
 {
-  private final static int WINDOW_WIDTH = 500;
+  private static final int WINDOW_WIDTH = 500;
   private BackgroundTask task           = null;
   private boolean interruptible         = false;
   private Button cancel                 = null;
@@ -90,6 +90,7 @@ public class BackgroundTaskDialog extends AbstractDialog
     
     final Thread t = new Thread("[Jameica Backgroundtask] " + task.getClass().getName())
     {
+      @Override
       public void run()
       {
         GUI.getStatusBar().startProgress();
@@ -158,6 +159,7 @@ public class BackgroundTaskDialog extends AbstractDialog
           // noch den GUI-Thread blockieren wollen
           Thread shutdown = new Thread("[Shutdown Backgroundtask] " + task.getClass().getName())
           {
+            @Override
             public void run()
             {
               try
@@ -179,7 +181,7 @@ public class BackgroundTaskDialog extends AbstractDialog
                   {
                     Thread.sleep(1000L);
                   }
-                  catch (Exception e)
+                  catch (InterruptedException e)
                   {
                     Logger.error("error while waiting for task",e);
                     break;

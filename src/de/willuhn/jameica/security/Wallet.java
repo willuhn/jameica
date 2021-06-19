@@ -56,8 +56,8 @@ import de.willuhn.logging.Logger;
 public final class Wallet
 {
 
-	private Class clazz 	       = null;
-	private Hashtable<String, Serializable>	serialized = new Hashtable<String, Serializable>();
+	private Class<?> clazz 	       = null;
+	private Hashtable<String, Serializable>	serialized = new Hashtable<>();
 	private Engine engine        = new RSAEngine();
   
   /**
@@ -65,7 +65,7 @@ public final class Wallet
 	 * @param clazz Klasse, fuer die das Wallet gilt.
    * @throws Exception
    */
-  public Wallet(Class clazz) throws Exception
+  public Wallet(Class<?> clazz) throws Exception
 	{
     this(clazz,null);
 	}
@@ -76,7 +76,7 @@ public final class Wallet
    * @param engine die zu verwendende Crypto-Engine.
    * @throws Exception
    */
-  public Wallet(Class clazz, Engine engine) throws Exception
+  public Wallet(Class<?> clazz, Engine engine) throws Exception
   {
     this.clazz = clazz;
     this.setEngine(engine);
@@ -180,7 +180,7 @@ public final class Wallet
    */
   public synchronized String[] getAll(String aliasPrefix) throws Exception
   {
-    ArrayList<String> keys = new ArrayList<String>();
+    ArrayList<String> keys = new ArrayList<>();
 
     Enumeration<String> e = this.serialized.keys();
     String s = null;
@@ -247,17 +247,13 @@ public final class Wallet
     if (!f.exists())
     {
       // Wallet existiert noch nicht. Dann erstellen wir ein neues
-      this.serialized = new Hashtable<String, Serializable>();
+      this.serialized = new Hashtable<>();
       return;
     }
 
-    InputStream is = null;
-
     Logger.debug("reading wallet file " + f.getAbsolutePath() + " via " + this.engine.getClass().getSimpleName());
-    try
+    try(InputStream is = new BufferedInputStream(new FileInputStream(f));)
     {
-      is = new BufferedInputStream(new FileInputStream(f));
-
       // Einlesen und entschluesseln
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -266,22 +262,9 @@ public final class Wallet
       Logger.debug("deserializing wallet");
       ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
       XMLDecoder xml = new XMLDecoder(bis);
-      this.serialized = (Hashtable) xml.readObject();
+      this.serialized = (Hashtable<String, Serializable>) xml.readObject();
       xml.close();
       Logger.debug("reading wallet done");
-      return;
-    }
-    finally
-    {
-      try
-      {
-        if (is != null)
-          is.close();
-      }
-      catch (Exception e)
-      {
-        Logger.error("unable to close file",e);
-      }
     }
 	}
 

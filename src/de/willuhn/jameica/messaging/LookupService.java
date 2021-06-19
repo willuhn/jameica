@@ -13,7 +13,7 @@ package de.willuhn.jameica.messaging;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Level;
@@ -26,8 +26,8 @@ import de.willuhn.net.MulticastClient;
  */
 public class LookupService implements MessageConsumer
 {
-  private static Hashtable<String,String> lookup = new Hashtable<String, String>();
-  private static Client client    = null;
+  private static HashMap<String,String> lookup = new HashMap<>();
+  private Client client                        = null;
   
   /**
    * Registriert einen Service mit dem angegebenen Namen.
@@ -84,7 +84,7 @@ public class LookupService implements MessageConsumer
     if (!enabled())
       return;
 
-    if (message == null || !(message instanceof SystemMessage))
+    if (!(message instanceof SystemMessage))
       return;
 
     SystemMessage msg = (SystemMessage) message;
@@ -119,6 +119,9 @@ public class LookupService implements MessageConsumer
       super();
     }
 
+    /**
+     * @see de.willuhn.net.MulticastClient#received(java.net.DatagramPacket)
+     */
     @Override
     public void received(DatagramPacket packet) throws IOException
     {
@@ -248,6 +251,9 @@ public class LookupService implements MessageConsumer
       super.send(name.getBytes());
     }
 
+    /**
+     * @see de.willuhn.net.MulticastClient#received(java.net.DatagramPacket)
+     */
     @Override
     public void received(DatagramPacket packet) throws IOException
     {

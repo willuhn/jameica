@@ -32,8 +32,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class CertificateImport implements Action
 {
-  private final static Settings settings = new Settings(CertificateList.class);
-  
+  private static final Settings settings = new Settings(CertificateList.class);
 
   /**
    * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
@@ -73,7 +72,7 @@ public class CertificateImport implements Action
       Logger.error("error while importing certificate",e);
       throw new ApplicationException(Application.getI18n().tr("Fehler beim Importieren des Zertifikats"));
     }
-  
+
   }
 
 }

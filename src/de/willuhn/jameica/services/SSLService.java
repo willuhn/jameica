@@ -26,7 +26,7 @@ public class SSLService implements Bootable
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
-  public Class[] depends()
+  public Class<Bootable>[] depends()
   {
     return new Class[]{LogService.class,
                        SecurityManagerService.class,

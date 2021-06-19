@@ -44,6 +44,7 @@ public class ReminderCalendarPart extends CalendarPart
   /**
    * @see de.willuhn.jameica.gui.calendar.CalendarPart#paint(org.eclipse.swt.widgets.Composite)
    */
+  @Override
   public void paint(Composite parent) throws RemoteException
   {
     super.paint(parent);
@@ -68,6 +69,7 @@ public class ReminderCalendarPart extends CalendarPart
    * @see de.willuhn.jameica.gui.calendar.CalendarPart#removeAppointmentProvider(de.willuhn.jameica.gui.calendar.AppointmentProvider)
    * Ueberschrieben, weil der Provider fuer die Jameica-Reminder nicht mit entfernt werden soll.
    */
+  @Override
   public void removeAppointmentProvider(AppointmentProvider provider)
   {
     if (provider == null || provider.getClass().equals(this.myProvider.getClass()))
@@ -81,6 +83,7 @@ public class ReminderCalendarPart extends CalendarPart
    * @see de.willuhn.jameica.gui.calendar.CalendarPart#removeAll()
    * Ueberschrieben, weil der Provider fuer die Jameica-Reminder nicht mit entfernt werden soll.
    */
+  @Override
   public void removeAll()
   {
     super.removeAll();
@@ -106,7 +109,7 @@ public class ReminderCalendarPart extends CalendarPart
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }

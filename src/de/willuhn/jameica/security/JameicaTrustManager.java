@@ -246,13 +246,13 @@ public class JameicaTrustManager implements X509TrustManager
         catch (CertificateExpiredException exp)
         {
           Logger.warn("certificate expired: " + validFrom + " - " + validTo);
-          if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo})))
+          if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}", validFrom, validTo)))
             return; // Abgelaufen, aber der User ist damit einverstanden
         }
         catch (CertificateNotYetValidException not)
         {
           Logger.warn("certificate not yet valid: " + validFrom + " - " + validTo);
-          if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo})))
+          if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}", validFrom, validTo)))
             return; // Noch nicht gueltig, aber der User ist damit einverstanden
         }
       }
@@ -301,9 +301,9 @@ public class JameicaTrustManager implements X509TrustManager
    */
   private String toString(X509Certificate cert)
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append("[subject: ");
-    sb.append(cert.getSubjectDN().getName());
+    sb.append(cert.getSubjectX500Principal().getName());
     sb.append("][valid from: ");
     sb.append(cert.getNotBefore().toString());
     sb.append(" to: ");

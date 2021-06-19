@@ -17,6 +17,7 @@ import java.io.Serializable;
  */
 public class Login implements Serializable
 {
+  private static final long serialVersionUID = 6787174774166153140L;
   private String username = null;
   private char[] password = null;
 

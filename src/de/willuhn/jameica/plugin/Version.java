@@ -29,7 +29,7 @@ public class Version implements Serializable, Comparable<Version>
   /**
    * Dummy-Version: Keine Versionsnummer.
    */
-  public final static Version NONE = new Version();
+  public static final Version NONE = new Version();
 
   private Integer major = null;
   private Integer minor = null;
@@ -60,10 +60,10 @@ public class Version implements Serializable, Comparable<Version>
       v = v.substring(0,spos);
     }
 
-    List<String> parts = new ArrayList(Arrays.asList(v.split("\\.")));
-    if (parts.size() > 0) this.major = this.parse(parts.remove(0));
-    if (parts.size() > 0) this.minor = this.parse(parts.remove(0));
-    if (parts.size() > 0) this.patch = this.parse(parts.remove(0));
+    List<String> parts = new ArrayList<>(Arrays.asList(v.split("\\.")));
+    if (!parts.isEmpty()) this.major = this.parse(parts.remove(0));
+    if (!parts.isEmpty()) this.minor = this.parse(parts.remove(0));
+    if (!parts.isEmpty()) this.patch = this.parse(parts.remove(0));
   }
   
   /**
@@ -231,7 +231,7 @@ public class Version implements Serializable, Comparable<Version>
    */
   public String toString()
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append(getMajor());
     sb.append(".");
     sb.append(getMinor());

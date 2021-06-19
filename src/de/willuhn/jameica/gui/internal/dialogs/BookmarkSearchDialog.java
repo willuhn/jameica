@@ -34,9 +34,9 @@ import de.willuhn.util.ApplicationException;
 /**
  * Dialog zum Suchen von Bookmarks.
  */
-public class BookmarkSearchDialog extends AbstractDialog
+public class BookmarkSearchDialog extends AbstractDialog<Object>
 {
-  private final static int WINDOW_WIDTH = 550;
+  private static final int WINDOW_WIDTH = 550;
   private Bookmark chosen = null;
   private BookmarkTreePart tree = null;
   private TextInput search = null;
@@ -46,7 +46,7 @@ public class BookmarkSearchDialog extends AbstractDialog
    */
   public BookmarkSearchDialog()
   {
-    super(BookmarkSearchDialog.POSITION_CENTER);
+    super(de.willuhn.jameica.gui.dialogs.AbstractDialog.POSITION_CENTER);
     this.setSize(WINDOW_WIDTH,400);
     this.setTitle(Application.getI18n().tr("Lesezeichen"));
   }
@@ -157,6 +157,7 @@ public class BookmarkSearchDialog extends AbstractDialog
     /**
      * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
      */
+    @Override
     public void keyReleased(KeyEvent e)
     {
       forward.handleEvent(null); // Das Event-Objekt interessiert uns eh nicht

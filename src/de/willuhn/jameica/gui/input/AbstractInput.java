@@ -36,11 +36,11 @@ import de.willuhn.util.I18N;
  */
 public abstract class AbstractInput implements Input
 {
-  final static I18N i18n = Application.getI18n();
+  static final I18N i18n = Application.getI18n();
 
-  private Map<String,Object> data = new HashMap<String,Object>();
+  private Map<String,Object> data = new HashMap<>();
   
-  private final static Object PLACEHOLDER = new Object();
+  private static final Object PLACEHOLDER = new Object();
 
   private Composite parent = null;
 
@@ -49,7 +49,7 @@ public abstract class AbstractInput implements Input
   private Label commentLabel = null;
 
   private Control control = null;
-	private ArrayList<Listener> listeners = new ArrayList<Listener>();
+	private ArrayList<Listener> listeners = new ArrayList<>();
 
   private String validChars = null;
   private String invalidChars = null;
@@ -177,7 +177,7 @@ public abstract class AbstractInput implements Input
    */
   private void applyVerifier(final Control control)
   {
-    if (control == null || !(control instanceof Text))
+    if (!(control instanceof Text))
       return;
     
     Listener updateCheck = new Listener() {
@@ -362,7 +362,7 @@ public abstract class AbstractInput implements Input
     {
       // Checken, ob wir ein Label haben
       Object o = this.getData("jameica.label");
-      if (o == null || !(o instanceof Label))
+      if (!(o instanceof Label))
         return;
       
       Label label = (Label) o;

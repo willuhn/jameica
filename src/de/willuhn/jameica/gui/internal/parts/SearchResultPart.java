@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Composite;
-
 import de.willuhn.datasource.GenericIterator;
 import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.GenericObjectNode;
@@ -48,15 +46,16 @@ public class SearchResultPart extends TreePart
    */
   public SearchResultPart(List<SearchResult> searchResult) throws RemoteException, ApplicationException
   {
-    super((List)null,new Action()
+    super((List<?>)null,new Action()
     {
       /**
        * @see de.willuhn.jameica.gui.Action#handleAction(java.lang.Object)
        */
       public void handleAction(Object context) throws ApplicationException
       {
-        if (context == null || !(context instanceof ResultObject))
+        if (!(context instanceof ResultObject)) {
           return;
+        }
         try
         {
           ((ResultObject)context).r.execute();
@@ -64,14 +63,14 @@ public class SearchResultPart extends TreePart
         catch (RemoteException re)
         {
           Logger.error("unable to open result",re);
-          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Öffnen des Suchergebnisses"),StatusBarMessage.TYPE_ERROR));
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim öffnen des Suchergebnisses"),StatusBarMessage.TYPE_ERROR));
         }
       }
     
     });
     
-    List l = this.createList(searchResult);
-    final Object first = (l != null && l.size() > 0) ? l.get(0) : null;
+    List<?> l = this.createList(searchResult);
+    final Object first = (!l.isEmpty()) ? l.get(0) : null;
     
     if (first != null)
     {
@@ -96,7 +95,7 @@ public class SearchResultPart extends TreePart
       });
     }
 
-    if (l.size() == 0)
+    if (l.isEmpty())
       l = Arrays.asList(new NotFound());
 
     this.setList(l);
@@ -106,16 +105,7 @@ public class SearchResultPart extends TreePart
     this.setRememberColWidths(true);
     
   }
-  
-  /**
-   * @see de.willuhn.jameica.gui.parts.TreePart#paint(org.eclipse.swt.widgets.Composite)
-   */
-  @Override
-  public void paint(Composite parent) throws RemoteException
-  {
-    super.paint(parent);
-  }
-  
+
   /**
    * Erstellt ein passendes Datenformat fuer den Tree.
    * @param searchResult
@@ -123,10 +113,10 @@ public class SearchResultPart extends TreePart
    * @throws RemoteException
    * @throws ApplicationException
    */
-  private List createList(List<SearchResult> searchResult) throws RemoteException, ApplicationException
+  private List<?> createList(List<SearchResult> searchResult) throws RemoteException, ApplicationException
   {
     // Wir muessen das Suchergebnis hier als Baum aufbereiten
-    HashMap<de.willuhn.jameica.plugin.Plugin, Plugin> plugins = new HashMap<de.willuhn.jameica.plugin.Plugin, Plugin>();
+    HashMap<de.willuhn.jameica.plugin.Plugin, Plugin> plugins = new HashMap<>();
     Plugin system = new Plugin(Application.getManifest().getName());
     
     for (int i=0;i<searchResult.size();++i)
@@ -155,24 +145,26 @@ public class SearchResultPart extends TreePart
 
     // Wir uebernehmen nur die Plugins, die Ergebnisse geliefert haben
     Iterator<Plugin> result = plugins.values().iterator();
-    List<Plugin> al = new ArrayList<Plugin>();
+    List<Plugin> al = new ArrayList<>();
 
     // Suchergebnisse von Jameica selbst hinzutun
-    if (system.providers.size() > 0)
+    if (!system.providers.isEmpty()) {
       al.add(system);
+    }
     
     while (result.hasNext())
     {
       Plugin p = result.next();
-      if (p.providers.size() > 0)
+      if (!p.providers.isEmpty()) {
         al.add(p);
+      }
     }
     
     // Die Anzeige der Plugins als Root-Knoten kann via Customizing ausgeblendet
     // werden. In dem Fall werden direkt die Ergebnis-Gruppen angezeigt
     if (Customizing.SETTINGS.getBoolean("application.search.hideplugins",false))
     {
-      List<Provider> providers = new ArrayList<Provider>();
+      List<Provider> providers = new ArrayList<>();
       for (Plugin p:al)
         providers.addAll(p.providers);
       return providers;
@@ -231,7 +223,7 @@ public class SearchResultPart extends TreePart
   private static class Plugin implements GenericObjectNode
   {
     private String name = null;
-    private ArrayList<Provider> providers = new ArrayList<Provider>();
+    private ArrayList<Provider> providers = new ArrayList<>();
     
     /**
      * ct.
@@ -258,7 +250,7 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getChildren()
      */
-    public GenericIterator getChildren() throws RemoteException
+    public GenericIterator<GenericObjectNode> getChildren() throws RemoteException
     {
       return PseudoIterator.fromArray(this.providers.toArray(new Provider[this.providers.size()]));
     }
@@ -274,7 +266,7 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getPath()
      */
-    public GenericIterator getPath() throws RemoteException
+    public GenericIterator<?> getPath() throws RemoteException
     {
       return null;
     }
@@ -282,7 +274,7 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getPossibleParents()
      */
-    public GenericIterator getPossibleParents() throws RemoteException
+    public GenericIterator<?> getPossibleParents() throws RemoteException
     {
       return null;
     }
@@ -292,8 +284,9 @@ public class SearchResultPart extends TreePart
      */
     public boolean hasChild(GenericObjectNode object) throws RemoteException
     {
-      if (object == null || !(object instanceof Provider))
+      if (!(object instanceof Provider)) {
         return false;
+      }
       return this.providers.contains(object);
     }
 
@@ -302,8 +295,9 @@ public class SearchResultPart extends TreePart
      */
     public boolean equals(GenericObject other) throws RemoteException
     {
-      if (other == null || !(other instanceof Plugin))
+      if (!(other instanceof Plugin)) {
         return false;
+      }
       return this.getID().equals(other.getID());
     }
 
@@ -348,7 +342,7 @@ public class SearchResultPart extends TreePart
   {
     private Plugin plugin            = null;
     private SearchResult result      = null;
-    private GenericIterator children = null;
+    private GenericIterator<GenericObjectNode> children = null;
     
     /**
      * ct.
@@ -364,11 +358,11 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getChildren()
      */
-    public GenericIterator getChildren() throws RemoteException
+    public GenericIterator<GenericObjectNode> getChildren() throws RemoteException
     {
       if (this.children == null)
       {
-        List<ResultObject> l = new ArrayList<ResultObject>();
+        List<ResultObject> l = new ArrayList<>();
         try
         {
           List<Result> result = this.result.getResult();
@@ -401,7 +395,7 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getPath()
      */
-    public GenericIterator getPath() throws RemoteException
+    public GenericIterator<?> getPath() throws RemoteException
     {
       return null;
     }
@@ -409,7 +403,7 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getPossibleParents()
      */
-    public GenericIterator getPossibleParents() throws RemoteException
+    public GenericIterator<?> getPossibleParents() throws RemoteException
     {
       return null;
     }
@@ -419,8 +413,9 @@ public class SearchResultPart extends TreePart
      */
     public boolean hasChild(GenericObjectNode other) throws RemoteException
     {
-      if (other == null || !(other instanceof ResultObject))
+      if (!(other instanceof ResultObject)) {
         return false;
+      }
       return this.getChildren().contains(other) != null;
     }
 
@@ -429,8 +424,9 @@ public class SearchResultPart extends TreePart
      */
     public boolean equals(GenericObject other) throws RemoteException
     {
-      if (other == null || !(other instanceof Provider))
+      if (!(other instanceof Provider)) {
         return false;
+      }
       return this.getID().equals(other.getID());
     }
 
@@ -489,7 +485,7 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getChildren()
      */
-    public GenericIterator getChildren() throws RemoteException
+    public GenericIterator<GenericObjectNode> getChildren() throws RemoteException
     {
       return null;
     }
@@ -505,7 +501,7 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getPath()
      */
-    public GenericIterator getPath() throws RemoteException
+    public GenericIterator<?> getPath() throws RemoteException
     {
       return null;
     }
@@ -513,7 +509,7 @@ public class SearchResultPart extends TreePart
     /**
      * @see de.willuhn.datasource.GenericObjectNode#getPossibleParents()
      */
-    public GenericIterator getPossibleParents() throws RemoteException
+    public GenericIterator<?> getPossibleParents() throws RemoteException
     {
       return null;
     }
@@ -531,8 +527,9 @@ public class SearchResultPart extends TreePart
      */
     public boolean equals(GenericObject other) throws RemoteException
     {
-      if (other == null || !(other instanceof ResultObject))
+      if (!(other instanceof ResultObject)) {
         return false;
+      }
       return this.getID().equals(other.getID());
     }
 

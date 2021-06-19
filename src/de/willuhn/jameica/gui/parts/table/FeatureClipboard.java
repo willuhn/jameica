@@ -35,7 +35,7 @@ import de.willuhn.logging.Logger;
  */
 public class FeatureClipboard implements Feature
 {
-  private final static Settings settings = new Settings(FeatureClipboard.class);
+  private static final Settings settings = new Settings(FeatureClipboard.class);
   private Listener listener = null;
   
   /**

@@ -19,15 +19,17 @@ import de.willuhn.jameica.system.Application;
  */
 public class SystemMessage extends TextMessage
 {
+  private static final long serialVersionUID = -6926849770221777670L;
+
   /**
    * Dieser Code wird verwendet, wenn das System vollstaendig gestartet wurde.
    */
-  public final static int SYSTEM_STARTED  = 1;
+  public static final int SYSTEM_STARTED  = 1;
   
   /**
    * Dieser Code wird verwendet, wenn das System heruntergefahren wird.
    */
-  public final static int SYSTEM_SHUTDOWN = 2;
+  public static final int SYSTEM_SHUTDOWN = 2;
   
   private int code = -1;
 

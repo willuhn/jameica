@@ -41,10 +41,10 @@ import de.willuhn.logging.Logger;
  */
 public class DialogInput extends ButtonInput
 {
-  private final static Object PLACEHOLDER = new Object();
+  private static final Object PLACEHOLDER = new Object();
 
 	private Text text;
-  private AbstractDialog dialog;
+  private AbstractDialog<?> dialog;
   private Object choosen;
   private int maxlength = 0;
 
@@ -68,7 +68,7 @@ public class DialogInput extends ButtonInput
    * @param value der initial einzufuegende Wert fuer das Eingabefeld.
    * @param d der Dialog.
    */
-  public DialogInput(String value,AbstractDialog d)
+  public DialogInput(String value,AbstractDialog<?> d)
   {
   	this.value = value;
   	this.dialog = d;
@@ -98,7 +98,7 @@ public class DialogInput extends ButtonInput
    * Speichert den anzuzeigenden Dialog.
    * @param d der anzuzeigende Dialog.
    */
-  public void setDialog(AbstractDialog d)
+  public void setDialog(AbstractDialog<?> d)
   {
     this.dialog = d;
   }
@@ -119,8 +119,9 @@ public class DialogInput extends ButtonInput
    */
   public String getText()
   {
-		if (text != null && !text.isDisposed())
+		if (text != null && !text.isDisposed()) {
 			return text.getText();
+		}
   	return value;
   }
 
@@ -177,14 +178,19 @@ public class DialogInput extends ButtonInput
   @Override
   public Control getClientControl(Composite parent) {
     text = GUI.getStyleFactory().createText(parent);
-  	if (value != null)
+  	if (value != null) {
   		text.setText(value);
-    if (this.maxlength > 0)
+  	}
+    if (this.maxlength > 0) {
       text.setTextLimit(this.maxlength);
+    }
 
   	return text;
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
+   */
   @Override
   protected void update() throws OperationCanceledException
   {
@@ -205,6 +211,10 @@ public class DialogInput extends ButtonInput
     text.setBackground(color);
   }
 
+  /**
+   * Ueberschrieben, weil nur der angezeigte Text interessiert.
+   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
+   */
   @Override
   public boolean hasChanged()
   {

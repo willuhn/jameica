@@ -13,13 +13,12 @@ package de.willuhn.jameica.gui;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 
-import net.n3.nanoxml.IXMLElement;
-
 import org.eclipse.swt.graphics.Image;
 
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.util.I18N;
+import net.n3.nanoxml.IXMLElement;
 
 /**
  * @author willuhn
@@ -36,7 +35,7 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
   {
     super(parent,path,i18n);
 
-    Enumeration e  = this.path.enumerateChildren();
+    Enumeration<?> e  = this.path.enumerateChildren();
     while (e.hasMoreElements())
     {
       IXMLElement child = (IXMLElement) e.nextElement();
@@ -67,6 +66,7 @@ public class MenuItemXml extends AbstractItemXml implements MenuItem
    * Ueberschrieben, um dabei auch das Menu anzupassen.
    * @see de.willuhn.jameica.gui.Item#setEnabled(boolean, boolean)
    */
+  @Override
   public void setEnabled(boolean enabled, boolean recursive)
       throws RemoteException
   {

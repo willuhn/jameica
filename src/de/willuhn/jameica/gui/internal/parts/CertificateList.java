@@ -30,6 +30,7 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateDetailDialog;
 import de.willuhn.jameica.gui.dialogs.CertificateTrustDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
@@ -56,7 +57,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class CertificateList extends TablePart
 {
-  private final static Settings mySettings = new Settings(CertificateList.class);
+  private static final Settings mySettings = new Settings(CertificateList.class);
 
   /**
    * ct.
@@ -114,11 +115,12 @@ public class CertificateList extends TablePart
     {
       public void handleAction(Object context) throws ApplicationException
       {
-        if (context == null || !(context instanceof CertObject))
+        if (!(context instanceof CertObject)) {
           throw new ApplicationException(Application.getI18n().tr("Bitte wählen Sie das zu löschende Zertifikat aus"));
+        }
         
         final X509Certificate c = ((CertObject)context).cert;
-        CertificateTrustDialog d = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,c);
+        CertificateTrustDialog d = new CertificateTrustDialog(de.willuhn.jameica.gui.dialogs.AbstractDialog.POSITION_CENTER,c);
         d.setText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Zertifikat aus dem Stammspeicher löschen wollen?"));
         try
         {
@@ -134,7 +136,6 @@ public class CertificateList extends TablePart
         catch (OperationCanceledException oce)
         {
           Logger.info(Application.getI18n().tr("Vorgang abgebrochen"));
-          return;
         }
         catch (Exception e)
         {
@@ -147,6 +148,7 @@ public class CertificateList extends TablePart
       /**
        * @see de.willuhn.jameica.gui.parts.ContextMenuItem#isEnabledFor(java.lang.Object)
        */
+      @Override
       public boolean isEnabledFor(Object o)
       {
         if (!changable)
@@ -188,32 +190,24 @@ public class CertificateList extends TablePart
           File f = new File(target);
           if (f.exists())
           {
-            YesNoDialog d = new YesNoDialog(YesNoDialog.POSITION_CENTER);
+            YesNoDialog d = new YesNoDialog(AbstractDialog.POSITION_CENTER);
             d.setTitle(Application.getI18n().tr("Überschreiben?"));
             d.setText(Application.getI18n().tr("Datei existiert bereits. Überschreiben?"));
             Boolean b = (Boolean) d.open();
             if (!b.booleanValue())
               return;
           }
-          OutputStream os = null;
-          try
+          try(OutputStream os = new FileOutputStream(f))
           {
-            os = new FileOutputStream(f);
             os.write(cert.getEncoded());
             os.flush();
             mySettings.setAttribute("lastdir",f.getParent());
             Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Zertifikate exportiert"), StatusBarMessage.TYPE_SUCCESS));
           }
-          finally
-          {
-            if (os != null)
-              os.close();
-          }
         }
         catch (OperationCanceledException oce)
         {
           Logger.info(oce.getMessage());
-          return;
         }
         catch (Exception e)
         {
@@ -230,6 +224,7 @@ public class CertificateList extends TablePart
       }
     },"document-open.png")
     {
+      @Override
       public boolean isEnabledFor(Object o)
       {
         return changable && super.isEnabledFor(o);
@@ -242,12 +237,12 @@ public class CertificateList extends TablePart
    * @return
    * @param trustManager der Trustmanager mit den Zertifikaten.
    */
-  private static GenericIterator init(X509TrustManager trustManager)
+  private static GenericIterator<?> init(X509TrustManager trustManager)
   {
     try
     {
       X509Certificate[] list = trustManager.getAcceptedIssuers();
-      List<CertObject> al = new ArrayList<CertObject>();
+      List<CertObject> al = new ArrayList<>();
       for (int i=0;i<list.length;++i)
       {
         al.add(new CertObject(list[i]));
@@ -276,7 +271,7 @@ public class CertificateList extends TablePart
     }
   }
 
-  private static class CertObject implements GenericObject, Comparable
+  private static class CertObject implements GenericObject, Comparable<Object>
   {
 
     private X509Certificate cert = null;
@@ -299,7 +294,7 @@ public class CertificateList extends TablePart
         String s = myCert.getSubject().getAttribute(Principal.COMMON_NAME);
         if (s == null || s.length() == 0)
         {
-          s = this.cert.getSubjectDN().getName();
+          s = this.cert.getSubjectX500Principal().getName();
           if (s != null && s.length() > 40)
             s = s.substring(0,39) + "...";
           return s;
@@ -313,7 +308,7 @@ public class CertificateList extends TablePart
           s = myCert.getIssuer().getAttribute(Principal.ORGANIZATION);
         if (s == null || s.length() == 0)
         {
-          s = this.cert.getIssuerDN().getName();
+          s = this.cert.getSubjectX500Principal().getName();
           if (s != null && s.length() > 40)
             s = s.substring(0,39) + "...";
           
@@ -410,18 +405,17 @@ public class CertificateList extends TablePart
      */
     public void handleAction(Object context) throws ApplicationException
     {
-      if (context == null || !(context instanceof CertObject))
+      if (!(context instanceof CertObject)) {
         return;
+      }
       try
       {
-        CertObject c = (CertObject) context;
-        CertificateDetailDialog d = new CertificateDetailDialog(CertificateDetailDialog.POSITION_CENTER,c.cert);
+        CertificateDetailDialog d = new CertificateDetailDialog(de.willuhn.jameica.gui.dialogs.AbstractDialog.POSITION_CENTER,((CertObject) context).cert);
         d.open();
       }
       catch (OperationCanceledException oce)
       {
         Logger.info(oce.getMessage());
-        return;
       }
       catch (Exception e)
       {

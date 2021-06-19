@@ -42,8 +42,8 @@ import de.willuhn.logging.Logger;
  */
 public class SearchPart implements Part
 {
-  private final static KeyStroke SHORTCUT_DEFAULT = KeyStroke.getInstance(SWT.CTRL,'1');
-  private final static Settings settings = new Settings(SearchPart.class);
+  private static final KeyStroke SHORTCUT_DEFAULT = KeyStroke.getInstance(SWT.CTRL,'1');
+  private static final Settings settings = new Settings(SearchPart.class);
   
   private KeyStroke currentKey = null;
   private QueryInput search = null;

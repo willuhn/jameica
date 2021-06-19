@@ -48,37 +48,37 @@ public class Font {
 	/**
    * Schrift fuer Ueberschriften erster Ordnung.
 	 */
-	public final static Font H1			 = new Font("font.h1",			new FontData(systemFont,systemHeight+2, SWT.BOLD));
+	public static final Font H1			 = new Font("font.h1",			new FontData(systemFont,systemHeight+2, SWT.BOLD));
 
   /**
    * Schrift fuer Ueberschriften zweiter Ordnung.
    */
-  public final static Font H2 		 = new Font("font.h2",			new FontData(systemFont,systemHeight+1, SWT.BOLD));
+  public static final Font H2 		 = new Font("font.h2",			new FontData(systemFont,systemHeight+1, SWT.BOLD));
 	
   /**
    * Schrift fuer Ueberschriften dritter Ordnung.
    */
-  public final static Font H3      = new Font("font.h3",      new FontData(systemFont,systemHeight, SWT.ITALIC));
+  public static final Font H3      = new Font("font.h3",      new FontData(systemFont,systemHeight, SWT.ITALIC));
 
   /**
    * Kleiner Text.
    */
-  public final static Font SMALL   = new Font("font.small",   new FontData(systemFont,systemHeight-1, SWT.NORMAL));
+  public static final Font SMALL   = new Font("font.small",   new FontData(systemFont,systemHeight-1, SWT.NORMAL));
 
   /**
    * Standard-Schrift.
    */
-  public final static Font DEFAULT = new Font("font.default",	new FontData(systemFont,systemHeight,SWT.NORMAL));
+  public static final Font DEFAULT = new Font("font.default",	new FontData(systemFont,systemHeight,SWT.NORMAL));
 
   /**
    * Standard-Schrift, fett gedruckt.
    */
-  public final static Font BOLD    = new Font("font.bold",    new FontData(systemFont,systemHeight,SWT.BOLD));
+  public static final Font BOLD    = new Font("font.bold",    new FontData(systemFont,systemHeight,SWT.BOLD));
 
   /**
    * Standard-Schrift, kursiv gedruckt.
    */
-  public final static Font ITALIC  = new Font("font.italic",   new FontData(systemFont,systemHeight,SWT.ITALIC));
+  public static final Font ITALIC  = new Font("font.italic",   new FontData(systemFont,systemHeight,SWT.ITALIC));
 
   private String name;
 	private FontData value;

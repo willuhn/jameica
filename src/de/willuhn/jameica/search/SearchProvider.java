@@ -41,7 +41,7 @@ public interface SearchProvider
    * @throws RemoteException
    * @throws ApplicationException
    */
-  public List search(String search) throws RemoteException, ApplicationException;
+  public List<Result> search(String search) throws RemoteException, ApplicationException;
 }
 
 

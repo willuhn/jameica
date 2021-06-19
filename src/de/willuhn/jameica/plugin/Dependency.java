@@ -21,6 +21,7 @@ import de.willuhn.jameica.system.Application;
  */
 public class Dependency implements Serializable
 {
+  private static final long serialVersionUID = 8344071704015804375L;
   private String name      = null;
   private String version   = null;
   private boolean required = true;
@@ -60,7 +61,7 @@ public class Dependency implements Serializable
   @Override
   public String toString()
   {
-    return this.name + ": " + (this.version == null ? "<any>" : this.version.toString());
+    return this.name + ": " + (this.version == null ? "<any>" : this.version);
   }
   
   /**

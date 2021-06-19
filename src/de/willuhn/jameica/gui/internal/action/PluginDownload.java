@@ -15,6 +15,7 @@ import java.util.List;
 
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.internal.dialogs.DependencyDownloadDialog;
 import de.willuhn.jameica.gui.internal.dialogs.DependencyMissingDialog;
 import de.willuhn.jameica.plugin.Dependency;
@@ -34,7 +35,7 @@ import de.willuhn.util.I18N;
  */
 public class PluginDownload implements Action
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
 
   /**
    * Erwartet ein Objekt vom Typ PluginData.
@@ -94,8 +95,8 @@ public class PluginDownload implements Action
       final List<PluginData> resolved = r.result.getResolved();
       final List<Dependency> missing  = r.result.getMissing();
       
-      final boolean haveMissing = missing.size() > 0;
-      final boolean haveDeps    = resolved.size() > 0;
+      final boolean haveMissing = !missing.isEmpty();
+      final boolean haveDeps    = !resolved.isEmpty();
       
       // Wir haben weder zu installierende noch fehlende Abhaengigkeiten
       if (!haveDeps && !haveMissing)
@@ -111,16 +112,16 @@ public class PluginDownload implements Action
       // Wir haben Abhaengigkeiten, die wir nicht erfuellen konnten
       if (haveMissing)
       {
-        DependencyMissingDialog d = new DependencyMissingDialog(DependencyMissingDialog.POSITION_CENTER,missing);
+        DependencyMissingDialog d = new DependencyMissingDialog(AbstractDialog.POSITION_CENTER,missing);
         d.open();
         return;
       }
       
       // Ansonsten geben wir Bescheid, welche Abhaengigkeiten mit installiert werden.
-      DependencyDownloadDialog d = new DependencyDownloadDialog(DependencyDownloadDialog.POSITION_CENTER,resolved);
+      DependencyDownloadDialog d = new DependencyDownloadDialog(AbstractDialog.POSITION_CENTER,resolved);
       d.open();
       
-      List<PluginData> all = new ArrayList<PluginData>();
+      List<PluginData> all = new ArrayList<>();
       all.addAll(resolved);
       all.add(data);
       

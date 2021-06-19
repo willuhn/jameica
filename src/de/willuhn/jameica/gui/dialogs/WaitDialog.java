@@ -43,7 +43,7 @@ import de.willuhn.util.ApplicationException;
  * erneut aufgerufen. Solange, bis sie {@code true} zurueckliefert, oder das Timeout
  * abgelaufen ist.
  */
-public abstract class WaitDialog extends AbstractDialog
+public abstract class WaitDialog extends AbstractDialog<Object>
 {
   private long timeout   = 60000L; // per Default 1 Minute
   private int steps      = 1000; // Anzahl der Schritte im Wartedialog
@@ -53,25 +53,25 @@ public abstract class WaitDialog extends AbstractDialog
    * Erzeugt einen Wartedialog mit einem Standard-Timeout von 60 Sekunden.
    * @param pos die Position des Dialogs.
    */
-  public WaitDialog(int pos)
+  protected WaitDialog(int pos)
   {
     this(-1,pos);
   }
-  
+
   /**
    * ct.
    * @param timeout Timeout in Millisekunden, nach deren Ablauf der Dialog mit einer
    * OperationCancelledException abbrechen soll. Muss mindestens 5000 (5 Sekunden) sein.
    * @param pos die Position des Dialogs.
    */
-  public WaitDialog(long timeout, int pos)
+  protected WaitDialog(long timeout, int pos)
   {
     super(pos);
     if (timeout >= 5000L)
       this.timeout = timeout;
 
     super.addCloseListener(new Listener() {
-    
+
       public void handleEvent(Event event)
       {
         if (t != null)
@@ -90,7 +90,7 @@ public abstract class WaitDialog extends AbstractDialog
           }
         }
       }
-    
+
     });
   }
 
@@ -145,7 +145,7 @@ public abstract class WaitDialog extends AbstractDialog
       {
         close();
       }
-    
+
     },null,true,"ok.png");
     buttons.addButton(i18n.tr("Abbrechen"),new Action() {
       public void handleAction(Object context) throws ApplicationException
@@ -154,10 +154,11 @@ public abstract class WaitDialog extends AbstractDialog
       }
     },null,false,"process-stop.png");
     container.addButtonArea(buttons);
-    
+
 
     t = new Thread() {
-    
+
+      @Override
       public void run()
       {
         try
@@ -165,9 +166,9 @@ public abstract class WaitDialog extends AbstractDialog
           final long wait   = 200L; // 5 mal pro Sekunde aktualisieren
           final long chunks = timeout / wait; // Anzahl der Schritte
           final int step    = (int) (steps / chunks); // Selection um diesen Wert pro Schritt erhoehen
-          
+
           final AtomicInteger pos = new AtomicInteger(0);
-          
+
           while (pos.intValue() <= steps)
           {
             if (check())
@@ -175,7 +176,7 @@ public abstract class WaitDialog extends AbstractDialog
               close();
               return;
             }
-           
+
             GUI.getDisplay().syncExec(new Runnable()
             {
               public void run()

@@ -27,8 +27,8 @@ import de.willuhn.util.I18N;
  */
 public class InvokeScriptMessageConsumer implements MessageConsumer
 {
-  private final static I18N i18n = Application.getI18n();
-  private final static String PREFIX_FX = "function.";
+  private static final I18N i18n = Application.getI18n();
+  private static final String PREFIX_FX = "function.";
   
   /**
    * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
@@ -79,7 +79,7 @@ public class InvokeScriptMessageConsumer implements MessageConsumer
     // diese Funktion direkt auf - ohne Mapping ueber die Events
     if (event.startsWith(PREFIX_FX) && event.length() > PREFIX_FX.length())
     {
-      functions = new ArrayList<String>();
+      functions = new ArrayList<>();
       functions.add(event.substring(PREFIX_FX.length()));
     }
     else
@@ -88,14 +88,14 @@ public class InvokeScriptMessageConsumer implements MessageConsumer
       functions = service.getFunction(event);
     }
     
-    if (functions == null || functions.size() == 0)
+    if (functions.isEmpty())
     {
       Logger.debug("no script functions registered for event " + event);
       msg.setData(new ApplicationException(i18n.tr("Kein passendes Script gefunden")));
       return;
     }
     
-    List returns = new ArrayList();
+    List<Object> returns = new ArrayList<>();
     Invocable i = (Invocable) engine;
     Object params = msg.getData();
 
@@ -126,7 +126,7 @@ public class InvokeScriptMessageConsumer implements MessageConsumer
     }
     
     // Rueckgabewert der Funktionen
-    if (returns.size() == 0)
+    if (returns.isEmpty())
       msg.setData(null); // Rueckgabewert leeren
     else if (returns.size() == 1)
       msg.setData(returns.get(0)); // nur ein Wert, dann nehmen wir den direkt

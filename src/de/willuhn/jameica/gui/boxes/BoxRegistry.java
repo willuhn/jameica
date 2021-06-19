@@ -35,7 +35,7 @@ public class BoxRegistry
    */
   public static synchronized List<Box> getBoxes()
   {
-    List<Box> instances = new LinkedList<Box>();
+    List<Box> instances = new LinkedList<>();
 
     if (boxes == null)
     {

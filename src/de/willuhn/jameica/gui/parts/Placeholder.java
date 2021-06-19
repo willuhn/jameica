@@ -31,7 +31,7 @@ import de.willuhn.util.I18N;
  */
 public class Placeholder implements Part
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
   
   /**
    * Vorkonfigurierte Styles.

@@ -65,7 +65,7 @@ public class ManifestMessageConsumer implements MessageConsumer
     MessagingFactory factory = Application.getMessagingFactory();
     BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
     
-    List<Manifest> list = new LinkedList<Manifest>();
+    List<Manifest> list = new LinkedList<>();
     list.addAll(Application.getPluginLoader().getInstalledManifests()); // die Plugins
     list.add(Application.getManifest()); // Jameica selbst
     
@@ -88,7 +88,7 @@ public class ManifestMessageConsumer implements MessageConsumer
         
         try
         {
-          Class c = null;
+          Class<?> c = null;
           
           if (mf.isSystemManifest())
           {
@@ -138,7 +138,7 @@ public class ManifestMessageConsumer implements MessageConsumer
     Logger.debug("searching for messages from manifests");
     MessagingFactory factory = Application.getMessagingFactory();
     
-    List<Manifest> list = new LinkedList<Manifest>();
+    List<Manifest> list = new LinkedList<>();
     list.addAll(Application.getPluginLoader().getInstalledManifests()); // die Plugins
     list.add(Application.getManifest()); // Jameica selbst
     

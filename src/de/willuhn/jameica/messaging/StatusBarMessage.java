@@ -19,20 +19,22 @@ package de.willuhn.jameica.messaging;
 public class StatusBarMessage extends TextMessage
 {
 
+  private static final long serialVersionUID = 8274897590566197333L;
+
   /**
    * Definiert Erfolgsnachrichten.
    */
-  public final static int TYPE_SUCCESS = 0;
+  public static final int TYPE_SUCCESS = 0;
   
   /**
    * Definiert Fehlernachrichten.
    */
-  public final static int TYPE_ERROR   = 1;
+  public static final int TYPE_ERROR   = 1;
 
   /**
    * Definiert Info-Nachrichten.
    */
-  public final static int TYPE_INFO    = 2;
+  public static final int TYPE_INFO    = 2;
 
   private int type    = TYPE_SUCCESS;
 

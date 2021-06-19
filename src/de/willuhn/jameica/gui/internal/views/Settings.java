@@ -209,12 +209,13 @@ public class Settings extends AbstractView implements Extendable
   /**
    * @see de.willuhn.jameica.gui.AbstractView#unbind()
    */
+  @Override
   public void unbind() throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue(this.getExtendableID()).unRegisterMessageConsumer(this.mc);
     
     // Wir merken uns das aktive Tab
-    lastActiveTab = new Integer(getTabFolder().getSelectionIndex());
+    lastActiveTab = Integer.valueOf(getTabFolder().getSelectionIndex());
   }
 
   /**
@@ -242,7 +243,7 @@ public class Settings extends AbstractView implements Extendable
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }

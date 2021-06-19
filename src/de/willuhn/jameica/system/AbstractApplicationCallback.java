@@ -11,8 +11,8 @@
 package de.willuhn.jameica.system;
 
 import java.net.InetAddress;
-
-import javax.security.cert.X509Certificate;
+import java.security.cert.X509Certificate;
+import java.security.cert.X509Extension;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -88,9 +88,9 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
   }
 
   /**
-   * @see de.willuhn.jameica.system.ApplicationCallback#checkHostname(java.lang.String, javax.security.cert.X509Certificate[])
+   * @see de.willuhn.jameica.system.ApplicationCallback#checkHostname(java.lang.String, java.security.cert.X509Extension[])
    */
-  public boolean checkHostname(String hostname, X509Certificate[] certs) throws Exception
+  public boolean checkHostname(String hostname, X509Extension[] certs) throws Exception
   {
     // Wir fragen vorher noch per Messaging. Wenn es uns jemand
     // beantwortet (z.Bsp. ein anderes Plugin), dann muessen wir
@@ -99,16 +99,16 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
     QueryMessage msg = new QueryMessage(hostname,certs);
     Application.getMessagingFactory().getMessagingQueue("jameica.trust.hostname").sendSyncMessage(msg);
     Object data = msg.getData();
-    if (data != null && (data instanceof Boolean) && ((Boolean)data).booleanValue())
+    if ((data instanceof Boolean) && ((Boolean)data).booleanValue())
     {
       Logger.debug("hostname: " + hostname + ", trusted by: " + msg.getName());
       return true;
     }
 
-    StringBuffer hostnames = new StringBuffer();
+    StringBuilder hostnames = new StringBuilder();
     for (int i=0;i<certs.length;++i)
     {
-      Certificate c = new Certificate(certs[i]);
+      Certificate c = new Certificate((X509Certificate) certs[i]);
       String h = c.getSubject().getAttribute(Principal.COMMON_NAME);
       if (h == null || h.length() == 0)
         continue;
@@ -119,7 +119,7 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
     }
     
     String s = Application.getI18n().tr("Der Hostname \"{0}\" stimmt mit keinem der Server-Zertifikate überein ({1}). " +
-                                        "Wollen Sie den Vorgang dennoch fortsetzen?",new String[]{hostname,hostnames.toString()});
+                                        "Wollen Sie den Vorgang dennoch fortsetzen?", hostname, hostnames.toString());
     return askUser(s);
   }
 
@@ -132,9 +132,9 @@ public abstract class AbstractApplicationCallback implements ApplicationCallback
     QueryMessage msg = new QueryMessage(authenticator);
     Application.getMessagingFactory().getMessagingQueue("jameica.auth").sendSyncMessage(msg);
     Object result = msg.getData();
-    if (result != null && (result instanceof Login))
+    if (result instanceof Login)
       return (Login) result; // jepp, war jemand zustaendig
-    
+
     return null; // keiner zustaendig. Dann soll es die konkrete Callback-Implementierung machen
   }
 }

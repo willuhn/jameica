@@ -28,7 +28,7 @@ import de.willuhn.util.ApplicationException;
 /**
  * About-Dialog.
  */
-public class About extends AbstractDialog
+public class About extends AbstractDialog<Object>
 {
 
   /**

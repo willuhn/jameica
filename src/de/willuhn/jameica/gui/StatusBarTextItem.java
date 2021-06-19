@@ -99,6 +99,7 @@ public class StatusBarTextItem implements StatusBarItem
 
       MouseAdapter ma = new MouseAdapter()
       {
+        @Override
         public void mouseUp(MouseEvent e)
         {
           if (GUI.getView().snappedIn())
@@ -150,7 +151,7 @@ public class StatusBarTextItem implements StatusBarItem
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[] {StatusBarMessage.class};
     }

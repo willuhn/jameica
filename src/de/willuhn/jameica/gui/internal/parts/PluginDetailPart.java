@@ -43,7 +43,7 @@ import de.willuhn.util.I18N;
  */
 public class PluginDetailPart extends InfoPanel
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
   
   /**
    * Legt fest, um welche Art von Plugin-Info es sich handelt.
@@ -153,7 +153,7 @@ public class PluginDetailPart extends InfoPanel
       }
       this.addButton(delete);
     }
-    else if (this.type == Type.AVAILABLE && this.plugins != null && this.plugins.size() > 0)
+    else if (this.type == Type.AVAILABLE && !this.plugins.isEmpty())
     {
       Action download = new PluginDownload(){
         /**
@@ -181,7 +181,7 @@ public class PluginDetailPart extends InfoPanel
       Button install = new Button(i18n.tr(text),download,null,false,"document-save.png");
       this.addButton(install);
     }
-    else if (this.type == Type.UPDATE && this.plugins != null && this.plugins.size() > 0)
+    else if (this.type == Type.UPDATE && !this.plugins.isEmpty())
     {
       Action download = new PluginDownload(){
         /**
@@ -204,7 +204,7 @@ public class PluginDetailPart extends InfoPanel
    */
   private PluginData getSelectedVersion()
   {
-    if (this.plugins == null || this.plugins.size() == 0)
+    if (this.plugins.isEmpty())
       return null;
     
     if (this.plugins.size() == 1)
@@ -230,7 +230,7 @@ public class PluginDetailPart extends InfoPanel
     if (this.version != null)
       return this.version;
     
-    List<Version> versions = new ArrayList<Version>();
+    List<Version> versions = new ArrayList<>();
     if (this.plugins != null)
     {
       for (PluginData plugin:plugins)

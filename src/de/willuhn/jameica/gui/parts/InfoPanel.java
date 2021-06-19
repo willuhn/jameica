@@ -51,7 +51,7 @@ public class InfoPanel implements Part
   private String tooltip   = null;
   private Color fgColor    = null;
   private Composite comp   = null;
-  private List<Button> buttons = new LinkedList<Button>();
+  private List<Button> buttons = new LinkedList<>();
   
   /**
    * Enums fuer die verschiedenen Zustaende beim Zeichnen des Info-Panel.
@@ -246,6 +246,7 @@ public class InfoPanel implements Part
         
         l.setText("<A>" + this.url + "</A>");
         l.addSelectionListener(new SelectionAdapter() {
+          @Override
           public void widgetSelected(SelectionEvent e)
           {
             try

@@ -65,7 +65,6 @@ public class PopupMessageConsumer implements MessageConsumer
       if (text.length() > 0)
         s = s + "\n" + text;
       Application.getCallback().notifyUser(s);
-      return;
     }
     else
     {

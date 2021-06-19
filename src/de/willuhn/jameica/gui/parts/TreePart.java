@@ -61,13 +61,14 @@ public class TreePart extends AbstractTablePart
 {
 
   private TreeFormatter formatter   = null;
-  private List list                 = null;
+  private ArrayList<Object> list    = null;
   private Tree tree                 = null;
-  
+
   private String id                 = null;
   private boolean expanded          = true;
-  private Map<Object,Item> itemLookup    = new HashMap<Object,Item>();
-  private Map<TreeItem,Boolean> autoimage = new HashMap<TreeItem,Boolean>();
+
+  private Map<Object,Item> itemLookup     = new HashMap<>();
+  private Map<TreeItem,Boolean> autoimage = new HashMap<>();
 
   //////////////////////////////////////////////////////////
   // State
@@ -101,7 +102,7 @@ public class TreePart extends AbstractTablePart
    * @param action Action, die bei der Auswahl eines Elements
    * ausgeloest werden soll.
    */
-  public TreePart(GenericIterator list, Action action)
+  public TreePart(GenericIterator<?> list, Action action)
   {
     super(action);
     this.setList(list);
@@ -113,7 +114,7 @@ public class TreePart extends AbstractTablePart
    * @param action Action, die bei der Auswahl eines Elements
    * ausgeloest werden soll.
    */
-  public TreePart(List list, Action action)
+  public TreePart(List<?> list, Action action)
   {
     super(action);
     this.setList(list);
@@ -135,7 +136,7 @@ public class TreePart extends AbstractTablePart
    * Speichert die Liste der anzuzeigenden Daten.
    * @param list Liste der anzuzeigenden Daten.
    */
-  public void setList(GenericIterator list)
+  public void setList(GenericIterator<?> list)
   {
     this.setList(asList(list));
   }
@@ -144,13 +145,13 @@ public class TreePart extends AbstractTablePart
    * Speichert die Liste der anzuzeigenden Daten.
    * @param list Liste der anzuzeigenden Daten.
    */
-  public void setList(List list)
+  public void setList(List<?> list)
   {
     this.removeAll();
 
     try
     {
-      this.list = list;
+      this.list = (ArrayList<Object>) list;
       this.loadData();
     }
     catch (RemoteException re)
@@ -195,9 +196,9 @@ public class TreePart extends AbstractTablePart
     if (this.id != null)
       return id;
 
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
 
-    if (this.list != null && this.list.size() > 0)
+    if (!this.list.isEmpty())
     {
       sb.append(this.list.get(0).getClass().getName());
     }
@@ -245,7 +246,7 @@ public class TreePart extends AbstractTablePart
       {
         if (!tree.isFocusControl())
           return;
-        
+
         Object o = getSelection();
         if (o == null)
           return;
@@ -276,14 +277,17 @@ public class TreePart extends AbstractTablePart
     // Listener fuer die Doppelklick und Menu.
     this.tree.addMouseListener(new MouseAdapter()
     {
+      @Override
       public void mouseDoubleClick(MouseEvent e)
       {
         handleDoubleClick(e);
       }
+      @Override
       public void mouseDown(MouseEvent e)
       {
         handleMouseDown(e);
       }
+      @Override
       public void mouseUp(MouseEvent e)
       {
         handleMouseUp(e);
@@ -325,7 +329,7 @@ public class TreePart extends AbstractTablePart
         {
           event.detail = -1;
         }
-        
+
         // Noch die Selection-Listeners
         for (Listener l:selectionListeners)
         {
@@ -340,15 +344,15 @@ public class TreePart extends AbstractTablePart
         }
       }
     });
-    
-    
+
+
     // Spalten hinzufuegen
-    if (this.columns.size() > 0)
+    if (!this.columns.isEmpty())
     {
       this.tree.setHeaderVisible(true);
       this.tree.setLinesVisible(true);
 
-      Object test = this.list != null && this.list.size() > 0 ? this.list.get(0) : null;
+      Object test = this.list.isEmpty() ? null : this.list.get(0);
 
       for (int i=0;i<this.columns.size();++i)
       {
@@ -514,7 +518,7 @@ public class TreePart extends AbstractTablePart
 
   private void orderBy(TreeItem item, GenericTreeItemComparator comparator){
     TreeItem[] children = item.getItems();
-    List<TreeItem> itemsToSort=new ArrayList<TreeItem>();
+    List<TreeItem> itemsToSort = new ArrayList<>();
     for (int i = 0; i <children.length; i++)
     {
       TreeItem child = children[i];
@@ -550,6 +554,7 @@ public class TreePart extends AbstractTablePart
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#restoreState()
    */
+  @Override
   public void restoreState()
   {
     if (!this.rememberState)
@@ -686,8 +691,8 @@ public class TreePart extends AbstractTablePart
       return items[0].getData(); // genau ein Element markiert, also brauchen wir kein Array
 
     // mehrere Elemente markiert. Also Array
-    Class type = null;
-    ArrayList data = new ArrayList();
+    Class<? extends Object> type = null;
+    ArrayList<Object> data = new ArrayList<>();
     for (int i=0;i<items.length;++i)
     {
       Object elem = items[i].getData();
@@ -734,13 +739,13 @@ public class TreePart extends AbstractTablePart
 
     try
     {
-      List<TreeItem> selection = new LinkedList<TreeItem>();
+      List<TreeItem> selection = new LinkedList<>();
       for (Object o:objects)
       {
         if (o == null)
           continue;
         
-        Iterator it = this.itemLookup.keySet().iterator();
+        Iterator<Object> it = this.itemLookup.keySet().iterator();
         while (it.hasNext())
         {
           Object go = it.next();
@@ -752,7 +757,7 @@ public class TreePart extends AbstractTablePart
           }
         }
       }
-      if (selection.size() > 0)
+      if (!selection.isEmpty())
         tree.setSelection(selection.toArray(new TreeItem[selection.size()]));
       
       // Dem Menu Bescheid sagen, dass ein oder mehrere Elemente markiert wurden
@@ -840,7 +845,7 @@ public class TreePart extends AbstractTablePart
       item.setFont(Font.DEFAULT.getSWTFont());
 			item.setData(data);
 
-      if (columns.size() == 0)
+      if (columns.isEmpty())
       {
         String s = BeanUtil.toString(data);
         item.setText(s != null ? s : "");
@@ -861,7 +866,7 @@ public class TreePart extends AbstractTablePart
         formatter.format(item);
 
       // Kinder laden
-      List children = getChildren(data);
+      List<?> children = getChildren(data);
 
       if (children != null)
       {
@@ -939,14 +944,14 @@ public class TreePart extends AbstractTablePart
    * @param o das Element, zu dem die Kinder geladen werden sollen.
    * @return die Liste der Kinder oder NULL.
    */
-  protected List getChildren(Object o)
+  protected List<?> getChildren(Object o)
   {
     try
     {
       if (o instanceof GenericObjectNode)
       {
         GenericObjectNode node = (GenericObjectNode) o;
-        GenericIterator children = node.getChildren();
+        GenericIterator<?> children = node.getChildren();
         return children != null ? PseudoIterator.asList(children) : null;
       }
     }
@@ -968,14 +973,14 @@ public class TreePart extends AbstractTablePart
    */
   public List getItems() throws RemoteException
   {
-    if (this.list == null)
-      return null;
+    if (this.list.isEmpty())
+      return new ArrayList<>();
 
     // Tree existiert noch nicht, existiert nicht mehr, oder Checkbox-Support ist inaktiv -> alle Items
     if (this.tree == null || this.tree.isDisposed() || !this.checkable)
-      return new ArrayList(this.list);
+      return new ArrayList<>(this.list);
     
-    List checkedList = new ArrayList();
+    ArrayList<Object> checkedList = new ArrayList<>();
     TreeItem[] items = this.tree.getItems();
 
     for (TreeItem item:items)
@@ -988,6 +993,7 @@ public class TreePart extends AbstractTablePart
   /**
    * @see de.willuhn.jameica.gui.parts.AbstractTablePart#setChecked(java.lang.Object[], boolean)
    */
+  @Override
   public void setChecked(Object[] objects, boolean checked)
   {
     if (objects == null || objects.length == 0 || !this.checkable)

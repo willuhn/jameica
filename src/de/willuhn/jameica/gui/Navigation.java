@@ -49,7 +49,7 @@ public class Navigation implements Part
   /**
    * Der Key, unter dem sich im TreeItem das Navigation-Objekt befindet.
    */
-  private final static String KEY_NAVIGATION = "jameica.item.navigation";
+  private static final String KEY_NAVIGATION = "jameica.item.navigation";
 
   private Listener action       = new MyActionListener();
   private DisposeListener dsl   = new MyDisposeListener();
@@ -60,7 +60,7 @@ public class Navigation implements Part
 	// TreeItem, unterhalb dessen die Plugins eingehaengt werden. 
   private TreeItem pluginTree		= null;
   
-  private Map<String,TreeItem> itemLookup  = new HashMap<String,TreeItem>();
+  private Map<String,TreeItem> itemLookup  = new HashMap<>();
   
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -175,7 +175,7 @@ public class Navigation implements Part
     item.setFont(Font.DEFAULT.getSWTFont());
     item.addDisposeListener(this.dsl);
     item.setData(KEY_NAVIGATION,element);
-		item.setText(name == null ? "" : name);
+		item.setText(name); // name == null wurde bereits abgefangen.
     expand(item);
     
     if (!element.isEnabled())
@@ -247,7 +247,7 @@ public class Navigation implements Part
    */
   private void loadChildren(NavigationItem element, TreeItem parentTree) throws RemoteException
 	{
-		GenericIterator childs = element.getChildren();
+		GenericIterator<?> childs = element.getChildren();
 		if (childs == null || childs.size() == 0)
 			return;
 		while (childs.hasNext())
@@ -357,9 +357,9 @@ public class Navigation implements Part
       if (item == null || !item.isEnabled())
         return;
       
-      Action action = item.getAction();
+      Action action2 = item.getAction();
       
-      if (action == null)
+      if (action2 == null)
         return;
 
       Logger.debug("executing navigation entry " + item.getID() + " [" + item.getName() + "]");
@@ -368,7 +368,7 @@ public class Navigation implements Part
       if (event != null)
         event.doit = false;
       
-      action.handleAction(event);
+      action2.handleAction(event);
     }
     catch (ApplicationException e)
     {
@@ -398,7 +398,7 @@ public class Navigation implements Part
         widget = mainTree.getItem(new Point(event.x, event.y));
       
       // OK, wir haben wirklich kein Widget. Ignorieren.
-      if (widget == null || !(widget instanceof TreeItem) || widget.isDisposed())
+      if (!(widget instanceof TreeItem) || widget.isDisposed())
         return;
 
       TreeItem item = (TreeItem) widget;
@@ -409,7 +409,7 @@ public class Navigation implements Part
       
       try
       {
-        Action action    = ni.getAction();
+        Action action2   = ni.getAction();
         boolean isFolder = ni.getChildren().size() > 0 && action == null;
         boolean execute  = false;
 
@@ -436,14 +436,14 @@ public class Navigation implements Part
           // Oeffnen einer View per Maus
           case SWT.MouseUp:
           {
-            execute = action != null;
+            execute = action2 != null;
             break;
           }
 
           // Oeffnen per Tastatur
           case SWT.DefaultSelection:
           {
-            execute = action != null;
+            execute = action2 != null;
             
             // Wenns ein Ordner ist, klappen wir ihn ausserdem auf/zu
             if (isFolder)
@@ -459,6 +459,7 @@ public class Navigation implements Part
             }
             break;
           }
+          default: {}
         }
 
         if (execute)

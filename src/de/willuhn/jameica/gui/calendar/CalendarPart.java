@@ -52,9 +52,9 @@ public class CalendarPart implements Part
   private Date currentDate = new Date();
   private Label text       = null;
 
-  private List<DayRenderer> days = new ArrayList<DayRenderer>();
+  private List<DayRenderer> days = new ArrayList<>();
   private Class<? extends DayRenderer> renderer = DayRendererImpl.class;
-  private List<AppointmentProvider> providers = new ArrayList<AppointmentProvider>();
+  private List<AppointmentProvider> providers = new ArrayList<>();
 
   /**
    * Legt das aktuelle Datum fest.
@@ -131,8 +131,8 @@ public class CalendarPart implements Part
     ////////////////////////////////////////////////////////////////////////////
 
     // Blaettern nach links
-    createPager(comp,"<<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, -1);}});
-    createPager(comp,"<",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, -1);}});
+    createPager(comp,"<<",new SelectionAdapter() {@Override public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, -1);}});
+    createPager(comp,"<",new SelectionAdapter() {@Override public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, -1);}});
 
     // Label mit aktuellem Monat
     this.text = new Label(comp, SWT.CENTER);
@@ -141,6 +141,7 @@ public class CalendarPart implements Part
     this.text.setLayoutData(gd);
     this.text.setToolTipText(Application.getI18n().tr("Klicken Sie hier, um zum aktuellen Monat zurückzukehren."));
     this.text.addMouseListener(new MouseAdapter() {
+      @Override
       public void mouseUp(MouseEvent e)
       {
         currentDate = new Date();
@@ -149,8 +150,8 @@ public class CalendarPart implements Part
     });
 
     // Blaettern nach rechts
-    createPager(comp,">",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, 1);}});
-    createPager(comp,">>",new SelectionAdapter() {public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, 1);}});
+    createPager(comp,">",new SelectionAdapter() {@Override public void widgetSelected(SelectionEvent e) {move(Calendar.MONTH, 1);}});
+    createPager(comp,">>",new SelectionAdapter() {@Override public void widgetSelected(SelectionEvent e) {move(Calendar.YEAR, 1);}});
 
     // Header mit den Wochentagen.
     I18N i18n = Application.getI18n();
@@ -175,7 +176,7 @@ public class CalendarPart implements Part
     {
       for (int i=0;i<42;++i)
       {
-        DayRenderer day = this.renderer.newInstance();
+        DayRenderer day = this.renderer.getDeclaredConstructor().newInstance();
         day.paint(comp);
         this.days.add(day);
       }
@@ -218,7 +219,7 @@ public class CalendarPart implements Part
     start = DateUtil.startOfDay(start);
     end   = DateUtil.endOfDay(end);
 
-    Map<Date,List<Appointment>> dates = new HashMap<Date,List<Appointment>>();
+    Map<Date,List<Appointment>> dates = new HashMap<>();
     
     for (AppointmentProvider provider:this.providers)
     {
@@ -227,18 +228,20 @@ public class CalendarPart implements Part
         List<Appointment> list = provider.getAppointments(start,end);
         
         // Hat der Provider Termine?
-        if (list == null || list.size() == 0)
+        if (list.isEmpty())
           continue;
 
         // Wir fuegen die Termine in die Map ein.
         for (Appointment a:list)
         {
-          if (a == null)
+          if (a == null) {
             continue;
+          }
           
           Date d = a.getDate();
-          if (d == null)
+          if (d == null) {
             continue;
+          }
           
           d = DateUtil.startOfDay(d); // Uhrzeit nicht beruecksichtigen
 
@@ -246,7 +249,7 @@ public class CalendarPart implements Part
           List<Appointment> current = dates.get(d);
           if (current == null)
           {
-            current = new LinkedList<Appointment>();
+            current = new LinkedList<>();
             dates.put(d,current);
           }
           current.add(a);

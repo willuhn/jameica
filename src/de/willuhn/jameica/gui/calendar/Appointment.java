@@ -24,7 +24,7 @@ public interface Appointment
   /**
    * Default-Wert fuer die Alarm-Zeit.
    */
-  public final static int ALARMTIME_SECONDS = 900;
+  public static final int ALARMTIME_SECONDS = 900;
   
   /**
    * Liefert das Datum des Termins.

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -55,7 +56,6 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import de.willuhn.io.FileFinder;
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.messaging.KeystoreChangedMessage;
 import de.willuhn.jameica.security.crypto.Engine;
 import de.willuhn.jameica.security.crypto.RSAEngine;
@@ -72,7 +72,7 @@ import de.willuhn.logging.Logger;
  */
 public class SSLFactory
 {
-  private final static Settings settings = new Settings(SSLFactory.class);
+  private static final Settings settings = new Settings(SSLFactory.class);
   
 	static
 	{
@@ -84,7 +84,7 @@ public class SSLFactory
     }
 	}
 
-  private final static String SYSTEM_ALIAS = "jameica";
+  private static final String SYSTEM_ALIAS = "jameica";
 
   /**
    * Das Zertifikat, mit dem die Plugins im Jameica-eigenen Repository
@@ -93,7 +93,7 @@ public class SSLFactory
    * Siehe auch
    * https://www.willuhn.de/products/jameica/updates/jameica.update-pem.crt
    */
-  private final static String CERT_UPDATES = 
+  private static final String CERT_UPDATES = 
     "-----BEGIN CERTIFICATE-----\n" +
     "MIIDdjCCAt+gAwIBAgIBTTANBgkqhkiG9w0BAQUFADCBqTELMAkGA1UEBhMCREUx\n" +
     "DzANBgNVBAgTBlNheG9ueTEQMA4GA1UEBxMHTGVpcHppZzEkMCIGA1UEChQbd2ls\n" +
@@ -128,7 +128,7 @@ public class SSLFactory
    * Siehe
    * https://www.willuhn.de/products/jameica/updates/jameica.update.ca1-pem.crt
    */
-  private final static String CERT_JAMEICA_UPDATE_CA = 
+  private static final String CERT_JAMEICA_UPDATE_CA = 
     "-----BEGIN CERTIFICATE-----\n" +
     "MIIDtjCCAp6gAwIBAgIIQdBXw3pRkF8wDQYJKoZIhvcNAQELBQAwTzETMBEGA1UE\n" +
     "AwwKSmFtZWljYSBDQTEVMBMGA1UECgwMT2xhZiBXaWxsdWhuMRQwEgYDVQQLDAtq\n" +
@@ -155,7 +155,7 @@ public class SSLFactory
   /**
    * Das System-CA-Zertifikat von Jameica.
    */
-  private final static String CERT_JAMEICA_CA =
+  private static final String CERT_JAMEICA_CA =
     "-----BEGIN CERTIFICATE-----\n" +
     "MIIDijCCAnKgAwIBAgIIIDT28rTyXw4wDQYJKoZIhvcNAQELBQAwTzETMBEGA1UE\n" +
     "AwwKSmFtZWljYSBDQTEVMBMGA1UECgwMT2xhZiBXaWxsdWhuMRQwEgYDVQQLDAtq\n" +
@@ -350,20 +350,16 @@ public class SSLFactory
    */
   private synchronized void storeKeystore() throws Exception
 	{
-		OutputStream os = null;
 		File target     = this.getKeyStoreFile();
 		boolean changed = target.exists();
-		try
+		try(OutputStream os = new FileOutputStream(target))
 		{
 			Logger.info("storing keystore: " + target);
-			os = new FileOutputStream(target);
 			this.keystore.store(os,this.callback.getPassword().toCharArray());
 		}
 		finally
 		{
-		  IOUtil.close(os);
-
-      // Force reload
+		  // Force reload
       this.keystore    = null;
       this.certificate = null;
       this.privateKey  = null;
@@ -442,7 +438,7 @@ public class SSLFactory
   {
     try
     {
-      X509Certificate cert     = this.loadCertificate(new ByteArrayInputStream(data.getBytes("ISO-8859-1")));
+      X509Certificate cert     = this.loadCertificate(new ByteArrayInputStream(data.getBytes(StandardCharsets.ISO_8859_1)));
       String alias             = this.createAlias(cert);
       X509Certificate existing = this.getTrustedCertificate(alias);
       
@@ -492,7 +488,7 @@ public class SSLFactory
    */
   public synchronized X509Certificate[] getTrustedCertificates() throws Exception
   {
-    ArrayList<java.security.cert.Certificate> list = new ArrayList<java.security.cert.Certificate>();
+    ArrayList<java.security.cert.Certificate> list = new ArrayList<>();
     Enumeration<String> e = getKeyStore().aliases();
     while (e.hasMoreElements())
     {
@@ -543,32 +539,16 @@ public class SSLFactory
     if (certs == null || certs.length == 0)
       return new X509Certificate[0];
 
-    ArrayList<X509Certificate> list = new ArrayList<X509Certificate>();
+    ArrayList<X509Certificate> list = new ArrayList<>();
     for (int i=0;i<certs.length;++i)
     {
-      InputStream is = null;
-      try
+      try(InputStream is = new FileInputStream(certs[i]))
       {
-        is = new FileInputStream(certs[i]);
         list.add(loadCertificate(is));
       }
       catch (Exception e)
       {
         Logger.error("unable to load certificate " + certs[i].getAbsolutePath(),e);
-      }
-      finally
-      {
-        if (is != null)
-        {
-          try
-          {
-            is.close();
-          }
-          catch (Exception e)
-          {
-            Logger.error("unable to close certificate file " + certs[i].getAbsolutePath(),e);
-          }
-        }
       }
     }
     return list.toArray(new X509Certificate[list.size()]);
@@ -605,16 +585,10 @@ public class SSLFactory
     // das jetzt noch mit dem angegeben Passwort.
     if (!verifier.verified)
     {
-      InputStream is = null;
-      try
+      try(InputStream is = new BufferedInputStream(new FileInputStream(f)))
       {
         Logger.info("trying to read keystore");
-        is = new BufferedInputStream(new FileInputStream(f));
         this.keystore.load(is,password.toCharArray());
-      }
-      finally
-      {
-        IOUtil.close(is);
       }
     }
     
@@ -635,7 +609,7 @@ public class SSLFactory
     if (getSystemCertificate().equals(cert))
       throw new Exception("system certificate cannot be deleted");
 
-    Logger.warn("removing certificate " + cert.getSubjectDN().getName() + " from keystore");
+    Logger.warn("removing certificate " + cert.getSubjectX500Principal().getName() + " from keystore");
 
     Logger.info("searching for alias name");
     Enumeration<String> e = getKeyStore().aliases();
@@ -687,6 +661,7 @@ public class SSLFactory
    * @return die geladenen Zertifikate. Es koennen mehrere sein.
    * @throws Exception
    */
+  @SuppressWarnings("unchecked")
   public synchronized Collection<X509Certificate> loadCertificates(InputStream is) throws Exception
   {
     try
@@ -720,9 +695,7 @@ public class SSLFactory
    */
   private String createAlias(X509Certificate cert)
   {
-    String dn    = cert.getSubjectDN().getName();
-    String alias = dn + "-" + cert.getSerialNumber().toString();
-    return alias;
+    return cert.getSubjectX500Principal().getName() + "-" + cert.getSerialNumber().toString();
   }
 	
   /**
@@ -767,13 +740,13 @@ public class SSLFactory
     }
     catch (CertificateExpiredException exp)
     {
-      String s = Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo});
+      String s = Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}", validFrom, validTo);
       if (!Application.getCallback().askUser(s))
         throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
     }
     catch (CertificateNotYetValidException not)
     {
-      String s = Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo});
+      String s = Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}", validFrom, validTo);
       if (!Application.getCallback().askUser(s))
         throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
     }
@@ -884,10 +857,8 @@ public class SSLFactory
       
     public boolean verify(String username, char[] password)
     {
-      InputStream is = null;
-      try
+      try(InputStream is = new BufferedInputStream(new FileInputStream(this.file)))
       {
-        is = new BufferedInputStream(new FileInputStream(this.file));
         this.keystore.load(is,password);
         this.verified = true;
         return true;
@@ -899,10 +870,6 @@ public class SSLFactory
       catch (Exception e)
       {
         Logger.error("unable to unlock keystore",e);
-      }
-      finally
-      {
-        IOUtil.close(is);
       }
       return false;
     }

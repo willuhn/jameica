@@ -9,6 +9,7 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.formatter;
 
+import java.io.Serializable;
 
 /**
  * Kleine Formatierer-Klasse.
@@ -16,7 +17,7 @@ package de.willuhn.jameica.gui.formatter;
  * erledigen, kann man einen solchen Formatter verwenden.
  * @author willuhn
  */
-public interface Formatter
+public interface Formatter extends Serializable
 {
 
   /**

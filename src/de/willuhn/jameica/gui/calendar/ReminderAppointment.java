@@ -30,17 +30,17 @@ public class ReminderAppointment implements Appointment
   /**
    * Unsere Queue.
    */
-  public final static String QUEUE = "jameica.reminder.appointment";
+  public static final String QUEUE = "jameica.reminder.appointment";
   
   /**
    * Name des Schluessels in der Nutzdaten-Map, in der der Name des Appointments steht.
    */
-  public final static String KEY_NAME = "key.name";
+  public static final String KEY_NAME = "key.name";
 
   /**
    * Name des Schluessels in der Nutzdaten-Map, in der die Beschreibung des Appointments steht.
    */
-  public final static String KEY_DESCRIPTION = "key.description";
+  public static final String KEY_DESCRIPTION = "key.description";
 
   private String uuid       = null;
   private Reminder reminder = null;

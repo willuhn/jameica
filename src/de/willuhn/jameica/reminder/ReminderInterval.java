@@ -26,10 +26,12 @@ import de.willuhn.util.I18N;
  */
 public class ReminderInterval implements Serializable
 {
+  private static final long serialVersionUID = -5007545937114537459L;
+
   /**
    * Die Zeiteinheit.
    */
-  public static enum TimeUnit
+  public enum TimeUnit
   {
     /**
      * Stuendliche Ausfuehrung.
@@ -164,7 +166,7 @@ public class ReminderInterval implements Serializable
     }
     
     
-    List<Date> list = new ArrayList<Date>();
+    List<Date> list = new ArrayList<>();
     
     if (!to.after(from))
     {
@@ -232,7 +234,7 @@ public class ReminderInterval implements Serializable
       return i18n.tr("alle {0} Monate",Integer.toString(i));
     }
     
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append("every ");
     sb.append(this.interval);
     sb.append(" ");

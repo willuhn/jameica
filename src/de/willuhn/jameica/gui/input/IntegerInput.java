@@ -42,6 +42,9 @@ public class IntegerInput extends TextInput
   	super(value < 0 ? "" : "" +value);
   }
 
+  /**
+   * @see de.willuhn.jameica.gui.input.Input#getControl()
+   */
   @Override
   public Control getControl()
   {
@@ -71,7 +74,7 @@ public class IntegerInput extends TextInput
     if (value == null || value.toString().length() == 0)
       return null;
     try {
-      return new Integer(value.toString());
+      return Integer.valueOf(value.toString());
     }
     catch (NumberFormatException e)
     {

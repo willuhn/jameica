@@ -22,6 +22,7 @@ import de.willuhn.jameica.util.DateUtil;
 public class DateFormatter implements Formatter
 {
 
+  private static final long serialVersionUID = 8561318461781142520L;
   private DateFormat formatter = DateUtil.DEFAULT_FORMAT;
 
   /**

@@ -34,8 +34,8 @@ import de.willuhn.logging.Logger;
  */
 public class Popup
 {
-  private final static int ALIGN_DEFAULT = SWT.BOTTOM | SWT.RIGHT;
-  private final static int ALPHA = 180;
+  private static final int ALIGN_DEFAULT = SWT.BOTTOM | SWT.RIGHT;
+  private static final int ALPHA = 180;
   
   private Shell shell    = null;
   private String title   = null;

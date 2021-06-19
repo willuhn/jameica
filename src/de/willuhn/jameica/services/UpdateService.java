@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
@@ -49,7 +50,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class UpdateService implements Bootable
 {
-  private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(UpdateService.class);
+  private static final de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(UpdateService.class);
 
   private Timer timer = null;
   private Worker worker = null;
@@ -205,18 +206,18 @@ public class UpdateService implements Bootable
    * @return die gefundenen Updates oder NULL, wenn keine Updates gefunden wurden.
    * @throws ApplicationException
    */
-  public TreeMap<String,List<PluginData>> findUpdates(ProgressMonitor monitor) throws ApplicationException
+  public SortedMap<String,List<PluginData>> findUpdates(ProgressMonitor monitor) throws ApplicationException
   {
     TreeMap<String,List<UpdateStatus>> states = this.findUpdateStates(monitor);
 
     if (states == null)
       return null;
 
-    TreeMap<String,List<PluginData>> result = new TreeMap<String,List<PluginData>>();
+    TreeMap<String,List<PluginData>> result = new TreeMap<>();
     
     for (Entry<String,List<UpdateStatus>> e:states.entrySet())
     {
-      List<PluginData> data = new ArrayList<PluginData>();
+      List<PluginData> data = new ArrayList<>();
       for (UpdateStatus s:e.getValue())
       {
         data.add(s.plugin);
@@ -248,7 +249,7 @@ public class UpdateService implements Bootable
     {
       //////////////////////
       // Haben wir ueberhaupt Plugins installiert?
-      if (Application.getPluginLoader().getInstalledPlugins().size() == 0)
+      if (Application.getPluginLoader().getInstalledPlugins().isEmpty())
       {
         Logger.info("no plugins installed");
         if (monitor != null)
@@ -262,7 +263,7 @@ public class UpdateService implements Bootable
       //
       //////////////////////
 
-      TreeMap<String,List<UpdateStatus>> updates = new TreeMap<String,List<UpdateStatus>>();
+      TreeMap<String,List<UpdateStatus>> updates = new TreeMap<>();
       RepositoryService service = Application.getBootLoader().getBootable(RepositoryService.class);
       List<URL> urls = service.getRepositories();
       
@@ -297,14 +298,14 @@ public class UpdateService implements Bootable
               List<UpdateStatus> list = updates.get(plugin.getName());
               if (list == null)
               {
-                list = new ArrayList<UpdateStatus>();
+                list = new ArrayList<>();
                 updates.put(plugin.getName(),list);
               }
               list.add(status);
             }
             catch (Exception e)
             {
-              if (monitor != null) monitor.log("  " + i18n.tr("Fehler beim Prüfen des Plugins {0}: {1}",new String[]{plugin.getName(),e.getMessage()}));
+              if (monitor != null) monitor.log("  " + i18n.tr("Fehler beim Prüfen des Plugins {0}: {1}", plugin.getName(), e.getMessage()));
               Logger.error("error while checking plugin " + plugin.getName(),e);
             }
           }
@@ -381,7 +382,7 @@ public class UpdateService implements Bootable
       
       try
       {
-        if (Application.getPluginLoader().getInstalledPlugins().size() == 0)
+        if (Application.getPluginLoader().getInstalledPlugins().isEmpty())
         {
           Logger.info("no plugins installed, no need to check for updates");
           return;
@@ -400,10 +401,10 @@ public class UpdateService implements Bootable
         // Updates installieren
         if (getUpdateInstall())
         {
-          StringBuffer names = new StringBuffer();
+          StringBuilder names = new StringBuilder();
           for (List<UpdateStatus> list:states.values())
           {
-            if (list.size() == 0)
+            if (list.isEmpty())
               continue;
 
             // Die hoechste Version ist jeweils die erste
@@ -430,12 +431,12 @@ public class UpdateService implements Bootable
         else
         {
           // nur benachrichtigen
-          StringBuffer names = new StringBuffer();
+          StringBuilder names = new StringBuilder();
           int count = 0;
-          Set<String> unique = new HashSet<String>();
+          Set<String> unique = new HashSet<>();
           for (List<UpdateStatus> list:states.values())
           {
-            if (list.size() == 0)
+            if (list.isEmpty())
               continue;
 
             // Die hoechste Version ist jeweils die erste
@@ -537,7 +538,7 @@ public class UpdateService implements Bootable
       try
       {
         ResolverResult result = service.resolve(plugin);
-        if (result.getMissing().size() > 0)
+        if (!result.getMissing().isEmpty())
         {
           Logger.warn("plugin " + plugin.getName() + " has missing dependencies: " + StringUtils.join(result.getMissing(),", "));
           return;

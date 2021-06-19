@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.internal.dialogs.PluginSourceDialog;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -66,17 +65,17 @@ import de.willuhn.util.Session;
  */
 public class RepositoryService implements Bootable
 {
-  private final static int ERRORCOUNT_MAX = 5;
+  private static final int ERRORCOUNT_MAX = 5;
   
   /**
    * Die URL des System-Repository.
    */
-  public final static String SYSTEM_REPOSITORY = "https://www.willuhn.de/products/jameica/updates";
+  public static final String SYSTEM_REPOSITORY = "https://www.willuhn.de/products/jameica/updates";
   
   /**
    * Liste von bekannten Repositories, die wir mit ausliefern, die der User aber wieder loeschen kann
    */
-  public final static String[] WELL_KNOWN =
+  protected static final String[] WELL_KNOWN =
   {
     "https://www.willuhn.de/products/jameica/updates/extensions",
     "https://www.jverein.de/updates/",
@@ -85,7 +84,7 @@ public class RepositoryService implements Bootable
     "https://hibiscus.tvbrowser.org/"
   };
 
-  private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(RepositoryService.class);
+  private static final de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(RepositoryService.class);
 
   private Session resolveCache = new Session(10 * 60 * 1000L); // Ergebnis 10 Minuten cachen 
   
@@ -140,7 +139,7 @@ public class RepositoryService implements Bootable
   public List<URL> getRepositories(boolean all)
   {
     String[] urls = settings.getList("repository.url",new String[0]);
-    List<URL> list = new ArrayList<URL>();
+    List<URL> list = new ArrayList<>();
     
     try
     {
@@ -243,7 +242,7 @@ public class RepositoryService implements Bootable
     // fragen wir den User, ob er den Vorgang fortsetzen will.
     try
     {
-      List<String> missing = new ArrayList<String>();
+      List<String> missing = new ArrayList<>();
       for (PluginData data:plugins)
       {
         final String name = data.getName();
@@ -267,7 +266,7 @@ public class RepositoryService implements Bootable
         String q = i18n.tr("Die Plugins \"{0}\" wurden vom Herausgeber nicht signiert.\n" +
             "Möchten Sie sie dennoch installieren?",StringUtils.join(missing,", "));
         if (!Application.getCallback().askUser(q,false))
-        throw new OperationCanceledException(i18n.tr("Vorgang abgebrochen"));
+          throw new OperationCanceledException(i18n.tr("Vorgang abgebrochen"));
       }
     }
     catch (ApplicationException ae)
@@ -428,19 +427,18 @@ public class RepositoryService implements Bootable
       throw new ApplicationException(Application.getI18n().tr("Repository enthält kein gültiges Zertifikat \"{0}\". Installation abgebrochen",plugin.getName()));
     }
 
-    InputStream is1 = null;
-    InputStream is2 = null;
-    try
-    {
-      // Signatur einlesen
-      is2 = new BufferedInputStream(new FileInputStream(sig));
+    try(
+      InputStream is1 = new BufferedInputStream(new FileInputStream(archive));
+      InputStream is2 = new BufferedInputStream(new FileInputStream(sig));
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    ) {
+      // Signatur einlesen
       byte[] buf = new byte[1024];
       int read = 0;
-      while ((read = is2.read(buf)) != -1)
+      while ((read = is2.read(buf)) != -1) {
         bos.write(buf,0,read);
-        
-      is1 = new BufferedInputStream(new FileInputStream(archive));
+      }
+
       if (Signature.verifiy(is1,cert.getPublicKey(),bos.toByteArray()))
       {
         Logger.info("signature of plugin " + plugin.getName() + " OK");
@@ -449,10 +447,6 @@ public class RepositoryService implements Bootable
       
       // Signatur ungueltig!
       throw new ApplicationException(Application.getI18n().tr("Signatur des Plugins \"{0}\" ungültig. Installation abgebrochen",plugin.getName()));
-    }
-    finally
-    {
-      IOUtil.close(is1,is2);
     }
   }
   
@@ -465,7 +459,7 @@ public class RepositoryService implements Bootable
    */
   public List<RepositorySearchResult> search(URL url, String query) throws ApplicationException
   {
-    List<RepositorySearchResult> result = new ArrayList<RepositorySearchResult>();
+    List<RepositorySearchResult> result = new ArrayList<>();
 
     List<URL> repos = url != null ? Arrays.asList(url) : this.getRepositories();
     
@@ -507,7 +501,7 @@ public class RepositoryService implements Bootable
     if (result != null)
       return (result instanceof PluginData) ? (PluginData) result : null;
 
-    List<PluginData> candidates = new ArrayList<PluginData>();
+    List<PluginData> candidates = new ArrayList<>();
     
     // Neu suchen. Wir iterieren ueber alle Repositories und suchen dort die Abhaengigkeit.
     for (URL u:this.getRepositories())
@@ -759,10 +753,10 @@ public class RepositoryService implements Bootable
    */
   private void setRepositories(List<URL> list)
   {
-    Map<String,URL> duplicates = new Hashtable<String,URL>();
-    
-    List<String> urls = new ArrayList<String>();
-    if (list != null && list.size() > 0)
+    Map<String,URL> duplicates = new HashMap<>();
+
+    List<String> urls = new ArrayList<>();
+    if (!list.isEmpty())
     {
       for (URL u:list)
       {
@@ -778,6 +772,6 @@ public class RepositoryService implements Bootable
         urls.add(s);
       }
     }
-    settings.setAttribute("repository.url",urls.size() > 0 ? urls.toArray(new String[urls.size()]) : null);
+    settings.setAttribute("repository.url", !urls.isEmpty() ? urls.toArray(new String[urls.size()]) : null);
   }
 }

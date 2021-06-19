@@ -55,7 +55,7 @@ public class NamedConcurrentQueue implements MessagingQueue
       return;
 
     Logger.info("creating thread pool");
-    messages = new LinkedBlockingQueue<Runnable>(2000);
+    messages = new LinkedBlockingQueue<>(2000);
     
     // Der Thread-Pool ist so konfiguriert, dass die Messages im Main-Thread zugestellt
     // werden, wenn die Queue voll ist, damit dieser ausgebremst wird.
@@ -70,7 +70,7 @@ public class NamedConcurrentQueue implements MessagingQueue
     if (message == null || pool.isTerminating() || pool.isTerminated())
       return;
 
-    if (this.consumers.size() == 0)
+    if (this.consumers.isEmpty())
     {
       // Das ist bewusst Debug-Level weil das durchaus vorkommen kann.
       Logger.debug("no message consumers found, ignoring message");
@@ -94,7 +94,7 @@ public class NamedConcurrentQueue implements MessagingQueue
     if (message == null || pool.isTerminating() || pool.isTerminated())
       return;
 
-    if (this.consumers.size() == 0)
+    if (this.consumers.isEmpty())
     {
       // Das ist bewusst Debug-Level weil das durchaus vorkommen kann.
       Logger.debug("no message consumers found, ignoring message");
@@ -113,7 +113,7 @@ public class NamedConcurrentQueue implements MessagingQueue
       return;
     
     // wir koennen direkt zustellen
-    if (this.consumers.size() > 0)
+    if (!this.consumers.isEmpty())
     {
       this.sendMessage(message);
       return;
@@ -169,7 +169,7 @@ public class NamedConcurrentQueue implements MessagingQueue
     if (consumer == null)
       return;
 
-    if (this.consumers.size() == 0)
+    if (this.consumers.isEmpty())
     {
       Logger.debug("queue contains no consumers, skip unregistering");
       return;
@@ -198,7 +198,7 @@ public class NamedConcurrentQueue implements MessagingQueue
 
     try
     {
-      while (messages != null && messages.size() > 0)
+      while (!messages.isEmpty())
         Thread.sleep(5);
     }
     catch (Exception e)
@@ -230,7 +230,7 @@ public class NamedConcurrentQueue implements MessagingQueue
     for (int i=0;i<this.consumers.size();++i)
     {
       consumer = this.consumers.get(i);
-      Class[] expected = consumer.getExpectedMessageTypes();
+      Class<?>[] expected = consumer.getExpectedMessageTypes();
       boolean send = expected == null;
       if (expected != null)
       {

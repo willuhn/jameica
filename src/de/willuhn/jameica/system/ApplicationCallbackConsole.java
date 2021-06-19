@@ -75,6 +75,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 		}
 		catch (IOException ioe)
 		{
+		  // Ignore
   	}
 		return false;
   }
@@ -251,7 +252,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     for (int i=0;i<3;++i) // Maximal 3 Versuche
     {
       this.password = promptPassword();
-      if (this.password != null && this.password.length() > 0)
+      if (!this.password.isEmpty())
       {
         if (verifier == null)
           return this.password; // Kein Verifier verfuegbar, wir muessen der Eingabe glauben
@@ -411,7 +412,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     Boolean trust = msg.isTrusted();
     if (trust != null)
     {
-      Logger.info("cert: " + cert.getSubjectDN().getName() + "," + (trust.booleanValue() ? "" : " NOT ") + " trusted by: " + msg.getTrustedBy());
+      Logger.info("cert: " + cert.getSubjectX500Principal().getName() + "," + (trust.booleanValue() ? "" : " NOT ") + " trusted by: " + msg.getTrustedBy());
       return trust.booleanValue();
     }
 
@@ -435,43 +436,28 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       }
 
       // Speichern des Zertifikats im Incoming-Verzeichnis
-      OutputStream os = null;
-      try
-      {
-        // Wir erzeugen einen Dateinamen aus dem Namen des Typen, fuer den es ausgestellt ist.
-        Certificate myCert = new Certificate(cert);
-        Principal p = myCert.getSubject();
-        String name = p.getAttribute(Principal.COMMON_NAME) + "__" + cert.getSerialNumber().toString();
-        // Wir nehmen alle Zeichen bis auf Buchstaben, Zahlen und Unterstrich raus 
-        name = name.replaceAll("[^A-Za-z0-9\\-_]","_");
-        // und kuerzen noch auf maximal 50 Zeichen
-        if (name.length() > 50)
-          name = name.substring(0,49);
-          
-        // und haengen noch ein ".cert" dran.
-        name += ".crt";
+      // Wir erzeugen einen Dateinamen aus dem Namen des Typen, fuer den es ausgestellt ist.
+      Certificate myCert = new Certificate(cert);
+      Principal p = myCert.getSubject();
+      String name = p.getAttribute(Principal.COMMON_NAME) + "__" + cert.getSerialNumber().toString();
+      // Wir nehmen alle Zeichen bis auf Buchstaben, Zahlen und Unterstrich raus 
+      name = name.replaceAll("[^A-Za-z0-9\\-_]","_");
+      // und kuerzen noch auf maximal 50 Zeichen
+      if (name.length() > 50)
+        name = name.substring(0,49);
 
-        File target = new File(f,name);
-        Logger.info(Application.getI18n().tr("Speichere Zertifikat in {0}",target.getAbsolutePath()));
-        if (target.exists())
-        {
-          Logger.warn(Application.getI18n().tr("Zertifikat {0} existiert bereits",target.getAbsolutePath()));
-          return false;
-        }
-        os = new BufferedOutputStream(new FileOutputStream(target));
-        os.write(cert.getEncoded());
-      }
-      finally
+      // und haengen noch ein ".cert" dran.
+      name += ".crt";
+
+      File target = new File(f,name);
+      Logger.info(Application.getI18n().tr("Speichere Zertifikat in {0}",target.getAbsolutePath()));
+      if (target.exists())
       {
-        if (os != null)
-        try
-        {
-          os.close();
-        }
-        catch (Exception e)
-        {
-          // useless
-        }
+        Logger.warn(Application.getI18n().tr("Zertifikat {0} existiert bereits",target.getAbsolutePath()));
+        return false;
+      }
+      try(OutputStream os = new BufferedOutputStream(new FileOutputStream(target))) {
+        os.write(cert.getEncoded());
       }
       return false;
     }
@@ -486,8 +472,8 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     System.out.println("----------------------------------------------------------------------");
     System.out.println(i18n.tr("Eigenschaften des Zertifikats"));
 
-    System.out.println((i18n.tr("Ausgestellt von:      ") + cert.getIssuerDN().getName()));
-    System.out.println((i18n.tr("Ausgestellt für:      ") + cert.getSubjectDN().getName()));
+    System.out.println((i18n.tr("Ausgestellt von:      ") + cert.getIssuerX500Principal().getName()));
+    System.out.println((i18n.tr("Ausgestellt für:      ") + cert.getSubjectX500Principal().getName()));
     System.out.println((i18n.tr("Gültig von:           ") + df.format(cert.getNotBefore())));
     System.out.println((i18n.tr("Gültig bis:           ") + df.format(cert.getNotAfter())));
     System.out.println((i18n.tr("Seriennummer:         ") + cert.getSerialNumber().toString()));
@@ -625,6 +611,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#login(de.willuhn.jameica.security.JameicaAuthenticator)
    */
+  @Override
   public Login login(JameicaAuthenticator auth) throws Exception
   {
     Login l = super.login(auth);
@@ -648,10 +635,10 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
       notify += "\n" + Application.getI18n().tr("Seite: {0}",prompt);
 
     notifyUser(notify);
-    String username = askUser(Application.getI18n().tr("Benutzername: "),(String) null);
-    String password = askUser(Application.getI18n().tr("Passwort: "),(String) null);
+    String username2 = askUser(Application.getI18n().tr("Benutzername: "),(String) null);
+    String password2 = askUser(Application.getI18n().tr("Passwort: "),(String) null);
     
-    return new Login(username,password == null ? null : password.toCharArray());
+    return new Login(username2,password2 == null ? null : password2.toCharArray());
   }
 }
 

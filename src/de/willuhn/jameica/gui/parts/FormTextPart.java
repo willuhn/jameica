@@ -25,7 +25,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
 
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
@@ -44,7 +43,7 @@ import de.willuhn.util.ApplicationException;
  */
 public class FormTextPart implements Part {
 
-  private StringBuffer content        = new StringBuffer();
+  private StringBuilder content        = new StringBuilder();
   private ScrolledComposite container = null;
   private FormText text               = null;
 
@@ -81,35 +80,20 @@ public class FormTextPart implements Part {
    */
   public void setText(Reader text) throws IOException
   {
-    BufferedReader br =  null;
-    
-    try {
-      br = new BufferedReader(text);
-
+    try(BufferedReader br = new BufferedReader(text);) {
       String thisLine = null;
-      StringBuffer buffer = new StringBuffer();
-      while ((thisLine =  br.readLine()) != null)
+      StringBuilder builder = new StringBuilder();
+      while ((thisLine = br.readLine()) != null)
       {
         if (thisLine.length() == 0) // Leerzeile
         {
-          buffer.append("\n\n");
+          builder.append("\n\n");
           continue;
         }
-        buffer.append(thisLine.trim() + " "); // Leerzeichen am Ende einfuegen.
-
-
+        builder.append(thisLine.trim() + " "); // Leerzeichen am Ende einfuegen.
       }
-
-      content = buffer; // machen wir erst wenn die gesamte Datei gelesen werden konnte
+      content = builder; // machen wir erst wenn die gesamte Datei gelesen werden konnte
       refresh();
-    }
-    catch (IOException e)
-    {
-      throw e;
-    }
-    finally
-    {
-      IOUtil.close(br);
     }
   }
 
@@ -119,7 +103,7 @@ public class FormTextPart implements Part {
    */
   public void setText(String s)
   {
-    content = new StringBuffer(s);
+    content = new StringBuilder(s);
     refresh();
   }
 
@@ -189,6 +173,7 @@ public class FormTextPart implements Part {
     container.setContent(text);
 
     text.addHyperlinkListener(new HyperlinkAdapter() {
+      @Override
       public void linkActivated(HyperlinkEvent e) {
         Object href = e.getHref();
         if (href == null)

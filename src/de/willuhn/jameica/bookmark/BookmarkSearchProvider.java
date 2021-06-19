@@ -44,13 +44,10 @@ public class BookmarkSearchProvider implements SearchProvider
   /**
    * @see de.willuhn.jameica.search.SearchProvider#search(java.lang.String)
    */
-  public List search(String search) throws RemoteException, ApplicationException
+  public List<Result> search(String search) throws RemoteException, ApplicationException
   {
-    if (search == null || search.length() == 0)
-      return null;
-
     List<Bookmark> list  = service.search(search);
-    List<Result> results = new ArrayList<Result>();
+    List<Result> results = new ArrayList<>();
     
     for (Bookmark b:list)
     {
@@ -65,6 +62,10 @@ public class BookmarkSearchProvider implements SearchProvider
    */
   private class MyResult implements Result
   {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8034026379642186354L;
     private Bookmark b = null;
     
     /**

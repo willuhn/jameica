@@ -19,6 +19,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.calendar.AppointmentProvider;
 import de.willuhn.jameica.gui.calendar.AppointmentProviderRegistry;
 import de.willuhn.jameica.gui.calendar.ReminderCalendarPart;
+import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.internal.action.ReminderAppointmentDetails;
 import de.willuhn.jameica.gui.internal.dialogs.AppointmentProviderDialog;
 import de.willuhn.jameica.gui.parts.ButtonArea;
@@ -80,6 +81,7 @@ public class Appointments extends AbstractView
   /**
    * @see de.willuhn.jameica.gui.AbstractView#unbind()
    */
+  @Override
   public void unbind() throws ApplicationException
   {
     if (this.calendar != null)
@@ -95,7 +97,7 @@ public class Appointments extends AbstractView
     {
       try
       {
-        AppointmentProviderDialog d = new AppointmentProviderDialog(AppointmentProviderDialog.POSITION_CENTER);
+        AppointmentProviderDialog d = new AppointmentProviderDialog(AbstractDialog.POSITION_CENTER);
         List<AppointmentProvider> selected = d.open();
         
         // Kalender-Anzeige aktualisieren

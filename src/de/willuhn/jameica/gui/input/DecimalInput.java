@@ -28,7 +28,7 @@ import de.willuhn.logging.Logger;
  */
 public class DecimalInput extends TextInput
 {
-  private DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Application.getConfig().getLocale());
+  private DecimalFormat format = (DecimalFormat) java.text.NumberFormat.getInstance(Application.getConfig().getLocale());
   private Number value = null;
   
   /**
@@ -47,7 +47,7 @@ public class DecimalInput extends TextInput
    */
   public DecimalInput(double d, DecimalFormat format)
   {
-    this(Double.isNaN(d) ? null : new Double(d),format);
+    this(Double.isNaN(d) ? null : Double.valueOf(d),format);
   }
 
   /**
@@ -63,8 +63,9 @@ public class DecimalInput extends TextInput
     if (format != null)
     {
       this.format = format;
-      if (n != null && (n instanceof BigDecimal))
+      if (n instanceof BigDecimal) {
         this.format.setParseBigDecimal(true);
+      }
     }
 
     // BUGZILLA 1014 Der Code war vorher ähnlich in Hibiscus auch drin. Ich hoffe, der macht hier jetzt keine Probleme.
@@ -98,7 +99,7 @@ public class DecimalInput extends TextInput
     {
       // ignore
     }
-    
+
     text.addListener (SWT.Verify, new Listener() {
       public void handleEvent (Event e) {
 
@@ -110,17 +111,17 @@ public class DecimalInput extends TextInput
 
 				// Wir lassen nur 0-9, Komma und Minus zu
         for (int i=0; i<chars.length; i++) {
-          
+
           // BUGZILLA 1636 Whitespaces erstmal tolerieren, werden anschliessend wieder entfernt
           if (Character.isWhitespace(chars[i]))
             continue;
-          
+
           if ((chars[i] < '0' || chars[i] > '9') && chars[i] != '-' && chars[i] != komma && chars[i] != group)
           {
             e.doit = false;
             return;
           }
-          
+
           // Jetzt checken wir noch, ob schon ein Komma eingegeben wurde
           if (chars[i] == komma && (text.getText()+"").indexOf(komma) != -1 && e.text.indexOf(komma) != -1)
           {
@@ -149,9 +150,9 @@ public class DecimalInput extends TextInput
   public Object getValue()
   {
     Number n = this.getNumber();
-    return n == null ? null : new Double(n.doubleValue());
+    return n == null ? null : Double.valueOf(n.doubleValue());
   }
-  
+
   /**
    * Liefert den Wert des Eingabefeldes als Number.
    * @return Wert des Eingabefeldes.
@@ -166,9 +167,9 @@ public class DecimalInput extends TextInput
     String s = text.getText();
     if (s == null || s.length() == 0)
       return null;
-    
+
     s = StringUtils.deleteWhitespace(s);
-    
+
     try {
       // Der folgende Code soll verhindern, dass z.Bsp. "160.44" als "16.044,00"
       // geparst wird, wenn die Anzeige von Tausenderpunkten aktiviert ist.
@@ -177,7 +178,7 @@ public class DecimalInput extends TextInput
         DecimalFormatSymbols symbols = format.getDecimalFormatSymbols();
         char komma = symbols.getDecimalSeparator();
         char group = symbols.getGroupingSeparator();
-        
+
         // Wenn der Text jetzt Punkt UND Komma enthaelt, entfernen wir die Punkte - das koennen
         // dann nur Tausender-Trenner sein. Die brauchen wir zum Parsen nicht
         if (s.indexOf(komma) != -1 && s.indexOf(group) != -1)
@@ -190,7 +191,7 @@ public class DecimalInput extends TextInput
         if (s.indexOf(komma) == -1 && lastDot != -1 && s.length() - 3 == lastDot) // BUGZILLA 1014
           s = s.substring(0,lastDot) + komma + s.substring(lastDot+1);
       }
-      
+
       return format.parse(s);
     }
     catch (Exception e)
@@ -235,7 +236,7 @@ public class DecimalInput extends TextInput
   {
     if (this.text == null || this.text.isDisposed())
       return;
-    
+
     this.text.setText(""); // Strange. Mache ich das nicht vorher, meckert oben der Komma-Checker
     if (this.value != null)
     {

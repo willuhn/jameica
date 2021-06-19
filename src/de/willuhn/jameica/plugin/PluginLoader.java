@@ -53,18 +53,22 @@ import de.willuhn.util.ProgressMonitor;
 public final class PluginLoader
 {
   /** Liste von Plugins, die beim Laden ignoriert werden sollen, weil sie inzwischen Bestandteil von Jameica sind */
-  private final static Set<String> obsoletePlugins = new HashSet<String>()
-  {{
-    add("jameica.scripting");
-    add("jameica.update");
-  }};
+  private static final Set<String> obsoletePlugins = new HashSet<String>()
+  {
+    private static final long serialVersionUID = -660690291312279705L;
+
+    {
+      add("jameica.scripting");
+      add("jameica.update");
+    }
+  };
 
   /** Liste mit allen gefundenen Plugins. */
   // Die Reihenfolge aus de.willuhn.jameica.system.Config.properties bleibt
-  private List<Manifest> plugins = new ArrayList<Manifest>();
+  private List<Manifest> plugins = new ArrayList<>();
 
   /** Initialisierungsmeldungen von Plugins. */
-  private Map<Manifest,Throwable> initErrors = new HashMap<Manifest,Throwable>();
+  private Map<Manifest,Throwable> initErrors = new HashMap<>();
 
   /** Den brauchen wir, damit wir Updates an Plugins triggern und deren Update-Methode aufrufen koennen. */
   private Settings updateChecker = null;
@@ -89,7 +93,7 @@ public final class PluginLoader
     PluginSourceService service = Application.getBootLoader().getBootable(PluginSourceService.class);
     List<PluginSource> sources = service.getSources();
     
-    Map<String,Manifest> cache = new HashMap<String,Manifest>();
+    Map<String,Manifest> cache = new HashMap<>();
 
     for (PluginSource source:sources)
     {
@@ -271,9 +275,8 @@ public final class PluginLoader
     ////////////////////////////////////////////////////////////////////////////
 
     // BUGZILLA 1341 Verhindert das Erstellen eines Backups wenn kein Plugin geladen werden konnte
-    if (this.getInstalledPlugins().size() == 0)
+    if (this.getInstalledPlugins().isEmpty())
       Application.getMessagingFactory().getMessagingQueue("jameica.error").sendMessage(new QueryMessage("no plugin could be loaded successfully"));
-      
   }
 
   /**
@@ -294,7 +297,7 @@ public final class PluginLoader
     // Checken, ob die Abhaengigkeit zu Jameica erfuellt ist
     Dependency jameica = manifest.getJameicaDependency();
     if (!jameica.check())
-      throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von {1}, welches jedoch nicht in dieser Version installiert ist",new String[] { manifest.getName(), jameica.toString() }));
+      throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von {1}, welches jedoch nicht in dieser Version installiert ist", manifest.getName(), jameica.toString() ));
 
     // Wir checken noch, ob ggf. eine Abhaengigkeit nicht erfuellt ist.
     Dependency[] deps = manifest.getDependencies();
@@ -305,7 +308,7 @@ public final class PluginLoader
       {
         Logger.info("  resolving " + (deps[i].isRequired() ? "required" : "optional") + " dependency " + deps[i]);
         if (!deps[i].check())
-          throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist",new String[] { manifest.getName(), deps[i].toString() }));
+          throw new ApplicationException(Application.getI18n().tr("Plugin {0} ist abhängig von Plugin {1}, welches jedoch nicht installiert ist", manifest.getName(), deps[i].toString() ));
       }
     }
 
@@ -433,7 +436,7 @@ public final class PluginLoader
         
         try
         {
-          Class c = manifest.getClassLoader().load(ext[i].getClassname());
+          Class<Plugin> c = manifest.getClassLoader().load(ext[i].getClassname());
           BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
           ExtensionRegistry.register((Extension) beanService.get(c), ext[i].getExtendableIDs());
           Logger.info("  register " + c.getName());
@@ -466,7 +469,7 @@ public final class PluginLoader
    */
   public List<Plugin> getInstalledPlugins()
   {
-    List<Plugin> l = new ArrayList<Plugin>();
+    List<Plugin> l = new ArrayList<>();
     int size = plugins.size();
     for (int i = 0; i < size; ++i)
     {
@@ -484,7 +487,7 @@ public final class PluginLoader
   public List<Manifest> getInstalledManifests()
   {
     List<Manifest> all = getManifests();
-    List<Manifest> installed = new ArrayList<Manifest>();
+    List<Manifest> installed = new ArrayList<>();
     for (int i = 0; i < all.size(); ++i)
     {
       Manifest p = plugins.get(i);
@@ -508,7 +511,7 @@ public final class PluginLoader
    * @param plugin Klasse des Plugins.
    * @return das Manifest.
    */
-  public Manifest getManifest(Class plugin)
+  public Manifest getManifest(Class<?> plugin)
   {
     if (plugin == null)
       return null;
@@ -599,7 +602,7 @@ public final class PluginLoader
    * @return das Plugin oder {@code null}, wenn es nicht ermittelbar ist
    *         oder zu einem Fehler fuehrte. Der Fehler wird im Jameica-Log protokolliert.
    */
-  public Plugin findByClass(Class c)
+  public Plugin findByClass(Class<?> c)
   {
     try
     {
@@ -894,9 +897,12 @@ public final class PluginLoader
     File deleteMarker = new File(dir,".deletemarker");
     try
     {
-      deleteMarker.createNewFile();
+      boolean status = deleteMarker.createNewFile();
+      if (!status) {
+        Logger.info("delete marker '" + deleteMarker + "' already exists");
+      }
     }
-    catch (IOException e)
+    catch (IOException | SecurityException e)
     {
       Logger.error("unable to create delete marker " + deleteMarker,e);
       throw new ApplicationException(Application.getI18n().tr("Löschen des Plugins {0} fehlgeschlagen: {1}",manifest.getName(),e.getMessage()));
@@ -926,7 +932,7 @@ public final class PluginLoader
       try
       {
         // Checken, ob wir das als Klasse laden koennen
-        Class c = loader.loadClass(name);
+        Class<?> c = loader.loadClass(name);
         Plugin p = this.findByClass(c);
         if (p == null)
           continue; // kein Plugin gefunden
@@ -990,14 +996,14 @@ public final class PluginLoader
       list.set(j, tmp);
     }
 
-    private static void quickSort(List list)
+    private static void quickSort(List<?> list)
     {
       if (list == null || list.size() < 2)
         return;
       _quickSort(list, 0, list.size() - 1);
     }
 
-    private static void _quickSort(List list, int left, int right)
+    private static void _quickSort(List<?> list, int left, int right)
     {
       if (right > left)
       {

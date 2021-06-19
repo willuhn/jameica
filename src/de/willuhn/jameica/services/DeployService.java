@@ -46,7 +46,7 @@ public class DeployService implements Bootable
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
-  public Class[] depends()
+  public Class<Bootable>[] depends()
   {
     return new Class[]{LogService.class, PluginSourceService.class};
   }
@@ -377,7 +377,7 @@ public class DeployService implements Bootable
           Logger.info("  clean up " + pluginDir);
 
           // Der Deploy-Service darf privilegiert
-          s.getSecurityManager().doPrivileged(new PrivilegedAction() {
+          s.getSecurityManager().doPrivileged(new PrivilegedAction<Object>() {
             public Object run()
             {
               try

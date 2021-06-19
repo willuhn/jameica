@@ -82,7 +82,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 			return this.password;
 		}
 			
-    NewPWD p = new NewPWD(NewPWD.POSITION_CENTER);
+    NewPWD p = new NewPWD(AbstractDialog.POSITION_CENTER);
   	String text = Application.getI18n().tr("Sie starten die Anwendung zum ersten Mal.\n\n" +
                                            "Bitte vergeben Sie ein Master-Passwort zum Schutz Ihrer persönlichen Daten. " +
                                            "Es wird anschließend bei jedem Start des Programms benötigt.");
@@ -91,7 +91,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   	p.setText(text);
   	p.setUsernameText(Customizing.SETTINGS.getString("application.firststart.username",null));
 		p.setTitle(Application.getI18n().tr("Master-Passwort"));
-		p.setMonitor(NewPWD.MONITOR_PRIMARY);
+		p.setMonitor(AbstractDialog.MONITOR_PRIMARY);
 
 		try
 		{
@@ -152,7 +152,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 	 */
 	public void changePassword() throws Exception
 	{
-		NewPasswordDialog p = new NewPasswordDialog(NewPasswordDialog.POSITION_CENTER);
+		NewPasswordDialog p = new NewPasswordDialog(AbstractDialog.POSITION_CENTER);
 
     String text = Application.getI18n().tr("Bitte geben Sie Ihr neues Master-Passwort zum Schutz Ihrer persönlichen Daten ein.\n" +
                                            "Es wird anschließend bei jedem Start von Jameica benötigt.");
@@ -223,6 +223,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 		b.setText("    OK    ");
 		b.addSelectionListener(new SelectionAdapter()
 		{
+		  @Override
 			public void widgetSelected(SelectionEvent e)
 			{
 				s.close();
@@ -247,7 +248,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public String askUser(String question, String labeltext) throws Exception
   {
-  	TextDialog d = new TextDialog(TextDialog.POSITION_CENTER);
+  	TextDialog d = new TextDialog(AbstractDialog.POSITION_CENTER);
   	d.setText(question);
   	d.setTitle(labeltext);
   	d.setLabelText(labeltext);
@@ -259,7 +260,8 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
    */
   public String askPassword(String question) throws Exception
   {
-    PasswordDialog d = new PasswordDialog(PasswordDialog.POSITION_CENTER) {
+    PasswordDialog d = new PasswordDialog(AbstractDialog.POSITION_CENTER) {
+      @Override
       protected boolean checkPassword(String password)
       {
         return true; // wir checken nicht.
@@ -328,7 +330,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     
     final String text = (variables == null || variables.length == 0) ? question : MessageFormat.format(question,(Object[])variables);
 
-    AbstractDialog d = new AbstractDialog(AbstractDialog.POSITION_CENTER)
+    AbstractDialog<?> d = new AbstractDialog<Object>(AbstractDialog.POSITION_CENTER)
     {
       private Boolean choice = Boolean.FALSE;
       private CheckboxInput check = new CheckboxInput(false);
@@ -430,11 +432,11 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     Boolean trust = msg.isTrusted();
     if (trust != null)
     {
-      Logger.info("cert: " + cert.getSubjectDN().getName() + "," + (trust.booleanValue() ? "" : " NOT ") + " trusted by: " + msg.getTrustedBy());
+      Logger.info("cert: " + cert.getSubjectX500Principal().getName() + "," + (trust.booleanValue() ? "" : " NOT ") + " trusted by: " + msg.getTrustedBy());
       return trust.booleanValue();
     }
 
-    CertificateTrustDialog d = new CertificateTrustDialog(CertificateTrustDialog.POSITION_CENTER,cert);
+    CertificateTrustDialog d = new CertificateTrustDialog(AbstractDialog.POSITION_CENTER,cert);
 
     Boolean b = (Boolean) d.open();
     return b.booleanValue();
@@ -451,7 +453,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
       Logger.warn("no text to be displayed for user notification");
       return;
     }
-    SimpleDialog d = new SimpleDialog(SimpleDialog.POSITION_CENTER);
+    SimpleDialog d = new SimpleDialog(AbstractDialog.POSITION_CENTER);
     d.setTitle(Application.getI18n().tr("Information"));
     d.setText(text);
     d.open();
@@ -502,12 +504,12 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
      */
     public PWD(LoginVerifier verifier)
     {
-      super(PWD.POSITION_CENTER);
+      super(AbstractDialog.POSITION_CENTER);
       this.verifier = verifier;
       this.setText(Application.getI18n().tr("Bitte geben Sie das Master-Passwort ein."));
       this.setUsernameText(Customizing.SETTINGS.getString("application.start.username",null));
       this.setTitle(Application.getI18n().tr("Master-Passwort"));
-      this.setMonitor(PWD.MONITOR_PRIMARY);
+      this.setMonitor(AbstractDialog.MONITOR_PRIMARY);
     }
     
     /**
@@ -527,6 +529,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
     /**
      * @see de.willuhn.jameica.gui.dialogs.PasswordDialog#checkPassword(java.lang.String)
      */
+    @Override
     protected boolean checkPassword(String password)
     {
       if (password == null || password.length() == 0)
@@ -563,12 +566,13 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
   /**
    * @see de.willuhn.jameica.system.ApplicationCallback#login(de.willuhn.jameica.security.JameicaAuthenticator)
    */
+  @Override
   public Login login(JameicaAuthenticator auth) throws Exception
   {
     Login l = super.login(auth);
     if (l != null)
       return l; // wurde bereits in der Super-Klasse abgefackelt
-    HttpAuthDialog d = new HttpAuthDialog(HttpAuthDialog.POSITION_CENTER, auth);
+    HttpAuthDialog d = new HttpAuthDialog(AbstractDialog.POSITION_CENTER, auth);
     return (Login) d.open();
   }
 }

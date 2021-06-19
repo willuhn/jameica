@@ -53,8 +53,9 @@ public class ServiceDescriptor
    */
   public String getName()
   {
-  	if (name != null)
+  	if (name != null) {
   		return name;
+  	}
     name = root.getAttribute("name",null);
     return name;
   }
@@ -102,9 +103,9 @@ public class ServiceDescriptor
 		if (s == null || s.length() == 0)
 			return new String[0];
 
-    s = s.replaceAll("\n|\r","");
+    s = s.replaceAll("[\n\r]","");
 		StringTokenizer st = new StringTokenizer(s,",");
-    ArrayList l = new ArrayList();
+    ArrayList<String> l = new ArrayList<>();
 		while (st.hasMoreTokens())
 		{
 		  s = st.nextToken();
@@ -112,7 +113,7 @@ public class ServiceDescriptor
         continue;
 			l.add(s.trim());
 		}
-    this.depends = (String[]) l.toArray(new String[l.size()]);
+    this.depends = l.toArray(new String[l.size()]);
 		return depends;
   }
 

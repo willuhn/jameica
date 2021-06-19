@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Listener;
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.input.ColorInput;
@@ -51,7 +52,7 @@ import de.willuhn.util.I18N;
  */
 public class SettingsControl extends AbstractControl
 {
-	private final static I18N i18n = Application.getI18n();
+	private static final I18N i18n = Application.getI18n();
 
   // System
   private Input logLevel;
@@ -233,7 +234,7 @@ public class SettingsControl extends AbstractControl
     if (this.locale != null)
       return this.locale;
     
-    final List<Locale> list = new ArrayList<Locale>();
+    final List<Locale> list = new ArrayList<>();
     list.add(Locale.GERMANY);
     list.add(Locale.ENGLISH);
     
@@ -414,7 +415,7 @@ public class SettingsControl extends AbstractControl
   public void handleRestore()
   {
   	try {
-  		YesNoDialog prompt = new YesNoDialog(YesNoDialog.POSITION_CENTER);
+  		YesNoDialog prompt = new YesNoDialog(AbstractDialog.POSITION_CENTER);
   		prompt.setTitle(i18n.tr("Sicher?"));
   		prompt.setText(i18n.tr("Alle Einstellungen werden auf die Standard-Werte zurückgesetzt"));
   		if (!((Boolean) prompt.open()).booleanValue())
@@ -438,7 +439,6 @@ public class SettingsControl extends AbstractControl
     catch (OperationCanceledException oce)
     {
       Logger.info(oce.getMessage());
-      return;
     }
   	catch (Exception e)
   	{

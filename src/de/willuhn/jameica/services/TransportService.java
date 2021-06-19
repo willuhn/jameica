@@ -50,20 +50,20 @@ public class TransportService implements Bootable
     
     Logger.info("init transport service");
 
-    this.map = new HashMap<String,Class<? extends Transport>>();
+    this.map = new HashMap<>();
     
     try
     {
       ClassFinder finder = Application.getClassLoader().getClassFinder();
-      Class[] classes = finder.findImplementors(Transport.class);
-      for (Class c:classes)
+      Class<?>[] classes = finder.findImplementors(Transport.class);
+      for (Class<?> c:classes)
       {
         try
         {
-          Transport t = (Transport) c.newInstance();
+          Transport t = (Transport) c.getDeclaredConstructor().newInstance();
           Logger.info("  " + c.getName());
           List<String> protocols = t.getProtocols();
-          if (protocols == null || protocols.size() == 0)
+          if (protocols.isEmpty())
           {
             Logger.warn("  supports no protocols, skipping");
             continue;
@@ -131,7 +131,7 @@ public class TransportService implements Bootable
     catch (Exception e)
     {
       Logger.error("unable to load class " + c,e);
-      throw new ApplicationException(i18n.tr("Protokoll-Implementierung {0} konnte nicht geladen werden: {1}", new String[]{p,e.getMessage()}));
+      throw new ApplicationException(i18n.tr("Protokoll-Implementierung {0} konnte nicht geladen werden: {1}", p, e.getMessage()));
     }
   }
   

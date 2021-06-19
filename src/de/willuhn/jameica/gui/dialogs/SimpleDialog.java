@@ -24,9 +24,9 @@ import de.willuhn.util.ApplicationException;
 /**
  * Billiger Dialog, der nur einen Text und einen OK-Button enthaelt.
  */
-public class SimpleDialog extends AbstractDialog
+public class SimpleDialog extends AbstractDialog<Object>
 {
-  private final static int WINDOW_WIDTH = 400;
+  private static final int WINDOW_WIDTH = 400;
 	private String text = null;
 
 	/**
@@ -64,6 +64,7 @@ public class SimpleDialog extends AbstractDialog
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#onEscape()
    * Abbrechen nicht zulaessig.
    */
+  @Override
   protected void onEscape()
   {
   }

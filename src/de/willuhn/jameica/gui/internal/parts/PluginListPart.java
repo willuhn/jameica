@@ -79,11 +79,11 @@ import de.willuhn.util.Session;
  */
 public class PluginListPart implements Part
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
   
   // Ergebnis 10 Minuten cachen
-  private final static Session availableCache = new Session(10 * 60 * 1000L);
-  private final static Session updateCache    = new Session(10 * 60 * 1000L);
+  private static final Session availableCache = new Session(10 * 60 * 1000L);
+  private static final Session updateCache    = new Session(10 * 60 * 1000L);
   
   private MessageConsumer pluginNotify = new MyInstalledMessageConsumer();
   private MessageConsumer repoNotify   = new MyRepoMessageConsumer();
@@ -92,13 +92,13 @@ public class PluginListPart implements Part
   
   private Type focus = null;
 
-  private Map<String,PluginDetailPart> installedParts = new HashMap<String,PluginDetailPart>();
+  private Map<String,PluginDetailPart> installedParts = new HashMap<>();
   private ScrolledContainer installedList = null;
 
-  private Map<String,PluginDetailPart> availableParts = new HashMap<String,PluginDetailPart>();
+  private Map<String,PluginDetailPart> availableParts = new HashMap<>();
   private ScrolledContainer availableList = null;
 
-  private Map<String,PluginDetailPart> updateParts = new HashMap<String,PluginDetailPart>();
+  private Map<String,PluginDetailPart> updateParts = new HashMap<>();
   private ScrolledContainer updateList = null;
   
   /**
@@ -306,7 +306,7 @@ public class PluginListPart implements Part
       Manifest mf = cache.get(e.getKey());
       PluginDetailPart part = new PluginDetailPart(mf,Type.INSTALLED);
       this.installedParts.put(e.getKey(),part);
-      part.paint(this.installedList.getComposite());//scrolled.getComposite());
+      part.paint(this.installedList.getComposite());
     }
     
     this.installedList.update();
@@ -348,12 +348,14 @@ public class PluginListPart implements Part
     final String query = (String) this.getQuery().getValue();
 
     final Thread t = new Thread("repo-fetch available") {
+      @Override
       public void run()
       {
         try
         {
           // Wir cachen das Ergebnis
           final String key = (url != null ? url.toString() : "<all>") + "." + query;
+          
           List<RepositorySearchResult> cachedResult = (List<RepositorySearchResult>) availableCache.get(key);
           if (cachedResult != null)
           {
@@ -366,7 +368,7 @@ public class PluginListPart implements Part
 
             // Auch wenn es kein Ergebnis gab, cachen wir das
             if (cachedResult == null)
-              cachedResult = new ArrayList<RepositorySearchResult>();
+              cachedResult = new ArrayList<>();
             
             availableCache.put(key,cachedResult);
           }
@@ -401,7 +403,7 @@ public class PluginListPart implements Part
 
                 for (RepositorySearchResult r:result)
                 {
-                  if (r.getGroups().size() > 0)
+                  if (r.getGroups().isEmpty())
                   {
                     Composite parent = availableList.getComposite();
                     SimpleContainer c = new SimpleContainer(parent);
@@ -419,7 +421,7 @@ public class PluginListPart implements Part
                     for (Entry<String,List<PluginData>> e:plugins.entrySet())
                     {
                       List<PluginData> list = e.getValue();
-                      if (list.size() == 0)
+                      if (list.isEmpty())
                         continue;
                       
                       count++;
@@ -433,11 +435,11 @@ public class PluginListPart implements Part
                     c.getComposite().setBackground(parent.getBackground());
                     c.getComposite().setBackgroundMode(SWT.INHERIT_FORCE);
                     c.addText(group.getName(),true);
-             
+
                     for (Entry<String,List<PluginData>> e:plugins.entrySet())
                     {
                       List<PluginData> list = e.getValue();
-                      if (list.size() == 0)
+                      if (list.isEmpty())
                         continue;
                       
                       try
@@ -524,7 +526,7 @@ public class PluginListPart implements Part
     updateList.update();
 
     final Thread t = new Thread("repo-fetch updates") {
-      
+      @Override
       public void run()
       {
         UpdateService service = Application.getBootLoader().getBootable(UpdateService.class);
@@ -538,18 +540,18 @@ public class PluginListPart implements Part
           }
           else
           {
-            cachedUpdates = service.findUpdates(null);
+            cachedUpdates = (TreeMap<String, List<PluginData>>) service.findUpdates(null);
             
             // Auch wenn es kein Ergebnis gab, cachen wir das
             if (cachedUpdates == null)
-              cachedUpdates = new TreeMap<String,List<PluginData>>();
+              cachedUpdates = new TreeMap<>();
             
             updateCache.put(key,cachedUpdates);
           }
           
           final TreeMap<String,List<PluginData>> updates = cachedUpdates;
           
-          Logger.info("search done, found " + (updates != null ? updates.size() : "no") + " updates");
+          Logger.info("search done, found " + (updates.isEmpty() ? "no" : updates.size()) + " updates");
 
           GUI.getDisplay().asyncExec(new Runnable() {
             
@@ -575,8 +577,9 @@ public class PluginListPart implements Part
                 {
                   // Wir nehmen das Manifest des ersten
                   List<PluginData> list = e.getValue();
-                  if (list.size() == 0)
+                  if (list.isEmpty()) {
                     continue;
+                  }
                   Manifest mf = list.get(0).getManifest();
                   PluginDetailPart part = new PluginDetailPart(mf,list,Type.UPDATE);
                   updateParts.put(e.getKey(),part);
@@ -629,7 +632,7 @@ public class PluginListPart implements Part
     
     // Nicht mit den URL-Objekten arbeiten, da schlagen die equals-Vergleiche bei Virtual-Hosts fehl.
     // Siehe https://www.willuhn.de/blog/index.php?/archives/709-Java-URLequals-ist-gefaehrlich.html
-    List<String> urls = new ArrayList<String>();
+    List<String> urls = new ArrayList<>();
     for (URL u:list)
     {
       urls.add(u.toString());
@@ -725,7 +728,7 @@ public class PluginListPart implements Part
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{QueryMessage.class};
     }
@@ -761,7 +764,7 @@ public class PluginListPart implements Part
     /**
      * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
      */
-    public Class[] getExpectedMessageTypes()
+    public Class<?>[] getExpectedMessageTypes()
     {
       return new Class[]{PluginMessage.class};
     }

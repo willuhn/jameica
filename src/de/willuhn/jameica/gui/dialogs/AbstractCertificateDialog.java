@@ -47,10 +47,10 @@ import de.willuhn.util.ApplicationException;
 /**
  * Abstrakter Basis-Dialog zur Anzeige von X.509-Zertifikaten
  */
-public abstract class AbstractCertificateDialog extends AbstractDialog
+public abstract class AbstractCertificateDialog extends AbstractDialog<Object>
 {
   private String text = null;
-  private List<X509Certificate> certs = new LinkedList<X509Certificate>();
+  private List<X509Certificate> certs = new LinkedList<>();
   
   private Input cnIssuer      = null;
   private Input oIssuer       = null;
@@ -67,7 +67,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
    * @param position Position des Dialogs.
    * @param cert Zertifikat.
    */
-  public AbstractCertificateDialog(int position, X509Certificate cert)
+  protected AbstractCertificateDialog(int position, X509Certificate cert)
   {
     this(position,Arrays.asList(cert));
   }
@@ -77,7 +77,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
    * @param position Position des Dialogs.
    * @param certs Liste der Zertifikate.
    */
-  public AbstractCertificateDialog(int position, List<X509Certificate> certs)
+  protected AbstractCertificateDialog(int position, List<X509Certificate> certs)
   {
     super(position);
     this.setSize(440,SWT.DEFAULT);
@@ -169,39 +169,20 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   private void fill(X509Certificate cert) throws CertificateEncodingException, NoSuchAlgorithmException
   {
     Certificate myCert = new Certificate(cert);
-    
-    /////////////////////////////////////////////////////////////////////////////
+    Principal p;
+
     // Aussteller
-    {
-      Principal p = myCert.getIssuer();
+    p = myCert.getIssuer();
+    this.cnIssuer.setValue(format(p.getAttribute(Principal.COMMON_NAME)));
+    this.oIssuer.setValue(format(p.getAttribute(Principal.ORGANIZATION)));
+    this.ouIssuer.setValue(format(p.getAttribute(Principal.ORGANIZATIONAL_UNIT)));
 
-      String cn = p.getAttribute(Principal.COMMON_NAME);
-      String o  = p.getAttribute(Principal.ORGANIZATION);
-      String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
-
-      this.cnIssuer.setValue(format(cn));
-      this.oIssuer.setValue(format(o));
-      this.ouIssuer.setValue(format(ou));
-    }
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    
-    /////////////////////////////////////////////////////////////////////////////
     // Subject
-    {
-      Principal p = myCert.getSubject();
+    p = myCert.getSubject();
+    this.cnSubject.setValue(format(p.getAttribute(Principal.COMMON_NAME)));
+    this.oSubject.setValue(format(p.getAttribute(Principal.ORGANIZATION)));
+    this.ouSubject.setValue(format(p.getAttribute(Principal.ORGANIZATIONAL_UNIT)));
 
-      String cn = p.getAttribute(Principal.COMMON_NAME);
-      String o  = p.getAttribute(Principal.ORGANIZATION);
-      String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
-
-      this.cnSubject.setValue(format(cn));
-      this.oSubject.setValue(format(o));
-      this.ouSubject.setValue(format(ou));
-    }
-    //
-    /////////////////////////////////////////////////////////////////////////////
-    
     /////////////////////////////////////////////////////////////////////////////
     // Details
     DateFormat df = DateUtil.DEFAULT_FORMAT;
@@ -211,7 +192,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
     /////////////////////////////////////////////////////////////////////////////
     // Fingerprint
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append(i18n.tr("SHA256:\n{0}",myCert.getSHA256Fingerprint().replaceAll("(.{48})","$1\n")));
     sb.append("\n\n");
     sb.append(i18n.tr("SHA1:\n{0}",myCert.getSHA1Fingerprint()));
@@ -303,7 +284,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
       return s;
 
     // Am Komma umbrechen
-    return s.replaceAll(",","\n");
+    return s.replace(",","\n");
   }
 
   /**

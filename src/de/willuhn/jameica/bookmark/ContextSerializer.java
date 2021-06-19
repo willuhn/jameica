@@ -27,6 +27,7 @@ import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Level;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.MultipleClassLoader;
 
 /**
  * Diese Klasse serialisiert/deserialisiert die Context-Information des Bookmarks.
@@ -41,8 +42,9 @@ public class ContextSerializer
    */
   public Context serialize(Object context)
   {
-    if (context == null)
+    if (context == null) {
       return null;
+    }
 
     Context result = new Context();
     
@@ -111,7 +113,7 @@ public class ContextSerializer
           return null;
         
         // Mal schauen, ob es ein Klassen-Name ist, den wir instanziieren koennen
-        Class c = Application.getClassLoader().load(className);
+        Class<?> c = Application.getClassLoader().load(className);
         return bs.get(c);
       }
 
@@ -142,14 +144,16 @@ public class ContextSerializer
         return null;
       
       // Wir laden die Klasse mal. Vielleicht ist es ein DBObject
-      Class c = mf.getClassLoader().load(className);
+      
+      MultipleClassLoader classLoader = mf.getClassLoader();
+      Class<?> c = classLoader.load(className);
       
       if (!DBObject.class.isAssignableFrom(c))
         return bs.get(c); // OK, dann halt einfach instanziieren
       
       
       // Dann mal schauen, ob das Plugin einen DBService hat
-      Class pluginClass = mf.getClassLoader().load(mf.getPluginClass());
+      Class<?> pluginClass = classLoader.load(mf.getPluginClass());
       ServiceDescriptor[] serviceNames = mf.getServices();
       for (ServiceDescriptor s:serviceNames)
       {
@@ -157,7 +161,7 @@ public class ContextSerializer
         if (service instanceof DBService)
         {
           // Sieht doch gut aus, mal versuchen, ob wir es laden koennen
-          return ((DBService)service).createObject(c,id);
+          return ((DBService)service).createObject((Class<? extends DBObject>) c,id);
         }
       }
     }

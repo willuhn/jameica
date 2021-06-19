@@ -29,7 +29,7 @@ import de.willuhn.util.ProgressMonitor;
  */
 public class PluginUnInstall implements Action
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
   
   /**
    * Erwartet ein Objekt vom Typ "AbstractPlugin" oder "Manifest".

@@ -33,27 +33,27 @@ public class StartupParams
 	/**
 	 * Konstante fuer "Anwendung laeuft standalone".
 	 */
-	public final static int MODE_STANDALONE		= 0;
+	public static final int MODE_STANDALONE = 0;
 	/**
 	 * Konstante fuer "Anwendung laeuft im Server-Mode ohne GUI".
 	 */
-	public final static int MODE_SERVER				= 1;
+	public static final int MODE_SERVER = 1;
 
 	/**
 	 * Konstante fuer "Anwendung laeuft im reinen Client-Mode".
 	 */
-	public final static int MODE_CLIENT = 2;
+	public static final int MODE_CLIENT = 2;
 
 	private Options options = null;
 
 	private String workDir         = null;
 	private String username        = null;
 	private String password        = null;
-	private int mode 				       = MODE_STANDALONE;
+	private int mode               = MODE_STANDALONE;
 
   private boolean noninteractive = false;
   private boolean ignoreLockfile = false;
-  
+
   private String[] params   = null;
 
   /**

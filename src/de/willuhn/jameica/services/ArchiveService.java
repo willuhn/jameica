@@ -127,7 +127,7 @@ public class ArchiveService implements Bootable
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
-  public Class[] depends()
+  public Class<Bootable>[] depends()
   {
     return new Class[]{MessagingService.class};
   }
@@ -202,28 +202,6 @@ public class ArchiveService implements Bootable
   }
 
   /**
-   * Erstellt einen TCP-Socket zum Archiv-Server.
-   * @return Socket zum Archiv-Server oder null wenn kein Archiv-Server existiert.
-   */
-  private Socket createSocket()
-  {
-    // Wenn wir keinen Host oder keinen Port haben, koennen wir keinen Socket erstellen
-    if (host == null || port <= 0)
-      return null;
-    
-    try
-    {
-      return new Socket(host,port);
-    }
-    catch (Exception e)
-    {
-      Logger.error("unable to create socket to archive server, host: " + host + ", port: " + port,e);
-    }
-    return null;
-  }
-
-  
-  /**
    * Abstrakte Basis-Implementierung der Kommandos.
    */
   private abstract class AbstractCommand implements MessageConsumer
@@ -249,32 +227,19 @@ public class ArchiveService implements Bootable
      */
     public void handleMessage(Message message) throws Exception
     {
-      Socket socket = createSocket();
-      if (socket == null)
-      {
+      // Wenn wir keinen Host oder keinen Port haben, koennen wir keinen Socket erstellen
+      if (!(host == null || port <= 0)) {
         Logger.debug("skip remote message delivery, no archive server found");
         return; // kein Socket. Also entweder kein Archiv-Server oder er ist nicht
                 // erreichbar. Egal. Wir stellen nichts zu.
       }
-
-      QueryMessage msg = (QueryMessage) message;
-      
-      try
-      {
-        handle(msg,socket);
+      try (Socket socket = new Socket(host,port);) {
+        handle((QueryMessage) message,socket);
       }
       catch (Exception e)
       {
         Logger.error("error while delivering message",e);
       }
-      finally
-      {
-        if (socket != null) {
-          try { socket.close(); }
-          catch (Exception e) { Logger.error("error while closing socket",e); }
-        }
-      }
-      
     }
     
     /**
@@ -304,12 +269,12 @@ public class ArchiveService implements Bootable
       if (channel == null)
         channel = "";
       
-      OutputStream os = null;
-      InputStream is = null;
-      try
-      {
+      try(
+          OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+          InputStream is = new BufferedInputStream(socket.getInputStream());
+          ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      ) {
         // Request senden
-        os = new BufferedOutputStream(socket.getOutputStream());
         os.write(("put " + channel + "\r\n").getBytes());
         
         long length = 0;
@@ -333,17 +298,10 @@ public class ArchiveService implements Bootable
         socket.shutdownOutput(); // teilt dem Server mit, dass nichts mehr kommt
         
         // Response holen
-        is = new BufferedInputStream(socket.getInputStream());
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOUtil.copy(is,bos);
-
         String uuid = bos.toString().trim();
         Logger.info("sent " + length + " bytes to channel " + channel + ", generated uuid: " + uuid);
         message.setData(uuid);
-      }
-      finally
-      {
-        IOUtil.close(is,os);
       }
     }
   }
@@ -363,27 +321,21 @@ public class ArchiveService implements Bootable
       if (uuid == null || uuid.length() == 0)
         throw new Exception("no uuid given");
       
-      OutputStream os = null;
-      InputStream is = null;
-      try
-      {
+      try(
+        OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+        InputStream is = new BufferedInputStream(socket.getInputStream());
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      ) {
         // Request senden
-        os = new BufferedOutputStream(socket.getOutputStream());
         os.write(("get " + uuid + "\r\n").getBytes());
         os.flush();
         socket.shutdownOutput(); // wir senden nichts mehr
 
         // Response holen
-        is = new BufferedInputStream(socket.getInputStream());
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         long count = IOUtil.copy(is,bos);
 
         message.setData(bos.toByteArray());
         Logger.info("got " + count + " bytes for message, uuid " + uuid);
-      }
-      finally
-      {
-        IOUtil.close(is,os);
       }
     }
   }
@@ -402,19 +354,13 @@ public class ArchiveService implements Bootable
       if (uuid == null || uuid.length() == 0)
         throw new Exception("no uuid given");
       
-      OutputStream os = null;
-      try
+      try(OutputStream os = new BufferedOutputStream(socket.getOutputStream()))
       {
         // Request senden
-        os = new BufferedOutputStream(socket.getOutputStream());
         os.write(("delete " + uuid + "\r\n").getBytes());
         os.flush();
         socket.shutdownOutput(); // wir senden nichts mehr
         Logger.info("deleted message, uuid " + uuid);
-      }
-      finally
-      {
-        IOUtil.close(os);
       }
     }
   }
@@ -433,29 +379,23 @@ public class ArchiveService implements Bootable
       if (uuid == null || uuid.length() == 0)
         throw new Exception("no uuid given");
       
-      OutputStream os = null;
-      InputStream is = null;
-      try
-      {
+      try(
+        OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+        InputStream is = new BufferedInputStream(socket.getInputStream());
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      ) {
         // Request senden
-        os = new BufferedOutputStream(socket.getOutputStream());
         os.write(("getmeta " + uuid + "\r\n").getBytes());
         os.flush();
         socket.shutdownOutput(); // wir senden nichts mehr
         
         // Response holen
-        is = new BufferedInputStream(socket.getInputStream());
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOUtil.copy(is,bos);
 
         Properties props = new Properties();
         props.load(new ByteArrayInputStream(bos.toByteArray()));
         message.setData(props);
         Logger.info("got " + props.size() + " properties for message, uuid " + uuid);
-      }
-      finally
-      {
-        IOUtil.close(is,os);
       }
     }
   }
@@ -472,7 +412,7 @@ public class ArchiveService implements Bootable
     {
       Object data = message.getData();
 
-      if (data == null || !(data instanceof Map))
+      if (!(data instanceof Map))
         throw new Exception("message contains no map as data");
 
       String uuid = message.getName();
@@ -481,23 +421,18 @@ public class ArchiveService implements Bootable
       
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       Properties props = new Properties();
-      props.putAll((Map) data);
+      props.putAll((Map<?, ?>) data);
       props.store(bos,"");
 
-      OutputStream os = null;
-      try
-      {
+      try(
+          OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+      ) {
         // Request senden
-        os = new BufferedOutputStream(socket.getOutputStream());
         os.write(("putmeta " + uuid + "\r\n").getBytes());
         os.write(bos.toByteArray());
         os.flush();
         socket.shutdownOutput(); // wir senden nichts mehr
         Logger.info("sent " + props.size() + " properties for message, uuid " + uuid);
-      }
-      finally
-      {
-        IOUtil.close(os);
       }
     }
   }
@@ -516,27 +451,21 @@ public class ArchiveService implements Bootable
       if (channel == null)
         channel = "";
       
-      OutputStream os = null;
-      InputStream is = null;
-      try
-      {
+      try (
+        OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+        InputStream is = new BufferedInputStream(socket.getInputStream());
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      ) {
         // Request senden
-        os = new BufferedOutputStream(socket.getOutputStream());
         os.write(("next " + channel + "\r\n").getBytes());
         os.flush();
         socket.shutdownOutput(); // wir senden nichts mehr
 
         // Response holen
-        is = new BufferedInputStream(socket.getInputStream());
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         long count = IOUtil.copy(is,bos);
 
         message.setData(bos.toByteArray());
         Logger.info("got " + count + " bytes for channel " + channel);
-      }
-      finally
-      {
-        IOUtil.close(is,os);
       }
     }
   }

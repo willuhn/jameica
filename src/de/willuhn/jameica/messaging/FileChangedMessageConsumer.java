@@ -69,7 +69,7 @@ public class FileChangedMessageConsumer implements MessageConsumer, Observer
    */
   public void update(Observable o, Object arg)
   {
-    if (arg == null || !(arg instanceof File))
+    if (!(arg instanceof File))
       return;
     Application.getMessagingFactory().sendMessage(new FileChangedMessage((File)arg));
   }

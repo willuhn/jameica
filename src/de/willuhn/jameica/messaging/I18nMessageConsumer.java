@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
@@ -75,21 +74,14 @@ public class I18nMessageConsumer implements MessageConsumer
    */
   private void store(I18N i18n, File file)
   {
-    OutputStream os = null;
-    
-    try
+    try(OutputStream os = new BufferedOutputStream(new FileOutputStream(file)))
     {
       Logger.info("storing untranslated strings in " + file);
-      os = new BufferedOutputStream(new FileOutputStream(file));
       i18n.storeUntranslated(os);
     }
     catch (Exception e)
     {
       Logger.error("unable to store untranslated strings",e);
-    }
-    finally
-    {
-       IOUtil.close(os);
     }
   }
 

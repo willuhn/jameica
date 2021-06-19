@@ -49,12 +49,12 @@ import de.willuhn.util.ApplicationException;
  */
 public class LogList extends TablePart
 {
-  private final static int L_INF0  = Level.INFO.getValue();
-  private final static int L_DEBUG = Level.DEBUG.getValue();
-  private final static int L_WARN  = Level.WARN.getValue();
-  private final static int L_ERR   = Level.ERROR.getValue();
+  private static final int L_INF0  = Level.INFO.getValue();
+  private static final int L_DEBUG = Level.DEBUG.getValue();
+  private static final int L_WARN  = Level.WARN.getValue();
+  private static final int L_ERR   = Level.ERROR.getValue();
 
-  private static LinkedList<LogObject> last = new LinkedList<LogObject>();
+  private static LinkedList<LogObject> last = new LinkedList<>();
   private LiveTarget target = null;
 
   /**
@@ -81,18 +81,24 @@ public class LogList extends TablePart
        */
       public void format(TableItem item)
       {
-        if (item == null)
+        if (item == null) {
           return;
+        }
         LogObject o = (LogObject) item.getData();
-        if (o == null)
+        if (o == null) {
           return;
+        }
         
         int level = o.message.getLevel().getValue();
 
-        if (level == L_INF0)           return;
-        else if (level <= L_DEBUG)     item.setForeground(Color.COMMENT.getSWTColor());
-        else if (level == L_WARN)      item.setForeground(Color.LINK_ACTIVE.getSWTColor());
-        else if (level >= L_ERR)       item.setForeground(Color.ERROR.getSWTColor());
+        if (level == L_INF0) {
+        } else if (level <= L_DEBUG) {
+          item.setForeground(Color.COMMENT.getSWTColor());
+        } else if (level == L_WARN) {
+          item.setForeground(Color.LINK_ACTIVE.getSWTColor());
+        } else if (level >= L_ERR) {
+          item.setForeground(Color.ERROR.getSWTColor());
+        }
       }
     });
     
@@ -107,7 +113,7 @@ public class LogList extends TablePart
    * @return die letzten 20 Meldungen.
    * @throws RemoteException
    */
-  private static GenericIterator init() throws RemoteException
+  private static GenericIterator<?> init() throws RemoteException
   {
     Message[] messages = Logger.getLastLines();
     LogObject[] objects = new LogObject[messages.length];
@@ -122,6 +128,7 @@ public class LogList extends TablePart
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
    */
+  @Override
   public synchronized void paint(Composite parent) throws RemoteException
   {
     parent.addDisposeListener(new DisposeListener() {
@@ -147,8 +154,9 @@ public class LogList extends TablePart
      */
     public void handleAction(Object context) throws ApplicationException
     {
-      if (context == null || !(context instanceof LogObject))
+      if (!(context instanceof LogObject)) {
         return;
+      }
       Message m = ((LogObject)context).message;
       LogDetailDialog d = new LogDetailDialog(m,LogDetailDialog.POSITION_CENTER);
       try
@@ -159,10 +167,7 @@ public class LogList extends TablePart
       {
         throw ae;
       }
-      catch (OperationCanceledException oce)
-      {
-        return;
-      }
+      catch (OperationCanceledException oce) { }
       catch (Exception e)
       {
         Logger.error("unable to display message details",e);
@@ -222,8 +227,9 @@ public class LogList extends TablePart
      */
     public boolean equals(GenericObject other) throws RemoteException
     {
-      if (other == null || !(other instanceof LogObject))
+      if (!(other instanceof LogObject)) {
         return false;
+      }
       return getID().equals(other.getID());
     }
 

@@ -32,7 +32,7 @@ import de.willuhn.util.ApplicationException;
 /**
  * Dialog, der einen Kalender enthaelt.
  */
-public class CalendarDialog extends AbstractDialog
+public class CalendarDialog extends AbstractDialog<Object>
 {
   private Date date = null;
   private String text = null;
@@ -89,6 +89,7 @@ public class CalendarDialog extends AbstractDialog
     cal.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     cal.addSelectionListener(new SelectionAdapter()
     {
+      @Override
       public void widgetDefaultSelected(SelectionEvent e)
       {
         date = getDateWithoutTime(cal);

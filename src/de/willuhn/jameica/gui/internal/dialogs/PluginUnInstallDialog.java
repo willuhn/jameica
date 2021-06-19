@@ -33,9 +33,9 @@ import de.willuhn.util.I18N;
 /**
  * Bestaetigungsdialog fuer die Deinstallation eines Plugins.
  */
-public class PluginUnInstallDialog extends AbstractDialog
+public class PluginUnInstallDialog extends AbstractDialog<Object>
 {
-  private final static I18N i18n = Application.getI18n();
+  private static final I18N i18n = Application.getI18n();
   
   private Manifest manifest      = null;
   private Boolean delete         = Boolean.FALSE;
@@ -47,7 +47,7 @@ public class PluginUnInstallDialog extends AbstractDialog
    */
   public PluginUnInstallDialog(Manifest mf)
   {
-    super(PluginUnInstallDialog.POSITION_CENTER);
+    super(AbstractDialog.POSITION_CENTER);
     this.setTitle(i18n.tr("Plugin {0} deinstallieren",mf.getName()));
     this.setSideImage(SWTUtil.getImage("dialog-warning-large.png"));
     this.manifest = mf;

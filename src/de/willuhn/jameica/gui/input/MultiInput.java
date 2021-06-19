@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.util.Color;
 
 /**
@@ -35,11 +34,11 @@ public class MultiInput implements Input
   /**
    * Context-Parameter fuer die Wichtung der Breite.
    */
-  public final static String DATA_WEIGHT = "jameica.multiinput.weight";
+  public static final String DATA_WEIGHT = "jameica.multiinput.weight";
   
-  private Map<String,Object> data = new HashMap<String,Object>();
+  private Map<String,Object> data = new HashMap<>();
 
-  private List<Input> inputs = new ArrayList<Input>();
+  private List<Input> inputs = new ArrayList<>();
   
   private Composite composite = null;
   private String name         = null;
@@ -101,7 +100,7 @@ public class MultiInput implements Input
   {
     // Das macht nur Sinn, wenn wir nur ein Element haben
     // Daher aktivieren wir grundsaetzlich nur das erste
-    if (this.inputs.size() > 0)
+    if (this.inputs.isEmpty())
       this.inputs.get(0).focus();
   }
 
@@ -201,8 +200,7 @@ public class MultiInput implements Input
 
     for (Input i:this.inputs)
     {
-      String name = i.getName();
-      if (name != null)
+      if (i.getName() != null)
         size++;
     }
 
@@ -218,11 +216,11 @@ public class MultiInput implements Input
     this.composite.setLayoutData(gd);
 
     for (Input i:this.inputs) {
-      String name = i.getName();
-      if (name != null && !(i instanceof CheckboxInput))
+      String name2 = i.getName();
+      if (name2 != null && !(i instanceof CheckboxInput))
       {
         Label l = GUI.getStyleFactory().createLabel(this.composite,SWT.NONE);
-        l.setText(name);
+        l.setText(name2);
         l.setAlignment(SWT.RIGHT);
         l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_CENTER));
       }
@@ -262,7 +260,7 @@ public class MultiInput implements Input
   public Object getValue()
   {
     // Wir liefern eine Liste aller Ergebnisse zurueck
-    List values = new ArrayList();
+    List<Object> values = new ArrayList<>();
     for (Input i:this.inputs)
       values.add(i.getValue());
     return values;
@@ -296,7 +294,7 @@ public class MultiInput implements Input
    */
   public void setValue(Object value)
   {
-    if (this.inputs.size() == 0)
+    if (this.inputs.isEmpty())
       return;
     
     // Wenn es ein Array oder eine Liste ist, uebernehmen wir
@@ -315,7 +313,7 @@ public class MultiInput implements Input
     }
     else if (value instanceof List)
     {
-      List values = (List) value;
+      List<?> values = (List<?>) value;
       for (int i=0;i<values.size();++i)
       {
         if (i >= this.inputs.size()) // Keine Eingabefelder mehr uebrig
