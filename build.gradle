@@ -4,6 +4,7 @@ plugins {
     id 'my.encoding.8859-1'
 }
 apply from: "${rootProject.rootDir}/gradle/url_file.gradle"
+apply from: "${rootProject.rootDir}/gradle/download_swt.gradle"
 
 group 'de.willuhn.jameica'
 version '2.8-SNAPSHOT'
