@@ -22,11 +22,11 @@ jobs:
         # value between 0 and 100
         min_quality_score: '50'
         # number of defects per line of code
-        max_defects_rate: '0.0001'
+        max_defects_rate: '0.015'
         # rate of complex functions (e.g. functions with high cyclomatic complexity)
-        max_complex_functions_rate: '0.0001'
+        max_complex_functions_rate: '0.0035'
         # rate of long functions (e.g. functions that are too long to be correctly read by developers)
-        max_long_functions_rate: '0.0001'
+        max_long_functions_rate: '0.042'
         # the name of the project on <https://www.code-inspector.com/> (optional).
         # If project name is set, the analysis engine will use the preferences of this project. Leave blank for not using a project.
         project_name: ''
