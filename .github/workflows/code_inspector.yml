@@ -1,0 +1,33 @@
+# use code-inspector.com Github Action
+# see https://github.com/marketplace/actions/code-inspector-github-action
+
+name: Code Inspector
+
+on: [push, pull_request]
+
+jobs:
+  check-quality:
+    runs-on: ubuntu-latest
+    name: check code metrics
+    steps:
+    - name: Check code meets quality standards
+      id: code-inspector
+      uses: codeinspectorio/github-action@master
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        code_inspector_access_key: ${{ secrets.CODE_INSPECTOR_ACCESS_KEY }}
+        code_inspector_secret_key: ${{ secrets.CODE_INSPECTOR_SECRET_KEY }}
+        # Valid values are: EXCELLENT, GOOD, NEUTRAL, WARNING, CRITICAL
+        min_quality_grade: 'WARNING'
+        # value between 0 and 100
+        min_quality_score: '50'
+        # number of defects per line of code
+        max_defects_rate: '0.0001'
+        # rate of complex functions (e.g. functions with high cyclomatic complexity)
+        max_complex_functions_rate: '0.0001'
+        # rate of long functions (e.g. functions that are too long to be correctly read by developers)
+        max_long_functions_rate: '0.0001'
+        # the name of the project on <https://www.code-inspector.com/> (optional).
+        # If project name is set, the analysis engine will use the preferences of this project. Leave blank for not using a project.
+        project_name: ''
+        max_timeout_sec: '600'
