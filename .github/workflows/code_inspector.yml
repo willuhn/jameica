@@ -3,7 +3,13 @@
 
 name: Code Inspector
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      - '**.java'
+  pull_request:
+    paths:
+      - '**.java'
 
 jobs:
   check-quality:
