@@ -643,20 +643,29 @@ public final class Config
    * Liefert den Namen des Loglevels.
    * @return Name des Loglevels.
    */
-  public String getLogLevel()
+  public Level getLogLevel()
   {
-    return settings.getString("jameica.system.log.level",Level.DEFAULT.getName());
+    String l = settings.getString("jameica.system.log.level", null);
+    if (null == l)
+    {
+      Logger.warn("unable to detect defined log level, fallback to default level");
+      return Logger.DEFAULT;
+    }
+    else
+    {
+      return Level.valueOf(l);
+    }
   }
 
 	/**
 	 * Legt den Log-Level fest.
-   * @param name Name des Log-Levels.
+   * @param logLevel neues Log-Level.
    */
-  public void setLoglevel(String name)
+  public void setLoglevel(Level logLevel)
 	{
-    settings.setAttribute("jameica.system.log.level",name);
+    settings.setAttribute("jameica.system.log.level", logLevel.name());
     // Aenderungen sofort uebernehmen
-    Logger.setLevel(Level.findByName(name));
+    Logger.setLevel(logLevel);
 	}
 
   /**

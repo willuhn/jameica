@@ -11,6 +11,7 @@
 package de.willuhn.jameica.gui.internal.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,15 +95,8 @@ public class SettingsControl extends AbstractControl
     if (this.logLevel != null)
       return this.logLevel;
 
-    String[] levels = new String[]
-    {
-      Level.TRACE.getName(),
-      Level.DEBUG.getName(),
-      Level.INFO.getName(),
-      Level.WARN.getName(),
-      Level.ERROR.getName()
-    };
-    logLevel = new SelectInput(levels,Logger.getLevel().getName());
+    String[] levels = Arrays.stream(Level.values()).map(Level::name).toArray(String[]::new);
+    logLevel = new SelectInput(levels,Logger.getLevel().name());
     return logLevel;
   }
 
@@ -355,7 +349,7 @@ public class SettingsControl extends AbstractControl
       boolean restartNeeded = false;
 
       // System
-      config.setLoglevel((String)getLogLevel().getValue());
+      config.setLoglevel(Level.valueOf((String)getLogLevel().getValue()));
       
       BootstrapSettings.setAskWorkdir(((Boolean)getAskWorkdir().getValue()).booleanValue());
 
@@ -426,7 +420,7 @@ public class SettingsControl extends AbstractControl
 			Color.LINK.reset();
 			Color.LINK_ACTIVE.reset();
       Application.getConfig().setRmiPort(Config.RMI_DEFAULT_PORT);
-      Application.getConfig().setLoglevel(Level.INFO.getName());
+      Application.getConfig().setLoglevel(Level.INFO);
       Application.getConfig().setRmiSSL(true);
       Application.getConfig().setProxyHost(null);
       Application.getConfig().setProxyPort(-1);

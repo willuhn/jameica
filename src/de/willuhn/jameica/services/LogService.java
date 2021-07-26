@@ -61,13 +61,8 @@ public class LogService implements Bootable
     }
     
     // Loglevel
-    Level level = Level.findByName(Application.getConfig().getLogLevel());
-    if (level == null)
-    {
-      Logger.warn("unable to detect defined log level, fallback to default level");
-      level = Level.DEFAULT;
-    }
-    Logger.info("using log level " + level.getName() + " [" + level.getValue() + "]");
+    Level level = Application.getConfig().getLogLevel();
+    Logger.info("using log level " + level.name());
     Logger.setLevel(level);
 
     

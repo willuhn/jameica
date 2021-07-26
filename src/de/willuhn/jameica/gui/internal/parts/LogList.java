@@ -49,11 +49,6 @@ import de.willuhn.util.ApplicationException;
  */
 public class LogList extends TablePart
 {
-  private final static int L_INF0  = Level.INFO.getValue();
-  private final static int L_DEBUG = Level.DEBUG.getValue();
-  private final static int L_WARN  = Level.WARN.getValue();
-  private final static int L_ERR   = Level.ERROR.getValue();
-
   private static LinkedList<LogObject> last = new LinkedList<LogObject>();
   private LiveTarget target = null;
 
@@ -87,12 +82,15 @@ public class LogList extends TablePart
         if (o == null)
           return;
         
-        int level = o.message.getLevel().getValue();
-
-        if (level == L_INF0)           return;
-        else if (level <= L_DEBUG)     item.setForeground(Color.COMMENT.getSWTColor());
-        else if (level == L_WARN)      item.setForeground(Color.LINK_ACTIVE.getSWTColor());
-        else if (level >= L_ERR)       item.setForeground(Color.ERROR.getSWTColor());
+        Level loglevel = o.message.getLevel();
+        if (loglevel == Level.INFO)
+          return; // behalte die aktuelle Farbe
+        else if (Level.DEBUG.includes(loglevel))
+          item.setForeground(Color.COMMENT.getSWTColor());
+        else if (loglevel == Level.WARN)
+          item.setForeground(Color.LINK_ACTIVE.getSWTColor());
+        else if (loglevel.includes(Level.ERROR))
+          item.setForeground(Color.ERROR.getSWTColor());
       }
     });
     
@@ -196,7 +194,7 @@ public class LogList extends TablePart
       if ("date".equals(name))
         return message.getDate();
       if ("level".equals(name))
-        return message.getLevel().getName();
+        return message.getLevel().name();
 
       return message.getText();
     }
