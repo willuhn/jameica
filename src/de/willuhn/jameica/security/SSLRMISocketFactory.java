@@ -113,6 +113,9 @@ public class SSLRMISocketFactory extends RMISocketFactory
     return socket;
   }
 
+  /** Log-Level, um in {@link #log(Object)} Informationen zu dokumentieren */
+  private static final Level LOG_LEVEL = Level.DEBUG;
+
 	/**
    * Loggt die vom Socket unterstuetzten Protokolle und Cipher-Suites.
    * @param socket zu loggender Socket.
@@ -120,7 +123,7 @@ public class SSLRMISocketFactory extends RMISocketFactory
    */
   private void log(Object socket) throws IOException
 	{
-    if (!Logger.isLogging(Level.DEBUG))
+    if (!Logger.isLogging(LOG_LEVEL))
       return;
 
     String[] protos;
@@ -132,14 +135,14 @@ public class SSLRMISocketFactory extends RMISocketFactory
       SSLServerSocket s = (SSLServerSocket) socket;
       protos = s.getEnabledProtocols();
       cipher = s.getEnabledCipherSuites();
-      Logger.debug(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
+      Logger.write(LOG_LEVEL, socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
     }
     else
     {
       SSLSocket s = (SSLSocket) socket;
       protos = s.getEnabledProtocols();
       cipher = s.getEnabledCipherSuites();
-      Logger.debug(socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
+      Logger.write(LOG_LEVEL, socketType + " Socket receive buffer size: " + s.getReceiveBufferSize());
     }
     StringBuffer sb = new StringBuffer("enabled protocols for " + socketType + " socket: ");
     for (int i=0;i<protos.length;++i) 
@@ -147,7 +150,7 @@ public class SSLRMISocketFactory extends RMISocketFactory
       sb.append(protos[i]);
       sb.append(" ");
     } 
-    Logger.debug(sb.toString());
+    Logger.write(LOG_LEVEL, sb.toString());
 
     sb = new StringBuffer("enabled cipher suites for " + socketType + " socket: ");
     for (int i=0;i<cipher.length;++i) 
@@ -155,7 +158,7 @@ public class SSLRMISocketFactory extends RMISocketFactory
       sb.append(cipher[i]);
       sb.append(" ");
     } 
-    Logger.debug(sb.toString());
+    Logger.write(LOG_LEVEL, sb.toString());
   }
 }
 
