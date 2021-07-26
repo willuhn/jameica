@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.input.LabelInput;
+import de.willuhn.jameica.gui.internal.ext.LogUtil;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.parts.TextPart;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.system.Application;
@@ -60,12 +60,7 @@ public class LogDetailDialog extends AbstractDialog
     
     Level level = message.getLevel();
     LabelInput l = new LabelInput(level.name());
-    if (level.includes(Level.ERROR))
-      l.setColor(Color.ERROR);
-    else if (Level.WARN == level)
-      l.setColor(Color.LINK_ACTIVE);
-    else if (Level.DEBUG.includes(level))
-      l.setColor(Color.COMMENT);
+    l.setColor(LogUtil.getColor(level));
 
     container.addLabelPair(Application.getI18n().tr("Priorität"), l);
     container.addLabelPair(Application.getI18n().tr("Quelle"), new LabelInput(message.getLoggingClass() + "." + message.getLoggingMethod()));

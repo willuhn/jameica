@@ -28,12 +28,12 @@ import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.gui.formatter.TableFormatter;
 import de.willuhn.jameica.gui.internal.action.LogExport;
 import de.willuhn.jameica.gui.internal.dialogs.LogDetailDialog;
+import de.willuhn.jameica.gui.internal.ext.LogUtil;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.parts.table.FeatureSummary;
-import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Level;
@@ -83,14 +83,7 @@ public class LogList extends TablePart
           return;
         
         Level loglevel = o.message.getLevel();
-        if (loglevel == Level.INFO)
-          return; // behalte die aktuelle Farbe
-        else if (Level.DEBUG.includes(loglevel))
-          item.setForeground(Color.COMMENT.getSWTColor());
-        else if (loglevel == Level.WARN)
-          item.setForeground(Color.LINK_ACTIVE.getSWTColor());
-        else if (loglevel.includes(Level.ERROR))
-          item.setForeground(Color.ERROR.getSWTColor());
+        item.setForeground(LogUtil.getColor(loglevel).getSWTColor());
       }
     });
     
