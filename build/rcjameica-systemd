@@ -1,0 +1,13 @@
+#!/bin/sh
+
+BASEDIR=`dirname $0`
+
+. "$BASEDIR/.jameica"
+
+if [ -f "$WORKDIR/.jameica" ]; then
+  . "$WORKDIR/.jameica"
+fi
+
+mkdir -p $WORKDIR
+cd $BASEDIR
+echo $PASSWORD | java -Djava.net.preferIPv4Stack=true -Xmx512m -jar jameica-linux.jar -d -f $WORKDIR
