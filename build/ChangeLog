@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0140 JRE-Update für Windows und Mac auf 11.0.13_8
   * NEW: 0139 MySQL-Treiber auf 5.1.49 aktualisiert - siehe https://homebanking-hilfe.de/forum/topic.php?t=24614
   * NEW: 0138 Update auf SWT 4.19M3 für macos64 - das Druckproblem https://bugs.eclipse.org/bugs/show_bug.cgi?id=569185 scheint dort behoben zu sein
   * NEW: 0137 Update auf SWT 4.18 für linux64, linux-arm64, win64 und macos64
