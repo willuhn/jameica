@@ -54,9 +54,7 @@ public abstract class ButtonInput extends AbstractInput
    */
   public abstract Control getClientControl(Composite parent);
   
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public final Control getControl()
   {
     if (comp != null && !comp.isDisposed())
@@ -117,11 +115,14 @@ public abstract class ButtonInput extends AbstractInput
 
 	/**
 	 * Definiert den auf dem Button anzuzeigenden Text.
-	 * Leider kann auf dem Button nicht Image <b>und</b> Text
-	 * angezeigt werden. Wenn also sowohl <code>setButtonText</code> und
-	 * <code>setButtonImage</code> gesetzt werden, wird nur das Image
+   *
+   * <p>Leider kann auf dem Button nicht Image <b>und</b> Text
+   * angezeigt werden. Wenn also sowohl {@link #setButtonText(String)} und
+   * {@link #setButtonImage(Image)} gesetzt werden, wird nur das Image
 	 * angezeigt.
-	 * Wird nichts von beiden gesetzt, wird ein Image mit einer Lupe angezeigt.
+   *
+   * <p>Wird nichts von beiden gesetzt, wird ein Image mit einer Lupe angezeigt.
+   *
    * @param text auf dem Button anzuzeigender Text.
    */
   public final void setButtonText(String text)
@@ -153,9 +154,7 @@ public abstract class ButtonInput extends AbstractInput
 		buttonListeners.add(l);
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#focus()
-   */
+  @Override
   public final void focus()
   {
     this.focus = true;
@@ -163,25 +162,19 @@ public abstract class ButtonInput extends AbstractInput
       clientControl.setFocus();
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#disable()
-   */
+  @Override
   public final void disable()
   {
     setEnabled(false);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#enable()
-   */
+  @Override
   public final void enable()
   {
     setEnabled(true);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
-   */
+  @Override
   public void setEnabled(boolean enabled)
   {
     if (enabled)
@@ -249,9 +242,7 @@ public abstract class ButtonInput extends AbstractInput
 		}
 	}
   
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
-   */
+  @Override
   public boolean isEnabled()
   {
     return buttonEnabled && clientControlEnabled;
@@ -259,9 +250,7 @@ public abstract class ButtonInput extends AbstractInput
   
   private boolean inUpdate = false;
 
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
-   */
+  @Override
   protected void update() throws OperationCanceledException
   {
     if (inUpdate)

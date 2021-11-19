@@ -140,7 +140,7 @@ public class GUI implements ApplicationController
       Rectangle r = GUI.getDisplay().getBounds();
       if (r.height < 800)
       {
-        Logger.info("display height smaller than 700px (" + r.width + "x" + r.width + ") - auto-activating netbook mode");
+        Logger.info("display height smaller than 800px (" + r.width + "x" + r.width + ") - auto-activating netbook mode");
         Customizing.SETTINGS.setAttribute("application.scrollview",true);
       }
       else if (Customizing.SETTINGS.getBoolean("application.scrollview.force",false))
@@ -153,7 +153,7 @@ public class GUI implements ApplicationController
         // Falls der Netbook-Mode schonmal aktiviert war, deaktivieren wir ihn automatisch wieder - das Display ist ja nun gross genug
         if (Customizing.SETTINGS.getString("application.scrollview",null) != null)
         {
-          Logger.info("display height larger than 700px (" + r.width + "x" + r.width + ") - disable netbook mode");
+          Logger.info("display height larger than 800px (" + r.width + "x" + r.width + ") - disable netbook mode");
           Customizing.SETTINGS.setAttribute("application.scrollview",(String)null);
         }
       }

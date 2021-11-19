@@ -5,9 +5,6 @@
 
 #_JCONSOLE="-Dcom.sun.management.jmxremote"
 
-# https://www.willuhn.de/bugzilla/show_bug.cgi?id=774
-# https://www.willuhn.de/bugzilla/show_bug.cgi?id=798
-
 link=$(readlink -f "$0")
 dir=$(dirname "$link")
 cd "$dir" 

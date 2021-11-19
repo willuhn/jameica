@@ -19,13 +19,16 @@ import net.n3.nanoxml.IXMLElement;
  * eines Services, welcher von einem Plugin zur Verfuegung
  * gestellt werden kann.
  * Diese finden sich in der plugin.xml eines jeden Plugins.
- * Bsp.:
+ *
+ * <p>Bsp.:
+ * <pre>{@code
  * <services>
  *   <service name="service 1" class="de.willuhn.jameica.plugin.Service1"
  *            autostart="true" depends="service 2" />
  *   <service name="service 2" class="de.willuhn.jameica.plugin.Service2"
  *            autostart="false" />
  * </services>
+ * }</pre>
  */
 public class ServiceDescriptor
 {
@@ -58,10 +61,12 @@ public class ServiceDescriptor
 
   /**
    * Liefert den Namen der Java-Klasse des Services.
-   * @return Name der Klasse.
-   * Hier muss keine Implementierung angegeben werden. Ist ein
+   *
+   * <p><b>HINWEIS:</b>Hier muss keine Implementierung angegeben werden. Ist ein
    * Interface eingetragen, sucht Jameica selbstaendig die
    * zugehoerige Implementierung.
+   *
+   * @return Name der Klasse.
    */
   public String getClassname()
   {
@@ -74,7 +79,7 @@ public class ServiceDescriptor
   /**
    * Legt fest, ob der Service beim Starten von Jameica automatisch
    * gestartet werden soll.
-   * @return true, wenn er automatisch gestartet werden soll.
+   * @return {@code true}, wenn er automatisch gestartet werden soll.
    */
   public boolean autostart()
   {
@@ -85,9 +90,8 @@ public class ServiceDescriptor
   /**
    * Liefert eine Liste von Service-Namen, von denen dieser Service
    * abhaengig ist.
-   * @return Liste von Services, die vorher instanziiert werden muessen.
-   * Kann <code>null</code> liefern, wenn der Service von keinen
-   * anderen Services abhaengig ist.
+   * @return Liste von Services, die vorher instanziiert werden muessen oder
+   *         {@code null}, wenn der Service von keinen anderen Services abhaengig ist.
    */
   public String[] depends()
   {
@@ -114,7 +118,7 @@ public class ServiceDescriptor
 
   /**
    * Legt fest, ob der Service im Netzwerk freigegeben werden soll.
-   * @return true, wenn er freigegeben werden soll.
+   * @return {@code true}, wenn er freigegeben werden soll.
    */
   public boolean share()
   {

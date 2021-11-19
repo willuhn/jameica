@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!--
- $Revision: 1.78 $
- $Date: 2011/06/10 10:30:14 $
- $Author: willuhn $
- 
- All rights reserved
--->
-
 <project basedir=".." default="all" name="All">
 
 
@@ -138,6 +130,10 @@
       <param name="param.classpath" value="${classpath.macos64}" />
     </antcall>
     <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.macosaarch64}" />
+      <param name="param.classpath" value="${classpath.macosaarch64}" />
+    </antcall>
+    <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.openbsd}" />
       <param name="param.classpath" value="${classpath.openbsd}" />
     </antcall>
@@ -157,11 +153,12 @@
         <include name="*.sh" />
         <include name="*.exe" />
         <include name=".jameica" />
-        <include name="rcjameica" />
+        <include name="rcjameica*" />
+        <include name="jameica.service" />
         <include name="jameica-icon.png" />
         <include name="jameica-icon.icns" />
         <include name="README" />
-        <include name="Info.plist" />
+        <include name="Info*.plist" />
       </fileset>
       <fileset dir="${basedir}">
         <include name="LICENSE" />
@@ -196,6 +193,7 @@
         <include name="${define.projectname}/README" />
         <include name="${define.projectname}/.jameica" />
         <include name="${define.projectname}/jameica-icon.png" />
+        <include name="${define.projectname}/jameica.service" />
         <include name="${define.projectname}/plugins" />
         <include name="${define.projectname}/lib/**" />
 
@@ -225,6 +223,7 @@
         <include name="${define.projectname}/README" />
         <include name="${define.projectname}/.jameica" />
         <include name="${define.projectname}/jameica-icon.png" />
+        <include name="${define.projectname}/jameica.service" />
         <include name="${define.projectname}/plugins" />
         <include name="${define.projectname}/lib/**" />
 
@@ -333,12 +332,42 @@
         <include name="plugins" />
         <include name="jre-macos64/**" />
         <include name="lib/**" />
+        <exclude name="Info-aarch64.plist" />
         <exclude name="lib/swt/win*/**" />
         <exclude name="lib/swt/linux*/**" />
-        <exclude name="lib/swt/macos/**" />
+        <exclude name="lib/swt/macos-aarch64/**" />
       </fileset>
     </copy>
     <zip destfile="${project.release}/${project.zipfilename.macos64}">
+      <zipfileset dir="${project.tmp}" filemode="755">
+        <include name="${define.projectname}.app/**" />
+      </zipfileset>
+    </zip>
+
+    <!-- ZIP-File fuer MacOSAArch64 -->
+    <delete dir="${project.tmp}/${define.projectname}.app" />
+    <mkdir dir="${project.tmp}/${define.projectname}.app" />
+    <copy todir="${project.tmp}/${define.projectname}.app">
+      <fileset dir="${project.release}/${define.projectname}">
+        <include name="plugin.xml" />
+        <include name="${define.jarfilename}" />
+        <include name="${define.jarfilename.macosaarch64}" />
+        <include name="LICENSE" />
+        <include name="COPYING" />
+        <include name="README" />
+        <include name="Info-aarch64.plist" />
+        <include name="jameica-macosaarch64.sh" />
+        <include name="jameica-icon.icns" />
+        <include name="plugins" />
+        <include name="lib/**" />
+        <exclude name="Info.plist" />
+        <exclude name="lib/swt/win*/**" />
+        <exclude name="lib/swt/linux*/**" />
+        <exclude name="lib/swt/macos64/**" />
+      </fileset>
+    </copy>
+    <move file="${project.tmp}/${define.projectname}.app/Info-aarch64.plist" tofile="${project.tmp}/${define.projectname}.app/Info.plist" />
+    <zip destfile="${project.release}/${project.zipfilename.macosaarch64}">
       <zipfileset dir="${project.tmp}" filemode="755">
         <include name="${define.projectname}.app/**" />
       </zipfileset>
@@ -375,7 +404,7 @@
         <include name="${define.projectname}" />
         <include name="${define.projectname}/**" />
         <exclude name="${define.projectname}/*.sh" />
-        <exclude name="${define.projectname}/rcjameica" />
+        <exclude name="${define.projectname}/rcjameica*" />
       </zipfileset>
       <zipfileset dir="${project.release}" filemode="755">
         <include name="${define.projectname}/*.sh" />
@@ -447,6 +476,7 @@
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linuxarm64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
+    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macosaarch64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.openbsd}" />
     <echo message="Creating PGP signatures" />
 
@@ -476,6 +506,9 @@
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macos64}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macosaarch64}" />
+    </exec>
+    <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.openbsd}" />
     </exec>
   </target>
@@ -493,6 +526,7 @@
     <copy file="${project.release}/${project.zipfilename.linux64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linuxarm64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.macos64}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.macosaarch64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win32}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.openbsd}" todir="${project.nightly}" />

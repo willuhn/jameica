@@ -315,7 +315,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   
 
   /**
-   * Liefert <code>null</code> zurueck.
+   * Liefert {@code null} zurueck.
    * Bitte ggf. ueberschreiben, um einen anderen Wert zurueckzuliefern.
    * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
    */

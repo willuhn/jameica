@@ -80,7 +80,7 @@ public class ContextMenuItem
 
   /**
 	 * Legt fest, ob das Menu ein Separator sein soll.
-   * @param separator true, wenn es ein Separator sein soll.
+   * @param separator {@code true}, wenn es ein Separator sein soll.
    */
   public void setSeparator(boolean separator)
 	{
@@ -89,7 +89,7 @@ public class ContextMenuItem
 
 	/**
 	 * Prueft, ob das Element ein Separator ist.
-   * @return true, wenn es ein Separator ist.
+   * @return {@code true}, wenn es ein Separator ist.
    */
   public boolean isSeparator()
 	{
@@ -152,8 +152,8 @@ public class ContextMenuItem
   }
   
   /**
-   * Liefert eine optionale Tastenkombi fuer den Short-Cut.
-   * @return Tastenkombi.
+   * Liefert eine optionale Tastenkombination fuer den Short-Cut.
+   * @return Tastenkombination.
    */
   public String getShortcut()
   {
@@ -161,7 +161,7 @@ public class ContextMenuItem
   }
   
   /**
-   * Speichert eine optionale Tastenkombi fuer den Short-Cut.
+   * Speichert eine optionale Tastenkombination fuer den Short-Cut.
    * @param shortcut
    */
   public void setShortcut(String shortcut)
@@ -175,15 +175,19 @@ public class ContextMenuItem
 	 * Diese Funktion wird fuer jedes MenuItem aufgerufen, wenn sich das Kontext-Menu oeffnet.
 	 * Folglich kann hier jedes MenuItem selbst bestimmen, ob es fuer das aktuelle
 	 * Objekt verfuegbar sein soll oder nicht.
-	 * Diese Default-Implementierung liefert immer <code>true</code>.
+	 *
+	 * <p>Diese Default-Implementierung liefert immer {@code true}.
 	 * Soll das Item also bei Bedarf deaktiviert werden, muss von dieser
 	 * Klasse abgeleitet und diese Methode ueberschrieben werden.
-	 * Alternativ kann auch bereits die abgeleitete Klasse CheckedContextMenuItem
-	 * verwendet werden, die nur dann <code>true</code> liefert, wenn das Objekt nicht
-	 * <code>null</code> ist. Sprich: Wenn nicht in leeren Raum geklickt wurde sondern
+	 *
+	 * <p>Alternativ kann auch bereits die abgeleitete Klasse {@link CheckedContextMenuItem}
+	 * verwendet werden, die nur dann {@code true} liefert, wenn das Objekt nicht
+	 * {@code null} ist. Sprich: Wenn nicht in leeren Raum geklickt wurde sondern
 	 * auf ein Objekt.
+	 *
    * @param o das zu testende Objekt.
-   * @return true, wenn das Item angezeigt werden soll. Andernfalls <code>false</code>.
+   * @return {@code true}, wenn das Item angezeigt werden soll. Andernfalls {@code false}.
+   * @see CheckedContextMenuItem#isEnabledFor(Object)
    */
   public boolean isEnabledFor(Object o)
 	{

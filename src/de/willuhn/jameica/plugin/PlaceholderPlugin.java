@@ -25,7 +25,7 @@ import de.willuhn.util.ApplicationException;
  * Javascripts. Im Manifest dieser Plugins kann das Attribut "class"
  * des XML-Elements "plugin" dann einfach weggelassen werden.
  * Da diese Plugins dennoch eine Klasse bereitstellen muessen, die
- * <code>Plugin</code> implementieren, wird dieses PlaceholderPlugin
+ * {@link Plugin} implementiert, wird dieses PlaceholderPlugin
  * verwendet. Es erzeugt via Reflection-Proxy dynamisch generierte
  * Klassen, die dieses Interface implementieren.
  */
@@ -44,7 +44,7 @@ public class PlaceholderPlugin implements Plugin
   }
   
   /**
-   * Erzeugt eine neue generische Platzhalter-Instanz, die von AbstractPlugin abgeleitet ist.
+   * Erzeugt eine neue generische Platzhalter-Instanz, die von {@link AbstractPlugin} abgeleitet ist.
    * @param manifest das Manifest des Platzhalter-Plugins.
    * @return die neue Plugin-Instanz.
    */
@@ -55,57 +55,43 @@ public class PlaceholderPlugin implements Plugin
     return (Plugin) Proxy.newProxyInstance(loader != null ? loader : Application.getClassLoader(),new Class[]{Plugin.class},handler);
   }
   
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#getResources()
-   */
+  @Override
   public PluginResources getResources()
   {
     return this.res;
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#getManifest()
-   */
+  @Override
   public Manifest getManifest()
   {
     return this.manifest;
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#init()
-   */
+  @Override
   public void init() throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".init").sendSyncMessage(new QueryMessage(this));
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#install()
-   */
+  @Override
   public void install() throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".install").sendSyncMessage(new QueryMessage(this));
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#update(de.willuhn.jameica.plugin.Version)
-   */
+  @Override
   public void update(Version oldVersion) throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".update").sendSyncMessage(new QueryMessage(new Object[]{this,oldVersion}));
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#shutDown()
-   */
+  @Override
   public void shutDown()
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".shutdown").sendSyncMessage(new QueryMessage(this));
   }
 
-  /**
-   * @see de.willuhn.jameica.plugin.Plugin#uninstall(boolean)
-   */
+  @Override
   public void uninstall(boolean deleteUserData) throws ApplicationException
   {
     Application.getMessagingFactory().getMessagingQueue("plugin." + this.manifest.getName() + ".uninstall").sendSyncMessage(new QueryMessage(new Object[]{this,deleteUserData}));
@@ -128,9 +114,7 @@ public class PlaceholderPlugin implements Plugin
       this.redirect = redirect;
     }
     
-    /**
-     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-     */
+    @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
     {
       return BeanUtil.invoke(redirect,method.getName(),args);

@@ -68,7 +68,7 @@ public abstract class AbstractInput implements Input
   }
   
   /**
-   * Liefert die Stylebits (GridData-Settings), welche zum Erstellen des Widgets
+   * Liefert die Stylebits ({@link GridData}-Settings), welche zum Erstellen des Widgets
    * verwendet werden.
    * @return die Style.Bits.
    */
@@ -77,17 +77,13 @@ public abstract class AbstractInput implements Input
     return GridData.FILL_HORIZONTAL;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#addListener(org.eclipse.swt.widgets.Listener)
-   */
+  @Override
   public void addListener(Listener l)
 	{
 		listeners.add(l);
 	}
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setComment(java.lang.String)
-   */
+  @Override
   public void setComment(String comment)
   {
     this.comment = comment;
@@ -98,17 +94,13 @@ public abstract class AbstractInput implements Input
 		}
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public final void paint(Composite parent)
   {
     paint(parent,240);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#paint(org.eclipse.swt.widgets.Composite, int)
-   */
+  @Override
   public final void paint(Composite parent,int width)
   {
 		boolean hasComment = this.comment != null;
@@ -263,11 +255,13 @@ public abstract class AbstractInput implements Input
    * Definiert eine Liste von Zeichen, die eingegeben werden koennen.
    * Wird diese Funktion verwendet, dann duerfen nur noch die hier
    * angegebenen Zeichen eingegeben werden.
-   * Werden beide Funktionen <code>setValidChars</code> <b>und</b>
-   * <code>setInvalidChars</code> benutzt, kann nur noch die verbleibende
+   *
+   * <p>Werden beide Funktionen {@link #setValidChars(String)} <b>und</b>
+   * {@link #setInvalidChars(String)} benutzt, kann nur noch die verbleibende
    * Restmenge eingegeben werden. Das sind die Zeichen, die in validChars
-   * angegeben und in invalidChars nicht enthalten sind. 
-   * @param chars
+   * angegeben und in invalidChars nicht enthalten sind.
+   *
+   * @param chars erlaubte Zeichen
    */
   public void setValidChars(String chars)
   {
@@ -278,16 +272,16 @@ public abstract class AbstractInput implements Input
    * Definiert eine Liste von Zeichen, die nicht eingegeben werden koennen.
    * Wird diese Funktion verwendet, dann duerfen die angegebenen Zeichen nicht
    * mehr verwendet werden.
-   * @param chars
+   *
+   * @param chars nicht-erlaubte Zeichen
+   * @see #setValidChars(String)
    */
   public void setInvalidChars(String chars)
   {
     this.invalidChars = chars;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isMandatory()
-   */
+  @Override
   public boolean isMandatory()
   {
     return this.mandatory && Application.getConfig().getMandatoryCheck();
@@ -331,9 +325,7 @@ public abstract class AbstractInput implements Input
     }
   }
   
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setMandatory(boolean)
-   */
+  @Override
   public void setMandatory(boolean mandatory)
   {
     // Wenn das Control bereits gezeichnet wurde und
@@ -354,17 +346,13 @@ public abstract class AbstractInput implements Input
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getName()
-   */
+  @Override
   public String getName()
   {
     return this.name;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setName(java.lang.String)
-   */
+  @Override
   public void setName(String name)
   {
     this.name = name;
@@ -384,9 +372,7 @@ public abstract class AbstractInput implements Input
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#hasChanged()
-   */
+  @Override
   public boolean hasChanged()
   {
     Object newValue = getValue();
@@ -405,23 +391,18 @@ public abstract class AbstractInput implements Input
     }
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setData(java.lang.String, java.lang.Object)
-   */
+  @Override
   public void setData(String key, Object data)
   {
     this.data.put(key,data);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getData(java.lang.String)
-   */
+  @Override
   public Object getData(String key)
   {
     return this.data.get(key);
   }
-  
-  
+
 }
 
 /*********************************************************************

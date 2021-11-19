@@ -20,13 +20,14 @@ import net.n3.nanoxml.IXMLElement;
 /**
  * Implementierung fuer die Beschreibungen einer Message im Manifest.
  * Wird in der plugin.xml definiert. Beispiel:
- * 
+ *
+ * <pre>{@code
  * <messaging>
  *   <message queue="meine.queue">
  *     Text der Message
  *   </message>
  * </messaging>
- * 
+ * }</pre>
  */
 public class MessageDescriptor
 {

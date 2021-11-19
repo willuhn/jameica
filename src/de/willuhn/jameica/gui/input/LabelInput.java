@@ -39,9 +39,7 @@ public class LabelInput extends AbstractInput
     this.value = value;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public Control getControl()
   {
     label = GUI.getStyleFactory().createLabel(getParent(),SWT.NONE);
@@ -58,24 +56,21 @@ public class LabelInput extends AbstractInput
   }
 
   /**
-   * Liefert den angezeigten Text.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
+   * Liefert den angezeigten Text vom Typ {@link java.lang.String}.
    */
+  @Override
   public Object getValue()
   {
     return value;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#focus()
-   */
+  @Override
   public void focus()
   {
   }
 
   /**
-   * Erwartet ein Objekt des Typs <code>java.lang.String</code>.
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
+   * Erwartet ein Objekt des Typs {@link java.lang.String}.
    */
   public void setValue(Object value)
   {
@@ -100,38 +95,28 @@ public class LabelInput extends AbstractInput
       this.label.setForeground(this.color.getSWTColor());
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#disable()
-   */
+  @Override
   public void disable()
   {
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#enable()
-   */
+  @Override
   public void enable()
   {
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#isEnabled()
-   */
+  @Override
   public boolean isEnabled()
   {
     return false;
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#setEnabled(boolean)
-   */
+  @Override
   public void setEnabled(boolean enabled)
   {
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
-   */
+  @Override
   protected void update() throws OperationCanceledException
   {
     // Wir machen hier nichts

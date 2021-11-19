@@ -14,7 +14,7 @@ import de.willuhn.jameica.gui.Action;
 
 /**
  * ContextMenu-Element, dass immer genau dann automatisch
- * deaktiviert ist, wenn das aktuelle Objekt <code>null</code> ist.
+ * deaktiviert ist, wenn das aktuelle Objekt {@code null} ist.
  */
 public class CheckedContextMenuItem extends ContextMenuItem
 {
@@ -48,9 +48,7 @@ public class CheckedContextMenuItem extends ContextMenuItem
     super(text, a, icon);
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.parts.ContextMenuItem#isEnabledFor(java.lang.Object)
-   */
+  @Override
   public boolean isEnabledFor(Object o)
   {
     return o != null;

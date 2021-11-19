@@ -14,12 +14,13 @@ import net.n3.nanoxml.IXMLElement;
 /**
  * Implementierung fuer die Beschreibungen eines Message-Consumers im Manifest.
  * Wird in der plugin.xml definiert. Beispiel:
- * 
+ *
+ * <pre>{@code
  * <messaging>
  *   <consumer class="mein.package.MyMessageConsumer" queue="meine.queue" />
  *   <consumer class="mein.package.MyMessageConsumer" />
  * </messaging>
-
+ * }</pre>
  */
 public class ConsumerDescriptor
 {

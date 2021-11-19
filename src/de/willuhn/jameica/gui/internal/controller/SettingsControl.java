@@ -47,7 +47,7 @@ import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
- * Controller fuer die Einstellungen unter Datei->Einstellungen
+ * Controller fuer die Einstellungen unter <i>Datei-&gt;Einstellungen</i>
  */
 public class SettingsControl extends AbstractControl
 {

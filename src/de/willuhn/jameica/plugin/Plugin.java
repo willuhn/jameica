@@ -76,7 +76,7 @@ public interface Plugin
 	public void shutDown();
 	
 	/**
-	 * Wird aufgerufen, wenn das Plugin ueber Datei->Einstellungen->Plugins
+	 * Wird aufgerufen, wenn das Plugin ueber <i>Datei-&gt;Einstellungen-&gt;Plugins</i>
 	 * deinstalliert wird. Hier kann das Plugin bei Bedarf eigene Aufraeum-Arbeiten durchfuehren.
 	 * VOR dem Aufruf dieser Funktion wird "shutDown" aufgerufen. Falls dort also
 	 * z.Bsp. Datenbankverbindungen geschlossen wurden, dann stehen diese hier nicht

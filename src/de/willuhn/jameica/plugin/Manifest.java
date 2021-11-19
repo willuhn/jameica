@@ -177,9 +177,11 @@ public class Manifest implements Comparable
   
   /**
    * Liefert die Build-Nummer, insofern sie ermittelbar ist.
-   * Da die Nummer nur im Manifest des Jars steht, kann sie nur dann
+   *
+   * <p>Da die Nummer nur im Manifest des Jars steht, kann sie nur dann
    * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
    * und der entsprechende Parameter im Manifest des JARs existiert.
+   *
    * @return Build-Number.
    */
   public final String getBuildnumber()
@@ -189,9 +191,11 @@ public class Manifest implements Comparable
 
   /**
    * Liefert das Build-Datum, insofern es ermittelbar ist.
-   * Da das Datum nur im Manifest des Jars steht, kann es nur dann
+   *
+   * <p>Da das Datum nur im Manifest des Jars steht, kann es nur dann
    * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
    * und der entsprechende Parameter im Manifest des JARs existiert.
+   *
    * @return Build-Datum.
    */
   public final String getBuildDate()
@@ -211,7 +215,7 @@ public class Manifest implements Comparable
 	
   /**
    * Liefert den Klassen-Name des Plugins.
-   * @return Klassen-Name des Plugins oder das DefaultPlugin, wenn keines angegeben ist.
+   * @return Klassen-Name des Plugins oder vom {@link PlaceholderPlugin}, wenn keines angegeben ist.
    */
   public String getPluginClass()
   {
@@ -233,10 +237,10 @@ public class Manifest implements Comparable
   }
   
   /**
-   * Liefert true, wenn das Plugin ueber den globalen Classloader von Jameica geladen werden soll.
-   * @return true, wenn es ueber den globalen Classloader geladen werden soll.
+   * Liefert zurueck, ob das Plugin ueber den globalen Classloader von Jameica geladen werden soll.
+   * @return {@code true}, wenn es ueber den globalen Classloader geladen werden soll.
    * Andernfalls erhaelt es einen exlusiven Classloader.
-   * Default: True
+   * Default: {@code true}
    */
   public boolean isShared()
   {
@@ -244,8 +248,8 @@ public class Manifest implements Comparable
   }
   
   /**
-   * Liefert true, wenn es kein gewoehnliches Plugin-Manifest ist sondern das Manifest von Jameica selbst.
-   * @return true, wenn es kein gewoehnliches Plugin-Manifest ist sondern das Manifest von Jameica selbst.
+   * Pruefe, ob es sich um das Manifest von Jameica selbst handelt (und somit kein Plugin-Manifest).
+   * @return {@code true}, wenn es kein gewoehnliches Plugin-Manifest ist sondern das Manifest von Jameica selbst.
    */
   public boolean isSystemManifest()
   {
@@ -296,7 +300,7 @@ public class Manifest implements Comparable
   /**
    * Liefert das Icon des Plugins.
    * Sollte 64x64 Pixel gross sein.
-   * @return das Icon oder NULL, wenn keines definiert ist.
+   * @return das Icon oder {@code null}, wenn keines definiert ist.
    */
   public String getIcon()
   {
@@ -363,8 +367,8 @@ public class Manifest implements Comparable
 
 	/**
 	 * Liefert eine Liste von Service-Desktriptoren zu diesem Plugin.
-   * @return Liste aller Service-Deskriptoren aus der plugin.xml oder
-   * <code>null</code> wenn keine definiert sind.
+   * @return Liste aller Service-Deskriptoren aus der <i>plugins.xml</i> oder
+   *         {@code null} wenn keine definiert sind.
    */
   public ServiceDescriptor[] getServices()
 	{
@@ -405,8 +409,8 @@ public class Manifest implements Comparable
 
   /**
    * Liefert eine Liste von Extension-Desktriptoren zu diesem Plugin.
-   * @return Liste aller Extension-Deskriptoren aus der plugin.xml oder
-   * <code>null</code> wenn keine definiert sind.
+   * @return Liste aller Extension-Deskriptoren aus der <i>plugin.xml</i> oder
+   *         {@code null} wenn keine definiert sind.
    */
   public ExtensionDescriptor[] getExtensions()
   {
@@ -425,8 +429,8 @@ public class Manifest implements Comparable
   
   /**
    * Liefert eine Liste von Consumer-Desktriptoren zu diesem Plugin.
-   * @return Liste aller Consumer-Deskriptoren aus der plugin.xml oder
-   * <code>null</code> wenn keine definiert sind.
+   * @return Liste aller Consumer-Deskriptoren aus der <i>plugin.xml</i> oder
+   *         {@code null} wenn keine definiert sind.
    */
   public ConsumerDescriptor[] getMessageConsumers()
   {
@@ -445,7 +449,7 @@ public class Manifest implements Comparable
 
   /**
    * Liefert eine Liste von Messages, die automatisch beim Start versendet werden sollen.
-   * @return Liste aller Messages oder <code>null</code> wenn keine definiert sind.
+   * @return Liste aller Messages oder {@code null} wenn keine definiert sind.
    */
   public MessageDescriptor[] getMessages()
   {
@@ -474,12 +478,14 @@ public class Manifest implements Comparable
 
   /**
    * Liste der Plugins, von denen dieses hier direkt abhaengig ist.
-   * Es werden also nur die direkt abhaengigen Plugins geliefert, nicht jedoch
+   *
+   * <p>Es werden also nur die direkt abhaengigen Plugins geliefert, nicht jedoch
    * die indirekten Abhaengigkeiten.
    * Wenn die komplette Liste der Abhaengigkeiten ermittelt werden soll (also incl.
-   * indirekter Abhaengigkeiten), dann muss "getDependencies()" verwendet werden.
-   * @return  Liste von Abhaengigkeiten fuer dieses Plugin.
-   * Die Funktion liefert nie NULL sondern hoechstens ein leeres Array.
+   * indirekter Abhaengigkeiten), dann muss {@link #getDependencies()} verwendet werden.
+   *
+   * @return Liste von Abhaengigkeiten fuer dieses Plugin.
+   *         Die Funktion liefert nie {@code null} sondern hoechstens ein leeres Array.
    */
   public Dependency[] getDirectDependencies()
   {
@@ -507,12 +513,14 @@ public class Manifest implements Comparable
   
   /**
    * Liste der Plugins, von denen dieses hier direkt oder indirekt abhaengig ist.
-   * Es werden also nicht nur die direkt abhaengigen Plugins geliefert sondern auch alle
-   * Plugins, die von diesen wiederrum benoetigt werden.
+   *
+   * <p>Es werden also nicht nur die direkt abhaengigen Plugins geliefert, sondern auch alle
+   * Plugins, die von diesen wiederum benoetigt werden.
    * Wenn nur die einfache Liste der Abhaengigkeiten ermittelt werden soll (also ohne
-   * indirekte Abhaengigkeiten), dann muss "getDirectDependencies()" verwendet werden.
-   * @return  Liste von Abhaengigkeiten fuer dieses Plugin.
-   * Die Funktion liefert nie NULL sondern hoechstens ein leeres Array.
+   * indirekte Abhaengigkeiten), dann muss {@link #getDirectDependencies()} verwendet werden.
+   *
+   * @return Liste von Abhaengigkeiten fuer dieses Plugin.
+   *         Die Funktion liefert nie {@code null} sondern hoechstens ein leeres Array.
    */
   public Dependency[] getDependencies()
   {
@@ -556,33 +564,48 @@ public class Manifest implements Comparable
     }
     return found.toArray(new Dependency[found.size()]);
   }
+
   /**
    * Prueft, ob das Plugin installiert werden kann.
-   * Konkret wird hier geprueft:
-   * 
-   *  1. Ist die richtige Jameica-Version installiert
-   *  2. Sind die Abhaengigkeiten zu anderen Plugins erfuellt.
-   *  3. Ist das Plugin ggf. schon installiert, wenn ja
-   *     - kann es ueberschrieben werden?
-   *     - ist die installierte Version nicht neuer als die zu installierende
+   *
+   * <p>Konkret wird hier geprueft:
+   * <ol>
+   *   <li>Ist die richtige Jameica-Version installiert?</li>
+   *   <li>Sind die Abhaengigkeiten zu anderen Plugins erfuellt?</li>
+   *   <li>Ist das Plugin ggf. schon installiert und wenn ja ...
+   *    <ul>
+   *      <li>... kann es ueberschrieben werden?</li>
+   *      <li>... ist die installierte Version nicht neuer als die zu installierende?</li>
+   *    </ul>
+   *   </li>
+   * </ol>
+   *
    * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
+   * @see #canDeploy(boolean)
    */
   public void canDeploy() throws ApplicationException
   {
     this.canDeploy(true);
   }
-  
+
   /**
    * Prueft, ob das Plugin installiert werden kann.
-   * Konkret wird hier geprueft:
-   * 
-   *  1. Ist die richtige Jameica-Version installiert
-   *  2. Sind die Abhaengigkeiten zu anderen Plugins erfuellt.
-   *  3. Ist das Plugin ggf. schon installiert, wenn ja
-   *     - kann es ueberschrieben werden?
-   *     - ist die installierte Version nicht neuer als die zu installierende
-   * @param checkDeps true, wenn die Abhaengigkeiten zu anderen Plugins geprueft werden sollen.
+   *
+   * <p>Konkret wird hier geprueft:
+   * <ol>
+   *   <li>Ist die richtige Jameica-Version installiert?</li>
+   *   <li>Sind die Abhaengigkeiten zu anderen Plugins erfuellt?</li>
+   *   <li>Ist das Plugin ggf. schon installiert und wenn ja ...
+   *    <ul>
+   *      <li>... kann es ueberschrieben werden?</li>
+   *      <li>... ist die installierte Version nicht neuer als die zu installierende?</li>
+   *    </ul>
+   *   </li>
+   * </ol>
+   *
+   * @param checkDeps {@code true}, wenn die Abhaengigkeiten zu anderen Plugins geprueft werden sollen.
    * @throws ApplicationException wenn das Plugin nicht installiert werden kann.
+   * @see #canDeploy()
    */
   public void canDeploy(boolean checkDeps) throws ApplicationException
   {
@@ -695,7 +718,7 @@ public class Manifest implements Comparable
 
   /**
    * Prueft, ob das Plugin geladen werden konnte.
-   * @return true, wenn es geladen werden konnte.
+   * @return {@code true}, wenn es geladen werden konnte.
    */
   public boolean isLoaded()
   {
@@ -785,7 +808,7 @@ public class Manifest implements Comparable
     {
       if (deps[i] == null)
         continue; // ueberspringen
-      if (otherName.equals(deps[i]))
+      if (otherName.equals(deps[i].getName()))
       {
         Logger.debug("7: " + otherName + " > " + name);
         return 1; // Wir haengen von dem anderen Plugin ab. Dann muss das andere zuerst geladen werden

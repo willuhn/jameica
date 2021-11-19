@@ -1,0 +1,14 @@
+## Beispiel für ein systemd-Unit-File
+[Unit]
+Description=Jameica
+After=mysql.service
+
+[Service]
+Type=simple
+ExecStart=/opt/jameica/rcjameica-systemd
+User=jameica
+ExecStop=kill $MAINPID
+StandardOutput=file:/dev/null
+
+[Install]
+WantedBy=multi-user.target

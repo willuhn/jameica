@@ -56,9 +56,7 @@ public class ColorInput extends ButtonInput
     });
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.ButtonInput#getClientControl(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public Control getClientControl(Composite parent)
   {
     label = GUI.getStyleFactory().createText(parent);
@@ -77,18 +75,19 @@ public class ColorInput extends ButtonInput
 
   /**
    * Liefert die aktuell ausgewaehlte Farbe.
-   * Rueckgabewert vom Typ <code>Color</code>.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
+   *
+   * @return Rueckgabewert vom Typ {@link Color}.
    */
+  @Override
   public Object getValue()
   {
     return color;
   }
 
   /**
-   * Erwartet ein Objekt vom Typ <code>Color</code>.
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
+   * Erwartet ein Objekt vom Typ {@link Color}.
    */
+  @Override
   public void setValue(Object value)
   {
     if (value == null)
@@ -115,8 +114,8 @@ public class ColorInput extends ButtonInput
   
   /**
    * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
-   * @see de.willuhn.jameica.gui.input.AbstractInput#update()
    */
+  @Override
   protected void update() throws OperationCanceledException
   {
   }

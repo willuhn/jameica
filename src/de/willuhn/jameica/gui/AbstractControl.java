@@ -13,7 +13,7 @@ package de.willuhn.jameica.gui;
 
 /**
  * Diese Basis-Klasse ist das Bindeglied zwischen View und Model.
- * Einem Dialog werden via <code>ButtonArea</code> Knoepfe hinzugefuegt.
+ * Einem Dialog werden via {@link de.willuhn.jameica.gui.parts.ButtonArea} Knoepfe hinzugefuegt.
  * Die Funktion zum Hinzufuegen von Knoepfen erwartet als Parameter
  * u.a. einen AbstractControl. Und genau dessen Methode handleIrgendwas() wird beim
  * Klick auf diesen Button dann ausgefuehrt.

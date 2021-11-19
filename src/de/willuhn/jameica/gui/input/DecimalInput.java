@@ -86,9 +86,7 @@ public class DecimalInput extends TextInput
     });
   }
 
-  /**
-   * @see de.willuhn.jameica.gui.input.Input#getControl()
-   */
+  @Override
   public Control getControl()
   {
 		Control c = super.getControl();
@@ -144,10 +142,10 @@ public class DecimalInput extends TextInput
   }
 
   /**
-   * Die Funktion liefert ein Objekt des Typs java.lang.Double zurueck
-   * oder <code>null</code> wenn nicht eingegeben wurde.
-   * @see de.willuhn.jameica.gui.input.Input#getValue()
+   * Die Funktion liefert ein Objekt des Typs {@link java.lang.Double} zurueck
+   * oder {@code null}, wenn nichts eingegeben wurde.
    */
+  @Override
   public Object getValue()
   {
     Number n = this.getNumber();
@@ -203,9 +201,9 @@ public class DecimalInput extends TextInput
   }
 
   /**
-   * Erwartet ein Objekt des Typs java.lang.Double.
-   * @see de.willuhn.jameica.gui.input.Input#setValue(java.lang.Object)
+   * Erwartet ein Objekt des Typs {@link java.lang.Double}.
    */
+  @Override
   public void setValue(Object value)
   {
     if (value instanceof Number)

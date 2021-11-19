@@ -34,15 +34,16 @@ public class XPathEmu
   /**
    * Liefert den Content/Wert des Attributes des angegebenen XML-Elementes.
    * Hier kann ein Pseudo-XPath angegeben werden.
+   *
    * @param path der Pseudo-XPath.
-   * <pre>
+   * <pre>{@code
    *   <Kunden>
    *     <Kunde>
    *       <Name>Foo</Name>
    *       <Ort plz="0815"/>
    *     </Kunde>
    *   </Kunden>
-   * </pre>
+   * }</pre>
    * Beispiel 1: path="Kunden/Kunde/Name" ergibt "Foo".
    * Beispiel 2: path="Kunden/Kunde/Ort/@plz" ergibt "0815".
    * @return Content des XML-Elementes oder null, niemals jedoch einen Leerstring.
