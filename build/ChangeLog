@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+2021-11-19 Version 2.10.1
+
   * NEW: 0142 Update auf SWT 4.20 für linux64, linux-arm64, win64, macos64
   * NEW: 0141 Support für Macos-aarch64 (SWT 4.20)
   * NEW: 0140 JRE-Update für Windows und Mac auf 11.0.13_8
