@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0143 Referenz auf JAR-File in jameica-macosaarch64.sh falsch
+
 2021-11-19 Version 2.10.1
 
   * NEW: 0142 Update auf SWT 4.20 für linux64, linux-arm64, win64, macos64
