@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0144 STRG+A im Logfenster möglich sowie Button "Text kopieren"
   * NEW: 0143 Referenz auf JAR-File in jameica-macosaarch64.sh falsch
 
 2021-11-19 Version 2.10.1

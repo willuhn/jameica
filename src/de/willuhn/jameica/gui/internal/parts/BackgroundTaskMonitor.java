@@ -17,6 +17,9 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -27,6 +30,7 @@ import de.willuhn.jameica.gui.parts.Panel;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.gui.parts.ProgressBar;
 import de.willuhn.jameica.gui.util.DelayedListener;
+import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.logging.Logger;
@@ -51,6 +55,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   private AtomicBoolean started     = new AtomicBoolean(false);
   private AtomicBoolean panelLocked = DEFAULT_LOCKED;
   private AtomicLong usage          = new AtomicLong(USAGES.incrementAndGet());
+  private StringBuilder logs        = new StringBuilder();
   
   private BackgroundTask task       = null;
   private PanelButton cancel        = null;
@@ -158,6 +163,7 @@ public class BackgroundTaskMonitor extends ProgressBar
           },Application.getI18n().tr("Minimieren")));
          
           panel.addButton(getLockButton());
+          panel.addButton(getCopyButton());
           
           // Abbrechen-Button einblenden, wenn wir einen Task haben
           if (task != null)
@@ -194,7 +200,7 @@ public class BackgroundTaskMonitor extends ProgressBar
    */
   private PanelButton getLockButton()
   {
-    final PanelButton lockButton=new PanelButton(getLockedIcon(), null, Application.getI18n().tr("Fixieren"));
+    final PanelButton lockButton = new PanelButton(getLockedIcon(), null, Application.getI18n().tr("Fixieren"));
     lockButton.setAction(new Action()
     {
       public void handleAction(Object context) throws ApplicationException
@@ -216,6 +222,33 @@ public class BackgroundTaskMonitor extends ProgressBar
       }
     });
     return lockButton;
+  }
+
+  /**
+   * Erzeugt den Copy-Button.
+   * @return der Copy-Button.
+   */
+  private PanelButton getCopyButton()
+  {
+    final PanelButton copyButton = new PanelButton("edit-copy.png", null, Application.getI18n().tr("Text kopieren"));
+    copyButton.setAction(new Action()
+    {
+      public void handleAction(Object context) throws ApplicationException
+      {
+        try
+        {
+          final Clipboard cb = new Clipboard(GUI.getDisplay());
+          cb.setContents(new Object[]{logs.toString()}, new Transfer[]{TextTransfer.getInstance()});
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Text in Zwischenablage kopiert."),StatusBarMessage.TYPE_SUCCESS));
+        }
+        catch (Exception e)
+        {
+          Logger.error("unable to copy text to clipboard",e);
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Fehler beim Kopieren in die Zwischenablage ."),StatusBarMessage.TYPE_ERROR));
+        }
+      }
+    });
+    return copyButton;
   }
 
   /**
@@ -309,7 +342,13 @@ public class BackgroundTaskMonitor extends ProgressBar
   public void log(String arg0)
   {
     check();
-    super.log("[" + DF.format(new Date()) + "] " + arg0);
+    
+    String msg = "[" + DF.format(new Date()) + "] " + arg0;
+    if (!msg.endsWith("\n"))
+      msg += "\n";
+    
+    this.logs.append(msg);
+    super.log(msg);
   }
   
   /**

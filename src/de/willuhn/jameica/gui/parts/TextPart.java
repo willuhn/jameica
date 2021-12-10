@@ -18,6 +18,8 @@ import java.rmi.RemoteException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
@@ -179,7 +181,6 @@ public class TextPart implements Part
    */
   public void paint(Composite parent) throws RemoteException
 	{
-//		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		stext = new StyledText(parent,SWT.READ_ONLY | SWT.V_SCROLL);
     stext.setFont(Font.DEFAULT.getSWTFont());
     if (this.background != null)
@@ -189,6 +190,18 @@ public class TextPart implements Part
 		stext.setLayoutData(new GridData(GridData.FILL_BOTH));
 		if (content != null)
 			stext.append(content.toString());
+		
+		stext.addKeyListener(new KeyAdapter() {
+	    @Override
+	    public void keyPressed(KeyEvent e)
+	    {
+        if (!stext.isDisposed() && e.stateMask == SWT.CTRL && e.keyCode == 'a')
+        {
+          stext.selectAll();
+          e.doit = false;
+        }
+	    }
+  	});
     scroll();
 	}
 
