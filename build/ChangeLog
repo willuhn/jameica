@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0145 Nachtrag zu #0144 - CMD-Taste statt STRG unter MacOS und Timeout für Logfenster von 30 auf 60 Sekunden erhöht
   * NEW: 0144 STRG+A im Logfenster möglich sowie Button "Text kopieren"
   * NEW: 0143 Referenz auf JAR-File in jameica-macosaarch64.sh falsch
 

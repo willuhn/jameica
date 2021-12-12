@@ -28,6 +28,8 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Platform;
 
 /**
  * Simpler Text, der automatisch nach unten
@@ -190,12 +192,16 @@ public class TextPart implements Part
 		stext.setLayoutData(new GridData(GridData.FILL_BOTH));
 		if (content != null)
 			stext.append(content.toString());
-		
+
+		final int mod = (Application.getPlatform().getOS() == Platform.OS_MAC ? SWT.COMMAND : SWT.CTRL);
 		stext.addKeyListener(new KeyAdapter() {
 	    @Override
 	    public void keyPressed(KeyEvent e)
 	    {
-        if (!stext.isDisposed() && e.stateMask == SWT.CTRL && e.keyCode == 'a')
+	      if (stext.isDisposed())
+	        return;
+	      
+        if (!stext.isDisposed() && e.stateMask == mod && e.keyCode == 'a')
         {
           stext.selectAll();
           e.doit = false;

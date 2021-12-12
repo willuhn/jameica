@@ -86,7 +86,7 @@ public class BackgroundTaskMonitor extends ProgressBar
   {
     if (delay == null)
     {
-      delay = new DelayedListener(30 * 1000,new Listener() {
+      delay = new DelayedListener(60 * 1000,new Listener() {
         public void handleEvent(Event event)
         {
           // Egal, welche sonstigen Zustaende existieren. Wenn es gelockt ist, bleibt es offen
