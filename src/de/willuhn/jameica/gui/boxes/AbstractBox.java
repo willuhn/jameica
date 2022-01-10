@@ -48,7 +48,7 @@ public abstract class AbstractBox implements Box
   public int getIndex()
   {
     if (this.index == null)
-      this.index = new Integer(settings.getInt(this.getClass().getName() + ".index",getDefaultIndex()));
+      this.index = Integer.valueOf(settings.getInt(this.getClass().getName() + ".index",getDefaultIndex()));
     return this.index.intValue();
   }
 
@@ -57,7 +57,7 @@ public abstract class AbstractBox implements Box
    */
   public void setIndex(int index)
   {
-    this.index = new Integer(index);
+    this.index = Integer.valueOf(index);
     settings.setAttribute(this.getClass().getName() + ".index",index);
   }
 
