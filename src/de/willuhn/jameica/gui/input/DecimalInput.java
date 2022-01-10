@@ -47,7 +47,7 @@ public class DecimalInput extends TextInput
    */
   public DecimalInput(double d, DecimalFormat format)
   {
-    this(Double.isNaN(d) ? null : new Double(d),format);
+    this((Double.isNaN(d) ? null : Double.valueOf(d)), format);
   }
 
   /**
@@ -149,7 +149,7 @@ public class DecimalInput extends TextInput
   public Object getValue()
   {
     Number n = this.getNumber();
-    return n == null ? null : new Double(n.doubleValue());
+    return n == null ? null : Double.valueOf(n.doubleValue());
   }
   
   /**

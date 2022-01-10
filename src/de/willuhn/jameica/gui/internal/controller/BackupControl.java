@@ -186,7 +186,7 @@ public class BackupControl extends AbstractControl
         long size = ((Number) o).longValue();
         if (size == 0)
           return "-";
-        return format.format(new Double(size / 1024d /1024d));
+        return format.format(Double.valueOf(size / 1024d /1024d));
       }
     
     });
