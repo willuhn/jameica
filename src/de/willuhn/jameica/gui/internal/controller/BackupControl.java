@@ -186,7 +186,7 @@ public class BackupControl extends AbstractControl
         long size = ((Number) o).longValue();
         if (size == 0)
           return "-";
-        return format.format(new Double(size / 1024d /1024d));
+        return format.format(Double.valueOf(size / 1024d /1024d));
       }
     
     });
@@ -276,7 +276,7 @@ public class BackupControl extends AbstractControl
     {
       Integer i = (Integer) getCount().getValue();
       config.setBackupCount(i == null ? -1 : i.intValue());
-      getCount().setValue(new Integer(config.getBackupCount())); // Reset, falls der User Unsinn eingegeben hat
+      getCount().setValue(Integer.valueOf(config.getBackupCount())); // Reset, falls der User Unsinn eingegeben hat
 
       config.setBackupDir((String)getTarget().getValue());
       getTarget().setValue(config.getBackupDir()); // Reset, falls der User Unsinn eingegeben hat

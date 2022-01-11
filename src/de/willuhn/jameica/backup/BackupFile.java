@@ -143,7 +143,7 @@ public class BackupFile implements GenericObject
     if ("created".equals(name))
       return new Date(this.file.lastModified());
     if ("size".equals(name))
-      return new Long(this.file.length());
+      return Long.valueOf(this.file.length());
     return BeanUtil.get(this.file,name);
   }
 

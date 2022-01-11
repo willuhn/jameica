@@ -97,9 +97,9 @@ public class SpinnerInput extends AbstractInput
   public Object getValue()
   {
     if (this.spinner == null || this.spinner.isDisposed())
-      return new Integer(this.value);
+      return Integer.valueOf(this.value);
     
-    return new Integer(this.spinner.getSelection());
+    return Integer.valueOf(this.spinner.getSelection());
   }
 
   /**

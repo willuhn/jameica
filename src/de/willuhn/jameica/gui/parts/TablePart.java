@@ -402,7 +402,7 @@ public class TablePart extends AbstractTablePart
           for (int i=0;i<this.columns.size();++i)
           {
             Column col   = this.columns.get(i);
-            List<Item> l = sortTable.get(new Integer(i));
+            List<Item> l = sortTable.get(Integer.valueOf(i));
             int pos      = l.indexOf(new Item(oldVersion,null));
             if (pos < 0)
             {
@@ -498,12 +498,12 @@ public class TablePart extends AbstractTablePart
       // Sortierung
       
       // Mal schauen, ob wir fuer die Spalte schon eine Sortierung haben
-      List<Item> l = sortTable.get(new Integer(i));
+      List<Item> l = sortTable.get(Integer.valueOf(i));
       if (l == null)
       {
         // Ne, also erstellen wir eine
         l = new LinkedList<Item>();
-        sortTable.put(new Integer(i),l);
+        sortTable.put(Integer.valueOf(i),l);
       }
 
       l.add(di);
@@ -701,7 +701,7 @@ public class TablePart extends AbstractTablePart
           try
           {
             state.put(getID() + ".object",event.data);
-            state.put(getID() + ".index",new Integer(table.getTopIndex()));
+            state.put(getID() + ".index", Integer.valueOf(table.getTopIndex()));
           }
           catch (Exception e)
           {
@@ -1305,7 +1305,7 @@ public class TablePart extends AbstractTablePart
     if (table == null || table.isDisposed())
       return;
 
-    List<Item> l = sortTable.get(new Integer(index));
+    List<Item> l = sortTable.get(Integer.valueOf(index));
     if (l == null)
       return; // nix zu sortieren.
 
