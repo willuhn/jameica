@@ -237,6 +237,38 @@ public class Manifest implements Comparable
   }
   
   /**
+   * Liefert den Bezeichner des Plugins, idealerweise ist dieser eindeutig.
+   * Im Allgemeinen entspricht das dem Klassen-Namen.
+   * Im Falle einer {@code Proxy} Instanz, wird der Namen der Komponente zurueck gegeben.
+   * @return Klassen-Name des Plugins oder Namen der Komponente.
+   */
+  public String getPluginLabel()
+  {
+    // Wenn das Plugin noch nicht geladen ist, betrachten wir die Beschreibung
+    if (this.pluginInstance == null)
+    {
+      String className = this.root.getAttribute("class",null);
+      
+      // normales Plugin
+      if (className != null)
+        return className.trim();
+      
+      // Das ist ein "Pseudo-Plugin" ohne eigene Plugin-Klasse. Wir laden das
+      // gleich hier, um den Namen der Klasse zu kriegen
+      this.pluginInstance = PlaceholderPlugin.createInstance(this);
+    }
+    
+    Class<?> clazz = this.pluginInstance.getClass();
+    
+    //Wenn es sich um eine Proxy-Instanz handelt, geben wir den Namen der Komponente zurueck
+    if(java.lang.reflect.Proxy.isProxyClass(clazz))
+        return getName();
+    
+    // normales Plugin
+    return clazz.getName();
+  }
+  
+  /**
    * Liefert zurueck, ob das Plugin ueber den globalen Classloader von Jameica geladen werden soll.
    * @return {@code true}, wenn es ueber den globalen Classloader geladen werden soll.
    * Andernfalls erhaelt es einen exlusiven Classloader.
