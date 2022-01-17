@@ -8,7 +8,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
-	<classpathentry kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux64/src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux64/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.10.1.v20140909-1633.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.10.1.v20140813-1009.jar"/>

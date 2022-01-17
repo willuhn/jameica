@@ -109,7 +109,9 @@ public class BackupVersionsList extends TablePart
     Hashtable<String,Manifest> installed = new Hashtable<String, Manifest>();
     
     for(Manifest mf: l)
-      installed.put(mf.getPluginLabel(),mf);
+    {
+      installed.put(mf.getPluginId(),mf);
+    }
     
     Properties props = file.getProperties();
     Enumeration<Object> keys = props.keys();
@@ -144,8 +146,7 @@ public class BackupVersionsList extends TablePart
     // Jetzt checken wir, ob in der "installed"-Liste noch
     // was drin steht. Das sind die, zu denen kein Backup
     // vorliegt
-    installed.forEach((pc,mf)
-        -> list.add(new Plugin(pc,mf,null)));
+    installed.forEach((pc,mf) -> list.add(new Plugin(pc,mf,null)));
     return list;
   }
 

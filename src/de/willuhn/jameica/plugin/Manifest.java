@@ -237,12 +237,12 @@ public class Manifest implements Comparable
   }
   
   /**
-   * Liefert den Bezeichner des Plugins, idealerweise ist dieser eindeutig.
+   * Liefert den Identifier des Plugins, idealerweise ist dieser eindeutig.
    * Im Allgemeinen entspricht das dem Klassen-Namen.
    * Im Falle einer {@code Proxy} Instanz, wird der Namen der Komponente zurueck gegeben.
    * @return Klassen-Name des Plugins oder Namen der Komponente.
    */
-  public String getPluginLabel()
+  public String getPluginId()
   {
     // Wenn das Plugin noch nicht geladen ist, betrachten wir die Beschreibung
     if (this.pluginInstance == null)
