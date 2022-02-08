@@ -30,6 +30,7 @@ public class DecimalInput extends TextInput
 {
   private DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Application.getConfig().getLocale());
   private Number value = null;
+  private Control control = null;
   
   /**
    * Erzeugt ein neues Eingabefeld ohne vorgegebenen Wert.
@@ -89,7 +90,10 @@ public class DecimalInput extends TextInput
   @Override
   public Control getControl()
   {
-		Control c = super.getControl();
+    if (this.control != null)
+      return this.control;
+    
+		this.control = super.getControl();
     try
     {
       text.setText(this.value == null ? "" : format.format(this.value));
@@ -138,7 +142,7 @@ public class DecimalInput extends TextInput
         }
       }
      });
-    return c;
+    return this.control;
   }
 
   /**
