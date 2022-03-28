@@ -663,7 +663,7 @@ public class GUI implements ApplicationController
             {
               Logger.write(Level.TRACE,"unable to compare objects",e);
             }
-            if (!same || !gui.currentView.getClass().getName().equals(view.getClass().getName()))
+            if (!same && !gui.currentView.getClass().getName().equals(view.getClass().getName()))
             {
               HistoryEntry entry = new HistoryEntry(gui.currentView);
               gui.history.push(entry);
