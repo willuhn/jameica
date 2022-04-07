@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0148 Support für CTRL+A in Tabellen und Trees unter Windows zum Markieren aller Datensätze (funktionierte bisher nur unter Linux)
   * BUG: 0147 Scripting-Plugins bei der Wiederherstellung eines Backups korrekt anzeigen
   * NEW: 0146 Trust-Manager-Implementierung nicht mehr anhand "java.vendor" auswählen sondern erst SunX509 versuchen. Wenn das fehlschlägt, dann Fallback auf IbmX509 
   * NEW: 0145 Nachtrag zu #0144 - CMD-Taste statt STRG unter MacOS und Timeout für Logfenster von 30 auf 60 Sekunden erhöht

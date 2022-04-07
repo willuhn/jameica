@@ -17,6 +17,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -95,7 +96,15 @@ public class FeatureClipboard implements Feature
 
         if ((event.stateMask == shortcut.getModifierKeys()) && (event.keyCode == c))
         {
-          Object control = ctx.control;
+          final Control control = ctx.control;
+          
+          if (ctx.control.isDisposed())
+            return;
+
+          // Kein Fokus auf dem Control
+          if (!ctx.control.isFocusControl())
+            return;
+
           if (!(control instanceof Table) && !(control instanceof Tree))
             return;
           
