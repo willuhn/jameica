@@ -10,6 +10,11 @@
 
 package de.willuhn.jameica.services;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
@@ -21,8 +26,11 @@ import de.willuhn.logging.Logger;
  */
 public class SecurityManagerService implements Bootable
 {
-  private JameicaSecurityManager securityManager = null;
+  private final static List<String> props = Arrays.asList("java.version","java.specification.version","java.runtime.version","java.vm.specification.version","java.vm.version");
 
+  private int javaVersion = 0;
+  private JameicaSecurityManager securityManager = null;
+  
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
@@ -36,9 +44,65 @@ public class SecurityManagerService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
-    Logger.info("applying jameica security manager");
+    // Auch wenn der Security-Manager von hoeheren Java-Versionen nicht mehr unterstuetzt wird,
+    // lassen wir ihn dennoch im System, weil er an einigen Stellen (z.Bsp. PluginSourceSystem, DeployService)
+    // direkt aufgerufen wird.
     this.securityManager = new JameicaSecurityManager();
+
+    this.javaVersion = getJavaVersion();
+    if (this.javaVersion >= 18)
+    {
+      Logger.info("running in java version 18 or higher, security manager no longer available");
+      return;
+    }
+    
+    Logger.info("applying jameica security manager");
     System.setSecurityManager(this.securityManager);
+  }
+  
+  /**
+   * Liefert die Java-Version.
+   * @return die Java-Version.
+   */
+  private int getJavaVersion()
+  {
+    Integer i = null;
+    
+    for (String s:props)
+    {
+      i = parseInt(System.getProperty(s));
+      if (i != null)
+        return i.intValue();
+    }
+    
+    Logger.warn("unable to determine java version");
+    return 0;
+  }
+  
+  /**
+   * Parst den Text fehlertolerant als Integer.
+   * @param s der Text.
+   * @return der Integer oder NULL, wenn kein Wert ermittelt werden konnte.
+   */
+  private Integer parseInt(String s)
+  {
+    s = StringUtils.trimToNull(s);
+    if (s == null)
+      return null;
+
+    final int plus = s.indexOf('+');
+    if (plus > 0)
+      s = s.substring(0,plus);
+    
+    try
+    {
+      return Integer.valueOf(s);
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to parse " + s + " as version",e);
+    }
+    return null;
   }
   
   /**
