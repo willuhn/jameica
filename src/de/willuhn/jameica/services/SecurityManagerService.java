@@ -28,7 +28,6 @@ public class SecurityManagerService implements Bootable
 {
   private final static List<String> props = Arrays.asList("java.version","java.specification.version","java.runtime.version","java.vm.specification.version","java.vm.version");
 
-  private int javaVersion = 0;
   private JameicaSecurityManager securityManager = null;
   
   /**
@@ -49,8 +48,9 @@ public class SecurityManagerService implements Bootable
     // direkt aufgerufen wird.
     this.securityManager = new JameicaSecurityManager();
 
-    this.javaVersion = getJavaVersion();
-    if (this.javaVersion >= 18)
+    final int jv = getJavaVersion();
+    Logger.info("detected java version: " + jv);
+    if (jv >= 18)
     {
       Logger.info("running in java version 18 or higher, security manager no longer available");
       return;
@@ -100,7 +100,7 @@ public class SecurityManagerService implements Bootable
     }
     catch (Exception e)
     {
-      Logger.error("unable to parse " + s + " as version",e);
+      Logger.error("unable to parse " + s + " as numeric java version",e);
     }
     return null;
   }
