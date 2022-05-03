@@ -356,7 +356,7 @@
         <include name="COPYING" />
         <include name="README" />
         <include name="Info-aarch64.plist" />
-        <include name="jameica-macosaarch64.sh" />
+        <include name="jameica-macos-aarch64.sh" />
         <include name="jameica-icon.icns" />
         <include name="plugins" />
         <include name="lib/**" />

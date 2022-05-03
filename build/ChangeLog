@@ -2,6 +2,7 @@ HEAD 2.11 (nightly)
 
 2022-05-03 Version 2.10.2
 
+  * BUG: 0152 Macos AArch64 Pfade korrigiert
   * NEW: 0151 Update auf SWT 4.23 für linux64, linux-arm64, win64, macos64, macos-aarch64
   * NEW: 0150 Kalender auf dunklen Themes farbig passend gestalten
   * NEW: 0149 Support für Java 18 - Security-Manager nicht mehr im System registrieren. Java 18+ unterstützt keinen Security-Manager mehr
