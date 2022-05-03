@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+2022-05-03 Version 2.10.2
+
   * NEW: 0150 Kalender auf dunklen Themes farbig passend gestalten
   * NEW: 0149 Support für Java 18 - Security-Manager nicht mehr im System registrieren. Java 18+ unterstützt keinen Security-Manager mehr
   * NEW: 0148 Support für CTRL+A in Tabellen und Trees unter Windows zum Markieren aller Datensätze (funktionierte bisher nur unter Linux)
