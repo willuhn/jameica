@@ -29,6 +29,7 @@ import de.willuhn.jameica.gui.formatter.Formatter;
 import de.willuhn.jameica.gui.parts.table.Feature;
 import de.willuhn.jameica.gui.parts.table.Feature.Context;
 import de.willuhn.jameica.gui.parts.table.FeatureClipboard;
+import de.willuhn.jameica.gui.parts.table.FeatureSelectAll;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
@@ -65,6 +66,7 @@ public abstract class AbstractTablePart implements Part
   {
     this.action = action;
     this.addFeature(new FeatureClipboard());
+    this.addFeature(new FeatureSelectAll());
   }
 
   /**
@@ -429,6 +431,15 @@ public abstract class AbstractTablePart implements Part
   public void setMulti(boolean multi)
   {
     this.multi = multi;
+  }
+  
+  /**
+   * Liefert true, wenn mehrere Elemente gleichzeitig markiert werden koennen.
+   * @return true, wenn mehrere Elemente gleichzeitig markiert werden koennen.
+   */
+  public boolean isMulti()
+  {
+    return this.multi;
   }
   
   /**

@@ -214,7 +214,7 @@ public class Settings extends AbstractView implements Extendable
     Application.getMessagingFactory().getMessagingQueue(this.getExtendableID()).unRegisterMessageConsumer(this.mc);
     
     // Wir merken uns das aktive Tab
-    lastActiveTab = new Integer(getTabFolder().getSelectionIndex());
+    lastActiveTab = Integer.valueOf(getTabFolder().getSelectionIndex());
   }
 
   /**

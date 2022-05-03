@@ -13,6 +13,7 @@ package de.willuhn.jameica.security;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertificateException;
@@ -80,16 +81,18 @@ public class JameicaTrustManager implements X509TrustManager
     // Nur wenn er die Zertifikate als nicht vertrauenswuerdig
     // einstuft, greifen wir ein und checken, ob wir das Zertifikat
     // in unserem eigenen Keystore haben.
-    String name = "SunX509";
-    String vendor = System.getProperty("java.vendor");
-    if (vendor != null && vendor.toLowerCase().indexOf("ibm") != -1)
+    TrustManagerFactory factory = null;
+    try
     {
-      Logger.info("seems to be an ibm java");
-      name = "IbmX509";
+      Logger.info("loading trustmanager SunX509");
+      factory = TrustManagerFactory.getInstance("SunX509");
+    }
+    catch (NoSuchAlgorithmException e)
+    {
+      Logger.info("failed. fallback to IbmX509");
+      factory = TrustManagerFactory.getInstance("IbmX509");
     }
 
-    Logger.info("loading trustmanager " + name);
-    TrustManagerFactory factory = TrustManagerFactory.getInstance(name);
     factory.init((KeyStore) null); // Wir initialisieren mit <code>null</code>, damit der System-Keystore genommen wird
 
     TrustManager[] trustmanagers = factory.getTrustManagers();
@@ -104,6 +107,9 @@ public class JameicaTrustManager implements X509TrustManager
     return this.systemTrustManager;
   }
   
+  /**
+   * @see javax.net.ssl.X509TrustManager#checkClientTrusted(java.security.cert.X509Certificate[], java.lang.String)
+   */
   @Override
   public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException
   {
@@ -129,6 +135,9 @@ public class JameicaTrustManager implements X509TrustManager
     }
   }
 
+  /**
+   * @see javax.net.ssl.X509TrustManager#checkServerTrusted(java.security.cert.X509Certificate[], java.lang.String)
+   */
   @Override
   public void checkServerTrusted(X509Certificate[] certificates, String authType) throws CertificateException
   {
@@ -278,6 +287,9 @@ public class JameicaTrustManager implements X509TrustManager
     }
   }
 
+  /**
+   * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
+   */
   @Override
   public X509Certificate[] getAcceptedIssuers()
   {

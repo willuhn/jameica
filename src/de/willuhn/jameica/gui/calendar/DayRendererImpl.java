@@ -31,6 +31,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -49,6 +50,8 @@ import de.willuhn.util.ApplicationException;
  */
 public class DayRendererImpl implements DayRenderer
 {
+  private final static int[] BACKGROUNDS = new int[]{SWT.COLOR_LIST_BACKGROUND,SWT.COLOR_TITLE_BACKGROUND, SWT.COLOR_WIDGET_BACKGROUND, SWT.COLOR_WHITE};
+  
   // Cache fuer die Farb-Ressourcen
   private Map<RGB,Color> colorMap = new HashMap<RGB,Color>();
   
@@ -69,7 +72,7 @@ public class DayRendererImpl implements DayRenderer
     
     this.comp = new Composite(parent,SWT.NONE);
     this.comp.setLayoutData(gd);
-    this.comp.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+    this.comp.setBackground(this.getBackground());
     this.comp.setBackgroundMode(SWT.INHERIT_FORCE);
     this.comp.setLayout(SWTUtil.createGrid(1,false));
     this.comp.addDisposeListener(new DisposeListener() {
@@ -128,11 +131,7 @@ public class DayRendererImpl implements DayRenderer
       ////////////////////////////////////////////////////////////////////////////
       // Farbe ermitteln
       int weekday = cal.get(Calendar.DAY_OF_WEEK);
-      Color color = GUI.getDisplay().getSystemColor(SWT.COLOR_WHITE);
-      if (status == Status.CURRENT)
-        color = getColor(new RGB(250,250,183)); // aktueller Tag
-      else if (weekday == Calendar.SATURDAY || weekday == Calendar.SUNDAY)
-        color = getColor(new RGB(240,240,240));
+      final Color color = (status == Status.CURRENT || weekday == Calendar.SATURDAY || weekday == Calendar.SUNDAY) ? this.getHighlightBackground() : this.getBackground();
 
       // Und uebernehmen
       this.comp.setBackground(color);
@@ -282,6 +281,51 @@ public class DayRendererImpl implements DayRenderer
     if (desc == null || desc.length() == 0)
       desc = name;
     label.setToolTipText(desc);
+  }
+  
+  /**
+   * Liefert die zu verwendende Hintergrundfarbe.
+   * @return die zu verwendende Hintergrundfarbe.
+   */
+  protected Color getBackground()
+  {
+    final Display display = GUI.getDisplay();
+    
+    // Wir nehmen die erste, die existiert
+    for (int i:BACKGROUNDS)
+    {
+      // Display#getSystemColor kann NULL liefern, wenn auf dem OS fuer diesen Code keine Farbe definiert ist
+      final Color c = display.getSystemColor(i);
+      if (c != null)
+        return c;
+    }
+    
+    // Wir verwenden unsere eigene Hintergrund-Farbe
+    return de.willuhn.jameica.gui.util.Color.WHITE.getSWTColor();
+  }
+  
+  /**
+   * Liefert die Hintergrundfarbe der hervorgehobenen Tage - passend zur restlichen Hintergrundfarbe.
+   * @return die Hintergrundfarbe der hervorgehobenen Tage.
+   */
+  protected Color getHighlightBackground()
+  {
+    final Color bg = this.getBackground();
+    
+    final int r = bg.getRed();
+    final int g = bg.getGreen();
+    final int b = bg.getBlue();
+    
+    
+    // Mal schauen, ob das eine eher helle oder dunkle Farbe ist
+    double avg = (r + g + b) / 3;
+    
+    // Wenn es eine eher hellere Farbe, machen wir die Highlight-Farbe etwas dunkler
+    // Wenn es eine dunklere Farbe ist, dann etwas heller
+    // Bei dunklen Themes sieht staerkere Aufhellung besser aus
+    final int offset = (avg > 127) ? -15 : 40;
+    
+    return this.getColor(new RGB(r + offset,g + offset,b + offset));
   }
   
   /**

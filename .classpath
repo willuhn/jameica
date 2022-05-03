@@ -12,7 +12,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.10.1.v20140909-1633.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.10.1.v20140813-1009.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.ui.forms_3.6.100.v20140422-1825.jar" sourcepath="lib.src/swt/linux/swt.src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.ui.forms_3.6.100.v20140422-1825.jar" sourcepath="lib.src/swt/win64/swt.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
 	<classpathentry kind="lib" path="lib/swtcalendar/swtcalendar.jar" sourcepath="lib.src/swtcalendar/swtcalendar.src.zip"/>

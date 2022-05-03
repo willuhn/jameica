@@ -71,7 +71,7 @@ public class IntegerInput extends TextInput
     if (value == null || value.toString().length() == 0)
       return null;
     try {
-      return new Integer(value.toString());
+      return Integer.valueOf(value.toString());
     }
     catch (NumberFormatException e)
     {

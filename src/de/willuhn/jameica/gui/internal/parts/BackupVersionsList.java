@@ -107,14 +107,14 @@ public class BackupVersionsList extends TablePart
     // nach dem Restore verloren gehen
     List<Manifest> l = Application.getPluginLoader().getInstalledManifests();
     Hashtable<String,Manifest> installed = new Hashtable<String, Manifest>();
-    for (int i=0;i<l.size();++i)
+    
+    for(Manifest mf: l)
     {
-      Manifest mf = l.get(i);
-      installed.put(mf.getPluginClass(),mf);
+      installed.put(mf.getPluginId(),mf);
     }
     
     Properties props = file.getProperties();
-    Enumeration keys = props.keys();
+    Enumeration<Object> keys = props.keys();
     ArrayList<Plugin> list = new ArrayList<Plugin>();
     while (keys.hasMoreElements())
     {
@@ -140,19 +140,13 @@ public class BackupVersionsList extends TablePart
       pc = pc.substring(0,pc.lastIndexOf(".version"));
       
       // Ist im Backup enthalten. Aus der "installed"-Liste streichen
-      installed.remove(pc);
-      list.add(new Plugin(pc,new Version(version)));
+      list.add(new Plugin(pc, installed.remove(pc), new Version(version)));
     }
     
     // Jetzt checken wir, ob in der "installed"-Liste noch
     // was drin steht. Das sind die, zu denen kein Backup
     // vorliegt
-    Enumeration<String> missing = installed.keys();
-    while (missing.hasMoreElements())
-    {
-      String pc = missing.nextElement();
-      list.add(new Plugin(pc,null));
-    }
+    installed.forEach((pc,mf) -> list.add(new Plugin(pc,mf,null)));
     return list;
   }
 
@@ -174,9 +168,10 @@ public class BackupVersionsList extends TablePart
     /**
      * ct.
      * @param pluginClass
+     * @param mf Manifest des installierten Plugins
      * @param backupVersion Version aus dem Backup
      */
-    private Plugin(String pluginClass, Version backupVersion)
+    private Plugin(String pluginClass, Manifest manifest, Version backupVersion)
     {
       this.pluginClass   = pluginClass;
       this.backupVersion = backupVersion;
@@ -184,26 +179,33 @@ public class BackupVersionsList extends TablePart
       this.name          = this.pluginClass;
       this.noBackup      = this.backupVersion == null;
 
-      // Checken, ob das Plugin installiert ist
-      de.willuhn.jameica.plugin.Plugin plugin = null;
-      try
+      //wenn kein Manifest vorgegeben wurde, lade das Plugin
+      if(manifest == null)
       {
-        plugin = Application.getPluginLoader().getPlugin(this.pluginClass);
-      }
-      catch (Exception e)
-      {
-        Logger.warn("unable to find plugin, consider as not-installed: " + e.getMessage());
-        Logger.write(Level.DEBUG,"stacktrace for debugging purpose",e);
+        // Checken, ob das Plugin installiert ist
+        de.willuhn.jameica.plugin.Plugin plugin = null;
+        try
+        {
+          plugin = Application.getPluginLoader().getPlugin(this.pluginClass);
+        }
+        catch (Exception e)
+        {
+          Logger.warn("unable to find plugin, consider as not-installed: " + e.getMessage());
+          Logger.write(Level.DEBUG,"stacktrace for debugging purpose",e);
+        }
+
+        // Plugin ist geladen. Hole das Manifest
+        if(plugin != null)
+          manifest = plugin.getManifest();
       }
 
-      this.notInstalled = plugin == null;
+      this.notInstalled = manifest == null;
 
-      if (plugin != null)
+      if (manifest != null)
       {
         // Plugin ist installiert. Versionsnummer checken
-        Manifest mf = plugin.getManifest();
-        this.name             = mf.getName();
-        this.currentVersion   = mf.getVersion();
+        this.name             = manifest.getName();
+        this.currentVersion   = manifest.getVersion();
         
         // Wir maengeln einen Versionskonflikt nur an, wenn die Version aus dem Backup
         // aktueller als die installierte ist. Sollte das Backup aelter sein, findet
