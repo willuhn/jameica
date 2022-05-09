@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+  * BUG: 0153 Bei CTRL+A in Tabellen unter Windows wurde anschließend das Refresh-Event nicht ausgelöst, um z.Bsp. die Summenzeile zu aktualisieren
+  
 2022-05-03 Version 2.10.2
 
   * NEW: 0152 JRE-Update auf 11.0.15
