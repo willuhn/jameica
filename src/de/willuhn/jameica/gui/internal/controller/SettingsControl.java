@@ -13,6 +13,7 @@ package de.willuhn.jameica.gui.internal.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -237,7 +238,9 @@ public class SettingsControl extends AbstractControl
     list.add(Locale.GERMANY);
     list.add(Locale.ENGLISH);
     
-    this.locale = new SelectInput(list,Application.getConfig().getLocale());
+    final Locale current = Application.getConfig().getLocale();
+    final Locale selected = Objects.equals(current.getLanguage(),Locale.ENGLISH.getLanguage()) ? Locale.ENGLISH : Locale.GERMAN;
+    this.locale = new SelectInput(list,selected);
     this.locale.setAttribute("displayName");
     
     return this.locale;

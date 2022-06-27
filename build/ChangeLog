@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * BUG: 0155 Systemsprache en_GB/en_US korrekt in der Auswahlbox unter Datei->Einstellungen erkennen
   * NEW: 0154 Neuer Customizing-Parameter "application.zoom.image=150/200/300", um in Wayland Icons mit höherer Auflösung auch dann zu verwenden, wenn -"Dswt.autoScale=false" gesetzt ist
   * BUG: 0153 Bei CTRL+A in Tabellen unter Windows wurde anschließend das Refresh-Event nicht ausgelöst, um z.Bsp. die Summenzeile zu aktualisieren
   
