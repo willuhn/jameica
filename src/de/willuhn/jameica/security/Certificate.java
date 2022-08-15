@@ -13,6 +13,11 @@ package de.willuhn.jameica.security;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.bouncycastle.asn1.x509.GeneralName;
 
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
@@ -24,6 +29,16 @@ public class Certificate
 {
   private X509Certificate cert = null;
   private javax.security.cert.X509Certificate cert2 = null;
+
+  /**
+   * ct.
+   * @param cert
+   */
+  public Certificate(java.security.cert.Certificate cert)
+  {
+    if (cert instanceof X509Certificate)
+      this.cert = (X509Certificate) cert;
+  }
 
   /**
    * ct.
@@ -139,34 +154,84 @@ public class Certificate
 
     return new Principal(cert2.getIssuerDN());
   }
+  
+  /**
+   * Liefert die Liste der Hostnamen, fuer die das Zertifikat ausgestellt ist.
+   * Die Liste enthaelt sowohl den Hostnamen im CN als auch die in Subject Alt Name.
+   * @return die Liste der Hostnamen, fuer die das Zertifikat ausgestellt ist.
+   */
+  public List<String> getHostnames()
+  {
+    final List<String> result = new ArrayList<String>();
+
+    // 1. Hostname im CN
+    String h = this.getSubject().getAttribute(Principal.COMMON_NAME);
+    if (h != null && !h.isEmpty())
+      result.add(h);
+    
+    // 2. Hostnamen im Subject Alt Name
+    if (this.cert != null)
+    {
+      try
+      {
+        final Collection<List<?>> altNames = this.cert.getSubjectAlternativeNames();
+        if (altNames != null && !altNames.isEmpty())
+        {
+          for (List<?> altName : altNames)
+          {
+            // Kein Plausibler Eintrag
+            if (altName.size() < 2)
+              continue;
+            
+            final Object type = altName.get(0);
+            if (!(type instanceof Integer))
+              continue;
+
+            final String value = this.getAltNameValue(altName.get(1));
+            if (value == null)
+              continue;
+
+            // Wir übernehmen nur die vom Typ DNS-Name und IP-Addresse
+            final Integer t = (Integer) type;
+            if (!t.equals(GeneralName.dNSName) && !t.equals(GeneralName.iPAddress))
+              continue;
+
+            result.add(value);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Logger.error("unable to read subject-alt-names from certificate",e);
+      }
+    }
+    else if (this.cert2 != null)
+    {
+      Logger.warn("extracting of subject-alt-names from javax.security.cert.X509Certificate not supported");
+    }
+
+    
+    return result;
+  }
+  
+  /**
+   * Versucht den Wert des Alt-Name zu lesen.
+   * @param o der Wert.
+   * @return der gelesene Wert als String oder NULL, wenn er nicht lesbar war.
+   */
+  private String getAltNameValue(Object o)
+  {
+    if (o == null)
+      return null;
+    
+    if (o instanceof String)
+      return (String) o;
+
+    if (o instanceof byte[])
+    {
+      Logger.warn("encoded subject-alt-names not yet supported");
+    }
+    
+    return null;
+  }
 }
-
-
-/*********************************************************************
- * $Log: Certificate.java,v $
- * Revision 1.8  2009/02/03 10:06:31  willuhn
- * @C Digest via de.willuhn.security.Checksum ermitteln
- *
- * Revision 1.7  2009/02/03 00:18:17  willuhn
- * @B Fingerprints der Zertifikate wurden falsch gruppiert
- *
- * Revision 1.6  2006/11/15 00:12:35  willuhn
- * @B Bug 329
- *
- * Revision 1.5  2006/03/15 16:25:32  web0
- * @N Statusbar refactoring
- *
- * Revision 1.4  2005/06/27 11:45:11  web0
- * *** empty log message ***
- *
- * Revision 1.3  2005/06/24 14:55:56  web0
- * *** empty log message ***
- *
- * Revision 1.2  2005/06/15 16:10:57  web0
- * @B javadoc fixes
- *
- * Revision 1.1  2005/06/10 13:04:41  web0
- * @N non-interactive Mode
- * @N automatisches Abspeichern eingehender Zertifikate im nicht-interaktiven Mode
- *
- *********************************************************************/

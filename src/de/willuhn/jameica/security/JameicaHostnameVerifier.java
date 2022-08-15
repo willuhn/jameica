@@ -10,6 +10,8 @@
 
 package de.willuhn.jameica.security;
 
+import java.util.List;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -40,10 +42,10 @@ public class JameicaHostnameVerifier implements HostnameVerifier
    */
   public boolean verify(String hostname, SSLSession session)
   {
-    javax.security.cert.X509Certificate[] certs = new javax.security.cert.X509Certificate[0];
+    java.security.cert.Certificate[] certs = new java.security.cert.Certificate[0];
     try
     {
-      certs = session.getPeerCertificateChain();
+      certs = session.getPeerCertificates();
     }
     catch (SSLPeerUnverifiedException e)
     {
@@ -55,23 +57,30 @@ public class JameicaHostnameVerifier implements HostnameVerifier
     for (int i=0;i<certs.length;++i)
     {
       Certificate c = new Certificate(certs[i]);
-      String h = c.getSubject().getAttribute(Principal.COMMON_NAME);
-      if (h == null || h.length() == 0)
+      final List<String> hostnames = c.getHostnames();
+      if (hostnames == null || hostnames.isEmpty())
         continue;
-      Logger.debug("comparing hostname " + hostname + " with CN " + h);
-      if (h.equalsIgnoreCase(hostname))
+      
+      for (String h:hostnames)
       {
-        Logger.debug("hostname matched");
-        match = true;
-        break;
+        Logger.debug("comparing hostname " + hostname + " (from server) with " + h + " (from certificate)");
+        if (h.equalsIgnoreCase(hostname))
+        {
+          Logger.debug("hostname matched");
+          match = true;
+          break;
+        }
       }
+      
+      if (match)
+        break;
     }
     
     if (!match)
     {
       try
       {
-        return Application.getCallback().checkHostname(hostname,certs);
+        return Application.getCallback().checkHostname(hostname,session.getPeerCertificateChain());
       }
       catch (OperationCanceledException oce)
       {
@@ -90,13 +99,3 @@ public class JameicaHostnameVerifier implements HostnameVerifier
   }
 
 }
-
-
-
-/**********************************************************************
- * $Log: JameicaHostnameVerifier.java,v $
- * Revision 1.1  2011/09/14 11:57:15  willuhn
- * @N HostnameVerifier in separate Klasse ausgelagert
- * @C Beim Erstellen eines neuen Master-Passwortes dieses sofort ververwenden und nicht nochmal mit getPasswort erfragen
- *
- **********************************************************************/
