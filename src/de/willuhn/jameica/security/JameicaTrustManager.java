@@ -321,7 +321,7 @@ public class JameicaTrustManager implements X509TrustManager
     sb.append(" to: ");
     sb.append(cert.getNotAfter().toString());
     sb.append("][serial: ");
-    sb.append(cert.getSerialNumber().toString());
+    sb.append("0x" + cert.getSerialNumber().toString(16).toUpperCase());
     sb.append("]");
     return sb.toString();
   }

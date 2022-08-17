@@ -206,7 +206,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     // Details
     DateFormat df = DateUtil.DEFAULT_FORMAT;
     this.validity.setValue(i18n.tr("{0} - {1}",df.format(cert.getNotBefore()),df.format(cert.getNotAfter())));
-    this.serial.setValue(cert.getSerialNumber().toString());
+    this.serial.setValue("0x" + cert.getSerialNumber().toString(16).toUpperCase());
     /////////////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////////

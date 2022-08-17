@@ -490,7 +490,7 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     System.out.println((i18n.tr("Ausgestellt für:      ") + cert.getSubjectDN().getName()));
     System.out.println((i18n.tr("Gültig von:           ") + df.format(cert.getNotBefore())));
     System.out.println((i18n.tr("Gültig bis:           ") + df.format(cert.getNotAfter())));
-    System.out.println((i18n.tr("Seriennummer:         ") + cert.getSerialNumber().toString()));
+    System.out.println((i18n.tr("Seriennummer:         ") + "0x" + cert.getSerialNumber().toString(16).toUpperCase()));
     System.out.println((i18n.tr("Typ:                  ") + cert.getType()));
     System.out.println((i18n.tr("SHA1-Fingerabdruck:   ") + myCert.getSHA1Fingerprint()));
     System.out.println((i18n.tr("SHA256-Fingerabdruck: ") + myCert.getSHA256Fingerprint()));

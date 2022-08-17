@@ -321,7 +321,7 @@ public class CertificateList extends TablePart
         return s;
       }
       if ("serial".equals(arg0))
-        return cert.getSerialNumber().toString();
+        return "0x" + cert.getSerialNumber().toString(16).toUpperCase();
       if ("organization".equals(arg0))
         return myCert.getSubject().getAttribute(Principal.ORGANIZATION);
       if ("ou".equals(arg0))
