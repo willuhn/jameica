@@ -39,7 +39,7 @@ public class TitlePart implements Part
 {
   private final static Font FONT          = Font.H2;
   private final static int TITLE_OFFSET_X = 8;
-  private final static int TITLE_OFFSET_Y = 3;
+  private final static int TITLE_OFFSET_Y = 8;
   
   private Composite myParent  = null;
   private Canvas title        = null;
@@ -183,7 +183,7 @@ public class TitlePart implements Part
         
         // Das Skalieren ist unter Windows nicht noetig
         int osx = TITLE_OFFSET_X;
-        int osy = TITLE_OFFSET_Y;
+        int osy = TITLE_OFFSET_Y / 2; // Wir haben den Abstand ja oben *und* unten
         int os = Application.getPlatform().getOS();
         if (os != Platform.OS_WINDOWS && os != Platform.OS_WINDOWS_64)
         {

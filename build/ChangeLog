@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0159 Titelleisten der Panel etwas höher darstellen
+  * NEW: 0158 Seriennummern der Zertifikate in HEX-Schreibweise anzeigen
   * NEW: 0157 Support für Subject-Alt-Name im Hostname-Verifier
   * CHG: 0156 Repository-URL von JVerein auf die neue URL des Forks "OpenJVerein" umgestellt: https://openjverein.github.io/jameica-repository
   * BUG: 0155 Systemsprache en_GB/en_US korrekt in der Auswahlbox unter Datei->Einstellungen erkennen
