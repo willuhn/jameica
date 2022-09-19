@@ -44,7 +44,7 @@ public class BootstrapSettings
       return;
     
     // Wir holen uns die aktuelle History und fuegen das neue Verzeichnis vorn dran
-    // Wir schreiben aber nur die letzten 5 Eintraege
+    // Wir schreiben aber nur die letzten 8 Eintraege
     List<String> history = getHistory();
     
     // Checken, ob wir es schon in der History haben. Wenn ja, loeschen wir
@@ -54,9 +54,11 @@ public class BootstrapSettings
     
     history.add(0,dir);
     
+    final int histSize = getProperties().getInt("size",8);
+    
     // Alte Verzeichnisse abschneiden
-    if (history.size() > 5)
-      history = history.subList(0,5);
+    if (history.size() > histSize)
+      history = history.subList(0,histSize);
     
     // Uebernehmen
     getProperties().setList("history",history.toArray(new String[history.size()]));
@@ -191,36 +193,3 @@ public class BootstrapSettings
     return file;
   }
 }
-
-
-
-/**********************************************************************
- * $Log: BootstrapSettings.java,v $
- * Revision 1.2  2012/02/23 22:03:36  willuhn
- * @N wenn der User im Workdir-Chooser die Option "kuenftig nicht mehr anzeigen" aktiviert hat, kann er die Einstellung jetzt unter Datei->Einstellungen wieder rueckgaengig machen. Es gab sonst keine komfortable Moeglichkeit, den Dialog wieder "hervorzuholen"
- *
- * Revision 1.1  2012/02/21 15:03:32  willuhn
- * @N Parameter "-a" abgeschafft. Jetzt wird per Default immer nach dem Workdir gefragt - das vereinfacht die ganze Sache etwas.
- *
- * Revision 1.6  2011-08-17 08:21:32  willuhn
- * @N BUGZILLA 937
- *
- * Revision 1.5  2011-04-07 08:04:05  willuhn
- * @B da fehlte ein Leerzeichen
- *
- * Revision 1.4  2011-03-08 14:53:25  willuhn
- * @B Achtung, NPE-Gefahr
- *
- * Revision 1.3  2011-03-08 14:49:04  willuhn
- * @N Liste der letzten 5 Verzeichnisse merken und als Auswahlbox anzeigen
- *
- * Revision 1.2  2011-03-08 13:43:46  willuhn
- * @B Debugging/Cleanup
- *
- * Revision 1.1  2011-03-07 12:52:11  willuhn
- * @N Neuer Start-Parameter "-a", mit dem die Abfrage des Work-Verzeichnisses via Dialog aktiviert wird
- *
- * Revision 1.1  2011-03-04 18:13:38  willuhn
- * @N Erster Code fuer einen Workdir-Chooser
- *
- **********************************************************************/
