@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0161 Optionales Logo-Part für mehr Customizing-Möglichkeiten. Empfang der Statusbar-Messages direkt durch das Notification-Panel. Hat den Vorteil, dass man das Notification-Panel auch an anderer Stelle verwenden kann.
   * NEW: 0160 Anzahl der Einträge in Auswahldialog der Jameica-Benutzerverzeichnisse auf 8 erhöht
   * NEW: 0159 Titelleisten der Panel etwas höher darstellen
   * NEW: 0158 Seriennummern der Zertifikate in HEX-Schreibweise anzeigen
