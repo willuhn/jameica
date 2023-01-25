@@ -11,6 +11,8 @@
 package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -23,6 +25,10 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.messaging.Message;
+import de.willuhn.jameica.messaging.MessageConsumer;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
@@ -30,7 +36,7 @@ import de.willuhn.logging.Logger;
  * Kapselt eine einzeilige Meldung (Erfolg, Fehler, Hinweis), die farblich
  * gestaltet ist und ein Notification-Icon links enthaelt. 
  */
-public class NotificationPanel implements Part
+public class NotificationPanel implements Part, MessageConsumer
 {
   /**
    * Der Typ der Notification.
@@ -76,6 +82,18 @@ public class NotificationPanel implements Part
       this.fg   = fg;
     }
   }
+
+  // Mappt die Status-Codes auf die Enums des Notification-Panel.
+  private final static Map<Integer,Type> TYPEMAP = new HashMap<Integer,Type>();
+  
+  static
+  {
+    TYPEMAP.put(StatusBarMessage.TYPE_ERROR,  Type.ERROR);
+    TYPEMAP.put(StatusBarMessage.TYPE_SUCCESS,Type.SUCCESS);
+    TYPEMAP.put(StatusBarMessage.TYPE_INFO,   Type.INFO);
+  }
+
+  private boolean receiveMessages = false;
   
   private Type type          = null;
   private String text        = null;
@@ -84,14 +102,14 @@ public class NotificationPanel implements Part
   private int border         = 1;
   private boolean background = true;
   private long lastUpdate = 0L;
-  
+
   /**
    * ct.
    */
   public NotificationPanel()
   {
   }
-  
+
   /**
    * ct.
    * @param type der Typ.
@@ -99,7 +117,22 @@ public class NotificationPanel implements Part
    */
   public NotificationPanel(Type type, String text)
   {
+    this();
     this.setText(type,text,false);
+  }
+  
+  /**
+   * Legt fest, ob das Notification-Panel Statusbar-Messages empfangen und anzeigen soll.
+   * @param b true, wenn das Notification-Panel Statusbar-Messages empfangen und anzeigen soll.
+   */
+  public void setReceiveMessages(boolean b)
+  {
+    if (b && !this.receiveMessages)
+      Application.getMessagingFactory().registerMessageConsumer(this);
+    if (!b && this.receiveMessages)
+      Application.getMessagingFactory().unRegisterMessageConsumer(this);
+
+    this.receiveMessages = b;
   }
   
   /**
@@ -223,6 +256,33 @@ public class NotificationPanel implements Part
     setText(Type.INVISIBLE,null,false);
   }
 
+  /**
+   * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+   */
+  public Class[] getExpectedMessageTypes()
+  {
+    return new Class[]{StatusBarMessage.class};
+  }
+
+  /**
+   * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+   */
+  public void handleMessage(Message message) throws Exception
+  {
+    if (message == null)
+      return;
+    
+    StatusBarMessage m = (StatusBarMessage) message;
+    final Type type = TYPEMAP.get(m.getType());
+    this.setText(type,m.getText());
+  }
+
+  /**
+   * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+   */
+  @Override
+  public boolean autoRegister()
+  {
+    return false;
+  }
 }
-
-

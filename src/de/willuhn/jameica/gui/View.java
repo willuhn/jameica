@@ -20,10 +20,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import de.willuhn.jameica.gui.internal.parts.LogoPart;
 import de.willuhn.jameica.gui.internal.parts.PanelButtonBack;
 import de.willuhn.jameica.gui.internal.parts.SearchPart;
 import de.willuhn.jameica.gui.parts.NotificationPanel;
-import de.willuhn.jameica.gui.parts.NotificationPanel.Type;
 import de.willuhn.jameica.gui.parts.PanelButton;
 import de.willuhn.jameica.gui.parts.TitlePart;
 import de.willuhn.jameica.gui.util.SWTUtil;
@@ -53,6 +53,7 @@ public class View implements Part
   
   private String title;
   
+  private LogoPart logoPart;
   private TitlePart titlePart;
 
   /**
@@ -83,10 +84,17 @@ public class View implements Part
 		snapin.setLayout(SWTUtil.createGrid(1,true));
 		sash.setMaximizedControl(view);
 
+    if (!Customizing.SETTINGS.getBoolean("application.view.hidelogo",true))
+    {
+      Composite comp = new Composite(view,SWT.NONE);
+      comp.setLayout(SWTUtil.createGrid(1,false));
+      comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+      this.logoPart = new LogoPart();
+      this.logoPart.paint(comp);
+    }
+
     if (!Customizing.SETTINGS.getBoolean("application.view.hidepanel",false))
     {
-      ////////////////////////////////////////////////////////////////////////////
-      //
       Composite comp = new Composite(view,SWT.NONE);
       comp.setLayout(SWTUtil.createGrid(1,false));
       comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -110,6 +118,7 @@ public class View implements Part
         notifications = new NotificationPanel();
         notifications.setBackground(true);
         notifications.setBorder(1);
+        notifications.setReceiveMessages(true);
         notifications.paint(comp);
       }
       catch (Exception e)
@@ -292,8 +301,7 @@ public class View implements Part
    */
   public void setLogoText(final String text)
   {
-    if (this.notifications != null)
-      this.notifications.setText(Type.INFO,text);
+    Application.getMessagingFactory().sendMessage(new StatusBarMessage(text,StatusBarMessage.TYPE_INFO));
   }
 
   /**
@@ -330,6 +338,15 @@ public class View implements Part
 	public SearchPart getSearchPart()
 	{
 	  return this.searchPart;
+	}
+	
+	/**
+	 * Liefert den Logo-Part.
+	 * @return der Logo-Part.
+	 */
+	public LogoPart getLogoPart()
+	{
+	  return this.logoPart;
 	}
 
   /**

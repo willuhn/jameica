@@ -86,6 +86,7 @@ public class FeatureSelectAll implements Feature
             final Tree t = (Tree) control;
             t.selectAll();
           }
+          ctx.part.featureEvent(Feature.Event.REFRESH,null);
         }
       }
     };

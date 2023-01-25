@@ -207,8 +207,8 @@ public class SSLFactory
   public synchronized void init() throws Exception
 	{
 
-		Logger.info("init ssl factory");
-    Application.getCallback().getStartupMonitor().setStatusText("init ssl factory");
+		Logger.info("init encryption system");
+    Application.getCallback().getStartupMonitor().setStatusText("init encryption system");
 
 		File keyStoreFile = getKeyStoreFile();
 
@@ -220,12 +220,12 @@ public class SSLFactory
 		}
 
 		Application.getCallback().getStartupMonitor().addPercentComplete(10);
-		Logger.info("no ssl certificates found, creating...");
+		Logger.info("no certificates found, creating...");
 
 
 		////////////////////////////////////////////////////////////////////////////
 		// Keys erstellen
-		Application.getCallback().getStartupMonitor().setStatusText("generating new ssl keys and certificates");
+		Application.getCallback().getStartupMonitor().setStatusText("generating new keys and certificates");
 
 		Logger.info("  generating rsa keypair");
 		KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA",BouncyCastleProvider.PROVIDER_NAME);

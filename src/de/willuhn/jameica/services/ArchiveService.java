@@ -17,6 +17,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 
@@ -121,6 +123,7 @@ public class ArchiveService implements Bootable
   private AbstractCommand put     = null;
   private AbstractCommand del     = null;
   private AbstractCommand next    = null;
+  private AbstractCommand list    = null;
   private AbstractCommand getMeta = null;
   private AbstractCommand putMeta = null;
 
@@ -177,6 +180,7 @@ public class ArchiveService implements Bootable
     this.put     = new Put();
     this.del     = new Del();
     this.next    = new Next();
+    this.list    = new List();
     this.getMeta = new GetMeta();
     this.putMeta = new PutMeta();
     
@@ -184,6 +188,7 @@ public class ArchiveService implements Bootable
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").registerMessageConsumer(this.put);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.del").registerMessageConsumer(this.del);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.next").registerMessageConsumer(this.next);
+    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.list").registerMessageConsumer(this.list);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.getmeta").registerMessageConsumer(this.getMeta);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.putmeta").registerMessageConsumer(this.putMeta);
   }
@@ -540,24 +545,50 @@ public class ArchiveService implements Bootable
       }
     }
   }
+
+  /**
+   * Implementierung des LIST-Kommandos.
+   */
+  private class List extends AbstractCommand
+  {
+    /**
+     * @see de.willuhn.jameica.messaging.ArchiveMessageConsumer.AbstractCommand#handle(de.willuhn.jameica.messaging.QueryMessage, java.net.Socket)
+     */
+    void handle(QueryMessage message, Socket socket) throws Exception
+    {
+      String channel = message.getName();
+      if (channel == null)
+        channel = "";
+      
+      OutputStream os = null;
+      InputStream is = null;
+      try
+      {
+        // Request senden
+        os = new BufferedOutputStream(socket.getOutputStream());
+        os.write(("list " + channel + "\r\n").getBytes());
+        os.flush();
+        socket.shutdownOutput(); // wir senden nichts mehr
+        
+        // Response holen
+        is = new BufferedInputStream(socket.getInputStream());
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        IOUtil.copy(is,bos);
+
+        final java.util.List<String> uuids = new LinkedList<>();
+        final String data = bos.toString();
+        if (data != null && data.length() > 0)
+        {
+          uuids.addAll(Arrays.asList(data.split(",")));
+          message.setData(uuids);
+        }
+        
+        Logger.info("got " + uuids.size() + " uuids for channel " + channel);
+      }
+      finally
+      {
+        IOUtil.close(is,os);
+      }
+    }
+  }
 }
-
-
-/**********************************************************************
- * $Log: ArchiveService.java,v $
- * Revision 1.5  2010/12/07 16:10:50  willuhn
- * @C Code cleanup
- *
- * Revision 1.4  2009/09/29 00:13:09  willuhn
- * @N Bei PUT ist jetzt auch in InputStream moeglich
- *
- * Revision 1.3  2009/09/29 00:05:59  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2009/09/29 00:03:27  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2009/09/28 23:55:16  willuhn
- * @N Archiv-Service fuer die Zustellung von Messages/Dateien an einen Jameica Archiv-Server (jameica.messaging) via TCP-Port 9000
- *
- **********************************************************************/

@@ -228,10 +228,14 @@ public class SWTUtil {
    */
   private static Image getZoomedImage(final String filename, final ClassLoader cl)
   {
+    // ggf. hart codierter Image-Zoom 
+    final int imageZoom = Customizing.SETTINGS.getInt("application.zoom.image", 0);
+    
     ImageDataProvider provider = new ImageDataProvider() {
       
-      public ImageData getImageData(int zoom)
+      public ImageData getImageData(int z)
       {
+        final int zoom = imageZoom > 0 ? imageZoom : z;
         InputStream is = null;
         
         try

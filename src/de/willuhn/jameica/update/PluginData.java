@@ -190,10 +190,28 @@ public class PluginData
    */
   public Version getInstalledVersion()
   {
-    Manifest mf = findInstalledVersion();
+    Manifest mf = this.getInstalledManifest();
     return mf == null ? null : mf.getVersion();
   }
 
+  /**
+   * Liefert das Manifest der installierten Version.
+   * @return das Manifest oder NULL.
+   */
+  public Manifest getInstalledManifest()
+  {
+    String name = this.getName();
+    if (name == null)
+      return null;
+    List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
+    for (Manifest m:list)
+    {
+      if (m.getName().equals(name))
+        return m;
+    }
+    return null;
+  }
+  
   /**
    * Prueft, ob das Plugin installiert werden kann.
    * @return true, wenn das Plugin installiert werden kann.
@@ -212,24 +230,6 @@ public class PluginData
     }
   }
   
-  /**
-   * Prueft, ob das Plugin bereits installiert ist.
-   * @return das Manifest oder NULL.
-   */
-  private Manifest findInstalledVersion()
-  {
-    String name = this.getName();
-    if (name == null)
-      return null;
-    List<Manifest> list = Application.getPluginLoader().getInstalledManifests();
-    for (Manifest m:list)
-    {
-      if (m.getName().equals(name))
-        return m;
-    }
-    return null;
-  }
-
   /**
    * Liefert eine Liste der Abhaengigkeiten.
    * @return Liste der Abhaengigkeiten.

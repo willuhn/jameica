@@ -478,6 +478,18 @@
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macosaarch64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.openbsd}" />
+
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${define.srcfilename}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.win32}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.win64}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.linux}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.linux64}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.linuxarm64}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.macos64}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.macosaarch64}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.openbsd}" />
+
     <echo message="Creating PGP signatures" />
 
     <exec executable="gpg" failonerror="true" timeout="60000">

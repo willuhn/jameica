@@ -1,3 +1,17 @@
+HEAD 2.11 (nightly)
+
+2023-01-25 Version 2.10.3
+
+  * NEW: 0161 Optionales Logo-Part für mehr Customizing-Möglichkeiten. Empfang der Statusbar-Messages direkt durch das Notification-Panel. Hat den Vorteil, dass man das Notification-Panel auch an anderer Stelle verwenden kann.
+  * NEW: 0160 Anzahl der Einträge in Auswahldialog der Jameica-Benutzerverzeichnisse auf 8 erhöht
+  * NEW: 0159 Titelleisten der Panel etwas höher darstellen
+  * NEW: 0158 Seriennummern der Zertifikate in HEX-Schreibweise anzeigen
+  * NEW: 0157 Support für Subject-Alt-Name im Hostname-Verifier
+  * CHG: 0156 Repository-URL von JVerein auf die neue URL des Forks "OpenJVerein" umgestellt: https://openjverein.github.io/jameica-repository
+  * BUG: 0155 Systemsprache en_GB/en_US korrekt in der Auswahlbox unter Datei->Einstellungen erkennen
+  * NEW: 0154 Neuer Customizing-Parameter "application.zoom.image=150/200/300", um in Wayland Icons mit höherer Auflösung auch dann zu verwenden, wenn -"Dswt.autoScale=false" gesetzt ist
+  * BUG: 0153 Bei CTRL+A in Tabellen unter Windows wurde anschließend das Refresh-Event nicht ausgelöst, um z.Bsp. die Summenzeile zu aktualisieren
+  
 2022-05-03 Version 2.10.2
 
   * NEW: 0152 JRE-Update auf 11.0.15

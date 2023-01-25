@@ -79,7 +79,7 @@ public class RepositoryService implements Bootable
   public final static String[] WELL_KNOWN =
   {
     "https://www.willuhn.de/products/jameica/updates/extensions",
-    "https://www.jverein.de/updates/",
+    "https://openjverein.github.io/jameica-repository",
     "https://scripting-updates.derrichter.de/",
     "https://www.open4me.de/hibiscus/",
     "https://hibiscus.tvbrowser.org/"

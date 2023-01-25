@@ -49,6 +49,7 @@ import de.willuhn.jameica.gui.parts.table.Feature;
 import de.willuhn.jameica.gui.parts.table.Feature.Context;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
+import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
 import de.willuhn.security.Checksum;
 import de.willuhn.util.Session;
@@ -59,6 +60,11 @@ import de.willuhn.util.Session;
  */
 public class TreePart extends AbstractTablePart
 {
+  private final static String IMG_FOLDER_OPEN  = Customizing.SETTINGS.getString("application.tree.icon.folderopen","folder-open.png");
+  private final static String IMG_FOLDER_CLOSE = Customizing.SETTINGS.getString("application.tree.icon.folderclose","folder.png");
+  private final static String IMG_DEFAULT      = Customizing.SETTINGS.getString("application.tree.icon.default","text-x-generic.png");
+  private final static String IMG_SORT_UP      = Customizing.SETTINGS.getString("application.sort.icon.up","up.png");
+  private final static String IMG_SORT_DOWN    = Customizing.SETTINGS.getString("application.sort.icon.down","down.png");
 
   private TreeFormatter formatter   = null;
   private List list                 = null;
@@ -76,8 +82,8 @@ public class TreePart extends AbstractTablePart
 
   //////////////////////////////////////////////////////////
   // Sortierung
-  private Image up                      = SWTUtil.getImage("up.png");
-  private Image down                    = SWTUtil.getImage("down.png");
+  private Image up                      = SWTUtil.getImage(IMG_SORT_UP);
+  private Image down                    = SWTUtil.getImage(IMG_SORT_DOWN);
   private int sortedBy                  = -1; // Index der sortierten Spalte
   private boolean direction             = true; // Ausrichtung
   //////////////////////////////////////////////////////////
@@ -651,7 +657,7 @@ public class TreePart extends AbstractTablePart
 		TreeItem item = (TreeItem) widget;
     if (autoimage.get(item) == null)
       return;
-		item.setImage(SWTUtil.getImage("folder-open.png"));
+		item.setImage(SWTUtil.getImage(IMG_FOLDER_OPEN));
 	}
 
 	/**
@@ -666,7 +672,7 @@ public class TreePart extends AbstractTablePart
 		TreeItem item = (TreeItem) widget;
 		if (autoimage.get(item) == null)
 		  return;
-  	item.setImage(SWTUtil.getImage("folder.png"));
+  	item.setImage(SWTUtil.getImage(IMG_FOLDER_CLOSE));
 	}
 
   /**
@@ -868,7 +874,7 @@ public class TreePart extends AbstractTablePart
         // Nur dann, wenn der Formatter nicht schon ein Icon eingefuegt hat
         if (item.getImage() == null)
         {
-          item.setImage(SWTUtil.getImage(expanded ? "folder-open.png" : "folder.png"));
+          item.setImage(SWTUtil.getImage(expanded ? IMG_FOLDER_OPEN : IMG_FOLDER_CLOSE));
           autoimage.put(item,Boolean.TRUE);
         }
 
@@ -890,7 +896,7 @@ public class TreePart extends AbstractTablePart
       // Default-Icon
       if (item.getImage() == null)
       {
-        item.setImage(SWTUtil.getImage("text-x-generic.png"));
+        item.setImage(SWTUtil.getImage(IMG_DEFAULT));
       }
 		}
   }

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -53,6 +54,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   private List<X509Certificate> certs = new LinkedList<X509Certificate>();
   
   private Input cnIssuer      = null;
+  private Input altNames      = null;
   private Input oIssuer       = null;
   private Input ouIssuer      = null;
   private Input cnSubject     = null;
@@ -84,6 +86,8 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     this.certs.addAll(certs);
     
     this.cnIssuer    = this.createLabel(i18n.tr("Common Name (CN)"));
+    this.altNames    = this.createLabel(i18n.tr("Alternative Hostnamen"));
+    
     this.oIssuer     = this.createLabel(i18n.tr("Organisation (O)"));
     this.ouIssuer    = this.createLabel(i18n.tr("Abteilung (OU)"));
     
@@ -196,6 +200,14 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
       String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
 
       this.cnSubject.setValue(format(cn));
+      
+      final List<String> alt = myCert.getHostnames();
+      if (alt != null && alt.size() > 1)
+      {
+        alt.remove(0);
+        this.altNames.setValue(StringUtils.join(alt,"\n"));
+      }
+
       this.oSubject.setValue(format(o));
       this.ouSubject.setValue(format(ou));
     }
@@ -206,7 +218,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     // Details
     DateFormat df = DateUtil.DEFAULT_FORMAT;
     this.validity.setValue(i18n.tr("{0} - {1}",df.format(cert.getNotBefore()),df.format(cert.getNotAfter())));
-    this.serial.setValue(cert.getSerialNumber().toString());
+    this.serial.setValue("0x" + cert.getSerialNumber().toString(16).toUpperCase());
     /////////////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////////
@@ -267,6 +279,7 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     group.addInput(this.cnSubject);
     group.addInput(this.oSubject);
     group.addInput(this.ouSubject);
+    group.addInput(this.altNames);
     /////////////////////////////////////////////////////////////////////////////
 
 
@@ -333,13 +346,3 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     this.text = text;
   }
 }
-
-
-/**********************************************************************
- * $Log: AbstractCertificateDialog.java,v $
- * Revision 1.9  2012/01/28 00:06:07  willuhn
- * @N BUGZILLA 1179 - in progress
- *
- * Revision 1.8  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- **********************************************************************/
