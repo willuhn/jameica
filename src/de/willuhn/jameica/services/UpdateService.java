@@ -527,38 +527,41 @@ public class UpdateService implements Bootable
       }
       
       final Manifest remoteMf = this.plugin.getManifest();
+      final Manifest localMf = this.plugin.getInstalledManifest();
       
       //////////////////////////////////////////////////////////////////////////////////////////////////////
       // Wenn in der installierten Version eine Homepage angegeben ist, muss das Update von der selben
       // Server-Adresse kommen, damit es aktualisiert werden kann
-      try
+      if (localMf.validateHomepage())
       {
-        final URL download = this.plugin.getDownloadUrl();
-        if (download == null)
+        try
         {
-          Logger.debug("no download url available");
-          return;
-        }
-        
-        final Manifest localMf = this.plugin.getInstalledManifest();
-        if (localMf != null)
-        {
-          final String homepage = localMf.getHomepage();
-          if (StringUtils.trimToNull(homepage) != null)
+          final URL download = this.plugin.getDownloadUrl();
+          if (download == null)
           {
-            final URL home = new URL(homepage);
-            if (!Objects.equals(download.getHost().toLowerCase(),home.getHost().toLowerCase()))
+            Logger.debug("no download url available");
+            return;
+          }
+
+          if (localMf != null)
+          {
+            final String homepage = localMf.getHomepage();
+            if (StringUtils.trimToNull(homepage) != null)
             {
-              Logger.warn("download url \"" + download + "\" does not belong to plugin homepage \"" + homepage + "\"");
-              return;
+              final URL home = new URL(homepage);
+              if (!Objects.equals(download.getHost().toLowerCase(),home.getHost().toLowerCase()))
+              {
+                Logger.warn("download url \"" + download + "\" does not belong to plugin homepage \"" + homepage + "\"");
+                return;
+              }
             }
           }
         }
-      }
-      catch (Exception e)
-      {
-        Logger.warn("unable to check download url for " + plugin.getName() + ": " + e.getMessage());
-        return;
+        catch (Exception e)
+        {
+          Logger.warn("unable to check download url for " + plugin.getName() + ": " + e.getMessage());
+          return;
+        }
       }
       //
       //////////////////////////////////////////////////////////////////////////////////////////////////////
