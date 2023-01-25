@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,6 +34,7 @@ import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.messaging.TextMessage;
 import de.willuhn.jameica.plugin.Dependency;
+import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.Version;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.update.PluginData;
@@ -509,7 +511,7 @@ public class UpdateService implements Bootable
       Version vc = this.plugin.getInstalledVersion();
 
       // Verfuegbare Version
-      Version va = plugin.getAvailableVersion();
+      Version va = this.plugin.getAvailableVersion();
 
       // Nicht installiert
       if (vc == null)
@@ -524,8 +526,45 @@ public class UpdateService implements Bootable
         return;
       }
       
+      final Manifest remoteMf = this.plugin.getManifest();
+      
+      //////////////////////////////////////////////////////////////////////////////////////////////////////
+      // Wenn in der installierten Version eine Homepage angegeben ist, muss das Update von der selben
+      // Server-Adresse kommen, damit es aktualisiert werden kann
+      try
+      {
+        final URL download = this.plugin.getDownloadUrl();
+        if (download == null)
+        {
+          Logger.debug("no download url available");
+          return;
+        }
+        
+        final Manifest localMf = this.plugin.getInstalledManifest();
+        if (localMf != null)
+        {
+          final String homepage = localMf.getHomepage();
+          if (StringUtils.trimToNull(homepage) != null)
+          {
+            final URL home = new URL(homepage);
+            if (!Objects.equals(download.getHost().toLowerCase(),home.getHost().toLowerCase()))
+            {
+              Logger.warn("download url \"" + download + "\" does not belong to plugin homepage \"" + homepage + "\"");
+              return;
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Logger.warn("unable to check download url for " + plugin.getName() + ": " + e.getMessage());
+        return;
+      }
+      //
+      //////////////////////////////////////////////////////////////////////////////////////////////////////
+      
       // Checken, ob die Jameica-Version passt
-      Dependency jd = plugin.getManifest().getJameicaDependency();
+      Dependency jd = remoteMf.getJameicaDependency();
       if (!jd.check())
       {
         Logger.debug("required jameica version not available. required: " + jd);
