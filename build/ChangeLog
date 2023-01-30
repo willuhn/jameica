@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+  * BUG: 0162 In Selectboxen nicht mehr auf FocusIn- und FocusOut-Events bei Listenern reagieren
+
 2023-01-25 Version 2.10.3
 
   * NEW: 0161 Optionales Logo-Part für mehr Customizing-Möglichkeiten. Empfang der Statusbar-Messages direkt durch das Notification-Panel. Hat den Vorteil, dass man das Notification-Panel auch an anderer Stelle verwenden kann.

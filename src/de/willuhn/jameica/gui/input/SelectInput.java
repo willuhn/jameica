@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.datasource.GenericIterator;
@@ -135,6 +137,16 @@ public class SelectInput extends AbstractInput
   public void setPleaseChoose(String choose)
   {
     this.pleaseChoose = choose;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#addListener(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Listener)
+   */
+  @Override
+  protected void addListener(Widget w, Listener l)
+  {
+    // Bei Select-Boxen reagieren wir nicht auf die Focus-Events
+    w.addListener(SWT.Selection,l);
   }
   
   /**
