@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0163 TXW2 gegen die zu JAXB Runtime passende, versionsgleiche Bibliothek austauschen
   * BUG: 0162 In Selectboxen nicht mehr auf FocusIn- und FocusOut-Events bei Listenern reagieren
 
 2023-01-25 Version 2.10.3
