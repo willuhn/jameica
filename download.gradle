@@ -16,8 +16,9 @@ repositories {
 
 dependencies {
     compile 'org.apache.xmlrpc:xmlrpc-client:+'
-    compile 'org.bouncycastle:bcprov-jdk15on:+'
-    compile 'org.bouncycastle:bcpkix-jdk15on:+'
+    compile 'org.bouncycastle:bcprov-jdk18on:+'
+    compile 'org.bouncycastle:bcpkix-jdk18on:+'
+    compile 'org.bouncycastle:bcutil-jdk18on:+'
     compile 'com.h2database:h2:+'
     compile 'commons-cli:commons-cli:+'
     compile 'commons-lang:commons-lang:2.+'
