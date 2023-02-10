@@ -118,6 +118,7 @@ public class ArchiveService implements Bootable
 {
   private String host = null;
   private int port    = -1;
+  private boolean enabled = false;
   
   private AbstractCommand get     = null;
   private AbstractCommand put     = null;
@@ -134,18 +135,32 @@ public class ArchiveService implements Bootable
   {
     return new Class[]{MessagingService.class};
   }
+  
+  /**
+   * Liefert true, wenn der Archive-Service verfügbar ist, weil entweder lokal das Plugin
+   * jameica.messaging installiert ist oder aber im LAN eine Instanz per Multicast-Lookup
+   * gefunden wurde.
+   * @return true, wenn der Archive-Service verfügbar ist.
+   */
+  public boolean isEnabled()
+  {
+    return this.enabled;
+  }
 
   /**
    * @see de.willuhn.boot.Bootable#init(de.willuhn.boot.BootLoader, de.willuhn.boot.Bootable)
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
+    Logger.info("checking jameica.messaging availability");
+    
     // Wir checken, ob das Plugin "jameica.messaging" lokal installiert ist.
     // Wenn das der Fall ist, werden wir nicht gebraucht, weil dann bereits
     // MessageConsumer fuer lokale Archiv-Zustellung aktiv sind.
     if (Application.getPluginLoader().getPlugin("de.willuhn.jameica.messaging.Plugin") != null)
     {
-      Logger.info("remote message delivery not needed, jameica.messaging is locally installed");
+      Logger.info("local jameica.messaging available");
+      this.enabled = true;
       return;
     }
     
@@ -161,6 +176,8 @@ public class ArchiveService implements Bootable
           // Jepp, wir haben eine URI
           this.host = uri.substring(0,colon);
           this.port = Integer.parseInt(uri.substring(colon+1));
+          Logger.info("remote jameica.messaging available on " + this.host + ":" + this.port);
+          this.enabled = true;
         }
       }
     }

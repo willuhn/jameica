@@ -10,6 +10,7 @@
 
 package de.willuhn.jameica.attachment.storage;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -53,8 +54,7 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public boolean isEnabled()
   {
-    // TODO Auto-generated
-    return false;
+    return this.archiveService.isEnabled();
   }
   
   /**
@@ -115,24 +115,30 @@ public class StorageProviderMessagingService implements StorageProvider
    * @see de.willuhn.jameica.attachment.storage.StorageProvider#create(de.willuhn.jameica.attachment.Attachment, java.io.InputStream)
    */
   @Override
-  public void create(Attachment a, InputStream is)
+  public void create(Attachment a, InputStream is) throws IOException
   {
     final String channel = this.getChannel(a.getContext());
-    final QueryMessage mm = new QueryMessage(channel,is);
-    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").sendSyncMessage(mm);
+    final QueryMessage m = new QueryMessage(channel,is);
+    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").sendSyncMessage(m);
     
     // Generierte UUID im Attachment speichern
-    a.setUuid(mm.getData().toString());
+    a.setUuid(m.getData().toString());
   }
   
   /**
    * @see de.willuhn.jameica.attachment.storage.StorageProvider#copy(de.willuhn.jameica.attachment.Attachment, java.io.OutputStream)
    */
   @Override
-  public void copy(Attachment a, OutputStream os)
+  public void copy(Attachment a, OutputStream os) throws IOException
   {
-    // TODO Auto-generated
+    final QueryMessage m = new QueryMessage(a.getUuid());
+    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.get").sendSyncMessage(m);
     
+    final Object data = m.getData();
+    if (!(data instanceof byte[]))
+      throw new IOException("attachment not found: " + a.getFilename());
+
+    os.write((byte[])data);
   }
   
   /**
@@ -141,8 +147,8 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public void delete(Attachment a)
   {
-    // TODO Auto-generated
-    
+    final QueryMessage m = new QueryMessage(a.getUuid());
+    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.del").sendSyncMessage(m);
   }
   
   /**

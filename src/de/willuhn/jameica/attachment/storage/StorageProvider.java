@@ -10,6 +10,7 @@
 
 package de.willuhn.jameica.attachment.storage;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -52,15 +53,17 @@ public interface StorageProvider
    * Kopiert das exsitierende Attachment in den angegebenen Stream.
    * @param a das existierende Attachment.
    * @param os Stream, in den das Attachment geschrieben wird.
+   * @throws IOException
    */
-  public void copy(Attachment a, OutputStream os);
+  public void copy(Attachment a, OutputStream os) throws IOException;
   
   /**
    * Erstell ein neues Attachment.
    * @param a das zu erstellende Attachment.
    * @param is Stream mit den Daten des neuen Attachments.
+   * @throws IOException
    */
-  public void create(Attachment a, InputStream is);
+  public void create(Attachment a, InputStream is) throws IOException;
   
   /**
    * Löscht das Attachment.
