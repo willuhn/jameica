@@ -46,8 +46,9 @@ public interface StorageProvider
    * Hierbei werden nur die Informationen zu den Attachments geliefert, nicht der Datei-Inhalt. Der kann per 
    * @param ctx der Context.
    * @return die Attachments.
+   * @throws IOException
    */
-  public List<Attachment> getAttachments(Context ctx);
+  public List<Attachment> getAttachments(Context ctx) throws IOException;
   
   /**
    * Kopiert das exsitierende Attachment in den angegebenen Stream.
@@ -68,7 +69,8 @@ public interface StorageProvider
   /**
    * Löscht das Attachment.
    * @param a das zu löschende Attachment.
+   * @throws IOException
    */
-  public void delete(Attachment a);
+  public void delete(Attachment a) throws IOException;
 
 }

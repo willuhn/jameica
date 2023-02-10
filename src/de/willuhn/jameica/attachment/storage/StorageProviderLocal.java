@@ -10,36 +10,37 @@
 
 package de.willuhn.jameica.attachment.storage;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 
 import de.willuhn.annotation.Lifecycle;
 import de.willuhn.annotation.Lifecycle.Type;
+import de.willuhn.io.IOUtil;
 import de.willuhn.jameica.attachment.Attachment;
 import de.willuhn.jameica.attachment.Context;
-import de.willuhn.jameica.messaging.QueryMessage;
-import de.willuhn.jameica.services.ArchiveService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
 /**
- * Storage-Provider, der die Speicherung per Jameica Messaging übernimmt.
+ * Storage-Provider, der die Speicherung in lokalen Dateien übernimmt.
  */
 @Lifecycle(Type.CONTEXT)
-public class StorageProviderMessagingService implements StorageProvider
+public class StorageProviderLocal implements StorageProvider
 {
   private final static I18N i18n = Application.getI18n();
-  
-  @Resource private ArchiveService archiveService = null;
+  private final static Settings settings = new Settings(StorageProviderLocal.class);
   
   /**
    * @see de.willuhn.jameica.attachment.storage.StorageProvider#getId()
@@ -47,7 +48,7 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public String getId()
   {
-    return "archive";
+    return "local";
   }
   
   /**
@@ -56,7 +57,7 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public boolean isEnabled()
   {
-    return this.archiveService.isEnabled();
+    return settings.getBoolean("enabled",true);
   }
   
   /**
@@ -65,7 +66,7 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public String getName()
   {
-    return i18n.tr("Jameica Messaging");
+    return i18n.tr("Speicherung in lokalen Dateien");
   }
   
   /**
@@ -79,34 +80,19 @@ public class StorageProviderMessagingService implements StorageProvider
     if (ctx == null)
       return result;
 
-    final String channel = this.getChannel(ctx);
-    
-    // Liste der UUIDs abrufen
-    final QueryMessage ml = new QueryMessage(channel,null);
-    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.list").sendSyncMessage(ml);
-    final List<String> uuids = (List<String>) ml.getData();
-    
-    if (uuids == null || uuids.isEmpty())
-      return result;
+    final File dir = this.getDir(ctx);
     
     // OK; wir haben Dateien. Dann die Meta-Daten abrufen, um die Attachments zu erzeugen
-    for (String uuid:uuids)
+    for (File f:dir.listFiles())
     {
-      final QueryMessage mm = new QueryMessage(uuid);
-      Application.getMessagingFactory().getMessagingQueue("jameica.messaging.getmeta").sendSyncMessage(mm);
-      final Map<String,String> meta = (Map<String,String>) ml.getData();
-      
-      if (meta == null || meta.isEmpty())
-      {
-        Logger.warn("no meta-data found for attachment uuid " + uuid);
+      if (!f.isFile() || !f.canRead())
         continue;
-      }
       
       final Attachment a = new Attachment();
       a.setStorageId(this.getId());
+      a.setUuid(null);
       a.setContext(ctx);
-      a.setUuid(uuid);
-      a.setFilename(meta.get("filename"));
+      a.setFilename(f.getName());
       result.add(a);
     }
 
@@ -119,12 +105,21 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public void create(Attachment a, InputStream is) throws IOException
   {
-    final String channel = this.getChannel(a.getContext());
-    final QueryMessage m = new QueryMessage(channel,is);
-    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").sendSyncMessage(m);
-    
-    // Generierte UUID im Attachment speichern
-    a.setUuid(m.getData().toString());
+    final File dir = this.getDir(a.getContext());
+    final File target = new File(dir,a.getFilename());
+    Logger.info("creating new attachment file " + target);
+
+    OutputStream os = null;
+    try
+    {
+      os = new BufferedOutputStream(new FileOutputStream(target));
+      final long bytes = IOUtil.copy(is,os);
+      Logger.info("wrote " + bytes + " bytes");
+    }
+    finally
+    {
+      IOUtil.close(is,os);
+    }
   }
   
   /**
@@ -133,14 +128,21 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public void copy(Attachment a, OutputStream os) throws IOException
   {
-    final QueryMessage m = new QueryMessage(a.getUuid());
-    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.get").sendSyncMessage(m);
-    
-    final Object data = m.getData();
-    if (!(data instanceof byte[]))
-      throw new IOException("attachment not found: " + a.getFilename());
+    final File dir = this.getDir(a.getContext());
+    final File target = new File(dir,a.getFilename());
+    Logger.info("creating new attachment file " + target);
 
-    os.write((byte[])data);
+    InputStream is = null;
+    try
+    {
+      is = new BufferedInputStream(new FileInputStream(target));
+      final long bytes = IOUtil.copy(is,os);
+      Logger.info("read " + bytes + " bytes");
+    }
+    finally
+    {
+      IOUtil.close(is,os);
+    }
   }
   
   /**
@@ -149,20 +151,29 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public void delete(Attachment a) throws IOException
   {
-    final QueryMessage m = new QueryMessage(a.getUuid());
-    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.del").sendSyncMessage(m);
+    final File dir = this.getDir(a.getContext());
+    final File target = new File(dir,a.getFilename());
+    if (!target.delete())
+      throw new IOException(i18n.tr("Datei {0} kann nicht gelöscht werden",target.getAbsolutePath()));
   }
   
   /**
-   * Liefert den Messaging-Channel für den Context.
-   * @param ctx der Context.
-   * @return der Messaging-Channel.
+   * Liefert das konfigurierte Arbeitsverzeichnis.
+   * @param ctx der Kontext.
+   * @return das Arbeitsverzeichnis.
+   * @throw IOException
    */
-  private String getChannel(Context ctx)
+  private File getDir(Context ctx) throws IOException
   {
-    return StringUtils.defaultIfBlank(ctx.getPlugin(),"default") + "." + 
-           StringUtils.defaultIfBlank(ctx.getClassName(),"default") + "." + 
-           StringUtils.defaultIfBlank(ctx.getId(),"default");
+    final String defaultDir = Application.getConfig().getWorkDir() + File.separator + "attachments";
+    final String basedir = settings.getString("basedir",defaultDir);
+    final File dir = new File(basedir + File.separator +
+                              StringUtils.defaultIfBlank(ctx.getPlugin(),"default") + File.separator +
+                              StringUtils.defaultIfBlank(ctx.getClassName(),"default"),StringUtils.defaultIfBlank(ctx.getId(),"default"));
+    if (!dir.exists() && !dir.mkdirs())
+      throw new IOException(i18n.tr("Ordner {0} kann nicht erstellt werden",dir.getAbsolutePath()));
+    
+    return dir;
   }
 }
 

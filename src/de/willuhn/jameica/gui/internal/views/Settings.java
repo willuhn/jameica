@@ -224,6 +224,23 @@ public class Settings extends AbstractView implements Extendable
   {
     return this.getClass().getName();
   }
+  
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#canBookmark()
+   */
+  public boolean canBookmark()
+  {
+    return false;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.AbstractView#canAttach()
+   */
+  @Override
+  public boolean canAttach()
+  {
+    return false;
+  }
 
   /**
    * Wird beanchtrichtigt, wenn die Extensions ihre Tabs gezeichnet haben.

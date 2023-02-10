@@ -11,18 +11,21 @@
 package de.willuhn.jameica.services;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.datasource.GenericObject;
 import de.willuhn.jameica.attachment.Attachment;
+import de.willuhn.jameica.attachment.Context;
 import de.willuhn.jameica.attachment.storage.StorageProvider;
 import de.willuhn.jameica.gui.AbstractView;
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.plugin.Plugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
-import de.willuhn.util.ApplicationException;
 
 /**
  * Service zum Laden und Speichern von Attachments.
@@ -43,15 +46,26 @@ public class AttachmentService implements Bootable
   /**
    * Liefert die Attachments für die aktuelle View mit dem aktuellen Objekt.
    * @return die Liste der Attachments.
-   * @throws ApplicationException
+   * @throws Exception
    */
-  public List<Attachment> find() throws ApplicationException
+  public List<Attachment> find() throws Exception
   {
     final AbstractView view = GUI.getCurrentView();
-    final String viewClass  = view.getClass().getName();
-    final Object ctx        = view.getCurrentObject();
+    final Object o          = view.getCurrentObject();
+    final Plugin plugin     = Application.getPluginLoader().findByClass(view.getClass());
     
-    return null;
+    final Context ctx = new Context();
+    ctx.setClassName(o != null ? o.getClass().getName() : null);
+    ctx.setId((o instanceof GenericObject) ? ((GenericObject)o).getID() : null);
+    ctx.setPlugin(plugin != null ? plugin.getManifest().getPluginClass() : null);
+    
+    final List<Attachment> result = new LinkedList<>();
+    for (StorageProvider p:this.providers)
+    {
+      result.addAll(p.getAttachments(ctx));
+    }
+    
+    return result;
   }
 
   /**

@@ -36,6 +36,7 @@ import de.willuhn.datasource.BeanUtil;
 import de.willuhn.jameica.gui.extension.Extendable;
 import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.internal.parts.BackgroundTaskMonitor;
+import de.willuhn.jameica.gui.internal.parts.PanelButtonAttachment;
 import de.willuhn.jameica.gui.internal.parts.PanelButtonBookmark;
 import de.willuhn.jameica.gui.internal.views.FatalErrorView;
 import de.willuhn.jameica.gui.parts.FormTextPart;
@@ -694,6 +695,12 @@ public class GUI implements ApplicationController
         if (gui.currentView.canBookmark())
         {
           PanelButtonBookmark button = new PanelButtonBookmark();
+          gui.view.addPanelButton(button);
+        }
+
+        if (gui.currentView.canAttach())
+        {
+          PanelButtonAttachment button = new PanelButtonAttachment();
           gui.view.addPanelButton(button);
         }
 
