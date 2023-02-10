@@ -10,6 +10,7 @@
 
 package de.willuhn.jameica.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,11 +45,11 @@ public class AttachmentService implements Bootable
   }
   
   /**
-   * Liefert die Attachments für die aktuelle View mit dem aktuellen Objekt.
-   * @return die Liste der Attachments.
-   * @throws Exception
+   * Liefert den aktuellen Attachment-Context.
+   * @return der aktuelle Attachment-Context.
+   * @throws IOException
    */
-  public List<Attachment> find() throws Exception
+  public Context getContext() throws IOException
   {
     final AbstractView view = GUI.getCurrentView();
     final Object o          = view.getCurrentObject();
@@ -58,7 +59,17 @@ public class AttachmentService implements Bootable
     ctx.setClassName(o != null ? o.getClass().getName() : null);
     ctx.setId((o instanceof GenericObject) ? ((GenericObject)o).getID() : null);
     ctx.setPlugin(plugin != null ? plugin.getManifest().getPluginClass() : null);
-    
+    return ctx;
+  }
+  
+  /**
+   * Liefert die Attachments für die aktuelle View mit dem aktuellen Objekt.
+   * @return die Liste der Attachments.
+   * @throws IOException
+   */
+  public List<Attachment> find() throws IOException
+  {
+    final Context ctx = this.getContext();
     final List<Attachment> result = new LinkedList<>();
     for (StorageProvider p:this.providers)
     {

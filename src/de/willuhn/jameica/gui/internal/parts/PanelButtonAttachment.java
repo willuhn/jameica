@@ -47,7 +47,6 @@ public class PanelButtonAttachment extends PanelButton
     }
     catch (Exception e)
     {
-      e.printStackTrace();
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(e.getMessage(),StatusBarMessage.TYPE_ERROR));
     }
   }

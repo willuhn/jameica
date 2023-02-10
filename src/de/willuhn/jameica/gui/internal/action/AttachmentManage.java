@@ -11,6 +11,10 @@
 package de.willuhn.jameica.gui.internal.action;
 
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.internal.dialogs.AttachmentManageDialog;
+import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
@@ -24,6 +28,21 @@ public class AttachmentManage implements Action
   @Override
   public void handleAction(Object context) throws ApplicationException
   {
+    try
+    {
+      final AttachmentManageDialog d = new AttachmentManageDialog(AttachmentManageDialog.POSITION_CENTER);
+      d.open();
+    }
+    catch (ApplicationException ae)
+    {
+      throw ae;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to determine current attachment context",e);
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Die Dateianhänge konnten nicht ermittelt werden"),StatusBarMessage.TYPE_ERROR));
+    }
+    
   }
 
 }
