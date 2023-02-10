@@ -11,11 +11,12 @@
 package de.willuhn.jameica.attachment.storage;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 import de.willuhn.annotation.Lifecycle;
 import de.willuhn.annotation.Lifecycle.Type;
@@ -25,22 +26,18 @@ import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.services.ArchiveService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.I18N;
 
 /**
- * Storage-Provider, der die Speicherung per Archive-Service übernimmt.
+ * Storage-Provider, der die Speicherung per Jameica Messaging übernimmt.
  */
 @Lifecycle(Type.CONTEXT)
-public class StorageProviderArchiveService implements StorageProvider
+public class StorageProviderMessagingService implements StorageProvider
 {
-  /**
-   * Initialisiert den Service.
-   */
-  @PostConstruct
-  private void init()
-  {
-    Application.getBootLoader().getBootable(ArchiveService.class);
-  }
-
+  private final static I18N i18n = Application.getI18n();
+  
+  @Resource private ArchiveService archiveService = null;
+  
   /**
    * @see de.willuhn.jameica.attachment.storage.StorageProvider#getId()
    */
@@ -48,6 +45,25 @@ public class StorageProviderArchiveService implements StorageProvider
   public String getId()
   {
     return "archive";
+  }
+  
+  /**
+   * @see de.willuhn.jameica.attachment.storage.StorageProvider#isEnabled()
+   */
+  @Override
+  public boolean isEnabled()
+  {
+    // TODO Auto-generated
+    return false;
+  }
+  
+  /**
+   * @see de.willuhn.jameica.attachment.storage.StorageProvider#getName()
+   */
+  @Override
+  public String getName()
+  {
+    return i18n.tr("Jameica Messaging");
   }
   
   /**
@@ -96,10 +112,10 @@ public class StorageProviderArchiveService implements StorageProvider
   }
   
   /**
-   * @see de.willuhn.jameica.attachment.storage.StorageProvider#addAttachment(de.willuhn.jameica.attachment.Attachment, java.io.InputStream)
+   * @see de.willuhn.jameica.attachment.storage.StorageProvider#create(de.willuhn.jameica.attachment.Attachment, java.io.InputStream)
    */
   @Override
-  public void addAttachment(Attachment a, InputStream is)
+  public void create(Attachment a, InputStream is)
   {
     final String channel = this.getChannel(a.getContext());
     final QueryMessage mm = new QueryMessage(channel,is);
@@ -107,6 +123,26 @@ public class StorageProviderArchiveService implements StorageProvider
     
     // Generierte UUID im Attachment speichern
     a.setUuid(mm.getData().toString());
+  }
+  
+  /**
+   * @see de.willuhn.jameica.attachment.storage.StorageProvider#copy(de.willuhn.jameica.attachment.Attachment, java.io.OutputStream)
+   */
+  @Override
+  public void copy(Attachment a, OutputStream os)
+  {
+    // TODO Auto-generated
+    
+  }
+  
+  /**
+   * @see de.willuhn.jameica.attachment.storage.StorageProvider#delete(de.willuhn.jameica.attachment.Attachment)
+   */
+  @Override
+  public void delete(Attachment a)
+  {
+    // TODO Auto-generated
+    
   }
   
   /**

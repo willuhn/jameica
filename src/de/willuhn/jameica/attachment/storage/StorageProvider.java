@@ -11,6 +11,7 @@
 package de.willuhn.jameica.attachment.storage;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import de.willuhn.jameica.attachment.Attachment;
@@ -26,21 +27,45 @@ public interface StorageProvider
    * @return ein Identifier.
    */
   public String getId();
+  
+  /**
+   * Liefert einen sprechenden Namen für den Storage-Provider.
+   * @return sprechender Name für den Storage-Provider.
+   */
+  public String getName();
+  
+  /**
+   * Liefert true, wenn der Storage-Provider verfügbar ist.
+   * @return true, wenn der Storage-Provider verfügbar ist.
+   */
+  public boolean isEnabled();
 
   /**
    * Liefert die Attachments für den angegebenen Context.
+   * Hierbei werden nur die Informationen zu den Attachments geliefert, nicht der Datei-Inhalt. Der kann per 
    * @param ctx der Context.
    * @return die Attachments.
    */
   public List<Attachment> getAttachments(Context ctx);
   
   /**
-   * Speichert ein Attachment.
-   * @param a das Attachment.
-   * @param is {@link InputStream} mit den Daten.
+   * Kopiert das exsitierende Attachment in den angegebenen Stream.
+   * @param a das existierende Attachment.
+   * @param os Stream, in den das Attachment geschrieben wird.
    */
-  public void addAttachment(Attachment a, InputStream is);
+  public void copy(Attachment a, OutputStream os);
+  
+  /**
+   * Erstell ein neues Attachment.
+   * @param a das zu erstellende Attachment.
+   * @param is Stream mit den Daten des neuen Attachments.
+   */
+  public void create(Attachment a, InputStream is);
+  
+  /**
+   * Löscht das Attachment.
+   * @param a das zu löschende Attachment.
+   */
+  public void delete(Attachment a);
 
 }
-
-
