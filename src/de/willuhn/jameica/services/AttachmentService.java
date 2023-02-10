@@ -60,6 +60,7 @@ public class AttachmentService implements Bootable
   @Override
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
+    Logger.info("init attachment service");
     final BeanService bs = loader.getBootable(BeanService.class);
     Logger.info("searching available storage providers");
     try
@@ -83,6 +84,7 @@ public class AttachmentService implements Bootable
     {
       Logger.error("suspect - no storage providers found",cne);
     }
+    Logger.info("found storage providers: " + this.providers.size());
   }
 
   /**
