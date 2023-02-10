@@ -10,6 +10,7 @@
 
 package de.willuhn.jameica.attachment.storage;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -95,13 +96,17 @@ public class StorageProviderArchiveService implements StorageProvider
   }
   
   /**
-   * @see de.willuhn.jameica.attachment.storage.StorageProvider#addAttachment(de.willuhn.jameica.attachment.Attachment)
+   * @see de.willuhn.jameica.attachment.storage.StorageProvider#addAttachment(de.willuhn.jameica.attachment.Attachment, java.io.InputStream)
    */
   @Override
-  public void addAttachment(Attachment a)
+  public void addAttachment(Attachment a, InputStream is)
   {
-    // TODO Auto-generated
+    final String channel = this.getChannel(a.getContext());
+    final QueryMessage mm = new QueryMessage(channel,is);
+    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").sendSyncMessage(mm);
     
+    // Generierte UUID im Attachment speichern
+    a.setUuid(mm.getData().toString());
   }
   
   /**

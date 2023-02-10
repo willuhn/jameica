@@ -10,6 +10,7 @@
 
 package de.willuhn.jameica.attachment.storage;
 
+import java.io.InputStream;
 import java.util.List;
 
 import de.willuhn.jameica.attachment.Attachment;
@@ -36,8 +37,9 @@ public interface StorageProvider
   /**
    * Speichert ein Attachment.
    * @param a das Attachment.
+   * @param is {@link InputStream} mit den Daten.
    */
-  public void addAttachment(Attachment a);
+  public void addAttachment(Attachment a, InputStream is);
 
 }
 
