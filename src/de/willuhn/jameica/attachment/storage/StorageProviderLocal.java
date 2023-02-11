@@ -175,15 +175,34 @@ public class StorageProviderLocal implements StorageProvider
    */
   private File getDir(Context ctx) throws IOException
   {
-    final String defaultDir = Application.getConfig().getWorkDir() + File.separator + "attachments";
-    final String basedir = settings.getString("basedir",defaultDir);
-    final File dir = new File(basedir + File.separator +
+    final File basedir = this.getBasedir();
+    final File dir = new File(basedir.getAbsolutePath() + File.separator +
                               StringUtils.defaultIfBlank(ctx.getPlugin(),"default") + File.separator +
                               StringUtils.defaultIfBlank(ctx.getClassName(),"default"),StringUtils.defaultIfBlank(ctx.getId(),"default"));
     if (!dir.exists() && !dir.mkdirs())
       throw new IOException(i18n.tr("Ordner {0} kann nicht erstellt werden",dir.getAbsolutePath()));
     
     return dir;
+  }
+  
+  /**
+   * Liefert das Basis-Verzeichnis für die Speicherung.
+   * @return das Basis-Verzeichnis für die Speicherung.
+   */
+  public File getBasedir()
+  {
+    final String defaultDir = Application.getConfig().getWorkDir() + File.separator + "attachments";
+    final String basedir = settings.getString("basedir",defaultDir);
+    return new File(basedir);
+  }
+  
+  /**
+   * Speichert das Basis-Verzeichnis für die Speicherung.
+   * @param dir das Basis-Verzeichnis für die Speicherung.
+   */
+  public void setBasedir(File dir)
+  {
+    settings.setAttribute("basedir",dir != null ? dir.getAbsolutePath() : null);
   }
 }
 

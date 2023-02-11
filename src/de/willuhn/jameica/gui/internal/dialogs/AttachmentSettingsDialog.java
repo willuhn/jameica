@@ -10,49 +10,46 @@
 
 package de.willuhn.jameica.gui.internal.dialogs;
 
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import de.willuhn.jameica.attachment.storage.StorageProvider;
+import de.willuhn.jameica.attachment.storage.StorageProviderLocal;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
-import de.willuhn.jameica.gui.input.CheckboxInput;
-import de.willuhn.jameica.gui.input.SelectInput;
+import de.willuhn.jameica.gui.input.DirectoryInput;
+import de.willuhn.jameica.gui.input.LabelInput;
 import de.willuhn.jameica.gui.internal.buttons.Cancel;
 import de.willuhn.jameica.gui.parts.ButtonArea;
+import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.services.AttachmentService;
+import de.willuhn.jameica.services.BeanService;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Settings;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
 
 /**
- * Auswahldialog für den zu verwendenden Storage-Provider.
+ * Dialog zum Konfigurieren der Attachments.
  */
-public class StorageProviderDialog extends AbstractDialog<StorageProvider>
+public class AttachmentSettingsDialog extends AbstractDialog
 {
   final int WINDOW_WIDTH = 470;
 
   private final static I18N i18n = Application.getI18n();
-  private final static Settings settings = new Settings(StorageProviderDialog.class);
-  
+
   private AttachmentService service = Application.getBootLoader().getBootable(AttachmentService.class);
-  
-  private StorageProvider selection = null;
 
   /**
    * ct.
    * @param position
    */
-  public StorageProviderDialog(int position)
+  public AttachmentSettingsDialog(int position)
   {
     super(position);
-    this.setTitle(i18n.tr("Speicherort für Dateianhänge"));
+    this.setTitle(i18n.tr("Einstellungen für Dateianhänge"));
     this.setSize(WINDOW_WIDTH,SWT.DEFAULT);
-    
-    // Ggf. vorhandene Vorauswahl
-    this.selection = this.service.getProvider(settings.getString("selected",null));
   }
 
   /**
@@ -62,15 +59,21 @@ public class StorageProviderDialog extends AbstractDialog<StorageProvider>
   protected void paint(Composite parent) throws Exception
   {
     SimpleContainer container = new SimpleContainer(parent,true);
-    container.addText(i18n.tr("Bitte wählen Sie den zu verwendenden Speicherort."),true);
     
-    final SelectInput select = new SelectInput(this.service.getProviders(),this.selection);
-    select.setAttribute("name");
-    container.addInput(select);
+    if (service.getProviders().size() > 1)
+      container.addText(i18n.tr("Bitte wählen Sie den Ordner, in dem Dateianhänge gespeichert werden sollen, wenn Sie die Speicherung in lokalen Dateien auswählen."),true);
+    else
+      container.addText(i18n.tr("Bitte wählen Sie den Ordner, in dem Dateianhänge gespeichert werden sollen."),true);
+
+    final BeanService bs = Application.getBootLoader().getBootable(BeanService.class);
+    final StorageProviderLocal storage = bs.get(StorageProviderLocal.class);
     
-    final CheckboxInput save = new CheckboxInput(false);
-    save.setName(i18n.tr("Diese Frage künftig nicht mehr anzeigen"));
-    container.addInput(save);
+    final DirectoryInput dir = new DirectoryInput(storage.getBasedir().getAbsolutePath());
+    container.addInput(dir);
+    
+    final LabelInput errors = new LabelInput("");
+    errors.setColor(Color.ERROR);
+    container.addInput(errors);
     
     ButtonArea buttons = new ButtonArea();
     buttons.addButton(i18n.tr("Übernehmen"),new Action() {
@@ -78,10 +81,15 @@ public class StorageProviderDialog extends AbstractDialog<StorageProvider>
       @Override
       public void handleAction(Object context) throws ApplicationException
       {
-        selection = (StorageProvider) select.getValue();
+        final String newDir = (String) dir.getValue();
+        final File test = new File(newDir);
+        if (!test.exists() || !test.isDirectory() || !test.canWrite())
+        {
+          errors.setValue(i18n.tr("Sie besitzen keine Schreibrechte in diesem Ordner"));
+          return;
+        }
         
-        if (((Boolean)save.getValue()).booleanValue())
-          settings.setAttribute("selected",selection != null ? selection.getId() : null);
+        storage.setBasedir(test);
         close();
       }
     },null,true,"ok.png");
@@ -91,22 +99,10 @@ public class StorageProviderDialog extends AbstractDialog<StorageProvider>
     getShell().setMinimumSize(getShell().computeSize(WINDOW_WIDTH,SWT.DEFAULT));
   }
   
-  /**
-   * Liefert eine ggf. gespeicherte Vorauswahl.
-   * @return die ggf. gespeicherte Vorauswahl oder NULL; wen keine existiert.
-   */
-  public StorageProvider getSaved()
+  @Override
+  protected Object getData() throws Exception
   {
-    return this.selection;
+    return null;
   }
   
-  /**
-   * @see de.willuhn.jameica.gui.dialogs.AbstractDialog#getData()
-   */
-  @Override
-  protected StorageProvider getData() throws Exception
-  {
-    return this.selection;
-  }
-
 }

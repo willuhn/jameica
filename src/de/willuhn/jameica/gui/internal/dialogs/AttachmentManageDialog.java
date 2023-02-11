@@ -22,6 +22,7 @@ import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.internal.action.AttachmentAdd;
 import de.willuhn.jameica.gui.internal.action.AttachmentDelete;
 import de.willuhn.jameica.gui.internal.action.AttachmentSave;
+import de.willuhn.jameica.gui.internal.action.AttachmentSettings;
 import de.willuhn.jameica.gui.internal.parts.AttachmentListPart;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
@@ -107,6 +108,7 @@ public class AttachmentManageDialog extends AbstractDialog
     buttons.addButton(Application.getI18n().tr("Dateien hinzufügen..."),new AttachmentAdd(),null,false,"list-add.png");
     buttons.addButton(save);
     buttons.addButton(delete);
+    buttons.addButton(Application.getI18n().tr("Einstellungen"), new AttachmentSettings(),null,false,"document-properties.png");
     buttons.addButton(Application.getI18n().tr("Schließen"),x -> close(),null,true,"window-close.png");
     
     container.addButtonArea(buttons);
