@@ -116,8 +116,16 @@ public class AttachmentService implements Bootable
     final Plugin plugin     = Application.getPluginLoader().findByClass(view.getClass());
     
     final Context ctx = new Context();
-    ctx.setClassName(o != null ? o.getClass().getName() : null);
-    ctx.setId((o instanceof GenericObject) ? ((GenericObject)o).getID() : null);
+    if (o instanceof GenericObject)
+    {
+      final GenericObject g = (GenericObject) o;
+      ctx.setClassName(g.getClass().getName());
+      ctx.setId(g.getID());
+    }
+    else
+    {
+      ctx.setClassName(view.getClass().getName());
+    }
     ctx.setPlugin(plugin != null ? plugin.getManifest().getPluginClass() : null);
     return ctx;
   }

@@ -129,7 +129,7 @@ public class Start extends AbstractView implements Extendable
   @Override
   public boolean canAttach()
   {
-    return true;
+    return false;
   }
   
   /**
