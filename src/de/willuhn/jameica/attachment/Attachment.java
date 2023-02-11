@@ -23,6 +23,7 @@ public class Attachment implements Serializable
   private String uuid      = null;
   private String storageId = null;
   private Context context  = null;
+  private long date        = 0;
   
   /**
    * Liefert den Dateinamen.
@@ -58,6 +59,24 @@ public class Attachment implements Serializable
   public void setUuid(String uuid)
   {
     this.uuid = uuid;
+  }
+  
+  /**
+   * Liefert den Zeitstempel des Dateianhangs.
+   * @return der Zeitstempel des Dateianhangs.
+   */
+  public long getDate()
+  {
+    return this.date;
+  }
+  
+  /**
+   * Speichert den Zeitstempel des Dateianhangs.
+   * @param created der Zeitstempel des Dateianhangs.
+   */
+  public void setDate(long date)
+  {
+    this.date = date;
   }
   
   /**

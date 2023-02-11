@@ -14,6 +14,7 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.internal.dialogs.AttachmentManageDialog;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -36,6 +37,10 @@ public class AttachmentManage implements Action
     catch (ApplicationException ae)
     {
       throw ae;
+    }
+    catch (OperationCanceledException oce)
+    {
+      throw oce;
     }
     catch (Exception e)
     {

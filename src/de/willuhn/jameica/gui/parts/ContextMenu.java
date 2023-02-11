@@ -27,6 +27,7 @@ import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -181,6 +182,9 @@ public class ContextMenu implements Part
 					try
 					{
 						a.handleAction(currentObject); 
+					}
+					catch (OperationCanceledException oce)
+					{
 					}
 					catch (ApplicationException e)
 					{

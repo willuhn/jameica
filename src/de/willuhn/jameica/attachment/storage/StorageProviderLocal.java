@@ -48,7 +48,7 @@ public class StorageProviderLocal implements StorageProvider
   @Override
   public String getId()
   {
-    return "local";
+    return "jameica.local";
   }
   
   /**
@@ -90,7 +90,7 @@ public class StorageProviderLocal implements StorageProvider
       
       final Attachment a = new Attachment();
       a.setStorageId(this.getId());
-      a.setUuid(null);
+      a.setDate(f.lastModified());
       a.setContext(ctx);
       a.setFilename(f.getName());
       result.add(a);
@@ -98,7 +98,7 @@ public class StorageProviderLocal implements StorageProvider
 
     return result;
   }
-  
+
   /**
    * @see de.willuhn.jameica.attachment.storage.StorageProvider#create(de.willuhn.jameica.attachment.Attachment, java.io.InputStream)
    */
@@ -107,7 +107,7 @@ public class StorageProviderLocal implements StorageProvider
   {
     final File dir = this.getDir(a.getContext());
     final File target = new File(dir,a.getFilename());
-    Logger.info("creating new attachment file " + target);
+    Logger.info("writing attachment file " + target);
 
     OutputStream os = null;
     try
@@ -120,6 +120,16 @@ public class StorageProviderLocal implements StorageProvider
     {
       IOUtil.close(is,os);
     }
+  }
+  
+  /**
+   * @see de.willuhn.jameica.attachment.storage.StorageProvider#update(de.willuhn.jameica.attachment.Attachment, java.io.InputStream)
+   */
+  @Override
+  public void update(Attachment a, InputStream is) throws IOException
+  {
+    // Wir können einfach erstellen. Dabei wird die Datei überschrieben
+    this.create(a,is);
   }
   
   /**

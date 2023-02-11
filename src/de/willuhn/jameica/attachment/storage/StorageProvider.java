@@ -67,6 +67,14 @@ public interface StorageProvider
   public void create(Attachment a, InputStream is) throws IOException;
   
   /**
+   * Aktualisiert ein Attachment.
+   * @param a das existierende Attachment.
+   * @param is Stream mit den aktualisierten Daten.
+   * @throws IOException
+   */
+  public void update(Attachment a, InputStream is) throws IOException;
+  
+  /**
    * Löscht das Attachment.
    * @param a das zu löschende Attachment.
    * @throws IOException

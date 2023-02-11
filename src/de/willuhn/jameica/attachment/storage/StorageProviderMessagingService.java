@@ -13,6 +13,7 @@ package de.willuhn.jameica.attachment.storage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public String getId()
   {
-    return "archive";
+    return "jameica.messaging";
   }
   
   /**
@@ -107,6 +108,7 @@ public class StorageProviderMessagingService implements StorageProvider
       a.setContext(ctx);
       a.setUuid(uuid);
       a.setFilename(meta.get("filename"));
+      a.setDate(Long.parseLong(meta.get("date")));
       result.add(a);
     }
 
@@ -119,12 +121,34 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public void create(Attachment a, InputStream is) throws IOException
   {
+    Logger.info("creating new attachment file " + a.getFilename());
     final String channel = this.getChannel(a.getContext());
     final QueryMessage m = new QueryMessage(channel,is);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").sendSyncMessage(m);
     
+    final Map meta = new HashMap();
+    meta.put("filename",a.getFilename());
+    meta.put("date",System.currentTimeMillis());
+    final QueryMessage mm = new QueryMessage(meta);
+    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.putmeta").sendSyncMessage(mm);
+
     // Generierte UUID im Attachment speichern
     a.setUuid(m.getData().toString());
+  }
+  
+  /**
+   * @see de.willuhn.jameica.attachment.storage.StorageProvider#update(de.willuhn.jameica.attachment.Attachment, java.io.InputStream)
+   */
+  @Override
+  public void update(Attachment a, InputStream is) throws IOException
+  {
+    final String uuid = a.getUuid();
+
+    // Ein Überschreiben gibt es nicht. Wir erstellen die Datei daher neu und löschen danach die alte
+    this.create(a,is);
+    
+    final QueryMessage m = new QueryMessage(uuid);
+    Application.getMessagingFactory().getMessagingQueue("jameica.messaging.del").sendSyncMessage(m);
   }
   
   /**
