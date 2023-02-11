@@ -93,9 +93,9 @@ public class StorageProviderMessagingService implements StorageProvider
     // OK; wir haben Dateien. Dann die Meta-Daten abrufen, um die Attachments zu erzeugen
     for (String uuid:uuids)
     {
-      final QueryMessage mm = new QueryMessage(uuid);
+      final QueryMessage mm = new QueryMessage(uuid,null);
       Application.getMessagingFactory().getMessagingQueue("jameica.messaging.getmeta").sendSyncMessage(mm);
-      final Map<String,String> meta = (Map<String,String>) ml.getData();
+      final Map<String,String> meta = (Map<String,String>) mm.getData();
       
       if (meta == null || meta.isEmpty())
       {
@@ -108,7 +108,13 @@ public class StorageProviderMessagingService implements StorageProvider
       a.setContext(ctx);
       a.setUuid(uuid);
       a.setFilename(meta.get("filename"));
-      a.setDate(Long.parseLong(meta.get("date")));
+      a.setDate(meta.get("date") != null ? Long.parseLong(meta.get("date")) : 0);
+      
+      if (a.getFilename() == null)
+      {
+        Logger.warn("invalid message for UUID " + uuid + " - missing filename");
+        continue;
+      }
       result.add(a);
     }
 
@@ -125,15 +131,17 @@ public class StorageProviderMessagingService implements StorageProvider
     final String channel = this.getChannel(a.getContext());
     final QueryMessage m = new QueryMessage(channel,is);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").sendSyncMessage(m);
-    
+
+    final String uuid = m.getData().toString();
+
     final Map meta = new HashMap();
     meta.put("filename",a.getFilename());
-    meta.put("date",System.currentTimeMillis());
-    final QueryMessage mm = new QueryMessage(meta);
+    meta.put("date",Long.toString(System.currentTimeMillis()));
+    final QueryMessage mm = new QueryMessage(uuid,meta);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.putmeta").sendSyncMessage(mm);
 
     // Generierte UUID im Attachment speichern
-    a.setUuid(m.getData().toString());
+    a.setUuid(uuid);
   }
   
   /**
@@ -147,7 +155,7 @@ public class StorageProviderMessagingService implements StorageProvider
     // Ein Überschreiben gibt es nicht. Wir erstellen die Datei daher neu und löschen danach die alte
     this.create(a,is);
     
-    final QueryMessage m = new QueryMessage(uuid);
+    final QueryMessage m = new QueryMessage(uuid,null);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.del").sendSyncMessage(m);
   }
   
@@ -157,7 +165,8 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public void copy(Attachment a, OutputStream os) throws IOException
   {
-    final QueryMessage m = new QueryMessage(a.getUuid());
+    final QueryMessage m = new QueryMessage(a.getUuid(),null);
+    
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.get").sendSyncMessage(m);
     
     final Object data = m.getData();
@@ -173,7 +182,7 @@ public class StorageProviderMessagingService implements StorageProvider
   @Override
   public void delete(Attachment a) throws IOException
   {
-    final QueryMessage m = new QueryMessage(a.getUuid());
+    final QueryMessage m = new QueryMessage(a.getUuid(),null);
     Application.getMessagingFactory().getMessagingQueue("jameica.messaging.del").sendSyncMessage(m);
   }
   

@@ -219,6 +219,7 @@ public class ArchiveService implements Bootable
     if (this.put != null) Application.getMessagingFactory().getMessagingQueue("jameica.messaging.put").unRegisterMessageConsumer(this.put);
     if (this.del != null) Application.getMessagingFactory().getMessagingQueue("jameica.messaging.del").unRegisterMessageConsumer(this.del);
     if (this.next != null) Application.getMessagingFactory().getMessagingQueue("jameica.messaging.next").unRegisterMessageConsumer(this.next);
+    if (this.list != null) Application.getMessagingFactory().getMessagingQueue("jameica.messaging.list").unRegisterMessageConsumer(this.list);
     if (this.getMeta != null) Application.getMessagingFactory().getMessagingQueue("jameica.messaging.getmeta").unRegisterMessageConsumer(this.getMeta);
     if (this.putMeta != null) Application.getMessagingFactory().getMessagingQueue("jameica.messaging.putmeta").unRegisterMessageConsumer(this.putMeta);
   }
