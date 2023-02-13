@@ -308,7 +308,7 @@ public class Manifest implements Comparable
 		IXMLElement desc = root.getFirstChildNamed("url");
 		return desc == null ? null: desc.getContent();
 	}
-	
+  
   /**
    * Liefert die Homepage-URL der Komponente.
    * @return Homepage-URL der Komponente.
@@ -317,6 +317,22 @@ public class Manifest implements Comparable
   {
 		IXMLElement desc = root.getFirstChildNamed("homepage");
 		return desc == null ? null: desc.getContent();
+  }
+  
+  /**
+   * Liefert true, wenn die Homepage bei Updates geprüft werden soll.
+   * Updates des Plugins werden in dem Fall nur dann durchgeführt, wenn sie vom selben
+   * Server kommen, der auch als Homepage angegeben ist.
+   * @return true, wenn die Homepage bei Updates geprüft werden soll.
+   */
+  public boolean validateHomepage()
+  {
+    IXMLElement homepage = root.getFirstChildNamed("homepage");
+    if (homepage == null)
+      return false;
+    
+    String b = homepage.getAttribute("validate",null);
+    return Boolean.parseBoolean(b);
   }
 
 	/**

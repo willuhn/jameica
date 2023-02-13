@@ -33,7 +33,7 @@ public class RepositoryEditDialog extends AbstractDialog<Void>
   {
     super(position);
     this.setTitle(i18n.tr("Plugin-Repositories"));
-    this.setSize(460,300);
+    this.setSize(460,500);
   }
 
   /**
