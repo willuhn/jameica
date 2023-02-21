@@ -69,6 +69,7 @@ public class AppointmentProviderDialog extends AbstractDialog<List<AppointmentPr
     this.table.addColumn(i18n.tr("Bezeichnung"),"name");
     this.table.setCheckable(true);
     this.table.setMulti(false);
+    this.table.setRememberColWidths(true);
     this.table.removeFeature(FeatureSummary.class);
     this.table.setRememberOrder(false);
     this.table.setFormatter(new TableFormatter() {
