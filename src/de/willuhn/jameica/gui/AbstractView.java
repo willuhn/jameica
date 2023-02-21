@@ -52,7 +52,7 @@ public abstract class AbstractView
    */
   public void reload() throws ApplicationException
   {
-    
+    GUI.startView(this.getClass(),this.getCurrentObject());
   }
 
 	/**
