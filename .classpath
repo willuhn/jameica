@@ -26,6 +26,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-collections-3.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-logging-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mckoi/mckoisqldb-1.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/mozilla_rhino/rhino-1.7.14.jar"/>
+	<classpathentry kind="lib" path="lib/mozilla_rhino/rhino-engine-1.7.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity/velocity-1.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/apache_xmlrpc/ws-commons-util-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/apache_xmlrpc/xml-apis-1.0.b2.jar"/>
