@@ -39,7 +39,6 @@ import de.willuhn.jameica.gui.dialogs.SimpleDialog;
 import de.willuhn.jameica.gui.dialogs.TextDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
 import de.willuhn.jameica.gui.parts.FormTextPart;
-import de.willuhn.jameica.gui.util.ButtonArea;
 import de.willuhn.jameica.gui.util.Container;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.jameica.messaging.CheckTrustMessage;
@@ -348,7 +347,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
       protected void paint(Composite parent) throws Exception
       {
-        Container g = new SimpleContainer(parent);
+        Container g = new SimpleContainer(parent,true);
         if (text.startsWith("<form>"))
           g.addPart(new FormTextPart(text));
         else
@@ -357,7 +356,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
         if (storeAnswer)
           g.addCheckbox(check,Application.getI18n().tr("Diese Frage künftig nicht mehr anzeigen"));
         
-        ButtonArea buttons = g.createButtonArea(2);
+        final de.willuhn.jameica.gui.parts.ButtonArea buttons = new de.willuhn.jameica.gui.parts.ButtonArea();
         buttons.addButton("   " + i18n.tr("Ja") + "   ", new Action() {
           public void handleAction(Object context) throws ApplicationException
           {
@@ -376,8 +375,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
             close();
           }
         },null,false,"process-stop.png");
-        getShell().setSize(getShell().computeSize(SWT.DEFAULT,SWT.DEFAULT));
-        getShell().setMinimumSize(350,getShell().getSize().y);
+        g.addButtonArea(buttons);
+        getShell().setMinimumSize(400,200);
+        getShell().setSize(getShell().computeSize(400,SWT.DEFAULT));
       }
     };
     d.setTitle(Application.getI18n().tr("Frage"));
