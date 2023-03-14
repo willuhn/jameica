@@ -27,9 +27,8 @@
       <item id="jameica.menu.quit"           name="Beenden"                         shortcut="CTRL+Q"         icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
     </item>
     <item name="Hilfe">
-      <item name="&amp;Über"                                                                                  icon="gtk-info.png"            action="de.willuhn.jameica.gui.internal.action.About" />
-      <item name="-" />
       <item name="Lizenzinformationen" icon="text-x-generic.png"     action="de.willuhn.jameica.gui.internal.action.License" />
+      <item name="&amp;Über"                                                                                  icon="gtk-info.png"            action="de.willuhn.jameica.gui.internal.action.About" />
     </item>
   </menu>
 
