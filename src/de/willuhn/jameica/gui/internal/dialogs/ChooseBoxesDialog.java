@@ -57,7 +57,6 @@ public class ChooseBoxesDialog extends AbstractDialog
   public ChooseBoxesDialog(int position)
   {
     super(position);
-    this.setSize(460,400);
     setTitle(i18n.tr("Auswahl der anzuzeigenden Elemente"));
   }
 
@@ -259,6 +258,10 @@ public class ChooseBoxesDialog extends AbstractDialog
       }
     },null,false,"process-stop.png");
     c.addButtonArea(buttons);
+    
+    getShell().setMinimumSize(550,400);
+    getShell().setSize(getShell().computeSize(550,SWT.DEFAULT));
+
   }
 
   /**
